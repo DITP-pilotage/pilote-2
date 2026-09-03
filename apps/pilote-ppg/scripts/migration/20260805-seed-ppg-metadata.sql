@@ -1,584 +1,16293 @@
 -- Seed PPG metadata — INSERT ... ON CONFLICT DO NOTHING — idempotent
 
 -- metadata_zones (183 rows)
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A01', 'Paris', '01', 'ACAD', 'R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A02', 'Aix-Marseille', '02', 'ACAD', 'R93') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A03', 'Besançon', '03', 'ACAD', 'R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A04', 'Bordeaux', '04', 'ACAD', 'R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A06', 'Clermont-Ferrand', '06', 'ACAD', 'R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A07', 'Dijon', '07', 'ACAD', 'R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A08', 'Grenoble', '08', 'ACAD', 'R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A09', 'Lille', '09', 'ACAD', 'R32') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A10', 'Lyon', '10', 'ACAD', 'R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A11', 'Montpellier', '11', 'ACAD', 'R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A12', 'Nancy-Metz', '12', 'ACAD', 'R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A13', 'Poitiers', '13', 'ACAD', 'R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A14', 'Rennes', '14', 'ACAD', 'R53') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A15', 'Strasbourg', '15', 'ACAD', 'R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A16', 'Toulouse', '16', 'ACAD', 'R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A17', 'Nantes', '17', 'ACAD', 'R52') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A18', 'Orléans-Tours', '18', 'ACAD', 'R24') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A19', 'Reims', '19', 'ACAD', 'R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A20', 'Amiens', '20', 'ACAD', 'R32') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A22', 'Limoges', '22', 'ACAD', 'R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A23', 'Nice', '23', 'ACAD', 'R93') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A24', 'Créteil', '24', 'ACAD', 'R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A25', 'Versailles', '25', 'ACAD', 'R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A27', 'Corse', '27', 'ACAD', 'R94') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A28', 'La Réunion', '28', 'ACAD', 'R04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A31', 'Martinique', '31', 'ACAD', 'R02') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A32', 'Guadeloupe', '32', 'ACAD', 'R01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A33', 'Guyane', '33', 'ACAD', 'R03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A40', 'Académie Nouvell C ?', '40', 'ACAD', 'COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A41', 'Académie Polynésie ?', '41', 'ACAD', 'COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A42', 'Académie W&F ?', '42', 'ACAD', 'COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A43', 'Mayotte', '43', 'ACAD', 'R06') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A44', 'Académie spmq ?', '44', 'ACAD', 'COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A70', 'Normandie', '70', 'ACAD', 'R28') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D01', 'Ain', '01', 'DEPT', 'A10 | R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D02', 'Aisne', '02', 'DEPT', 'A20 | R32') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D03', 'Allier', '03', 'DEPT', 'A06 | R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D04', 'Alpes-de-Haute-Provence', '04', 'DEPT', 'A02 | R93') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D05', 'Hautes-Alpes', '05', 'DEPT', 'A02 | R93') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D06', 'Alpes-Maritimes', '06', 'DEPT', 'A23 | R93 | FM04 | ZFE03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D07', 'Ardèche', '07', 'DEPT', 'A08 | R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D08', 'Ardennes', '08', 'DEPT', 'A19 | R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D09', 'Ariège', '09', 'DEPT', 'A16 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D10', 'Aube', '10', 'DEPT', 'A19 | R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D11', 'Aude', '11', 'DEPT', 'A11 | R76 | FM04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D12', 'Aveyron', '12', 'DEPT', 'A16 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D13', 'Bouches-du-Rhône', '13', 'DEPT', 'A02 | R93 | FM04 | ZFE03 | PORT02') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D14', 'Calvados', '14', 'DEPT', 'A70 | R28 | FM01 | ZFE05') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D15', 'Cantal', '15', 'DEPT', 'A06 | R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D16', 'Charente', '16', 'DEPT', 'A13 | R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D17', 'Charente-Maritime', '17', 'DEPT', 'A13 | R75 | FM03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D18', 'Cher', '18', 'DEPT', 'A18 | R24') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D19', 'Corrèze', '19', 'DEPT', 'A22 | R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D21', 'Côte-d''Or', '21', 'DEPT', 'A07 | R27 | ZFE06') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D22', 'Côtes-d''Armor', '22', 'DEPT', 'A14 | R53 | FM02') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D23', 'Creuse', '23', 'DEPT', 'A22 | R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D24', 'Dordogne', '24', 'DEPT', 'A04 | R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D25', 'Doubs', '25', 'DEPT', 'A03 | R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D26', 'Drôme', '26', 'DEPT', 'A08 | R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D27', 'Eure', '27', 'DEPT', 'A70 | R28') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D28', 'Eure-et-Loir', '28', 'DEPT', 'A18 | R24') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D29', 'Finistère', '29', 'DEPT', 'A14 | R53 | FM02 | ZFE07') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D2A', 'Corse-du-Sud', '2A', 'DEPT', 'A27 | R94 | FM04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D2B', 'Haute-Corse', '2B', 'DEPT', 'A27 | R94 | FM04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D30', 'Gard', '30', 'DEPT', 'A11 | R76 | FM04 | ZFE04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D31', 'Haute-Garonne', '31', 'DEPT', 'A16 | R76 | ZFE04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D32', 'Gers', '32', 'DEPT', 'A16 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D33', 'Gironde', '33', 'DEPT', 'A04 | R75 | FM03 | ZFE08') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D34', 'Hérault', '34', 'DEPT', 'A11 | R76 | FM04 | ZFE04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D35', 'Ille-et-Vilaine', '35', 'DEPT', 'A14 | R53 | FM02 | ZFE07') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D36', 'Indre', '36', 'DEPT', 'A18 | R24') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D37', 'Indre-et-Loire', '37', 'DEPT', 'A18 | R24 | ZFE09') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D38', 'Isère', '38', 'DEPT', 'A08 | R84 | ZFE01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D39', 'Jura', '39', 'DEPT', 'A03 | R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D40', 'Landes', '40', 'DEPT', 'A04 | R75 | FM03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D41', 'Loir-et-Cher', '41', 'DEPT', 'A18 | R24') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D42', 'Loire', '42', 'DEPT', 'A10 | R84 | ZFE01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D43', 'Haute-Loire', '43', 'DEPT', 'A06 | R84') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D44', 'Loire-Atlantique', '44', 'DEPT', 'A17 | R52 | FM02 | ZFE10') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D45', 'Loiret', '45', 'DEPT', 'A18 | R24 | ZFE09') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D46', 'Lot', '46', 'DEPT', 'A16 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D47', 'Lot-et-Garonne', '47', 'DEPT', 'A04 | R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D48', 'Lozère', '48', 'DEPT', 'A11 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D49', 'Maine-et-Loire', '49', 'DEPT', 'A17 | R52 | ZFE10') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D50', 'Manche', '50', 'DEPT', 'A70 | R28 | FM01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D51', 'Marne', '51', 'DEPT', 'A19 | R44 | ZFE11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D52', 'Haute-Marne', '52', 'DEPT', 'A19 | R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D53', 'Mayenne', '53', 'DEPT', 'A17 | R52') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D54', 'Meurthe-et-Moselle', '54', 'DEPT', 'A12 | R44 | ZFE11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D55', 'Meuse', '55', 'DEPT', 'A12 | R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D56', 'Morbihan', '56', 'DEPT', 'A14 | R53 | FM02') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D57', 'Moselle', '57', 'DEPT', 'A12 | R44 | ZFE11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D58', 'Nièvre', '58', 'DEPT', 'A07 | R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D59', 'Nord', '59', 'DEPT', 'A09 | R32 | FM01 | PORT04 | ZFE12') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D60', 'Oise', '60', 'DEPT', 'A20 | R32') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D61', 'Orne', '61', 'DEPT', 'A70 | R28') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D62', 'Pas-de-Calais', '62', 'DEPT', 'A09 | R32 | FM01 | ZFE12') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D63', 'Puy-de-Dôme', '63', 'DEPT', 'A06 | R84 | ZFE01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D64', 'Pyrénées-Atlantiques', '64', 'DEPT', 'A04 | R75 | FM03 | ZFE08') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D65', 'Hautes-Pyrénées', '65', 'DEPT', 'A16 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D66', 'Pyrénées-Orientales', '66', 'DEPT', 'A11 | R76 | FM04 | ZFE08') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D67', 'Bas-Rhin', '67', 'DEPT', 'A15 | R44 | ZFE11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D68', 'Haut-Rhin', '68', 'DEPT', 'A15 | R44 | ZFE11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D69', 'Rhône', '69', 'DEPT', 'A10 | R84 | ZFE01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D70', 'Haute-Saône', '70', 'DEPT', 'A03 | R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D71', 'Saône-et-Loire', '71', 'DEPT', 'A07 | R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D72', 'Sarthe', '72', 'DEPT', 'A17 | R52') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D73', 'Savoie', '73', 'DEPT', 'A08 | R84 | ZFE01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D74', 'Haute-Savoie', '74', 'DEPT', 'A08 | R84 | ZFE01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D75', 'Paris', '75', 'DEPT', 'A01 | R11 | ZFE02 | PORT03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D76', 'Seine-Maritime', '76', 'DEPT', 'A70 | R28 | FM01 | PORT01 | ZFE05') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D77', 'Seine-et-Marne', '77', 'DEPT', 'A24 | R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D78', 'Yvelines', '78', 'DEPT', 'A25 | R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D79', 'Deux-Sèvres', '79', 'DEPT', 'A13 | R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D80', 'Somme', '80', 'DEPT', 'A20 | R32 | FM01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D81', 'Tarn', '81', 'DEPT', 'A16 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D82', 'Tarn-et-Garonne', '82', 'DEPT', 'A16 | R76') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D83', 'Var', '83', 'DEPT', 'A23 | R93 | FM04 | ZFE03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D84', 'Vaucluse', '84', 'DEPT', 'A02 | R93 | ZFE03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D85', 'Vendée', '85', 'DEPT', 'A17 | R52 | FM02') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D86', 'Vienne', '86', 'DEPT', 'A13 | R75') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D87', 'Haute-Vienne', '87', 'DEPT', 'A22 | R75 | ZFE08') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D88', 'Vosges', '88', 'DEPT', 'A12 | R44') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D89', 'Yonne', '89', 'DEPT', 'A07 | R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D90', 'Territoire de Belfort', '90', 'DEPT', 'A03 | R27') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D91', 'Essonne', '91', 'DEPT', 'A25 | R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D92', 'Hauts-de-Seine', '92', 'DEPT', 'A25 | R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D93', 'Seine-Saint-Denis', '93', 'DEPT', 'A24 | R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D94', 'Val-de-Marne', '94', 'DEPT', 'A24 | R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D95', 'Val-d''Oise', '95', 'DEPT', 'A25 | R11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D971', 'Guadeloupe', '971', 'DEPT', 'A32 | R01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D972', 'Martinique', '972', 'DEPT', 'A31 | R02') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D973', 'Guyane', '973', 'DEPT', 'A33 | R03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D974', 'La Réunion', '974', 'DEPT', 'A28 | R04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D976', 'Mayotte', '976', 'DEPT', 'A43 | R06') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('FRANCE', 'National', 'FR', 'NAT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R01', 'Guadeloupe', '01', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R02', 'Martinique', '02', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R03', 'Guyane', '03', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R04', 'La Réunion', '04', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R06', 'Mayotte', '06', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R11', 'Île-de-France', '11', 'REG', 'FRANCE | ZFE02 | PORT03') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R24', 'Centre-Val de Loire', '24', 'REG', 'FRANCE | ZFE09') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R27', 'Bourgogne-Franche-Comté', '27', 'REG', 'FRANCE | ZFE06') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R28', 'Normandie', '28', 'REG', 'FRANCE | FM01 | PORT01 | ZFE05') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R32', 'Hauts-de-France', '32', 'REG', 'FRANCE | FM01 | PORT04 | ZFE12') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R44', 'Grand Est', '44', 'REG', 'FRANCE | ZFE11') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R52', 'Pays de la Loire', '52', 'REG', 'FRANCE | FM02 | ZFE10') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R53', 'Bretagne', '53', 'REG', 'FRANCE | FM02 | ZFE07') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R75', 'Nouvelle-Aquitaine', '75', 'REG', 'FRANCE | FM03 | ZFE08') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R76', 'Occitanie', '76', 'REG', 'FRANCE | FM04 | ZFE04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R84', 'Auvergne-Rhône-Alpes', '84', 'REG', 'FRANCE | ZFE01') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R93', 'Provence-Alpes-Côte d''Azur', '93', 'REG', 'FRANCE | FM04 | ZFE03 | PORT02') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R94', 'Corse', '94', 'REG', 'FRANCE | FM04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('FM01', 'Manche-Est - Mer du Nord', '01', 'FM', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('FM02', 'Nord Atlantique - Manche Ouest', '02', 'FM', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('FM03', 'Sud-Atlantique', '03', 'FM', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('FM04', 'Méditerranée', '04', 'FM', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE01', 'ZFE AURA (Grenoble, Saint-Etienne, Clermont-Ferrand, Lyon, Chambéry, Annecy, Annemasse)', '01', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE02', 'ZFE IDF (Paris)', '02', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE03', 'ZFE PACA (Nice, Aix-Marseille, Toulon, Avignon)', '03', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE04', 'ZFE Occitanie (Nîmes, Toulouse, Montpellier, Perpignan)', '04', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('PORT01', 'Port Le Havre et Rouen', '01', 'PORT', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('PORT02', 'Port Fos', '02', 'PORT', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('PORT03', 'Port Paris', '03', 'PORT', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('PORT04', 'Port Dunkerque', '04', 'PORT', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE05', 'ZFE Normandie (Caen, Le Havre, Rouen)', '05', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE06', 'ZFE BFC (Dijon)', '06', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE07', 'ZFE Bretagne (Brest, Rennes)', '07', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE08', 'ZFE Nouvelle-Aquitaine (Bordeaux, Bayonne, Pau, Limoges)', '08', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE09', 'ZFE CVL (Tours, Orléans)', '09', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE10', 'ZFE PDL (Nantes, Angers, Le Mans)', '10', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE11', 'ZFE Grand-Est (Reims, Nancy, Metz, Strasbourg, Mulhouse)', '11', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE12', 'ZFE Hauts-de-France (Dunkerque, Lille, Valenciennes, Béthune, Douai-Lens, Amiens)', '12', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A01',
+        'Paris',
+        '01',
+        'ACAD',
+        'R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A02',
+        'Aix-Marseille',
+        '02',
+        'ACAD',
+        'R93'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A03',
+        'Besançon',
+        '03',
+        'ACAD',
+        'R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A04',
+        'Bordeaux',
+        '04',
+        'ACAD',
+        'R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A06',
+        'Clermont-Ferrand',
+        '06',
+        'ACAD',
+        'R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A07',
+        'Dijon',
+        '07',
+        'ACAD',
+        'R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A08',
+        'Grenoble',
+        '08',
+        'ACAD',
+        'R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A09',
+        'Lille',
+        '09',
+        'ACAD',
+        'R32'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A10',
+        'Lyon',
+        '10',
+        'ACAD',
+        'R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A11',
+        'Montpellier',
+        '11',
+        'ACAD',
+        'R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A12',
+        'Nancy-Metz',
+        '12',
+        'ACAD',
+        'R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A13',
+        'Poitiers',
+        '13',
+        'ACAD',
+        'R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A14',
+        'Rennes',
+        '14',
+        'ACAD',
+        'R53'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A15',
+        'Strasbourg',
+        '15',
+        'ACAD',
+        'R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A16',
+        'Toulouse',
+        '16',
+        'ACAD',
+        'R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A17',
+        'Nantes',
+        '17',
+        'ACAD',
+        'R52'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A18',
+        'Orléans-Tours',
+        '18',
+        'ACAD',
+        'R24'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A19',
+        'Reims',
+        '19',
+        'ACAD',
+        'R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A20',
+        'Amiens',
+        '20',
+        'ACAD',
+        'R32'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A22',
+        'Limoges',
+        '22',
+        'ACAD',
+        'R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A23',
+        'Nice',
+        '23',
+        'ACAD',
+        'R93'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A24',
+        'Créteil',
+        '24',
+        'ACAD',
+        'R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A25',
+        'Versailles',
+        '25',
+        'ACAD',
+        'R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A27',
+        'Corse',
+        '27',
+        'ACAD',
+        'R94'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A28',
+        'La Réunion',
+        '28',
+        'ACAD',
+        'R04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A31',
+        'Martinique',
+        '31',
+        'ACAD',
+        'R02'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A32',
+        'Guadeloupe',
+        '32',
+        'ACAD',
+        'R01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A33',
+        'Guyane',
+        '33',
+        'ACAD',
+        'R03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A40',
+        'Académie Nouvell C ?',
+        '40',
+        'ACAD',
+        'COM'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A41',
+        'Académie Polynésie ?',
+        '41',
+        'ACAD',
+        'COM'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A42',
+        'Académie W&F ?',
+        '42',
+        'ACAD',
+        'COM'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A43',
+        'Mayotte',
+        '43',
+        'ACAD',
+        'R06'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A44',
+        'Académie spmq ?',
+        '44',
+        'ACAD',
+        'COM'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'A70',
+        'Normandie',
+        '70',
+        'ACAD',
+        'R28'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D01',
+        'Ain',
+        '01',
+        'DEPT',
+        'A10 | R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D02',
+        'Aisne',
+        '02',
+        'DEPT',
+        'A20 | R32'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D03',
+        'Allier',
+        '03',
+        'DEPT',
+        'A06 | R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D04',
+        'Alpes-de-Haute-Provence',
+        '04',
+        'DEPT',
+        'A02 | R93'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D05',
+        'Hautes-Alpes',
+        '05',
+        'DEPT',
+        'A02 | R93'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D06',
+        'Alpes-Maritimes',
+        '06',
+        'DEPT',
+        'A23 | R93 | FM04 | ZFE03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D07',
+        'Ardèche',
+        '07',
+        'DEPT',
+        'A08 | R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D08',
+        'Ardennes',
+        '08',
+        'DEPT',
+        'A19 | R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D09',
+        'Ariège',
+        '09',
+        'DEPT',
+        'A16 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D10',
+        'Aube',
+        '10',
+        'DEPT',
+        'A19 | R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D11',
+        'Aude',
+        '11',
+        'DEPT',
+        'A11 | R76 | FM04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D12',
+        'Aveyron',
+        '12',
+        'DEPT',
+        'A16 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D13',
+        'Bouches-du-Rhône',
+        '13',
+        'DEPT',
+        'A02 | R93 | FM04 | ZFE03 | PORT02'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D14',
+        'Calvados',
+        '14',
+        'DEPT',
+        'A70 | R28 | FM01 | ZFE05'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D15',
+        'Cantal',
+        '15',
+        'DEPT',
+        'A06 | R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D16',
+        'Charente',
+        '16',
+        'DEPT',
+        'A13 | R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D17',
+        'Charente-Maritime',
+        '17',
+        'DEPT',
+        'A13 | R75 | FM03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D18',
+        'Cher',
+        '18',
+        'DEPT',
+        'A18 | R24'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D19',
+        'Corrèze',
+        '19',
+        'DEPT',
+        'A22 | R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D21',
+        'Côte-d''Or',
+        '21',
+        'DEPT',
+        'A07 | R27 | ZFE06'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D22',
+        'Côtes-d''Armor',
+        '22',
+        'DEPT',
+        'A14 | R53 | FM02'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D23',
+        'Creuse',
+        '23',
+        'DEPT',
+        'A22 | R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D24',
+        'Dordogne',
+        '24',
+        'DEPT',
+        'A04 | R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D25',
+        'Doubs',
+        '25',
+        'DEPT',
+        'A03 | R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D26',
+        'Drôme',
+        '26',
+        'DEPT',
+        'A08 | R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D27',
+        'Eure',
+        '27',
+        'DEPT',
+        'A70 | R28'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D28',
+        'Eure-et-Loir',
+        '28',
+        'DEPT',
+        'A18 | R24'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D29',
+        'Finistère',
+        '29',
+        'DEPT',
+        'A14 | R53 | FM02 | ZFE07'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D2A',
+        'Corse-du-Sud',
+        '2A',
+        'DEPT',
+        'A27 | R94 | FM04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D2B',
+        'Haute-Corse',
+        '2B',
+        'DEPT',
+        'A27 | R94 | FM04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D30',
+        'Gard',
+        '30',
+        'DEPT',
+        'A11 | R76 | FM04 | ZFE04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D31',
+        'Haute-Garonne',
+        '31',
+        'DEPT',
+        'A16 | R76 | ZFE04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D32',
+        'Gers',
+        '32',
+        'DEPT',
+        'A16 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D33',
+        'Gironde',
+        '33',
+        'DEPT',
+        'A04 | R75 | FM03 | ZFE08'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D34',
+        'Hérault',
+        '34',
+        'DEPT',
+        'A11 | R76 | FM04 | ZFE04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D35',
+        'Ille-et-Vilaine',
+        '35',
+        'DEPT',
+        'A14 | R53 | FM02 | ZFE07'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D36',
+        'Indre',
+        '36',
+        'DEPT',
+        'A18 | R24'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D37',
+        'Indre-et-Loire',
+        '37',
+        'DEPT',
+        'A18 | R24 | ZFE09'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D38',
+        'Isère',
+        '38',
+        'DEPT',
+        'A08 | R84 | ZFE01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D39',
+        'Jura',
+        '39',
+        'DEPT',
+        'A03 | R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D40',
+        'Landes',
+        '40',
+        'DEPT',
+        'A04 | R75 | FM03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D41',
+        'Loir-et-Cher',
+        '41',
+        'DEPT',
+        'A18 | R24'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D42',
+        'Loire',
+        '42',
+        'DEPT',
+        'A10 | R84 | ZFE01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D43',
+        'Haute-Loire',
+        '43',
+        'DEPT',
+        'A06 | R84'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D44',
+        'Loire-Atlantique',
+        '44',
+        'DEPT',
+        'A17 | R52 | FM02 | ZFE10'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D45',
+        'Loiret',
+        '45',
+        'DEPT',
+        'A18 | R24 | ZFE09'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D46',
+        'Lot',
+        '46',
+        'DEPT',
+        'A16 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D47',
+        'Lot-et-Garonne',
+        '47',
+        'DEPT',
+        'A04 | R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D48',
+        'Lozère',
+        '48',
+        'DEPT',
+        'A11 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D49',
+        'Maine-et-Loire',
+        '49',
+        'DEPT',
+        'A17 | R52 | ZFE10'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D50',
+        'Manche',
+        '50',
+        'DEPT',
+        'A70 | R28 | FM01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D51',
+        'Marne',
+        '51',
+        'DEPT',
+        'A19 | R44 | ZFE11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D52',
+        'Haute-Marne',
+        '52',
+        'DEPT',
+        'A19 | R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D53',
+        'Mayenne',
+        '53',
+        'DEPT',
+        'A17 | R52'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D54',
+        'Meurthe-et-Moselle',
+        '54',
+        'DEPT',
+        'A12 | R44 | ZFE11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D55',
+        'Meuse',
+        '55',
+        'DEPT',
+        'A12 | R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D56',
+        'Morbihan',
+        '56',
+        'DEPT',
+        'A14 | R53 | FM02'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D57',
+        'Moselle',
+        '57',
+        'DEPT',
+        'A12 | R44 | ZFE11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D58',
+        'Nièvre',
+        '58',
+        'DEPT',
+        'A07 | R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D59',
+        'Nord',
+        '59',
+        'DEPT',
+        'A09 | R32 | FM01 | PORT04 | ZFE12'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D60',
+        'Oise',
+        '60',
+        'DEPT',
+        'A20 | R32'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D61',
+        'Orne',
+        '61',
+        'DEPT',
+        'A70 | R28'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D62',
+        'Pas-de-Calais',
+        '62',
+        'DEPT',
+        'A09 | R32 | FM01 | ZFE12'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D63',
+        'Puy-de-Dôme',
+        '63',
+        'DEPT',
+        'A06 | R84 | ZFE01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D64',
+        'Pyrénées-Atlantiques',
+        '64',
+        'DEPT',
+        'A04 | R75 | FM03 | ZFE08'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D65',
+        'Hautes-Pyrénées',
+        '65',
+        'DEPT',
+        'A16 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D66',
+        'Pyrénées-Orientales',
+        '66',
+        'DEPT',
+        'A11 | R76 | FM04 | ZFE08'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D67',
+        'Bas-Rhin',
+        '67',
+        'DEPT',
+        'A15 | R44 | ZFE11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D68',
+        'Haut-Rhin',
+        '68',
+        'DEPT',
+        'A15 | R44 | ZFE11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D69',
+        'Rhône',
+        '69',
+        'DEPT',
+        'A10 | R84 | ZFE01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D70',
+        'Haute-Saône',
+        '70',
+        'DEPT',
+        'A03 | R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D71',
+        'Saône-et-Loire',
+        '71',
+        'DEPT',
+        'A07 | R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D72',
+        'Sarthe',
+        '72',
+        'DEPT',
+        'A17 | R52'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D73',
+        'Savoie',
+        '73',
+        'DEPT',
+        'A08 | R84 | ZFE01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D74',
+        'Haute-Savoie',
+        '74',
+        'DEPT',
+        'A08 | R84 | ZFE01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D75',
+        'Paris',
+        '75',
+        'DEPT',
+        'A01 | R11 | ZFE02 | PORT03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D76',
+        'Seine-Maritime',
+        '76',
+        'DEPT',
+        'A70 | R28 | FM01 | PORT01 | ZFE05'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D77',
+        'Seine-et-Marne',
+        '77',
+        'DEPT',
+        'A24 | R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D78',
+        'Yvelines',
+        '78',
+        'DEPT',
+        'A25 | R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D79',
+        'Deux-Sèvres',
+        '79',
+        'DEPT',
+        'A13 | R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D80',
+        'Somme',
+        '80',
+        'DEPT',
+        'A20 | R32 | FM01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D81',
+        'Tarn',
+        '81',
+        'DEPT',
+        'A16 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D82',
+        'Tarn-et-Garonne',
+        '82',
+        'DEPT',
+        'A16 | R76'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D83',
+        'Var',
+        '83',
+        'DEPT',
+        'A23 | R93 | FM04 | ZFE03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D84',
+        'Vaucluse',
+        '84',
+        'DEPT',
+        'A02 | R93 | ZFE03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D85',
+        'Vendée',
+        '85',
+        'DEPT',
+        'A17 | R52 | FM02'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D86',
+        'Vienne',
+        '86',
+        'DEPT',
+        'A13 | R75'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D87',
+        'Haute-Vienne',
+        '87',
+        'DEPT',
+        'A22 | R75 | ZFE08'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D88',
+        'Vosges',
+        '88',
+        'DEPT',
+        'A12 | R44'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D89',
+        'Yonne',
+        '89',
+        'DEPT',
+        'A07 | R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D90',
+        'Territoire de Belfort',
+        '90',
+        'DEPT',
+        'A03 | R27'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D91',
+        'Essonne',
+        '91',
+        'DEPT',
+        'A25 | R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D92',
+        'Hauts-de-Seine',
+        '92',
+        'DEPT',
+        'A25 | R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D93',
+        'Seine-Saint-Denis',
+        '93',
+        'DEPT',
+        'A24 | R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D94',
+        'Val-de-Marne',
+        '94',
+        'DEPT',
+        'A24 | R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D95',
+        'Val-d''Oise',
+        '95',
+        'DEPT',
+        'A25 | R11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D971',
+        'Guadeloupe',
+        '971',
+        'DEPT',
+        'A32 | R01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D972',
+        'Martinique',
+        '972',
+        'DEPT',
+        'A31 | R02'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D973',
+        'Guyane',
+        '973',
+        'DEPT',
+        'A33 | R03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D974',
+        'La Réunion',
+        '974',
+        'DEPT',
+        'A28 | R04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'D976',
+        'Mayotte',
+        '976',
+        'DEPT',
+        'A43 | R06'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'FRANCE',
+        'National',
+        'FR',
+        'NAT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R01',
+        'Guadeloupe',
+        '01',
+        'REG',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R02',
+        'Martinique',
+        '02',
+        'REG',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R03',
+        'Guyane',
+        '03',
+        'REG',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R04',
+        'La Réunion',
+        '04',
+        'REG',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R06',
+        'Mayotte',
+        '06',
+        'REG',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R11',
+        'Île-de-France',
+        '11',
+        'REG',
+        'FRANCE | ZFE02 | PORT03'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R24',
+        'Centre-Val de Loire',
+        '24',
+        'REG',
+        'FRANCE | ZFE09'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R27',
+        'Bourgogne-Franche-Comté',
+        '27',
+        'REG',
+        'FRANCE | ZFE06'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R28',
+        'Normandie',
+        '28',
+        'REG',
+        'FRANCE | FM01 | PORT01 | ZFE05'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R32',
+        'Hauts-de-France',
+        '32',
+        'REG',
+        'FRANCE | FM01 | PORT04 | ZFE12'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R44',
+        'Grand Est',
+        '44',
+        'REG',
+        'FRANCE | ZFE11'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R52',
+        'Pays de la Loire',
+        '52',
+        'REG',
+        'FRANCE | FM02 | ZFE10'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R53',
+        'Bretagne',
+        '53',
+        'REG',
+        'FRANCE | FM02 | ZFE07'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R75',
+        'Nouvelle-Aquitaine',
+        '75',
+        'REG',
+        'FRANCE | FM03 | ZFE08'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R76',
+        'Occitanie',
+        '76',
+        'REG',
+        'FRANCE | FM04 | ZFE04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R84',
+        'Auvergne-Rhône-Alpes',
+        '84',
+        'REG',
+        'FRANCE | ZFE01'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R93',
+        'Provence-Alpes-Côte d''Azur',
+        '93',
+        'REG',
+        'FRANCE | FM04 | ZFE03 | PORT02'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'R94',
+        'Corse',
+        '94',
+        'REG',
+        'FRANCE | FM04'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'FM01',
+        'Manche-Est - Mer du Nord',
+        '01',
+        'FM',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'FM02',
+        'Nord Atlantique - Manche Ouest',
+        '02',
+        'FM',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'FM03',
+        'Sud-Atlantique',
+        '03',
+        'FM',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'FM04',
+        'Méditerranée',
+        '04',
+        'FM',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE01',
+        'ZFE AURA (Grenoble, Saint-Etienne, Clermont-Ferrand, Lyon, Chambéry, Annecy, Annemasse)',
+        '01',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE02',
+        'ZFE IDF (Paris)',
+        '02',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE03',
+        'ZFE PACA (Nice, Aix-Marseille, Toulon, Avignon)',
+        '03',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE04',
+        'ZFE Occitanie (Nîmes, Toulouse, Montpellier, Perpignan)',
+        '04',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'PORT01',
+        'Port Le Havre et Rouen',
+        '01',
+        'PORT',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'PORT02',
+        'Port Fos',
+        '02',
+        'PORT',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'PORT03',
+        'Port Paris',
+        '03',
+        'PORT',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'PORT04',
+        'Port Dunkerque',
+        '04',
+        'PORT',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE05',
+        'ZFE Normandie (Caen, Le Havre, Rouen)',
+        '05',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE06',
+        'ZFE BFC (Dijon)',
+        '06',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE07',
+        'ZFE Bretagne (Brest, Rennes)',
+        '07',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE08',
+        'ZFE Nouvelle-Aquitaine (Bordeaux, Bayonne, Pau, Limoges)',
+        '08',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE09',
+        'ZFE CVL (Tours, Orléans)',
+        '09',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE10',
+        'ZFE PDL (Nantes, Angers, Le Mans)',
+        '10',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE11',
+        'ZFE Grand-Est (Reims, Nancy, Metz, Strasbourg, Mulhouse)',
+        '11',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zones (
+        "zone_id",
+        "nom",
+        "zone_code",
+        "zone_type",
+        "zone_parent"
+    )
+VALUES (
+        'ZFE12',
+        'ZFE Hauts-de-France (Dunkerque, Lille, Valenciennes, Béthune, Douai-Lens, Amiens)',
+        '12',
+        'ZFE',
+        'FRANCE'
+    )
+ON CONFLICT DO NOTHING;
 
 -- metadata_axes (4 rows)
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('EMPLOI', 'Atteindre le plein emploi et réindustrialiser le pays', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('TE', 'Planifier et accélérer la transition écologique', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('PROGRES', 'Bâtir de nouveaux progrès et refonder nos services publics', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('ENGAG', 'Renforcer l’ordre républicain et encourager l’engagement', NULL) ON CONFLICT DO NOTHING;
+INSERT INTO
+    raw_data.metadata_axes (
+        "axe_id",
+        "axe_name",
+        "axe_desc"
+    )
+VALUES (
+        'EMPLOI',
+        'Atteindre le plein emploi et réindustrialiser le pays',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_axes (
+        "axe_id",
+        "axe_name",
+        "axe_desc"
+    )
+VALUES (
+        'TE',
+        'Planifier et accélérer la transition écologique',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_axes (
+        "axe_id",
+        "axe_name",
+        "axe_desc"
+    )
+VALUES (
+        'PROGRES',
+        'Bâtir de nouveaux progrès et refonder nos services publics',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_axes (
+        "axe_id",
+        "axe_name",
+        "axe_desc"
+    )
+VALUES (
+        'ENGAG',
+        'Renforcer l’ordre républicain et encourager l’engagement',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
 
 -- metadata_ppgs (60 rows)
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-1', 'Faire réussir les élèves dans une école des savoirs fondamentaux qui favorise l’épanouissement et qui protège nos enfants', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-10', 'Lutter contre l''ensemble des discriminations', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-11', 'Mettre en place France Travail', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-12', 'Mieux accompagner les enfants en danger', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-13', 'Mieux répondre aux besoins de compétences et préparer aux métiers d''avenir', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-14', 'Mieux vivre de son travail', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-15', 'Permettre l''accès à une alimentation locale et de qualité', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-16', 'Porter la grande cause du quinquennat, l’égalité entre les hommes et les femmes', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-17', 'Poursuivre le renforcement des capacités opérationnelles de nos armées et de leurs forces morales', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-18', 'Protéger et restaurer la nature, les écosystèmes et les espèces', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-19', 'Réduire les déchets et développer massivement l''économie circulaire', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-2', 'Favoriser l''attractivité de la fonction publique et poursuivre sa transformation', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-20', 'Réduire les tensions de recrutement', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-21', 'Refonder l''orientation des élèves', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-22', 'Rendre et exécuter des décisions de justice plus rapidement', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-23', 'Rendre l''école plus inclusive', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-24', 'Rendre le service public exemplaire notamment en matière de transition écologique', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-25', 'Renforcer la place de la prévention dans le quotidien des Français', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-26', 'Renforcer la sécurité du quotidien avec davantage de moyens', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-27', 'Renforcer les partenariats internationaux de la France et soutenir la Francophonie', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-28', 'Renouveler et former une génération d''agriculteurs et d''agricultrices', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-29', 'Renouveler la Démocratie', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-3', 'Favoriser la prise en charge et l’insertion des personnes condamnées et des mineurs délinquants', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-30', 'Répondre aux difficultés de recrutement et de fidélisation dans les métiers de la santé et du social', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-31', 'Réussir les Jeux Olympiques et Paralympiques 2024', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-32', 'S''engager dans la planification écologique et la territorialiser', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-33', 'Simplifier l''accès aux SP dans tous les territoires', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-34', 'Simplifier la vie des PME et des TPE et les accompagner pour faire face aux grandes transitions', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-35', 'Soutenir la création française et valoriser le patrimoine dans les environnements physiques et numériques', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-36', 'Soutenir plus fortement les familles monoparentales', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-37', 'Transformer l’école en faisant confiance aux acteurs de terrain', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-38', 'Verser automatiquement les prestations sociales pour en finir avec les non recours et les fraudes', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-4', 'Former aux savoirs et aux métiers d''avenir', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-5', 'Garantir l''égalité des chances dans l''ensemble des territoires', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-6', 'Investir dans la recherche au service de la connaissance et de l’innovation', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-7', 'Lutter contre l''immigration illégale et mieux intégrer les étrangers en situation régulière', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-8', 'Lutter contre les inégalités d’accès à la santé et les déserts médicaux', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-9', 'Lutter contre les violences faites aux femmes et les féminicides', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-AJE', 'Construire un service universel de solution d’accueil du jeune enfant', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-DCE', 'Devenir la première grande économie décarbonée grâce à de nouvelles source d''énergie propre', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-DCF', 'Devenir la première grande économie décarbonée en mobilisant la finance et l''industrie', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-DCT', 'Devenir la première grande économie décarbonée avec des transports propres', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-EHP', 'Bien vieillir à domicile et dans des EHPAD modernisés', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-F30', 'Déployer France 2030 : un plan d''investissement sans précédent pour la France', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-FIP', 'Continuer à baisser les impôts en maîtrisant les finances publiques', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-HOS', 'Adapter et renforcer notre modèle hospitalier', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-IND', 'Accélérer la réindustrialisation de la France', 'Description de la ppg IND', 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-JCU', 'Faciliter pour chaque jeune l''accès à la culture, au patrimoine et à la création contemporaine', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-LOG', 'Améliorer l''accès au logement', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-LPR', 'Faire du lycée professionnel une voie de réussite et d''accès à l''emploi', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-MAR', 'Accompagner le développement des territoires ultra-marins', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-PNU', 'Devenir la première puissance numérique européenne', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-PTH', 'En finir avec les passoires thermiques et renforcer la performance énergétique des bâtiments', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-QPH', 'Faciliter le quotidien des personnes en situation de handicap', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-SAL', 'Assurer la souveraineté alimentaire et forestière en réussissant la transition écologique', NULL, 'TE') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-SEN', 'Améliorer le taux d''emploi des jeunes et des seniors', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-SNU', 'Déployer le service national universel', 'Description de la PPG SNU', 'ENGAG') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-SPJ', 'Faire du sport un levier d’émancipation de la jeunesse et favorable à la santé des Français', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-SUE', 'Consolider la souveraineté de l’Union européenne indispensable à l’autonomie stratégique de la France', NULL, 'EMPLOI') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-VET', 'Améliorer la vie étudiante', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-1',
+        'Faire réussir les élèves dans une école des savoirs fondamentaux qui favorise l’épanouissement et qui protège nos enfants',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-10',
+        'Lutter contre l''ensemble des discriminations',
+        NULL,
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-11',
+        'Mettre en place France Travail',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-12',
+        'Mieux accompagner les enfants en danger',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-13',
+        'Mieux répondre aux besoins de compétences et préparer aux métiers d''avenir',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-14',
+        'Mieux vivre de son travail',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-15',
+        'Permettre l''accès à une alimentation locale et de qualité',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-16',
+        'Porter la grande cause du quinquennat, l’égalité entre les hommes et les femmes',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-17',
+        'Poursuivre le renforcement des capacités opérationnelles de nos armées et de leurs forces morales',
+        NULL,
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-18',
+        'Protéger et restaurer la nature, les écosystèmes et les espèces',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-19',
+        'Réduire les déchets et développer massivement l''économie circulaire',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-2',
+        'Favoriser l''attractivité de la fonction publique et poursuivre sa transformation',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-20',
+        'Réduire les tensions de recrutement',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-21',
+        'Refonder l''orientation des élèves',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-22',
+        'Rendre et exécuter des décisions de justice plus rapidement',
+        NULL,
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-23',
+        'Rendre l''école plus inclusive',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-24',
+        'Rendre le service public exemplaire notamment en matière de transition écologique',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-25',
+        'Renforcer la place de la prévention dans le quotidien des Français',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-26',
+        'Renforcer la sécurité du quotidien avec davantage de moyens',
+        NULL,
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-27',
+        'Renforcer les partenariats internationaux de la France et soutenir la Francophonie',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-28',
+        'Renouveler et former une génération d''agriculteurs et d''agricultrices',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-29',
+        'Renouveler la Démocratie',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-3',
+        'Favoriser la prise en charge et l’insertion des personnes condamnées et des mineurs délinquants',
+        NULL,
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-30',
+        'Répondre aux difficultés de recrutement et de fidélisation dans les métiers de la santé et du social',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-31',
+        'Réussir les Jeux Olympiques et Paralympiques 2024',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-32',
+        'S''engager dans la planification écologique et la territorialiser',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-33',
+        'Simplifier l''accès aux SP dans tous les territoires',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-34',
+        'Simplifier la vie des PME et des TPE et les accompagner pour faire face aux grandes transitions',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-35',
+        'Soutenir la création française et valoriser le patrimoine dans les environnements physiques et numériques',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-36',
+        'Soutenir plus fortement les familles monoparentales',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-37',
+        'Transformer l’école en faisant confiance aux acteurs de terrain',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-38',
+        'Verser automatiquement les prestations sociales pour en finir avec les non recours et les fraudes',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-4',
+        'Former aux savoirs et aux métiers d''avenir',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-5',
+        'Garantir l''égalité des chances dans l''ensemble des territoires',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-6',
+        'Investir dans la recherche au service de la connaissance et de l’innovation',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-7',
+        'Lutter contre l''immigration illégale et mieux intégrer les étrangers en situation régulière',
+        NULL,
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-8',
+        'Lutter contre les inégalités d’accès à la santé et les déserts médicaux',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-9',
+        'Lutter contre les violences faites aux femmes et les féminicides',
+        NULL,
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-AJE',
+        'Construire un service universel de solution d’accueil du jeune enfant',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-DCE',
+        'Devenir la première grande économie décarbonée grâce à de nouvelles source d''énergie propre',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-DCF',
+        'Devenir la première grande économie décarbonée en mobilisant la finance et l''industrie',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-DCT',
+        'Devenir la première grande économie décarbonée avec des transports propres',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-EHP',
+        'Bien vieillir à domicile et dans des EHPAD modernisés',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-F30',
+        'Déployer France 2030 : un plan d''investissement sans précédent pour la France',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-FIP',
+        'Continuer à baisser les impôts en maîtrisant les finances publiques',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-HOS',
+        'Adapter et renforcer notre modèle hospitalier',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-IND',
+        'Accélérer la réindustrialisation de la France',
+        'Description de la ppg IND',
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-JCU',
+        'Faciliter pour chaque jeune l''accès à la culture, au patrimoine et à la création contemporaine',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-LOG',
+        'Améliorer l''accès au logement',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-LPR',
+        'Faire du lycée professionnel une voie de réussite et d''accès à l''emploi',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-MAR',
+        'Accompagner le développement des territoires ultra-marins',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-PNU',
+        'Devenir la première puissance numérique européenne',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-PTH',
+        'En finir avec les passoires thermiques et renforcer la performance énergétique des bâtiments',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-QPH',
+        'Faciliter le quotidien des personnes en situation de handicap',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-SAL',
+        'Assurer la souveraineté alimentaire et forestière en réussissant la transition écologique',
+        NULL,
+        'TE'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-SEN',
+        'Améliorer le taux d''emploi des jeunes et des seniors',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-SNU',
+        'Déployer le service national universel',
+        'Description de la PPG SNU',
+        'ENGAG'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-SPJ',
+        'Faire du sport un levier d’émancipation de la jeunesse et favorable à la santé des Français',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-SUE',
+        'Consolider la souveraineté de l’Union européenne indispensable à l’autonomie stratégique de la France',
+        NULL,
+        'EMPLOI'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_ppgs (
+        "ppg_id",
+        "ppg_nom",
+        "ppg_desc",
+        "ppg_axe"
+    )
+VALUES (
+        'PPG-VET',
+        'Améliorer la vie étudiante',
+        NULL,
+        'PROGRES'
+    )
+ON CONFLICT DO NOTHING;
 
 -- metadata_porteurs (90 rows)
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('1', 'NONE', 'Aucun', 'Pas de porteur', 'AUTRE', 'Aucun', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2', 'PENDING', 'Provisoire', 'Porteur provisoire, pas définitif', 'AUTRE', 'Aucun', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('110', 'MEAE', 'Europe et Affaires Étrangères', 'Ministère de l''Europe et des Affaires Etrangères', 'MIN', NULL, 'remix::earth::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('120', 'MTSS', 'Travail, Santé et Solidarités', 'Ministère du Travail, de la Santé et des Solidarités', 'MIN', NULL, 'material-icons::business_center::filled') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('130', 'MASA', 'Agriculture et Souveraineté alimentaire', 'Ministère de l''Agriculture et de la Souveraineté alimentaire', 'MIN', NULL, 'remix::seedling::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('140', 'MC', 'Culture', 'Ministère de la Culture', 'MIN', NULL, 'remix::book-open::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('150', 'MINARM', 'Armées', 'Ministère des Armées', 'MIN', NULL, 'material-icons::radar::filled') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('180', 'MENJ', 'Éducation Nationale', 'Ministère de l''Education Nationale', 'MIN', NULL, 'remix::ball-pen::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('190', 'MTECT', 'Transition écologique et Cohésion des territoires', 'Ministère de la Transition écologique et de la Cohésion des territoires', 'MIN', NULL, 'dsfr::sun::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('200', 'MI', 'Intérieur et Outre-mer', 'Ministère de l''Intérieur', 'MIN', NULL, 'remix::alarm-warning::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('220', 'MINJ', 'Justice', 'Ministère de la Justice', 'MIN', NULL, 'remix::scales-3::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('250', 'MTFP', 'Transformation et Fonction publiques', 'Ministère de la Transformation et de la Fonction publiques', 'MIN', NULL, 'remix::team::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('280', 'MESR', 'Enseignement supérieur et Recherche', 'Ministère de l''Enseignement supérieur et de la Recherche', 'MIN', NULL, 'material-icons::school::filled') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('290', 'MEFSIN', 'Économie, Finances et Souveraineté industrielle et numérique', 'Ministère de l''Économie, des Finances et de la Souveraineté industrielle et numérique', 'MIN', NULL, 'material-icons::factory::filled') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('340', 'MSJVA', 'Sports, jeunesse et vie associative', 'Ministère des Sports, de la Jeunesse et de la Vie associative', 'MIN', NULL, 'remix::football::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('1001', 'SGPI', 'Secrétariat général pour l''investissement', NULL, 'DAC', 'Bruno BONNELL', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('1002', 'SGPE', 'Secrétariat général à la planification écologique', NULL, 'DAC', 'Antoine PELLION', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('1004', 'DIJOP', 'Délégation interministérielle aux jeux olympiques et paralympiques', NULL, 'DAC', 'Michel CADOT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('1006', 'MDRD', 'Renouveau démocratique', 'Ministre déléguée auprès du Premier ministre, chargée du Renouveau démocratique', 'MIN', NULL, 'material-symbols::how_to_vote::filled') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('1007', 'MDEFH', 'Egalité entre les Femmes et les Hommes', 'Ministre déléguée auprès du Premier ministre, chargée de l''Égalité entre les femmes et les hommes, et de la lutte contre les discriminations', 'MIN', NULL, 'material-symbols::equal::outlined') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('1009', 'PM', 'Premier Ministre', 'Premier Ministre', 'MIN', NULL, 'remix::government::fill') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2002', 'ANCT', 'Agence nationale de cohésion des territoires', NULL, 'DAC', 'Henri PREVOST', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2003', 'ANRU', 'Agence Nationale pour la Rénovation Urbaine', NULL, 'DAC', 'Anne-Claire MIALOT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2004', 'ATIGIP', 'Agence du travail d''intérêt général et de l''insertion professionnelle des personnes placées sous main de justice', NULL, 'DAC', 'Bruno Clément-Petremann', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2005', 'CGDD', 'Commissariat général au développement durable', NULL, 'DAC', 'Brice HUET', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2007', 'DAE', 'Direction des achats de l''État', NULL, 'DAC', 'François Adam', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2008', 'DAP', 'Direction de l''administration pénitencière', NULL, 'DAC', 'Laurence Venet-Lopez', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2009', 'DB', 'Direction du budget', NULL, 'DAC', 'Mélanie Joder', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2010', 'DFAE', 'Direction des Français à l''étranger et de l''administration consulaire', NULL, 'DAC', 'Pauline CARMONA', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2012', 'DG2TDC', 'Délégation générale à la transmission, aux territoires et à la démocratie culturelle', NULL, 'DAC', 'Noël Corbin', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2013', 'DGAFP', 'Direction générale de l''administration et de la fonction publique', NULL, 'DAC', 'Nathalie Colin', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2015', 'DGAMPA', 'Direction générale des affaires maritimes, de la pêche et de l''aquaculture', NULL, 'DAC', 'Eric Banel', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2016', 'DGCCRF', 'Direction générale de la concurrence, de la consommation et de la répression des fraudes', NULL, 'DAC', 'Sarah Lacoche', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2018', 'DGCS', 'Direction générale de la cohésion sociale', NULL, 'DAC', 'Jean-Benoît Dujol', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2021', 'DGE', 'Direction générale des entreprises', NULL, 'DAC', 'Thomas Courbe', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2023', 'DGEC', 'Direction générale de l''énergie et du climat', NULL, 'DAC', 'Sophie MOURLON', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2024', 'DGEF', 'Direction générale des étrangers en France', NULL, 'DAC', 'Eric Jalon', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2026', 'DGEFP', 'Délégation générale à l''emploi et à la formation professionnelle', NULL, 'DAC', 'Benjamin MAURICE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2028', 'DGESCO', 'Direction générale de l''enseignement scolaire', NULL, 'DAC', 'Caroline PASCAL', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2029', 'DGESIP', 'Direction générale de l''enseignement supérieur et de l''insertion professionnelle', NULL, 'DAC', 'Olivier GINEZ', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2030', 'DGFIP', 'Direction générale des Finances publiques', NULL, 'DAC', 'Amélie VERDIER', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2032', 'DGITM', 'Direction générale des infrastructures, des transports et des mobilités', NULL, 'DAC', 'Rodolphe GINTZ', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2033', 'DGM', 'Direction générale de la mondialisation, de la culture, de l''enseignement et du développement international', NULL, 'DAC', 'Aurélien LECHEVALLIER', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2035', 'DGOM', 'Direction générale des outre-mer', NULL, 'DAC', 'Olivier Jacob', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2037', 'DGOS', 'Direction générale de l''offre de soins', NULL, 'DAC', 'Hugo GILARDI', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2039', 'DGPR', 'Direction Générale de la Prévention des Risques', NULL, 'DAC', 'Cédric BOURILLET', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2040', 'DGRH', 'Direction générale des ressources humaines', NULL, 'DAC', 'Christophe GEHIN', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2041', 'DGRI', 'Direction générale de la recherche et de l''innovation', NULL, 'DAC', 'Nicolas JEAN JEAN', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2043', 'DGS', 'Direction générale de la santé', NULL, 'DAC', 'Didier LEPELLETIER', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2044', 'DGT', 'Direction générale du travail', NULL, 'DAC', 'Pierre RAMAIN', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2047', 'DIE', 'Direction de l''immobilier de l''État', NULL, 'DAC', 'Sylviane BOURGUET', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2048', 'DIESE', 'Délégation interministérielle à l’encadrement supérieur de l’État', NULL, 'DAC', 'Émilie PIETTE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2049', 'DIHAL', 'Délégation interministérielle à l''hébergement et à l''accès au logement', NULL, 'DAC', 'Jérôme D''HARCOURT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2052', 'DITP', 'Direction interministérielle de la transformation publique', NULL, 'DAC', 'Thierry LAMBERT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2053', 'DGSNU', 'Déléguée générale au service national universel', NULL, 'DAC', 'Corinne ORZECHOWSKI', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2054', 'DJEPVA', 'Direction de la jeunesse, de l''éducation populaire et de la vie associative', NULL, 'DAC', 'Thibaut DE SAINT POL', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2055', 'DLF', 'Direction de la Législation fiscale', NULL, 'DAC', 'Bruno MAUCHAUFFÉE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2056', 'DS', 'Direction des sports', NULL, 'DAC', 'Fabienne BOURDAIS', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2057', 'DSJ', 'Direction des services judiciaires', NULL, 'DAC', 'Paul HUBER', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2058', 'DSS', 'Direction de la sécurité sociale', NULL, 'DAC', 'Pierre PRIBILE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2060', 'MFR', 'Mission France Recouvrement', NULL, 'DAC', '-', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2062', 'PJJ', 'Direction de la protection judiciaire de la jeunesse', NULL, 'DAC', 'Caroline NISAND', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2067', 'DAEI', 'Délégation aux affaires européennes et internationales', NULL, 'AUTRE', '-', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2068', 'DGDDI', 'Direction générale des douanes et droits indirects', NULL, 'DAC', 'Isabelle BRAUN-LEMAIRE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2069', 'DGGN', 'Direction générale de la gendarmerie nationale', NULL, 'DAC', 'Hubert BONNEAU', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2070', 'DGPN', 'Direction générale de la Police nationale', NULL, 'DAC', 'Louis LAUGIER', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2071', 'DHUP', 'Direction de l''Habitat, de l''Urbanisme et des Paysages', NULL, 'DAC', 'Damien Botteghi', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2073', 'DILCRAH', 'Délégation Interministérielle à la Lutte Contre le Racisme, l''Antisémitisme et la Haine anti-LGBT', NULL, 'DI', 'Matthias OTT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2074', 'DIA', 'Délégation Interministérielle à l''Accessibilité', NULL, 'DAC', 'Isabelle SAURAT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2075', 'DSNJ', 'Direction du service national et de la jeunesse', NULL, 'DAC', 'Dominique ARBIOL', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2076', 'MILDECA', 'Mission interministérielle de lutte contre les drogues et les conduites addictives', NULL, 'AUTRE', '-', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2077', 'DGAC', 'Direction générale de l''Aviation civile', NULL, 'DAC', 'Marc BOREL', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2078', 'DRH', 'Direction des ressources humaines du ministère des Armées', NULL, 'DAC', 'Thibaut DE VANSSAY DE BLAVOUS', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2079', 'EMA', 'État-major des armées', NULL, 'DAC', 'Thierry BURKHARD', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2080', 'DGPE', 'Direction générale de la performance économique et environnementale des entreprises ', NULL, 'DAC', 'Philippe DUCLAUD', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2081', 'DGER', 'Direction générale de l''enseignement et de la recherche ', NULL, 'DAC', 'Benoît BONAIME', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2082', 'DGAL', 'Direction générale de l’alimentation', NULL, 'DAC', 'Maud Faipoux', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2083', 'CIPDR', 'Comité interministériel de prévention de la délinquance et de la radicalisation', NULL, 'DAC', 'Etienne Apaire', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2084', 'SGMJ', 'Secrétariat général du Ministère de la Justice', NULL, 'DAC', 'Carine CHEVRIER', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2085', 'SGMJ', 'Secrétariat général du Ministère de la Justice(adj)', NULL, 'DAC', 'Philippe CLERGEOT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2086', 'DDE', 'Direction de la diplomatie économique', NULL, 'DAC', 'Ludovic POUILLE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2087', 'DIAN', 'Direction de l’intégration et de l’accès à la nationalité', NULL, 'DAC', 'David COSTE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2088', 'DNS', 'Délégation ministérielle au numérique en santé', NULL, 'AUTRE', 'Hela Ghariani', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2089', 'DIA-TND', 'Délégation interministérielle à l''autisme et aux troubles du neuro-développement', NULL, 'AUTRE', 'Etienne POT', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2091', 'DGALN', 'Direction générale de l''aménagement, du logement et de la nature', NULL, 'DAC', 'Philippe MAZENC', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2092', 'DINUM', 'Direction interministérielle du numérique', NULL, 'DAC', 'Stéphanie SCHAER', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2093', 'DNPAF', 'DNPAF', NULL, 'DAC', 'Valérie Minne', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2094', 'DGDCER', 'Direction générale de la démocratie culturelle, des enseignements et de la recherche', NULL, 'DAC', 'Naomi PERES', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2095', 'SGDSN', 'Secrétariat général de la défense et de la sécurité nationale', NULL, 'DAC', 'Nicolas ROCHE', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_porteurs ("porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type", "porteur_directeur", "porteur_picto") VALUES ('2096', 'DEPP', 'Direction de l''évaluation, de la prospective et de la performance', NULL, 'DAC', 'Magda TOMASINI', NULL) ON CONFLICT DO NOTHING;
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '1',
+        'NONE',
+        'Aucun',
+        'Pas de porteur',
+        'AUTRE',
+        'Aucun',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2',
+        'PENDING',
+        'Provisoire',
+        'Porteur provisoire, pas définitif',
+        'AUTRE',
+        'Aucun',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '110',
+        'MEAE',
+        'Europe et Affaires Étrangères',
+        'Ministère de l''Europe et des Affaires Etrangères',
+        'MIN',
+        NULL,
+        'remix::earth::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '120',
+        'MTSS',
+        'Travail, Santé et Solidarités',
+        'Ministère du Travail, de la Santé et des Solidarités',
+        'MIN',
+        NULL,
+        'material-icons::business_center::filled'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '130',
+        'MASA',
+        'Agriculture et Souveraineté alimentaire',
+        'Ministère de l''Agriculture et de la Souveraineté alimentaire',
+        'MIN',
+        NULL,
+        'remix::seedling::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '140',
+        'MC',
+        'Culture',
+        'Ministère de la Culture',
+        'MIN',
+        NULL,
+        'remix::book-open::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '150',
+        'MINARM',
+        'Armées',
+        'Ministère des Armées',
+        'MIN',
+        NULL,
+        'material-icons::radar::filled'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '180',
+        'MENJ',
+        'Éducation Nationale',
+        'Ministère de l''Education Nationale',
+        'MIN',
+        NULL,
+        'remix::ball-pen::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '190',
+        'MTECT',
+        'Transition écologique et Cohésion des territoires',
+        'Ministère de la Transition écologique et de la Cohésion des territoires',
+        'MIN',
+        NULL,
+        'dsfr::sun::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '200',
+        'MI',
+        'Intérieur et Outre-mer',
+        'Ministère de l''Intérieur',
+        'MIN',
+        NULL,
+        'remix::alarm-warning::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '220',
+        'MINJ',
+        'Justice',
+        'Ministère de la Justice',
+        'MIN',
+        NULL,
+        'remix::scales-3::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '250',
+        'MTFP',
+        'Transformation et Fonction publiques',
+        'Ministère de la Transformation et de la Fonction publiques',
+        'MIN',
+        NULL,
+        'remix::team::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '280',
+        'MESR',
+        'Enseignement supérieur et Recherche',
+        'Ministère de l''Enseignement supérieur et de la Recherche',
+        'MIN',
+        NULL,
+        'material-icons::school::filled'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '290',
+        'MEFSIN',
+        'Économie, Finances et Souveraineté industrielle et numérique',
+        'Ministère de l''Économie, des Finances et de la Souveraineté industrielle et numérique',
+        'MIN',
+        NULL,
+        'material-icons::factory::filled'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '340',
+        'MSJVA',
+        'Sports, jeunesse et vie associative',
+        'Ministère des Sports, de la Jeunesse et de la Vie associative',
+        'MIN',
+        NULL,
+        'remix::football::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '1001',
+        'SGPI',
+        'Secrétariat général pour l''investissement',
+        NULL,
+        'DAC',
+        'Bruno BONNELL',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '1002',
+        'SGPE',
+        'Secrétariat général à la planification écologique',
+        NULL,
+        'DAC',
+        'Antoine PELLION',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '1004',
+        'DIJOP',
+        'Délégation interministérielle aux jeux olympiques et paralympiques',
+        NULL,
+        'DAC',
+        'Michel CADOT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '1006',
+        'MDRD',
+        'Renouveau démocratique',
+        'Ministre déléguée auprès du Premier ministre, chargée du Renouveau démocratique',
+        'MIN',
+        NULL,
+        'material-symbols::how_to_vote::filled'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '1007',
+        'MDEFH',
+        'Egalité entre les Femmes et les Hommes',
+        'Ministre déléguée auprès du Premier ministre, chargée de l''Égalité entre les femmes et les hommes, et de la lutte contre les discriminations',
+        'MIN',
+        NULL,
+        'material-symbols::equal::outlined'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '1009',
+        'PM',
+        'Premier Ministre',
+        'Premier Ministre',
+        'MIN',
+        NULL,
+        'remix::government::fill'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2002',
+        'ANCT',
+        'Agence nationale de cohésion des territoires',
+        NULL,
+        'DAC',
+        'Henri PREVOST',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2003',
+        'ANRU',
+        'Agence Nationale pour la Rénovation Urbaine',
+        NULL,
+        'DAC',
+        'Anne-Claire MIALOT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2004',
+        'ATIGIP',
+        'Agence du travail d''intérêt général et de l''insertion professionnelle des personnes placées sous main de justice',
+        NULL,
+        'DAC',
+        'Bruno Clément-Petremann',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2005',
+        'CGDD',
+        'Commissariat général au développement durable',
+        NULL,
+        'DAC',
+        'Brice HUET',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2007',
+        'DAE',
+        'Direction des achats de l''État',
+        NULL,
+        'DAC',
+        'François Adam',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2008',
+        'DAP',
+        'Direction de l''administration pénitencière',
+        NULL,
+        'DAC',
+        'Laurence Venet-Lopez',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2009',
+        'DB',
+        'Direction du budget',
+        NULL,
+        'DAC',
+        'Mélanie Joder',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2010',
+        'DFAE',
+        'Direction des Français à l''étranger et de l''administration consulaire',
+        NULL,
+        'DAC',
+        'Pauline CARMONA',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2012',
+        'DG2TDC',
+        'Délégation générale à la transmission, aux territoires et à la démocratie culturelle',
+        NULL,
+        'DAC',
+        'Noël Corbin',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2013',
+        'DGAFP',
+        'Direction générale de l''administration et de la fonction publique',
+        NULL,
+        'DAC',
+        'Nathalie Colin',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2015',
+        'DGAMPA',
+        'Direction générale des affaires maritimes, de la pêche et de l''aquaculture',
+        NULL,
+        'DAC',
+        'Eric Banel',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2016',
+        'DGCCRF',
+        'Direction générale de la concurrence, de la consommation et de la répression des fraudes',
+        NULL,
+        'DAC',
+        'Sarah Lacoche',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2018',
+        'DGCS',
+        'Direction générale de la cohésion sociale',
+        NULL,
+        'DAC',
+        'Jean-Benoît Dujol',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2021',
+        'DGE',
+        'Direction générale des entreprises',
+        NULL,
+        'DAC',
+        'Thomas Courbe',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2023',
+        'DGEC',
+        'Direction générale de l''énergie et du climat',
+        NULL,
+        'DAC',
+        'Sophie MOURLON',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2024',
+        'DGEF',
+        'Direction générale des étrangers en France',
+        NULL,
+        'DAC',
+        'Eric Jalon',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2026',
+        'DGEFP',
+        'Délégation générale à l''emploi et à la formation professionnelle',
+        NULL,
+        'DAC',
+        'Benjamin MAURICE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2028',
+        'DGESCO',
+        'Direction générale de l''enseignement scolaire',
+        NULL,
+        'DAC',
+        'Caroline PASCAL',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2029',
+        'DGESIP',
+        'Direction générale de l''enseignement supérieur et de l''insertion professionnelle',
+        NULL,
+        'DAC',
+        'Olivier GINEZ',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2030',
+        'DGFIP',
+        'Direction générale des Finances publiques',
+        NULL,
+        'DAC',
+        'Amélie VERDIER',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2032',
+        'DGITM',
+        'Direction générale des infrastructures, des transports et des mobilités',
+        NULL,
+        'DAC',
+        'Rodolphe GINTZ',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2033',
+        'DGM',
+        'Direction générale de la mondialisation, de la culture, de l''enseignement et du développement international',
+        NULL,
+        'DAC',
+        'Aurélien LECHEVALLIER',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2035',
+        'DGOM',
+        'Direction générale des outre-mer',
+        NULL,
+        'DAC',
+        'Olivier Jacob',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2037',
+        'DGOS',
+        'Direction générale de l''offre de soins',
+        NULL,
+        'DAC',
+        'Hugo GILARDI',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2039',
+        'DGPR',
+        'Direction Générale de la Prévention des Risques',
+        NULL,
+        'DAC',
+        'Cédric BOURILLET',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2040',
+        'DGRH',
+        'Direction générale des ressources humaines',
+        NULL,
+        'DAC',
+        'Christophe GEHIN',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2041',
+        'DGRI',
+        'Direction générale de la recherche et de l''innovation',
+        NULL,
+        'DAC',
+        'Nicolas JEAN JEAN',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2043',
+        'DGS',
+        'Direction générale de la santé',
+        NULL,
+        'DAC',
+        'Didier LEPELLETIER',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2044',
+        'DGT',
+        'Direction générale du travail',
+        NULL,
+        'DAC',
+        'Pierre RAMAIN',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2047',
+        'DIE',
+        'Direction de l''immobilier de l''État',
+        NULL,
+        'DAC',
+        'Sylviane BOURGUET',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2048',
+        'DIESE',
+        'Délégation interministérielle à l’encadrement supérieur de l’État',
+        NULL,
+        'DAC',
+        'Émilie PIETTE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2049',
+        'DIHAL',
+        'Délégation interministérielle à l''hébergement et à l''accès au logement',
+        NULL,
+        'DAC',
+        'Jérôme D''HARCOURT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2052',
+        'DITP',
+        'Direction interministérielle de la transformation publique',
+        NULL,
+        'DAC',
+        'Thierry LAMBERT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2053',
+        'DGSNU',
+        'Déléguée générale au service national universel',
+        NULL,
+        'DAC',
+        'Corinne ORZECHOWSKI',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2054',
+        'DJEPVA',
+        'Direction de la jeunesse, de l''éducation populaire et de la vie associative',
+        NULL,
+        'DAC',
+        'Thibaut DE SAINT POL',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2055',
+        'DLF',
+        'Direction de la Législation fiscale',
+        NULL,
+        'DAC',
+        'Bruno MAUCHAUFFÉE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2056',
+        'DS',
+        'Direction des sports',
+        NULL,
+        'DAC',
+        'Fabienne BOURDAIS',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2057',
+        'DSJ',
+        'Direction des services judiciaires',
+        NULL,
+        'DAC',
+        'Paul HUBER',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2058',
+        'DSS',
+        'Direction de la sécurité sociale',
+        NULL,
+        'DAC',
+        'Pierre PRIBILE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2060',
+        'MFR',
+        'Mission France Recouvrement',
+        NULL,
+        'DAC',
+        '-',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2062',
+        'PJJ',
+        'Direction de la protection judiciaire de la jeunesse',
+        NULL,
+        'DAC',
+        'Caroline NISAND',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2067',
+        'DAEI',
+        'Délégation aux affaires européennes et internationales',
+        NULL,
+        'AUTRE',
+        '-',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2068',
+        'DGDDI',
+        'Direction générale des douanes et droits indirects',
+        NULL,
+        'DAC',
+        'Isabelle BRAUN-LEMAIRE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2069',
+        'DGGN',
+        'Direction générale de la gendarmerie nationale',
+        NULL,
+        'DAC',
+        'Hubert BONNEAU',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2070',
+        'DGPN',
+        'Direction générale de la Police nationale',
+        NULL,
+        'DAC',
+        'Louis LAUGIER',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2071',
+        'DHUP',
+        'Direction de l''Habitat, de l''Urbanisme et des Paysages',
+        NULL,
+        'DAC',
+        'Damien Botteghi',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2073',
+        'DILCRAH',
+        'Délégation Interministérielle à la Lutte Contre le Racisme, l''Antisémitisme et la Haine anti-LGBT',
+        NULL,
+        'DI',
+        'Matthias OTT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2074',
+        'DIA',
+        'Délégation Interministérielle à l''Accessibilité',
+        NULL,
+        'DAC',
+        'Andrea KHOSHKHOU',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2075',
+        'DSNJ',
+        'Direction du service national et de la jeunesse',
+        NULL,
+        'DAC',
+        'Dominique ARBIOL',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2076',
+        'MILDECA',
+        'Mission interministérielle de lutte contre les drogues et les conduites addictives',
+        NULL,
+        'AUTRE',
+        '-',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2077',
+        'DGAC',
+        'Direction générale de l''Aviation civile',
+        NULL,
+        'DAC',
+        'Marc BOREL',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2078',
+        'DRH',
+        'Direction des ressources humaines du ministère des Armées',
+        NULL,
+        'DAC',
+        'Thibaut DE VANSSAY DE BLAVOUS',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2079',
+        'EMA',
+        'État-major des armées',
+        NULL,
+        'DAC',
+        'Thierry BURKHARD',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2080',
+        'DGPE',
+        'Direction générale de la performance économique et environnementale des entreprises ',
+        NULL,
+        'DAC',
+        'Philippe DUCLAUD',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2081',
+        'DGER',
+        'Direction générale de l''enseignement et de la recherche ',
+        NULL,
+        'DAC',
+        'Benoît BONAIME',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2082',
+        'DGAL',
+        'Direction générale de l’alimentation',
+        NULL,
+        'DAC',
+        'Maud Faipoux',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2083',
+        'CIPDR',
+        'Comité interministériel de prévention de la délinquance et de la radicalisation',
+        NULL,
+        'DAC',
+        'Etienne Apaire',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2084',
+        'SGMJ',
+        'Secrétariat général du Ministère de la Justice',
+        NULL,
+        'DAC',
+        'Carine CHEVRIER',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2085',
+        'SGMJ',
+        'Secrétariat général du Ministère de la Justice(adj)',
+        NULL,
+        'DAC',
+        'Philippe CLERGEOT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2086',
+        'DDE',
+        'Direction de la diplomatie économique',
+        NULL,
+        'DAC',
+        'Ludovic POUILLE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2087',
+        'DIAN',
+        'Direction de l’intégration et de l’accès à la nationalité',
+        NULL,
+        'DAC',
+        'David COSTE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2088',
+        'DNS',
+        'Délégation ministérielle au numérique en santé',
+        NULL,
+        'AUTRE',
+        'Hela Ghariani',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2089',
+        'DIA-TND',
+        'Délégation interministérielle à l''autisme et aux troubles du neuro-développement',
+        NULL,
+        'AUTRE',
+        'Etienne POT',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2091',
+        'DGALN',
+        'Direction générale de l''aménagement, du logement et de la nature',
+        NULL,
+        'DAC',
+        'Philippe MAZENC',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2092',
+        'DINUM',
+        'Direction interministérielle du numérique',
+        NULL,
+        'DAC',
+        'Stéphanie SCHAER',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2093',
+        'DNPAF',
+        'DNPAF',
+        NULL,
+        'DAC',
+        'Valérie Minne',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2094',
+        'DGDCER',
+        'Direction générale de la démocratie culturelle, des enseignements et de la recherche',
+        NULL,
+        'DAC',
+        'Naomi PERES',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2095',
+        'SGDSN',
+        'Secrétariat général de la défense et de la sécurité nationale',
+        NULL,
+        'DAC',
+        'Nicolas ROCHE',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_porteurs (
+        "porteur_id",
+        "porteur_short",
+        "porteur_name",
+        "porteur_desc",
+        "porteur_type",
+        "porteur_directeur",
+        "porteur_picto"
+    )
+VALUES (
+        '2096',
+        'DEPP',
+        'Direction de l''évaluation, de la prospective et de la performance',
+        NULL,
+        'DAC',
+        'Magda TOMASINI',
+        NULL
+    )
+ON CONFLICT DO NOTHING;
 
 -- metadata_perimetres (31 rows)
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-001', 'Agriculture', '130') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-002', 'Armées', '150') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-003', 'Autonomie, Handicap', '120') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-004', 'Aménagement du territoire', '190') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-005', 'Comptes publics', '290') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-006', 'Culture', '140') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-007', 'Vie associative', '1009') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-008', 'Économie et Entreprises', '290') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-009', 'Éducation nationale', '180') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-010', 'Égalité Femmes-Hommes', '1007') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-011', 'Enfance et Famille', '120') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-012', 'Enseignement supérieur, Recherche', '280') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-013', 'Europe et Affaires étrangères', '110') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-014', 'Intérieur', '200') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-015', 'Justice', '220') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-016', 'Logement', '190') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-017', 'Mer et Biodiversité', '190') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-018', 'Outre-Mer', '200') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-019', 'Premier Ministre', '1009') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-020', 'Renouveau Démocratique', '1006') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-021', 'Santé', '120') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-022', 'Solidarité', '120') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-023', 'Sports', '340') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-024', 'Transformation et Fonction Publiques', '250') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-025', 'Transition Écologique', '190') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-026', 'Industrie et Énergie', '290') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-027', 'Transports', '190') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-028', 'Travail, Emploi', '120') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-029', 'todo', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-030', 'Numérique et IA', '290') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-031', 'Jeunesse', '340') ON CONFLICT DO NOTHING;
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-001',
+        'Agriculture',
+        '130'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-002', 'Armées', '150')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-003',
+        'Autonomie, Handicap',
+        '120'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-004',
+        'Aménagement du territoire',
+        '190'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-005',
+        'Comptes publics',
+        '290'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-006', 'Culture', '140')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-007',
+        'Vie associative',
+        '1009'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-008',
+        'Économie et Entreprises',
+        '290'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-009',
+        'Éducation nationale',
+        '180'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-010',
+        'Égalité Femmes-Hommes',
+        '1007'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-011',
+        'Enfance et Famille',
+        '120'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-012',
+        'Enseignement supérieur, Recherche',
+        '280'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-013',
+        'Europe et Affaires étrangères',
+        '110'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-014', 'Intérieur', '200')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-015', 'Justice', '220')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-016', 'Logement', '190')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-017',
+        'Mer et Biodiversité',
+        '190'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-018', 'Outre-Mer', '200')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-019',
+        'Premier Ministre',
+        '1009'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-020',
+        'Renouveau Démocratique',
+        '1006'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-021', 'Santé', '120')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-022',
+        'Solidarité',
+        '120'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-023', 'Sports', '340')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-024',
+        'Transformation et Fonction Publiques',
+        '250'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-025',
+        'Transition Écologique',
+        '190'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-026',
+        'Industrie et Énergie',
+        '290'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-027',
+        'Transports',
+        '190'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-028',
+        'Travail, Emploi',
+        '120'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-029', 'todo', NULL)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES (
+        'PER-030',
+        'Numérique et IA',
+        '290'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_perimetres (
+        "perimetre_id",
+        "per_nom",
+        "per_porteur_id"
+    )
+VALUES ('PER-031', 'Jeunesse', '340')
+ON CONFLICT DO NOTHING;
 
 -- metadata_engagement (5 rows)
-INSERT INTO raw_data.metadata_engagement ("engagement_id", "engagement_short", "engagement_name") VALUES ('1', 'EMPLOI', 'Atteindre le plein emploi et réindustrialiser le pays') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_engagement ("engagement_id", "engagement_short", "engagement_name") VALUES ('2', 'PROGRES', 'Bâtir de nouveaux progrès et refonder nos services publics') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_engagement ("engagement_id", "engagement_short", "engagement_name") VALUES ('3', 'TE', 'Planifier et accélérer la transition écologique') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_engagement ("engagement_id", "engagement_short", "engagement_name") VALUES ('4', 'ENGAG', 'Renforcer l’ordre républicain et encourager l’engagement') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_engagement ("engagement_id", "engagement_short", "engagement_name") VALUES ('0', 'TODO', 'Engagement non précisé') ON CONFLICT DO NOTHING;
+INSERT INTO
+    raw_data.metadata_engagement (
+        "engagement_id",
+        "engagement_short",
+        "engagement_name"
+    )
+VALUES (
+        '1',
+        'EMPLOI',
+        'Atteindre le plein emploi et réindustrialiser le pays'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_engagement (
+        "engagement_id",
+        "engagement_short",
+        "engagement_name"
+    )
+VALUES (
+        '2',
+        'PROGRES',
+        'Bâtir de nouveaux progrès et refonder nos services publics'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_engagement (
+        "engagement_id",
+        "engagement_short",
+        "engagement_name"
+    )
+VALUES (
+        '3',
+        'TE',
+        'Planifier et accélérer la transition écologique'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_engagement (
+        "engagement_id",
+        "engagement_short",
+        "engagement_name"
+    )
+VALUES (
+        '4',
+        'ENGAG',
+        'Renforcer l’ordre républicain et encourager l’engagement'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_engagement (
+        "engagement_id",
+        "engagement_short",
+        "engagement_name"
+    )
+VALUES (
+        '0',
+        'TODO',
+        'Engagement non précisé'
+    )
+ON CONFLICT DO NOTHING;
 
 -- metadata_zonegroup (34 rows)
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-REF', 'Toutes zones', 'Tous départements et régions Hexagone et OM', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'FRANCE', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-001', 'Groupement 1', 'Premier groupement de test', ARRAY['D01', 'D22', 'R11', 'FM01.DEPT', 'R01.DEPT', 'FRANCE.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-002', 'Façades maritimes département', 'Départements avec façade maritime', ARRAY['FRANCE', 'FM01.DEPT', 'FM02.DEPT', 'FM03.DEPT', 'FM04.DEPT']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-003', 'Façades maritimes région', 'Régions avec façade maritime', ARRAY['FRANCE', 'FM01.REG', 'FM02.REG', 'FM03.REG', 'FM04.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-004', 'ZFE département', 'Départements avec au moins une ZFE', ARRAY['FRANCE', 'ZFE01.DEPT', 'ZFE02.DEPT', 'ZFE03.DEPT', 'ZFE04.DEPT', 'ZFE05.DEPT', 'ZFE06.DEPT', 'ZFE07.DEPT', 'ZFE08.DEPT', 'ZFE09.DEPT', 'ZFE10.DEPT', 'ZFE11.DEPT', 'ZFE12.DEPT']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-005', 'ZFE région', 'Régions avec au moins une ZFE', ARRAY['FRANCE', 'ZFE01.REG', 'ZFE02.REG', 'ZFE03.REG', 'ZFE04.REG', 'ZFE05.REG', 'ZFE06.REG', 'ZFE07.REG', 'ZFE08.REG', 'ZFE09.REG', 'ZFE10.REG', 'ZFE11.REG', 'ZFE12.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-006', 'Façades maritimes hors OM', 'Ensemble des territoires avec façade maritime hors Outre-Mer', ARRAY['FRANCE', 'FM01.DEPT', 'FM02.DEPT', 'FM03.DEPT', 'FM04.DEPT', 'FM01.REG', 'FM02.REG', 'FM03.REG', 'FM04.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-007', 'ZFE', 'Territoires avec au moins une ZFE', ARRAY['FRANCE', 'ZFE01.DEPT', 'ZFE02.DEPT', 'ZFE03.DEPT', 'ZFE04.DEPT', 'ZFE05.DEPT', 'ZFE06.DEPT', 'ZFE07.DEPT', 'ZFE08.DEPT', 'ZFE09.DEPT', 'ZFE10.DEPT', 'ZFE11.DEPT', 'ZFE12.DEPT', 'ZFE01.REG', 'ZFE02.REG', 'ZFE03.REG', 'ZFE04.REG', 'ZFE05.REG', 'ZFE06.REG', 'ZFE07.REG', 'ZFE08.REG', 'ZFE09.REG', 'ZFE10.REG', 'ZFE11.REG', 'ZFE12.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-008', 'Ports CH-049', 'Territoires des 3 Grands-Ports-Maritimes HAROPA, Dunkerque et Marseille-Fos', ARRAY['FRANCE', 'PORT01.DEPT', 'PORT02.DEPT', 'PORT03.DEPT', 'PORT01.REG', 'PORT02.REG', 'PORT03.REG', 'PORT04.DEPT', 'PORT04.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-009', 'Ports CH-059', 'Ports de la PPG « Devenir leader de l’hydrogène décarboné »', ARRAY['FRANCE', 'PORT01.DEPT', 'PORT04.DEPT', 'PORT02.DEPT', 'PORT01.REG', 'PORT04.REG', 'PORT02.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-010', 'Façade maritime Méditerranée', 'Territoires de la façade maritime méditerranéenne', ARRAY['FRANCE', 'FM04.DEPT', 'FM04.REG']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-011', 'ANRU', 'Territoires concernés par le programme Accélérer le renouvellement urbain des quartiers', ARRAY['FRANCE', 'D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D47', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-012', 'ACV', 'Territoires concernés par le programme Action Coeur de Ville', ARRAY['FRANCE', 'D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-013', 'PVD', 'Territoires concernés par le programme Petites Villes de Demain', ARRAY['FRANCE', 'D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-014', 'Outre-Mer', 'DROM', ARRAY['FRANCE', 'D971', 'D972', 'D973', 'D974', 'D976', 'R01', 'R02', 'R03', 'R04', 'R06']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-015', 'Façades maritimes dont OM', 'Territoires avec façade maritime dont Outre-Mer', ARRAY['FRANCE', 'FM01.DEPT', 'FM02.DEPT', 'FM03.DEPT', 'FM04.DEPT', 'FM01.REG', 'FM02.REG', 'FM03.REG', 'FM04.REG', 'D971', 'D972', 'D973', 'D974', 'D976', 'R01', 'R02', 'R03', 'R04', 'R06']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-016', 'Prisons', 'Territoires concernés par le programme 15 000 places de prisons', ARRAY['FRANCE', 'D12', 'D13', 'D62', 'D83', 'D75', 'D92', 'D68', 'D10', 'D33', 'D971', 'D14', 'D59', 'D91', 'D30', 'D45', 'D34', 'D95', 'D77', 'D26', 'D93', 'D72', 'D84', 'D972', 'D51', 'D54', 'D08', 'D973', 'D31', 'D66', 'D56', 'D49', 'D94', 'D64', 'D78', 'R76', 'R93', 'R32', 'R11', 'R44', 'R75', 'R01', 'R28', 'R24', 'R84', 'R52', 'R02', 'R03', 'R53']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-017', 'GUDA', 'Territoires concernés par les GUDA', ARRAY['FRANCE', 'R84', 'D63', 'D38', 'D69', 'R27', 'D25', 'D21', 'D71', 'R53', 'D35', 'R24', 'D45', 'R44', 'D51', 'D67', 'D68', 'D57', 'R32', 'D60', 'D59', 'R11', 'D93', 'D95', 'D94', 'D91', 'D77', 'D92', 'D75', 'D78', 'R28', 'D76', 'R75', 'D33', 'D86', 'R76', 'D34', 'D31', 'R52', 'D44', 'R93', 'D13', 'R03', 'D973', 'R06', 'D976', 'R01', 'D971', 'R04', 'D974']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-018', 'Toutes zones sauf Mayotte', 'Tous départements et régions Hexagone et OM, hors Mayotte', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D973', 'D974', 'FRANCE', 'R01', 'R02', 'R03', 'R04', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-033', 'Accessibilité ét. Santé', 'CH-196 - Mise en accessibilité des établissements de santé', ARRAY['D01', 'D02', 'D03', 'D04', 'D06', 'D07', 'D12', 'D13', 'D16', 'D17', 'D18', 'D21', 'D22', 'D23', 'D25', 'D29', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D40', 'D41', 'D42', 'D51', 'D53', 'D56', 'D57', 'D58', 'D59', 'D62', 'D63', 'D66', 'D69', 'D74', 'D75', 'D76', 'D78', 'D79', 'D83', 'D84', 'D89', 'D92', 'D93', 'D94', 'D974', 'FRANCE', 'R04', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-019', 'Toutes zones métropole', 'Tous départements et régions Hexagone', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'FRANCE', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-020', '50 sites + émetteurs', 'Territoires des 50 sites industriels les plus émetteurs', ARRAY['FRANCE', 'D59', 'D13', 'D57', 'D54', 'D73', 'D62', 'D39', 'D51', 'D79', 'D30', 'D17', 'D18', 'D14', 'D37', 'D53', 'D07', 'D11', 'D31', 'D69', 'D68', 'D55', 'D38', 'D06', 'D77', 'D76', 'D03', 'D02', 'D80', 'D67', 'R32', 'R93', 'R44', 'R84', 'R27', 'R75', 'R76', 'R24', 'R28', 'R52', 'R11']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-021', 'Force aux Frontières', 'Territoires de la PPG « Force aux Frontières »', ARRAY['FRANCE', 'D62', 'D59', 'D02', 'D08', 'D55', 'D54', 'D57', 'D67', 'D68', 'D90', 'D25', 'D39', 'D01', 'D74', 'D73', 'D05', 'D04', 'D06', 'D66', 'D09', 'D31', 'D65', 'D64', 'D976', 'R06', 'R27', 'R32', 'R44', 'R84', 'R93']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-022', 'Stationnement vélo sécurisé en gare', 'Territoires de l''indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'FRANCE', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-023', 'Industrie CH-052', 'Toutes région sauf Bretagne, Corse et DROM', ARRAY['FRANCE', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R75', 'R76', 'R84', 'R93']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-024', 'Education prioritaire', 'Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n’ont pas de REP)', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D44', 'D45', 'D47', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'FRANCE', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-025', 'Bon état écologique des cours d’eau', 'Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D94', 'D95', 'FRANCE', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-026', 'PCAET (CH-161)', 'Toutes zones sauf Lozère', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'FRANCE', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-027', 'Toutes zones sauf Corse', 'Tous départements et régions sauf Corse', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D30', 'D31', 'D32', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D43', 'D44', 'D45', 'D46', 'D47', 'D48', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'FRANCE', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-028', 'REP', 'Tous territoires contenant des REP (8 terr exclus)', ARRAY['D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D16', 'D17', 'D18', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D2A', 'D2B', 'D30', 'D31', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D39', 'D40', 'D41', 'D42', 'D44', 'D45', 'D47', 'D49', 'D50', 'D51', 'D52', 'D54', 'D55', 'D56', 'D57', 'D58', 'D59', 'D60', 'D61', 'D62', 'D63', 'D64', 'D65', 'D66', 'D67', 'D68', 'D69', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77', 'D78', 'D79', 'D80', 'D81', 'D82', 'D83', 'D84', 'D85', 'D86', 'D87', 'D88', 'D89', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D974', 'D976', 'FRANCE', 'R01', 'R02', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-029', 'REP+', 'Tous territoires contenant des REP+ (31 dept exclus)', ARRAY['D01', 'D02', 'D03', 'D06', 'D08', 'D10', 'D13', 'D14', 'D16', 'D17', 'D18', 'D19', 'D21', 'D25', 'D26', 'D27', 'D28', 'D2B', 'D30', 'D31', 'D33', 'D34', 'D35', 'D36', 'D37', 'D38', 'D41', 'D42', 'D44', 'D45', 'D49', 'D50', 'D51', 'D52', 'D53', 'D54', 'D55', 'D57', 'D59', 'D60', 'D61', 'D62', 'D63', 'D66', 'D67', 'D68', 'D69', 'D72', 'D73', 'D75', 'D76', 'D77', 'D78', 'D80', 'D83', 'D84', 'D86', 'D87', 'D88', 'D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D971', 'D972', 'D973', 'D974', 'D976', 'FRANCE', 'R01', 'R02', 'R03', 'R04', 'R06', 'R11', 'R24', 'R27', 'R28', 'R32', 'R44', 'R52', 'R53', 'R75', 'R76', 'R84', 'R93', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-030', 'Accessibilité tribunaux', 'CH-196 - Mise en accessibilité des tribunaux', ARRAY['D09', 'D22', 'D25', 'D2B', 'D32', 'D41', 'D47', 'D54', 'D57', 'D58', 'D59', 'D62', 'D63', 'D64', 'D67', 'D76', 'FRANCE', 'R24', 'R27', 'R28', 'R32', 'R44', 'R53', 'R75', 'R76', 'R84', 'R94']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-031', 'Accessibilité PN', 'CH-196 - Mise en accessibilité des lieux Police Nationale', ARRAY['D01', 'D06', 'D11', 'D13', 'D15', 'D27', 'D29', 'D32', 'D33', 'D35', 'D45', 'D66', 'D69', 'D73', 'D78', 'D81', 'D83', 'D86', 'D90', 'D95', 'D972', 'FRANCE', 'R02', 'R11', 'R24', 'R27', 'R28', 'R53', 'R75', 'R76', 'R84', 'R93']) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zonegroup ("zone_group_id", "zg_name", "zg_desc", "zg_zones") VALUES ('ZG-032', 'Accessibilité GN', 'CH-196 - Mise en accessibilité des lieux Gendarmerie Nationale', ARRAY['D05', 'D08', 'D16', 'D29', 'D34', 'D82', 'D2A', 'D972', 'D973', 'FRANCE', 'R02', 'R03', 'R44', 'R53', 'R75', 'R76', 'R93', 'R94']) ON CONFLICT DO NOTHING;
--- metadata_chantiers (169 rows)
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-001', 'Mettre en œuvre et assurer l''impact du programme France 2030', '- 05/2024 : changement intitulé : Déployer France 2030 -> Mettre en œuvre et assurer l''impact du programme France 2030', 'PPG-F30', false, 'EMPLOI', false, NULL, 'ARCHIVE', NULL, '1009', ARRAY[]::TEXT[], ARRAY['1001'], 'PER-019', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-003', 'Protéger le pouvoir d''achat des Français en baissant les impôts', E'- 04/2024 : suppression de la PPG\n- 05/2024 : fusion des CH-003 et CH-008 pour nouvelle PPG CH-195', 'PPG-FIP', false, 'PROGRES', false, NULL, 'SUPPRIME', NULL, '290', ARRAY[]::TEXT[], ARRAY['2055'], 'PER-005', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-004', 'Lutter contre la fraude fiscale, douanière et sociale', '- 11/2025 : PPG territorialisée à la maille départementale', 'PPG-FIP', true, 'PROGRES', false, 'ate', 'PUBLIE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2030'], 'PER-005', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-006', 'Faciliter la vie des entreprises et le développement des sites industriels', E'- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"\n - 05/2024 : Territorialisation à la maille régionale', 'PPG-IND', true, 'EMPLOI', false, 'ate', 'PUBLIE', NULL, '290', ARRAY['190'], ARRAY['2021'], 'PER-026', ARRAY['REG','NAT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-007', 'Renforcer notre souveraineté économique par la commande publique', NULL, 'PPG-IND', true, 'TODO', false, 'ate', 'BROUILLON', NULL, '290', ARRAY[]::TEXT[], ARRAY['2007'], 'PER-005', ARRAY['REG','NAT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-008', 'Baisser les impôts de production et sur les entreprises', E'- 04/2024 : suppression de la PPG\n-  05/2024 : fusion des CH-003 et CH-008 pour nouvelle PPG CH-195', 'PPG-IND', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '290', ARRAY[]::TEXT[], ARRAY['2055'], 'PER-008', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-009', 'Atteindre l''objectif de 100 Licornes "French Tech" en 2030', NULL, 'PPG-PNU', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2021'], 'PER-030', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-010', 'Proposer des outils pour protéger les consommateurs en ligne', ' - 04/2024 : périmètre Economie, industrie devient Économie et Entreprises', 'PPG-PNU', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2016'], 'PER-008', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-011', 'Assurer la couverture numérique du territoire', NULL, 'PPG-PNU', true, 'PROGRES', false, 'ate', 'ARCHIVE', NULL, '290', ARRAY['190'], ARRAY['2002','2021'], 'PER-030', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-012', 'Accélérer la numérisation et la robotisation des entreprises', '- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"', 'PPG-PNU', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2021'], 'PER-026', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-013', 'Favoriser l’inclusion numérique pour tous par la formation et les conseillers numériques de proximité', NULL, 'PPG-PNU', true, 'PROGRES', false, 'ate', 'ARCHIVE', NULL, '290', ARRAY['190', '250'], ARRAY['2002'], 'PER-030', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-014', 'Relocaliser la production des fruits et légumes et celle des protéines végétales', NULL, 'PPG-SAL', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '130', ARRAY[]::TEXT[], ARRAY['2080'], 'PER-001', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-015', 'Réussir la transition écologique des exploitations agricoles', '- 05/2024 : Territorialisation à la maille régionale', 'PPG-SAL', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '130', ARRAY['190'], ARRAY['2080'], 'PER-001', ARRAY['REG','NAT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-017', 'Accompagner le programme visant à planter 1 milliard d''arbres d''ici 2032', NULL, 'PPG-SAL', true, 'TE', false, 'ate', 'ARCHIVE', NULL, '130', ARRAY['190'], ARRAY['2080'], 'PER-001', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-018', 'Renouveler et former une génération d''agriculteurs et d''agricultrices', '- 05/2024 : Territorialisation à la maille régionale  - 04/2026 : PPG en cours de cadrage', 'PPG-28', true, 'TODO', false, 'ate', 'BROUILLON', NULL, '130', ARRAY[]::TEXT[], ARRAY['2081'], 'PER-001', ARRAY['REG','NAT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-020', 'Refondre les accords de Schengen pour renforcer nos frontières européennes', '- 04/2024 : suppression de la PPG', 'PPG-SUE', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '200', ARRAY['110'], ARRAY['2024'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-022', 'Doubler les effectifs d''élèves dans les établissements scolaires à l''étranger d''ici 2030', NULL, 'PPG-27', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '110', ARRAY[]::TEXT[], ARRAY['2033'], 'PER-013', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-025', 'Accroître l''attractivité des territoires pour l’investissement étranger et promouvoir l’exportation des PME', NULL, 'PPG-27', true, 'TODO', false, 'ate', 'BROUILLON', NULL, '110', ARRAY['290', '200'], ARRAY['2086'], 'PER-013', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-026', 'Poursuivre le renforcement capacitaire des armées', NULL, 'PPG-17', false, 'ENGAG', false, NULL, 'ARCHIVE', NULL, '150', ARRAY[]::TEXT[], ARRAY['2079'], 'PER-002', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-027', 'Doubler les effectifs de la réserve opérationnelle', NULL, 'PPG-17', false, 'ENGAG', false, NULL, 'ARCHIVE', NULL, '150', ARRAY[]::TEXT[], ARRAY['2079'], 'PER-002', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-028', 'Augmenter les moyens dédiés à l''accompagnement social et moral de nos forces armées avec le plan famille', NULL, 'PPG-17', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '150', ARRAY[]::TEXT[], ARRAY['2078'], 'PER-002', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-029', 'Améliorer la résilience des territoires', '- 09/2025 : création de la PPG', 'PPG-5', true, 'TODO', false, NULL, 'BROUILLON', NULL, '1009', ARRAY['200'], ARRAY['2095'], 'PER-019', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-030', 'Déployer les outils cœur de la Suite numérique', '- 12/2025 : création de la PPG', 'PPG-PNU', true, 'TODO', false, 'ate', 'BROUILLON', NULL, '250', ARRAY[]::TEXT[], ARRAY['2052','2092'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'eric.roux@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-032', 'Favoriser l''emploi des séniors', '- 04/2024 : rattachement MTSS', 'PPG-SEN', true, 'TODO', false, 'ate', 'BROUILLON', NULL, '120', ARRAY[]::TEXT[], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-033', 'Poursuivre le développement du CEJ', '- 04/2024 : rattachement MTSS', 'PPG-SEN', true, 'EMPLOI', false, 'ate', 'BROUILLON', NULL, '120', ARRAY[]::TEXT[], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-034', 'Réformer l''assurance chômage', '- 04/2024 : rattachement MTSS', 'PPG-20', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-036', 'Développer les outils de partage de la valeur (salaires, intéressement, prime de partage de la valeur)', '- 04/2024 : rattachement MTSS', 'PPG-14', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '120', ARRAY['290'], ARRAY['2044'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-037', 'Créer un compte épargne temps universel', '- 04/2024 : création de la PPG', 'PPG-14', false, NULL, false, NULL, 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-038', 'Favoriser l''emploi des jeunes et l''apprentissage', '- 04/2024 : rattachement MTSS', 'PPG-13', true, 'EMPLOI', false, 'ate', 'PUBLIE', NULL, '120', ARRAY['280', '250'], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-039', 'Former aux métiers d''avenir', '- 04/2024 : rattachement MTSS', 'PPG-13', false, 'EMPLOI', false, NULL, 'ARCHIVE', NULL, '120', ARRAY['280'], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-040', 'Développer la validation des acquis de l''expérience', '- 04/2024 : suppression de la PPG', 'PPG-13', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '120', ARRAY['250'], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-041', 'Planifier la transition écologique', '- 04/2024 : suppression de la PPG', 'PPG-32', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '1009', ARRAY[]::TEXT[], ARRAY['1002'], 'PER-019', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-042', 'Territorialiser la planification écologique', NULL, 'PPG-32', true, 'TE', false, 'ate', 'PUBLIE', NULL, '190', ARRAY['290'], ARRAY['2005'], 'PER-025', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-043', 'Amplifier le Plan vélo', NULL, 'PPG-DCT', true, 'TE', false, 'ate', 'ARCHIVE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2032'], 'PER-027', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-044', 'Développer la part des voitures électriques', NULL, 'PPG-DCT', true, 'TE', false, 'ate', 'ARCHIVE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2023'], 'PER-027', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-045', 'Poursuivre l''accompagnement des collectivités territoriales dans la mise en place des ZFE', '- 07/2024 : Exclusion de la Sarthe (D72) et de la Somme (D80) des départements concernés par la PPG.', 'PPG-DCT', true, 'TE', false, 'ate', 'ARCHIVE', 'ZG-007', '190', ARRAY[]::TEXT[], ARRAY['2023'], 'PER-025', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-046', 'Développer le co-voiturage', NULL, 'PPG-DCT', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2032'], 'PER-027', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-047', 'Verdir le secteur aérien', NULL, 'PPG-DCT', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2077'], 'PER-027', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-049', 'Verdir les ports et les flottes', '- 04/2024 : rattachement du périmètre "Mer et Biodiversité" au MTECT', 'PPG-DCT', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-008', '190', ARRAY[]::TEXT[], ARRAY['2015'], 'PER-017', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-050', 'Accélérer la rénovation énergétique de l''habitat et des logements privés', NULL, 'PPG-PTH', true, 'TE', false, 'ate', 'PUBLIE', NULL, '190', ARRAY['290'], ARRAY['2091'], 'PER-016', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-051', 'Rationaliser les surfaces occupées par l’État', '- 05/2024 : Territorialisation à la maille régionale 03/2026 : Territorialisation à la maille départementale', 'PPG-PTH', true, 'TODO', false, 'ate', 'PUBLIE', NULL, '290', ARRAY['190'], ARRAY['2047'], 'PER-005', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-052', 'Devenir la première grande économie décarbonée en mobilisant la finance et l''industrie', E'- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"\n- 09/2024 : Territorialisation à la maille régionale\n- 10/2024 : Restriction géographique sur les régions concernées', 'PPG-DCF', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-023', '290', ARRAY[]::TEXT[], ARRAY['2021','1002'], 'PER-026', ARRAY['REG','NAT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-053', 'Garantir une information claire sur l''impact environnemental des produits courants', NULL, 'PPG-19', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '190', ARRAY['290'], ARRAY['2005'], 'PER-025', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-054', 'Lutter contre le gaspillage et renforcer le recyclage', NULL, 'PPG-19', true, 'TE', false, 'ate', 'PUBLIE', NULL, '190', ARRAY['290'], ARRAY['2039'], 'PER-025', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-057', 'Multiplier par dix la puissance solaire d''ici 2050', E'- 04/2024 : Transition énergétique devient Industrie et Énergie et est rattaché au MEFSIN\n - 05/2024 : Territorialisation à la maille régionale', 'PPG-DCE', true, 'TE', false, 'ate', 'ARCHIVE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2023'], 'PER-026', ARRAY['REG','NAT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-058', 'Installer 50 parcs éoliens en mer d''ici 2050', E'- 04/2024 : Transition énergétique devient Industrie et Énergie\n- 04/2024 : Périmètre Industrie et Energie est rattaché au MEFSIN', 'PPG-DCE', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-006', '290', ARRAY['190'], ARRAY['2023'], 'PER-026', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-059', 'Devenir leader de l''hydrogène décarboné', E'- 04/2024 : Transition énergétique devient Industrie et Énergie\n- 04/2024 : Périmètre Industrie et Energie est rattaché au MEFSIN', 'PPG-DCE', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2023'], 'PER-026', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-060', 'Mettre en œuvre l''objectif "Zéro artificialisation nette"', NULL, 'PPG-18', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2091'], 'PER-025', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-061', 'Protéger les espaces naturels et la biodiversité', '- 05/2024 : Territorialisation à la maille régionale', 'PPG-18', true, 'TODO', false, 'ate', 'PUBLIE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2091'], 'PER-025', ARRAY['REG','NAT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-062', 'Assurer une gestion sobre de la ressource en eau', NULL, 'PPG-18', true, 'TE', false, 'ate', 'PUBLIE', NULL, '190', ARRAY['130'], ARRAY['2091'], 'PER-025', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-063', 'Lutter contre l''abandon des animaux domestiques', '- 04/2024 : création de la PPG', 'PPG-18', false, NULL, false, NULL, 'SUPPRIME', NULL, '130', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-001', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-064', 'Garantir 50% de produits bio, de qualité ou durables dans la restauration collective (Egalim)', NULL, 'PPG-15', true, 'TODO', false, 'ate', 'PUBLIE', NULL, '130', ARRAY['190'], ARRAY['2082'], 'PER-001', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-066', 'Renforcer la pêche durable française', E'- 04/2024 : territorialisation à la maille Régionale\n - 04/2024 : rattachement du périmètre "Mer et Biodiversité" au MTECT', 'PPG-15', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-015', '190', ARRAY[]::TEXT[], ARRAY['2015'], 'PER-017', ARRAY['REG','NAT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-067', 'Améliorer le niveau des élèves dans les savoirs fondamentaux', NULL, 'PPG-1', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '180', ARRAY[]::TEXT[], ARRAY['2096'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-068', 'Dédoubler les classes en éducation prioritaire et limiter les effectifs à 24 partout ailleurs (grande section, CP, CE1)', NULL, 'PPG-1', true, 'PROGRES', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '180', ARRAY[]::TEXT[], ARRAY['2028'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'heloise.thibault@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-069', 'Lutter contre le harcèlement et le cyberharcèlement scolaires', NULL, 'PPG-1', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '180', ARRAY[]::TEXT[], ARRAY['2028'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-070', 'Remplacer les enseignants absents', NULL, 'PPG-1', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '180', ARRAY[]::TEXT[], ARRAY['2040'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-071', 'Mieux orienter les élèves au collège et au lycée', NULL, 'PPG-21', true, 'TODO', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '180', ARRAY['280'], ARRAY['2028'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-072', 'Améliorer l''orientation des lycéens vers l''enseignement supérieur via ParcourSup', NULL, 'PPG-21', false, 'PROGRES', false, NULL, 'ARCHIVE', NULL, '280', ARRAY['180'], ARRAY['2029'], 'PER-012', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-073', 'Faire du lycée professionnel une voie de réussite et d''accès à l''emploi', E'- 04/2024 : territorialisation à la maille Régionale\n - 04/2024 : rattachement MTPEI devient MTSS', 'PPG-LPR', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '180', ARRAY['120'], ARRAY['2028'], 'PER-009', ARRAY['REG','NAT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-074', 'Transformer l’école en faisant confiance aux acteurs de terrain', NULL, 'PPG-37', true, 'TODO', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '180', ARRAY[]::TEXT[], ARRAY['2028'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'heloise.thibault@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-075', 'Rendre l''école plus inclusive', '- 04/2024 : rattachement MTSS', 'PPG-23', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '180', ARRAY['120'], ARRAY['2028'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-076', 'Ouvrir les filières de formation de l''enseignement supérieur nécessaires pour répondre aux besoins de la Nation', NULL, 'PPG-4', false, 'TODO', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '280', ARRAY[]::TEXT[], ARRAY['2029'], 'PER-012', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-077', 'Améliorer la qualité des services rendus aux étudiants dans les universités et les CROUS (dont SP+)', '- 04/2024 : suppression de la PPG', 'PPG-VET', true, 'TODO', false, 'hors_ate_deconcentre', 'SUPPRIME', NULL, '280', ARRAY[]::TEXT[], ARRAY['2029'], 'PER-012', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-078', 'Augmenter le nombre de logements pour les étudiants', '- 10/2025 : nouvel intitulé et territorialisation à la maille Régionale', 'PPG-VET', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '280', ARRAY['190'], ARRAY['2029'], 'PER-012', ARRAY['REG','NAT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-079', 'Investir dans la recherche au service de la connaissance et de l’innovation', NULL, 'PPG-6', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '280', ARRAY['290'], ARRAY['2041'], 'PER-012', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-080', 'Poursuivre le déploiement du Pass Culture', NULL, 'PPG-JCU', true, 'PROGRES', false, 'hors_ate_centralise', 'ARCHIVE', NULL, '140', ARRAY[]::TEXT[], ARRAY['2012'], 'PER-006', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-081', 'Offrir à chaque élève une éducation culturelle et artistique', NULL, 'PPG-JCU', true, 'PROGRES', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '180', ARRAY['140'], ARRAY['2028'], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'heloise.thibault@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-082', 'Déployer le plan Culture et Ruralités', '- 11/2025 : publication de la PPG (Régionale)', 'PPG-JCU', true, NULL, false, 'ate', 'PUBLIE', 'ZG-027', '140', ARRAY[]::TEXT[], ARRAY['2094'], 'PER-006', ARRAY['REG','NAT'], NULL, NULL, true, 'eric.roux@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-083', 'Soutenir la création française et valoriser le patrimoine dans les environnements physiques et numériques', NULL, 'PPG-35', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '140', ARRAY['180'], ARRAY[]::TEXT[], 'PER-006', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-084', 'Assurer 30 minutes de sport par jour à l''école primaire', NULL, 'PPG-SPJ', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '340', ARRAY['180'], ARRAY['2056','2028'], 'PER-023', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-085', 'Étendre le Pass''sport', NULL, 'PPG-SPJ', true, 'TODO', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '340', ARRAY[]::TEXT[], ARRAY['2056'], 'PER-023', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-086', 'Augmenter le nombre d''équipements sportifs', NULL, 'PPG-SPJ', true, 'PROGRES', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '340', ARRAY[]::TEXT[], ARRAY['2056'], 'PER-023', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-088', 'Réussir les Jeux Olympiques et Paralympiques 2024', '- 04/2024 : suppression de la PPG', 'PPG-31', false, 'PROGRES', false, NULL, 'SUPPRIME', NULL, '1009', ARRAY['340'], ARRAY['1004'], 'PER-019', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-089', 'Lutter contre le racisme, l’antisémitisme, la haine anti-LGBT et les discriminations', NULL, 'PPG-10', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '1007', ARRAY[]::TEXT[], ARRAY['2073'], 'PER-010', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-090', 'Accélérer le renouvellement urbain des quartiers', NULL, 'PPG-5', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-011', '190', ARRAY[]::TEXT[], ARRAY['2003'], 'PER-004', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-091', 'Faire d''Action Cœur de ville et de Petites villes de demain un outil d''aménagement durable du territoire', NULL, 'PPG-5', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-013', '190', ARRAY[]::TEXT[], ARRAY['2002'], 'PER-004', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-092', 'Prolonger l’élan des territoires ruraux', '- 09/2025 : création de la PPG', 'PPG-5', true, NULL, false, NULL, 'BROUILLON', NULL, '190', ARRAY[]::TEXT[], ARRAY['2002'], 'PER-004', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'julien.megdoud@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-093', 'Déployer les plans d’autonomie alimentaire en outre-mer', NULL, 'PPG-MAR', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-014', '200', ARRAY['130'], ARRAY['2035'], 'PER-018', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'eric.roux@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-094', 'Développer l''emploi et la création de valeur dans les territoires ultra-marins', '- 04/2024 : rattachement MTSS', 'PPG-MAR', true, 'EMPLOI', false, 'ate', 'ARCHIVE', 'ZG-014', '200', ARRAY['120'], ARRAY['2035'], 'PER-018', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'eric.roux@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-095', 'Mieux relier les quartiers urbains à la collectivité', '- 09/2025 : création de la PPG', 'PPG-5', true, NULL, false, NULL, 'BROUILLON', NULL, '190', ARRAY[]::TEXT[], ARRAY['2002'], 'PER-004', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'julien.megdoud@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-096', 'Renforcer l''égalité femmes-hommes dans les entreprises', '- 04/2024 : rattachement MTSS', 'PPG-16', true, 'PROGRES', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '120', ARRAY['1007'], ARRAY['2044'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-097', 'Mettre en place l''index égalité femmes-hommes dans la Fonction publique', NULL, 'PPG-16', false, 'PROGRES', false, NULL, 'ARCHIVE', NULL, '250', ARRAY['1007'], ARRAY['2013'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-099', 'Bilan de prévention aux âges clés', '- 04/2024 : rattachement MTSS', 'PPG-25', true, 'TODO', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2043'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-101', 'Prévenir et lutter contre les addictions', '- 04/2024 : rattachement MTSS', 'PPG-25', true, 'TODO', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2043'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-102', 'Améliorer la couverture vaccinale des Français', '- 04/2024 : rattachement MTSS', 'PPG-25', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', 'ZG-018', '120', ARRAY[]::TEXT[], ARRAY['2043'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-103', 'Faciliter le parcours du patient par le numérique et la télésanté', '- 04/2024 : rattachement MTSS', 'PPG-8', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2088','2037'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-104', 'Libérer du temps soignant', '- 04/2024 : rattachement MTSS', 'PPG-8', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2037'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-105', 'Améliorer l''accès aux soins dans tous les territoires par la coopération entre les professionnels de santé', '- 04/2024 : rattachement MTSS', 'PPG-8', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2037'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-107', 'Mieux réguler les urgences entre la médecine de ville et l''hôpital', '- 04/2024 : rattachement MTSS', 'PPG-HOS', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2037'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-108', 'Réduire les tensions de recrutement dans les secteurs d''activité les plus touchés', '- 04/2024 : rattachement MTSS', 'PPG-30', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-110', 'Déployer le service public de la petite enfance', '- 06/2024 - saisie des commentaires par services déconcentrés sous responsabilité administration centrale', 'PPG-AJE', true, 'TODO', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2058'], 'PER-011', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-111', 'Lutter contre les impayés de pension alimentaire', E' - 04/2024 : rattachement MTSS  \n- 04/2024 : périmètre « Enfance, jeunesse et famille » ', 'PPG-36', true, 'PROGRES', false, 'ate', 'PUBLIE', NULL, '120', ARRAY['220'], ARRAY['2058'], 'PER-011', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-112', 'Étendre le complément de mode de garde 6-12 ans aux familles monoparentales', '- 04/2024 : création de la PPG', 'PPG-36', false, NULL, false, NULL, 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-011', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-113', 'Déployer la solidarité à la source', '- 04/2024 : création de la PPG', 'PPG-38', false, NULL, false, NULL, 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-022', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-114', 'Déployer le plan « Logement d’abord »', '-09/2025 : changement nom', 'PPG-LOG', true, 'PROGRES', false, 'ate', 'PUBLIE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2049'], 'PER-016', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-115', 'Augmenter le nombre de logements sociaux', '- 08/2025 : création de la PPG', 'PPG-LOG', true, 'TODO', false, NULL, 'BROUILLON', NULL, '190', ARRAY[]::TEXT[], ARRAY['2071'], 'PER-016', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-116', 'Simplifier l''accès aux droits pour les personnes handicapées', '- 04/2024 : rattachement MTSS', 'PPG-QPH', true, 'PROGRES', false, 'ate', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2018'], 'PER-003', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-117', 'Réaliser l''accessibilité téléphonique universelle', '- 04/2024 : rattachement MTSS', 'PPG-QPH', false, 'PROGRES', false, NULL, 'ARCHIVE', NULL, '290', ARRAY['120', '250'], ARRAY['2021'], 'PER-030', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-118', 'Insérer dans l''emploi des personnes en situation de handicap', '- 04/2024 : rattachement MTSS', 'PPG-QPH', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '120', ARRAY['250'], ARRAY['2026'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-120', 'Déployer Ma prime adapt', NULL, 'PPG-EHP', true, 'TODO', false, 'ate', 'PUBLIE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2071'], 'PER-016', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-121', 'Mieux accompagner les aidants', '- 04/2024 : rattachement MTSS', 'PPG-EHP', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2018'], 'PER-003', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-124', 'Renforcer la présence des forces de l''ordre dans l''espace public', NULL, 'PPG-26', true, 'ENGAG', false, 'ate', 'ARCHIVE', NULL, '200', ARRAY[]::TEXT[], ARRAY['2069','2070'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-126', 'Associer les parties prenantes à l''amélioration continue du service rendu par les forces de l''ordre', NULL, 'PPG-26', true, 'ENGAG', false, 'ate', 'ARCHIVE', NULL, '200', ARRAY[]::TEXT[], ARRAY['2069','2070'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-127', 'Renforcer la lutte contre le trafic de stupéfiants', NULL, 'PPG-26', true, 'ENGAG', false, 'ate', 'ARCHIVE', NULL, '200', ARRAY['220'], ARRAY['2069','2070'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, false, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-128', 'Renforcer la lutte contre la cybercriminalité', NULL, 'PPG-26', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '200', ARRAY[]::TEXT[], ARRAY['2069','2070'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-129', 'Renforcer la lutte contre les atteintes à l''environnement', NULL, 'PPG-26', true, 'TE', false, 'ate', 'PUBLIE', NULL, '200', ARRAY['220'], ARRAY['2069','2070'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-130', 'Réformer l''organisation de l''asile', '- 05/2024 : Territorialisation à la maille régionale', 'PPG-7', true, 'ENGAG', false, 'ate', 'ARCHIVE', NULL, '200', ARRAY['220'], ARRAY['2024'], 'PER-014', ARRAY['REG','NAT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-131', 'Moderniser la délivrance des titres de séjour', NULL, 'PPG-7', true, 'ENGAG', false, 'ate', 'ARCHIVE', NULL, '200', ARRAY[]::TEXT[], ARRAY['2024'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-133', 'Favoriser l''intégration des étrangers en France', NULL, 'PPG-7', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '200', ARRAY[]::TEXT[], ARRAY['2087'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-134', 'Éloigner les étrangers qui menacent l''ordre public', NULL, 'PPG-7', false, 'ENGAG', false, NULL, 'ARCHIVE', NULL, '200', ARRAY[]::TEXT[], ARRAY['2024'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-135', 'Rendre les décisions de justice en moins d''un an en première instance', NULL, 'PPG-22', false, 'ENGAG', false, 'hors_ate_centralise', 'ARCHIVE', NULL, '220', ARRAY[]::TEXT[], ARRAY['2057'], 'PER-015', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-136', 'Obtenir une décision d''aide juridictionnelle en moins de 5 jours', NULL, 'PPG-22', false, 'ENGAG', false, 'hors_ate_centralise', 'ARCHIVE', NULL, '220', ARRAY[]::TEXT[], ARRAY['2084'], 'PER-015', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-137', 'Généraliser et approfondir la  dématérialisation de la procédure pénale', NULL, 'PPG-22', true, 'TODO', false, 'hors_ate_centralise', 'ARCHIVE', NULL, '220', ARRAY['200'], ARRAY['2084'], 'PER-015', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-138', 'Renforcer les moyens de la  Justice avec 10 000 ETP en plus d''ici 2027', NULL, 'PPG-22', false, 'ENGAG', false, NULL, 'ARCHIVE', NULL, '220', ARRAY[]::TEXT[], ARRAY['2085'], 'PER-015', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-139', 'Développer les places de travail d’intérêt général (TIG)', NULL, 'PPG-3', true, 'TODO', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '220', ARRAY[]::TEXT[], ARRAY['2004'], 'PER-015', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-140', 'Accélérer la construction de places de prison', NULL, 'PPG-3', true, 'ENGAG', false, 'hors_ate_centralise', 'BROUILLON', 'ZG-016', '220', ARRAY[]::TEXT[], ARRAY['2008'], 'PER-015', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-141', 'Développer l''insertion professionnelle des personnes détenues', '- 05/2024 : Territorialisation à la maille régionale', 'PPG-3', true, 'ENGAG', false, 'hors_ate_centralise', 'ARCHIVE', NULL, '220', ARRAY[]::TEXT[], ARRAY['2004'], 'PER-015', ARRAY['REG','NAT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-142', 'Réinsérer les mineurs délinquants', NULL, 'PPG-3', true, 'TODO', false, 'hors_ate_centralise', 'ARCHIVE', NULL, '220', ARRAY['150'], ARRAY['2062'], 'PER-015', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-143', 'Mieux protéger et accompagner les femmes victimes de violences', NULL, 'PPG-9', true, 'PROGRES', false, 'ate', 'PUBLIE', NULL, '1007', ARRAY['200', '220', '190'], ARRAY['2018'], 'PER-010', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-144', 'Déployer Services Publics + pour améliorer le service rendu aux Français en associant les usagers', '- 11/2025 : PPG archivée (fusion CH-145)', 'PPG-33', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '250', ARRAY[]::TEXT[], ARRAY['2052'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-145', 'Améliorer l''accès aux services publics et la qualité du service rendu', '- 11/2025 : publication de la PPG (fusion CH-144 et CH-146)', 'PPG-33', true, NULL, false, 'ate', 'PUBLIE', NULL, '250', ARRAY[]::TEXT[], ARRAY['2052','2002'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'eric.roux@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-146', 'Consolider le réseau des espaces France services', '- 11/2025 : PPG archivée (fusion CH-145)', 'PPG-33', true, 'PROGRES', false, 'ate', 'ARCHIVE', NULL, '250', ARRAY['190'], ARRAY['2002'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-147', 'Améliorer la qualité de service rendu aux Français de l''étranger', NULL, 'PPG-33', false, 'PROGRES', false, NULL, 'ARCHIVE', NULL, '110', ARRAY['250'], ARRAY['2010'], 'PER-013', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-148', 'Généraliser la "facturation électronique"', NULL, 'PPG-34', false, 'EMPLOI', false, NULL, 'ARCHIVE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2030'], 'PER-005', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-150', 'Poursuivre l''unification du recouvrement social et fiscal', '- 04/2024 : rattachement MTSS', 'PPG-34', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '290', ARRAY['120', '250'], ARRAY['2060'], 'PER-005', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-152', 'Réformer les parcours et les rémunérations dans la fonction publique pour la rendre plus attractive et efficace', E' - 04/2024 : création de la PPG   \n- 04/2024 : rattachement MTSS', 'PPG-2', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '250', ARRAY[]::TEXT[], ARRAY['2013'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-154', 'Former les cadres de la fonction publique à la transition écologique', '- 06/2024 : fusion avec la PPG CH-155 "Accélérer la transformation écologique de l’Etat"', 'PPG-24', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '250', ARRAY['190'], ARRAY['2048'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-188', 'Améliorer l''accès aux soins dans tous les territoires', '- 09/2025 : création de la PPG (fuison CH-103,CH-104,CH-105)', 'PPG-8', true, 'PROGRES', false, 'hors_ate_deconcentre', 'BROUILLON', NULL, '120', ARRAY[]::TEXT[], ARRAY['2037'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-155', 'Accélérer la transformation écologique de l’Etat', E'- 05/2024 : changement intitulé : Garantir des services publics écoresponsables -> Accélérer la transformation écologique de l’État\n - 05/2024 : Territorialisation à la maille régionale', 'PPG-24', true, 'TODO', false, 'ate', 'PUBLIE', NULL, '190', ARRAY['250'], ARRAY['2005'], 'PER-025', ARRAY['REG','NAT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-156', 'Généraliser le Service national universel', NULL, 'PPG-SNU', true, 'ENGAG', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '340', ARRAY['150'], ARRAY['2053'], 'PER-031', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-157', 'Favoriser l''engagement civique des jeunes', NULL, 'PPG-SNU', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '340', ARRAY[]::TEXT[], ARRAY['2054'], 'PER-031', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'eric.roux@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-158', 'Préparer la sortie du cuivre', '- 09/2025 : création de la PPG - 05/2026 : publication', 'PPG-PNU', true, NULL, false, 'ate', 'PUBLIE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2021','2002'], 'PER-026', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-159', 'Déployer la stratégie IA dans les territoires', '- 09/2025 : création de la PPG', 'PPG-PNU', true, NULL, false, NULL, 'BROUILLON', NULL, '290', ARRAY[]::TEXT[], ARRAY['2021'], 'PER-030', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-161', 'Adapter nos territoires au changement climatique', NULL, 'PPG-32', true, 'TODO', false, 'ate', 'PUBLIE', NULL, '190', ARRAY[]::TEXT[], ARRAY['2023'], 'PER-025', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-162', 'Améliorer la qualité du logement en outre-mer', NULL, 'PPG-MAR', true, 'PROGRES', false, 'ate', 'ARCHIVE', 'ZG-014', '200', ARRAY['190'], ARRAY['2035'], 'PER-018', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'eric.roux@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-163', 'Améliorer la santé et la sécurité au travail', '- 04/2024 : rattachement MTSS', 'PPG-25', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2044'], 'PER-028', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-yves.douchez@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-165', 'Développer des services numériques plus proactifs', '- 04/2024 : suppression de la PPG', 'PPG-33', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '250', ARRAY[]::TEXT[], ARRAY['2092'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-166', 'Développer et améliorer l’accueil et la prise en charge des personnes âgées à domicile et en EHPAD', '- 04/2024 : rattachement MTSS', 'PPG-EHP', true, 'PROGRES', false, 'hors_ate_deconcentre', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2018'], 'PER-003', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-167', 'Assurer l''impact des investissements du Ségur de la Santé', E' - 04/2024 : changement intitulé « Investir dans les hôpitaux » devient « Assurer l''impact des investissements du Ségur de la Santé »\n - 04/2024 : rattachement MTSS', 'PPG-HOS', true, 'TODO', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2037'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'mehdi.kellal@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-168', 'Mieux accompagner l’insertion professionnelle et sociale des jeunes majeurs issus de l''ASE', '- 04/2024 : suppression de la PPG', 'PPG-12', true, 'TODO', false, 'ate', 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY['2018'], 'PER-011', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-169', 'Permettre une intervention précoce auprès des enfants ayant un trouble du neuro-développement', E' - 04/2024 : rattachement MTSS\n - 04/2024 : changement de périmètre : « Autonomie, handicap »', 'PPG-25', true, 'PROGRES', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2089'], 'PER-003', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-170', 'Poursuivre le déploiement du plan "1 000 premiers jours"', '- 04/2024 : suppression de la PPG', 'PPG-25', true, 'PROGRES', false, 'hors_ate_deconcentre', 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY['2058','2043','2018'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'mehdi.kellal@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-171', 'Réduire le recours aux produits phytosanitaires', '- 05/2024 : Territorialisation à la maille régionale', 'PPG-18', true, 'TODO', false, 'ate', 'ARCHIVE', 'ZG-018', '130', ARRAY['190'], ARRAY['2082'], 'PER-001', ARRAY['REG','NAT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-172', 'Renforcer la lutte contre les séparatismes', NULL, 'PPG-26', true, 'TODO', false, 'ate', 'ARCHIVE', NULL, '200', ARRAY['220'], ARRAY['2083'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, false, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-173', 'Renforcer notre souveraineté industrielle', E'- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"\n - 05/2024 : Territorialisation à la maille régionale', 'PPG-SUE', true, 'EMPLOI', false, 'ate', 'PUBLIE', NULL, '290', ARRAY[]::TEXT[], ARRAY['2021'], 'PER-026', ARRAY['REG','NAT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-174', 'Respecter la trajectoire de la Loi de programmation des finances publiques', NULL, 'PPG-FIP', false, 'TODO', false, NULL, 'SUPPRIME', NULL, '290', ARRAY[]::TEXT[], ARRAY['2009'], 'PER-005', ARRAY['REG','NAT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-175', 'Simplifier les démarches administratives des usagers par moments de vie', '- 04/2024 : changement intitulé : "Simplifier les démarches administratives des usagers pour 10 moments de vie" devient : "Simplifier les démarches administratives des usagers par moments de vie"', 'PPG-33', false, 'PROGRES', false, NULL, 'ARCHIVE', NULL, '250', ARRAY[]::TEXT[], ARRAY['2052'], 'PER-024', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-176', 'Simplifier la vie des soignants à l''hôpital', '- 04/2024 : rattachement MTSS', 'PPG-HOS', true, 'TODO', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2037'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'mehdi.kellal@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-177', 'Simplifier la vie des associations', '- 04/2024 : passe du périmètre "Jeunesse et Vie associative" au périmètre "Premier Ministre"', 'PPG-33', false, 'TODO', false, NULL, 'ARCHIVE', NULL, '1009', ARRAY[]::TEXT[], ARRAY['2054'], 'PER-019', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-178', 'Répondre aux difficultés de recrutement et de fidélisation dans les métiers de la santé et du social', '- 04/2024 : rattachement MTSS', 'PPG-30', true, 'TODO', false, 'hors_ate_deconcentre', 'ARCHIVE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2018','2037'], 'PER-022', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-179', 'Améliorer la prévention', '- 09/2025 : création de la PPG (fusion CH-099,CH-101,CH-102)', 'PPG-25', true, 'TODO', false, 'hors_ate_deconcentre', 'BROUILLON', NULL, '120', ARRAY[]::TEXT[], ARRAY['2043'], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-180', 'Prévenir la délinquance et déployer la Force d''action républicaine', '- 04/2024 : création de la PPG', 'PPG-26', false, NULL, false, NULL, 'SUPPRIME', NULL, '1009', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-181', 'Simplifier la vie des entreprises', E' - 04/2024 : création de la PPG  \n - 04/2024 : périmètre Economie, industrie devient Économie et Entreprises', 'PPG-34', false, NULL, false, NULL, 'SUPPRIME', NULL, '290', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-008', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-182', 'Améliorer le recouvrement des amendes', '- 04/2024 : création de la PPG', 'PPG-FIP', false, NULL, false, NULL, 'BROUILLON', NULL, '290', ARRAY[]::TEXT[], ARRAY['2030'], 'PER-005', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-183', 'Maîtriser les flux migratoires avec la Force aux Frontières', '- 04/2024 : création de la PPG', 'PPG-7', false, NULL, false, NULL, 'SUPPRIME', NULL, '200', ARRAY[]::TEXT[], ARRAY['2093'], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-184', 'Déployer l''identité numérique', '- 04/2024 : création de la PPG', 'PPG-33', false, NULL, false, NULL, 'SUPPRIME', NULL, '200', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-014', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'vincent.augier@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-185', 'Déployer le service public de l''autonomie', E' - 04/2024 : création de la PPG \n - 04/2024 : rattachement MTSS', 'PPG-EHP', false, NULL, false, NULL, 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-003', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-186', 'Santé mentale des jeunes', '- 04/2024 : rattachement MTSS', 'PPG-8', false, NULL, false, NULL, 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-021', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'mehdi.kellal@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-187', 'Accompagner les parents et les jeunes en rupture', '- 04/2024 : création de la PPG', 'PPG-12', false, NULL, false, NULL, 'SUPPRIME', NULL, '120', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-011', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-189', 'Mettre en place les groupes de niveaux au collège', '- 04/2024 : création de la PPG', 'PPG-1', false, NULL, false, NULL, 'SUPPRIME', NULL, '180', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'heloise.thibault@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-190', 'Restaurer l''autorité à l''École de la République', '- 04/2024 : création de la PPG', 'PPG-1', false, NULL, false, NULL, 'SUPPRIME', NULL, '180', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-009', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'heloise.thibault@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-191', 'Garantir l''accessibilité de la culture', '- 04/2024 : création de la PPG', 'PPG-JCU', false, NULL, false, NULL, 'SUPPRIME', NULL, '140', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-006', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-192', 'Renforcer les synergies dans l''audiovisuel public', '- 04/2024 : création de la PPG', 'PPG-35', false, NULL, false, NULL, 'SUPPRIME', NULL, '140', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-006', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-193', 'Simplifier la vie des agriculteurs', '- 04/2024 : création de la PPG', 'PPG-28', false, NULL, false, NULL, 'SUPPRIME', NULL, '130', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-001', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'sandrine.brochon@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-194', 'Construire 30 000 Logements dans 22 territoires prioritaires', '- 04/2024 : création de la PPG', 'PPG-LOG', false, NULL, false, NULL, 'SUPPRIME', NULL, '190', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-016', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'muriel.metivet@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-195', 'Baisser les prélèvements obligatoires', '- 04/2024 : création de la PPG (fusion de la PPG CH003 et CH-008)', 'PPG-FIP', false, NULL, false, NULL, 'SUPPRIME', NULL, '290', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-005', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'jean-baptiste.menguy@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-196', 'Garantir l''accessibilité des établissements recevant du public (ERP) essentiels ', '- 09/2025 : création de la PPG - 04/2026 : publication de la PPG', 'PPG-QPH', true, 'TODO', false, 'ate', 'PUBLIE', NULL, '120', ARRAY[]::TEXT[], ARRAY['2074'], 'PER-003', ARRAY['NAT','REG','DEPT'], NULL, NULL, true, 'antoine.danel@modernisation.gouv.fr') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_chantiers ("chantier_id", "ch_nom", "ch_descr", "ch_ppg", "ch_territo", "engagement_short", "ch_hidden_pilote", "ch_saisie_ate", "ch_state", "zg_applicable", "porteur_id_principal", "porteur_ids_secondaires", "porteur_ids_DAC", "ch_per", "maille_applicable", "replicate_val_reg_to", "replicate_val_nat_to", "ch_cible_attendue", "conseiller_mail") VALUES ('CH-197', 'Chantiers prioritaires - Premier Ministre', '- 06/2025 : création de la PPG', 'PPG-QPH', true, NULL, false, NULL, 'BROUILLON', NULL, '1009', ARRAY[]::TEXT[], ARRAY[]::TEXT[], 'PER-019', ARRAY['NAT','REG','DEPT'], NULL, NULL, false, NULL) ON CONFLICT DO NOTHING;
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-REF',
+        'Toutes zones',
+        'Tous départements et régions Hexagone et OM',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'FRANCE',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
 
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-001',
+        'Groupement 1',
+        'Premier groupement de test',
+        ARRAY[
+            'D01',
+            'D22',
+            'R11',
+            'FM01.DEPT',
+            'R01.DEPT',
+            'FRANCE.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-002',
+        'Façades maritimes département',
+        'Départements avec façade maritime',
+        ARRAY[
+            'FRANCE',
+            'FM01.DEPT',
+            'FM02.DEPT',
+            'FM03.DEPT',
+            'FM04.DEPT'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-003',
+        'Façades maritimes région',
+        'Régions avec façade maritime',
+        ARRAY[
+            'FRANCE',
+            'FM01.REG',
+            'FM02.REG',
+            'FM03.REG',
+            'FM04.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-004',
+        'ZFE département',
+        'Départements avec au moins une ZFE',
+        ARRAY[
+            'FRANCE',
+            'ZFE01.DEPT',
+            'ZFE02.DEPT',
+            'ZFE03.DEPT',
+            'ZFE04.DEPT',
+            'ZFE05.DEPT',
+            'ZFE06.DEPT',
+            'ZFE07.DEPT',
+            'ZFE08.DEPT',
+            'ZFE09.DEPT',
+            'ZFE10.DEPT',
+            'ZFE11.DEPT',
+            'ZFE12.DEPT'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-005',
+        'ZFE région',
+        'Régions avec au moins une ZFE',
+        ARRAY[
+            'FRANCE',
+            'ZFE01.REG',
+            'ZFE02.REG',
+            'ZFE03.REG',
+            'ZFE04.REG',
+            'ZFE05.REG',
+            'ZFE06.REG',
+            'ZFE07.REG',
+            'ZFE08.REG',
+            'ZFE09.REG',
+            'ZFE10.REG',
+            'ZFE11.REG',
+            'ZFE12.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-006',
+        'Façades maritimes hors OM',
+        'Ensemble des territoires avec façade maritime hors Outre-Mer',
+        ARRAY[
+            'FRANCE',
+            'FM01.DEPT',
+            'FM02.DEPT',
+            'FM03.DEPT',
+            'FM04.DEPT',
+            'FM01.REG',
+            'FM02.REG',
+            'FM03.REG',
+            'FM04.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-007',
+        'ZFE',
+        'Territoires avec au moins une ZFE',
+        ARRAY[
+            'FRANCE',
+            'ZFE01.DEPT',
+            'ZFE02.DEPT',
+            'ZFE03.DEPT',
+            'ZFE04.DEPT',
+            'ZFE05.DEPT',
+            'ZFE06.DEPT',
+            'ZFE07.DEPT',
+            'ZFE08.DEPT',
+            'ZFE09.DEPT',
+            'ZFE10.DEPT',
+            'ZFE11.DEPT',
+            'ZFE12.DEPT',
+            'ZFE01.REG',
+            'ZFE02.REG',
+            'ZFE03.REG',
+            'ZFE04.REG',
+            'ZFE05.REG',
+            'ZFE06.REG',
+            'ZFE07.REG',
+            'ZFE08.REG',
+            'ZFE09.REG',
+            'ZFE10.REG',
+            'ZFE11.REG',
+            'ZFE12.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-008',
+        'Ports CH-049',
+        'Territoires des 3 Grands-Ports-Maritimes HAROPA, Dunkerque et Marseille-Fos',
+        ARRAY[
+            'FRANCE',
+            'PORT01.DEPT',
+            'PORT02.DEPT',
+            'PORT03.DEPT',
+            'PORT01.REG',
+            'PORT02.REG',
+            'PORT03.REG',
+            'PORT04.DEPT',
+            'PORT04.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-009',
+        'Ports CH-059',
+        'Ports de la PPG « Devenir leader de l’hydrogène décarboné »',
+        ARRAY[
+            'FRANCE',
+            'PORT01.DEPT',
+            'PORT04.DEPT',
+            'PORT02.DEPT',
+            'PORT01.REG',
+            'PORT04.REG',
+            'PORT02.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-010',
+        'Façade maritime Méditerranée',
+        'Territoires de la façade maritime méditerranéenne',
+        ARRAY[
+            'FRANCE',
+            'FM04.DEPT',
+            'FM04.REG'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-011',
+        'ANRU',
+        'Territoires concernés par le programme Accélérer le renouvellement urbain des quartiers',
+        ARRAY[
+            'FRANCE',
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D47',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-012',
+        'ACV',
+        'Territoires concernés par le programme Action Coeur de Ville',
+        ARRAY[
+            'FRANCE',
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-013',
+        'PVD',
+        'Territoires concernés par le programme Petites Villes de Demain',
+        ARRAY[
+            'FRANCE',
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-014',
+        'Outre-Mer',
+        'DROM',
+        ARRAY[
+            'FRANCE',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-015',
+        'Façades maritimes dont OM',
+        'Territoires avec façade maritime dont Outre-Mer',
+        ARRAY[
+            'FRANCE',
+            'FM01.DEPT',
+            'FM02.DEPT',
+            'FM03.DEPT',
+            'FM04.DEPT',
+            'FM01.REG',
+            'FM02.REG',
+            'FM03.REG',
+            'FM04.REG',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-016',
+        'Prisons',
+        'Territoires concernés par le programme 15 000 places de prisons',
+        ARRAY[
+            'FRANCE',
+            'D12',
+            'D13',
+            'D62',
+            'D83',
+            'D75',
+            'D92',
+            'D68',
+            'D10',
+            'D33',
+            'D971',
+            'D14',
+            'D59',
+            'D91',
+            'D30',
+            'D45',
+            'D34',
+            'D95',
+            'D77',
+            'D26',
+            'D93',
+            'D72',
+            'D84',
+            'D972',
+            'D51',
+            'D54',
+            'D08',
+            'D973',
+            'D31',
+            'D66',
+            'D56',
+            'D49',
+            'D94',
+            'D64',
+            'D78',
+            'R76',
+            'R93',
+            'R32',
+            'R11',
+            'R44',
+            'R75',
+            'R01',
+            'R28',
+            'R24',
+            'R84',
+            'R52',
+            'R02',
+            'R03',
+            'R53'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-017',
+        'GUDA',
+        'Territoires concernés par les GUDA',
+        ARRAY[
+            'FRANCE',
+            'R84',
+            'D63',
+            'D38',
+            'D69',
+            'R27',
+            'D25',
+            'D21',
+            'D71',
+            'R53',
+            'D35',
+            'R24',
+            'D45',
+            'R44',
+            'D51',
+            'D67',
+            'D68',
+            'D57',
+            'R32',
+            'D60',
+            'D59',
+            'R11',
+            'D93',
+            'D95',
+            'D94',
+            'D91',
+            'D77',
+            'D92',
+            'D75',
+            'D78',
+            'R28',
+            'D76',
+            'R75',
+            'D33',
+            'D86',
+            'R76',
+            'D34',
+            'D31',
+            'R52',
+            'D44',
+            'R93',
+            'D13',
+            'R03',
+            'D973',
+            'R06',
+            'D976',
+            'R01',
+            'D971',
+            'R04',
+            'D974'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-018',
+        'Toutes zones sauf Mayotte',
+        'Tous départements et régions Hexagone et OM, hors Mayotte',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'FRANCE',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-033',
+        'Accessibilité ét. Santé',
+        'CH-196 - Mise en accessibilité des établissements de santé',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D06',
+            'D07',
+            'D12',
+            'D13',
+            'D16',
+            'D17',
+            'D18',
+            'D21',
+            'D22',
+            'D23',
+            'D25',
+            'D29',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D40',
+            'D41',
+            'D42',
+            'D51',
+            'D53',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D62',
+            'D63',
+            'D66',
+            'D69',
+            'D74',
+            'D75',
+            'D76',
+            'D78',
+            'D79',
+            'D83',
+            'D84',
+            'D89',
+            'D92',
+            'D93',
+            'D94',
+            'D974',
+            'FRANCE',
+            'R04',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-019',
+        'Toutes zones métropole',
+        'Tous départements et régions Hexagone',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'FRANCE',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-020',
+        '50 sites + émetteurs',
+        'Territoires des 50 sites industriels les plus émetteurs',
+        ARRAY[
+            'FRANCE',
+            'D59',
+            'D13',
+            'D57',
+            'D54',
+            'D73',
+            'D62',
+            'D39',
+            'D51',
+            'D79',
+            'D30',
+            'D17',
+            'D18',
+            'D14',
+            'D37',
+            'D53',
+            'D07',
+            'D11',
+            'D31',
+            'D69',
+            'D68',
+            'D55',
+            'D38',
+            'D06',
+            'D77',
+            'D76',
+            'D03',
+            'D02',
+            'D80',
+            'D67',
+            'R32',
+            'R93',
+            'R44',
+            'R84',
+            'R27',
+            'R75',
+            'R76',
+            'R24',
+            'R28',
+            'R52',
+            'R11'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-021',
+        'Force aux Frontières',
+        'Territoires de la PPG « Force aux Frontières »',
+        ARRAY[
+            'FRANCE',
+            'D62',
+            'D59',
+            'D02',
+            'D08',
+            'D55',
+            'D54',
+            'D57',
+            'D67',
+            'D68',
+            'D90',
+            'D25',
+            'D39',
+            'D01',
+            'D74',
+            'D73',
+            'D05',
+            'D04',
+            'D06',
+            'D66',
+            'D09',
+            'D31',
+            'D65',
+            'D64',
+            'D976',
+            'R06',
+            'R27',
+            'R32',
+            'R44',
+            'R84',
+            'R93'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-022',
+        'Stationnement vélo sécurisé en gare',
+        'Territoires de l''indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'FRANCE',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-023',
+        'Industrie CH-052',
+        'Toutes région sauf Bretagne, Corse et DROM',
+        ARRAY[
+            'FRANCE',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R75',
+            'R76',
+            'R84',
+            'R93'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-024',
+        'Education prioritaire',
+        'Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n’ont pas de REP)',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D44',
+            'D45',
+            'D47',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'FRANCE',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-025',
+        'Bon état écologique des cours d’eau',
+        'Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D94',
+            'D95',
+            'FRANCE',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-026',
+        'PCAET (CH-161)',
+        'Toutes zones sauf Lozère',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'FRANCE',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-027',
+        'Toutes zones sauf Corse',
+        'Tous départements et régions sauf Corse',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D15',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D30',
+            'D31',
+            'D32',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D43',
+            'D44',
+            'D45',
+            'D46',
+            'D47',
+            'D48',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'FRANCE',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-028',
+        'REP',
+        'Tous territoires contenant des REP (8 terr exclus)',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D04',
+            'D05',
+            'D06',
+            'D07',
+            'D08',
+            'D09',
+            'D10',
+            'D11',
+            'D12',
+            'D13',
+            'D14',
+            'D16',
+            'D17',
+            'D18',
+            'D21',
+            'D22',
+            'D23',
+            'D24',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D29',
+            'D2A',
+            'D2B',
+            'D30',
+            'D31',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D39',
+            'D40',
+            'D41',
+            'D42',
+            'D44',
+            'D45',
+            'D47',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D54',
+            'D55',
+            'D56',
+            'D57',
+            'D58',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D64',
+            'D65',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D70',
+            'D71',
+            'D72',
+            'D73',
+            'D74',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D79',
+            'D80',
+            'D81',
+            'D82',
+            'D83',
+            'D84',
+            'D85',
+            'D86',
+            'D87',
+            'D88',
+            'D89',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D974',
+            'D976',
+            'FRANCE',
+            'R01',
+            'R02',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-029',
+        'REP+',
+        'Tous territoires contenant des REP+ (31 dept exclus)',
+        ARRAY[
+            'D01',
+            'D02',
+            'D03',
+            'D06',
+            'D08',
+            'D10',
+            'D13',
+            'D14',
+            'D16',
+            'D17',
+            'D18',
+            'D19',
+            'D21',
+            'D25',
+            'D26',
+            'D27',
+            'D28',
+            'D2B',
+            'D30',
+            'D31',
+            'D33',
+            'D34',
+            'D35',
+            'D36',
+            'D37',
+            'D38',
+            'D41',
+            'D42',
+            'D44',
+            'D45',
+            'D49',
+            'D50',
+            'D51',
+            'D52',
+            'D53',
+            'D54',
+            'D55',
+            'D57',
+            'D59',
+            'D60',
+            'D61',
+            'D62',
+            'D63',
+            'D66',
+            'D67',
+            'D68',
+            'D69',
+            'D72',
+            'D73',
+            'D75',
+            'D76',
+            'D77',
+            'D78',
+            'D80',
+            'D83',
+            'D84',
+            'D86',
+            'D87',
+            'D88',
+            'D90',
+            'D91',
+            'D92',
+            'D93',
+            'D94',
+            'D95',
+            'D971',
+            'D972',
+            'D973',
+            'D974',
+            'D976',
+            'FRANCE',
+            'R01',
+            'R02',
+            'R03',
+            'R04',
+            'R06',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R52',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-030',
+        'Accessibilité tribunaux',
+        'CH-196 - Mise en accessibilité des tribunaux',
+        ARRAY[
+            'D09',
+            'D22',
+            'D25',
+            'D2B',
+            'D32',
+            'D41',
+            'D47',
+            'D54',
+            'D57',
+            'D58',
+            'D59',
+            'D62',
+            'D63',
+            'D64',
+            'D67',
+            'D76',
+            'FRANCE',
+            'R24',
+            'R27',
+            'R28',
+            'R32',
+            'R44',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-031',
+        'Accessibilité PN',
+        'CH-196 - Mise en accessibilité des lieux Police Nationale',
+        ARRAY[
+            'D01',
+            'D06',
+            'D11',
+            'D13',
+            'D15',
+            'D27',
+            'D29',
+            'D32',
+            'D33',
+            'D35',
+            'D45',
+            'D66',
+            'D69',
+            'D73',
+            'D78',
+            'D81',
+            'D83',
+            'D86',
+            'D90',
+            'D95',
+            'D972',
+            'FRANCE',
+            'R02',
+            'R11',
+            'R24',
+            'R27',
+            'R28',
+            'R53',
+            'R75',
+            'R76',
+            'R84',
+            'R93'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_zonegroup (
+        "zone_group_id",
+        "zg_name",
+        "zg_desc",
+        "zg_zones"
+    )
+VALUES (
+        'ZG-032',
+        'Accessibilité GN',
+        'CH-196 - Mise en accessibilité des lieux Gendarmerie Nationale',
+        ARRAY[
+            'D05',
+            'D08',
+            'D16',
+            'D29',
+            'D34',
+            'D82',
+            'D2A',
+            'D972',
+            'D973',
+            'FRANCE',
+            'R02',
+            'R03',
+            'R44',
+            'R53',
+            'R75',
+            'R76',
+            'R93',
+            'R94'
+        ]
+    )
+ON CONFLICT DO NOTHING;
+-- metadata_chantiers (169 rows)
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-001',
+        'Mettre en œuvre et assurer l''impact du programme France 2030',
+        '- 05/2024 : changement intitulé : Déployer France 2030 -> Mettre en œuvre et assurer l''impact du programme France 2030',
+        'PPG-F30',
+        false,
+        'EMPLOI',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '1009',
+        ARRAY[]::TEXT [],
+        ARRAY['1001'],
+        'PER-019',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-003',
+        'Protéger le pouvoir d''achat des Français en baissant les impôts',
+        E'- 04/2024 : suppression de la PPG\n- 05/2024 : fusion des CH-003 et CH-008 pour nouvelle PPG CH-195',
+        'PPG-FIP',
+        false,
+        'PROGRES',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2055'],
+        'PER-005',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-004',
+        'Lutter contre la fraude fiscale, douanière et sociale',
+        '- 11/2025 : PPG territorialisée à la maille départementale',
+        'PPG-FIP',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2030'],
+        'PER-005',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-006',
+        'Faciliter la vie des entreprises et le développement des sites industriels',
+        E'- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"\n - 05/2024 : Territorialisation à la maille régionale',
+        'PPG-IND',
+        true,
+        'EMPLOI',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '290',
+        ARRAY['190'],
+        ARRAY['2021'],
+        'PER-026',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-007',
+        'Renforcer notre souveraineté économique par la commande publique',
+        NULL,
+        'PPG-IND',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'BROUILLON',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2007'],
+        'PER-005',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-008',
+        'Baisser les impôts de production et sur les entreprises',
+        E'- 04/2024 : suppression de la PPG\n-  05/2024 : fusion des CH-003 et CH-008 pour nouvelle PPG CH-195',
+        'PPG-IND',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2055'],
+        'PER-008',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-009',
+        'Atteindre l''objectif de 100 Licornes "French Tech" en 2030',
+        NULL,
+        'PPG-PNU',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2021'],
+        'PER-030',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-010',
+        'Proposer des outils pour protéger les consommateurs en ligne',
+        ' - 04/2024 : périmètre Economie, industrie devient Économie et Entreprises',
+        'PPG-PNU',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2016'],
+        'PER-008',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-011',
+        'Assurer la couverture numérique du territoire',
+        NULL,
+        'PPG-PNU',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY['190'],
+        ARRAY['2002', '2021'],
+        'PER-030',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-012',
+        'Accélérer la numérisation et la robotisation des entreprises',
+        '- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"',
+        'PPG-PNU',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2021'],
+        'PER-026',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-013',
+        'Favoriser l’inclusion numérique pour tous par la formation et les conseillers numériques de proximité',
+        NULL,
+        'PPG-PNU',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY['190', '250'],
+        ARRAY['2002'],
+        'PER-030',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-014',
+        'Relocaliser la production des fruits et légumes et celle des protéines végétales',
+        NULL,
+        'PPG-SAL',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '130',
+        ARRAY[]::TEXT [],
+        ARRAY['2080'],
+        'PER-001',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-015',
+        'Réussir la transition écologique des exploitations agricoles',
+        '- 05/2024 : Territorialisation à la maille régionale',
+        'PPG-SAL',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '130',
+        ARRAY['190'],
+        ARRAY['2080'],
+        'PER-001',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-017',
+        'Accompagner le programme visant à planter 1 milliard d''arbres d''ici 2032',
+        NULL,
+        'PPG-SAL',
+        true,
+        'TE',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '130',
+        ARRAY['190'],
+        ARRAY['2080'],
+        'PER-001',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-018',
+        'Renouveler et former une génération d''agriculteurs et d''agricultrices',
+        '- 05/2024 : Territorialisation à la maille régionale  - 04/2026 : PPG en cours de cadrage',
+        'PPG-28',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'BROUILLON',
+        NULL,
+        '130',
+        ARRAY[]::TEXT [],
+        ARRAY['2081'],
+        'PER-001',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-020',
+        'Refondre les accords de Schengen pour renforcer nos frontières européennes',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-SUE',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '200',
+        ARRAY['110'],
+        ARRAY['2024'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-022',
+        'Doubler les effectifs d''élèves dans les établissements scolaires à l''étranger d''ici 2030',
+        NULL,
+        'PPG-27',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '110',
+        ARRAY[]::TEXT [],
+        ARRAY['2033'],
+        'PER-013',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-025',
+        'Accroître l''attractivité des territoires pour l’investissement étranger et promouvoir l’exportation des PME',
+        NULL,
+        'PPG-27',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'BROUILLON',
+        NULL,
+        '110',
+        ARRAY['290', '200'],
+        ARRAY['2086'],
+        'PER-013',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-026',
+        'Poursuivre le renforcement capacitaire des armées',
+        NULL,
+        'PPG-17',
+        false,
+        'ENGAG',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '150',
+        ARRAY[]::TEXT [],
+        ARRAY['2079'],
+        'PER-002',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-027',
+        'Doubler les effectifs de la réserve opérationnelle',
+        NULL,
+        'PPG-17',
+        false,
+        'ENGAG',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '150',
+        ARRAY[]::TEXT [],
+        ARRAY['2079'],
+        'PER-002',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-028',
+        'Augmenter les moyens dédiés à l''accompagnement social et moral de nos forces armées avec le plan famille',
+        NULL,
+        'PPG-17',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '150',
+        ARRAY[]::TEXT [],
+        ARRAY['2078'],
+        'PER-002',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-029',
+        'Améliorer la résilience des territoires',
+        '- 09/2025 : création de la PPG',
+        'PPG-5',
+        true,
+        'TODO',
+        false,
+        NULL,
+        'BROUILLON',
+        NULL,
+        '1009',
+        ARRAY['200'],
+        ARRAY['2095'],
+        'PER-019',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-030',
+        'Déployer les outils cœur de la Suite numérique',
+        '- 12/2025 : création de la PPG',
+        'PPG-PNU',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'BROUILLON',
+        NULL,
+        '250',
+        ARRAY[]::TEXT [],
+        ARRAY['2052', '2092'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'eric.roux@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-032',
+        'Favoriser l''emploi des séniors',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-SEN',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'BROUILLON',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-033',
+        'Poursuivre le développement du CEJ',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-SEN',
+        true,
+        'EMPLOI',
+        false,
+        'ate',
+        'BROUILLON',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-034',
+        'Réformer l''assurance chômage',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-20',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-036',
+        'Développer les outils de partage de la valeur (salaires, intéressement, prime de partage de la valeur)',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-14',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY['290'],
+        ARRAY['2044'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-037',
+        'Créer un compte épargne temps universel',
+        '- 04/2024 : création de la PPG',
+        'PPG-14',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-038',
+        'Favoriser l''emploi des jeunes et l''apprentissage',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-13',
+        true,
+        'EMPLOI',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY['280', '250'],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-039',
+        'Former aux métiers d''avenir',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-13',
+        false,
+        'EMPLOI',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY['280'],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-040',
+        'Développer la validation des acquis de l''expérience',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-13',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY['250'],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-041',
+        'Planifier la transition écologique',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-32',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '1009',
+        ARRAY[]::TEXT [],
+        ARRAY['1002'],
+        'PER-019',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-042',
+        'Territorialiser la planification écologique',
+        NULL,
+        'PPG-32',
+        true,
+        'TE',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY['290'],
+        ARRAY['2005'],
+        'PER-025',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-043',
+        'Amplifier le Plan vélo',
+        NULL,
+        'PPG-DCT',
+        true,
+        'TE',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2032'],
+        'PER-027',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-044',
+        'Développer la part des voitures électriques',
+        NULL,
+        'PPG-DCT',
+        true,
+        'TE',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2023'],
+        'PER-027',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-045',
+        'Poursuivre l''accompagnement des collectivités territoriales dans la mise en place des ZFE',
+        '- 07/2024 : Exclusion de la Sarthe (D72) et de la Somme (D80) des départements concernés par la PPG.',
+        'PPG-DCT',
+        true,
+        'TE',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-007',
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2023'],
+        'PER-025',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-046',
+        'Développer le co-voiturage',
+        NULL,
+        'PPG-DCT',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2032'],
+        'PER-027',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-047',
+        'Verdir le secteur aérien',
+        NULL,
+        'PPG-DCT',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2077'],
+        'PER-027',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-049',
+        'Verdir les ports et les flottes',
+        '- 04/2024 : rattachement du périmètre "Mer et Biodiversité" au MTECT',
+        'PPG-DCT',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-008',
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2015'],
+        'PER-017',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-050',
+        'Accélérer la rénovation énergétique de l''habitat et des logements privés',
+        NULL,
+        'PPG-PTH',
+        true,
+        'TE',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY['290'],
+        ARRAY['2091'],
+        'PER-016',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-051',
+        'Rationaliser les surfaces occupées par l’État',
+        '- 05/2024 : Territorialisation à la maille régionale 03/2026 : Territorialisation à la maille départementale',
+        'PPG-PTH',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '290',
+        ARRAY['190'],
+        ARRAY['2047'],
+        'PER-005',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-052',
+        'Devenir la première grande économie décarbonée en mobilisant la finance et l''industrie',
+        E'- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"\n- 09/2024 : Territorialisation à la maille régionale\n- 10/2024 : Restriction géographique sur les régions concernées',
+        'PPG-DCF',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-023',
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2021', '1002'],
+        'PER-026',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-053',
+        'Garantir une information claire sur l''impact environnemental des produits courants',
+        NULL,
+        'PPG-19',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '190',
+        ARRAY['290'],
+        ARRAY['2005'],
+        'PER-025',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-054',
+        'Lutter contre le gaspillage et renforcer le recyclage',
+        NULL,
+        'PPG-19',
+        true,
+        'TE',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY['290'],
+        ARRAY['2039'],
+        'PER-025',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-057',
+        'Multiplier par dix la puissance solaire d''ici 2050',
+        E'- 04/2024 : Transition énergétique devient Industrie et Énergie et est rattaché au MEFSIN\n - 05/2024 : Territorialisation à la maille régionale',
+        'PPG-DCE',
+        true,
+        'TE',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2023'],
+        'PER-026',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-058',
+        'Installer 50 parcs éoliens en mer d''ici 2050',
+        E'- 04/2024 : Transition énergétique devient Industrie et Énergie\n- 04/2024 : Périmètre Industrie et Energie est rattaché au MEFSIN',
+        'PPG-DCE',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-006',
+        '290',
+        ARRAY['190'],
+        ARRAY['2023'],
+        'PER-026',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-059',
+        'Devenir leader de l''hydrogène décarboné',
+        E'- 04/2024 : Transition énergétique devient Industrie et Énergie\n- 04/2024 : Périmètre Industrie et Energie est rattaché au MEFSIN',
+        'PPG-DCE',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2023'],
+        'PER-026',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-060',
+        'Mettre en œuvre l''objectif "Zéro artificialisation nette"',
+        NULL,
+        'PPG-18',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2091'],
+        'PER-025',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-061',
+        'Protéger les espaces naturels et la biodiversité',
+        '- 05/2024 : Territorialisation à la maille régionale',
+        'PPG-18',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2091'],
+        'PER-025',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-062',
+        'Assurer une gestion sobre de la ressource en eau',
+        NULL,
+        'PPG-18',
+        true,
+        'TE',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY['130'],
+        ARRAY['2091'],
+        'PER-025',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-063',
+        'Lutter contre l''abandon des animaux domestiques',
+        '- 04/2024 : création de la PPG',
+        'PPG-18',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '130',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-001',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-064',
+        'Garantir 50% de produits bio, de qualité ou durables dans la restauration collective (Egalim)',
+        NULL,
+        'PPG-15',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '130',
+        ARRAY['190'],
+        ARRAY['2082'],
+        'PER-001',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-066',
+        'Renforcer la pêche durable française',
+        E'- 04/2024 : territorialisation à la maille Régionale\n - 04/2024 : rattachement du périmètre "Mer et Biodiversité" au MTECT',
+        'PPG-15',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-015',
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2015'],
+        'PER-017',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-067',
+        'Améliorer le niveau des élèves dans les savoirs fondamentaux',
+        NULL,
+        'PPG-1',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '180',
+        ARRAY[]::TEXT [],
+        ARRAY['2096'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-068',
+        'Dédoubler les classes en éducation prioritaire et limiter les effectifs à 24 partout ailleurs (grande section, CP, CE1)',
+        NULL,
+        'PPG-1',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '180',
+        ARRAY[]::TEXT [],
+        ARRAY['2028'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'heloise.thibault@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-069',
+        'Lutter contre le harcèlement et le cyberharcèlement scolaires',
+        NULL,
+        'PPG-1',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '180',
+        ARRAY[]::TEXT [],
+        ARRAY['2028'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-070',
+        'Remplacer les enseignants absents',
+        NULL,
+        'PPG-1',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '180',
+        ARRAY[]::TEXT [],
+        ARRAY['2040'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-071',
+        'Mieux orienter les élèves au collège et au lycée',
+        NULL,
+        'PPG-21',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '180',
+        ARRAY['280'],
+        ARRAY['2028'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-072',
+        'Améliorer l''orientation des lycéens vers l''enseignement supérieur via ParcourSup',
+        NULL,
+        'PPG-21',
+        false,
+        'PROGRES',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '280',
+        ARRAY['180'],
+        ARRAY['2029'],
+        'PER-012',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-073',
+        'Faire du lycée professionnel une voie de réussite et d''accès à l''emploi',
+        E'- 04/2024 : territorialisation à la maille Régionale\n - 04/2024 : rattachement MTPEI devient MTSS',
+        'PPG-LPR',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '180',
+        ARRAY['120'],
+        ARRAY['2028'],
+        'PER-009',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-074',
+        'Transformer l’école en faisant confiance aux acteurs de terrain',
+        NULL,
+        'PPG-37',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '180',
+        ARRAY[]::TEXT [],
+        ARRAY['2028'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'heloise.thibault@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-075',
+        'Rendre l''école plus inclusive',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-23',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '180',
+        ARRAY['120'],
+        ARRAY['2028'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-076',
+        'Ouvrir les filières de formation de l''enseignement supérieur nécessaires pour répondre aux besoins de la Nation',
+        NULL,
+        'PPG-4',
+        false,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '280',
+        ARRAY[]::TEXT [],
+        ARRAY['2029'],
+        'PER-012',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-077',
+        'Améliorer la qualité des services rendus aux étudiants dans les universités et les CROUS (dont SP+)',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-VET',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'SUPPRIME',
+        NULL,
+        '280',
+        ARRAY[]::TEXT [],
+        ARRAY['2029'],
+        'PER-012',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-078',
+        'Augmenter le nombre de logements pour les étudiants',
+        '- 10/2025 : nouvel intitulé et territorialisation à la maille Régionale',
+        'PPG-VET',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '280',
+        ARRAY['190'],
+        ARRAY['2029'],
+        'PER-012',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-079',
+        'Investir dans la recherche au service de la connaissance et de l’innovation',
+        NULL,
+        'PPG-6',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '280',
+        ARRAY['290'],
+        ARRAY['2041'],
+        'PER-012',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-080',
+        'Poursuivre le déploiement du Pass Culture',
+        NULL,
+        'PPG-JCU',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_centralise',
+        'ARCHIVE',
+        NULL,
+        '140',
+        ARRAY[]::TEXT [],
+        ARRAY['2012'],
+        'PER-006',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-081',
+        'Offrir à chaque élève une éducation culturelle et artistique',
+        NULL,
+        'PPG-JCU',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '180',
+        ARRAY['140'],
+        ARRAY['2028'],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'heloise.thibault@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-082',
+        'Déployer le plan Culture et Ruralités',
+        '- 11/2025 : publication de la PPG (Régionale)',
+        'PPG-JCU',
+        true,
+        NULL,
+        false,
+        'ate',
+        'PUBLIE',
+        'ZG-027',
+        '140',
+        ARRAY[]::TEXT [],
+        ARRAY['2094'],
+        'PER-006',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'eric.roux@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-083',
+        'Soutenir la création française et valoriser le patrimoine dans les environnements physiques et numériques',
+        NULL,
+        'PPG-35',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '140',
+        ARRAY['180'],
+        ARRAY[]::TEXT [],
+        'PER-006',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-084',
+        'Assurer 30 minutes de sport par jour à l''école primaire',
+        NULL,
+        'PPG-SPJ',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '340',
+        ARRAY['180'],
+        ARRAY['2056', '2028'],
+        'PER-023',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-085',
+        'Étendre le Pass''sport',
+        NULL,
+        'PPG-SPJ',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '340',
+        ARRAY[]::TEXT [],
+        ARRAY['2056'],
+        'PER-023',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-086',
+        'Augmenter le nombre d''équipements sportifs',
+        NULL,
+        'PPG-SPJ',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '340',
+        ARRAY[]::TEXT [],
+        ARRAY['2056'],
+        'PER-023',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-088',
+        'Réussir les Jeux Olympiques et Paralympiques 2024',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-31',
+        false,
+        'PROGRES',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '1009',
+        ARRAY['340'],
+        ARRAY['1004'],
+        'PER-019',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-089',
+        'Lutter contre le racisme, l’antisémitisme, la haine anti-LGBT et les discriminations',
+        NULL,
+        'PPG-10',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '1007',
+        ARRAY[]::TEXT [],
+        ARRAY['2073'],
+        'PER-010',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-090',
+        'Accélérer le renouvellement urbain des quartiers',
+        NULL,
+        'PPG-5',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-011',
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2003'],
+        'PER-004',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-091',
+        'Faire d''Action Cœur de ville et de Petites villes de demain un outil d''aménagement durable du territoire',
+        NULL,
+        'PPG-5',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-013',
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2002'],
+        'PER-004',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-092',
+        'Prolonger l’élan des territoires ruraux',
+        '- 09/2025 : création de la PPG',
+        'PPG-5',
+        true,
+        NULL,
+        false,
+        NULL,
+        'BROUILLON',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2002'],
+        'PER-004',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'julien.megdoud@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-093',
+        'Déployer les plans d’autonomie alimentaire en outre-mer',
+        NULL,
+        'PPG-MAR',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-014',
+        '200',
+        ARRAY['130'],
+        ARRAY['2035'],
+        'PER-018',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'eric.roux@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-094',
+        'Développer l''emploi et la création de valeur dans les territoires ultra-marins',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-MAR',
+        true,
+        'EMPLOI',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-014',
+        '200',
+        ARRAY['120'],
+        ARRAY['2035'],
+        'PER-018',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'eric.roux@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-095',
+        'Mieux relier les quartiers urbains à la collectivité',
+        '- 09/2025 : création de la PPG',
+        'PPG-5',
+        true,
+        NULL,
+        false,
+        NULL,
+        'BROUILLON',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2002'],
+        'PER-004',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'julien.megdoud@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-096',
+        'Renforcer l''égalité femmes-hommes dans les entreprises',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-16',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY['1007'],
+        ARRAY['2044'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-097',
+        'Mettre en place l''index égalité femmes-hommes dans la Fonction publique',
+        NULL,
+        'PPG-16',
+        false,
+        'PROGRES',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '250',
+        ARRAY['1007'],
+        ARRAY['2013'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-099',
+        'Bilan de prévention aux âges clés',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-25',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2043'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-101',
+        'Prévenir et lutter contre les addictions',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-25',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2043'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-102',
+        'Améliorer la couverture vaccinale des Français',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-25',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        'ZG-018',
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2043'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-103',
+        'Faciliter le parcours du patient par le numérique et la télésanté',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-8',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2088', '2037'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-104',
+        'Libérer du temps soignant',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-8',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2037'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-105',
+        'Améliorer l''accès aux soins dans tous les territoires par la coopération entre les professionnels de santé',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-8',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2037'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-107',
+        'Mieux réguler les urgences entre la médecine de ville et l''hôpital',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-HOS',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2037'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-108',
+        'Réduire les tensions de recrutement dans les secteurs d''activité les plus touchés',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-30',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-110',
+        'Déployer le service public de la petite enfance',
+        '- 06/2024 - saisie des commentaires par services déconcentrés sous responsabilité administration centrale',
+        'PPG-AJE',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2058'],
+        'PER-011',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-111',
+        'Lutter contre les impayés de pension alimentaire',
+        E' - 04/2024 : rattachement MTSS  \n- 04/2024 : périmètre « Enfance, jeunesse et famille » ',
+        'PPG-36',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY['220'],
+        ARRAY['2058'],
+        'PER-011',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-112',
+        'Étendre le complément de mode de garde 6-12 ans aux familles monoparentales',
+        '- 04/2024 : création de la PPG',
+        'PPG-36',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-011',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-113',
+        'Déployer la solidarité à la source',
+        '- 04/2024 : création de la PPG',
+        'PPG-38',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-022',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-114',
+        'Déployer le plan « Logement d’abord »',
+        '-09/2025 : changement nom',
+        'PPG-LOG',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2049'],
+        'PER-016',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-115',
+        'Augmenter le nombre de logements sociaux',
+        '- 08/2025 : création de la PPG',
+        'PPG-LOG',
+        true,
+        'TODO',
+        false,
+        NULL,
+        'BROUILLON',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2071'],
+        'PER-016',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-116',
+        'Simplifier l''accès aux droits pour les personnes handicapées',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-QPH',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2018'],
+        'PER-003',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-117',
+        'Réaliser l''accessibilité téléphonique universelle',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-QPH',
+        false,
+        'PROGRES',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY['120', '250'],
+        ARRAY['2021'],
+        'PER-030',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-118',
+        'Insérer dans l''emploi des personnes en situation de handicap',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-QPH',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY['250'],
+        ARRAY['2026'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-120',
+        'Déployer Ma prime adapt',
+        NULL,
+        'PPG-EHP',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2071'],
+        'PER-016',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-121',
+        'Mieux accompagner les aidants',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-EHP',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2018'],
+        'PER-003',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-124',
+        'Renforcer la présence des forces de l''ordre dans l''espace public',
+        NULL,
+        'PPG-26',
+        true,
+        'ENGAG',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY['2069', '2070'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-126',
+        'Associer les parties prenantes à l''amélioration continue du service rendu par les forces de l''ordre',
+        NULL,
+        'PPG-26',
+        true,
+        'ENGAG',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY['2069', '2070'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-127',
+        'Renforcer la lutte contre le trafic de stupéfiants',
+        NULL,
+        'PPG-26',
+        true,
+        'ENGAG',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY['220'],
+        ARRAY['2069', '2070'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        false,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-128',
+        'Renforcer la lutte contre la cybercriminalité',
+        NULL,
+        'PPG-26',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY['2069', '2070'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-129',
+        'Renforcer la lutte contre les atteintes à l''environnement',
+        NULL,
+        'PPG-26',
+        true,
+        'TE',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '200',
+        ARRAY['220'],
+        ARRAY['2069', '2070'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-130',
+        'Réformer l''organisation de l''asile',
+        '- 05/2024 : Territorialisation à la maille régionale',
+        'PPG-7',
+        true,
+        'ENGAG',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY['220'],
+        ARRAY['2024'],
+        'PER-014',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-131',
+        'Moderniser la délivrance des titres de séjour',
+        NULL,
+        'PPG-7',
+        true,
+        'ENGAG',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY['2024'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-133',
+        'Favoriser l''intégration des étrangers en France',
+        NULL,
+        'PPG-7',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY['2087'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-134',
+        'Éloigner les étrangers qui menacent l''ordre public',
+        NULL,
+        'PPG-7',
+        false,
+        'ENGAG',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY['2024'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-135',
+        'Rendre les décisions de justice en moins d''un an en première instance',
+        NULL,
+        'PPG-22',
+        false,
+        'ENGAG',
+        false,
+        'hors_ate_centralise',
+        'ARCHIVE',
+        NULL,
+        '220',
+        ARRAY[]::TEXT [],
+        ARRAY['2057'],
+        'PER-015',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-136',
+        'Obtenir une décision d''aide juridictionnelle en moins de 5 jours',
+        NULL,
+        'PPG-22',
+        false,
+        'ENGAG',
+        false,
+        'hors_ate_centralise',
+        'ARCHIVE',
+        NULL,
+        '220',
+        ARRAY[]::TEXT [],
+        ARRAY['2084'],
+        'PER-015',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-137',
+        'Généraliser et approfondir la  dématérialisation de la procédure pénale',
+        NULL,
+        'PPG-22',
+        true,
+        'TODO',
+        false,
+        'hors_ate_centralise',
+        'ARCHIVE',
+        NULL,
+        '220',
+        ARRAY['200'],
+        ARRAY['2084'],
+        'PER-015',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-138',
+        'Renforcer les moyens de la  Justice avec 10 000 ETP en plus d''ici 2027',
+        NULL,
+        'PPG-22',
+        false,
+        'ENGAG',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '220',
+        ARRAY[]::TEXT [],
+        ARRAY['2085'],
+        'PER-015',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-139',
+        'Développer les places de travail d’intérêt général (TIG)',
+        NULL,
+        'PPG-3',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '220',
+        ARRAY[]::TEXT [],
+        ARRAY['2004'],
+        'PER-015',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-140',
+        'Accélérer la construction de places de prison',
+        NULL,
+        'PPG-3',
+        true,
+        'ENGAG',
+        false,
+        'hors_ate_centralise',
+        'BROUILLON',
+        'ZG-016',
+        '220',
+        ARRAY[]::TEXT [],
+        ARRAY['2008'],
+        'PER-015',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-141',
+        'Développer l''insertion professionnelle des personnes détenues',
+        '- 05/2024 : Territorialisation à la maille régionale',
+        'PPG-3',
+        true,
+        'ENGAG',
+        false,
+        'hors_ate_centralise',
+        'ARCHIVE',
+        NULL,
+        '220',
+        ARRAY[]::TEXT [],
+        ARRAY['2004'],
+        'PER-015',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-142',
+        'Réinsérer les mineurs délinquants',
+        NULL,
+        'PPG-3',
+        true,
+        'TODO',
+        false,
+        'hors_ate_centralise',
+        'ARCHIVE',
+        NULL,
+        '220',
+        ARRAY['150'],
+        ARRAY['2062'],
+        'PER-015',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-143',
+        'Mieux protéger et accompagner les femmes victimes de violences',
+        NULL,
+        'PPG-9',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '1007',
+        ARRAY['200', '220', '190'],
+        ARRAY['2018'],
+        'PER-010',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-144',
+        'Déployer Services Publics + pour améliorer le service rendu aux Français en associant les usagers',
+        '- 11/2025 : PPG archivée (fusion CH-145)',
+        'PPG-33',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '250',
+        ARRAY[]::TEXT [],
+        ARRAY['2052'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-145',
+        'Améliorer l''accès aux services publics et la qualité du service rendu',
+        '- 11/2025 : publication de la PPG (fusion CH-144 et CH-146)',
+        'PPG-33',
+        true,
+        NULL,
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '250',
+        ARRAY[]::TEXT [],
+        ARRAY['2052', '2002'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'eric.roux@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-146',
+        'Consolider le réseau des espaces France services',
+        '- 11/2025 : PPG archivée (fusion CH-145)',
+        'PPG-33',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '250',
+        ARRAY['190'],
+        ARRAY['2002'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-147',
+        'Améliorer la qualité de service rendu aux Français de l''étranger',
+        NULL,
+        'PPG-33',
+        false,
+        'PROGRES',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '110',
+        ARRAY['250'],
+        ARRAY['2010'],
+        'PER-013',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-148',
+        'Généraliser la "facturation électronique"',
+        NULL,
+        'PPG-34',
+        false,
+        'EMPLOI',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2030'],
+        'PER-005',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-150',
+        'Poursuivre l''unification du recouvrement social et fiscal',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-34',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '290',
+        ARRAY['120', '250'],
+        ARRAY['2060'],
+        'PER-005',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-152',
+        'Réformer les parcours et les rémunérations dans la fonction publique pour la rendre plus attractive et efficace',
+        E' - 04/2024 : création de la PPG   \n- 04/2024 : rattachement MTSS',
+        'PPG-2',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '250',
+        ARRAY[]::TEXT [],
+        ARRAY['2013'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-154',
+        'Former les cadres de la fonction publique à la transition écologique',
+        '- 06/2024 : fusion avec la PPG CH-155 "Accélérer la transformation écologique de l’Etat"',
+        'PPG-24',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '250',
+        ARRAY['190'],
+        ARRAY['2048'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-188',
+        'Améliorer l''accès aux soins dans tous les territoires',
+        '- 09/2025 : création de la PPG (fuison CH-103,CH-104,CH-105)',
+        'PPG-8',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'BROUILLON',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2037'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-155',
+        'Accélérer la transformation écologique de l’Etat',
+        E'- 05/2024 : changement intitulé : Garantir des services publics écoresponsables -> Accélérer la transformation écologique de l’État\n - 05/2024 : Territorialisation à la maille régionale',
+        'PPG-24',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY['250'],
+        ARRAY['2005'],
+        'PER-025',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-156',
+        'Généraliser le Service national universel',
+        NULL,
+        'PPG-SNU',
+        true,
+        'ENGAG',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '340',
+        ARRAY['150'],
+        ARRAY['2053'],
+        'PER-031',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-157',
+        'Favoriser l''engagement civique des jeunes',
+        NULL,
+        'PPG-SNU',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '340',
+        ARRAY[]::TEXT [],
+        ARRAY['2054'],
+        'PER-031',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'eric.roux@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-158',
+        'Préparer la sortie du cuivre',
+        '- 09/2025 : création de la PPG - 05/2026 : publication',
+        'PPG-PNU',
+        true,
+        NULL,
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2021', '2002'],
+        'PER-026',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-159',
+        'Déployer la stratégie IA dans les territoires',
+        '- 09/2025 : création de la PPG',
+        'PPG-PNU',
+        true,
+        NULL,
+        false,
+        NULL,
+        'BROUILLON',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2021'],
+        'PER-030',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-161',
+        'Adapter nos territoires au changement climatique',
+        NULL,
+        'PPG-32',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY['2023'],
+        'PER-025',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-162',
+        'Améliorer la qualité du logement en outre-mer',
+        NULL,
+        'PPG-MAR',
+        true,
+        'PROGRES',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-014',
+        '200',
+        ARRAY['190'],
+        ARRAY['2035'],
+        'PER-018',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'eric.roux@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-163',
+        'Améliorer la santé et la sécurité au travail',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-25',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2044'],
+        'PER-028',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-yves.douchez@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-165',
+        'Développer des services numériques plus proactifs',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-33',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '250',
+        ARRAY[]::TEXT [],
+        ARRAY['2092'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-166',
+        'Développer et améliorer l’accueil et la prise en charge des personnes âgées à domicile et en EHPAD',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-EHP',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2018'],
+        'PER-003',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-167',
+        'Assurer l''impact des investissements du Ségur de la Santé',
+        E' - 04/2024 : changement intitulé « Investir dans les hôpitaux » devient « Assurer l''impact des investissements du Ségur de la Santé »\n - 04/2024 : rattachement MTSS',
+        'PPG-HOS',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2037'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'mehdi.kellal@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-168',
+        'Mieux accompagner l’insertion professionnelle et sociale des jeunes majeurs issus de l''ASE',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-12',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2018'],
+        'PER-011',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-169',
+        'Permettre une intervention précoce auprès des enfants ayant un trouble du neuro-développement',
+        E' - 04/2024 : rattachement MTSS\n - 04/2024 : changement de périmètre : « Autonomie, handicap »',
+        'PPG-25',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2089'],
+        'PER-003',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-170',
+        'Poursuivre le déploiement du plan "1 000 premiers jours"',
+        '- 04/2024 : suppression de la PPG',
+        'PPG-25',
+        true,
+        'PROGRES',
+        false,
+        'hors_ate_deconcentre',
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2058', '2043', '2018'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'mehdi.kellal@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-171',
+        'Réduire le recours aux produits phytosanitaires',
+        '- 05/2024 : Territorialisation à la maille régionale',
+        'PPG-18',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        'ZG-018',
+        '130',
+        ARRAY['190'],
+        ARRAY['2082'],
+        'PER-001',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-172',
+        'Renforcer la lutte contre les séparatismes',
+        NULL,
+        'PPG-26',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'ARCHIVE',
+        NULL,
+        '200',
+        ARRAY['220'],
+        ARRAY['2083'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        false,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-173',
+        'Renforcer notre souveraineté industrielle',
+        E'- 04/2024 : passe du périmètre "Economie, industrie" au périmètre "Industrie et Énergie"\n - 05/2024 : Territorialisation à la maille régionale',
+        'PPG-SUE',
+        true,
+        'EMPLOI',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2021'],
+        'PER-026',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-174',
+        'Respecter la trajectoire de la Loi de programmation des finances publiques',
+        NULL,
+        'PPG-FIP',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2009'],
+        'PER-005',
+        ARRAY['REG', 'NAT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-175',
+        'Simplifier les démarches administratives des usagers par moments de vie',
+        '- 04/2024 : changement intitulé : "Simplifier les démarches administratives des usagers pour 10 moments de vie" devient : "Simplifier les démarches administratives des usagers par moments de vie"',
+        'PPG-33',
+        false,
+        'PROGRES',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '250',
+        ARRAY[]::TEXT [],
+        ARRAY['2052'],
+        'PER-024',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-176',
+        'Simplifier la vie des soignants à l''hôpital',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-HOS',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2037'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'mehdi.kellal@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-177',
+        'Simplifier la vie des associations',
+        '- 04/2024 : passe du périmètre "Jeunesse et Vie associative" au périmètre "Premier Ministre"',
+        'PPG-33',
+        false,
+        'TODO',
+        false,
+        NULL,
+        'ARCHIVE',
+        NULL,
+        '1009',
+        ARRAY[]::TEXT [],
+        ARRAY['2054'],
+        'PER-019',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-178',
+        'Répondre aux difficultés de recrutement et de fidélisation dans les métiers de la santé et du social',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-30',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'ARCHIVE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2018', '2037'],
+        'PER-022',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-179',
+        'Améliorer la prévention',
+        '- 09/2025 : création de la PPG (fusion CH-099,CH-101,CH-102)',
+        'PPG-25',
+        true,
+        'TODO',
+        false,
+        'hors_ate_deconcentre',
+        'BROUILLON',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2043'],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-180',
+        'Prévenir la délinquance et déployer la Force d''action républicaine',
+        '- 04/2024 : création de la PPG',
+        'PPG-26',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '1009',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-181',
+        'Simplifier la vie des entreprises',
+        E' - 04/2024 : création de la PPG  \n - 04/2024 : périmètre Economie, industrie devient Économie et Entreprises',
+        'PPG-34',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-008',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-182',
+        'Améliorer le recouvrement des amendes',
+        '- 04/2024 : création de la PPG',
+        'PPG-FIP',
+        false,
+        NULL,
+        false,
+        NULL,
+        'BROUILLON',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY['2030'],
+        'PER-005',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-183',
+        'Maîtriser les flux migratoires avec la Force aux Frontières',
+        '- 04/2024 : création de la PPG',
+        'PPG-7',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY['2093'],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-184',
+        'Déployer l''identité numérique',
+        '- 04/2024 : création de la PPG',
+        'PPG-33',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '200',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-014',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'vincent.augier@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-185',
+        'Déployer le service public de l''autonomie',
+        E' - 04/2024 : création de la PPG \n - 04/2024 : rattachement MTSS',
+        'PPG-EHP',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-003',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-186',
+        'Santé mentale des jeunes',
+        '- 04/2024 : rattachement MTSS',
+        'PPG-8',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-021',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'mehdi.kellal@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-187',
+        'Accompagner les parents et les jeunes en rupture',
+        '- 04/2024 : création de la PPG',
+        'PPG-12',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-011',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-189',
+        'Mettre en place les groupes de niveaux au collège',
+        '- 04/2024 : création de la PPG',
+        'PPG-1',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '180',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'heloise.thibault@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-190',
+        'Restaurer l''autorité à l''École de la République',
+        '- 04/2024 : création de la PPG',
+        'PPG-1',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '180',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-009',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'heloise.thibault@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-191',
+        'Garantir l''accessibilité de la culture',
+        '- 04/2024 : création de la PPG',
+        'PPG-JCU',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '140',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-006',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-192',
+        'Renforcer les synergies dans l''audiovisuel public',
+        '- 04/2024 : création de la PPG',
+        'PPG-35',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '140',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-006',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-193',
+        'Simplifier la vie des agriculteurs',
+        '- 04/2024 : création de la PPG',
+        'PPG-28',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '130',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-001',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'sandrine.brochon@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-194',
+        'Construire 30 000 Logements dans 22 territoires prioritaires',
+        '- 04/2024 : création de la PPG',
+        'PPG-LOG',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '190',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-016',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'muriel.metivet@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-195',
+        'Baisser les prélèvements obligatoires',
+        '- 04/2024 : création de la PPG (fusion de la PPG CH003 et CH-008)',
+        'PPG-FIP',
+        false,
+        NULL,
+        false,
+        NULL,
+        'SUPPRIME',
+        NULL,
+        '290',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-005',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'jean-baptiste.menguy@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-196',
+        'Garantir l''accessibilité des établissements recevant du public (ERP) essentiels ',
+        '- 09/2025 : création de la PPG - 04/2026 : publication de la PPG',
+        'PPG-QPH',
+        true,
+        'TODO',
+        false,
+        'ate',
+        'PUBLIE',
+        NULL,
+        '120',
+        ARRAY[]::TEXT [],
+        ARRAY['2074'],
+        'PER-003',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        true,
+        'antoine.danel@modernisation.gouv.fr'
+    )
+ON CONFLICT DO NOTHING;
+
+INSERT INTO
+    raw_data.metadata_chantiers (
+        "chantier_id",
+        "ch_nom",
+        "ch_descr",
+        "ch_ppg",
+        "ch_territo",
+        "engagement_short",
+        "ch_hidden_pilote",
+        "ch_saisie_ate",
+        "ch_state",
+        "zg_applicable",
+        "porteur_id_principal",
+        "porteur_ids_secondaires",
+        "porteur_ids_DAC",
+        "ch_per",
+        "maille_applicable",
+        "replicate_val_reg_to",
+        "replicate_val_nat_to",
+        "ch_cible_attendue",
+        "conseiller_mail"
+    )
+VALUES (
+        'CH-197',
+        'Chantiers prioritaires - Premier Ministre',
+        '- 06/2025 : création de la PPG',
+        'PPG-QPH',
+        true,
+        NULL,
+        false,
+        NULL,
+        'BROUILLON',
+        NULL,
+        '1009',
+        ARRAY[]::TEXT [],
+        ARRAY[]::TEXT [],
+        'PER-019',
+        ARRAY['NAT', 'REG', 'DEPT'],
+        NULL,
+        NULL,
+        false,
+        NULL
+    )
+ON CONFLICT DO NOTHING;
