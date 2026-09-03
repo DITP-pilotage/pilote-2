@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
+import { createPaginatedApiListSchema, idsFilterSchema, listQuerySchema } from './pagination'
 import { individuPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 
 export { individuPublicIdSchema } from './publicIds'
@@ -33,5 +33,7 @@ export type ListIndividusForReferentielQuery = z.infer<
   typeof listIndividusForReferentielQuerySchema
 >
 
-export const listIndividusQuerySchema = listQuerySchema
+export const listIndividusQuerySchema = listQuerySchema.extend({
+  ids: idsFilterSchema(individuPublicIdSchema, 'DEPT-84,REG-11'),
+})
 export type ListIndividusQuery = z.infer<typeof listIndividusQuerySchema>
