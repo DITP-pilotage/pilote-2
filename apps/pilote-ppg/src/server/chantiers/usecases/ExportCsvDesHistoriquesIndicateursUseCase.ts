@@ -156,12 +156,11 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
                     historiqueIndicateursPourExport.chantierAUnePropositionValeurAvancement,
                   )
                 ) {
-                  return [
-                    ...acc,
+                  acc.push(
                     presenterEnHistoriqueIndicateurExportContrat(
                       historiqueIndicateursPourExport,
                     ),
-                  ];
+                  );
                 }
                 return acc;
               },
