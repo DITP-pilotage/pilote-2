@@ -10,6 +10,7 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ExportCsvDesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCase";
+import { ecrireCsvEnStreaming } from "@/server/infrastructure/export_csv/ecrireCsvEnStreaming";
 
 export const handleExportDesIndicateurs = async (
   request: NextApiRequest,
@@ -81,8 +82,6 @@ export const handleExportDesIndicateurs = async (
     quoted_string: true,
   } satisfies Options);
 
-  stringifier.pipe(response);
-
   const chunkSize = configuration().export.csvIndicateursChunkSize;
 
   const habilitation = new Habilitation(session.habilitations);
@@ -117,17 +116,20 @@ export const handleExportDesIndicateurs = async (
     "exportCsvDesIndicateursUseCase",
   );
 
-  for await (const partialResult of exportCsvDesIndicateursUseCase.run({
-    chantierIds,
-    territoireCodes: territoireARecuperer,
-    profil: session.profil,
-    indicateurChunkSize: chunkSize,
-    jalon,
-    optionsExport,
-  })) {
-    for (const indicateurPourExport of partialResult) {
-      stringifier.write(indicateurPourExport);
+  const { profil } = session;
+
+  async function* genererLignes() {
+    for await (const partialResult of exportCsvDesIndicateursUseCase.run({
+      chantierIds,
+      territoireCodes: territoireARecuperer,
+      profil,
+      indicateurChunkSize: chunkSize,
+      jalon,
+      optionsExport,
+    })) {
+      yield* partialResult;
     }
   }
-  stringifier.end();
+
+  await ecrireCsvEnStreaming(genererLignes(), stringifier, response);
 };
