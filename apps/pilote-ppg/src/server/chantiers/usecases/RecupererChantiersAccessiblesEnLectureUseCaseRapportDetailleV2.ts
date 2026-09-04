@@ -287,8 +287,7 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
           chantierTerritoireSelectionne?.est_applicable &&
           appliquerFiltre(mailleChantier, profil)(chantierIdentite)
         ) {
-          return [
-            ...acc,
+          acc.push(
             presenterEnChantierRapportDetaille(
               chantierIdentite,
               territoires,
@@ -299,7 +298,7 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
               jalonParDefaut,
               utilisateurParId,
             ),
-          ];
+          );
         }
         return acc;
       }, [] as ChantierRapportDetailleContrat[])

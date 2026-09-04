@@ -2,7 +2,6 @@ import {
   indicateur_identite as PrismaIndicateurIdentite,
   indicateur_territoire as PrismaIndicateurTerritoire,
   indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
-  indicateur_territoire_valeur_evenement as PrismaIndicateurTerritoireValeurEvenement,
   metadata_parametrage_indicateurs as PrismaMetadataParametrageIndicateurs,
 } from "@prisma/client";
 import IndicateurRepository from "@/server/domain/indicateur/IndicateurRepository.interface";
@@ -17,7 +16,11 @@ import { comparerDates, formatDate } from "@/client/utils/date/date";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { calculerDateDernierImport } from "@/server/chantiers/domain/calculerDateDernierImport";
+import {
+  calculerDateDernierImport,
+  EvenementPourDateDernierImport,
+} from "@/server/chantiers/domain/calculerDateDernierImport";
+import { regrouperDerniersImportsParIndicateur } from "@/server/chantiers/infrastructure/regrouperDerniersImportsParIndicateur";
 
 export interface historique_valeurs {
   date: string;
@@ -65,11 +68,14 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     indicateurs: (PrismaIndicateurTerritoire & {
       indicateur_identite: PrismaIndicateurIdentite;
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
-      indicateur_territoire_valeur_evenement: PrismaIndicateurTerritoireValeurEvenement[];
+      indicateur_territoire_valeur_evenement: EvenementPourDateDernierImport[];
     })[],
     jalon: number,
     dateDerniereExecutionDatajobs: Date,
-    evenementsMailles: PrismaIndicateurTerritoireValeurEvenement[],
+    evenementsMaillesParIndicateur: Map<
+      string,
+      EvenementPourDateDernierImport[]
+    >,
     metadataIndicateurs: PrismaMetadataParametrageIndicateurs[],
     enfantsParTerritoire: Map<string, string[]>,
   ): DétailsIndicateurs {
@@ -92,9 +98,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateurRow.maille,
         dateDerniereExecutionDatajobs,
         indicateurRow.indicateur_territoire_valeur_evenement,
-        evenementsMailles.filter(
-          (evenement) => evenement.indic_id === indicateurRow.id,
-        ),
+        evenementsMaillesParIndicateur.get(indicateurRow.id) ?? [],
         metadataIndicateurCourant?.va_nat_from ?? null,
         metadataIndicateurCourant?.va_reg_from ?? null,
         enfantsParTerritoire.get(indicateurRow.territoire_code) ?? [],
@@ -195,7 +199,24 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         },
       },
       include: {
-        indicateur_territoire_valeur_evenement: true,
+        indicateur_territoire_valeur_evenement: {
+          where: {
+            type_evenement: {
+              in: [
+                EvenementValeurEnum.VALEUR_CREEE,
+                EvenementValeurEnum.VALEUR_MODIFIEE,
+              ],
+            },
+            date_creation: {
+              lt: dateDerniereExecutionDatajobs,
+            },
+          },
+          select: {
+            territoire_code: true,
+            type_evenement: true,
+            date_creation: true,
+          },
+        },
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
@@ -212,8 +233,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         where: { indic_id: { in: indicateursIds } },
       });
 
-    const evenementsMailles =
-      await this.prisma.indicateur_territoire_valeur_evenement.findMany({
+    const derniersImportsParMaille =
+      await this.prisma.indicateur_territoire_valeur_evenement.groupBy({
+        by: ["indic_id", "territoire_code", "type_evenement"],
         where: {
           indic_id: { in: indicateursIds },
           type_evenement: {
@@ -226,7 +248,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
             lt: dateDerniereExecutionDatajobs,
           },
         },
+        _max: { date_creation: true },
       });
+
+    const evenementsMaillesParIndicateur =
+      regrouperDerniersImportsParIndicateur(derniersImportsParMaille);
 
     const territoiresRegions = await this.prisma.territoire.findMany({
       where: { code: { startsWith: "REG" } },
@@ -255,7 +281,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           indicateursChantier,
           jalon,
           dateDerniereExecutionDatajobs,
-          evenementsMailles,
+          evenementsMaillesParIndicateur,
           metadataIndicateurs,
           enfantsParTerritoire,
         );

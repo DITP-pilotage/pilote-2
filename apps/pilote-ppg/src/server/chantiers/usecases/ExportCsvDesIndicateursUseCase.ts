@@ -318,14 +318,13 @@ export class ExportCsvDesIndicateursUseCase {
                     indicateursPourExport.chantierAUnePropositionValeurAvancement,
                   )
                 ) {
-                  return [
-                    ...acc,
+                  acc.push(
                     presenterEnIndicateurExportContrat(
                       indicateursPourExport,
                       profil,
                       optionsExport,
                     ),
-                  ];
+                  );
                 }
                 return acc;
               },

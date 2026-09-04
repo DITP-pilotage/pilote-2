@@ -13,6 +13,7 @@ import { recupererLesNomsDesTerritoires } from "@/server/app/RecupererLesNomsDes
 import { Territoire } from "@/server/gestion-utilisateur/domain/Territoire";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
+import { ecrireCsvEnStreaming } from "@/server/infrastructure/export_csv/ecrireCsvEnStreaming";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import {
   getPerimetreLibelle,
@@ -209,8 +210,6 @@ export const handleExportDesUtilisateurs = async (
     quoted_string: true,
   } satisfies Options);
 
-  stringifier.pipe(response);
-
   const filtresActifs = {
     territoires: optionsExport.territoires,
     perimetresMinisteriels: optionsExport.perimetresMinisteriels,
@@ -260,15 +259,16 @@ export const handleExportDesUtilisateurs = async (
       habilitation,
     });
 
-  for (const utilisateurPourExport of listeUtilisateurFiltré) {
-    stringifier.write(
-      presenterEnUtilisateurPourExportCSVContrat(
+  function* genererLignes() {
+    for (const utilisateurPourExport of listeUtilisateurFiltré) {
+      yield presenterEnUtilisateurPourExportCSVContrat(
         utilisateurPourExport,
         listeDesTerritoires,
         listeInformationsChantiersUtilisateurs,
         listePerimetresMinisteriels,
-      ),
-    );
+      );
+    }
   }
-  stringifier.end();
+
+  await ecrireCsvEnStreaming(genererLignes(), stringifier, response);
 };

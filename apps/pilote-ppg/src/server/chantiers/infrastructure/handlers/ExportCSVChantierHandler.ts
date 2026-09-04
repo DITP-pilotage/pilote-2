@@ -11,6 +11,7 @@ import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ExportCsvDesChantiersUseCase } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { ecrireCsvEnStreaming } from "@/server/infrastructure/export_csv/ecrireCsvEnStreaming";
 
 export const handleExportDesChantiers = async (
   request: NextApiRequest,
@@ -86,7 +87,6 @@ export const handleExportDesChantiers = async (
     quoted_string: true,
   } satisfies Options);
 
-  stringifier.pipe(response);
   const habilitation = new Habilitation(session.habilitations);
   const territoireCodes =
     habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -119,19 +119,21 @@ export const handleExportDesChantiers = async (
     "exportCsvDesChantiersUseCase",
   );
 
-  for await (const partialResult of exportCsvDesChantiersUseCase.run({
-    chantierIds,
-    territoireCodes: territoireARecuperer,
-    profil: session.profil,
-    chantierChunkSize: chunkSize,
-    jalonSelectionne,
-    jalonParDefaut,
-    optionsExport,
-  })) {
-    for (const chantierPourExport of partialResult) {
-      stringifier.write(chantierPourExport);
+  const { profil } = session;
+
+  async function* genererLignes() {
+    for await (const partialResult of exportCsvDesChantiersUseCase.run({
+      chantierIds,
+      territoireCodes: territoireARecuperer,
+      profil,
+      chantierChunkSize: chunkSize,
+      jalonSelectionne,
+      jalonParDefaut,
+      optionsExport,
+    })) {
+      yield* partialResult;
     }
   }
 
-  stringifier.end();
+  await ecrireCsvEnStreaming(genererLignes(), stringifier, response);
 };
