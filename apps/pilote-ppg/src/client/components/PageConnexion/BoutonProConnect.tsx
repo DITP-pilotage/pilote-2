@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/connect/connect.min.css";
 import { FunctionComponent } from "react";
 
 /**
