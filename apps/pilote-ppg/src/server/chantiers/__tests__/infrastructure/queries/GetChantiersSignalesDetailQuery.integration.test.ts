@@ -2,13 +2,16 @@ import { createIntegrationTest } from "@/server/infrastructure/test/createIntegr
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { GetChantiersSignalesDetailQuery } from "@/server/chantiers/infrastructure/queries/GetChantiersSignalesDetailQuery";
+import { ChantiersSignalesDataFetcher } from "@/server/chantiers/infrastructure/queries/ChantiersSignalesDataFetcher";
 
 describe("GetChantiersSignalesDetailQuery", () => {
   let query: GetChantiersSignalesDetailQuery;
 
   beforeEach(() => {
     query = new GetChantiersSignalesDetailQuery({
-      prisma: new PrismaPilote(),
+      chantiersSignalesDataFetcher: new ChantiersSignalesDataFetcher({
+        prisma: new PrismaPilote(),
+      }),
     });
   });
 

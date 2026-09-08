@@ -49,6 +49,7 @@ import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "./infra
 import { GetRepartitionMeteoChantiersQuery } from "./infrastructure/queries/GetRepartitionMeteoChantiersQuery";
 import { GetChantiersSignalesQuery } from "./infrastructure/queries/GetChantiersSignalesQuery";
 import { GetChantiersSignalesDetailQuery } from "./infrastructure/queries/GetChantiersSignalesDetailQuery";
+import { ChantiersSignalesDataFetcher } from "./infrastructure/queries/ChantiersSignalesDataFetcher";
 import { GetStatistiquesAvancementChantiersQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 import { GetStatistiquesAvancementChantiersParChantierQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
 import { RecupererEvolutionValeursAvancementTerritoiresQuery } from "./infrastructure/queries/RecupererEvolutionValeursAvancementTerritoiresQuery";
@@ -118,6 +119,7 @@ type ChantierOwnCradle = ChantierExports & {
   getStatistiquesAvancementChantiersParChantierQuery: GetStatistiquesAvancementChantiersParChantierQuery;
   getRepartitionMeteoChantiersQuery: GetRepartitionMeteoChantiersQuery;
   getChantiersSignalesQuery: GetChantiersSignalesQuery;
+  chantiersSignalesDataFetcher: ChantiersSignalesDataFetcher;
   recupererEvolutionValeursAvancementTerritoiresQuery: RecupererEvolutionValeursAvancementTerritoiresQuery;
   recupererEvolutionTauxAvancementTerritoiresQuery: RecupererEvolutionTauxAvancementTerritoiresQuery;
   getAvancementChantierQuery: GetAvancementChantierQuery;
@@ -242,6 +244,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getRepartitionMeteoChantiersQuery: asModuleClass(
         GetRepartitionMeteoChantiersQuery,
       ),
+      chantiersSignalesDataFetcher: asModuleClass(ChantiersSignalesDataFetcher),
       getChantiersSignalesQuery: asModuleClass(GetChantiersSignalesQuery),
       getChantiersSignalesDetailQuery: asModuleClass(
         GetChantiersSignalesDetailQuery,

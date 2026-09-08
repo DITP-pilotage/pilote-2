@@ -3,13 +3,16 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { GetChantiersSignalesQuery } from "@/server/chantiers/infrastructure/queries/GetChantiersSignalesQuery";
+import { ChantiersSignalesDataFetcher } from "@/server/chantiers/infrastructure/queries/ChantiersSignalesDataFetcher";
 
 describe("GetChantiersSignalesQuery", () => {
   let query: GetChantiersSignalesQuery;
 
   beforeEach(() => {
     query = new GetChantiersSignalesQuery({
-      prisma: new PrismaPilote(),
+      chantiersSignalesDataFetcher: new ChantiersSignalesDataFetcher({
+        prisma: new PrismaPilote(),
+      }),
     });
   });
 
