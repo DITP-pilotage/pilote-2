@@ -1,7 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
 
+import { cheminDeRetourSur } from "@/server/authentification/domain/cheminDeRetour";
 import logger from "./server/infrastructure/Logger";
 
 function generateNonce(): string {
@@ -31,38 +31,16 @@ function generateNonce(): string {
   return nonce;
 }
 
-async function validateKeycloakToken(token: string): Promise<boolean> {
-  try {
-    const params = new URLSearchParams({
-      client_id: process.env.KEYCLOAK_CLIENT_ID || "",
-      client_secret: process.env.KEYCLOAK_CLIENT_SECRET || "",
-      token,
-    });
-
-    const response = await axios.post(
-      `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token/introspect`,
-      params.toString(),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        validateStatus: () => true,
-      },
-    );
-
-    if (response.status < 200 || response.status >= 300) {
-      return false;
-    }
-
-    return response.data?.active === true;
-  } catch (error) {
-    logger.error(
-      { categorie: "auth", source: "proxy.validateKeycloakToken" },
-      `Erreur validation token Keycloak : ${(error as Error).message}`,
-    );
-    return false;
+const urlDeConnexion = (request: NextRequest): URL => {
+  const url = new URL("/connexion", request.url);
+  const chemin = cheminDeRetourSur({
+    chemin: `${request.nextUrl.pathname}${request.nextUrl.search}`,
+  });
+  if (chemin && chemin !== "/") {
+    url.searchParams.set("callbackUrl", chemin);
   }
-}
+  return url;
+};
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -120,6 +98,7 @@ export async function proxy(request: NextRequest) {
   const estRoutePublique =
     pathname.startsWith("/api/open-api") ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/connexion") ||
     pathname.startsWith("/api/test") ||
     pathname.startsWith("/centre-aide-pilote-2") ||
     pathname.startsWith("/centreaide") ||
@@ -130,25 +109,36 @@ export async function proxy(request: NextRequest) {
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {
+    const useSecureCookies =
+      process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
+
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NEXTAUTH_URL?.startsWith("https://") ?? false,
+      secureCookie: useSecureCookies,
     });
 
     if (!token) {
-      return NextResponse.redirect(new URL("/", request.url), { status: 303 });
+      return NextResponse.redirect(urlDeConnexion(request), { status: 303 });
     }
 
     if (!process.env.DEV_PASSWORD) {
-      const isValidToken = await validateKeycloakToken(
-        token?.accessToken as string,
-      );
+      const email = (token.user as { email?: string } | undefined)?.email;
+      const { getContainer } = await import("@/server/dependances");
+      const utilisateurRepository =
+        getContainer("gestionUtilisateur").cradle.utilisateurRepository;
+      const statut = email
+        ? await utilisateurRepository.statutCompte(email)
+        : "inconnu";
 
-      if (!isValidToken) {
-        // Créer une redirection vers la racine
+      if (statut !== "actif") {
+        logger.info(
+          { categorie: "auth", source: "proxy", statut },
+          "Session invalidée : compte non actif",
+        );
+
         const redirectResponse = NextResponse.redirect(
-          new URL("/", request.url),
+          urlDeConnexion(request),
           { status: 303 },
         );
 
@@ -169,7 +159,13 @@ export async function proxy(request: NextRequest) {
               expires: new Date(0),
               path: "/",
               httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
+              // Doit matcher les attributs de la pose : un cookie `__Secure-`
+              // n'est ni posé ni effacé sans l'attribut Secure, et NextAuth le
+              // nomme ainsi dès que NEXTAUTH_URL est en https. Sans ça le
+              // navigateur ignore le clear et on part en boucle de
+              // redirections. Ce chemin est emprunté à chaque désactivation de
+              // compte, donc bien plus souvent qu'avec l'introspection.
+              secure: useSecureCookies,
               sameSite: "lax",
             });
           }
