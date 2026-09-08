@@ -1,5 +1,5 @@
+import { asSchema } from 'ai'
 import { describe, expect, it, vi } from 'vitest'
-import { type z } from 'zod'
 
 import { buildUrl, deriveTool, type WhitelistEntry } from '@/assistant/tools/deriveTool'
 import { WHITELIST } from '@/assistant/tools/whitelist'
@@ -38,8 +38,34 @@ describe('buildUrl', () => {
   })
 })
 
+// Rejoue la validation que le SDK applique avant `execute`.
+const validated = async (tool: { inputSchema: unknown }, value: unknown): Promise<never> => {
+  const result = await asSchema(tool.inputSchema as Parameters<typeof asSchema>[0]).validate!(value)
+  if (!result.success) throw result.error
+  return result.value as never
+}
+
 describe('deriveTool', () => {
   const entry = WHITELIST.find((candidat) => candidat.name === 'get_indicateur')!
+
+  it("expose au modèle le schéma d'ENTRÉE de la route, avant transformation", async () => {
+    const valeursEntry = WHITELIST.find((candidat) => candidat.name === 'get_indicateur_valeurs')!
+    const tool = deriveTool(valeursEntry, () => Promise.resolve(new Response('{}')))
+
+    const schema = (await asSchema(tool.inputSchema as Parameters<typeof asSchema>[0])
+      .jsonSchema) as {
+      properties: Record<string, { type?: string }>
+    }
+
+    expect(schema.properties.individus?.type).toBe('string')
+  })
+
+  it("refuse ce que la route refuserait, même si l'entrée est bien formée en JSON", async () => {
+    const valeursEntry = WHITELIST.find((candidat) => candidat.name === 'get_indicateur_valeurs')!
+    const tool = deriveTool(valeursEntry, () => Promise.resolve(new Response('{}')))
+
+    await expect(validated(tool, { id: 'IND-046', individus: ['REG-01'] })).rejects.toThrow()
+  })
 
   it('passe par le requêteur injecté, jamais par une app importée', async () => {
     const fetcher = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ id: 'IND-42' }))))
@@ -59,11 +85,7 @@ describe('deriveTool', () => {
     const fetcher = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ items: [] }))))
     const tool = deriveTool(listEntry, fetcher)
 
-    const input = (tool.inputSchema as z.ZodType).parse({
-      cursor: '',
-      recherche: '',
-      pageSize: 100,
-    })
+    const input = await validated(tool, { cursor: '', recherche: '', pageSize: 100 })
     await tool.execute?.(input, { toolCallId: 't', messages: [], context: undefined })
 
     expect(fetcher).toHaveBeenCalledWith('/indicateurs?pageSize=100')
@@ -74,10 +96,7 @@ describe('deriveTool', () => {
     const fetcher = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ items: [] }))))
     const tool = deriveTool(valeursEntry, fetcher)
 
-    const input = (tool.inputSchema as z.ZodType).parse({
-      id: 'IND-046',
-      individus: 'REG-01,REG-02',
-    })
+    const input = await validated(tool, { id: 'IND-046', individus: 'REG-01,REG-02' })
     await tool.execute?.(input, { toolCallId: 't', messages: [], context: undefined })
 
     expect(fetcher).toHaveBeenCalledWith('/indicateurs/IND-046/valeurs?individus=REG-01%2CREG-02')

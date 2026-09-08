@@ -4,8 +4,6 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
-  InvalidToolInputError,
-  NoSuchToolError,
   stepCountIs,
   streamText,
   type UIMessage,
@@ -42,11 +40,21 @@ const inContext = <T>(principal: Principal, fn: () => Promise<T>): Promise<T> =>
  * Le SDK masque toute erreur en « An error occurred. » vers le client. Une entrée d'outil
  * refusée est la seule qu'on rend telle quelle : c'est exactement ce que le modèle reçoit
  * pour corriger son appel, et c'est ce que l'utilisateur veut lire dans le panneau.
+ *
+ * Elle arrive déjà sérialisée en chaîne (`getErrorMessage` dans le flux), jamais en instance :
+ * on la reconnaît à son préfixe, pas à sa classe.
  */
-const describeError = (error: unknown): string =>
-  InvalidToolInputError.isInstance(error) || NoSuchToolError.isInstance(error)
-    ? error.message
-    : 'Une erreur est survenue.'
+const INPUT_ERROR = /^AI_(?:InvalidToolInput|NoSuchTool)Error/u
+
+const describeError = (error: unknown): string => {
+  const text =
+    typeof error === 'string'
+      ? error
+      : error instanceof Error
+        ? `${error.name}: ${error.message}`
+        : ''
+  return INPUT_ERROR.test(text) ? text : 'Une erreur est survenue.'
+}
 
 export const streamTurn = async ({
   surface,
