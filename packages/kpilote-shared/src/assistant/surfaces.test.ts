@@ -7,7 +7,11 @@ const conversationId = '018f3a2b-0000-7000-8000-000000000000'
 describe('chatRequestSchema', () => {
   it('accepte une requête ask-libre', () => {
     expect(
-      chatRequestSchema.safeParse({ surface: 'ask-libre', conversationId, messages: [] }).success,
+      chatRequestSchema.safeParse({
+        surface: 'ask-libre',
+        conversationId,
+        message: { role: 'user', parts: [] },
+      }).success,
     ).toBe(true)
   })
 
@@ -16,7 +20,7 @@ describe('chatRequestSchema', () => {
       chatRequestSchema.safeParse({
         surface: 'ask-libre',
         conversationId,
-        messages: [],
+        message: { role: 'user', parts: [] },
         model: 'openweight-medium',
       }).success,
     ).toBe(true)
@@ -27,7 +31,7 @@ describe('chatRequestSchema', () => {
       chatRequestSchema.safeParse({
         surface: 'ask-libre',
         conversationId,
-        messages: [],
+        message: { role: 'user', parts: [] },
         model: 'gpt-4',
       }).success,
     ).toBe(false)
@@ -35,14 +39,21 @@ describe('chatRequestSchema', () => {
 
   it('rejette une surface non encore servie par le moteur', () => {
     expect(
-      chatRequestSchema.safeParse({ surface: 'ask-entite', conversationId, messages: [] }).success,
+      chatRequestSchema.safeParse({
+        surface: 'ask-entite',
+        conversationId,
+        message: { role: 'user', parts: [] },
+      }).success,
     ).toBe(false)
   })
 
   it("rejette un conversationId qui n'est pas un uuid", () => {
     expect(
-      chatRequestSchema.safeParse({ surface: 'ask-libre', conversationId: 'x', messages: [] })
-        .success,
+      chatRequestSchema.safeParse({
+        surface: 'ask-libre',
+        conversationId: 'x',
+        message: { role: 'user', parts: [] },
+      }).success,
     ).toBe(false)
   })
 })

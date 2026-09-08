@@ -1,5 +1,6 @@
 import { type streamText } from 'ai'
 
+import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
 const MAX_TITLE_LENGTH = 80
@@ -39,10 +40,21 @@ export const recordConversation = async ({
   messages: ReadonlyArray<unknown>
 }): Promise<void> => {
   const blob = toPlainJson(messages)
-  await db().assistantConversation.upsert({
-    where: { id },
-    create: { id, principalId, surface, titre: deriveTitle(messages), messages: blob },
-    update: { messages: blob },
+  // La mise à jour est cloisonnée au principal : un `upsert` sur `id` seul laisserait un
+  // identifiant deviné écraser la conversation de quelqu'un d'autre. Zéro ligne touchée
+  // signifie premier tour — sauf si l'id est déjà pris par un autre, auquel cas la
+  // conversation est introuvable, comme en lecture.
+  const { count } = await db().assistantConversation.updateMany({
+    where: { id, principalId },
+    data: { messages: blob },
+  })
+  if (count > 0) return
+
+  const taken = await db().assistantConversation.findUnique({ where: { id }, select: { id: true } })
+  if (taken) throw new NotFoundError('Conversation introuvable', { id })
+
+  await db().assistantConversation.create({
+    data: { id, principalId, surface, titre: deriveTitle(messages), messages: blob },
   })
 }
 

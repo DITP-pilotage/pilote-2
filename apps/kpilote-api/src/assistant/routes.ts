@@ -4,13 +4,14 @@ import { chatRequestSchema } from '@pilote/kpilote-shared/assistant/surfaces'
 import { validateUIMessages } from 'ai'
 
 import { rateResponse } from '@/assistant/commands/rateResponse'
+import { getConversationMessages } from '@/assistant/queries/getConversationMessages'
 import { streamTurn } from '@/assistant/runtime/AssistantRuntime'
 import { DEFAULT_MODEL } from '@/assistant/runtime/model'
 import { createFetcher, type Fetcher } from '@/assistant/tools/fetcher'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { requireCurrentPrincipalId, requirePrincipal } from '@/framework/auth/userContext'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { erreur400 } from '@/framework/openapi/responses'
+import { erreur400, erreur404 } from '@/framework/openapi/responses'
 
 const ChatBodySchema = chatRequestSchema.openapi('AssistantChatBody')
 
@@ -20,7 +21,7 @@ const chatRoute = createRoute({
   tags: ['Assistant'],
   summary: "Ouvrir un tour de conversation avec l'assistant",
   description:
-    "Streame la réponse de l'assistant au format UIMessage du SDK `ai` (flux SSE). La `surface` est déclarée par l'appelant et détermine la couche de prompt et les outils autorisés : le moteur ne déduit jamais l'intention du texte. Les sources consultées sont émises en fin de tour dans une part `data-sources`, dérivée des identifiants publics réellement renvoyés par les outils et refiltrée par les habilitations de l'appelant. Le paramètre `model` permet de rejouer un même échange sur un autre modèle Albert.",
+    "Streame la réponse de l'assistant au format UIMessage du SDK `ai` (flux SSE). La `surface` est déclarée par l'appelant et détermine la couche de prompt et les outils autorisés : le moteur ne déduit jamais l'intention du texte. Le serveur possède l'historique : il recharge la conversation par son identifiant et le principal appelant, y ajoute `message`, et rend 404 (`ENTITY_NOT_FOUND`) si la conversation appartient à quelqu'un d'autre. Les sources consultées sont émises en fin de tour dans une part `data-sources`, dérivée des identifiants publics réellement renvoyés par les outils et refiltrée par les habilitations de l'appelant. Le paramètre `model` permet de rejouer un même échange sur un autre modèle Albert.",
   middleware: [requireAuthentication],
   request: {
     body: { content: { 'application/json': { schema: ChatBodySchema } }, required: true },
@@ -31,6 +32,7 @@ const chatRoute = createRoute({
       description: 'Flux de la réponse',
     },
     400: erreur400,
+    404: erreur404,
   },
 })
 
@@ -54,14 +56,18 @@ export const assistantRoutes = createOpenApiHono()
 assistantRoutes.openapi(chatRoute, async (context) => {
   const body = context.req.valid('json')
   const token = (context.req.header('authorization') ?? '').replace(/^Bearer\s+/iu, '')
-  const messages = await validateUIMessages({ messages: body.messages })
+  // Capturés MAINTENANT : les callbacks du flux tournent après le dénouement des middlewares.
+  const principal = requirePrincipal()
+  const principalId = requireCurrentPrincipalId()
+
+  const history = await getConversationMessages({ id: body.conversationId, principalId })
+  const messages = await validateUIMessages({ messages: [...history, body.message] })
 
   return streamTurn({
     surface: body.surface,
     conversationId: body.conversationId,
-    // Capturés MAINTENANT : les callbacks du flux tournent après le dénouement des middlewares.
-    principal: requirePrincipal(),
-    principalId: requireCurrentPrincipalId(),
+    principal,
+    principalId,
     messages,
     model: body.model ?? DEFAULT_MODEL,
     fetcher: await fetcherFromApp(token),

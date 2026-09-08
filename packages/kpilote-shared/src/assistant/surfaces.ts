@@ -57,7 +57,10 @@ export const chatRequestSchema = z.discriminatedUnion('surface', [
   z.object({
     surface: z.literal('ask-libre'),
     conversationId: z.uuid().describe('Identifiant de la conversation, généré par le client.'),
-    messages: z.array(z.unknown()).describe('Historique au format UIMessage du SDK ai.'),
+    // Le serveur possède l'historique : il le recharge par (conversationId, principal) et
+    // n'accepte que le nouveau message. Un client ne peut donc ni forger un historique, ni
+    // poursuivre la conversation d'un autre.
+    message: z.unknown().describe('Le nouveau message utilisateur, au format UIMessage du SDK ai.'),
     model: z
       .enum(MODELS)
       .optional()

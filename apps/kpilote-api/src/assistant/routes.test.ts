@@ -26,7 +26,7 @@ const body = (override: Record<string, unknown> = {}) =>
   JSON.stringify({
     surface: 'ask-libre',
     conversationId,
-    messages: [{ id: 'm1', role: 'user', parts: [{ type: 'text', text: 'Bonjour' }] }],
+    message: { id: 'm1', role: 'user', parts: [{ type: 'text', text: 'Bonjour' }] },
     ...override,
   })
 
@@ -69,6 +69,25 @@ describe.concurrent('POST /assistant/chat', () => {
     integrationTest(async () => {
       const rawKey = await givenApiKey()
       expect((await callChat(rawKey, body({ model: 'gpt-4' }))).status).toBe(400)
+    }),
+  )
+
+  it(
+    "renvoie 404 sur la conversation d'un autre principal",
+    integrationTest(async () => {
+      const owner = await fixtures.apiKey()
+      const foreign = '018f3a2b-0000-7000-8000-0000000000cc'
+      await db().assistantConversation.create({
+        data: {
+          id: foreign,
+          principalId: owner.id,
+          surface: 'ask-libre',
+          titre: 'T',
+          messages: [],
+        },
+      })
+      const rawKey = await givenApiKey()
+      expect((await callChat(rawKey, body({ conversationId: foreign }))).status).toBe(404)
     }),
   )
 })

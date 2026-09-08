@@ -194,7 +194,7 @@ export const chatRequestSchema = z.discriminatedUnion('surface', [
   z.object({
     surface: z.literal('ask-libre'),
     conversationId: z.uuid(),
-    messages: z.array(z.unknown()),
+    message: z.unknown(), // le nouveau message seulement : l'historique est au serveur
     modele: z.enum(MODELES).optional(),
   }),
 ])
@@ -394,7 +394,12 @@ Deux tables, deux usages — c'est l'ADR 0008 de ppg, et son raisonnement tient 
 
 **`AssistantConversation`** — `id` (uuid), `utilisateurId`, `titre`, `surface`, `messages` (JSONB),
 `contexte` (JSONB nullable), `createdAt`, `updatedAt`. Le blob complet des `KpiloteUIMessage[]` est
-réécrit en upsert à chaque tour. Index sur `(utilisateurId, updatedAt DESC)` et sur `updatedAt`
+réécrit à chaque tour, **cloisonné au principal** : la mise à jour filtre sur
+`(id, utilisateurId)`, et la conversation d'un autre est introuvable, en lecture comme en
+écriture. Le serveur possède l'historique — le client n'envoie que le nouveau message, le
+moteur recharge le reste par `(conversationId, principal)`. Un client ne peut donc ni forger
+un historique ni poursuivre la conversation d'un autre, et la reprise (sous-projet 3) n'aura
+pas à changer le contrat. Index sur `(utilisateurId, updatedAt DESC)` et sur `updatedAt`
 pour la purge. Rétention 14 jours.
 
 Les `parts` sont polymorphes et définies par le SDK : une table normalisée par message ne servirait
