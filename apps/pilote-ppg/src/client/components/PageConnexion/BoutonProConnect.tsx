@@ -1,4 +1,6 @@
-import { FunctionComponent } from "react";
+type BoutonProConnectProps = {
+  onClick: () => void;
+};
 
 /**
  * Bouton officiel ProConnect.
@@ -11,9 +13,7 @@ import { FunctionComponent } from "react";
  * Source : https://github.com/proconnect-gouv/proconnect-documentation
  *          doc_fs/bouton_proconnect.md
  */
-export const BoutonProConnect: FunctionComponent<{ onClick: () => void }> = ({
-  onClick,
-}) => (
+export const BoutonProConnect = ({ onClick }: BoutonProConnectProps) => (
   <div className="fr-connect-group text-center">
     <button
       className="proconnect-button fr-connect"

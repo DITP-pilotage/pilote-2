@@ -1,6 +1,5 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { FunctionComponent } from "react";
 import { z } from "zod";
 import { useEnv } from "@/client/hooks/useEnv";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -27,7 +26,7 @@ const parametresConnexionSchema = z.object({
   error: parametreSchema,
 });
 
-export const PageConnexion: FunctionComponent = () => {
+export const PageConnexion = () => {
   const { query } = useRouter();
   const ffProConnect = useEnv("NEXT_PUBLIC_FF_PROCONNECT");
 

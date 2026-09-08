@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { GetServerSideProps } from "next";
-import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { PageConnexion } from "@/client/components/PageConnexion/PageConnexion";
 
@@ -14,7 +13,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return { props: {} };
 };
 
-const NextPageConnexion: FunctionComponent = () => (
+const NextPageConnexion = () => (
   <>
     <Head>
       <title>Connexion - PILOTE</title>
