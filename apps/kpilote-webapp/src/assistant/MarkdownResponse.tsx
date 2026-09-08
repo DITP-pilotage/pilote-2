@@ -4,6 +4,7 @@ import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 import { cleanPseudoCalls } from './cleanPseudoCalls'
+import { flattenLatex } from './flattenLatex'
 
 const remarkPlugins = [remarkGfm]
 
@@ -60,7 +61,7 @@ const COMPONENTS: Components = {
 }
 
 export const MarkdownResponse = memo(function MarkdownResponse({ text }: { text: string }) {
-  const cleaned = cleanPseudoCalls(text)
+  const cleaned = flattenLatex(cleanPseudoCalls(text))
   if (cleaned.length === 0) return null
 
   return (
