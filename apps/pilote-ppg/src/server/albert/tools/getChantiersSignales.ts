@@ -167,16 +167,16 @@ Un seul territoire par appel, pas de sous-territoires.`,
           };
         }
 
-        const filteredChantierIds = input.chantier_ids?.filter((id) =>
+        const chantierIdsFiltrants =
+          input.chantier_ids && input.chantier_ids.length > 0
+            ? input.chantier_ids
+            : undefined;
+
+        const filteredChantierIds = chantierIdsFiltrants?.filter((id) =>
           chantiersAccessibles.includes(id),
         );
 
-        if (
-          filteredChantierIds &&
-          filteredChantierIds.length === 0 &&
-          input.chantier_ids &&
-          input.chantier_ids.length > 0
-        ) {
+        if (filteredChantierIds && filteredChantierIds.length === 0) {
           return {
             resultats: [],
             _output_instructions:

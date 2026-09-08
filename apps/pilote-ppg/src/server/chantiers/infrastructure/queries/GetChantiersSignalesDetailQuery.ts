@@ -35,20 +35,21 @@ export class GetChantiersSignalesDetailQuery {
 
     const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);
 
-    const pvaIds = await this.résoudrePvaIds(
-      params.typesAlerte,
-      maille,
-      chantierTerritoires,
-      params.territoireCode,
-    );
-
-    const { chantiersAvecDept, chantiersAvecTaux } =
-      await this.résoudreAbsenceTauxDepartementalSets(
-        params.typesAlerte,
-        maille,
-        chantierTerritoires,
-        params.jalon,
-      );
+    const [pvaIds, { chantiersAvecDept, chantiersAvecTaux }] =
+      await Promise.all([
+        this.résoudrePvaIds(
+          params.typesAlerte,
+          maille,
+          chantierTerritoires,
+          params.territoireCode,
+        ),
+        this.résoudreAbsenceTauxDepartementalSets(
+          params.typesAlerte,
+          maille,
+          chantierTerritoires,
+          params.jalon,
+        ),
+      ]);
 
     return this.construireResultats(
       chantierTerritoires,
@@ -132,7 +133,7 @@ export class GetChantiersSignalesDetailQuery {
       resultats.push({
         id: chantierTerritoire.id,
         nom: `${chantierTerritoire.id} — ${chantierTerritoire.chantier_identite.nom}`,
-        meteo: chantierTerritoire.meteo,
+        meteo: chantierTerritoire.meteo ?? "NON_RENSEIGNEE",
         ecart,
         typesAlerte: typesAlerteMatches,
       });

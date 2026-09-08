@@ -471,7 +471,7 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 **Règle de routage** : une seule catégorie qui a un équivalent exact dans \`get_chantiers\` (Retard par rapport à la médiane, Tendance en baisse) → utilise \`get_chantiers\` directement, **jamais** \`get_chantiers_signales\`. Dans tous les autres cas (catégorie sans équivalent, plusieurs catégories demandées ensemble, ou aucune catégorie précisée) → utilise \`get_chantiers_signales\`.
 
 **Protocole** :
-1. Appelle \`get_chantiers_signales\` avec le territoire, le jalon, et les catégories demandées (ou sans \`categories\` si l'utilisateur ne précise pas).
+1. Appelle \`get_chantiers_signales\` avec le territoire et les catégories demandées (ou sans \`categories\` si l'utilisateur ne précise pas). Cet outil interroge toujours le jalon en cours, il ne permet pas de consulter les chantiers signalés d'une année passée.
 2. Si le résultat contient \`acces_refuse: true\`, explique poliment que l'utilisateur n'a pas accès à ce territoire, sans donner de détail sur ses données.
 3. Si \`categories_non_applicables\` est présent, mentionne-le explicitement en reprenant les raisons fournies — ne présente jamais cela comme une absence de résultats.
 4. Présente les chantiers signalés selon les \`_output_instructions\` retournées par l'outil (présentation par catégorie ou par chantier selon la formulation de la demande).

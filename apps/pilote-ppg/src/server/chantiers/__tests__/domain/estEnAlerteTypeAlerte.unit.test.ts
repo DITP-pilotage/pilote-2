@@ -187,7 +187,9 @@ describe("estEnAlerteTypeAlerte", () => {
   describe("estEnAlerteMétéoNonRenseignée", () => {
     test("en alerte quand la météo est absente en base (null)", () => {
       // Given
-      const ctx = buildCtx({ chantierTerritoire: buildChantierTerritoire({ meteo: null }) });
+      const ctx = buildCtx({
+        chantierTerritoire: buildChantierTerritoire({ meteo: null }),
+      });
 
       // When
       const résultat = estEnAlerteTypeAlerte(
@@ -222,7 +224,9 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "DEPT",
         pvaIds: new Set(),
-        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 1 }),
+        chantierTerritoire: buildChantierTerritoire({
+          nombre_propositions_valeur_actuelle: 1,
+        }),
       });
 
       // When
@@ -240,7 +244,9 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "DEPT",
         pvaIds: new Set(),
-        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
+        chantierTerritoire: buildChantierTerritoire({
+          nombre_propositions_valeur_actuelle: 0,
+        }),
       });
 
       // When
@@ -258,7 +264,9 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "NAT",
         pvaIds: new Set(["CH-001"]),
-        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
+        chantierTerritoire: buildChantierTerritoire({
+          nombre_propositions_valeur_actuelle: 0,
+        }),
       });
 
       // When
@@ -276,7 +284,9 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "NAT",
         pvaIds: new Set(),
-        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
+        chantierTerritoire: buildChantierTerritoire({
+          nombre_propositions_valeur_actuelle: 0,
+        }),
       });
 
       // When
