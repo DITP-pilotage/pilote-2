@@ -1,6 +1,7 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
+import { z } from "zod";
 import { useEnv } from "@/client/hooks/useEnv";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import Titre from "@/components/_commons/Titre/Titre";
@@ -9,19 +10,32 @@ import { messageDeConnexion } from "./messagesConnexion";
 
 const ADRESSE_ASSISTANCE = "pilote.ditp@modernisation.gouv.fr";
 
-const premierParametre = (
-  valeur: string | string[] | undefined,
-): string | null =>
-  Array.isArray(valeur) ? (valeur[0] ?? null) : (valeur ?? null);
+/**
+ * Next répète un paramètre d'URL sous forme de tableau. On ne garde que la
+ * première valeur, et rien du tout si le paramètre est absent.
+ */
+const parametreSchema = z
+  .union([z.string(), z.array(z.string())])
+  .optional()
+  .transform((valeur) =>
+    Array.isArray(valeur) ? (valeur[0] ?? null) : (valeur ?? null),
+  );
+
+const parametresConnexionSchema = z.object({
+  callbackUrl: parametreSchema,
+  motif: parametreSchema,
+  error: parametreSchema,
+});
 
 export const PageConnexion: FunctionComponent = () => {
   const { query } = useRouter();
   const ffProConnect = useEnv("NEXT_PUBLIC_FF_PROCONNECT");
 
-  const callbackUrl = premierParametre(query.callbackUrl) ?? undefined;
+  const parametres = parametresConnexionSchema.parse(query);
+  const callbackUrl = parametres.callbackUrl ?? undefined;
   const message = messageDeConnexion({
-    motif: premierParametre(query.motif),
-    error: premierParametre(query.error),
+    motif: parametres.motif,
+    error: parametres.error,
   });
 
   return (
