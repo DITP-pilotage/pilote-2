@@ -34,7 +34,7 @@ test.describe("Écran de choix du mode de connexion", () => {
 
     await expect(page.locator(".fr-alert--error")).toContainText("désactivé");
     await expect(
-      page.getByRole("link", { name: "pilote@modernisation.gouv.fr" }),
+      page.getByRole("link", { name: "pilote.ditp@modernisation.gouv.fr" }),
     ).toBeVisible();
     await expect(
       page.getByRole("button", {

@@ -7,7 +7,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonProConnect } from "./BoutonProConnect";
 import { messageDeConnexion } from "./messagesConnexion";
 
-const ADRESSE_ASSISTANCE = "pilote@modernisation.gouv.fr";
+const ADRESSE_ASSISTANCE = "pilote.ditp@modernisation.gouv.fr";
 
 const premierParametre = (
   valeur: string | string[] | undefined,
