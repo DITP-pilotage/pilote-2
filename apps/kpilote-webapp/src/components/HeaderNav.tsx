@@ -25,6 +25,12 @@ export function HeaderNav({ auth }: { auth: Auth }) {
   // Requête rendue à la palette au retour depuis l'assistant ; effacée à sa fermeture
   // pour qu'un ⌘K ordinaire reparte à vide.
   const [paletteQuery, setPaletteQuery] = useState('')
+
+  const backToPalette = (question: string) => {
+    setAssistant(null)
+    setPaletteQuery(question)
+    setPaletteOpen(true)
+  }
   const [assistant, setAssistant] = useState<{ conversationId: string; question: string } | null>(
     null,
   )
@@ -91,6 +97,9 @@ export function HeaderNav({ auth }: { auth: Auth }) {
         <Modale
           open
           onClose={() => setAssistant(null)}
+          // `Échap` remonte d'un écran, comme dans la palette : l'assistant est une étape
+          // du parcours ⌘K, pas une fenêtre à part. La croix ferme tout.
+          onEscape={() => backToPalette(assistant.question)}
           titre="Assistant kpilote"
           description="Les réponses proviennent de vos données kpilote. Vérifiez-les avant de les diffuser."
           size="lg"
@@ -101,11 +110,7 @@ export function HeaderNav({ auth }: { auth: Auth }) {
             key={assistant.conversationId}
             conversationId={assistant.conversationId}
             initialQuestion={assistant.question}
-            onBack={() => {
-              setAssistant(null)
-              setPaletteQuery(assistant.question)
-              setPaletteOpen(true)
-            }}
+            onBack={() => backToPalette(assistant.question)}
           />
         </Modale>
       ) : null}
