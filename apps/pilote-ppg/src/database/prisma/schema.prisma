@@ -830,6 +830,7 @@ model utilisateur {
   date_deuxieme_relance_desactivation    DateTime?
   date_desactivation_programee           DateTime?
   date_derniere_connexion                DateTime                                 @default(now())
+  dernier_provider_connexion             String?
   rapports_hebdomadaires                 rapport_hebdomadaire_coordinateur[]
   rapports_propositions_avancement       rapport_propositions_avancement[]
   llm_calls                              llm_calls[]

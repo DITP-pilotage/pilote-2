@@ -307,10 +307,11 @@ export const authConfig: NextAuthConfig = {
           const { getContainer } = await import("@/server/dependances");
           const utilisateurRepository =
             getContainer("gestionUtilisateur").cradle.utilisateurRepository;
-          await utilisateurRepository.mettreAJourDateDerniereConnexion(
-            user.email,
-            new Date(),
-          );
+          await utilisateurRepository.mettreAJourDateDerniereConnexion({
+            email: user.email,
+            date: new Date(),
+            provider: account.provider,
+          });
         }
 
         return {

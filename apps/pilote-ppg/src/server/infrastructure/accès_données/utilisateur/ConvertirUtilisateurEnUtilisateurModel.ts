@@ -27,6 +27,7 @@ export const convertirEnModel = (utilisateurAConvertir: {
   | "date_deuxieme_relance_desactivation"
   | "date_desactivation_programee"
   | "date_derniere_connexion"
+  | "dernier_provider_connexion"
 > => {
   return {
     email: utilisateurAConvertir.email,

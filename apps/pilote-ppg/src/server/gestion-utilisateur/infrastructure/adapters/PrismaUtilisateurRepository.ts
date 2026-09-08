@@ -1077,14 +1077,20 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     });
   }
 
-  async mettreAJourDateDerniereConnexion(
-    email: string,
-    date: Date,
-  ): Promise<void> {
+  async mettreAJourDateDerniereConnexion({
+    email,
+    date,
+    provider,
+  }: {
+    email: string;
+    date: Date;
+    provider: string;
+  }): Promise<void> {
     await this.prisma.utilisateur.update({
-      where: { email: email.toLowerCase() },
+      where: { email: email.trim().toLowerCase() },
       data: {
         date_derniere_connexion: date,
+        dernier_provider_connexion: provider,
         date_premiere_relance_desactivation: null,
         date_deuxieme_relance_desactivation: null,
         date_desactivation_programee: null,
