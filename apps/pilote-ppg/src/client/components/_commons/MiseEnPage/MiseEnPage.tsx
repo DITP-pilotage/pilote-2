@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 import PageLanding from "@/components/PageLanding/PageLanding";
 import Loader from "@/client/components/_commons/Loader/Loader";
@@ -17,6 +18,10 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
   children,
 }) => {
   const { status } = useSession();
+  const { pathname } = useRouter();
+  // L'écran de choix du mode de connexion doit s'afficher pour un visiteur non
+  // authentifié, là où toute autre page laisse la place à la landing.
+  const estPageDeConnexion = pathname === "/connexion";
 
   usePrefetchUtilisateurConnecte();
 
@@ -35,7 +40,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
               <p className="p-4 m-0">Chargement des données en cours...</p>
             </div>
           ) : null}
-          {status === "unauthenticated" ? (
+          {status === "unauthenticated" && !estPageDeConnexion ? (
             <PageLanding />
           ) : (
             <ClientOnly>
