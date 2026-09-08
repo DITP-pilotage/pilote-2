@@ -14,6 +14,10 @@ const toolLabel = (part: ToolPart): string => {
   return TOOL_LABELS[name] ?? name
 }
 
+// Une entrée refusée n'a pas d'`input` : ce que le modèle a envoyé est dans `rawInput`.
+const sentInput = (part: ToolPart): unknown =>
+  part.input ?? ('rawInput' in part ? part.rawInput : undefined)
+
 function StatusIcon({ state }: { state: ToolUIPart['state'] }) {
   if (state === 'output-error') return <TriangleAlert className="size-3 text-error" aria-hidden />
   if (state === 'output-available') return <Check className="size-3 text-success" aria-hidden />
@@ -59,7 +63,7 @@ export const ToolCallIndicator = memo(function ToolCallIndicator({ part }: { par
         ) : null}
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <JsonBlock title="Paramètres" value={part.input} />
+        <JsonBlock title="Paramètres" value={sentInput(part)} />
         {part.state === 'output-error' ? (
           <JsonBlock title="Erreur" value={part.errorText} />
         ) : (

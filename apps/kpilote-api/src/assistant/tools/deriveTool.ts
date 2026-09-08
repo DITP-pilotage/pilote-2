@@ -43,10 +43,28 @@ export const buildUrl = (path: string, params: Record<string, unknown>): string 
   return suffix ? `${pathWithParams}?${suffix}` : pathWithParams
 }
 
-const mergeSchemas = (route: RouteConfig): z.ZodObject<z.ZodRawShape> => {
+/**
+ * Un paramètre vide vaut absent. Le modèle remplit volontiers tous les champs optionnels
+ * avec `""` ou `null` — d'autant que la description de `cursor` dit « vide pour la première
+ * page » — et un `cursor: ""` est rejeté par le schéma de la route. Dans une query string,
+ * les deux formes signifient la même chose : on aligne la validation sur l'URL produite.
+ */
+export const dropEmptyValues = (value: unknown): unknown => {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return value
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).filter(
+      ([, content]) => content !== '' && content !== null,
+    ),
+  )
+}
+
+const mergeSchemas = (route: RouteConfig): z.ZodType<Record<string, unknown>> => {
   const params = route.request?.params as z.ZodObject<z.ZodRawShape> | undefined
   const query = route.request?.query as z.ZodObject<z.ZodRawShape> | undefined
-  return z.object({ ...(params?.shape ?? {}), ...(query?.shape ?? {}) })
+  return z.preprocess(
+    dropEmptyValues,
+    z.object({ ...(params?.shape ?? {}), ...(query?.shape ?? {}) }),
+  )
 }
 
 /**
