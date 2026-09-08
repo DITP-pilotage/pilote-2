@@ -2,8 +2,12 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 import { useEnv } from "@/client/hooks/useEnv";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import Titre from "@/components/_commons/Titre/Titre";
+import { BoutonProConnect } from "./BoutonProConnect";
 import { messageDeConnexion } from "./messagesConnexion";
+
+const ADRESSE_ASSISTANCE = "pilote@modernisation.gouv.fr";
 
 const premierParametre = (
   valeur: string | string[] | undefined,
@@ -22,38 +26,36 @@ export const PageConnexion: FunctionComponent = () => {
 
   return (
     <main>
-      <div className="fr-container fr-py-8w">
-        <div className="fr-grid-row fr-grid-row--center">
-          <div className="fr-col-12 fr-col-md-6">
-            <Titre baliseHtml="h1">Connexion à PILOTE</Titre>
+      <div className="fr-container fr-py-10w">
+        <div className="mx-auto w-full max-w-[38rem]">
+          <div className="border-dsfr-grey-925 border bg-white p-6 md:p-8">
+            <Titre baliseHtml="h1" className="fr-h4 fr-mb-1w">
+              Connexion à PILOTE
+            </Titre>
+            <p className="text-dsfr-mention-grey fr-mb-4w fr-text--sm">
+              {ffProConnect
+                ? "Choisissez votre mode de connexion."
+                : "Connectez-vous avec vos identifiants PILOTE."}
+            </p>
 
             {message ? (
-              <div className="fr-alert fr-alert--error fr-mb-4w" role="alert">
-                <p>{message}</p>
-                <p>
-                  Besoin d'aide ?{" "}
-                  <a
-                    className="fr-link"
-                    href="mailto:pilote@modernisation.gouv.fr"
-                  >
-                    pilote@modernisation.gouv.fr
-                  </a>
-                </p>
+              <div role="alert">
+                <Alerte
+                  classesSupplementaires="fr-mb-4w"
+                  message={message}
+                  type="erreur"
+                />
               </div>
             ) : null}
 
             {ffProConnect ? (
-              <div className="fr-mb-4w">
-                <button
-                  className="proconnect-button"
+              <>
+                <BoutonProConnect
                   onClick={() => signIn("proconnect", { callbackUrl })}
-                  type="button"
-                >
-                  S'identifier avec ProConnect
-                </button>
-                <p className="fr-mt-1w fr-text--sm">
+                />
+                <p className="fr-mt-1w fr-mb-0">
                   <a
-                    className="fr-link"
+                    className="fr-link fr-link--sm"
                     href="https://proconnect.gouv.fr/"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -61,16 +63,32 @@ export const PageConnexion: FunctionComponent = () => {
                     Qu'est-ce que ProConnect ?
                   </a>
                 </p>
-              </div>
+
+                <div className="fr-my-4w flex items-center gap-4">
+                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
+                  <span className="text-dsfr-mention-grey fr-text--sm">ou</span>
+                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
+                </div>
+              </>
             ) : null}
 
             <button
-              className="fr-btn fr-btn--secondary"
+              className="fr-btn fr-btn--secondary w-full justify-center"
               onClick={() => signIn("keycloak", { callbackUrl })}
               type="button"
             >
               Se connecter avec une adresse électronique et un mot de passe
             </button>
+
+            <p className="text-dsfr-mention-grey fr-mt-4w fr-mb-0 fr-text--xs">
+              Un problème pour vous connecter ?{" "}
+              <a
+                className="fr-link fr-link--xs"
+                href={`mailto:${ADRESSE_ASSISTANCE}`}
+              >
+                {ADRESSE_ASSISTANCE}
+              </a>
+            </p>
           </div>
         </div>
       </div>

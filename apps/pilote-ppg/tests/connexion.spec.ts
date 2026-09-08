@@ -32,11 +32,10 @@ test.describe("Écran de choix du mode de connexion", () => {
   }) => {
     await page.goto("/connexion?motif=compte_desactive");
 
-    // Next injecte son propre role="alert" pour l'annonce de route, d'où le
-    // sélecteur restreint à l'alerte DSFR.
-    const alerte = page.locator("[role=alert].fr-alert");
-    await expect(alerte).toContainText("désactivé");
-    await expect(alerte).toContainText("pilote@modernisation.gouv.fr");
+    await expect(page.locator(".fr-alert--error")).toContainText("désactivé");
+    await expect(
+      page.getByRole("link", { name: "pilote@modernisation.gouv.fr" }),
+    ).toBeVisible();
     await expect(
       page.getByRole("button", {
         name: "Se connecter avec une adresse électronique et un mot de passe",
