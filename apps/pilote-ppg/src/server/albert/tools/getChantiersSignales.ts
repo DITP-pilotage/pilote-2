@@ -4,17 +4,15 @@ import type {
   GetChantiersSignalesDetailQuery,
   ChantierSignale,
 } from "@/server/chantiers/infrastructure/queries/GetChantiersSignalesDetailQuery";
-import type { CategorieAlerteChantier } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+import {
+  CATEGORIES_ALERTE_CHANTIER,
+  type CategorieAlerteChantier,
+} from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
-const CATEGORIES: CategorieAlerteChantier[] = [
-  "ecart",
-  "baisse",
-  "taux_non_calcule",
-  "absence_taux_departemental",
-  "meteo_non_renseignee",
-  "pva",
-];
+const CATEGORIES: CategorieAlerteChantier[] = CATEGORIES_ALERTE_CHANTIER.map(
+  ({ categorie }) => categorie,
+);
 
 const LIBELLES_CATEGORIES: Record<CategorieAlerteChantier, string> = {
   ecart: "Retard par rapport à la médiane",

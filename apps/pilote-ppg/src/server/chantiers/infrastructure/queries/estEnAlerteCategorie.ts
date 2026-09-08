@@ -48,7 +48,7 @@ export function estEnAlerteCategorie(
     }
     case "meteo_non_renseignee":
       return Alerte.estEnAlerteMétéoNonRenseignée(
-        ct.meteo as ChantierVueDEnsemble["météo"],
+        (ct.meteo ?? "NON_RENSEIGNEE") as ChantierVueDEnsemble["météo"],
       );
     case "pva": {
       const aUnePropositionValeurAvancement =

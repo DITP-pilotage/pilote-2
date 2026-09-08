@@ -1,6 +1,8 @@
 import { Inject } from "@/server/chantiers/module";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
+import { CATEGORIES_ALERTE_CHANTIER } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
+import { estEnAlerteCategorie } from "./estEnAlerteCategorie";
 import type { ChantierTerritoireSignale } from "./ChantiersSignalesDataFetcher";
 
 export class GetChantiersSignalesQuery {
@@ -23,12 +25,11 @@ export class GetChantiersSignalesQuery {
     const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);
     const chantierIdsApplicables = chantierTerritoires.map((ct) => ct.id);
 
-    const pvaChantierIds =
-      await this.deps.chantiersSignalesDataFetcher.recupererPvaIds(
-        maille,
-        chantierIdsApplicables,
-        params.territoireCode,
-      );
+    const pvaIds = await this.deps.chantiersSignalesDataFetcher.recupererPvaIds(
+      maille,
+      chantierIdsApplicables,
+      params.territoireCode,
+    );
 
     const { chantiersAvecDept, chantiersAvecTaux } =
       await this.deps.chantiersSignalesDataFetcher.recupererAbsenceTauxDepartementalSets(
@@ -37,80 +38,46 @@ export class GetChantiersSignalesQuery {
         params.jalonParDefaut,
       );
 
-    const absenceTauxDeptCount = this.compterAbsenceTauxDepartemental(
-      chantierTerritoires,
-      chantiersAvecDept,
-      chantiersAvecTaux,
-    );
-
     return this.agregerCompteurs(
       chantierTerritoires,
       maille,
-      pvaChantierIds,
-      absenceTauxDeptCount,
+      pvaIds,
+      chantiersAvecDept,
+      chantiersAvecTaux,
     );
-  }
-
-  private compterAbsenceTauxDepartemental(
-    chantierTerritoires: ChantierTerritoireSignale[],
-    chantiersAvecDept: Set<string>,
-    chantiersAvecTaux: Set<string>,
-  ): number {
-    let count = 0;
-    for (const ct of chantierTerritoires) {
-      if (!ct.chantier_identite.cible_attendue) continue;
-      if (!chantiersAvecDept.has(ct.id)) continue;
-      if (!chantiersAvecTaux.has(ct.id)) count++;
-    }
-    return count;
   }
 
   private agregerCompteurs(
     chantierTerritoires: ChantierTerritoireSignale[],
     maille: string,
-    pvaChantierIds: Set<string>,
-    absenceTauxDeptCount: number,
+    pvaIds: Set<string>,
+    chantiersAvecDept: Set<string>,
+    chantiersAvecTaux: Set<string>,
   ): ChantiersSignalesContrat {
-    let ecart = 0;
-    let baisse = 0;
-    let tauxNonCalcule = 0;
-    let meteoNonRenseignee = 0;
-    let pva = 0;
+    const compteurs = Object.fromEntries(
+      CATEGORIES_ALERTE_CHANTIER.map(({ typeAlerte }) => [typeAlerte, 0]),
+    ) as ChantiersSignalesContrat;
 
     for (const ct of chantierTerritoires) {
       const jalonData = ct.chantier_territoire_jalon[0];
+      const ecart = jalonData?.ecart ?? null;
+      const tauxAvancement = jalonData?.taux_avancement ?? null;
 
-      if (jalonData?.ecart !== null && jalonData?.ecart !== undefined) {
-        if (jalonData.ecart < -10) ecart++;
-      }
+      for (const { categorie, typeAlerte } of CATEGORIES_ALERTE_CHANTIER) {
+        const enAlerte = estEnAlerteCategorie(categorie, {
+          ct,
+          maille,
+          ecart,
+          tauxAvancement,
+          pvaIds,
+          chantiersAvecDept,
+          chantiersAvecTaux,
+        });
 
-      if (ct.tendance === "BAISSE") baisse++;
-
-      if (
-        ct.chantier_identite.cible_attendue &&
-        (jalonData?.taux_avancement === null ||
-          jalonData?.taux_avancement === undefined)
-      ) {
-        tauxNonCalcule++;
-      }
-
-      if (ct.meteo === "NON_RENSEIGNEE" || ct.meteo === null)
-        meteoNonRenseignee++;
-
-      if (maille === "DEPT") {
-        if (ct.nombre_propositions_valeur_actuelle > 0) pva++;
-      } else {
-        if (pvaChantierIds.has(ct.id)) pva++;
+        if (enAlerte) compteurs[typeAlerte]++;
       }
     }
 
-    return {
-      estEnAlerteÉcart: ecart,
-      estEnAlerteBaisse: baisse,
-      estEnAlerteTauxAvancementNonCalculé: tauxNonCalcule,
-      estEnAlerteAbscenceTauxAvancementDepartemental: absenceTauxDeptCount,
-      estEnAlerteMétéoNonRenseignée: meteoNonRenseignee,
-      estEnAlertePossedePropositionsValeurAvancement: pva,
-    };
+    return compteurs;
   }
 }

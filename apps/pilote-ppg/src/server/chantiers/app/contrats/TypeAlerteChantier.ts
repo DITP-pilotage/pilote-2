@@ -1,7 +1,4 @@
+import { CATEGORIES_ALERTE_CHANTIER } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+
 export type TypeAlerteChantier =
-  | "estEnAlerteÉcart"
-  | "estEnAlerteBaisse"
-  | "estEnAlerteTauxAvancementNonCalculé"
-  | "estEnAlerteAbscenceTauxAvancementDepartemental"
-  | "estEnAlerteMétéoNonRenseignée"
-  | "estEnAlertePossedePropositionsValeurAvancement";
+  (typeof CATEGORIES_ALERTE_CHANTIER)[number]["typeAlerte"];
