@@ -419,6 +419,12 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS",
     },
+    proconnect: {
+      format: Boolean,
+      default: false,
+      doc: "Affiche le bouton ProConnect sur l'écran de connexion",
+      env: "NEXT_PUBLIC_FF_PROCONNECT",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",
