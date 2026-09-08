@@ -36,6 +36,8 @@ type CommandPaletteProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   openAssistant: (question: string) => void
+  /** Requête présente à l'ouverture — le retour depuis l'assistant rend sa question. */
+  initialQuery?: string
 }
 
 const NAVIGATION_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'])
@@ -43,8 +45,14 @@ const NAVIGATION_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', '
 const GROUP_HEADING_CLASS =
   '[&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-subtle'
 
-export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPaletteProps) {
-  const [query, setQuery] = useState('')
+export function CommandPalette({
+  open,
+  onOpenChange,
+  openAssistant,
+  initialQuery,
+}: CommandPaletteProps) {
+  // État initial seulement : l'appelant remonte le composant (`key`) quand il change.
+  const [query, setQuery] = useState(initialQuery ?? '')
   // Item dont on affiche la page d'actions (`Tab` depuis la liste). `null` = liste racine.
   const [activeItem, setActiveItem] = useState<Command | null>(null)
   // Valeur cmdk de la ligne surlignée. Contrôlée : cmdk n'émet `onValueChange`
@@ -171,10 +179,14 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    // Sur une page d'actions : Esc / Backspace (champ vide) reviennent en
+    // Sur une page d'actions : Esc, ⇧Tab et Backspace (champ vide) reviennent en
     // arrière au lieu de fermer la palette.
     if (activeItem) {
-      if (event.key === 'Escape' || (event.key === 'Backspace' && query.length === 0)) {
+      if (
+        event.key === 'Escape' ||
+        (event.key === 'Tab' && event.shiftKey) ||
+        (event.key === 'Backspace' && query.length === 0)
+      ) {
         event.preventDefault()
         exitActions()
       }

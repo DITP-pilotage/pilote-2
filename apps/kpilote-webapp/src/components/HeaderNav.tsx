@@ -22,6 +22,9 @@ import type { Auth } from '@/auth'
 export function HeaderNav({ auth }: { auth: Auth }) {
   const navigate = useNavigate()
   const [paletteOpen, setPaletteOpen] = useState(false)
+  // Requête rendue à la palette au retour depuis l'assistant ; effacée à sa fermeture
+  // pour qu'un ⌘K ordinaire reparte à vide.
+  const [paletteQuery, setPaletteQuery] = useState('')
   const [assistant, setAssistant] = useState<{ conversationId: string; question: string } | null>(
     null,
   )
@@ -68,8 +71,13 @@ export function HeaderNav({ auth }: { auth: Auth }) {
       {auth.isAuthenticated ? (
         <Suspense fallback={null}>
           <CommandPalette
+            key={paletteQuery}
             open={paletteOpen}
-            onOpenChange={setPaletteOpen}
+            onOpenChange={(open) => {
+              setPaletteOpen(open)
+              if (!open) setPaletteQuery('')
+            }}
+            initialQuery={paletteQuery}
             openAssistant={(question) => {
               // Un identifiant neuf par ouverture : chaque session de questions est sa
               // propre conversation tant que l'historique n'existe pas.
@@ -93,6 +101,11 @@ export function HeaderNav({ auth }: { auth: Auth }) {
             key={assistant.conversationId}
             conversationId={assistant.conversationId}
             initialQuestion={assistant.question}
+            onBack={() => {
+              setAssistant(null)
+              setPaletteQuery(assistant.question)
+              setPaletteOpen(true)
+            }}
           />
         </Modale>
       ) : null}

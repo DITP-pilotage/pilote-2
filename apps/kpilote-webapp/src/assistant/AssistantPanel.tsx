@@ -9,9 +9,12 @@ import { useAssistant } from './useAssistant'
 export function AssistantPanel({
   conversationId,
   initialQuestion,
+  onBack,
 }: {
   conversationId: string
   initialQuestion?: string
+  /** ⇧Tab : retour à l'écran d'où l'on vient, symétrique du `Tab` qui a mené ici. */
+  onBack?: () => void
 }) {
   const { messages, sendMessage, status, error } = useAssistant(conversationId)
   const [input, setInput] = useState(initialQuestion ?? '')
@@ -25,7 +28,15 @@ export function AssistantPanel({
   }, [messages, status])
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div
+      className="flex h-full flex-col gap-4"
+      onKeyDown={(event) => {
+        if (onBack && event.key === 'Tab' && event.shiftKey) {
+          event.preventDefault()
+          onBack()
+        }
+      }}
+    >
       <div ref={thread} className="flex-1 space-y-4 overflow-y-auto">
         {messages.map((message) => (
           <AssistantMessage key={message.id} message={message} />
