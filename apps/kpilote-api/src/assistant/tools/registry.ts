@@ -8,7 +8,7 @@
 // quel que soit le tri applique aux imports suivants.
 import '@hono/zod-openapi'
 
-import { type Surface } from '@pilote/kpilote-shared/assistant/surfaces'
+import { type Model, type Surface } from '@pilote/kpilote-shared/assistant/surfaces'
 import { type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import { type ToolSet } from 'ai'
 
@@ -32,13 +32,13 @@ const TOOLS_BY_SURFACE: Record<Surface, ReadonlyArray<ToolName>> = {
   ],
 }
 
-export const resolveTools = (surface: Surface, fetcher: Fetcher): ToolSet => {
+export const resolveTools = (surface: Surface, fetcher: Fetcher, model: Model): ToolSet => {
   const business: ToolSet = {
     search_indicateurs: createSearchIndicateursTool(),
     search_collections: createSearchCollectionsTool(),
     get_synthese_indicateur: createGetSyntheseIndicateurTool(fetcher),
     get_synthese_collection: createGetSyntheseCollectionTool(fetcher),
-    compose_view: createComposeViewTool(),
+    compose_view: createComposeViewTool(model),
   }
   const derived: ToolSet = Object.fromEntries(
     WHITELIST.map((entry) => [entry.name, deriveTool(entry, fetcher)]),

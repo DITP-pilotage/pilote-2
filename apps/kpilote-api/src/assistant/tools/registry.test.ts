@@ -7,21 +7,21 @@ const requeteur = () => Promise.resolve(new Response('{}'))
 
 describe('resolveTools', () => {
   it('expose treize outils pour la surface ask-libre', () => {
-    expect(Object.keys(resolveTools('ask-libre', requeteur))).toHaveLength(13)
+    expect(Object.keys(resolveTools('ask-libre', requeteur, 'openweight-large'))).toHaveLength(13)
   })
 
   it('couvre exactement les noms déclarés dans le contrat partagé', () => {
-    const noms = Object.keys(resolveTools('ask-libre', requeteur)).sort()
+    const noms = Object.keys(resolveTools('ask-libre', requeteur, 'openweight-large')).sort()
     expect(noms).toEqual([...TOOL_NAMES].sort())
   })
 
   it('donne une description non vide à chaque outil', () => {
-    const outils = resolveTools('ask-libre', requeteur)
+    const outils = resolveTools('ask-libre', requeteur, 'openweight-large')
     expect(Object.values(outils).every((outil) => (outil.description ?? '').length > 0)).toBe(true)
   })
 
   it("n'expose pas les routes que get_synthese_indicateur compose déjà", () => {
-    const noms = Object.keys(resolveTools('ask-libre', requeteur))
+    const noms = Object.keys(resolveTools('ask-libre', requeteur, 'openweight-large'))
     expect(noms).not.toContain('get_indicateur_taux_progression')
     expect(noms).not.toContain('get_indicateur_objectifs')
   })
