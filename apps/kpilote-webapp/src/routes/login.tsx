@@ -10,6 +10,7 @@ const loginSearchSchema = z.object({
 })
 
 export const Route = createFileRoute('/login')({
+  staticData: { title: 'Connexion' },
   validateSearch: loginSearchSchema,
   component: LoginPage,
 })

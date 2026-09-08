@@ -5,6 +5,7 @@ import { loadMeFeature } from '@/queries/meFeature'
 import { loadMePermissions } from '@/queries/mePermissions'
 
 export const Route = createFileRoute('/_authenticated')({
+  staticData: { title: null },
   beforeLoad: ({ context, location }) => {
     if (!context.auth.isAuthenticated) {
       const hash = location.hash ? `#${location.hash}` : ''

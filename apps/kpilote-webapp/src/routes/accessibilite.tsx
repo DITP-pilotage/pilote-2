@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 
 export const Route = createFileRoute('/accessibilite')({
+  staticData: { title: 'Accessibilité' },
   component: AccessibilitePage,
 })
 

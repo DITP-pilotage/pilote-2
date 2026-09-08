@@ -7,6 +7,7 @@ import { Section } from '@pilote/kpilote-ui/Section'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 
 export const Route = createFileRoute('/')({
+  staticData: { title: 'Accueil' },
   beforeLoad: ({ context }) => {
     if (context.auth.isAuthenticated) {
       throw redirect({ to: '/indicateurs', search: {} })

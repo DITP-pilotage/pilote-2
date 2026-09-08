@@ -1,6 +1,7 @@
 import type { AnyRouter } from '@tanstack/react-router'
 
 import { analytics } from '@/analytics/tracker'
+import { routeTitle } from '@/lib/pageTitle'
 
 // Les identifiants de route portent les segments de mise en page sans chemin
 // (`/_authenticated/indicateurs/$id`) : on les retire pour n'envoyer que le
@@ -19,8 +20,10 @@ const routePattern = (router: AnyRouter): string => {
 export const trackPageViews = (router: AnyRouter): void => {
   router.subscribe('onResolved', ({ fromLocation, pathChanged }) => {
     if (fromLocation && !pathChanged) return
-    // `title` omis : `document.title` est figé tant que PIL-1724 n'a pas donné
-    // un titre à chaque route.
-    analytics.trackPageView({ path: routePattern(router) })
+    // Le titre envoyé est celui du type de page, pas `document.title` : ce
+    // dernier porte le libellé de l'indicateur ou de la collection consultée.
+    const path = routePattern(router)
+    const title = routeTitle(router)
+    analytics.trackPageView(title === undefined ? { path } : { path, title })
   })
 }

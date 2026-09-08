@@ -36,6 +36,7 @@ const toIndicateursQuery = (search: IndicateursSearch) => ({
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
+  staticData: { title: 'Indicateurs' },
   validateSearch: indicateursSearchSchema,
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
