@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "portless ${PORTLESS_NAME:-}pilote.modernisation next dev",
     "deploy:prepare": "bash deploy-prepare.sh",
-    "build": "prisma generate && bash scripts/clone_centre_aide.sh && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
+    "build": "prisma generate && bash scripts/clone_centre_aide.sh && NODE_OPTIONS=\"${NODE_OPTIONS:-} --max-old-space-size=${MAX_OLD_SPACE_SIZE:-768}\" next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "build:dev": "prisma generate && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "deploy:bundle": "bash deploy-bundle.sh",
     "start": "node --max-old-space-size=${MAX_OLD_SPACE_SIZE:-768} .next/standalone/apps/pilote-ppg/server.js",
