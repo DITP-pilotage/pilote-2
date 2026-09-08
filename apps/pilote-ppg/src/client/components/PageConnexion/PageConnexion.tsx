@@ -55,7 +55,7 @@ export const PageConnexion: FunctionComponent = () => {
                 />
                 <div className="fr-my-4w flex items-center gap-4">
                   <span className="bg-dsfr-contrast-grey h-px flex-1" />
-                  <span className="text-dsfr-mention-grey fr-text--sm">ou</span>
+                  <span className="text-dsfr-mention-grey text-sm">ou</span>
                   <span className="bg-dsfr-contrast-grey h-px flex-1" />
                 </div>
               </>
