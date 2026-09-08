@@ -59,11 +59,13 @@ export const recordConversation = async ({
 }
 
 /**
- * Ce que rend `streamText().response` : les métadonnées du tour et les messages générés,
- * appels et résultats d'outils compris. Dérivé du SDK plutôt que redéclaré — la trace
- * suit le format que `ai` produit, sans qu'on ait à le maintenir à la main.
+ * Les métadonnées de réponse du tour et TOUS les messages générés, appels et résultats
+ * d'outils compris. Dérivé du SDK plutôt que redéclaré — la trace suit le format que `ai`
+ * produit, sans qu'on ait à le maintenir à la main.
  */
-export type AssistantTranscript = Awaited<ReturnType<typeof streamText>['response']>
+export type AssistantTranscript = Awaited<ReturnType<typeof streamText>['response']> & {
+  messages: Awaited<ReturnType<typeof streamText>['responseMessages']>
+}
 
 export const recordCall = async ({
   conversationId,

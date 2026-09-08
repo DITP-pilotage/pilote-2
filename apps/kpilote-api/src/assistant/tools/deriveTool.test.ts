@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { type z } from 'zod'
 
 import { buildUrl, deriveTool, type WhitelistEntry } from '@/assistant/tools/deriveTool'
 import { WHITELIST } from '@/assistant/tools/whitelist'
@@ -51,6 +52,21 @@ describe('deriveTool', () => {
 
     expect(fetcher).toHaveBeenCalledWith('/indicateurs/IND-42')
     expect(output).toEqual({ id: 'IND-42' })
+  })
+
+  it('accepte un paramètre optionnel vide comme absent, sans le porter dans la requête', async () => {
+    const listEntry = WHITELIST.find((candidat) => candidat.name === 'get_indicateurs')!
+    const fetcher = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ items: [] }))))
+    const tool = deriveTool(listEntry, fetcher)
+
+    const input = (tool.inputSchema as z.ZodType).parse({
+      cursor: '',
+      recherche: '',
+      pageSize: 100,
+    })
+    await tool.execute?.(input, { toolCallId: 't', messages: [], context: undefined })
+
+    expect(fetcher).toHaveBeenCalledWith('/indicateurs?pageSize=100')
   })
 
   it('renvoie une erreur lisible plutôt que de faire tomber le tour', async () => {
