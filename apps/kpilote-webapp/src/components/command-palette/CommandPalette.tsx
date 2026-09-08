@@ -255,6 +255,14 @@ export function CommandPalette({
         <DialogPrimitive.Content
           aria-label="Palette de commandes"
           className="fixed left-1/2 top-[8vh] z-50 flex h-[84vh] w-[min(56rem,calc(100vw-2rem))] -translate-x-1/2 flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.16)] focus:outline-none"
+          // Radix écoute `Échap` sur le document en phase de capture, donc AVANT le
+          // `onKeyDown` de cmdk : sur une page d'actions, le retour doit se jouer ici,
+          // sinon la palette se ferme avant d'avoir pu remonter d'un niveau.
+          onEscapeKeyDown={(event) => {
+            if (!activeItem) return
+            event.preventDefault()
+            exitActions()
+          }}
         >
           <DialogPrimitive.Title className="sr-only">
             Rechercher une page ou un indicateur
