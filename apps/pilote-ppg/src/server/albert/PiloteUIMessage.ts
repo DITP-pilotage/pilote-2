@@ -44,6 +44,10 @@ import {
   searchTerritoiresInputSchema,
   type SearchTerritoiresOutput,
 } from "@/server/albert/tools/searchTerritoires";
+import {
+  getChantiersSignalesInputSchema,
+  type GetChantiersSignalesOutput,
+} from "@/server/albert/tools/getChantiersSignales";
 
 export type PiloteUITools = {
   display_choices: {
@@ -69,6 +73,10 @@ export type PiloteUITools = {
   get_chantier_objectifs: {
     input: z.input<typeof getChantierObjectifsInputSchema>;
     output: GetChantierObjectifsOutput;
+  };
+  get_chantiers_signales: {
+    input: z.input<typeof getChantiersSignalesInputSchema>;
+    output: GetChantiersSignalesOutput;
   };
   search_chantiers: {
     input: z.input<typeof searchChantiersInputSchema>;
