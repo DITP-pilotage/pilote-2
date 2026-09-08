@@ -28,7 +28,6 @@ const executeTool = async (
   tool: ReturnType<ReturnType<typeof createGetChantiersSignalesTool>>,
   input: {
     territoire_code: string;
-    jalon: number;
     categories?: CategorieAlerteChantier[];
     chantier_ids?: string[];
   },
@@ -52,7 +51,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "REG-11",
-      jalon: 2025,
     });
 
     // Then
@@ -74,7 +72,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "NAT-FR",
-      jalon: 2025,
       chantier_ids: ["CH-001"],
     });
 
@@ -105,7 +102,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "NAT-FR",
-      jalon: 2025,
       categories: ["ecart", "meteo_non_renseignee"],
     });
 
@@ -141,7 +137,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "REG-11",
-      jalon: 2025,
       categories: ["taux_non_calcule", "ecart"],
     });
 
@@ -169,7 +164,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "DEPT-75",
-      jalon: 2025,
       categories: ["absence_taux_departemental", "baisse"],
     });
 
@@ -197,7 +191,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "NAT-FR",
-      jalon: 2025,
     });
 
     // Then — pas de categories_non_applicables, toutes les catégories nationales ont été interrogées

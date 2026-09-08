@@ -4,7 +4,7 @@ import {
   ChantierVueDEnsemble,
 } from "@/server/domain/chantier/Chantier.interface";
 import { CategorieAlerteChantier } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
-import type { ChantierTerritoireSignale } from "./ChantiersSignalesDataFetcher";
+import type { ChantierTerritoireSignale } from "@/server/chantiers/infrastructure/queries/ChantiersSignalesDataFetcher";
 
 export function estEnAlerteCategorie(
   categorie: CategorieAlerteChantier,

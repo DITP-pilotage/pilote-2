@@ -9,6 +9,8 @@ import {
   type CategorieAlerteChantier,
 } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
+import { configuration } from "@/config";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 
 const CATEGORIES: CategorieAlerteChantier[] = CATEGORIES_ALERTE_CHANTIER.map(
   ({ categorie }) => categorie,
@@ -55,12 +57,6 @@ export const getChantiersSignalesInputSchema = z.object({
     .describe(
       "Code du territoire (ex: NAT-FR, REG-11, DEPT-75). Un seul territoire par appel, pas de sous-territoires.",
     ),
-  jalon: z
-    .number()
-    .int()
-    .min(2022)
-    .max(new Date().getFullYear())
-    .describe("Année du jalon (ex: 2024, 2025)"),
   categories: z
     .array(
       z.enum(
@@ -99,9 +95,8 @@ function buildOutputInstructions(
   const base =
     "Utilise toujours les libellés officiels des catégories de signalement (jamais les codes internes), " +
     'et présente chaque chantier au format "CH-XXX — Nom du chantier".\n\n' +
-    "Choisis la présentation la plus adaptée à la demande de l'utilisateur :\n" +
-    "- par catégorie (une section par catégorie avec la liste des chantiers concernés) si la demande porte sur une catégorie précise (ex: « quels chantiers ont un problème de météo ? ») ;\n" +
-    "- par chantier (un chantier avec la liste de ses catégories) si la demande porte sur un chantier précis (ex: « quels sont les signalements du chantier CH-042 ? ») ou sur plusieurs catégories à la fois.\n\n" +
+    "Présente par défaut par catégorie (une section par catégorie avec la liste des chantiers concernés). " +
+    "Bascule vers une présentation par chantier (un chantier avec la liste de ses catégories) uniquement si la demande porte sur un chantier précis (ex: « quels sont les signalements du chantier CH-042 ? »).\n\n" +
     "Un chantier concerné par plusieurs catégories ne doit JAMAIS être présenté comme deux chantiers distincts dans des sections séparées sans qu'un lien explicite soit fait entre les deux occurrences.\n\n" +
     'Les champs "ecart" et "meteo" sont présents sur chaque chantier mais ne doivent être mentionnés que s\'ils sont pertinents pour au moins une des catégories matchées par ce chantier ("ecart" pour la catégorie "Retard par rapport à la médiane", "meteo" pour "Météo et synthèse non renseignées").';
 
@@ -189,8 +184,7 @@ Un seul territoire par appel, pas de sous-territoires.`,
         const { maille } = territoireCodeVersMailleCodeInsee(
           input.territoire_code,
         );
-        const categoriesApplicables =
-          CATEGORIES_PAR_MAILLE[maille as "NAT" | "REG" | "DEPT"] ?? [];
+        const categoriesApplicables = CATEGORIES_PAR_MAILLE[maille] ?? [];
         const categoriesDemandees = input.categories ?? categoriesApplicables;
 
         const categoriesAInterroger = categoriesDemandees.filter((categorie) =>
@@ -200,12 +194,17 @@ Un seul territoire par appel, pas de sous-territoires.`,
           (categorie) => !categoriesApplicables.includes(categorie),
         );
 
+        const jalonEnCours = getAnneeDateDeBascule(
+          new Date(),
+          configuration().dateBasculeAffichageValeursAnneePrecedente,
+        );
+
         const resultats =
           categoriesAInterroger.length === 0
             ? []
             : await getChantiersSignalesDetailQuery.execute({
                 territoireCode: input.territoire_code,
-                jalon: input.jalon,
+                jalon: jalonEnCours,
                 chantierIds: filteredChantierIds ?? chantiersAccessibles,
                 categories: categoriesAInterroger,
               });

@@ -2,7 +2,7 @@ import { Inject } from "@/server/chantiers/module";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
 import { CATEGORIES_ALERTE_CHANTIER } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { estEnAlerteCategorie } from "./estEnAlerteCategorie";
+import { estEnAlerteCategorie } from "@/server/chantiers/domain/estEnAlerteCategorie";
 import type { ChantierTerritoireSignale } from "./ChantiersSignalesDataFetcher";
 
 export class GetChantiersSignalesQuery {
