@@ -88,6 +88,25 @@ const config = convict({
       default: "ToBeDefined",
     },
   },
+  proconnect: {
+    doc: "Fournisseur d'identité ProConnect. Obligatoire hors mode DEV_PASSWORD.",
+    clientId: {
+      format: String,
+      default: "ToBeDefined",
+      env: "PROCONNECT_CLIENT_ID",
+    },
+    clientSecret: {
+      format: String,
+      default: "ToBeDefined",
+      env: "PROCONNECT_CLIENT_SECRET",
+    },
+    issuer: {
+      format: String,
+      default: "ToBeDefined",
+      doc: "URL de découverte OIDC, ex. https://fca.integ01.dev-agentconnect.fr/api/v2",
+      env: "PROCONNECT_ISSUER",
+    },
+  },
   import: {
     keycloakUrl: {
       format: String,

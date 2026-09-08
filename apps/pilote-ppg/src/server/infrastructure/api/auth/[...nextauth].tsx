@@ -7,6 +7,7 @@ import { JWT } from "next-auth/jwt";
 import axios from "axios";
 import logger from "@/server/infrastructure/Logger";
 import { configuration } from "@/config";
+import { proconnect } from "@/server/infrastructure/api/auth/proconnect";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
@@ -277,7 +278,9 @@ const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
 
 export const authConfig: NextAuthConfig = {
   trustHost: true,
-  providers: !!configuration().devPassword ? [credentialsProvider] : [keycloak],
+  providers: !!configuration().devPassword
+    ? [credentialsProvider]
+    : [keycloak, proconnect],
   debug: configuration().nextAuth.debug,
   session: {
     maxAge: configuration().nextAuth.sessionMaxAge,
