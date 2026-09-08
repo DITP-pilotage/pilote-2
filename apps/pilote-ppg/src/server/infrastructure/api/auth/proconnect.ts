@@ -92,6 +92,15 @@ export const proconnect: OIDCConfig<ProfilProConnect> = {
     params: { scope: "openid given_name usual_name email" },
   },
   client: { token_endpoint_auth_method: "client_secret_post" },
+  // ProConnect exige `state` et `nonce` dans la requête d'autorisation, là où
+  // Auth.js n'envoie que `pkce` par défaut. Sans eux, ProConnect répond
+  // Y000400 « state must be a string ».
+  checks: ["pkce", "state", "nonce"],
+  // Sans ceci, Auth.js lit le profil dans l'`id_token` et n'appelle jamais
+  // `userinfo`. Or l'id_token ProConnect ne porte pas l'email : c'est le
+  // userinfo qui le fournit, et lui seul permet le rapprochement avec un
+  // compte PILOTE.
+  idToken: false,
   userinfo: { request: recupererProfilProConnect },
   profile(profil) {
     return {
