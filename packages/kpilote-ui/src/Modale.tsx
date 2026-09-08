@@ -30,9 +30,15 @@ export function Modale({
   children,
   footer,
   size = 'md',
+  onEscape,
 }: {
   open: boolean
   onClose: () => void
+  /**
+   * Quand la modale est une étape d'un parcours, `Échap` revient en arrière au lieu de
+   * tout fermer — la croix, elle, ferme toujours.
+   */
+  onEscape?: () => void
   titre: string
   description?: ReactNode
   children: ReactNode
@@ -43,7 +49,17 @@ export function Modale({
     <Dialog open={open} onOpenChange={(ouvert: boolean) => (ouvert ? undefined : onClose())}>
       <Dialog.Portal>
         <Dialog.Overlay />
-        <Dialog.Content className={clsxm(SIZES[size])}>
+        <Dialog.Content
+          className={clsxm(SIZES[size])}
+          {...(onEscape
+            ? {
+                onEscapeKeyDown: (event: KeyboardEvent) => {
+                  event.preventDefault()
+                  onEscape()
+                },
+              }
+            : {})}
+        >
           <div className="flex items-start justify-between border-b border-border px-6 py-4">
             <div>
               <Dialog.Title>{titre}</Dialog.Title>
