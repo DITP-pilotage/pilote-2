@@ -1,17 +1,10 @@
 import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
-import { TOOL_LABELS, type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import { isToolUIPart } from 'ai'
-
-import { clsxm } from '@/lib/clsxm'
 
 import { MarkdownResponse } from './MarkdownResponse'
 import { SourcesPanel } from './SourcesPanel'
 import { ViewGrid } from './tiles/ViewGrid'
-
-const toolLabel = (partType: string): string => {
-  const name = partType.replace(/^tool-/u, '') as ToolName
-  return TOOL_LABELS[name] ?? name
-}
+import { ToolCallIndicator } from './ToolCallIndicator'
 
 export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
   if (message.role === 'user') {
@@ -53,17 +46,7 @@ export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
 
         // `startsWith('tool-')` ne restreint pas l'union pour TypeScript : le garde du SDK, si.
         if (isToolUIPart(part)) {
-          const pending = part.state !== 'output-available' && part.state !== 'output-error'
-          return (
-            <p
-              key={index}
-              className={clsxm('text-xs italic text-text-subtle', pending && 'animate-pulse')}
-              aria-live="polite"
-            >
-              {toolLabel(part.type)}
-              {part.state === 'output-error' ? ' — échec' : pending ? '…' : ''}
-            </p>
-          )
+          return <ToolCallIndicator key={index} part={part} />
         }
 
         return null
