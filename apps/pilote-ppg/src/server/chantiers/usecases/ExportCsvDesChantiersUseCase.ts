@@ -427,8 +427,7 @@ export class ExportCsvDesChantiersUseCase {
             chantierTerritoireExport.aUnePropositionsValeurAvancement,
           )
         ) {
-          return [
-            ...acc,
+          acc.push(
             presenterEnChantierExportContrat(
               chantierTerritoireExport,
               profil,
@@ -439,7 +438,7 @@ export class ExportCsvDesChantiersUseCase {
                 null,
               utilisateurParId,
             ),
-          ];
+          );
         }
         return acc;
       }, [] as string[][]);

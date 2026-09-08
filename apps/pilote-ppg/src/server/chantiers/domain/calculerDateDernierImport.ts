@@ -4,11 +4,16 @@ import {
 } from "@prisma/client";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
+export type EvenementPourDateDernierImport = Pick<
+  PrismaIndicateurTerritoireValeurEvenement,
+  "territoire_code" | "type_evenement" | "date_creation"
+>;
+
 export function calculerDateDernierImport(
   maille: $Enums.Maille,
   dateDerniereExecutionDatajobs: Date,
-  evenementsTerritoire: PrismaIndicateurTerritoireValeurEvenement[],
-  evenementsMailles: PrismaIndicateurTerritoireValeurEvenement[],
+  evenementsTerritoire: EvenementPourDateDernierImport[],
+  evenementsMailles: EvenementPourDateDernierImport[],
   origineVaNat: string | null,
   origineVaReg: string | null,
   codesTerritoiresEnfants: string[] = [],
