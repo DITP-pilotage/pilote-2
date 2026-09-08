@@ -7,7 +7,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     logger.info(
       {
-        categorie: "application-log",
+        categorie: "albert",
         source: "cron/purge-conversations-albert",
       },
       `Purge des conversations Albert expirées`,
@@ -19,7 +19,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     logger.info(
       {
-        categorie: "application-log",
+        categorie: "albert",
         source: "cron/purge-conversations-albert",
         supprimees: result.supprimees,
         anterieurA: result.anterieurA.toISOString(),
@@ -31,7 +31,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   } catch (error) {
     logger.error(
       {
-        categorie: "application-log",
+        categorie: "albert",
         source: "cron/purge-conversations-albert",
       },
       `Erreur lors de la purge des conversations : ${(error as Error).message}`,

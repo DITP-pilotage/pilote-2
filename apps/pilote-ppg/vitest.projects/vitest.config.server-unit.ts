@@ -13,6 +13,7 @@ export default defineProject({
       // src/validation/ n'etait couvert par AUCUN projet vitest : ses 21 fichiers de
       // schemas etaient structurellement intestables.
       "src/validation/**/*.unit.test.{ts,tsx}",
+      "src/utils/**/*.unit.test.{ts,tsx}",
     ],
     setupFiles: ["./vitest.setup.server.ts"],
     globals: true,

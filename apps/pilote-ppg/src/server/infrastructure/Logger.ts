@@ -2,6 +2,10 @@ import pino, { type LogFn } from "pino";
 import { type Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { configuration } from "@/config";
+import {
+  CATEGORIE_LOG_PAR_DEFAUT,
+  type CategorieLog,
+} from "@/utils/categoriesLog";
 
 const CHAMPS_STANDARD_PINO = new Set([
   "level",
@@ -94,7 +98,8 @@ function persisterEnBase(
       .create({
         data: {
           level: level as "ERROR" | "WARN" | "INFO" | "DEBUG",
-          categorie: (obj.categorie as string) ?? "systeme",
+          categorie:
+            (obj.categorie as CategorieLog) ?? CATEGORIE_LOG_PAR_DEFAUT,
           message: msg,
           contexte: contexteAvecStack,
           source: (obj.source as string) ?? null,
@@ -107,11 +112,13 @@ function persisterEnBase(
   }
 }
 
+type ContexteLog = Record<string, unknown> & { categorie?: CategorieLog };
+
 interface StructuredLogger {
-  info(obj: Record<string, unknown>, msg: string): void;
-  error(obj: Record<string, unknown>, msg: string): void;
-  warn(obj: Record<string, unknown>, msg: string): void;
-  debug(obj: Record<string, unknown>, msg: string): void;
+  info(obj: ContexteLog, msg: string): void;
+  error(obj: ContexteLog, msg: string): void;
+  warn(obj: ContexteLog, msg: string): void;
+  debug(obj: ContexteLog, msg: string): void;
 }
 
 class AppLogger implements StructuredLogger {
@@ -142,19 +149,19 @@ class AppLogger implements StructuredLogger {
     });
   }
 
-  info(obj: Record<string, unknown>, msg: string): void {
+  info(obj: ContexteLog, msg: string): void {
     this._logger.info(obj, msg);
   }
 
-  error(obj: Record<string, unknown>, msg: string): void {
+  error(obj: ContexteLog, msg: string): void {
     this._logger.error(obj, msg);
   }
 
-  warn(obj: Record<string, unknown>, msg: string): void {
+  warn(obj: ContexteLog, msg: string): void {
     this._logger.warn(obj, msg);
   }
 
-  debug(obj: Record<string, unknown>, msg: string): void {
+  debug(obj: ContexteLog, msg: string): void {
     this._logger.debug(obj, msg);
   }
 }

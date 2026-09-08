@@ -9,7 +9,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     logger.info(
-      { categorie: "application-log", source: "cron/purge-logs" },
+      { categorie: "maintenance", source: "cron/purge-logs" },
       `Purge des logs antérieurs au ${anterieurA.toISOString()}`,
     );
 
@@ -19,7 +19,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     logger.info(
       {
-        categorie: "application-log",
+        categorie: "maintenance",
         source: "cron/purge-logs",
         ...result,
       },
@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(200).json(result);
   } catch (error) {
     logger.error(
-      { categorie: "application-log", source: "cron/purge-logs" },
+      { categorie: "maintenance", source: "cron/purge-logs" },
       `Erreur lors de la purge des logs : ${(error as Error).message}`,
     );
 

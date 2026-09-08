@@ -39,7 +39,7 @@ export class SyncMbValeursUseCase {
       await this.mbSyncExecutionRepository.recupererDerniereDateSync();
 
     logger.info(
-      { source: "cron/sync-mb-valeurs", lastSyncAt },
+      { categorie: "sync", source: "cron/sync-mb-valeurs", lastSyncAt },
       "Démarrage de la synchronisation mb-valeurs",
     );
 
@@ -52,7 +52,12 @@ export class SyncMbValeursUseCase {
         );
 
       logger.info(
-        { source: "cron/sync-mb-valeurs", indicId, count: evenements.length },
+        {
+          categorie: "sync",
+          source: "cron/sync-mb-valeurs",
+          indicId,
+          count: evenements.length,
+        },
         "Delta récupéré pour l'indicateur",
       );
 
@@ -75,7 +80,7 @@ export class SyncMbValeursUseCase {
     await this.mbSyncExecutionRepository.mettreAJourDerniereDateSync(syncAt);
 
     logger.info(
-      { source: "cron/sync-mb-valeurs", resultats },
+      { categorie: "sync", source: "cron/sync-mb-valeurs", resultats },
       "Synchronisation mb-valeurs terminée",
     );
 

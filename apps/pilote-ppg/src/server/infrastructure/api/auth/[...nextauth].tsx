@@ -21,7 +21,10 @@ function _assertResponseOk(
   errorMessage: string,
 ): void {
   if (response.status < 200 || response.status >= 300) {
-    logger.warn({ status: response.status, data: response.data }, errorMessage);
+    logger.warn(
+      { categorie: "auth", status: response.status, data: response.data },
+      errorMessage,
+    );
     throw new Error(errorMessage);
   }
 }
@@ -67,6 +70,7 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
       );
       logger.debug(
         {
+          categorie: "auth",
           status: response.status,
           statusText: response.statusText,
           data: response.data,
@@ -211,7 +215,7 @@ async function refreshAccessTokenAvecDeduplication(
   const promesseExistante = refreshEnCours.get(token.refreshToken);
   if (promesseExistante) {
     logger.info(
-      { userId: token.user.id },
+      { categorie: "auth", userId: token.user.id },
       "Refresh already in progress, waiting for result...",
     );
     return promesseExistante;
@@ -362,7 +366,7 @@ export const authConfig: NextAuthConfig = {
       const profil = await profilRepository.récupérer(utilisateur!.profil);
 
       logger.debug(
-        { userId: utilisateur?.id },
+        { categorie: "auth", userId: utilisateur?.id },
         "Session callback, adding habilitations to session",
       );
 

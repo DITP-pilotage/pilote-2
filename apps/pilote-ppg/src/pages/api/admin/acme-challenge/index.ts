@@ -25,7 +25,7 @@ async function handler(
     const { token, keyAuthorization } = parsed.data;
     acmeChallengeStore.set(token, keyAuthorization);
     logger.info(
-      { categorie: "acme", source: "admin/acme-challenge", token },
+      { categorie: "maintenance", source: "admin/acme-challenge", token },
       "Challenge ACME stocké",
     );
     res.status(201).json({ token, stored: true });
@@ -44,7 +44,12 @@ async function handler(
     const token = parsed.data;
     const deleted = acmeChallengeStore.delete(token);
     logger.info(
-      { categorie: "acme", source: "admin/acme-challenge", token, deleted },
+      {
+        categorie: "maintenance",
+        source: "admin/acme-challenge",
+        token,
+        deleted,
+      },
       "Challenge ACME supprimé",
     );
     res.status(204).end();
