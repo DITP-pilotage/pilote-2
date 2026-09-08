@@ -5,7 +5,9 @@
  * l'écran de connexion.
  */
 const CHEMIN_INTERNE = /^\/(?:[^/\\].*)?$/;
-const LONGUEUR_MAXIMALE = 512;
+// 2048 est la limite d'URL de fait des navigateurs. En dessous, un chemin
+// porteur de filtres nuqs se fait tronquer et on perd la destination.
+const LONGUEUR_MAXIMALE = 2048;
 
 export const cheminDeRetourSur = ({
   chemin,

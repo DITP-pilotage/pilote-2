@@ -18,8 +18,14 @@ describe("cheminDeRetourSur", () => {
     expect(cheminDeRetourSur({ chemin })).toBeNull();
   });
 
+  it("accepte un chemin long chargé de filtres", () => {
+    const chemin = `/${"a".repeat(2047)}`;
+
+    expect(cheminDeRetourSur({ chemin })).toBe(chemin);
+  });
+
   it("refuse un chemin déraisonnablement long", () => {
-    expect(cheminDeRetourSur({ chemin: `/${"a".repeat(512)}` })).toBeNull();
+    expect(cheminDeRetourSur({ chemin: `/${"a".repeat(2048)}` })).toBeNull();
   });
 
   it.each([null, undefined, ""])("refuse la valeur vide %p", (chemin) => {
