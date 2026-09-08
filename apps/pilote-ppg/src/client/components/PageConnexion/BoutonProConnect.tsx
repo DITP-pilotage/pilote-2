@@ -1,25 +1,38 @@
+import "@gouvfr/dsfr/dist/component/connect/connect.min.css";
 import { FunctionComponent } from "react";
 
 /**
  * Bouton officiel ProConnect.
  *
- * Le composant `fr-connect` du DSFR embarque le logo FranceConnect et ne
- * convient donc pas : ProConnect est une marque distincte, avec son propre kit.
- * On en reproduit ici la structure — libellé sur deux lignes, marque mise en
- * avant, fond bleu France — sans le glyphe, qui doit être repris tel quel du kit
- * DINUM avant la mise en production.
+ * Reprend le composant `fr-connect` du DSFR, dont le glyphe FranceConnect est
+ * remplacé par celui de ProConnect via la surcharge `.proconnect-button`
+ * définie dans app.scss. C'est la première des trois intégrations proposées par
+ * la DINUM, celle destinée aux services déjà sous DSFR.
+ *
+ * Source : https://github.com/proconnect-gouv/proconnect-documentation
+ *          doc_fs/bouton_proconnect.md
  */
 export const BoutonProConnect: FunctionComponent<{ onClick: () => void }> = ({
   onClick,
 }) => (
-  <button
-    className="flex w-full flex-col items-center justify-center gap-0.5 bg-primary px-4 py-3 text-white transition-colors hover:bg-dsfr-blue-france-sun-113-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    onClick={onClick}
-    type="button"
-  >
-    <span className="text-sm leading-none font-normal">S'identifier avec</span>
-    <span className="text-xl leading-tight font-bold tracking-tight">
-      ProConnect
-    </span>
-  </button>
+  <div className="fr-connect-group">
+    <button
+      className="proconnect-button fr-connect"
+      onClick={onClick}
+      type="button"
+    >
+      <span className="fr-connect__login">S'identifier avec</span>
+      <span className="fr-connect__brand">ProConnect</span>
+    </button>
+    <p>
+      <a
+        href="https://www.proconnect.gouv.fr/"
+        rel="noopener noreferrer"
+        target="_blank"
+        title="Qu'est-ce que ProConnect ? - nouvelle fenêtre"
+      >
+        Qu'est-ce que ProConnect ?
+      </a>
+    </p>
+  </div>
 );

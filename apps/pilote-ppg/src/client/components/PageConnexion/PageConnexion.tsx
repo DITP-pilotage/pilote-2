@@ -53,17 +53,6 @@ export const PageConnexion: FunctionComponent = () => {
                 <BoutonProConnect
                   onClick={() => signIn("proconnect", { callbackUrl })}
                 />
-                <p className="fr-mt-1w fr-mb-0">
-                  <a
-                    className="fr-link fr-link--sm"
-                    href="https://proconnect.gouv.fr/"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Qu'est-ce que ProConnect ?
-                  </a>
-                </p>
-
                 <div className="fr-my-4w flex items-center gap-4">
                   <span className="bg-dsfr-contrast-grey h-px flex-1" />
                   <span className="text-dsfr-mention-grey fr-text--sm">ou</span>
