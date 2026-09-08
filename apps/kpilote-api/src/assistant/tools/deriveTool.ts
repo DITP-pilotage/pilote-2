@@ -1,7 +1,7 @@
 import { type RouteConfig } from '@hono/zod-openapi'
 import { type ToolError, type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import { type ErrorApiModel } from '@pilote/kpilote-shared/error'
-import { tool, type Tool } from 'ai'
+import { jsonSchema, tool, type Schema, type Tool } from 'ai'
 import { z } from 'zod'
 
 import { type Fetcher } from '@/assistant/tools/fetcher'
@@ -64,12 +64,37 @@ export const dropEmptyValues = (value: unknown): unknown => {
   )
 }
 
-const mergeSchemas = (route: RouteConfig): z.ZodType<Record<string, unknown>> => {
+type ToolInput = Record<string, unknown>
+
+/**
+ * Le schéma de la route valide l'entrée, mais l'outil exécute l'entrée BRUTE.
+ *
+ * Un schéma zod donné tel quel au SDK lui fait passer la valeur transformée : `individus`
+ * arrive à `execute` en tableau alors que le modèle a envoyé un CSV. Ce tableau est ensuite
+ * rejoué dans l'historique comme l'entrée de l'appel, et le modèle l'imite au tour suivant —
+ * un tableau que le schéma refuse. Le JSON Schema exposé est celui de l'entrée, la valeur
+ * validée est celle que le modèle a écrite : ce qu'il voit dans l'historique est ce qu'il
+ * doit produire.
+ */
+const inputSchemaFor = (route: RouteConfig): Schema<ToolInput> => {
   const params = route.request?.params as z.ZodObject<z.ZodRawShape> | undefined
   const query = route.request?.query as z.ZodObject<z.ZodRawShape> | undefined
-  return z.preprocess(
-    dropEmptyValues,
-    z.object({ ...(params?.shape ?? {}), ...(query?.shape ?? {}) }),
+  const routeSchema = z.object({ ...(params?.shape ?? {}), ...(query?.shape ?? {}) })
+
+  return jsonSchema<ToolInput>(
+    {
+      ...z.toJSONSchema(routeSchema, { target: 'draft-7', io: 'input' }),
+      additionalProperties: false,
+    } as Parameters<typeof jsonSchema>[0],
+    {
+      validate: (value) => {
+        const raw = dropEmptyValues(value) as ToolInput
+        const result = routeSchema.safeParse(raw)
+        return result.success
+          ? { success: true, value: raw }
+          : { success: false, error: result.error }
+      },
+    },
   )
 }
 
@@ -105,8 +130,8 @@ export const deriveTool = ({ route }: WhitelistEntry, fetcher: Fetcher): Tool =>
 
   return tool({
     description: route.description ?? route.summary ?? '',
-    inputSchema: mergeSchemas(route),
-    execute: async (params: Record<string, unknown>) => {
+    inputSchema: inputSchemaFor(route),
+    execute: async (params: ToolInput) => {
       const url = buildUrl(route.path, params)
       if (failed.has(url)) return REPEATED_FAILURE
 
