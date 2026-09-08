@@ -12,6 +12,7 @@ import type {
   StatistiquesLogs,
 } from "@/server/application-log/queries/ObtenirStatistiquesLogsQuery";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
+import { libelleCategorieLog } from "@/utils/categoriesLog";
 import { type Periode, useGraphesLogs } from "./useGraphesLogs";
 
 // Valeurs hex issues du tailwind.config.js (ECharts canvas ne supporte pas les CSS variables)
@@ -245,7 +246,10 @@ function useEchartsBarCategorie(
     chart.setOption({
       tooltip: { trigger: "axis" },
       xAxis: { type: "value" },
-      yAxis: { type: "category", data: sorted.map((entry) => entry.categorie) },
+      yAxis: {
+        type: "category",
+        data: sorted.map((entry) => libelleCategorieLog(entry.categorie)),
+      },
       series: [
         {
           type: "bar",

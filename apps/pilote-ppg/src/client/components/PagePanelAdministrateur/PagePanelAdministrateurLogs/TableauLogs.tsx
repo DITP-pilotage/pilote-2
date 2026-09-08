@@ -2,21 +2,10 @@ import { Fragment, FunctionComponent, useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import { flexRender } from "@tanstack/react-table";
 import { clsxm } from "@/utils/clsxm";
+import { CATEGORIES_LOG, libelleCategorieLog } from "@/utils/categoriesLog";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { useTableauLogs } from "./useTableauLogs";
 import { ModalePurge } from "./ModalePurge";
-
-const CATEGORIES = [
-  "auth",
-  "chantier",
-  "import",
-  "indicateur",
-  "notification",
-  "pva",
-  "rapport",
-  "utilisateur",
-  "systeme",
-];
 
 const BADGE_STYLES: Record<$Enums.log_level, string> = {
   ERROR: "bg-red-100 text-red-800",
@@ -96,9 +85,9 @@ export const TableauLogs: FunctionComponent = () => {
             value={filtreCategorie ?? ""}
           >
             <option value="">Toutes</option>
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+            {Object.entries(CATEGORIES_LOG).map(([categorie, libelle]) => (
+              <option key={categorie} value={categorie}>
+                {libelle}
               </option>
             ))}
           </select>
@@ -188,7 +177,9 @@ export const TableauLogs: FunctionComponent = () => {
                         {log.level}
                       </span>
                     </td>
-                    <td className="px-4 py-2 text-gray-700">{log.categorie}</td>
+                    <td className="px-4 py-2 text-gray-700">
+                      {libelleCategorieLog(log.categorie)}
+                    </td>
                     <td className="px-4 py-2 max-w-[400px] truncate text-gray-800">
                       {log.message}
                     </td>

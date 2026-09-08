@@ -12,7 +12,10 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const deleted =
     await rapportFileStorage.deleteOlderThan(TWENTY_FOUR_HOURS_MS);
 
-  logger.info({ deleted }, "Nettoyage des rapports exportés terminé");
+  logger.info(
+    { categorie: "rapport", source: "cron/nettoyage-rapports", deleted },
+    "Nettoyage des rapports exportés terminé",
+  );
 
   res.status(200).json({ deleted });
 }

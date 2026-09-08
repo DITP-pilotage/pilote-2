@@ -48,7 +48,7 @@ export class SyncMbMetadonneesUseCase {
 
   async execute(indicateursIds: string[]): Promise<SyncMetadonneesResultat> {
     logger.info(
-      { source: "cron/sync-mb-valeurs" },
+      { categorie: "sync", source: "cron/sync-mb-valeurs" },
       "Démarrage de la synchronisation mb-metadonnees",
     );
 
@@ -60,7 +60,7 @@ export class SyncMbMetadonneesUseCase {
 
       if (!indicateur) {
         logger.warn(
-          { source: "cron/sync-mb-valeurs", indicId },
+          { categorie: "sync", source: "cron/sync-mb-valeurs", indicId },
           "Indicateur absent de indicateur_identite, sync métadonnées ignorée",
         );
         resultats.push({ id: indicId, statut: "non_trouve" });
@@ -83,7 +83,7 @@ export class SyncMbMetadonneesUseCase {
       });
 
       logger.info(
-        { source: "cron/sync-mb-valeurs", indicId },
+        { categorie: "sync", source: "cron/sync-mb-valeurs", indicId },
         "Métadonnées synchronisées",
       );
 
@@ -91,7 +91,7 @@ export class SyncMbMetadonneesUseCase {
     }
 
     logger.info(
-      { source: "cron/sync-mb-valeurs", resultats },
+      { categorie: "sync", source: "cron/sync-mb-valeurs", resultats },
       "Synchronisation mb-metadonnees terminée",
     );
 
