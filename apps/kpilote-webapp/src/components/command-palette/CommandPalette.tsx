@@ -38,23 +38,31 @@ type CommandPaletteProps = {
   openAssistant: (question: string) => void
 }
 
+const NAVIGATION_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'])
+
 const GROUP_HEADING_CLASS =
   '[&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-subtle'
 
 export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
-  // Item dont on affiche la page d'actions (⌘K). `null` = liste racine.
+  // Item dont on affiche la page d'actions (`Tab` depuis la liste). `null` = liste racine.
   const [activeItem, setActiveItem] = useState<Command | null>(null)
   // Valeur cmdk de la ligne surlignée. Contrôlée : cmdk n'émet `onValueChange`
   // sur la racine que si `value` l'est aussi (indispensable pour résoudre l'item
-  // ciblé au ⌘K).
+  // ciblé au `Tab`).
   const [highlighted, setHighlighted] = useState('')
+  // Vrai dès que l'utilisateur est « descendu » dans la liste (flèches, ou pointeur
+  // dessus). Le focus DOM ne bouge jamais de l'input avec cmdk : c'est ce drapeau qui
+  // dit si `Tab` s'adresse au champ de recherche (assistant) ou à la ligne surlignée
+  // (ses actions). Retombe à faux dès que la requête change.
+  const [inList, setInList] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Réinitialise la palette à son état racine (liste principale, requête vide).
   const resetToRoot = useCallback(() => {
     setActiveItem(null)
     setQuery('')
+    setInList(false)
   }, [])
 
   // Ferme la palette ET réinitialise son état. `close()` est déclenché après une
@@ -172,9 +180,12 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
       }
       return
     }
-    // À la racine, `Tab` transmet la recherche à l'assistant : c'est la touche que
-    // l'affordance du champ annonce. On la neutralise dans tous les cas pour ne pas
-    // perdre le focus.
+    if (NAVIGATION_KEYS.has(event.key)) setInList(true)
+
+    // `Tab` a deux sens selon l'endroit : sur le champ de recherche, il transmet la
+    // requête à l'assistant — c'est ce que l'affordance du champ annonce ; une fois
+    // descendu dans la liste, il ouvre les actions de la ligne surlignée. Neutralisé
+    // dans tous les cas pour ne pas perdre le focus.
     if (
       event.key === 'Tab' &&
       !event.shiftKey &&
@@ -183,12 +194,16 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
       !event.altKey
     ) {
       event.preventDefault()
-      askAssistant()
+      if (!inList) {
+        askAssistant()
+      } else if (highlightedCommand?.actions?.length) {
+        enterActions(highlightedCommand)
+      }
       return
     }
-    // Les actions de l'item surligné passent donc sur ⌘K, comme chez Raycast. Le
-    // raccourci global d'ouverture ignore les champs de saisie, et le focus vit dans
-    // l'input : aucune collision possible avec la réouverture de la palette.
+    // ⌘K ouvre les actions depuis n'importe où, comme chez Raycast. Le raccourci global
+    // d'ouverture ignore les champs de saisie, et le focus vit dans l'input : aucune
+    // collision possible avec la réouverture de la palette.
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault()
       if (highlightedCommand?.actions?.length) enterActions(highlightedCommand)
@@ -256,7 +271,10 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
               <CommandPrimitive.Input
                 ref={inputRef}
                 value={query}
-                onValueChange={setQuery}
+                onValueChange={(value) => {
+                  setQuery(value)
+                  setInList(false)
+                }}
                 placeholder={
                   activeItem
                     ? `Actions sur « ${activeItem.label} »…`
@@ -266,7 +284,10 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
               />
               {activeItem ? null : <AskAiTrigger onAsk={askAssistant} />}
             </div>
-            <CommandPrimitive.List className="min-h-0 flex-1 overflow-y-auto p-1.5">
+            <CommandPrimitive.List
+              className="min-h-0 flex-1 overflow-y-auto p-1.5"
+              onPointerMove={() => setInList(true)}
+            >
               <CommandPrimitive.Empty className="px-3 py-8 text-center text-sm text-text-muted">
                 {activeItem ? 'Aucune action.' : isLoading ? 'Recherche…' : 'Aucun résultat.'}
               </CommandPrimitive.Empty>
@@ -324,6 +345,7 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
             <PaletteFooter
               inActions={Boolean(activeItem)}
               showActionsHint={Boolean(highlightedCommand?.actions?.length)}
+              inList={inList}
             />
           </CommandPrimitive>
         </DialogPrimitive.Content>
@@ -440,9 +462,11 @@ function ActionRow({ action }: { action: CommandAction }) {
 function PaletteFooter({
   inActions,
   showActionsHint,
+  inList,
 }: {
   inActions: boolean
   showActionsHint: boolean
+  inList: boolean
 }) {
   const raccourciActions = useRaccourciPalette()
 
@@ -457,7 +481,10 @@ function PaletteFooter({
         <>
           <FooterHint keys={<KeyChip icon={CornerDownLeft} />} label="Aller à" />
           {showActionsHint ? (
-            <FooterHint keys={<KeyChip>{raccourciActions}</KeyChip>} label="Actions" />
+            <FooterHint
+              keys={<KeyChip>{inList ? 'Tab' : raccourciActions}</KeyChip>}
+              label="Actions"
+            />
           ) : null}
         </>
       )}
