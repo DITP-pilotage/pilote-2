@@ -40,7 +40,7 @@ export function estEnAlerteTypeAlerte(
       );
     case "estEnAlerteAbscenceTauxAvancementDepartemental": {
       const aUnTauxAvancementDepartemental =
-        chantiersAvecDept.has(ct.id) && chantiersAvecTaux.has(ct.id);
+        !chantiersAvecDept.has(ct.id) || chantiersAvecTaux.has(ct.id);
       return Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(
         aUnTauxAvancementDepartemental,
         ct.chantier_identite.cible_attendue,

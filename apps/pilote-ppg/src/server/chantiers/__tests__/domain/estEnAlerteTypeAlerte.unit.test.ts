@@ -121,8 +121,10 @@ describe("estEnAlerteTypeAlerte", () => {
   });
 
   describe("estEnAlerteAbscenceTauxAvancementDepartemental", () => {
-    test("en alerte quand le chantier n'a pas de département applicable et la cible est attendue", () => {
+    test("pas en alerte quand le chantier n'a pas de département applicable", () => {
       // Given
+      // Un chantier sans département applicable n'a rien à comparer : ce n'est
+      // pas une absence de taux, juste un indicateur sans déclinaison départementale.
       const ctx = buildCtx({
         chantiersAvecDept: new Set(),
         chantiersAvecTaux: new Set(),
@@ -138,7 +140,7 @@ describe("estEnAlerteTypeAlerte", () => {
       );
 
       // Then
-      expect(résultat).toBeTruthy();
+      expect(résultat).toBeFalsy();
     });
 
     test("en alerte quand le département applicable n'a pas de taux renseigné", () => {
