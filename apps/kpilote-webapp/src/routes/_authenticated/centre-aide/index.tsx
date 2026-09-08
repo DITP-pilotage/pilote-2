@@ -10,6 +10,7 @@ import { useRecordVisit } from '@/lib/recentlyVisited'
 import { articlesCentreAidePubliesQueryOptions } from '@/queries/centreAide'
 
 export const Route = createFileRoute('/_authenticated/centre-aide/')({
+  staticData: { title: 'Centre d’aide' },
   validateSearch: (search: Record<string, unknown>): { article: string | undefined } => ({
     article: typeof search.article === 'string' ? search.article : undefined,
   }),

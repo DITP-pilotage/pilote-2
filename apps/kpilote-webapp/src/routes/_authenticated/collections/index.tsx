@@ -29,6 +29,7 @@ const collectionsSearchSchema = z.object({
 })
 
 export const Route = createFileRoute('/_authenticated/collections/')({
+  staticData: { title: 'Collections' },
   validateSearch: collectionsSearchSchema,
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {

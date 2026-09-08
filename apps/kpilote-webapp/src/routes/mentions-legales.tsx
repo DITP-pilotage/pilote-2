@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 
 export const Route = createFileRoute('/mentions-legales')({
+  staticData: { title: 'Mentions légales' },
   component: MentionsLegalesPage,
 })
 

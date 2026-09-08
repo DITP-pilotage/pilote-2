@@ -43,6 +43,11 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
+  staticData: {
+    title: 'Indicateur',
+    documentTitle: ({ indicateur }: { indicateur: Awaited<ReturnType<typeof loadIndicateur>> }) =>
+      indicateur.nom,
+  },
   params: {
     parse: (raw) => paramsSchema.parse(raw),
     stringify: ({ id }) => ({ id }),

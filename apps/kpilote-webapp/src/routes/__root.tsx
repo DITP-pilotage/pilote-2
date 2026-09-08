@@ -12,6 +12,7 @@ export type RouterContext = {
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
+  staticData: { title: null },
   component: RootComponent,
 })
 

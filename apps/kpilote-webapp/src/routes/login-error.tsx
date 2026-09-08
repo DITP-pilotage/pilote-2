@@ -22,6 +22,7 @@ const loginErrorSearchSchema = z.object({
 })
 
 export const Route = createFileRoute('/login-error')({
+  staticData: { title: 'Erreur de connexion' },
   validateSearch: loginErrorSearchSchema,
   component: LoginErrorPage,
 })

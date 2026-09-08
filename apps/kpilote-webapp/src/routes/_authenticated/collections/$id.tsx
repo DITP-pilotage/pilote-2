@@ -44,6 +44,11 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute('/_authenticated/collections/$id')({
+  staticData: {
+    title: 'Collection',
+    documentTitle: ({ collection }: { collection: Awaited<ReturnType<typeof loadCollection>> }) =>
+      collection.nom,
+  },
   params: {
     parse: (raw) => paramsSchema.parse(raw),
     stringify: ({ id }) => ({ id }),

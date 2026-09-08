@@ -7,6 +7,7 @@ import { createAnalyticsMutationCache } from '@/analytics/mutationCache'
 import { trackPageViews } from '@/analytics/pageViews'
 import { auth } from '@/auth'
 import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
+import { syncDocumentTitle } from '@/lib/pageTitle'
 import { ToastProvider } from '@pilote/kpilote-ui/Toast'
 import '@/index.css'
 import { routeTree } from '@/routeTree.gen'
@@ -31,6 +32,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
+syncDocumentTitle(router)
 trackPageViews(router)
 
 const root = createRoot(rootElement)

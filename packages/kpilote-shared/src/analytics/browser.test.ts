@@ -39,6 +39,31 @@ describe('createBrowserAnalytics', () => {
     expect(url.startsWith('https://matomo.test/matomo.php?')).toBe(true)
   })
 
+  it('rattache les événements à la dernière page vue', () => {
+    const send = vi.fn()
+    const analytics = createBrowserAnalytics(options({ send }))
+
+    analytics.trackPageView({ path: '/indicateurs/$id', title: 'Indicateur' })
+    analytics.trackEvent({ category: 'kpilote.indicateur', action: 'view', name: 'resultats' })
+
+    const [url] = send.mock.calls[1] as [string]
+    const sent = new URL(url).searchParams
+    expect(sent.get('url')).toBe('https://kpilote.test/indicateurs/$id')
+    expect(sent.get('action_name')).toBe('Indicateur')
+  })
+
+  it('émet sans page les événements qui précèdent la première page vue', () => {
+    const send = vi.fn()
+    createBrowserAnalytics(options({ send })).trackEvent({
+      category: 'kpilote.error',
+      action: 'error',
+      name: 'mutation',
+    })
+
+    const [url] = send.mock.calls[0] as [string]
+    expect(new URL(url).searchParams.has('url')).toBe(false)
+  })
+
   it("n'émet rien sans configuration", () => {
     const send = vi.fn()
     createBrowserAnalytics(options({ send, config: null })).trackPageView({ path: '/' })
