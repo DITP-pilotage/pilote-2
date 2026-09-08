@@ -287,7 +287,11 @@ const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
 export const authConfig: NextAuthConfig = {
   trustHost: true,
   pages: {
-    signIn: "/connexion",
+    // Volontairement pas de `signIn` ici : le rediriger vers /connexion ferait
+    // boucler le mode DEV_PASSWORD, où signIn("keycloak") ne correspond à
+    // aucun provider enregistré et doit retomber sur l'écran next-auth par
+    // défaut qui porte le formulaire credentials. Les visiteurs non
+    // authentifiés arrivent sur /connexion via proxy.ts.
     error: "/connexion",
   },
   providers: !!configuration().devPassword

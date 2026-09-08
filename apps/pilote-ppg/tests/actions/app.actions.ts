@@ -22,6 +22,14 @@ export class AppActions {
     await pageAccueilNonConnecte.goto();
     await pageAccueilNonConnecte.header.clickLogin();
 
+    // L'écran de choix du mode de connexion s'intercale désormais entre le
+    // point d'entrée de l'en-tête et le formulaire.
+    await this.page
+      .getByRole("button", {
+        name: "Se connecter avec une adresse électronique et un mot de passe",
+      })
+      .click();
+
     const pageLogin = new PageLogin(this.page, this.e2eContext);
     await pageLogin.fillCredentials(username, password);
     await pageLogin.submit();
