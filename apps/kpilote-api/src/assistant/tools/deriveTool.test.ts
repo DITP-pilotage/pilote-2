@@ -44,7 +44,10 @@ describe('deriveTool', () => {
     const fetcher = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ id: 'IND-42' }))))
     const tool = deriveTool(entry, fetcher)
 
-    const output = await tool.execute?.({ id: 'IND-42' }, { toolCallId: 't', messages: [] })
+    const output = await tool.execute?.(
+      { id: 'IND-42' },
+      { toolCallId: 't', messages: [], context: undefined },
+    )
 
     expect(fetcher).toHaveBeenCalledWith('/indicateurs/IND-42')
     expect(output).toEqual({ id: 'IND-42' })
@@ -54,7 +57,10 @@ describe('deriveTool', () => {
     const fetcher = vi.fn(() => Promise.resolve(new Response('nope', { status: 403 })))
     const tool = deriveTool(entry, fetcher)
 
-    const output = await tool.execute?.({ id: 'IND-42' }, { toolCallId: 't', messages: [] })
+    const output = await tool.execute?.(
+      { id: 'IND-42' },
+      { toolCallId: 't', messages: [], context: undefined },
+    )
 
     expect(output).toContainEntry(['error', expect.stringContaining('403')])
   })
