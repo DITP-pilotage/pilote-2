@@ -15,7 +15,7 @@ import { FunctionComponent } from "react";
 export const BoutonProConnect: FunctionComponent<{ onClick: () => void }> = ({
   onClick,
 }) => (
-  <div className="fr-connect-group">
+  <div className="fr-connect-group text-center">
     <button
       className="proconnect-button fr-connect"
       onClick={onClick}
@@ -24,7 +24,7 @@ export const BoutonProConnect: FunctionComponent<{ onClick: () => void }> = ({
       <span className="fr-connect__login">S'identifier avec</span>
       <span className="fr-connect__brand">ProConnect</span>
     </button>
-    <p>
+    <p className="fr-mb-0">
       <a
         href="https://www.proconnect.gouv.fr/"
         rel="noopener noreferrer"
