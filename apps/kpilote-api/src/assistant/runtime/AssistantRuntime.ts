@@ -61,7 +61,7 @@ export const streamTurn = async ({
     model: createAssistantModel(model),
     system: buildSystemPrompt({ surface, now: new Date() }),
     messages: await convertToModelMessages(messages),
-    tools: resolveTools(surface, fetcher),
+    tools: resolveTools(surface, fetcher, model),
     stopWhen: stepCountIs(MAX_STEPS),
     temperature: CONVERSATION_TEMPERATURE,
     // `exactOptionalPropertyTypes` interdit de passer explicitement `undefined`.
