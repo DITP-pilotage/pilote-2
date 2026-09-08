@@ -5,6 +5,7 @@ import PageLanding from "@/components/PageLanding/PageLanding";
 import Loader from "@/client/components/_commons/Loader/Loader";
 import { ClientOnly } from "@/components/shared/ClientOnly";
 import { usePrefetchUtilisateurConnecte } from "@/client/hooks/usePrefetchUtilisateurConnecte";
+import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 import { EnTete } from "./EnTete/EnTete";
 import PiedDePage from "./PiedDePage/PiedDePage";
 
@@ -21,7 +22,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
   const { pathname } = useRouter();
   // L'écran de choix du mode de connexion doit s'afficher pour un visiteur non
   // authentifié, là où toute autre page laisse la place à la landing.
-  const estPageDeConnexion = pathname === "/connexion";
+  const estPageDeConnexion = pathname === CHEMIN_CONNEXION;
 
   usePrefetchUtilisateurConnecte();
 

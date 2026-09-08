@@ -13,6 +13,7 @@ import {
 } from "@/server/infrastructure/api/auth/proconnect";
 import { autoriserConnexionProConnect } from "@/server/authentification/domain/autoriserConnexionProConnect";
 import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
+import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
@@ -292,7 +293,7 @@ export const authConfig: NextAuthConfig = {
     // aucun provider enregistré et doit retomber sur l'écran next-auth par
     // défaut qui porte le formulaire credentials. Les visiteurs non
     // authentifiés arrivent sur /connexion via proxy.ts.
-    error: "/connexion",
+    error: CHEMIN_CONNEXION,
   },
   providers: !!configuration().devPassword
     ? [credentialsProvider]
@@ -315,34 +316,28 @@ export const authConfig: NextAuthConfig = {
       }
 
       const { getContainer } = await import("@/server/dependances");
-      const utilisateurRepository =
-        getContainer("gestionUtilisateur").cradle.utilisateurRepository;
+      const statutCompteQuery =
+        getContainer("gestionUtilisateur").cradle.statutCompteQuery;
 
       const motif = await autoriserConnexionProConnect({
         email: profile?.email,
         recupererStatutCompte: (email) =>
-          utilisateurRepository.statutCompte(email),
+          statutCompteQuery.recuperer({ email }),
       });
 
       if (motif) {
+        // L'email n'est pas journalisé : une identité refusée n'est pas un
+        // utilisateur de PILOTE.
         logger.warn(
           {
             categorie: "auth",
             source: "nextauth.signIn",
             provider: account.provider,
             motif,
-            // Hors production uniquement. En production, une identité refusée
-            // n'est pas un utilisateur de PILOTE et son email n'a rien à faire
-            // dans nos journaux. Ailleurs c'est la seule façon de savoir quel
-            // compte rapprocher : sans lui, un refus légitime est
-            // indiscernable d'un bug.
-            ...(configuration().env === "production"
-              ? {}
-              : { email: profile?.email }),
           },
           "Connexion ProConnect refusée",
         );
-        return `/connexion?motif=${motif}`;
+        return `${CHEMIN_CONNEXION}?motif=${motif}`;
       }
 
       logger.info(
@@ -371,9 +366,10 @@ export const authConfig: NextAuthConfig = {
 
         if (user.email) {
           const { getContainer } = await import("@/server/dependances");
-          const utilisateurRepository =
-            getContainer("gestionUtilisateur").cradle.utilisateurRepository;
-          await utilisateurRepository.mettreAJourDateDerniereConnexion({
+          const mettreAJourLaDerniereConnexionUseCase =
+            getContainer("gestionUtilisateur").cradle
+              .mettreAJourLaDerniereConnexionUseCase;
+          await mettreAJourLaDerniereConnexionUseCase.execute({
             email: user.email,
             date: new Date(),
             provider: account.provider,

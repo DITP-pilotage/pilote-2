@@ -1,9 +1,18 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 import { cheminDeRetourSur } from "@/server/authentification/domain/cheminDeRetour";
+import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 import { getContainer } from "@/server/dependances";
 import logger from "./server/infrastructure/Logger";
+
+/**
+ * Le contenu du JWT vient du réseau : on le valide au lieu de l'affirmer par
+ * un cast. Un token sans email exploitable n'ouvre aucun accès, il retombe sur
+ * le statut `inconnu`.
+ */
+const utilisateurDuTokenSchema = z.object({ email: z.string().min(1) });
 
 function generateNonce(): string {
   // Utiliser crypto.getRandomValues de manière compatible avec tous les environnements
@@ -33,7 +42,7 @@ function generateNonce(): string {
 }
 
 const urlDeConnexion = (request: NextRequest): URL => {
-  const url = new URL("/connexion", request.url);
+  const url = new URL(CHEMIN_CONNEXION, request.url);
   const chemin = cheminDeRetourSur({
     chemin: `${request.nextUrl.pathname}${request.nextUrl.search}`,
   });
@@ -99,7 +108,7 @@ export async function proxy(request: NextRequest) {
   const estRoutePublique =
     pathname.startsWith("/api/open-api") ||
     pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/connexion") ||
+    pathname.startsWith(CHEMIN_CONNEXION) ||
     pathname.startsWith("/api/test") ||
     pathname.startsWith("/centre-aide-pilote-2") ||
     pathname.startsWith("/centreaide") ||
@@ -124,11 +133,14 @@ export async function proxy(request: NextRequest) {
     }
 
     if (!process.env.DEV_PASSWORD) {
-      const email = (token.user as { email?: string } | undefined)?.email;
-      const utilisateurRepository =
-        getContainer("gestionUtilisateur").cradle.utilisateurRepository;
+      const utilisateurDuToken = utilisateurDuTokenSchema.safeParse(token.user);
+      const email = utilisateurDuToken.success
+        ? utilisateurDuToken.data.email
+        : undefined;
+      const statutCompteQuery =
+        getContainer("gestionUtilisateur").cradle.statutCompteQuery;
       const statut = email
-        ? await utilisateurRepository.statutCompte(email)
+        ? await statutCompteQuery.recuperer({ email })
         : "inconnu";
 
       if (statut !== "actif") {

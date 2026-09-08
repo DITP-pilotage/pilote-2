@@ -1,14 +1,16 @@
-import { PrismaUtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaUtilisateurRepository";
+import { MettreAJourLaDerniereConnexionUseCase } from "@/server/gestion-utilisateur/usecases/MettreAJourLaDerniereConnexionUseCase";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-describe("PrismaUtilisateurRepository#mettreAJourDateDerniereConnexion", () => {
-  let repository: PrismaUtilisateurRepository;
+describe("MettreAJourLaDerniereConnexionUseCase", () => {
+  let useCase: MettreAJourLaDerniereConnexionUseCase;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    repository = new PrismaUtilisateurRepository({ prisma: prismaPilote });
+    useCase = new MettreAJourLaDerniereConnexionUseCase({
+      prisma: prismaPilote,
+    });
   });
 
   it(
@@ -18,7 +20,7 @@ describe("PrismaUtilisateurRepository#mettreAJourDateDerniereConnexion", () => {
       await fixtures.utilisateur({ email: "agent.trace@exemple.gouv.fr" });
 
       // When
-      await repository.mettreAJourDateDerniereConnexion({
+      await useCase.execute({
         email: "agent.trace@exemple.gouv.fr",
         date: new Date("2026-09-08T10:00:00Z"),
         provider: "proconnect",
@@ -50,7 +52,7 @@ describe("PrismaUtilisateurRepository#mettreAJourDateDerniereConnexion", () => {
       });
 
       // When
-      await repository.mettreAJourDateDerniereConnexion({
+      await useCase.execute({
         email: "agent.bascule@exemple.gouv.fr",
         date: new Date("2026-09-08T11:00:00Z"),
         provider: "proconnect",

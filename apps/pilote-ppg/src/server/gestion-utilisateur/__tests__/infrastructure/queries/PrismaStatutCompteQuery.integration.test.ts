@@ -1,14 +1,14 @@
-import { PrismaUtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaUtilisateurRepository";
+import { PrismaStatutCompteQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaStatutCompteQuery";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-describe("PrismaUtilisateurRepository#statutCompte", () => {
-  let repository: PrismaUtilisateurRepository;
+describe("PrismaStatutCompteQuery", () => {
+  let query: PrismaStatutCompteQuery;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    repository = new PrismaUtilisateurRepository({ prisma: prismaPilote });
+    query = new PrismaStatutCompteQuery({ prisma: prismaPilote });
   });
 
   it(
@@ -19,9 +19,9 @@ describe("PrismaUtilisateurRepository#statutCompte", () => {
         date_desactivation: null,
       });
 
-      const statut = await repository.statutCompte(
-        "agent.actif@exemple.gouv.fr",
-      );
+      const statut = await query.recuperer({
+        email: "agent.actif@exemple.gouv.fr",
+      });
 
       expect(statut).toBe("actif");
     }),
@@ -35,9 +35,9 @@ describe("PrismaUtilisateurRepository#statutCompte", () => {
         date_desactivation: new Date("2026-01-15"),
       });
 
-      const statut = await repository.statutCompte(
-        "agent.desactive@exemple.gouv.fr",
-      );
+      const statut = await query.recuperer({
+        email: "agent.desactive@exemple.gouv.fr",
+      });
 
       expect(statut).toBe("desactive");
     }),
@@ -46,7 +46,9 @@ describe("PrismaUtilisateurRepository#statutCompte", () => {
   it(
     "retourne inconnu quand aucun compte ne porte cet email",
     createIntegrationTest(async () => {
-      const statut = await repository.statutCompte("personne@exemple.gouv.fr");
+      const statut = await query.recuperer({
+        email: "personne@exemple.gouv.fr",
+      });
 
       expect(statut).toBe("inconnu");
     }),
@@ -57,9 +59,9 @@ describe("PrismaUtilisateurRepository#statutCompte", () => {
     createIntegrationTest(async () => {
       await fixtures.utilisateur({ email: "agent.casse@exemple.gouv.fr" });
 
-      const statut = await repository.statutCompte(
-        "  Agent.Casse@Exemple.Gouv.FR  ",
-      );
+      const statut = await query.recuperer({
+        email: "  Agent.Casse@Exemple.Gouv.FR  ",
+      });
 
       expect(statut).toBe("actif");
     }),

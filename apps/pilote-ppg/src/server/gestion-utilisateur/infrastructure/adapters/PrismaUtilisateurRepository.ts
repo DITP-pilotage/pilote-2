@@ -14,7 +14,6 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import { StatutCompte } from "@/server/gestion-utilisateur/domain/StatutCompte";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { estUnProfilTerritorialise } from "@/server/app/domain/ProfilTerritorialise";
@@ -258,18 +257,6 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     });
 
     return utilisateur !== null;
-  }
-
-  async statutCompte(email: string): Promise<StatutCompte> {
-    const utilisateur = await this.prisma.utilisateur.findUnique({
-      where: { email: email.trim().toLowerCase() },
-    });
-
-    if (!utilisateur) {
-      return "inconnu";
-    }
-
-    return utilisateur.date_desactivation === null ? "actif" : "desactive";
   }
 
   async desactiver(email: string, auteurId: string): Promise<void> {
@@ -1074,27 +1061,6 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     await this.prisma.utilisateur.update({
       where: { email: email.toLowerCase() },
       data: { date_desactivation_programee: date },
-    });
-  }
-
-  async mettreAJourDateDerniereConnexion({
-    email,
-    date,
-    provider,
-  }: {
-    email: string;
-    date: Date;
-    provider: string;
-  }): Promise<void> {
-    await this.prisma.utilisateur.update({
-      where: { email: email.trim().toLowerCase() },
-      data: {
-        date_derniere_connexion: date,
-        dernier_provider_connexion: provider,
-        date_premiere_relance_desactivation: null,
-        date_deuxieme_relance_desactivation: null,
-        date_desactivation_programee: null,
-      },
     });
   }
 }
