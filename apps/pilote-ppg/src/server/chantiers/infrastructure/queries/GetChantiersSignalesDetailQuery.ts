@@ -112,14 +112,14 @@ export class GetChantiersSignalesDetailQuery {
   ): ChantierSignale[] {
     const resultats: ChantierSignale[] = [];
 
-    for (const ct of chantierTerritoires) {
-      const jalonData = ct.chantier_territoire_jalon[0];
+    for (const chantierTerritoire of chantierTerritoires) {
+      const jalonData = chantierTerritoire.chantier_territoire_jalon[0];
       const ecart = jalonData?.ecart ?? null;
       const tauxAvancement = jalonData?.taux_avancement ?? null;
 
       const typesAlerteMatches = typesAlerte.filter((typeAlerte) =>
         estEnAlerteTypeAlerte(typeAlerte, {
-          ct,
+          chantierTerritoire,
           maille,
           ecart,
           tauxAvancement,
@@ -130,9 +130,9 @@ export class GetChantiersSignalesDetailQuery {
       if (typesAlerteMatches.length === 0) continue;
 
       resultats.push({
-        id: ct.id,
-        nom: `${ct.id} — ${ct.chantier_identite.nom}`,
-        meteo: ct.meteo,
+        id: chantierTerritoire.id,
+        nom: `${chantierTerritoire.id} — ${chantierTerritoire.chantier_identite.nom}`,
+        meteo: chantierTerritoire.meteo,
         ecart,
         typesAlerte: typesAlerteMatches,
       });

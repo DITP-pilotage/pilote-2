@@ -6,7 +6,7 @@ import type { ChantierTerritoireSignale } from "@/server/chantiers/infrastructur
 export function estEnAlerteTypeAlerte(
   typeAlerte: TypeAlerteChantier,
   ctx: {
-    ct: ChantierTerritoireSignale;
+    chantierTerritoire: ChantierTerritoireSignale;
     maille: string;
     ecart: number | null;
     tauxAvancement: number | null;
@@ -16,7 +16,7 @@ export function estEnAlerteTypeAlerte(
   },
 ): boolean {
   const {
-    ct,
+    chantierTerritoire,
     maille,
     ecart,
     tauxAvancement,
@@ -29,29 +29,31 @@ export function estEnAlerteTypeAlerte(
     case "estEnAlerteÉcart":
       return Alerte.estEnAlerteÉcart(ecart);
     case "estEnAlerteBaisse":
-      return Alerte.estEnAlerteBaisse(ct.tendance);
+      return Alerte.estEnAlerteBaisse(chantierTerritoire.tendance);
     case "estEnAlerteTauxAvancementNonCalculé":
       return Alerte.estEnAlerteTauxAvancementNonCalculé(
         tauxAvancement,
-        ct.chantier_identite.cible_attendue,
+        chantierTerritoire.chantier_identite.cible_attendue,
       );
     case "estEnAlerteAbscenceTauxAvancementDepartemental": {
       const aUnTauxAvancementDepartemental =
-        !chantiersAvecDept.has(ct.id) || chantiersAvecTaux.has(ct.id);
+        !chantiersAvecDept.has(chantierTerritoire.id) ||
+        chantiersAvecTaux.has(chantierTerritoire.id);
       return Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(
         aUnTauxAvancementDepartemental,
-        ct.chantier_identite.cible_attendue,
+        chantierTerritoire.chantier_identite.cible_attendue,
       );
     }
     case "estEnAlerteMétéoNonRenseignée":
       return Alerte.estEnAlerteMétéoNonRenseignée(
-        (ct.meteo ?? "NON_RENSEIGNEE") as ChantierVueDEnsemble["météo"],
+        (chantierTerritoire.meteo ??
+          "NON_RENSEIGNEE") as ChantierVueDEnsemble["météo"],
       );
     case "estEnAlertePossedePropositionsValeurAvancement": {
       const aUnePropositionValeurAvancement =
         maille === "DEPT"
-          ? ct.nombre_propositions_valeur_actuelle > 0
-          : pvaIds.has(ct.id);
+          ? chantierTerritoire.nombre_propositions_valeur_actuelle > 0
+          : pvaIds.has(chantierTerritoire.id);
       return Alerte.estEnAlertePossedePropositionsValeurAvancement(
         aUnePropositionValeurAvancement,
       );

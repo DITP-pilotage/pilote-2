@@ -17,7 +17,7 @@ const buildChantierTerritoire = (
 const buildCtx = (
   overrides: Partial<Parameters<typeof estEnAlerteTypeAlerte>[1]> = {},
 ): Parameters<typeof estEnAlerteTypeAlerte>[1] => ({
-  ct: buildChantierTerritoire(),
+  chantierTerritoire: buildChantierTerritoire(),
   maille: "DEPT",
   ecart: null,
   tauxAvancement: null,
@@ -56,7 +56,7 @@ describe("estEnAlerteTypeAlerte", () => {
     test("en alerte quand la tendance du chantier territoire est BAISSE", () => {
       // Given
       const ctx = buildCtx({
-        ct: buildChantierTerritoire({ tendance: "BAISSE" }),
+        chantierTerritoire: buildChantierTerritoire({ tendance: "BAISSE" }),
       });
 
       // When
@@ -69,7 +69,7 @@ describe("estEnAlerteTypeAlerte", () => {
     test("pas en alerte quand la tendance du chantier territoire est HAUSSE", () => {
       // Given
       const ctx = buildCtx({
-        ct: buildChantierTerritoire({ tendance: "HAUSSE" }),
+        chantierTerritoire: buildChantierTerritoire({ tendance: "HAUSSE" }),
       });
 
       // When
@@ -85,7 +85,7 @@ describe("estEnAlerteTypeAlerte", () => {
       // Given
       const ctx = buildCtx({
         tauxAvancement: null,
-        ct: buildChantierTerritoire({
+        chantierTerritoire: buildChantierTerritoire({
           chantier_identite: { nom: "Chantier test", cible_attendue: true },
         }),
       });
@@ -104,7 +104,7 @@ describe("estEnAlerteTypeAlerte", () => {
       // Given
       const ctx = buildCtx({
         tauxAvancement: null,
-        ct: buildChantierTerritoire({
+        chantierTerritoire: buildChantierTerritoire({
           chantier_identite: { nom: "Chantier test", cible_attendue: false },
         }),
       });
@@ -128,7 +128,7 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         chantiersAvecDept: new Set(),
         chantiersAvecTaux: new Set(),
-        ct: buildChantierTerritoire({
+        chantierTerritoire: buildChantierTerritoire({
           chantier_identite: { nom: "Chantier test", cible_attendue: true },
         }),
       });
@@ -148,7 +148,7 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         chantiersAvecDept: new Set(["CH-001"]),
         chantiersAvecTaux: new Set(),
-        ct: buildChantierTerritoire({
+        chantierTerritoire: buildChantierTerritoire({
           chantier_identite: { nom: "Chantier test", cible_attendue: true },
         }),
       });
@@ -168,7 +168,7 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         chantiersAvecDept: new Set(["CH-001"]),
         chantiersAvecTaux: new Set(["CH-001"]),
-        ct: buildChantierTerritoire({
+        chantierTerritoire: buildChantierTerritoire({
           chantier_identite: { nom: "Chantier test", cible_attendue: true },
         }),
       });
@@ -187,7 +187,7 @@ describe("estEnAlerteTypeAlerte", () => {
   describe("estEnAlerteMétéoNonRenseignée", () => {
     test("en alerte quand la météo est absente en base (null)", () => {
       // Given
-      const ctx = buildCtx({ ct: buildChantierTerritoire({ meteo: null }) });
+      const ctx = buildCtx({ chantierTerritoire: buildChantierTerritoire({ meteo: null }) });
 
       // When
       const résultat = estEnAlerteTypeAlerte(
@@ -202,7 +202,7 @@ describe("estEnAlerteTypeAlerte", () => {
     test("pas en alerte quand la météo est renseignée", () => {
       // Given
       const ctx = buildCtx({
-        ct: buildChantierTerritoire({ meteo: "SOLEIL" }),
+        chantierTerritoire: buildChantierTerritoire({ meteo: "SOLEIL" }),
       });
 
       // When
@@ -222,7 +222,7 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "DEPT",
         pvaIds: new Set(),
-        ct: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 1 }),
+        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 1 }),
       });
 
       // When
@@ -240,7 +240,7 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "DEPT",
         pvaIds: new Set(),
-        ct: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
+        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
       });
 
       // When
@@ -258,7 +258,7 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "NAT",
         pvaIds: new Set(["CH-001"]),
-        ct: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
+        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
       });
 
       // When
@@ -276,7 +276,7 @@ describe("estEnAlerteTypeAlerte", () => {
       const ctx = buildCtx({
         maille: "NAT",
         pvaIds: new Set(),
-        ct: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
+        chantierTerritoire: buildChantierTerritoire({ nombre_propositions_valeur_actuelle: 0 }),
       });
 
       // When

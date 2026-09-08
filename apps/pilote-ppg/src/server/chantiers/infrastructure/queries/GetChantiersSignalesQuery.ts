@@ -58,14 +58,14 @@ export class GetChantiersSignalesQuery {
       TYPES_ALERTE_CHANTIER.map((typeAlerte) => [typeAlerte, 0]),
     ) as ChantiersSignalesContrat;
 
-    for (const ct of chantierTerritoires) {
-      const jalonData = ct.chantier_territoire_jalon[0];
+    for (const chantierTerritoire of chantierTerritoires) {
+      const jalonData = chantierTerritoire.chantier_territoire_jalon[0];
       const ecart = jalonData?.ecart ?? null;
       const tauxAvancement = jalonData?.taux_avancement ?? null;
 
       for (const typeAlerte of TYPES_ALERTE_CHANTIER) {
         const enAlerte = estEnAlerteTypeAlerte(typeAlerte, {
-          ct,
+          chantierTerritoire,
           maille,
           ecart,
           tauxAvancement,
