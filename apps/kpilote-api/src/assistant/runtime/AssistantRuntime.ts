@@ -4,6 +4,8 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
+  InvalidToolInputError,
+  NoSuchToolError,
   stepCountIs,
   streamText,
   type UIMessage,
@@ -35,6 +37,16 @@ import { startTimer } from '@/framework/timer'
  */
 const inContext = <T>(principal: Principal, fn: () => Promise<T>): Promise<T> =>
   runWithDb(prisma, () => runWithPrincipal(principal, fn)) as Promise<T>
+
+/**
+ * Le SDK masque toute erreur en « An error occurred. » vers le client. Une entrée d'outil
+ * refusée est la seule qu'on rend telle quelle : c'est exactement ce que le modèle reçoit
+ * pour corriger son appel, et c'est ce que l'utilisateur veut lire dans le panneau.
+ */
+const describeError = (error: unknown): string =>
+  InvalidToolInputError.isInstance(error) || NoSuchToolError.isInstance(error)
+    ? error.message
+    : 'Une erreur est survenue.'
 
 export const streamTurn = async ({
   surface,
@@ -71,7 +83,7 @@ export const streamTurn = async ({
   const stream = createUIMessageStream({
     originalMessages: messages,
     execute: async ({ writer }) => {
-      writer.merge(result.toUIMessageStream())
+      writer.merge(result.toUIMessageStream({ onError: describeError }))
 
       const steps = await result.steps
       const toolOutputs = steps.flatMap((step) =>
@@ -102,7 +114,9 @@ export const streamTurn = async ({
     },
     onFinish: async ({ messages: finalMessages }) => {
       const usage = await result.usage
-      const transcript = await result.response
+      // `response` ne porte que la dernière étape ; les appels d'outils sont dans les
+      // précédentes. `responseMessages` les accumule toutes.
+      const transcript = { ...(await result.response), messages: await result.responseMessages }
       await inContext(principal, async () => {
         // La conversation AVANT l'appel : assistant_appel.conversation_id la référence, la
         // contrainte de clé étrangère échouerait au premier tour dans l'autre ordre.
