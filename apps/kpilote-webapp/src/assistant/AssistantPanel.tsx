@@ -48,9 +48,12 @@ export function AssistantPanel({
         {/* Le libellé reste dans le DOM pour les lecteurs d'écran ; le placeholder
             suffit à l'œil dans un fil de conversation. */}
         <div className="flex-1">
+          {/* Le focus arrive ici à l'ouverture, pas sur la croix de la modale : on vient
+              de la palette pour écrire, pas pour fermer. */}
           <FieldInput
             label="Votre question"
             hideLabel
+            autoFocus
             value={input}
             onChange={(event) => setInput(event.target.value)}
             placeholder="Posez votre question…"
