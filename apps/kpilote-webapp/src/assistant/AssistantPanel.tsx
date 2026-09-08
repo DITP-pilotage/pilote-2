@@ -1,6 +1,6 @@
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { AssistantMessage } from './AssistantMessage'
 import { FeedbackBar } from './FeedbackBar'
@@ -15,10 +15,18 @@ export function AssistantPanel({
 }) {
   const { messages, sendMessage, status, error } = useAssistant(conversationId)
   const [input, setInput] = useState(initialQuestion ?? '')
+  const thread = useRef<HTMLDivElement>(null)
+
+  // Le fil suit la réponse : à chaque lot de tokens, on colle le bas du flux au bas de la
+  // zone. `messages` change à chaque throttle du flux, donc ça tient le rythme du streaming.
+  useEffect(() => {
+    const element = thread.current
+    if (element) element.scrollTop = element.scrollHeight
+  }, [messages, status])
 
   return (
     <div className="flex h-full flex-col gap-4">
-      <div className="flex-1 space-y-4 overflow-y-auto">
+      <div ref={thread} className="flex-1 space-y-4 overflow-y-auto">
         {messages.map((message) => (
           <AssistantMessage key={message.id} message={message} />
         ))}
