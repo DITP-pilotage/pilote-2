@@ -15,7 +15,11 @@ export const useAssistant = (conversationId: string) => {
         id: conversationId,
         transport: new DefaultChatTransport<KpiloteUIMessage>({
           api: `${env.apiUrl}/assistant/chat`,
-          body: { surface: 'ask-libre', conversationId },
+          // Le serveur possède l'historique : seul le nouveau message part, jamais la
+          // liste complète que `useChat` tient localement.
+          prepareSendMessagesRequest: ({ messages }) => ({
+            body: { surface: 'ask-libre', conversationId, message: messages.at(-1) },
+          }),
           // Le jeton est lu à chaque envoi, pas capturé à la construction : il tourne.
           headers: () => {
             const token = tokenStore.get()
