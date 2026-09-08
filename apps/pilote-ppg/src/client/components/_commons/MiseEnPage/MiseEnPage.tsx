@@ -26,12 +26,12 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
   usePrefetchUtilisateurConnecte();
 
   return (
-    <div className="break-words [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_.fr-btn]:hidden print:[&_.fr-link]:hidden print:[&_*]:scrollbar-none print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:!bg-white">
+    <div className="flex min-h-screen flex-col break-words [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_.fr-btn]:hidden print:[&_.fr-link]:hidden print:[&_*]:scrollbar-none print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:!bg-white">
       <EnTete />
       {status === "loading" ? (
         <Loader />
       ) : (
-        <div className="relative">
+        <div className="relative flex grow flex-col">
           {afficherLeLoader ? (
             <div className="fixed right-16 bottom-16 z-[1751] w-80 bg-dsfr-grey-1000 [filter:drop-shadow(var(--overlap-shadow))] shadow-[inset_0_0_0_1px_theme(colors.dsfr-grey-900)]">
               <div className="relative w-full h-[0.4em] bg-pilote-loader-bg">
@@ -44,7 +44,9 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
             <PageLanding />
           ) : (
             <ClientOnly>
-              <div id="main">{children}</div>
+              <div className="flex grow flex-col" id="main">
+                {children}
+              </div>
             </ClientOnly>
           )}
           <ClientOnly>
