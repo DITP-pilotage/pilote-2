@@ -1,5 +1,5 @@
 import { buildEventRequest, buildPageViewRequest } from './buildRequest'
-import type { AnalyticsConfig, AnalyticsEvent, AnalyticsPageView } from './schema'
+import type { AnalyticsConfig, AnalyticsEvent, AnalyticsPage, AnalyticsPageView } from './schema'
 
 export type InactiveAnalyticsReason = 'not-configured' | 'disabled' | 'do-not-track'
 
@@ -46,9 +46,17 @@ export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analyt
     }
   }
 
+  // L'émetteur retient la dernière page vue pour en rattacher les événements
+  // suivants : eux seuls ne savent pas d'où ils partent. Les événements émis
+  // avant la première page vue restent sans page, comme aujourd'hui.
+  let currentPage: AnalyticsPage | undefined
+
   return {
     status: { active: true },
-    trackPageView: (pageView) => emit(buildPageViewRequest(pageView, config)),
-    trackEvent: (event) => emit(buildEventRequest(event, config)),
+    trackPageView: (pageView) => {
+      currentPage = pageView
+      emit(buildPageViewRequest(pageView, config))
+    },
+    trackEvent: (event) => emit(buildEventRequest(event, config, currentPage)),
   }
 }

@@ -35,9 +35,14 @@ export type AnalyticsEvent = {
   context?: AnalyticsContext
 }
 
-export type AnalyticsPageView = {
+// La page sur laquelle une action se produit. Portée par la page vue, puis
+// rattachée aux événements qui la suivent.
+export type AnalyticsPage = {
   path: string
   title?: string
+}
+
+export type AnalyticsPageView = AnalyticsPage & {
   context?: AnalyticsContext
 }
 

@@ -108,6 +108,38 @@ describe('buildEventRequest', () => {
       ).get('e_v'),
     ).toBe('500')
   })
+
+  it("rattache l'événement à la page sur laquelle il se produit", () => {
+    const result = params(
+      buildEventRequest({ category: 'kpilote.error', action: 'error', name: 'mutation' }, config, {
+        path: '/indicateurs/$id',
+        title: 'Indicateur',
+      }),
+    )
+
+    expect(result.get('url')).toBe('https://kpilote.test/indicateurs/$id')
+    expect(result.get('action_name')).toBe('Indicateur')
+  })
+
+  it("n'envoie ni url ni action_name quand la page est inconnue", () => {
+    const result = params(
+      buildEventRequest({ category: 'kpilote.error', action: 'error', name: 'mutation' }, config),
+    )
+
+    expect(result.has('url')).toBe(false)
+    expect(result.has('action_name')).toBe(false)
+  })
+
+  it("n'envoie action_name que si la page a un titre", () => {
+    const result = params(
+      buildEventRequest({ category: 'kpilote.error', action: 'error', name: 'mutation' }, config, {
+        path: '/',
+      }),
+    )
+
+    expect(result.get('url')).toBe('https://kpilote.test/')
+    expect(result.has('action_name')).toBe(false)
+  })
 })
 
 describe('buildPageViewRequest', () => {

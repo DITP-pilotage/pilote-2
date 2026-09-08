@@ -1,4 +1,10 @@
-import type { AnalyticsConfig, AnalyticsContext, AnalyticsEvent, AnalyticsPageView } from './schema'
+import type {
+  AnalyticsConfig,
+  AnalyticsContext,
+  AnalyticsEvent,
+  AnalyticsPage,
+  AnalyticsPageView,
+} from './schema'
 
 type SplitContext = {
   dimensions: Record<string, string>
@@ -29,7 +35,11 @@ const baseParams = (config: AnalyticsConfig): Record<string, string> => ({
   apiv: '1',
 })
 
-export const buildEventRequest = (event: AnalyticsEvent, config: AnalyticsConfig): string => {
+export const buildEventRequest = (
+  event: AnalyticsEvent,
+  config: AnalyticsConfig,
+  page?: AnalyticsPage,
+): string => {
   const { dimensions, rest } = splitContext(
     { ...config.globalContext, ...event.context },
     config.dimensionSlots ?? {},
@@ -45,6 +55,14 @@ export const buildEventRequest = (event: AnalyticsEvent, config: AnalyticsConfig
   })
 
   if (event.value !== undefined) params.set('e_v', String(event.value))
+
+  // Sans page, Matomo enregistre l'événement hors de tout parcours : impossible
+  // de segmenter « quels événements sur quelle page ». Le contexte reste replié
+  // dans `e_n`, l'URL ne porte donc que le motif de route.
+  if (page) {
+    params.set('url', `${config.appUrl}${page.path}`)
+    if (page.title !== undefined) params.set('action_name', page.title)
+  }
 
   return params.toString()
 }
