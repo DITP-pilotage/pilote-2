@@ -2,6 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 import { cheminDeRetourSur } from "@/server/authentification/domain/cheminDeRetour";
+import { getContainer } from "@/server/dependances";
 import logger from "./server/infrastructure/Logger";
 
 function generateNonce(): string {
@@ -124,7 +125,6 @@ export async function proxy(request: NextRequest) {
 
     if (!process.env.DEV_PASSWORD) {
       const email = (token.user as { email?: string } | undefined)?.email;
-      const { getContainer } = await import("@/server/dependances");
       const utilisateurRepository =
         getContainer("gestionUtilisateur").cradle.utilisateurRepository;
       const statut = email
