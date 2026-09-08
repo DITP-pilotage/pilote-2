@@ -286,6 +286,10 @@ const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
 
 export const authConfig: NextAuthConfig = {
   trustHost: true,
+  pages: {
+    signIn: "/connexion",
+    error: "/connexion",
+  },
   providers: !!configuration().devPassword
     ? [credentialsProvider]
     : [keycloak, proconnect],
