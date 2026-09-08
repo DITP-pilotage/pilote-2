@@ -43,31 +43,36 @@ export const decoderPayloadJwt = ({ jwt }: { jwt: string }): unknown => {
 };
 
 /**
- * Le contexte passé au handler `userinfo` est décrit ici plutôt qu'importé :
- * le fichier de déclaration publié par @auth/core référence le type
+ * Le contexte passé au handler `userinfo` est validé plutôt qu'affirmé : le
+ * fichier de déclaration publié par @auth/core référence le type
  * `EndpointHandler` sans jamais le définir ni l'importer, si bien que
  * `UserinfoEndpointHandler` se résout en `any` et n'apporte aucun typage.
- */
-type ContexteUserinfo = {
-  tokens: { access_token?: string };
-  provider: { userinfo?: string | { url?: string | URL } };
-};
-
-/**
+ *
  * L'URL du userinfo vient de la découverte OIDC : Auth.js la renseigne sur le
- * provider avant d'appeler ce handler.
+ * provider avant d'appeler ce handler, sous forme de chaîne ou d'objet.
  */
-const recupererProfilProConnect = async ({
-  tokens,
-  provider,
-}: ContexteUserinfo): Promise<ProfilProConnect> => {
+const contexteUserinfoSchema = z.object({
+  tokens: z.object({ access_token: z.string().min(1) }),
+  provider: z.object({
+    userinfo: z.union([
+      z.string().min(1),
+      z.object({ url: z.union([z.string().min(1), z.instanceof(URL)]) }),
+    ]),
+  }),
+});
+
+const recupererProfilProConnect = async (
+  contexte: unknown,
+): Promise<ProfilProConnect> => {
+  const resultat = contexteUserinfoSchema.safeParse(contexte);
+  if (!resultat.success) {
+    throw new Error("Endpoint userinfo ProConnect introuvable");
+  }
+  const { tokens, provider } = resultat.data;
   const url =
     typeof provider.userinfo === "string"
       ? provider.userinfo
-      : provider.userinfo?.url?.toString();
-  if (!url) {
-    throw new Error("Endpoint userinfo ProConnect introuvable");
-  }
+      : provider.userinfo.url.toString();
 
   const reponse = await fetch(url, {
     headers: { Authorization: `Bearer ${tokens.access_token}` },
