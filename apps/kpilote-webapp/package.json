@@ -27,7 +27,7 @@
     "test:watch": "tsr generate && vitest"
   },
   "dependencies": {
-    "@ai-sdk/react": "^3.0.163",
+    "@ai-sdk/react": "^4.0.65",
     "@hono/node-server": "2.1.0",
     "@hookform/resolvers": "^5.7.1",
     "@js-temporal/polyfill": "^0.5.1",
@@ -44,7 +44,7 @@
     "@tiptap/react": "3.29.2",
     "@tiptap/starter-kit": "3.29.2",
     "@yornaath/batshit": "^0.14.0",
-    "ai": "^6.0.161",
+    "ai": "^7.0.59",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

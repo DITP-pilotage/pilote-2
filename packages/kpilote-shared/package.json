@@ -188,12 +188,12 @@
     "format:check": "prettier --check ."
   },
   "peerDependencies": {
-    "ai": "^6.0.161",
+    "ai": "^7.0.59",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
-    "ai": "^6.0.161",
+    "ai": "^7.0.59",
     "prettier": "^3.9.6",
     "vitest": "^4.1.9"
   }

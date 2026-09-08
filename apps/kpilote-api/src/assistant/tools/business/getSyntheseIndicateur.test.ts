@@ -27,6 +27,7 @@ const runTool = (
   return tool.execute?.(input, {
     toolCallId: 't',
     messages: [],
+    context: undefined,
   }) as Promise<SyntheseIndicateurOutput>
 }
 
