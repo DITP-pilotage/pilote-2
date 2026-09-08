@@ -31,9 +31,9 @@ describe('buildUrl', () => {
     expect(buildUrl('/indicateurs', { recherche: undefined })).toBe('/indicateurs')
   })
 
-  it('déplie un paramètre tableau en occurrences répétées', () => {
+  it('joint un tableau en CSV, la seule forme que les routes de liste acceptent', () => {
     expect(buildUrl('/indicateurs', { ids: ['IND-1', 'IND-2'] })).toBe(
-      '/indicateurs?ids=IND-1&ids=IND-2',
+      '/indicateurs?ids=IND-1%2CIND-2',
     )
   })
 })
@@ -67,6 +67,45 @@ describe('deriveTool', () => {
     await tool.execute?.(input, { toolCallId: 't', messages: [], context: undefined })
 
     expect(fetcher).toHaveBeenCalledWith('/indicateurs?pageSize=100')
+  })
+
+  it("rejoue une liste CSV telle que la route l'attend, même après transformation du schéma", async () => {
+    const valeursEntry = WHITELIST.find((candidat) => candidat.name === 'get_indicateur_valeurs')!
+    const fetcher = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ items: [] }))))
+    const tool = deriveTool(valeursEntry, fetcher)
+
+    const input = (tool.inputSchema as z.ZodType).parse({
+      id: 'IND-046',
+      individus: 'REG-01,REG-02',
+    })
+    await tool.execute?.(input, { toolCallId: 't', messages: [], context: undefined })
+
+    expect(fetcher).toHaveBeenCalledWith('/indicateurs/IND-046/valeurs?individus=REG-01%2CREG-02')
+  })
+
+  it("remonte le message de l'API pour que le modèle sache quoi corriger", async () => {
+    const body = JSON.stringify({ code: 'VALIDATION_ERROR', message: 'individus est requis' })
+    const fetcher = vi.fn(() => Promise.resolve(new Response(body, { status: 400 })))
+    const tool = deriveTool(entry, fetcher)
+
+    const output = await tool.execute?.(
+      { id: 'IND-42' },
+      { toolCallId: 't', messages: [], context: undefined },
+    )
+
+    expect(output).toContainEntry(['error', expect.stringContaining('individus est requis')])
+  })
+
+  it("refuse de rejouer un appel déjà échoué à l'identique dans le tour", async () => {
+    const fetcher = vi.fn(() => Promise.resolve(new Response('nope', { status: 400 })))
+    const tool = deriveTool(entry, fetcher)
+    const options = { toolCallId: 't', messages: [], context: undefined }
+
+    await tool.execute?.({ id: 'IND-42' }, options)
+    const second = await tool.execute?.({ id: 'IND-42' }, options)
+
+    expect(fetcher).toHaveBeenCalledTimes(1)
+    expect(second).toContainEntry(['error', expect.stringContaining('déjà échoué')])
   })
 
   it('renvoie une erreur lisible plutôt que de faire tomber le tour', async () => {

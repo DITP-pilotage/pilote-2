@@ -1,5 +1,6 @@
 import { type RouteConfig } from '@hono/zod-openapi'
-import { type ToolName } from '@pilote/kpilote-shared/assistant/tools'
+import { type ToolError, type ToolName } from '@pilote/kpilote-shared/assistant/tools'
+import { type ErrorApiModel } from '@pilote/kpilote-shared/error'
 import { tool, type Tool } from 'ai'
 import { z } from 'zod'
 
@@ -22,6 +23,11 @@ const toScalar = (value: unknown): string | null =>
 /**
  * Reconstitue l'URL documentée par la route : les paramètres qui apparaissent entre
  * accolades dans le chemin y sont substitués, les autres partent en query string.
+ *
+ * Un tableau part en CSV, jamais en clé répétée. L'outil reçoit l'entrée APRÈS le schéma
+ * de la route, dont les transformations ont déjà éclaté les listes CSV (`individus`,
+ * `ids`) en tableaux ; une clé répétée arriverait à la route sous forme de tableau, que
+ * son `z.string()` refuse. Le CSV est la forme que toutes ces routes acceptent.
  */
 export const buildUrl = (path: string, params: Record<string, unknown>): string => {
   const consumed = new Set<string>()
@@ -33,10 +39,10 @@ export const buildUrl = (path: string, params: Record<string, unknown>): string 
   const query = new URLSearchParams()
   for (const [key, value] of Object.entries(params)) {
     if (consumed.has(key) || value === undefined || value === null) continue
-    for (const item of Array.isArray(value) ? value : [value]) {
-      const scalar = toScalar(item)
-      if (scalar !== null) query.append(key, scalar)
-    }
+    const scalars = (Array.isArray(value) ? value : [value])
+      .map(toScalar)
+      .filter((item): item is string => item !== null)
+    if (scalars.length > 0) query.append(key, scalars.join(','))
   }
 
   const suffix = query.toString()
@@ -67,21 +73,49 @@ const mergeSchemas = (route: RouteConfig): z.ZodType<Record<string, unknown>> =>
   )
 }
 
+const REPEATED_FAILURE: ToolError = {
+  error:
+    "Cet appel a déjà échoué dans ce tour avec exactement ces paramètres. Ne le répète pas : corrige les paramètres d'après l'erreur précédente, ou explique à l'utilisateur ce qui bloque.",
+}
+
+/**
+ * Une erreur lisible plutôt qu'un throw, et le message de l'API avec : c'est lui qui dit au
+ * modèle QUOI corriger. Sans lui, un 400 se lit comme un refus et le modèle réessaie à
+ * l'identique.
+ */
+const describeFailure = async (response: Response): Promise<ToolError> => {
+  // Lecture structurelle plutôt que `errorApiModelSchema` : importer un schéma partagé ici
+  // l'évaluerait avant l'extension `.openapi()` de zod, ce qui casse les routes (voir registry.ts).
+  const body = (await response.json().catch(() => null)) as Partial<ErrorApiModel> | null
+  if (typeof body?.message !== 'string') {
+    return { error: `L'appel a échoué avec le statut ${response.status}.` }
+  }
+  const details = body.details === undefined ? '' : ` ${JSON.stringify(body.details)}`
+  return { error: `L'appel a échoué avec le statut ${response.status} : ${body.message}${details}` }
+}
+
 /**
  * Transforme une route de lecture en outil. La description et le schéma sont ceux de la
  * route : quand elle évolue, l'outil suit sans intervention.
+ *
+ * L'outil est construit par tour : la mémoire des appels échoués ne vit pas plus longtemps.
  */
-export const deriveTool = ({ route }: WhitelistEntry, fetcher: Fetcher): Tool =>
-  tool({
+export const deriveTool = ({ route }: WhitelistEntry, fetcher: Fetcher): Tool => {
+  const failed = new Set<string>()
+
+  return tool({
     description: route.description ?? route.summary ?? '',
     inputSchema: mergeSchemas(route),
     execute: async (params: Record<string, unknown>) => {
-      const response = await fetcher(buildUrl(route.path, params))
+      const url = buildUrl(route.path, params)
+      if (failed.has(url)) return REPEATED_FAILURE
+
+      const response = await fetcher(url)
       if (!response.ok) {
-        // Une erreur lisible plutôt qu'un throw : le modèle peut corriger son appel ou
-        // dire à l'utilisateur qu'il n'a pas accès, au lieu de perdre tout le tour.
-        return { error: `L'appel a échoué avec le statut ${response.status}.` }
+        failed.add(url)
+        return describeFailure(response)
       }
       return response.json()
     },
   })
+}
