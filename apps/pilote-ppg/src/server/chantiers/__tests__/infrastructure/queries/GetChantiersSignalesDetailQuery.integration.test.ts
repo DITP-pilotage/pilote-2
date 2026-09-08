@@ -65,7 +65,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "REG-11",
         jalon: 2025,
         chantierIds: ["CH-001", "CH-002"],
-        categories: ["ecart"],
+        typesAlerte: ["estEnAlerteÉcart"],
       });
 
       // Then
@@ -75,7 +75,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier en retard",
           meteo: "NON_RENSEIGNEE",
           ecart: -15,
-          categories: ["ecart"],
+          typesAlerte: ["estEnAlerteÉcart"],
         },
       ]);
     }),
@@ -117,7 +117,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "REG-11",
         jalon: 2025,
         chantierIds: ["CH-001", "CH-002"],
-        categories: ["baisse"],
+        typesAlerte: ["estEnAlerteBaisse"],
       });
 
       // Then
@@ -127,7 +127,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier en baisse",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["baisse"],
+          typesAlerte: ["estEnAlerteBaisse"],
         },
       ]);
     }),
@@ -185,7 +185,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "NAT-FR",
         jalon: 2025,
         chantierIds: ["CH-001", "CH-002"],
-        categories: ["taux_non_calcule"],
+        typesAlerte: ["estEnAlerteTauxAvancementNonCalculé"],
       });
 
       // Then
@@ -195,7 +195,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier sans taux",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["taux_non_calcule"],
+          typesAlerte: ["estEnAlerteTauxAvancementNonCalculé"],
         },
       ]);
     }),
@@ -237,7 +237,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "REG-11",
         jalon: 2025,
         chantierIds: ["CH-001", "CH-002"],
-        categories: ["meteo_non_renseignee"],
+        typesAlerte: ["estEnAlerteMétéoNonRenseignée"],
       });
 
       // Then
@@ -247,7 +247,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier sans météo",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["meteo_non_renseignee"],
+          typesAlerte: ["estEnAlerteMétéoNonRenseignée"],
         },
       ]);
     }),
@@ -289,7 +289,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "DEPT-75",
         jalon: 2025,
         chantierIds: ["CH-001", "CH-002"],
-        categories: ["pva"],
+        typesAlerte: ["estEnAlertePossedePropositionsValeurAvancement"],
       });
 
       // Then
@@ -299,7 +299,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier avec PVA",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["pva"],
+          typesAlerte: ["estEnAlertePossedePropositionsValeurAvancement"],
         },
       ]);
     }),
@@ -336,7 +336,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "NAT-FR",
         jalon: 2025,
         chantierIds: ["CH-001"],
-        categories: ["pva"],
+        typesAlerte: ["estEnAlertePossedePropositionsValeurAvancement"],
       });
 
       // Then — PVA compté depuis le DEPT enfant
@@ -346,7 +346,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier national",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["pva"],
+          typesAlerte: ["estEnAlertePossedePropositionsValeurAvancement"],
         },
       ]);
     }),
@@ -418,7 +418,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "NAT-FR",
         jalon: 2025,
         chantierIds: ["CH-001", "CH-002"],
-        categories: ["absence_taux_departemental"],
+        typesAlerte: ["estEnAlerteAbscenceTauxAvancementDepartemental"],
       });
 
       // Then
@@ -428,7 +428,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier sans taux dept",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["absence_taux_departemental"],
+          typesAlerte: ["estEnAlerteAbscenceTauxAvancementDepartemental"],
         },
       ]);
     }),
@@ -465,7 +465,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         territoireCode: "REG-11",
         jalon: 2025,
         chantierIds: ["CH-001"],
-        categories: ["ecart", "meteo_non_renseignee"],
+        typesAlerte: ["estEnAlerteÉcart", "estEnAlerteMétéoNonRenseignée"],
       });
 
       // Then — une seule entrée, avec les 2 catégories
@@ -475,7 +475,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
           nom: "CH-001 — Chantier double alerte",
           meteo: "NON_RENSEIGNEE",
           ecart: -15,
-          categories: ["ecart", "meteo_non_renseignee"],
+          typesAlerte: ["estEnAlerteÉcart", "estEnAlerteMétéoNonRenseignée"],
         },
       ]);
     }),

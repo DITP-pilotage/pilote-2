@@ -1,4 +1,10 @@
-import { CATEGORIES_ALERTE_CHANTIER } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+export const TYPES_ALERTE_CHANTIER = [
+  "estEnAlerteÉcart",
+  "estEnAlerteBaisse",
+  "estEnAlerteTauxAvancementNonCalculé",
+  "estEnAlerteAbscenceTauxAvancementDepartemental",
+  "estEnAlerteMétéoNonRenseignée",
+  "estEnAlertePossedePropositionsValeurAvancement",
+] as const;
 
-export type TypeAlerteChantier =
-  (typeof CATEGORIES_ALERTE_CHANTIER)[number]["typeAlerte"];
+export type TypeAlerteChantier = (typeof TYPES_ALERTE_CHANTIER)[number];

@@ -5,7 +5,7 @@ import {
   type GetChantiersSignalesOutput,
 } from "@/server/albert/tools/getChantiersSignales";
 import type { GetChantiersSignalesDetailQuery } from "@/server/chantiers/infrastructure/queries/GetChantiersSignalesDetailQuery";
-import type { CategorieAlerteChantier } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+import type { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 
 const buildTool = ({
   queryResult,
@@ -28,7 +28,7 @@ const executeTool = async (
   tool: ReturnType<ReturnType<typeof createGetChantiersSignalesTool>>,
   input: {
     territoire_code: string;
-    categories?: CategorieAlerteChantier[];
+    categories?: TypeAlerteChantier[];
     chantier_ids?: string[];
   },
 ): Promise<GetChantiersSignalesOutput> =>
@@ -92,7 +92,7 @@ describe("createGetChantiersSignalesTool execute", () => {
           nom: "CH-001 — Chantier test",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["meteo_non_renseignee"],
+          typesAlerte: ["estEnAlerteMétéoNonRenseignée"],
         },
       ],
       territoiresAccessibles: ["NAT-FR"],
@@ -102,7 +102,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "NAT-FR",
-      categories: ["ecart", "meteo_non_renseignee"],
+      categories: ["estEnAlerteÉcart", "estEnAlerteMétéoNonRenseignée"],
     });
 
     // Then
@@ -113,12 +113,12 @@ describe("createGetChantiersSignalesTool execute", () => {
           nom: "CH-001 — Chantier test",
           meteo: "NON_RENSEIGNEE",
           ecart: null,
-          categories: ["meteo_non_renseignee"],
+          typesAlerte: ["estEnAlerteMétéoNonRenseignée"],
         },
       ],
       categories_non_applicables: [
         {
-          categorie: "ecart",
+          categorie: "estEnAlerteÉcart",
           raison: expect.any(String),
         },
       ],
@@ -137,7 +137,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "REG-11",
-      categories: ["taux_non_calcule", "ecart"],
+      categories: ["estEnAlerteTauxAvancementNonCalculé", "estEnAlerteÉcart"],
     });
 
     // Then
@@ -145,7 +145,7 @@ describe("createGetChantiersSignalesTool execute", () => {
       resultats: [],
       categories_non_applicables: [
         {
-          categorie: "taux_non_calcule",
+          categorie: "estEnAlerteTauxAvancementNonCalculé",
           raison: expect.any(String),
         },
       ],
@@ -164,7 +164,10 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "DEPT-75",
-      categories: ["absence_taux_departemental", "baisse"],
+      categories: [
+        "estEnAlerteAbscenceTauxAvancementDepartemental",
+        "estEnAlerteBaisse",
+      ],
     });
 
     // Then
@@ -172,7 +175,7 @@ describe("createGetChantiersSignalesTool execute", () => {
       resultats: [],
       categories_non_applicables: [
         {
-          categorie: "absence_taux_departemental",
+          categorie: "estEnAlerteAbscenceTauxAvancementDepartemental",
           raison: expect.any(String),
         },
       ],

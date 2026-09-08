@@ -1,7 +1,7 @@
 import { Inject } from "@/server/chantiers/module";
-import { CategorieAlerteChantier } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { estEnAlerteCategorie } from "@/server/chantiers/domain/estEnAlerteCategorie";
+import { estEnAlerteTypeAlerte } from "@/server/chantiers/domain/estEnAlerteTypeAlerte";
 import type { ChantierTerritoireSignale } from "./ChantiersSignalesDataFetcher";
 
 export type ChantierSignale = {
@@ -9,7 +9,7 @@ export type ChantierSignale = {
   nom: string;
   meteo: string | null;
   ecart: number | null;
-  categories: CategorieAlerteChantier[];
+  typesAlerte: TypeAlerteChantier[];
 };
 
 export type GetChantiersSignalesDetailResult = ChantierSignale[];
@@ -21,7 +21,7 @@ export class GetChantiersSignalesDetailQuery {
     territoireCode: string;
     jalon: number;
     chantierIds: string[];
-    categories: CategorieAlerteChantier[];
+    typesAlerte: TypeAlerteChantier[];
   }): Promise<GetChantiersSignalesDetailResult> {
     const chantierTerritoires =
       await this.deps.chantiersSignalesDataFetcher.recupererChantierTerritoires(
@@ -36,7 +36,7 @@ export class GetChantiersSignalesDetailQuery {
     const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);
 
     const pvaIds = await this.résoudrePvaIds(
-      params.categories,
+      params.typesAlerte,
       maille,
       chantierTerritoires,
       params.territoireCode,
@@ -44,7 +44,7 @@ export class GetChantiersSignalesDetailQuery {
 
     const { chantiersAvecDept, chantiersAvecTaux } =
       await this.résoudreAbsenceTauxDepartementalSets(
-        params.categories,
+        params.typesAlerte,
         maille,
         chantierTerritoires,
         params.jalon,
@@ -53,18 +53,19 @@ export class GetChantiersSignalesDetailQuery {
     return this.construireResultats(
       chantierTerritoires,
       maille,
-      params.categories,
+      params.typesAlerte,
       { pvaIds, chantiersAvecDept, chantiersAvecTaux },
     );
   }
 
   private async résoudrePvaIds(
-    categories: CategorieAlerteChantier[],
+    typesAlerte: TypeAlerteChantier[],
     maille: string,
     chantierTerritoires: ChantierTerritoireSignale[],
     territoireCode: string,
   ): Promise<Set<string>> {
-    if (!categories.includes("pva")) return new Set<string>();
+    if (!typesAlerte.includes("estEnAlertePossedePropositionsValeurAvancement"))
+      return new Set<string>();
 
     const chantierIdsApplicables = chantierTerritoires.map((ct) => ct.id);
     return this.deps.chantiersSignalesDataFetcher.recupererPvaIds(
@@ -75,7 +76,7 @@ export class GetChantiersSignalesDetailQuery {
   }
 
   private async résoudreAbsenceTauxDepartementalSets(
-    categories: CategorieAlerteChantier[],
+    typesAlerte: TypeAlerteChantier[],
     maille: string,
     chantierTerritoires: ChantierTerritoireSignale[],
     jalon: number,
@@ -83,7 +84,9 @@ export class GetChantiersSignalesDetailQuery {
     chantiersAvecDept: Set<string>;
     chantiersAvecTaux: Set<string>;
   }> {
-    if (!categories.includes("absence_taux_departemental")) {
+    if (
+      !typesAlerte.includes("estEnAlerteAbscenceTauxAvancementDepartemental")
+    ) {
       return {
         chantiersAvecDept: new Set<string>(),
         chantiersAvecTaux: new Set<string>(),
@@ -100,7 +103,7 @@ export class GetChantiersSignalesDetailQuery {
   private construireResultats(
     chantierTerritoires: ChantierTerritoireSignale[],
     maille: string,
-    categories: CategorieAlerteChantier[],
+    typesAlerte: TypeAlerteChantier[],
     contexteAlertesTransverses: {
       pvaIds: Set<string>;
       chantiersAvecDept: Set<string>;
@@ -114,8 +117,8 @@ export class GetChantiersSignalesDetailQuery {
       const ecart = jalonData?.ecart ?? null;
       const tauxAvancement = jalonData?.taux_avancement ?? null;
 
-      const categoriesMatchees = categories.filter((categorie) =>
-        estEnAlerteCategorie(categorie, {
+      const typesAlerteMatches = typesAlerte.filter((typeAlerte) =>
+        estEnAlerteTypeAlerte(typeAlerte, {
           ct,
           maille,
           ecart,
@@ -124,14 +127,14 @@ export class GetChantiersSignalesDetailQuery {
         }),
       );
 
-      if (categoriesMatchees.length === 0) continue;
+      if (typesAlerteMatches.length === 0) continue;
 
       resultats.push({
         id: ct.id,
         nom: `${ct.id} — ${ct.chantier_identite.nom}`,
         meteo: ct.meteo,
         ecart,
-        categories: categoriesMatchees,
+        typesAlerte: typesAlerteMatches,
       });
     }
 

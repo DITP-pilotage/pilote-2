@@ -1,8 +1,8 @@
 import { Inject } from "@/server/chantiers/module";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
-import { CATEGORIES_ALERTE_CHANTIER } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+import { TYPES_ALERTE_CHANTIER } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { estEnAlerteCategorie } from "@/server/chantiers/domain/estEnAlerteCategorie";
+import { estEnAlerteTypeAlerte } from "@/server/chantiers/domain/estEnAlerteTypeAlerte";
 import type { ChantierTerritoireSignale } from "./ChantiersSignalesDataFetcher";
 
 export class GetChantiersSignalesQuery {
@@ -55,7 +55,7 @@ export class GetChantiersSignalesQuery {
     chantiersAvecTaux: Set<string>,
   ): ChantiersSignalesContrat {
     const compteurs = Object.fromEntries(
-      CATEGORIES_ALERTE_CHANTIER.map(({ typeAlerte }) => [typeAlerte, 0]),
+      TYPES_ALERTE_CHANTIER.map((typeAlerte) => [typeAlerte, 0]),
     ) as ChantiersSignalesContrat;
 
     for (const ct of chantierTerritoires) {
@@ -63,8 +63,8 @@ export class GetChantiersSignalesQuery {
       const ecart = jalonData?.ecart ?? null;
       const tauxAvancement = jalonData?.taux_avancement ?? null;
 
-      for (const { categorie, typeAlerte } of CATEGORIES_ALERTE_CHANTIER) {
-        const enAlerte = estEnAlerteCategorie(categorie, {
+      for (const typeAlerte of TYPES_ALERTE_CHANTIER) {
+        const enAlerte = estEnAlerteTypeAlerte(typeAlerte, {
           ct,
           maille,
           ecart,

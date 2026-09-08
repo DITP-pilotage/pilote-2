@@ -5,51 +5,58 @@ import type {
   ChantierSignale,
 } from "@/server/chantiers/infrastructure/queries/GetChantiersSignalesDetailQuery";
 import {
-  CATEGORIES_ALERTE_CHANTIER,
-  type CategorieAlerteChantier,
-} from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+  TYPES_ALERTE_CHANTIER,
+  type TypeAlerteChantier,
+} from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { configuration } from "@/config";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 
-const CATEGORIES: CategorieAlerteChantier[] = CATEGORIES_ALERTE_CHANTIER.map(
-  ({ categorie }) => categorie,
-);
-
-const LIBELLES_CATEGORIES: Record<CategorieAlerteChantier, string> = {
-  ecart: "Retard par rapport à la médiane",
-  baisse: "Tendance en baisse",
-  taux_non_calcule: "Taux d'avancement non calculé",
-  absence_taux_departemental: "Absence de taux d'avancement départemental",
-  meteo_non_renseignee: "Météo et synthèse non renseignées",
-  pva: "Proposition de valeur d'avancement",
+const LIBELLES_TYPES_ALERTE: Record<TypeAlerteChantier, string> = {
+  estEnAlerteÉcart: "Retard par rapport à la médiane",
+  estEnAlerteBaisse: "Tendance en baisse",
+  estEnAlerteTauxAvancementNonCalculé: "Taux d'avancement non calculé",
+  estEnAlerteAbscenceTauxAvancementDepartemental:
+    "Absence de taux d'avancement départemental",
+  estEnAlerteMétéoNonRenseignée: "Météo et synthèse non renseignées",
+  estEnAlertePossedePropositionsValeurAvancement:
+    "Proposition de valeur d'avancement",
 };
 
-const CATEGORIES_PAR_MAILLE: Record<
+const TYPES_ALERTE_PAR_MAILLE: Record<
   "NAT" | "REG" | "DEPT",
-  CategorieAlerteChantier[]
+  TypeAlerteChantier[]
 > = {
   NAT: [
-    "taux_non_calcule",
-    "absence_taux_departemental",
-    "meteo_non_renseignee",
-    "pva",
+    "estEnAlerteTauxAvancementNonCalculé",
+    "estEnAlerteAbscenceTauxAvancementDepartemental",
+    "estEnAlerteMétéoNonRenseignée",
+    "estEnAlertePossedePropositionsValeurAvancement",
   ],
-  REG: ["ecart", "baisse", "meteo_non_renseignee", "pva"],
-  DEPT: ["ecart", "baisse", "meteo_non_renseignee", "pva"],
+  REG: [
+    "estEnAlerteÉcart",
+    "estEnAlerteBaisse",
+    "estEnAlerteMétéoNonRenseignée",
+    "estEnAlertePossedePropositionsValeurAvancement",
+  ],
+  DEPT: [
+    "estEnAlerteÉcart",
+    "estEnAlerteBaisse",
+    "estEnAlerteMétéoNonRenseignée",
+    "estEnAlertePossedePropositionsValeurAvancement",
+  ],
 };
 
-const RAISONS_NON_APPLICABLE: Partial<Record<CategorieAlerteChantier, string>> =
-  {
-    ecart:
-      "Le signalement « Retard par rapport à la médiane » ne peut pas être calculé au niveau national : il repose sur une comparaison entre le taux d'avancement d'un chantier sur un territoire donné et la médiane des autres territoires du même niveau.",
-    baisse:
-      "Le signalement « Tendance en baisse » ne peut pas être calculé au niveau national : il repose sur la tendance d'évolution du taux d'avancement d'un chantier sur un territoire régional ou départemental.",
-    taux_non_calcule:
-      "Le signalement « Taux d'avancement non calculé » n'est pertinent qu'au niveau national : il identifie les chantiers dont le taux d'avancement national attendu n'a pas encore été calculé.",
-    absence_taux_departemental:
-      "Le signalement « Absence de taux d'avancement départemental » n'est pertinent qu'au niveau national : il identifie, pour chaque chantier national, l'absence de taux d'avancement départemental agrégé.",
-  };
+const RAISONS_NON_APPLICABLE: Partial<Record<TypeAlerteChantier, string>> = {
+  estEnAlerteÉcart:
+    "Le signalement « Retard par rapport à la médiane » ne peut pas être calculé au niveau national : il repose sur une comparaison entre le taux d'avancement d'un chantier sur un territoire donné et la médiane des autres territoires du même niveau.",
+  estEnAlerteBaisse:
+    "Le signalement « Tendance en baisse » ne peut pas être calculé au niveau national : il repose sur la tendance d'évolution du taux d'avancement d'un chantier sur un territoire régional ou départemental.",
+  estEnAlerteTauxAvancementNonCalculé:
+    "Le signalement « Taux d'avancement non calculé » n'est pertinent qu'au niveau national : il identifie les chantiers dont le taux d'avancement national attendu n'a pas encore été calculé.",
+  estEnAlerteAbscenceTauxAvancementDepartemental:
+    "Le signalement « Absence de taux d'avancement départemental » n'est pertinent qu'au niveau national : il identifie, pour chaque chantier national, l'absence de taux d'avancement départemental agrégé.",
+};
 
 export const getChantiersSignalesInputSchema = z.object({
   territoire_code: z
@@ -58,11 +65,7 @@ export const getChantiersSignalesInputSchema = z.object({
       "Code du territoire (ex: NAT-FR, REG-11, DEPT-75). Un seul territoire par appel, pas de sous-territoires.",
     ),
   categories: z
-    .array(
-      z.enum(
-        CATEGORIES as [CategorieAlerteChantier, ...CategorieAlerteChantier[]],
-      ),
-    )
+    .array(z.enum(TYPES_ALERTE_CHANTIER))
     .optional()
     .describe(
       "Catégories de signalement demandées. Absent = toutes les catégories applicables à la maille du territoire interrogé.",
@@ -83,14 +86,14 @@ export type GetChantiersSignalesOutput = {
   resultats: ChantierSignale[];
   acces_refuse?: boolean;
   categories_non_applicables?: {
-    categorie: CategorieAlerteChantier;
+    categorie: TypeAlerteChantier;
     raison: string;
   }[];
   _output_instructions: string;
 };
 
 function buildOutputInstructions(
-  categoriesNonApplicables: CategorieAlerteChantier[],
+  typesAlerteNonApplicables: TypeAlerteChantier[],
 ): string {
   const base =
     "Utilise toujours les libellés officiels des catégories de signalement (jamais les codes internes), " +
@@ -100,12 +103,12 @@ function buildOutputInstructions(
     "Un chantier concerné par plusieurs catégories ne doit JAMAIS être présenté comme deux chantiers distincts dans des sections séparées sans qu'un lien explicite soit fait entre les deux occurrences.\n\n" +
     'Les champs "ecart" et "meteo" sont présents sur chaque chantier mais ne doivent être mentionnés que s\'ils sont pertinents pour au moins une des catégories matchées par ce chantier ("ecart" pour la catégorie "Retard par rapport à la médiane", "meteo" pour "Météo et synthèse non renseignées").';
 
-  if (categoriesNonApplicables.length === 0) return base;
+  if (typesAlerteNonApplicables.length === 0) return base;
 
-  const raisons = categoriesNonApplicables
+  const raisons = typesAlerteNonApplicables
     .map(
-      (categorie) =>
-        `- ${LIBELLES_CATEGORIES[categorie]} : ${RAISONS_NON_APPLICABLE[categorie]}`,
+      (typeAlerte) =>
+        `- ${LIBELLES_TYPES_ALERTE[typeAlerte]} : ${RAISONS_NON_APPLICABLE[typeAlerte]}`,
     )
     .join("\n");
 
@@ -133,22 +136,22 @@ export function createGetChantiersSignalesTool({
       description: `Outil pour obtenir la liste des chantiers signalés (chantiers avec une alerte) sur un territoire donné, catégorie par catégorie.
 
 Catégories disponibles :
-- "ecart" : Retard par rapport à la médiane
-- "baisse" : Tendance en baisse
-- "taux_non_calcule" : Taux d'avancement non calculé
-- "absence_taux_departemental" : Absence de taux d'avancement départemental
-- "meteo_non_renseignee" : Météo et synthèse non renseignées
-- "pva" : Proposition de valeur d'avancement
+- "estEnAlerteÉcart" : Retard par rapport à la médiane
+- "estEnAlerteBaisse" : Tendance en baisse
+- "estEnAlerteTauxAvancementNonCalculé" : Taux d'avancement non calculé
+- "estEnAlerteAbscenceTauxAvancementDepartemental" : Absence de taux d'avancement départemental
+- "estEnAlerteMétéoNonRenseignée" : Météo et synthèse non renseignées
+- "estEnAlertePossedePropositionsValeurAvancement" : Proposition de valeur d'avancement
 
 Catégories applicables selon la maille du territoire :
-- National (NAT-FR) : taux_non_calcule, absence_taux_departemental, meteo_non_renseignee, pva
-- Régional/départemental (REG-XX, DEPT-XX) : ecart, baisse, meteo_non_renseignee, pva
+- National (NAT-FR) : estEnAlerteTauxAvancementNonCalculé, estEnAlerteAbscenceTauxAvancementDepartemental, estEnAlerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurAvancement
+- Régional/départemental (REG-XX, DEPT-XX) : estEnAlerteÉcart, estEnAlerteBaisse, estEnAlerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurAvancement
 
 ⚠️ N'utilise PAS cet outil si la demande porte sur UNE SEULE catégorie qui a un équivalent exact dans get_chantiers :
-- "ecart" seul → get_chantiers(view='en_retard')
-- "baisse" seul → get_chantiers(tendance='BAISSE')
+- "estEnAlerteÉcart" seul → get_chantiers(view='en_retard')
+- "estEnAlerteBaisse" seul → get_chantiers(tendance='BAISSE')
 
-Utilise get_chantiers_signales dans tous les autres cas : une seule catégorie sans équivalent dans get_chantiers, plusieurs catégories demandées ensemble (y compris si ecart et/ou baisse en font partie), ou aucune catégorie précisée ("chantiers signalés", "signalements" sans détail → toutes les catégories applicables à la maille).
+Utilise get_chantiers_signales dans tous les autres cas : une seule catégorie sans équivalent dans get_chantiers, plusieurs catégories demandées ensemble (y compris si estEnAlerteÉcart et/ou estEnAlerteBaisse en font partie), ou aucune catégorie précisée ("chantiers signalés", "signalements" sans détail → toutes les catégories applicables à la maille).
 
 Un seul territoire par appel, pas de sous-territoires.`,
       inputSchema: getChantiersSignalesInputSchema,
@@ -184,14 +187,14 @@ Un seul territoire par appel, pas de sous-territoires.`,
         const { maille } = territoireCodeVersMailleCodeInsee(
           input.territoire_code,
         );
-        const categoriesApplicables = CATEGORIES_PAR_MAILLE[maille] ?? [];
-        const categoriesDemandees = input.categories ?? categoriesApplicables;
+        const typesAlerteApplicables = TYPES_ALERTE_PAR_MAILLE[maille] ?? [];
+        const typesAlerteDemandes = input.categories ?? typesAlerteApplicables;
 
-        const categoriesAInterroger = categoriesDemandees.filter((categorie) =>
-          categoriesApplicables.includes(categorie),
+        const typesAlerteAInterroger = typesAlerteDemandes.filter(
+          (typeAlerte) => typesAlerteApplicables.includes(typeAlerte),
         );
-        const categoriesNonApplicables = categoriesDemandees.filter(
-          (categorie) => !categoriesApplicables.includes(categorie),
+        const typesAlerteNonApplicables = typesAlerteDemandes.filter(
+          (typeAlerte) => !typesAlerteApplicables.includes(typeAlerte),
         );
 
         const jalonEnCours = getAnneeDateDeBascule(
@@ -200,29 +203,29 @@ Un seul territoire par appel, pas de sous-territoires.`,
         );
 
         const resultats =
-          categoriesAInterroger.length === 0
+          typesAlerteAInterroger.length === 0
             ? []
             : await getChantiersSignalesDetailQuery.execute({
                 territoireCode: input.territoire_code,
                 jalon: jalonEnCours,
                 chantierIds: filteredChantierIds ?? chantiersAccessibles,
-                categories: categoriesAInterroger,
+                typesAlerte: typesAlerteAInterroger,
               });
 
         return {
           resultats,
-          ...(categoriesNonApplicables.length > 0
+          ...(typesAlerteNonApplicables.length > 0
             ? {
-                categories_non_applicables: categoriesNonApplicables.map(
-                  (categorie) => ({
-                    categorie,
-                    raison: RAISONS_NON_APPLICABLE[categorie] ?? "",
+                categories_non_applicables: typesAlerteNonApplicables.map(
+                  (typeAlerte) => ({
+                    categorie: typeAlerte,
+                    raison: RAISONS_NON_APPLICABLE[typeAlerte] ?? "",
                   }),
                 ),
               }
             : {}),
           _output_instructions: buildOutputInstructions(
-            categoriesNonApplicables,
+            typesAlerteNonApplicables,
           ),
         };
       },

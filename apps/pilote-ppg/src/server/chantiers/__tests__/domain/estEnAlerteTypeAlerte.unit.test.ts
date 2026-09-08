@@ -1,4 +1,4 @@
-import { estEnAlerteCategorie } from "@/server/chantiers/domain/estEnAlerteCategorie";
+import { estEnAlerteTypeAlerte } from "@/server/chantiers/domain/estEnAlerteTypeAlerte";
 import type { ChantierTerritoireSignale } from "@/server/chantiers/infrastructure/queries/ChantiersSignalesDataFetcher";
 
 const buildChantierTerritoire = (
@@ -15,8 +15,8 @@ const buildChantierTerritoire = (
 });
 
 const buildCtx = (
-  overrides: Partial<Parameters<typeof estEnAlerteCategorie>[1]> = {},
-): Parameters<typeof estEnAlerteCategorie>[1] => ({
+  overrides: Partial<Parameters<typeof estEnAlerteTypeAlerte>[1]> = {},
+): Parameters<typeof estEnAlerteTypeAlerte>[1] => ({
   ct: buildChantierTerritoire(),
   maille: "DEPT",
   ecart: null,
@@ -27,14 +27,14 @@ const buildCtx = (
   ...overrides,
 });
 
-describe("estEnAlerteCategorie", () => {
-  describe("ecart", () => {
+describe("estEnAlerteTypeAlerte", () => {
+  describe("estEnAlerteÉcart", () => {
     test("en alerte quand l'écart est <= -10", () => {
       // Given
       const ctx = buildCtx({ ecart: -15 });
 
       // When
-      const résultat = estEnAlerteCategorie("ecart", ctx);
+      const résultat = estEnAlerteTypeAlerte("estEnAlerteÉcart", ctx);
 
       // Then
       expect(résultat).toBeTruthy();
@@ -45,14 +45,14 @@ describe("estEnAlerteCategorie", () => {
       const ctx = buildCtx({ ecart: -5 });
 
       // When
-      const résultat = estEnAlerteCategorie("ecart", ctx);
+      const résultat = estEnAlerteTypeAlerte("estEnAlerteÉcart", ctx);
 
       // Then
       expect(résultat).toBeFalsy();
     });
   });
 
-  describe("baisse", () => {
+  describe("estEnAlerteBaisse", () => {
     test("en alerte quand la tendance du chantier territoire est BAISSE", () => {
       // Given
       const ctx = buildCtx({
@@ -60,7 +60,7 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("baisse", ctx);
+      const résultat = estEnAlerteTypeAlerte("estEnAlerteBaisse", ctx);
 
       // Then
       expect(résultat).toBeTruthy();
@@ -73,14 +73,14 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("baisse", ctx);
+      const résultat = estEnAlerteTypeAlerte("estEnAlerteBaisse", ctx);
 
       // Then
       expect(résultat).toBeFalsy();
     });
   });
 
-  describe("taux_non_calcule", () => {
+  describe("estEnAlerteTauxAvancementNonCalculé", () => {
     test("en alerte quand le taux est null et la cible attendue", () => {
       // Given
       const ctx = buildCtx({
@@ -91,7 +91,10 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("taux_non_calcule", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlerteTauxAvancementNonCalculé",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeTruthy();
@@ -107,14 +110,17 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("taux_non_calcule", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlerteTauxAvancementNonCalculé",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeFalsy();
     });
   });
 
-  describe("absence_taux_departemental", () => {
+  describe("estEnAlerteAbscenceTauxAvancementDepartemental", () => {
     test("en alerte quand le chantier n'a pas de département applicable et la cible est attendue", () => {
       // Given
       const ctx = buildCtx({
@@ -126,7 +132,10 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("absence_taux_departemental", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlerteAbscenceTauxAvancementDepartemental",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeTruthy();
@@ -143,7 +152,10 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("absence_taux_departemental", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlerteAbscenceTauxAvancementDepartemental",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeTruthy();
@@ -160,20 +172,26 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("absence_taux_departemental", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlerteAbscenceTauxAvancementDepartemental",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeFalsy();
     });
   });
 
-  describe("meteo_non_renseignee", () => {
+  describe("estEnAlerteMétéoNonRenseignée", () => {
     test("en alerte quand la météo est absente en base (null)", () => {
       // Given
       const ctx = buildCtx({ ct: buildChantierTerritoire({ meteo: null }) });
 
       // When
-      const résultat = estEnAlerteCategorie("meteo_non_renseignee", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlerteMétéoNonRenseignée",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeTruthy();
@@ -186,14 +204,17 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("meteo_non_renseignee", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlerteMétéoNonRenseignée",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeFalsy();
     });
   });
 
-  describe("pva", () => {
+  describe("estEnAlertePossedePropositionsValeurAvancement", () => {
     test("au départemental, en alerte quand nombre_propositions_valeur_actuelle > 0", () => {
       // Given
       const ctx = buildCtx({
@@ -203,7 +224,10 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("pva", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlertePossedePropositionsValeurAvancement",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeTruthy();
@@ -218,7 +242,10 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("pva", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlertePossedePropositionsValeurAvancement",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeFalsy();
@@ -233,7 +260,10 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("pva", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlertePossedePropositionsValeurAvancement",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeTruthy();
@@ -248,7 +278,10 @@ describe("estEnAlerteCategorie", () => {
       });
 
       // When
-      const résultat = estEnAlerteCategorie("pva", ctx);
+      const résultat = estEnAlerteTypeAlerte(
+        "estEnAlertePossedePropositionsValeurAvancement",
+        ctx,
+      );
 
       // Then
       expect(résultat).toBeFalsy();

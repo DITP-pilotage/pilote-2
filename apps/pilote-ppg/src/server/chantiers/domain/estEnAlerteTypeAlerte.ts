@@ -3,11 +3,11 @@ import {
   ChantierTendance,
   ChantierVueDEnsemble,
 } from "@/server/domain/chantier/Chantier.interface";
-import { CategorieAlerteChantier } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
+import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import type { ChantierTerritoireSignale } from "@/server/chantiers/infrastructure/queries/ChantiersSignalesDataFetcher";
 
-export function estEnAlerteCategorie(
-  categorie: CategorieAlerteChantier,
+export function estEnAlerteTypeAlerte(
+  typeAlerte: TypeAlerteChantier,
   ctx: {
     ct: ChantierTerritoireSignale;
     maille: string;
@@ -28,17 +28,17 @@ export function estEnAlerteCategorie(
     chantiersAvecTaux,
   } = ctx;
 
-  switch (categorie) {
-    case "ecart":
+  switch (typeAlerte) {
+    case "estEnAlerteÉcart":
       return Alerte.estEnAlerteÉcart(ecart);
-    case "baisse":
+    case "estEnAlerteBaisse":
       return Alerte.estEnAlerteBaisse(ct.tendance as ChantierTendance | null);
-    case "taux_non_calcule":
+    case "estEnAlerteTauxAvancementNonCalculé":
       return Alerte.estEnAlerteTauxAvancementNonCalculé(
         tauxAvancement,
         ct.chantier_identite.cible_attendue,
       );
-    case "absence_taux_departemental": {
+    case "estEnAlerteAbscenceTauxAvancementDepartemental": {
       const aUnTauxAvancementDepartemental =
         !chantiersAvecDept.has(ct.id) || chantiersAvecTaux.has(ct.id);
       return Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(
@@ -46,11 +46,11 @@ export function estEnAlerteCategorie(
         ct.chantier_identite.cible_attendue,
       );
     }
-    case "meteo_non_renseignee":
+    case "estEnAlerteMétéoNonRenseignée":
       return Alerte.estEnAlerteMétéoNonRenseignée(
         (ct.meteo ?? "NON_RENSEIGNEE") as ChantierVueDEnsemble["météo"],
       );
-    case "pva": {
+    case "estEnAlertePossedePropositionsValeurAvancement": {
       const aUnePropositionValeurAvancement =
         maille === "DEPT"
           ? ct.nombre_propositions_valeur_actuelle > 0
