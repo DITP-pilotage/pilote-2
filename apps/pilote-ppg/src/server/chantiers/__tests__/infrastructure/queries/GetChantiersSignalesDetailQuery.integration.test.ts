@@ -73,7 +73,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier en retard",
-          meteo: null,
+          meteo: "NON_RENSEIGNEE",
           ecart: -15,
           categories: ["ecart"],
         },
@@ -125,7 +125,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier en baisse",
-          meteo: null,
+          meteo: "NON_RENSEIGNEE",
           ecart: null,
           categories: ["baisse"],
         },
@@ -193,7 +193,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier sans taux",
-          meteo: null,
+          meteo: "NON_RENSEIGNEE",
           ecart: null,
           categories: ["taux_non_calcule"],
         },
@@ -297,7 +297,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier avec PVA",
-          meteo: null,
+          meteo: "NON_RENSEIGNEE",
           ecart: null,
           categories: ["pva"],
         },
@@ -344,7 +344,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier national",
-          meteo: null,
+          meteo: "NON_RENSEIGNEE",
           ecart: null,
           categories: ["pva"],
         },
@@ -426,7 +426,7 @@ describe("GetChantiersSignalesDetailQuery", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier sans taux dept",
-          meteo: null,
+          meteo: "NON_RENSEIGNEE",
           ecart: null,
           categories: ["absence_taux_departemental"],
         },
