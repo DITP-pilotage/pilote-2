@@ -1,9 +1,10 @@
+import { $Enums } from "@prisma/client";
 import { Inject } from "@/server/chantiers/module";
 
 export type ChantierTerritoireSignale = {
   id: string;
   meteo: string | null;
-  tendance: string | null;
+  tendance: $Enums.type_tendance | null;
   nombre_propositions_valeur_actuelle: number;
   maille: string;
   chantier_identite: { nom: string; cible_attendue: boolean };

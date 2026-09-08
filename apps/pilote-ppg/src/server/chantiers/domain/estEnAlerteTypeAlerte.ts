@@ -1,8 +1,5 @@
 import Alerte from "@/server/domain/alerte/Alerte";
-import {
-  ChantierTendance,
-  ChantierVueDEnsemble,
-} from "@/server/domain/chantier/Chantier.interface";
+import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import type { ChantierTerritoireSignale } from "@/server/chantiers/infrastructure/queries/ChantiersSignalesDataFetcher";
 
@@ -32,7 +29,7 @@ export function estEnAlerteTypeAlerte(
     case "estEnAlerteÉcart":
       return Alerte.estEnAlerteÉcart(ecart);
     case "estEnAlerteBaisse":
-      return Alerte.estEnAlerteBaisse(ct.tendance as ChantierTendance | null);
+      return Alerte.estEnAlerteBaisse(ct.tendance);
     case "estEnAlerteTauxAvancementNonCalculé":
       return Alerte.estEnAlerteTauxAvancementNonCalculé(
         tauxAvancement,
