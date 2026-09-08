@@ -25,9 +25,11 @@ describe("PrismaUtilisateurRepository#mettreAJourDateDerniereConnexion", () => {
       });
 
       // Then
-      const utilisateurs = await prismaPilote.getInstance().utilisateur.findMany({
-        where: { email: "agent.trace@exemple.gouv.fr" },
-      });
+      const utilisateurs = await prismaPilote
+        .getInstance()
+        .utilisateur.findMany({
+          where: { email: "agent.trace@exemple.gouv.fr" },
+        });
       expect(utilisateurs).toEqual([
         expect.objectContaining({
           email: "agent.trace@exemple.gouv.fr",
@@ -55,9 +57,11 @@ describe("PrismaUtilisateurRepository#mettreAJourDateDerniereConnexion", () => {
       });
 
       // Then
-      const utilisateurs = await prismaPilote.getInstance().utilisateur.findMany({
-        where: { email: "agent.bascule@exemple.gouv.fr" },
-      });
+      const utilisateurs = await prismaPilote
+        .getInstance()
+        .utilisateur.findMany({
+          where: { email: "agent.bascule@exemple.gouv.fr" },
+        });
       expect(utilisateurs).toEqual([
         expect.objectContaining({
           dernier_provider_connexion: "proconnect",

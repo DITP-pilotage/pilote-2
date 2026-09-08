@@ -19,7 +19,9 @@ describe("PrismaUtilisateurRepository#statutCompte", () => {
         date_desactivation: null,
       });
 
-      const statut = await repository.statutCompte("agent.actif@exemple.gouv.fr");
+      const statut = await repository.statutCompte(
+        "agent.actif@exemple.gouv.fr",
+      );
 
       expect(statut).toBe("actif");
     }),
