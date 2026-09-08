@@ -5,6 +5,7 @@ import {
   type GetChantiersSignalesOutput,
 } from "@/server/albert/tools/getChantiersSignales";
 import type { GetChantiersSignalesDetailQuery } from "@/server/chantiers/infrastructure/queries/GetChantiersSignalesDetailQuery";
+import type { CategorieAlerteChantier } from "@/server/chantiers/app/contrats/CategorieAlerteChantier";
 
 const buildTool = ({
   queryResult,
@@ -28,7 +29,7 @@ const executeTool = async (
   input: {
     territoire_code: string;
     jalon: number;
-    categories?: string[];
+    categories?: CategorieAlerteChantier[];
     chantier_ids?: string[];
   },
 ): Promise<GetChantiersSignalesOutput> =>

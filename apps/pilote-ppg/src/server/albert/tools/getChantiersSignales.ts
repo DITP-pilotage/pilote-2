@@ -37,16 +37,17 @@ const CATEGORIES_PAR_MAILLE: Record<
   DEPT: ["ecart", "baisse", "meteo_non_renseignee", "pva"],
 };
 
-const RAISONS_NON_APPLICABLE: Partial<Record<CategorieAlerteChantier, string>> = {
-  ecart:
-    "Le signalement « Retard par rapport à la médiane » ne peut pas être calculé au niveau national : il repose sur une comparaison entre le taux d'avancement d'un chantier sur un territoire donné et la médiane des autres territoires du même niveau.",
-  baisse:
-    "Le signalement « Tendance en baisse » ne peut pas être calculé au niveau national : il repose sur la tendance d'évolution du taux d'avancement d'un chantier sur un territoire régional ou départemental.",
-  taux_non_calcule:
-    "Le signalement « Taux d'avancement non calculé » n'est pertinent qu'au niveau national : il identifie les chantiers dont le taux d'avancement national attendu n'a pas encore été calculé.",
-  absence_taux_departemental:
-    "Le signalement « Absence de taux d'avancement départemental » n'est pertinent qu'au niveau national : il identifie, pour chaque chantier national, l'absence de taux d'avancement départemental agrégé.",
-};
+const RAISONS_NON_APPLICABLE: Partial<Record<CategorieAlerteChantier, string>> =
+  {
+    ecart:
+      "Le signalement « Retard par rapport à la médiane » ne peut pas être calculé au niveau national : il repose sur une comparaison entre le taux d'avancement d'un chantier sur un territoire donné et la médiane des autres territoires du même niveau.",
+    baisse:
+      "Le signalement « Tendance en baisse » ne peut pas être calculé au niveau national : il repose sur la tendance d'évolution du taux d'avancement d'un chantier sur un territoire régional ou départemental.",
+    taux_non_calcule:
+      "Le signalement « Taux d'avancement non calculé » n'est pertinent qu'au niveau national : il identifie les chantiers dont le taux d'avancement national attendu n'a pas encore été calculé.",
+    absence_taux_departemental:
+      "Le signalement « Absence de taux d'avancement départemental » n'est pertinent qu'au niveau national : il identifie, pour chaque chantier national, l'absence de taux d'avancement départemental agrégé.",
+  };
 
 export const getChantiersSignalesInputSchema = z.object({
   territoire_code: z
@@ -61,7 +62,11 @@ export const getChantiersSignalesInputSchema = z.object({
     .max(new Date().getFullYear())
     .describe("Année du jalon (ex: 2024, 2025)"),
   categories: z
-    .array(z.enum(CATEGORIES as [CategorieAlerteChantier, ...CategorieAlerteChantier[]]))
+    .array(
+      z.enum(
+        CATEGORIES as [CategorieAlerteChantier, ...CategorieAlerteChantier[]],
+      ),
+    )
     .optional()
     .describe(
       "Catégories de signalement demandées. Absent = toutes les catégories applicables à la maille du territoire interrogé.",
@@ -74,12 +79,17 @@ export const getChantiersSignalesInputSchema = z.object({
     ),
 });
 
-type GetChantiersSignalesInput = z.infer<typeof getChantiersSignalesInputSchema>;
+type GetChantiersSignalesInput = z.infer<
+  typeof getChantiersSignalesInputSchema
+>;
 
 export type GetChantiersSignalesOutput = {
   resultats: ChantierSignale[];
   acces_refuse?: boolean;
-  categories_non_applicables?: { categorie: CategorieAlerteChantier; raison: string }[];
+  categories_non_applicables?: {
+    categorie: CategorieAlerteChantier;
+    raison: string;
+  }[];
   _output_instructions: string;
 };
 
@@ -147,7 +157,9 @@ Utilise get_chantiers_signales dans tous les autres cas : une seule catégorie s
 
 Un seul territoire par appel, pas de sous-territoires.`,
       inputSchema: getChantiersSignalesInputSchema,
-      execute: async (input: GetChantiersSignalesInput): Promise<GetChantiersSignalesOutput> => {
+      execute: async (
+        input: GetChantiersSignalesInput,
+      ): Promise<GetChantiersSignalesOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
           return {
             resultats: [],
@@ -210,7 +222,9 @@ Un seul territoire par appel, pas de sous-territoires.`,
                 ),
               }
             : {}),
-          _output_instructions: buildOutputInstructions(categoriesNonApplicables),
+          _output_instructions: buildOutputInstructions(
+            categoriesNonApplicables,
+          ),
         };
       },
     });

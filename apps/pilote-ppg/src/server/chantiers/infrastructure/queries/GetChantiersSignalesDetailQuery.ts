@@ -43,17 +43,18 @@ export class GetChantiersSignalesDetailQuery {
         )
       : new Set<string>();
 
-    const { chantiersAvecDept, chantiersAvecTaux } =
-      params.categories.includes("absence_taux_departemental")
-        ? await this.deps.chantiersSignalesDataFetcher.recupererAbsenceTauxDepartementalSets(
-            maille,
-            chantierTerritoires,
-            params.jalon,
-          )
-        : {
-            chantiersAvecDept: new Set<string>(),
-            chantiersAvecTaux: new Set<string>(),
-          };
+    const { chantiersAvecDept, chantiersAvecTaux } = params.categories.includes(
+      "absence_taux_departemental",
+    )
+      ? await this.deps.chantiersSignalesDataFetcher.recupererAbsenceTauxDepartementalSets(
+          maille,
+          chantierTerritoires,
+          params.jalon,
+        )
+      : {
+          chantiersAvecDept: new Set<string>(),
+          chantiersAvecTaux: new Set<string>(),
+        };
 
     const resultats: ChantierSignale[] = [];
 

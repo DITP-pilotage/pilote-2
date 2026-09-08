@@ -96,7 +96,10 @@ export class ChantiersSignalesDataFetcher {
     maille: string,
     chantierTerritoires: ChantierTerritoireSignale[],
     jalon: number,
-  ): Promise<{ chantiersAvecDept: Set<string>; chantiersAvecTaux: Set<string> }> {
+  ): Promise<{
+    chantiersAvecDept: Set<string>;
+    chantiersAvecTaux: Set<string>;
+  }> {
     if (maille !== "NAT") {
       return { chantiersAvecDept: new Set(), chantiersAvecTaux: new Set() };
     }
