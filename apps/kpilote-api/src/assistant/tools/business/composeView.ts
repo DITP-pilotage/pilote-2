@@ -2,6 +2,7 @@ import {
   composeViewInputSchema,
   type ComposeViewOutput,
 } from '@pilote/kpilote-shared/assistant/tools'
+import { type Model } from '@pilote/kpilote-shared/assistant/surfaces'
 import { viewSchema, type View } from '@pilote/kpilote-shared/assistant/tiles'
 import { generateText, Output, stepCountIs, tool, type Tool } from 'ai'
 
@@ -70,11 +71,13 @@ export const composeView = async ({
   }
 }
 
+// Le sous-agent tourne sur le modèle du tour : une surcharge `model` sur la requête
+// compare deux modèles sur TOUT l'échange, composition comprise.
 export const createLlmComposer =
-  (abortSignal?: AbortSignal): Composer =>
+  (model: Model, abortSignal?: AbortSignal): Composer =>
   async (prompt) => {
     const output = await generateText({
-      model: createAssistantModel(),
+      model: createAssistantModel(model),
       system: SUBAGENT_PROMPT,
       prompt,
       output: Output.object({ schema: viewSchema }),
@@ -86,10 +89,10 @@ export const createLlmComposer =
     return output.output
   }
 
-export const createComposeViewTool = (): Tool =>
+export const createComposeViewTool = (model: Model): Tool =>
   tool({
     description: COMPOSE_VIEW_DESCRIPTION,
     inputSchema: composeViewInputSchema,
     execute: (input, { abortSignal }): Promise<ComposeViewOutput> =>
-      composeView({ ...input, compose: createLlmComposer(abortSignal) }),
+      composeView({ ...input, compose: createLlmComposer(model, abortSignal) }),
   })
