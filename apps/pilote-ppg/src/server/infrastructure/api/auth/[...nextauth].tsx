@@ -325,14 +325,20 @@ export const authConfig: NextAuthConfig = {
       });
 
       if (motif) {
-        // L'email n'est pas journalisé : une identité refusée n'est pas un
-        // utilisateur de PILOTE.
         logger.warn(
           {
             categorie: "auth",
             source: "nextauth.signIn",
             provider: account.provider,
             motif,
+            // Hors production uniquement. En production, une identité refusée
+            // n'est pas un utilisateur de PILOTE et son email n'a rien à faire
+            // dans nos journaux. Ailleurs c'est la seule façon de savoir quel
+            // compte rapprocher : sans lui, un refus légitime est
+            // indiscernable d'un bug.
+            ...(configuration().env === "production"
+              ? {}
+              : { email: profile?.email }),
           },
           "Connexion ProConnect refusée",
         );
