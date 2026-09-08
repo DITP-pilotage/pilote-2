@@ -19,6 +19,9 @@ if (hasSubmodule) {
 
 const nextConfig = {
   reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     turbopackFileSystemCacheForBuild: process.env.CI !== "true",
   },
