@@ -40,6 +40,8 @@ type CommandPaletteProps = {
   initialQuery?: string
 }
 
+const preventDefault = (event: Event) => event.preventDefault()
+
 const NAVIGATION_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'])
 
 const GROUP_HEADING_CLASS =
@@ -173,32 +175,24 @@ export function CommandPalette({
     inputRef.current?.focus()
   }, [activeItem])
 
-  // Radix écoute `Échap` sur le document en phase de capture et ferme le Dialog si rien
-  // n'a annulé l'événement avant lui — son `onEscapeKeyDown` n'a pas suffi ici, le
-  // gestionnaire qu'il retient ne suivait pas `activeItem`. Sur une page d'actions on se
-  // place donc encore avant, sur `window`, pour remonter d'un niveau au lieu de fermer.
-  useEffect(() => {
-    if (!activeItem) return
-    const handleEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      event.preventDefault()
-      exitActions()
-    }
-    window.addEventListener('keydown', handleEscape, { capture: true })
-    return () => window.removeEventListener('keydown', handleEscape, { capture: true })
-  }, [activeItem, exitActions])
-
   const handleOpenChange = (next: boolean) => {
     onOpenChange(next)
     if (!next) resetToRoot()
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    // Sur une page d'actions : Esc, ⇧Tab et Backspace (champ vide) reviennent en
-    // arrière au lieu de fermer la palette.
+    // `Échap` remonte d'un niveau : de la page d'actions à la liste, de la liste à la
+    // fermeture. Le Dialog ne ferme plus de lui-même (voir `onEscapeKeyDown`), c'est ici
+    // que la décision se prend, avec l'état courant.
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      if (activeItem) exitActions()
+      else handleOpenChange(false)
+      return
+    }
+    // Sur une page d'actions, ⇧Tab et Backspace (champ vide) reviennent aussi en arrière.
     if (activeItem) {
       if (
-        event.key === 'Escape' ||
         (event.key === 'Tab' && event.shiftKey) ||
         (event.key === 'Backspace' && query.length === 0)
       ) {
@@ -270,6 +264,10 @@ export function CommandPalette({
         <DialogPrimitive.Content
           aria-label="Palette de commandes"
           className="fixed left-1/2 top-[8vh] z-50 flex h-[84vh] w-[min(56rem,calc(100vw-2rem))] -translate-x-1/2 flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.16)] focus:outline-none"
+          // Radix intercepte `Échap` sur le document, avant nos gestionnaires, et ferme si
+          // rien ne l'en empêche. On lui retire la décision, sans condition : le sens
+          // d'`Échap` dépend de la page affichée, et c'est `handleKeyDown` qui le connaît.
+          onEscapeKeyDown={preventDefault}
         >
           <DialogPrimitive.Title className="sr-only">
             Rechercher une page ou un indicateur
