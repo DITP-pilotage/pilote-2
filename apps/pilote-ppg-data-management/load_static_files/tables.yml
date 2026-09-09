@@ -18,9 +18,6 @@ groups:
       mesure_indicateur_py:
         schema: "seeds"
         path_in_repo: "seeds/mesure_indicateur.csv"
-      commentaires_py:
-        schema: "seeds"
-        path_in_repo: "seeds/commentaires.csv"
       utilisateur_py:
         schema: "seeds"
         path_in_repo: "seeds/utilisateur.csv"

@@ -6,7 +6,6 @@ sources:
     schema: seeds
     tables:
       - name: utilisateur_py
-      - name: commentaires_py
       - name: mesure_indicateur_py
       - name: rapport_import_mesure_indicateur_py
 
