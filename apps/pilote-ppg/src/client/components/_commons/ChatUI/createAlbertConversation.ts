@@ -3,40 +3,40 @@ import { DefaultChatTransport } from "ai";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
-export type AgentContextAlbert = {
+export type AlbertAgentContext = {
   territoireCode: string;
   jalon: number;
   instructions: string;
 };
 
-export type CorpsRequeteAlbert = {
-  agentContext?: AgentContextAlbert;
+export type AlbertRequestBody = {
+  agentContext?: AlbertAgentContext;
   model: AlbertModel;
 };
 
-export type ConversationAlbert = {
+export type AlbertConversation = {
   chat: Chat<PiloteUIMessage>;
-  corpsRequete: CorpsRequeteAlbert;
+  requestBody: AlbertRequestBody;
 };
 
-export const ENDPOINT_ALBERT = "/api/albert/chat";
+export const ALBERT_ENDPOINT = "/api/albert/chat";
 
-export const creerConversationAlbert = ({
+export const createAlbertConversation = ({
   id,
-  endpoint = ENDPOINT_ALBERT,
+  endpoint = ALBERT_ENDPOINT,
   agentContext,
   messages,
   onFinish,
 }: {
   id: string;
   endpoint?: string;
-  agentContext?: AgentContextAlbert;
+  agentContext?: AlbertAgentContext;
   messages?: PiloteUIMessage[];
   onFinish?: () => void;
-}): ConversationAlbert => {
-  // Objet muté en place et référencé par le transport : le sélecteur de modèle
-  // de ChatInputForm doit pouvoir le changer en cours de conversation.
-  const corpsRequete: CorpsRequeteAlbert = {
+}): AlbertConversation => {
+  // Mutated in place and referenced by the transport: the model selector in
+  // ChatInputForm must be able to switch models mid-conversation.
+  const requestBody: AlbertRequestBody = {
     ...(agentContext ? { agentContext } : {}),
     model: "openweight-large",
   };
@@ -46,10 +46,10 @@ export const creerConversationAlbert = ({
     ...(messages ? { messages } : {}),
     transport: new DefaultChatTransport<PiloteUIMessage>({
       api: endpoint,
-      body: corpsRequete,
+      body: requestBody,
     }),
     onFinish: () => onFinish?.(),
   });
 
-  return { chat, corpsRequete };
+  return { chat, requestBody };
 };

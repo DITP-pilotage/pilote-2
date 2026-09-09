@@ -13,7 +13,7 @@ export const BoutonSyntheseTerritoire = ({
   jalon: number;
   scenarios: ChatScenarios;
 }) => {
-  const { ouvrir } = useAlbertConversation();
+  const { open } = useAlbertConversation();
   const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
 
   return (
@@ -21,7 +21,7 @@ export const BoutonSyntheseTerritoire = ({
       aria-label="Ouvrir Albert"
       className="flex gap-2 rounded-lg px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
       onClick={() =>
-        ouvrir({
+        open({
           scenarios,
           agentContext: {
             jalon,

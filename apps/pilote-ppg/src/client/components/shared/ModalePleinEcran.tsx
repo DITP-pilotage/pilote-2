@@ -8,21 +8,20 @@ export const ModalePleinEcran = ({
   title,
   open,
   onOpenChange,
-  onReduire,
+  onMinimize,
   children,
 }: {
   title: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onReduire?: () => void;
+  onMinimize: () => void;
   children: ReactNode;
 }) => {
-  // Quand la modale sait se réduire, les gestes d'évitement (Échap, clic hors
-  // du calque) réduisent au lieu de fermer : seul « Fermer » est destructif.
-  const reduireAuLieuDeFermer = (event: { preventDefault: () => void }) => {
-    if (!onReduire) return;
+  // Dismiss gestures (Escape, click outside the layer) minimize rather than
+  // close: only « Fermer » discards the conversation.
+  const minimizeInsteadOfClosing = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    onReduire();
+    onMinimize();
   };
 
   return (
@@ -31,25 +30,23 @@ export const ModalePleinEcran = ({
         <Dialog.Overlay className="fixed inset-0 !bg-black/50 z-10" />
         <Dialog.Content
           className="fixed inset-4 z-10 flex items-center justify-center !pointer-events-none"
-          onEscapeKeyDown={reduireAuLieuDeFermer}
-          onInteractOutside={reduireAuLieuDeFermer}
+          onEscapeKeyDown={minimizeInsteadOfClosing}
+          onInteractOutside={minimizeInsteadOfClosing}
         >
           <div className="relative w-full h-full bg-white pt-4 px-0 pb-0 rounded-md shadow-md !pointer-events-auto flex flex-col">
             <div className="absolute top-2 right-4 flex items-center gap-1">
-              {onReduire ? (
-                <button
-                  className="!text-primary flex items-center gap-1 px-4 py-2 !text-sm"
-                  onClick={onReduire}
-                  title="Réduire la fenêtre"
-                  type="button"
-                >
-                  Réduire
-                  <Icone
-                    className="w-4 h-4 !text-current"
-                    icone={ArrowDownCircleIcon}
-                  />
-                </button>
-              ) : null}
+              <button
+                className="!text-primary flex items-center gap-1 px-4 py-2 !text-sm"
+                onClick={onMinimize}
+                title="Réduire la fenêtre"
+                type="button"
+              >
+                Réduire
+                <Icone
+                  className="w-4 h-4 !text-current"
+                  icone={ArrowDownCircleIcon}
+                />
+              </button>
               <Dialog.Close asChild>
                 <button
                   className="!text-primary flex items-center gap-1 px-4 py-2 !text-sm"

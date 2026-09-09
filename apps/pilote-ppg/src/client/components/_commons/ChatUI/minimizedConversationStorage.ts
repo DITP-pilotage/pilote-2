@@ -11,29 +11,29 @@ const conversationMinimiseeSchema = z.object({
   }),
 });
 
-export type ConversationMinimisee = z.infer<typeof conversationMinimiseeSchema>;
+export type MinimizedConversation = z.infer<typeof conversationMinimiseeSchema>;
 
-export const lireConversationMinimisee = (): ConversationMinimisee | null => {
+export const readMinimizedConversation = (): MinimizedConversation | null => {
   const brut = sessionStorage.getItem(CLE);
   if (!brut) return null;
 
   try {
-    const resultat = conversationMinimiseeSchema.safeParse(JSON.parse(brut));
-    if (resultat.success) return resultat.data;
+    const result = conversationMinimiseeSchema.safeParse(JSON.parse(brut));
+    if (result.success) return result.data;
   } catch {
-    // Contenu illisible : traité comme une absence.
+    // Unreadable content: treated as if nothing was stored.
   }
 
   sessionStorage.removeItem(CLE);
   return null;
 };
 
-export const ecrireConversationMinimisee = (
-  conversation: ConversationMinimisee,
+export const writeMinimizedConversation = (
+  conversation: MinimizedConversation,
 ): void => {
   sessionStorage.setItem(CLE, JSON.stringify(conversation));
 };
 
-export const effacerConversationMinimisee = (): void => {
+export const clearMinimizedConversation = (): void => {
   sessionStorage.removeItem(CLE);
 };

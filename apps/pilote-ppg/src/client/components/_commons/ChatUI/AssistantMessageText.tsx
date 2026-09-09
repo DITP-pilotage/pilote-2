@@ -2,9 +2,9 @@ import { memo, useMemo, type ReactNode } from "react";
 import { useRouter } from "next/router";
 import ReactMarkdown, { type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
+import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
-import { remarkLiensChantiers } from "@/components/_commons/ChatUI/remarkLiensChantiers";
+import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
 
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
 // à la ToolSet dans src/app/api/albert/chat/route.ts.
@@ -91,7 +91,7 @@ export function stripParagraphesVides(text: string): string {
     .join("\n");
 }
 
-const LienMarkdown = ({
+const MarkdownLink = ({
   href,
   children,
 }: {
@@ -99,7 +99,7 @@ const LienMarkdown = ({
   children?: ReactNode;
 }) => {
   const router = useRouter();
-  const { minimiser } = useAlbertConversation();
+  const { minimize } = useAlbertConversation();
 
   if (!href?.startsWith("/")) {
     return (
@@ -113,10 +113,10 @@ const LienMarkdown = ({
     <a
       href={href}
       onClick={(event) => {
-        // Laisse passer clic-milieu, Ctrl/Cmd-clic et « ouvrir dans un nouvel onglet ».
+        // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
         if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
         event.preventDefault();
-        minimiser();
+        minimize();
         router.push(href);
       }}
     >
@@ -125,23 +125,23 @@ const LienMarkdown = ({
   );
 };
 
-const composants = { a: LienMarkdown };
+const components = { a: MarkdownLink };
 
 export const AssistantMessageText = memo(function AssistantMessageText({
   text,
 }: {
   text: string;
 }) {
-  const { optionsLiensChantiers } = useChatContext();
+  const chantierLinkOptions = useChantierLinks();
   const sanitized = stripParagraphesVides(stripPseudoToolCalls(text));
   const remarkPlugins = useMemo<Options["remarkPlugins"]>(
-    () => [remarkGfm, [remarkLiensChantiers, optionsLiensChantiers]],
-    [optionsLiensChantiers],
+    () => [remarkGfm, [remarkChantierLinks, chantierLinkOptions]],
+    [chantierLinkOptions],
   );
 
   return (
     <div className="albert-markdown">
-      <ReactMarkdown components={composants} remarkPlugins={remarkPlugins}>
+      <ReactMarkdown components={components} remarkPlugins={remarkPlugins}>
         {sanitized}
       </ReactMarkdown>
     </div>

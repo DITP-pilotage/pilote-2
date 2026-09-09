@@ -1,9 +1,6 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
-import {
-  creerConversationAlbert,
-  type ConversationAlbert,
-} from "@/components/_commons/ChatUI/creerConversationAlbert";
+import { createAlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
 
 const scenarios: ChatScenarios = {
   kind: "flat",
@@ -27,10 +24,9 @@ const scenarios: ChatScenarios = {
 };
 
 export const AlbertChat = () => {
-  const conversationRef = useRef<ConversationAlbert | null>(null);
-  conversationRef.current ??= creerConversationAlbert({
-    id: crypto.randomUUID(),
-  });
+  const [conversation] = useState(() =>
+    createAlbertConversation({ id: crypto.randomUUID() }),
+  );
 
   return (
     <div>
@@ -39,7 +35,7 @@ export const AlbertChat = () => {
         Interrogez Albert sur les chantiers et leurs synthèses de résultats.
       </p>
       <ChatUI
-        conversation={conversationRef.current}
+        conversation={conversation}
         placeholder="Posez votre question sur un chantier..."
         scenarios={scenarios}
       />

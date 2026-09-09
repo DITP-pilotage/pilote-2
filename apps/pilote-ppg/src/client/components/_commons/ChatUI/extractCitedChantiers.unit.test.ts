@@ -1,8 +1,8 @@
 import type { $Enums } from "@prisma/client";
-import { extraireChantiersCites } from "@/components/_commons/ChatUI/extraireChantiersCites";
+import { extractCitedChantiers } from "@/components/_commons/ChatUI/extractCitedChantiers";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
-const messageAssistant = (
+const assistantMessage = (
   parts: PiloteUIMessage["parts"],
 ): PiloteUIMessage => ({
   id: "message-1",
@@ -10,7 +10,7 @@ const messageAssistant = (
   parts,
 });
 
-const chantierResultat = ({
+const chantierResult = ({
   id,
   nom,
   maillesApplicables,
@@ -37,11 +37,11 @@ const chantierResultat = ({
   commentaires: { donnees: null, autresResultats: null },
 });
 
-describe("extraireChantiersCites", () => {
+describe("extractCitedChantiers", () => {
   test("retient les chantiers remontés par get_chantiers avec leurs mailles", () => {
     // Given
     const messages = [
-      messageAssistant([
+      assistantMessage([
         {
           type: "tool-get_chantiers",
           toolCallId: "appel-1",
@@ -54,7 +54,7 @@ describe("extraireChantiersCites", () => {
                 territoire_nom: "France",
                 jalon: 2025,
                 chantiers: [
-                  chantierResultat({
+                  chantierResult({
                     id: "CH-050",
                     nom: "Sécurité routière",
                     maillesApplicables: ["NAT", "REG"],
@@ -69,7 +69,7 @@ describe("extraireChantiersCites", () => {
     ];
 
     // When
-    const chantiers = extraireChantiersCites(messages);
+    const chantiers = extractCitedChantiers(messages);
 
     // Then
     expect([...chantiers.values()]).toStrictEqual([
@@ -84,7 +84,7 @@ describe("extraireChantiersCites", () => {
   test("retient les chantiers remontés par search_chantiers, sans mailles", () => {
     // Given
     const messages = [
-      messageAssistant([
+      assistantMessage([
         {
           type: "tool-search_chantiers",
           toolCallId: "appel-1",
@@ -100,7 +100,7 @@ describe("extraireChantiersCites", () => {
     ];
 
     // When
-    const chantiers = extraireChantiersCites(messages);
+    const chantiers = extractCitedChantiers(messages);
 
     // Then
     expect([...chantiers.values()]).toStrictEqual([
@@ -111,7 +111,7 @@ describe("extraireChantiersCites", () => {
   test("retient le chantier de rattachement des indicateurs trouvés", () => {
     // Given
     const messages = [
-      messageAssistant([
+      assistantMessage([
         {
           type: "tool-search_indicateurs",
           toolCallId: "appel-1",
@@ -133,7 +133,7 @@ describe("extraireChantiersCites", () => {
     ];
 
     // When
-    const chantiers = extraireChantiersCites(messages);
+    const chantiers = extractCitedChantiers(messages);
 
     // Then
     expect([...chantiers.values()]).toStrictEqual([
@@ -144,7 +144,7 @@ describe("extraireChantiersCites", () => {
   test("cumule les chantiers sur plusieurs tours et conserve les mailles connues", () => {
     // Given
     const messages = [
-      messageAssistant([
+      assistantMessage([
         {
           type: "tool-get_chantiers",
           toolCallId: "appel-1",
@@ -157,7 +157,7 @@ describe("extraireChantiersCites", () => {
                 territoire_nom: "France",
                 jalon: 2025,
                 chantiers: [
-                  chantierResultat({
+                  chantierResult({
                     id: "CH-050",
                     nom: "Sécurité routière",
                     maillesApplicables: ["NAT"],
@@ -169,7 +169,7 @@ describe("extraireChantiersCites", () => {
           },
         },
       ] as PiloteUIMessage["parts"]),
-      messageAssistant([
+      assistantMessage([
         {
           type: "tool-search_chantiers",
           toolCallId: "appel-2",
@@ -188,7 +188,7 @@ describe("extraireChantiersCites", () => {
     ];
 
     // When
-    const chantiers = extraireChantiersCites(messages);
+    const chantiers = extractCitedChantiers(messages);
 
     // Then
     expect([...chantiers.values()]).toStrictEqual([
@@ -200,7 +200,7 @@ describe("extraireChantiersCites", () => {
   test("ignore les parts dont la sortie n'est pas disponible", () => {
     // Given
     const messages = [
-      messageAssistant([
+      assistantMessage([
         {
           type: "tool-search_chantiers",
           toolCallId: "appel-1",
@@ -211,7 +211,7 @@ describe("extraireChantiersCites", () => {
     ];
 
     // When
-    const chantiers = extraireChantiersCites(messages);
+    const chantiers = extractCitedChantiers(messages);
 
     // Then
     expect([...chantiers.values()]).toStrictEqual([]);

@@ -5,72 +5,64 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
 import {
-  creerConversationAlbert,
-  type AgentContextAlbert,
-  type ConversationAlbert,
-} from "@/components/_commons/ChatUI/creerConversationAlbert";
+  createAlbertConversation,
+  type AlbertAgentContext,
+  type AlbertConversation,
+} from "@/components/_commons/ChatUI/createAlbertConversation";
 import {
-  ecrireConversationMinimisee,
-  effacerConversationMinimisee,
-  lireConversationMinimisee,
-  type ConversationMinimisee,
-} from "@/components/_commons/ChatUI/conversationMinimiseeStockage";
+  clearMinimizedConversation,
+  readMinimizedConversation,
+  writeMinimizedConversation,
+} from "@/components/_commons/ChatUI/minimizedConversationStorage";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import api from "@/server/infrastructure/api/trpc/api";
 
-export type AffichageAlbert = "plein-ecran" | "minimise";
+export type AlbertDisplay = "fullscreen" | "minimized";
 
-export type ConversationCourante = ConversationAlbert & {
-  agentContext: AgentContextAlbert;
+export type CurrentConversation = AlbertConversation & {
+  agentContext: AlbertAgentContext;
   scenarios?: ChatScenarios;
 };
 
-type ChargementConversation = {
-  demande: ConversationMinimisee;
-  affichageCible: AffichageAlbert;
-};
-
 type AlbertConversationContextValue = {
-  conversation: ConversationCourante | null;
-  affichage: AffichageAlbert;
-  ouvrir: (params: {
-    agentContext: AgentContextAlbert;
+  conversation: CurrentConversation | null;
+  display: AlbertDisplay;
+  open: (params: {
+    agentContext: AlbertAgentContext;
     scenarios: ChatScenarios;
   }) => void;
-  minimiser: () => void;
-  restaurer: () => void;
-  fermer: () => void;
-  demarrerNouvelleConversation: () => void;
-  selectionnerConversation: (id: string) => void;
+  minimize: () => void;
+  restore: () => void;
+  close: () => void;
+  startNewConversation: () => void;
+  selectConversation: (id: string) => void;
 };
 
 const context = createContext<AlbertConversationContextValue | null>(null);
 
 export const useAlbertConversation = (): AlbertConversationContextValue => {
-  const valeur = useContext(context);
-  if (!valeur) {
+  const value = useContext(context);
+  if (!value) {
     throw new Error(
-      "useAlbertConversation doit être utilisé dans un AlbertConversationProvider !",
+      "useAlbertConversation must be used within an AlbertConversationProvider!",
     );
   }
-  return valeur;
+  return value;
 };
 
 export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
-  const [conversation, setConversation] = useState<ConversationCourante | null>(
+  const [conversation, setConversation] = useState<CurrentConversation | null>(
     null,
   );
-  const [affichage, setAffichage] = useState<AffichageAlbert>("plein-ecran");
-  const [chargement, setChargement] = useState<ChargementConversation | null>(
-    null,
-  );
-  const utilsTrpc = api.useUtils();
+  const [display, setDisplay] = useState<AlbertDisplay>("fullscreen");
+  const trpcUtils = api.useUtils();
 
-  const construire = useCallback(
+  const build = useCallback(
     ({
       id,
       agentContext,
@@ -78,137 +70,149 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       messages,
     }: {
       id: string;
-      agentContext: AgentContextAlbert;
+      agentContext: AlbertAgentContext;
       scenarios?: ChatScenarios;
       messages?: PiloteUIMessage[];
-    }): ConversationCourante => ({
-      ...creerConversationAlbert({
+    }): CurrentConversation => ({
+      ...createAlbertConversation({
         id,
         agentContext,
         messages,
-        onFinish: () => utilsTrpc.albert.conversations.lister.invalidate(),
+        onFinish: () => trpcUtils.albert.conversations.lister.invalidate(),
       }),
       agentContext,
       scenarios,
     }),
-    [utilsTrpc],
+    [trpcUtils],
   );
 
+  const load = useCallback(
+    async ({
+      id,
+      agentContext,
+      targetDisplay,
+    }: {
+      id: string;
+      agentContext: AlbertAgentContext;
+      targetDisplay: AlbertDisplay;
+    }) => {
+      try {
+        const stored = await trpcUtils.albert.conversations.recuperer.fetch({
+          id,
+        });
+        // A missing conversation resolves to null rather than throwing.
+        if (!stored) {
+          clearMinimizedConversation();
+          return;
+        }
+        setConversation(build({ id, agentContext, messages: stored.messages }));
+        setDisplay(targetDisplay);
+      } catch {
+        // Never persisted (no turn completed yet) or already purged: the
+        // fallback is simply not to show it.
+        clearMinimizedConversation();
+      }
+    },
+    [build, trpcUtils],
+  );
+
+  const restoredFromStorage = useRef(false);
+
   useEffect(() => {
-    const stockee = lireConversationMinimisee();
-    if (stockee) {
-      setChargement({ demande: stockee, affichageCible: "minimise" });
-    }
-  }, []);
+    if (restoredFromStorage.current) return;
+    restoredFromStorage.current = true;
 
-  const { data: conversationChargee, isError } =
-    api.albert.conversations.recuperer.useQuery(
-      { id: chargement?.demande.id ?? "" },
-      { enabled: chargement !== null, retry: false },
-    );
+    const stored = readMinimizedConversation();
+    if (!stored) return;
 
-  useEffect(() => {
-    if (!chargement) return;
+    load({
+      id: stored.id,
+      agentContext: stored.agentContext,
+      targetDisplay: "minimized",
+    });
+  }, [load]);
 
-    if (isError) {
-      effacerConversationMinimisee();
-      setChargement(null);
-      return;
-    }
-
-    if (!conversationChargee) return;
-
-    setConversation(
-      construire({
-        id: chargement.demande.id,
-        agentContext: chargement.demande.agentContext,
-        messages: conversationChargee.messages,
-      }),
-    );
-    setAffichage(chargement.affichageCible);
-    setChargement(null);
-  }, [chargement, conversationChargee, isError, construire]);
-
-  const ouvrir = useCallback<AlbertConversationContextValue["ouvrir"]>(
+  const open = useCallback<AlbertConversationContextValue["open"]>(
     ({ agentContext, scenarios }) => {
       setConversation(
-        (courante) =>
-          courante ??
-          construire({ id: crypto.randomUUID(), agentContext, scenarios }),
+        (current) =>
+          current ??
+          build({ id: crypto.randomUUID(), agentContext, scenarios }),
       );
-      setAffichage("plein-ecran");
+      setDisplay("fullscreen");
     },
-    [construire],
+    [build],
   );
 
-  const minimiser = useCallback(() => {
+  const minimize = useCallback(() => {
     if (conversation) {
-      ecrireConversationMinimisee({
+      writeMinimizedConversation({
         id: conversation.chat.id,
         agentContext: conversation.agentContext,
       });
     }
-    setAffichage("minimise");
+    setDisplay("minimized");
   }, [conversation]);
 
-  const restaurer = useCallback(() => setAffichage("plein-ecran"), []);
+  const restore = useCallback(() => setDisplay("fullscreen"), []);
 
-  const fermer = useCallback(() => {
+  const close = useCallback(() => {
     conversation?.chat.stop();
-    effacerConversationMinimisee();
+    clearMinimizedConversation();
     setConversation(null);
-    setAffichage("plein-ecran");
+    setDisplay("fullscreen");
   }, [conversation]);
 
-  const demarrerNouvelleConversation = useCallback(() => {
+  const startNewConversation = useCallback(() => {
     if (!conversation) return;
     conversation.chat.stop();
-    effacerConversationMinimisee();
+    clearMinimizedConversation();
     setConversation(
-      construire({
+      build({
         id: crypto.randomUUID(),
         agentContext: conversation.agentContext,
         scenarios: conversation.scenarios,
       }),
     );
-    setAffichage("plein-ecran");
-  }, [conversation, construire]);
+    setDisplay("fullscreen");
+  }, [conversation, build]);
 
-  const selectionnerConversation = useCallback(
+  const selectConversation = useCallback(
     (id: string) => {
       if (!conversation) return;
       conversation.chat.stop();
-      effacerConversationMinimisee();
-      setChargement({
-        demande: { id, agentContext: conversation.agentContext },
-        affichageCible: "plein-ecran",
+      clearMinimizedConversation();
+      load({
+        id,
+        agentContext: conversation.agentContext,
+        targetDisplay: "fullscreen",
       });
     },
-    [conversation],
+    [conversation, load],
   );
 
-  const valeur = useMemo(
+  const value = useMemo(
     () => ({
       conversation,
-      affichage,
-      ouvrir,
-      minimiser,
-      restaurer,
-      fermer,
-      demarrerNouvelleConversation,
-      selectionnerConversation,
+      display,
+      open,
+      minimize,
+      restore,
+      close,
+      startNewConversation,
+      selectConversation,
     }),
     [
       conversation,
-      affichage,
-      ouvrir,
-      minimiser,
-      restaurer,
-      fermer,
-      demarrerNouvelleConversation,
-      selectionnerConversation,
+      display,
+      open,
+      minimize,
+      restore,
+      close,
+      startNewConversation,
+      selectConversation,
     ],
   );
 
-  return <context.Provider value={valeur}>{children}</context.Provider>;
+  return <context.Provider value={value}>{children}</context.Provider>;
 };

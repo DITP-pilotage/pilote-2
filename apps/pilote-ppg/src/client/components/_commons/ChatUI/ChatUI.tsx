@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
-import type { ConversationAlbert } from "@/components/_commons/ChatUI/creerConversationAlbert";
+import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
 import {
-  extraireChantiersCites,
-  type ChantierCite,
-} from "@/components/_commons/ChatUI/extraireChantiersCites";
-import { construireUrlChantier } from "@/components/_commons/ChatUI/construireUrlChantier";
+  extractCitedChantiers,
+  type CitedChantier,
+} from "@/components/_commons/ChatUI/extractCitedChantiers";
+import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
+import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { clsxm } from "@/utils/clsxm";
 import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
 import { UserMessage } from "@/components/_commons/ChatUI/UserMessage";
@@ -34,7 +35,7 @@ export const ChatUI = ({
   scenarios,
   showExperimentationBanner = false,
 }: {
-  conversation: ConversationAlbert;
+  conversation: AlbertConversation;
   placeholder?: string;
   className?: string;
   scenarios?: ChatScenarios;
@@ -90,20 +91,20 @@ export const ChatUI = ({
 
   const handleModelChange = useCallback(
     (model: AlbertModel) => {
-      conversation.corpsRequete.model = model;
+      conversation.requestBody.model = model;
     },
     [conversation],
   );
 
-  const optionsLiensChantiers = useMemo(() => {
-    const contexte = {
-      territoireCode: conversation.corpsRequete.agentContext?.territoireCode,
-      jalon: conversation.corpsRequete.agentContext?.jalon,
+  const chantierLinkOptions = useMemo(() => {
+    const context = {
+      territoireCode: conversation.requestBody.agentContext?.territoireCode,
+      jalon: conversation.requestBody.agentContext?.jalon,
     };
     return {
-      chantiers: extraireChantiersCites(messages),
-      construireUrl: (chantier: ChantierCite) =>
-        construireUrlChantier({ chantier, contexte }),
+      chantiers: extractCitedChantiers(messages),
+      buildUrl: (chantier: CitedChantier) =>
+        buildChantierUrl({ chantier, context }),
     };
   }, [messages, conversation]);
 
@@ -132,82 +133,83 @@ export const ChatUI = ({
     <ChatContextProvider
       error={error}
       fillInput={fillInput}
-      optionsLiensChantiers={optionsLiensChantiers}
       sendMessage={sendMessage}
       status={status}
       stop={stop}
     >
-      <div className={clsxm("flex flex-col", className)}>
-        <style>{chatMarkdownStyles}</style>
+      <ChantierLinksProvider options={chantierLinkOptions}>
+        <div className={clsxm("flex flex-col", className)}>
+          <style>{chatMarkdownStyles}</style>
 
-        <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-          className="flex-1 overflow-y-auto bg-white"
-        >
-          <div className="max-w-6xl mx-auto p-4 space-y-4">
-            {messages.length === 0 && scenarios && (
-              <ChatEmptyState scenarios={scenarios} />
-            )}
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-y-auto bg-white"
+          >
+            <div className="max-w-6xl mx-auto p-4 space-y-4">
+              {messages.length === 0 && scenarios && (
+                <ChatEmptyState scenarios={scenarios} />
+              )}
 
-            {messages.map((message, index) => {
-              return (
-                <div key={message.id}>
-                  {message.role === "user" ? (
-                    <div className="max-w-3xl mx-auto flex justify-end">
-                      <UserMessage message={message} />
-                    </div>
-                  ) : (
-                    <AssistantMessage
-                      message={message}
-                      isStreaming={
-                        index === messages.length - 1 && status !== "ready"
-                      }
-                    />
-                  )}
+              {messages.map((message, index) => {
+                return (
+                  <div key={message.id}>
+                    {message.role === "user" ? (
+                      <div className="max-w-3xl mx-auto flex justify-end">
+                        <UserMessage message={message} />
+                      </div>
+                    ) : (
+                      <AssistantMessage
+                        message={message}
+                        isStreaming={
+                          index === messages.length - 1 && status !== "ready"
+                        }
+                      />
+                    )}
+                  </div>
+                );
+              })}
+
+              {status === "submitted" && (
+                <div className="max-w-3xl mx-auto flex justify-start">
+                  <div className="text-sm text-gray-500">
+                    <AssistantLoader label="Réflexion en cours" />
+                  </div>
                 </div>
-              );
-            })}
+              )}
 
-            {status === "submitted" && (
-              <div className="max-w-3xl mx-auto flex justify-start">
-                <div className="text-sm text-gray-500">
-                  <AssistantLoader label="Réflexion en cours" />
+              {error && (
+                <div className="max-w-3xl mx-auto flex justify-start">
+                  <div className="max-w-[80%] text-sm text-red-600">
+                    Erreur : {error.message}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {error && (
-              <div className="max-w-3xl mx-auto flex justify-start">
-                <div className="max-w-[80%] text-sm text-red-600">
-                  Erreur : {error.message}
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} />
+            </div>
           </div>
-        </div>
 
-        {choicesPanelData && (
-          <ChoicesPanel
-            question={choicesPanelData.question}
-            choices={choicesPanelData.choices}
+          {choicesPanelData && (
+            <ChoicesPanel
+              question={choicesPanelData.question}
+              choices={choicesPanelData.choices}
+            />
+          )}
+
+          {messages.length > 0 && status === "ready" && (
+            <FeedbackBar chatId={conversation.chat.id} />
+          )}
+
+          <ChatInputForm
+            fillInputRef={fillInputRef}
+            onModelChange={handleModelChange}
+            placeholder={placeholder}
           />
-        )}
 
-        {messages.length > 0 && status === "ready" && (
-          <FeedbackBar chatId={conversation.chat.id} />
-        )}
-
-        <ChatInputForm
-          fillInputRef={fillInputRef}
-          onModelChange={handleModelChange}
-          placeholder={placeholder}
-        />
-
-        {showExperimentationBanner && <ChatExperimentationBanner />}
-      </div>
+          {showExperimentationBanner && <ChatExperimentationBanner />}
+        </div>
+      </ChantierLinksProvider>
     </ChatContextProvider>
   );
 };

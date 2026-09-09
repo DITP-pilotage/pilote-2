@@ -1,7 +1,7 @@
 import type { $Enums } from "@prisma/client";
-import { construireUrlChantier } from "@/components/_commons/ChatUI/construireUrlChantier";
+import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
 
-describe("construireUrlChantier", () => {
+describe("buildChantierUrl", () => {
   test("utilise le territoire et le jalon de la conversation", () => {
     // Given
     const maillesApplicables: $Enums.Maille[] = ["NAT", "REG"];
@@ -12,9 +12,9 @@ describe("construireUrlChantier", () => {
     };
 
     // When
-    const url = construireUrlChantier({
+    const url = buildChantierUrl({
       chantier,
-      contexte: { territoireCode: "REG-11", jalon: 2025 },
+      context: { territoireCode: "REG-11", jalon: 2025 },
     });
 
     // Then
@@ -31,9 +31,9 @@ describe("construireUrlChantier", () => {
     };
 
     // When
-    const url = construireUrlChantier({
+    const url = buildChantierUrl({
       chantier,
-      contexte: { territoireCode: "DEPT-75", jalon: 2025 },
+      context: { territoireCode: "DEPT-75", jalon: 2025 },
     });
 
     // Then
@@ -45,21 +45,21 @@ describe("construireUrlChantier", () => {
     const chantier = { id: "CH-050", nom: "Sécurité routière" };
 
     // When
-    const url = construireUrlChantier({
+    const url = buildChantierUrl({
       chantier,
-      contexte: { territoireCode: "DEPT-75", jalon: 2025 },
+      context: { territoireCode: "DEPT-75", jalon: 2025 },
     });
 
     // Then
     expect(url).toStrictEqual("/chantier/CH-050/DEPT-75?jalon=2025");
   });
 
-  test("retombe sur le territoire national quand le contexte est vide", () => {
+  test("retombe sur le territoire national quand le context est vide", () => {
     // Given
     const chantier = { id: "CH-050", nom: "Sécurité routière" };
 
     // When
-    const url = construireUrlChantier({ chantier, contexte: {} });
+    const url = buildChantierUrl({ chantier, context: {} });
 
     // Then
     expect(url).toStrictEqual("/chantier/CH-050/NAT-FR");

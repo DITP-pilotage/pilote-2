@@ -1,8 +1,8 @@
 import {
-  ecrireConversationMinimisee,
-  effacerConversationMinimisee,
-  lireConversationMinimisee,
-} from "@/components/_commons/ChatUI/conversationMinimiseeStockage";
+  writeMinimizedConversation,
+  clearMinimizedConversation,
+  readMinimizedConversation,
+} from "@/components/_commons/ChatUI/minimizedConversationStorage";
 
 const conversation = {
   id: "0199a1ce-0000-7000-8000-000000000001",
@@ -13,28 +13,28 @@ const conversation = {
   },
 };
 
-describe("conversationMinimiseeStockage", () => {
+describe("minimizedConversationStorage", () => {
   beforeEach(() => {
     sessionStorage.clear();
   });
 
   test("relit ce qui a été écrit", () => {
     // Given
-    ecrireConversationMinimisee(conversation);
+    writeMinimizedConversation(conversation);
 
     // When
-    const relue = lireConversationMinimisee();
+    const readBack = readMinimizedConversation();
 
     // Then
-    expect(relue).toStrictEqual(conversation);
+    expect(readBack).toStrictEqual(conversation);
   });
 
   test("retourne null quand rien n'a été écrit", () => {
     // When
-    const relue = lireConversationMinimisee();
+    const readBack = readMinimizedConversation();
 
     // Then
-    expect(relue).toBeNull();
+    expect(readBack).toBeNull();
   });
 
   test("retourne null et nettoie quand le contenu stocké est invalide", () => {
@@ -42,21 +42,21 @@ describe("conversationMinimiseeStockage", () => {
     sessionStorage.setItem("albert:conversation", '{"id":"pas-un-uuid"}');
 
     // When
-    const relue = lireConversationMinimisee();
+    const readBack = readMinimizedConversation();
 
     // Then
-    expect(relue).toBeNull();
+    expect(readBack).toBeNull();
     expect(sessionStorage.getItem("albert:conversation")).toBeNull();
   });
 
   test("efface l'entrée", () => {
     // Given
-    ecrireConversationMinimisee(conversation);
+    writeMinimizedConversation(conversation);
 
     // When
-    effacerConversationMinimisee();
+    clearMinimizedConversation();
 
     // Then
-    expect(lireConversationMinimisee()).toBeNull();
+    expect(readMinimizedConversation()).toBeNull();
   });
 });

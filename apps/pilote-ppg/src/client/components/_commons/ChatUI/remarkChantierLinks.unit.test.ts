@@ -1,41 +1,37 @@
 import {
-  remarkLiensChantiers,
-  type NoeudMarkdown,
-} from "@/components/_commons/ChatUI/remarkLiensChantiers";
-import type { ChantierCite } from "@/components/_commons/ChatUI/extraireChantiersCites";
+  remarkChantierLinks,
+  type MarkdownNode,
+} from "@/components/_commons/ChatUI/remarkChantierLinks";
+import type { CitedChantier } from "@/components/_commons/ChatUI/extractCitedChantiers";
 
-const chantiers = new Map<string, ChantierCite>([
+const chantiers = new Map<string, CitedChantier>([
   ["CH-050", { id: "CH-050", nom: "Sécurité routière" }],
   ["CH-012", { id: "CH-012", nom: "Handicap [phase 2]" }],
 ]);
 
-const construireUrl = (chantier: ChantierCite) =>
-  `/chantier/${chantier.id}/NAT-FR`;
+const buildUrl = (chantier: CitedChantier) => `/chantier/${chantier.id}/NAT-FR`;
 
-const appliquer = (tree: NoeudMarkdown): void => {
-  remarkLiensChantiers({ chantiers, construireUrl })(tree);
+const apply = (tree: MarkdownNode): void => {
+  remarkChantierLinks({ chantiers, buildUrl })(tree);
 };
 
-const paragraphe = (valeur: string): NoeudMarkdown => ({
+const paragraph = (text: string): MarkdownNode => ({
   type: "root",
-  children: [
-    { type: "paragraph", children: [{ type: "text", value: valeur }] },
-  ],
+  children: [{ type: "paragraph", children: [{ type: "text", value: text }] }],
 });
 
-const enfantsDuParagraphe = (tree: NoeudMarkdown) =>
-  tree.children?.[0].children;
+const paragraphChildren = (tree: MarkdownNode) => tree.children?.[0].children;
 
-describe("remarkLiensChantiers", () => {
+describe("remarkChantierLinks", () => {
   test("transforme le libellé complet en un seul lien", () => {
     // Given
-    const tree = paragraphe("Voir CH-050 — Sécurité routière pour le détail.");
+    const tree = paragraph("Voir CH-050 — Sécurité routière pour le détail.");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       { type: "text", value: "Voir " },
       {
         type: "link",
@@ -48,13 +44,13 @@ describe("remarkLiensChantiers", () => {
 
   test("retombe sur l'identifiant seul quand le nom ne suit pas", () => {
     // Given
-    const tree = paragraphe("Le chantier CH-050 progresse.");
+    const tree = paragraph("Le chantier CH-050 progresse.");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       { type: "text", value: "Le chantier " },
       {
         type: "link",
@@ -67,13 +63,13 @@ describe("remarkLiensChantiers", () => {
 
   test("retombe sur l'identifiant seul quand le nom qui suit ne correspond pas", () => {
     // Given
-    const tree = paragraphe("CH-050 — Autre libellé");
+    const tree = paragraph("CH-050 — Autre libellé");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       {
         type: "link",
         url: "/chantier/CH-050/NAT-FR",
@@ -85,13 +81,13 @@ describe("remarkLiensChantiers", () => {
 
   test("tolère la casse et les séparateurs alternatifs", () => {
     // Given
-    const tree = paragraphe("Ch-050 - Sécurité routière");
+    const tree = paragraph("Ch-050 - Sécurité routière");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       {
         type: "link",
         url: "/chantier/CH-050/NAT-FR",
@@ -102,15 +98,15 @@ describe("remarkLiensChantiers", () => {
 
   test("reconnaît un identifiant écrit avec un tiret insécable", () => {
     // Given
-    // Le modèle produit U+2011 dans l'identifiant et U+202F avant le tiret
-    // cadratin, au lieu du trait d'union et de l'espace ASCII.
-    const tree = paragraphe("CH\u2011050\u202f\u2014 Sécurité routière");
+    // The model emits U+2011 inside the id and U+202F before the em dash,
+    // instead of the ASCII hyphen and space.
+    const tree = paragraph("CH\u2011050\u202f\u2014 Sécurité routière");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       {
         type: "link",
         url: "/chantier/CH-050/NAT-FR",
@@ -123,26 +119,26 @@ describe("remarkLiensChantiers", () => {
 
   test("laisse en texte un identifiant absent de la whitelist", () => {
     // Given
-    const tree = paragraphe("Le chantier CH-999 n'existe pas.");
+    const tree = paragraph("Le chantier CH-999 n'existe pas.");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       { type: "text", value: "Le chantier CH-999 n'existe pas." },
     ]);
   });
 
   test("crée un lien pour chaque chantier d'une même phrase", () => {
     // Given
-    const tree = paragraphe("CH-050 et CH-012 sont concernés.");
+    const tree = paragraph("CH-050 et CH-012 sont concernés.");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       {
         type: "link",
         url: "/chantier/CH-050/NAT-FR",
@@ -160,7 +156,7 @@ describe("remarkLiensChantiers", () => {
 
   test("descend dans les nœuds imbriqués comme le gras", () => {
     // Given
-    const tree: NoeudMarkdown = {
+    const tree: MarkdownNode = {
       type: "root",
       children: [
         {
@@ -173,7 +169,7 @@ describe("remarkLiensChantiers", () => {
     };
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
     expect(tree.children?.[0].children?.[0].children).toStrictEqual([
@@ -187,7 +183,7 @@ describe("remarkLiensChantiers", () => {
 
   test("ne touche ni au code inline ni aux liens existants", () => {
     // Given
-    const tree: NoeudMarkdown = {
+    const tree: MarkdownNode = {
       type: "root",
       children: [
         {
@@ -205,10 +201,10 @@ describe("remarkLiensChantiers", () => {
     };
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       { type: "inlineCode", value: "CH-050" },
       {
         type: "link",
@@ -220,13 +216,13 @@ describe("remarkLiensChantiers", () => {
 
   test("gère un nom de chantier contenant des caractères markdown", () => {
     // Given
-    const tree = paragraphe("CH-012 — Handicap [phase 2] est en cours.");
+    const tree = paragraph("CH-012 — Handicap [phase 2] est en cours.");
 
     // When
-    appliquer(tree);
+    apply(tree);
 
     // Then
-    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+    expect(paragraphChildren(tree)).toStrictEqual([
       {
         type: "link",
         url: "/chantier/CH-012/NAT-FR",

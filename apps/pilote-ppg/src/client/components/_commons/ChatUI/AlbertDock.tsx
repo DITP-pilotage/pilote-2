@@ -3,16 +3,16 @@ import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
-import type { ConversationAlbert } from "@/components/_commons/ChatUI/creerConversationAlbert";
+import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { deriverTitre } from "@/server/albert/domain/ChatConversation";
 
 export const AlbertDock = ({
   conversation,
 }: {
-  conversation: ConversationAlbert;
+  conversation: AlbertConversation;
 }) => {
-  const { restaurer, fermer } = useAlbertConversation();
+  const { restore, close } = useAlbertConversation();
   const { messages } = useChat<PiloteUIMessage>({ chat: conversation.chat });
 
   return (
@@ -20,7 +20,7 @@ export const AlbertDock = ({
       <button
         aria-label="Reprendre la conversation"
         className="flex min-w-0 flex-1 items-center gap-2 text-left hover:bg-transparent"
-        onClick={restaurer}
+        onClick={restore}
         type="button"
       >
         <Icone
@@ -39,7 +39,7 @@ export const AlbertDock = ({
       <button
         aria-label="Fermer la conversation"
         className="shrink-0 text-gray-400 hover:text-red-500"
-        onClick={fermer}
+        onClick={close}
         type="button"
       >
         <Icone className="h-4 w-4 !text-current" icone={CloseLineIcon} />

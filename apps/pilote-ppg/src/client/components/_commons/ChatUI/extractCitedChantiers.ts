@@ -1,20 +1,20 @@
 import type { $Enums } from "@prisma/client";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
-export type ChantierCite = {
+export type CitedChantier = {
   id: string;
   nom: string;
   maillesApplicables?: $Enums.Maille[];
 };
 
-export const extraireChantiersCites = (
+export const extractCitedChantiers = (
   messages: PiloteUIMessage[],
-): Map<string, ChantierCite> => {
-  const chantiers = new Map<string, ChantierCite>();
+): Map<string, CitedChantier> => {
+  const chantiers = new Map<string, CitedChantier>();
 
-  const ajouter = (chantier: ChantierCite) => {
-    const existant = chantiers.get(chantier.id);
-    if (existant?.maillesApplicables && !chantier.maillesApplicables) return;
+  const add = (chantier: CitedChantier) => {
+    const existing = chantiers.get(chantier.id);
+    if (existing?.maillesApplicables && !chantier.maillesApplicables) return;
     chantiers.set(chantier.id, chantier);
   };
 
@@ -23,12 +23,12 @@ export const extraireChantiersCites = (
       if (!("state" in part) || part.state !== "output-available") continue;
 
       if (part.type === "tool-get_chantiers") {
-        for (const resultat of part.output.resultats) {
-          for (const ligne of resultat.chantiers) {
-            ajouter({
-              id: ligne.chantier.id,
-              nom: ligne.chantier.nom,
-              maillesApplicables: ligne.chantier.mailles_applicables,
+        for (const result of part.output.resultats) {
+          for (const row of result.chantiers) {
+            add({
+              id: row.chantier.id,
+              nom: row.chantier.nom,
+              maillesApplicables: row.chantier.mailles_applicables,
             });
           }
         }
@@ -36,13 +36,13 @@ export const extraireChantiersCites = (
 
       if (part.type === "tool-search_chantiers") {
         for (const chantier of part.output.chantiers) {
-          ajouter({ id: chantier.id, nom: chantier.nom });
+          add({ id: chantier.id, nom: chantier.nom });
         }
       }
 
       if (part.type === "tool-search_indicateurs") {
         for (const indicateur of part.output.indicateurs) {
-          ajouter({ id: indicateur.chantier.id, nom: indicateur.chantier.nom });
+          add({ id: indicateur.chantier.id, nom: indicateur.chantier.nom });
         }
       }
     }

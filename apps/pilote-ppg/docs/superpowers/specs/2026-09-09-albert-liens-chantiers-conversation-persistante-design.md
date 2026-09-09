@@ -69,32 +69,32 @@ Un `AlbertConversationProvider` est monté dans `MiseEnPage`, au même niveau qu
 `PiedDePage`, à l'intérieur du `ClientOnly` existant. Il détient :
 
 ```ts
-type ConversationAlbert = {
+type AlbertConversation = {
   chat: Chat<PiloteUIMessage>;
   // Objet muté en place et référencé par le transport : porte agentContext et
   // le modèle sélectionné, que ChatInputForm peut changer en cours de conversation.
-  corpsRequete: { agentContext?: Record<string, unknown>; model: AlbertModel };
+  requestBody: { agentContext?: Record<string, unknown>; model: AlbertModel };
   scenarios?: ChatScenarios;
 };
 
-type AffichageAlbert = "plein-ecran" | "minimise";
+type AlbertDisplay = "fullscreen" | "minimized";
 ```
 
 et expose :
 
 ```ts
 type AlbertConversationContextValue = {
-  conversation: ConversationAlbert | null;
-  affichage: AffichageAlbert;
-  ouvrir: (params: {
+  conversation: AlbertConversation | null;
+  display: AlbertDisplay;
+  open: (params: {
     agentContext: Record<string, unknown>;
     scenarios: ChatScenarios;
   }) => void;
-  minimiser: () => void;
-  restaurer: () => void;
-  fermer: () => void;
-  demarrerNouvelleConversation: () => void;
-  selectionnerConversation: (id: string) => void;
+  minimize: () => void;
+  restore: () => void;
+  close: () => void;
+  startNewConversation: () => void;
+  selectConversation: (id: string) => void;
 };
 ```
 
@@ -111,17 +111,17 @@ a rien à montrer. Cela évite un état incohérent (fermé mais avec une conver
 
 | Déclencheur | Effet |
 |---|---|
-| `ouvrir()` depuis `BoutonSyntheseTerritoire` | Crée une conversation si `null`, sinon réutilise celle en cours → `plein-ecran` |
-| Clic sur un lien interne dans une réponse | `minimiser()` puis `router.push(url)` |
-| Clic sur le corps du dock | `restaurer()` → `plein-ecran` |
-| Clic sur la croix du dock | `fermer()` |
-| Bouton « Réduire » de la modale | `minimiser()` |
-| Échap ou clic hors de la modale | `minimiser()` |
-| Bouton « Fermer » de la modale | `fermer()` |
-| « + Nouvelle conversation » du drawer | `demarrerNouvelleConversation()` |
-| Sélection dans le drawer | `selectionnerConversation(id)` |
+| `open()` depuis `BoutonSyntheseTerritoire` | Crée une conversation si `null`, sinon réutilise celle en cours → `fullscreen` |
+| Clic sur un lien interne dans une réponse | `minimize()` puis `router.push(url)` |
+| Clic sur le corps du dock | `restore()` → `fullscreen` |
+| Clic sur la croix du dock | `close()` |
+| Bouton « Réduire » de la modale | `minimize()` |
+| Échap ou clic hors de la modale | `minimize()` |
+| Bouton « Fermer » de la modale | `close()` |
+| « + Nouvelle conversation » du drawer | `startNewConversation()` |
+| Sélection dans le drawer | `selectConversation(id)` |
 
-**Le bouton « Fermer » de la modale ferme bien la conversation**, il ne la minimise pas.
+**Le bouton « Fermer » de la modale ferme bien la conversation**, il ne la minimized pas.
 C'est le critère « le parcours standard d'ouverture/fermeture sans clic sur un lien reste
 inchangé » de PIL-1690.
 
@@ -129,24 +129,25 @@ inchangé » de PIL-1690.
 déclenche `onOpenChange(false)` sur ces deux gestes comme sur le bouton « Fermer » ; une
 touche Échap réflexe détruisait donc la conversation, récupérable seulement si le flag
 d'historique est actif *et* qu'un tour s'est terminé. `ModalePleinEcran` reçoit une prop
-optionnelle `onReduire` : quand elle est fournie, elle affiche un bouton « Réduire » à côté
-de « Fermer » et intercepte `onEscapeKeyDown` / `onInteractOutside` pour réduire. Sans
-cette prop, le comportement de la modale est strictement inchangé.
+requise `onMinimize` : elle affiche un bouton « Réduire » à côté de « Fermer » et
+intercepte `onEscapeKeyDown` / `onInteractOutside` pour réduire. La prop est requise et
+non optionnelle : la modale n'a qu'un consommateur, et une option non utilisée serait du
+YAGNI.
 
 Conséquence assumée : après un Échap, un dock apparaît là où rien n'était visible
 auparavant. C'est le prix de la protection contre la perte accidentelle.
 
-`fermer()` appelle `chat.stop()` si un flux est en cours, met `conversation` à `null` et
-purge le sessionStorage. `demarrerNouvelleConversation()` et `selectionnerConversation()`
+`close()` appelle `chat.stop()` si un flux est en cours, met `conversation` à `null` et
+purge le sessionStorage. `startNewConversation()` et `selectConversation()`
 font de même avant de construire la nouvelle instance.
 
 ### 1.3 L'overlay et le dock
 
 Un composant `AlbertOverlay`, rendu par le provider, porte les deux vues :
 
-- `affichage === "plein-ecran"` → la `ModalePleinEcran` existante, avec le
+- `display === "fullscreen"` → la `ModalePleinEcran` existante, avec le
   `ConversationHistoryDrawer` (si le flag d'historique est actif) et `ChatUI` ;
-- `affichage === "minimise"` → le dock, en `position: fixed` bas-droite.
+- `display === "minimized"` → le dock, en `position: fixed` bas-droite.
 
 Le dock affiche une icône `SparklingIcon`, le libellé « Reprendre la conversation » et le
 titre court dérivé de la conversation, obtenu en réutilisant `deriverTitre(messages)`
@@ -172,14 +173,16 @@ Le sessionStorage porte le strict minimum, sous la clé `albert:conversation` :
 { id: string; agentContext: Record<string, unknown> }
 ```
 
-Il est écrit par `minimiser()` et purgé par `fermer()`. Les messages ne sont **pas**
+Il est écrit par `minimize()` et purgé par `close()`. Les messages ne sont **pas**
 dupliqués côté client : ils sont relus depuis la base.
 
 Au montage, le provider lit le sessionStorage. S'il y trouve une entrée, il appelle
-`api.albert.conversations.recuperer({ id })` — requête qui n'est donc émise que dans ce
-cas, pas à chaque chargement de page pour tout le monde. En cas de succès, il reconstruit
-l'instance `Chat` avec les messages récupérés et se place en `minimise`. En cas d'échec
-(conversation absente, purgée, ou premier tour jamais terminé), il purge le sessionStorage
+`trpcUtils.albert.conversations.recuperer.fetch({ id })` — un `fetch` impératif plutôt
+qu'un `useQuery` avec `enabled` : la requête n'est émise que dans ce cas, et surtout on
+évite un état intermédiaire « chargement en cours » doublé d'un effet de transfert vers
+`setConversation`. `selectConversation` emprunte exactement le même chemin. En cas de succès, il reconstruit
+l'instance `Chat` avec les messages récupérés et se place en `minimized`. En cas d'échec — la procédure résout sur `null` quand la conversation est absente,
+purgée, ou qu'aucun tour ne s'est terminé, plutôt que de lever — il purge le sessionStorage
 et n'affiche pas de dock — c'est le « repli explicite et sans erreur » du critère
 d'acceptation.
 
@@ -212,11 +215,11 @@ chaque tour) est désormais payé par tous ; à la volumétrie cible qu'elle doc
 
 ### 2.1 Whitelist des chantiers cités
 
-Une fonction pure `extraireChantiersCites(messages: PiloteUIMessage[])` parcourt les
-`parts` typées de la conversation et retourne une `Map<string, ChantierCite>` :
+Une fonction pure `extractCitedChantiers(messages: PiloteUIMessage[])` parcourt les
+`parts` typées de la conversation et retourne une `Map<string, CitedChantier>` :
 
 ```ts
-type ChantierCite = {
+type CitedChantier = {
   id: string;
   nom: string;
   maillesApplicables?: $Enums.Maille[];
@@ -228,7 +231,7 @@ type ChantierCite = {
 client de `Maille.interface.ts` (`nationale` | `regionale` | `departementale`). C'est le
 premier qui est attendu ici — `mailles_applicables` remonte les codes `NAT`/`REG`/`DEPT`,
 comme le documente `systemPrompt.ts:321`. `GetChantiersQuery` le type aujourd'hui en
-`string[]` (`:10`) ; on resserre sur `$Enums.Maille[]` côté `ChantierCite`, conformément à
+`string[]` (`:10`) ; on resserre sur `$Enums.Maille[]` côté `CitedChantier`, conformément à
 la consigne « utiliser `$Enums` de `@prisma` » du CLAUDE.md.
 
 Sources exploitées, toutes déjà typées via `PiloteUITools` :
@@ -243,8 +246,9 @@ Seules les parts en `state === "output-available"` sont lues.
 
 La whitelist est **cumulative sur toute la conversation**, pas par message : Albert cite
 régulièrement au tour N un chantier résolu au tour N−1. Elle est calculée dans `ChatUI`
-avec un `useMemo` sur `messages` et exposée via `ChatContext`, qui existe déjà et sert
-justement à faire descendre l'état du chat vers les composants de rendu.
+avec un `useMemo` sur `messages` et exposée via un contexte dédié,
+`ChantierLinksContext`. Elle ne passe pas par `ChatContext` : celui-ci porte l'état de
+saisie et de flux (`sendMessage`, `status`, `stop`), auquel les liens n'ont rien à voir.
 
 ### 2.2 Construction de l'URL
 
@@ -270,7 +274,7 @@ des données vides, et le sélecteur de territoire y reste disponible.
 
 ### 2.3 Plugin remark
 
-Un plugin `remarkLiensChantiers({ chantiers, construireUrl })` parcourt l'arbre mdast et
+Un plugin `remarkChantierLinks({ chantiers, buildUrl })` parcourt l'arbre mdast et
 remplace, dans les nœuds `text` uniquement, les occurrences reconnues par des nœuds `link`.
 Travailler à l'AST écarte gratuitement les cas que la réécriture de chaîne ferait rater :
 les blocs de code (`code`, `inlineCode` ne sont pas de type `text`), les liens existants
@@ -284,10 +288,14 @@ Reconnaissance, dans cet ordre :
 2. **Identifiant seul** — repli quand le nom ne suit pas ou ne correspond pas. Le lien ne
    couvre que `CH-050`.
 
-Deux tolérances, parce qu'un modèle openweight n'est pas fiable sur la forme exacte :
-l'identifiant est reconnu **sans tenir compte de la casse** (`CH-050`, `Ch-050`, `ch-050`),
-et le **séparateur** entre identifiant et nom accepte `—`, `–` et `-`. La casse du texte
-affiché est préservée ; seule l'URL utilise l'identifiant canonique.
+Trois tolérances, parce qu'un modèle openweight n'est pas fiable sur la forme exacte :
+l'identifiant est reconnu **sans tenir compte de la casse** (`CH-050`, `Ch-050`), et le
+tiret — aussi bien **à l'intérieur de l'identifiant** que comme **séparateur** devant le
+nom — accepte toute la famille Unicode (`-`, `‐`, `‑`, `‒`, `–`, `—`, `−`). Ce dernier
+point n'est pas théorique : sur une réponse réelle, le modèle écrit `CH‑173` avec un
+NON-BREAKING HYPHEN (U+2011) et une espace fine insécable (U+202F) devant le tiret
+cadratin. Avec le seul trait d'union ASCII, aucun lien n'était produit. Le texte affiché
+conserve la graphie du modèle ; seule l'URL utilise l'identifiant canonique.
 
 **Pas de nouvelle dépendance.** `unist-util-visit` et `@types/mdast` ne sont pas résolvables
 depuis l'application (pnpm strict n'expose que `remark-gfm`), et les faire entrer comme
@@ -298,7 +306,7 @@ pour les seuls nœuds manipulés (`text`, `link`, et les nœuds parents).
 ### 2.4 Interception du clic
 
 `AssistantMessageText` fournit à `ReactMarkdown` un `components.a` personnalisé. Pour un
-`href` interne (commençant par `/`), il rend un lien qui, au clic, appelle `minimiser()`
+`href` interne (commençant par `/`), il rend un lien qui, au clic, appelle `minimize()`
 puis `router.push(href)` — c'est le point de jonction entre les deux tickets. La navigation
 reste dans le même onglet et côté client, donc `_app` n'est jamais démonté et le dock
 survit sans dépendre d'aucune persistance. Les liens externes gardent le comportement par
@@ -318,18 +326,21 @@ nouvel onglet » continuent de fonctionner, et seul le clic simple est intercept
 | `client/components/_commons/ChatUI/AlbertConversationProvider.tsx` | Provider : instance `Chat`, état d'affichage, sessionStorage |
 | `client/components/_commons/ChatUI/AlbertOverlay.tsx` | Rendu modale ou dock selon l'affichage |
 | `client/components/_commons/ChatUI/AlbertDock.tsx` | Composant minimisé bas-droite |
-| `client/components/_commons/ChatUI/extraireChantiersCites.ts` | Whitelist depuis les tool-outputs |
-| `client/components/_commons/ChatUI/remarkLiensChantiers.ts` | Plugin remark de linkification |
-| `client/components/_commons/ChatUI/construireUrlChantier.ts` | URL depuis id canonique + agentContext |
+| `client/components/_commons/ChatUI/extractCitedChantiers.ts` | Whitelist depuis les tool-outputs |
+| `client/components/_commons/ChatUI/remarkChantierLinks.ts` | Plugin remark de linkification |
+| `client/components/_commons/ChatUI/buildChantierUrl.ts` | URL depuis id canonique + agentContext |
+| `client/components/_commons/ChatUI/createAlbertConversation.ts` | Fabrique l'instance `Chat` et son corps de requête |
+| `client/components/_commons/ChatUI/minimizedConversationStorage.ts` | Lecture/écriture sessionStorage, validée par zod |
+| `client/components/_commons/ChatUI/ChantierLinksContext.tsx` | Contexte dédié aux options de linkification |
 
 **Modifiés**
 
 | Fichier | Modification |
 |---|---|
-| `ChatUI.tsx` | L'instance `Chat` devient une prop ; calcul de la whitelist ; `onModelChange` mute `corpsRequete` |
-| `ChatContext.tsx` | Expose `chantiersCites` |
+| `ChatUI.tsx` | L'instance `Chat` devient une prop ; calcul de la whitelist ; `onModelChange` mute `requestBody` |
+| `ModalePleinEcran.tsx` | Prop `onMinimize` ; Échap et clic extérieur réduisent |
 | `AssistantMessageText.tsx` | Plugin remark + `components.a` |
-| `BoutonSyntheseTerritoire.tsx` | Réduit à un déclencheur appelant `ouvrir()` ; le flag ne pilote plus que le drawer |
+| `BoutonSyntheseTerritoire.tsx` | Réduit à un déclencheur appelant `open()` ; le flag ne pilote plus que le drawer |
 | `MiseEnPage.tsx` | Monte le provider et l'overlay ; place le dock hors du loader |
 | `app/api/albert/chat/route.ts` | Persistance inconditionnelle |
 
@@ -338,12 +349,12 @@ nouvel onglet » continuent de fonctionner, et seul le clic simple est intercept
 **Unitaires (`--project client`)** — le cœur de la logique est fait de fonctions pures,
 testables sans rendu :
 
-- `extraireChantiersCites` : un `get_chantiers`, un `search_chantiers`, plusieurs tours
+- `extractCitedChantiers` : un `get_chantiers`, un `search_chantiers`, plusieurs tours
   cumulés, parts en erreur ou sans output, doublons entre tours.
-- `remarkLiensChantiers` : libellé complet reconnu, repli sur l'identifiant seul, casse et
+- `remarkChantierLinks` : libellé complet reconnu, repli sur l'identifiant seul, casse et
   séparateurs alternatifs, identifiant absent de la whitelist laissé en texte, occurrence
   dans un bloc de code ignorée, nom contenant des caractères markdown.
-- `construireUrlChantier` : territoire et jalon de la conversation, repli `NAT-FR` sur
+- `buildChantierUrl` : territoire et jalon de la conversation, repli `NAT-FR` sur
   maille non applicable, `maillesApplicables` inconnu.
 
 Ces cas couvrent le minimum exigé par PIL-1693 — un chantier valide, plusieurs chantiers,
@@ -351,13 +362,14 @@ un identifiant invalide, un chantier non autorisé — ce dernier étant couvert
 construction : un chantier hors habilitation n'apparaît dans aucun tool-output, donc
 jamais dans la whitelist.
 
-**Composants** — `AssistantMessageText` rend bien un `<a>` pour un chantier de la whitelist
-et du texte pour un identifiant inconnu ; le dock expose ses deux actions distinctes.
+- `minimizedConversationStorage` : aller-retour d'écriture/lecture, absence, contenu
+  invalide nettoyé.
 
-**E2E Playwright** — le parcours complet : ouvrir Albert, obtenir une réponse citant un
-chantier, cliquer le lien, vérifier l'arrivée sur la fiche et la présence du dock, naviguer
-une seconde fois, restaurer et retrouver les mêmes messages avec le même identifiant de
-conversation. Le parcours ouverture/fermeture sans lien doit rester inchangé.
+**Pas de test de composant ni de test E2E.** Un test de rendu de `AssistantMessageText` et
+un parcours Playwright avaient été écrits, puis retirés en revue. Ce qui n'est donc couvert
+par aucun test : le câblage `[plugin, options]` au travers de `react-markdown`, l'ouverture
+et la restauration du dock, et l'interception d'Échap par `ModalePleinEcran`. Ces points
+relèvent d'une vérification manuelle.
 
 ## 5. Hors périmètre
 
