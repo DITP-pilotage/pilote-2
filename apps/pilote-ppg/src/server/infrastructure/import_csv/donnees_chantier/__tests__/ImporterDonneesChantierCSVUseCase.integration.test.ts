@@ -92,7 +92,7 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
         where: { chantier_id: chantier.id },
       });
       expect(commentaires.map((commentaire) => commentaire.type)).toEqual([
-        "risquesEtFreinsÀLever",
+        "freins_a_lever",
       ]);
 
       const syntheses = await tx.synthese_des_resultats.findMany({
