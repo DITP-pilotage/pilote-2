@@ -1,5 +1,3 @@
-import type { CitedChantier } from "@/components/_commons/ChatUI/extractCitedChantiers";
-
 // Minimal mdast types: @types/mdast is not resolvable under pnpm strict, and
 // only these nodes are handled here.
 export type MarkdownNode = {
@@ -10,22 +8,18 @@ export type MarkdownNode = {
 };
 
 export type ChantierLinkOptions = {
-  chantiers: Map<string, CitedChantier>;
-  buildUrl: (chantier: CitedChantier) => string;
+  buildUrl: (chantierId: string) => string;
 };
 
 // An openweight model does not stick to the ASCII hyphen: it commonly emits
-// U+2011 inside the id ("CH\u2011173") and an em dash preceded by a narrow
-// no-break space before the name. We accept the whole Unicode dash family, and
-// the URL is always built from the canonical id, never from the spelling found
-// in the text.
-const DASHES = "-\u2010\u2011\u2012\u2013\u2014\u2212";
+// U+2011 inside the id ("CH‑173"). We accept the whole Unicode dash
+// family, and the URL is always built from the canonical id, never from the
+// spelling found in the text.
+const DASHES = "-‐‑‒–—−";
 const ID_PATTERN = new RegExp(`\\bch[${DASHES}](\\d{3,})\\b`, "gi");
-const SEPARATOR_PATTERN = new RegExp(`^\\s*[${DASHES}]\\s*`, "u");
 
 const splitText = ({
   text,
-  chantiers,
   buildUrl,
 }: ChantierLinkOptions & { text: string }): MarkdownNode[] | null => {
   const nodes: MarkdownNode[] = [];
@@ -33,26 +27,14 @@ const splitText = ({
 
   for (const match of text.matchAll(ID_PATTERN)) {
     const start = match.index;
-    if (start < cursor) continue;
-
-    const chantier = chantiers.get(`CH-${match[1]}`);
-    if (!chantier) continue;
-
-    let end = start + match[0].length;
-    const separator = SEPARATOR_PATTERN.exec(text.slice(end));
-    if (separator) {
-      const afterSeparator = end + separator[0].length;
-      if (text.startsWith(chantier.nom, afterSeparator)) {
-        end = afterSeparator + chantier.nom.length;
-      }
-    }
+    const end = start + match[0].length;
 
     if (start > cursor) {
       nodes.push({ type: "text", value: text.slice(cursor, start) });
     }
     nodes.push({
       type: "link",
-      url: buildUrl(chantier),
+      url: buildUrl(`CH-${match[1]}`),
       children: [{ type: "text", value: text.slice(start, end) }],
     });
     cursor = end;

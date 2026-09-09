@@ -2,17 +2,11 @@ import {
   remarkChantierLinks,
   type MarkdownNode,
 } from "@/components/_commons/ChatUI/remarkChantierLinks";
-import type { CitedChantier } from "@/components/_commons/ChatUI/extractCitedChantiers";
 
-const chantiers = new Map<string, CitedChantier>([
-  ["CH-050", { id: "CH-050", nom: "Sécurité routière" }],
-  ["CH-012", { id: "CH-012", nom: "Handicap [phase 2]" }],
-]);
-
-const buildUrl = (chantier: CitedChantier) => `/chantier/${chantier.id}/NAT-FR`;
+const buildUrl = (chantierId: string) => `/chantier/${chantierId}/NAT-FR`;
 
 const apply = (tree: MarkdownNode): void => {
-  remarkChantierLinks({ chantiers, buildUrl })(tree);
+  remarkChantierLinks({ buildUrl })(tree);
 };
 
 const paragraph = (text: string): MarkdownNode => ({
@@ -23,26 +17,7 @@ const paragraph = (text: string): MarkdownNode => ({
 const paragraphChildren = (tree: MarkdownNode) => tree.children?.[0].children;
 
 describe("remarkChantierLinks", () => {
-  test("transforme le libellé complet en un seul lien", () => {
-    // Given
-    const tree = paragraph("Voir CH-050 — Sécurité routière pour le détail.");
-
-    // When
-    apply(tree);
-
-    // Then
-    expect(paragraphChildren(tree)).toStrictEqual([
-      { type: "text", value: "Voir " },
-      {
-        type: "link",
-        url: "/chantier/CH-050/NAT-FR",
-        children: [{ type: "text", value: "CH-050 — Sécurité routière" }],
-      },
-      { type: "text", value: " pour le détail." },
-    ]);
-  });
-
-  test("retombe sur l'identifiant seul quand le nom ne suit pas", () => {
+  test("transforme un identifiant en lien", () => {
     // Given
     const tree = paragraph("Le chantier CH-050 progresse.");
 
@@ -61,9 +36,9 @@ describe("remarkChantierLinks", () => {
     ]);
   });
 
-  test("retombe sur l'identifiant seul quand le nom qui suit ne correspond pas", () => {
+  test("laisse le libellé qui suit hors du lien", () => {
     // Given
-    const tree = paragraph("CH-050 — Autre libellé");
+    const tree = paragraph("CH-050 — Sécurité routière");
 
     // When
     apply(tree);
@@ -75,13 +50,14 @@ describe("remarkChantierLinks", () => {
         url: "/chantier/CH-050/NAT-FR",
         children: [{ type: "text", value: "CH-050" }],
       },
-      { type: "text", value: " — Autre libellé" },
+      { type: "text", value: " — Sécurité routière" },
     ]);
   });
 
-  test("tolère la casse et les séparateurs alternatifs", () => {
+  test("tolère la casse et les tirets Unicode dans l'identifiant", () => {
     // Given
-    const tree = paragraph("Ch-050 - Sécurité routière");
+    // The model emits U+2011 inside the id instead of the ASCII hyphen.
+    const tree = paragraph("Ch‑050 en cours");
 
     // When
     apply(tree);
@@ -91,42 +67,9 @@ describe("remarkChantierLinks", () => {
       {
         type: "link",
         url: "/chantier/CH-050/NAT-FR",
-        children: [{ type: "text", value: "Ch-050 - Sécurité routière" }],
+        children: [{ type: "text", value: "Ch‑050" }],
       },
-    ]);
-  });
-
-  test("reconnaît un identifiant écrit avec un tiret insécable", () => {
-    // Given
-    // The model emits U+2011 inside the id and U+202F before the em dash,
-    // instead of the ASCII hyphen and space.
-    const tree = paragraph("CH\u2011050\u202f\u2014 Sécurité routière");
-
-    // When
-    apply(tree);
-
-    // Then
-    expect(paragraphChildren(tree)).toStrictEqual([
-      {
-        type: "link",
-        url: "/chantier/CH-050/NAT-FR",
-        children: [
-          { type: "text", value: "CH\u2011050\u202f\u2014 Sécurité routière" },
-        ],
-      },
-    ]);
-  });
-
-  test("laisse en texte un identifiant absent de la whitelist", () => {
-    // Given
-    const tree = paragraph("Le chantier CH-999 n'existe pas.");
-
-    // When
-    apply(tree);
-
-    // Then
-    expect(paragraphChildren(tree)).toStrictEqual([
-      { type: "text", value: "Le chantier CH-999 n'existe pas." },
+      { type: "text", value: " en cours" },
     ]);
   });
 
@@ -214,21 +157,16 @@ describe("remarkChantierLinks", () => {
     ]);
   });
 
-  test("gère un nom de chantier contenant des caractères markdown", () => {
+  test("laisse le texte intact quand aucun identifiant n'est présent", () => {
     // Given
-    const tree = paragraph("CH-012 — Handicap [phase 2] est en cours.");
+    const tree = paragraph("Aucun chantier ici.");
 
     // When
     apply(tree);
 
     // Then
     expect(paragraphChildren(tree)).toStrictEqual([
-      {
-        type: "link",
-        url: "/chantier/CH-012/NAT-FR",
-        children: [{ type: "text", value: "CH-012 — Handicap [phase 2]" }],
-      },
-      { type: "text", value: " est en cours." },
+      { type: "text", value: "Aucun chantier ici." },
     ]);
   });
 });

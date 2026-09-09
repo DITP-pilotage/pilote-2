@@ -2,10 +2,6 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
-import {
-  extractCitedChantiers,
-  type CitedChantier,
-} from "@/components/_commons/ChatUI/extractCitedChantiers";
 import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { clsxm } from "@/utils/clsxm";
@@ -102,11 +98,10 @@ export const ChatUI = ({
       jalon: conversation.requestBody.agentContext?.jalon,
     };
     return {
-      chantiers: extractCitedChantiers(messages),
-      buildUrl: (chantier: CitedChantier) =>
-        buildChantierUrl({ chantier, context }),
+      buildUrl: (chantierId: string) =>
+        buildChantierUrl({ chantierId, context }),
     };
-  }, [messages, conversation]);
+  }, [conversation]);
 
   const choicesPanelData = useMemo(() => {
     if (status !== "ready" || messages.length === 0) return null;
