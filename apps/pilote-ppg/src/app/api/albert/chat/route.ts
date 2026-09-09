@@ -165,13 +165,6 @@ export async function POST(request: Request) {
       return "la génération de la réponse a échoué. Vous pouvez réessayer.";
     };
 
-    const persistanceActive =
-      variables.NEXT_PUBLIC_FF_HISTORIQUE_ALBERT === true;
-
-    if (!persistanceActive) {
-      return result.toUIMessageStreamResponse({ onError: onErreurFlux });
-    }
-
     const enregistrerConversation = container.resolve(
       "enregistrerConversationUseCase",
     );
