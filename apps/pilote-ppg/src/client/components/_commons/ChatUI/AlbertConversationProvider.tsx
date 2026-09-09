@@ -3,6 +3,7 @@ import {
   PropsWithChildren,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -12,6 +13,12 @@ import {
   type AgentContextAlbert,
   type ConversationAlbert,
 } from "@/components/_commons/ChatUI/creerConversationAlbert";
+import {
+  ecrireConversationMinimisee,
+  effacerConversationMinimisee,
+  lireConversationMinimisee,
+  type ConversationMinimisee,
+} from "@/components/_commons/ChatUI/conversationMinimiseeStockage";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -20,6 +27,11 @@ export type AffichageAlbert = "plein-ecran" | "minimise";
 export type ConversationCourante = ConversationAlbert & {
   agentContext: AgentContextAlbert;
   scenarios?: ChatScenarios;
+};
+
+type ChargementConversation = {
+  demande: ConversationMinimisee;
+  affichageCible: AffichageAlbert;
 };
 
 type AlbertConversationContextValue = {
@@ -53,6 +65,9 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     null,
   );
   const [affichage, setAffichage] = useState<AffichageAlbert>("plein-ecran");
+  const [chargement, setChargement] = useState<ChargementConversation | null>(
+    null,
+  );
   const utilsTrpc = api.useUtils();
 
   const construire = useCallback(
@@ -79,6 +94,41 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     [utilsTrpc],
   );
 
+  useEffect(() => {
+    const stockee = lireConversationMinimisee();
+    if (stockee) {
+      setChargement({ demande: stockee, affichageCible: "minimise" });
+    }
+  }, []);
+
+  const { data: conversationChargee, isError } =
+    api.albert.conversations.recuperer.useQuery(
+      { id: chargement?.demande.id ?? "" },
+      { enabled: chargement !== null, retry: false },
+    );
+
+  useEffect(() => {
+    if (!chargement) return;
+
+    if (isError) {
+      effacerConversationMinimisee();
+      setChargement(null);
+      return;
+    }
+
+    if (!conversationChargee) return;
+
+    setConversation(
+      construire({
+        id: chargement.demande.id,
+        agentContext: chargement.demande.agentContext,
+        messages: conversationChargee.messages,
+      }),
+    );
+    setAffichage(chargement.affichageCible);
+    setChargement(null);
+  }, [chargement, conversationChargee, isError, construire]);
+
   const ouvrir = useCallback<AlbertConversationContextValue["ouvrir"]>(
     ({ agentContext, scenarios }) => {
       setConversation(
@@ -91,34 +141,50 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     [construire],
   );
 
-  const minimiser = useCallback(() => setAffichage("minimise"), []);
+  const minimiser = useCallback(() => {
+    if (conversation) {
+      ecrireConversationMinimisee({
+        id: conversation.chat.id,
+        agentContext: conversation.agentContext,
+      });
+    }
+    setAffichage("minimise");
+  }, [conversation]);
+
   const restaurer = useCallback(() => setAffichage("plein-ecran"), []);
 
   const fermer = useCallback(() => {
     conversation?.chat.stop();
+    effacerConversationMinimisee();
     setConversation(null);
     setAffichage("plein-ecran");
   }, [conversation]);
 
-  const remplacer = useCallback(
+  const demarrerNouvelleConversation = useCallback(() => {
+    if (!conversation) return;
+    conversation.chat.stop();
+    effacerConversationMinimisee();
+    setConversation(
+      construire({
+        id: crypto.randomUUID(),
+        agentContext: conversation.agentContext,
+        scenarios: conversation.scenarios,
+      }),
+    );
+    setAffichage("plein-ecran");
+  }, [conversation, construire]);
+
+  const selectionnerConversation = useCallback(
     (id: string) => {
       if (!conversation) return;
       conversation.chat.stop();
-      setConversation(
-        construire({
-          id,
-          agentContext: conversation.agentContext,
-          scenarios: conversation.scenarios,
-        }),
-      );
-      setAffichage("plein-ecran");
+      effacerConversationMinimisee();
+      setChargement({
+        demande: { id, agentContext: conversation.agentContext },
+        affichageCible: "plein-ecran",
+      });
     },
-    [conversation, construire],
-  );
-
-  const demarrerNouvelleConversation = useCallback(
-    () => remplacer(crypto.randomUUID()),
-    [remplacer],
+    [conversation],
   );
 
   const valeur = useMemo(
@@ -130,7 +196,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       restaurer,
       fermer,
       demarrerNouvelleConversation,
-      selectionnerConversation: remplacer,
+      selectionnerConversation,
     }),
     [
       conversation,
@@ -140,7 +206,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       restaurer,
       fermer,
       demarrerNouvelleConversation,
-      remplacer,
+      selectionnerConversation,
     ],
   );
 
