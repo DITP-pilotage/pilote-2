@@ -1,6 +1,9 @@
 import { Content } from "pdfmake/interfaces";
 import { lexer, Token, Tokens } from "marked";
-import { COLORS } from "@/server/evaluation/handlers/pdfFactories";
+import {
+  COLORS,
+  createTable,
+} from "@/server/evaluation/handlers/pdfFactories";
 
 const HEADING_STYLES: Record<
   number,
@@ -160,6 +163,25 @@ function convertBlockTokens(tokens: Token[]): Content[] {
             margin: [0, 0, 0, 8],
           });
         }
+        break;
+      }
+      case "table": {
+        const tableToken = token as Tokens.Table;
+        const buildCell = (cell: Tokens.TableCell): Content => ({
+          text: convertInlineTokens(cell.tokens),
+          fontSize: 8,
+          bold: cell.header,
+          color: COLORS.text,
+        });
+        result.push(
+          createTable(
+            [
+              tableToken.header.map(buildCell),
+              ...tableToken.rows.map((row) => row.map(buildCell)),
+            ],
+            { rowModulo: 1, widths: tableToken.header.map(() => "*") },
+          ),
+        );
         break;
       }
       case "code": {
