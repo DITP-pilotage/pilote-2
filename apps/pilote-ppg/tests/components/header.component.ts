@@ -8,7 +8,7 @@ export class HeaderComponent {
   }
 
   get loginButton() {
-    return this.banner.getByRole("button", { name: "Se connecter" });
+    return this.banner.getByRole("link", { name: "Se connecter" });
   }
 
   userButton() {

@@ -1,5 +1,6 @@
 import "@gouvfr/dsfr/dist/core/core.min.css";
 import "@gouvfr/dsfr/dist/component/link/link.min.css";
+import "@gouvfr/dsfr/dist/component/connect/connect.min.css";
 import "@/client/styles/app.scss";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Script from "next/script";

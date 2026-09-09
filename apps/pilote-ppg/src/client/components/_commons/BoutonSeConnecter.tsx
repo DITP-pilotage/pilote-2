@@ -1,15 +1,14 @@
-import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 
 export const BoutonSeConnecter = () => (
-  <button
+  <Link
     className="flex gap-2 !p-0 !text-primary"
-    onClick={() => signIn("keycloak")}
+    href="/connexion"
     title="Se connecter"
-    type="button"
   >
     <Icone icone={Account1Icon} />
     Se connecter
-  </button>
+  </Link>
 );

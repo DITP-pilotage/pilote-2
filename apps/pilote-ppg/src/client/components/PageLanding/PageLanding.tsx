@@ -4,7 +4,6 @@ import carteFranceSvg from "@gouvfr/dsfr/dist/artwork/pictograms/map/location-fr
 import visualisationDonnéesSvg from "@gouvfr/dsfr/dist/artwork/pictograms/digital/data-visualization.svg";
 import téléchargementFichierSvg from "@gouvfr/dsfr/dist/artwork/pictograms/document/document-download.svg";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import Head from "next/head";
 import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
@@ -37,13 +36,9 @@ const PageLanding = () => {
                   nécessaires pour garantir l'atteinte des objectifs de la
                   feuille de route du Gouvernement.
                 </p>
-                <button
-                  className="fr-btn fr-mr-2w rounded"
-                  onClick={() => signIn("keycloak")}
-                  type="button"
-                >
+                <Link className="fr-btn fr-mr-2w rounded" href="/connexion">
                   Se connecter
-                </button>
+                </Link>
               </div>
               <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg flex justify-center">
                 <Image alt="" priority src={captureÉcranPilote} />

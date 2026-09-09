@@ -105,5 +105,4 @@ export interface UtilisateurRepository {
     email: string,
     date: Date,
   ): Promise<void>;
-  mettreAJourDateDerniereConnexion(email: string, date: Date): Promise<void>;
 }

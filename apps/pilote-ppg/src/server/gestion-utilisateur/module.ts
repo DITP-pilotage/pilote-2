@@ -61,6 +61,8 @@ import { DesactiverLesComptesInactifsUseCase } from "./usecases/DesactiverLesCom
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
 import { PrismaActiviteComptesQuery } from "./infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "./infrastructure/queries/PrismaUtilisateursQuery";
+import { PrismaStatutCompteQuery } from "./infrastructure/queries/PrismaStatutCompteQuery";
+import { MettreAJourLaDerniereConnexionUseCase } from "./usecases/MettreAJourLaDerniereConnexionUseCase";
 
 type GestionUtilisateurExports = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
@@ -107,6 +109,8 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   envoyerLesRelancesUseCase: EnvoyerLesRelancesUseCase;
   desactiverLesComptesInactifsUseCase: DesactiverLesComptesInactifsUseCase;
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
+  statutCompteQuery: PrismaStatutCompteQuery;
+  mettreAJourLaDerniereConnexionUseCase: MettreAJourLaDerniereConnexionUseCase;
 };
 
 export const gestionUtilisateurModule = defineModule<
@@ -212,6 +216,10 @@ export const gestionUtilisateurModule = defineModule<
       ),
       importerDesUtilisateursUseCase: asModuleClass(
         ImporterDesUtilisateursUseCase,
+      ),
+      statutCompteQuery: asModuleClass(PrismaStatutCompteQuery),
+      mettreAJourLaDerniereConnexionUseCase: asModuleClass(
+        MettreAJourLaDerniereConnexionUseCase,
       ),
     } satisfies VerifyCradle<GestionUtilisateurCradle>);
   },

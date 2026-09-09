@@ -7,6 +7,13 @@ import { JWT } from "next-auth/jwt";
 import axios from "axios";
 import logger from "@/server/infrastructure/Logger";
 import { configuration } from "@/config";
+import {
+  proconnect,
+  PROVIDER_PROCONNECT,
+} from "@/server/infrastructure/api/auth/proconnect";
+import { autoriserConnexionProConnect } from "@/server/authentification/domain/autoriserConnexionProConnect";
+import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
+import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
@@ -108,7 +115,7 @@ type OpenIdTokenResponse = {
 type PiloteJWTPayload = {
   accessToken: string;
   accessTokenExpires: number;
-  refreshToken: string;
+  refreshToken?: string;
   idToken: string;
   provider: string;
   user: User & { email: string };
@@ -212,7 +219,18 @@ const refreshEnCours = new Map<string, Promise<PiloteJWTPayload>>();
 async function refreshAccessTokenAvecDeduplication(
   token: PiloteJWTPayload,
 ): Promise<PiloteJWTPayload> {
-  const promesseExistante = refreshEnCours.get(token.refreshToken);
+  const refreshToken = token.refreshToken;
+  if (!refreshToken) {
+    // Sans refresh token il n'y a rien à rafraîchir. Cas non atteint pour
+    // ProConnect, dont sessionExpiree renvoie toujours false.
+    logger.warn(
+      { categorie: "auth", source: "nextauth.refreshAccessToken" },
+      "Aucun refresh token dans la session",
+    );
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+
+  const promesseExistante = refreshEnCours.get(refreshToken);
   if (promesseExistante) {
     logger.info(
       { categorie: "auth", userId: token.user.id },
@@ -222,10 +240,10 @@ async function refreshAccessTokenAvecDeduplication(
   }
 
   const promesse = refreshAccessToken(token).finally(() => {
-    refreshEnCours.delete(token.refreshToken);
+    refreshEnCours.delete(refreshToken);
   });
 
-  refreshEnCours.set(token.refreshToken, promesse);
+  refreshEnCours.set(refreshToken, promesse);
   return promesse;
 }
 
@@ -269,19 +287,21 @@ const credentialsProvider = CredentialsProvider({
   },
 });
 
-function _hasExpired(token: PiloteJWTPayload): Boolean {
-  if (token.provider == "credentials") {
-    return false;
-  }
-  const now = Date.now();
-  return now >= token.accessTokenExpires;
-}
-
 const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
 
 export const authConfig: NextAuthConfig = {
   trustHost: true,
-  providers: !!configuration().devPassword ? [credentialsProvider] : [keycloak],
+  pages: {
+    // Volontairement pas de `signIn` ici : le rediriger vers /connexion ferait
+    // boucler le mode DEV_PASSWORD, où signIn("keycloak") ne correspond à
+    // aucun provider enregistré et doit retomber sur l'écran next-auth par
+    // défaut qui porte le formulaire credentials. Les visiteurs non
+    // authentifiés arrivent sur /connexion via proxy.ts.
+    error: CHEMIN_CONNEXION,
+  },
+  providers: !!configuration().devPassword
+    ? [credentialsProvider]
+    : [keycloak, proconnect],
   debug: configuration().nextAuth.debug,
   session: {
     maxAge: configuration().nextAuth.sessionMaxAge,
@@ -294,6 +314,47 @@ export const authConfig: NextAuthConfig = {
     },
   },
   callbacks: {
+    async signIn({ account, profile }) {
+      if (account?.provider !== PROVIDER_PROCONNECT) {
+        return true;
+      }
+
+      const { getContainer } = await import("@/server/dependances");
+      const statutCompteQuery =
+        getContainer("gestionUtilisateur").cradle.statutCompteQuery;
+
+      const motif = await autoriserConnexionProConnect({
+        email: profile?.email,
+        recupererStatutCompte: (email) =>
+          statutCompteQuery.recuperer({ email }),
+      });
+
+      if (motif) {
+        // L'email n'est pas journalisé : une identité refusée n'est pas un
+        // utilisateur de PILOTE.
+        logger.warn(
+          {
+            categorie: "auth",
+            source: "nextauth.signIn",
+            provider: account.provider,
+            motif,
+          },
+          "Connexion ProConnect refusée",
+        );
+        return `${CHEMIN_CONNEXION}?motif=${motif}`;
+      }
+
+      logger.info(
+        {
+          categorie: "auth",
+          source: "nextauth.signIn",
+          provider: account.provider,
+        },
+        "Connexion ProConnect autorisée",
+      );
+      return true;
+    },
+
     async jwt({ token, account, user }) {
       if (account != null && user != null) {
         logger.info(
@@ -309,12 +370,14 @@ export const authConfig: NextAuthConfig = {
 
         if (user.email) {
           const { getContainer } = await import("@/server/dependances");
-          const utilisateurRepository =
-            getContainer("gestionUtilisateur").cradle.utilisateurRepository;
-          await utilisateurRepository.mettreAJourDateDerniereConnexion(
-            user.email,
-            new Date(),
-          );
+          const mettreAJourLaDerniereConnexionUseCase =
+            getContainer("gestionUtilisateur").cradle
+              .mettreAJourLaDerniereConnexionUseCase;
+          await mettreAJourLaDerniereConnexionUseCase.execute({
+            email: user.email,
+            date: new Date(),
+            provider: account.provider,
+          });
         }
 
         return {
@@ -323,14 +386,26 @@ export const authConfig: NextAuthConfig = {
             account.expires_at == null
               ? null
               : (account.expires_at - 10) * 1000,
-          refreshToken: account.refresh_token,
+          // ProConnect plafonne le refresh token à 2 h sans rotation : on ne
+          // l'utilise pas, donc on ne le conserve pas dans la session.
+          refreshToken:
+            account.provider === PROVIDER_PROCONNECT
+              ? undefined
+              : account.refresh_token,
           idToken: account.id_token,
           provider: account.provider,
           user,
         };
       }
 
-      if (!_hasExpired(toPiloteJWTPayload(token))) {
+      const piloteToken = toPiloteJWTPayload(token);
+      if (
+        !sessionExpiree({
+          provider: piloteToken.provider,
+          accessTokenExpires: piloteToken.accessTokenExpires,
+          maintenant: Date.now(),
+        })
+      ) {
         return token;
       }
 

@@ -50,6 +50,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL: boolean;
   NEXT_PUBLIC_FF_PAGE_ACTUALITES: boolean;
   NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS: boolean;
+  NEXT_PUBLIC_FF_PROCONNECT: boolean;
 }
 
 type FeatureFlipConfig = ReturnType<typeof configuration>["featureFlip"];
@@ -278,6 +279,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_PAGE_ACTUALITES",
     configKey: "pageActualites",
     label: "Page actualités (newsletters Brevo)",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_PROCONNECT",
+    configKey: "proconnect",
+    label: "Connexion ProConnect",
   },
   {
     envKey: "NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS",
