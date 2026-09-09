@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { $Enums } from "@prisma/client";
 import type {
   GetChantiersSignalesDetailQuery,
   ChantierSignale,
@@ -12,21 +13,7 @@ import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { configuration } from "@/config";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 
-const LIBELLES_TYPES_ALERTE: Record<TypeAlerteChantier, string> = {
-  estEnAlerteÉcart: "Retard par rapport à la médiane",
-  estEnAlerteBaisse: "Tendance en baisse",
-  estEnAlerteTauxAvancementNonCalculé: "Taux d'avancement non calculé",
-  estEnAlerteAbscenceTauxAvancementDepartemental:
-    "Absence de taux d'avancement départemental",
-  estEnAlerteMétéoNonRenseignée: "Météo et synthèse non renseignées",
-  estEnAlertePossedePropositionsValeurAvancement:
-    "Proposition de valeur d'avancement",
-};
-
-const TYPES_ALERTE_PAR_MAILLE: Record<
-  "NAT" | "REG" | "DEPT",
-  TypeAlerteChantier[]
-> = {
+const TYPES_ALERTE_PAR_MAILLE: Record<$Enums.Maille, TypeAlerteChantier[]> = {
   NAT: [
     "estEnAlerteTauxAvancementNonCalculé",
     "estEnAlerteAbscenceTauxAvancementDepartemental",
@@ -45,17 +32,6 @@ const TYPES_ALERTE_PAR_MAILLE: Record<
     "estEnAlerteMétéoNonRenseignée",
     "estEnAlertePossedePropositionsValeurAvancement",
   ],
-};
-
-const RAISONS_NON_APPLICABLE: Partial<Record<TypeAlerteChantier, string>> = {
-  estEnAlerteÉcart:
-    "Le signalement « Retard par rapport à la médiane » ne peut pas être calculé au niveau national : il repose sur une comparaison entre le taux d'avancement d'un chantier sur un territoire donné et la médiane des autres territoires du même niveau.",
-  estEnAlerteBaisse:
-    "Le signalement « Tendance en baisse » ne peut pas être calculé au niveau national : il repose sur la tendance d'évolution du taux d'avancement d'un chantier sur un territoire régional ou départemental.",
-  estEnAlerteTauxAvancementNonCalculé:
-    "Le signalement « Taux d'avancement non calculé » n'est pertinent qu'au niveau national : il identifie les chantiers dont le taux d'avancement national attendu n'a pas encore été calculé.",
-  estEnAlerteAbscenceTauxAvancementDepartemental:
-    "Le signalement « Absence de taux d'avancement départemental » n'est pertinent qu'au niveau national : il identifie, pour chaque chantier national, l'absence de taux d'avancement départemental agrégé.",
 };
 
 export const getChantiersSignalesInputSchema = z.object({
@@ -85,10 +61,7 @@ type GetChantiersSignalesInput = z.infer<
 export type GetChantiersSignalesOutput = {
   resultats: ChantierSignale[];
   acces_refuse?: boolean;
-  categories_non_applicables?: {
-    categorie: TypeAlerteChantier;
-    raison: string;
-  }[];
+  categories_non_applicables: TypeAlerteChantier[];
   _output_instructions: string;
 };
 
@@ -105,18 +78,10 @@ function buildOutputInstructions(
 
   if (typesAlerteNonApplicables.length === 0) return base;
 
-  const raisons = typesAlerteNonApplicables
-    .map(
-      (typeAlerte) =>
-        `- ${LIBELLES_TYPES_ALERTE[typeAlerte]} : ${RAISONS_NON_APPLICABLE[typeAlerte]}`,
-    )
-    .join("\n");
-
   return (
     `${base}\n\n` +
     "Certaines catégories demandées ne sont pas applicables au territoire interrogé. " +
-    "Mentionne-le explicitement à l'utilisateur en reprenant ces raisons, sans jamais présenter cela comme une absence de résultats silencieuse :\n" +
-    raisons
+    "Mentionne-le explicitement à l'utilisateur en reprenant ces raisons, sans jamais présenter cela comme une absence de résultats silencieuse."
   );
 }
 
@@ -161,6 +126,7 @@ Un seul territoire par appel, pas de sous-territoires.`,
         if (!territoiresAccessibles.includes(input.territoire_code)) {
           return {
             resultats: [],
+            categories_non_applicables: [],
             acces_refuse: true,
             _output_instructions:
               "L'utilisateur n'a pas accès à ce territoire pour les chantiers signalés. Explique-le poliment sans donner de détail sur les données du territoire.",
@@ -179,6 +145,7 @@ Un seul territoire par appel, pas de sous-territoires.`,
         if (filteredChantierIds && filteredChantierIds.length === 0) {
           return {
             resultats: [],
+            categories_non_applicables: [],
             _output_instructions:
               "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
           };
@@ -214,16 +181,7 @@ Un seul territoire par appel, pas de sous-territoires.`,
 
         return {
           resultats,
-          ...(typesAlerteNonApplicables.length > 0
-            ? {
-                categories_non_applicables: typesAlerteNonApplicables.map(
-                  (typeAlerte) => ({
-                    categorie: typeAlerte,
-                    raison: RAISONS_NON_APPLICABLE[typeAlerte] ?? "",
-                  }),
-                ),
-              }
-            : {}),
+          categories_non_applicables: typesAlerteNonApplicables,
           _output_instructions: buildOutputInstructions(
             typesAlerteNonApplicables,
           ),
