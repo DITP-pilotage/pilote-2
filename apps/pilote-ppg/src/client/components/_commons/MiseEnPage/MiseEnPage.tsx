@@ -6,6 +6,8 @@ import Loader from "@/client/components/_commons/Loader/Loader";
 import { ClientOnly } from "@/components/shared/ClientOnly";
 import { usePrefetchUtilisateurConnecte } from "@/client/hooks/usePrefetchUtilisateurConnecte";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
+import { AlbertConversationProvider } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { AlbertOverlay } from "@/components/_commons/ChatUI/AlbertOverlay";
 import { EnTete } from "./EnTete/EnTete";
 import PiedDePage from "./PiedDePage/PiedDePage";
 
@@ -45,9 +47,12 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
             <PageLanding />
           ) : (
             <ClientOnly>
-              <div className="flex grow flex-col" id="main">
-                {children}
-              </div>
+              <AlbertConversationProvider>
+                <div className="flex grow flex-col" id="main">
+                  {children}
+                </div>
+                <AlbertOverlay />
+              </AlbertConversationProvider>
             </ClientOnly>
           )}
           <ClientOnly>

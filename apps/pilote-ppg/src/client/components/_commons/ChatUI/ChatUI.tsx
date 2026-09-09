@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Chat, useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { useChat } from "@ai-sdk/react";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
+import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
+import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
+import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { clsxm } from "@/utils/clsxm";
 import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
 import { UserMessage } from "@/components/_commons/ChatUI/UserMessage";
@@ -23,24 +25,16 @@ import type {
 export type { ChatScenario, ChatScenarioGroup, ChatScenarios };
 
 export const ChatUI = ({
-  endpoint,
+  conversation,
   placeholder = "Posez votre question...",
   className = "h-[calc(100vh-200px)]",
   scenarios,
-  agentContext,
-  chatId,
-  initialMessages,
-  onChatFinish,
   showExperimentationBanner = false,
 }: {
-  endpoint: string;
+  conversation: AlbertConversation;
   placeholder?: string;
   className?: string;
   scenarios?: ChatScenarios;
-  agentContext?: Record<string, unknown>;
-  chatId?: string;
-  initialMessages?: PiloteUIMessage[];
-  onChatFinish?: () => void;
   showExperimentationBanner?: boolean;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -48,30 +42,10 @@ export const ChatUI = ({
   const userHasScrolledRef = useRef(false);
   const prevMessageCountRef = useRef(0);
   const fillInputRef = useRef<((text: string) => void) | null>(null);
-  const bodyRef = useRef<{
-    agentContext?: Record<string, unknown>;
-    model: AlbertModel;
-  }>({
-    ...(agentContext ? { agentContext } : {}),
-    model: "openweight-large",
-  });
-  const onChatFinishRef = useRef(onChatFinish);
-  onChatFinishRef.current = onChatFinish;
-  const chatRef = useRef(
-    new Chat<PiloteUIMessage>({
-      ...(chatId ? { id: chatId } : {}),
-      ...(initialMessages ? { messages: initialMessages } : {}),
-      transport: new DefaultChatTransport<PiloteUIMessage>({
-        api: endpoint,
-        body: bodyRef.current,
-      }),
-      onFinish: () => onChatFinishRef.current?.(),
-    }),
-  );
 
   const { messages, sendMessage, status, error, stop } =
     useChat<PiloteUIMessage>({
-      chat: chatRef.current,
+      chat: conversation.chat,
       experimental_throttle: 250,
     });
 
@@ -111,9 +85,23 @@ export const ChatUI = ({
     fillInputRef.current?.(text);
   }, []);
 
-  const handleModelChange = useCallback((model: AlbertModel) => {
-    bodyRef.current.model = model;
-  }, []);
+  const handleModelChange = useCallback(
+    (model: AlbertModel) => {
+      conversation.requestBody.model = model;
+    },
+    [conversation],
+  );
+
+  const chantierLinkOptions = useMemo(() => {
+    const context = {
+      territoireCode: conversation.requestBody.agentContext?.territoireCode,
+      jalon: conversation.requestBody.agentContext?.jalon,
+    };
+    return {
+      buildUrl: (chantierId: string) =>
+        buildChantierUrl({ chantierId, context }),
+    };
+  }, [conversation]);
 
   const choicesPanelData = useMemo(() => {
     if (status !== "ready" || messages.length === 0) return null;
@@ -144,77 +132,79 @@ export const ChatUI = ({
       status={status}
       stop={stop}
     >
-      <div className={clsxm("flex flex-col", className)}>
-        <style>{chatMarkdownStyles}</style>
+      <ChantierLinksProvider options={chantierLinkOptions}>
+        <div className={clsxm("flex flex-col", className)}>
+          <style>{chatMarkdownStyles}</style>
 
-        <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-          className="flex-1 overflow-y-auto bg-white"
-        >
-          <div className="max-w-6xl mx-auto p-4 space-y-4">
-            {messages.length === 0 && scenarios && (
-              <ChatEmptyState scenarios={scenarios} />
-            )}
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-y-auto bg-white"
+          >
+            <div className="max-w-6xl mx-auto p-4 space-y-4">
+              {messages.length === 0 && scenarios && (
+                <ChatEmptyState scenarios={scenarios} />
+              )}
 
-            {messages.map((message, index) => {
-              return (
-                <div key={message.id}>
-                  {message.role === "user" ? (
-                    <div className="max-w-3xl mx-auto flex justify-end">
-                      <UserMessage message={message} />
-                    </div>
-                  ) : (
-                    <AssistantMessage
-                      message={message}
-                      isStreaming={
-                        index === messages.length - 1 && status !== "ready"
-                      }
-                    />
-                  )}
+              {messages.map((message, index) => {
+                return (
+                  <div key={message.id}>
+                    {message.role === "user" ? (
+                      <div className="max-w-3xl mx-auto flex justify-end">
+                        <UserMessage message={message} />
+                      </div>
+                    ) : (
+                      <AssistantMessage
+                        message={message}
+                        isStreaming={
+                          index === messages.length - 1 && status !== "ready"
+                        }
+                      />
+                    )}
+                  </div>
+                );
+              })}
+
+              {status === "submitted" && (
+                <div className="max-w-3xl mx-auto flex justify-start">
+                  <div className="text-sm text-gray-500">
+                    <AssistantLoader label="Réflexion en cours" />
+                  </div>
                 </div>
-              );
-            })}
+              )}
 
-            {status === "submitted" && (
-              <div className="max-w-3xl mx-auto flex justify-start">
-                <div className="text-sm text-gray-500">
-                  <AssistantLoader label="Réflexion en cours" />
+              {error && (
+                <div className="max-w-3xl mx-auto flex justify-start">
+                  <div className="max-w-[80%] text-sm text-red-600">
+                    Erreur : {error.message}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {error && (
-              <div className="max-w-3xl mx-auto flex justify-start">
-                <div className="max-w-[80%] text-sm text-red-600">
-                  Erreur : {error.message}
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} />
+            </div>
           </div>
-        </div>
 
-        {choicesPanelData && (
-          <ChoicesPanel
-            question={choicesPanelData.question}
-            choices={choicesPanelData.choices}
+          {choicesPanelData && (
+            <ChoicesPanel
+              question={choicesPanelData.question}
+              choices={choicesPanelData.choices}
+            />
+          )}
+
+          {messages.length > 0 && status === "ready" && (
+            <FeedbackBar chatId={conversation.chat.id} />
+          )}
+
+          <ChatInputForm
+            fillInputRef={fillInputRef}
+            onModelChange={handleModelChange}
+            placeholder={placeholder}
           />
-        )}
 
-        {messages.length > 0 && status === "ready" && (
-          <FeedbackBar chatId={chatRef.current.id} />
-        )}
-
-        <ChatInputForm
-          fillInputRef={fillInputRef}
-          onModelChange={handleModelChange}
-          placeholder={placeholder}
-        />
-
-        {showExperimentationBanner && <ChatExperimentationBanner />}
-      </div>
+          {showExperimentationBanner && <ChatExperimentationBanner />}
+        </div>
+      </ChantierLinksProvider>
     </ChatContextProvider>
   );
 };

@@ -1,8 +1,10 @@
-import { memo } from "react";
-import ReactMarkdown from "react-markdown";
+import { memo, useMemo, type ReactNode } from "react";
+import { useRouter } from "next/router";
+import ReactMarkdown, { type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-const remarkPlugins = [remarkGfm];
+import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
+import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
 
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
 // à la ToolSet dans src/app/api/albert/chat/route.ts.
@@ -89,15 +91,59 @@ export function stripParagraphesVides(text: string): string {
     .join("\n");
 }
 
+const MarkdownLink = ({
+  href,
+  children,
+}: {
+  href?: string;
+  children?: ReactNode;
+}) => {
+  const router = useRouter();
+  const { minimize } = useAlbertConversation();
+
+  if (!href?.startsWith("/")) {
+    return (
+      <a href={href} rel="noopener noreferrer" target="_blank">
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      onClick={(event) => {
+        // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
+        if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
+        event.preventDefault();
+        minimize();
+        router.push(href);
+      }}
+    >
+      {children}
+    </a>
+  );
+};
+
+const components = { a: MarkdownLink };
+
 export const AssistantMessageText = memo(function AssistantMessageText({
   text,
 }: {
   text: string;
 }) {
+  const chantierLinkOptions = useChantierLinks();
   const sanitized = stripParagraphesVides(stripPseudoToolCalls(text));
+  const remarkPlugins = useMemo<Options["remarkPlugins"]>(
+    () => [remarkGfm, [remarkChantierLinks, chantierLinkOptions]],
+    [chantierLinkOptions],
+  );
+
   return (
     <div className="albert-markdown">
-      <ReactMarkdown remarkPlugins={remarkPlugins}>{sanitized}</ReactMarkdown>
+      <ReactMarkdown components={components} remarkPlugins={remarkPlugins}>
+        {sanitized}
+      </ReactMarkdown>
     </div>
   );
 });
