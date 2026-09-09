@@ -158,6 +158,7 @@ export const ChatUI = ({
             )}
 
             {messages.map((message, index) => {
+              const isLastMessage = index === messages.length - 1;
               return (
                 <div key={message.id}>
                   {message.role === "user" ? (
@@ -167,9 +168,9 @@ export const ChatUI = ({
                   ) : (
                     <AssistantMessage
                       message={message}
-                      isStreaming={
-                        index === messages.length - 1 && status !== "ready"
-                      }
+                      isStreaming={isLastMessage && status !== "ready"}
+                      isLastAssistantMessage={isLastMessage}
+                      conversationId={chatRef.current.id}
                     />
                   )}
                 </div>
