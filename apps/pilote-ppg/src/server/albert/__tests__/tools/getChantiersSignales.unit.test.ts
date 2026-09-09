@@ -56,6 +56,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
+      categories_non_applicables: [],
       acces_refuse: true,
       _output_instructions: expect.any(String),
     });
@@ -78,6 +79,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
+      categories_non_applicables: [],
       _output_instructions:
         "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
     });
@@ -116,12 +118,7 @@ describe("createGetChantiersSignalesTool execute", () => {
           typesAlerte: ["estEnAlerteMétéoNonRenseignée"],
         },
       ],
-      categories_non_applicables: [
-        {
-          categorie: "estEnAlerteÉcart",
-          raison: expect.any(String),
-        },
-      ],
+      categories_non_applicables: ["estEnAlerteÉcart"],
       _output_instructions: expect.any(String),
     });
   });
@@ -143,12 +140,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      categories_non_applicables: [
-        {
-          categorie: "estEnAlerteTauxAvancementNonCalculé",
-          raison: expect.any(String),
-        },
-      ],
+      categories_non_applicables: ["estEnAlerteTauxAvancementNonCalculé"],
       _output_instructions: expect.any(String),
     });
   });
@@ -174,10 +166,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: [
-        {
-          categorie: "estEnAlerteAbscenceTauxAvancementDepartemental",
-          raison: expect.any(String),
-        },
+        "estEnAlerteAbscenceTauxAvancementDepartemental",
       ],
       _output_instructions: expect.any(String),
     });
@@ -199,6 +188,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // Then — pas de categories_non_applicables, toutes les catégories nationales ont été interrogées
     expect(result).toEqual({
       resultats: [],
+      categories_non_applicables: [],
       _output_instructions: expect.any(String),
     });
   });
