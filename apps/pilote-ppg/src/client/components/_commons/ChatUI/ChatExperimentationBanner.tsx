@@ -13,7 +13,7 @@ export const ChatExperimentationBanner = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="flex min-h-9 shrink-0 items-center gap-3 border-b border-dsfr-blue-france-850 bg-dsfr-info-950 px-4 py-1 text-xs leading-[18px] text-dsfr-grey-200">
+    <div className="flex min-h-9 shrink-0 items-center gap-3 border-t border-dsfr-blue-france-850 bg-dsfr-info-950 px-4 py-1 text-xs leading-[18px] text-dsfr-grey-200">
       <span className="shrink-0 font-bold uppercase tracking-wide text-dsfr-flat-info">
         Expérimentation
       </span>

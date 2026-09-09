@@ -111,7 +111,6 @@ export const AlbertOverlay = () => {
           onEscapeKeyDown={minimiserAuLieuDeFermer}
           onInteractOutside={minimiserAuLieuDeFermer}
         >
-          <ChatExperimentationBanner />
           <AlbertEnTete contexte={contexte} onReduire={minimize} />
           <div className="flex min-h-0 flex-1">
             <ConversationHistory chatId={conversation.chat.id} />
@@ -126,6 +125,7 @@ export const AlbertOverlay = () => {
               />
             </div>
           </div>
+          <ChatExperimentationBanner />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
