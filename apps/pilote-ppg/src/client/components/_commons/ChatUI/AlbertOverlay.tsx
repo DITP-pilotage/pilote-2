@@ -28,7 +28,8 @@ const HistoriqueConversations = ({
 };
 
 export const AlbertOverlay = () => {
-  const { conversation, affichage, fermer } = useAlbertConversation();
+  const { conversation, affichage, fermer, minimiser } =
+    useAlbertConversation();
 
   if (!conversation) return null;
 
@@ -41,6 +42,7 @@ export const AlbertOverlay = () => {
       onOpenChange={(ouvert) => {
         if (!ouvert) fermer();
       }}
+      onReduire={minimiser}
       open
       title="Synthèse de territoire"
     >

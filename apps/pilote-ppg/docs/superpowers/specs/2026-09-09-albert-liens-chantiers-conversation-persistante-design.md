@@ -115,14 +115,26 @@ a rien à montrer. Cela évite un état incohérent (fermé mais avec une conver
 | Clic sur un lien interne dans une réponse | `minimiser()` puis `router.push(url)` |
 | Clic sur le corps du dock | `restaurer()` → `plein-ecran` |
 | Clic sur la croix du dock | `fermer()` |
+| Bouton « Réduire » de la modale | `minimiser()` |
+| Échap ou clic hors de la modale | `minimiser()` |
 | Bouton « Fermer » de la modale | `fermer()` |
 | « + Nouvelle conversation » du drawer | `demarrerNouvelleConversation()` |
 | Sélection dans le drawer | `selectionnerConversation(id)` |
 
 **Le bouton « Fermer » de la modale ferme bien la conversation**, il ne la minimise pas.
 C'est le critère « le parcours standard d'ouverture/fermeture sans clic sur un lien reste
-inchangé » de PIL-1690 : minimiser ici ferait apparaître un dock que l'utilisateur n'a pas
-demandé. Seul un clic sur un lien interne minimise.
+inchangé » de PIL-1690.
+
+**En revanche, Échap et le clic hors de la modale réduisent au lieu de fermer.** Radix
+déclenche `onOpenChange(false)` sur ces deux gestes comme sur le bouton « Fermer » ; une
+touche Échap réflexe détruisait donc la conversation, récupérable seulement si le flag
+d'historique est actif *et* qu'un tour s'est terminé. `ModalePleinEcran` reçoit une prop
+optionnelle `onReduire` : quand elle est fournie, elle affiche un bouton « Réduire » à côté
+de « Fermer » et intercepte `onEscapeKeyDown` / `onInteractOutside` pour réduire. Sans
+cette prop, le comportement de la modale est strictement inchangé.
+
+Conséquence assumée : après un Échap, un dock apparaît là où rien n'était visible
+auparavant. C'est le prix de la protection contre la perte accidentelle.
 
 `fermer()` appelle `chat.stop()` si un flux est en cours, met `conversation` à `null` et
 purge le sessionStorage. `demarrerNouvelleConversation()` et `selectionnerConversation()`
