@@ -14,6 +14,7 @@ import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase"
 import { EnregistrerConversationUseCase } from "@/server/albert/usecases/EnregistrerConversationUseCase";
 import { ListerConversationsUseCase } from "@/server/albert/usecases/ListerConversationsUseCase";
 import { RecupererConversationUseCase } from "@/server/albert/usecases/RecupererConversationUseCase";
+import { ExporterDerniereReponseUseCase } from "@/server/albert/usecases/ExporterDerniereReponseUseCase";
 import { SupprimerConversationUseCase } from "@/server/albert/usecases/SupprimerConversationUseCase";
 import { PurgerConversationsExpireesUseCase } from "@/server/albert/usecases/PurgerConversationsExpireesUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
@@ -59,6 +60,7 @@ type AlbertOwnCradle = {
   enregistrerConversationUseCase: EnregistrerConversationUseCase;
   listerConversationsUseCase: ListerConversationsUseCase;
   recupererConversationUseCase: RecupererConversationUseCase;
+  exporterDerniereReponseUseCase: ExporterDerniereReponseUseCase;
   supprimerConversationUseCase: SupprimerConversationUseCase;
   purgerConversationsExpireesUseCase: PurgerConversationsExpireesUseCase;
   listerConversationsAdminQuery: ListerConversationsAdminQuery;
@@ -106,6 +108,9 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       ),
       listerConversationsUseCase: asModuleClass(ListerConversationsUseCase),
       recupererConversationUseCase: asModuleClass(RecupererConversationUseCase),
+      exporterDerniereReponseUseCase: asModuleClass(
+        ExporterDerniereReponseUseCase,
+      ),
       supprimerConversationUseCase: asModuleClass(SupprimerConversationUseCase),
       purgerConversationsExpireesUseCase: asModuleClass(
         PurgerConversationsExpireesUseCase,
