@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { createAlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
+import { AlarmWarningIcon } from "@/components/_commons/Icones/AlarmWarningIcon";
+import { AlignLeftIcon } from "@/components/_commons/Icones/AlignLeftIcon";
+import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
 
 const scenarios: ChatScenarios = {
   kind: "flat",
@@ -9,16 +12,19 @@ const scenarios: ChatScenarios = {
       label: "Synthèse d'un territoire",
       message: "Fais moi la synthèse de ",
       mode: "fill",
+      icone: AlignLeftIcon,
     },
     {
       label: "Chantiers en retard",
       message: "Quels sont les chantiers en retard sur ",
       mode: "fill",
+      icone: ErrorWarningIcon,
     },
     {
       label: "Chantiers en difficulté",
       message: "Quels sont les chantiers en difficulté sur ",
       mode: "fill",
+      icone: AlarmWarningIcon,
     },
   ],
 };
