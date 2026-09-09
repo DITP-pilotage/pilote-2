@@ -2,10 +2,7 @@ const plugin = require("tailwindcss/plugin");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "./theme.config.*.tsx", // Pour le thème Nextra
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: false,
   important: true,
   theme: {

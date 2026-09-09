@@ -18,13 +18,6 @@
 # typescript
 *.tsbuildinfo
 
-# generated
-public/centreaide/
-public/_pagefind/
-
-# submodule (cloné au build)
-src/content/
-
 # local env
 .env
 .env.e2e

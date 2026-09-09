@@ -26,7 +26,6 @@ export default tseslint.config(
       "*.config.js",
       "*.config.mjs",
       "copy-assets.js",
-      "src/pages/centre-aide-pilote-2/**",
     ],
   },
 

@@ -47,7 +47,7 @@ Tous les environnements (dev, CI, prod) tournent sur Node 24.9.0. Pas de fallbac
 | `@keycloak/keycloak-admin-client` | `26.5.6` | La 26.6.0 a un `prepare` script cassé qui appelle `pnpm wireit`. À re-tester maintenant qu'on est sur pnpm (le blocage d'origine venait de `npm install`). | Check `pnpm outdated` à chaque campagne |
 | `@tiptap/*` (core, extensions, react, pm, starter-kit, etc.) | `3.22.3` | Les packages `@tiptap/*` **doivent tous être à la même version** au runtime sinon l'éditeur plante (multiple `@tiptap/core` instances). On pin à l'exact pour éviter qu'un seul paquet dérive. | Bumper tout le bloc ensemble |
 | `fast-xml-parser` | `5.7.3` | Bumpé en mai 2026 pour CVEs. Pinné car la 5.7.1 introduit `@nodable/entities` v2.1.0 avec breaking changes sur les entités — on fige tant qu'on n'a pas vérifié l'impact. | À évaluer pour passer en `^5.7.3` |
-| `@next/env`, `next-auth`, `nextra*`, `@gouvfr/dsfr`, `convict*`, `dotenv`, `dotenv-expand`, `next-router-mock`, `jest-extended`, `sanitize-html`, `sass`, `swagger-ui-react`, `ws`, `zustand`, etc. | divers | Pins historiques par prudence. Chaque ligne pourrait être remplacée par `^` lors d'une campagne si on valide que le bump mineur est safe. | À réévaluer ponctuellement |
+| `@next/env`, `next-auth`, `@gouvfr/dsfr`, `convict*`, `dotenv`, `dotenv-expand`, `next-router-mock`, `jest-extended`, `sanitize-html`, `sass`, `swagger-ui-react`, `ws`, `zustand`, etc. | divers | Pins historiques par prudence. Chaque ligne pourrait être remplacée par `^` lors d'une campagne si on valide que le bump mineur est safe. | À réévaluer ponctuellement |
 
 ## Overrides
 
@@ -408,7 +408,6 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 | `mime` | `3.x` → `4.x` | 🟡 low | ESM-only |
 | `chroma-js` | `2.x` → `3.x` | 🟡 low | Types officiels + renames |
 | `csv-parse` | `5.x` → `6.x` | 🟡 low | Stream API stable, check usage |
-| `nextra` + `nextra-theme-docs` | surveiller | - | Surveiller les majors, utilisé pour le centre d'aide |
 
 ### Stratégie recommandée pour ces majors
 
@@ -419,6 +418,23 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 - **Attendre** : TypeScript 7 sur les 3 apps (verrou `typescript-eslint`, cf. « Pièges connus ») ; `@hono/node-server` v2 (retirer l'override d'abord, cf. « Overrides »)
 
 ## Historique des campagnes
+
+### Septembre 2026 — Suppression de l'ancien centre d'aide (Nextra)
+
+Le centre d'aide MDX servi par Nextra (route `/centre-aide-pilote-2`, submodule
+`apps/pilote-ppg/src/content`) a été remplacé par le centre d'aide en base
+(`/centre-aide-pilote`, édité depuis le panel admin). Retiré avec lui :
+
+| Retrait | Détail |
+|---|---|
+| deps `nextra`, `nextra-theme-docs` | plus aucune route MDX |
+| dep `pagefind` | index de recherche propre à Nextra ; étape retirée des scripts `build` / `build:dev` |
+| dep `raw-loader` | ne servait qu'aux règles turbopack `*.pdf` / `*.ods` / `*.xlsx` des assets MDX |
+| overrides `nextra>zod`, `nextra-theme-docs>zod` | plus de consommateur |
+| override `mermaid: >=11.16.1 <12` | ne tenait que par la chaîne `nextra` ; `mermaid` a disparu de l'arbre (vérifié `pnpm why -r`) |
+| override `linkify-it@>=5 <6` | idem, disparu de l'arbre |
+
+`-237` paquets installés.
 
 ### Août 2026 (2026-08-25) — Campagne d'upgrade
 

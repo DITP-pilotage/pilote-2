@@ -1,21 +1,7 @@
 /** @type {import('next').NextConfig} */
-import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const submodulePath = path.join(__dirname, "src/content");
-const hasSubmodule =
-  fs.existsSync(submodulePath) && fs.readdirSync(submodulePath).length > 0;
-
-let withNextra = (config) => config;
-
-if (hasSubmodule) {
-  const nextra = (await import("nextra")).default;
-  withNextra = nextra({
-    contentDirBasePath: "/centre-aide-pilote-2",
-    defaultShowCopyCode: false,
-  });
-}
 
 const nextConfig = {
   reactStrictMode: true,
@@ -28,7 +14,7 @@ const nextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, '../..'),
   bundlePagesRouterDependencies: true,
-  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+  pageExtensions: ["js", "jsx", "ts", "tsx"],
   allowedDevOrigins: [
     "*.pilote.modernisation.localhost",
     "pilote.modernisation.localhost",
@@ -43,33 +29,25 @@ const nextConfig = {
         loaders: ["js-yaml-loader"],
         as: "*.js",
       },
-      "*.pdf": {
-        loaders: ["raw-loader"],
-        as: "*.js",
-      },
-      "*.ods": {
-        loaders: ["raw-loader"],
-        as: "*.js",
-      },
-      "*.xlsx": {
-        loaders: ["raw-loader"],
-        as: "*.js",
-      },
     },
     resolveAlias: {
       "react-hook-form": "react-hook-form/dist/index.esm.mjs",
-      "next-mdx-import-source-file": "./src/mdx-components.tsx",
     },
   },
   async rewrites() {
     return [
       {
-        source: "/centreaide/:slug*",
-        destination: "/centre-aide-pilote-2/centre-aide/:slug*",
-      },
-      {
         source: "/.well-known/acme-challenge/:token",
         destination: "/api/acme-challenge/:token",
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: "/centreaide/:slug*",
+        destination: "/centre-aide-pilote",
+        permanent: true,
       },
     ];
   },
@@ -77,10 +55,6 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.ya?ml$/,
       use: "js-yaml-loader",
-    });
-    config.module.rules.push({
-      test: /\.(pdf|ods|xlsx)$/,
-      type: "asset/resource",
     });
     return config;
   },
@@ -119,4 +93,4 @@ const nextConfig = {
   },
 };
 
-export default withNextra(nextConfig);
+export default nextConfig;

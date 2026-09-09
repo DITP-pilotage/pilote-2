@@ -74,11 +74,7 @@ export async function proxy(request: NextRequest) {
   response.headers.set("x-nonce", nonce);
 
   // Ajout du CSP pour empecher les attaques XSS côté serveur
-  if (
-    isDev ||
-    request.nextUrl.pathname.startsWith("/centreaide") ||
-    request.nextUrl.pathname.startsWith("/centre-aide-pilote-2")
-  ) {
+  if (isDev) {
     response.headers.set(
       "Content-Security-Policy",
       "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/; font-src 'self'; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com https://sh1.sendinblue.com; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
@@ -110,8 +106,6 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/api/auth") ||
     pathname.startsWith(CHEMIN_CONNEXION) ||
     pathname.startsWith("/api/test") ||
-    pathname.startsWith("/centre-aide-pilote-2") ||
-    pathname.startsWith("/centreaide") ||
     pathname.startsWith("/api/admin/cron") ||
     pathname.startsWith("/api/admin/unitaire") ||
     pathname.startsWith("/api/admin/acme-challenge") ||
