@@ -12,7 +12,6 @@ import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import {
   defineModule,
   type ExtractScope,
-  type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
@@ -39,13 +38,18 @@ type ImportSyntheseDesResultatsCradle = {
   transaction: Transaction;
 };
 
+export type ImportSyntheseDesResultatsExports = Pick<
+  ImportSyntheseDesResultatsCradle,
+  "importerSynthesesDesResultatsUseCase"
+>;
+
 export const importSyntheseDesResultatsModule = defineModule<
-  NoExports,
+  ImportSyntheseDesResultatsExports,
   ImportSyntheseDesResultatsCradle
 >()({
   name: "importSyntheseDesResultats",
   imports: ["shared"],
-  exports: [],
+  exports: ["importerSynthesesDesResultatsUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({
       synthèseDesRésultatsRepository: asModuleClass(

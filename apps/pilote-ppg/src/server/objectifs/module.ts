@@ -13,7 +13,6 @@ import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chant
 import {
   defineModule,
   type ExtractScope,
-  type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
 
@@ -31,10 +30,12 @@ type ObjectifCradle = {
   recupererHistoriqueObjectifQuery: RecupererHistoriqueObjectifQuery;
 };
 
-export const objectifModule = defineModule<NoExports, ObjectifCradle>()({
+export type ObjectifExports = Pick<ObjectifCradle, "importerObjectifsUseCase">;
+
+export const objectifModule = defineModule<ObjectifExports, ObjectifCradle>()({
   name: "objectif",
   imports: ["shared"],
-  exports: [],
+  exports: ["importerObjectifsUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({
       objectifRepository: asModuleClass(ObjectifSQLRepository),

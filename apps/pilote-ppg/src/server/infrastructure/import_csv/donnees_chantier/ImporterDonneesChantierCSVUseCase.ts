@@ -1,8 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
-import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
-import { ImporterDecisionsStrategiquesUseCase } from "@/server/decisions-strategiques/usecases/ImporterDecisionsStrategiquesUseCase";
-import { ImporterObjectifsUseCase } from "@/server/objectifs/usecases/ImporterObjectifsUseCase";
+import type { Inject } from "@/server/infrastructure/import_csv/donnees_chantier/module";
 import {
   DomaineCible,
   ErreurLigneCSVDonneesChantier,
@@ -29,13 +25,13 @@ export type RésultatImportDonneesChantierCSV =
 
 export class ImporterDonneesChantierCSVUseCase {
   constructor(
-    private readonly dependencies: {
-      prisma: PrismaClient;
-      importerCommentairesUseCase: ImporterCommentairesUseCase;
-      importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
-      importerDecisionsStrategiquesUseCase: ImporterDecisionsStrategiquesUseCase;
-      importerObjectifsUseCase: ImporterObjectifsUseCase;
-    },
+    private readonly dependencies: Inject<
+      | "prisma"
+      | "importerCommentairesUseCase"
+      | "importerSynthesesDesResultatsUseCase"
+      | "importerDecisionsStrategiquesUseCase"
+      | "importerObjectifsUseCase"
+    >,
   ) {}
 
   async execute(
@@ -81,10 +77,12 @@ export class ImporterDonneesChantierCSVUseCase {
       ),
     ];
 
-    const utilisateurs = await this.dependencies.prisma.utilisateur.findMany({
-      where: { email: { in: [...emails, EMAIL_UTILISATEUR_IMPORT] } },
-      select: { id: true, email: true },
-    });
+    const utilisateurs = await this.dependencies.prisma
+      .getInstance()
+      .utilisateur.findMany({
+        where: { email: { in: [...emails, EMAIL_UTILISATEUR_IMPORT] } },
+        select: { id: true, email: true },
+      });
 
     const utilisateurImport = utilisateurs.find(
       (utilisateur) => utilisateur.email === EMAIL_UTILISATEUR_IMPORT,

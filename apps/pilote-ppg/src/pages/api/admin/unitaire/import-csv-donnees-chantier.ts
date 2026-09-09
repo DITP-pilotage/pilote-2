@@ -4,10 +4,8 @@ import { File } from "formidable";
 import fs from "node:fs";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
-import { prisma } from "@/server/db/prisma";
 import logger from "@/server/infrastructure/Logger";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
-import { ImporterDonneesChantierCSVUseCase } from "@/server/infrastructure/import_csv/donnees_chantier/ImporterDonneesChantierCSVUseCase";
 
 /**
  - Format CSV attendu :
@@ -17,10 +15,15 @@ import { ImporterDonneesChantierCSVUseCase } from "@/server/infrastructure/impor
       CH-001,notre_ambition,"Réduire le délai de traitement",2026-01-15,,,,
       CH-001,synthese_des_resultats,"Trajectoire conforme",2026-01-15,,REG,11,OBJECTIF_SECURISE
 
-   Le champ `type` détermine le domaine cible (commentaire, synthèse des résultats,
-   décision stratégique ou objectif) — voir résoudreDomaineCible dans
-   src/validation/import-csv-donnees-chantier.ts pour la liste complète des types
-   acceptés.
+   Le champ `type` détermine le domaine cible — voir résoudreDomaineCible dans
+   src/validation/import-csv-donnees-chantier.ts. Valeurs acceptées :
+      - commentaire : commentaires_sur_les_donnees, autres_resultats_obtenus,
+        autres_resultats_obtenus_non_correles_aux_indicateurs,
+        risques_et_freins_a_lever, solutions_et_actions_a_venir,
+        exemples_concrets_de_reussite
+      - synthèse des résultats : synthese_des_resultats
+      - décision stratégique : suivi_des_decisions
+      - objectif : notre_ambition, deja_fait, a_faire
 
    `maille`/`code_insee` ne sont utilisés que pour les domaines territorialisés
    (commentaire, synthese_des_resultats) ; laissés vides, le territoire national
@@ -68,22 +71,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     trim: true,
   });
 
-  const importerDonneesChantierCSVUseCase =
-    new ImporterDonneesChantierCSVUseCase({
-      prisma,
-      importerCommentairesUseCase: getContainer("commentaires").resolve(
-        "importerCommentairesUseCase",
-      ),
-      importerSynthesesDesResultatsUseCase: getContainer(
-        "importSyntheseDesResultats",
-      ).resolve("importerSynthesesDesResultatsUseCase"),
-      importerDecisionsStrategiquesUseCase: getContainer(
-        "decisionStrategique",
-      ).resolve("importerDecisionsStrategiquesUseCase"),
-      importerObjectifsUseCase: getContainer("objectif").resolve(
-        "importerObjectifsUseCase",
-      ),
-    });
+  const importerDonneesChantierCSVUseCase = getContainer(
+    "importDonneesChantierCSV",
+  ).resolve("importerDonneesChantierCSVUseCase");
 
   const résultat =
     await importerDonneesChantierCSVUseCase.execute(lignesBrutes);

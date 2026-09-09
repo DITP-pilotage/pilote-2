@@ -15,8 +15,6 @@ import {
   importObjectifSchema,
 } from "@/validation/import-objectif";
 import { importSyntheseDesResultatsSchema } from "@/validation/import-synthese-des-resultats";
-import { NOMS_TYPES_COMMENTAIRES } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
-import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { meteosSaisissables } from "@/server/domain/météo/Météo.interface";
 
 export const domainesCibles = [
@@ -27,28 +25,8 @@ export const domainesCibles = [
 ] as const;
 export type DomaineCible = (typeof domainesCibles)[number];
 
-/*
- * Correspondance entre les codes "type" historiques du CSV brut (identiques à ceux
- * stockés en base pour les commentaires, cf. CommentaireSQLRepository) et les codes
- * attendus par le contrat API JSON (import-commentaire.ts). Trois libellés diffèrent
- * entre les deux : freins_a_lever / actions_a_venir / actions_a_valoriser côté CSV et
- * base, contre risques_et_freins_a_lever / solutions_et_actions_a_venir /
- * exemples_concrets_de_reussite côté API.
- */
-const domaineCommentaireVersTypeAPI = Object.fromEntries(
-  Object.entries(typesCommentaireAPIVersDomaine).map(([typeAPI, domaine]) => [
-    domaine,
-    typeAPI as TypeCommentaireAPI,
-  ]),
-) as Record<TypeCommentaireChantier, TypeCommentaireAPI>;
-
-function typeCommentaireCSVVersTypeAPI(typeCSV: string): TypeCommentaireAPI {
-  const domaine = NOMS_TYPES_COMMENTAIRES[typeCSV];
-  return domaineCommentaireVersTypeAPI[domaine];
-}
-
 export function résoudreDomaineCible(typeCSV: string): DomaineCible | null {
-  if (typeCSV in NOMS_TYPES_COMMENTAIRES) return "commentaire";
+  if (typeCSV in typesCommentaireAPIVersDomaine) return "commentaire";
   if (typeCSV === "synthese_des_resultats") return "synthese_des_resultats";
   if (typeCSV in typesDecisionStrategiqueAPIVersDomaine)
     return "decision_strategique";
@@ -156,7 +134,7 @@ export function répartirLigne(ligne: LigneCSVDonneesChantier): LigneRepartie {
         auteurEmail: ligne.auteur_email,
         input: {
           territoire: territoireDepuisLigne(ligne),
-          type: typeCommentaireCSVVersTypeAPI(ligne.type),
+          type: ligne.type as TypeCommentaireAPI,
           contenu: ligne.contenu,
           date_commentaire: ligne.date,
         },

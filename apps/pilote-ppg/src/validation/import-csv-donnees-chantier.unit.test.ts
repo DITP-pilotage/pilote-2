@@ -28,7 +28,7 @@ function ligneCSV(overrides: Partial<Record<string, string>> = {}) {
 }
 
 describe("résoudreDomaineCible", () => {
-  it("résout les types historiques de commentaires vers le domaine commentaire", () => {
+  it("résout les types de commentaires (codes du contrat API) vers le domaine commentaire", () => {
     expect(résoudreDomaineCible("commentaires_sur_les_donnees")).toEqual(
       "commentaire",
     );
@@ -40,9 +40,15 @@ describe("résoudreDomaineCible", () => {
         "autres_resultats_obtenus_non_correles_aux_indicateurs",
       ),
     ).toEqual("commentaire");
-    expect(résoudreDomaineCible("freins_a_lever")).toEqual("commentaire");
-    expect(résoudreDomaineCible("actions_a_venir")).toEqual("commentaire");
-    expect(résoudreDomaineCible("actions_a_valoriser")).toEqual("commentaire");
+    expect(résoudreDomaineCible("risques_et_freins_a_lever")).toEqual(
+      "commentaire",
+    );
+    expect(résoudreDomaineCible("solutions_et_actions_a_venir")).toEqual(
+      "commentaire",
+    );
+    expect(résoudreDomaineCible("exemples_concrets_de_reussite")).toEqual(
+      "commentaire",
+    );
   });
 
   it("résout synthese_des_resultats vers le domaine synthese_des_resultats", () => {
@@ -135,9 +141,9 @@ describe("validerLignesCSV", () => {
 });
 
 describe("répartirLigne", () => {
-  it("construit une ligne commentaire avec le code API historique correct", () => {
+  it("construit une ligne commentaire avec le type du CSV inchangé (code du contrat API)", () => {
     const ligne = répartirLigne(
-      ligneCSV({ type: "freins_a_lever" }),
+      ligneCSV({ type: "risques_et_freins_a_lever" }),
     ) as LigneRepartieCommentaire;
 
     expect(ligne.domaine).toEqual("commentaire");
