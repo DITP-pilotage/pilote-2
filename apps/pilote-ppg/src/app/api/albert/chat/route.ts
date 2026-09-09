@@ -1,4 +1,4 @@
-import { validateUIMessages } from "ai";
+import { createIdGenerator, validateUIMessages } from "ai";
 import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
 import { displayChoicesTool } from "@/server/albert/tools/displayChoices";
@@ -18,6 +18,8 @@ import {
   construireFeatureFlipsAskAI,
 } from "@/server/albert/accesAskAI";
 import { estEmailAutoriseAskAITerritoire } from "@/server/albert/emailsAutorisesAskAITerritoire";
+
+const genererIdMessage = createIdGenerator({ prefix: "msg" });
 
 const chatRequestSchema = z
   .object({
@@ -169,7 +171,10 @@ export async function POST(request: Request) {
       variables.NEXT_PUBLIC_FF_HISTORIQUE_ALBERT === true;
 
     if (!persistanceActive) {
-      return result.toUIMessageStreamResponse({ onError: onErreurFlux });
+      return result.toUIMessageStreamResponse({
+        generateMessageId: genererIdMessage,
+        onError: onErreurFlux,
+      });
     }
 
     const enregistrerConversation = container.resolve(
@@ -177,6 +182,7 @@ export async function POST(request: Request) {
     );
 
     return result.toUIMessageStreamResponse<PiloteUIMessage>({
+      generateMessageId: genererIdMessage,
       originalMessages: messagesPilote,
       onError: onErreurFlux,
       onFinish: async ({ messages: messagesFinaux }) => {

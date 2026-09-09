@@ -52,3 +52,19 @@ test("n'affiche pas la barre d'actions pendant le streaming, même sur le dernie
 
   expect(screen.queryByTitle("Exporter en PDF")).not.toBeInTheDocument();
 });
+
+test("n'affiche pas la barre d'actions si le message n'a pas d'id (conversation persistée avant le fix de generateMessageId)", () => {
+  render(
+    <AssistantMessage
+      message={{ ...buildMessage(), id: "" }}
+      isStreaming={false}
+      isLastAssistantMessage
+      conversationId="conv-1"
+    />,
+  );
+
+  expect(screen.queryByTitle("Exporter en PDF")).not.toBeInTheDocument();
+  expect(
+    screen.queryByTitle("Copier dans le presse-papiers"),
+  ).not.toBeInTheDocument();
+});

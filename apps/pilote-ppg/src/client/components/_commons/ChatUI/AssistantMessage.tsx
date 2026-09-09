@@ -43,7 +43,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   return (
     <div className="text-sm text-gray-900 w-full relative group/message">
-      {isLastAssistantMessage && hasText && !isStreaming && (
+      {isLastAssistantMessage && hasText && !isStreaming && message.id && (
         <LastResponseActions
           texte={extractMessageText(message)}
           conversationId={conversationId}
