@@ -3,7 +3,9 @@ import { Dialog } from "radix-ui";
 import { $Enums } from "@prisma/client";
 import { Modale } from "@/components/shared/Modale";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { ActionReponse } from "@/components/_commons/ChatUI/ActionReponse";
 import { FeedbackCategorieCard } from "@/components/_commons/ChatUI/FeedbackCategorieCard";
+import { ThumbDownIcon } from "@/components/_commons/Icones/ThumbDownIcon";
 import { FEEDBACK_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -71,13 +73,11 @@ export const FeedbackNegatifModale = ({
       sousTitreClassName="mb-2"
       title="Aidez-nous à nous améliorer"
       trigger={
-        <button
-          className="rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-colors disabled:opacity-50"
+        <ActionReponse
           disabled={disabled}
-          type="button"
-        >
-          Non
-        </button>
+          icone={ThumbDownIcon}
+          label="Pas utile"
+        />
       }
     >
       <fieldset className="border-0 p-0 m-0">

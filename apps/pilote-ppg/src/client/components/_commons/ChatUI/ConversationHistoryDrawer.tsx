@@ -1,20 +1,19 @@
+import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
+import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
+import {
+  formaterDateConversation,
+  grouperConversationsParPeriode,
+} from "@/components/_commons/ChatUI/grouperConversationsParPeriode";
+import { clsxm } from "@/utils/clsxm";
 
 type Props = {
   chatIdCourant: string | null;
   onSelectionner: (id: string) => void;
   onNouvelleConversation: () => void;
-};
-
-const formatRelative = (date: Date): string => {
-  return new Date(date).toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 };
 
 export const ConversationHistoryDrawer = ({
@@ -28,57 +27,87 @@ export const ConversationHistoryDrawer = ({
     onSuccess: () => refetch(),
   });
 
+  const groupes = useMemo(
+    () =>
+      grouperConversationsParPeriode({
+        conversations,
+        maintenant: new Date(),
+      }),
+    [conversations],
+  );
+
   const handleSupprimer = (id: string) => {
     if (!confirm("Supprimer cette conversation ?")) return;
     supprimer.mutate({ id });
   };
 
   return (
-    <aside className="w-64 h-full border-r border-gray-200 bg-gray-50 flex flex-col">
-      <button
-        type="button"
+    <aside className="flex h-full w-[280px] shrink-0 flex-col border-r border-dsfr-grey-900 bg-white">
+      <Bouton
+        className="mx-3 mb-1 mt-3 justify-start"
+        iconLeft={
+          <Icone className="h-4 w-4 !text-current" icone={AddLineIcon} />
+        }
+        label="Nouvelle conversation"
         onClick={onNouvelleConversation}
-        className="m-3 px-3 py-2 text-sm font-medium bg-primary text-white rounded hover:bg-primary/90"
-      >
-        + Nouvelle conversation
-      </button>
+        size="sm"
+        variant="secondary"
+      />
 
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 && (
-          <p className="text-xs text-gray-500 px-3">Aucune conversation.</p>
+          <p className="px-4 py-3 text-xs text-dsfr-mention-grey fr-mb-0">
+            Aucune conversation.
+          </p>
         )}
-        {conversations.map((conversation) => {
-          const estActive = conversation.id === chatIdCourant;
-          return (
-            <div
-              key={conversation.id}
-              className={`group flex items-start gap-2 px-3 py-2 text-sm ${
-                estActive ? "bg-primary/10" : "hover:bg-gray-100"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => onSelectionner(conversation.id)}
-                className="flex-1 min-w-0 text-left hover:bg-transparent"
-              >
-                <p className="truncate font-medium text-gray-900 fr-mb-0">
-                  {conversation.titre}
-                </p>
-                <p className="text-xs text-gray-500 fr-mb-0">
-                  {formatRelative(conversation.updatedAt)}
-                </p>
-              </button>
-              <button
-                type="button"
-                aria-label="Supprimer"
-                className="opacity-0 group-hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 text-gray-400 hover:text-red-500"
-                onClick={() => handleSupprimer(conversation.id)}
-              >
-                <Icone className="w-4 h-4" icone={DeleteIcon} />
-              </button>
-            </div>
-          );
-        })}
+        {groupes.map((groupe) => (
+          <div key={groupe.libelle}>
+            <p className="px-3 pb-1 pt-3 text-xs font-bold uppercase tracking-wide text-dsfr-mention-grey fr-mb-0">
+              {groupe.libelle}
+            </p>
+            {groupe.conversations.map((conversation) => {
+              const estActive = conversation.id === chatIdCourant;
+              return (
+                <div
+                  className={clsxm(
+                    "group flex items-start gap-2 border-l-[3px] py-2 pl-4 pr-3 text-sm",
+                    estActive
+                      ? "border-l-primary bg-dsfr-blue-france-950"
+                      : "border-l-transparent hover:bg-dsfr-grey-1000",
+                  )}
+                  key={conversation.id}
+                >
+                  <button
+                    className="min-w-0 flex-1 text-left hover:bg-transparent"
+                    onClick={() => onSelectionner(conversation.id)}
+                    type="button"
+                  >
+                    <p className="truncate font-medium leading-5 text-dsfr-grey-50 fr-mb-0">
+                      {conversation.titre}
+                    </p>
+                    <p className="text-xs leading-[18px] text-dsfr-mention-grey fr-mb-0">
+                      {formaterDateConversation({
+                        date: conversation.updatedAt,
+                        maintenant: new Date(),
+                      })}
+                    </p>
+                  </button>
+                  <button
+                    aria-label="Supprimer"
+                    className="mt-0.5 text-dsfr-grey-625 opacity-0 hover:text-error focus:opacity-100 focus-visible:opacity-100 group-hover:opacity-100"
+                    onClick={() => handleSupprimer(conversation.id)}
+                    type="button"
+                  >
+                    <Icone
+                      className="h-4 w-4 !text-current"
+                      icone={DeleteIcon}
+                    />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </aside>
   );

@@ -9,7 +9,7 @@ export const DashboardWidgetTitle = ({
 }) => (
   <div
     className={clsxm(
-      "text-xs uppercase tracking-wide text-gray-500",
+      "text-[11px] font-bold uppercase leading-4 tracking-wide text-dsfr-mention-grey",
       className,
     )}
   >

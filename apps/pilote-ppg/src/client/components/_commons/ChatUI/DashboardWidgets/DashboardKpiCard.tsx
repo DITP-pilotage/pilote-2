@@ -10,6 +10,8 @@ export const DashboardKpiCard = ({
   footer: string;
 }) => (
   <DashboardCardShell label={label} footer={footer}>
-    <div className="text-3xl font-semibold text-gray-900">{value}</div>
+    <div className="text-[28px] font-bold leading-8 text-dsfr-grey-50">
+      {value}
+    </div>
   </DashboardCardShell>
 );

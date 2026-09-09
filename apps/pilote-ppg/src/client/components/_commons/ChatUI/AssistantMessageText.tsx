@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
+import { clsxm } from "@/utils/clsxm";
 
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
 // à la ToolSet dans src/app/api/albert/chat/route.ts.
@@ -74,7 +75,7 @@ export function stripPseudoToolCalls(text: string): string {
 
 /**
  * Supprime les paragraphes markdown ne contenant que des espaces insécables
- * (`&nbsp;` ou  ). Le LLM en produit parfois pour aérer son rendu, mais
+ * (`&nbsp;` ou  ). Le LLM en produit parfois pour aérer son rendu, mais
  * ReactMarkdown les rend en `<p>&nbsp;</p>` qui ajoutent du vide visuel.
  */
 export function stripParagraphesVides(text: string): string {
@@ -85,7 +86,7 @@ export function stripParagraphesVides(text: string): string {
       // super-lineaire. On retire les insecables et on ne filtre la ligne que si
       // elle en portait au moins un ET que le reste n'est que du blanc — une ligne
       // de pur blanc reste un separateur de paragraphe et doit etre conservee.
-      const sansInsecables = ligne.replaceAll("&nbsp;", "").replaceAll(" ", "");
+      const sansInsecables = ligne.replaceAll("&nbsp;", "").replaceAll(" ", "");
       return !(sansInsecables !== ligne && sansInsecables.trim() === "");
     })
     .join("\n");
@@ -129,8 +130,11 @@ const components = { a: MarkdownLink };
 
 export const AssistantMessageText = memo(function AssistantMessageText({
   text,
+  streaming = false,
 }: {
   text: string;
+  /** Affiche un curseur clignotant à la fin du texte en cours d'écriture. */
+  streaming?: boolean;
 }) {
   const chantierLinkOptions = useChantierLinks();
   const sanitized = stripParagraphesVides(stripPseudoToolCalls(text));
@@ -140,7 +144,11 @@ export const AssistantMessageText = memo(function AssistantMessageText({
   );
 
   return (
-    <div className="albert-markdown">
+    <div
+      className={clsxm("albert-markdown", {
+        "albert-markdown--streaming": streaming,
+      })}
+    >
       <ReactMarkdown components={components} remarkPlugins={remarkPlugins}>
         {sanitized}
       </ReactMarkdown>

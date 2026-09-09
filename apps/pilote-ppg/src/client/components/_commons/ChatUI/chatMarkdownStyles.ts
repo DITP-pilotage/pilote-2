@@ -20,7 +20,7 @@ export const chatMarkdownStyles = `
     border-collapse: collapse;
     width: 100%;
     margin: 0.75em 0;
-    font-size: 1rem;
+    font-size: 0.95em;
   }
   .albert-markdown th, .albert-markdown td {
     border: 1px solid #d1d5db;
@@ -76,5 +76,20 @@ export const chatMarkdownStyles = `
   @keyframes md-fade-in {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  /* Curseur clignotant à la fin du texte pendant le streaming. */
+  .albert-markdown--streaming > :last-child:not(ul):not(ol)::after,
+  .albert-markdown--streaming > :is(ul, ol):last-child > li:last-child::after {
+    content: "";
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 2px;
+    vertical-align: -0.15em;
+    background: #000091;
+    animation: md-blink-caret 1s steps(2) infinite;
+  }
+  @keyframes md-blink-caret {
+    50% { opacity: 0; }
   }
 `;

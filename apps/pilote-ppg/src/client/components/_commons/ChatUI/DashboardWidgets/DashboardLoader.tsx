@@ -1,11 +1,22 @@
+import { Squelette } from "@/components/_commons/ChatUI/Squelette";
+import { LoaderIcon } from "@/components/_commons/Icones/LoaderIcon";
+
 export const DashboardLoader = () => (
-  <div className="my-4 rounded-lg border border-gray-200 bg-gray-50 p-6 flex items-center justify-center">
-    <div className="flex items-center gap-3 text-sm text-gray-600">
-      <div
-        aria-hidden="true"
-        className="h-4 w-4 rounded-full border-2 border-gray-300 border-t-gray-600 animate-spin"
+  <div className="border border-dsfr-grey-900 bg-white">
+    <div className="flex h-11 items-center gap-2.5 border-b border-dsfr-grey-900 bg-dsfr-grey-1000 px-4 text-sm font-medium text-dsfr-mention-grey">
+      <span>Composition du tableau de bord…</span>
+      <span className="flex-1" />
+      <LoaderIcon
+        className="h-4 w-4 animate-spin text-primary"
+        fill="currentColor"
       />
-      <span>Composition du dashboard…</span>
+    </div>
+    <div className="grid grid-cols-4 gap-3 p-3">
+      <Squelette className="h-[88px]" />
+      <Squelette className="h-[88px]" />
+      <Squelette className="h-[88px]" />
+      <Squelette className="h-[88px]" />
+      <Squelette className="col-span-4 h-[120px]" />
     </div>
   </div>
 );

@@ -1,3 +1,4 @@
+import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 
 export type ChatScenario = {
@@ -15,7 +16,18 @@ export type ChatScenarios =
   | { kind: "flat"; scenarios: ChatScenario[] }
   | { kind: "grouped"; groups: ChatScenarioGroup[] };
 
-export const ChatEmptyState = ({ scenarios }: { scenarios: ChatScenarios }) => {
+export type ContexteAccueil = {
+  territoireNom: string;
+  jalon: number;
+};
+
+export const ChatEmptyState = ({
+  scenarios,
+  contexte,
+}: {
+  scenarios: ChatScenarios;
+  contexte?: ContexteAccueil;
+}) => {
   const { sendMessage, fillInput } = useChatContext();
 
   const handleClick = (scenario: ChatScenario) => {
@@ -27,11 +39,11 @@ export const ChatEmptyState = ({ scenarios }: { scenarios: ChatScenarios }) => {
   };
 
   const renderScenarioGrid = (scenarioList: ChatScenario[]) => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
       {scenarioList.map((scenario) => (
         <button
+          className="flex min-h-[76px] items-start border border-dsfr-grey-900 bg-white p-3.5 text-left text-sm font-medium leading-5 text-dsfr-grey-50 transition-colors hover:border-primary hover:bg-dsfr-alt-blue-france hover:text-primary"
           key={scenario.label}
-          className="text-left rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-700 hover:border-primary hover:bg-primary/5 hover:text-primary transition-colors"
           onClick={() => handleClick(scenario)}
           type="button"
         >
@@ -42,19 +54,39 @@ export const ChatEmptyState = ({ scenarios }: { scenarios: ChatScenarios }) => {
   );
 
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-4">
-      <p className="text-sm text-gray-500 mb-4 text-center">
-        Exemples de ce que vous pouvez faire...
-      </p>
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-7 py-8">
+      <div className="flex flex-col gap-3">
+        <AlbertMonogramme taille="lg" />
+        <h2 className="text-[26px] font-bold leading-8 text-dsfr-grey-50 fr-mb-0">
+          Bonjour, je suis Albert.
+        </h2>
+        <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+          {contexte ? (
+            <>
+              Je synthétise les données PILOTE de{" "}
+              <strong className="text-dsfr-grey-50">
+                {contexte.territoireNom}
+              </strong>{" "}
+              au jalon {contexte.jalon} : chantiers, indicateurs, commentaires.
+            </>
+          ) : (
+            <>
+              Je synthétise les données PILOTE : chantiers, indicateurs,
+              commentaires.
+            </>
+          )}{" "}
+          Choisissez un point de départ ou posez votre question.
+        </p>
+      </div>
       {scenarios.kind === "flat" ? (
         renderScenarioGrid(scenarios.scenarios)
       ) : (
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           {scenarios.groups
             .filter((group) => group.scenarios.length > 0)
             .map((group) => (
-              <div key={group.label}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              <div className="flex flex-col gap-2.5" key={group.label}>
+                <p className="text-[11px] font-bold uppercase tracking-wide text-dsfr-mention-grey fr-mb-0">
                   {group.label}
                 </p>
                 {renderScenarioGrid(group.scenarios)}
