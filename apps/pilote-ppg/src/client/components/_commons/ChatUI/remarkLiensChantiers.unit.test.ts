@@ -100,6 +100,27 @@ describe("remarkLiensChantiers", () => {
     ]);
   });
 
+  test("reconnaît un identifiant écrit avec un tiret insécable", () => {
+    // Given
+    // Le modèle produit U+2011 dans l'identifiant et U+202F avant le tiret
+    // cadratin, au lieu du trait d'union et de l'espace ASCII.
+    const tree = paragraphe("CH\u2011050\u202f\u2014 Sécurité routière");
+
+    // When
+    appliquer(tree);
+
+    // Then
+    expect(enfantsDuParagraphe(tree)).toStrictEqual([
+      {
+        type: "link",
+        url: "/chantier/CH-050/NAT-FR",
+        children: [
+          { type: "text", value: "CH\u2011050\u202f\u2014 Sécurité routière" },
+        ],
+      },
+    ]);
+  });
+
   test("laisse en texte un identifiant absent de la whitelist", () => {
     // Given
     const tree = paragraphe("Le chantier CH-999 n'existe pas.");

@@ -14,8 +14,14 @@ export type OptionsLiensChantiers = {
   construireUrl: (chantier: ChantierCite) => string;
 };
 
-const MOTIF_IDENTIFIANT = /\bch-\d{3,}\b/gi;
-const MOTIF_SEPARATEUR = /^\s*[—–-]\s*/u;
+// Un modèle openweight ne s'en tient pas au trait d'union ASCII : il produit
+// couramment U+2011 dans l'identifiant (« CH\u2011173 ») et un tiret cadratin
+// précédé d'une espace fine insécable devant le nom. On accepte toute la
+// famille des tirets Unicode, et l'URL est construite depuis l'identifiant
+// canonique, jamais depuis la graphie rencontrée.
+const TIRETS = "-\u2010\u2011\u2012\u2013\u2014\u2212";
+const MOTIF_IDENTIFIANT = new RegExp(`\\bch[${TIRETS}](\\d{3,})\\b`, "gi");
+const MOTIF_SEPARATEUR = new RegExp(`^\\s*[${TIRETS}]\\s*`, "u");
 
 const decouperTexte = ({
   valeur,
@@ -29,7 +35,7 @@ const decouperTexte = ({
     const debut = correspondance.index;
     if (debut < curseur) continue;
 
-    const chantier = chantiers.get(correspondance[0].toUpperCase());
+    const chantier = chantiers.get(`CH-${correspondance[1]}`);
     if (!chantier) continue;
 
     let fin = debut + correspondance[0].length;
