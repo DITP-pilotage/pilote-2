@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { $Enums, Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 type ChantierIdentite = {
@@ -7,7 +7,7 @@ type ChantierIdentite = {
   axe: string;
   ppg: string;
   ministeres: string[];
-  mailles_applicables: string[];
+  mailles_applicables: $Enums.Maille[];
 };
 
 type SyntheseResultat = {
