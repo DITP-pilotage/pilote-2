@@ -2,6 +2,11 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { ConversationAlbert } from "@/components/_commons/ChatUI/creerConversationAlbert";
+import {
+  extraireChantiersCites,
+  type ChantierCite,
+} from "@/components/_commons/ChatUI/extraireChantiersCites";
+import { construireUrlChantier } from "@/components/_commons/ChatUI/construireUrlChantier";
 import { clsxm } from "@/utils/clsxm";
 import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
 import { UserMessage } from "@/components/_commons/ChatUI/UserMessage";
@@ -90,6 +95,18 @@ export const ChatUI = ({
     [conversation],
   );
 
+  const optionsLiensChantiers = useMemo(() => {
+    const contexte = {
+      territoireCode: conversation.corpsRequete.agentContext?.territoireCode,
+      jalon: conversation.corpsRequete.agentContext?.jalon,
+    };
+    return {
+      chantiers: extraireChantiersCites(messages),
+      construireUrl: (chantier: ChantierCite) =>
+        construireUrlChantier({ chantier, contexte }),
+    };
+  }, [messages, conversation]);
+
   const choicesPanelData = useMemo(() => {
     if (status !== "ready" || messages.length === 0) return null;
     const lastMessage = messages[messages.length - 1];
@@ -115,6 +132,7 @@ export const ChatUI = ({
     <ChatContextProvider
       error={error}
       fillInput={fillInput}
+      optionsLiensChantiers={optionsLiensChantiers}
       sendMessage={sendMessage}
       status={status}
       stop={stop}

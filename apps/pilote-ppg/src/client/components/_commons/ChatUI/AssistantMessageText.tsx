@@ -1,8 +1,10 @@
-import { memo } from "react";
-import ReactMarkdown from "react-markdown";
+import { memo, useMemo, type ReactNode } from "react";
+import { useRouter } from "next/router";
+import ReactMarkdown, { type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-const remarkPlugins = [remarkGfm];
+import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
+import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { remarkLiensChantiers } from "@/components/_commons/ChatUI/remarkLiensChantiers";
 
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
 // à la ToolSet dans src/app/api/albert/chat/route.ts.
@@ -89,15 +91,59 @@ export function stripParagraphesVides(text: string): string {
     .join("\n");
 }
 
+const LienMarkdown = ({
+  href,
+  children,
+}: {
+  href?: string;
+  children?: ReactNode;
+}) => {
+  const router = useRouter();
+  const { minimiser } = useAlbertConversation();
+
+  if (!href?.startsWith("/")) {
+    return (
+      <a href={href} rel="noopener noreferrer" target="_blank">
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      onClick={(event) => {
+        // Laisse passer clic-milieu, Ctrl/Cmd-clic et « ouvrir dans un nouvel onglet ».
+        if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
+        event.preventDefault();
+        minimiser();
+        router.push(href);
+      }}
+    >
+      {children}
+    </a>
+  );
+};
+
+const composants = { a: LienMarkdown };
+
 export const AssistantMessageText = memo(function AssistantMessageText({
   text,
 }: {
   text: string;
 }) {
+  const { optionsLiensChantiers } = useChatContext();
   const sanitized = stripParagraphesVides(stripPseudoToolCalls(text));
+  const remarkPlugins = useMemo<Options["remarkPlugins"]>(
+    () => [remarkGfm, [remarkLiensChantiers, optionsLiensChantiers]],
+    [optionsLiensChantiers],
+  );
+
   return (
     <div className="albert-markdown">
-      <ReactMarkdown remarkPlugins={remarkPlugins}>{sanitized}</ReactMarkdown>
+      <ReactMarkdown components={composants} remarkPlugins={remarkPlugins}>
+        {sanitized}
+      </ReactMarkdown>
     </div>
   );
 });
