@@ -30,7 +30,7 @@ Trois contraintes du code actuel structurent le design :
 ## Objectifs
 
 1. Rendre chaque chantier cité par Albert cliquable, sans qu'une URL puisse être produite
-   par le modèle et sans lien vers un chantier hors habilitation.
+   par le modèle.
 2. Conserver la conversation courante — identifiant, messages, contexte — lors d'une
    navigation interne, sous forme minimisée en bas à droite.
 3. Restaurer la conversation à l'identique au clic sur le composant minimisé, et la
@@ -46,13 +46,28 @@ L'objet `Chat` du AI SDK est conçu pour vivre hors du cycle React — c'est dé
 `useChat({ chat })` consomme (`ChatUI.tsx:73-77`). Tout le reste (dock, restauration,
 navigation) découle de ce déplacement.
 
-**D2 — La linkification se fait à l'AST, côté client, contre une whitelist issue des
-tool-outputs.** Un plugin `remark` ne transforme un `CH-XXX` en lien que si l'identifiant
-figure parmi les chantiers réellement retournés par un tool au cours de la conversation.
-Les deux critères durs de PIL-1693 sont alors satisfaits par construction plutôt que par
-contrôle défensif : un identifiant halluciné n'est dans aucun tool-output et reste du texte,
-et un chantier hors habilitation n'a jamais pu sortir d'un tool — `getChantiers` filtre sur
-`chantiersAccessibles` et `searchChantiers` passe par `filtrerHallucinations`.
+**D2 — Tout `CH-XXX` cité devient un lien, à l'AST, sans whitelist.** Un plugin `remark`
+transforme chaque identifiant reconnu en nœud `link`, l'URL étant construite par
+l'application à partir de l'identifiant canonique — jamais par le modèle.
+
+La protection contre un identifiant halluciné ou hors habilitation n'est pas assurée côté
+client mais par la page de destination, qui se défend déjà seule :
+`RecupererChantierUseCaseV2` appelle `vérifierLesHabilitationsEnLecture`, qui lève un
+`ChantierNonAutoriséErreur` — un `ForbiddenError`, donc un `PiloteError` de statut 403 — que
+le `getServerSideProps` de `chantier/[id]/[territoireCode].tsx` traduit en `notFound`
+(`:281`). Un `CH-999` inventé et un chantier auquel l'utilisateur n'a pas droit aboutissent
+donc au même 404 propre, jamais à une 500.
+
+Une whitelist construite depuis les tool-outputs avait d'abord été retenue. Elle a été
+abandonnée : elle ne pouvait couvrir que `get_chantiers`, `search_chantiers` et
+`search_indicateurs`, si bien qu'un chantier cité après un simple
+`get_chantier_commentaires` n'était pas lié. Et elle ne pouvait pas s'étendre à ce tool,
+qui ne filtre que sur les territoires et réémet tel quel l'identifiant fourni par le
+modèle — l'ajouter aurait blanchi une entrée du LLM en lien.
+
+Ce que cette décision coûte, explicitement : le lien ne couvre plus que l'identifiant, la
+source du nom ayant disparu, et l'URL ne peut plus retomber sur `NAT-FR` quand la maille du
+territoire courant n'est pas applicable au chantier.
 
 **D3 — `NEXT_PUBLIC_FF_HISTORIQUE_ALBERT` ne pilote plus que l'affichage de l'historique.**
 La persistance des conversations devient inconditionnelle. Le libellé admin du flag dit
@@ -213,97 +228,54 @@ chaque tour) est désormais payé par tous ; à la volumétrie cible qu'elle doc
 
 ## 2. Liens internes vers les chantiers (PIL-1693)
 
-### 2.1 Whitelist des chantiers cités
-
-Une fonction pure `extractCitedChantiers(messages: PiloteUIMessage[])` parcourt les
-`parts` typées de la conversation et retourne une `Map<string, CitedChantier>` :
-
-```ts
-type CitedChantier = {
-  id: string;
-  nom: string;
-  maillesApplicables?: $Enums.Maille[];
-};
-```
-
-⚠️ Deux types `Maille` coexistent dans le repo et ne portent pas les mêmes valeurs :
-`$Enums.Maille` de Prisma (`NAT` | `REG` | `DEPT`, `schema.prisma:15`) et le `Maille`
-client de `Maille.interface.ts` (`nationale` | `regionale` | `departementale`). C'est le
-premier qui est attendu ici — `mailles_applicables` remonte les codes `NAT`/`REG`/`DEPT`,
-comme le documente `systemPrompt.ts:321`. `GetChantiersQuery` le type aujourd'hui en
-`string[]` (`:10`) ; on resserre sur `$Enums.Maille[]` côté `CitedChantier`, conformément à
-la consigne « utiliser `$Enums` de `@prisma` » du CLAUDE.md.
-
-Sources exploitées, toutes déjà typées via `PiloteUITools` :
-
-| Part | Chemin | `maillesApplicables` |
-|---|---|---|
-| `tool-get_chantiers` | `output.resultats[].chantiers[].chantier` | oui |
-| `tool-search_chantiers` | `output.chantiers[]` | non |
-| `tool-search_indicateurs` | `output.indicateurs[].chantier` | non |
-
-Seules les parts en `state === "output-available"` sont lues.
-
-La whitelist est **cumulative sur toute la conversation**, pas par message : Albert cite
-régulièrement au tour N un chantier résolu au tour N−1. Elle est calculée dans `ChatUI`
-avec un `useMemo` sur `messages` et exposée via un contexte dédié,
-`ChantierLinksContext`. Elle ne passe pas par `ChatContext` : celui-ci porte l'état de
-saisie et de flux (`sendMessage`, `status`, `stop`), auquel les liens n'ont rien à voir.
-
-### 2.2 Construction de l'URL
+### 2.1 Construction de l'URL
 
 La destination est `/chantier/{id}/{territoireCode}?jalon={jalon}` — route existante
 (`pages/chantier/[id]/[territoireCode].tsx`), `jalon` étant lu par
 `loadChantierDetailSearchParams`. **L'identifiant utilisé est toujours l'identifiant
-canonique du tool-output**, jamais la chaîne écrite par le modèle.
+canonique** (`CH-` suivi des chiffres capturés), jamais la chaîne exacte écrite par le
+modèle, dont la casse et le tiret varient.
 
 `territoireCode` et `jalon` proviennent de l'`agentContext` de la conversation — le
 contexte que l'utilisateur avait en tête en posant sa question, déjà transporté vers l'API
 et persisté dans `contexte` (ADR 0008). C'est le sens du « territoire et jalon cohérents
-avec la conversation » du ticket.
+avec la conversation » du ticket. À défaut de territoire dans le contexte, l'URL vise
+`NAT-FR`.
 
-Un garde-fou : `mailles_applicables` indique à quelles mailles un chantier est piloté. Le
-préfixe d'un `territoireCode` est précisément l'un de ces codes — `NAT-FR`, `REG-11`,
-`DEPT-75` —, donc la vérification se réduit à comparer le segment avant le premier tiret,
-comme le fait déjà `territoireCodeVersMailleCodeInsee` (`server/utils/territoires.ts:5`).
-Si le territoire de la conversation n'est pas d'une maille applicable au chantier, l'URL
-retombe sur `NAT-FR`. Quand l'information est inconnue
-(chantier venu de `search_chantiers`, qui ne remonte que `{ id, nom }`), on garde le
-territoire de la conversation — la page ne casse pas dans ce cas, elle affiche simplement
-des données vides, et le sélecteur de territoire y reste disponible.
+`buildChantierUrl` ne dépendant que de l'`agentContext`, les options de linkification sont
+mémorisées sur la seule conversation et non sur `messages` : elles ne sont pas recalculées
+à chaque jeton pendant le streaming.
 
-### 2.3 Plugin remark
+### 2.2 Plugin remark
 
-Un plugin `remarkChantierLinks({ chantiers, buildUrl })` parcourt l'arbre mdast et
-remplace, dans les nœuds `text` uniquement, les occurrences reconnues par des nœuds `link`.
-Travailler à l'AST écarte gratuitement les cas que la réécriture de chaîne ferait rater :
-les blocs de code (`code`, `inlineCode` ne sont pas de type `text`), les liens existants
-(on ne descend pas dans un nœud `link`), et l'échappement du nom du chantier s'il contient
-`[`, `]` ou `(`.
+Un plugin `remarkChantierLinks({ buildUrl })` parcourt l'arbre mdast et remplace, dans les
+nœuds `text` uniquement, chaque identifiant reconnu par un nœud `link`. Travailler à l'AST
+écarte gratuitement les cas que la réécriture de chaîne ferait rater : les blocs de code
+(`code` et `inlineCode` ne sont pas de type `text`) et les liens existants (on ne descend
+pas dans un nœud `link`).
 
-Reconnaissance, dans cet ordre :
+Le lien couvre l'identifiant seul, pas le libellé qui le suit : sans whitelist, aucune
+source ne permet de vérifier qu'un texte suivant est bien le nom du chantier.
 
-1. **Libellé complet** — `CH-050 — Nom du chantier`, retenu si le nom qui suit correspond
-   au nom du chantier remonté par le tool. Le lien couvre alors tout le libellé.
-2. **Identifiant seul** — repli quand le nom ne suit pas ou ne correspond pas. Le lien ne
-   couvre que `CH-050`.
-
-Trois tolérances, parce qu'un modèle openweight n'est pas fiable sur la forme exacte :
-l'identifiant est reconnu **sans tenir compte de la casse** (`CH-050`, `Ch-050`), et le
-tiret — aussi bien **à l'intérieur de l'identifiant** que comme **séparateur** devant le
-nom — accepte toute la famille Unicode (`-`, `‐`, `‑`, `‒`, `–`, `—`, `−`). Ce dernier
+Deux tolérances, parce qu'un modèle openweight n'est pas fiable sur la forme exacte :
+l'identifiant est reconnu **sans tenir compte de la casse** (`CH-050`, `Ch-050`) et avec
+n'importe quel tiret de la famille Unicode (`-`, `‐`, `‑`, `‒`, `–`, `—`, `−`). Ce dernier
 point n'est pas théorique : sur une réponse réelle, le modèle écrit `CH‑173` avec un
-NON-BREAKING HYPHEN (U+2011) et une espace fine insécable (U+202F) devant le tiret
-cadratin. Avec le seul trait d'union ASCII, aucun lien n'était produit. Le texte affiché
-conserve la graphie du modèle ; seule l'URL utilise l'identifiant canonique.
+NON-BREAKING HYPHEN (U+2011). Avec le seul trait d'union ASCII, aucun lien n'était produit.
+Le texte affiché conserve la graphie du modèle ; seule l'URL utilise l'identifiant
+canonique.
 
-**Pas de nouvelle dépendance.** `unist-util-visit` et `@types/mdast` ne sont pas résolvables
-depuis l'application (pnpm strict n'expose que `remark-gfm`), et les faire entrer comme
-dépendances directes pour une vingtaine de lignes n'en vaut pas le prix. Le plugin fait sa
-propre descente récursive sur `children`, avec un type mdast minimal déclaré localement
-pour les seuls nœuds manipulés (`text`, `link`, et les nœuds parents).
+Les options sont exposées via un contexte dédié, `ChantierLinksContext`, et non via
+`ChatContext` : celui-ci porte l'état de saisie et de flux (`sendMessage`, `status`,
+`stop`), auquel les liens n'ont rien à voir.
 
-### 2.4 Interception du clic
+**Aucune nouvelle dépendance.** `unist-util-visit` et `@types/mdast` ne sont pas
+résolvables depuis l'application (pnpm strict n'expose que `remark-gfm`), et les faire
+entrer comme dépendances directes pour une vingtaine de lignes n'en vaut pas le prix. Le
+plugin fait sa propre descente récursive sur `children`, avec un type mdast minimal déclaré
+localement pour les seuls nœuds manipulés (`text`, `link`, et les nœuds parents).
+
+### 2.3 Interception du clic
 
 `AssistantMessageText` fournit à `ReactMarkdown` un `components.a` personnalisé. Pour un
 `href` interne (commençant par `/`), il rend un lien qui, au clic, appelle `minimize()`
@@ -326,7 +298,6 @@ nouvel onglet » continuent de fonctionner, et seul le clic simple est intercept
 | `client/components/_commons/ChatUI/AlbertConversationProvider.tsx` | Provider : instance `Chat`, état d'affichage, sessionStorage |
 | `client/components/_commons/ChatUI/AlbertOverlay.tsx` | Rendu modale ou dock selon l'affichage |
 | `client/components/_commons/ChatUI/AlbertDock.tsx` | Composant minimisé bas-droite |
-| `client/components/_commons/ChatUI/extractCitedChantiers.ts` | Whitelist depuis les tool-outputs |
 | `client/components/_commons/ChatUI/remarkChantierLinks.ts` | Plugin remark de linkification |
 | `client/components/_commons/ChatUI/buildChantierUrl.ts` | URL depuis id canonique + agentContext |
 | `client/components/_commons/ChatUI/createAlbertConversation.ts` | Fabrique l'instance `Chat` et son corps de requête |
@@ -337,7 +308,7 @@ nouvel onglet » continuent de fonctionner, et seul le clic simple est intercept
 
 | Fichier | Modification |
 |---|---|
-| `ChatUI.tsx` | L'instance `Chat` devient une prop ; calcul de la whitelist ; `onModelChange` mute `requestBody` |
+| `ChatUI.tsx` | L'instance `Chat` devient une prop ; options de linkification ; `onModelChange` mute `requestBody` |
 | `ModalePleinEcran.tsx` | Prop `onMinimize` ; Échap et clic extérieur réduisent |
 | `AssistantMessageText.tsx` | Plugin remark + `components.a` |
 | `BoutonSyntheseTerritoire.tsx` | Réduit à un déclencheur appelant `open()` ; le flag ne pilote plus que le drawer |
@@ -349,19 +320,11 @@ nouvel onglet » continuent de fonctionner, et seul le clic simple est intercept
 **Unitaires (`--project client`)** — le cœur de la logique est fait de fonctions pures,
 testables sans rendu :
 
-- `extractCitedChantiers` : un `get_chantiers`, un `search_chantiers`, plusieurs tours
-  cumulés, parts en erreur ou sans output, doublons entre tours.
-- `remarkChantierLinks` : libellé complet reconnu, repli sur l'identifiant seul, casse et
-  séparateurs alternatifs, identifiant absent de la whitelist laissé en texte, occurrence
-  dans un bloc de code ignorée, nom contenant des caractères markdown.
-- `buildChantierUrl` : territoire et jalon de la conversation, repli `NAT-FR` sur
-  maille non applicable, `maillesApplicables` inconnu.
-
-Ces cas couvrent le minimum exigé par PIL-1693 — un chantier valide, plusieurs chantiers,
-un identifiant invalide, un chantier non autorisé — ce dernier étant couvert par
-construction : un chantier hors habilitation n'apparaît dans aucun tool-output, donc
-jamais dans la whitelist.
-
+- `remarkChantierLinks` : identifiant transformé en lien, libellé qui suit laissé hors du
+  lien, casse et tirets Unicode, plusieurs chantiers dans une phrase, nœuds imbriqués,
+  code inline et liens existants préservés, texte sans identifiant laissé intact.
+- `buildChantierUrl` : territoire et jalon de la conversation, repli `NAT-FR` sans
+  territoire de contexte, jalon absent.
 - `minimizedConversationStorage` : aller-retour d'écriture/lecture, absence, contenu
   invalide nettoyé.
 
@@ -376,8 +339,8 @@ relèvent d'une vérification manuelle.
 - Le bouton d'ouverture d'Albert reste sur les pages d'accueil. Hors accueil, seul le dock
   est visible, et uniquement s'il existe une conversation.
 - Les liens vers les indicateurs, territoires ou autres objets : le ticket cadre le premier
-  cas sur les chantiers. La whitelist et le plugin sont paramétrés pour être étendus, mais
-  aucune autre entité n'est traitée ici.
+  cas sur les chantiers. Le plugin est paramétré pour être étendu, mais aucune autre
+  entité n'est traitée ici.
 - Le drawer d'historique reste derrière son feature flag, inchangé.
 - Aucun changement de schéma de base ni de migration.
 
@@ -393,12 +356,11 @@ tension directe avec le critère « restaurer puis minimiser plusieurs fois ne d
 conversation ni les messages ».
 
 **Réécrire la chaîne markdown avant `ReactMarkdown`** (la piste notée sur PIL-1693).
-Linkifierait aussi à l'intérieur des blocs de code et des liens existants, et demanderait
-d'échapper à la main les noms de chantiers contenant des caractères markdown.
+Linkifierait aussi à l'intérieur des blocs de code et des liens existants, là où l'AST
+les écarte sans effort.
 
-**Transformer le texte côté serveur, dans le flux.** Le serveur devrait rejouer
-l'historique des tool-outputs pour reconstituer la whitelist, et on perdrait la main sur le
-clic — or il faut minimiser avant de naviguer.
+**Transformer le texte côté serveur, dans le flux.** On perdrait la main sur le clic — or
+il faut minimiser la conversation avant de naviguer, ce qui est un comportement client.
 
 **Stocker les messages en sessionStorage.** Survivrait au rechargement sans dépendre de la
 base, mais dupliquerait la source de vérité et déposerait des données métier dans le
@@ -406,10 +368,16 @@ navigateur, alors que la persistance serveur existe déjà.
 
 ## 7. Risques et limites connues
 
-- **Le libellé complet dépend du respect du format par le modèle.** Le system prompt impose
-  `**CH-XXX — Nom du chantier**`, mais un modèle openweight ne s'y tient pas
-  systématiquement. Le repli sur l'identifiant seul couvre le cas ; la zone cliquable varie
-  donc d'une réponse à l'autre.
+- **Un lien peut mener à un 404.** Sans whitelist, un identifiant halluciné par le modèle
+  produit un lien cliquable qui aboutit à la page « non trouvé ». C'est le compromis assumé
+  par D2 : le coût est une navigation infructueuse, jamais une fuite de données ni une
+  erreur serveur.
+- **Le lien ne couvre que l'identifiant**, pas le libellé qui le suit. La zone cliquable est
+  donc étroite, et le libellé du lien n'est pas compréhensible hors contexte — le critère
+  d'acceptation correspondant de PIL-1693 n'est pas satisfait.
+- **L'URL ne tient plus compte de `mailles_applicables`.** Si le territoire de la
+  conversation n'est pas une maille de pilotage du chantier, la fiche s'ouvre avec des
+  données vides ; le sélecteur de territoire y reste disponible.
 - **La persistance en fin de tour** laisse le tour en cours hors de portée d'un
   rechargement (§1.4).
 - **La persistance devient inconditionnelle**, avec le coût d'écriture que l'ADR 0008
