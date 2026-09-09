@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { toast } from "sonner";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicator";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
@@ -8,17 +7,20 @@ import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRappor
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
-import { Icone } from "@/components/_commons/Icone";
-import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { LastResponseActions } from "@/components/_commons/ChatUI/LastResponseActions";
 
 const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
 
 export const AssistantMessage = memo(function AssistantMessage({
   message,
   isStreaming,
+  isLastAssistantMessage,
+  conversationId,
 }: {
   message: PiloteUIMessage;
   isStreaming: boolean;
+  isLastAssistantMessage: boolean;
+  conversationId: string;
 }) {
   const shouldHideText = message.parts?.some((part) => {
     const toolName = part.type.startsWith("tool-") ? part.type.slice(5) : null;
@@ -34,19 +36,21 @@ export const AssistantMessage = memo(function AssistantMessage({
     (part) => part.type === "text" && part.text.trim().length > 0,
   );
 
-  const lastTextIndex =
-    message.parts?.reduce<number>(
-      (acc, part, index) => (part.type === "text" ? index : acc),
-      -1,
-    ) ?? -1;
-
   const lastPart = message.parts?.[message.parts.length - 1];
   const isTextStreaming = lastPart?.type === "text";
   const hasStreamingText = isTextStreaming && lastPart.text !== "";
   const showLoader = isStreaming && isTextStreaming && !hasStreamingText;
 
   return (
-    <div className="text-sm text-gray-900 w-full">
+    <div className="text-sm text-gray-900 w-full relative group/message">
+      {isLastAssistantMessage && hasText && !isStreaming && (
+        <LastResponseActions
+          texte={extractMessageText(message)}
+          conversationId={conversationId}
+          messageId={message.id}
+        />
+      )}
+
       <div className="max-w-3xl mx-auto">
         {message.parts?.map((part, index) => {
           if (
@@ -69,26 +73,8 @@ export const AssistantMessage = memo(function AssistantMessage({
         if (part.type === "text") {
           if (shouldHideText) return null;
           return (
-            <div key={index} className="max-w-3xl mx-auto relative group/text">
+            <div key={index} className="max-w-3xl mx-auto">
               <AssistantMessageText text={part.text} />
-              {!isStreaming && index === lastTextIndex && hasText && (
-                <button
-                  className="absolute top-1 right-1 p-1 rounded bg-white/80 text-gray-500 hover:text-gray-800 hover:bg-gray-100 border border-gray-200 opacity-0 group-hover/text:opacity-100 transition-opacity"
-                  onClick={() => {
-                    navigator.clipboard
-                      .writeText(extractMessageText(message))
-                      .then(() => {
-                        toast.success("Texte copié dans le presse-papiers", {
-                          duration: 3000,
-                        });
-                      });
-                  }}
-                  title="Copier dans le presse-papiers"
-                  type="button"
-                >
-                  <Icone className="w-4 h-4" icone={ClipboardIcon} />
-                </button>
-              )}
             </div>
           );
         }
