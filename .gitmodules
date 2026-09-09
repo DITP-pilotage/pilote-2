@@ -1,3 +1,0 @@
-[submodule "src/content"]
-	path = apps/pilote-ppg/src/content
-	url = git@github.com:DITP-pilotage/centre-aide-pilote-2.git

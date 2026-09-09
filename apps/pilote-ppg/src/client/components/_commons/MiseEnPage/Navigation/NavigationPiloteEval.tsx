@@ -70,14 +70,6 @@ export const NavigationPiloteEval = () => {
           prefetch: true,
           target: "_self",
         },
-        {
-          nom: "Centre d'aide",
-          lien: "/centre-aide-pilote-2/centre-aide-eval",
-          matcher: "/centre-aide-pilote-2/centre-aide-eval",
-          accessible: droitsPiloteEval?.peutAccederPilotage ?? false,
-          prefetch: false,
-          target: "_blank",
-        },
       ]}
     />
   );

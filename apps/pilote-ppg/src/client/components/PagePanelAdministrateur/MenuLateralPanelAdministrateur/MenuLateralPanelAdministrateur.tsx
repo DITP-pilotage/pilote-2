@@ -22,7 +22,6 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
 > = ({ pageActive }) => {
   const [estReplie, setEstReplie] = useState(false);
   const ffGestionTokenAPI = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
-  const ffCentreAide = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN");
 
   const menuItems = useMemo<MenuItem[]>(() => {
     const gestionTokenItem: MenuItem[] = ffGestionTokenAPI
@@ -32,17 +31,6 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
             label: "Token API",
             href: "/panel-administrateur/gestion-token-api",
             pageKey: "gestion-token-api",
-          },
-        ]
-      : [];
-
-    const centreAideItem: MenuItem[] = ffCentreAide
-      ? [
-          {
-            type: "item",
-            label: "Centre d'aide",
-            href: "/panel-administrateur/centre-aide",
-            pageKey: "centre-aide",
           },
         ]
       : [];
@@ -129,7 +117,12 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         href: "/panel-administrateur/nouveaute",
         pageKey: "nouveaute",
       },
-      ...centreAideItem,
+      {
+        type: "item",
+        label: "Centre d'aide",
+        href: "/panel-administrateur/centre-aide",
+        pageKey: "centre-aide",
+      },
       {
         type: "item",
         label: "Albert",
@@ -149,7 +142,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         pageKey: "logs",
       },
     ];
-  }, [ffGestionTokenAPI, ffCentreAide]);
+  }, [ffGestionTokenAPI]);
 
   return (
     <nav

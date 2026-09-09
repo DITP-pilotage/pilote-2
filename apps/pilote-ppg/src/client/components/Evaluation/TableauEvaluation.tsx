@@ -3,7 +3,6 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
 import { ComponentProps, memo, useCallback, useEffect } from "react";
-import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
 import {
   Critere,
@@ -185,17 +184,6 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                       Les options de <strong>filtrage</strong> vous permettent
                       d'adapter la vue. Vous pouvez les utiliser pour travailler
                       par territoire ou par item, selon votre préférence.
-                    </p>
-
-                    <p className="!mb-0">
-                      Pour plus de détails, consultez le{" "}
-                      <Link
-                        href="/centre-aide-pilote-2/centre-aide-eval"
-                        target="_blank"
-                      >
-                        centre d'aide
-                      </Link>
-                      .
                     </p>
                   </div>
                 </Disclosure>

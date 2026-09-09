@@ -159,24 +159,6 @@ const config = convict({
     doc: "URL de la db sur laquelle copier les données de prod",
     env: "CONN_STR_DEST",
   },
-  centreaide: {
-    githubFolder: {
-      format: String,
-      doc: "Dossier du centre d aide à récupérer",
-      default: "integration-pilote",
-      env: "CENTREAIDE_GITHUB_FOLDER",
-    },
-    githubToken: {
-      format: String,
-      default: "ToBeDefined",
-      env: "CENTREAIDE_GITHUB_TOKEN",
-    },
-    assetsFolder: {
-      format: String,
-      default: "ToBeDefined",
-      env: "CENTREAIDE_ASSETS_FOLDER",
-    },
-  },
   featureFlip: {
     nouvellePageAccueil: {
       format: Boolean,
@@ -357,21 +339,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
-    },
-    centreAideAdmin: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN",
-    },
-    centreAidePilote: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE",
-    },
-    ancienCentreAide: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_ANCIEN_CENTRE_AIDE",
     },
     accesPilote: {
       format: Boolean,
