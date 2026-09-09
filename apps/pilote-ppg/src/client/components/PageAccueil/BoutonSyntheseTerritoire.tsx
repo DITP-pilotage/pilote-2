@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
+import {
+  creerConversationAlbert,
+  type ConversationAlbert,
+} from "@/components/_commons/ChatUI/creerConversationAlbert";
 import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
 import Loader from "@/components/_commons/Loader/Loader";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
@@ -53,6 +57,26 @@ export const BoutonSyntheseTerritoire = ({
 
   const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
 
+  const conversationRef = useRef<{
+    id: string;
+    valeur: ConversationAlbert;
+  } | null>(null);
+  if (conversationPrete && conversationRef.current?.id !== conversation.id) {
+    conversationRef.current = {
+      id: conversation.id,
+      valeur: creerConversationAlbert({
+        id: conversation.id,
+        agentContext: {
+          jalon,
+          territoireCode,
+          instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
+        },
+        messages: conversationChargee?.messages,
+        onFinish: ffHistorique ? rafraichirHistorique : undefined,
+      }),
+    };
+  }
+
   return (
     <>
       <button
@@ -78,22 +102,14 @@ export const BoutonSyntheseTerritoire = ({
               />
             ) : null}
             <div className="flex-1 relative">
-              {conversationPrete ? (
+              {conversationPrete && conversationRef.current ? (
                 <ChatUI
                   key={conversation.id}
-                  chatId={conversation.id}
-                  initialMessages={conversationChargee?.messages}
-                  onChatFinish={ffHistorique ? rafraichirHistorique : undefined}
-                  endpoint="/api/albert/chat"
+                  conversation={conversationRef.current.valeur}
                   className="h-full"
                   placeholder="Posez une question sur ce territoire..."
                   scenarios={scenarios}
                   showExperimentationBanner
-                  agentContext={{
-                    jalon,
-                    territoireCode,
-                    instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
-                  }}
                 />
               ) : (
                 <Loader />

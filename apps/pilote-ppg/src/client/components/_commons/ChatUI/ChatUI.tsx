@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Chat, useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { useChat } from "@ai-sdk/react";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
+import type { ConversationAlbert } from "@/components/_commons/ChatUI/creerConversationAlbert";
 import { clsxm } from "@/utils/clsxm";
 import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
 import { UserMessage } from "@/components/_commons/ChatUI/UserMessage";
@@ -23,24 +23,16 @@ import type {
 export type { ChatScenario, ChatScenarioGroup, ChatScenarios };
 
 export const ChatUI = ({
-  endpoint,
+  conversation,
   placeholder = "Posez votre question...",
   className = "h-[calc(100vh-200px)]",
   scenarios,
-  agentContext,
-  chatId,
-  initialMessages,
-  onChatFinish,
   showExperimentationBanner = false,
 }: {
-  endpoint: string;
+  conversation: ConversationAlbert;
   placeholder?: string;
   className?: string;
   scenarios?: ChatScenarios;
-  agentContext?: Record<string, unknown>;
-  chatId?: string;
-  initialMessages?: PiloteUIMessage[];
-  onChatFinish?: () => void;
   showExperimentationBanner?: boolean;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -48,30 +40,10 @@ export const ChatUI = ({
   const userHasScrolledRef = useRef(false);
   const prevMessageCountRef = useRef(0);
   const fillInputRef = useRef<((text: string) => void) | null>(null);
-  const bodyRef = useRef<{
-    agentContext?: Record<string, unknown>;
-    model: AlbertModel;
-  }>({
-    ...(agentContext ? { agentContext } : {}),
-    model: "openweight-large",
-  });
-  const onChatFinishRef = useRef(onChatFinish);
-  onChatFinishRef.current = onChatFinish;
-  const chatRef = useRef(
-    new Chat<PiloteUIMessage>({
-      ...(chatId ? { id: chatId } : {}),
-      ...(initialMessages ? { messages: initialMessages } : {}),
-      transport: new DefaultChatTransport<PiloteUIMessage>({
-        api: endpoint,
-        body: bodyRef.current,
-      }),
-      onFinish: () => onChatFinishRef.current?.(),
-    }),
-  );
 
   const { messages, sendMessage, status, error, stop } =
     useChat<PiloteUIMessage>({
-      chat: chatRef.current,
+      chat: conversation.chat,
       experimental_throttle: 250,
     });
 
@@ -111,9 +83,12 @@ export const ChatUI = ({
     fillInputRef.current?.(text);
   }, []);
 
-  const handleModelChange = useCallback((model: AlbertModel) => {
-    bodyRef.current.model = model;
-  }, []);
+  const handleModelChange = useCallback(
+    (model: AlbertModel) => {
+      conversation.corpsRequete.model = model;
+    },
+    [conversation],
+  );
 
   const choicesPanelData = useMemo(() => {
     if (status !== "ready" || messages.length === 0) return null;
@@ -204,7 +179,7 @@ export const ChatUI = ({
         )}
 
         {messages.length > 0 && status === "ready" && (
-          <FeedbackBar chatId={chatRef.current.id} />
+          <FeedbackBar chatId={conversation.chat.id} />
         )}
 
         <ChatInputForm
