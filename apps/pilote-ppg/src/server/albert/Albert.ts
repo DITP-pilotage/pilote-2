@@ -106,6 +106,46 @@ export class Albert {
     return result.output;
   }
 
+  /**
+   * Pendant non streamé de `streamText` : mêmes modèle, température et
+   * `stopWhen`, même écriture dans `llm_calls`. Renvoie le résultat complet,
+   * `steps` compris — ce que le flux ne permet pas d'inspecter.
+   *
+   * `generateText` de `ai` n'expose pas de `onFinish`, la persistance se fait
+   * donc après l'attente. `finalStep.usage` porte la même sémantique que dans
+   * l'évènement de `streamText`.
+   */
+  static async generateText({
+    chatId,
+    prompt,
+    systemPrompt,
+    userId,
+    tools,
+    model = DEFAULT_MODEL,
+  }: {
+    chatId: string;
+    prompt: string;
+    systemPrompt: string;
+    userId: string;
+    tools?: ToolSet;
+    model?: string;
+  }) {
+    const albertProvider = this.createProvider();
+
+    const result = await generateText({
+      model: withOptionalDevTools(albertProvider.chat(model)),
+      system: systemPrompt,
+      prompt,
+      tools,
+      stopWhen: stepCountIs(50),
+      temperature: TEMPERATURE_STREAM_TEXT,
+    });
+
+    await Albert.saveLlmCall({ chatId, userId, event: result, model });
+
+    return result;
+  }
+
   static async streamText({
     chatId,
     messages,
