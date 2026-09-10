@@ -1,10 +1,11 @@
 import { evalite } from "evalite";
 import { toolCallAccuracy } from "evalite/scorers";
 import {
-  chargerHabilitationsCompletes,
-  jouerTourAgent,
-  type ToolCallObserve,
-} from "./harnaisAlbert";
+  runAgentTurn,
+  type AgentTurn,
+  type ObservedToolCall,
+} from "./agentTurn";
+import { withEvalWorld } from "./world";
 
 /**
  * SPIKE — volet 2/3 : selection d'outils, boucle complete sur la base de dev.
@@ -19,13 +20,7 @@ type CasOutil = {
   motif: string;
 };
 
-type SortieAgent = {
-  toolCalls: ToolCallObserve[];
-  texte: string;
-  nbEtapes: number;
-};
-
-const CAS: { input: CasOutil; expected: ToolCallObserve[] }[] = [
+const CAS: { input: CasOutil; expected: ObservedToolCall[] }[] = [
   {
     input: {
       question: "Quel est le taux d'avancement de la région Bretagne ?",
@@ -85,19 +80,10 @@ const CAS: { input: CasOutil; expected: ToolCallObserve[] }[] = [
   },
 ];
 
-evalite<CasOutil, SortieAgent, ToolCallObserve[]>("Sélection des outils", {
+evalite<CasOutil, AgentTurn, ObservedToolCall[]>("Sélection des outils", {
   data: () => CAS,
-  task: async (input) => {
-    const { chantiersAccessibles, territoiresAccessibles } =
-      await chargerHabilitationsCompletes();
-
-    const { toolCalls, texte, nbEtapes } = await jouerTourAgent({
-      question: input.question,
-      chantiersAccessibles,
-      territoiresAccessibles,
-    });
-    return { toolCalls, texte, nbEtapes };
-  },
+  task: async (input) =>
+    withEvalWorld((world) => runAgentTurn({ question: input.question, world })),
 
   // Mesure du spike : sur des runs successifs du MEME dataset, le score global
   // est passe de 100 % a 68 %. La selection d'outils n'est pas stable d'un tour
@@ -148,6 +134,6 @@ evalite<CasOutil, SortieAgent, ToolCallObserve[]>("Sélection des outils", {
       label: "Attendu",
       value: (expected ?? []).map((appel) => appel.toolName).join(", ") || "—",
     },
-    { label: "Ét.", value: String(output.nbEtapes) },
+    { label: "Ét.", value: String(output.stepCount) },
   ],
 });

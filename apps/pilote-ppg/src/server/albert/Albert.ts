@@ -14,7 +14,7 @@ import { Prisma } from "@prisma/client";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { z } from "zod";
 import { configuration } from "@/config";
-import { prisma } from "@/server/db/prisma";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   if (!configuration().albert.devTools) {
@@ -67,7 +67,10 @@ export class Albert {
     };
     const usage = évènement?.finalStep?.usage ?? évènement?.usage;
 
-    await prisma.llm_calls.create({
+    // `getPrisma()` et non le client global : sans ça, l'écriture sort de la
+    // transaction ambiante quand il y en a une. En production il n'y en a pas,
+    // le comportement est donc inchangé.
+    await getPrisma().llm_calls.create({
       data: {
         chat_id: chatId,
         model,
