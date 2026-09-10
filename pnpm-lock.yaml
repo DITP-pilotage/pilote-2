@@ -57,8 +57,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@19.2.8)
       '@hono/node-server':
-        specifier: '>=1.19.15 <2'
-        version: 1.19.17(hono@4.13.5)
+        specifier: 2.1.1
+        version: 2.1.1(hono@4.13.5)
       '@hono/zod-validator':
         specifier: ^0.9.0
         version: 0.9.0(hono@4.13.5)(zod@4.4.3)
@@ -1820,6 +1820,12 @@ packages:
   '@hono/node-server@1.19.17':
     resolution: {integrity: sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ==}
     engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: '>=4.12.34 <5'
+
+  '@hono/node-server@2.1.1':
+    resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
+    engines: {node: '>=20'}
     peerDependencies:
       hono: '>=4.12.34 <5'
 
@@ -10586,6 +10592,10 @@ snapshots:
       hono: 4.13.1
 
   '@hono/node-server@1.19.17(hono@4.13.5)':
+    dependencies:
+      hono: 4.13.5
+
+  '@hono/node-server@2.1.1(hono@4.13.5)':
     dependencies:
       hono: 4.13.5
 
