@@ -134,7 +134,7 @@
     "sharp": "^0.35.3",
     "sonner": "^2.0.8",
     "superjson": "^2.2.6",
-    "swagger-ui-react": "5.32.1",
+    "swagger-ui-react": "5.32.14",
     "tailwind-merge": "^3.6.0",
     "tsx": "^4.23.12",
     "ws": "8.21.0",
