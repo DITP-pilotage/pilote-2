@@ -457,6 +457,119 @@ Le mécanisme décrit au 2026-08-25 est maintenant observé en entier, sur un se
 Le mensonge est recréé par le moteur lui-même, immédiatement après avoir été réparé. Tant que
 l'override global `<2` coexiste avec le chemin « major », le cycle se répète à chaque campagne.
 
+### Second passage du 2026-09-10 — 15 overrides, après extension du périmètre à ppg
+
+Rejoué après l'élargissement du moteur à tout le monorepo et les bumps de ppg. Protocole
+inchangé : retrait de l'override, install, **re-résolution forcée**, observation.
+
+| Override | Verdict | Sans lui |
+|---|---|---|
+| `@hono/node-server: >=1.19.15 <2` | **PORTEUR** | 2.1.1 et 1.19.17 |
+| `js-yaml@>=4 <5: >=4.3.2 <5` | **PORTEUR** | 4.3.1 apparaît — **sous l'advisory** |
+| `deepmerge-ts: >=8.0.0 <9` | **PORTEUR** | 7.1.5 |
+| `hono: >=4.13.5 <5` | inerte | 4.13.5 |
+| `postcss: >=8.5.23 <9` | inerte | 8.5.26 et 8.5.23 |
+| `sharp: >=0.35.4 <0.36` | inerte | 0.35.4 |
+| `brace-expansion@<2`, `@>=2 <3`, `@>=5 <6` | inerte | 1.1.18, 2.1.4, 5.0.9 |
+| `undici@>=7 <8: >=7.29.0 <8` | inerte | 7.29.0 et 8.10.0 |
+| `immutable@>=4 <5: >=4.3.9 <5` | inerte | 4.3.9 |
+| `js-yaml@<4: >=3.15.2 <4` | inerte | 3.15.2 |
+| `tar@>=7 <8: >=7.5.21 <8` | inerte | 7.5.22 |
+| `fast-uri@>=3 <4: >=3.1.6 <4` | inerte | 3.1.6 |
+| `eslint-plugin-sonarjs>typescript: 5.9.3` | inerte | absent de l'arbre |
+
+**Aucun n'est supprimé.** Les douze inertes le sont parce que la résolution naturelle est
+*aujourd'hui* au-dessus de leur plancher — pas parce que leur raison a disparu. Les retirer
+rouvrirait la porte au prochain rafraîchissement du lockfile. C'est la distinction que ce document
+martèle depuis le 2026-07-17 : « inerte » répond à *puis-je le retirer sans casser maintenant ?*,
+pas à *sa raison tient-elle encore ?*.
+
+Deux cas méritent d'être suivis nommément.
+
+**`@hono/node-server` reste porteur pour une mauvaise raison.** Sans lui la résolution donne 2.1.1,
+c'est-à-dire ce que les trois apps déclarent elles-mêmes. Il n'est donc porteur que parce qu'il
+combat les manifestes, pas parce qu'il retient une transitive. **Le mensonge de manifeste est
+toujours là** : les apps annoncent `2.1.1`, le lockfile installe `1.19.17`.
+
+**`immutable@>=4 <5` est devenu inerte pour une bonne raison, elle.** Voir ci-dessous.
+
+### 🟢 La condition de sortie d'`immutable` était remplie depuis juillet, sans que personne le voie
+
+Ce document affirmait les deux advisories high d'`immutable` non corrigeables, avec pour condition
+de sortie « que `swagger-ui-react` lâche immutable 3 ». **C'est fait depuis la 5.32.11, publiée le
+2026-07-22.**
+
+| Version de `swagger-ui-react` | `immutable` déclaré |
+|---|---|
+| `5.32.1` (celle qui était épinglée) | `^3.x.x` → **3.8.3**, ligne sans correctif |
+| `5.32.11` et suivantes | `^4.3.9` — exactement la version corrigée |
+| `5.32.15` | `^5.1.9` |
+
+Le dépôt a été monté en **5.32.14**, la plus récente qui franchit les 14 j de `minimumReleaseAge`.
+`immutable@3.8.3` a disparu de l'arbre.
+
+**Corrige aussi une croyance fausse de ce document** : `swagger-ui-react` est très maintenu, trois
+versions publiées en août et septembre 2026. Le paquet réellement abandonné de la chaîne est
+`react-immutable-proptypes`, dernier publié en 2022 — mais son peer sur `immutable` est **ouvert**
+(`>=3.6.2`), donc il ne bloque rien. C'était le pin exact de `swagger-ui-react` qui bloquait, pas
+l'écosystème.
+
+**Leçon générale** : une condition de sortie écrite n'est utile que si quelqu'un la teste. Celle-ci
+était vraie depuis sept semaines. Ajouter la vérification des conditions de sortie au banc d'essai
+mécanique, plutôt que de la laisser en prose, éviterait ce genre de dette dormante.
+
+### `xlsx` : les deux dernières high de kpilote, et ce qu'elles coûtent vraiment
+
+| | |
+|---|---|
+| Advisories | prototype pollution (`<0.19.3`) et ReDoS (`<0.20.2`), les deux **high** |
+| `patched_versions` | `<0.0.0` — aucune version npm ne les corrige |
+| Installé | `0.18.5`, la dernière publiée sur npm |
+
+SheetJS a quitté le registre npm : les versions corrigées n'existent que sur son propre CDN.
+
+**La surface d'usage est minuscule, et c'est ce qui rend la sortie abordable.** Un seul module de
+production charge la bibliothèque, en import **dynamique** :
+`apps/kpilote-webapp/src/components/import-valeurs/lecture/fichierVersMatrice.ts`. Il lit un fichier
+CSV ou Excel déposé par l'utilisateur et le rend en matrice de cellules brutes. Deux appels au
+total : `XLSX.read` et `XLSX.utils.sheet_to_json`. Les autres API (`write`, `book_new`,
+`aoa_to_sheet`, `book_append_sheet`) ne servent qu'à fabriquer les fixtures du test voisin.
+
+Trois sorties possibles, par coût croissant :
+
+1. **Épingler la distribution officielle du CDN**, ce que SheetJS documente :
+   `"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"` (URL vérifiée disponible le
+   2026-09-10). Ferme les deux advisories sans toucher au code. Coût : une dépendance hors registre,
+   donc hors `pnpm audit` et hors `minimumReleaseAge`.
+2. **Remplacer par une bibliothèque maintenue** sur le registre. La surface à couvrir est « lire un
+   classeur, rendre une matrice », donc le remplacement est circonscrit à un fichier.
+3. **Assumer le résiduel.** L'entrée est un fichier fourni par un utilisateur authentifié, et la
+   lecture est côté navigateur. À arbitrer, pas à supposer.
+
+C'est une décision produit, pas un bump : elle ne sera jamais prise par une campagne.
+
+### `mysql2` : advisory réelle, inatteignable, et durable
+
+`prisma` épingle `mysql2` à `3.15.3` **exact** ; les advisories exigent `>=3.22.0` et `>=3.23.1`.
+Le projet est en **PostgreSQL** avec `@prisma/adapter-pg` : Prisma embarque le driver MySQL sans
+jamais le charger. Sortie : que Prisma relève son épinglage. Un override `mysql2: ">=3.23.1 <4"`
+fermerait les deux lignes mais **n'a pas été passé au banc d'essai** — un pin exact en amont signale
+en général une contrainte de protocole.
+
+### Trajectoire de l'audit sur la campagne : 28 → 4
+
+| Étape | Advisories |
+|---|---|
+| Départ, sur `dev` | **28** (14 high, 14 moderate) |
+| Lot in-range | 18 |
+| Relèvement de six planchers d'overrides | 12 |
+| `vitest` 4.1.11 sur ppg et ppg-auth | 10 |
+| `csv-parse` 7, `@faker-js/faker` 10, alignement tiptap | 6 |
+| `swagger-ui-react` 5.32.14 | **4** (0 critical, 3 high, 1 moderate) |
+
+Les quatre restantes sont `xlsx` ×2 et `mysql2` ×2, toutes deux traitées ci-dessus. **Aucune n'est
+fermable par un bump.**
+
 ### Règles pour ajouter un override
 
 1. **Documenter la raison ici** (CVE, bug upstream, conflit de résolution), avec un lien vers l'issue/CVE.
