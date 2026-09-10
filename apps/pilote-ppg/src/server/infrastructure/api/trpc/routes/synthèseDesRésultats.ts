@@ -9,7 +9,7 @@ import {
   validationSyntheseAModifier,
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
-} from "validation/synthèseDesRésultats";
+} from "@/validation/synthèseDesRésultats";
 
 import { getContainer } from "@/server/dependances";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";

@@ -11,7 +11,7 @@ import {
   validationObjectifFormulaire,
   validationBrouillonObjectifAPublier,
   validationObjectifAModifier,
-} from "validation/objectif";
+} from "@/validation/objectif";
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
