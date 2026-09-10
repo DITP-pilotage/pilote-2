@@ -1,15 +1,19 @@
 import { $Enums } from "@prisma/client";
-import { getContainer } from "@/server/dependances";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { ImporterDonneesChantierCSVUseCase } from "@/server/infrastructure/import_csv/donnees_chantier/ImporterDonneesChantierCSVUseCase";
+import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
+import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
+import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
+import { ImporterDecisionsStrategiquesUseCase } from "@/server/decisions-strategiques/usecases/ImporterDecisionsStrategiquesUseCase";
+import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
+import { ImporterObjectifsUseCase } from "@/server/objectifs/usecases/ImporterObjectifsUseCase";
+import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
 
 const EMAIL_UTILISATEUR_IMPORT = "import.csv@modernisation.gouv.fr";
-
-function créerUseCase() {
-  return getContainer("importDonneesChantierCSV").resolve(
-    "importerDonneesChantierCSVUseCase",
-  );
-}
 
 async function créerChantierRattachéÀNatFr() {
   const chantier = await fixtures.chantierIdentite();
@@ -24,9 +28,40 @@ async function créerChantierRattachéÀNatFr() {
 }
 
 describe("ImporterDonneesChantierCSVUseCase", () => {
+  let useCase: ImporterDonneesChantierCSVUseCase;
+  const prismaPilote = new PrismaPilote();
+
+  beforeEach(() => {
+    useCase = new ImporterDonneesChantierCSVUseCase({
+      prisma: prismaPilote,
+      importerCommentairesUseCase: new ImporterCommentairesUseCase({
+        commentaireRepository: new CommentaireSQLRepository({
+          prisma: prismaPilote,
+        }),
+      }),
+      importerSynthesesDesResultatsUseCase:
+        new ImporterSynthesesDesResultatsUseCase({
+          synthèseDesRésultatsRepository: new SynthèseDesRésultatsSQLRepository(
+            { prisma: prismaPilote },
+          ),
+        }),
+      importerDecisionsStrategiquesUseCase:
+        new ImporterDecisionsStrategiquesUseCase({
+          décisionStratégiqueRepository: new DécisionStratégiqueSQLRepository({
+            prisma: prismaPilote,
+          }),
+        }),
+      importerObjectifsUseCase: new ImporterObjectifsUseCase({
+        objectifRepository: new ObjectifSQLRepository({
+          prisma: prismaPilote,
+        }),
+      }),
+    });
+  });
+
   it(
     "répartit les lignes d'un CSV vers les 4 domaines cibles",
-    createIntegrationTest(async (tx) => {
+    createIntegrationTest(async () => {
       // Given
       await fixtures.utilisateur({ email: EMAIL_UTILISATEUR_IMPORT });
       const chantier = await créerChantierRattachéÀNatFr();
@@ -75,7 +110,7 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
       ];
 
       // When
-      const résultat = await créerUseCase().execute(lignesBrutes);
+      const résultat = await useCase.execute(lignesBrutes);
 
       // Then
       expect(résultat).toEqual({
@@ -88,26 +123,28 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
         },
       });
 
-      const commentaires = await tx.commentaire.findMany({
+      const prisma = getPrisma();
+
+      const commentaires = await prisma.commentaire.findMany({
         where: { chantier_id: chantier.id },
       });
       expect(commentaires.map((commentaire) => commentaire.type)).toEqual([
         "freins_a_lever",
       ]);
 
-      const syntheses = await tx.synthese_des_resultats.findMany({
+      const syntheses = await prisma.synthese_des_resultats.findMany({
         where: { chantier_id: chantier.id },
       });
       expect(syntheses.map((synthese) => synthese.meteo)).toEqual(["SOLEIL"]);
 
-      const decisions = await tx.decision_strategique.findMany({
+      const decisions = await prisma.decision_strategique.findMany({
         where: { chantier_id: chantier.id },
       });
       expect(decisions.map((decision) => decision.type)).toEqual([
         "suivi_des_decisions",
       ]);
 
-      const objectifs = await tx.objectif.findMany({
+      const objectifs = await prisma.objectif.findMany({
         where: { chantier_id: chantier.id },
       });
       expect(objectifs.map((objectif) => objectif.type)).toEqual([
@@ -118,14 +155,14 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
 
   it(
     "attribue le commentaire à l'auteur correspondant à auteur_email",
-    createIntegrationTest(async (tx) => {
+    createIntegrationTest(async () => {
       // Given
       await fixtures.utilisateur({ email: EMAIL_UTILISATEUR_IMPORT });
       const chantier = await créerChantierRattachéÀNatFr();
       const auteur = await fixtures.utilisateur();
 
       // When
-      await créerUseCase().execute([
+      await useCase.execute([
         {
           chantier_id: chantier.id,
           type: "commentaires_sur_les_donnees",
@@ -139,7 +176,7 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
       ]);
 
       // Then
-      const commentaires = await tx.commentaire.findMany({
+      const commentaires = await getPrisma().commentaire.findMany({
         where: { chantier_id: chantier.id },
       });
       expect(
@@ -150,7 +187,7 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
 
   it(
     "attribue à l'utilisateur système quand auteur_email est vide ou inconnu",
-    createIntegrationTest(async (tx) => {
+    createIntegrationTest(async () => {
       // Given
       const utilisateurImport = await fixtures.utilisateur({
         email: EMAIL_UTILISATEUR_IMPORT,
@@ -158,7 +195,7 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
       const chantier = await créerChantierRattachéÀNatFr();
 
       // When
-      await créerUseCase().execute([
+      await useCase.execute([
         {
           chantier_id: chantier.id,
           type: "commentaires_sur_les_donnees",
@@ -172,7 +209,7 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
       ]);
 
       // Then
-      const commentaires = await tx.commentaire.findMany({
+      const commentaires = await getPrisma().commentaire.findMany({
         where: { chantier_id: chantier.id },
       });
       expect(
@@ -183,13 +220,13 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
 
   it(
     "n'importe rien si une ligne est invalide (tout ou rien)",
-    createIntegrationTest(async (tx) => {
+    createIntegrationTest(async () => {
       // Given
       await fixtures.utilisateur({ email: EMAIL_UTILISATEUR_IMPORT });
       const chantier = await créerChantierRattachéÀNatFr();
 
       // When
-      const résultat = await créerUseCase().execute([
+      const résultat = await useCase.execute([
         {
           chantier_id: chantier.id,
           type: "commentaires_sur_les_donnees",
@@ -214,7 +251,7 @@ describe("ImporterDonneesChantierCSVUseCase", () => {
 
       // Then
       expect(résultat.succès).toEqual(false);
-      const commentaires = await tx.commentaire.findMany({
+      const commentaires = await getPrisma().commentaire.findMany({
         where: { chantier_id: chantier.id },
       });
       expect(commentaires).toEqual([]);
