@@ -18,7 +18,17 @@ export default defineConfig({
   viteConfig: {
     plugins: [tsconfigPaths()],
     ssr: { noExternal: ["next-auth"] },
+
+    // `globals` : integrationTestSetup utilise `beforeEach` / `afterAll` sans
+    // les importer. `fileParallelism` : son `beforeEach` TRUNCATE tout le
+    // schema, donc deux fichiers d'eval en parallele se videraient la base
+    // mutuellement — `maxConcurrency` ne couvre pas ce cas, il ne plafonne que
+    // les cas concurrents A L'INTERIEUR d'un fichier.
+    test: { globals: true, fileParallelism: false },
   },
+
+  // Charge apres `evalite/env-setup-file`, que le runner prefixe en dur.
+  setupFiles: ["./evals/setup.ts"],
 
   // Un tour d'agent Albert enchaine jusqu'a 50 etapes et plusieurs allers-retours
   // Prisma : les 30 s par defaut ne suffisent pas. Mesure sur le POC : les cas

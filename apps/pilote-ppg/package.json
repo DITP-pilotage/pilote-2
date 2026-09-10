@@ -40,9 +40,9 @@
     "database:init-force": "prisma migrate reset --force && prisma generate && prisma db seed",
     "database:migration": "prisma migrate dev",
     "lint:oxlint": "oxlint --type-aware src tests",
-    "eval": "evalite run",
-    "eval:dev": "evalite watch",
-    "eval:rapide": "evalite run evals/detecteurIntention.eval.ts"
+    "eval": "DOTENV_CONFIG_PATH=.env.test evalite run",
+    "eval:dev": "DOTENV_CONFIG_PATH=.env.test evalite watch",
+    "eval:rapide": "DOTENV_CONFIG_PATH=.env.test evalite run evals/detecteurIntention.eval.ts"
   },
   "browserslist": {
     "production": [
