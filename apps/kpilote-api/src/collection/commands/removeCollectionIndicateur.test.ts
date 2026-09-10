@@ -4,14 +4,14 @@ import { removeCollectionIndicateur } from '@/collection/commands/removeCollecti
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testCollectionNumericId, testIndicateurId } from '@/test/randomIds'
+import { testCollectionId, testIndicateurId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 describe.concurrent('removeCollectionIndicateur', () => {
   it(
     'retire le lien sans supprimer l’indicateur',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       const collection = await fixtures.collection({
         publicId,
@@ -31,7 +31,7 @@ describe.concurrent('removeCollectionIndicateur', () => {
   it(
     'reste idempotent sur un lien absent',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId })
       await fixtures.indicateur({ publicId: indicateurId })
@@ -48,7 +48,7 @@ describe.concurrent('removeCollectionIndicateur', () => {
   it(
     'refuse une clé API non ADMIN',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId, indicateurs: [{ publicId: indicateurId }] })
       const apiKey = await fixtures.apiKey()

@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMemo } from 'react'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
 
 import {
   PERIODE_MISE_A_JOUR_LABELS,
@@ -8,12 +7,13 @@ import {
   UNITE_DUREE_LABELS,
   UNITES_DUREE,
 } from '@pilote/kpilote-shared/indicateur'
+import { slugify } from '@pilote/kpilote-shared/slug'
 
 import { AdminReferentiels } from '@/components/indicateurs/AdminReferentiels'
 import { AdminResponsables } from '@/components/indicateurs/AdminResponsables'
 import { UnitePicker } from '@/components/indicateurs/UnitePicker'
 import {
-  buildIndicateurFormSchema,
+  indicateurFormSchema,
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
 import { Button } from '@pilote/kpilote-ui/Button'
@@ -43,12 +43,12 @@ export function IndicateurForm({
   onCancel: () => void
 }) {
   const { isProd } = useAppConfig()
-  const schema = useMemo(() => buildIndicateurFormSchema(mode), [mode])
   const form = useForm<IndicateurFormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(indicateurFormSchema),
     mode: 'onChange',
     defaultValues: initial,
   })
+  const nom = useWatch({ control: form.control, name: 'nom' })
 
   return (
     <FormProvider {...form}>
@@ -63,19 +63,18 @@ export function IndicateurForm({
                 </span>
               </Field>
             ) : (
-              <FieldInput
-                label="Identifiant"
-                placeholder="IND-001"
-                className="w-48 font-mono"
-                error={form.formState.errors.id?.message}
-                {...form.register('id')}
-                onChange={(event) =>
-                  form.setValue('id', event.target.value.toUpperCase(), {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-              />
+              <>
+                <FieldInput
+                  label="Identifiant"
+                  placeholder={slugify(nom) || 'bilan-de-prevention'}
+                  className="w-96 font-mono"
+                  error={form.formState.errors.slug?.message}
+                  {...form.register('slug')}
+                />
+                <p className="mt-1 text-xs text-text-subtle">
+                  Laissé vide, il est dérivé du nom. Il n’est plus modifiable ensuite.
+                </p>
+              </>
             )}
           </div>
 
