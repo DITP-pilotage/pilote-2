@@ -41,7 +41,7 @@
     "database:migration": "prisma migrate dev",
     "eval": "DOTENV_CONFIG_PATH=.env.test evalite run",
     "eval:dev": "DOTENV_CONFIG_PATH=.env.test evalite watch",
-    "eval:rapide": "DOTENV_CONFIG_PATH=.env.test evalite run evals/detecteurIntention.eval.ts"
+    "eval:rapide": "DOTENV_CONFIG_PATH=.env.test evalite run evals/1-keywords"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
