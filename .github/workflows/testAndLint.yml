@@ -88,6 +88,13 @@ jobs:
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      # Depuis Prisma 7, prisma.config.ts resout DATABASE_URL au chargement et leve si
+      # elle manque, ce qui casse meme `prisma generate`. Or ce lint ne se connecte a
+      # aucune base : une URL factice suffit a charger la config, et evite de demarrer
+      # un service postgres pour rien. (kpilote-api, lui, en a un vrai besoin : son
+      # lint fait `prisma generate --sql`, qui introspecte les tables reelles.)
+      DATABASE_URL: postgresql://inutilise:inutilise@127.0.0.1:1/inutilise
     steps:
       - uses: actions/checkout@v4
 
