@@ -14,7 +14,7 @@ import { commentaireModule } from "@/server/commentaires/module";
 import { importDecisionStrategiqueModule } from "@/server/decisions-strategiques/module";
 import { objectifModule } from "@/server/objectifs/module";
 import { importSyntheseDesResultatsModule } from "@/server/syntheses-des-resultats/module";
-import { importDonneesChantierCSVModule } from "@/server/infrastructure/import_csv/donnees_chantier/module";
+import { importPublicationCSVModule } from "@/server/infrastructure/import_csv/publication/module";
 import { ficheConducteurModule } from "@/server/fiche-conducteur/module";
 import { piloteEvalModule } from "@/server/evaluation/module";
 import { applicationLogModule } from "@/server/application-log/module";
@@ -48,7 +48,7 @@ const allModules = [
   importDecisionStrategiqueModule,
   objectifModule,
   importSyntheseDesResultatsModule,
-  importDonneesChantierCSVModule,
+  importPublicationCSVModule,
   gestionUtilisateurModule,
   ficheConducteurModule,
   parametrageNouveautesModule,
@@ -110,7 +110,7 @@ function registerContainer(): ContainerDependencies {
     decisionStrategique: getContainer("decisionStrategique"),
     objectif: getContainer("objectif"),
     importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
-    importDonneesChantierCSV: getContainer("importDonneesChantierCSV"),
+    importPublicationCSV: getContainer("importPublicationCSV"),
     datajobsExecution: getContainer("datajobsExecution"),
     legacy: getContainer("legacy"),
     applicationLog: getContainer("applicationLog"),

@@ -3,11 +3,11 @@ import {
   LigneRepartieDecisionStrategique,
   LigneRepartieObjectif,
   LigneRepartieSyntheseDesResultats,
-  ligneCSVDonneesChantierSchema,
+  ligneCSVPublicationSchema,
   résoudreDomaineCible,
   répartirLigne,
   validerLignesCSV,
-} from "@/validation/import-csv-donnees-chantier";
+} from "@/validation/import-csv-publication";
 
 function ligneCSVBrute(overrides: Partial<Record<string, string>> = {}) {
   return {
@@ -24,7 +24,7 @@ function ligneCSVBrute(overrides: Partial<Record<string, string>> = {}) {
 }
 
 function ligneCSV(overrides: Partial<Record<string, string>> = {}) {
-  return ligneCSVDonneesChantierSchema.parse(ligneCSVBrute(overrides));
+  return ligneCSVPublicationSchema.parse(ligneCSVBrute(overrides));
 }
 
 describe("résoudreDomaineCible", () => {

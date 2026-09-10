@@ -1,7 +1,7 @@
-import type { Inject } from "@/server/infrastructure/import_csv/donnees_chantier/module";
+import type { Inject } from "@/server/infrastructure/import_csv/publication/module";
 import {
   DomaineCible,
-  ErreurLigneCSVDonneesChantier,
+  ErreurLigneCSVPublication,
   LigneRepartie,
   LigneRepartieCommentaire,
   LigneRepartieDecisionStrategique,
@@ -9,21 +9,21 @@ import {
   LigneRepartieSyntheseDesResultats,
   répartirLigne,
   validerLignesCSV,
-} from "@/validation/import-csv-donnees-chantier";
+} from "@/validation/import-csv-publication";
 
 const EMAIL_UTILISATEUR_IMPORT = "import.csv@modernisation.gouv.fr";
 
-export type RésultatImportDonneesChantierCSV =
+export type RésultatImportPublicationCSV =
   | {
       succès: true;
       comptesParDomaine: Record<DomaineCible, number>;
     }
   | {
       succès: false;
-      erreurs: ErreurLigneCSVDonneesChantier[];
+      erreurs: ErreurLigneCSVPublication[];
     };
 
-export class ImporterDonneesChantierCSVUseCase {
+export class ImporterPublicationCSVUseCase {
   constructor(
     private readonly dependencies: Inject<
       | "prisma"
@@ -36,7 +36,7 @@ export class ImporterDonneesChantierCSVUseCase {
 
   async execute(
     lignesBrutes: unknown[],
-  ): Promise<RésultatImportDonneesChantierCSV> {
+  ): Promise<RésultatImportPublicationCSV> {
     const { lignesValides, erreurs } = validerLignesCSV(lignesBrutes);
 
     if (erreurs.length > 0) {

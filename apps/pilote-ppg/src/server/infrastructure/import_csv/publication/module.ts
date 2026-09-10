@@ -1,4 +1,4 @@
-import { ImporterDonneesChantierCSVUseCase } from "@/server/infrastructure/import_csv/donnees_chantier/ImporterDonneesChantierCSVUseCase";
+import { ImporterPublicationCSVUseCase } from "@/server/infrastructure/import_csv/publication/ImporterPublicationCSVUseCase";
 import type { CommentaireExports } from "@/server/commentaires/module";
 import type { ImportSyntheseDesResultatsExports } from "@/server/syntheses-des-resultats/module";
 import type { ImportDecisionStrategiqueExports } from "@/server/decisions-strategiques/module";
@@ -10,23 +10,23 @@ import {
   type VerifyCradle,
 } from "@/server/module-system";
 
-type ImportDonneesChantierCSVImports = CommentaireExports &
+type ImportPublicationCSVImports = CommentaireExports &
   ImportSyntheseDesResultatsExports &
   ImportDecisionStrategiqueExports &
   ObjectifExports;
 
-type ImportDonneesChantierCSVOwnCradle = {
-  importerDonneesChantierCSVUseCase: ImporterDonneesChantierCSVUseCase;
+type ImportPublicationCSVOwnCradle = {
+  importerPublicationCSVUseCase: ImporterPublicationCSVUseCase;
 };
 
-type ImportDonneesChantierCSVCradle = ImportDonneesChantierCSVOwnCradle &
-  ImportDonneesChantierCSVImports;
+type ImportPublicationCSVCradle = ImportPublicationCSVOwnCradle &
+  ImportPublicationCSVImports;
 
-export const importDonneesChantierCSVModule = defineModule<
+export const importPublicationCSVModule = defineModule<
   NoExports,
-  ImportDonneesChantierCSVCradle
+  ImportPublicationCSVCradle
 >()({
-  name: "importDonneesChantierCSV",
+  name: "importPublicationCSV",
   imports: [
     "shared",
     "commentaires",
@@ -37,12 +37,12 @@ export const importDonneesChantierCSVModule = defineModule<
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({
-      importerDonneesChantierCSVUseCase: asModuleClass(
-        ImporterDonneesChantierCSVUseCase,
+      importerPublicationCSVUseCase: asModuleClass(
+        ImporterPublicationCSVUseCase,
       ),
-    } satisfies VerifyCradle<ImportDonneesChantierCSVOwnCradle>);
+    } satisfies VerifyCradle<ImportPublicationCSVOwnCradle>);
   },
 });
 
-type Scope = ExtractScope<typeof importDonneesChantierCSVModule>;
+type Scope = ExtractScope<typeof importPublicationCSVModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

@@ -45,7 +45,7 @@ function champOptionnelVide<Schema extends z.ZodTypeAny>(schema: Schema) {
   );
 }
 
-export const ligneCSVDonneesChantierSchema = z.object({
+export const ligneCSVPublicationSchema = z.object({
   chantier_id: z.string().min(1, "Le chantier_id ne peut pas être vide"),
   type: z
     .string()
@@ -75,9 +75,7 @@ export const ligneCSVDonneesChantierSchema = z.object({
   meteo: champOptionnelVide(z.string()),
 });
 
-export type LigneCSVDonneesChantier = z.infer<
-  typeof ligneCSVDonneesChantierSchema
->;
+export type LigneCSVPublication = z.infer<typeof ligneCSVPublicationSchema>;
 
 export type LigneRepartieCommentaire = {
   domaine: "commentaire";
@@ -110,12 +108,12 @@ export type LigneRepartie =
   | LigneRepartieDecisionStrategique
   | LigneRepartieObjectif;
 
-function territoireDepuisLigne(ligne: LigneCSVDonneesChantier): string {
+function territoireDepuisLigne(ligne: LigneCSVPublication): string {
   return `${ligne.maille || "NAT"}-${ligne.code_insee || "FR"}`;
 }
 
 function meteoDepuisLigne(
-  ligne: LigneCSVDonneesChantier,
+  ligne: LigneCSVPublication,
 ): (typeof meteosSaisissables)[number] | "NON_RENSEIGNEE" {
   const meteo = ligne.meteo;
   return meteo && (meteosSaisissables as readonly string[]).includes(meteo)
@@ -123,7 +121,7 @@ function meteoDepuisLigne(
     : "NON_RENSEIGNEE";
 }
 
-export function répartirLigne(ligne: LigneCSVDonneesChantier): LigneRepartie {
+export function répartirLigne(ligne: LigneCSVPublication): LigneRepartie {
   const domaine = résoudreDomaineCible(ligne.type);
 
   switch (domaine) {
@@ -179,12 +177,12 @@ export function répartirLigne(ligne: LigneCSVDonneesChantier): LigneRepartie {
         },
       };
     default:
-      // Impossible : ligneCSVDonneesChantierSchema rejette déjà les types inconnus.
+      // Impossible : ligneCSVPublicationSchema rejette déjà les types inconnus.
       throw new Error(`Type de ligne non résolu : ${ligne.type}`);
   }
 }
 
-export type ErreurLigneCSVDonneesChantier = {
+export type ErreurLigneCSVPublication = {
   ligne: number;
   chantierId?: string;
   type?: string;
@@ -192,14 +190,14 @@ export type ErreurLigneCSVDonneesChantier = {
 };
 
 export function validerLignesCSV(lignesBrutes: unknown[]): {
-  lignesValides: LigneCSVDonneesChantier[];
-  erreurs: ErreurLigneCSVDonneesChantier[];
+  lignesValides: LigneCSVPublication[];
+  erreurs: ErreurLigneCSVPublication[];
 } {
-  const lignesValides: LigneCSVDonneesChantier[] = [];
-  const erreurs: ErreurLigneCSVDonneesChantier[] = [];
+  const lignesValides: LigneCSVPublication[] = [];
+  const erreurs: ErreurLigneCSVPublication[] = [];
 
   lignesBrutes.forEach((ligneBrute, index) => {
-    const résultat = ligneCSVDonneesChantierSchema.safeParse(ligneBrute);
+    const résultat = ligneCSVPublicationSchema.safeParse(ligneBrute);
 
     if (!résultat.success) {
       const ligneBruteObjet = ligneBrute as Record<string, unknown>;

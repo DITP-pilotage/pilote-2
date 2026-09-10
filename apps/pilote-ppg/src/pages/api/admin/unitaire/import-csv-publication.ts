@@ -16,7 +16,7 @@ import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/Pa
       CH-001,synthese_des_resultats,"Trajectoire conforme",2026-01-15,,REG,11,OBJECTIF_SECURISE
 
    Le champ `type` détermine le domaine cible — voir résoudreDomaineCible dans
-   src/validation/import-csv-donnees-chantier.ts. Valeurs acceptées :
+   src/validation/import-csv-publication.ts. Valeurs acceptées :
       - commentaire : commentaires_sur_les_donnees, autres_resultats_obtenus,
         autres_resultats_obtenus_non_correles_aux_indicateurs,
         risques_et_freins_a_lever, solutions_et_actions_a_venir,
@@ -35,7 +35,7 @@ import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/Pa
 
  - Comment appeler cet endpoint en local :
       S'assurer d'avoir les variables d'env APP_URL et CRON_AUTH_SECRET configurées
-      curl -X POST $APP_URL/api/admin/unitaire/import-csv-donnees-chantier \
+      curl -X POST $APP_URL/api/admin/unitaire/import-csv-publication \
         -H "Authorization: Bearer $CRON_AUTH_SECRET" \
         -F "file=@/chemin/fichier/local/import.csv"
 
@@ -71,21 +71,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     trim: true,
   });
 
-  const importerDonneesChantierCSVUseCase = getContainer(
-    "importDonneesChantierCSV",
-  ).resolve("importerDonneesChantierCSVUseCase");
+  const importerPublicationCSVUseCase = getContainer(
+    "importPublicationCSV",
+  ).resolve("importerPublicationCSVUseCase");
 
-  const résultat =
-    await importerDonneesChantierCSVUseCase.execute(lignesBrutes);
+  const résultat = await importerPublicationCSVUseCase.execute(lignesBrutes);
 
   if (!résultat.succès) {
     logger.warn(
       {
         categorie: "import",
-        source: "import-csv-donnees-chantier",
+        source: "import-csv-publication",
         nombreErreurs: résultat.erreurs.length,
       },
-      "Validation échouée pour l'import CSV de données chantier",
+      "Validation échouée pour l'import CSV de publication",
     );
     return res.status(400).json({
       message: "Une erreur est survenue lors de l'import du CSV",
@@ -96,10 +95,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   logger.info(
     {
       categorie: "import",
-      source: "import-csv-donnees-chantier",
+      source: "import-csv-publication",
       comptesParDomaine: résultat.comptesParDomaine,
     },
-    "Import CSV de données chantier terminé avec succès",
+    "Import CSV de publication terminé avec succès",
   );
 
   return res

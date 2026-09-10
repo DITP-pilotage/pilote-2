@@ -3,7 +3,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { ImporterDonneesChantierCSVUseCase } from "@/server/infrastructure/import_csv/donnees_chantier/ImporterDonneesChantierCSVUseCase";
+import { ImporterPublicationCSVUseCase } from "@/server/infrastructure/import_csv/publication/ImporterPublicationCSVUseCase";
 import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
 import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
@@ -27,12 +27,12 @@ async function créerChantierRattachéÀNatFr() {
   return chantier;
 }
 
-describe("ImporterDonneesChantierCSVUseCase", () => {
-  let useCase: ImporterDonneesChantierCSVUseCase;
+describe("ImporterPublicationCSVUseCase", () => {
+  let useCase: ImporterPublicationCSVUseCase;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    useCase = new ImporterDonneesChantierCSVUseCase({
+    useCase = new ImporterPublicationCSVUseCase({
       prisma: prismaPilote,
       importerCommentairesUseCase: new ImporterCommentairesUseCase({
         commentaireRepository: new CommentaireSQLRepository({
