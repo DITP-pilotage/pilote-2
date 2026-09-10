@@ -36,13 +36,9 @@
     "test:server:domain:coverage": "vitest run --project server-unit --coverage 'src/server/domain/**/*.test.*'",
     "test:server:infrastructure:coverage": "vitest run --project server-unit --coverage 'src/server/infrastructure/**/*.test.*'",
     "test:database:init": "dotenv -e .env.test -- pnpm database:init-force",
-    "database:init": "prisma migrate reset",
-    "database:init-force": "prisma migrate reset --force",
+    "database:init": "prisma migrate reset && prisma generate && prisma db seed",
+    "database:init-force": "prisma migrate reset --force && prisma generate && prisma db seed",
     "database:migration": "prisma migrate dev"
-  },
-  "prisma": {
-    "schema": "src/database/prisma/schema.prisma",
-    "seed": "tsx src/database/prisma/seed.ts"
   },
   "browserslist": {
     "production": [
@@ -69,7 +65,8 @@
     "@hookform/resolvers": "^5.7.1",
     "@keycloak/keycloak-admin-client": "26.5.6",
     "@next/env": "16.1.2",
-    "@prisma/client": "6.2.1",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "7.10.0",
     "@socialgouv/matomo-next": "1.13.1",
     "@tanstack/react-query": "^5.101.4",
     "@tanstack/react-query-devtools": "^5.101.4",
@@ -123,6 +120,7 @@
     "next-auth": "5.0.0-beta.32",
     "nuqs": "^2.9.5",
     "pdfmake": "^0.2.23",
+    "pg": "^8.23.0",
     "pino": "^8.21.0",
     "radix-ui": "^1.6.7",
     "react": "^19.2.8",
@@ -167,6 +165,7 @@
     "@types/mime": "^3.0.4",
     "@types/node": "^22.20.1",
     "@types/pdfmake": "0.2.12",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@types/sanitize-html": "^2.16.1",
@@ -196,7 +195,7 @@
     "playwright-core": "1.59.1",
     "portless": "^0.11.1",
     "prettier": "^3.9.6",
-    "prisma": "6.2.1",
+    "prisma": "7.10.0",
     "proj4": "^2.21.0",
     "reproject": "^1.2.7",
     "sass": "1.78.0",

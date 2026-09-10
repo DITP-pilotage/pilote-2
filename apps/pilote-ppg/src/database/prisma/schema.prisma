@@ -3,12 +3,11 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema", "relationJoins"]
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
   schemas  = ["public", "raw_data"]
 }
 
