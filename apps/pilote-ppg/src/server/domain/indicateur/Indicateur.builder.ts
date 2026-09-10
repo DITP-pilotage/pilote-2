@@ -51,7 +51,7 @@ export default class IndicateurBuilder {
       "Mensuelle",
       "3 ans",
     ]);
-    this._delaiDisponibilite = faker.datatype
+    this._delaiDisponibilite = faker.number
       .bigInt({ min: 10, max: 100 })
       .toString();
     this._responsablesDonneesMails = [];

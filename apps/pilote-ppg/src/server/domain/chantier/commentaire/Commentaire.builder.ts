@@ -49,11 +49,13 @@ export default class CommentaireBuilder {
 
   private _générerUnCommentaire(type: TypeCommentaireChantier) {
     return {
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       type: type,
       contenu: faker.lorem.paragraph(),
-      date: faker.date.recent(60, "2023-05-01T00:00:00.000Z").toISOString(),
-      auteur: faker.helpers.arrayElement(["", faker.name.fullName()]),
+      date: faker.date
+        .recent({ days: 60, refDate: "2023-05-01T00:00:00.000Z" })
+        .toISOString(),
+      auteur: faker.helpers.arrayElement(["", faker.person.fullName()]),
     };
   }
 

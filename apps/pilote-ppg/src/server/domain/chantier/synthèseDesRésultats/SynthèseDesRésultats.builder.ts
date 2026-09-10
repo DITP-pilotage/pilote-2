@@ -16,9 +16,11 @@ export default class SynthèseDesRésultatsBuilder {
   private _générerUneSynthèseDesRésultat() {
     return {
       contenu: faker.lorem.paragraph(),
-      date: faker.date.recent(60, "2023-05-01T00:00:00.000Z").toISOString(),
-      auteur: faker.helpers.arrayElement(["", faker.name.fullName()]),
-      id: faker.datatype.uuid(),
+      date: faker.date
+        .recent({ days: 60, refDate: "2023-05-01T00:00:00.000Z" })
+        .toISOString(),
+      auteur: faker.helpers.arrayElement(["", faker.person.fullName()]),
+      id: faker.string.uuid(),
       météo: new MétéoBuilder().build(),
     };
   }

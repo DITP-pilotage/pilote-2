@@ -31,9 +31,7 @@ export default class PérimètreMinistérielSQLRowBuilder {
       0.2,
       `${générerUnLibellé(1, 3)} ministère`,
     );
-    this._ministère_id = this._ministère
-      ? `MIN-${faker.datatype.number()}`
-      : null;
+    this._ministère_id = this._ministère ? `MIN-${faker.number.int()}` : null;
     this._a_supprimer = false;
   }
 

@@ -40,7 +40,7 @@ export default class MinistèreBuilder {
 
   constructor() {
     this._id = générerUnIdentifiantUnique("MIN");
-    this._acronyme = faker.datatype.string(4).toUpperCase();
+    this._acronyme = faker.string.sample(4).toUpperCase();
     this._nom = `${générerUnLibellé(1, 3)} ministère`;
     this._périmètresMinistériels = [new PérimètreMinistérielBuilder().build()];
     this._icône = générerPeutÊtreNull(
