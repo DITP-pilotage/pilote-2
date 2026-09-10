@@ -39,9 +39,9 @@
     "database:init": "prisma migrate reset",
     "database:init-force": "prisma migrate reset --force",
     "database:migration": "prisma migrate dev",
-    "eval": "evalite run",
-    "eval:dev": "evalite watch",
-    "eval:rapide": "evalite run evals/detecteurIntention.eval.ts"
+    "eval": "DOTENV_CONFIG_PATH=.env.test evalite run",
+    "eval:dev": "DOTENV_CONFIG_PATH=.env.test evalite watch",
+    "eval:rapide": "DOTENV_CONFIG_PATH=.env.test evalite run evals/detecteurIntention.eval.ts"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
