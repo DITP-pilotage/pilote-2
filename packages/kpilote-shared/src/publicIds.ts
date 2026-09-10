@@ -1,41 +1,26 @@
-import { z } from 'zod'
+import { slugSchema } from './slug'
 
-export const indicateurPublicIdSchema = z
-  .string()
-  .regex(/^IND-\d+$/, 'Identifiant public attendu au format IND-XXX')
-  .describe("Identifiant public de l'indicateur (format IND-XXX).")
+// Toutes les entités partagent le même format d'identifiant public : un slug.
+// Les schémas restent nommés par entité pour que les paramètres de route
+// gardent un type et une documentation propres, mais ils ne se distinguent plus
+// par leur validation — une inversion d'argument se solde par un 404, plus par
+// une erreur 400.
+export const indicateurPublicIdSchema = slugSchema.describe(
+  "Identifiant public de l'indicateur, sous forme de slug (ex. `bilan-de-prevention`, `IND-42`).",
+)
 
-export const collectionPublicIdSchema = z
-  .string()
-  .regex(/^COL-\d+$/, 'Identifiant public attendu au format COL-XXX')
-  .describe('Identifiant public de la collection (format COL-XXX).')
+export const collectionPublicIdSchema = slugSchema.describe(
+  'Identifiant public de la collection, sous forme de slug (ex. `sante-de-proximite`, `COL-001`).',
+)
 
-export const referentielPublicIdSchema = z
-  .string()
-  .regex(
-    /^REF-[A-Z0-9-]{1,16}$/,
-    'Identifiant public attendu au format REF-<SLUG> (max 20 caractères)',
-  )
-  .describe(
-    'Identifiant public du référentiel (format REF-<SLUG>, ex. REF-DEPT). Max 20 caractères.',
-  )
+export const referentielPublicIdSchema = slugSchema.describe(
+  'Identifiant public du référentiel, sous forme de slug (ex. `REF-DEPT`).',
+)
 
-export const individuPublicIdSchema = z
-  .string()
-  .regex(
-    /^[A-Z][A-Z0-9-]{0,19}$/,
-    "Identifiant public d'individu attendu (lettre majuscule suivie de lettres/chiffres/tirets, max 20 caractères)",
-  )
-  .describe(
-    "Identifiant public d'individu, format humain-friendly (ex. DEPT-84, REG-93, FR). Lettre majuscule puis lettres/chiffres/tirets, max 20 caractères.",
-  )
+export const individuPublicIdSchema = slugSchema.describe(
+  "Identifiant public d'individu, sous forme de slug (ex. `DEPT-84`, `REG-93`, `FR`).",
+)
 
-export const widgetPublicIdSchema = z
-  .string()
-  .regex(
-    /^WID-[A-Z0-9-]{1,16}$/,
-    'Identifiant public attendu au format WID-<SLUG> (max 20 caractères)',
-  )
-  .describe(
-    'Identifiant public du widget (format WID-<SLUG>, ex. WID-CARTE-DEPT). Max 20 caractères.',
-  )
+export const widgetPublicIdSchema = slugSchema.describe(
+  'Identifiant public du widget, sous forme de slug (ex. `WID-CARTE-DEPT`).',
+)

@@ -4,19 +4,14 @@ import { updateCollectionIndicateurPonderation } from '@/collection/commands/upd
 import { getCollectionTauxProgression } from '@/collection/queries/getCollectionTauxProgression'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import {
-  testCollectionNumericId,
-  testDeptId,
-  testIndicateurId,
-  testReferentielId,
-} from '@/test/randomIds'
+import { testCollectionId, testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 describe.concurrent('updateCollectionIndicateurPonderation', () => {
   it(
     'remplace la pondération du lien',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId, indicateurs: [{ publicId: indicateurId }] })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
@@ -32,7 +27,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
   it(
     'accepte une pondération nulle',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId, indicateurs: [{ publicId: indicateurId }] })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
@@ -48,7 +43,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
   it(
     'échoue si l’indicateur n’est pas affecté à la collection',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId })
       await fixtures.indicateur({ publicId: indicateurId })
@@ -65,7 +60,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
   it(
     'refuse une clé API non ADMIN',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId, indicateurs: [{ publicId: indicateurId }] })
       const apiKey = await fixtures.apiKey()
@@ -85,7 +80,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
       const deptId = testDeptId()
       const indFaible = testIndicateurId()
       const indFort = testIndicateurId()
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
 
       // Indicateur faible : 50 / 100 → 50 %. Indicateur fort : 80 / 100 → 80 %.
       for (const [indicateurId, valeur] of [

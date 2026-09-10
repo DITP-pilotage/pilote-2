@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
 
 import {
   PERIODE_MISE_A_JOUR_LABELS,
@@ -7,6 +7,7 @@ import {
   UNITE_DUREE_LABELS,
   UNITES_DUREE,
 } from '@pilote/kpilote-shared/indicateur'
+import { slugify } from '@pilote/kpilote-shared/slug'
 
 import { AdminReferentiels } from '@/components/indicateurs/AdminReferentiels'
 import { AdminResponsables } from '@/components/indicateurs/AdminResponsables'
@@ -47,25 +48,35 @@ export function IndicateurForm({
     mode: 'onChange',
     defaultValues: initial,
   })
+  const nom = useWatch({ control: form.control, name: 'nom' })
 
   return (
     <FormProvider {...form}>
       <form onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}>
         <div className="rounded-xl border border-border bg-surface p-6">
-          {mode === 'edit' ? (
-            <div className="mb-5">
+          <div className="mb-5">
+            {mode === 'edit' ? (
               <Field label="Identifiant">
                 <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
                   {initial.id}{' '}
                   <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
                 </span>
               </Field>
-            </div>
-          ) : (
-            <p className="mb-5 text-xs text-text-subtle">
-              L’identifiant (<code>IND-…</code>) est généré automatiquement à la création.
-            </p>
-          )}
+            ) : (
+              <>
+                <FieldInput
+                  label="Identifiant"
+                  placeholder={slugify(nom) || 'bilan-de-prevention'}
+                  className="w-96 font-mono"
+                  error={form.formState.errors.slug?.message}
+                  {...form.register('slug')}
+                />
+                <p className="mt-1 text-xs text-text-subtle">
+                  Laissé vide, il est dérivé du nom. Il n’est plus modifiable ensuite.
+                </p>
+              </>
+            )}
+          </div>
 
           <div className="mb-5">
             <FieldInput

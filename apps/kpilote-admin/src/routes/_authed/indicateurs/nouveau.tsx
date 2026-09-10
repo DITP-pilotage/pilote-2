@@ -6,7 +6,7 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { IndicateurForm } from '@/components/indicateurs/IndicateurForm'
 import {
   buildInitialValues,
-  toUpsertBody,
+  toCreateBody,
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
 import { PageHeading } from '@/components/PageHeading'
@@ -30,7 +30,7 @@ function NewIndicateurComponent() {
 
   const toast = useToast()
   const mutation = useMutation({
-    mutationFn: (values: IndicateurFormValues) => createIndicateur(toUpsertBody(values)),
+    mutationFn: (values: IndicateurFormValues) => createIndicateur(toCreateBody(values)),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['indicateurs'] })
       toast({ title: 'Indicateur créé.' })

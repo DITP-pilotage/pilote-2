@@ -1,4 +1,5 @@
 import type {
+  CreateIndicateurBody,
   IndicateurApiModel,
   IndicateurListApiModel,
   UpsertIndicateurBody,
@@ -36,7 +37,7 @@ export const fetchIndicateurById = async (id: string): Promise<IndicateurApiMode
   return indicateurApiModelSchema.parse(json)
 }
 
-export const createIndicateur = async (body: UpsertIndicateurBody): Promise<IndicateurApiModel> => {
+export const createIndicateur = async (body: CreateIndicateurBody): Promise<IndicateurApiModel> => {
   const json = await bffClient.post('indicateurs', { json: body }).json()
   return indicateurApiModelSchema.parse(json)
 }

@@ -3,14 +3,14 @@ import { describe, expect, it } from 'vitest'
 import { upsertCollection } from '@/collection/commands/upsertCollection'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testCollectionNumericId, testIndicateurId } from '@/test/randomIds'
+import { testCollectionId, testIndicateurId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 describe.concurrent('upsertCollection', () => {
   it(
     'crée la collection quand l’identifiant est libre',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
@@ -33,7 +33,7 @@ describe.concurrent('upsertCollection', () => {
   it(
     'remplace les champs scalaires sans toucher aux indicateurs affectés',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({
         publicId,
@@ -68,7 +68,7 @@ describe.concurrent('upsertCollection', () => {
 
       await expect(
         runAsContributor(apiKey.id, () =>
-          upsertCollection(testCollectionNumericId(), {
+          upsertCollection(testCollectionId(), {
             nom: 'X',
             description: null,
             visibilite: 'PUBLIC',

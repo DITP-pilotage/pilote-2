@@ -1,7 +1,10 @@
 import {
   type ConfigurationIndicateurReferentiel,
+  type CreateIndicateurBody,
+  type IndicateurApiModel,
   type UpsertIndicateurBody,
 } from '@pilote/kpilote-shared/indicateur'
+import { slugify } from '@pilote/kpilote-shared/slug'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
@@ -9,8 +12,9 @@ import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/pri
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+import { resolveSlug } from '@/framework/persistence/resolveSlug'
 import { type FonctionAgregation, IndicateurPermissionAction } from '@/generated/prisma/enums'
-import { generateIndicateurPublicId } from '@/indicateur/commands/generateIndicateurPublicId'
+import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 
 type ConfigurationResolue = {
   referentielId: string
@@ -175,13 +179,13 @@ const grantOwnerPermissions = async (principalId: string, indicateurId: string):
 }
 
 const createIndicateurAvecGrants = async (
+  publicId: string,
   body: UpsertIndicateurBody,
   principalId: string,
-): Promise<string> => {
+): Promise<void> => {
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   const responsablesCibles =
     body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
-  const publicId = await generateIndicateurPublicId()
   const indicateurId = uuidv7()
   await db().indicateur.create({
     data: {
@@ -206,16 +210,15 @@ const createIndicateurAvecGrants = async (
   if (responsablesCibles !== undefined) {
     await remplacerResponsables(indicateurId, responsablesCibles)
   }
-  return publicId
 }
 
 const updateIndicateurExistant = async (
   publicId: string,
+  indicateurId: string,
   body: UpsertIndicateurBody,
   principalId: string,
 ): Promise<void> => {
-  const existant = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
-  await assertWritePermission(existant.id, principalId)
+  await assertWritePermission(indicateurId, principalId)
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   const responsablesCibles =
     body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
@@ -228,34 +231,61 @@ const updateIndicateurExistant = async (
       ...metadonneesData(body),
     },
   })
-  await remplacerConfigurationsReferentiels(existant.id, configurations)
+  await remplacerConfigurationsReferentiels(indicateurId, configurations)
   if (responsablesCibles !== undefined) {
-    await remplacerResponsables(existant.id, responsablesCibles)
+    await remplacerResponsables(indicateurId, responsablesCibles)
   }
 }
 
-const performCreate = async (body: UpsertIndicateurBody): Promise<string> => {
+const ensureAuteur = (): string => {
   ensurePrincipal(
     (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
     'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
   )
-  const principalId = requireCurrentPrincipalId()
-  return createIndicateurAvecGrants(body, principalId)
+  return requireCurrentPrincipalId()
 }
 
-const performUpdate = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
-  ensurePrincipal(
-    (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
-    'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
-  )
-  const principalId = requireCurrentPrincipalId()
-  await updateIndicateurExistant(publicId, body, principalId)
+// L'identifiant public se décide à la seule création : le slug proposé par le
+// client est respecté tel quel, sinon il est dérivé du nom.
+const resoudrePublicId = async (body: CreateIndicateurBody): Promise<string> => {
+  const base = body.slug ?? slugify(body.nom)
+  if (base === '') {
+    throw new ValidationError('Impossible de dériver un identifiant public depuis le nom', {
+      nom: body.nom,
+    })
+  }
+  return resolveSlug({ entite: 'indicateur', base })
 }
 
-export const createIndicateur = (body: UpsertIndicateurBody): ResultAsync<string, never> =>
-  ResultAsync.fromSafePromise(performCreate(body))
+const performCreate = async (body: CreateIndicateurBody): Promise<string> => {
+  const principalId = ensureAuteur()
+  const publicId = await resoudrePublicId(body)
+  await createIndicateurAvecGrants(publicId, body, principalId)
+  return publicId
+}
 
-export const updateIndicateur = (
+// Upsert : le client impose l'identifiant, l'indicateur est créé s'il est
+// libre. C'est ce que consomme la synchronisation pilote-ppg, qui pousse ses
+// propres identifiants sans les avoir créés au préalable.
+const performUpsert = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
+  const principalId = ensureAuteur()
+  const existant = await db().indicateur.findUnique({ where: { publicId } })
+  if (existant) {
+    await updateIndicateurExistant(publicId, existant.id, body, principalId)
+    return
+  }
+  await createIndicateurAvecGrants(publicId, body, principalId)
+}
+
+export const createIndicateur = (
+  body: CreateIndicateurBody,
+): ResultAsync<IndicateurApiModel, never> =>
+  ResultAsync.fromSafePromise(performCreate(body)).andThen(getIndicateurByPublicId)
+
+export const upsertIndicateur = (
   publicId: string,
   body: UpsertIndicateurBody,
-): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpdate(publicId, body))
+): ResultAsync<IndicateurApiModel, never> =>
+  ResultAsync.fromSafePromise(performUpsert(publicId, body)).andThen(() =>
+    getIndicateurByPublicId(publicId),
+  )

@@ -1,10 +1,11 @@
 import { IndicateurPermissionAction } from '@/generated/prisma/enums'
+import { slugify } from '@pilote/kpilote-shared/slug'
 import { describe, expect, it } from 'vitest'
 import { uuidv7 } from 'uuidv7'
 
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { createIndicateur, updateIndicateur } from '@/indicateur/commands/writeIndicateur'
+import { createIndicateur, upsertIndicateur } from '@/indicateur/commands/writeIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testReferentielId } from '@/test/randomIds'
@@ -61,7 +62,7 @@ describe.concurrent('createIndicateur', () => {
             delaiMiseADisposition: { nombre: 6, unite: 'MOIS' },
           }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
 
       const row = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
       expect(row.delaiMiseADispositionNombre).toBe(6)
@@ -81,9 +82,9 @@ describe.concurrent('createIndicateur', () => {
             delaiMiseADisposition: { nombre: 6, unite: 'MOIS' },
           }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, { ...BODY_BASE, delaiMiseADisposition: null }),
+        upsertIndicateur(publicId, { ...BODY_BASE, delaiMiseADisposition: null }),
       )
 
       const row = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
@@ -115,8 +116,9 @@ describe.concurrent('createIndicateur', () => {
       )
 
       expect(result.isOk()).toBe(true)
-      const publicId = result._unsafeUnwrap()
-      expect(publicId).toMatch(/^IND-\d+$/)
+      const publicId = result._unsafeUnwrap().id
+      // Suffixe toléré : la dérivation exacte est couverte par les tests de slug.
+      expect(publicId).toMatch(/^nouvel-indicateur(-\d+)?$/)
 
       const configurationsTriees = [
         { id: refCreateA, fonctionAgregation: 'SUM' as const },
@@ -136,22 +138,58 @@ describe.concurrent('createIndicateur', () => {
   )
 
   it(
-    'génère un publicId IND-<max+1>',
+    'dérive l’identifiant public du nom',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-900001' })
       const apiKey = await fixtures.apiKey()
+      const nom = `Bilan de prévention ${testIndicateurId()}`
+
+      const result = await runAsAdmin(apiKey.id, () => createIndicateur({ ...BODY_BASE, nom }))
+
+      expect(result._unsafeUnwrap().id).toBe(slugify(nom))
+    }),
+  )
+
+  it(
+    'respecte l’identifiant public proposé par le client, casse comprise',
+    integrationTest(async () => {
+      const apiKey = await fixtures.apiKey()
+      const slug = testIndicateurId()
 
       const result = await runAsAdmin(apiKey.id, () =>
-        createIndicateur({
-          nom: 'Indicateur numéroté',
-          visibilite: 'PRIVE',
-          unite: null,
-          ...METADONNEES_VIDES,
-          referentiels: [],
-        }),
+        createIndicateur({ ...BODY_BASE, nom: 'Nom sans rapport', slug }),
       )
 
-      expect(result._unsafeUnwrap()).toBe('IND-900002')
+      expect(result._unsafeUnwrap().id).toBe(slug)
+    }),
+  )
+
+  it(
+    'suffixe l’identifiant quand le slug est déjà pris, sans distinguer la casse',
+    integrationTest(async () => {
+      const apiKey = await fixtures.apiKey()
+      const slug = testIndicateurId()
+      await fixtures.indicateur({ publicId: slug.toUpperCase() })
+
+      const premier = await runAsAdmin(apiKey.id, () =>
+        createIndicateur({ ...BODY_BASE, nom: 'Homonyme', slug }),
+      )
+      const second = await runAsAdmin(apiKey.id, () =>
+        createIndicateur({ ...BODY_BASE, nom: 'Homonyme', slug }),
+      )
+
+      expect(premier._unsafeUnwrap().id).toBe(`${slug}-2`)
+      expect(second._unsafeUnwrap().id).toBe(`${slug}-3`)
+    }),
+  )
+
+  it(
+    'refuse un nom dont aucun caractère ne peut composer un slug',
+    integrationTest(async () => {
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        runAsAdmin(apiKey.id, () => createIndicateur({ ...BODY_BASE, nom: '??? !!!' })),
+      ).rejects.toBeInstanceOf(ValidationError)
     }),
   )
 
@@ -170,7 +208,7 @@ describe.concurrent('createIndicateur', () => {
         }),
       )
 
-      const publicId = result._unsafeUnwrap()
+      const publicId = result._unsafeUnwrap().id
       const row = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
       expect(row.visibilite).toBe('PUBLIC')
     }),
@@ -190,12 +228,12 @@ describe.concurrent('createIndicateur', () => {
           referentiels: [],
         }),
       )
-      const publicId = createResult._unsafeUnwrap()
+      const publicId = createResult._unsafeUnwrap().id
       const apresCreation = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
       expect(apresCreation.unite).toBe('POURCENTAGE')
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, {
+        upsertIndicateur(publicId, {
           nom: 'I',
           visibilite: 'PRIVE',
           unite: 'ANNEES',
@@ -207,7 +245,7 @@ describe.concurrent('createIndicateur', () => {
       expect(apresMaj.unite).toBe('ANNEES')
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, {
+        upsertIndicateur(publicId, {
           nom: 'I',
           visibilite: 'PRIVE',
           unite: null,
@@ -239,7 +277,7 @@ describe.concurrent('createIndicateur', () => {
           referentiels: [],
         }),
       )
-      const publicId = createResult._unsafeUnwrap()
+      const publicId = createResult._unsafeUnwrap().id
 
       const apresCreation = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
       expect(apresCreation.description).toBe('Description initiale')
@@ -250,7 +288,7 @@ describe.concurrent('createIndicateur', () => {
       expect(apresCreation.jourMiseAJour).toBe(5)
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, {
+        upsertIndicateur(publicId, {
           nom: 'I',
           visibilite: 'PRIVE',
           unite: null,
@@ -298,10 +336,10 @@ describe.concurrent('createIndicateur', () => {
           ],
         }),
       )
-      const publicId = createResult._unsafeUnwrap()
+      const publicId = createResult._unsafeUnwrap().id
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, {
+        upsertIndicateur(publicId, {
           nom: 'I',
           visibilite: 'PRIVE',
           unite: null,
@@ -336,10 +374,10 @@ describe.concurrent('createIndicateur', () => {
           referentiels: [{ id: refEmptyA, fonctionAgregation: 'SUM' }],
         }),
       )
-      const publicId = createResult._unsafeUnwrap()
+      const publicId = createResult._unsafeUnwrap().id
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, {
+        upsertIndicateur(publicId, {
           nom: 'I',
           visibilite: 'PRIVE',
           unite: null,
@@ -373,7 +411,7 @@ describe.concurrent('createIndicateur', () => {
       )
 
       expect(result.isOk()).toBe(true)
-      const publicId = result._unsafeUnwrap()
+      const publicId = result._unsafeUnwrap().id
       expect(await getConfigurationsReferentiels(publicId)).toEqual([
         { id: refDedupA, fonctionAgregation: 'SUM' },
       ])
@@ -429,10 +467,10 @@ describe.concurrent('createIndicateur', () => {
           referentiels: [{ id: refUpdateA, fonctionAgregation: 'SUM' }],
         }),
       )
-      const publicId = createResult._unsafeUnwrap()
+      const publicId = createResult._unsafeUnwrap().id
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, {
+        upsertIndicateur(publicId, {
           nom: 'I',
           visibilite: 'PRIVE',
           unite: null,
@@ -468,7 +506,7 @@ describe.concurrent('createIndicateur', () => {
       )
 
       expect(result.isOk()).toBe(true)
-      const publicId = result._unsafeUnwrap()
+      const publicId = result._unsafeUnwrap().id
       expect(await getConfigurationsReferentiels(publicId)).toEqual([
         { id: refDedupFn, fonctionAgregation: 'NONE' },
       ])
@@ -487,7 +525,7 @@ describe.concurrent('createIndicateur', () => {
         await runAsAdmin(apiKey.id, () =>
           createIndicateur({ ...BODY_BASE, responsables: [userA.id, userB.id] }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
 
       const ids = await getResponsableUtilisateurIds(publicId)
       expect(new Set(ids)).toEqual(new Set([userA.id, userB.id]))
@@ -507,9 +545,9 @@ describe.concurrent('createIndicateur', () => {
         await runAsAdmin(apiKey.id, () =>
           createIndicateur({ ...BODY_BASE, responsables: [userA.id, userB.id] }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, { ...BODY_BASE, responsables: [userB.id, userC.id] }),
+        upsertIndicateur(publicId, { ...BODY_BASE, responsables: [userB.id, userC.id] }),
       )
 
       const ids = await getResponsableUtilisateurIds(publicId)
@@ -528,10 +566,10 @@ describe.concurrent('createIndicateur', () => {
         await runAsAdmin(apiKey.id, () =>
           createIndicateur({ ...BODY_BASE, responsables: [userA.id] }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
       // Pas de clé `responsables` → ne pas toucher.
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, { ...BODY_BASE, nom: 'Renommé' }),
+        upsertIndicateur(publicId, { ...BODY_BASE, nom: 'Renommé' }),
       )
 
       const ids = await getResponsableUtilisateurIds(publicId)
@@ -550,9 +588,9 @@ describe.concurrent('createIndicateur', () => {
         await runAsAdmin(apiKey.id, () =>
           createIndicateur({ ...BODY_BASE, responsables: [userA.id] }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, { ...BODY_BASE, responsables: [] }),
+        upsertIndicateur(publicId, { ...BODY_BASE, responsables: [] }),
       )
 
       const ids = await getResponsableUtilisateurIds(publicId)
@@ -571,7 +609,7 @@ describe.concurrent('createIndicateur', () => {
         await runAsAdmin(apiKey.id, () =>
           createIndicateur({ ...BODY_BASE, responsables: [userA.id, userA.id] }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
 
       const ids = await getResponsableUtilisateurIds(publicId)
       expect(ids).toEqual([userA.id])
@@ -611,13 +649,13 @@ describe.concurrent('createIndicateur', () => {
         await runAsAdmin(apiKey.id, () =>
           createIndicateur({ ...BODY_BASE, responsables: [userA.id] }),
         )
-      )._unsafeUnwrap()
+      )._unsafeUnwrap().id
       const avant = await db().indicateurResponsable.findFirstOrThrow({
         where: { utilisateurId: userA.id, indicateur: { publicId } },
       })
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur(publicId, { ...BODY_BASE, responsables: [userA.id, userB.id] }),
+        upsertIndicateur(publicId, { ...BODY_BASE, responsables: [userA.id, userB.id] }),
       )
       const apres = await db().indicateurResponsable.findFirstOrThrow({
         where: { utilisateurId: userA.id, indicateur: { publicId } },
@@ -631,7 +669,7 @@ describe.concurrent('createIndicateur', () => {
   )
 })
 
-describe.concurrent('updateIndicateur', () => {
+describe.concurrent('upsertIndicateur', () => {
   it(
     'met à jour un indicateur existant',
     integrationTest(async () => {
@@ -646,7 +684,7 @@ describe.concurrent('updateIndicateur', () => {
       })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        updateIndicateur('IND-900500', {
+        upsertIndicateur('IND-900500', {
           nom: 'Nouveau nom',
           visibilite: 'PUBLIC',
           unite: null,
@@ -662,21 +700,27 @@ describe.concurrent('updateIndicateur', () => {
   )
 
   it(
-    "échoue en 404 (P2025) si l'indicateur à mettre à jour n'existe pas",
+    "crée l'indicateur sous l'identifiant imposé quand il n'existe pas, et grante son auteur",
     integrationTest(async () => {
       const apiKey = await fixtures.apiKey()
+      const publicId = testIndicateurId()
 
-      await expect(
-        runAsAdmin(apiKey.id, () =>
-          updateIndicateur('IND-909090', {
-            nom: 'Peu importe',
-            visibilite: 'PRIVE',
-            unite: null,
-            ...METADONNEES_VIDES,
-            referentiels: [],
-          }),
-        ),
-      ).rejects.toMatchObject({ code: 'P2025' })
+      const result = await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(publicId, { ...BODY_BASE, nom: 'Créé par PUT' }),
+      )
+
+      expect(result._unsafeUnwrap()).toMatchObject({ id: publicId, nom: 'Créé par PUT' })
+      const cree = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
+      const grants = await db().indicateurPermission.findMany({
+        where: { indicateurId: cree.id, principalId: apiKey.id },
+      })
+      expect(grants.map((grant) => grant.action).sort()).toEqual(
+        [
+          IndicateurPermissionAction.READ,
+          IndicateurPermissionAction.WRITE_COMMENT,
+          IndicateurPermissionAction.WRITE_DATA,
+        ].sort(),
+      )
     }),
   )
 
@@ -691,7 +735,7 @@ describe.concurrent('updateIndicateur', () => {
       })
 
       await runAsAdmin(apiKey.id, () =>
-        updateIndicateur('IND-900501', {
+        upsertIndicateur('IND-900501', {
           nom: 'I',
           visibilite: 'PUBLIC',
           unite: null,
@@ -717,7 +761,7 @@ describe.concurrent('updateIndicateur', () => {
 
       await expect(
         runAsAdmin(apiKey.id, () =>
-          updateIndicateur('IND-900502', {
+          upsertIndicateur('IND-900502', {
             nom: 'X',
             visibilite: 'PRIVE',
             unite: null,
@@ -758,7 +802,7 @@ describe.concurrent('writeIndicateur — garde ADMIN', () => {
       const result = await runAsAdmin(apiKey.id, () => createIndicateur(body))
 
       expect(result.isOk()).toBe(true)
-      const publicId = result._unsafeUnwrap()
+      const publicId = result._unsafeUnwrap().id
       const row = await db().indicateur.findUnique({ where: { publicId } })
       expect(row?.nom).toBe('Nouveau nom')
     }),

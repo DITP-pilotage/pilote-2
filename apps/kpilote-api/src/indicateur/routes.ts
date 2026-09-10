@@ -5,6 +5,7 @@ import {
   recupererIndicateurIndividuBrouillonQuerySchema,
 } from '@pilote/kpilote-shared/commentaire'
 import {
+  createIndicateurBodySchema,
   indicateurApiModelSchema,
   listIndicateursQuerySchema,
   upsertIndicateurBodySchema,
@@ -28,7 +29,7 @@ import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { createIndicateur, updateIndicateur } from '@/indicateur/commands/writeIndicateur'
+import { createIndicateur, upsertIndicateur } from '@/indicateur/commands/writeIndicateur'
 import {
   creerIndicateurIndividuCommentaire,
   indicateurIndividuConfig,
@@ -46,6 +47,7 @@ const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApi
 const IndicateurListApiModelSchema =
   createPaginatedApiListSchema(indicateurApiModelSchema).openapi('IndicateurListApiModel')
 const UpsertIndicateurBodySchema = upsertIndicateurBodySchema.openapi('UpsertIndicateurBody')
+const CreateIndicateurBodySchema = createIndicateurBodySchema.openapi('CreateIndicateurBody')
 
 // --- GET /indicateurs --------------------------------------------------------
 
@@ -79,7 +81,7 @@ const getIndicateurByIdRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Récupérer un indicateur par identifiant public',
   description:
-    'Retourne un indicateur identifié par son identifiant public (format `IND-XXX`). La réponse inclut `referentielIds` (référentiels liés, triés par publicId ASC). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.',
+    'Retourne un indicateur identifié par son identifiant public (slug, ex. `bilan-de-prevention`). La réponse inclut `referentielIds` (référentiels liés, triés par publicId ASC). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
@@ -97,13 +99,13 @@ const createIndicateurRoute = createRoute({
   method: 'post',
   path: '/indicateurs',
   tags: ['Indicateur', 'Admin'],
-  summary: 'Créer un indicateur (identifiant public généré par le serveur)',
+  summary: 'Créer un indicateur (identifiant public dérivé du nom)',
   description:
-    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée un indicateur ; l'identifiant public (`IND-<n>`) est généré côté serveur (dernier numéro + 1). Le champ `referentiels` applique la sémantique replace-all. Si un `referentielId` n'existe pas, 400 `VALIDATION_ERROR` + `details.unknownReferentielIds`. L'opération est atomique.",
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée un indicateur ; l'identifiant public est le `slug` fourni, sinon un slug dérivé du `nom` (« Bilan de prévention » → `bilan-de-prevention`), suffixé (`-2`, `-3`, …) s'il est déjà pris. Pour imposer un identifiant existant côté client, utiliser `PUT /indicateurs/{id}`. Le champ `referentiels` applique la sémantique replace-all. Si un `referentielId` n'existe pas, 400 `VALIDATION_ERROR` + `details.unknownReferentielIds`. L'opération est atomique.",
   middleware: [requireAuthentication],
   request: {
     body: {
-      content: { 'application/json': { schema: UpsertIndicateurBodySchema } },
+      content: { 'application/json': { schema: CreateIndicateurBodySchema } },
       required: true,
     },
   },
@@ -119,13 +121,13 @@ const createIndicateurRoute = createRoute({
 
 // --- PUT /indicateurs/:id ----------------------------------------------------
 
-const updateIndicateurRoute = createRoute({
+const upsertIndicateurRoute = createRoute({
   method: 'put',
   path: '/indicateurs/{id}',
   tags: ['Indicateur', 'Admin'],
-  summary: 'Mettre à jour un indicateur (nom + référentiels liés)',
+  summary: 'Créer ou mettre à jour un indicateur sous un identifiant imposé',
   description:
-    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Met à jour le `nom`, la visibilité, l'unité, les métadonnées et les référentiels liés (replace-all). Renvoie 404 (`ENTITY_NOT_FOUND`) si l'indicateur n'existe pas. L'opération est atomique.",
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée l'indicateur si l'identifiant est libre, met à jour sinon le `nom`, la visibilité, l'unité, les métadonnées et les référentiels liés (replace-all). C'est la voie d'entrée des clients qui portent déjà leurs propres identifiants. L'opération est atomique.",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -137,11 +139,10 @@ const updateIndicateurRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: IndicateurApiModelSchema } },
-      description: 'Indicateur mis à jour',
+      description: 'Indicateur créé ou mis à jour',
     },
     400: erreur400,
     403: erreur403,
-    404: erreur404,
   },
 })
 
@@ -182,10 +183,7 @@ indicateurRoutes.openapi(getIndicateurByIdRoute, async (context) => {
 indicateurRoutes.openapi(createIndicateurRoute, async (context) => {
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () => {
-    const publicId = (await createIndicateur(body))._unsafeUnwrap()
-    return getIndicateurByPublicId(publicId)
-  })
+  const result = await withTransaction(async () => createIndicateur(body))
 
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: IndicateurApiModelSchema, status: 200 }),
@@ -193,14 +191,11 @@ indicateurRoutes.openapi(createIndicateurRoute, async (context) => {
   )
 })
 
-indicateurRoutes.openapi(updateIndicateurRoute, async (context) => {
+indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () => {
-    ;(await updateIndicateur(id, body))._unsafeUnwrap()
-    return getIndicateurByPublicId(id)
-  })
+  const result = await withTransaction(async () => upsertIndicateur(id, body))
 
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: IndicateurApiModelSchema, status: 200 }),

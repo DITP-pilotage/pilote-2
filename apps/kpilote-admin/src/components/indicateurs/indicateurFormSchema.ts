@@ -1,6 +1,10 @@
 import { z } from 'zod'
 
-import type { IndicateurApiModel, UpsertIndicateurBody } from '@pilote/kpilote-shared/indicateur'
+import type {
+  CreateIndicateurBody,
+  IndicateurApiModel,
+  UpsertIndicateurBody,
+} from '@pilote/kpilote-shared/indicateur'
 import {
   configurationIndicateurReferentielSchema,
   indicateurSourceUrlSchema,
@@ -9,16 +13,19 @@ import {
   uniteDureeSchema,
   uniteIndicateurCodeSchema,
 } from '@pilote/kpilote-shared/indicateur'
+import { slugSchema } from '@pilote/kpilote-shared/slug'
 
 import { emptyToNull } from '@/lib/emptyToNull'
 
 // Schéma du formulaire (valeurs saisies, toutes en chaînes natives). La
-// conversion vers le body PUT — `'' → null`, `jour → number` — est faite par
-// `toUpsertBody`. `id` n'est jamais saisi : généré par l'API à la création,
-// verrouillé en édition.
+// conversion vers le body d'écriture — `'' → null`, `jour → number` — est faite
+// par `toUpsertBody` / `toCreateBody`. `id` n'est jamais saisi : attribué par
+// l'API à la création, verrouillé en édition. `slug` ne sert qu'à la création,
+// pour imposer un identifiant plutôt que de le laisser dériver du nom.
 export const indicateurFormSchema = z
   .object({
     id: z.string(),
+    slug: z.union([z.literal(''), slugSchema]),
     nom: z.string().trim().min(1, 'Le nom est requis'),
     visibilite: indicateurVisibiliteSchema,
     unite: z.union([z.literal(''), uniteIndicateurCodeSchema]),
@@ -68,6 +75,7 @@ export type IndicateurFormValues = z.infer<typeof indicateurFormSchema>
 export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurFormValues {
   return {
     id: indicateur?.id ?? '',
+    slug: '',
     nom: indicateur?.nom ?? '',
     visibilite: indicateur?.visibilite ?? 'PUBLIC',
     unite: indicateur?.unite?.code ?? '',
@@ -93,8 +101,8 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
   }
 }
 
-// Mappe les valeurs du formulaire vers le body PUT. Les 6 métadonnées sont
-// toujours envoyées (chaîne vide → null = « effacer ») : ce que montre le
+// Mappe les valeurs du formulaire vers le body d'écriture. Les 6 métadonnées
+// sont toujours envoyées (chaîne vide → null = « effacer ») : ce que montre le
 // formulaire est ce qui est persisté.
 export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody {
   return {
@@ -113,5 +121,13 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
         : { nombre: Number(values.delaiNombre), unite: values.delaiUnite },
     referentiels: values.referentiels,
     responsables: values.responsables.map((responsable) => responsable.id),
+  }
+}
+
+// À la création, un identifiant laissé vide est dérivé du nom par l'API.
+export function toCreateBody(values: IndicateurFormValues): CreateIndicateurBody {
+  return {
+    ...toUpsertBody(values),
+    ...(values.slug !== '' && { slug: values.slug }),
   }
 }
