@@ -39,7 +39,10 @@
     "database:init": "prisma migrate reset && prisma generate && prisma db seed",
     "database:init-force": "prisma migrate reset --force && prisma generate && prisma db seed",
     "database:migration": "prisma migrate dev",
-    "lint:oxlint": "oxlint --type-aware src tests"
+    "lint:oxlint": "oxlint --type-aware src tests",
+    "eval": "evalite run",
+    "eval:dev": "evalite watch",
+    "eval:rapide": "evalite run evals/detecteurIntention.eval.ts"
   },
   "browserslist": {
     "production": [
@@ -171,6 +174,8 @@
     "@types/react-dom": "^19.2.7",
     "@types/sanitize-html": "^2.16.1",
     "@vitest/coverage-v8": "^5.0.0",
+    "better-sqlite3": "^13.0.3",
+    "evalite": "1.0.0-beta.16",
     "jest-extended": "7.0.0",
     "jsdom": "^30.0.1",
     "next-router-mock": "1.0.5",
