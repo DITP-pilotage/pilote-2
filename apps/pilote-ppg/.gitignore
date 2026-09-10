@@ -22,3 +22,4 @@
 .env
 .env.e2e
 .env.test
+.devtools
