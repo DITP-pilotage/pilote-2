@@ -137,13 +137,18 @@ async function seedChantierDetaille({
     territoire_code: NATIONAL_TERRITORY,
   });
 
+  // `freins_a_lever` et non `autres_resultats_obtenus` : ce dernier est un type
+  // TERRITORIAL, que `getTypesContenuChantierPourTerritoire` exclut dès que le
+  // territoire interrogé est NAT-FR. Un commentaire semé ainsi au national est
+  // invisible pour l'outil — sans erreur, l'agent répond juste « aucun
+  // commentaire », et le scorer de sélection d'outils reste vert.
   await fixtures.commentaire({
     chantier_id: chantierId,
     territoire_code: NATIONAL_TERRITORY,
     maille: "NAT",
     code_insee: "FR",
-    type: "autres_resultats_obtenus",
-    contenu: `Point d'avancement sur le ${chantierId}.`,
+    type: "freins_a_lever",
+    contenu: `Frein identifié sur le ${chantierId} : délais de recrutement.`,
     auteur_creation_id: auteurId,
     auteur_modification_id: auteurId,
   });
