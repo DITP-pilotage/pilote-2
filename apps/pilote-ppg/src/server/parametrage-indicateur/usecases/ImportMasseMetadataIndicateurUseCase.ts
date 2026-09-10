@@ -1,4 +1,4 @@
-import { parse } from "csv-parse/sync";
+import { OptionsWithColumns, parse } from "csv-parse/sync";
 import fs from "node:fs";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain/ImportMetadataIndicateur";
@@ -207,7 +207,7 @@ export default class ImportMasseMetadataIndicateurUseCase {
   }
 
   async run({ nomDuFichier }: { nomDuFichier: string }) {
-    const csvParserOptions = {
+    const csvParserOptions: OptionsWithColumns<RecordCSVImport> = {
       columns: true,
       skipEmptyLines: true,
       trim: true,

@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "csv-parse/sync";
 import { File } from "formidable";
 import fs from "node:fs";
+import { CsvRecord } from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
@@ -54,7 +55,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const contenu = fs.readFileSync(fichier.filepath, "utf8");
-  const csvRecords = parse(contenu, {
+  const csvRecords = parse<CsvRecord>(contenu, {
     columns: true,
     skipEmptyLines: true,
     trim: true,
