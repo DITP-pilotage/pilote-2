@@ -7,12 +7,12 @@ Le monorepo contient **6 apps** (le doc en annonçait 3 jusqu'au 2026-07-17 ; l'
 - `@pilote/kpilote-api` (`apps/kpilote-api`) : backend Hono (kpilote)
 - `@pilote/kpilote-webapp` (`apps/kpilote-webapp`) : webapp (kpilote)
 - `@pilote/kpilote-admin` (`apps/kpilote-admin`) : back-office (kpilote) — **3 fichiers de test** (`src/components/centre-aide/{arbre,arbreDnd}.test.ts`, `extensions/miseEnTitre.test.ts`). Ce document et l'outil de campagne ont longtemps affirmé « aucun test » : c'était faux, corrigé le 2026-08-25.
-- `pilote-ppg-auth` (`apps/pilote-ppg-auth`) : proxy auth/ACME — **hors périmètre de `pnpm deps:campagne`**
+- `pilote-ppg-auth` (`apps/pilote-ppg-auth`) : proxy auth/ACME — **dans le périmètre de `pnpm deps:campagne` depuis le 2026-09-10**
 - `apps/pilote-ppg-data-management` : modèles dbt (SQL, pas de deps npm)
 
 Plus les packages partagés `packages/kpilote-shared` et `packages/kpilote-ui`.
 
-> **`pilote-ppg-auth` n'est bumpé par personne.** Il est hors du filtre kpilote de l'outil de campagne, et personne ne le met à jour à la main. C'est ainsi qu'il s'est retrouvé sur `hono@4.12.18` (9 advisories, dont une HIGH) pendant que les apps kpilote flottaient jusqu'à 4.12.27. À traiter.
+> **~~`pilote-ppg-auth` n'est bumpé par personne.~~ Corrigé le 2026-09-10.** Il était hors du filtre kpilote de l'outil de campagne, et personne ne le mettait à jour à la main. C'est ainsi qu'il s'est retrouvé sur `hono@4.12.18` (9 advisories, dont une HIGH) pendant que les apps kpilote flottaient jusqu'à 4.12.27. Le périmètre de l'outil couvre désormais **les 7 workspaces npm**.
 
 Toutes les décisions ci-dessous s'appliquent au monorepo (root `package.json` pour les overrides ; pins et deps directes dans chaque app).
 
@@ -471,9 +471,43 @@ Mesuré sur `terser` : retirer `"<5.47.0"` puis `pnpm install` laisse 5.46.2 (ve
 
 **Protocole correct** : retirer l'override → `pnpm install` → **`pnpm update <paquet> -r --depth Infinity`** → observer la résolution. C'est ce que fait `pnpm deps:campagne`.
 
+### 🔴 Le périmètre « kpilote seulement » était une illusion
+
+**Élargi à tout le monorepo le 2026-09-10.** `FILTRES_CAMPAGNE` (ex-`FILTRES_KPILOTE`) couvre
+désormais les **7 workspaces npm** : les 5 kpilote, plus `@pilote/ppg` et `pilote-ppg-auth`.
+
+Le découpage ne tenait pas, parce que **le `pnpm-lock.yaml` est partagé**. Deux incidents l'ont
+démontré, le second de façon spectaculaire :
+
+1. **`pilote-ppg-auth` n'était bumpé par personne** — ni par l'outil, ni à la main. Il a porté un
+   `hono` vulnérable pendant des mois. Constat déjà écrit dans ce document au 2026-07-17, jamais
+   corrigé depuis.
+2. **Le bump tiptap du 2026-09-10, pourtant « kpilote only », a cassé le `tsc` de `pilote-ppg`**
+   — 17 erreurs, toute la barre d'outils de l'éditeur riche. `@tiptap/starter-kit` déclare des
+   **carets** sur ses paquets frères : dès que la 3.30.5 entre quelque part dans le monorepo, le
+   starter-kit de ppg s'y résout alors que ppg garde son `core` en 3.29.2. Deux `@tiptap/core`
+   dans un seul programme `tsc`.
+
+**Les pins exacts des dépendances directes ne protègent pas de ça** : ils n'atteignent pas les
+carets internes des paquets tiers. C'est la même famille que l'incident zod du 2026-08-25 — une
+dépendance qu'on ne voit pas parce qu'elle n'est pas déclarée directement.
+
+Conséquences pour l'outillage :
+
+| Point | Traitement |
+|---|---|
+| `pilote-ppg-auth` n'a **pas** de script `lint` | nouvelle liste `APPS_LINTEES` qui l'exclut ; son `typecheck` est déjà couvert par l'oracle rapide |
+| `ppg` épuise la pile de Node sur `tsc` | invocation par `node --stack-size=8000`, car `--stack-size` est **refusé dans `NODE_OPTIONS`** |
+| `ppg` a `incremental: true` | purge du `.tsbuildinfo` avant chaque `tsc` — sans quoi le cache survit d'un commit à l'autre et rend un **vert faux** (mesuré) |
+| les tests de `ppg` attaquent une vraie base | nouvelle sonde `verifierBaseTestPpgAccessible()` sur le **port 7433** de son `.env.test`, en préalable, au même titre que la base de dev |
+
+**Nouveau prérequis pour lancer une campagne** : la base de dev (5434) **et** la base de test de
+ppg (7433) doivent être levées. Le moteur les sonde et s'arrête avec un message clair, sans jamais
+toucher aux conteneurs.
+
 ## Campagne d'upgrade : procédure type
 
-**Périmètre kpilote : la campagne est outillée.** `pnpm deps:campagne` (ou le skill `/deps-campagne`)
+**Périmètre : tout le monorepo, et la campagne est outillée.** `pnpm deps:campagne` (ou le skill `/deps-campagne`)
 fait tout ce qui suit automatiquement — snapshot, branche, commits atomiques, oracle après chacun,
 banc d'essai des overrides (15 au 2026-08-25), et un `report.json`. Compter ~40-60 min non surveillées. Voir
 `docs/superpowers/specs/2026-07-17-campagne-deps-ia-design.md`. La procédure manuelle ci-dessous

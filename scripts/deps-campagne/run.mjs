@@ -15,7 +15,8 @@ import {
   oracleComplet,
   installer,
   verifierBaseAccessible,
-  FILTRES_KPILOTE,
+  FILTRES_CAMPAGNE,
+  verifierBaseTestPpgAccessible,
 } from './lib/oracle.mjs'
 
 const DOSSIER_SORTIE = '.deps-campagne'
@@ -32,7 +33,7 @@ function lireOutdated() {
   // interpreterOutdated lève si pnpm a échoué, au lieu de rendre [] — un « rien de périmé »
   // silencieux produirait une campagne vide en se croyant à jour.
   return interpreterOutdated(
-    run(['pnpm', 'outdated', '-r', ...FILTRES_KPILOTE, '--format', 'json']),
+    run(['pnpm', 'outdated', '-r', ...FILTRES_CAMPAGNE, '--format', 'json']),
   )
 }
 
@@ -63,6 +64,16 @@ function verifierPrealables() {
     throw new Error(
       'base de dev injoignable — kpilote-api en a besoin même pour son lint (prisma generate --sql). ' +
         'Vérifie que Docker tourne et que la base est levée, puis relance. ' +
+        'Le script ne touche jamais aux conteneurs lui-même.',
+    )
+  }
+  // ppg est dans le périmètre depuis le 2026-09-10 : ses tests attaquent réellement sa base
+  // de test (port 7433 dans son .env.test). Sans elle, tous ses commits seraient rouges pour
+  // une raison qui n'a rien à voir avec les dépendances.
+  if (!verifierBaseTestPpgAccessible()) {
+    throw new Error(
+      'base de TEST de ppg injoignable (port 7433) — requise depuis que ppg est dans le ' +
+        'périmètre de la campagne. Lève-la, joue `pnpm test:database:init`, puis relance. ' +
         'Le script ne touche jamais aux conteneurs lui-même.',
     )
   }
@@ -216,7 +227,7 @@ function main() {
   // --- Lot in-range : on fait, puis on observe.
   journal('lot in-range : pnpm update')
   const avant = lireOutdated()
-  exigerSucces(run(['pnpm', 'update', '-r', ...FILTRES_KPILOTE]), 'pnpm update')
+  exigerSucces(run(['pnpm', 'update', '-r', ...FILTRES_CAMPAGNE]), 'pnpm update')
   const apres = lireOutdated()
   const bouges = diffInRange(avant, apres)
 

@@ -1,11 +1,26 @@
 import { run } from './shell.mjs'
 
 /**
- * Périmètre des bumps : kpilote uniquement. pilote-ppg n'est jamais touché.
+ * Périmètre des bumps : TOUT le monorepo npm depuis le 2026-09-10.
  *
- * Le périmètre doit couvrir TOUS les workspaces kpilote, y compris ceux qui n'ont pas de
- * tsc à eux. Un package laissé hors filtre garde sa résolution figée pendant que les apps
- * montent, et deux copies de la même dépendance se retrouvent dans un seul programme tsc.
+ * Le périmètre était limité à kpilote jusque-là. Deux incidents ont montré que ce
+ * découpage est une illusion, parce que le `pnpm-lock.yaml` est partagé :
+ *
+ * 1. `pilote-ppg-auth` n'était bumpé par personne — ni par cet outil, ni à la main. Il
+ *    a porté un `hono` vulnérable (9 advisories, dont une HIGH) pendant des mois pendant
+ *    que les apps kpilote flottaient plus haut.
+ * 2. Le bump tiptap du 2026-09-10, pourtant « kpilote only », a cassé le tsc de
+ *    `pilote-ppg` (17 erreurs). `@tiptap/starter-kit` déclare des CARETS sur ses paquets
+ *    frères : dès que la 3.30.5 entre quelque part dans le monorepo, le starter-kit de ppg
+ *    s'y résout, alors que ppg garde son `core` en 3.29.2. Deux `@tiptap/core` dans un
+ *    seul programme tsc. Les pins exacts des dépendances directes n'y peuvent rien : ils
+ *    n'atteignent pas les carets internes des paquets tiers.
+ *
+ * Conclusion : on ne peut pas bumper une moitié du monorepo. Soit tout monte, soit rien.
+ *
+ * Le périmètre doit couvrir TOUS les workspaces, y compris ceux qui n'ont pas de tsc à eux.
+ * Un package laissé hors filtre garde sa résolution figée pendant que les autres montent,
+ * et deux copies de la même dépendance se retrouvent dans un seul programme tsc.
  *
  * Pour zod c'est fatal : il estampille ses schémas avec sa propre version, en type LITTÉRAL
  * (`_$ZodTypeInternals { version: typeof version }`, dont `minor` est un littéral). Deux
@@ -17,7 +32,7 @@ import { run } from './shell.mjs'
  * de shared qui ne la portent pas. Le mode d'échec est décrit dans DEPENDENCIES.md, section
  * « `pnpm outdated` ne voit pas les `peerDependencies` ».
  */
-export const FILTRES_KPILOTE = [
+export const FILTRES_CAMPAGNE = [
   '--filter',
   '@pilote/kpilote-api',
   '--filter',
@@ -28,6 +43,10 @@ export const FILTRES_KPILOTE = [
   '@pilote/kpilote-ui',
   '--filter',
   '@pilote/kpilote-shared',
+  '--filter',
+  '@pilote/ppg',
+  '--filter',
+  'pilote-ppg-auth',
 ]
 
 /**
@@ -40,6 +59,30 @@ const APPS_TYPEES = [
   { pkg: '@pilote/kpilote-api', prepare: ['prisma', 'generate', '--sql'] },
   { pkg: '@pilote/kpilote-webapp', prepare: ['tsr', 'generate'] },
   { pkg: '@pilote/kpilote-admin', prepare: ['tsr', 'generate'] },
+  // ppg épuise la pile par défaut de Node sur ce codebase : il lui faut --stack-size, et
+  // celui-ci est REFUSÉ dans NODE_OPTIONS (« --stack-size= is not allowed »). Il faut donc
+  // invoquer le binaire tsc par node, pas par le shim pnpm.
+  // Son tsconfig a `incremental: true` : sans purge du .tsbuildinfo entre deux commits,
+  // tsc réutilise le cache et rend un VERT FAUX. Mesuré le 2026-09-10.
+  {
+    pkg: '@pilote/ppg',
+    prepare: ['prisma', 'generate'],
+    purger: 'tsconfig.tsbuildinfo',
+    tsc: ['node', '--stack-size=8000', './node_modules/typescript/bin/tsc'],
+  },
+  { pkg: 'pilote-ppg-auth' },
+]
+
+/**
+ * Apps qui portent un script `lint`. `pilote-ppg-auth` n'en a PAS — il n'a qu'un
+ * `typecheck`, déjà couvert par l'oracle rapide via APPS_TYPEES. L'inclure ici ferait
+ * échouer l'oracle sur un script inexistant, ce qui se lirait comme une régression.
+ */
+const APPS_LINTEES = [
+  '@pilote/kpilote-api',
+  '@pilote/kpilote-webapp',
+  '@pilote/kpilote-admin',
+  '@pilote/ppg',
 ]
 
 /**
@@ -62,6 +105,8 @@ const APPS_TESTEES = [
   '@pilote/kpilote-admin',
   '@pilote/kpilote-ui',
   '@pilote/kpilote-shared',
+  '@pilote/ppg',
+  'pilote-ppg-auth',
 ]
 
 /** Env que la CI fournit aux tests (cf. testAndLint.yml). Aucun vrai backend n'est appelé. */
@@ -93,6 +138,22 @@ export function verifierBaseAccessible() {
 }
 
 /**
+ * Base de TEST de ppg (port 7433 dans son `.env.test`), indispensable depuis que ppg est
+ * dans le périmètre : ses tests l'attaquent réellement. La CI la monte en service postgres
+ * et joue `pnpm test:database:init` avant les tests — en local elle doit être levée.
+ * Le moteur ne touche JAMAIS aux conteneurs, il se contente de constater.
+ */
+export function verifierBaseTestPpgAccessible() {
+  const { code } = run(
+    ['pnpm', '-F', '@pilote/ppg', 'exec', 'dotenv', '-e', '.env.test', '--', 'prisma', 'db', 'execute', '--stdin'],
+    {
+      input: 'SELECT 1;',
+    },
+  )
+  return code === 0
+}
+
+/**
  * Oracle rapide : install + tsc sur les 3 apps typées. ~30 s.
  * C'est le signal discriminant sur un codebase TS : signature changée, export retiré,
  * type modifié. Inutile de payer 3 min de tests pour un commit qui ne compile pas.
@@ -106,12 +167,18 @@ export function oracleRapide() {
   }
 
   for (const app of APPS_TYPEES) {
-    const prepare = run(['pnpm', '-F', app.pkg, 'exec', ...app.prepare])
-    if (prepare.code !== 0) {
-      echecs.push(`${app.pkg}: ${app.prepare.join(' ')} — ${derniereLigne(prepare.stderr)}`)
-      continue
+    if (app.prepare) {
+      const prepare = run(['pnpm', '-F', app.pkg, 'exec', ...app.prepare])
+      if (prepare.code !== 0) {
+        echecs.push(`${app.pkg}: ${app.prepare.join(' ')} — ${derniereLigne(prepare.stderr)}`)
+        continue
+      }
     }
-    const tsc = run(['pnpm', '-F', app.pkg, 'exec', 'tsc', '--noEmit'])
+    // Un cache incrémental survivant d'un commit à l'autre rend un vert faux.
+    if (app.purger) {
+      run(['pnpm', '-F', app.pkg, 'exec', 'rm', '-f', app.purger])
+    }
+    const tsc = run(['pnpm', '-F', app.pkg, 'exec', ...(app.tsc ?? ['tsc', '--noEmit'])])
     if (tsc.code !== 0) {
       echecs.push(
         `${app.pkg}: tsc — ${compterErreursTsc(tsc.stdout)} erreurs\n${extrait(tsc.stdout)}`,
@@ -126,14 +193,14 @@ export function oracleRapide() {
 export function oracleComplet() {
   const echecs = []
 
-  for (const app of APPS_TYPEES) {
-    const lint = run(['pnpm', 'lint'], { env: { APP_PACKAGE: app.pkg } })
-    if (lint.code !== 0) echecs.push(`${app.pkg}: lint — ${extrait(lint.stdout || lint.stderr)}`)
+  for (const pkg of APPS_LINTEES) {
+    const lint = run(['pnpm', 'lint'], { env: { APP_PACKAGE: pkg } })
+    if (lint.code !== 0) echecs.push(`${pkg}: lint — ${extrait(lint.stderr, lint.stdout)}`)
   }
 
   for (const pkg of APPS_TESTEES) {
     const test = run(['pnpm', 'test'], { env: { APP_PACKAGE: pkg, ...ENV_TESTS } })
-    if (test.code !== 0) echecs.push(`${pkg}: tests — ${extrait(test.stdout || test.stderr)}`)
+    if (test.code !== 0) echecs.push(`${pkg}: tests — ${extrait(test.stderr, test.stdout)}`)
   }
 
   // `pnpm audit` sort en non-zéro dès qu'il trouve une vulnérabilité : c'est une donnée, pas une erreur.
@@ -150,7 +217,23 @@ function compterErreursTsc(sortie) {
   return (sortie.match(/error TS\d+/g) ?? []).length
 }
 
-/** Le rapport doit rester compact : on ne garde que les 20 premières lignes utiles. */
-function extrait(sortie) {
-  return (sortie ?? '').trim().split('\n').slice(0, 20).join('\n')
+/**
+ * Le rapport doit rester compact — mais par la BONNE extrémité.
+ *
+ * Cette fonction gardait les 20 PREMIÈRES lignes. Pour `pnpm lint` comme pour `vitest`, ces
+ * 20 lignes sont le préambule pnpm et le bruit de migration : le message d'erreur réel n'y est
+ * jamais. Mesuré le 2026-09-10 — l'échec du bump TypeScript 7 a été enregistré sans une seule
+ * ligne d'erreur, et il a fallu le reproduire à la main pour apprendre qu'il s'agissait de
+ * « typescript-eslint does not support TS 7.0 ».
+ *
+ * Et stderr était ÉCARTÉ dès que stdout était non vide (`stdout || stderr`), ce qui suffit à
+ * perdre tout crash qui ne passe pas par stdout. On concatène les deux, et on garde la fin.
+ */
+function extrait(...sorties) {
+  const lignes = sorties
+    .map((s) => (s ?? '').trim())
+    .filter(Boolean)
+    .join('\n')
+    .split('\n')
+  return lignes.slice(-20).join('\n')
 }
