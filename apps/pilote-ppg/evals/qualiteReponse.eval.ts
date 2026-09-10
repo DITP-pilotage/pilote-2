@@ -1,5 +1,6 @@
 import { evalite } from "evalite";
-import { chargerHabilitationsCompletes, jouerTourAgent } from "./harnaisAlbert";
+import { runAgentTurn } from "./agentTurn";
+import { withEvalWorld } from "./world";
 import { creerScorerJuge, MODELE_JUGE } from "./jugeAlbert";
 
 /**
@@ -43,15 +44,11 @@ evalite<CasQualite, { texte: string; nbOutils: number }>(
     data: () => CAS,
 
     task: async (input) => {
-      const { chantiersAccessibles, territoiresAccessibles } =
-        await chargerHabilitationsCompletes();
+      const { text, toolCalls } = await withEvalWorld((world) =>
+        runAgentTurn({ question: input.question, world }),
+      );
 
-      const { texte, toolCalls } = await jouerTourAgent({
-        question: input.question,
-        chantiersAccessibles,
-        territoiresAccessibles,
-      });
-      return { texte, nbOutils: toolCalls.length };
+      return { texte: text, nbOutils: toolCalls.length };
     },
 
     // Un juge LLM n'est pas stable : 2 passages montrent l'ecart sans tripler

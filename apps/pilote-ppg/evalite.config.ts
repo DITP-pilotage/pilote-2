@@ -42,4 +42,14 @@ export default defineConfig({
   // C'est la contrainte dimensionnante de tout eval d'agent sur Albert : le
   // debit de l'API, pas le temps CPU.
   maxConcurrency: 1,
+
+  // Evalite met en cache les sorties du modele, et sa cle de cache inclut
+  // `trialCount` sans inclure l'INDEX de l'essai : les 3 essais d'un meme cas
+  // partagent donc une entree et renvoient une sortie identique. Le cache par
+  // defaut annule exactement ce que `trialCount` sert a mesurer.
+  //
+  // Mesure : a cache actif, 5,2 s et des essais tous identiques ; a cache
+  // coupe, 34,7 s et des essais qui divergent — 0/0/100 sur la clarification,
+  // 100/100/50 sur la recherche thematique. C'est ce signal qu'on veut.
+  cache: false,
 });
