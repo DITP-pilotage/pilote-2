@@ -23,7 +23,7 @@ import { Albert } from "@/server/albert/Albert";
  * `deepseek-v4-flash`, lui, diverge sur tous les prompts testes.
  */
 
-export const MODELE_JUGE = "deepseek-v4-flash";
+export const JUDGE_MODEL = "deepseek-v4-flash";
 
 const verdictSchema = z.object({
   note: z
@@ -63,7 +63,7 @@ async function demanderVerdict({
   reponse: string;
 }) {
   const resultat = await generateText({
-    model: Albert.createProvider().chat(MODELE_JUGE),
+    model: Albert.createProvider().chat(JUDGE_MODEL),
     system: PROMPT_JUGE,
     prompt: [
       `CRITÈRE À ÉVALUER : ${critere}`,
@@ -90,21 +90,21 @@ async function demanderVerdict({
  * cote du score, ce qui est indispensable pour calibrer un juge (une note sans
  * motif n'est pas exploitable).
  */
-export function creerScorerJuge<TInput extends { question: string }>({
-  nom,
-  critere,
+export function createJudgeScorer<TInput extends { question: string }>({
+  name,
+  criterion,
 }: {
-  nom: string;
-  critere: string;
+  name: string;
+  criterion: string;
 }) {
-  return createScorer<TInput, { texte: string }, unknown>({
-    name: nom,
-    description: `Juge LLM (${MODELE_JUGE}) — ${critere}`,
+  return createScorer<TInput, { text: string }, unknown>({
+    name,
+    description: `Juge LLM (${JUDGE_MODEL}) — ${criterion}`,
     scorer: async ({ input, output }) => {
       const verdict = await demanderVerdict({
-        critere,
+        critere: criterion,
         question: input.question,
-        reponse: output.texte,
+        reponse: output.text,
       });
 
       // SPIKE : le tableau du terminal n'affiche pas les metadata, seulement le
@@ -112,7 +112,7 @@ export function creerScorerJuge<TInput extends { question: string }>({
       // — a retirer si les evals passent en CI, l'UI web les montre nativement.
       // eslint-disable-next-line no-console
       console.error(
-        `    [juge:${nom}] ${verdict.note} — ${verdict.justification}`,
+        `    [juge:${name}] ${verdict.note} — ${verdict.justification}`,
       );
 
       return {
