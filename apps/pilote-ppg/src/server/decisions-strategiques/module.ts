@@ -13,7 +13,6 @@ import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_d
 import {
   defineModule,
   type ExtractScope,
-  type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
 
@@ -31,13 +30,18 @@ type ImportDecisionStrategiqueCradle = {
   décisionStratégiqueRepository: DécisionStratégiqueRepository;
 };
 
+export type ImportDecisionStrategiqueExports = Pick<
+  ImportDecisionStrategiqueCradle,
+  "importerDecisionsStrategiquesUseCase"
+>;
+
 export const importDecisionStrategiqueModule = defineModule<
-  NoExports,
+  ImportDecisionStrategiqueExports,
   ImportDecisionStrategiqueCradle
 >()({
   name: "decisionStrategique",
   imports: ["shared"],
-  exports: [],
+  exports: ["importerDecisionsStrategiquesUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({
       décisionStratégiqueRepository: asModuleClass(

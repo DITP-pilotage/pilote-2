@@ -13,7 +13,6 @@ import CommentaireSQLRepository from "@/server/infrastructure/accès_données/ch
 import {
   defineModule,
   type ExtractScope,
-  type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
 
@@ -31,10 +30,18 @@ type CommentaireCradle = {
   commentaireRepository: CommentaireRepository;
 };
 
-export const commentaireModule = defineModule<NoExports, CommentaireCradle>()({
+export type CommentaireExports = Pick<
+  CommentaireCradle,
+  "importerCommentairesUseCase"
+>;
+
+export const commentaireModule = defineModule<
+  CommentaireExports,
+  CommentaireCradle
+>()({
   name: "commentaires",
   imports: ["shared"],
-  exports: [],
+  exports: ["importerCommentairesUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({
       commentaireRepository: asModuleClass(CommentaireSQLRepository),

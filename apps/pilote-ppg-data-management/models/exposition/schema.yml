@@ -13,38 +13,6 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_ppg"
       - name: nom
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_ppg"
-  - name: commentaire
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant uniques"
-      - name: chantier_id
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: type
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: contenu
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: date
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: auteur
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: maille
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: code_insee
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-  - name: decision_strategique
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant unique"
-      - name: auteur
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: type_decision_strategique
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: contenu
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: date
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: chantier_id
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
   - name: ministere
     columns:
       - name: id
@@ -53,20 +21,6 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.m_porteurs"
       - name: icone
         description: "source de données à date du 07/07/2023 : ppg_metadata.m_porteurs"
-  - name: objectif
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant unique"
-      - name: auteur
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: type_objectif
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: contenu
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: date
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
-      - name: chantier_id
-        description: "source de données à date du 07/07/2023 : import massif des commentaires"
   - name: perimetre
     columns:
       - name: id
@@ -77,17 +31,6 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_perimetre"
       - name: ministere_id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_perimetre"
-  - name: synthese_des_resultats
-    columns:
-      - name: id
-        description: "Identifiant unique de la synthese"
-        data_tests:
-          - unique
-          - not_null
-      - name: maille
-        description: "Maille de la synthese"
-        data_tests:
-          - not_null
 
 exposures:
   - name: copilot_sig_export

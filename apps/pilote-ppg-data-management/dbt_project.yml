@@ -63,13 +63,6 @@ models:
           mesure_indicateur:
             +unique_key:
               - 'id'
-          commentaires:
-            +unique_key:
-              - 'chantier_id'
-              - 'maille'
-              - 'code_insee'
-              - 'date'
-              - 'type'
         public:
           +schema: public
           utilisateur:
@@ -106,18 +99,6 @@ models:
           - 'id'
           - 'maille'
           - 'code_insee'
-      commentaire:
-        +unique_key:
-          - 'id'
-      objectif:
-        +unique_key:
-          - 'id'
-      decision_strategique:
-        +unique_key:
-          - 'id'
-      synthese_des_resultats:
-        +unique_key:
-          - 'id'
 
 vars:
   ditp_ppg_dbt:

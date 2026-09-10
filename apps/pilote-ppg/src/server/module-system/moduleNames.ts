@@ -8,6 +8,7 @@ export const moduleNames = [
   "decisionStrategique",
   "objectif",
   "importSyntheseDesResultats",
+  "importPublicationCSV",
   "gestionUtilisateur",
   "ficheConducteur",
   "parametrageNouveautes",
