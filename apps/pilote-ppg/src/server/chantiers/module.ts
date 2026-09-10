@@ -48,6 +48,8 @@ import { RecupererTauxAvancementIndicateurTerritoiresQuery } from "./infrastruct
 import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetStatistiquesTauxAvancementIndicateurTerritoiresQuery";
 import { GetRepartitionMeteoChantiersQuery } from "./infrastructure/queries/GetRepartitionMeteoChantiersQuery";
 import { GetChantiersSignalesQuery } from "./infrastructure/queries/GetChantiersSignalesQuery";
+import { GetChantiersSignalesDetailQuery } from "./infrastructure/queries/GetChantiersSignalesDetailQuery";
+import { ChantiersSignalesDataFetcher } from "./infrastructure/queries/ChantiersSignalesDataFetcher";
 import { GetStatistiquesAvancementChantiersQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 import { GetStatistiquesAvancementChantiersParChantierQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
 import { RecupererEvolutionValeursAvancementTerritoiresQuery } from "./infrastructure/queries/RecupererEvolutionValeursAvancementTerritoiresQuery";
@@ -75,6 +77,7 @@ type ChantierExports = {
   getChantiersIdentiteQuery: GetChantiersIdentiteQuery;
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
+  getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -116,6 +119,7 @@ type ChantierOwnCradle = ChantierExports & {
   getStatistiquesAvancementChantiersParChantierQuery: GetStatistiquesAvancementChantiersParChantierQuery;
   getRepartitionMeteoChantiersQuery: GetRepartitionMeteoChantiersQuery;
   getChantiersSignalesQuery: GetChantiersSignalesQuery;
+  chantiersSignalesDataFetcher: ChantiersSignalesDataFetcher;
   recupererEvolutionValeursAvancementTerritoiresQuery: RecupererEvolutionValeursAvancementTerritoiresQuery;
   recupererEvolutionTauxAvancementTerritoiresQuery: RecupererEvolutionTauxAvancementTerritoiresQuery;
   getAvancementChantierQuery: GetAvancementChantierQuery;
@@ -145,6 +149,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getChantiersIdentiteQuery",
     "getIndicateursIdentiteQuery",
     "getTerritoiresIdentiteQuery",
+    "getChantiersSignalesDetailQuery",
   ],
   register: (container, { asModuleClass }) => {
     container.register({
@@ -239,7 +244,11 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getRepartitionMeteoChantiersQuery: asModuleClass(
         GetRepartitionMeteoChantiersQuery,
       ),
+      chantiersSignalesDataFetcher: asModuleClass(ChantiersSignalesDataFetcher),
       getChantiersSignalesQuery: asModuleClass(GetChantiersSignalesQuery),
+      getChantiersSignalesDetailQuery: asModuleClass(
+        GetChantiersSignalesDetailQuery,
+      ),
       recupererEvolutionValeursAvancementTerritoiresQuery: asModuleClass(
         RecupererEvolutionValeursAvancementTerritoiresQuery,
       ),

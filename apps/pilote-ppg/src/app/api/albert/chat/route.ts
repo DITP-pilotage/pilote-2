@@ -75,6 +75,9 @@ export async function POST(request: Request) {
     const createGetChantierObjectifsTool = container.resolve(
       "createGetChantierObjectifsTool",
     );
+    const createGetChantiersSignalesTool = container.resolve(
+      "createGetChantiersSignalesTool",
+    );
     const createSearchChantiersTool = container.resolve(
       "createSearchChantiersTool",
     );
@@ -117,6 +120,10 @@ export async function POST(request: Request) {
     const getChantierObjectifs = createGetChantierObjectifsTool({
       chantiersAccessibles: session.habilitations.lecture.chantiers,
     });
+    const getChantiersSignales = createGetChantiersSignalesTool({
+      territoiresAccessibles,
+      chantiersAccessibles: session.habilitations.lecture.chantiers,
+    });
     const searchChantiers = createSearchChantiersTool({
       chantiersAccessibles: session.habilitations.lecture.chantiers,
     });
@@ -136,6 +143,7 @@ export async function POST(request: Request) {
       get_indicateurs: getChantierIndicateurs,
       get_chantier_commentaires: getChantierCommentaires,
       get_chantier_objectifs: getChantierObjectifs,
+      get_chantiers_signales: getChantiersSignales,
       search_chantiers: searchChantiers,
       search_indicateurs: searchIndicateurs,
       search_territoires: searchTerritoires,
