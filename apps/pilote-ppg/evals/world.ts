@@ -1,5 +1,4 @@
 import { getPrisma } from "@/server/db/PrismaTransaction";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
@@ -83,7 +82,29 @@ const CHANTIERS = [
  */
 const CHANTIERS_DETAILLES = ["CH-001", "CH-004", "CH-007"];
 
-const TERRITOIRE_NATIONAL = "NAT-FR";
+export const NATIONAL_TERRITORY = "NAT-FR";
+
+/**
+ * Rattachement régional réel, relevé sur la base de dev.
+ *
+ * Les cas qui portent sur `en_retard` ou `en_difficulte` doivent viser une
+ * région : au national, `get_chantiers` renvoie `non_applicable`, l'écart à la
+ * médiane supposant des territoires comparables.
+ */
+export const BRETAGNE = {
+  territoire_code: "REG-53",
+  code_insee: "53",
+  maille: "REG" as const,
+  zone_id: "R53",
+};
+
+/**
+ * Durée de vie de la transaction d'un cas. Un tour d'agent attend le réseau
+ * pendant qu'elle est ouverte ; les cas qui passent par `search_chantiers`,
+ * lui-même un sous-agent LLM, dépassent 180 s. Reste sous le `testTimeout`
+ * d'Evalite, pour que ce soit le runner qui arbitre en dernier ressort.
+ */
+export const EVAL_TIMEOUT_MS = 400_000;
 
 async function seedChantierDetaille({
   chantierId,
@@ -92,12 +113,16 @@ async function seedChantierDetaille({
   chantierId: string;
   auteurId: string;
 }) {
+  // `est_applicable` n'a pas de valeur par defaut en base et le `where` de
+  // GetChantiersQuery filtre dessus : sans ce champ, le chantier n'existe pas
+  // pour l'outil, sans qu'aucune erreur ne le signale.
   await fixtures.chantierTerritoire({
     id: chantierId,
-    territoire_code: TERRITOIRE_NATIONAL,
+    territoire_code: NATIONAL_TERRITORY,
     code_insee: "FR",
     maille: "NAT",
     zone_id: "FRANCE",
+    est_applicable: true,
   });
 
   const indicateur = await fixtures.indicateurIdentite({
@@ -109,12 +134,12 @@ async function seedChantierDetaille({
   await fixtures.indicateurTerritoire({
     id: indicateur.id,
     chantier_id: chantierId,
-    territoire_code: TERRITOIRE_NATIONAL,
+    territoire_code: NATIONAL_TERRITORY,
   });
 
   await fixtures.commentaire({
     chantier_id: chantierId,
-    territoire_code: TERRITOIRE_NATIONAL,
+    territoire_code: NATIONAL_TERRITORY,
     maille: "NAT",
     code_insee: "FR",
     type: "autres_resultats_obtenus",
@@ -175,35 +200,4 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
       gestionUtilisateur: perimetreComplet,
     },
   };
-}
-
-/**
- * Durée de vie de la transaction. Un tour d'agent attend le réseau pendant
- * qu'elle est ouverte : les cas qui passent par `search_chantiers`, lui-même un
- * sous-agent LLM, dépassent 180 s. Reste sous le `testTimeout` d'Evalite, pour
- * que ce soit le runner qui arbitre en dernier ressort.
- */
-const TIMEOUT_TRANSACTION_MS = 400_000;
-
-/**
- * Joue `run` sur un monde fraîchement semé, dans une transaction annulée à la
- * sortie — y compris les lignes `llm_calls` écrites par l'assistant.
- *
- * `createIntegrationTest` attend une fonction sans valeur de retour, alors
- * qu'une tâche d'eval doit rendre sa sortie au scorer. On la récupère donc par
- * fermeture plutôt que d'aller changer une signature partagée par 161 fichiers.
- */
-export async function withEvalWorld<T>(
-  run: (world: EvalWorld) => Promise<T>,
-): Promise<T> {
-  let sortie: T | undefined;
-
-  await createIntegrationTest(
-    async () => {
-      sortie = await run(await seedEvalWorld());
-    },
-    { timeout: TIMEOUT_TRANSACTION_MS },
-  )();
-
-  return sortie as T;
 }
