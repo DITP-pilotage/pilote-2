@@ -10,7 +10,7 @@ export const DashboardPanel = ({
 }) => (
   <div
     className={clsxm(
-      "h-full rounded-lg border border-gray-200 bg-white p-4",
+      "h-full border border-dsfr-grey-925 bg-white p-4",
       className,
     )}
   >

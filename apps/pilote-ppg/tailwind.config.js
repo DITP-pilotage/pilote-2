@@ -114,6 +114,17 @@ module.exports = {
           "0%": { opacity: "0", transform: "translateY(100%)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "pulse-square": {
+          "0%, 100%": { opacity: "0.25" },
+          "50%": { opacity: "1" },
+        },
+        "blink-caret": {
+          "50%": { opacity: "0" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "dropdown-fade-in": "dropdown-fade-in 150ms ease-out",
@@ -123,6 +134,9 @@ module.exports = {
         "pulse-opacity": "pulse-opacity 2s ease-in-out infinite",
         "cssload-width": "cssload-width 1s ease-out 1",
         "slide-up": "slide-up 300ms ease-out",
+        "pulse-square": "pulse-square 1.2s ease-in-out infinite",
+        "blink-caret": "blink-caret 1s steps(2) infinite",
+        shimmer: "shimmer 1.6s linear infinite",
       },
     },
   },

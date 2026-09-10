@@ -1,7 +1,8 @@
 import { useChat } from "@ai-sdk/react";
 import { Icone } from "@/components/_commons/Icone";
-import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
+import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
+import { PointsAttente } from "@/components/_commons/ChatUI/PointsAttente";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
@@ -13,32 +14,40 @@ export const AlbertDock = ({
   conversation: AlbertConversation;
 }) => {
   const { restore, close } = useAlbertConversation();
-  const { messages } = useChat<PiloteUIMessage>({ chat: conversation.chat });
+  const { messages, status } = useChat<PiloteUIMessage>({
+    chat: conversation.chat,
+  });
+  const enCours = status === "submitted" || status === "streaming";
 
   return (
-    <div className="fixed bottom-4 right-4 z-[1750] flex max-w-xs items-center gap-2 rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
+    <div className="fixed bottom-4 right-4 z-[1750] flex h-12 max-w-[380px] items-center gap-2.5 border border-dsfr-grey-900 bg-white pl-2.5 pr-1.5 shadow-md">
+      <AlbertMonogramme taille="sm" />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[13px] font-medium leading-[18px] text-dsfr-grey-50 fr-mb-0">
+          {deriverTitre(messages)}
+        </p>
+        <p className="flex items-center gap-1.5 text-[11px] leading-[14px] text-dsfr-mention-grey fr-mb-0">
+          {enCours ? (
+            <>
+              <PointsAttente className="[&>span]:h-1 [&>span]:w-1" />
+              <span className="text-primary">Albert rédige…</span>
+            </>
+          ) : (
+            "Conversation en pause"
+          )}
+        </p>
+      </div>
       <button
         aria-label="Reprendre la conversation"
-        className="flex min-w-0 flex-1 items-center gap-2 text-left hover:bg-transparent"
+        className="fr-btn fr-btn--sm"
         onClick={restore}
         type="button"
       >
-        <Icone
-          className="h-4 w-4 shrink-0 !text-primary"
-          icone={SparklingIcon}
-        />
-        <span className="min-w-0">
-          <span className="block text-sm font-medium text-primary">
-            Reprendre la conversation
-          </span>
-          <span className="block truncate text-xs text-gray-500">
-            {deriverTitre(messages)}
-          </span>
-        </span>
+        {enCours ? "Voir" : "Reprendre"}
       </button>
       <button
         aria-label="Fermer la conversation"
-        className="shrink-0 text-gray-400 hover:text-red-500"
+        className="flex h-8 w-8 items-center justify-center text-dsfr-mention-grey transition-colors hover:bg-dsfr-grey-1000 hover:text-dsfr-grey-50"
         onClick={close}
         type="button"
       >

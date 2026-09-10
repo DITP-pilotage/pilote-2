@@ -8,7 +8,7 @@ export const UserMessage = memo(function UserMessage({
   message: PiloteUIMessage;
 }) {
   return (
-    <div className="max-w-[80%] rounded-2xl rounded-br-sm px-4 py-3 text-sm whitespace-pre-wrap bg-primary text-white">
+    <div className="max-w-[560px] whitespace-pre-wrap bg-dsfr-blue-france-950 px-4 py-3 text-[15px] leading-6 text-dsfr-grey-50">
       {extractMessageText(message)}
     </div>
   );

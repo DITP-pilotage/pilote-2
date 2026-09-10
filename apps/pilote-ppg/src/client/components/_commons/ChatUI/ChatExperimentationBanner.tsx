@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { useState } from "react";
-import { Callout } from "@/components/shared/Callout";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 
 const CHARTE_IA_URL =
   "https://docs.numerique.gouv.fr/docs/fa8a98a7-bb77-4c07-9a16-bd80006ee5ec/";
+
+const LIEN = "whitespace-nowrap font-medium text-primary hover:underline";
 
 export const ChatExperimentationBanner = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -12,44 +13,38 @@ export const ChatExperimentationBanner = () => {
   if (!isVisible) return null;
 
   return (
-    <Callout.Root color="info" className="relative pr-8 pl-2 py-2">
-      <Callout.Icon />
-      <Callout.Text>
-        <p className="mb-1">
-          <span className="font-semibold">Expérimentation en cours</span>
-          <span className="mx-3 text-gray-300">|</span>
-          <span className="text-sm">
-            Ce chatbot est une expérimentation. Vos interactions sont analysées
-            pour évaluer sa qualité et sont pseudonymisées.
-          </span>
-        </p>
-        <div className="flex flex-wrap items-center gap-y-1">
-          <a
-            href={CHARTE_IA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
-          >
-            Charte d&apos;utilisation de l&apos;IA dans PILOTE
-          </a>
-          <span className="mx-3 text-gray-300">|</span>
-          <Link
-            href="/donnees-personnelles-cookies"
-            target="_blank"
-            className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
-          >
-            Données personnelles et cookies
-          </Link>
-        </div>
-      </Callout.Text>
-      <button
-        type="button"
-        onClick={() => setIsVisible(false)}
-        aria-label="Masquer le bandeau"
-        className="absolute top-2 right-2 p-1 text-gray-500 hover:text-gray-800 transition-colors"
+    <div className="flex min-h-9 shrink-0 items-center gap-3 border-t border-dsfr-blue-france-850 bg-dsfr-info-950 px-4 py-1 text-xs leading-[18px] text-dsfr-grey-200">
+      <span className="shrink-0 font-bold uppercase tracking-wide text-dsfr-flat-info">
+        Expérimentation
+      </span>
+      <span>
+        Ce chatbot est une expérimentation. Vos interactions sont analysées pour
+        évaluer sa qualité et sont pseudonymisées.
+      </span>
+      <a
+        className={LIEN}
+        href={CHARTE_IA_URL}
+        rel="noopener noreferrer"
+        target="_blank"
       >
-        <CloseLineIcon className="w-4 h-4" fill="currentColor" />
+        Charte d&apos;utilisation de l&apos;IA dans PILOTE
+      </a>
+      <Link
+        className={LIEN}
+        href="/donnees-personnelles-cookies"
+        target="_blank"
+      >
+        Données personnelles et cookies
+      </Link>
+      <span className="flex-1" />
+      <button
+        aria-label="Masquer le bandeau"
+        className="flex h-7 w-7 shrink-0 items-center justify-center text-dsfr-mention-grey transition-colors hover:bg-white/60 hover:text-dsfr-grey-50"
+        onClick={() => setIsVisible(false)}
+        type="button"
+      >
+        <CloseLineIcon className="h-4 w-4" fill="currentColor" />
       </button>
-    </Callout.Root>
+    </div>
   );
 };
