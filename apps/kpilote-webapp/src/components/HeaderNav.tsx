@@ -5,11 +5,13 @@ import { Suspense, useState } from 'react'
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 
 import { analytics } from '@/analytics/tracker'
+import { AssistantPanel } from '@/assistant/AssistantPanel'
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { ContacterEquipe } from '@/components/ContacterEquipe'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
 import { UserMenu } from '@/components/UserMenu'
 import { Button } from '@pilote/kpilote-ui/Button'
+import { Modale } from '@pilote/kpilote-ui/Modale'
 import type { Auth } from '@/auth'
 
 /**
@@ -20,6 +22,18 @@ import type { Auth } from '@/auth'
 export function HeaderNav({ auth }: { auth: Auth }) {
   const navigate = useNavigate()
   const [paletteOpen, setPaletteOpen] = useState(false)
+  // Requête rendue à la palette au retour depuis l'assistant ; effacée à sa fermeture
+  // pour qu'un ⌘K ordinaire reparte à vide.
+  const [paletteQuery, setPaletteQuery] = useState('')
+
+  const backToPalette = (question: string) => {
+    setAssistant(null)
+    setPaletteQuery(question)
+    setPaletteOpen(true)
+  }
+  const [assistant, setAssistant] = useState<{ conversationId: string; question: string } | null>(
+    null,
+  )
 
   return (
     <>
@@ -62,8 +76,43 @@ export function HeaderNav({ auth }: { auth: Auth }) {
 
       {auth.isAuthenticated ? (
         <Suspense fallback={null}>
-          <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+          <CommandPalette
+            key={paletteQuery}
+            open={paletteOpen}
+            onOpenChange={(open) => {
+              setPaletteOpen(open)
+              if (!open) setPaletteQuery('')
+            }}
+            initialQuery={paletteQuery}
+            openAssistant={(question) => {
+              // Un identifiant neuf par ouverture : chaque session de questions est sa
+              // propre conversation tant que l'historique n'existe pas.
+              setAssistant({ conversationId: crypto.randomUUID(), question })
+            }}
+          />
         </Suspense>
+      ) : null}
+
+      {assistant ? (
+        <Modale
+          open
+          onClose={() => setAssistant(null)}
+          // `Échap` remonte d'un écran, comme dans la palette : l'assistant est une étape
+          // du parcours ⌘K, pas une fenêtre à part. La croix ferme tout.
+          onEscape={() => backToPalette(assistant.question)}
+          titre="Assistant kpilote"
+          description="Les réponses proviennent de vos données kpilote. Vérifiez-les avant de les diffuser."
+          size="lg"
+        >
+          {/* `size="lg"` donne sa hauteur à la modale : le panneau la remplit au lieu
+              de la fixer lui-même en vh, ce qui débordait sur petit écran. */}
+          <AssistantPanel
+            key={assistant.conversationId}
+            conversationId={assistant.conversationId}
+            initialQuestion={assistant.question}
+            onBack={() => backToPalette(assistant.question)}
+          />
+        </Modale>
       ) : null}
     </>
   )

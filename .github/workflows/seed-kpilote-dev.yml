@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: 24.9.0
+  NODE_VERSION: 24.20.0
   SCALINGO_APP: dev-kpilote-api
   TUNNEL_PORT: 10000
 

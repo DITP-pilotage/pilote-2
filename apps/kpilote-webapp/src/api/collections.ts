@@ -17,7 +17,15 @@ import { apiClient } from '@/api/client'
 export const fetchCollections = async (
   params: ListCollectionsQuery,
 ): Promise<CollectionListApiModel> => {
-  const json = await apiClient.get('collections', { searchParams: params }).json()
+  // ky filters out `undefined` values from object-form searchParams (see
+  // Ky.#normalizeSearchParams). Le filtre `ids` est CSV côté API : on le
+  // sérialise explicitement, sinon ky le rendrait en multi-value `?ids=a&ids=b`.
+  const { ids, ...rest } = params
+  const searchParams = {
+    ...rest,
+    ...(ids && ids.length > 0 ? { ids: ids.join(',') } : {}),
+  }
+  const json = await apiClient.get('collections', { searchParams }).json()
   return collectionListApiModelSchema.parse(json)
 }
 

@@ -8,7 +8,7 @@
     "dist"
   ],
   "engines": {
-    "node": "24.9.0"
+    "node": "24.20.0"
   },
   "scripts": {
     "dev": "portless kpilote.modernisation vite",
@@ -27,6 +27,7 @@
     "test:watch": "tsr generate && vitest"
   },
   "dependencies": {
+    "@ai-sdk/react": "^4.0.65",
     "@hono/node-server": "2.1.0",
     "@hookform/resolvers": "^5.7.1",
     "@js-temporal/polyfill": "^0.5.1",
@@ -43,6 +44,7 @@
     "@tiptap/react": "3.29.2",
     "@tiptap/starter-kit": "3.29.2",
     "@yornaath/batshit": "^0.14.0",
+    "ai": "^7.0.59",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -62,6 +64,8 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.85.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
     "xlsx": "^0.18.5",
     "zod": "^4.4.3"
