@@ -50,6 +50,26 @@ async function seedRattachement({
     ecart,
     taux_avancement: taux,
   });
+
+  // Un indicateur chiffré sur le même territoire. Les scénarios de l'interface
+  // demandent systématiquement « et les valeurs de leurs indicateurs » ; sans
+  // lui, l'agent produit une section « Aucun indicateur disponible » que le
+  // juge note — à juste titre — comme du remplissage.
+  const indicateur = await fixtures.indicateurIdentite({
+    chantier_id: chantierId,
+    id: `IND-${chantierId.slice(3)}-${territoire.code_insee}`,
+    nom: `Indicateur de suivi du ${chantierId}`,
+  });
+
+  await fixtures.indicateurTerritoire({
+    id: indicateur.id,
+    chantier_id: chantierId,
+    ...territoire,
+    est_applicable: true,
+    valeur_initiale: 20,
+    valeur_actuelle_mandat: taux,
+    valeur_cible_mandat: 100,
+  });
 }
 
 export async function seedChantierEnRetard({
