@@ -245,6 +245,188 @@ Historique supprimé lors de la campagne d'avril 2026 :
 | `@tiptap/core, @tiptap/pm, @tiptap/extensions: 3.22.3` | Forcer la cohérence du bloc tiptap | Tous les `@tiptap/*` en deps directes sont pinnés à `3.22.3` → dedupe naturelle sans override |
 | `@asamuzakjp/css-color → @csstools/css-tokenizer: ^4.0.0` | Workaround conflit de versions dans la chaîne jsdom/cssstyle de `isomorphic-dompurify@1.x` | Pas d'impact observé sans l'override ; à disparaître complètement quand on passera `isomorphic-dompurify` en v3 |
 
+### Verdicts du 2026-09-10 — 16 overrides au banc d'essai
+
+Campagne `deps/campagne-2026-09-10`. L'ensemble compte **16 overrides** (les 15 du 2026-08-25,
+moins les trois retirés avec Nextra — `nextra>zod`, `nextra-theme-docs>zod`, `mermaid` et
+`linkify-it` — plus `eslint-plugin-sonarjs>typescript` et `deepmerge-ts` posés depuis).
+
+| Override | Verdict mesuré | Preuve du banc d'essai |
+|---|---|---|
+| `@hono/node-server: >=1.19.15 <2` | **PORTEUR** | se résout en 2.1.1 sans lui |
+| `js-yaml@>=4 <5: >=4.3.1 <5` | **PORTEUR** | 4.1.1 sans lui |
+| `deepmerge-ts: >=8.0.0 <9` | **PORTEUR** | 7.1.5 sans lui |
+| `@xmldom/xmldom: >=0.9.10 <0.10` | inerte | **absent de l'arbre** sans lui |
+| `eslint-plugin-sonarjs>typescript: 5.9.3` | inerte | **absent de l'arbre** sans lui |
+| `hono: >=4.12.34 <5` | inerte | 4.13.5 sans lui |
+| `postcss: >=8.5.23 <9` | inerte | 8.5.26 sans lui |
+| `sharp: >=0.35.0 <0.36` | inerte | 0.35.4 sans lui |
+| `brace-expansion@<2: >=1.1.18 <2` | inerte | 1.1.18 sans lui |
+| `brace-expansion@>=2 <3: >=2.1.2 <3` | inerte | 2.1.4 sans lui |
+| `brace-expansion@>=5 <6: >=5.0.9 <6` | inerte | 5.0.9 sans lui |
+| `undici@>=7 <8: >=7.29.0 <8` | inerte | 7.29.0 sans lui |
+| `immutable@>=4 <5: >=4.3.9 <5` | inerte | 4.3.9 sans lui |
+| `js-yaml@<4: >=3.15.1 <4` | inerte | 3.15.2 sans lui |
+| `tar@>=7 <8: >=7.5.21 <8` | inerte | 7.5.22 sans lui |
+| `fast-uri@>=3 <4: >=3.1.4 <4` | inerte | 3.1.6 sans lui |
+
+#### 🔴 Six planchers sur seize étaient repassés sous leur advisory — troisième campagne consécutive
+
+Le motif n'est plus une surprise, c'est une **récurrence** : il s'est produit au 2026-07-17, au
+2026-08-25, et de nouveau ici. Une advisory est révisée à la hausse sans prévenir, et le plancher
+posé la campagne d'avant passe dessous. **Relire `first_patched_version` à chaque campagne est
+donc une étape obligatoire, pas une précaution.**
+
+Relevé contre l'API GitHub Advisory (`/advisories?ecosystem=npm&affects=<paquet>`) :
+
+| Override | Plancher posé | Advisory exige | Sévérité |
+|---|---|---|---|
+| `hono` | 4.12.34 | **4.13.5** | 3 medium |
+| `sharp` | 0.35.0 | **0.35.4** | 1 high |
+| `js-yaml@<4` | 3.15.1 | **3.15.2** | 1 high |
+| `js-yaml@>=4 <5` | 4.3.1 | **4.3.2** | 1 high |
+| `fast-uri@>=3 <4` | 3.1.4 | **3.1.6** | 4 high |
+| `brace-expansion@>=2 <3` | 2.1.2 | **2.1.4** | 1 high |
+
+Les six versions correctives ont été publiées entre le 2026-07-30 et le 2026-08-26, donc toutes
+au-delà des 14 j de `minimumReleaseAge` : **aucun contournement de quarantaine n'a été nécessaire.**
+Les six planchers ont été relevés dans le commit `aac4fe92d`.
+
+Les dix autres planchers étaient conformes : `postcss` (8.5.23), `tar` (7.5.21), `undici` (7.29.0),
+`brace-expansion@<2` (1.1.18), `brace-expansion@>=5 <6` (5.0.9), `immutable@>=4 <5` (4.3.9),
+`deepmerge-ts` (8.0.0), `@hono/node-server` (1.19.15 sur la ligne 1.x).
+
+#### 🔴 Trois overrides CAUSAIENT l'advisory qu'ils devaient fermer
+
+C'est la forme la plus forte de « un override inerte n'est pas inoffensif », et elle est **mesurée**,
+pas supposée. Le banc d'essai montre que **sans** l'override la résolution monte à la version
+corrigée, alors qu'**avec** lui le lockfile restait sous l'advisory.
+
+| Paquet | Retenu à | Sans l'override | Coût | App touchée |
+|---|---|---|---|---|
+| `js-yaml` (ligne 3.x) | 3.15.1 | **3.15.2** | 2 high | `pilote-ppg` |
+| `sharp` | 0.35.3 | **0.35.4** | 1 high | `pilote-ppg` |
+| `hono` | 4.13.1 | **4.13.5** | 3 medium | `pilote-ppg-auth` |
+
+Le mécanisme est toujours le même : `pilote-ppg` et `pilote-ppg-auth` sont hors du filtre kpilote,
+donc `pnpm update` ne les re-résout jamais. Seul le plancher de l'override décide de leur version, et
+un plancher qui dérive les cloue sous le correctif. **Relever les six planchers a fermé six
+advisories dans deux apps qu'on n'a pas touchées.**
+
+#### `@xmldom/xmldom` : supprimé, la suppression de Nextra l'a rendu sans objet
+
+Le banc d'essai est sans ambiguïté : **sans l'override, le paquet est absent de l'arbre**. La chaîne
+qui le tirait (`nextra → mathjax-full → speech-rule-engine`) a disparu avec l'ancien centre d'aide.
+La condition de sortie documentée au 2026-07-17 (« stable 5.x de speech-rule-engine **et** bump de
+`mathjax-full` ») n'a jamais été remplie — elle est devenue **sans objet**, ce qui n'est pas la même
+chose et méritait d'être distingué. Huit advisories high tombent avec lui.
+
+#### Override enfin documenté : `eslint-plugin-sonarjs>typescript`
+
+Posé par la campagne du 2026-08-25 (`a1efd48af`, PR #2332) et **jamais entré dans ce tableau** —
+exactement le trou que la règle « documenter la raison ici » sert à éviter. Il aura fallu une
+campagne pour s'en apercevoir.
+
+| Override | Raison | Condition de sortie |
+|---|---|---|
+| `eslint-plugin-sonarjs>typescript: 5.9.3` | `eslint-plugin-sonarjs` déclare `typescript: ">=5 <6.1.0"` en **dépendance normale**, pas en peer : sans l'override il tire sa propre copie de TypeScript à côté des `5.9.3` pinnés des apps. Le pin ciblé la dédoublonne. | Quand `eslint-plugin-sonarjs` passera `typescript` en peer, ou quand les apps quitteront le pin `5.9.3`. |
+
+À noter : c'est le **seul** override du fichier écrit sous la forme ciblée `parent>enfant`, celle que
+ce document recommande depuis le 2026-07-17.
+
+#### Audit : 28 → 12 sur la campagne
+
+| Étape | Advisories |
+|---|---|
+| départ, sur `dev` | **28** (0 critical, 14 high, 14 moderate) |
+| après le lot in-range | 18 |
+| après le relèvement des six planchers | **12** (0 critical, 7 high, 7 moderate) |
+
+**Le point contre-intuitif de cette campagne** : la suppression de Nextra a bien produit son effet —
+`nextra`, `mermaid`, `linkify-it`, `uuid` et `@xmldom/xmldom` ont entièrement quitté l'arbre — mais
+le compte était **remonté de 6 à 28** entre la fin de la campagne d'août et le 2026-09-10. La cause
+n'est pas une régression du dépôt : c'est une salve d'advisories publiées fin août sur des paquets
+déjà présents, sous des planchers qui n'avaient pas bougé.
+
+Les 12 résiduelles :
+
+| Sévérité | Paquet | Installé → requis | App | Pourquoi ça résiste |
+|---|---|---|---|---|
+| high ×2 | `xlsx` | 0.18.5 → **aucun correctif** | kpilote-webapp | `patched_versions: <0.0.0`, SheetJS hors registre npm |
+| high ×1 + moderate ×1 | `mysql2` | 3.15.3 → `>=3.23.1` | kpilote-api | voir ci-dessous |
+| high ×2 | `immutable` | 3.8.3 → `>=4.3.9` | pilote-ppg | ligne 3.x sans correctif, tenue par `swagger-ui-react` |
+| high ×1 | `@faker-js/faker` | → `>=10.5.0` | pilote-ppg | dep directe, hors périmètre |
+| high ×1 + moderate ×1 | `@tiptap/core` | → `>=3.30.4` | pilote-ppg | kpilote est déjà en 3.30.5 ; ppg a son propre bloc |
+| moderate ×1 | `csv-parse` | → `>=7.0.2` | pilote-ppg | dep directe, hors périmètre |
+| moderate ×2 | `vitest`, `@vitest/mocker` | → `>=4.1.11` | pilote-ppg, pilote-ppg-auth | kpilote est déjà en 4.1.11 |
+
+**Côté kpilote il ne reste que `xlsx` et `mysql2`.** Quatre des résiduelles ppg (`@faker-js/faker`,
+`@tiptap/core`, `csv-parse`, `vitest`) sont des **deps directes de ppg fermables par un simple bump**,
+contrairement aux résiduelles d'août dont aucune ne l'était. Elles méritent leur propre passage.
+
+#### `mysql2` : advisory réelle, mais inatteignable
+
+`prisma` **pin `mysql2` à `3.15.3` exact** — vérifié sur `prisma@7.9.1` comme sur `8.1.0-dev.2`, le
+pin ne bouge pas. Les advisories exigent `>=3.22.0` (high, fuite de credentials en clair par
+downgrade du plugin d'auth) et `>=3.23.1` (moderate, bombe de décompression zlib).
+
+**Le projet n'ouvre jamais de connexion MySQL** : `apps/kpilote-api/prisma/schema.prisma:10` déclare
+`provider = "postgresql"` et l'app utilise `@prisma/adapter-pg`. Prisma embarque le driver MySQL sans
+qu'il soit jamais chargé.
+
+Sortie : que Prisma relève son pin. Un override `mysql2: ">=3.23.1 <4"` fermerait les deux lignes,
+mais **il n'a pas été passé au banc d'essai** — un pin exact en amont est en général le signe d'une
+contrainte de protocole. À tester avant de l'appliquer, pas à poser à l'aveugle.
+
+### 🔴 Le moteur de campagne ne connaît pas la notion de décision délibérée
+
+C'est le constat structurant du 2026-09-10, et il vaut plus que n'importe lequel des quatre majors
+pris séparément. **Les quatre majors proposés visaient une mauvaise cible, et trois d'entre eux
+annulaient une décision écrite dans ce document.**
+
+| Major | Ce que le moteur a fait | Ce que la décision disait |
+|---|---|---|
+| `typescript` 5.9.3 → 7.0.2 | monté dans les 3 apps, lint cassé partout | « elles restent en `5.9.3` par pin exact, **et c'est volontaire** » |
+| `@types/node` 24.13.3 → 26.4.0 | monté dans **5** paquets | plafond `^24.13.3` posé en août sur ces mêmes 5 paquets |
+| `@hono/node-server` 1.19.17 → 2.1.1 | manifestes réécrits, lockfile inchangé | « ne **jamais** poser `<2` en global » — l'override est toujours là |
+| `prisma` 7.9.1 → 8.1.0-dev.2 | préversion non balisée | aucune, mais la cible n'existe pas comme produit |
+
+Trois défauts d'outillage distincts en sont la cause :
+
+1. **Aucun mécanisme de plafond persistant.** Un pin exact ou un caret plafonnant n'est, pour le
+   chemin « major », qu'une version à relever. Un plafond qui vit dans un `package.json` ne survit
+   pas à une campagne — mesuré : celui d'août a tenu exactement une campagne. Seul `pnpm.overrides`
+   survivrait.
+2. **Aucun filtre de préversion.** `scripts/deps-campagne/lib/outdated.mjs` lit `info.latest` verbatim ;
+   `semver.coerce` ne sert qu'à calculer `isMajor`. Mesuré : `pnpm outdated` a rapporté
+   `prisma → 8.1.0-dev.2`, un build de développement **qu'aucune balise npm ne référence** —
+   ce n'est donc même pas la dist-tag `latest`, c'est le plus grand numéro publié.
+3. **Le rapport d'échec tronque par le mauvais bout.** `extrait()` garde les **20 premières** lignes
+   de la sortie. Pour `pnpm lint` comme pour `vitest`, ces 20 lignes sont le préambule pnpm et le
+   bruit de migration : le message d'erreur réel n'y est jamais. De plus `lint.stdout || lint.stderr`
+   écarte entièrement stderr dès que stdout est non vide. Conséquence mesurée : l'échec du bump
+   TypeScript a été enregistré **sans une seule ligne d'erreur**, et il a fallu le reproduire à la
+   main pour apprendre qu'il s'agissait de `typescript-eslint does not support TS 7.0`. Correctif :
+   garder les dernières lignes, et concaténer stderr au lieu de le remplacer.
+
+Un quatrième point, moins grave mais coûteux : **le moteur exige Node `24.9.0` sans le vérifier.**
+Lancé sous Node 24.20.0, le warning `Unsupported engine` de pnpm se mêle à la sortie de
+`pnpm outdated -r --format json` et fait échouer le parse JSON dès la première commande. Le message
+d'erreur est correct mais ne dit pas que la cause est la version de Node.
+
+### 🔴 Le moteur répare le mensonge de manifeste, puis le recrée
+
+Le mécanisme décrit au 2026-08-25 est maintenant observé en entier, sur un seul run :
+
+1. Le lot in-range (`04f9a9040`) réécrit `@hono/node-server` de `"2.1.0"` — le pin exact hérité du
+   mensonge d'août — vers **`"^1.19.17"`**, la version réellement présente dans le lockfile.
+   **`pnpm update` a donc guéri le manifeste.**
+2. Le commit major (`ac6d29b3f`), quelques minutes plus tard, réécrit **`"2.1.1"`** en pin exact,
+   tandis que le lockfile reste sur `1.19.17` puisque l'override le contraint.
+
+Le mensonge est recréé par le moteur lui-même, immédiatement après avoir été réparé. Tant que
+l'override global `<2` coexiste avec le chemin « major », le cycle se répète à chaque campagne.
+
 ### Règles pour ajouter un override
 
 1. **Documenter la raison ici** (CVE, bug upstream, conflit de résolution), avec un lien vers l'issue/CVE.
@@ -358,16 +540,29 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
   (`@since v25.9.0`) compile alors que `typeof storage.withScope === 'undefined'` à l'exécution —
   or `AsyncLocalStorage` est instancié dans `framework/persistence/dbStore.ts:7` et
   `framework/auth/userContext.ts:24`. 161 marqueurs `@since v25/v26` dans les typings 26.2.0.
-- **`typescript-eslint` ne supporte pas TypeScript 7 et ne le supportera pas avant l'API stable.**
-  TS 7 est le portage natif Go : le paquet npm n'expose plus l'API programmatique
-  (`exports` réduit à `./lib/version.cjs`, `tsserver` supprimé, `ts.createProgram`/`ts.SyntaxKind`
-  = `undefined`). `@typescript-eslint/typescript-estree` code en dur
-  `SUPPORTED_TYPESCRIPT_VERSIONS = '>=4.8.4 <6.1.0'` et appelle ces API : ce n'est pas un warning
-  de version, c'est un crash. Amont :
-  [typescript-eslint#12518](https://github.com/typescript-eslint/typescript-eslint/issues/12518)
-  **closed / not_planned**. Conséquence : **ne pas « aligner » les 3 apps kpilote sur TS 7** —
-  elles utilisent toutes `recommendedTypeChecked` avec `parserOptions.project`, leur lint casserait
-  immédiatement. Elles restent en `5.9.3` par pin exact, et c'est volontaire.
+- **`typescript-eslint` ne supporte pas encore TypeScript 7.** TS 7 est le portage natif Go : le
+  paquet npm n'expose plus l'API programmatique (`exports` réduit à `./lib/version.cjs`, ni
+  `tsserver` ni `lsp` dans le paquet, donc l'impact touche aussi l'IDE). Une API existe sous
+  `./unstable/*`, non stabilisée. `typescript-eslint` déclare un peer `>=4.8.4 <6.1.0` et lève
+  désormais une erreur explicite — « typescript-eslint does not support TS 7.0 » — plutôt qu'un
+  crash d'API.
+  **Amont, corrigé le 2026-09-10** : la référence donnée jusqu'ici, `typescript-eslint#12518`
+  **closed / not_planned**, est un **doublon ouvert et fermé en 38 minutes**, étiqueté `duplicate`.
+  L'issue qui fait foi est
+  [typescript-eslint#10940](https://github.com/typescript-eslint/typescript-eslint/issues/10940) —
+  **OPEN**, étiquetée `blocked by external API`, verrouillée par un mainteneur. La nuance compte :
+  le support est **en attente d'une API amont stable**, pas abandonné.
+  Conséquence inchangée : **ne pas « aligner » les 3 apps kpilote sur TS 7** — elles utilisent toutes
+  `recommendedTypeChecked` avec `parserOptions.project`, leur lint casserait immédiatement. Elles
+  restent en `5.9.3` par pin exact, et c'est volontaire.
+  **Condition de sortie exécutable** : `pnpm view typescript-eslint peerDependencies` ne mentionne
+  plus `<6.1.0`. Signal amont à surveiller : la publication de **TypeScript 7.1**, qui doit apporter
+  l'API stable (aujourd'hui en builds `next`).
+  Un **mode side-by-side** est documenté par l'amont (installer TS 6 sous la clé `typescript` pour
+  satisfaire le peer, TS 7 sous une clé aliasée ; `@typescript/typescript6@6.0.2` expose l'API
+  complète). Le monorepo fait déjà tourner deux TypeScript côte à côte. **Non testé ici** : le
+  binaire `tsc` sous pnpm avec une clé aliasée, et la divergence entre le checker qui juge le lint
+  et celui qui compile.
 - **Phantom deps** : pnpm en mode `node-linker=isolated` refuse toute dépendance non déclarée. Si un `Cannot find module X` apparaît après upgrade, la solution est **toujours** d'ajouter `X` explicitement via `pnpm add` / `pnpm add -D`. Ne **pas** utiliser `public-hoist-pattern[]` pour contourner (cf. ADR / PRD migration npm→pnpm).
 - **Build scripts ignorés** : pnpm 10 ignore par défaut tous les `postinstall`. Toute nouvelle dep avec build natif (Prisma, sharp, esbuild, tree-sitter…) doit être ajoutée à `pnpm.onlyBuiltDependencies` dans `package.json`, sinon binaires manquants à l'exécution.
 - **`eslint-import-resolver-typescript` doit être en devDep direct** et pas seulement transitive via `eslint-config-next`. Sinon `eslint-module-utils` ne le trouve pas (il est nested) et tout le lint casse avec `Resolve error: typescript with invalid interface loaded as resolver`.
@@ -403,7 +598,7 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 | `marked` | `15.x` → `18.x` | 🟡 low-medium | Renderer API modifiée |
 | `dotenv` + `dotenv-cli` + `dotenv-expand` | `16 + 7 + 11` → `17 + 11 + 12` | 🟠 medium | Parser rewrite, tester tous les `.env*` |
 | `pdfmake` | `0.2.x` → `0.3.x` | 🟠 medium | Pre-1.0, saut important |
-| `typescript` | `5.9.3` → `7.x` | 🟠 bloqué par l'outillage | **Le code est prêt, l'outillage non.** Mesuré le 2026-08-25 : les 4 tsconfig kpilote compilent en 7.0.2 (exit 0), aucune option retirée n'est utilisée. Mais `typescript-eslint` crashe sur TS 7 (API programmatique supprimée), et l'issue amont est **closed / not_planned**. `kpilote-ui` est en 7.0.2 (aucun ESLint, aucun `tsc`) ; les 3 apps restent en `5.9.3` **volontairement**. Condition de sortie : support TS 7 dans `typescript-eslint`. |
+| `typescript` | `5.9.3` → `7.x` | 🟠 bloqué par l'outillage | **Le code est prêt, l'outillage non.** Re-mesuré le 2026-09-10 : les 4 projets kpilote compilent en 7.0.2 (exit 0), aucune option retirée n'est utilisée, et `tsc` passe de **2,115 s à 0,403 s** sur `kpilote-api` (≈ 5,3×). Mais `typescript-eslint@8.70.0` déclare toujours un peer `<6.1.0` et le lint meurt sur les 3 apps. L'issue amont qui fait foi est **#10940, OPEN / `blocked by external API`** (et non #12518, un doublon fermé). `kpilote-ui` est en 7.0.2 (aucun ESLint, aucun `tsc`) ; les 3 apps restent en `5.9.3` **volontairement**. Condition de sortie exécutable : `pnpm view typescript-eslint peerDependencies` ne mentionne plus `<6.1.0`. |
 | `htmlparser2` | `8.x` → `12.x` | 🟡 low | 4 majors successifs |
 | `mime` | `3.x` → `4.x` | 🟡 low | ESM-only |
 | `chroma-js` | `2.x` → `3.x` | 🟡 low | Types officiels + renames |
@@ -418,6 +613,99 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 - **Attendre** : TypeScript 7 sur les 3 apps (verrou `typescript-eslint`, cf. « Pièges connus ») ; `@hono/node-server` v2 (retirer l'override d'abord, cf. « Overrides »)
 
 ## Historique des campagnes
+
+### Septembre 2026 (2026-09-10) — Campagne d'upgrade
+
+Branche `deps/campagne-2026-09-10`. Départ : **40 deps périmées, 4 majors, 28 advisories**
+(14 high, 14 moderate, 0 critical). 8 commits.
+
+**Le lot in-range est vert** — oracle rapide **et** complet, ce qui n'était pas arrivé depuis
+longtemps : en août le lint échouait dès le premier commit et aucun test n'avait tourné de toute la
+campagne. 26 paquets bougés, dont `eslint` 10.8.1 → 10.9.1, `@hono/zod-openapi` 1.5.3 → 1.6.1,
+`hono` 4.13.1 → 4.13.5, `ai` 7.0.59 → 7.0.83, `vitest` 4.1.10 → 4.1.11.
+Deux pin-minors verts également : `@prisma/client` → 7.10.0 et le bloc `@tiptap/*` → 3.30.5.
+
+**Les quatre majors visaient tous une mauvaise cible.** Voir « Le moteur de campagne ne connaît pas
+la notion de décision délibérée » ci-dessus pour le mécanisme commun.
+
+| Major | Oracle | Verdict |
+|---|---|---|
+| `@hono/node-server` 1.19.17 → 2.1.1 | rapide ✅ complet ✅ | 🔴 **Vert sans valeur.** L'override `<2` est toujours là : les 3 manifestes disent `2.1.1`, le lockfile n'a que `1.19.17`. Le mensonge d'août, reproduit à l'identique. |
+| `@types/node` 24.13.3 → 26.4.0 | rapide ✅ complet ❌ | 🔴 **À annuler.** Bénéfice mesuré nul, coût mesuré 208 symboles en avance sur le runtime. Le rouge, lui, **n'est pas imputable au bump**. |
+| `typescript` 5.9.3 → 7.0.2 | rapide ✅ complet ❌ | 🔴 **À annuler.** Casse un pin délibéré ; lint mort sur les 3 apps. Le code, lui, est prêt. |
+| `prisma` 7.9.1 → 8.1.0-dev.2 | rapide ✅ complet ❌ | 🔴 **À abandonner.** La cible n'est pas Prisma 8. Le rouge est un héritage du commit TypeScript. |
+
+**`@hono/node-server` — l'oracle est structurellement aveugle à ce paquet**, override ou pas. Aucun
+test n'appelle `serve()` ni `createAdaptorServer` : les tests de routes passent par `app.request(...)`,
+le dispatch fetch interne de Hono, donc **l'adaptateur n'est jamais chargé par la suite de tests**.
+Aucun test n'assert un `204`, et aucun E2E ne couvre les apps kpilote. Retirer l'override sans ajouter
+un test qui boote `serve()` remplacerait un vert cosmétique par un vert tout aussi vide.
+
+Sur le fond, la v2 n'annonce que **deux** breaking changes, aucun ne concerne le projet : Node ≥ 20
+(on est en 24.9.0) et le retrait de l'adaptateur `/vercel` (zéro import). La surface de types est un
+sur-ensemble strict. Un diff HTTP réel a été identifié : **les réponses `204` perdent leur en-tête
+`content-type`** (correction RFC 7231), sur 7 sites de `kpilote-api` ; le seul consommateur qui
+branche sur le content-type traite les deux valeurs à l'identique. Le risque non levable reste la
+réécriture de la lecture du corps de requête (PR amont #301, `text()`/`json()` redéfinis sur le
+prototype), avec trois points d'exposition : `valeurImport/routes.ts` (`MAX_ROWS = 1000`),
+`kpilote-admin/src/server/api/router.ts:55` (proxy générique faisant `req.text()` sur tout non-GET),
+et `kpilote-admin/src/server/auth/router.ts` dont les `.catch(() => null)` masqueraient une erreur
+d'adaptateur en simple 400.
+
+**`@types/node` — le rouge n'est pas imputable au bump.** Les tests de `kpilote-api` ont été relancés
+deux fois à la main sur ce commit exact, dont une fois avec l'environnement de l'oracle : **662 tests,
+114 fichiers, tous verts**. Le payload enregistré par le moteur s'arrête sur la sortie de migration
+sans une seule ligne de test en échec, et `@types/node` ne contient que des types.
+
+Le bump touche **5 paquets, pas 3** : les deux `packages/kpilote-*` portaient aussi le plafond d'août.
+Bénéfice mesuré **nul** (0 erreur `tsc` de part et d'autre, le parent direct étant vert au complet) ;
+coût mesuré **208 symboles `@since v25/v26`**, contre 161 en août, dont **trois modules entiers
+inexistants sous Node 24.9.0** — `node:quic`, `node:ffi`, `node:vfs`. Un `import 'node:quic'` compile
+et jette `ERR_UNKNOWN_BUILTIN_MODULE` en production. Aucune API v25/v26 n'est appelée aujourd'hui
+(0 occurrence sur les 5 arbres `src`). La cible utile est `24.13.4`, publiée le 2026-09-09, sans un
+seul marqueur en avance, et **déjà couverte par le caret `^24.13.3`** — elle sera prise seule à la
+sortie de quarantaine, le 2026-09-23.
+
+**`typescript` — le code est prêt, l'outillage ne l'est pas, et la doc citait la mauvaise issue.**
+`tsc --noEmit` sort en 0 sur les quatre projets, et le gain est réel : **2,115 s → 0,403 s** sur
+`kpilote-api`, soit environ 5,3×. Mais `typescript-eslint@8.70.0`, la dernière publiée, déclare
+toujours un peer `>=4.8.4 <6.1.0`, et le lint meurt sur les trois apps.
+
+Deux changements de défaut de TS 7 sont invisibles pour `tsc` aujourd'hui mais mordront plus tard :
+les `@types` ne sont plus auto-découverts (`apps/kpilote-api/tsconfig.json` n'a **pas** de champ
+`types` et reste vert *par accident*, `@types/node` entrant par transitivité des imports `node:*`
+alors qu'il utilise `process.env` 30 fois), et `noUncheckedSideEffectImports` est actif par défaut
+(`packages/kpilote-ui/tsconfig.json:15` n'a pas `vite/client` : le premier `import './x.css'` ajouté
+là casserait). **Deux améliorations gratuites, valables dès `5.9.3`.**
+
+**`prisma` — la cible n'est pas Prisma 8.** `8.1.0-dev.2` est la CLI **7.10.0** avec un numéro
+trompeur : mêmes six dépendances, même `engines`, mêmes peers, et un `@prisma/engines` qui résout
+vers `@prisma/engines-version: 7.10.0-…`. La vraie lignée 8 (`8.0.0-rc.13`) est une CLI ré-architecturée
+autour de `@prisma/cli-engine` et `@prisma/orm-toolchain`, encore en RC — 9 RC en 33 jours, aucune
+stable, **aucun guide de migration 7 → 8 publié**. Les breaking changes annoncés pour Prisma 8
+(`count` passant de `number` à `bigint`, ce qui toucherait **33 sites d'appel** dans `kpilote-api`)
+sont d'ailleurs **absents** de ce build, ce qui achève de prouver qu'il n'est pas sur cette lignée.
+
+Le désalignement CLI/client est installé et la CLI le signale elle-même par un **avertissement non
+bloquant** à chaque `prisma generate` — d'où le vert de l'oracle rapide : rien ne casse, ça chuchote.
+Et le vert de `tsc` ne couvre pas le client généré, dont les **44 fichiers portent `@ts-nocheck`**.
+
+**Le vrai coût serait différé** : au sens semver `8.1.0-dev.2 > 8.0.0`, donc une fois ce pin en place
+`pnpm outdated` ne signalerait **plus jamais** prisma comme périmé, pas même à la GA de 8.0.0. Le
+dépôt se gèlerait sur un build de développement non balisé, silencieusement, en se croyant à jour.
+Cible correcte : **`prisma@7.10.0`**, qui réaligne la CLI sur le client déjà monté.
+
+**Correctifs appliqués sur la branche** :
+
+| Action | Effet mesuré |
+|---|---|
+| 6 planchers d'overrides relevés à leur advisory | audit **18 → 12** ; 6 advisories fermées dans `ppg` et `ppg-auth` par ricochet |
+| Override `@xmldom/xmldom` supprimé | sans objet depuis le retrait de Nextra ; 8 advisories high tombent avec lui |
+
+**Vérifications** : le lot in-range et les deux pin-minors passent l'oracle **complet** (lint + tests).
+Les trois majors `@types/node`, `typescript` et `prisma` laissent la branche **rouge au lint**, par
+héritage du bump TypeScript — c'est voulu, le rouge est l'information. **E2E non lancés**
+(`e2e.yml` est en cron) — à déclencher via `workflow_dispatch`.
 
 ### Septembre 2026 — Suppression de l'ancien centre d'aide (Nextra)
 
