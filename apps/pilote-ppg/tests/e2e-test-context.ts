@@ -1,6 +1,8 @@
 import { $Enums, PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+import { creerAdapter } from "@/server/db/adapter";
+
+const prisma = new PrismaClient({ adapter: creerAdapter() });
 
 const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
   "PROPOSITION_VALEUR_CREEE",

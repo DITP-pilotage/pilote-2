@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
+import { creerAdapter } from "@/server/db/adapter";
+
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
 export class PrismaPilote {
@@ -11,7 +13,7 @@ export class PrismaPilote {
 
   getInstance() {
     if (!this.instance) {
-      this.instance = new PrismaClient();
+      this.instance = new PrismaClient({ adapter: creerAdapter() });
     }
     return getPrisma() || this.instance;
   }
