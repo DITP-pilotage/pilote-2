@@ -1,4 +1,4 @@
-import { Options, parse } from "csv-parse/sync";
+import { OptionsWithColumns, parse } from "csv-parse/sync";
 import { $Enums } from "@prisma/client";
 import fs from "node:fs";
 import assert from "node:assert/strict";
@@ -13,7 +13,7 @@ import {
 import { CsvRecord } from "./UtilisateurCSVParseur.interface";
 
 export default class UtilisateurCSVParseur {
-  private _CSV_PARSE_OPTIONS: Options = {
+  private _CSV_PARSE_OPTIONS: OptionsWithColumns<CsvRecord> = {
     columns: true,
     skipEmptyLines: true,
     trim: true,

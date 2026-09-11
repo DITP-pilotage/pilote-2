@@ -10,11 +10,11 @@ export default class AvancementBuilder {
   constructor() {
     this._global = générerPeutÊtreNull(
       0.1,
-      faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+      faker.number.float({ min: 0, max: 100, multipleOf: 0.01 }),
     );
     this._annuel = générerPeutÊtreNull(
       0.1,
-      faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+      faker.number.float({ min: 0, max: 100, multipleOf: 0.01 }),
     );
   }
 

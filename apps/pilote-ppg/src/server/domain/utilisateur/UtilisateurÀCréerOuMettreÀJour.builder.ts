@@ -27,8 +27,8 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
   private _gestionUtilisateur: UtilisateurÀCréerOuMettreÀJour["gestionUtilisateur"];
 
   constructor() {
-    this._nom = faker.name.lastName();
-    this._prénom = faker.name.firstName();
+    this._nom = faker.person.lastName();
+    this._prénom = faker.person.firstName();
     this._email = faker.internet.email();
     this._profil = faker.helpers.arrayElement(profilsCodes);
     this._fonction = "fonction";

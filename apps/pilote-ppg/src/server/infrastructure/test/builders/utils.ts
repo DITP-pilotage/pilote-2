@@ -5,8 +5,18 @@ import {
   codesInseeRégions,
 } from "@/server/domain/territoire/Territoire.interface";
 
+// `faker.helpers.unique` a été retiré en faker 9. Il rejouait la fonction jusqu'à
+// obtenir une valeur jamais rendue dans le processus courant. On réimplémente
+// exactement ce contrat, en conservant le format à 7 chiffres.
+const suffixesDéjàGénérés = new Set<string>();
+
 export function générerUnIdentifiantUnique(prefixe: string) {
-  return `${prefixe}-${faker.helpers.unique(faker.random.numeric, [7])}`;
+  let suffixe = faker.string.numeric(7);
+  while (suffixesDéjàGénérés.has(suffixe)) {
+    suffixe = faker.string.numeric(7);
+  }
+  suffixesDéjàGénérés.add(suffixe);
+  return `${prefixe}-${suffixe}`;
 }
 
 export function générerCaractèresSpéciaux(nombre: number) {
@@ -46,7 +56,7 @@ export function générerUnLibellé(
   nomdeDeMotsMax: number,
 ) {
   const nom = faker.lorem.words(
-    faker.datatype.number({ min: nomdeDeMotsMin, max: nomdeDeMotsMax }),
+    faker.number.int({ min: nomdeDeMotsMin, max: nomdeDeMotsMax }),
   );
   return nom.charAt(0).toUpperCase() + nom.slice(1);
 }
@@ -57,7 +67,7 @@ export function générerTableau<T>(
   entitéBuilder: (i: number) => T,
 ): T[] {
   return Array.from({
-    length: faker.datatype.number({
+    length: faker.number.int({
       min: nombreOccurrenceMin,
       max: nombreOccurrenceMax,
     }),
@@ -68,7 +78,7 @@ export function générerPeutÊtreNull<T>(
   probabilitéNull: number,
   valeurSinon: T,
 ): T | null {
-  return faker.datatype.number({ min: 0, max: 1, precision: 0.001 }) <
+  return faker.number.float({ min: 0, max: 1, multipleOf: 0.001 }) <
     probabilitéNull
     ? null
     : valeurSinon;

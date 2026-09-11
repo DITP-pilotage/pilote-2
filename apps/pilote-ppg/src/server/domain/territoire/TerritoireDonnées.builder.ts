@@ -57,7 +57,7 @@ export default class TerritoireDonnéesBuilder {
       new AvancementBuilder().build(),
     ]);
     this._météo = new MétéoBuilder().build();
-    this._écart = faker.datatype.number({ min: -20, max: 20, precision: 3 });
+    this._écart = faker.number.float({ min: -20, max: 20, multipleOf: 3 });
     this._tendance = faker.helpers.arrayElement([
       "BAISSE",
       "HAUSSE",
@@ -74,13 +74,13 @@ export default class TerritoireDonnéesBuilder {
     );
     this._estApplicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._coordinateurTerritorial = générerTableau(1, 3, () => ({
-      nom: faker.name.fullName(),
+      nom: faker.person.fullName(),
       email: faker.internet.email(),
       service: null,
       fonction: null,
     }));
     this._responsableLocal = générerTableau(1, 3, () => ({
-      nom: faker.name.fullName(),
+      nom: faker.person.fullName(),
       email: faker.internet.email(),
       service: null,
       fonction: null,

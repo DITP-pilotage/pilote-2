@@ -457,6 +457,192 @@ Le mécanisme décrit au 2026-08-25 est maintenant observé en entier, sur un se
 Le mensonge est recréé par le moteur lui-même, immédiatement après avoir été réparé. Tant que
 l'override global `<2` coexiste avec le chemin « major », le cycle se répète à chaque campagne.
 
+### Second passage du 2026-09-10 — 15 overrides, après extension du périmètre à ppg
+
+Rejoué après l'élargissement du moteur à tout le monorepo et les bumps de ppg. Protocole
+inchangé : retrait de l'override, install, **re-résolution forcée**, observation.
+
+| Override | Verdict | Sans lui |
+|---|---|---|
+| `@hono/node-server: >=1.19.15 <2` | **PORTEUR** | 2.1.1 et 1.19.17 |
+| `js-yaml@>=4 <5: >=4.3.2 <5` | **PORTEUR** | 4.3.1 apparaît — **sous l'advisory** |
+| `deepmerge-ts: >=8.0.0 <9` | **PORTEUR** | 7.1.5 |
+| `hono: >=4.13.5 <5` | inerte | 4.13.5 |
+| `postcss: >=8.5.23 <9` | inerte | 8.5.26 et 8.5.23 |
+| `sharp: >=0.35.4 <0.36` | inerte | 0.35.4 |
+| `brace-expansion@<2`, `@>=2 <3`, `@>=5 <6` | inerte | 1.1.18, 2.1.4, 5.0.9 |
+| `undici@>=7 <8: >=7.29.0 <8` | inerte | 7.29.0 et 8.10.0 |
+| `immutable@>=4 <5: >=4.3.9 <5` | inerte | 4.3.9 |
+| `js-yaml@<4: >=3.15.2 <4` | inerte | 3.15.2 |
+| `tar@>=7 <8: >=7.5.21 <8` | inerte | 7.5.22 |
+| `fast-uri@>=3 <4: >=3.1.6 <4` | inerte | 3.1.6 |
+| `eslint-plugin-sonarjs>typescript: 5.9.3` | inerte | absent de l'arbre |
+
+**Aucun n'est supprimé.** Les douze inertes le sont parce que la résolution naturelle est
+*aujourd'hui* au-dessus de leur plancher — pas parce que leur raison a disparu. Les retirer
+rouvrirait la porte au prochain rafraîchissement du lockfile. C'est la distinction que ce document
+martèle depuis le 2026-07-17 : « inerte » répond à *puis-je le retirer sans casser maintenant ?*,
+pas à *sa raison tient-elle encore ?*.
+
+Deux cas méritent d'être suivis nommément.
+
+**`@hono/node-server` reste porteur pour une mauvaise raison.** Sans lui la résolution donne 2.1.1,
+c'est-à-dire ce que les trois apps déclarent elles-mêmes. Il n'est donc porteur que parce qu'il
+combat les manifestes, pas parce qu'il retient une transitive. **Le mensonge de manifeste est
+toujours là** : les apps annoncent `2.1.1`, le lockfile installe `1.19.17`.
+
+**`immutable@>=4 <5` est devenu inerte pour une bonne raison, elle.** Voir ci-dessous.
+
+### 🟢 La condition de sortie d'`immutable` était remplie depuis juillet, sans que personne le voie
+
+Ce document affirmait les deux advisories high d'`immutable` non corrigeables, avec pour condition
+de sortie « que `swagger-ui-react` lâche immutable 3 ». **C'est fait depuis la 5.32.11, publiée le
+2026-07-22.**
+
+| Version de `swagger-ui-react` | `immutable` déclaré |
+|---|---|
+| `5.32.1` (celle qui était épinglée) | `^3.x.x` → **3.8.3**, ligne sans correctif |
+| `5.32.11` et suivantes | `^4.3.9` — exactement la version corrigée |
+| `5.32.15` | `^5.1.9` |
+
+Le dépôt a d'abord été monté en **5.32.14**, la plus récente qui franchit les 14 j de
+`minimumReleaseAge`. `immutable@3.8.3` a disparu de l'arbre.
+
+**Puis le paquet a été supprimé, parce qu'il n'était plus utilisé du tout.**
+
+**Corrige aussi une croyance fausse de ce document** : `swagger-ui-react` est très maintenu, trois
+versions publiées en août et septembre 2026. Le paquet réellement abandonné de la chaîne est
+`react-immutable-proptypes`, dernier publié en 2022 — mais son peer sur `immutable` est **ouvert**
+(`>=3.6.2`), donc il ne bloque rien. C'était le pin exact de `swagger-ui-react` qui bloquait, pas
+l'écosystème.
+
+**Leçon générale** : une condition de sortie écrite n'est utile que si quelqu'un la teste. Celle-ci
+était vraie depuis sept semaines. Ajouter la vérification des conditions de sortie au banc d'essai
+mécanique, plutôt que de la laisser en prose, éviterait ce genre de dette dormante.
+
+
+
+### 🔴 `swagger-ui-react` était une dépendance morte depuis sept mois — 108 paquets pour rien
+
+Le vrai correctif n'était pas le bump, c'était le retrait.
+
+**Aucun fichier source du dépôt n'importe `swagger-ui-react`.** Le commit `051274f6c` du 2026-02-17
+(« fix: swagger a cause de turbo », PR #1912) a remplacé l'import npm par un **bundle copié dans
+`public/swagger-ui/`** :
+
+```diff
+-import "swagger-ui-react/swagger-ui.css";
+-const DynamicSwaggerUI = dynamic(() => import("swagger-ui-react"), { ssr: false, … });
++<Script src="/swagger-ui/swagger-ui-bundle.js" onLoad={initSwaggerUI} />
+```
+
+Depuis, `apps/pilote-ppg/src/pages/swagger.tsx` charge un fichier statique et appelle
+`window.SwaggerUIBundle`. Le paquet npm et ses types étaient payés sans être utilisés.
+
+**Coût mesuré du retrait : −108 paquets**, dont toute la famille `@swagger-api/apidom-*`,
+`swagger-client`, `redux`, `ramda`, `prismjs`, `react-inspector` (à l'origine des warnings de peer
+React 19), `react-immutable-proptypes` — et surtout **trois paquets à build natif**
+(`tree-sitter`, `tree-sitter-json`, `@tree-sitter-grammars/tree-sitter-yaml`) qui occupent encore
+des lignes de `pnpm.onlyBuiltDependencies` à la racine.
+
+Vérifié après retrait : `tsc` à 0 erreur, `pnpm lint` vert, 1773 tests verts, et les deux fichiers
+de `public/swagger-ui/` intacts. **Aucune ligne d'interface touchée.**
+
+#### Ce qui reste à traiter sur ce sujet
+
+| Point | État |
+|---|---|
+| Le bundle servi est `swagger-ui-dist@5.31.0` | vérifié par empreinte SHA-256. Figé depuis décembre 2025, **1,7 Mo commités dans git**. Le pin du `package.json` ne pilotait donc rien |
+| Sortie propre | ajouter `swagger-ui-dist` en **devDependency** et copier le fichier au build via `copy-assets.js`, qui existe déjà. Ce paquet a **1 dépendance et 0 peer** — aucun couplage React |
+| Le bouton « Try it out » | très probablement **déjà inopérant en production** : la CSP `connect-src` de `apps/pilote-ppg/src/proxy.ts` n'autorise pas le serveur déclaré dans la spec. Soit on l'ouvre, soit on masque le bouton plutôt que d'exposer un contrôle mort |
+| Réimplémentation maison | chiffrée à **5,5 j-h** en lecture seule, **10,5 j-h** avec interaction. **Injustifiable** : le retrait a déjà ramené l'empreinte à zéro paquet |
+
+#### La leçon, au-delà de swagger
+
+Une dépendance retirée du code mais laissée dans le `package.json` ne coûte pas « un peu » : elle
+coûte sa clôture transitive entière, ici **108 paquets et 3 builds natifs**, plus les advisories
+qu'elle traîne. Elle est restée sept mois, et la campagne l'a d'abord *bumpée* avant de s'apercevoir
+qu'elle était morte. **Vérifier qu'une dépendance est importée quelque part devrait précéder tout
+bump**, et c'est mécanisable : un grep sur les imports, croisé avec les dépendances déclarées.
+
+### `xlsx` : les deux dernières high de kpilote, et ce qu'elles coûtent vraiment
+
+| | |
+|---|---|
+| Advisories | prototype pollution (`<0.19.3`) et ReDoS (`<0.20.2`), les deux **high** |
+| `patched_versions` | `<0.0.0` — aucune version npm ne les corrige |
+| Installé | `0.18.5`, la dernière publiée sur npm |
+
+SheetJS a quitté le registre npm : les versions corrigées n'existent que sur son propre CDN.
+
+**La surface d'usage est minuscule, et c'est ce qui rend la sortie abordable.** Un seul module de
+production charge la bibliothèque, en import **dynamique** :
+`apps/kpilote-webapp/src/components/import-valeurs/lecture/fichierVersMatrice.ts`. Il lit un fichier
+CSV ou Excel déposé par l'utilisateur et le rend en matrice de cellules brutes. Deux appels au
+total : `XLSX.read` et `XLSX.utils.sheet_to_json`. Les autres API (`write`, `book_new`,
+`aoa_to_sheet`, `book_append_sheet`) ne servent qu'à fabriquer les fixtures du test voisin.
+
+Trois sorties possibles, par coût croissant :
+
+1. **Épingler la distribution officielle du CDN**, ce que SheetJS documente :
+   `"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"` (URL vérifiée disponible le
+   2026-09-10). Ferme les deux advisories sans toucher au code. Coût : une dépendance hors registre,
+   donc hors `pnpm audit` et hors `minimumReleaseAge`.
+2. **Remplacer par une bibliothèque maintenue** sur le registre. La surface à couvrir est « lire un
+   classeur, rendre une matrice », donc le remplacement est circonscrit à un fichier.
+3. **Assumer le résiduel.** L'entrée est un fichier fourni par un utilisateur authentifié, et la
+   lecture est côté navigateur. À arbitrer, pas à supposer.
+
+**L'exposition est côté navigateur uniquement.** `fichierVersMatrice` n'est appelé que depuis le
+hook `useImportValeurs`, et rien du serveur de la webapp ne charge la bibliothèque. Un attaquant
+devrait donc fabriquer un fichier malveillant et se le déposer à lui-même, dans son propre onglet,
+avec un compte authentifié. Les deux advisories restent réelles mais ne sont pas une porte d'entrée
+vers l'infrastructure.
+
+Alternatives évaluées le 2026-09-10 :
+
+| Option | Maintenu | Deps | Couvre le CSV | Changement de code |
+|---|---|---|---|---|
+| tarball officiel SheetJS (`0.20.3`) | oui | 0 | oui | **aucun** |
+| `@e965/xlsx@0.20.3` | republication | 0 | oui | aucun |
+| `read-excel-file` + `papaparse` | oui, août 2026 | 4 + 0 | via `papaparse` | oui, un module et ses tests |
+| `exceljs` | dernière sortie **déc. 2024** | 9 | non | oui |
+
+**`@e965/xlsx` est à écarter** : republication par **un seul individu**, depuis un dépôt nommé
+`sheetjs-npm-publisher`. Le contenu est probablement identique à l'officiel, mais c'est déléguer la
+chaîne d'approvisionnement à une personne. **`exceljs` aussi** : 21 mois sans sortie, 9 dépendances,
+et il ne lit pas le CSV.
+
+Restent deux vraies voies. Le tarball officiel ferme les deux advisories sans toucher une ligne, au
+prix de sortir du registre — donc de `pnpm audit` et de `minimumReleaseAge`. La bascule vers
+`read-excel-file` + `papaparse` ramène dans le registre avec deux bibliothèques maintenues sous
+licence MIT, au prix d'un branchement sur le type de fichier et d'une réécriture des fixtures du
+test, qui fabriquent aujourd'hui les classeurs avec `XLSX.write`. Environ une journée.
+
+C'est une décision produit, pas un bump : elle ne sera jamais prise par une campagne.
+
+### `mysql2` : advisory réelle, inatteignable, et durable
+
+`prisma` épingle `mysql2` à `3.15.3` **exact** ; les advisories exigent `>=3.22.0` et `>=3.23.1`.
+Le projet est en **PostgreSQL** avec `@prisma/adapter-pg` : Prisma embarque le driver MySQL sans
+jamais le charger. Sortie : que Prisma relève son épinglage. Un override `mysql2: ">=3.23.1 <4"`
+fermerait les deux lignes mais **n'a pas été passé au banc d'essai** — un pin exact en amont signale
+en général une contrainte de protocole.
+
+### Trajectoire de l'audit sur la campagne : 28 → 4
+
+| Étape | Advisories |
+|---|---|
+| Départ, sur `dev` | **28** (14 high, 14 moderate) |
+| Lot in-range | 18 |
+| Relèvement de six planchers d'overrides | 12 |
+| `vitest` 4.1.11 sur ppg et ppg-auth | 10 |
+| `csv-parse` 7, `@faker-js/faker` 10, alignement tiptap | 6 |
+| `swagger-ui-react` 5.32.14 | **4** (0 critical, 3 high, 1 moderate) |
+
+Les quatre restantes sont `xlsx` ×2 et `mysql2` ×2, toutes deux traitées ci-dessus. **Aucune n'est
+fermable par un bump.**
+
 ### Règles pour ajouter un override
 
 1. **Documenter la raison ici** (CVE, bug upstream, conflit de résolution), avec un lien vers l'issue/CVE.
