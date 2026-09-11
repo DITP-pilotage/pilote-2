@@ -22,28 +22,25 @@ import type { AgentTurn, ObservedToolCall } from "../types";
  * Trois scorers : la sélection d'outils dit si l'agent a fait le bon travail,
  * les deux juges s'il l'a rendu exploitable.
  *
- * Référence observée le 2026-09-10 : 69 %.
+ * Référence observée le 2026-09-11 : 89 %.
  *
- * Les deux premiers scénarios sortent à 100 % sur les trois scorers : l'agent
- * appelle les bons outils et le juge note 1/1 en citant les valeurs réelles
- * (« TA 51 % », « écart -15 points », « IND-005-53 »).
+ * Les deux premiers scénarios sortent à 85-100 % sur les trois scorers :
+ * l'agent appelle les bons outils et le juge note 1/1 en citant les valeurs
+ * réelles (« TA 51 % », « écart -15 points », « IND-005-53 »).
  *
- * ANGLE MORT à traiter : le scénario dashboard sort à 8-42 % alors qu'Albert
- * fait le travail. Il appelle bien `create_dashboard` et répond « Voici le
- * tableau de bord demandé pour la Bretagne (REG-53) : » — mais le contenu du
- * dashboard vit dans le RÉSULTAT DE L'OUTIL, pas dans le texte. Le juge ne
- * reçoit que `text`, donc il note une phrase d'introduction et conclut
- * « aucune donnée exploitable ».
+ * Le scénario dashboard reste le plus variable (58-100 %), mais il mesure
+ * désormais quelque chose. Deux corrections y ont mené :
  *
- * Ce n'est donc pas une faiblesse de l'agent, c'est une limite de la mesure.
- * Elle vaut pour tout scénario dont le livrable est un artefact d'outil —
- * dashboard, export de fichier. Deux issues : ne scorer ces scénarios que sur
- * la sélection d'outils, ou donner au juge la sortie des outils en plus du
- * texte. À arbitrer avant de lire ce score comme une note de qualité.
- *
- * Un premier jet sortait à 70 % avec, en plus, des sections « Aucun indicateur
- * disponible » que le juge notait comme du remplissage : les chantiers semés
- * en Bretagne n'avaient aucun indicateur. Corrigé dans `seeds.ts`.
+ *  - les chantiers semés en Bretagne n'avaient aucun indicateur, alors que ces
+ *    scénarios demandent tous « et les valeurs de leurs indicateurs ». Le juge
+ *    notait à juste titre les sections « Aucun indicateur disponible » comme du
+ *    remplissage. Corrigé dans `seeds.ts` ;
+ *  - le juge ne recevait que le texte. Or quand l'agent appelle
+ *    `create_dashboard`, le contenu vit dans le RÉSULTAT DE L'OUTIL : le juge
+ *    notait une phrase d'introduction et concluait « aucune donnée
+ *    exploitable ». Ce 8 % ne mesurait pas Albert. Il reçoit maintenant les
+ *    NOMS des outils appelés — pas leurs sorties — et juge le texte pour ce
+ *    qu'il est, un accompagnement.
  */
 
 type Case = {
