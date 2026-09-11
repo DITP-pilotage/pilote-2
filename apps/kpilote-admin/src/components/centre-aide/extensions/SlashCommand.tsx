@@ -20,6 +20,7 @@ const ListeSlash = forwardRef<ListeHandle, SuggestionProps<OptionBloc>>(
     // pas à chaque mise à jour de Suggestion (props.items change de référence en
     // continu, ce qui refermait le sous-menu aussitôt ouvert).
     useEffect(() => {
+      // oxlint-disable-next-line react/set-state-in-effect -- remise a zero volontaire du sous-menu, cf. commentaire ci-dessus
       setSousListe(null)
       setIndex(0)
     }, [props.query])

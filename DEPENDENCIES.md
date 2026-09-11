@@ -501,7 +501,86 @@ Mesuré sur `terser` : retirer `"<5.47.0"` puis `pnpm install` laisse 5.46.2 (ve
 
 **Protocole correct** : retirer l'override → `pnpm install` → **`pnpm update <paquet> -r --depth Infinity`** → observer la résolution. C'est ce que fait `pnpm deps:campagne`.
 
-### 🔴 Le périmètre « kpilote seulement » était une illusion
+## Linting : oxlint sur kpilote, ESLint sur ppg
+
+**Décidé le 2026-09-10.** Les 3 apps kpilote (`kpilote-api`, `kpilote-webapp`, `kpilote-admin`)
+sont passées d'ESLint à **oxlint** avec son moteur typé `tsgolint`. `pilote-ppg` et
+`pilote-ppg-auth` restent sur ESLint. `packages/kpilote-shared` et `packages/kpilote-ui` n'ont
+jamais eu de linter (`prettier --check` seul), rien n'y change.
+
+### Pourquoi
+
+Le blocage TypeScript 7 n'était pas contournable autrement. `typescript-eslint` **refuse de
+démarrer** sous TS 7 faute d'API programmatique stable, et cette attente dépend de Microsoft (voir
+« Pièges connus »). `tsgolint`, lui, est **bâti sur typescript-go et exige TypeScript 7.0 ou plus** :
+là où typescript-eslint bute, oxlint en fait un prérequis. Son versionnage suit d'ailleurs celui du
+compilateur — `oxlint-tsgolint@7.0.2001` cible **TypeScript 7.0.2**, exactement la version du dépôt.
+
+À noter que `tsgolint` est **né chez typescript-eslint puis abandonné** (« not actively being worked
+on, nor expected to be production ready », dernier commit 2025-07-13). Le fork oxc, réalisé avec
+permission, est celui qui vit : 59 des 61 règles typées de typescript-eslint, activées par
+`--type-aware`, stables depuis juillet 2026.
+
+### Couverture — mesurée, pas estimée
+
+| Bloc de règles | Actives avant | Couvertes par oxlint |
+|---|---|---|
+| `@typescript-eslint/recommended` | 20 | **20** |
+| `recommended-type-checked-only` | 23 | **23** |
+| `react-hooks` (rules-of-hooks, exhaustive-deps) | 2 | **2** |
+| `no-restricted-syntax` (custom) | 1 | **0** |
+| `react-refresh/only-export-components` | 1, déjà `off` | sans objet |
+
+**45 règles sur 46.** La seule perte est `no-restricted-syntax`, qui portait deux interdictions :
+
+- **`export default`** — récupérée à l'identique par `import/no-default-export`, supportée.
+- **`new Date()` dans `model`, `commands` et `queries`** (la règle « injecter une Clock ») — **sans
+  équivalent**. Vérifié au 2026-09-10 : **aucune violation dans le code actuel**, la perte est donc
+  préventive et non active. Pistes de remplacement, par ordre de coût : un plugin JS oxlint (la règle
+  est purement syntaxique, donc éligible — mais l'API plugin est en alpha), un test d'architecture,
+  ou un grep en CI.
+
+### Ce que la bascule a fait remonter
+
+La catégorie `correctness` d'oxlint couvre plus que l'ancien jeu de règles. Trois trouvailles
+réelles, toutes traitées :
+
+| Trouvaille | Traitement |
+|---|---|
+| `require-array-sort-compare` sur `.sort()` de nombres (`upsertValeursAvancementBatch.test.ts`) | **corrigé** — bug latent : le tri était lexicographique, le test passait par chance avec 11 et 22 et aurait échoué avec 9 et 11 |
+| `no-misused-spread` ×6 sur `{ ...window }` dans des stubs de test | règle désactivée **dans les tests uniquement** — idiome délibéré de `vi.stubGlobal` |
+| `react/set-state-in-effect` dans `SlashCommand.tsx` | suppression **en ligne**, avec motif : la remise à zéro du sous-menu est une décision documentée dans le code, qui corrigeait un bug |
+
+### Performances
+
+| App | `oxlint --type-aware` |
+|---|---|
+| `kpilote-api` | 0,55 s |
+| `kpilote-webapp` | 0,47 s |
+| `kpilote-admin` | 0,45 s |
+
+Aucune base de comparaison ESLint n'existe sur kpilote sous TS 7, puisque ESLint n'y démarre pas.
+Sur `pilote-ppg`, resté en TS 5.9.3, ESLint met **43,5 s** là où oxlint met **0,09 s** en syntaxique.
+
+### Pièges
+
+- **`oxlint-tsgolint` doit être déclaré dans chaque app.** Le `node-linker` isolé de pnpm interdit
+  les phantom deps : sans la dépendance explicite, oxlint échoue sur « Failed to find tsgolint
+  executable ».
+- **Quarantaine.** `oxlint@1.80.0` (2026-08-24) passe les 14 j de `minimumReleaseAge` ; les 1.81 et
+  1.82 étaient encore dessous au 2026-09-10. `oxlint-tsgolint@7.0.2001` date du 2026-07-21.
+- **Épingler `oxlint-tsgolint` en `~`, pas en `^`.** Son numéro encode la version du compilateur
+  ciblé : `7.0.2001` = TypeScript 7.0.2. Un caret autoriserait une 7.1.x alignée sur un autre
+  compilateur.
+- **Les deux peers d'oxlint sont optionnels** (`vite-plus`, `oxlint-tsgolint`), et aucun des deux
+  paquets n'a de script d'installation : rien à ajouter à `onlyBuiltDependencies`.
+- **Le tsconfig de `pilote-ppg` n'est pas compatible TS 7** (`baseUrl` retiré, chemins non
+  relatifs). C'est sans conséquence tant qu'il reste sur ESLint et TS 5.9.3, mais c'est le premier
+  obstacle si on voulait l'y amener un jour.
+- **La CI n'a pas bougé** : les jobs appellent `pnpm lint` via `APP_PACKAGE`, tout le changement
+  tient dans les scripts des `package.json`.
+
+## 🔴 Le périmètre « kpilote seulement » était une illusion
 
 **Élargi à tout le monorepo le 2026-09-10.** `FILTRES_CAMPAGNE` (ex-`FILTRES_KPILOTE`) couvre
 désormais les **7 workspaces npm** : les 5 kpilote, plus `@pilote/ppg` et `pilote-ppg-auth`.
@@ -534,7 +613,6 @@ Conséquences pour l'outillage :
 **Nouveau prérequis pour lancer une campagne** : la base de dev (5434) **et** la base de test de
 ppg (7433) doivent être levées. Le moteur les sonde et s'arrête avec un message clair, sans jamais
 toucher aux conteneurs.
-
 ## Campagne d'upgrade : procédure type
 
 **Périmètre : tout le monorepo, et la campagne est outillée.** `pnpm deps:campagne` (ou le skill `/deps-campagne`)
@@ -604,7 +682,8 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
   (`@since v25.9.0`) compile alors que `typeof storage.withScope === 'undefined'` à l'exécution —
   or `AsyncLocalStorage` est instancié dans `framework/persistence/dbStore.ts:7` et
   `framework/auth/userContext.ts:24`. 161 marqueurs `@since v25/v26` dans les typings 26.2.0.
-- **`typescript-eslint` ne supporte pas encore TypeScript 7.** TS 7 est le portage natif Go : le
+- **`typescript-eslint` ne supporte pas encore TypeScript 7** — ne concerne plus que `pilote-ppg`
+  et `pilote-ppg-auth` depuis que les 3 apps kpilote sont passées à oxlint (voir « Linting »). TS 7 est le portage natif Go : le
   paquet npm n'expose plus l'API programmatique (`exports` réduit à `./lib/version.cjs`, ni
   `tsserver` ni `lsp` dans le paquet, donc l'impact touche aussi l'IDE). Une API existe sous
   `./unstable/*`, non stabilisée. `typescript-eslint` déclare un peer `>=4.8.4 <6.1.0` et lève
@@ -662,7 +741,7 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 | `marked` | `15.x` → `18.x` | 🟡 low-medium | Renderer API modifiée |
 | `dotenv` + `dotenv-cli` + `dotenv-expand` | `16 + 7 + 11` → `17 + 11 + 12` | 🟠 medium | Parser rewrite, tester tous les `.env*` |
 | `pdfmake` | `0.2.x` → `0.3.x` | 🟠 medium | Pre-1.0, saut important |
-| `typescript` | `5.9.3` → `7.x` | 🟠 bloqué par l'outillage | **Le code est prêt, l'outillage non.** Re-mesuré le 2026-09-10 : les 4 projets kpilote compilent en 7.0.2 (exit 0), aucune option retirée n'est utilisée, et `tsc` passe de **2,115 s à 0,403 s** sur `kpilote-api` (≈ 5,3×). Mais `typescript-eslint@8.70.0` déclare toujours un peer `<6.1.0` et le lint meurt sur les 3 apps. L'issue amont qui fait foi est **#10940, OPEN / `blocked by external API`** (et non #12518, un doublon fermé). `kpilote-ui` est en 7.0.2 (aucun ESLint, aucun `tsc`) ; les 3 apps restent en `5.9.3` **volontairement**. Condition de sortie exécutable : `pnpm view typescript-eslint peerDependencies` ne mentionne plus `<6.1.0`. |
+| `typescript` | `5.9.3` → `7.0.2` | ✅ **fait sur kpilote** | **Débloqué le 2026-09-10 par la bascule à oxlint** (voir « Linting »). Les 3 apps kpilote compilent en 7.0.2 avec un `pnpm lint` vert et 794 tests verts. `tsc` passe de **2,115 s à 0,403 s** sur `kpilote-api` (≈ 5,3×). Reste en `5.9.3` : `pilote-ppg` et `pilote-ppg-auth`, qui gardent ESLint et sont donc toujours plafonnés par le peer `<6.1.0` de `typescript-eslint`. |
 | `htmlparser2` | `8.x` → `12.x` | 🟡 low | 4 majors successifs |
 | `mime` | `3.x` → `4.x` | 🟡 low | ESM-only |
 | `chroma-js` | `2.x` → `3.x` | 🟡 low | Types officiels + renames |

@@ -301,7 +301,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         where: { indicateur: { publicId: indId } },
       })
       expect(rows).toHaveLength(2)
-      expect(rows.map((row) => row.valeur.toNumber()).sort()).toEqual([11, 22])
+      expect(rows.map((row) => row.valeur.toNumber()).sort((a, b) => a - b)).toEqual([11, 22])
     }),
   )
 })
