@@ -799,6 +799,53 @@ Conséquences pour l'outillage :
 **Nouveau prérequis pour lancer une campagne** : la base de dev (5434) **et** la base de test de
 ppg (7433) doivent être levées. Le moteur les sonde et s'arrête avec un message clair, sans jamais
 toucher aux conteneurs.
+## 🔭 Prisma 8 : à faire dès la sortie de la stable
+
+**Décision prise le 2026-09-11 : on passe à Prisma 8 dès que la stable est publiée**, pas avant.
+
+### Pourquoi pas maintenant
+
+`prisma@latest` pointe sur une **release candidate** (`8.0.0-rc.13` au 2026-09-10), et
+`@prisma/client` n'a **aucune version 8 stable** : six 8.x publiées, toutes des préversions. Or
+c'est ce paquet-là que le code importe. Adopter la CLI 8 aujourd'hui donnerait une CLI en RC face à
+un client en 7.10.0, exactement le désalignement que la CLI signale elle-même par un avertissement à
+chaque `prisma generate`.
+
+> 🔴 **Ne jamais suivre `prisma@latest` aveuglément.** La balise pointe sur une préversion, et le
+> moteur de campagne, qui lit `info.latest` verbatim, a proposé `8.1.0-dev.2` — un build de
+> développement **qu'aucune balise ne référence**, et qui n'est même pas Prisma 8 mais la CLI 7.10.0
+> renumérotée. Pire, au sens semver `8.1.0-dev.2 > 8.0.0` : une fois ce pin en place,
+> `pnpm outdated` n'aurait **plus jamais** signalé prisma, pas même à la GA. Le dépôt se serait
+> gelé sur un build de développement en se croyant à jour.
+
+### Condition de sortie, vérifiable en une commande
+
+```
+npm view @prisma/client dist-tags.latest    # doit rendre une 8.x SANS suffixe de préversion
+```
+
+Tant que cette commande rend une `7.x` ou une version contenant un tiret, **on ne bouge pas**.
+
+### Ce qu'il faudra traiter le jour venu
+
+| Point | Détail |
+|---|---|
+| `count` passe de `number` à `bigint` | annoncé dans la RC. **33 sites d'appel** `count`/`aggregate`/`groupBy`/`_count` dans `apps/kpilote-api/src`. Toute comparaison d'égalité ou arithmétique sur un agrégat casse silencieusement (`count === 2` est faux quand `count` vaut `2n`) |
+| `sum()` et `avg()` sous PostgreSQL | `sum()` sur entiers s'élargit en `bigint`, `avg()` rend des chaînes décimales exactes |
+| CLI ré-architecturée | `@prisma/cli-engine`, `@prisma/orm-toolchain`, `@prisma/compute-sdk` remplacent la structure actuelle |
+| `engines.node` | la RC exige `>=22.18.0` — compatible avec le 24.20.0 du projet, mais c'est un changement de socle |
+| Guide de migration | **inexistant au 2026-09-10** (404 sur la page d'upgrade 7 → 8). Attendre qu'il soit publié |
+| `prisma-client-js` | annoncé pour **disparaître** en 8.x. `ppg` l'utilise encore (306 imports `@prisma/client`). La bascule vers le generator `prisma-client`, déjà en place sur `kpilote-api`, doit être faite **avant** ce major |
+| `mysql2` | Prisma l'épingle à l'exact et traîne 2 advisories inatteignables. Vérifier si la 8 relève ce pin |
+
+### Ordre de travail recommandé
+
+1. **Avant la 8** : migrer `ppg` du generator `prisma-client-js` vers `prisma-client` — chemin de
+   sortie, 306 imports, format de module, tracing Next. C'est un ticket à part entière.
+2. **À la GA** : bumper `prisma` et `@prisma/client` **ensemble**, jamais l'un sans l'autre.
+3. **Immédiatement après** : balayer les 33 sites d'agrégat pour les `bigint`, puis rejouer les
+   migrations et les suites de tests sur vraie base — c'est le seul oracle qui voie ce major.
+
 ## Campagne d'upgrade : procédure type
 
 **Périmètre : tout le monorepo, et la campagne est outillée.** `pnpm deps:campagne` (ou le skill `/deps-campagne`)
@@ -916,7 +963,7 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 
 | Package | Current → Latest | Niveau | Notes |
 |---|---|---|---|
-| `@prisma/client` + `prisma` | `6.2.1` → `7.x` | 🔴 risqué | Nouveau query engine, drop CockroachDB preview, re-jouer toutes les migrations en E2E |
+| `@prisma/client` + `prisma` | `7.10.0` → `8.x` | 🔭 **en attente de la stable** | `ppg` et `kpilote-api` sont tous deux en **7.10.0** depuis le 2026-09-11. La ligne 8.x est en release candidate et `@prisma/client` n'a aucune 8 stable. **Décision : y aller dès la GA.** Condition de sortie et plan détaillé dans « Prisma 8 : à faire dès la sortie de la stable ». |
 | `zod` | `3.x` → `4.x` | 🔴 risqué | Rewrite. Impact sur tout `src/validation/` + tRPC inputs |
 | `eslint` + `@eslint/js` + `@eslint/compat` | `9.x` → `10.x` | 🟠 bloqué | **Attend `eslint-plugin-react` compat** (latest stable 7.37.5 ne supporte que ESLint ≤9.7). Vérifier `npm view eslint-plugin-react peerDependencies` à chaque campagne |
 | `pino` + `pino-pretty` | `8 + 10` → `10 + 13` | 🟠 medium | Transport API change. À bumper ensemble |

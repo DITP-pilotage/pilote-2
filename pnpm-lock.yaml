@@ -982,13 +982,13 @@ importers:
         version: 1.19.17(hono@4.13.5)
       '@hono/zod-validator':
         specifier: ^0.7.0
-        version: 0.7.6(hono@4.13.5)(zod@4.3.6)
+        version: 0.7.6(hono@4.13.5)(zod@4.4.3)
       hono:
         specifier: '>=4.13.5 <5'
         version: 4.13.5
       zod:
-        specifier: ^4.3.6
-        version: 4.3.6
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@types/node':
         specifier: ^22.12.0
@@ -1009,7 +1009,7 @@ importers:
   packages/kpilote-shared:
     dependencies:
       zod:
-        specifier: ^4.3.6
+        specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
       '@types/node':
@@ -9096,9 +9096,6 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  zod@4.3.6:
-    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
-
   zod@4.4.3:
     resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
@@ -9856,10 +9853,10 @@ snapshots:
       openapi3-ts: 4.6.1
       zod: 4.4.3
 
-  '@hono/zod-validator@0.7.6(hono@4.13.5)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.13.5)(zod@4.4.3)':
     dependencies:
       hono: 4.13.5
-      zod: 4.3.6
+      zod: 4.4.3
 
   '@hono/zod-validator@0.9.0(hono@4.13.5)(zod@4.4.3)':
     dependencies:
@@ -18519,8 +18516,6 @@ snapshots:
   zod-validation-error@4.0.2(zod@4.4.3):
     dependencies:
       zod: 4.4.3
-
-  zod@4.3.6: {}
 
   zod@4.4.3: {}
 
