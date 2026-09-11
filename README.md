@@ -21,7 +21,7 @@ pilote/
 
 ## Prérequis
 
-- **Node.js** 24.9.0
+- **Node.js** 24.20.0
 - **pnpm** 10 (`npm install -g pnpm@10`)
 - **PostgreSQL** 16+
 - **Keycloak** (pour l'authentification)

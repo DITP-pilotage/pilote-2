@@ -35,10 +35,40 @@ Depuis avril 2026, le projet utilise **pnpm 10** (lockfile : `pnpm-lock.yaml`).
 ## `engines` Node
 
 ```json
-"engines": { "node": "24.9.0" }
+"engines": { "node": "24.20.0" }
 ```
 
-Tous les environnements (dev, CI, prod) tournent sur Node 24.9.0. Pas de fallback 18/20. Cela permet notamment d'envisager ESLint 10 (qui requiert Node ≥20.19) dès que le reste de l'écosystème sera prêt (voir "Packages à surveiller").
+Tous les environnements (dev, CI, prod) tournent sur Node 24.20.0. Pas de fallback 18/20.
+
+**Passé de 24.9.0 à 24.20.0 le 2026-09-10.** Le pin reste **exact**, conformément à la convention
+existante — avec pour contrepartie qu'un poste sur un autre patch de la ligne 24 déclenche le
+warning `Unsupported engine` de pnpm. Ce n'est pas cosmétique : en mode récursif ce warning se mêle
+à la sortie de `pnpm outdated -r --format json` et **fait échouer le parse**, ce qui a fait planter
+le moteur de campagne au premier appel le 2026-09-10. Un range (`^24.20.0`) supprimerait la classe
+entière de problème, au prix d'un environnement moins strictement reproductible — arbitrage non
+tranché.
+
+**Ce bump débloque `jsdom` 30**, écarté par la campagne du 2026-08-25 au seul motif que ses
+`engines` exigent `^22.22.2 || ^24.15.0 || >=26` alors que le projet était pinné sous 24.15.0.
+
+Il permet aussi, comme le pin précédent, ESLint 10 (qui requiert Node ≥ 20.19).
+
+### Endroits qui déclarent la version — inventaire au 2026-09-10
+
+| Où | Fichiers |
+|---|---|
+| `engines.node` | racine + les 5 apps (`kpilote-api`, `kpilote-admin`, `kpilote-webapp`, `pilote-ppg`, `pilote-ppg-auth`) — les deux `packages/kpilote-*` n'en déclarent pas |
+| `.nvmrc` | `kpilote-api`, `kpilote-admin`, `kpilote-webapp` uniquement — **`pilote-ppg` et `pilote-ppg-auth` n'en ont pas** |
+| CI | `testAndLint.yml` et `seed-kpilote-dev.yml` via `NODE_VERSION` ; `e2e.yml` lit `node-version-file: package.json` et suit donc tout seul |
+| Docs | ce fichier et `README.md` |
+| Prod | le buildpack Scalingo lit `engines.node` — rien à changer séparément |
+
+> 🔴 **Angle mort : les Dockerfiles de `pilote-ppg` sont restés en Node 18.**
+> `apps/pilote-ppg/docker/Dockerfile.webapp.prod:1` et `Dockerfile.webapp.dev:1` déclarent
+> `ARG NODE_VERSION=18.20.2`. Ils avaient été « laissés en l'état » lors de la migration npm→pnpm
+> d'avril 2026, et personne n'y est revenu depuis. L'écart avec les `engines` déclarés est donc de
+> **six majeures**, pas d'un patch. Non traité par le bump du 2026-09-10 : changer une image de base
+> de production demande son propre test, pas un sed.
 
 ## Pins exacts (sans `^`)
 
