@@ -11,7 +11,7 @@ import {
   validationDecisionStrategiqueFormulaire,
   validationBrouillonDecisionStrategiqueAPublier,
   validationDecisionStrategiqueAModifier,
-} from "validation/decisionStrategique";
+} from "@/validation/decisionStrategique";
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),

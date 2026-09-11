@@ -42,7 +42,7 @@
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
-    "seed": "ts-node src/database/prisma/seed.ts"
+    "seed": "tsx src/database/prisma/seed.ts"
   },
   "browserslist": {
     "production": [
@@ -201,8 +201,6 @@
     "reproject": "^1.2.7",
     "sass": "1.78.0",
     "tailwindcss": "^4.3.3",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.67.0",
     "vite-tsconfig-paths": "^6.1.1",

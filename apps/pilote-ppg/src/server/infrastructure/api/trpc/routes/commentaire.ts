@@ -9,7 +9,7 @@ import {
   validationCommentaireFormulaire,
   validationCommentaireAModifier,
   validationBrouillonCommentaireAPublier,
-} from "validation/commentaire";
+} from "@/validation/commentaire";
 import { getContainer } from "@/server/dependances";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
