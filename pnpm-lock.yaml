@@ -5,7 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@hono/node-server': '>=1.19.15 <2'
   hono: '>=4.13.5 <5'
   postcss: '>=8.5.23 <9'
   sharp: '>=0.35.4 <0.36'
@@ -56,8 +55,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@19.2.8)
       '@hono/node-server':
-        specifier: '>=1.19.15 <2'
-        version: 1.19.17(hono@4.13.5)
+        specifier: 2.1.1
+        version: 2.1.1(hono@4.13.5)
       '@hono/zod-validator':
         specifier: ^0.9.0
         version: 0.9.0(hono@4.13.5)(zod@4.4.3)
@@ -234,8 +233,8 @@ importers:
         specifier: ^4.0.50
         version: 4.0.50(zod@4.4.3)
       '@hono/node-server':
-        specifier: '>=1.19.15 <2'
-        version: 1.19.17(hono@4.13.5)
+        specifier: 2.1.1
+        version: 2.1.1(hono@4.13.5)
       '@hono/swagger-ui':
         specifier: ^0.6.1
         version: 0.6.1(hono@4.13.5)
@@ -343,8 +342,8 @@ importers:
   apps/kpilote-webapp:
     dependencies:
       '@hono/node-server':
-        specifier: '>=1.19.15 <2'
-        version: 1.19.17(hono@4.13.5)
+        specifier: 2.1.1
+        version: 2.1.1(hono@4.13.5)
       '@hookform/resolvers':
         specifier: ^5.9.1
         version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.20.0)(react-hook-form@7.86.0(react@19.2.8))(valibot@1.4.2(typescript@7.0.2))(zod@4.4.3)
@@ -978,7 +977,7 @@ importers:
   apps/pilote-ppg-auth:
     dependencies:
       '@hono/node-server':
-        specifier: '>=1.19.15 <2'
+        specifier: ^1.19.17
         version: 1.19.17(hono@4.13.5)
       '@hono/zod-validator':
         specifier: ^0.7.0
@@ -1758,6 +1757,12 @@ packages:
   '@hono/node-server@1.19.17':
     resolution: {integrity: sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ==}
     engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: '>=4.13.5 <5'
+
+  '@hono/node-server@2.1.1':
+    resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
+    engines: {node: '>=20'}
     peerDependencies:
       hono: '>=4.13.5 <5'
 
@@ -9828,6 +9833,10 @@ snapshots:
   '@gouvfr/dsfr@1.11.0': {}
 
   '@hono/node-server@1.19.17(hono@4.13.5)':
+    dependencies:
+      hono: 4.13.5
+
+  '@hono/node-server@2.1.1(hono@4.13.5)':
     dependencies:
       hono: 4.13.5
 
