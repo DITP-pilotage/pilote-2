@@ -14,7 +14,7 @@ import { Prisma } from "@prisma/client";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { z } from "zod";
 import { configuration } from "@/config";
-import { prisma } from "@/server/db/prisma";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   if (!configuration().albert.devTools) {
@@ -67,7 +67,10 @@ export class Albert {
     };
     const usage = évènement?.finalStep?.usage ?? évènement?.usage;
 
-    await prisma.llm_calls.create({
+    // `getPrisma()` et non le client global : sans ça, l'écriture sort de la
+    // transaction ambiante quand il y en a une. En production il n'y en a pas,
+    // le comportement est donc inchangé.
+    await getPrisma().llm_calls.create({
       data: {
         chat_id: chatId,
         model,
@@ -104,6 +107,46 @@ export class Albert {
       abortSignal,
     });
     return result.output;
+  }
+
+  /**
+   * Pendant non streamé de `streamText` : mêmes modèle, température et
+   * `stopWhen`, même écriture dans `llm_calls`. Renvoie le résultat complet,
+   * `steps` compris — ce que le flux ne permet pas d'inspecter.
+   *
+   * `generateText` de `ai` n'expose pas de `onFinish`, la persistance se fait
+   * donc après l'attente. `finalStep.usage` porte la même sémantique que dans
+   * l'évènement de `streamText`.
+   */
+  static async generateText({
+    chatId,
+    prompt,
+    systemPrompt,
+    userId,
+    tools,
+    model = DEFAULT_MODEL,
+  }: {
+    chatId: string;
+    prompt: string;
+    systemPrompt: string;
+    userId: string;
+    tools?: ToolSet;
+    model?: string;
+  }) {
+    const albertProvider = this.createProvider();
+
+    const result = await generateText({
+      model: withOptionalDevTools(albertProvider.chat(model)),
+      system: systemPrompt,
+      prompt,
+      tools,
+      stopWhen: stepCountIs(50),
+      temperature: TEMPERATURE_STREAM_TEXT,
+    });
+
+    await Albert.saveLlmCall({ chatId, userId, event: result, model });
+
+    return result;
   }
 
   static async streamText({

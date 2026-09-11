@@ -1,18 +1,9 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
-import { Albert } from "@/server/albert/Albert";
-import { displayChoicesTool } from "@/server/albert/tools/displayChoices";
+import { AssistantIA } from "@/server/albert/AssistantIA";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
-import {
-  Capacities,
-  dashboardDejaCompose,
-  detecterCapacities,
-  extraireTexteDernierMessageUtilisateur,
-} from "@/server/albert/detecteurIntention";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
-import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 import {
   calculerAccesAskAI,
   construireFeatureFlipsAskAI,
@@ -59,106 +50,15 @@ export async function POST(request: Request) {
 
     const agentContext = body.agentContext ?? undefined;
 
-    const territoiresAccessibles = session.habilitations.lecture.territoires;
-
-    const container = getContainer("albert");
-    const createGetTauxAvancementTerritoireTool = container.resolve(
-      "createGetTauxAvancementTerritoireTool",
-    );
-    const createGetChantiersTool = container.resolve("createGetChantiersTool");
-    const createGetChantierIndicateursTool = container.resolve(
-      "createGetChantierIndicateursTool",
-    );
-    const createGetChantierCommentairesTool = container.resolve(
-      "createGetChantierCommentairesTool",
-    );
-    const createGetChantierObjectifsTool = container.resolve(
-      "createGetChantierObjectifsTool",
-    );
-    const createGetChantiersSignalesTool = container.resolve(
-      "createGetChantiersSignalesTool",
-    );
-    const createSearchChantiersTool = container.resolve(
-      "createSearchChantiersTool",
-    );
-    const createSearchIndicateursTool = container.resolve(
-      "createSearchIndicateursTool",
-    );
-    const createSearchTerritoiresTool = container.resolve(
-      "createSearchTerritoiresTool",
-    );
-    const createExportRapportTool = container.resolve(
-      "createExportRapportTool",
-    );
-
     const messagesPilote = messages as PiloteUIMessage[];
-    const texteDernierMessage =
-      extraireTexteDernierMessageUtilisateur(messagesPilote);
-    const capacitiesDetectees = detecterCapacities(texteDernierMessage);
-    const capacities: Capacities = {
-      ...capacitiesDetectees,
-      dashboard:
-        capacitiesDetectees.dashboard || dashboardDejaCompose(messagesPilote),
-    };
 
-    const systemPrompt = buildChatSystemPrompt({
-      territoiresAccessibles,
-      agentContext,
-      capacities,
-    });
-    const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool({
-      habilitations: session.habilitations,
-    });
-    const getChantiers = createGetChantiersTool({
-      territoiresAccessibles,
-      chantiersAccessibles: session.habilitations.lecture.chantiers,
-    });
-    const getChantierIndicateurs = createGetChantierIndicateursTool();
-    const getChantierCommentaires = createGetChantierCommentairesTool({
-      territoiresAccessibles,
-    });
-    const getChantierObjectifs = createGetChantierObjectifsTool({
-      chantiersAccessibles: session.habilitations.lecture.chantiers,
-    });
-    const getChantiersSignales = createGetChantiersSignalesTool({
-      territoiresAccessibles,
-      chantiersAccessibles: session.habilitations.lecture.chantiers,
-    });
-    const searchChantiers = createSearchChantiersTool({
-      chantiersAccessibles: session.habilitations.lecture.chantiers,
-    });
-    const searchIndicateurs = createSearchIndicateursTool({
-      chantiersAccessibles: session.habilitations.lecture.chantiers,
-    });
-    const searchTerritoires = createSearchTerritoiresTool();
-    const exportRapport = createExportRapportTool({
-      userId: session.user.id,
-    });
-
-    const createDashboard = createCreateDashboardTool();
-
-    const tools = {
-      get_taux_avancement_territoire: getTauxAvancementTerritoire,
-      get_chantiers: getChantiers,
-      get_indicateurs: getChantierIndicateurs,
-      get_chantier_commentaires: getChantierCommentaires,
-      get_chantier_objectifs: getChantierObjectifs,
-      get_chantiers_signales: getChantiersSignales,
-      search_chantiers: searchChantiers,
-      search_indicateurs: searchIndicateurs,
-      search_territoires: searchTerritoires,
-      display_choices: displayChoicesTool,
-      ...(capacities.dashboard ? { create_dashboard: createDashboard } : {}),
-      ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
-    };
-
-    const result = await Albert.streamText({
+    const result = await AssistantIA.streamText({
       chatId: body.id,
       messages,
-      systemPrompt,
+      habilitations: session.habilitations,
+      agentContext,
       userId: session.user.id,
       model: body.model,
-      tools,
     });
 
     // Le detail de l'erreur reste cote serveur : une erreur d'appel LLM peut porter un
@@ -173,7 +73,7 @@ export async function POST(request: Request) {
       return "la génération de la réponse a échoué. Vous pouvez réessayer.";
     };
 
-    const enregistrerConversation = container.resolve(
+    const enregistrerConversation = getContainer("albert").resolve(
       "enregistrerConversationUseCase",
     );
 
