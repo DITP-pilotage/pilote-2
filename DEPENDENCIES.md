@@ -505,8 +505,10 @@ de sortie « que `swagger-ui-react` lâche immutable 3 ». **C'est fait depuis l
 | `5.32.11` et suivantes | `^4.3.9` — exactement la version corrigée |
 | `5.32.15` | `^5.1.9` |
 
-Le dépôt a été monté en **5.32.14**, la plus récente qui franchit les 14 j de `minimumReleaseAge`.
-`immutable@3.8.3` a disparu de l'arbre.
+Le dépôt a d'abord été monté en **5.32.14**, la plus récente qui franchit les 14 j de
+`minimumReleaseAge`. `immutable@3.8.3` a disparu de l'arbre.
+
+**Puis le paquet a été supprimé, parce qu'il n'était plus utilisé du tout.**
 
 **Corrige aussi une croyance fausse de ce document** : `swagger-ui-react` est très maintenu, trois
 versions publiées en août et septembre 2026. Le paquet réellement abandonné de la chaîne est
@@ -517,6 +519,51 @@ l'écosystème.
 **Leçon générale** : une condition de sortie écrite n'est utile que si quelqu'un la teste. Celle-ci
 était vraie depuis sept semaines. Ajouter la vérification des conditions de sortie au banc d'essai
 mécanique, plutôt que de la laisser en prose, éviterait ce genre de dette dormante.
+
+
+
+### 🔴 `swagger-ui-react` était une dépendance morte depuis sept mois — 108 paquets pour rien
+
+Le vrai correctif n'était pas le bump, c'était le retrait.
+
+**Aucun fichier source du dépôt n'importe `swagger-ui-react`.** Le commit `051274f6c` du 2026-02-17
+(« fix: swagger a cause de turbo », PR #1912) a remplacé l'import npm par un **bundle copié dans
+`public/swagger-ui/`** :
+
+```diff
+-import "swagger-ui-react/swagger-ui.css";
+-const DynamicSwaggerUI = dynamic(() => import("swagger-ui-react"), { ssr: false, … });
++<Script src="/swagger-ui/swagger-ui-bundle.js" onLoad={initSwaggerUI} />
+```
+
+Depuis, `apps/pilote-ppg/src/pages/swagger.tsx` charge un fichier statique et appelle
+`window.SwaggerUIBundle`. Le paquet npm et ses types étaient payés sans être utilisés.
+
+**Coût mesuré du retrait : −108 paquets**, dont toute la famille `@swagger-api/apidom-*`,
+`swagger-client`, `redux`, `ramda`, `prismjs`, `react-inspector` (à l'origine des warnings de peer
+React 19), `react-immutable-proptypes` — et surtout **trois paquets à build natif**
+(`tree-sitter`, `tree-sitter-json`, `@tree-sitter-grammars/tree-sitter-yaml`) qui occupent encore
+des lignes de `pnpm.onlyBuiltDependencies` à la racine.
+
+Vérifié après retrait : `tsc` à 0 erreur, `pnpm lint` vert, 1773 tests verts, et les deux fichiers
+de `public/swagger-ui/` intacts. **Aucune ligne d'interface touchée.**
+
+#### Ce qui reste à traiter sur ce sujet
+
+| Point | État |
+|---|---|
+| Le bundle servi est `swagger-ui-dist@5.31.0` | vérifié par empreinte SHA-256. Figé depuis décembre 2025, **1,7 Mo commités dans git**. Le pin du `package.json` ne pilotait donc rien |
+| Sortie propre | ajouter `swagger-ui-dist` en **devDependency** et copier le fichier au build via `copy-assets.js`, qui existe déjà. Ce paquet a **1 dépendance et 0 peer** — aucun couplage React |
+| Le bouton « Try it out » | très probablement **déjà inopérant en production** : la CSP `connect-src` de `apps/pilote-ppg/src/proxy.ts` n'autorise pas le serveur déclaré dans la spec. Soit on l'ouvre, soit on masque le bouton plutôt que d'exposer un contrôle mort |
+| Réimplémentation maison | chiffrée à **5,5 j-h** en lecture seule, **10,5 j-h** avec interaction. **Injustifiable** : le retrait a déjà ramené l'empreinte à zéro paquet |
+
+#### La leçon, au-delà de swagger
+
+Une dépendance retirée du code mais laissée dans le `package.json` ne coûte pas « un peu » : elle
+coûte sa clôture transitive entière, ici **108 paquets et 3 builds natifs**, plus les advisories
+qu'elle traîne. Elle est restée sept mois, et la campagne l'a d'abord *bumpée* avant de s'apercevoir
+qu'elle était morte. **Vérifier qu'une dépendance est importée quelque part devrait précéder tout
+bump**, et c'est mécanisable : un grep sur les imports, croisé avec les dépendances déclarées.
 
 ### `xlsx` : les deux dernières high de kpilote, et ce qu'elles coûtent vraiment
 
@@ -545,6 +592,32 @@ Trois sorties possibles, par coût croissant :
    classeur, rendre une matrice », donc le remplacement est circonscrit à un fichier.
 3. **Assumer le résiduel.** L'entrée est un fichier fourni par un utilisateur authentifié, et la
    lecture est côté navigateur. À arbitrer, pas à supposer.
+
+**L'exposition est côté navigateur uniquement.** `fichierVersMatrice` n'est appelé que depuis le
+hook `useImportValeurs`, et rien du serveur de la webapp ne charge la bibliothèque. Un attaquant
+devrait donc fabriquer un fichier malveillant et se le déposer à lui-même, dans son propre onglet,
+avec un compte authentifié. Les deux advisories restent réelles mais ne sont pas une porte d'entrée
+vers l'infrastructure.
+
+Alternatives évaluées le 2026-09-10 :
+
+| Option | Maintenu | Deps | Couvre le CSV | Changement de code |
+|---|---|---|---|---|
+| tarball officiel SheetJS (`0.20.3`) | oui | 0 | oui | **aucun** |
+| `@e965/xlsx@0.20.3` | republication | 0 | oui | aucun |
+| `read-excel-file` + `papaparse` | oui, août 2026 | 4 + 0 | via `papaparse` | oui, un module et ses tests |
+| `exceljs` | dernière sortie **déc. 2024** | 9 | non | oui |
+
+**`@e965/xlsx` est à écarter** : republication par **un seul individu**, depuis un dépôt nommé
+`sheetjs-npm-publisher`. Le contenu est probablement identique à l'officiel, mais c'est déléguer la
+chaîne d'approvisionnement à une personne. **`exceljs` aussi** : 21 mois sans sortie, 9 dépendances,
+et il ne lit pas le CSV.
+
+Restent deux vraies voies. Le tarball officiel ferme les deux advisories sans toucher une ligne, au
+prix de sortir du registre — donc de `pnpm audit` et de `minimumReleaseAge`. La bascule vers
+`read-excel-file` + `papaparse` ramène dans le registre avec deux bibliothèques maintenues sous
+licence MIT, au prix d'un branchement sur le type de fichier et d'une réécriture des fixtures du
+test, qui fabriquent aujourd'hui les classeurs avec `XLSX.write`. Environ une journée.
 
 C'est une décision produit, pas un bump : elle ne sera jamais prise par une campagne.
 
