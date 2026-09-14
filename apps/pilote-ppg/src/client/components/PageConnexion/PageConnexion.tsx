@@ -48,7 +48,7 @@ export const PageConnexion = () => {
             <p className="text-dsfr-mention-grey fr-mb-4w fr-text--sm">
               {ffProConnect
                 ? "Choisissez votre mode de connexion."
-                : "Connectez-vous avec vos identifiants PILOTE."}
+                : "La possibilité de vous connecter avec ProConnect arrive bientôt. Vous pourrez toujours vous connecter avec vos identifiants PILOTE."}
             </p>
 
             {message ? (
@@ -61,25 +61,23 @@ export const PageConnexion = () => {
               </div>
             ) : null}
 
-            {ffProConnect ? (
-              <>
-                <BoutonProConnect
-                  onClick={() => signIn("proconnect", { callbackUrl })}
-                />
-                <div className="fr-my-4w flex items-center gap-4">
-                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
-                  <span className="text-dsfr-mention-grey text-sm">ou</span>
-                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
-                </div>
-              </>
-            ) : null}
+            <BoutonProConnect
+              onClick={() => signIn("proconnect", { callbackUrl })}
+            />
+
+            <div className="fr-my-4w flex items-center gap-4">
+              <span className="bg-dsfr-contrast-grey h-px flex-1" />
+              <span className="text-dsfr-mention-grey text-sm">ou</span>
+              <span className="bg-dsfr-contrast-grey h-px flex-1" />
+            </div>
 
             <button
               className="fr-btn fr-btn--secondary w-full justify-center"
               onClick={() => signIn("keycloak", { callbackUrl })}
               type="button"
             >
-              Se connecter avec une adresse électronique et un mot de passe
+              Se connecter avec mes identifiants PILOTE (adresse électronique et
+              mot de passe)
             </button>
 
             <p className="text-dsfr-mention-grey fr-mt-4w fr-mb-0 fr-text--xs">
