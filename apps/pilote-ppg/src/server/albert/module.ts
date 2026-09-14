@@ -3,6 +3,7 @@ import { RecupererConversationAdminQuery } from "@/server/albert/queries/Recuper
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
+import { createGetEvolutionIndicateurTool } from "@/server/albert/tools/getEvolutionIndicateur";
 import { createGetChantierCommentairesTool } from "@/server/albert/tools/getChantierCommentaires";
 import { createGetChantierObjectifsTool } from "@/server/albert/tools/getChantierObjectifs";
 import { createGetChantiersSignalesTool } from "@/server/albert/tools/getChantiersSignales";
@@ -43,6 +44,9 @@ type AlbertOwnCradle = {
   createGetChantiersTool: ReturnType<typeof createGetChantiersTool>;
   createGetChantierIndicateursTool: ReturnType<
     typeof createGetChantierIndicateursTool
+  >;
+  createGetEvolutionIndicateurTool: ReturnType<
+    typeof createGetEvolutionIndicateurTool
   >;
   createGetChantierCommentairesTool: ReturnType<
     typeof createGetChantierCommentairesTool
@@ -85,6 +89,9 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetChantiersTool: asModuleFunction(createGetChantiersTool),
       createGetChantierIndicateursTool: asModuleFunction(
         createGetChantierIndicateursTool,
+      ),
+      createGetEvolutionIndicateurTool: asModuleFunction(
+        createGetEvolutionIndicateurTool,
       ),
       createGetChantierCommentairesTool: asModuleFunction(
         createGetChantierCommentairesTool,
