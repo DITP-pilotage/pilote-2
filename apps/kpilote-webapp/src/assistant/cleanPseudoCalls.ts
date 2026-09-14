@@ -6,12 +6,10 @@ import { TOOL_NAMES } from '@pilote/kpilote-shared/assistant/tools'
 // elle a divergé de quatre outils.
 const CALL_START = new RegExp(`^\\s*(?:${TOOL_NAMES.join('|')})\\s*\\(`)
 
+const countOccurrences = (line: string, pattern: RegExp): number => line.match(pattern)?.length ?? 0
+
 const parenthesisBalance = (line: string): number =>
-  [...line].reduce((balance, character) => {
-    if (character === '(') return balance + 1
-    if (character === ')') return balance - 1
-    return balance
-  }, 0)
+  countOccurrences(line, /\(/gu) - countOccurrences(line, /\)/gu)
 
 export const cleanPseudoCalls = (text: string): string => {
   const kept: string[] = []
