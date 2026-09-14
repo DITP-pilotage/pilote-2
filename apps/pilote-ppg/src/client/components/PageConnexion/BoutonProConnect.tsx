@@ -1,5 +1,8 @@
+import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+
 type BoutonProConnectProps = {
-  onClick: () => void;
+  aVenir?: boolean;
+  onClick?: () => void;
 };
 
 /**
@@ -13,16 +16,31 @@ type BoutonProConnectProps = {
  * Source : https://github.com/proconnect-gouv/proconnect-documentation
  *          doc_fs/bouton_proconnect.md
  */
-export const BoutonProConnect = ({ onClick }: BoutonProConnectProps) => (
+export const BoutonProConnect = ({
+  aVenir = false,
+  onClick,
+}: BoutonProConnectProps) => (
   <div className="fr-connect-group text-center">
     <button
+      aria-describedby={aVenir ? "proconnect-a-venir" : undefined}
       className="proconnect-button fr-connect"
+      disabled={aVenir}
       onClick={onClick}
       type="button"
     >
       <span className="fr-connect__login">S'identifier avec</span>
       <span className="fr-connect__brand">ProConnect</span>
     </button>
+    {aVenir ? (
+      <p className="fr-mt-1w fr-mb-1w">
+        <span
+          className="fr-badge fr-badge--sm fr-badge--info fr-badge--no-icon"
+          id="proconnect-a-venir"
+        >
+          Bientôt disponible
+        </span>
+      </p>
+    ) : null}
     <p className="fr-mb-0">
       <a
         href="https://www.proconnect.gouv.fr/"

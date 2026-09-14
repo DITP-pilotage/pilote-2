@@ -48,7 +48,7 @@ export const PageConnexion = () => {
             <p className="text-dsfr-mention-grey fr-mb-4w fr-text--sm">
               {ffProConnect
                 ? "Choisissez votre mode de connexion."
-                : "Connectez-vous avec vos identifiants PILOTE."}
+                : "La connexion avec ProConnect arrive bientôt. En attendant, connectez-vous avec vos identifiants PILOTE."}
             </p>
 
             {message ? (
@@ -62,17 +62,18 @@ export const PageConnexion = () => {
             ) : null}
 
             {ffProConnect ? (
-              <>
-                <BoutonProConnect
-                  onClick={() => signIn("proconnect", { callbackUrl })}
-                />
-                <div className="fr-my-4w flex items-center gap-4">
-                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
-                  <span className="text-dsfr-mention-grey text-sm">ou</span>
-                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
-                </div>
-              </>
-            ) : null}
+              <BoutonProConnect
+                onClick={() => signIn("proconnect", { callbackUrl })}
+              />
+            ) : (
+              <BoutonProConnect aVenir />
+            )}
+
+            <div className="fr-my-4w flex items-center gap-4">
+              <span className="bg-dsfr-contrast-grey h-px flex-1" />
+              <span className="text-dsfr-mention-grey text-sm">ou</span>
+              <span className="bg-dsfr-contrast-grey h-px flex-1" />
+            </div>
 
             <button
               className="fr-btn fr-btn--secondary w-full justify-center"
