@@ -1,4 +1,4 @@
-import { evenementErreurAuthJs } from "@/server/infrastructure/api/auth/loggerAuthJs";
+import { buildAuthJsErrorEvent } from "@/server/infrastructure/api/auth/loggerAuthJs";
 
 class ErreurAuthJs extends Error {
   readonly type: string;
@@ -18,23 +18,23 @@ class ErreurAuthJs extends Error {
   }
 }
 
-describe("evenementErreurAuthJs", () => {
+describe("buildAuthJsErrorEvent", () => {
   it("prend le type Auth.js comme message, plus lisible que le nom de classe", () => {
     const erreur = new ErreurAuthJs({
       type: "OAuthCallbackError",
       message: "Echec du callback",
     });
 
-    expect(evenementErreurAuthJs(erreur)).toMatchObject({
+    expect(buildAuthJsErrorEvent(erreur)).toMatchObject({
       message: "Echec du flux d'authentification : OAuthCallbackError",
-      contexte: { erreurMessage: "Echec du callback" },
+      context: { errorMessage: "Echec du callback" },
     });
   });
 
   it("retombe sur le nom de l'erreur quand ce n'est pas une erreur Auth.js typée", () => {
     const erreur = new TypeError("fetch failed");
 
-    expect(evenementErreurAuthJs(erreur)).toMatchObject({
+    expect(buildAuthJsErrorEvent(erreur)).toMatchObject({
       message: "Echec du flux d'authentification : TypeError",
     });
   });
@@ -47,7 +47,7 @@ describe("evenementErreurAuthJs", () => {
       cause: { err: origine, provider: "proconnect" },
     });
 
-    expect(evenementErreurAuthJs(erreur).contexte).toMatchObject({
+    expect(buildAuthJsErrorEvent(erreur).context).toMatchObject({
       provider: "proconnect",
       causeMessage: "Appel userinfo ProConnect en échec (502)",
     });
@@ -61,7 +61,7 @@ describe("evenementErreurAuthJs", () => {
       cause: { err: origine },
     });
 
-    expect(evenementErreurAuthJs(erreur).contexte.errorStack).toBe(
+    expect(buildAuthJsErrorEvent(erreur).context.errorStack).toBe(
       origine.stack,
     );
   });
@@ -78,12 +78,12 @@ describe("evenementErreurAuthJs", () => {
       },
     });
 
-    const contexte = evenementErreurAuthJs(erreur).contexte;
+    const context = buildAuthJsErrorEvent(erreur).context;
 
-    expect(contexte).not.toHaveProperty("profile");
-    expect(contexte).not.toHaveProperty("access_token");
-    expect(JSON.stringify(contexte)).not.toContain("agent@exemple.gouv.fr");
-    expect(JSON.stringify(contexte)).not.toContain("jeton-secret");
+    expect(context).not.toHaveProperty("profile");
+    expect(context).not.toHaveProperty("access_token");
+    expect(JSON.stringify(context)).not.toContain("agent@exemple.gouv.fr");
+    expect(JSON.stringify(context)).not.toContain("jeton-secret");
   });
 
   it("journalise en catégorie auth, dans la source authjs", () => {
@@ -92,7 +92,7 @@ describe("evenementErreurAuthJs", () => {
       message: "Provider mal configuré",
     });
 
-    expect(evenementErreurAuthJs(erreur).contexte).toMatchObject({
+    expect(buildAuthJsErrorEvent(erreur).context).toMatchObject({
       categorie: "auth",
       source: "authjs",
     });
@@ -105,8 +105,8 @@ describe("evenementErreurAuthJs", () => {
       cause: "une chaîne",
     });
 
-    expect(() => evenementErreurAuthJs(erreur)).not.toThrow();
-    expect(evenementErreurAuthJs(erreur).contexte).not.toHaveProperty(
+    expect(() => buildAuthJsErrorEvent(erreur)).not.toThrow();
+    expect(buildAuthJsErrorEvent(erreur).context).not.toHaveProperty(
       "causeMessage",
     );
   });

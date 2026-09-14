@@ -5,7 +5,7 @@ import type { CategorieLog } from "@/utils/categoriesLog";
 const CATEGORIE: CategorieLog = "auth";
 const SOURCE = "authjs";
 
-type ContexteLogAuthJs = Record<string, unknown> & { categorie: CategorieLog };
+type AuthJsLogContext = Record<string, unknown> & { categorie: CategorieLog };
 
 /**
  * Auth.js range l'erreur d'origine dans `cause.err` et y ajoute des données
@@ -14,36 +14,36 @@ type ContexteLogAuthJs = Record<string, unknown> & { categorie: CategorieLog };
  * administrateur, `provider` est la seule donnée dont on ait besoin pour
  * distinguer un échec ProConnect d'un échec Keycloak.
  */
-const lireCause = (
+const readCause = (
   cause: unknown,
-): { erreurOrigine?: Error; provider?: string } => {
+): { originalError?: Error; provider?: string } => {
   if (typeof cause !== "object" || cause === null) {
     return {};
   }
   const { err, provider } = cause as { err?: unknown; provider?: unknown };
   return {
-    erreurOrigine: err instanceof Error ? err : undefined,
+    originalError: err instanceof Error ? err : undefined,
     provider: typeof provider === "string" ? provider : undefined,
   };
 };
 
-export const evenementErreurAuthJs = (
-  erreur: Error,
-): { message: string; contexte: ContexteLogAuthJs } => {
-  const type = (erreur as { type?: unknown }).type;
-  const nom = typeof type === "string" ? type : erreur.name;
-  const { erreurOrigine, provider } = lireCause(erreur.cause);
+export const buildAuthJsErrorEvent = (
+  error: Error,
+): { message: string; context: AuthJsLogContext } => {
+  const type = (error as { type?: unknown }).type;
+  const nom = typeof type === "string" ? type : error.name;
+  const { originalError, provider } = readCause(error.cause);
 
   return {
     message: `Echec du flux d'authentification : ${nom}`,
-    contexte: {
+    context: {
       categorie: CATEGORIE,
       source: SOURCE,
-      erreurType: nom,
-      erreurMessage: erreur.message,
+      errorType: nom,
+      errorMessage: error.message,
       ...(provider ? { provider } : {}),
-      ...(erreurOrigine ? { causeMessage: erreurOrigine.message } : {}),
-      errorStack: erreurOrigine?.stack ?? erreur.stack,
+      ...(originalError ? { causeMessage: originalError.message } : {}),
+      errorStack: originalError?.stack ?? error.stack,
     },
   };
 };
@@ -55,9 +55,9 @@ export const evenementErreurAuthJs = (
  * /connexion et l'administrateur n'a rien dans le panel Logs.
  */
 export const loggerAuthJs: NonNullable<NextAuthConfig["logger"]> = {
-  error: (erreur) => {
-    const { message, contexte } = evenementErreurAuthJs(erreur);
-    logger.error(contexte, message);
+  error: (error) => {
+    const { message, context } = buildAuthJsErrorEvent(error);
+    logger.error(context, message);
   },
   warn: (code) => {
     logger.warn(
