@@ -80,7 +80,8 @@ export const PageConnexion = () => {
               onClick={() => signIn("keycloak", { callbackUrl })}
               type="button"
             >
-              Se connecter avec une adresse électronique et un mot de passe
+              Se connecter avec mes identifiants PILOTE (adresse électronique et
+              mot de passe)
             </button>
 
             <p className="text-dsfr-mention-grey fr-mt-4w fr-mb-0 fr-text--xs">
