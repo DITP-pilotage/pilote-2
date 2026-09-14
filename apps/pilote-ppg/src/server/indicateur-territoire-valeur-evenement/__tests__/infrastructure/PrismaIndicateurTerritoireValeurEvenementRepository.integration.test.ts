@@ -2,6 +2,7 @@ import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/in
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
   let prismaIndicateurTerritoireValeurEvenementRepository: PrismaIndicateurTerritoireValeurEvenementRepository;
@@ -2094,6 +2095,300 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
 
         // Then
         expect(result.size).toBe(0);
+      }),
+    );
+  });
+
+  describe("#recupererHistoriqueParIndicIdEtTerritoireCode avec filtres", () => {
+    it(
+      "filtre par plage de dates",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const utilisateur = await fixtures.utilisateur();
+
+        const evenementDansLaPlage =
+          await fixtures.indicateurTerritoireValeurEvenement({
+            indic_id: indicateur.id,
+            territoire_code: "DEPT-75",
+            id_auteur_modification: utilisateur.id,
+            type_evenement: "VALEUR_CREEE",
+            date_valeur: new Date("2024-06-01"),
+            ordre: 1,
+          });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "VALEUR_CREEE",
+          date_valeur: new Date("2023-01-01"),
+          ordre: 1,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode(
+            {
+              indicId: indicateur.id,
+              territoireCode: "DEPT-75",
+              dateDebut: new Date("2024-01-01"),
+              dateFin: new Date("2024-12-31"),
+            },
+          );
+
+        // Then
+        expect(result.map((evenement) => evenement.id)).toEqual([
+          evenementDansLaPlage.id,
+        ]);
+      }),
+    );
+
+    it(
+      "filtre par type d'événement",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const utilisateur = await fixtures.utilisateur();
+
+        const evenementProposition =
+          await fixtures.indicateurTerritoireValeurEvenement({
+            indic_id: indicateur.id,
+            territoire_code: "DEPT-75",
+            id_auteur_modification: utilisateur.id,
+            type_evenement: "PROPOSITION_VALEUR_CREEE",
+            donnees_complementaires: { motif: "motif" },
+            ordre: 1,
+          });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "VALEUR_CREEE",
+          ordre: 2,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode(
+            {
+              indicId: indicateur.id,
+              territoireCode: "DEPT-75",
+              typesEvenement: ["PROPOSITION_VALEUR_CREEE"],
+            },
+          );
+
+        // Then
+        expect(result.map((evenement) => evenement.id)).toEqual([
+          evenementProposition.id,
+        ]);
+      }),
+    );
+
+    it(
+      "retourne tout, comme avant, quand aucun filtre n'est fourni",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const utilisateur = await fixtures.utilisateur();
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "VALEUR_CREEE",
+          ordre: 1,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "PROPOSITION_VALEUR_CREEE",
+          donnees_complementaires: { motif: "motif" },
+          ordre: 2,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode(
+            { indicId: indicateur.id, territoireCode: "DEPT-75" },
+          );
+
+        // Then
+        expect(result).toHaveLength(2);
+      }),
+    );
+  });
+
+  describe("#compterHistoriqueParIndicIdEtTerritoireCode", () => {
+    it(
+      "compte les événements correspondant aux mêmes filtres que le fetch",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const utilisateur = await fixtures.utilisateur();
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "PROPOSITION_VALEUR_CREEE",
+          donnees_complementaires: { motif: "motif" },
+          ordre: 1,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "VALEUR_CREEE",
+          ordre: 2,
+        });
+
+        // When
+        const count =
+          await prismaIndicateurTerritoireValeurEvenementRepository.compterHistoriqueParIndicIdEtTerritoireCode(
+            {
+              indicId: indicateur.id,
+              territoireCode: "DEPT-75",
+              typesEvenement: ["PROPOSITION_VALEUR_CREEE"],
+            },
+          );
+
+        // Then
+        expect(count).toBe(1);
+      }),
+    );
+  });
+
+  describe("#recupererBornesDatesHistorique", () => {
+    it(
+      "retourne les dates min et max des événements filtrés, sans lire les lignes",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+        });
+        const utilisateur = await fixtures.utilisateur();
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "VALEUR_CREEE",
+          date_valeur: new Date("2022-01-01"),
+          ordre: 1,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-75",
+          id_auteur_modification: utilisateur.id,
+          type_evenement: "VALEUR_CREEE",
+          date_valeur: new Date("2024-06-01"),
+          ordre: 1,
+        });
+
+        // When
+        const bornes =
+          await prismaIndicateurTerritoireValeurEvenementRepository.recupererBornesDatesHistorique(
+            { indicId: indicateur.id, territoireCode: "DEPT-75" },
+          );
+
+        // Then
+        expect(bornes).toEqual({
+          dateMin: new Date("2022-01-01"),
+          dateMax: new Date("2024-06-01"),
+        });
+      }),
+    );
+
+    it(
+      "retourne des bornes nulles quand aucun événement ne correspond",
+      createIntegrationTest(async () => {
+        // When
+        const bornes =
+          await prismaIndicateurTerritoireValeurEvenementRepository.recupererBornesDatesHistorique(
+            { indicId: "IND-INEXISTANT", territoireCode: "DEPT-75" },
+          );
+
+        // Then
+        expect(bornes).toEqual({ dateMin: null, dateMax: null });
       }),
     );
   });

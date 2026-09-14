@@ -1,6 +1,7 @@
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
 export type PropositionValeurAvancementRapport = {
   indicateurId: string;
@@ -34,7 +35,24 @@ export interface IndicateurTerritoireValeurEvenementRepository {
   recupererHistoriqueParIndicIdEtTerritoireCode(args: {
     indicId: string;
     territoireCode: string;
+    dateDebut?: Date;
+    dateFin?: Date;
+    typesEvenement?: TypeEvenement[];
   }): Promise<IndicateurTerritoireValeurEvenement[]>;
+  compterHistoriqueParIndicIdEtTerritoireCode(args: {
+    indicId: string;
+    territoireCode: string;
+    dateDebut?: Date;
+    dateFin?: Date;
+    typesEvenement?: TypeEvenement[];
+  }): Promise<number>;
+  recupererBornesDatesHistorique(args: {
+    indicId: string;
+    territoireCode: string;
+    dateDebut?: Date;
+    dateFin?: Date;
+    typesEvenement?: TypeEvenement[];
+  }): Promise<{ dateMin: Date | null; dateMax: Date | null }>;
   enregistrer(evenement: IndicateurTerritoireValeurEvenement): Promise<void>;
   enregistrerTous(
     evenements: IndicateurTerritoireValeurEvenement[],
