@@ -228,7 +228,7 @@ const createCollectionRoute = createRoute({
   tags: ['Collection', 'Admin'],
   summary: 'Créer une collection',
   description:
-    "Réservé aux clés API de rôle `ADMIN`. L'identifiant public est généré par l'API au format `COL-NNN` : il suit le plus grand identifiant numérique existant. Pour imposer un identifiant, utiliser `PUT /collections/{id}`.",
+    "Réservé aux clés API de rôle `ADMIN`. L'identifiant public est un slug dérivé du `nom` (« Santé de proximité » → `sante-de-proximite`), suffixé (`-2`, `-3`, …) s'il est déjà pris. Pour imposer un identifiant, utiliser `PUT /collections/{id}`.",
   middleware: [requireAuthentication],
   request: {
     body: {
