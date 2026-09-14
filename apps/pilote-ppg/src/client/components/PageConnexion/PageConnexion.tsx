@@ -61,13 +61,9 @@ export const PageConnexion = () => {
               </div>
             ) : null}
 
-            {ffProConnect ? (
-              <BoutonProConnect
-                onClick={() => signIn("proconnect", { callbackUrl })}
-              />
-            ) : (
-              <BoutonProConnect aVenir />
-            )}
+            <BoutonProConnect
+              onClick={() => signIn("proconnect", { callbackUrl })}
+            />
 
             <div className="fr-my-4w flex items-center gap-4">
               <span className="bg-dsfr-contrast-grey h-px flex-1" />
