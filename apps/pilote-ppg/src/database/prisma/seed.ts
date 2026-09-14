@@ -78,5 +78,10 @@ async function main() {
   await upsertTerritoire(seedsDepartements);
 }
 
-// eslint-disable-next-line no-console
-main().catch(console.error);
+main().catch((erreur) => {
+  // eslint-disable-next-line no-console
+  console.error(erreur);
+  // Sans ce code de sortie, `prisma db seed` rend 0 malgre un seed casse : la base
+  // repart vide et l'echec ne remonte que plus loin, sous forme de violation de FK.
+  process.exit(1);
+});

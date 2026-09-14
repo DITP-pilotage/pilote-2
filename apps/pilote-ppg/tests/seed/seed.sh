@@ -11,6 +11,10 @@ source "$PROJECT_ROOT/${ENV_FILE:-.env.e2e}"
 set +a
 
 pnpm exec prisma migrate reset --force
+# Prisma 7 n'enchaine plus le seed apres un reset : il faut l'appeler explicitement,
+# sinon les referentiels (profil, scope, territoire) restent vides et les inserts
+# de utilisateurs-test.sql cassent sur la FK utilisateur_profil_code_fkey.
+pnpm exec prisma db seed
 
 psql -q -d "$DATABASE_URL" -f "$SCRIPT_DIR/schema.sql"
 
