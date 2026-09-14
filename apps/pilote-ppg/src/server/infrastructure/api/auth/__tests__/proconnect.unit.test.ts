@@ -1,7 +1,7 @@
+import { ErreurProConnect } from "@/server/infrastructure/api/auth/ErreurProConnect";
 import {
   acrFromIdToken,
   decoderPayloadJwt,
-  ErreurProConnect,
   profilProConnectSchema,
 } from "@/server/infrastructure/api/auth/proconnect";
 
@@ -87,18 +87,6 @@ describe("acrFromIdToken", () => {
 
   it("renvoie undefined sans id_token", () => {
     expect(acrFromIdToken({ idToken: undefined })).toBeUndefined();
-  });
-});
-
-describe("ErreurProConnect", () => {
-  it("s'identifie par son nom, seule information qu'Auth.js remonte au logger", () => {
-    expect(new ErreurProConnect("boum").name).toBe("ErreurProConnect");
-  });
-
-  it("porte le provider dans sa cause, pour distinguer un échec ProConnect d'un échec Keycloak dans le panel", () => {
-    expect(new ErreurProConnect("boum").cause).toEqual({
-      provider: "proconnect",
-    });
   });
 });
 

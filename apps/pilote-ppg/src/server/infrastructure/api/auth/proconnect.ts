@@ -2,22 +2,10 @@ import type { OIDCConfig } from "next-auth/providers";
 import { z } from "zod";
 import { configuration } from "@/config";
 import { ACR_DOUBLE_AUTHENTIFICATION } from "@/server/authentification/domain/autoriserConnexionProConnect";
-
-export const PROVIDER_PROCONNECT = "proconnect";
-
-/**
- * Une erreur levée depuis le handler `userinfo` traverse Auth.js sans être
- * enveloppée : elle arrive telle quelle au `logger.error` de la configuration,
- * qui n'en connaît que le nom et la cause. D'où cette classe nommée plutôt
- * qu'un `Error` anonyme, sans quoi le panel administrateur afficherait un
- * « Error » indistinct de n'importe quel autre échec d'authentification.
- */
-export class ErreurProConnect extends Error {
-  constructor(message: string) {
-    super(message, { cause: { provider: PROVIDER_PROCONNECT } });
-    this.name = "ErreurProConnect";
-  }
-}
+import {
+  ErreurProConnect,
+  PROVIDER_PROCONNECT,
+} from "@/server/infrastructure/api/auth/ErreurProConnect";
 
 /**
  * ProConnect ne suit pas la nomenclature OIDC courante : le nom de famille est
