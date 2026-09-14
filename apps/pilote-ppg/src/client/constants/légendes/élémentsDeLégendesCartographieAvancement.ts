@@ -1,4 +1,5 @@
 import { CartographieÉlémentsDeLégende } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
+import { REMPLISSAGE_HACHURE } from "@/client/constants/légendes/hachure/hachure";
 
 const REMPLISSAGE_PAR_DÉFAUT = "#bababa";
 
@@ -51,6 +52,6 @@ export const ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS: CartographieÉlémentsDeL
     },
     NON_APPLICABLE: {
       libellé: "Territoire où le chantier prioritaire ne s'applique pas",
-      remplissage: "url(#hachures-gris-blanc)",
+      remplissage: REMPLISSAGE_HACHURE,
     },
   };

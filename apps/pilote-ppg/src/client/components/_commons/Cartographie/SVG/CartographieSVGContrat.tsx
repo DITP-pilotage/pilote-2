@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { Fragment, ReactNode } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 
 type SVGTerritoire = { "attr-territoire-code": string };
@@ -1271,7 +1271,7 @@ const CARTOGRAPHIE_REGION_SVG_AS_JSON = {
 };
 type RenderSVGProps = {
   key: string;
-  className: string;
+  className?: string;
   fill?: string;
   style?: React.CSSProperties;
   onClick?: () => void;
@@ -1332,11 +1332,13 @@ const createSvgMap = (contenuSVG: SVGG) => {
       };
     }
 
+    // Fragment et non <g> : ces tracés sont aussi rendus dans un <clipPath>,
+    // qui n'accepte que des formes comme enfants directs.
     svgMap.set(g["attr-territoire-code"], (props) => (
-      <g key={props.key}>
+      <Fragment key={props.key}>
         {polygons(props)}
         {paths(props)}
-      </g>
+      </Fragment>
     ));
   });
 

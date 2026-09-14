@@ -1,6 +1,7 @@
 import { CartographieÉlémentsDeLégende } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
+import { REMPLISSAGE_HACHURE } from "@/client/constants/légendes/hachure/hachure";
 
 const REMPLISSAGE_PAR_DÉFAUT = "#bababa";
 
@@ -31,6 +32,6 @@ export const ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS: CartographieÉlémentsDeLég
   },
   NON_APPLICABLE: {
     libellé: "Territoire où le chantier prioritaire ne s'applique pas",
-    remplissage: "url(#hachures-gris-blanc)",
+    remplissage: REMPLISSAGE_HACHURE,
   },
 };

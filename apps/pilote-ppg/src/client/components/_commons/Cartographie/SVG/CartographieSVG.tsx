@@ -1,6 +1,7 @@
-import { FunctionComponent, useRef, useState } from "react";
+import { FunctionComponent, useId, useRef, useState } from "react";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
-import hachuresGrisBlanc from "@/client/constants/légendes/hachure/hachuresGrisBlanc";
+import { HachuresDiagonales } from "@/client/constants/légendes/hachure/hachures";
+import { estHachure } from "@/client/constants/légendes/hachure/hachure";
 import {
   CartographieOptions,
   CartographieTerritoires,
@@ -40,6 +41,11 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
     null,
   );
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const idHachures = useId();
+
+  const territoiresHachurés = territoires.filter((territoire) =>
+    estHachure(territoire.remplissage),
+  );
 
   const viewbox = {
     x: 1,
@@ -78,14 +84,29 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           viewBox="1 0 100 100"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <defs>{hachuresGrisBlanc.patternSVG}</defs>
+          <defs>
+            {territoiresHachurés.map((territoire) => (
+              <clipPath
+                id={`${idHachures}-${territoire.codeInsee}`}
+                key={`clip-${territoire.codeInsee}`}
+              >
+                {getTraceSvg(
+                  territoire.code,
+                  { key: `clip-tracé-${territoire.codeInsee}` },
+                  mailleSelectionnee,
+                )}
+              </clipPath>
+            ))}
+          </defs>
           <g className="canvas">
             {territoires.map((territoire) =>
               getTraceSvg(
                 territoire.code,
                 {
                   className: `[stroke-width:0.15] hover:opacity-[0.72] ${options.estInteractif && territoire.estInteractif && territoire.estApplicable && "cursor-pointer"}`,
-                  fill: territoire.remplissage,
+                  fill: estHachure(territoire.remplissage)
+                    ? "#ffffff"
+                    : territoire.remplissage,
                   key: `territoire-${territoire.codeInsee}`,
                   onClick: () => {
                     if (
@@ -115,6 +136,14 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                 mailleSelectionnee,
               ),
             )}
+            {territoiresHachurés.map((territoire) => (
+              <g
+                clipPath={`url(#${idHachures}-${territoire.codeInsee})`}
+                key={`hachures-${territoire.codeInsee}`}
+              >
+                <HachuresDiagonales taille={viewbox.height} />
+              </g>
+            ))}
             {frontières.map((frontière) =>
               getTraceSvg(
                 frontière.code,
