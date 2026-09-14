@@ -1,7 +1,7 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { toISODate } from "@/server/app/domain/Dates";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { filtrerEvenementsSupersedes } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsSupersedes";
 import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type HistoriqueIndicateurTerritoireValeurEvenementContrat = {
@@ -63,54 +63,34 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
         args,
       );
 
-    const historiqueGroupe: HistoriqueIndicateurTerritoireValeurEvenementContrat =
-      {};
+    const evenementsGroupesParDate: Record<
+      string,
+      IndicateurTerritoireValeurEvenement[]
+    > = {};
 
     evenements.forEach((evenement) => {
       const dateKey = toISODate(evenement.dateValeur);
 
-      if (!historiqueGroupe[dateKey]) {
-        historiqueGroupe[dateKey] = [];
+      if (!evenementsGroupesParDate[dateKey]) {
+        evenementsGroupesParDate[dateKey] = [];
       }
 
-      historiqueGroupe[dateKey].push(
-        presenterEnIndicateurTerritoireValeurEvenement(evenement),
-      );
+      evenementsGroupesParDate[dateKey].push(evenement);
     });
 
     const historiqueTrie: HistoriqueIndicateurTerritoireValeurEvenementContrat =
       {};
 
-    Object.keys(historiqueGroupe)
+    Object.keys(evenementsGroupesParDate)
       .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
       .forEach((dateKey) => {
-        historiqueTrie[dateKey] = historiqueGroupe[dateKey].sort(
-          (a, b) => b.ordre - a.ordre,
-        );
+        const evenementsDuJourTriesParOrdreDecroissant =
+          evenementsGroupesParDate[dateKey].sort((a, b) => b.ordre - a.ordre);
+
+        historiqueTrie[dateKey] = filtrerEvenementsSupersedes(
+          evenementsDuJourTriesParOrdreDecroissant,
+        ).map(presenterEnIndicateurTerritoireValeurEvenement);
       });
-
-    Object.entries(historiqueTrie).forEach(([key, evenementsDuJour]) => {
-      historiqueTrie[key] = evenementsDuJour.filter((evenement, index) => {
-        const evenementSuivant = evenementsDuJour[index + 1]?.typeEvenement;
-
-        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_MODIFIEE) {
-          return ![
-            EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
-            EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
-            EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE,
-          ].includes(evenementSuivant);
-        }
-
-        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_HISTORISEE) {
-          return (
-            evenementSuivant !==
-            EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE
-          );
-        }
-
-        return true;
-      });
-    });
 
     return historiqueTrie;
   }
