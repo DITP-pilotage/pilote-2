@@ -61,6 +61,7 @@ import { GetChantierIndicateursQuery } from "./query/GetChantierIndicateursQuery
 import { GetChantierCommentairesQuery } from "./query/GetChantierCommentairesQuery";
 import { GetChantiersIdentiteQuery } from "./query/GetChantiersIdentiteQuery";
 import { GetIndicateursIdentiteQuery } from "./query/GetIndicateursIdentiteQuery";
+import { GetIndicateurContexteQuery } from "./query/GetIndicateurContexteQuery";
 import { GetTerritoiresIdentiteQuery } from "./query/GetTerritoiresIdentiteQuery";
 import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAvancementTerritoireQuery";
 import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
@@ -76,6 +77,7 @@ type ChantierExports = {
   getChantierObjectifsQuery: GetChantierObjectifsQuery;
   getChantiersIdentiteQuery: GetChantiersIdentiteQuery;
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
+  getIndicateurContexteQuery: GetIndicateurContexteQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
 };
@@ -148,6 +150,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getChantierObjectifsQuery",
     "getChantiersIdentiteQuery",
     "getIndicateursIdentiteQuery",
+    "getIndicateurContexteQuery",
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
   ],
@@ -263,6 +266,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantierObjectifsQuery: asModuleClass(GetChantierObjectifsQuery),
       getChantiersIdentiteQuery: asModuleClass(GetChantiersIdentiteQuery),
       getIndicateursIdentiteQuery: asModuleClass(GetIndicateursIdentiteQuery),
+      getIndicateurContexteQuery: asModuleClass(GetIndicateurContexteQuery),
       getTerritoiresIdentiteQuery: asModuleClass(GetTerritoiresIdentiteQuery),
       recupererTauxAvancementTerritoireQuery: asModuleClass(
         RecupererTauxAvancementTerritoireQuery,
