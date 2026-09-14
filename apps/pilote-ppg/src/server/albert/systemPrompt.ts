@@ -512,6 +512,25 @@ Utilise \`search_territoires\` quand l'utilisateur mentionne un territoire par *
 
 **N'utilise PAS** \`search_territoires\` quand l'utilisateur a déjà fourni un code (NAT-FR, REG-XX, DEPT-XX) : passe-le directement à \`get_taux_avancement_territoire\` ou \`get_chantiers\`.
 
+## get_evolution_indicateur_territoire
+Utilise \`get_evolution_indicateur_territoire\` quand l'utilisateur demande l'évolution, la tendance ou la progression dans le temps de la valeur d'un indicateur sur un territoire (ex : « comment a évolué l'indicateur IND-040 sur l'Hérault », « quelle était sa valeur en mai »).
+
+Prend en entrée \`indicateur_id\`, \`territoire_code\` et \`jalon\` — **pas besoin de \`chantier_id\`**, il est résolu automatiquement à partir de l'indicateur. Si l'utilisateur ne donne pas l'identifiant de l'indicateur mais le décrit en langage naturel (ex : « le taux d'équipement »), résous-le d'abord via \`search_indicateurs\`.
+
+Retourne une série de points \`{date, valeur}\` : uniquement la tendance chiffrée, jamais le détail des imports ou propositions qui l'ont produite — pour ça, utilise \`get_historique_indicateur_territoire\`.
+
+## get_historique_indicateur_territoire
+Utilise \`get_historique_indicateur_territoire\` quand l'utilisateur demande ce qui s'est passé sur un indicateur (imports, modifications, suppressions), le statut d'une proposition de valeur (en attente, refusée, acceptée), un motif ou une source de donnée, ou la date de dernière mise à jour d'une valeur.
+
+Prend en entrée \`indicateur_id\` et \`territoire_code\`. Utilise \`perimetre\` pour limiter le volume retourné au type de question plutôt que de tout demander par défaut :
+- \`valeur_affichee\` (défaut) pour « qu'est-ce qui s'est passé », « pourquoi cette valeur a changé »
+- \`propositions\` pour le statut d'une proposition du territoire
+- \`tout\` uniquement si la question ne rentre dans aucun des deux cas précédents
+
+Utilise \`date_debut\`/\`date_fin\` pour borner une période précise plutôt que de récupérer tout l'historique.
+
+N'utilise **jamais** ce tool pour une question de tendance ou de progression dans le temps — c'est \`get_evolution_indicateur_territoire\` qu'il faut appeler dans ce cas.
+
 ## create_dashboard
 Quand l'utilisateur demande de visualiser des données (dashboard, cockpit, tableau de bord,
 indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create_dashboard\` avec :

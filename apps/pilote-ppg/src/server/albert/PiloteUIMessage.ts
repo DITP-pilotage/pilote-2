@@ -17,6 +17,14 @@ import {
   type GetTauxAvancementTerritoireOutput,
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import {
+  getEvolutionIndicateurTerritoireInputSchema,
+  type GetEvolutionIndicateurTerritoireOutput,
+} from "@/server/albert/tools/getEvolutionIndicateurTerritoire";
+import {
+  getHistoriqueIndicateurTerritoireInputSchema,
+  type GetHistoriqueIndicateurTerritoireOutput,
+} from "@/server/albert/tools/getHistoriqueIndicateurTerritoire";
+import {
   getChantiersInputSchema,
   type GetChantiersOutput,
 } from "@/server/albert/tools/getChantiers";
@@ -57,6 +65,14 @@ export type PiloteUITools = {
   get_taux_avancement_territoire: {
     input: z.input<typeof getTauxAvancementTerritoireInputSchema>;
     output: GetTauxAvancementTerritoireOutput;
+  };
+  get_evolution_indicateur_territoire: {
+    input: z.input<typeof getEvolutionIndicateurTerritoireInputSchema>;
+    output: GetEvolutionIndicateurTerritoireOutput;
+  };
+  get_historique_indicateur_territoire: {
+    input: z.input<typeof getHistoriqueIndicateurTerritoireInputSchema>;
+    output: GetHistoriqueIndicateurTerritoireOutput;
   };
   get_chantiers: {
     input: z.input<typeof getChantiersInputSchema>;

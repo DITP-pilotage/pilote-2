@@ -65,6 +65,12 @@ export async function POST(request: Request) {
     const createGetTauxAvancementTerritoireTool = container.resolve(
       "createGetTauxAvancementTerritoireTool",
     );
+    const createGetEvolutionIndicateurTerritoireTool = container.resolve(
+      "createGetEvolutionIndicateurTerritoireTool",
+    );
+    const createGetHistoriqueIndicateurTerritoireTool = container.resolve(
+      "createGetHistoriqueIndicateurTerritoireTool",
+    );
     const createGetChantiersTool = container.resolve("createGetChantiersTool");
     const createGetChantierIndicateursTool = container.resolve(
       "createGetChantierIndicateursTool",
@@ -109,6 +115,16 @@ export async function POST(request: Request) {
     const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool({
       habilitations: session.habilitations,
     });
+    const getEvolutionIndicateurTerritoire =
+      createGetEvolutionIndicateurTerritoireTool({
+        chantiersAccessibles: session.habilitations.lecture.chantiers,
+        habilitations: session.habilitations,
+        profil: session.profil,
+      });
+    const getHistoriqueIndicateurTerritoire =
+      createGetHistoriqueIndicateurTerritoireTool({
+        territoiresAccessibles: session.habilitations.lecture.territoires,
+      });
     const getChantiers = createGetChantiersTool({
       territoiresAccessibles,
       chantiersAccessibles: session.habilitations.lecture.chantiers,
@@ -139,6 +155,8 @@ export async function POST(request: Request) {
 
     const tools = {
       get_taux_avancement_territoire: getTauxAvancementTerritoire,
+      get_evolution_indicateur_territoire: getEvolutionIndicateurTerritoire,
+      get_historique_indicateur_territoire: getHistoriqueIndicateurTerritoire,
       get_chantiers: getChantiers,
       get_indicateurs: getChantierIndicateurs,
       get_chantier_commentaires: getChantierCommentaires,

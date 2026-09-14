@@ -66,6 +66,7 @@ import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAva
 import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
 import { GetChantiersHabilitesQuery } from "./infrastructure/queries/GetChantiersHabilitesQuery";
 import { GetChantierObjectifsQuery } from "./query/GetChantierObjectifsQuery";
+import { RecupererChantierIdParIndicateurIdQuery } from "./query/RecupererChantierIdParIndicateurIdQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -78,6 +79,8 @@ type ChantierExports = {
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
+  recupererEvolutionValeursAvancementTerritoiresQuery: RecupererEvolutionValeursAvancementTerritoiresQuery;
+  recupererChantierIdParIndicateurIdQuery: RecupererChantierIdParIndicateurIdQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -150,6 +153,8 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getIndicateursIdentiteQuery",
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
+    "recupererEvolutionValeursAvancementTerritoiresQuery",
+    "recupererChantierIdParIndicateurIdQuery",
   ],
   register: (container, { asModuleClass }) => {
     container.register({
@@ -261,6 +266,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantierIndicateursQuery: asModuleClass(GetChantierIndicateursQuery),
       getChantierCommentairesQuery: asModuleClass(GetChantierCommentairesQuery),
       getChantierObjectifsQuery: asModuleClass(GetChantierObjectifsQuery),
+      recupererChantierIdParIndicateurIdQuery: asModuleClass(
+        RecupererChantierIdParIndicateurIdQuery,
+      ),
       getChantiersIdentiteQuery: asModuleClass(GetChantiersIdentiteQuery),
       getIndicateursIdentiteQuery: asModuleClass(GetIndicateursIdentiteQuery),
       getTerritoiresIdentiteQuery: asModuleClass(GetTerritoiresIdentiteQuery),

@@ -1,6 +1,7 @@
 import { ListerConversationsAdminQuery } from "@/server/albert/queries/ListerConversationsAdminQuery";
 import { RecupererConversationAdminQuery } from "@/server/albert/queries/RecupererConversationAdminQuery";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
+import { createGetEvolutionIndicateurTerritoireTool } from "@/server/albert/tools/getEvolutionIndicateurTerritoire";
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createGetChantierCommentairesTool } from "@/server/albert/tools/getChantierCommentaires";
@@ -10,7 +11,9 @@ import { createSearchChantiersTool } from "@/server/albert/tools/searchChantiers
 import { createSearchIndicateursTool } from "@/server/albert/tools/searchIndicateurs";
 import { createSearchTerritoiresTool } from "@/server/albert/tools/searchTerritoires";
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
+import { createGetHistoriqueIndicateurTerritoireTool } from "@/server/albert/tools/getHistoriqueIndicateurTerritoire";
 import type { ChantierExports } from "@/server/chantiers/module";
+import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { EnregistrerConversationUseCase } from "@/server/albert/usecases/EnregistrerConversationUseCase";
 import { ListerConversationsUseCase } from "@/server/albert/usecases/ListerConversationsUseCase";
@@ -32,13 +35,21 @@ import {
 } from "@/server/module-system";
 import type { SharedDependencies } from "@/server/shared/module";
 
-type AlbertImports = SharedDependencies & ChantierExports;
+type AlbertImports = SharedDependencies &
+  ChantierExports &
+  IndicateurTerritoireValeurEvenementExports;
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
   rapportFileStorage: RapportFileStorage;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
+  >;
+  createGetEvolutionIndicateurTerritoireTool: ReturnType<
+    typeof createGetEvolutionIndicateurTerritoireTool
+  >;
+  createGetHistoriqueIndicateurTerritoireTool: ReturnType<
+    typeof createGetHistoriqueIndicateurTerritoireTool
   >;
   createGetChantiersTool: ReturnType<typeof createGetChantiersTool>;
   createGetChantierIndicateursTool: ReturnType<
@@ -73,7 +84,7 @@ type AlbertCradle = AlbertOwnCradle & AlbertImports;
 
 export const albertModule = defineModule<NoExports, AlbertCradle>()({
   name: "albert",
-  imports: ["shared", "chantiers"],
+  imports: ["shared", "chantiers", "indicateurTerritoireValeurEvenement"],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
@@ -81,6 +92,12 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       rapportFileStorage: asModuleClass(FsRapportFileStorage),
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
+      ),
+      createGetEvolutionIndicateurTerritoireTool: asModuleFunction(
+        createGetEvolutionIndicateurTerritoireTool,
+      ),
+      createGetHistoriqueIndicateurTerritoireTool: asModuleFunction(
+        createGetHistoriqueIndicateurTerritoireTool,
       ),
       createGetChantiersTool: asModuleFunction(createGetChantiersTool),
       createGetChantierIndicateursTool: asModuleFunction(
