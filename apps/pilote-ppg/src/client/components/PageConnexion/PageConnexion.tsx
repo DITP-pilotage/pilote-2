@@ -48,7 +48,7 @@ export const PageConnexion = () => {
             <p className="text-dsfr-mention-grey fr-mb-4w fr-text--sm">
               {ffProConnect
                 ? "Choisissez votre mode de connexion."
-                : "La connexion avec ProConnect arrive bientôt. En attendant, connectez-vous avec vos identifiants PILOTE."}
+                : "La possibilité de vous connecter avec ProConnect arrive bientôt. Vous pourrez toujours vous connecter avec vos identifiants PILOTE."}
             </p>
 
             {message ? (
