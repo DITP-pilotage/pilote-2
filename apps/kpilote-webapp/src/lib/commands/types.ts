@@ -9,7 +9,7 @@ import { normaliserTexte } from '@/lib/texte'
 export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'collections' | 'centre-aide'
 
 /**
- * Sous-action accessible via `Tab` sur une commande actionnable (ex: sur un
+ * Sous-action accessible via `Tab` depuis la liste (ou ⌘K) sur une commande actionnable (ex: sur un
  * indicateur : « Voir les commentaires », « Voir les métadonnées »…).
  *
  * Volontairement découplée de la navigation : `run()` peut aussi bien naviguer
@@ -35,7 +35,7 @@ export type CommandAction = {
  * Contrat générique d'une entrée de la palette de commandes (⌘K).
  *
  * Chaque commande a une action primaire (`run`, déclenchée par `Entrée`). Elle
- * peut en plus exposer des sous-actions (`actions`) accessibles via `Tab` : la
+ * peut en plus exposer des sous-actions (`actions`) accessibles via `Tab` depuis la liste : la
  * palette bascule alors sur une page dédiée listant ces actions. Un item est
  * « actionnable » ssi `actions` est présent et non vide.
  */

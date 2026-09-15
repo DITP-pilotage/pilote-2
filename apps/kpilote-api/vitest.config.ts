@@ -8,5 +8,6 @@ export default defineConfig({
     maxWorkers: 10,
     testTimeout: 30_000,
     globalSetup: ['./src/test/globalSetup.ts'],
+    setupFiles: ['./src/test/setup.ts'],
   },
 })

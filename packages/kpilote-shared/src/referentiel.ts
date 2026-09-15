@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
+import { createPaginatedApiListSchema, idsFilterSchema, listQuerySchema } from './pagination'
 import { individuPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 import { widgetApiModelSchema } from './widget'
 
@@ -37,6 +37,7 @@ export type ReferentielScope = z.infer<typeof referentielScopeSchema>
 
 export const listReferentielsQuerySchema = listQuerySchema.extend({
   scope: referentielScopeSchema.optional(),
+  ids: idsFilterSchema(referentielPublicIdSchema, 'REF-DEPT,REF-REG'),
 })
 export type ListReferentielsQuery = z.infer<typeof listReferentielsQuerySchema>
 

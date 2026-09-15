@@ -1,0 +1,34 @@
+import { Chat, useChat } from '@ai-sdk/react'
+import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
+import { DefaultChatTransport } from 'ai'
+import { useState } from 'react'
+
+import { tokenStore } from '@/auth/tokenStore'
+import { env } from '@/env'
+
+export const useAssistant = (conversationId: string) => {
+  // `useState` avec initialiseur paresseux plutôt qu'un ref : la valeur est lue pendant le
+  // rendu, ce que React interdit sur un ref. Le `Chat` reste construit une seule fois.
+  const [chat] = useState(
+    () =>
+      new Chat<KpiloteUIMessage>({
+        id: conversationId,
+        transport: new DefaultChatTransport<KpiloteUIMessage>({
+          api: `${env.apiUrl}/assistant/chat`,
+          // Le serveur possède l'historique : seul le nouveau message part, jamais la
+          // liste complète que `useChat` tient localement.
+          prepareSendMessagesRequest: ({ messages }) => ({
+            body: { surface: 'ask-libre', conversationId, message: messages.at(-1) },
+          }),
+          // Le jeton est lu à chaque envoi, pas capturé à la construction : il tourne.
+          headers: () => {
+            const token = tokenStore.get()
+            return token ? { Authorization: `Bearer ${token}` } : {}
+          },
+        }),
+      }),
+  )
+
+  // Le throttle évite un re-rendu par token : le flux arrive plus vite que React ne peint.
+  return useChat<KpiloteUIMessage>({ chat, experimental_throttle: 250 })
+}
