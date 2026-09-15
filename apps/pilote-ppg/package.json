@@ -21,6 +21,7 @@
     "lint:eslint": "eslint '{src,tests}/**/*.{ts,tsx}' --quiet",
     "lint:tsc": "pnpm exec tsc",
     "test": "vitest run",
+    "test:unit": "vitest run --project client --project server-unit",
     "test:client": "vitest run --project client",
     "test:client:unit": "vitest run --project client '.unit.test.'",
     "test:client:integration": "vitest run --project client '.integration.test.'",
