@@ -12,7 +12,7 @@ import { MicrophoneIcon } from "@/components/_commons/Icones/MicrophoneIcon";
 import { StopIcon } from "@/components/_commons/Icones/StopIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
-import { LIBELLE_PREPARATION_REPONSE } from "@/components/_commons/ChatUI/libellesAssistant";
+import { libelleActiviteAssistant } from "@/components/_commons/ChatUI/libellesAssistant";
 import { Select } from "@/components/shared/Select";
 import { ChatAssistantDisclaimer } from "@/components/_commons/ChatUI/ChatAssistantDisclaimer";
 
@@ -104,7 +104,11 @@ export const ChatInputForm = ({
               handleSubmit(event);
             }
           }}
-          placeholder={isBusy ? `${LIBELLE_PREPARATION_REPONSE}…` : placeholder}
+          placeholder={
+            isBusy
+              ? `${libelleActiviteAssistant("prépare sa réponse")}…`
+              : placeholder
+          }
           ref={textareaRef}
           rows={1}
           value={input}

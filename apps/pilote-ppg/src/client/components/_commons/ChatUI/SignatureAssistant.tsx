@@ -1,20 +1,26 @@
 import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
 import { PointsAttente } from "@/components/_commons/ChatUI/PointsAttente";
 import {
-  LIBELLE_PREPARATION_REPONSE,
+  libelleActiviteAssistant,
   NOM_ASSISTANT,
 } from "@/components/_commons/ChatUI/libellesAssistant";
+import {
+  LIBELLES_ETAT_ASSISTANT,
+  type EtatAssistant,
+} from "@/components/_commons/ChatUI/deriverEtatAssistant";
 
 export const SignatureAssistant = ({
-  enCoursDeGeneration,
+  etat,
 }: {
-  enCoursDeGeneration: boolean;
+  etat: EtatAssistant | null;
 }) => (
   <div className="flex items-center gap-2 text-xs leading-5 text-dsfr-mention-grey">
     <AlbertMonogramme taille="sm" />
-    {enCoursDeGeneration ? (
+    {etat ? (
       <>
-        <span aria-live="polite">{LIBELLE_PREPARATION_REPONSE}</span>
+        <span aria-live="polite">
+          {libelleActiviteAssistant(LIBELLES_ETAT_ASSISTANT[etat])}
+        </span>
         <PointsAttente />
       </>
     ) : (
