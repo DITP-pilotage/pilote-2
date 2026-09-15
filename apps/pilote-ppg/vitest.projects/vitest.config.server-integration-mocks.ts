@@ -24,6 +24,11 @@ export default defineProject({
     ],
     pool: "forks",
     fileParallelism: false,
+    // vitest refuse que deux projets aient un `maxWorkers` different et le meme
+    // `groupOrder`. `fileParallelism: false` force maxWorkers a 1 ici, la ou les
+    // projets unitaires gardent le defaut : il faut donc un ordre distinct, qui
+    // fait au passage tourner l'integration apres les tests unitaires.
+    sequence: { groupOrder: 2 },
     globals: true,
   },
   ssr: {
