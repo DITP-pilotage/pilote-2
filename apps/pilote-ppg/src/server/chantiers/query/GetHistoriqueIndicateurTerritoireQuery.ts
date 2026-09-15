@@ -9,8 +9,8 @@ import { formaterDate } from "@/client/utils/date/date";
 export type EvenementHistoriqueLisible = {
   ordre: number;
   date_creation: string;
-  libelle: string;
-  type_valeur: string;
+  description: string | null;
+  resultat: string | null;
 };
 
 export type GroupeHistoriqueIndicateur = {
@@ -24,19 +24,6 @@ export type HistoriqueIndicateurTerritoireResult = {
   dateMax: string | null;
   groupes: GroupeHistoriqueIndicateur[];
 };
-
-function construireLibelleLisible(
-  evenement: IndicateurTerritoireValeurEvenement,
-): string {
-  const { description, resultat } = libelleEvenementIndicateurTerritoireValeur(
-    evenement.typeEvenement,
-    evenement.valeur ?? null,
-  );
-
-  return [description, resultat ? `→ ${resultat}` : null]
-    .filter((partie): partie is string => Boolean(partie))
-    .join(" ");
-}
 
 export class GetHistoriqueIndicateurTerritoireQuery {
   constructor(
@@ -93,14 +80,19 @@ export class GetHistoriqueIndicateurTerritoireQuery {
           evenements: evenementsRestants.map(
             (evenement): EvenementHistoriqueLisible => {
               const dateCreationIso = toISODateTime(evenement.dateCreation);
+              const { description, resultat } =
+                libelleEvenementIndicateurTerritoireValeur(
+                  evenement.typeEvenement,
+                  evenement.valeur ?? null,
+                );
 
               return {
                 ordre: evenement.ordre,
                 date_creation:
                   formaterDate(dateCreationIso, "DD/MM/YYYY HH[:]mm") ??
                   dateCreationIso,
-                libelle: construireLibelleLisible(evenement),
-                type_valeur: evenement.typeValeur,
+                description,
+                resultat,
               };
             },
           ),

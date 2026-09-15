@@ -122,15 +122,14 @@ describe("GetHistoriqueIndicateurTerritoireQuery execute", () => {
           {
             ordre: 1,
             date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
-            libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
-            type_valeur: "VALEUR_AVANCEMENT",
+            description: null,
+            resultat: "nouvelle valeur affichée dans PILOTE : 10",
           },
           {
             ordre: 2,
             date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
-            libelle:
-              "import de données par la direction de projet → nouvelle valeur affichée dans PILOTE : 20",
-            type_valeur: "VALEUR_AVANCEMENT",
+            description: "import de données par la direction de projet",
+            resultat: "nouvelle valeur affichée dans PILOTE : 20",
           },
         ],
       },

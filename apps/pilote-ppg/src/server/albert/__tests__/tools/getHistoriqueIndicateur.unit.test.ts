@@ -222,8 +222,8 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
                 {
                   ordre: 1,
                   date_creation: "15/01/2024 12:00",
-                  libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
-                  type_valeur: "VALEUR_AVANCEMENT",
+                  description: null,
+                  resultat: "nouvelle valeur affichée dans PILOTE : 10",
                 },
               ],
             },
@@ -254,8 +254,8 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
             {
               ordre: 1,
               date_creation: "15/01/2024 12:00",
-              libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
-              type_valeur: "VALEUR_AVANCEMENT",
+              description: null,
+              resultat: "nouvelle valeur affichée dans PILOTE : 10",
             },
           ],
         },
