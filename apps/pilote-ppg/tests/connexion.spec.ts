@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { PageConnexion } from "./pages/page-connexion";
 
 test.describe("Écran de choix du mode de connexion", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
@@ -21,9 +22,7 @@ test.describe("Écran de choix du mode de connexion", () => {
     await page.goto("/connexion");
 
     await expect(
-      page.getByRole("button", {
-        name: "Se connecter avec une adresse électronique et un mot de passe",
-      }),
+      new PageConnexion(page).boutonIdentifiantsPilote,
     ).toBeVisible();
   });
 
@@ -37,9 +36,7 @@ test.describe("Écran de choix du mode de connexion", () => {
       page.getByRole("link", { name: "pilote.ditp@modernisation.gouv.fr" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", {
-        name: "Se connecter avec une adresse électronique et un mot de passe",
-      }),
+      new PageConnexion(page).boutonIdentifiantsPilote,
     ).toBeVisible();
   });
 
