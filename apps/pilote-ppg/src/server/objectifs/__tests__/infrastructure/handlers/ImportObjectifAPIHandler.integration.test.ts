@@ -5,6 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 // node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
 type CorpsReponseImport = { message: string; erreurs: { message: string }[] };
@@ -116,198 +117,233 @@ function créerMockRequestAvecBodyInvalide() {
 }
 
 describe("ImportObjectifAPIHandler", () => {
-  it("importe un objectif valide et le persiste en base", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+  it(
+    "importe un objectif valide et le persiste en base",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
+        chantierId,
+      );
 
-    const body = {
-      objectifs: [
-        {
-          type: "notre_ambition",
-          contenu: "Contenu de l'objectif de test",
-        },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
-      request,
-      response,
-      chantierId,
-      utilisateurAuthentifie: utilisateurAuthentifié,
-    });
-
-    // Then
-    expect(response._getStatusCode()).toEqual(200);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Les objectifs ont correctement été importés",
-    );
-
-    const objectifsEnBase = await prisma.objectif.findMany({
-      where: { chantier_id: chantierId },
-    });
-    expect(objectifsEnBase).toHaveLength(1);
-    expect(objectifsEnBase[0].contenu).toEqual("Contenu de l'objectif de test");
-    expect(objectifsEnBase[0].type).toEqual("notre_ambition");
-    expect(objectifsEnBase[0].auteur_creation_id).toEqual(auteurId);
-    expect(objectifsEnBase[0].auteur_modification_id).toEqual(auteurId);
-  });
-
-  it("retourne 400 quand le JSON est invalide", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const { request, response } = créerMockRequestAvecBodyInvalide();
-
-    // When
-    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
-      request,
-      response,
-      chantierId,
-      utilisateurAuthentifie: utilisateurAuthentifié,
-    });
-
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Le corps de la requête n'est pas un JSON valide",
-    );
-  });
-
-  it("retourne 403 quand le chantier n'est pas autorisé", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-
-    const utilisateurAuthentifié =
-      UtilisateurAuthentifie.creerUtilisateurAuthentifie({
-        id: auteurId,
-        email: "test@test.com",
-        profil: ProfilEnum.EQUIPE_DIR_PROJET,
-        profilAAccèsAuxChantiersBrouillons: false,
-        habilitations: {
-          lecture: { chantiers: [], territoires: [], périmètres: [] },
-          saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
-          saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
-          responsabilite: { chantiers: [], territoires: [], périmètres: [] },
-          gestionUtilisateur: {
-            chantiers: [],
-            territoires: [],
-            périmètres: [],
+      const body = {
+        objectifs: [
+          {
+            type: "notre_ambition",
+            contenu: "Contenu de l'objectif de test",
           },
-        },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("objectif")
+        .resolve("importObjectifAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(200);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Les objectifs ont correctement été importés",
+      );
+
+      const objectifsEnBase = await prisma.objectif.findMany({
+        where: { chantier_id: chantierId },
       });
+      expect(objectifsEnBase).toHaveLength(1);
+      expect(objectifsEnBase[0].contenu).toEqual(
+        "Contenu de l'objectif de test",
+      );
+      expect(objectifsEnBase[0].type).toEqual("notre_ambition");
+      expect(objectifsEnBase[0].auteur_creation_id).toEqual(auteurId);
+      expect(objectifsEnBase[0].auteur_modification_id).toEqual(auteurId);
+    }),
+  );
 
-    const body = {
-      objectifs: [
-        {
-          type: "notre_ambition",
-          contenu: "Tentative non autorisée",
-        },
-      ],
-    };
+  it(
+    "retourne 400 quand le JSON est invalide",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
+        chantierId,
+      );
 
-    const { request, response } = créerMockRequestAvecBody(body);
+      const { request, response } = créerMockRequestAvecBodyInvalide();
 
-    // When
-    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
-      request,
-      response,
-      chantierId,
-      utilisateurAuthentifie: utilisateurAuthentifié,
-    });
+      // When
+      await getContainer("objectif")
+        .resolve("importObjectifAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    // Then
-    expect(response._getStatusCode()).toEqual(403);
-  });
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Le corps de la requête n'est pas un JSON valide",
+      );
+    }),
+  );
 
-  it("retourne 400 quand le type est invalide (validation Zod)", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+  it(
+    "retourne 403 quand le chantier n'est pas autorisé",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
 
-    const body = {
-      objectifs: [
-        {
-          type: "type_inexistant",
-          contenu: "Objectif avec type invalide",
-        },
-      ],
-    };
+      const utilisateurAuthentifié =
+        UtilisateurAuthentifie.creerUtilisateurAuthentifie({
+          id: auteurId,
+          email: "test@test.com",
+          profil: ProfilEnum.EQUIPE_DIR_PROJET,
+          profilAAccèsAuxChantiersBrouillons: false,
+          habilitations: {
+            lecture: { chantiers: [], territoires: [], périmètres: [] },
+            saisieCommentaire: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            saisieIndicateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            responsabilite: { chantiers: [], territoires: [], périmètres: [] },
+            gestionUtilisateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+          },
+        });
 
-    const { request, response } = créerMockRequestAvecBody(body);
+      const body = {
+        objectifs: [
+          {
+            type: "notre_ambition",
+            contenu: "Tentative non autorisée",
+          },
+        ],
+      };
 
-    // When
-    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
-      request,
-      response,
-      chantierId,
-      utilisateurAuthentifie: utilisateurAuthentifié,
-    });
+      const { request, response } = créerMockRequestAvecBody(body);
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      // When
+      await getContainer("objectif")
+        .resolve("importObjectifAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-  it("retourne 400 quand la date est dans le futur", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+      // Then
+      expect(response._getStatusCode()).toEqual(403);
+    }),
+  );
 
-    const futurDate = new Date();
-    futurDate.setFullYear(futurDate.getFullYear() + 1);
-    const futurDateStr = futurDate.toISOString().split("T")[0];
+  it(
+    "retourne 400 quand le type est invalide (validation Zod)",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
+        chantierId,
+      );
 
-    const body = {
-      objectifs: [
-        {
-          type: "notre_ambition",
-          contenu: "Objectif avec date future",
-          date_objectif: futurDateStr,
-        },
-      ],
-    };
+      const body = {
+        objectifs: [
+          {
+            type: "type_inexistant",
+            contenu: "Objectif avec type invalide",
+          },
+        ],
+      };
 
-    const { request, response } = créerMockRequestAvecBody(body);
+      const { request, response } = créerMockRequestAvecBody(body);
 
-    // When
-    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
-      request,
-      response,
-      chantierId,
-      utilisateurAuthentifie: utilisateurAuthentifié,
-    });
+      // When
+      await getContainer("objectif")
+        .resolve("importObjectifAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
+
+  it(
+    "retourne 400 quand la date est dans le futur",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
+        chantierId,
+      );
+
+      const futurDate = new Date();
+      futurDate.setFullYear(futurDate.getFullYear() + 1);
+      const futurDateStr = futurDate.toISOString().split("T")[0];
+
+      const body = {
+        objectifs: [
+          {
+            type: "notre_ambition",
+            contenu: "Objectif avec date future",
+            date_objectif: futurDateStr,
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("objectif")
+        .resolve("importObjectifAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
 });

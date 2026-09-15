@@ -335,7 +335,17 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
           },
           templateId: 56,
         });
-        expect(notificationEmailService.execute).toHaveBeenNthCalledWith(2, {
+        // L'ordre de `listeTerritoires` n'est pas garanti : la requete qui
+        // remonte les territoires rattaches n'a pas d'ORDER BY. On compare donc
+        // la liste triee, sans quoi l'assertion depend de l'ordre physique des
+        // lignes en base.
+        const [deuxiemeEnvoi] = notificationEmailService.execute.mock.calls[1];
+        expect({
+          ...deuxiemeEnvoi,
+          params: {
+            listeTerritoires: [...deuxiemeEnvoi.params.listeTerritoires].sort(),
+          },
+        }).toEqual({
           destinataires: [{ email: "notif2@example.com" }],
           params: {
             listeTerritoires: ["01 - Rattachement1", "Région Rattachement2"],

@@ -4,6 +4,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { prisma } from "@/server/db/prisma";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import ChantierSQLRepository from "./ChantierSQLRepository";
 
 const prismaPilote = new PrismaPilote();
@@ -18,1190 +19,1227 @@ describe("ChantierSQLRepository", () => {
   });
 
   describe("#récupérerLesEntréesDUnChantier", () => {
-    test("Quand on le chantier demandé n'existe pas, doit remonter une erreur en cas de chantier non trouvé", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-        },
-      });
+    test(
+      "Quand on le chantier demandé n'existe pas, doit remonter une erreur en cas de chantier non trouvé",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+          },
+        });
 
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
-          code_insee: "FR",
-          maille: "NAT",
-          zone_id: "FRANCE",
-          territoire_code: "NAT-FR",
-        },
-      });
-
-      const habilitation = {
-        lecture: {
-          chantiers: ["CH-001", "CH-002"],
-          territoires: ["NAT-FR"],
-        },
-      } as unknown as Utilisateur["habilitations"];
-
-      const profil = ProfilEnum.DITP_ADMIN;
-
-      // When
-      const request = async () => {
-        await prismaChantierRepository.récupérerLesEntréesDUnChantier(
-          "CH-002",
-          habilitation,
-          profil,
-          2024,
-        );
-      };
-
-      // Then
-      await expect(request).rejects.toThrow(/chantier 'CH-002' non trouvé/);
-    });
-
-    test("quand on est un profil territorial, doit renvoyer la liste des chantiers sans la maille nationale", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-        },
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
+        await prisma.chantier_territoire.create({
+          data: {
             id: "CH-001",
             code_insee: "FR",
             maille: "NAT",
             zone_id: "FRANCE",
             territoire_code: "NAT-FR",
           },
-          {
+        });
+
+        const habilitation = {
+          lecture: {
+            chantiers: ["CH-001", "CH-002"],
+            territoires: ["NAT-FR"],
+          },
+        } as unknown as Utilisateur["habilitations"];
+
+        const profil = ProfilEnum.DITP_ADMIN;
+
+        // When
+        const request = async () => {
+          await prismaChantierRepository.récupérerLesEntréesDUnChantier(
+            "CH-002",
+            habilitation,
+            profil,
+            2024,
+          );
+        };
+
+        // Then
+        await expect(request).rejects.toThrow(/chantier 'CH-002' non trouvé/);
+      }),
+    );
+
+    test(
+      "quand on est un profil territorial, doit renvoyer la liste des chantiers sans la maille nationale",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+          },
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              code_insee: "FR",
+              maille: "NAT",
+              zone_id: "FRANCE",
+              territoire_code: "NAT-FR",
+            },
+            {
+              id: "CH-001",
+              code_insee: "87",
+              maille: "DEPT",
+              zone_id: "D87",
+              territoire_code: "DEPT-87",
+            },
+            {
+              id: "CH-001",
+              code_insee: "87",
+              maille: "DEPT",
+              zone_id: "D87",
+              territoire_code: "DEPT-88",
+            },
+          ],
+        });
+
+        const habilitation = {
+          lecture: {
+            chantiers: ["CH-001", "CH-002"],
+            territoires: ["DEPT-87"],
+          },
+        } as unknown as Utilisateur["habilitations"];
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        // When
+        const listeChantier =
+          await prismaChantierRepository.récupérerLesEntréesDUnChantier(
+            "CH-001",
+            habilitation,
+            profil,
+            2024,
+          );
+
+        // Then
+        expect(listeChantier.nom).toEqual("Chantier 001");
+        expect(
+          listeChantier.chantier_territoire.map(
+            (chantierTerritoire) => chantierTerritoire.territoire_code,
+          ),
+        ).toContainEqual("DEPT-87");
+      }),
+    );
+
+    test(
+      "quand on n'est pas un profil territorial, doit renvoyer la liste des chantiers avec la maille nationale",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+          },
+        });
+
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+          },
+        });
+
+        await prisma.chantier_territoire.create({
+          data: {
+            id: "CH-002",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            territoire_code: "NAT-FR",
+          },
+        });
+
+        await prisma.chantier_territoire.create({
+          data: {
+            id: "CH-001",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            territoire_code: "NAT-FR",
+          },
+        });
+        await prisma.chantier_territoire.create({
+          data: {
             id: "CH-001",
             code_insee: "87",
             maille: "DEPT",
             zone_id: "D87",
             territoire_code: "DEPT-87",
+            chantier_territoire_jalon: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "87",
+                    maille: "DEPT",
+                    zone_id: "D87",
+                    jalon: 2024,
+                    taux_avancement: 10,
+                  },
+                  {
+                    code_insee: "87",
+                    maille: "DEPT",
+                    zone_id: "D87",
+                    jalon: 2025,
+                    taux_avancement: 12,
+                  },
+                ],
+              },
+            },
           },
-          {
+        });
+
+        await prisma.chantier_territoire.create({
+          data: {
             id: "CH-001",
-            code_insee: "87",
+            code_insee: "88",
             maille: "DEPT",
-            zone_id: "D87",
+            zone_id: "D88",
             territoire_code: "DEPT-88",
-          },
-        ],
-      });
-
-      const habilitation = {
-        lecture: {
-          chantiers: ["CH-001", "CH-002"],
-          territoires: ["DEPT-87"],
-        },
-      } as unknown as Utilisateur["habilitations"];
-
-      const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
-
-      // When
-      const listeChantier =
-        await prismaChantierRepository.récupérerLesEntréesDUnChantier(
-          "CH-001",
-          habilitation,
-          profil,
-          2024,
-        );
-
-      // Then
-      expect(listeChantier.nom).toEqual("Chantier 001");
-      expect(
-        listeChantier.chantier_territoire.map(
-          (chantierTerritoire) => chantierTerritoire.territoire_code,
-        ),
-      ).toContainEqual("DEPT-87");
-    });
-
-    test("quand on n'est pas un profil territorial, doit renvoyer la liste des chantiers avec la maille nationale", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-        },
-      });
-
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-002",
-          code_insee: "FR",
-          maille: "NAT",
-          zone_id: "FRANCE",
-          territoire_code: "NAT-FR",
-        },
-      });
-
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
-          code_insee: "FR",
-          maille: "NAT",
-          zone_id: "FRANCE",
-          territoire_code: "NAT-FR",
-        },
-      });
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
-          code_insee: "87",
-          maille: "DEPT",
-          zone_id: "D87",
-          territoire_code: "DEPT-87",
-          chantier_territoire_jalon: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "87",
-                  maille: "DEPT",
-                  zone_id: "D87",
-                  jalon: 2024,
-                  taux_avancement: 10,
-                },
-                {
-                  code_insee: "87",
-                  maille: "DEPT",
-                  zone_id: "D87",
-                  jalon: 2025,
-                  taux_avancement: 12,
-                },
-              ],
+            chantier_territoire_jalon: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "88",
+                    maille: "DEPT",
+                    zone_id: "D88",
+                    jalon: 2024,
+                    taux_avancement: 10,
+                  },
+                  {
+                    code_insee: "88",
+                    maille: "DEPT",
+                    zone_id: "D88",
+                    jalon: 2025,
+                    taux_avancement: 12,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
-          code_insee: "88",
-          maille: "DEPT",
-          zone_id: "D88",
-          territoire_code: "DEPT-88",
-          chantier_territoire_jalon: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "88",
-                  maille: "DEPT",
-                  zone_id: "D88",
-                  jalon: 2024,
-                  taux_avancement: 10,
-                },
-                {
-                  code_insee: "88",
-                  maille: "DEPT",
-                  zone_id: "D88",
-                  jalon: 2025,
-                  taux_avancement: 12,
-                },
-              ],
-            },
+        const habilitation = {
+          lecture: {
+            chantiers: ["CH-001", "CH-002"],
+            territoires: ["DEPT-87"],
           },
-        },
-      });
+        } as unknown as Utilisateur["habilitations"];
 
-      const habilitation = {
-        lecture: {
-          chantiers: ["CH-001", "CH-002"],
-          territoires: ["DEPT-87"],
-        },
-      } as unknown as Utilisateur["habilitations"];
+        const profil = ProfilEnum.DITP_ADMIN;
 
-      const profil = ProfilEnum.DITP_ADMIN;
+        // When
+        const listeChantier =
+          await prismaChantierRepository.récupérerLesEntréesDUnChantier(
+            "CH-001",
+            habilitation,
+            profil,
+            2024,
+          );
 
-      // When
-      const listeChantier =
-        await prismaChantierRepository.récupérerLesEntréesDUnChantier(
-          "CH-001",
-          habilitation,
-          profil,
-          2024,
-        );
-
-      // Then
-      expect(listeChantier.nom).toEqual("Chantier 001");
-      expect(listeChantier.chantier_territoire).toHaveLength(2);
-      expect(
-        listeChantier.chantier_territoire.map(
-          (chantierTerritoire) => chantierTerritoire.territoire_code,
-        ),
-      ).toIncludeAllMembers(["NAT-FR", "DEPT-87"]);
-      expect(
-        listeChantier.chantier_territoire.find(
-          (chantierTerritoire) =>
-            chantierTerritoire.territoire_code === "DEPT-87",
-        )?.chantier_territoire_jalon,
-      ).toIncludeAllPartialMembers<Partial<chantier_territoire_jalon>>([
-        {
-          taux_avancement: 10,
-        },
-      ]);
-    });
+        // Then
+        expect(listeChantier.nom).toEqual("Chantier 001");
+        expect(listeChantier.chantier_territoire).toHaveLength(2);
+        expect(
+          listeChantier.chantier_territoire.map(
+            (chantierTerritoire) => chantierTerritoire.territoire_code,
+          ),
+        ).toIncludeAllMembers(["NAT-FR", "DEPT-87"]);
+        expect(
+          listeChantier.chantier_territoire.find(
+            (chantierTerritoire) =>
+              chantierTerritoire.territoire_code === "DEPT-87",
+          )?.chantier_territoire_jalon,
+        ).toIncludeAllPartialMembers<Partial<chantier_territoire_jalon>>([
+          {
+            taux_avancement: 10,
+          },
+        ]);
+      }),
+    );
   });
 
   describe("#recupererLaRepartitionMeteo", () => {
-    it("quand on a l'option estBarometre et territorialisation à ['regionale', 'departementale'], doit remonter la répartition météo des chantiers qui sont du barometre et territorialisés", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          est_barometre: true,
-          est_territorialise: true,
-          mailles_applicables: ["REG", "DEPT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  territoire_code: "NAT-FR",
-                  maille: "NAT",
-                  zone_id: "FRANCE",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+    it(
+      "quand on a l'option estBarometre et territorialisation à ['regionale', 'departementale'], doit remonter la répartition météo des chantiers qui sont du barometre et territorialisés",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+            est_barometre: true,
+            est_territorialise: true,
+            mailles_applicables: ["REG", "DEPT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    territoire_code: "NAT-FR",
+                    maille: "NAT",
+                    zone_id: "FRANCE",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-          est_barometre: true,
-          est_territorialise: true,
-          mailles_applicables: ["REG", "DEPT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+            est_barometre: true,
+            est_territorialise: true,
+            mailles_applicables: ["REG", "DEPT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-003",
-          nom: "Chantier 003",
-          est_barometre: true,
-          est_territorialise: false,
-          mailles_applicables: ["NAT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-003",
+            nom: "Chantier 003",
+            est_barometre: true,
+            est_territorialise: false,
+            mailles_applicables: ["NAT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-004",
-          nom: "Chantier 004",
-          est_barometre: false,
-          est_territorialise: false,
-          mailles_applicables: ["NAT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-004",
+            nom: "Chantier 004",
+            est_barometre: false,
+            est_territorialise: false,
+            mailles_applicables: ["NAT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      const filtres: FiltreQueryParams = {
-        perimetres: [],
-        axes: [],
-        statut: [],
-        meteos: [],
-        territorialisation: ["regionale", "departementale"],
-        estBarometre: true,
-        valeurDeLaRecherche: "",
-      };
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          statut: [],
+          meteos: [],
+          territorialisation: ["regionale", "departementale"],
+          estBarometre: true,
+          valeurDeLaRecherche: "",
+        };
 
-      // When
-      const result = await prismaChantierRepository.recupererLaRepartitionMeteo(
-        ["CH-001", "CH-002", "CH-003", "CH-004"],
-        "NAT-FR",
-        filtres,
-      );
+        // When
+        const result =
+          await prismaChantierRepository.recupererLaRepartitionMeteo(
+            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            "NAT-FR",
+            filtres,
+          );
 
-      // Then
-      expect(result.nombreCouvert).toEqual(1);
-      expect(result.nombreSoleil).toEqual(1);
-      expect(result.nombreNuage).toEqual(0);
-      expect(result.nombreOrage).toEqual(0);
-    });
+        // Then
+        expect(result.nombreCouvert).toEqual(1);
+        expect(result.nombreSoleil).toEqual(1);
+        expect(result.nombreNuage).toEqual(0);
+        expect(result.nombreOrage).toEqual(0);
+      }),
+    );
 
-    it("quand on a le filtre estBarometre a true et estTerritorialise à false, doit remonter la répartition météo pour les chantiers du barometre", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          est_barometre: true,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  territoire_code: "NAT-FR",
-                  maille: "NAT",
-                  zone_id: "FRANCE",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+    it(
+      "quand on a le filtre estBarometre a true et estTerritorialise à false, doit remonter la répartition météo pour les chantiers du barometre",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+            est_barometre: true,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    territoire_code: "NAT-FR",
+                    maille: "NAT",
+                    zone_id: "FRANCE",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-          est_barometre: true,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+            est_barometre: true,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-003",
-          nom: "Chantier 003",
-          est_barometre: false,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-003",
+            nom: "Chantier 003",
+            est_barometre: false,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-004",
-          nom: "Chantier 004",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-004",
+            nom: "Chantier 004",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      const filtres: FiltreQueryParams = {
-        perimetres: [],
-        axes: [],
-        statut: [],
-        meteos: [],
-        territorialisation: [],
-        estBarometre: true,
-        valeurDeLaRecherche: "",
-      };
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          statut: [],
+          meteos: [],
+          territorialisation: [],
+          estBarometre: true,
+          valeurDeLaRecherche: "",
+        };
 
-      // When
-      const result = await prismaChantierRepository.recupererLaRepartitionMeteo(
-        ["CH-001", "CH-002", "CH-003", "CH-004"],
-        "NAT-FR",
-        filtres,
-      );
+        // When
+        const result =
+          await prismaChantierRepository.recupererLaRepartitionMeteo(
+            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            "NAT-FR",
+            filtres,
+          );
 
-      // Then
-      expect(result.nombreCouvert).toEqual(1);
-      expect(result.nombreSoleil).toEqual(1);
-      expect(result.nombreNuage).toEqual(0);
-      expect(result.nombreOrage).toEqual(0);
-    });
+        // Then
+        expect(result.nombreCouvert).toEqual(1);
+        expect(result.nombreSoleil).toEqual(1);
+        expect(result.nombreNuage).toEqual(0);
+        expect(result.nombreOrage).toEqual(0);
+      }),
+    );
 
-    it("quand on a l'option estBarometre est a false et territorialisation est defini en regionale et departementale, doit remonter les chantiers ids contenant les chantiers territorialise", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          est_barometre: true,
-          est_territorialise: true,
-          mailles_applicables: ["REG", "DEPT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  territoire_code: "NAT-FR",
-                  maille: "NAT",
-                  zone_id: "FRANCE",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+    it(
+      "quand on a l'option estBarometre est a false et territorialisation est defini en regionale et departementale, doit remonter les chantiers ids contenant les chantiers territorialise",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+            est_barometre: true,
+            est_territorialise: true,
+            mailles_applicables: ["REG", "DEPT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    territoire_code: "NAT-FR",
+                    maille: "NAT",
+                    zone_id: "FRANCE",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-          est_barometre: true,
-          est_territorialise: false,
-          mailles_applicables: ["NAT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+            est_barometre: true,
+            est_territorialise: false,
+            mailles_applicables: ["NAT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-003",
-          nom: "Chantier 003",
-          est_barometre: false,
-          est_territorialise: true,
-          mailles_applicables: ["REG", "DEPT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-003",
+            nom: "Chantier 003",
+            est_barometre: false,
+            est_territorialise: true,
+            mailles_applicables: ["REG", "DEPT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-004",
-          nom: "Chantier 004",
-          est_barometre: false,
-          est_territorialise: false,
-          mailles_applicables: ["NAT"],
-          ministeres: ["MINA"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "NUAGE",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-004",
+            nom: "Chantier 004",
+            est_barometre: false,
+            est_territorialise: false,
+            mailles_applicables: ["NAT"],
+            ministeres: ["MINA"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "NUAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      const filtres: FiltreQueryParams = {
-        perimetres: [],
-        axes: [],
-        statut: [],
-        meteos: [],
-        territorialisation: ["regionale", "departementale"],
-        estBarometre: false,
-        valeurDeLaRecherche: "",
-      };
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          statut: [],
+          meteos: [],
+          territorialisation: ["regionale", "departementale"],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
 
-      // When
-      const result = await prismaChantierRepository.recupererLaRepartitionMeteo(
-        ["CH-001", "CH-002", "CH-003", "CH-004"],
-        "NAT-FR",
-        filtres,
-      );
+        // When
+        const result =
+          await prismaChantierRepository.recupererLaRepartitionMeteo(
+            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            "NAT-FR",
+            filtres,
+          );
 
-      // Then
-      expect(result.nombreCouvert).toEqual(1);
-      expect(result.nombreSoleil).toEqual(0);
-      expect(result.nombreNuage).toEqual(0);
-      expect(result.nombreOrage).toEqual(1);
-    });
+        // Then
+        expect(result.nombreCouvert).toEqual(1);
+        expect(result.nombreSoleil).toEqual(0);
+        expect(result.nombreNuage).toEqual(0);
+        expect(result.nombreOrage).toEqual(1);
+      }),
+    );
 
-    it("quand on a le filtre statut est défini, doit remonter la répartition météo des chantiers avec les statuts demandés", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          est_barometre: true,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          statut: "PUBLIE",
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  territoire_code: "NAT-FR",
-                  maille: "NAT",
-                  zone_id: "FRANCE",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+    it(
+      "quand on a le filtre statut est défini, doit remonter la répartition météo des chantiers avec les statuts demandés",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+            est_barometre: true,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            statut: "PUBLIE",
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    territoire_code: "NAT-FR",
+                    maille: "NAT",
+                    zone_id: "FRANCE",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-          est_barometre: true,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          statut: "PUBLIE",
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+            est_barometre: true,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            statut: "PUBLIE",
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-003",
-          nom: "Chantier 003",
-          est_barometre: false,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          statut: "BROUILLON",
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-003",
+            nom: "Chantier 003",
+            est_barometre: false,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            statut: "BROUILLON",
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-004",
-          nom: "Chantier 004",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          statut: "ARCHIVE",
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-004",
+            nom: "Chantier 004",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            statut: "ARCHIVE",
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-005",
-          nom: "Chantier 005",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          statut: "SUPPRIME",
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-005",
+            nom: "Chantier 005",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            statut: "SUPPRIME",
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      const filtres: FiltreQueryParams = {
-        perimetres: [],
-        axes: [],
-        statut: ["PUBLIE", "BROUILLON"],
-        meteos: [],
-        territorialisation: [],
-        estBarometre: false,
-        valeurDeLaRecherche: "",
-      };
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          statut: ["PUBLIE", "BROUILLON"],
+          meteos: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
 
-      // When
-      const result = await prismaChantierRepository.recupererLaRepartitionMeteo(
-        ["CH-001", "CH-002", "CH-003", "CH-004"],
-        "NAT-FR",
-        filtres,
-      );
+        // When
+        const result =
+          await prismaChantierRepository.recupererLaRepartitionMeteo(
+            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            "NAT-FR",
+            filtres,
+          );
 
-      // Then
-      expect(result.nombreCouvert).toEqual(2);
-      expect(result.nombreSoleil).toEqual(0);
-      expect(result.nombreNuage).toEqual(0);
-      expect(result.nombreOrage).toEqual(1);
-    });
+        // Then
+        expect(result.nombreCouvert).toEqual(2);
+        expect(result.nombreSoleil).toEqual(0);
+        expect(result.nombreNuage).toEqual(0);
+        expect(result.nombreOrage).toEqual(1);
+      }),
+    );
 
-    it("quand on a l'option perimetreIds est définie, doit remonter les répartions météo des chantiers avec les périmètres demandés", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          est_barometre: true,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-01", "PER-02"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  territoire_code: "NAT-FR",
-                  maille: "NAT",
-                  zone_id: "FRANCE",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+    it(
+      "quand on a l'option perimetreIds est définie, doit remonter les répartions météo des chantiers avec les périmètres demandés",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+            est_barometre: true,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-01", "PER-02"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    territoire_code: "NAT-FR",
+                    maille: "NAT",
+                    zone_id: "FRANCE",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-          est_barometre: true,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-01"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+            est_barometre: true,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-01"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-003",
-          nom: "Chantier 003",
-          est_barometre: false,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-02"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-003",
+            nom: "Chantier 003",
+            est_barometre: false,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-02"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-004",
-          nom: "Chantier 004",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-03"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-004",
+            nom: "Chantier 004",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-03"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-005",
-          nom: "Chantier 005",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-01", "PER-03"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-005",
+            nom: "Chantier 005",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-01", "PER-03"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      const filtres: FiltreQueryParams = {
-        perimetres: ["PER-01", "PER-02"],
-        axes: [],
-        statut: [],
-        meteos: [],
-        territorialisation: [],
-        estBarometre: false,
-        valeurDeLaRecherche: "",
-      };
+        const filtres: FiltreQueryParams = {
+          perimetres: ["PER-01", "PER-02"],
+          axes: [],
+          statut: [],
+          meteos: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
 
-      // When
-      const result = await prismaChantierRepository.recupererLaRepartitionMeteo(
-        ["CH-001", "CH-002", "CH-003", "CH-004", "CH-005"],
-        "NAT-FR",
-        filtres,
-      );
+        // When
+        const result =
+          await prismaChantierRepository.recupererLaRepartitionMeteo(
+            ["CH-001", "CH-002", "CH-003", "CH-004", "CH-005"],
+            "NAT-FR",
+            filtres,
+          );
 
-      // Then
-      expect(result.nombreCouvert).toEqual(1);
-      expect(result.nombreSoleil).toEqual(1);
-      expect(result.nombreNuage).toEqual(0);
-      expect(result.nombreOrage).toEqual(2);
-    });
+        // Then
+        expect(result.nombreCouvert).toEqual(1);
+        expect(result.nombreSoleil).toEqual(1);
+        expect(result.nombreNuage).toEqual(0);
+        expect(result.nombreOrage).toEqual(2);
+      }),
+    );
 
-    it("doit retourner la répartition météo des chantiers ids demandés", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          est_barometre: true,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-01", "PER-02"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  territoire_code: "NAT-FR",
-                  maille: "NAT",
-                  zone_id: "FRANCE",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-              ],
+    it(
+      "doit retourner la répartition météo des chantiers ids demandés",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+            est_barometre: true,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-01", "PER-02"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    territoire_code: "NAT-FR",
+                    maille: "NAT",
+                    zone_id: "FRANCE",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-          est_barometre: true,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-01"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+            est_barometre: true,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-01"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-003",
-          nom: "Chantier 003",
-          est_barometre: false,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-02"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-003",
+            nom: "Chantier 003",
+            est_barometre: false,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-02"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-004",
-          nom: "Chantier 004",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-03"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-004",
+            nom: "Chantier 004",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-03"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-005",
-          nom: "Chantier 005",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-03"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-005",
+            nom: "Chantier 005",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-03"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      const filtres: FiltreQueryParams = {
-        perimetres: [],
-        axes: [],
-        statut: [],
-        meteos: [],
-        territorialisation: [],
-        estBarometre: false,
-        valeurDeLaRecherche: "",
-      };
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          statut: [],
+          meteos: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
 
-      // When
-      const result = await prismaChantierRepository.recupererLaRepartitionMeteo(
-        ["CH-001", "CH-003", "CH-005"],
-        "NAT-FR",
-        filtres,
-      );
+        // When
+        const result =
+          await prismaChantierRepository.recupererLaRepartitionMeteo(
+            ["CH-001", "CH-003", "CH-005"],
+            "NAT-FR",
+            filtres,
+          );
 
-      // Then
-      expect(result.nombreCouvert).toEqual(1);
-      expect(result.nombreSoleil).toEqual(1);
-      expect(result.nombreNuage).toEqual(0);
-      expect(result.nombreOrage).toEqual(1);
-    });
-    it("doit retourner la répartition météo des chantiers uniquement sur les territoires demandés", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          est_barometre: true,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-01", "PER-02"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  territoire_code: "NAT-FR",
-                  maille: "NAT",
-                  zone_id: "FRANCE",
-                  meteo: "SOLEIL",
-                  est_applicable: true,
-                },
-                {
-                  code_insee: "34",
-                  territoire_code: "DEPT-34",
-                  maille: "DEPT",
-                  zone_id: "D34",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        // Then
+        expect(result.nombreCouvert).toEqual(1);
+        expect(result.nombreSoleil).toEqual(1);
+        expect(result.nombreNuage).toEqual(0);
+        expect(result.nombreOrage).toEqual(1);
+      }),
+    );
+    it(
+      "doit retourner la répartition météo des chantiers uniquement sur les territoires demandés",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-001",
+            nom: "Chantier 001",
+            est_barometre: true,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-01", "PER-02"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    territoire_code: "NAT-FR",
+                    maille: "NAT",
+                    zone_id: "FRANCE",
+                    meteo: "SOLEIL",
+                    est_applicable: true,
+                  },
+                  {
+                    code_insee: "34",
+                    territoire_code: "DEPT-34",
+                    maille: "DEPT",
+                    zone_id: "D34",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-002",
-          nom: "Chantier 002",
-          est_barometre: true,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-01"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-002",
+            nom: "Chantier 002",
+            est_barometre: true,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-01"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-003",
-          nom: "Chantier 003",
-          est_barometre: false,
-          est_territorialise: true,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-02"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "ORAGE",
-                  est_applicable: true,
-                },
-              ],
+        });
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-003",
+            nom: "Chantier 003",
+            est_barometre: false,
+            est_territorialise: true,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-02"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "ORAGE",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-004",
-          nom: "Chantier 004",
-          est_barometre: false,
-          est_territorialise: false,
-          ministeres: ["MINA"],
-          perimetre_ids: ["PER-03"],
-          chantier_territoire: {
-            createMany: {
-              data: [
-                {
-                  code_insee: "FR",
-                  zone_id: "FRANCE",
-                  maille: "NAT",
-                  territoire_code: "NAT-FR",
-                  meteo: "COUVERT",
-                  est_applicable: true,
-                },
-              ],
+        await prisma.chantier_identite.create({
+          data: {
+            id: "CH-004",
+            nom: "Chantier 004",
+            est_barometre: false,
+            est_territorialise: false,
+            ministeres: ["MINA"],
+            perimetre_ids: ["PER-03"],
+            chantier_territoire: {
+              createMany: {
+                data: [
+                  {
+                    code_insee: "FR",
+                    zone_id: "FRANCE",
+                    maille: "NAT",
+                    territoire_code: "NAT-FR",
+                    meteo: "COUVERT",
+                    est_applicable: true,
+                  },
+                ],
+              },
             },
           },
-        },
-      });
+        });
 
-      const filtres: FiltreQueryParams = {
-        perimetres: [],
-        axes: [],
-        statut: [],
-        meteos: [],
-        territorialisation: [],
-        estBarometre: false,
-        valeurDeLaRecherche: "",
-      };
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          statut: [],
+          meteos: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
 
-      // When
-      const result = await prismaChantierRepository.recupererLaRepartitionMeteo(
-        ["CH-001", "CH-002", "CH-003", "CH-004"],
-        "NAT-FR",
-        filtres,
-      );
+        // When
+        const result =
+          await prismaChantierRepository.recupererLaRepartitionMeteo(
+            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            "NAT-FR",
+            filtres,
+          );
 
-      // Then
-      expect(result.nombreCouvert).toEqual(1);
-      expect(result.nombreSoleil).toEqual(1);
-      expect(result.nombreNuage).toEqual(0);
-      expect(result.nombreOrage).toEqual(2);
-    });
+        // Then
+        expect(result.nombreCouvert).toEqual(1);
+        expect(result.nombreSoleil).toEqual(1);
+        expect(result.nombreNuage).toEqual(0);
+        expect(result.nombreOrage).toEqual(2);
+      }),
+    );
   });
 });

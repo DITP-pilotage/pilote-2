@@ -5,6 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 // node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
 type CorpsReponseImport = { message: string; erreurs: { message: string }[] };
@@ -143,256 +144,282 @@ function créerMockRequestAvecBodyInvalide() {
 }
 
 describe("ImportSyntheseDesResultatsAPIHandler", () => {
-  it("importe une synthèse des résultats valide et la persiste en base", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const body = {
-      syntheses_des_resultats: [
-        {
-          territoire: "NAT-FR",
-          contenu: "Contenu de la synthèse de test",
-          meteo: "OBJECTIF_SECURISE",
-        },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("importSyntheseDesResultats")
-      .resolve("importSyntheseDesResultatsAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "importe une synthèse des résultats valide et la persiste en base",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(200);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Les synthèses des résultats ont correctement été importées",
-    );
-
-    const synthesesEnBase = await prisma.synthese_des_resultats.findMany({
-      where: { chantier_id: chantierId },
-    });
-    expect(synthesesEnBase).toHaveLength(1);
-    expect(synthesesEnBase[0].commentaire).toEqual(
-      "Contenu de la synthèse de test",
-    );
-    // Vérifie que la valeur open API est bien transformée en valeur interne
-    expect(synthesesEnBase[0].meteo).toEqual("SOLEIL");
-    expect(synthesesEnBase[0].auteur_creation_id).toEqual(auteurId);
-    expect(synthesesEnBase[0].auteur_modification_id).toEqual(auteurId);
-  });
-
-  it("retourne 400 quand le JSON est invalide", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const { request, response } = créerMockRequestAvecBodyInvalide();
-
-    // When
-    await getContainer("importSyntheseDesResultats")
-      .resolve("importSyntheseDesResultatsAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
-
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Le corps de la requête n'est pas un JSON valide",
-    );
-  });
-
-  it("retourne 403 quand le chantier n'est pas autorisé", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-
-    const utilisateurAuthentifié =
-      UtilisateurAuthentifie.creerUtilisateurAuthentifie({
-        id: auteurId,
-        email: "test@test.com",
-        profil: ProfilEnum.EQUIPE_DIR_PROJET,
-        profilAAccèsAuxChantiersBrouillons: false,
-        habilitations: {
-          lecture: { chantiers: [], territoires: [], périmètres: [] },
-          saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
-          saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
-          responsabilite: { chantiers: [], territoires: [], périmètres: [] },
-          gestionUtilisateur: {
-            chantiers: [],
-            territoires: [],
-            périmètres: [],
+      const body = {
+        syntheses_des_resultats: [
+          {
+            territoire: "NAT-FR",
+            contenu: "Contenu de la synthèse de test",
+            meteo: "OBJECTIF_SECURISE",
           },
-        },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("importSyntheseDesResultats")
+        .resolve("importSyntheseDesResultatsAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(200);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Les synthèses des résultats ont correctement été importées",
+      );
+
+      const synthesesEnBase = await prisma.synthese_des_resultats.findMany({
+        where: { chantier_id: chantierId },
       });
+      expect(synthesesEnBase).toHaveLength(1);
+      expect(synthesesEnBase[0].commentaire).toEqual(
+        "Contenu de la synthèse de test",
+      );
+      // Vérifie que la valeur open API est bien transformée en valeur interne
+      expect(synthesesEnBase[0].meteo).toEqual("SOLEIL");
+      expect(synthesesEnBase[0].auteur_creation_id).toEqual(auteurId);
+      expect(synthesesEnBase[0].auteur_modification_id).toEqual(auteurId);
+    }),
+  );
 
-    const body = {
-      syntheses_des_resultats: [
-        {
-          territoire: "NAT-FR",
-          contenu: "Tentative non autorisée",
-          meteo: "OBJECTIF_SECURISE",
-        },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("importSyntheseDesResultats")
-      .resolve("importSyntheseDesResultatsAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "retourne 400 quand le JSON est invalide",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(403);
-  });
+      const { request, response } = créerMockRequestAvecBodyInvalide();
 
-  it("retourne 400 quand la météo est invalide (validation Zod)", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+      // When
+      await getContainer("importSyntheseDesResultats")
+        .resolve("importSyntheseDesResultatsAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    const body = {
-      syntheses_des_resultats: [
-        {
-          territoire: "NAT-FR",
-          contenu: "Synthèse avec météo invalide",
-          meteo: "METEO_INVALIDE",
-        },
-      ],
-    };
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Le corps de la requête n'est pas un JSON valide",
+      );
+    }),
+  );
 
-    const { request, response } = créerMockRequestAvecBody(body);
+  it(
+    "retourne 403 quand le chantier n'est pas autorisé",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
 
-    // When
-    await getContainer("importSyntheseDesResultats")
-      .resolve("importSyntheseDesResultatsAPIHandler")
-      .handle({
-        request,
-        response,
+      const utilisateurAuthentifié =
+        UtilisateurAuthentifie.creerUtilisateurAuthentifie({
+          id: auteurId,
+          email: "test@test.com",
+          profil: ProfilEnum.EQUIPE_DIR_PROJET,
+          profilAAccèsAuxChantiersBrouillons: false,
+          habilitations: {
+            lecture: { chantiers: [], territoires: [], périmètres: [] },
+            saisieCommentaire: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            saisieIndicateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            responsabilite: { chantiers: [], territoires: [], périmètres: [] },
+            gestionUtilisateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+          },
+        });
+
+      const body = {
+        syntheses_des_resultats: [
+          {
+            territoire: "NAT-FR",
+            contenu: "Tentative non autorisée",
+            meteo: "OBJECTIF_SECURISE",
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("importSyntheseDesResultats")
+        .resolve("importSyntheseDesResultatsAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(403);
+    }),
+  );
+
+  it(
+    "retourne 400 quand la météo est invalide (validation Zod)",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      const body = {
+        syntheses_des_resultats: [
+          {
+            territoire: "NAT-FR",
+            contenu: "Synthèse avec météo invalide",
+            meteo: "METEO_INVALIDE",
+          },
+        ],
+      };
 
-  it("retourne 400 quand la date est dans le futur", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+      const { request, response } = créerMockRequestAvecBody(body);
 
-    const futurDate = new Date();
-    futurDate.setFullYear(futurDate.getFullYear() + 1);
-    const futurDateStr = futurDate.toISOString().split("T")[0];
+      // When
+      await getContainer("importSyntheseDesResultats")
+        .resolve("importSyntheseDesResultatsAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    const body = {
-      syntheses_des_resultats: [
-        {
-          territoire: "NAT-FR",
-          contenu: "Synthèse avec date future",
-          meteo: "OBJECTIF_SECURISE",
-          date_synthese: futurDateStr,
-        },
-      ],
-    };
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
 
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("importSyntheseDesResultats")
-      .resolve("importSyntheseDesResultatsAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "retourne 400 quand la date est dans le futur",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      const futurDate = new Date();
+      futurDate.setFullYear(futurDate.getFullYear() + 1);
+      const futurDateStr = futurDate.toISOString().split("T")[0];
 
-  it("retourne 400 quand le territoire n'est pas autorisé", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    // Utilisateur uniquement autorisé sur NAT-FR
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-      { territoires: ["NAT-FR"] },
-    );
+      const body = {
+        syntheses_des_resultats: [
+          {
+            territoire: "NAT-FR",
+            contenu: "Synthèse avec date future",
+            meteo: "OBJECTIF_SECURISE",
+            date_synthese: futurDateStr,
+          },
+        ],
+      };
 
-    const body = {
-      syntheses_des_resultats: [
-        {
-          territoire: "REG-84",
-          contenu: "Synthèse sur territoire non autorisé",
-          meteo: "OBJECTIF_SECURISE",
-        },
-      ],
-    };
+      const { request, response } = créerMockRequestAvecBody(body);
 
-    const { request, response } = créerMockRequestAvecBody(body);
+      // When
+      await getContainer("importSyntheseDesResultats")
+        .resolve("importSyntheseDesResultatsAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    // When
-    await getContainer("importSyntheseDesResultats")
-      .resolve("importSyntheseDesResultatsAPIHandler")
-      .handle({
-        request,
-        response,
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
+
+  it(
+    "retourne 400 quand le territoire n'est pas autorisé",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      // Utilisateur uniquement autorisé sur NAT-FR
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+        { territoires: ["NAT-FR"] },
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs[0].message,
-    ).toContain("n'êtes pas autorisé");
-  });
+      const body = {
+        syntheses_des_resultats: [
+          {
+            territoire: "REG-84",
+            contenu: "Synthèse sur territoire non autorisé",
+            meteo: "OBJECTIF_SECURISE",
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("importSyntheseDesResultats")
+        .resolve("importSyntheseDesResultatsAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs[0].message,
+      ).toContain("n'êtes pas autorisé");
+    }),
+  );
 });
