@@ -12,6 +12,7 @@ import type { ContexteAccueil } from "@/components/_commons/ChatUI/ChatEmptyStat
 import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
 import { AlbertDock } from "@/components/_commons/ChatUI/AlbertDock";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 
 const BOUTON_ICONE =
   "flex h-8 w-8 items-center justify-center text-primary transition-colors hover:bg-dsfr-alt-blue-france";
@@ -43,7 +44,7 @@ const AlbertEnTete = ({
   <div className="flex h-14 shrink-0 items-center gap-3 border-b border-dsfr-grey-900 pl-5 pr-4">
     <AlbertMonogramme />
     <Dialog.Title className="!mb-0 !text-base font-bold leading-5 !text-dsfr-grey-50">
-      Albert
+      {NOM_ASSISTANT}
     </Dialog.Title>
     <span className="ml-2 inline-flex h-7 items-center gap-1.5 border border-dsfr-blue-france-925 bg-dsfr-blue-france-950 px-2.5 text-[13px] font-medium leading-5 text-primary">
       <Icone className="h-4 w-4" icone={MapPin2Icon} />
@@ -61,7 +62,7 @@ const AlbertEnTete = ({
     </button>
     <Dialog.Close asChild>
       <button
-        aria-label="Fermer Albert"
+        aria-label={`Fermer l'${NOM_ASSISTANT}`}
         className={BOUTON_ICONE}
         title="Fermer"
         type="button"

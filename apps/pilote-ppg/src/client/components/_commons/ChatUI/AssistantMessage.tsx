@@ -6,7 +6,6 @@ import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMess
 import { ChoicesInline } from "@/components/_commons/ChatUI/ChoicesInline";
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
-import type { EtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
 import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { SignatureAssistant } from "@/components/_commons/ChatUI/SignatureAssistant";
 import {
@@ -22,14 +21,11 @@ const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
 export const AssistantMessage = memo(function AssistantMessage({
   message,
   isStreaming,
-  etat = null,
   afficherChoix = false,
   evaluation,
 }: {
   message: PiloteUIMessage;
   isStreaming: boolean;
-  /** Ce qu'Albert est en train de faire, affiché sous sa signature. */
-  etat?: EtatAssistant | null;
   /** Rend la question à choix (display_choices) dans le fil. */
   afficherChoix?: boolean;
   /** Boutons d'évaluation à afficher à côté de « Copier ». */
@@ -67,7 +63,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   return (
     <div className="flex w-full flex-col gap-3 text-[15px] leading-6 text-dsfr-grey-50">
-      <SignatureAssistant etat={etat} />
+      <SignatureAssistant enCoursDeGeneration={isStreaming} />
 
       {sources.length > 0 && <SourcesConsultees parts={sources} />}
 

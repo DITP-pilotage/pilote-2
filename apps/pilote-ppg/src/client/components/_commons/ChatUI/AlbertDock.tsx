@@ -3,6 +3,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
 import { PointsAttente } from "@/components/_commons/ChatUI/PointsAttente";
+import { LIBELLE_PREPARATION_REPONSE } from "@/components/_commons/ChatUI/libellesAssistant";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
@@ -30,7 +31,9 @@ export const AlbertDock = ({
           {enCours ? (
             <>
               <PointsAttente className="[&>span]:h-1 [&>span]:w-1" />
-              <span className="text-primary">Albert rédige…</span>
+              <span className="min-w-0 truncate text-primary">
+                {LIBELLE_PREPARATION_REPONSE}…
+              </span>
             </>
           ) : (
             "Conversation en pause"
