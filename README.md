@@ -76,7 +76,7 @@ pnpm test:e2e             # Tests E2E (Playwright)
 ### Qualité de code
 
 ```bash
-pnpm lint                 # ESLint + TypeScript
+pnpm lint                 # oxlint + TypeScript + Prettier
 pnpm lint:fix             # Auto-fix
 pnpm format               # Prettier
 ```
