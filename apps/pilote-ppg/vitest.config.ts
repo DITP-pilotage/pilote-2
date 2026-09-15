@@ -6,6 +6,7 @@ export default defineConfig({
   test: {
     projects: [
       './vitest.projects/vitest.config.server-integration.ts',
+      './vitest.projects/vitest.config.server-integration-mocks.ts',
       './vitest.projects/vitest.config.server-unit.ts',
       './vitest.projects/vitest.config.client.ts',
     ],
