@@ -16,7 +16,11 @@ export default defineProject({
       "./src/server/infrastructure/test/integrationTestSetup.ts",
     ],
     pool: "forks",
-    fileParallelism: false,
+    // Les tests ne se voient plus entre eux : chacun tourne dans une transaction
+    // annulee a la fin, donc rien n'est commit et deux workers concurrents ne
+    // peuvent pas se marcher dessus. `fileParallelism: false` n'avait de sens que
+    // tant que l'isolation reposait sur un TRUNCATE de la base partagee.
+    fileParallelism: true,
     // Les fichiers sont deja serialises par `fileParallelism`, et l'isolation
     // reelle vient du nettoyage de la base entre les tests, pas du process. Un
     // registre de modules neuf par fichier ne garantissait donc rien de plus, il

@@ -63,6 +63,9 @@ export class PrismaRapportRepository implements RapportRepository {
           date_creation: { gte: dateCreationMin },
         }),
       },
+      // Les rapports sont envoyes dans l'ordre renvoye ici : la file se vide du
+      // plus ancien au plus recent, et non dans l'ordre physique des lignes.
+      orderBy: { date_creation: "asc" },
     });
 
     return rapports.map((row): RapportHebdomadaire => {
