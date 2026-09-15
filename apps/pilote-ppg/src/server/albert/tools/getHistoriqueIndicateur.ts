@@ -8,7 +8,7 @@ import {
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { PROPOSITION_TYPES_EVENEMENT } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
-const SEUIL_BESOIN_PRECISION = 40;
+const SEUIL_BESOIN_PRECISION = 100;
 
 export const getHistoriqueIndicateurInputSchema = z.object({
   indicateur_id: z
