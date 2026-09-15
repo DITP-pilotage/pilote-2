@@ -46,19 +46,28 @@ async function enregistrerParseursDeTableauxDEnums(
  * Enveloppe le pool pour qu'aucune requete ne soit servie avant que les parseurs
  * soient enregistres. Sans cette barriere, les toutes premieres requetes de
  * l'application rendraient encore des chaines, de facon non deterministe.
+ *
+ * L'enregistrement est declenche par la premiere requete et non a la construction
+ * de l'adapter : sinon le seul fait d'importer un module qui importe le client
+ * Prisma ouvre une connexion. Les tests unitaires, qui n'ont pas de base, en
+ * heritaient alors que leurs dependances sont mockees.
  */
-function poolAvecParseursPrets(pool: pg.Pool, pret: Promise<void>): pg.Pool {
+function poolAvecParseursPrets(pool: pg.Pool): pg.Pool {
+  let pret: Promise<void> | null = null;
+  const parseursPrets = () =>
+    (pret ??= enregistrerParseursDeTableauxDEnums(pool));
+
   return new Proxy(pool, {
     get(cible, propriete, recepteur) {
       if (propriete === "query") {
         return async (...args: unknown[]) => {
-          await pret;
+          await parseursPrets();
           return (cible.query as (...a: unknown[]) => unknown)(...args);
         };
       }
       if (propriete === "connect") {
         return async (...args: unknown[]) => {
-          await pret;
+          await parseursPrets();
           return (cible.connect as (...a: unknown[]) => unknown)(...args);
         };
       }
@@ -76,6 +85,5 @@ export function creerAdapter(): PrismaPg {
     );
   }
   const pool = new pg.Pool({ connectionString });
-  const pret = enregistrerParseursDeTableauxDEnums(pool);
-  return new PrismaPg(poolAvecParseursPrets(pool, pret));
+  return new PrismaPg(poolAvecParseursPrets(pool));
 }

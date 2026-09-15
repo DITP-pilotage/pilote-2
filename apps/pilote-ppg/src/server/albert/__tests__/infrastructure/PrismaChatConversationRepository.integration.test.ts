@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { prisma } from "@/server/db/prisma";
 import { PrismaChatConversationRepository } from "@/server/albert/infrastructure/PrismaChatConversationRepository";
 
 describe("PrismaChatConversationRepository", () => {
@@ -91,15 +92,17 @@ describe("PrismaChatConversationRepository", () => {
       const utilisateurB = await fixtures.utilisateur({});
       const repository = buildRepository();
 
+      const idA1 = randomUUID();
+      const idA2 = randomUUID();
       await repository.save({
-        id: randomUUID(),
+        id: idA1,
         utilisateurId: utilisateurA.id,
         titre: "A-1",
         messages: [],
         contexte: null,
       });
       await repository.save({
-        id: randomUUID(),
+        id: idA2,
         utilisateurId: utilisateurA.id,
         titre: "A-2",
         messages: [],
@@ -111,6 +114,18 @@ describe("PrismaChatConversationRepository", () => {
         titre: "B-1",
         messages: [],
         contexte: null,
+      });
+
+      // PostgreSQL fige `now()` a l'ouverture de la transaction : les `save()`
+      // partagent le meme `updated_at` et l'ordre serait indetermine. On date
+      // donc les deux conversations explicitement.
+      await prisma.chat_conversation.update({
+        where: { id: idA1 },
+        data: { updated_at: new Date("2026-01-01T10:00:00Z") },
+      });
+      await prisma.chat_conversation.update({
+        where: { id: idA2 },
+        data: { updated_at: new Date("2026-01-02T10:00:00Z") },
       });
 
       // When

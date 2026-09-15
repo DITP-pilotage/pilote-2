@@ -60,18 +60,22 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
           where: { id: { in: [rapport1.id, rapport2.id] } },
         });
 
-      expect(rapportsApres).toEqual([
-        expect.objectContaining({
-          id: rapport1.id,
-          statut_envoi: "ENVOYE",
-          nombre_tentatives: 1,
-        }),
-        expect.objectContaining({
-          id: rapport2.id,
-          statut_envoi: "ENVOYE",
-          nombre_tentatives: 1,
-        }),
-      ]);
+      // `findMany` sans tri ne garantit pas l'ordre, et les deux rapports
+      // partagent la meme date de creation. On indexe par identifiant plutot
+      // que de dependre de la position dans la liste.
+      const etatParRapport = Object.fromEntries(
+        rapportsApres.map((rapport) => [
+          rapport.id,
+          {
+            statut_envoi: rapport.statut_envoi,
+            nombre_tentatives: rapport.nombre_tentatives,
+          },
+        ]),
+      );
+      expect(etatParRapport).toEqual({
+        [rapport1.id]: { statut_envoi: "ENVOYE", nombre_tentatives: 1 },
+        [rapport2.id]: { statut_envoi: "ENVOYE", nombre_tentatives: 1 },
+      });
 
       for (const rapport of rapportsApres) {
         expect(rapport.date_envoi).not.toBeNull();
@@ -182,10 +186,12 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
           where: { id: rapport2.id },
         });
 
-      expect(rapport1Apres).not.toBeNull();
-      expect(rapport1Apres!.statut_envoi).toBe("ECHEC");
-      expect(rapport2Apres).not.toBeNull();
-      expect(rapport2Apres!.statut_envoi).toBe("ENVOYE");
+      // Les deux rapports partagent la meme date de creation : lequel des deux
+      // part en premier n'est pas garanti, et n'est pas ce que ce test verifie.
+      // Le comportement atteste est qu'un echec n'empeche pas l'autre envoi.
+      expect(
+        [rapport1Apres?.statut_envoi, rapport2Apres?.statut_envoi].sort(),
+      ).toEqual(["ECHEC", "ENVOYE"]);
     }),
   );
 

@@ -28,7 +28,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 }: {
   message: PiloteUIMessage;
   isStreaming: boolean;
-  /** Ce qu'Albert est en train de faire, affiché sous sa signature. */
+  /** Ce que l'assistant est en train de faire, affiché sous sa signature. */
   etat?: EtatAssistant | null;
   /** Rend la question à choix (display_choices) dans le fil. */
   afficherChoix?: boolean;

@@ -5,6 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 // node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
 type CorpsReponseImport = { message: string; erreurs: { message: string }[] };
@@ -143,279 +144,305 @@ function créerMockRequestAvecBodyInvalide() {
 }
 
 describe("ImportCommentaireAPIHandler", () => {
-  it("importe un commentaire valide et le persiste en base", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const body = {
-      commentaires: [
-        {
-          territoire: "NAT-FR",
-          type: "risques_et_freins_a_lever",
-          contenu: "Contenu du commentaire de test",
-        },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("commentaires")
-      .resolve("importCommentaireAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "importe un commentaire valide et le persiste en base",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(200);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Les commentaires ont correctement été importés",
-    );
-
-    const commentairesEnBase = await prisma.commentaire.findMany({
-      where: { chantier_id: chantierId },
-    });
-    expect(commentairesEnBase).toHaveLength(1);
-    expect(commentairesEnBase[0].contenu).toEqual(
-      "Contenu du commentaire de test",
-    );
-    expect(commentairesEnBase[0].type).toEqual("freins_a_lever");
-    expect(commentairesEnBase[0].auteur_creation_id).toEqual(auteurId);
-    expect(commentairesEnBase[0].auteur_modification_id).toEqual(auteurId);
-  });
-
-  it("retourne 400 quand le JSON est invalide", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const { request, response } = créerMockRequestAvecBodyInvalide();
-
-    // When
-    await getContainer("commentaires")
-      .resolve("importCommentaireAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
-
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Le corps de la requête n'est pas un JSON valide",
-    );
-  });
-
-  it("retourne 403 quand le chantier n'est pas autorisé", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-
-    const utilisateurAuthentifié =
-      UtilisateurAuthentifie.creerUtilisateurAuthentifie({
-        id: auteurId,
-        email: "test@test.com",
-        profil: ProfilEnum.EQUIPE_DIR_PROJET,
-        profilAAccèsAuxChantiersBrouillons: false,
-        habilitations: {
-          lecture: { chantiers: [], territoires: [], périmètres: [] },
-          saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
-          saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
-          responsabilite: { chantiers: [], territoires: [], périmètres: [] },
-          gestionUtilisateur: {
-            chantiers: [],
-            territoires: [],
-            périmètres: [],
+      const body = {
+        commentaires: [
+          {
+            territoire: "NAT-FR",
+            type: "risques_et_freins_a_lever",
+            contenu: "Contenu du commentaire de test",
           },
-        },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("commentaires")
+        .resolve("importCommentaireAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(200);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Les commentaires ont correctement été importés",
+      );
+
+      const commentairesEnBase = await prisma.commentaire.findMany({
+        where: { chantier_id: chantierId },
       });
+      expect(commentairesEnBase).toHaveLength(1);
+      expect(commentairesEnBase[0].contenu).toEqual(
+        "Contenu du commentaire de test",
+      );
+      expect(commentairesEnBase[0].type).toEqual("freins_a_lever");
+      expect(commentairesEnBase[0].auteur_creation_id).toEqual(auteurId);
+      expect(commentairesEnBase[0].auteur_modification_id).toEqual(auteurId);
+    }),
+  );
 
-    const body = {
-      commentaires: [
-        {
-          territoire: "NAT-FR",
-          type: "risques_et_freins_a_lever",
-          contenu: "Tentative non autorisée",
-        },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("commentaires")
-      .resolve("importCommentaireAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "retourne 400 quand le JSON est invalide",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(403);
-  });
+      const { request, response } = créerMockRequestAvecBodyInvalide();
 
-  it("retourne 400 quand le type est invalide (validation Zod)", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+      // When
+      await getContainer("commentaires")
+        .resolve("importCommentaireAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    const body = {
-      commentaires: [
-        {
-          territoire: "NAT-FR",
-          type: "type_inexistant",
-          contenu: "Commentaire avec type invalide",
-        },
-      ],
-    };
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Le corps de la requête n'est pas un JSON valide",
+      );
+    }),
+  );
 
-    const { request, response } = créerMockRequestAvecBody(body);
+  it(
+    "retourne 403 quand le chantier n'est pas autorisé",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
 
-    // When
-    await getContainer("commentaires")
-      .resolve("importCommentaireAPIHandler")
-      .handle({
-        request,
-        response,
+      const utilisateurAuthentifié =
+        UtilisateurAuthentifie.creerUtilisateurAuthentifie({
+          id: auteurId,
+          email: "test@test.com",
+          profil: ProfilEnum.EQUIPE_DIR_PROJET,
+          profilAAccèsAuxChantiersBrouillons: false,
+          habilitations: {
+            lecture: { chantiers: [], territoires: [], périmètres: [] },
+            saisieCommentaire: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            saisieIndicateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            responsabilite: { chantiers: [], territoires: [], périmètres: [] },
+            gestionUtilisateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+          },
+        });
+
+      const body = {
+        commentaires: [
+          {
+            territoire: "NAT-FR",
+            type: "risques_et_freins_a_lever",
+            contenu: "Tentative non autorisée",
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("commentaires")
+        .resolve("importCommentaireAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(403);
+    }),
+  );
+
+  it(
+    "retourne 400 quand le type est invalide (validation Zod)",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      const body = {
+        commentaires: [
+          {
+            territoire: "NAT-FR",
+            type: "type_inexistant",
+            contenu: "Commentaire avec type invalide",
+          },
+        ],
+      };
 
-  it("retourne 400 quand un type national est utilisé sur maille régionale", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
+      const { request, response } = créerMockRequestAvecBody(body);
 
-    await prisma.territoire.upsert({
-      where: { code: "REG-84" },
-      update: {},
-      create: {
-        code: "REG-84",
-        nom: "Région 84",
-        nom_affiche: "Région 84",
-        maille: "REG",
-        code_insee: "84",
-        zone_id: "R84",
-      },
-    });
+      // When
+      await getContainer("commentaires")
+        .resolve("importCommentaireAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    await prisma.chantier_territoire.create({
-      data: {
-        id: chantierId,
-        territoire_code: "REG-84",
-        code_insee: "84",
-        zone_id: "R84",
-        maille: "REG",
-      },
-    });
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
 
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-      { territoires: ["NAT-FR", "REG-84"] },
-    );
+  it(
+    "retourne 400 quand un type national est utilisé sur maille régionale",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
 
-    const body = {
-      commentaires: [
-        {
-          territoire: "REG-84",
-          type: "risques_et_freins_a_lever",
-          contenu: "Type national sur maille régionale",
+      await prisma.territoire.upsert({
+        where: { code: "REG-84" },
+        update: {},
+        create: {
+          code: "REG-84",
+          nom: "Région 84",
+          nom_affiche: "Région 84",
+          maille: "REG",
+          code_insee: "84",
+          zone_id: "R84",
         },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("commentaires")
-      .resolve("importCommentaireAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
       });
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs[0].message,
-    ).toContain("n'est pas autorisé pour la maille régionale");
-  });
-
-  it("retourne 400 quand la date est dans le futur", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const futurDate = new Date();
-    futurDate.setFullYear(futurDate.getFullYear() + 1);
-    const futurDateStr = futurDate.toISOString().split("T")[0];
-
-    const body = {
-      commentaires: [
-        {
-          territoire: "NAT-FR",
-          type: "risques_et_freins_a_lever",
-          contenu: "Commentaire avec date future",
-          date_commentaire: futurDateStr,
+      await prisma.chantier_territoire.create({
+        data: {
+          id: chantierId,
+          territoire_code: "REG-84",
+          code_insee: "84",
+          zone_id: "R84",
+          maille: "REG",
         },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("commentaires")
-      .resolve("importCommentaireAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
       });
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
+        chantierId,
+        { territoires: ["NAT-FR", "REG-84"] },
+      );
+
+      const body = {
+        commentaires: [
+          {
+            territoire: "REG-84",
+            type: "risques_et_freins_a_lever",
+            contenu: "Type national sur maille régionale",
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("commentaires")
+        .resolve("importCommentaireAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs[0].message,
+      ).toContain("n'est pas autorisé pour la maille régionale");
+    }),
+  );
+
+  it(
+    "retourne 400 quand la date est dans le futur",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
+        chantierId,
+      );
+
+      const futurDate = new Date();
+      futurDate.setFullYear(futurDate.getFullYear() + 1);
+      const futurDateStr = futurDate.toISOString().split("T")[0];
+
+      const body = {
+        commentaires: [
+          {
+            territoire: "NAT-FR",
+            type: "risques_et_freins_a_lever",
+            contenu: "Commentaire avec date future",
+            date_commentaire: futurDateStr,
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("commentaires")
+        .resolve("importCommentaireAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
 });

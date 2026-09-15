@@ -3,6 +3,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 
 export const BoutonSyntheseTerritoire = ({
   territoireCode,
@@ -18,7 +19,7 @@ export const BoutonSyntheseTerritoire = ({
 
   return (
     <button
-      aria-label="Ouvrir Albert"
+      aria-label={`Ouvrir l'${NOM_ASSISTANT}`}
       className="flex gap-2 rounded-lg px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
       onClick={() =>
         open({

@@ -7,6 +7,7 @@ import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateu
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { prisma } from "@/server/db/prisma";
 import { getContainer } from "@/server/dependances";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 async function creeUnUtilisateurEnBase() {
   const auteurId = randomUUID();
@@ -38,225 +39,234 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
   });
 
   describe("#sauvegarder", () => {
-    it("doit sauvegarder les données", async () => {
-      // Given
-      const auteurId = await creeUnUtilisateurEnBase();
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-        .avecEmail("ditp.admin@example.com")
-        .avecProfil(ProfilEnum.DITP_ADMIN)
-        .avecHabilitationsLecture([], [], [])
-        .build();
-      await getContainer("authentification")
-        .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur, auteurId);
+    it(
+      "doit sauvegarder les données",
+      createIntegrationTest(async () => {
+        // Given
+        const auteurId = await creeUnUtilisateurEnBase();
+        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
+          .avecEmail("ditp.admin@example.com")
+          .avecProfil(ProfilEnum.DITP_ADMIN)
+          .avecHabilitationsLecture([], [], [])
+          .build();
+        await getContainer("authentification")
+          .resolve("utilisateurRepository")
+          .créerOuMettreÀJour(utilisateur, auteurId);
 
-      const rapport = new DetailValidationFichierBuilder()
-        .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-        .avecUtilisateurEmail("ditp.admin@example.com")
-        .build();
-      await prismaRapportRepository.sauvegarder(rapport);
+        const rapport = new DetailValidationFichierBuilder()
+          .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .build();
+        await prismaRapportRepository.sauvegarder(rapport);
 
-      const listeMesuresIndicateurTemporaire = [
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("b2450ce3-8006-4550-8132-e5aab19c0caf")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecIndicId("IND-001")
-          .avecMetricDate("30/12/2022")
-          .avecMetricType("vi")
-          .avecMetricValue("12")
-          .avecZoneId("D001")
-          .build(),
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("f7632d30-5b49-465e-8774-063f9f67f83b")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecIndicId("IND-002")
-          .avecMetricDate("31/12/2022")
-          .avecMetricType("vc")
-          .avecMetricValue("15")
-          .avecZoneId("D002")
-          .build(),
-      ];
+        const listeMesuresIndicateurTemporaire = [
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("b2450ce3-8006-4550-8132-e5aab19c0caf")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecIndicId("IND-001")
+            .avecMetricDate("30/12/2022")
+            .avecMetricType("vi")
+            .avecMetricValue("12")
+            .avecZoneId("D001")
+            .build(),
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("f7632d30-5b49-465e-8774-063f9f67f83b")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecIndicId("IND-002")
+            .avecMetricDate("31/12/2022")
+            .avecMetricType("vc")
+            .avecMetricValue("15")
+            .avecZoneId("D002")
+            .build(),
+        ];
 
-      // When
-      await prismaMesureIndicateurTemporaireRepository.sauvegarder(
-        listeMesuresIndicateurTemporaire,
-      );
+        // When
+        await prismaMesureIndicateurTemporaireRepository.sauvegarder(
+          listeMesuresIndicateurTemporaire,
+        );
 
-      // Then
-      const resultListeIndicateursData =
-        await prisma.mesure_indicateur_temporaire.findMany();
+        // Then
+        const resultListeIndicateursData =
+          await prisma.mesure_indicateur_temporaire.findMany();
 
-      expect(resultListeIndicateursData).toHaveLength(2);
+        expect(resultListeIndicateursData).toHaveLength(2);
 
-      expect(resultListeIndicateursData[0].id).toEqual(
-        "b2450ce3-8006-4550-8132-e5aab19c0caf",
-      );
-      expect(resultListeIndicateursData[0].rapport_id).toEqual(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
-      expect(resultListeIndicateursData[0].indic_id).toEqual("IND-001");
-      expect(resultListeIndicateursData[0].metric_date).toEqual("30/12/2022");
-      expect(resultListeIndicateursData[0].metric_type).toEqual("vi");
-      expect(resultListeIndicateursData[0].metric_value).toEqual("12");
-      expect(resultListeIndicateursData[0].zone_id).toEqual("D001");
+        expect(resultListeIndicateursData[0].id).toEqual(
+          "b2450ce3-8006-4550-8132-e5aab19c0caf",
+        );
+        expect(resultListeIndicateursData[0].rapport_id).toEqual(
+          "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+        );
+        expect(resultListeIndicateursData[0].indic_id).toEqual("IND-001");
+        expect(resultListeIndicateursData[0].metric_date).toEqual("30/12/2022");
+        expect(resultListeIndicateursData[0].metric_type).toEqual("vi");
+        expect(resultListeIndicateursData[0].metric_value).toEqual("12");
+        expect(resultListeIndicateursData[0].zone_id).toEqual("D001");
 
-      expect(resultListeIndicateursData[1].id).toEqual(
-        "f7632d30-5b49-465e-8774-063f9f67f83b",
-      );
-      expect(resultListeIndicateursData[1].rapport_id).toEqual(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
-      expect(resultListeIndicateursData[1].indic_id).toEqual("IND-002");
-      expect(resultListeIndicateursData[1].metric_date).toEqual("31/12/2022");
-      expect(resultListeIndicateursData[1].metric_type).toEqual("vc");
-      expect(resultListeIndicateursData[1].metric_value).toEqual("15");
-      expect(resultListeIndicateursData[1].zone_id).toEqual("D002");
-    });
+        expect(resultListeIndicateursData[1].id).toEqual(
+          "f7632d30-5b49-465e-8774-063f9f67f83b",
+        );
+        expect(resultListeIndicateursData[1].rapport_id).toEqual(
+          "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+        );
+        expect(resultListeIndicateursData[1].indic_id).toEqual("IND-002");
+        expect(resultListeIndicateursData[1].metric_date).toEqual("31/12/2022");
+        expect(resultListeIndicateursData[1].metric_type).toEqual("vc");
+        expect(resultListeIndicateursData[1].metric_value).toEqual("15");
+        expect(resultListeIndicateursData[1].zone_id).toEqual("D002");
+      }),
+    );
   });
 
   describe("recupererToutParRapportId", () => {
-    it("doit récupérer les mesures indicateurs temporaire liés au rapport id", async () => {
-      // Given
-      const auteurId = await creeUnUtilisateurEnBase();
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-        .avecEmail("ditp.admin@example.com")
-        .avecProfil(ProfilEnum.DITP_ADMIN)
-        .avecHabilitationsLecture([], [], [])
-        .build();
-      await getContainer("authentification")
-        .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur, auteurId);
+    it(
+      "doit récupérer les mesures indicateurs temporaire liés au rapport id",
+      createIntegrationTest(async () => {
+        // Given
+        const auteurId = await creeUnUtilisateurEnBase();
+        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
+          .avecEmail("ditp.admin@example.com")
+          .avecProfil(ProfilEnum.DITP_ADMIN)
+          .avecHabilitationsLecture([], [], [])
+          .build();
+        await getContainer("authentification")
+          .resolve("utilisateurRepository")
+          .créerOuMettreÀJour(utilisateur, auteurId);
 
-      const rapport = new DetailValidationFichierBuilder()
-        .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-        .avecUtilisateurEmail("ditp.admin@example.com")
-        .build();
-      const rapport2 = new DetailValidationFichierBuilder()
-        .avecId("1402c583-e04f-4236-a59f-39b1e8890bc1")
-        .avecUtilisateurEmail("ditp.admin@example.com")
-        .build();
-      await prismaRapportRepository.sauvegarder(rapport);
-      await prismaRapportRepository.sauvegarder(rapport2);
+        const rapport = new DetailValidationFichierBuilder()
+          .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .build();
+        const rapport2 = new DetailValidationFichierBuilder()
+          .avecId("1402c583-e04f-4236-a59f-39b1e8890bc1")
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .build();
+        await prismaRapportRepository.sauvegarder(rapport);
+        await prismaRapportRepository.sauvegarder(rapport2);
 
-      const listeMesuresIndicateurTemporaire = [
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("c3adee3f-3ec8-4a74-9787-6eaa757028ac")
-          .avecIndicId("IND-001")
-          .avecMetricDate("30/12/2022")
-          .avecMetricType("vi")
-          .avecMetricValue("12")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecZoneId("D001")
-          .build(),
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("88dc64cf-6a2a-4789-b8d7-ad98f72bd236")
-          .avecIndicId("IND-002")
-          .avecMetricDate("31/12/2022")
-          .avecMetricType("vc")
-          .avecMetricValue("15")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecZoneId("D002")
-          .build(),
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("5ede3f95-e0ef-4b8f-8100-3f382ba3f47a")
-          .avecIndicId("IND-003")
-          .avecMetricDate("31/12/2022")
-          .avecMetricType("vc")
-          .avecMetricValue("15")
-          .avecRapportId("1402c583-e04f-4236-a59f-39b1e8890bc1")
-          .avecZoneId("D002")
-          .build(),
-      ];
-      await prismaMesureIndicateurTemporaireRepository.sauvegarder(
-        listeMesuresIndicateurTemporaire,
-      );
-      // When
-      const resultListeMesuresIndicateurTemporaire =
-        await prismaMesureIndicateurTemporaireRepository.recupererToutParRapportId(
+        const listeMesuresIndicateurTemporaire = [
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("c3adee3f-3ec8-4a74-9787-6eaa757028ac")
+            .avecIndicId("IND-001")
+            .avecMetricDate("30/12/2022")
+            .avecMetricType("vi")
+            .avecMetricValue("12")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecZoneId("D001")
+            .build(),
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("88dc64cf-6a2a-4789-b8d7-ad98f72bd236")
+            .avecIndicId("IND-002")
+            .avecMetricDate("31/12/2022")
+            .avecMetricType("vc")
+            .avecMetricValue("15")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecZoneId("D002")
+            .build(),
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("5ede3f95-e0ef-4b8f-8100-3f382ba3f47a")
+            .avecIndicId("IND-003")
+            .avecMetricDate("31/12/2022")
+            .avecMetricType("vc")
+            .avecMetricValue("15")
+            .avecRapportId("1402c583-e04f-4236-a59f-39b1e8890bc1")
+            .avecZoneId("D002")
+            .build(),
+        ];
+        await prismaMesureIndicateurTemporaireRepository.sauvegarder(
+          listeMesuresIndicateurTemporaire,
+        );
+        // When
+        const resultListeMesuresIndicateurTemporaire =
+          await prismaMesureIndicateurTemporaireRepository.recupererToutParRapportId(
+            "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+          );
+
+        // Then
+        expect(resultListeMesuresIndicateurTemporaire).toHaveLength(2);
+        expect(resultListeMesuresIndicateurTemporaire[0].rapportId).toEqual(
           "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
         );
-
-      // Then
-      expect(resultListeMesuresIndicateurTemporaire).toHaveLength(2);
-      expect(resultListeMesuresIndicateurTemporaire[0].rapportId).toEqual(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
-      expect(resultListeMesuresIndicateurTemporaire[1].rapportId).toEqual(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
-    });
+        expect(resultListeMesuresIndicateurTemporaire[1].rapportId).toEqual(
+          "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+        );
+      }),
+    );
   });
 
   describe("supprimerToutParRapportId", () => {
-    it("doit supprimer les mesures indicateurs temporaires liés à un rapport", async () => {
-      // Given
-      const auteurId = await creeUnUtilisateurEnBase();
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-        .avecEmail("ditp.admin@example.com")
-        .avecProfil(ProfilEnum.DITP_ADMIN)
-        .avecHabilitationsLecture([], [], [])
-        .build();
-      await getContainer("authentification")
-        .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur, auteurId);
+    it(
+      "doit supprimer les mesures indicateurs temporaires liés à un rapport",
+      createIntegrationTest(async () => {
+        // Given
+        const auteurId = await creeUnUtilisateurEnBase();
+        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
+          .avecEmail("ditp.admin@example.com")
+          .avecProfil(ProfilEnum.DITP_ADMIN)
+          .avecHabilitationsLecture([], [], [])
+          .build();
+        await getContainer("authentification")
+          .resolve("utilisateurRepository")
+          .créerOuMettreÀJour(utilisateur, auteurId);
 
-      const rapport = new DetailValidationFichierBuilder()
-        .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-        .avecUtilisateurEmail("ditp.admin@example.com")
-        .build();
-      const rapport2 = new DetailValidationFichierBuilder()
-        .avecId("1402c583-e04f-4236-a59f-39b1e8890bc1")
-        .avecUtilisateurEmail("ditp.admin@example.com")
-        .build();
-      await prismaRapportRepository.sauvegarder(rapport);
-      await prismaRapportRepository.sauvegarder(rapport2);
+        const rapport = new DetailValidationFichierBuilder()
+          .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .build();
+        const rapport2 = new DetailValidationFichierBuilder()
+          .avecId("1402c583-e04f-4236-a59f-39b1e8890bc1")
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .build();
+        await prismaRapportRepository.sauvegarder(rapport);
+        await prismaRapportRepository.sauvegarder(rapport2);
 
-      const listeMesuresIndicateurTemporaire = [
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("b2450ce3-8006-4550-8132-e5aab19c0caf")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecIndicId("IND-001")
-          .avecMetricDate("30/12/2022")
-          .avecMetricType("vi")
-          .avecMetricValue("12")
-          .avecZoneId("D001")
-          .build(),
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("f7632d30-5b49-465e-8774-063f9f67f83b")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecIndicId("IND-002")
-          .avecMetricDate("31/12/2022")
-          .avecMetricType("vc")
-          .avecMetricValue("15")
-          .avecZoneId("D002")
-          .build(),
-        new MesureIndicateurTemporaireBuilder()
-          .avecId("5ede3f95-e0ef-4b8f-8100-3f382ba3f47a")
-          .avecIndicId("IND-003")
-          .avecMetricDate("31/12/2022")
-          .avecMetricType("vc")
-          .avecMetricValue("15")
-          .avecRapportId("1402c583-e04f-4236-a59f-39b1e8890bc1")
-          .avecZoneId("D002")
-          .build(),
-      ];
-      await prismaMesureIndicateurTemporaireRepository.sauvegarder(
-        listeMesuresIndicateurTemporaire,
-      );
+        const listeMesuresIndicateurTemporaire = [
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("b2450ce3-8006-4550-8132-e5aab19c0caf")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecIndicId("IND-001")
+            .avecMetricDate("30/12/2022")
+            .avecMetricType("vi")
+            .avecMetricValue("12")
+            .avecZoneId("D001")
+            .build(),
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("f7632d30-5b49-465e-8774-063f9f67f83b")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecIndicId("IND-002")
+            .avecMetricDate("31/12/2022")
+            .avecMetricType("vc")
+            .avecMetricValue("15")
+            .avecZoneId("D002")
+            .build(),
+          new MesureIndicateurTemporaireBuilder()
+            .avecId("5ede3f95-e0ef-4b8f-8100-3f382ba3f47a")
+            .avecIndicId("IND-003")
+            .avecMetricDate("31/12/2022")
+            .avecMetricType("vc")
+            .avecMetricValue("15")
+            .avecRapportId("1402c583-e04f-4236-a59f-39b1e8890bc1")
+            .avecZoneId("D002")
+            .build(),
+        ];
+        await prismaMesureIndicateurTemporaireRepository.sauvegarder(
+          listeMesuresIndicateurTemporaire,
+        );
 
-      // When
-      await prismaMesureIndicateurTemporaireRepository.supprimerToutParRapportId(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
+        // When
+        await prismaMesureIndicateurTemporaireRepository.supprimerToutParRapportId(
+          "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+        );
 
-      // Then
-      const resultListeIndicateursData =
-        await prisma.mesure_indicateur_temporaire.findMany();
+        // Then
+        const resultListeIndicateursData =
+          await prisma.mesure_indicateur_temporaire.findMany();
 
-      expect(resultListeIndicateursData).toHaveLength(1);
-      expect(resultListeIndicateursData[0].rapport_id).not.toEqual(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
-    });
+        expect(resultListeIndicateursData).toHaveLength(1);
+        expect(resultListeIndicateursData[0].rapport_id).not.toEqual(
+          "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+        );
+      }),
+    );
   });
 });

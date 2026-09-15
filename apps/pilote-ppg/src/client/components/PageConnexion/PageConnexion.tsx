@@ -42,13 +42,13 @@ export const PageConnexion = () => {
       <div className="fr-container fr-py-10w">
         <div className="mx-auto w-full max-w-[38rem]">
           <div className="border-dsfr-grey-925 border bg-white p-6 md:p-8">
-            <Titre baliseHtml="h1" className="fr-h4 fr-mb-1w">
+            <Titre baliseHtml="h1" className="fr-h4 fr-mb-1w text-center">
               Connexion à PILOTE
             </Titre>
             <p className="text-dsfr-mention-grey fr-mb-4w fr-text--sm">
               {ffProConnect
                 ? "Choisissez votre mode de connexion."
-                : "Connectez-vous avec vos identifiants PILOTE."}
+                : "ProConnect arrive bientôt sur PILOTE. Vous pourrez alors accéder à votre compte avec ProConnect ou continuer d'utiliser vos identifiants habituels."}
             </p>
 
             {message ? (
@@ -61,25 +61,25 @@ export const PageConnexion = () => {
               </div>
             ) : null}
 
-            {ffProConnect ? (
-              <>
-                <BoutonProConnect
-                  onClick={() => signIn("proconnect", { callbackUrl })}
-                />
-                <div className="fr-my-4w flex items-center gap-4">
-                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
-                  <span className="text-dsfr-mention-grey text-sm">ou</span>
-                  <span className="bg-dsfr-contrast-grey h-px flex-1" />
-                </div>
-              </>
-            ) : null}
+            <BoutonProConnect
+              onClick={() => signIn("proconnect", { callbackUrl })}
+            />
+
+            <div className="fr-my-4w flex items-center gap-4">
+              <span className="bg-dsfr-contrast-grey h-px flex-1" />
+              <span className="text-dsfr-mention-grey text-sm">ou</span>
+              <span className="bg-dsfr-contrast-grey h-px flex-1" />
+            </div>
 
             <button
               className="fr-btn fr-btn--secondary w-full justify-center"
               onClick={() => signIn("keycloak", { callbackUrl })}
               type="button"
             >
-              Se connecter avec une adresse électronique et un mot de passe
+              <span className="flex flex-col text-center">
+                <span>Se connecter avec mes identifiants PILOTE</span>
+                <span>(adresse électronique et mot de passe)</span>
+              </span>
             </button>
 
             <p className="text-dsfr-mention-grey fr-mt-4w fr-mb-0 fr-text--xs">

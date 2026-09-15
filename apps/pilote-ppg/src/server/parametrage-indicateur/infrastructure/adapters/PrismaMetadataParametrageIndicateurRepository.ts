@@ -4,6 +4,7 @@
 
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
+import { executerEnLot } from "@/server/db/executerEnLot";
 import Logger from "@/server/infrastructure/Logger";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
@@ -363,7 +364,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                              couverture_temporelle               = ${makeStrSafer(inputs.couvertureTemporelle)}
                                          WHERE indic_id = '${inputs.indicId}'`;
 
-    await prisma.$transaction([
+    await executerEnLot([
       prisma.$queryRaw`${Prisma.raw(queryIndicateur)}`,
       prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
       prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
@@ -522,7 +523,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(inputs.maillePilotage)},
                                                  ${inputs.cibleAttendue},
                                                  ${makeStrSafer(inputs.couvertureTemporelle)})`;
-    await prisma.$transaction([
+    await executerEnLot([
       prisma.$queryRaw`${Prisma.raw(queryIndicateur)}`,
       prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
       prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
@@ -770,6 +771,6 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
         prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaireFn(indicateur))}`,
       ];
     });
-    await prisma.$transaction(listePromise);
+    await executerEnLot(listePromise);
   }
 }

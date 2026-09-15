@@ -1,55 +1,20 @@
-import logger from "@/server/infrastructure/Logger";
 import { prisma } from "@/server/db/prisma";
+
+/**
+ * L'isolation entre tests d'integration est assuree par `createIntegrationTest`,
+ * qui joue chaque test dans une transaction annulee a la fin. Rien n'est commit,
+ * il n'y a donc rien a nettoyer entre deux tests.
+ *
+ * Ce fichier ne garde que ce qui doit vivre en dehors des transactions : les
+ * donnees de reference et la fermeture du pool.
+ */
+
+beforeAll(async () => {
+  await prisma.$executeRawUnsafe(
+    "INSERT INTO scope VALUES ('responsabilite', 'Responsabilité') ON CONFLICT DO NOTHING;",
+  );
+});
 
 afterAll(async () => {
   await prisma.$disconnect();
-});
-
-beforeEach(async () => {
-  try {
-    await prisma.$executeRawUnsafe(
-      "INSERT INTO scope VALUES ('responsabilite', 'Responsabilité') ON CONFLICT DO NOTHING;",
-    );
-  } catch {
-    logger.info(
-      { categorie: "systeme", source: "integrationTestSetup" },
-      "Le scope responsabilité existe déjà",
-    );
-  }
-
-  const tablenames = await prisma.$queryRaw<
-    Array<{ tablename: string }>
-  >`SELECT tablename 
-    FROM pg_tables
-    WHERE schemaname = 'public'`;
-  const tablenamesRawData = await prisma.$queryRaw<
-    Array<{ tablename: string }>
-  >`SELECT tablename
-    FROM pg_tables
-    WHERE schemaname = 'raw_data'`;
-
-  const tables = tablenames
-    .map(({ tablename }) => tablename)
-    .filter(
-      (name) =>
-        ![
-          "_prisma_migrations",
-          "territoire",
-          "profil",
-          "profil_habilitation",
-          "habilitation_scope",
-          "scope",
-        ].includes(name),
-    )
-    .map((name) => `"public"."${name}"`)
-    .join(", ");
-
-  const tablesRawData = tablenamesRawData
-    .map(({ tablename }) => tablename)
-    .map((name) => `"raw_data"."${name}"`)
-    .join(", ");
-
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tablesRawData} CASCADE;`);
-  await prisma.mesure_indicateur.deleteMany();
 });

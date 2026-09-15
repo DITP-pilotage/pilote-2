@@ -1,5 +1,6 @@
 import { Page } from "@playwright/test";
 import { PageAccueilNonConnecte } from "../pages/page-accueil-non-connecte";
+import { PageConnexion } from "../pages/page-connexion";
 import { PageLogin } from "../pages/page-login";
 import { PageAccueil } from "../pages/page-accueil";
 import { HeaderComponent } from "../components/header.component";
@@ -24,11 +25,8 @@ export class AppActions {
 
     // L'écran de choix du mode de connexion s'intercale désormais entre le
     // point d'entrée de l'en-tête et le formulaire.
-    await this.page
-      .getByRole("button", {
-        name: "Se connecter avec une adresse électronique et un mot de passe",
-      })
-      .click();
+    const pageConnexion = new PageConnexion(this.page);
+    await pageConnexion.choisirConnexionParIdentifiants();
 
     const pageLogin = new PageLogin(this.page, this.e2eContext);
     await pageLogin.fillCredentials(username, password);
