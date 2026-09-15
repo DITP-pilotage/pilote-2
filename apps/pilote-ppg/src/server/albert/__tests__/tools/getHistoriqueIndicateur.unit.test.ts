@@ -30,7 +30,8 @@ const creerEvenement = (
       idAuteurModification: "user1",
       correlationId: "corr1",
       ordre: overrides.ordre ?? 1,
-      dateCreation: overrides.dateCreation ?? new Date("2024-01-15T12:00:00.000Z"),
+      dateCreation:
+        overrides.dateCreation ?? new Date("2024-01-15T12:00:00.000Z"),
     },
   );
 

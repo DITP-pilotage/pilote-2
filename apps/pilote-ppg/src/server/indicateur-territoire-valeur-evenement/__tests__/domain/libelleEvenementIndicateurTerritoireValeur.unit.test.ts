@@ -2,7 +2,9 @@ import { libelleEvenementIndicateurTerritoireValeur } from "@/server/indicateur-
 
 describe("libelleEvenementIndicateurTerritoireValeur", () => {
   it("VALEUR_CREEE : pas de description, résultat avec la valeur", () => {
-    expect(libelleEvenementIndicateurTerritoireValeur("VALEUR_CREEE", 42)).toEqual({
+    expect(
+      libelleEvenementIndicateurTerritoireValeur("VALEUR_CREEE", 42),
+    ).toEqual({
       description: null,
       resultat: "nouvelle valeur affichée dans PILOTE : 42",
     });

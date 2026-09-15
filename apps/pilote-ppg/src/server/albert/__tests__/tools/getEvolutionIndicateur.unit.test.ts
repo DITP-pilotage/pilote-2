@@ -85,6 +85,8 @@ describe("createGetEvolutionIndicateurTool execute", () => {
       introuvable: true,
       _output_instructions: expect.any(String),
     });
-    expect(getEvolutionIndicateurTerritoireQuery.execute).not.toHaveBeenCalled();
+    expect(
+      getEvolutionIndicateurTerritoireQuery.execute,
+    ).not.toHaveBeenCalled();
   });
 });

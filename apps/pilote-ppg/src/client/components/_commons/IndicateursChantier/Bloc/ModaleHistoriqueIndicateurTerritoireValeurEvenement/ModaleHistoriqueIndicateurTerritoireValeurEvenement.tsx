@@ -7,9 +7,9 @@ import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-ev
 import { toISODateTime } from "@/server/app/domain/Dates";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { Modale } from "@/components/shared/Modale";
-import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 import { libelleEvenementIndicateurTerritoireValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/libelleEvenementIndicateurTerritoireValeur";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
   children,
@@ -27,10 +27,11 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
     typeEvenement: string;
     valeur?: number | null;
   }) => {
-    const { description, resultat } = libelleEvenementIndicateurTerritoireValeur(
-      typeEvenement as TypeEvenement,
-      valeur ?? null,
-    );
+    const { description, resultat } =
+      libelleEvenementIndicateurTerritoireValeur(
+        typeEvenement as TypeEvenement,
+        valeur ?? null,
+      );
 
     return (
       <div>

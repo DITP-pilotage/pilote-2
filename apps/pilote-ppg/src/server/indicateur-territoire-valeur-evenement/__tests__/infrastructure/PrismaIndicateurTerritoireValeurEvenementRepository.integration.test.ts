@@ -2239,13 +2239,14 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         });
         const utilisateur = await fixtures.utilisateur();
 
-        const evenementCree = await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "DEPT-75",
-          id_auteur_modification: utilisateur.id,
-          type_evenement: "VALEUR_CREEE",
-          ordre: 1,
-        });
+        const evenementCree =
+          await fixtures.indicateurTerritoireValeurEvenement({
+            indic_id: indicateur.id,
+            territoire_code: "DEPT-75",
+            id_auteur_modification: utilisateur.id,
+            type_evenement: "VALEUR_CREEE",
+            ordre: 1,
+          });
         const evenementProposition =
           await fixtures.indicateurTerritoireValeurEvenement({
             indic_id: indicateur.id,
