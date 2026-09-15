@@ -296,41 +296,6 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository implements Indi
     });
   }
 
-  async compterHistoriqueParIndicIdEtTerritoireCode(args: {
-    indicId: string;
-    territoireCode: string;
-    dateDebut?: Date;
-    dateFin?: Date;
-    typesEvenement?: readonly TypeEvenement[];
-  }): Promise<number> {
-    return this.prisma
-      .getInstance()
-      .indicateur_territoire_valeur_evenement.count({
-        where: this.construireFiltresHistorique(args),
-      });
-  }
-
-  async recupererBornesDatesHistorique(args: {
-    indicId: string;
-    territoireCode: string;
-    dateDebut?: Date;
-    dateFin?: Date;
-    typesEvenement?: readonly TypeEvenement[];
-  }): Promise<{ dateMin: Date | null; dateMax: Date | null }> {
-    const resultat = await this.prisma
-      .getInstance()
-      .indicateur_territoire_valeur_evenement.aggregate({
-        where: this.construireFiltresHistorique(args),
-        _min: { date_valeur: true },
-        _max: { date_valeur: true },
-      });
-
-    return {
-      dateMin: resultat._min.date_valeur,
-      dateMax: resultat._max.date_valeur,
-    };
-  }
-
   async enregistrerTous(
     evenements: IndicateurTerritoireValeurEvenement[],
   ): Promise<void> {

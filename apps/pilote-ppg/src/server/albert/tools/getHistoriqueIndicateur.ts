@@ -1,17 +1,14 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
+import {
+  GetHistoriqueIndicateurTerritoireQuery,
+  type GroupeHistoriqueIndicateur,
+} from "@/server/chantiers/query/GetHistoriqueIndicateurTerritoireQuery";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { filtrerEvenementsSupersedes } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsSupersedes";
-import { libelleEvenementIndicateurTerritoireValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/libelleEvenementIndicateurTerritoireValeur";
 import { PROPOSITION_TYPES_EVENEMENT } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
-import { toISODate, toISODateTime } from "@/server/app/domain/Dates";
-import { formaterDate } from "@/client/utils/date/date";
 
 const SEUIL_BESOIN_PRECISION = 40;
-const PLAFOND_EVENEMENTS = 100;
 
 export const getHistoriqueIndicateurInputSchema = z.object({
   indicateur_id: z
@@ -37,13 +34,6 @@ export const getHistoriqueIndicateurInputSchema = z.object({
     ),
 });
 
-type EvenementLisible = {
-  ordre: number;
-  date_creation: string;
-  libelle: string;
-  type_valeur: string;
-};
-
 export type GetHistoriqueIndicateurOutput = {
   indicateur: { id: string; nom: string; unite_mesure: string | null } | null;
   territoire_code?: string;
@@ -52,7 +42,7 @@ export type GetHistoriqueIndicateurOutput = {
   nombre_evenements?: number;
   date_evenement_la_plus_ancienne?: string;
   date_evenement_la_plus_recente?: string;
-  groupes?: { date_valeur: string; evenements: EvenementLisible[] }[];
+  groupes?: GroupeHistoriqueIndicateur[];
   introuvable?: true;
   _output_instructions: string;
 };
@@ -72,25 +62,12 @@ function construireInstructionsBesoinPrecision(
   return `Il y a ${nombreEvenements} événements pour cet indicateur sur ce territoire, trop pour être tous présentés d'un coup. Propose à l'utilisateur une période en t'appuyant sur les bornes fournies (date_evenement_la_plus_ancienne / date_evenement_la_plus_recente, au format ISO) — dans ta réponse à l'utilisateur, exprime cette période au format MM/AAAA, mais réutilise les bornes ISO telles quelles comme date_debut / date_fin quand tu rappelles cet outil.`;
 }
 
-function construireLibelleLisible(
-  evenement: IndicateurTerritoireValeurEvenement,
-): string {
-  const { description, resultat } = libelleEvenementIndicateurTerritoireValeur(
-    evenement.typeEvenement,
-    evenement.valeur ?? null,
-  );
-
-  return [description, resultat ? `→ ${resultat}` : null]
-    .filter((partie): partie is string => Boolean(partie))
-    .join(" ");
-}
-
 export function createGetHistoriqueIndicateurTool({
   getIndicateurContexteQuery,
-  indicateurTerritoireValeurEvenementRepository,
+  getHistoriqueIndicateurTerritoireQuery,
 }: {
   getIndicateurContexteQuery: GetIndicateurContexteQuery;
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  getHistoriqueIndicateurTerritoireQuery: GetHistoriqueIndicateurTerritoireQuery;
 }) {
   return () => {
     return tool({
@@ -152,85 +129,27 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
           typesEvenement,
         };
 
-        const nombreEvenements =
-          await indicateurTerritoireValeurEvenementRepository.compterHistoriqueParIndicIdEtTerritoireCode(
-            filtres,
-          );
+        const resultat =
+          await getHistoriqueIndicateurTerritoireQuery.execute(filtres);
 
-        if (
-          nombreEvenements > SEUIL_BESOIN_PRECISION &&
-          !dateDebut &&
-          !dateFin
-        ) {
-          const { dateMin, dateMax } =
-            await indicateurTerritoireValeurEvenementRepository.recupererBornesDatesHistorique(
-              filtres,
-            );
-
+        if (resultat.nombreEvenements > SEUIL_BESOIN_PRECISION) {
           return {
             indicateur: indicateurResume,
             territoire_code: input.territoire_code,
             besoin_precision: true,
-            nombre_evenements: nombreEvenements,
-            date_evenement_la_plus_ancienne: dateMin
-              ? toISODate(dateMin)
-              : undefined,
-            date_evenement_la_plus_recente: dateMax
-              ? toISODate(dateMax)
-              : undefined,
-            _output_instructions:
-              construireInstructionsBesoinPrecision(nombreEvenements),
+            nombre_evenements: resultat.nombreEvenements,
+            date_evenement_la_plus_ancienne: resultat.dateMin ?? undefined,
+            date_evenement_la_plus_recente: resultat.dateMax ?? undefined,
+            _output_instructions: construireInstructionsBesoinPrecision(
+              resultat.nombreEvenements,
+            ),
           };
         }
-
-        const evenements = (
-          await indicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode(
-            filtres,
-          )
-        ).slice(0, PLAFOND_EVENEMENTS);
-
-        const evenementsParDate = new Map<
-          string,
-          IndicateurTerritoireValeurEvenement[]
-        >();
-        evenements.forEach((evenement) => {
-          const dateKey = toISODate(evenement.dateValeur);
-          const groupe = evenementsParDate.get(dateKey) ?? [];
-          groupe.push(evenement);
-          evenementsParDate.set(dateKey, groupe);
-        });
-
-        const groupes = Array.from(evenementsParDate.entries())
-          .sort(([dateA], [dateB]) => (dateA < dateB ? 1 : -1))
-          .map(([dateValeur, evenementsDuJour]) => {
-            const evenementsDuJourTriesDesc = [...evenementsDuJour].sort(
-              (a, b) => b.ordre - a.ordre,
-            );
-            const evenementsRestants = filtrerEvenementsSupersedes(
-              evenementsDuJourTriesDesc,
-            ).sort((a, b) => a.ordre - b.ordre);
-
-            return {
-              date_valeur: formaterDate(dateValeur, "MM/YYYY") ?? dateValeur,
-              evenements: evenementsRestants.map(
-                (evenement): EvenementLisible => ({
-                  ordre: evenement.ordre,
-                  date_creation:
-                    formaterDate(
-                      toISODateTime(evenement.dateCreation),
-                      "DD/MM/YYYY HH[:]mm",
-                    ) ?? toISODateTime(evenement.dateCreation),
-                  libelle: construireLibelleLisible(evenement),
-                  type_valeur: evenement.typeValeur,
-                }),
-              ),
-            };
-          });
 
         return {
           indicateur: indicateurResume,
           territoire_code: input.territoire_code,
-          groupes,
+          groupes: resultat.groupes,
           _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },

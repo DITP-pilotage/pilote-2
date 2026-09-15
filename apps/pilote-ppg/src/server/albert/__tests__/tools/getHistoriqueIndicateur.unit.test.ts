@@ -5,35 +5,7 @@ import {
   type GetHistoriqueIndicateurOutput,
 } from "@/server/albert/tools/getHistoriqueIndicateur";
 import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
-import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
-
-const creerEvenement = (
-  overrides: Partial<{
-    typeEvenement: TypeEvenement;
-    valeur: number | null;
-    ordre: number;
-    dateValeur: Date;
-    dateCreation: Date;
-  }> = {},
-): IndicateurTerritoireValeurEvenement =>
-  IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-    {
-      indicId: "IND-001",
-      territoireCode: "DEPT-75",
-      typeEvenement: overrides.typeEvenement ?? "VALEUR_CREEE",
-      typeValeur: "VALEUR_AVANCEMENT",
-      dateValeur: overrides.dateValeur ?? new Date("2024-01-01"),
-      valeur: overrides.valeur ?? 10,
-      donneesComplementaires: undefined,
-      idAuteurModification: "user1",
-      correlationId: "corr1",
-      ordre: overrides.ordre ?? 1,
-      dateCreation:
-        overrides.dateCreation ?? new Date("2024-01-15T12:00:00.000Z"),
-    },
-  );
+import type { GetHistoriqueIndicateurTerritoireQuery } from "@/server/chantiers/query/GetHistoriqueIndicateurTerritoireQuery";
 
 const contexteParDefaut = {
   id: "IND-001",
@@ -93,11 +65,11 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => null,
     });
-    const indicateurTerritoireValeurEvenementRepository =
-      mock<IndicateurTerritoireValeurEvenementRepository>();
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>();
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
-      indicateurTerritoireValeurEvenementRepository,
+      getHistoriqueIndicateurTerritoireQuery,
     })();
 
     // When
@@ -118,17 +90,17 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     ["NAT-FR", "NAT", { mailleNatAgregee: true, mailleRegAgregee: false }],
     ["REG-11", "REG", { mailleNatAgregee: false, mailleRegAgregee: true }],
   ])(
-    "bloque l'historique et n'appelle pas le repository quand l'indicateur est agrégé à la maille %s",
+    "bloque l'historique et n'appelle pas la query quand l'indicateur est agrégé à la maille %s",
     async (territoireCode, _maille, drapeaux) => {
       // Given
       const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
         execute: async () => ({ ...contexteParDefaut, ...drapeaux }),
       });
-      const indicateurTerritoireValeurEvenementRepository =
-        mock<IndicateurTerritoireValeurEvenementRepository>();
+      const getHistoriqueIndicateurTerritoireQuery =
+        mock<GetHistoriqueIndicateurTerritoireQuery>();
       const tool = createGetHistoriqueIndicateurTool({
         getIndicateurContexteQuery,
-        indicateurTerritoireValeurEvenementRepository,
+        getHistoriqueIndicateurTerritoireQuery,
       })();
 
       // When
@@ -149,27 +121,28 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         _output_instructions: expect.any(String),
       });
       expect(
-        indicateurTerritoireValeurEvenementRepository.compterHistoriqueParIndicIdEtTerritoireCode,
+        getHistoriqueIndicateurTerritoireQuery.execute,
       ).not.toHaveBeenCalled();
     },
   );
 
-  it("demande une précision de période quand le volume dépasse le seuil sans plage fournie, sans lire les événements", async () => {
+  it("demande une précision de période quand le volume dépasse le seuil, sans plage fournie", async () => {
     // Given
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => contexteParDefaut,
     });
-    const indicateurTerritoireValeurEvenementRepository =
-      mock<IndicateurTerritoireValeurEvenementRepository>({
-        compterHistoriqueParIndicIdEtTerritoireCode: async () => 41,
-        recupererBornesDatesHistorique: async () => ({
-          dateMin: new Date("2020-01-01"),
-          dateMax: new Date("2024-06-01"),
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>({
+        execute: async () => ({
+          nombreEvenements: 41,
+          dateMin: "2020-01-01",
+          dateMax: "2020-02-10",
+          groupes: [],
         }),
       });
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
-      indicateurTerritoireValeurEvenementRepository,
+      getHistoriqueIndicateurTerritoireQuery,
     })();
 
     // When
@@ -185,28 +158,79 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
       besoin_precision: true,
       nombre_evenements: 41,
       date_evenement_la_plus_ancienne: "2020-01-01",
-      date_evenement_la_plus_recente: "2024-06-01",
+      date_evenement_la_plus_recente: "2020-02-10",
       _output_instructions: expect.any(String),
     });
-    expect(
-      indicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode,
-    ).not.toHaveBeenCalled();
   });
 
-  it("ne demande pas de précision quand une plage de dates est fournie, même au-dessus du seuil", async () => {
+  it("demande quand même une précision de période quand une plage est fournie mais dépasse encore le seuil", async () => {
     // Given
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => contexteParDefaut,
     });
-    const evenement = creerEvenement();
-    const indicateurTerritoireValeurEvenementRepository =
-      mock<IndicateurTerritoireValeurEvenementRepository>({
-        compterHistoriqueParIndicIdEtTerritoireCode: async () => 41,
-        recupererHistoriqueParIndicIdEtTerritoireCode: async () => [evenement],
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>({
+        execute: async () => ({
+          nombreEvenements: 41,
+          dateMin: "2024-01-01",
+          dateMax: "2024-02-10",
+          groupes: [],
+        }),
       });
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
-      indicateurTerritoireValeurEvenementRepository,
+      getHistoriqueIndicateurTerritoireQuery,
+    })();
+
+    // When
+    const result = await executeTool(tool, {
+      indicateur_id: "IND-001",
+      territoire_code: "DEPT-75",
+      date_debut: "2024-01-01",
+      date_fin: "2024-12-31",
+    });
+
+    // Then
+    expect(result).toEqual({
+      indicateur: { id: "IND-001", nom: "Indicateur test", unite_mesure: "%" },
+      territoire_code: "DEPT-75",
+      besoin_precision: true,
+      nombre_evenements: 41,
+      date_evenement_la_plus_ancienne: "2024-01-01",
+      date_evenement_la_plus_recente: "2024-02-10",
+      _output_instructions: expect.any(String),
+    });
+  });
+
+  it("retourne les groupes tels que fournis par la query quand le volume est sous le seuil", async () => {
+    // Given
+    const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
+      execute: async () => contexteParDefaut,
+    });
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>({
+        execute: async () => ({
+          nombreEvenements: 1,
+          dateMin: "2024-01-01",
+          dateMax: "2024-01-01",
+          groupes: [
+            {
+              date_valeur: "01/2024",
+              evenements: [
+                {
+                  ordre: 1,
+                  date_creation: "15/01/2024 12:00",
+                  libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
+                  type_valeur: "VALEUR_AVANCEMENT",
+                },
+              ],
+            },
+          ],
+        }),
+      });
+    const tool = createGetHistoriqueIndicateurTool({
+      getIndicateurContexteQuery,
+      getHistoriqueIndicateurTerritoireQuery,
     })();
 
     // When
@@ -227,9 +251,7 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
           evenements: [
             {
               ordre: 1,
-              date_creation: expect.stringMatching(
-                /^15\/01\/2024 \d{2}:\d{2}$/,
-              ),
+              date_creation: "15/01/2024 12:00",
               libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
               type_valeur: "VALEUR_AVANCEMENT",
             },
@@ -240,81 +262,23 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     });
   });
 
-  it("groupe par date_valeur, ordonne par ordre croissant et mappe des libellés humains sans type_evenement brut", async () => {
+  it("passe les 9 types PROPOSITION_VALEUR_* à la query quand type_filtre vaut PROPOSITIONS", async () => {
     // Given
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => contexteParDefaut,
     });
-    const evenementCree = creerEvenement({
-      typeEvenement: "VALEUR_CREEE",
-      valeur: 10,
-      ordre: 1,
-      dateValeur: new Date("2024-01-01"),
-    });
-    const evenementModifie = creerEvenement({
-      typeEvenement: "VALEUR_MODIFIEE",
-      valeur: 20,
-      ordre: 2,
-      dateValeur: new Date("2024-01-01"),
-    });
-    const indicateurTerritoireValeurEvenementRepository =
-      mock<IndicateurTerritoireValeurEvenementRepository>({
-        compterHistoriqueParIndicIdEtTerritoireCode: async () => 2,
-        recupererHistoriqueParIndicIdEtTerritoireCode: async () => [
-          evenementModifie,
-          evenementCree,
-        ],
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>({
+        execute: vi.fn(async () => ({
+          nombreEvenements: 0,
+          dateMin: null,
+          dateMax: null,
+          groupes: [],
+        })),
       });
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
-      indicateurTerritoireValeurEvenementRepository,
-    })();
-
-    // When
-    const result = await executeTool(tool, {
-      indicateur_id: "IND-001",
-      territoire_code: "DEPT-75",
-    });
-
-    // Then
-    expect(result.groupes).toEqual([
-      {
-        date_valeur: "01/2024",
-        evenements: [
-          {
-            ordre: 1,
-            date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
-            libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
-            type_valeur: "VALEUR_AVANCEMENT",
-          },
-          {
-            ordre: 2,
-            date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
-            libelle:
-              "import de données par la direction de projet → nouvelle valeur affichée dans PILOTE : 20",
-            type_valeur: "VALEUR_AVANCEMENT",
-          },
-        ],
-      },
-    ]);
-    const libellesJson = JSON.stringify(result.groupes);
-    expect(libellesJson).not.toContain("VALEUR_CREEE");
-    expect(libellesJson).not.toContain("VALEUR_MODIFIEE");
-  });
-
-  it("passe les 9 types PROPOSITION_VALEUR_* au repository quand type_filtre vaut PROPOSITIONS", async () => {
-    // Given
-    const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
-      execute: async () => contexteParDefaut,
-    });
-    const indicateurTerritoireValeurEvenementRepository =
-      mock<IndicateurTerritoireValeurEvenementRepository>({
-        compterHistoriqueParIndicIdEtTerritoireCode: vi.fn(async () => 0),
-        recupererHistoriqueParIndicIdEtTerritoireCode: async () => [],
-      });
-    const tool = createGetHistoriqueIndicateurTool({
-      getIndicateurContexteQuery,
-      indicateurTerritoireValeurEvenementRepository,
+      getHistoriqueIndicateurTerritoireQuery,
     })();
 
     // When
@@ -325,9 +289,7 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     });
 
     // Then
-    expect(
-      indicateurTerritoireValeurEvenementRepository.compterHistoriqueParIndicIdEtTerritoireCode,
-    ).toHaveBeenCalledWith(
+    expect(getHistoriqueIndicateurTerritoireQuery.execute).toHaveBeenCalledWith(
       expect.objectContaining({
         typesEvenement: [
           "PROPOSITION_VALEUR_CREEE",

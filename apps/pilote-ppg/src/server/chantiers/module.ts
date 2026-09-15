@@ -63,6 +63,7 @@ import { GetChantiersIdentiteQuery } from "./query/GetChantiersIdentiteQuery";
 import { GetIndicateursIdentiteQuery } from "./query/GetIndicateursIdentiteQuery";
 import { GetIndicateurContexteQuery } from "./query/GetIndicateurContexteQuery";
 import { GetEvolutionIndicateurTerritoireQuery } from "./query/GetEvolutionIndicateurTerritoireQuery";
+import { GetHistoriqueIndicateurTerritoireQuery } from "./query/GetHistoriqueIndicateurTerritoireQuery";
 import { GetTerritoiresIdentiteQuery } from "./query/GetTerritoiresIdentiteQuery";
 import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAvancementTerritoireQuery";
 import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
@@ -80,6 +81,7 @@ type ChantierExports = {
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
   getIndicateurContexteQuery: GetIndicateurContexteQuery;
   getEvolutionIndicateurTerritoireQuery: GetEvolutionIndicateurTerritoireQuery;
+  getHistoriqueIndicateurTerritoireQuery: GetHistoriqueIndicateurTerritoireQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
 };
@@ -154,6 +156,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getIndicateursIdentiteQuery",
     "getIndicateurContexteQuery",
     "getEvolutionIndicateurTerritoireQuery",
+    "getHistoriqueIndicateurTerritoireQuery",
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
   ],
@@ -272,6 +275,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getIndicateurContexteQuery: asModuleClass(GetIndicateurContexteQuery),
       getEvolutionIndicateurTerritoireQuery: asModuleClass(
         GetEvolutionIndicateurTerritoireQuery,
+      ),
+      getHistoriqueIndicateurTerritoireQuery: asModuleClass(
+        GetHistoriqueIndicateurTerritoireQuery,
       ),
       getTerritoiresIdentiteQuery: asModuleClass(GetTerritoiresIdentiteQuery),
       recupererTauxAvancementTerritoireQuery: asModuleClass(
