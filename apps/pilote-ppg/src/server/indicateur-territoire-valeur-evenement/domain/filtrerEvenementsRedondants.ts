@@ -1,7 +1,7 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
-export function filtrerEvenementsSupersedes(
+export function filtrerEvenementsRedondants(
   evenementsTriesParOrdreDecroissant: IndicateurTerritoireValeurEvenement[],
 ): IndicateurTerritoireValeurEvenement[] {
   return evenementsTriesParOrdreDecroissant.filter((evenement, index) => {

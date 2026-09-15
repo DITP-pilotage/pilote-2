@@ -38,17 +38,18 @@ export type GetHistoriqueIndicateurOutput = {
   indicateur: { id: string; nom: string; unite_mesure: string | null } | null;
   territoire_code?: string;
   agrege_bloque?: true;
-  besoin_precision?: true;
-  nombre_evenements?: number;
-  date_evenement_la_plus_ancienne?: string;
-  date_evenement_la_plus_recente?: string;
+  besoin_precision?: {
+    nombre_evenements: number;
+    date_evenement_la_plus_ancienne?: string;
+    date_evenement_la_plus_recente?: string;
+  };
   groupes?: GroupeHistoriqueIndicateur[];
   introuvable?: true;
   _output_instructions: string;
 };
 
 const OUTPUT_INSTRUCTIONS =
-  "Ces données représentent un HISTORIQUE : les actions qui ont eu lieu sur la valeur de cet indicateur (import, modification, proposition, acceptation, refus...), groupées par date et dans l'ordre chronologique. Deux dates distinctes apparaissent, ne les confonds pas : `date_valeur` (par groupe) est le mois auquel s'applique la valeur d'avancement, déjà au format MM/AAAA — reprends-le tel quel ; `date_creation` (par événement) est la date et l'heure réelles auxquelles l'action a eu lieu, déjà formatée en entier — reprends-la telle quelle aussi. Décris l'enchaînement des actions en citant ces deux dates pour chaque événement. Si l'utilisateur veut plutôt la tendance/courbe de la valeur dans le temps, indique-lui simplement que c'est possible, sans citer de nom d'outil technique.";
+  "Ces données représentent un HISTORIQUE : les actions qui ont eu lieu sur la valeur de cet indicateur (import, modification, proposition, acceptation, refus...), groupées par date et dans l'ordre chronologique. Deux dates distinctes apparaissent, ne les confonds pas : `date_valeur` (par groupe) est le mois auquel s'applique la valeur d'avancement, déjà au format MM/AAAA — reprends-le tel quel ; `date_creation` (par événement) est la date et l'heure réelles auxquelles l'action a eu lieu, déjà formatée en entier — reprends-la telle quelle aussi. Si l'utilisateur veut plutôt la tendance/courbe de la valeur dans le temps, indique-lui simplement que c'est possible, sans citer de nom d'outil technique.";
 
 const INDICATEUR_INTROUVABLE_INSTRUCTIONS =
   "Cet indicateur est introuvable. Informe l'utilisateur qu'aucun indicateur ne correspond à cet identifiant.";
@@ -112,21 +113,15 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
           };
         }
 
-        const dateDebut = input.date_debut
-          ? new Date(input.date_debut)
-          : undefined;
-        const dateFin = input.date_fin ? new Date(input.date_fin) : undefined;
-        const typesEvenement =
-          input.type_filtre === "PROPOSITIONS"
-            ? PROPOSITION_TYPES_EVENEMENT
-            : undefined;
-
         const filtres = {
           indicId: input.indicateur_id,
           territoireCode: input.territoire_code,
-          dateDebut,
-          dateFin,
-          typesEvenement,
+          dateDebut: input.date_debut ? new Date(input.date_debut) : undefined,
+          dateFin: input.date_fin ? new Date(input.date_fin) : undefined,
+          typesEvenement:
+            input.type_filtre === "PROPOSITIONS"
+              ? PROPOSITION_TYPES_EVENEMENT
+              : undefined,
         };
 
         const resultat =
@@ -136,10 +131,11 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
           return {
             indicateur: indicateurResume,
             territoire_code: input.territoire_code,
-            besoin_precision: true,
-            nombre_evenements: resultat.nombreEvenements,
-            date_evenement_la_plus_ancienne: resultat.dateMin ?? undefined,
-            date_evenement_la_plus_recente: resultat.dateMax ?? undefined,
+            besoin_precision: {
+              nombre_evenements: resultat.nombreEvenements,
+              date_evenement_la_plus_ancienne: resultat.dateMin ?? undefined,
+              date_evenement_la_plus_recente: resultat.dateMax ?? undefined,
+            },
             _output_instructions: construireInstructionsBesoinPrecision(
               resultat.nombreEvenements,
             ),

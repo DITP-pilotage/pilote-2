@@ -1,5 +1,5 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { comparerDates } from "@/client/utils/date/date";
+import { comparerDates, formaterDate } from "@/client/utils/date/date";
 
 export type PointEvolutionAvancement = { date: string; valeur: number };
 
@@ -25,6 +25,11 @@ export class GetEvolutionIndicateurTerritoireQuery {
         { date: string; valeur: number }[] | null) ?? []
     ).map(({ date, valeur }) => ({ date, valeur }));
 
-    return [...points].sort((a, b) => comparerDates(a.date, b.date));
+    return [...points]
+      .sort((a, b) => comparerDates(a.date, b.date))
+      .map(({ date, valeur }) => ({
+        date: formaterDate(date, "MM/YYYY") ?? date,
+        valeur,
+      }));
   }
 }

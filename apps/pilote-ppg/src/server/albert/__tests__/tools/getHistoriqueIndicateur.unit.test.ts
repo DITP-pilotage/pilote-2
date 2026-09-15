@@ -155,10 +155,11 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     expect(result).toEqual({
       indicateur: { id: "IND-001", nom: "Indicateur test", unite_mesure: "%" },
       territoire_code: "DEPT-75",
-      besoin_precision: true,
-      nombre_evenements: 101,
-      date_evenement_la_plus_ancienne: "2020-01-01",
-      date_evenement_la_plus_recente: "2020-02-10",
+      besoin_precision: {
+        nombre_evenements: 101,
+        date_evenement_la_plus_ancienne: "2020-01-01",
+        date_evenement_la_plus_recente: "2020-02-10",
+      },
       _output_instructions: expect.any(String),
     });
   });
@@ -194,10 +195,11 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     expect(result).toEqual({
       indicateur: { id: "IND-001", nom: "Indicateur test", unite_mesure: "%" },
       territoire_code: "DEPT-75",
-      besoin_precision: true,
-      nombre_evenements: 101,
-      date_evenement_la_plus_ancienne: "2024-01-01",
-      date_evenement_la_plus_recente: "2024-02-10",
+      besoin_precision: {
+        nombre_evenements: 101,
+        date_evenement_la_plus_ancienne: "2024-01-01",
+        date_evenement_la_plus_recente: "2024-02-10",
+      },
       _output_instructions: expect.any(String),
     });
   });

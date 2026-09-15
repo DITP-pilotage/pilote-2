@@ -34,8 +34,8 @@ describe("createGetEvolutionIndicateurTool execute", () => {
     const getEvolutionIndicateurTerritoireQuery =
       mock<GetEvolutionIndicateurTerritoireQuery>({
         execute: async () => [
-          { date: "2024-01-01", valeur: 10 },
-          { date: "2024-06-01", valeur: 20 },
+          { date: "01/2024", valeur: 10 },
+          { date: "06/2024", valeur: 20 },
         ],
       });
     const tool = createGetEvolutionIndicateurTool({

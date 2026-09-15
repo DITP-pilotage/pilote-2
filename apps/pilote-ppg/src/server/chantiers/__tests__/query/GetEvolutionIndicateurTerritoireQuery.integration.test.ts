@@ -55,9 +55,9 @@ describe("GetEvolutionIndicateurTerritoireQuery", () => {
 
       // Then
       expect(result).toEqual([
-        { date: "2024-01-01", valeur: 10 },
-        { date: "2024-03-01", valeur: 20 },
-        { date: "2024-06-01", valeur: 30 },
+        { date: "01/2024", valeur: 10 },
+        { date: "03/2024", valeur: 20 },
+        { date: "06/2024", valeur: 30 },
       ]);
     }),
   );

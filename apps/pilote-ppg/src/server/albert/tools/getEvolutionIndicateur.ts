@@ -3,7 +3,6 @@ import { z } from "zod";
 import { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 import { GetEvolutionIndicateurTerritoireQuery } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
 import type { PointEvolutionAvancement } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
-import { formaterDate } from "@/client/utils/date/date";
 
 export const getEvolutionIndicateurInputSchema = z.object({
   indicateur_id: z
@@ -61,13 +60,6 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
           territoireCode: input.territoire_code,
         });
 
-        const pointsFormates = points.map(
-          ({ date, valeur }): PointEvolutionAvancement => ({
-            date: formaterDate(date, "MM/YYYY") ?? date,
-            valeur,
-          }),
-        );
-
         return {
           indicateur: {
             id: contexte.id,
@@ -75,7 +67,7 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
             unite_mesure: contexte.uniteMesure,
           },
           territoire_code: input.territoire_code,
-          points: pointsFormates,
+          points,
           _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },

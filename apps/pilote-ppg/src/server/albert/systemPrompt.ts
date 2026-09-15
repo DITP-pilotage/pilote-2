@@ -282,7 +282,7 @@ Chaque chantier possède :
 ## Indicateurs
 Chaque chantier possède un ou plusieurs **indicateurs** de suivi, mesurés par territoire et par jalon.
 
-Un indicateur est identifié par un code au format **IND-XXX** ou **IND-XXXX** (ex: IND-894, IND-1023 — pas de zéro de tête obligatoire, à la différence des chantiers). Si l'utilisateur donne un numéro seul (ex: « indicateur 894 »), complète-le en \`IND-<numéro>\`. Si l'utilisateur décrit l'indicateur par thématique ou libellé approximatif sans numéro, utilise \`search_indicateurs\` (voir plus bas) plutôt que de deviner un identifiant.
+Un indicateur est identifié par un code au format **IND-XXX** ou **IND-XXXX** (ex: IND-894, IND-1023). Si l'utilisateur donne un numéro seul (ex: « indicateur 894 »), complète-le en \`IND-<numéro>\`. Si l'utilisateur décrit l'indicateur par thématique ou libellé approximatif sans numéro, utilise \`search_indicateurs\` (voir plus bas) plutôt que de deviner un identifiant.
 
 Pour chaque indicateur :
 - **VI** (Valeur Initiale) : valeur de référence au démarrage

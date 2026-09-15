@@ -1,5 +1,5 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { filtrerEvenementsSupersedes } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsSupersedes";
+import { filtrerEvenementsRedondants } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsRedondants";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
@@ -23,7 +23,7 @@ const creerEvenement = (
     },
   );
 
-describe("filtrerEvenementsSupersedes", () => {
+describe("filtrerEvenementsRedondants", () => {
   it.each([
     EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
     EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
@@ -34,7 +34,7 @@ describe("filtrerEvenementsSupersedes", () => {
       const evenementValeurModifiee = creerEvenement("VALEUR_MODIFIEE", 2);
       const evenementTerminal = creerEvenement(typeTerminal, 1);
 
-      const result = filtrerEvenementsSupersedes([
+      const result = filtrerEvenementsRedondants([
         evenementValeurModifiee,
         evenementTerminal,
       ]);
@@ -47,7 +47,7 @@ describe("filtrerEvenementsSupersedes", () => {
     const evenementCreee = creerEvenement("VALEUR_CREEE", 2);
     const evenementValeurModifiee = creerEvenement("VALEUR_MODIFIEE", 1);
 
-    const result = filtrerEvenementsSupersedes([
+    const result = filtrerEvenementsRedondants([
       evenementCreee,
       evenementValeurModifiee,
     ]);
@@ -62,7 +62,7 @@ describe("filtrerEvenementsSupersedes", () => {
       1,
     );
 
-    const result = filtrerEvenementsSupersedes([
+    const result = filtrerEvenementsRedondants([
       evenementHistorisee,
       evenementIgnoree,
     ]);
@@ -73,7 +73,7 @@ describe("filtrerEvenementsSupersedes", () => {
   it("garde un VALEUR_HISTORISEE quand il n'est suivi d'aucun événement", () => {
     const evenementHistorisee = creerEvenement("VALEUR_HISTORISEE", 1);
 
-    const result = filtrerEvenementsSupersedes([evenementHistorisee]);
+    const result = filtrerEvenementsRedondants([evenementHistorisee]);
 
     expect(result).toEqual([evenementHistorisee]);
   });
@@ -84,7 +84,7 @@ describe("filtrerEvenementsSupersedes", () => {
       1,
     );
 
-    const result = filtrerEvenementsSupersedes([evenementPropositionCreee]);
+    const result = filtrerEvenementsRedondants([evenementPropositionCreee]);
 
     expect(result).toEqual([evenementPropositionCreee]);
   });

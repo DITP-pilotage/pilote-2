@@ -1,6 +1,6 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { filtrerEvenementsSupersedes } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsSupersedes";
+import { filtrerEvenementsRedondants } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsRedondants";
 import { libelleEvenementIndicateurTerritoireValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/libelleEvenementIndicateurTerritoireValeur";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { toISODate, toISODateTime } from "@/server/app/domain/Dates";
@@ -84,23 +84,25 @@ export class GetHistoriqueIndicateurTerritoireQuery {
         const evenementsDuJourTriesDesc = [...evenementsDuJour].sort(
           (a, b) => b.ordre - a.ordre,
         );
-        const evenementsRestants = filtrerEvenementsSupersedes(
+        const evenementsRestants = filtrerEvenementsRedondants(
           evenementsDuJourTriesDesc,
         ).sort((a, b) => a.ordre - b.ordre);
 
         return {
           date_valeur: formaterDate(dateValeur, "MM/YYYY") ?? dateValeur,
           evenements: evenementsRestants.map(
-            (evenement): EvenementHistoriqueLisible => ({
-              ordre: evenement.ordre,
-              date_creation:
-                formaterDate(
-                  toISODateTime(evenement.dateCreation),
-                  "DD/MM/YYYY HH[:]mm",
-                ) ?? toISODateTime(evenement.dateCreation),
-              libelle: construireLibelleLisible(evenement),
-              type_valeur: evenement.typeValeur,
-            }),
+            (evenement): EvenementHistoriqueLisible => {
+              const dateCreationIso = toISODateTime(evenement.dateCreation);
+
+              return {
+                ordre: evenement.ordre,
+                date_creation:
+                  formaterDate(dateCreationIso, "DD/MM/YYYY HH[:]mm") ??
+                  dateCreationIso,
+                libelle: construireLibelleLisible(evenement),
+                type_valeur: evenement.typeValeur,
+              };
+            },
           ),
         };
       });

@@ -1,7 +1,7 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { toISODate } from "@/server/app/domain/Dates";
-import { filtrerEvenementsSupersedes } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsSupersedes";
+import { filtrerEvenementsRedondants } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsRedondants";
 import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type HistoriqueIndicateurTerritoireValeurEvenementContrat = {
@@ -87,7 +87,7 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
         const evenementsDuJourTriesParOrdreDecroissant =
           evenementsGroupesParDate[dateKey].sort((a, b) => b.ordre - a.ordre);
 
-        historiqueTrie[dateKey] = filtrerEvenementsSupersedes(
+        historiqueTrie[dateKey] = filtrerEvenementsRedondants(
           evenementsDuJourTriesParOrdreDecroissant,
         ).map(presenterEnIndicateurTerritoireValeurEvenement);
       });
