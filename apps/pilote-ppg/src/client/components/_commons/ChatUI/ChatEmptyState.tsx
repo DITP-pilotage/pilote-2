@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
+import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { Icone } from "@/components/_commons/Icone";
 
@@ -64,7 +65,7 @@ export const ChatEmptyState = ({
       <div className="flex flex-col gap-3">
         <AlbertMonogramme taille="lg" />
         <h2 className="text-[26px] font-bold leading-8 text-dsfr-grey-50 fr-mb-0">
-          Bonjour, je suis Albert.
+          Bonjour, je suis l&apos;{NOM_ASSISTANT}.
         </h2>
         <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
           {contexte ? (

@@ -22,8 +22,9 @@ const OUTILS_TABLEAU_DE_BORD = new Set([
 ]);
 
 /**
- * Déduit ce qu'Albert est en train de faire à partir de la dernière part du
- * message en cours de génération. Sert au libellé affiché sous sa signature.
+ * Déduit ce que l'assistant est en train de faire à partir de la dernière
+ * part du message en cours de génération. Sert au libellé affiché sous sa
+ * signature.
  */
 export const deriverEtatAssistant = ({
   message,
