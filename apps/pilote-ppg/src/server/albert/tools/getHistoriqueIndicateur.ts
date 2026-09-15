@@ -17,12 +17,12 @@ export const getHistoriqueIndicateurInputSchema = z.object({
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
-  date_debut: z
-    .string()
+  date_debut: z.iso
+    .date()
     .optional()
     .describe("Date de début de la période demandée (ISO, ex: 2024-01-01)"),
-  date_fin: z
-    .string()
+  date_fin: z.iso
+    .date()
     .optional()
     .describe("Date de fin de la période demandée (ISO, ex: 2024-12-31)"),
   type_filtre: z

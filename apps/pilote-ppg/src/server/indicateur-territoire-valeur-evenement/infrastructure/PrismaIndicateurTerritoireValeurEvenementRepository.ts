@@ -219,13 +219,13 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository implements Indi
     territoireCode: string;
     dateDebut?: Date;
     dateFin?: Date;
-    typesEvenement?: TypeEvenement[];
+    typesEvenement?: readonly TypeEvenement[];
   }): Prisma.indicateur_territoire_valeur_evenementWhereInput {
     return {
       indic_id: args.indicId,
       territoire_code: args.territoireCode,
       ...(args.typesEvenement
-        ? { type_evenement: { in: args.typesEvenement } }
+        ? { type_evenement: { in: [...args.typesEvenement] } }
         : {}),
       ...(args.dateDebut || args.dateFin
         ? {
@@ -243,7 +243,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository implements Indi
     territoireCode: string;
     dateDebut?: Date;
     dateFin?: Date;
-    typesEvenement?: TypeEvenement[];
+    typesEvenement?: readonly TypeEvenement[];
   }): Promise<IndicateurTerritoireValeurEvenement[]> {
     const lignes = await this.prisma
       .getInstance()
@@ -301,7 +301,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository implements Indi
     territoireCode: string;
     dateDebut?: Date;
     dateFin?: Date;
-    typesEvenement?: TypeEvenement[];
+    typesEvenement?: readonly TypeEvenement[];
   }): Promise<number> {
     return this.prisma
       .getInstance()
@@ -315,7 +315,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository implements Indi
     territoireCode: string;
     dateDebut?: Date;
     dateFin?: Date;
-    typesEvenement?: TypeEvenement[];
+    typesEvenement?: readonly TypeEvenement[];
   }): Promise<{ dateMin: Date | null; dateMax: Date | null }> {
     const resultat = await this.prisma
       .getInstance()

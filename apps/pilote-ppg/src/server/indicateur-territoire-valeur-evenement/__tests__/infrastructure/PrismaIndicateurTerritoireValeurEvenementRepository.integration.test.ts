@@ -2239,21 +2239,22 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         });
         const utilisateur = await fixtures.utilisateur();
 
-        await fixtures.indicateurTerritoireValeurEvenement({
+        const evenementCree = await fixtures.indicateurTerritoireValeurEvenement({
           indic_id: indicateur.id,
           territoire_code: "DEPT-75",
           id_auteur_modification: utilisateur.id,
           type_evenement: "VALEUR_CREEE",
           ordre: 1,
         });
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "DEPT-75",
-          id_auteur_modification: utilisateur.id,
-          type_evenement: "PROPOSITION_VALEUR_CREEE",
-          donnees_complementaires: { motif: "motif" },
-          ordre: 2,
-        });
+        const evenementProposition =
+          await fixtures.indicateurTerritoireValeurEvenement({
+            indic_id: indicateur.id,
+            territoire_code: "DEPT-75",
+            id_auteur_modification: utilisateur.id,
+            type_evenement: "PROPOSITION_VALEUR_CREEE",
+            donnees_complementaires: { motif: "motif" },
+            ordre: 2,
+          });
 
         // When
         const result =
@@ -2262,7 +2263,9 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           );
 
         // Then
-        expect(result).toHaveLength(2);
+        expect(result.map((evenement) => evenement.id).sort()).toEqual(
+          [evenementCree.id, evenementProposition.id].sort(),
+        );
       }),
     );
   });

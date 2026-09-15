@@ -7,10 +7,11 @@ import {
 import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
 const creerEvenement = (
   overrides: Partial<{
-    typeEvenement: string;
+    typeEvenement: TypeEvenement;
     valeur: number | null;
     ordre: number;
     dateValeur: Date;
@@ -20,8 +21,7 @@ const creerEvenement = (
     {
       indicId: "IND-001",
       territoireCode: "DEPT-75",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      typeEvenement: (overrides.typeEvenement ?? "VALEUR_CREEE") as any,
+      typeEvenement: overrides.typeEvenement ?? "VALEUR_CREEE",
       typeValeur: "VALEUR_AVANCEMENT",
       dateValeur: overrides.dateValeur ?? new Date("2024-01-01"),
       valeur: overrides.valeur ?? 10,
@@ -59,6 +59,31 @@ const executeTool = async (
     abortSignal: undefined,
     context: {},
   }) as Promise<GetHistoriqueIndicateurOutput>;
+
+describe("getHistoriqueIndicateurInputSchema", () => {
+  it.each(["2024", "janvier 2024", "2024-13-01", "not-a-date"])(
+    "rejette une date_debut mal formée : %s",
+    (dateInvalide) => {
+      const result = getHistoriqueIndicateurInputSchema.safeParse({
+        indicateur_id: "IND-001",
+        territoire_code: "DEPT-75",
+        date_debut: dateInvalide,
+      });
+
+      expect(result.success).toBe(false);
+    },
+  );
+
+  it("accepte une date_debut au format ISO", () => {
+    const result = getHistoriqueIndicateurInputSchema.safeParse({
+      indicateur_id: "IND-001",
+      territoire_code: "DEPT-75",
+      date_debut: "2024-01-01",
+    });
+
+    expect(result.success).toBe(true);
+  });
+});
 
 describe("createGetHistoriqueIndicateurTool execute", () => {
   it("retourne introuvable quand l'indicateur n'existe pas", async () => {
@@ -191,8 +216,23 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     });
 
     // Then
-    expect(result.besoin_precision).toBeUndefined();
-    expect(result.groupes).toBeDefined();
+    expect(result).toEqual({
+      indicateur: { id: "IND-001", nom: "Indicateur test", unite_mesure: "%" },
+      territoire_code: "DEPT-75",
+      groupes: [
+        {
+          date_valeur: "2024-01-01",
+          evenements: [
+            {
+              ordre: 1,
+              libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
+              type_valeur: "VALEUR_AVANCEMENT",
+            },
+          ],
+        },
+      ],
+      _output_instructions: expect.any(String),
+    });
   });
 
   it("groupe par date_valeur, ordonne par ordre croissant et mappe des libellés humains sans type_evenement brut", async () => {

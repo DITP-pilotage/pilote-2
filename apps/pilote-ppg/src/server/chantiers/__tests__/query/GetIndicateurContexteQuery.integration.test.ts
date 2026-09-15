@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -48,6 +49,24 @@ describe("GetIndicateurContexteQuery", () => {
     createIntegrationTest(async () => {
       // When
       const result = await query.execute({ indicateurId: "IND-INEXISTANT" });
+
+      // Then
+      expect(result).toBeNull();
+    }),
+  );
+
+  it(
+    "retourne null quand l'indicateur a le statut SUPPRIME",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+        statut: $Enums.type_statut_indicateur.SUPPRIME,
+      });
+
+      // When
+      const result = await query.execute({ indicateurId: indicateur.id });
 
       // Then
       expect(result).toBeNull();

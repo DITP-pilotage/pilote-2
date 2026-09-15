@@ -37,21 +37,21 @@ export interface IndicateurTerritoireValeurEvenementRepository {
     territoireCode: string;
     dateDebut?: Date;
     dateFin?: Date;
-    typesEvenement?: TypeEvenement[];
+    typesEvenement?: readonly TypeEvenement[];
   }): Promise<IndicateurTerritoireValeurEvenement[]>;
   compterHistoriqueParIndicIdEtTerritoireCode(args: {
     indicId: string;
     territoireCode: string;
     dateDebut?: Date;
     dateFin?: Date;
-    typesEvenement?: TypeEvenement[];
+    typesEvenement?: readonly TypeEvenement[];
   }): Promise<number>;
   recupererBornesDatesHistorique(args: {
     indicId: string;
     territoireCode: string;
     dateDebut?: Date;
     dateFin?: Date;
-    typesEvenement?: TypeEvenement[];
+    typesEvenement?: readonly TypeEvenement[];
   }): Promise<{ dateMin: Date | null; dateMax: Date | null }>;
   enregistrer(evenement: IndicateurTerritoireValeurEvenement): Promise<void>;
   enregistrerTous(

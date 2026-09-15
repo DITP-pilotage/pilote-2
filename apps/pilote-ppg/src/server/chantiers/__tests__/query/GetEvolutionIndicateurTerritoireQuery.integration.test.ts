@@ -36,7 +36,14 @@ describe("GetEvolutionIndicateurTerritoireQuery", () => {
         evolution_avancement: [
           { date: "2024-06-01", valeur: 30 },
           { date: "2024-01-01", valeur: 10 },
-          { date: "2024-03-01", valeur: 20 },
+          {
+            date: "2024-03-01",
+            valeur: 20,
+            // champs bruts supplémentaires réellement présents dans la colonne JSON,
+            // qui ne doivent jamais fuiter dans la sortie de la query
+            taux_avancement_jalon: 99,
+            taux_avancement_mandat: 88,
+          },
         ],
       });
 

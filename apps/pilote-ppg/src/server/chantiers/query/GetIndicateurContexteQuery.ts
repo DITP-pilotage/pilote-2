@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type IndicateurContexteResult = {
@@ -19,7 +20,10 @@ export class GetIndicateurContexteQuery {
     const prisma = this.deps.prisma.getInstance();
 
     const indicateur = await prisma.indicateur_identite.findUnique({
-      where: { id: params.indicateurId },
+      where: {
+        id: params.indicateurId,
+        statut: $Enums.type_statut_indicateur.PUBLIE,
+      },
       include: { chantier_identite: true },
     });
 

@@ -20,9 +20,11 @@ export class GetEvolutionIndicateurTerritoireQuery {
       select: { evolution_avancement: true },
     });
 
-    const points =
-      (ligne?.evolution_avancement as PointEvolutionAvancement[] | null) ??
-      [];
+    const points = (
+      (ligne?.evolution_avancement as
+        | { date: string; valeur: number }[]
+        | null) ?? []
+    ).map(({ date, valeur }) => ({ date, valeur }));
 
     return [...points].sort((a, b) => comparerDates(a.date, b.date));
   }

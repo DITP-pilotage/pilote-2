@@ -1,17 +1,17 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { filtrerEvenementsSupersedes } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsSupersedes";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 const creerEvenement = (
-  typeEvenement: string,
+  typeEvenement: TypeEvenement,
   ordre: number,
 ): IndicateurTerritoireValeurEvenement =>
   IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
     {
       indicId: "INDIC_001",
       territoireCode: "FR",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      typeEvenement: typeEvenement as any,
+      typeEvenement,
       typeValeur: "VALEUR_AVANCEMENT",
       dateValeur: new Date("2024-01-01"),
       valeur: 10,
