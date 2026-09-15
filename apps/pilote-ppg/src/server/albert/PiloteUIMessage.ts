@@ -48,6 +48,14 @@ import {
   getChantiersSignalesInputSchema,
   type GetChantiersSignalesOutput,
 } from "@/server/albert/tools/getChantiersSignales";
+import {
+  getEvolutionIndicateurInputSchema,
+  type GetEvolutionIndicateurOutput,
+} from "@/server/albert/tools/getEvolutionIndicateur";
+import {
+  getHistoriqueIndicateurInputSchema,
+  type GetHistoriqueIndicateurOutput,
+} from "@/server/albert/tools/getHistoriqueIndicateur";
 
 export type PiloteUITools = {
   display_choices: {
@@ -77,6 +85,14 @@ export type PiloteUITools = {
   get_chantiers_signales: {
     input: z.input<typeof getChantiersSignalesInputSchema>;
     output: GetChantiersSignalesOutput;
+  };
+  get_evolution_indicateur: {
+    input: z.input<typeof getEvolutionIndicateurInputSchema>;
+    output: GetEvolutionIndicateurOutput;
+  };
+  get_historique_indicateur: {
+    input: z.input<typeof getHistoriqueIndicateurInputSchema>;
+    output: GetHistoriqueIndicateurOutput;
   };
   search_chantiers: {
     input: z.input<typeof searchChantiersInputSchema>;

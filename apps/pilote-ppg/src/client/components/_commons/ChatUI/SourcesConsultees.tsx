@@ -21,7 +21,9 @@ export type SourceToolPart = Extract<
       | "tool-get_chantier_objectifs"
       | "tool-search_chantiers"
       | "tool-search_indicateurs"
-      | "tool-search_territoires";
+      | "tool-search_territoires"
+      | "tool-get_evolution_indicateur"
+      | "tool-get_historique_indicateur";
   }
 >;
 
@@ -35,6 +37,8 @@ const LIBELLES: Record<SourceToolPart["type"], string> = {
   "tool-search_chantiers": "Recherche de chantiers",
   "tool-search_indicateurs": "Recherche d'indicateurs",
   "tool-search_territoires": "Recherche de territoires",
+  "tool-get_evolution_indicateur": "Évolution de l'indicateur",
+  "tool-get_historique_indicateur": "Historique de l'indicateur",
 };
 
 const TYPES_SOURCES = new Set<string>(Object.keys(LIBELLES));
