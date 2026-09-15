@@ -7,6 +7,7 @@ import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructu
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("PrismaMesureIndicateurRepository", () => {
   let prismaRapportRepository: PrismaRapportRepository;
@@ -17,91 +18,96 @@ describe("PrismaMesureIndicateurRepository", () => {
       prismaRapportRepository = new PrismaRapportRepository();
       prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository();
     });
-    it("doit sauvegarder les données", async () => {
-      // Given
-      const auteurId = randomUUID();
-      await prisma.utilisateur.create({
-        data: {
-          id: auteurId,
-          email: "john.doe@test.com",
-          nom: "John",
-          prenom: "Doe",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
+    it(
+      "doit sauvegarder les données",
+      createIntegrationTest(async () => {
+        // Given
+        const auteurId = randomUUID();
+        await prisma.utilisateur.create({
+          data: {
+            id: auteurId,
+            email: "john.doe@test.com",
+            nom: "John",
+            prenom: "Doe",
+            date_creation: new Date().toISOString(),
+            profil: {
+              connect: {
+                code: ProfilEnum.DITP_ADMIN,
+              },
             },
           },
-        },
-      });
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-        .avecEmail("ditp.admin@example.com")
-        .avecProfil(ProfilEnum.DITP_ADMIN)
-        .avecHabilitationsLecture([], [], [])
-        .build();
-      await getContainer("authentification")
-        .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur, auteurId);
+        });
+        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
+          .avecEmail("ditp.admin@example.com")
+          .avecProfil(ProfilEnum.DITP_ADMIN)
+          .avecHabilitationsLecture([], [], [])
+          .build();
+        await getContainer("authentification")
+          .resolve("utilisateurRepository")
+          .créerOuMettreÀJour(utilisateur, auteurId);
 
-      const rapport = new DetailValidationFichierBuilder()
-        .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-        .avecUtilisateurEmail("ditp.admin@example.com")
-        .build();
-      await prismaRapportRepository.sauvegarder(rapport);
+        const rapport = new DetailValidationFichierBuilder()
+          .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .build();
+        await prismaRapportRepository.sauvegarder(rapport);
 
-      const listeIndicateursData = [
-        new IndicateurDataBuilder()
-          .avecId("b2450ce3-8006-4550-8132-e5aab19c0caf")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecIndicId("IND-001")
-          .avecMetricDate("2022-12-01")
-          .avecMetricType("vi")
-          .avecMetricValue("12")
-          .avecZoneId("D001")
-          .build(),
-        new IndicateurDataBuilder()
-          .avecId("f7632d30-5b49-465e-8774-063f9f67f83b")
-          .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
-          .avecIndicId("IND-002")
-          .avecMetricDate("2023-01-01")
-          .avecMetricType("vc")
-          .avecMetricValue("15")
-          .avecZoneId("D002")
-          .build(),
-      ];
+        const listeIndicateursData = [
+          new IndicateurDataBuilder()
+            .avecId("b2450ce3-8006-4550-8132-e5aab19c0caf")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecIndicId("IND-001")
+            .avecMetricDate("2022-12-01")
+            .avecMetricType("vi")
+            .avecMetricValue("12")
+            .avecZoneId("D001")
+            .build(),
+          new IndicateurDataBuilder()
+            .avecId("f7632d30-5b49-465e-8774-063f9f67f83b")
+            .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
+            .avecIndicId("IND-002")
+            .avecMetricDate("2023-01-01")
+            .avecMetricType("vc")
+            .avecMetricValue("15")
+            .avecZoneId("D002")
+            .build(),
+        ];
 
-      // When
-      await prismaMesureIndicateurRepository.sauvegarder(listeIndicateursData);
+        // When
+        await prismaMesureIndicateurRepository.sauvegarder(
+          listeIndicateursData,
+        );
 
-      // Then
-      const resultListeIndicateursData =
-        await prismaMesureIndicateurRepository.recupererTout();
+        // Then
+        const resultListeIndicateursData =
+          await prismaMesureIndicateurRepository.recupererTout();
 
-      expect(resultListeIndicateursData).toHaveLength(2);
+        expect(resultListeIndicateursData).toHaveLength(2);
 
-      expect(resultListeIndicateursData[0].id).toEqual(
-        "b2450ce3-8006-4550-8132-e5aab19c0caf",
-      );
-      expect(resultListeIndicateursData[0].rapportId).toEqual(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
-      expect(resultListeIndicateursData[0].indicId).toEqual("IND-001");
-      expect(resultListeIndicateursData[0].metricDate).toEqual("2022-12-01");
-      expect(resultListeIndicateursData[0].metricType).toEqual("vi");
-      expect(resultListeIndicateursData[0].metricValue).toEqual("12");
-      expect(resultListeIndicateursData[0].zoneId).toEqual("D001");
+        expect(resultListeIndicateursData[0].id).toEqual(
+          "b2450ce3-8006-4550-8132-e5aab19c0caf",
+        );
+        expect(resultListeIndicateursData[0].rapportId).toEqual(
+          "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+        );
+        expect(resultListeIndicateursData[0].indicId).toEqual("IND-001");
+        expect(resultListeIndicateursData[0].metricDate).toEqual("2022-12-01");
+        expect(resultListeIndicateursData[0].metricType).toEqual("vi");
+        expect(resultListeIndicateursData[0].metricValue).toEqual("12");
+        expect(resultListeIndicateursData[0].zoneId).toEqual("D001");
 
-      expect(resultListeIndicateursData[1].id).toEqual(
-        "f7632d30-5b49-465e-8774-063f9f67f83b",
-      );
-      expect(resultListeIndicateursData[1].rapportId).toEqual(
-        "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
-      );
-      expect(resultListeIndicateursData[1].indicId).toEqual("IND-002");
-      expect(resultListeIndicateursData[1].metricDate).toEqual("2023-01-01");
-      expect(resultListeIndicateursData[1].metricType).toEqual("vc");
-      expect(resultListeIndicateursData[1].metricValue).toEqual("15");
-      expect(resultListeIndicateursData[1].zoneId).toEqual("D002");
-    });
+        expect(resultListeIndicateursData[1].id).toEqual(
+          "f7632d30-5b49-465e-8774-063f9f67f83b",
+        );
+        expect(resultListeIndicateursData[1].rapportId).toEqual(
+          "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
+        );
+        expect(resultListeIndicateursData[1].indicId).toEqual("IND-002");
+        expect(resultListeIndicateursData[1].metricDate).toEqual("2023-01-01");
+        expect(resultListeIndicateursData[1].metricType).toEqual("vc");
+        expect(resultListeIndicateursData[1].metricValue).toEqual("15");
+        expect(resultListeIndicateursData[1].zoneId).toEqual("D002");
+      }),
+    );
   });
 });

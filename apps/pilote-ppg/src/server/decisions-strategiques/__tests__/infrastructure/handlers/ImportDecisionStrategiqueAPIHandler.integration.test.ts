@@ -5,6 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 // node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
 type CorpsReponseImport = { message: string; erreurs: { message: string }[] };
@@ -116,210 +117,233 @@ function créerMockRequestAvecBodyInvalide() {
 }
 
 describe("ImportDecisionStrategiqueAPIHandler", () => {
-  it("importe une décision stratégique valide et la persiste en base", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const body = {
-      decisions_strategiques: [
-        {
-          type: "suivi_des_decisions",
-          contenu: "Contenu de la décision stratégique de test",
-        },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("decisionStrategique")
-      .resolve("importDecisionStrategiqueAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "importe une décision stratégique valide et la persiste en base",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(200);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Les décisions stratégiques ont correctement été importées",
-    );
-
-    const decisionsEnBase = await prisma.decision_strategique.findMany({
-      where: { chantier_id: chantierId },
-    });
-    expect(decisionsEnBase).toHaveLength(1);
-    expect(decisionsEnBase[0].contenu).toEqual(
-      "Contenu de la décision stratégique de test",
-    );
-    expect(decisionsEnBase[0].type).toEqual("suivi_des_decisions");
-    expect(decisionsEnBase[0].auteur_modification_id).toEqual(auteurId);
-    expect(decisionsEnBase[0].auteur_creation_id).toEqual(auteurId);
-  });
-
-  it("retourne 400 quand le JSON est invalide", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
-
-    const { request, response } = créerMockRequestAvecBodyInvalide();
-
-    // When
-    await getContainer("decisionStrategique")
-      .resolve("importDecisionStrategiqueAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
-
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
-      "Le corps de la requête n'est pas un JSON valide",
-    );
-  });
-
-  it("retourne 403 quand le chantier n'est pas autorisé", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-
-    const utilisateurAuthentifié =
-      UtilisateurAuthentifie.creerUtilisateurAuthentifie({
-        id: auteurId,
-        email: "test@test.com",
-        profil: ProfilEnum.EQUIPE_DIR_PROJET,
-        profilAAccèsAuxChantiersBrouillons: false,
-        habilitations: {
-          lecture: { chantiers: [], territoires: [], périmètres: [] },
-          saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
-          saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
-          responsabilite: { chantiers: [], territoires: [], périmètres: [] },
-          gestionUtilisateur: {
-            chantiers: [],
-            territoires: [],
-            périmètres: [],
+      const body = {
+        decisions_strategiques: [
+          {
+            type: "suivi_des_decisions",
+            contenu: "Contenu de la décision stratégique de test",
           },
-        },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("decisionStrategique")
+        .resolve("importDecisionStrategiqueAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(200);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Les décisions stratégiques ont correctement été importées",
+      );
+
+      const decisionsEnBase = await prisma.decision_strategique.findMany({
+        where: { chantier_id: chantierId },
       });
+      expect(decisionsEnBase).toHaveLength(1);
+      expect(decisionsEnBase[0].contenu).toEqual(
+        "Contenu de la décision stratégique de test",
+      );
+      expect(decisionsEnBase[0].type).toEqual("suivi_des_decisions");
+      expect(decisionsEnBase[0].auteur_modification_id).toEqual(auteurId);
+      expect(decisionsEnBase[0].auteur_creation_id).toEqual(auteurId);
+    }),
+  );
 
-    const body = {
-      decisions_strategiques: [
-        {
-          type: "suivi_des_decisions",
-          contenu: "Tentative non autorisée",
-        },
-      ],
-    };
-
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("decisionStrategique")
-      .resolve("importDecisionStrategiqueAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "retourne 400 quand le JSON est invalide",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(403);
-  });
+      const { request, response } = créerMockRequestAvecBodyInvalide();
 
-  it("retourne 400 quand le type est invalide (validation Zod)", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+      // When
+      await getContainer("decisionStrategique")
+        .resolve("importDecisionStrategiqueAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    const body = {
-      decisions_strategiques: [
-        {
-          type: "type_inexistant",
-          contenu: "Décision avec type invalide",
-        },
-      ],
-    };
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
+        "Le corps de la requête n'est pas un JSON valide",
+      );
+    }),
+  );
 
-    const { request, response } = créerMockRequestAvecBody(body);
+  it(
+    "retourne 403 quand le chantier n'est pas autorisé",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
 
-    // When
-    await getContainer("decisionStrategique")
-      .resolve("importDecisionStrategiqueAPIHandler")
-      .handle({
-        request,
-        response,
+      const utilisateurAuthentifié =
+        UtilisateurAuthentifie.creerUtilisateurAuthentifie({
+          id: auteurId,
+          email: "test@test.com",
+          profil: ProfilEnum.EQUIPE_DIR_PROJET,
+          profilAAccèsAuxChantiersBrouillons: false,
+          habilitations: {
+            lecture: { chantiers: [], territoires: [], périmètres: [] },
+            saisieCommentaire: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            saisieIndicateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+            responsabilite: { chantiers: [], territoires: [], périmètres: [] },
+            gestionUtilisateur: {
+              chantiers: [],
+              territoires: [],
+              périmètres: [],
+            },
+          },
+        });
+
+      const body = {
+        decisions_strategiques: [
+          {
+            type: "suivi_des_decisions",
+            contenu: "Tentative non autorisée",
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("decisionStrategique")
+        .resolve("importDecisionStrategiqueAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(403);
+    }),
+  );
+
+  it(
+    "retourne 400 quand le type est invalide (validation Zod)",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      const body = {
+        decisions_strategiques: [
+          {
+            type: "type_inexistant",
+            contenu: "Décision avec type invalide",
+          },
+        ],
+      };
 
-  it("retourne 400 quand la date est dans le futur", async () => {
-    // Given
-    const chantierId = `CH-${randomUUID().slice(0, 6)}`;
-    const auteurId = await créerUtilisateurEnBase();
-    await créerDonnéesDeRéférence(chantierId);
-    const utilisateurAuthentifié = créerUtilisateurAuthentifié(
-      auteurId,
-      chantierId,
-    );
+      const { request, response } = créerMockRequestAvecBody(body);
 
-    const futurDate = new Date();
-    futurDate.setFullYear(futurDate.getFullYear() + 1);
-    const futurDateStr = futurDate.toISOString().split("T")[0];
+      // When
+      await getContainer("decisionStrategique")
+        .resolve("importDecisionStrategiqueAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
 
-    const body = {
-      decisions_strategiques: [
-        {
-          type: "suivi_des_decisions",
-          contenu: "Décision avec date future",
-          date_decision_strategique: futurDateStr,
-        },
-      ],
-    };
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
 
-    const { request, response } = créerMockRequestAvecBody(body);
-
-    // When
-    await getContainer("decisionStrategique")
-      .resolve("importDecisionStrategiqueAPIHandler")
-      .handle({
-        request,
-        response,
+  it(
+    "retourne 400 quand la date est dans le futur",
+    createIntegrationTest(async () => {
+      // Given
+      const chantierId = `CH-${randomUUID().slice(0, 6)}`;
+      const auteurId = await créerUtilisateurEnBase();
+      await créerDonnéesDeRéférence(chantierId);
+      const utilisateurAuthentifié = créerUtilisateurAuthentifié(
+        auteurId,
         chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+      );
 
-    // Then
-    expect(response._getStatusCode()).toEqual(400);
-    expect(
-      (response._getJSONData() as CorpsReponseImport).erreurs,
-    ).toBeDefined();
-  });
+      const futurDate = new Date();
+      futurDate.setFullYear(futurDate.getFullYear() + 1);
+      const futurDateStr = futurDate.toISOString().split("T")[0];
+
+      const body = {
+        decisions_strategiques: [
+          {
+            type: "suivi_des_decisions",
+            contenu: "Décision avec date future",
+            date_decision_strategique: futurDateStr,
+          },
+        ],
+      };
+
+      const { request, response } = créerMockRequestAvecBody(body);
+
+      // When
+      await getContainer("decisionStrategique")
+        .resolve("importDecisionStrategiqueAPIHandler")
+        .handle({
+          request,
+          response,
+          chantierId,
+          utilisateurAuthentifie: utilisateurAuthentifié,
+        });
+
+      // Then
+      expect(response._getStatusCode()).toEqual(400);
+      expect(
+        (response._getJSONData() as CorpsReponseImport).erreurs,
+      ).toBeDefined();
+    }),
+  );
 });

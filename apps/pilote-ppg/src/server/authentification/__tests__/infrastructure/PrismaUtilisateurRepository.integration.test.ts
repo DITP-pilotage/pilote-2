@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db/prisma";
 import { PrismaUtilisateurRepository } from "@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("PrismaUtilisateurRepository", () => {
   let prismaUtilisateurRepository: PrismaUtilisateurRepository;
@@ -10,48 +11,54 @@ describe("PrismaUtilisateurRepository", () => {
   });
 
   describe("#estPresent", () => {
-    it("doit remonter true si l'email appartient à un utilisateur", async () => {
-      // Given
-      await prisma.utilisateur.create({
-        data: {
+    it(
+      "doit remonter true si l'email appartient à un utilisateur",
+      createIntegrationTest(async () => {
+        // Given
+        await prisma.utilisateur.create({
+          data: {
+            email: "john.doe@test.com",
+            nom: "John",
+            prenom: "Doe",
+            date_creation: new Date().toISOString(),
+            profil: {
+              connect: {
+                code: ProfilEnum.DITP_ADMIN,
+              },
+            },
+          },
+        });
+        // When
+        const estPresent = await prismaUtilisateurRepository.estPresent({
           email: "john.doe@test.com",
-          nom: "John",
-          prenom: "Doe",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
+        });
+        // Then
+        expect(estPresent).toEqual(true);
+      }),
+    );
+    it(
+      "doit remonter false si l'email appartient à aucun utilisateur",
+      createIntegrationTest(async () => {
+        await prisma.utilisateur.create({
+          data: {
+            email: "jane.doe@test.com",
+            nom: "Jane",
+            prenom: "Doe",
+            date_creation: new Date().toISOString(),
+            profil: {
+              connect: {
+                code: ProfilEnum.DITP_ADMIN,
+              },
             },
           },
-        },
-      });
-      // When
-      const estPresent = await prismaUtilisateurRepository.estPresent({
-        email: "john.doe@test.com",
-      });
-      // Then
-      expect(estPresent).toEqual(true);
-    });
-    it("doit remonter false si l'email appartient à aucun utilisateur", async () => {
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Jane",
-          prenom: "Doe",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-      // When
-      const estPresent = await prismaUtilisateurRepository.estPresent({
-        email: "john.doe@test.com",
-      });
-      // Then
-      expect(estPresent).toEqual(false);
-    });
+        });
+        // When
+        const estPresent = await prismaUtilisateurRepository.estPresent({
+          email: "john.doe@test.com",
+        });
+        // Then
+        expect(estPresent).toEqual(false);
+      }),
+    );
   });
 });

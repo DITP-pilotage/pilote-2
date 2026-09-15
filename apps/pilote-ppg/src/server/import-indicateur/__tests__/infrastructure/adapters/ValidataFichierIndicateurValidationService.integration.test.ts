@@ -4,6 +4,7 @@ import { ReportErrorBuilder } from "@/server/import-indicateur/app/builder/Repor
 import { ReportValidataWithDataBuilder } from "@/server/import-indicateur/app/builder/ReportValidataWithDataBuilder";
 import { ValiderFichierPayload } from "@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface";
 import { HttpClient } from "@/server/import-indicateur/domain/ports/HttpClient.interface";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("ValidataFichierIndicateurValidationService", () => {
   let validataFichierIndicateurValidationService: ValidataFichierIndicateurValidationService;
@@ -22,70 +23,9 @@ describe("ValidataFichierIndicateurValidationService", () => {
       new ValidataFichierIndicateurValidationService({ httpClient });
   });
 
-  it("doit appeler le httpClient pour contacter validata", async () => {
-    // Given
-    const body: ValiderFichierPayload = {
-      cheminCompletDuFichier,
-      nomDuFichier,
-      schema,
-      utilisateurEmail,
-    };
-    const report = new ReportValidataWithDataBuilder()
-      .avecValid(true)
-      .avecResourceData(
-        [
-          "identifiant_indic",
-          "zone_id",
-          "date_valeur",
-          "type_valeur",
-          "valeur",
-        ],
-        ["IND-001", "D001", metricDateValue1, "vi", "9"],
-        ["IND-002", "D004", metricDateValue2, "vc", "3"],
-      )
-      .build();
-
-    httpClient.post.mockResolvedValue(report);
-
-    // When
-    await validataFichierIndicateurValidationService.validerFichier(body);
-
-    // Then
-    expect(httpClient.post).toHaveBeenNthCalledWith(1, {
-      cheminCompletDuFichier,
-      nomDuFichier,
-      schema,
-    });
-  });
-
-  it("quand le httpClient remonte une erreur, doit remonter une erreur", async () => {
-    // Given
-    const body: ValiderFichierPayload = {
-      cheminCompletDuFichier,
-      nomDuFichier,
-      schema,
-      utilisateurEmail,
-    };
-
-    httpClient.post.mockRejectedValue(new Error("error"));
-
-    // When
-    const result =
-      await validataFichierIndicateurValidationService.validerFichier(body);
-
-    // Then
-    expect(httpClient.post).toHaveBeenNthCalledWith(1, {
-      cheminCompletDuFichier,
-      nomDuFichier,
-      schema,
-    });
-    expect(result.listeErreursValidation.at(0)?.message).toEqual(
-      "Une erreur est survenue lors de la validation de la forme du fichier",
-    );
-  });
-
-  describe("quand le fichier est valide", () => {
-    it("doit construire le rapport de validation du fichier", async () => {
+  it(
+    "doit appeler le httpClient pour contacter validata",
+    createIntegrationTest(async () => {
       // Given
       const body: ValiderFichierPayload = {
         cheminCompletDuFichier,
@@ -111,55 +51,20 @@ describe("ValidataFichierIndicateurValidationService", () => {
       httpClient.post.mockResolvedValue(report);
 
       // When
-      const result =
-        await validataFichierIndicateurValidationService.validerFichier(body);
+      await validataFichierIndicateurValidationService.validerFichier(body);
 
       // Then
-      expect(result.id).toBeDefined();
-      expect(result.estValide).toEqual(true);
-      expect(result.dateCreation).toBeDefined();
-      expect(result.utilisateurEmail).toEqual("ditp.admin@example.com");
+      expect(httpClient.post).toHaveBeenNthCalledWith(1, {
+        cheminCompletDuFichier,
+        nomDuFichier,
+        schema,
+      });
+    }),
+  );
 
-      expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
-
-      expect(result.listeMesuresIndicateurTemporaire[0].id).toBeDefined();
-      expect(result.listeMesuresIndicateurTemporaire[0].rapportId).toEqual(
-        result.id,
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].indicId).toEqual(
-        "IND-001",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].metricDate).toEqual(
-        "30/12/2023",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].metricType).toEqual(
-        "vi",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].metricValue).toEqual(
-        "9",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].zoneId).toEqual("D001");
-
-      expect(result.listeMesuresIndicateurTemporaire[1].id).toBeDefined();
-      expect(result.listeMesuresIndicateurTemporaire[1].rapportId).toEqual(
-        result.id,
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].indicId).toEqual(
-        "IND-002",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].metricDate).toEqual(
-        "31/12/2023",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].metricType).toEqual(
-        "vc",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].metricValue).toEqual(
-        "3",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].zoneId).toEqual("D004");
-    });
-
-    it("quand les en-têtes sont dans un autre ordre, doit construire le même rapport de validation du fichier", async () => {
+  it(
+    "quand le httpClient remonte une erreur, doit remonter une erreur",
+    createIntegrationTest(async () => {
       // Given
       const body: ValiderFichierPayload = {
         cheminCompletDuFichier,
@@ -167,138 +72,265 @@ describe("ValidataFichierIndicateurValidationService", () => {
         schema,
         utilisateurEmail,
       };
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "type_valeur",
-            "zone_id",
-            "date_valeur",
-            "identifiant_indic",
-            "valeur",
-          ],
-          ["vi", "D001", metricDateValue1, "IND-001", "9"],
-          ["vc", "D004", metricDateValue2, "IND-002", "3"],
-        )
-        .build();
 
-      httpClient.post.mockResolvedValue(report);
+      httpClient.post.mockRejectedValue(new Error("error"));
 
       // When
       const result =
         await validataFichierIndicateurValidationService.validerFichier(body);
 
       // Then
-      expect(result.estValide).toEqual(true);
+      expect(httpClient.post).toHaveBeenNthCalledWith(1, {
+        cheminCompletDuFichier,
+        nomDuFichier,
+        schema,
+      });
+      expect(result.listeErreursValidation.at(0)?.message).toEqual(
+        "Une erreur est survenue lors de la validation de la forme du fichier",
+      );
+    }),
+  );
 
-      expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
+  describe("quand le fichier est valide", () => {
+    it(
+      "doit construire le rapport de validation du fichier",
+      createIntegrationTest(async () => {
+        // Given
+        const body: ValiderFichierPayload = {
+          cheminCompletDuFichier,
+          nomDuFichier,
+          schema,
+          utilisateurEmail,
+        };
+        const report = new ReportValidataWithDataBuilder()
+          .avecValid(true)
+          .avecResourceData(
+            [
+              "identifiant_indic",
+              "zone_id",
+              "date_valeur",
+              "type_valeur",
+              "valeur",
+            ],
+            ["IND-001", "D001", metricDateValue1, "vi", "9"],
+            ["IND-002", "D004", metricDateValue2, "vc", "3"],
+          )
+          .build();
 
-      expect(result.listeMesuresIndicateurTemporaire[0].id).toBeDefined();
-      expect(result.listeMesuresIndicateurTemporaire[0].indicId).toEqual(
-        "IND-001",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].metricDate).toEqual(
-        metricDateValue1,
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].metricType).toEqual(
-        "vi",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].metricValue).toEqual(
-        "9",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[0].zoneId).toEqual("D001");
+        httpClient.post.mockResolvedValue(report);
 
-      expect(result.listeMesuresIndicateurTemporaire[1].id).toBeDefined();
-      expect(result.listeMesuresIndicateurTemporaire[1].indicId).toEqual(
-        "IND-002",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].metricDate).toEqual(
-        metricDateValue2,
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].metricType).toEqual(
-        "vc",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].metricValue).toEqual(
-        "3",
-      );
-      expect(result.listeMesuresIndicateurTemporaire[1].zoneId).toEqual("D004");
-    });
+        // When
+        const result =
+          await validataFichierIndicateurValidationService.validerFichier(body);
+
+        // Then
+        expect(result.id).toBeDefined();
+        expect(result.estValide).toEqual(true);
+        expect(result.dateCreation).toBeDefined();
+        expect(result.utilisateurEmail).toEqual("ditp.admin@example.com");
+
+        expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
+
+        expect(result.listeMesuresIndicateurTemporaire[0].id).toBeDefined();
+        expect(result.listeMesuresIndicateurTemporaire[0].rapportId).toEqual(
+          result.id,
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].indicId).toEqual(
+          "IND-001",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].metricDate).toEqual(
+          "30/12/2023",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].metricType).toEqual(
+          "vi",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].metricValue).toEqual(
+          "9",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].zoneId).toEqual(
+          "D001",
+        );
+
+        expect(result.listeMesuresIndicateurTemporaire[1].id).toBeDefined();
+        expect(result.listeMesuresIndicateurTemporaire[1].rapportId).toEqual(
+          result.id,
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].indicId).toEqual(
+          "IND-002",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].metricDate).toEqual(
+          "31/12/2023",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].metricType).toEqual(
+          "vc",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].metricValue).toEqual(
+          "3",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].zoneId).toEqual(
+          "D004",
+        );
+      }),
+    );
+
+    it(
+      "quand les en-têtes sont dans un autre ordre, doit construire le même rapport de validation du fichier",
+      createIntegrationTest(async () => {
+        // Given
+        const body: ValiderFichierPayload = {
+          cheminCompletDuFichier,
+          nomDuFichier,
+          schema,
+          utilisateurEmail,
+        };
+        const report = new ReportValidataWithDataBuilder()
+          .avecValid(true)
+          .avecResourceData(
+            [
+              "type_valeur",
+              "zone_id",
+              "date_valeur",
+              "identifiant_indic",
+              "valeur",
+            ],
+            ["vi", "D001", metricDateValue1, "IND-001", "9"],
+            ["vc", "D004", metricDateValue2, "IND-002", "3"],
+          )
+          .build();
+
+        httpClient.post.mockResolvedValue(report);
+
+        // When
+        const result =
+          await validataFichierIndicateurValidationService.validerFichier(body);
+
+        // Then
+        expect(result.estValide).toEqual(true);
+
+        expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
+
+        expect(result.listeMesuresIndicateurTemporaire[0].id).toBeDefined();
+        expect(result.listeMesuresIndicateurTemporaire[0].indicId).toEqual(
+          "IND-001",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].metricDate).toEqual(
+          metricDateValue1,
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].metricType).toEqual(
+          "vi",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].metricValue).toEqual(
+          "9",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[0].zoneId).toEqual(
+          "D001",
+        );
+
+        expect(result.listeMesuresIndicateurTemporaire[1].id).toBeDefined();
+        expect(result.listeMesuresIndicateurTemporaire[1].indicId).toEqual(
+          "IND-002",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].metricDate).toEqual(
+          metricDateValue2,
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].metricType).toEqual(
+          "vc",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].metricValue).toEqual(
+          "3",
+        );
+        expect(result.listeMesuresIndicateurTemporaire[1].zoneId).toEqual(
+          "D004",
+        );
+      }),
+    );
   });
 
   describe("quand le fichier est invalide", () => {
-    it("doit construire le rapport d'erreur du fichier", async () => {
-      // Given
-      const body: ValiderFichierPayload = {
-        cheminCompletDuFichier,
-        nomDuFichier,
-        schema,
-        utilisateurEmail,
-      };
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-          new ReportErrorBuilder()
-            .avecCell("cellule 2")
-            .avecName("nom 2")
-            .avecFieldName("nom du champ 2")
-            .avecFieldPosition(2)
-            .avecMessage("message 2")
-            .avecRowNumber(2)
-            .avecRowPosition(2)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D001", metricDateValue1, "vi", "9"],
-          ["IND-001", "D004", metricDateValue2, "vc", "3"],
-        )
-        .build();
+    it(
+      "doit construire le rapport d'erreur du fichier",
+      createIntegrationTest(async () => {
+        // Given
+        const body: ValiderFichierPayload = {
+          cheminCompletDuFichier,
+          nomDuFichier,
+          schema,
+          utilisateurEmail,
+        };
+        const report = new ReportValidataWithDataBuilder()
+          .avecValid(false)
+          .avecErrors(
+            new ReportErrorBuilder()
+              .avecCell("cellule 1")
+              .avecName("nom 1")
+              .avecFieldName("nom du champ 1")
+              .avecFieldPosition(1)
+              .avecMessage("message 1")
+              .avecRowNumber(1)
+              .avecRowPosition(1)
+              .build(),
+            new ReportErrorBuilder()
+              .avecCell("cellule 2")
+              .avecName("nom 2")
+              .avecFieldName("nom du champ 2")
+              .avecFieldPosition(2)
+              .avecMessage("message 2")
+              .avecRowNumber(2)
+              .avecRowPosition(2)
+              .build(),
+          )
+          .avecResourceData(
+            [
+              "identifiant_indic",
+              "zone_id",
+              "date_valeur",
+              "type_valeur",
+              "valeur",
+            ],
+            ["IND-001", "D001", metricDateValue1, "vi", "9"],
+            ["IND-001", "D004", metricDateValue2, "vc", "3"],
+          )
+          .build();
 
-      httpClient.post.mockResolvedValue(report);
+        httpClient.post.mockResolvedValue(report);
 
-      // When
-      const result =
-        await validataFichierIndicateurValidationService.validerFichier(body);
+        // When
+        const result =
+          await validataFichierIndicateurValidationService.validerFichier(body);
 
-      // Then
-      expect(result.estValide).toEqual(false);
-      expect(result.listeErreursValidation).toHaveLength(2);
+        // Then
+        expect(result.estValide).toEqual(false);
+        expect(result.listeErreursValidation).toHaveLength(2);
 
-      expect(result.listeErreursValidation.at(0)?.cellule).toEqual("cellule 1");
-      expect(result.listeErreursValidation.at(0)?.nom).toEqual("nom 1");
-      expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual(
-        "nom du champ 1",
-      );
-      expect(result.listeErreursValidation.at(0)?.positionDuChamp).toEqual(1);
-      expect(result.listeErreursValidation.at(0)?.message).toEqual("message 1");
-      expect(result.listeErreursValidation.at(0)?.numeroDeLigne).toEqual(1);
-      expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(0);
+        expect(result.listeErreursValidation.at(0)?.cellule).toEqual(
+          "cellule 1",
+        );
+        expect(result.listeErreursValidation.at(0)?.nom).toEqual("nom 1");
+        expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual(
+          "nom du champ 1",
+        );
+        expect(result.listeErreursValidation.at(0)?.positionDuChamp).toEqual(1);
+        expect(result.listeErreursValidation.at(0)?.message).toEqual(
+          "message 1",
+        );
+        expect(result.listeErreursValidation.at(0)?.numeroDeLigne).toEqual(1);
+        expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(0);
 
-      expect(result.listeErreursValidation.at(1)?.cellule).toEqual("cellule 2");
-      expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 2");
-      expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
-        "nom du champ 2",
-      );
-      expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
-      expect(result.listeErreursValidation.at(1)?.message).toEqual("message 2");
-      expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
-      expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(1);
-    });
+        expect(result.listeErreursValidation.at(1)?.cellule).toEqual(
+          "cellule 2",
+        );
+        expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 2");
+        expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
+          "nom du champ 2",
+        );
+        expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
+        expect(result.listeErreursValidation.at(1)?.message).toEqual(
+          "message 2",
+        );
+        expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
+        expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(1);
+      }),
+    );
 
     describe("et que le rapport possèdes des erreurs spécifiques, doit personnaliser le message", () => {
       it.each([
@@ -430,15 +462,73 @@ describe("ValidataFichierIndicateurValidationService", () => {
         ],
       ])(
         "pour le champ %s, le code %s, la description %s et la note %s à la ligne %i",
-        async (
-          fieldName,
-          code,
-          description,
-          note,
-          rowNumber,
-          rowPosition,
-          expected,
-        ) => {
+        createIntegrationTest(
+          async (
+            _prisma,
+            fieldName,
+            code,
+            description,
+            note,
+            rowNumber,
+            rowPosition,
+            expected,
+          ) => {
+            // Given
+            const body: ValiderFichierPayload = {
+              cheminCompletDuFichier,
+              nomDuFichier,
+              schema,
+              utilisateurEmail,
+            };
+            const report = new ReportValidataWithDataBuilder()
+              .avecValid(false)
+              .avecErrors(
+                new ReportErrorBuilder()
+                  .avecFieldName(fieldName)
+                  .avecCode(code)
+                  .avecMessage(
+                    "Une erreur est survenue, veuillez contacter le support pour plus d'information",
+                  )
+                  .avecNote(note)
+                  .avecCell("F001")
+                  .avecRowNumber(rowNumber)
+                  .avecRowPosition(rowPosition)
+                  .avecDescription(description)
+                  .build(),
+              )
+              .avecResourceData(
+                [
+                  "identifiant_indic",
+                  "zone_id",
+                  "date_valeur",
+                  "type_valeur",
+                  "valeur",
+                ],
+                ["IND-001", "D001", metricDateValue1, "vi", "9"],
+                ["IND-001", "D004", metricDateValue2, "vc", "3"],
+              )
+              .build();
+
+            httpClient.post.mockResolvedValue(report);
+
+            // When
+            const result =
+              await validataFichierIndicateurValidationService.validerFichier(
+                body,
+              );
+
+            expect(result.listeErreursValidation.at(0)?.message).toEqual(
+              expected,
+            );
+          },
+        ),
+      );
+    });
+
+    describe("quand identifiant_indic n'est pas défini dans les en-têtes", () => {
+      it(
+        "doit identifier que l'en-tête identifiant_indic n'est pas présente",
+        createIntegrationTest(async () => {
           // Given
           const body: ValiderFichierPayload = {
             cheminCompletDuFichier,
@@ -450,16 +540,75 @@ describe("ValidataFichierIndicateurValidationService", () => {
             .avecValid(false)
             .avecErrors(
               new ReportErrorBuilder()
-                .avecFieldName(fieldName)
-                .avecCode(code)
-                .avecMessage(
-                  "Une erreur est survenue, veuillez contacter le support pour plus d'information",
-                )
-                .avecNote(note)
-                .avecCell("F001")
-                .avecRowNumber(rowNumber)
-                .avecRowPosition(rowPosition)
-                .avecDescription(description)
+                .avecCell("cellule 1")
+                .avecName("nom 1")
+                .avecFieldName("nom du champ 1")
+                .avecFieldPosition(1)
+                .avecMessage("message 1")
+                .avecRowNumber(1)
+                .avecRowPosition(1)
+                .build(),
+            )
+            .avecResourceData(
+              ["id_indic", "zone_id", "date_valeur", "type_valeur", "valeur"],
+              ["IND-001", "D001", metricDateValue1, "vi", "9"],
+              ["IND-001", "D004", metricDateValue2, "vc", "3"],
+            )
+            .build();
+
+          httpClient.post.mockResolvedValue(report);
+
+          // When
+          const result =
+            await validataFichierIndicateurValidationService.validerFichier(
+              body,
+            );
+
+          // Then
+          expect(result.estValide).toEqual(false);
+          expect(result.listeErreursValidation).toHaveLength(2);
+          expect(result.listeMesuresIndicateurTemporaire).toHaveLength(0);
+
+          expect(result.listeErreursValidation.at(0)?.nom).toEqual(
+            "identifiant_indic",
+          );
+          expect(result.listeErreursValidation.at(0)?.message).toEqual(
+            "L'en-tête identifiant_indic n'est pas présente",
+          );
+
+          expect(result.listeErreursValidation.at(1)?.cellule).toEqual(
+            "cellule 1",
+          );
+          expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 1");
+          expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
+            "nom du champ 1",
+          );
+        }),
+      );
+    });
+
+    describe("quand une entête possède un espace", () => {
+      it(
+        "doit identifier que l'en-tête est incorrect",
+        createIntegrationTest(async () => {
+          // Given
+          const body: ValiderFichierPayload = {
+            cheminCompletDuFichier,
+            nomDuFichier,
+            schema,
+            utilisateurEmail,
+          };
+          const report = new ReportValidataWithDataBuilder()
+            .avecValid(false)
+            .avecErrors(
+              new ReportErrorBuilder()
+                .avecCell("cellule 1")
+                .avecName("nom 1")
+                .avecFieldName("nom du champ 1")
+                .avecFieldPosition(1)
+                .avecMessage("message 1")
+                .avecRowNumber(1)
+                .avecRowPosition(1)
                 .build(),
             )
             .avecResourceData(
@@ -468,7 +617,7 @@ describe("ValidataFichierIndicateurValidationService", () => {
                 "zone_id",
                 "date_valeur",
                 "type_valeur",
-                "valeur",
+                "valeur   ",
               ],
               ["IND-001", "D001", metricDateValue1, "vi", "9"],
               ["IND-001", "D004", metricDateValue2, "vc", "3"],
@@ -483,138 +632,106 @@ describe("ValidataFichierIndicateurValidationService", () => {
               body,
             );
 
-          expect(result.listeErreursValidation.at(0)?.message).toEqual(
-            expected,
+          // Then
+          expect(result.estValide).toEqual(false);
+          expect(result.listeErreursValidation).toHaveLength(2);
+          expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
+
+          expect(result.listeErreursValidation.at(0)?.nom).toEqual(
+            "En-tête incorrect",
           );
-        },
+          expect(result.listeErreursValidation.at(0)?.message).toEqual(
+            "Le champ de l'en-tête 'valeur' comporte des espaces, veuillez les supprimer",
+          );
+          expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual(
+            "valeur",
+          );
+
+          expect(result.listeErreursValidation.at(1)?.cellule).toEqual(
+            "cellule 1",
+          );
+          expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 1");
+          expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
+            "nom du champ 1",
+          );
+        }),
       );
     });
 
-    describe("quand identifiant_indic n'est pas défini dans les en-têtes", () => {
-      it("doit identifier que l'en-tête identifiant_indic n'est pas présente", async () => {
-        // Given
-        const body: ValiderFichierPayload = {
-          cheminCompletDuFichier,
-          nomDuFichier,
-          schema,
-          utilisateurEmail,
-        };
-        const report = new ReportValidataWithDataBuilder()
-          .avecValid(false)
-          .avecErrors(
-            new ReportErrorBuilder()
-              .avecCell("cellule 1")
-              .avecName("nom 1")
-              .avecFieldName("nom du champ 1")
-              .avecFieldPosition(1)
-              .avecMessage("message 1")
-              .avecRowNumber(1)
-              .avecRowPosition(1)
-              .build(),
-          )
-          .avecResourceData(
-            ["id_indic", "zone_id", "date_valeur", "type_valeur", "valeur"],
-            ["IND-001", "D001", metricDateValue1, "vi", "9"],
-            ["IND-001", "D004", metricDateValue2, "vc", "3"],
-          )
-          .build();
-
-        httpClient.post.mockResolvedValue(report);
-
-        // When
-        const result =
-          await validataFichierIndicateurValidationService.validerFichier(body);
-
-        // Then
-        expect(result.estValide).toEqual(false);
-        expect(result.listeErreursValidation).toHaveLength(2);
-        expect(result.listeMesuresIndicateurTemporaire).toHaveLength(0);
-
-        expect(result.listeErreursValidation.at(0)?.nom).toEqual(
-          "identifiant_indic",
-        );
-        expect(result.listeErreursValidation.at(0)?.message).toEqual(
-          "L'en-tête identifiant_indic n'est pas présente",
-        );
-
-        expect(result.listeErreursValidation.at(1)?.cellule).toEqual(
-          "cellule 1",
-        );
-        expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 1");
-        expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
-          "nom du champ 1",
-        );
-      });
-    });
-
-    describe("quand une entête possède un espace", () => {
-      it("doit identifier que l'en-tête est incorrect", async () => {
-        // Given
-        const body: ValiderFichierPayload = {
-          cheminCompletDuFichier,
-          nomDuFichier,
-          schema,
-          utilisateurEmail,
-        };
-        const report = new ReportValidataWithDataBuilder()
-          .avecValid(false)
-          .avecErrors(
-            new ReportErrorBuilder()
-              .avecCell("cellule 1")
-              .avecName("nom 1")
-              .avecFieldName("nom du champ 1")
-              .avecFieldPosition(1)
-              .avecMessage("message 1")
-              .avecRowNumber(1)
-              .avecRowPosition(1)
-              .build(),
-          )
-          .avecResourceData(
-            [
-              "identifiant_indic",
-              "zone_id",
-              "date_valeur",
-              "type_valeur",
-              "valeur   ",
-            ],
-            ["IND-001", "D001", metricDateValue1, "vi", "9"],
-            ["IND-001", "D004", metricDateValue2, "vc", "3"],
-          )
-          .build();
-
-        httpClient.post.mockResolvedValue(report);
-
-        // When
-        const result =
-          await validataFichierIndicateurValidationService.validerFichier(body);
-
-        // Then
-        expect(result.estValide).toEqual(false);
-        expect(result.listeErreursValidation).toHaveLength(2);
-        expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
-
-        expect(result.listeErreursValidation.at(0)?.nom).toEqual(
-          "En-tête incorrect",
-        );
-        expect(result.listeErreursValidation.at(0)?.message).toEqual(
-          "Le champ de l'en-tête 'valeur' comporte des espaces, veuillez les supprimer",
-        );
-        expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual(
-          "valeur",
-        );
-
-        expect(result.listeErreursValidation.at(1)?.cellule).toEqual(
-          "cellule 1",
-        );
-        expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 1");
-        expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
-          "nom du champ 1",
-        );
-      });
-    });
-
     describe("quand une entête possède des majuscules", () => {
-      it("doit identifier que l'en-tête est incorrect", async () => {
+      it(
+        "doit identifier que l'en-tête est incorrect",
+        createIntegrationTest(async () => {
+          // Given
+          const body: ValiderFichierPayload = {
+            cheminCompletDuFichier,
+            nomDuFichier,
+            schema,
+            utilisateurEmail,
+          };
+          const report = new ReportValidataWithDataBuilder()
+            .avecValid(false)
+            .avecErrors(
+              new ReportErrorBuilder()
+                .avecCell("cellule 1")
+                .avecName("nom 1")
+                .avecFieldName("nom du champ 1")
+                .avecFieldPosition(1)
+                .avecMessage("message 1")
+                .avecRowNumber(1)
+                .avecRowPosition(1)
+                .build(),
+            )
+            .avecResourceData(
+              [
+                "identifiant_indic",
+                "zone_id",
+                "date_valeur",
+                "type_valeur",
+                "Valeur",
+              ],
+              ["IND-001", "D001", metricDateValue1, "vi", "9"],
+              ["IND-001", "D004", metricDateValue2, "vc", "3"],
+            )
+            .build();
+
+          httpClient.post.mockResolvedValue(report);
+
+          // When
+          const result =
+            await validataFichierIndicateurValidationService.validerFichier(
+              body,
+            );
+
+          // Then
+          expect(result.estValide).toEqual(false);
+          expect(result.listeErreursValidation).toHaveLength(2);
+          expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
+
+          expect(result.listeErreursValidation.at(0)?.nom).toEqual(
+            "En-tête incorrect",
+          );
+          expect(result.listeErreursValidation.at(0)?.message).toEqual(
+            "Le champ de l'en-tête 'valeur' comporte des majuscules, veuillez les mettre en minuscule",
+          );
+          expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual(
+            "valeur",
+          );
+
+          expect(result.listeErreursValidation.at(1)?.cellule).toEqual(
+            "cellule 1",
+          );
+          expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 1");
+          expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
+            "nom du champ 1",
+          );
+        }),
+      );
+    });
+
+    it(
+      "quand le fichier possède des données, doit construire le remonter les données du fichier",
+      createIntegrationTest(async () => {
         // Given
         const body: ValiderFichierPayload = {
           cheminCompletDuFichier,
@@ -641,7 +758,7 @@ describe("ValidataFichierIndicateurValidationService", () => {
               "zone_id",
               "date_valeur",
               "type_valeur",
-              "Valeur",
+              "valeur",
             ],
             ["IND-001", "D001", metricDateValue1, "vi", "9"],
             ["IND-001", "D004", metricDateValue2, "vc", "3"],
@@ -655,73 +772,9 @@ describe("ValidataFichierIndicateurValidationService", () => {
           await validataFichierIndicateurValidationService.validerFichier(body);
 
         // Then
-        expect(result.estValide).toEqual(false);
-        expect(result.listeErreursValidation).toHaveLength(2);
+        expect(result.listeErreursValidation).toHaveLength(1);
         expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
-
-        expect(result.listeErreursValidation.at(0)?.nom).toEqual(
-          "En-tête incorrect",
-        );
-        expect(result.listeErreursValidation.at(0)?.message).toEqual(
-          "Le champ de l'en-tête 'valeur' comporte des majuscules, veuillez les mettre en minuscule",
-        );
-        expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual(
-          "valeur",
-        );
-
-        expect(result.listeErreursValidation.at(1)?.cellule).toEqual(
-          "cellule 1",
-        );
-        expect(result.listeErreursValidation.at(1)?.nom).toEqual("nom 1");
-        expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual(
-          "nom du champ 1",
-        );
-      });
-    });
-
-    it("quand le fichier possède des données, doit construire le remonter les données du fichier", async () => {
-      // Given
-      const body: ValiderFichierPayload = {
-        cheminCompletDuFichier,
-        nomDuFichier,
-        schema,
-        utilisateurEmail,
-      };
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D001", metricDateValue1, "vi", "9"],
-          ["IND-001", "D004", metricDateValue2, "vc", "3"],
-        )
-        .build();
-
-      httpClient.post.mockResolvedValue(report);
-
-      // When
-      const result =
-        await validataFichierIndicateurValidationService.validerFichier(body);
-
-      // Then
-      expect(result.listeErreursValidation).toHaveLength(1);
-      expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
-    });
+      }),
+    );
   });
 });

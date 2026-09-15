@@ -1,3 +1,4 @@
+import { prisma } from "@/server/db/prisma";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { ListerRattachementsPiloteEval } from "@/server/evaluation/queries/ListerRattachementsPiloteEval";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
@@ -16,6 +17,12 @@ describe("ListerRattachementsPiloteEval", () => {
       "retourne tous les rattachements",
       createIntegrationTest(async () => {
         // Given
+        // Le referentiel de rattachement est alimente par le seed. Ce test
+        // compte les lignes qu'il cree, il repart donc d'une table vide. Le
+        // DELETE est annule avec la transaction du test.
+        await prisma.referentiel_rattachement.deleteMany();
+        await prisma.referentiel_rattachement_groupe.deleteMany();
+
         const groupe1 = await fixtures.rattachementGroupe({
           code: "REG",
           libelle: "Groupe Régions",
