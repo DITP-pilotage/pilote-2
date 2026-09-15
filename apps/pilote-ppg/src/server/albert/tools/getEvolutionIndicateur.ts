@@ -6,7 +6,9 @@ import type { PointEvolutionAvancement } from "@/server/chantiers/query/GetEvolu
 import { formaterDate } from "@/client/utils/date/date";
 
 export const getEvolutionIndicateurInputSchema = z.object({
-  indicateur_id: z.string().describe("Identifiant canonique de l'indicateur"),
+  indicateur_id: z
+    .string()
+    .describe("Identifiant canonique de l'indicateur (ex: IND-894)"),
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),

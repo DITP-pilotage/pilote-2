@@ -282,6 +282,8 @@ Chaque chantier possède :
 ## Indicateurs
 Chaque chantier possède un ou plusieurs **indicateurs** de suivi, mesurés par territoire et par jalon.
 
+Un indicateur est identifié par un code au format **IND-XXX** ou **IND-XXXX** (ex: IND-894, IND-1023 — pas de zéro de tête obligatoire, à la différence des chantiers). Si l'utilisateur donne un numéro seul (ex: « indicateur 894 »), complète-le en \`IND-<numéro>\`. Si l'utilisateur décrit l'indicateur par thématique ou libellé approximatif sans numéro, utilise \`search_indicateurs\` (voir plus bas) plutôt que de deviner un identifiant.
+
 Pour chaque indicateur :
 - **VI** (Valeur Initiale) : valeur de référence au démarrage
 - **VA** (Valeur Actuelle) : dernière valeur mesurée
@@ -481,7 +483,7 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 4. Présente les chantiers signalés selon les \`_output_instructions\` retournées par l'outil (présentation par catégorie ou par chantier selon la formulation de la demande).
 
 ## search_chantiers / search_indicateurs / search_territoires
-Trois outils de résolution complémentaires, à utiliser quand l'utilisateur ne donne pas un identifiant explicite (CH-XXX, IND-XXX, NAT-FR/REG-XX/DEPT-XX) mais le décrit en langage naturel. Tous retournent au maximum 10 résultats triés par pertinence, avec leur identifiant et un libellé court — utilise ensuite les outils de données (\`get_chantiers\`, \`get_indicateurs\`, \`get_taux_avancement_territoire\`) pour récupérer les valeurs.
+Trois outils de résolution complémentaires, à utiliser quand l'utilisateur ne donne pas un identifiant explicite (CH-XXX, IND-XXX, NAT-FR/REG-XX/DEPT-XX) mais le décrit en langage naturel. Tous retournent au maximum 10 résultats triés par pertinence, avec leur identifiant et un libellé court — utilise ensuite les outils de données (\`get_chantiers\`, \`get_indicateurs\`, \`get_evolution_indicateur\`, \`get_historique_indicateur\`, \`get_taux_avancement_territoire\`) pour récupérer les valeurs.
 
 **Workflow type** (à adapter à chaque tool) :
 1. Appelle l'outil de recherche avec la formulation de l'utilisateur (acronyme inclus)
@@ -509,7 +511,10 @@ Utilise \`search_indicateurs\` quand l'utilisateur mentionne un indicateur par *
 
 **Pré-scope par chantier** (recommandé) : si tu as déjà ciblé un ou plusieurs chantiers (via \`search_chantiers\` ou un CH-XXX explicite), passe-les dans \`chantier_ids\` pour réduire le contexte et améliorer la pertinence. Sans ce filtre, la recherche porte sur tous les indicateurs accessibles.
 
-La sortie inclut le chantier de rattachement (\`chantier: { id, nom }\`) — utilise-le pour désambiguïser et pour appeler \`get_indicateurs\` avec le bon \`chantier_id\`.
+La sortie inclut le chantier de rattachement (\`chantier: { id, nom }\`) et l'identifiant \`id\` de l'indicateur (format IND-XXX). Utilise le chantier pour désambiguïser, puis choisis l'outil de données selon la demande :
+- valeurs VI/VA/VC/TA d'un chantier → \`get_indicateurs\` avec le \`chantier_id\`
+- tendance/courbe de l'indicateur dans le temps → \`get_evolution_indicateur\` avec l'\`indicateur_id\` résolu (\`id\`)
+- historique des actions (import, proposition, validation...) sur l'indicateur → \`get_historique_indicateur\` avec l'\`indicateur_id\` résolu (\`id\`)
 
 ## search_territoires
 Utilise \`search_territoires\` quand l'utilisateur mentionne un territoire par **nom, numéro de département, ancienne région, gentilé ou regroupement géographique** sans donner son code (ex: « la Normandie », « le 75 », « les départements bretons », « les DOM », « France entière »).

@@ -14,7 +14,9 @@ const SEUIL_BESOIN_PRECISION = 40;
 const PLAFOND_EVENEMENTS = 100;
 
 export const getHistoriqueIndicateurInputSchema = z.object({
-  indicateur_id: z.string().describe("Identifiant canonique de l'indicateur"),
+  indicateur_id: z
+    .string()
+    .describe("Identifiant canonique de l'indicateur (ex: IND-894)"),
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
