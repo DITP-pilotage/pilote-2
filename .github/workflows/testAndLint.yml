@@ -1,4 +1,4 @@
-name: Tests and Linters
+name: CI
 
 on:
   push:
@@ -54,8 +54,8 @@ jobs:
   # n'ont besoin ni du service postgres ni du seed, seulement du client Prisma
   # genere pour que les imports resolvent. Les sortir du job d'integration les
   # retire du chemin critique.
-  test-unit:
-    name: Run unit tests
+  pilote-ppg-test-unit:
+    name: "pilote-ppg: unit tests"
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
     runs-on: ubuntu-latest
@@ -78,8 +78,8 @@ jobs:
       - name: Run unit tests
         run: pnpm -F @pilote/ppg test:unit
 
-  test-integration:
-    name: Run integration tests
+  pilote-ppg-test-integration:
+    name: "pilote-ppg: integration tests"
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
     runs-on: ubuntu-latest
@@ -111,8 +111,8 @@ jobs:
       - name: Run integration tests
         run: pnpm -F @pilote/ppg test:server:integration
 
-  lint:
-    name: Run linters for code
+  pilote-ppg-lint:
+    name: "pilote-ppg: lint"
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
     runs-on: ubuntu-latest
@@ -134,8 +134,8 @@ jobs:
       - name: Run lint command
         run: pnpm lint
 
-  test-kpilote-api:
-    name: Run tests for kpilote-api
+  kpilote-api-test:
+    name: "kpilote-api: tests"
     needs: changes
     if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -183,8 +183,8 @@ jobs:
           OIDC_AUDIENCE: test-client
           OIDC_AUTHORIZED_PARTY: test-client
 
-  lint-kpilote-api:
-    name: Run linters for kpilote-api
+  kpilote-api-lint:
+    name: "kpilote-api: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -224,8 +224,8 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-api'
 
-  test-kpilote-webapp:
-    name: Run tests for kpilote-webapp
+  kpilote-webapp-test:
+    name: "kpilote-webapp: tests"
     needs: changes
     if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -245,8 +245,8 @@ jobs:
           # Tests stub fetch globally so no real backend is hit; this only needs to be a valid URL.
           VITE_API_URL: http://localhost:3000
 
-  lint-kpilote-webapp:
-    name: Run linters for kpilote-webapp
+  kpilote-webapp-lint:
+    name: "kpilote-webapp: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -263,8 +263,8 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-webapp'
 
-  test-kpilote-shared:
-    name: Run tests for kpilote-shared
+  kpilote-shared-test:
+    name: "kpilote-shared: tests"
     needs: changes
     if: needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -281,8 +281,8 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-shared'
 
-  lint-kpilote-shared:
-    name: Run linters for kpilote-shared
+  kpilote-shared-lint:
+    name: "kpilote-shared: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -299,8 +299,8 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-shared'
 
-  lint-kpilote-ui:
-    name: Run linters for kpilote-ui
+  kpilote-ui-lint:
+    name: "kpilote-ui: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-ui'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -317,8 +317,8 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-ui'
 
-  lint-kpilote-admin:
-    name: Run linters for kpilote-admin
+  kpilote-admin-lint:
+    name: "kpilote-admin: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-admin'] == 'true' || needs.changes.outputs['kpilote-ui'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
     runs-on: ubuntu-latest
@@ -335,8 +335,8 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-admin'
 
-  lint-sql:
-    name: Run SQL linter on dbt models
+  pilote-ppg-data-management-lint-sql:
+    name: "pilote-ppg-data-management: SQL lint"
     needs: changes
     if: needs.changes.outputs['pilote-ppg-data-management'] == 'true'
     runs-on: ubuntu-latest
