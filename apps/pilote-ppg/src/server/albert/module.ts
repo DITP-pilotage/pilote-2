@@ -4,6 +4,7 @@ import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/get
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createGetEvolutionIndicateurTool } from "@/server/albert/tools/getEvolutionIndicateur";
+import { createGetHistoriqueIndicateurTool } from "@/server/albert/tools/getHistoriqueIndicateur";
 import { createGetChantierCommentairesTool } from "@/server/albert/tools/getChantierCommentaires";
 import { createGetChantierObjectifsTool } from "@/server/albert/tools/getChantierObjectifs";
 import { createGetChantiersSignalesTool } from "@/server/albert/tools/getChantiersSignales";
@@ -12,6 +13,7 @@ import { createSearchIndicateursTool } from "@/server/albert/tools/searchIndicat
 import { createSearchTerritoiresTool } from "@/server/albert/tools/searchTerritoires";
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
 import type { ChantierExports } from "@/server/chantiers/module";
+import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { EnregistrerConversationUseCase } from "@/server/albert/usecases/EnregistrerConversationUseCase";
 import { ListerConversationsUseCase } from "@/server/albert/usecases/ListerConversationsUseCase";
@@ -33,7 +35,9 @@ import {
 } from "@/server/module-system";
 import type { SharedDependencies } from "@/server/shared/module";
 
-type AlbertImports = SharedDependencies & ChantierExports;
+type AlbertImports = SharedDependencies &
+  ChantierExports &
+  IndicateurTerritoireValeurEvenementExports;
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
@@ -47,6 +51,9 @@ type AlbertOwnCradle = {
   >;
   createGetEvolutionIndicateurTool: ReturnType<
     typeof createGetEvolutionIndicateurTool
+  >;
+  createGetHistoriqueIndicateurTool: ReturnType<
+    typeof createGetHistoriqueIndicateurTool
   >;
   createGetChantierCommentairesTool: ReturnType<
     typeof createGetChantierCommentairesTool
@@ -77,7 +84,7 @@ type AlbertCradle = AlbertOwnCradle & AlbertImports;
 
 export const albertModule = defineModule<NoExports, AlbertCradle>()({
   name: "albert",
-  imports: ["shared", "chantiers"],
+  imports: ["shared", "chantiers", "indicateurTerritoireValeurEvenement"],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
@@ -92,6 +99,9 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       ),
       createGetEvolutionIndicateurTool: asModuleFunction(
         createGetEvolutionIndicateurTool,
+      ),
+      createGetHistoriqueIndicateurTool: asModuleFunction(
+        createGetHistoriqueIndicateurTool,
       ),
       createGetChantierCommentairesTool: asModuleFunction(
         createGetChantierCommentairesTool,

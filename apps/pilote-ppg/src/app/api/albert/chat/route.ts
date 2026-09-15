@@ -72,6 +72,9 @@ export async function POST(request: Request) {
     const createGetEvolutionIndicateurTool = container.resolve(
       "createGetEvolutionIndicateurTool",
     );
+    const createGetHistoriqueIndicateurTool = container.resolve(
+      "createGetHistoriqueIndicateurTool",
+    );
     const createGetChantierCommentairesTool = container.resolve(
       "createGetChantierCommentairesTool",
     );
@@ -118,6 +121,7 @@ export async function POST(request: Request) {
     });
     const getChantierIndicateurs = createGetChantierIndicateursTool();
     const getEvolutionIndicateur = createGetEvolutionIndicateurTool();
+    const getHistoriqueIndicateur = createGetHistoriqueIndicateurTool();
     const getChantierCommentaires = createGetChantierCommentairesTool({
       territoiresAccessibles,
     });
@@ -146,6 +150,7 @@ export async function POST(request: Request) {
       get_chantiers: getChantiers,
       get_indicateurs: getChantierIndicateurs,
       get_evolution_indicateur: getEvolutionIndicateur,
+      get_historique_indicateur: getHistoriqueIndicateur,
       get_chantier_commentaires: getChantierCommentaires,
       get_chantier_objectifs: getChantierObjectifs,
       get_chantiers_signales: getChantiersSignales,
