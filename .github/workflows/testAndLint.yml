@@ -50,8 +50,36 @@ jobs:
               - 'package.json'
               - 'pnpm-lock.yaml'
 
-  test:
-    name: Run tests
+  # Les tests unitaires (client jsdom + server-unit) ne touchent pas la base : ils
+  # n'ont besoin ni du service postgres ni du seed, seulement du client Prisma
+  # genere pour que les imports resolvent. Les sortir du job d'integration les
+  # retire du chemin critique.
+  test-unit:
+    name: Run unit tests
+    needs: changes
+    if: needs.changes.outputs['pilote-ppg'] == 'true'
+    runs-on: ubuntu-latest
+    env:
+      # `prisma generate` n'ouvre aucune connexion, mais prisma.config.ts resout
+      # DATABASE_URL au chargement et leve si elle manque. Meme URL factice que le
+      # job de lint.
+      DATABASE_URL: postgresql://inutilise:inutilise@127.0.0.1:1/inutilise
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Generate Prisma client
+        run: pnpm -F @pilote/ppg exec prisma generate
+
+      - name: Run unit tests
+        run: pnpm -F @pilote/ppg test:unit
+
+  test-integration:
+    name: Run integration tests
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
     runs-on: ubuntu-latest
@@ -80,8 +108,8 @@ jobs:
       - name: Initialize database
         run: pnpm test:database:init
 
-      - name: Run test command
-        run: pnpm test
+      - name: Run integration tests
+        run: pnpm -F @pilote/ppg test:server:integration
 
   lint:
     name: Run linters for code
