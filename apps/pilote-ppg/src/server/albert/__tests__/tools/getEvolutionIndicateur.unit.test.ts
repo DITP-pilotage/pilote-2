@@ -54,8 +54,8 @@ describe("createGetEvolutionIndicateurTool execute", () => {
       indicateur: { id: "IND-001", nom: "Indicateur test", unite_mesure: "%" },
       territoire_code: "DEPT-75",
       points: [
-        { date: "2024-01-01", valeur: 10 },
-        { date: "2024-06-01", valeur: 20 },
+        { date: "01/2024", valeur: 10 },
+        { date: "06/2024", valeur: 20 },
       ],
       _output_instructions: expect.any(String),
     });

@@ -15,6 +15,7 @@ const creerEvenement = (
     valeur: number | null;
     ordre: number;
     dateValeur: Date;
+    dateCreation: Date;
   }> = {},
 ): IndicateurTerritoireValeurEvenement =>
   IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -29,7 +30,7 @@ const creerEvenement = (
       idAuteurModification: "user1",
       correlationId: "corr1",
       ordre: overrides.ordre ?? 1,
-      dateCreation: new Date("2024-01-01"),
+      dateCreation: overrides.dateCreation ?? new Date("2024-01-15T12:00:00.000Z"),
     },
   );
 
@@ -221,10 +222,13 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
       territoire_code: "DEPT-75",
       groupes: [
         {
-          date_valeur: "2024-01-01",
+          date_valeur: "01/2024",
           evenements: [
             {
               ordre: 1,
+              date_creation: expect.stringMatching(
+                /^15\/01\/2024 \d{2}:\d{2}$/,
+              ),
               libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
               type_valeur: "VALEUR_AVANCEMENT",
             },
@@ -274,15 +278,17 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     // Then
     expect(result.groupes).toEqual([
       {
-        date_valeur: "2024-01-01",
+        date_valeur: "01/2024",
         evenements: [
           {
             ordre: 1,
+            date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
             libelle: "→ nouvelle valeur affichée dans PILOTE : 10",
             type_valeur: "VALEUR_AVANCEMENT",
           },
           {
             ordre: 2,
+            date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
             libelle:
               "import de données par la direction de projet → nouvelle valeur affichée dans PILOTE : 20",
             type_valeur: "VALEUR_AVANCEMENT",

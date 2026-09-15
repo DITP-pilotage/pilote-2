@@ -7,7 +7,8 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { filtrerEvenementsSupersedes } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsSupersedes";
 import { libelleEvenementIndicateurTerritoireValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/libelleEvenementIndicateurTerritoireValeur";
 import { PROPOSITION_TYPES_EVENEMENT } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
-import { toISODate } from "@/server/app/domain/Dates";
+import { toISODate, toISODateTime } from "@/server/app/domain/Dates";
+import { formaterDate } from "@/client/utils/date/date";
 
 const SEUIL_BESOIN_PRECISION = 40;
 const PLAFOND_EVENEMENTS = 100;
@@ -36,6 +37,7 @@ export const getHistoriqueIndicateurInputSchema = z.object({
 
 type EvenementLisible = {
   ordre: number;
+  date_creation: string;
   libelle: string;
   type_valeur: string;
 };
@@ -54,7 +56,7 @@ export type GetHistoriqueIndicateurOutput = {
 };
 
 const OUTPUT_INSTRUCTIONS =
-  "Ces données représentent un HISTORIQUE : les actions qui ont eu lieu sur la valeur de cet indicateur (import, modification, proposition, acceptation, refus...), groupées par date et dans l'ordre chronologique. Décris l'enchaînement des actions. Si l'utilisateur veut plutôt la tendance/courbe de la valeur dans le temps, précise que get_evolution_indicateur peut répondre à ça.";
+  "Ces données représentent un HISTORIQUE : les actions qui ont eu lieu sur la valeur de cet indicateur (import, modification, proposition, acceptation, refus...), groupées par date et dans l'ordre chronologique. Deux dates distinctes apparaissent, ne les confonds pas : `date_valeur` (par groupe) est le mois auquel s'applique la valeur d'avancement, déjà au format MM/AAAA — reprends-le tel quel ; `date_creation` (par événement) est la date et l'heure réelles auxquelles l'action a eu lieu, déjà formatée en entier — reprends-la telle quelle aussi. Décris l'enchaînement des actions en citant ces deux dates pour chaque événement. Si l'utilisateur veut plutôt la tendance/courbe de la valeur dans le temps, indique-lui simplement que c'est possible, sans citer de nom d'outil technique.";
 
 const INDICATEUR_INTROUVABLE_INSTRUCTIONS =
   "Cet indicateur est introuvable. Informe l'utilisateur qu'aucun indicateur ne correspond à cet identifiant.";
@@ -65,7 +67,7 @@ const AGREGE_BLOQUE_INSTRUCTIONS =
 function construireInstructionsBesoinPrecision(
   nombreEvenements: number,
 ): string {
-  return `Il y a ${nombreEvenements} événements pour cet indicateur sur ce territoire, trop pour être tous présentés d'un coup. Propose à l'utilisateur une période (date de début / date de fin) en t'appuyant sur les bornes fournies (date_evenement_la_plus_ancienne / date_evenement_la_plus_recente), puis rappelle cet outil avec cette période.`;
+  return `Il y a ${nombreEvenements} événements pour cet indicateur sur ce territoire, trop pour être tous présentés d'un coup. Propose à l'utilisateur une période en t'appuyant sur les bornes fournies (date_evenement_la_plus_ancienne / date_evenement_la_plus_recente, au format ISO) — dans ta réponse à l'utilisateur, exprime cette période au format MM/AAAA, mais réutilise les bornes ISO telles quelles comme date_debut / date_fin quand tu rappelles cet outil.`;
 }
 
 function construireLibelleLisible(
@@ -207,10 +209,15 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
             ).sort((a, b) => a.ordre - b.ordre);
 
             return {
-              date_valeur: dateValeur,
+              date_valeur: formaterDate(dateValeur, "MM/YYYY") ?? dateValeur,
               evenements: evenementsRestants.map(
                 (evenement): EvenementLisible => ({
                   ordre: evenement.ordre,
+                  date_creation:
+                    formaterDate(
+                      toISODateTime(evenement.dateCreation),
+                      "DD/MM/YYYY HH[:]mm",
+                    ) ?? toISODateTime(evenement.dateCreation),
                   libelle: construireLibelleLisible(evenement),
                   type_valeur: evenement.typeValeur,
                 }),

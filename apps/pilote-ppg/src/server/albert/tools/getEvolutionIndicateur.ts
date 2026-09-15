@@ -3,6 +3,7 @@ import { z } from "zod";
 import { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 import { GetEvolutionIndicateurTerritoireQuery } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
 import type { PointEvolutionAvancement } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
+import { formaterDate } from "@/client/utils/date/date";
 
 export const getEvolutionIndicateurInputSchema = z.object({
   indicateur_id: z.string().describe("Identifiant canonique de l'indicateur"),
@@ -20,7 +21,7 @@ export type GetEvolutionIndicateurOutput = {
 };
 
 const OUTPUT_INSTRUCTIONS =
-  "Ces données représentent une ÉVOLUTION : la tendance dans le temps de la valeur d'avancement affichée dans PILOTE pour cet indicateur et ce territoire. Présente-les comme une évolution/tendance, en citant le nom et l'unité de l'indicateur plutôt que des chiffres bruts. Si l'utilisateur veut le détail des actions ayant produit ces valeurs (qui a fait quoi, import, proposition, validation...), précise que get_historique_indicateur peut répondre à ça.";
+  "Ces données représentent une ÉVOLUTION : la tendance dans le temps de la valeur d'avancement affichée dans PILOTE pour cet indicateur et ce territoire. Chaque point est daté au format MM/AAAA (mois de la valeur d'avancement) — reprends ce format tel quel, ne le recalcule pas. Présente-les comme une évolution/tendance, en citant le nom et l'unité de l'indicateur plutôt que des chiffres bruts. Si l'utilisateur veut le détail des actions ayant produit ces valeurs (qui a fait quoi, import, proposition, validation...), indique-lui simplement qu'il est possible d'obtenir ce détail, sans citer de nom d'outil technique.";
 
 const INDICATEUR_INTROUVABLE_INSTRUCTIONS =
   "Cet indicateur est introuvable. Informe l'utilisateur qu'aucun indicateur ne correspond à cet identifiant.";
@@ -58,6 +59,13 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
           territoireCode: input.territoire_code,
         });
 
+        const pointsFormates = points.map(
+          ({ date, valeur }): PointEvolutionAvancement => ({
+            date: formaterDate(date, "MM/YYYY") ?? date,
+            valeur,
+          }),
+        );
+
         return {
           indicateur: {
             id: contexte.id,
@@ -65,7 +73,7 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
             unite_mesure: contexte.uniteMesure,
           },
           territoire_code: input.territoire_code,
-          points,
+          points: pointsFormates,
           _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },
