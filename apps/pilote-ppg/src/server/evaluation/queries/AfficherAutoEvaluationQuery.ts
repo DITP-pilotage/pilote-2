@@ -63,7 +63,9 @@ export class AfficherAutoEvaluationQuery {
     const criteres = await this.prisma
       .getInstance()
       .referentiel_critere.findMany({
-        include: { sous_criteres: true },
+        // Sans tri explicite, l'ordre des sous-criteres remis a l'utilisateur
+        // depend de l'ordre physique des lignes. On reprend le tri du parent.
+        include: { sous_criteres: { orderBy: { libelle: "asc" } } },
         orderBy: { libelle: "asc" },
       });
     const etapeAutoEvaluation = await this.prisma
