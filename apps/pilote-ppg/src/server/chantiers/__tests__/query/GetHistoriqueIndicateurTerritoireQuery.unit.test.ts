@@ -139,6 +139,46 @@ describe("GetHistoriqueIndicateurTerritoireQuery execute", () => {
     expect(libellesJson).not.toContain("VALEUR_MODIFIEE");
   });
 
+  it("ordonne les groupes chronologiquement, du plus ancien au plus récent", async () => {
+    // Given
+    const evenementRecent = creerEvenement({
+      dateValeur: new Date("2024-06-01"),
+      ordre: 3,
+    });
+    const evenementAncien = creerEvenement({
+      dateValeur: new Date("2020-01-01"),
+      ordre: 1,
+    });
+    const evenementIntermediaire = creerEvenement({
+      dateValeur: new Date("2022-03-01"),
+      ordre: 2,
+    });
+    const indicateurTerritoireValeurEvenementRepository =
+      mock<IndicateurTerritoireValeurEvenementRepository>({
+        recupererHistoriqueParIndicIdEtTerritoireCode: async () => [
+          evenementRecent,
+          evenementAncien,
+          evenementIntermediaire,
+        ],
+      });
+    const query = new GetHistoriqueIndicateurTerritoireQuery({
+      indicateurTerritoireValeurEvenementRepository,
+    });
+
+    // When
+    const result = await query.execute({
+      indicId: "IND-001",
+      territoireCode: "DEPT-75",
+    });
+
+    // Then
+    expect(result.groupes.map((groupe) => groupe.date_valeur)).toEqual([
+      "01/2020",
+      "03/2022",
+      "06/2024",
+    ]);
+  });
+
   it("transmet les filtres (dates, types d'événement) au repository", async () => {
     // Given
     const indicateurTerritoireValeurEvenementRepository =

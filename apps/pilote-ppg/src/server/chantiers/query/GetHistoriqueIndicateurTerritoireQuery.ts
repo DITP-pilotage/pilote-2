@@ -66,7 +66,7 @@ export class GetHistoriqueIndicateurTerritoireQuery {
     });
 
     const groupes = Array.from(evenementsParDate.entries())
-      .sort(([dateA], [dateB]) => (dateA < dateB ? 1 : -1))
+      .sort(([dateA], [dateB]) => (dateA < dateB ? -1 : 1))
       .map(([dateValeur, evenementsDuJour]) => {
         const evenementsDuJourTriesDesc = [...evenementsDuJour].sort(
           (a, b) => b.ordre - a.ordre,
