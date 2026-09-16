@@ -3,13 +3,18 @@ import semver from 'semver'
 /**
  * Paquets qui doivent impérativement bouger d'un seul tenant.
  * - @tiptap/* : versions désalignées => plusieurs instances de @tiptap/core au runtime => éditeur cassé.
- * - eslint / @eslint/js : le plugin suit le major du core.
+ * - typescript / oxlint-tsgolint : le numéro de tsgolint encode la version du compilateur
+ *   qu'il cible (`7.0.2001` = TypeScript 7.0.2). Monter l'un sans l'autre fait juger le lint
+ *   par un compilateur différent de celui qui compile.
+ *
+ * Le groupe `eslint` / `@eslint/js` a disparu avec ESLint : plus aucun workspace ne l'utilise
+ * depuis que `pilote-ppg` est passé à oxlint.
  */
 const GROUPES_COUPLES = [
   { nom: 'tiptap', concerne: (name) => name.startsWith('@tiptap/') },
   {
-    nom: 'eslint',
-    concerne: (name) => name === 'eslint' || name === '@eslint/js',
+    nom: 'typescript',
+    concerne: (name) => name === 'typescript' || name === 'oxlint-tsgolint',
   },
 ]
 
