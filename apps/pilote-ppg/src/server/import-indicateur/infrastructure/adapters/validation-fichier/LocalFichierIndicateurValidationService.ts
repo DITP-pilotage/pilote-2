@@ -86,24 +86,26 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
         }
       }
 
-      if (new Set(normalisees).size !== normalisees.length) {
+      const indexIdentifiant = normalisees.indexOf(COLONNE_IDENTIFIANT);
+      const entetesEnDoublon = new Set(normalisees).size !== normalisees.length;
+
+      if (entetesEnDoublon) {
+        // Mesuré : `duplicate-label` est fatal chez Validata, qui n'analyse
+        // plus le contenu du fichier au-delà.
         erreurs.push(
           erreurDEnTete("Il existe des entêtes en doublon dans le fichier"),
         );
-      }
-
-      const indexIdentifiant = normalisees.indexOf(COLONNE_IDENTIFIANT);
-
-      if (indexIdentifiant === -1) {
-        erreurs.push(
-          erreurDEnTete("L'en-tête identifiant_indic n'est pas présente"),
-        );
       } else {
         // Une colonne de clé primaire absente est bloquante, là où une colonne
-        // ordinaire absente est simplement ignorée (schema_sync).
+        // ordinaire absente est simplement ignorée (schema_sync). Validata
+        // continue malgré tout d'analyser le contenu : on fait de même.
         for (const colonne of schema.colonnesClePrimaireAbsentes) {
           erreurs.push(
-            erreurDEnTete(`L'en-tête ${colonne} n'est pas présente`),
+            erreurDEnTete(
+              colonne === COLONNE_IDENTIFIANT
+                ? "L'en-tête identifiant_indic n'est pas présente"
+                : `L'en-tête ${colonne} n'est pas présente`,
+            ),
           );
         }
 
@@ -134,19 +136,24 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
           );
         }
 
-        const index = (nom: string) => normalisees.indexOf(nom);
-        rapport.affecterListeMesuresIndicateurTemporaire(
-          fichier.lignes.map((ligne) =>
-            MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
-              rapportId: rapport.id,
-              indicId: ligne[indexIdentifiant] ?? null,
-              zoneId: ligne[index("zone_id")] ?? null,
-              metricDate: ligne[index("date_valeur")] ?? null,
-              metricType: ligne[index("type_valeur")] ?? null,
-              metricValue: `${ligne[index("valeur")] ?? ""}`,
-            }),
-          ),
-        );
+        // Les mesures ne sont exploitables que si la colonne d'identifiant est
+        // là ; elles ne seront de toute façon persistées que si le rapport est
+        // valide.
+        if (indexIdentifiant !== -1) {
+          const index = (nom: string) => normalisees.indexOf(nom);
+          rapport.affecterListeMesuresIndicateurTemporaire(
+            fichier.lignes.map((ligne) =>
+              MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
+                rapportId: rapport.id,
+                indicId: ligne[indexIdentifiant] ?? null,
+                zoneId: ligne[index("zone_id")] ?? null,
+                metricDate: ligne[index("date_valeur")] ?? null,
+                metricType: ligne[index("type_valeur")] ?? null,
+                metricValue: `${ligne[index("valeur")] ?? ""}`,
+              }),
+            ),
+          );
+        }
       }
 
       rapport.affecterListeErreursValidation(erreurs);
