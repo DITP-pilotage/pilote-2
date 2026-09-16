@@ -105,8 +105,8 @@ describe("VerifierImportIndicateurHandler", () => {
     createIntegrationTest(async () => {
       const sessionToken = await creerAdminEtSeConnecter();
       deposerCsv([
-        "IND-001;D046;2023-12-30;vi;9",
-        "IND-001;D004;2023-12-31;vc;3",
+        "IND-001;D46;2023-12-30;vi;9",
+        "IND-001;D04;2023-12-31;vc;3",
       ]);
 
       const { statut, rapport } = await verifier(sessionToken, "IND-001");
@@ -129,7 +129,7 @@ describe("VerifierImportIndicateurHandler", () => {
     "refuse un identifiant d'indicateur au mauvais format, avec un message en français",
     createIntegrationTest(async () => {
       const sessionToken = await creerAdminEtSeConnecter();
-      deposerCsv(["IND-XXX;D046;2023-12-30;vi;9"]);
+      deposerCsv(["IND-XXX;D46;2023-12-30;vi;9"]);
 
       const { statut, rapport } = await verifier(sessionToken, "IND-XXX");
 
@@ -147,7 +147,7 @@ describe("VerifierImportIndicateurHandler", () => {
       const sessionToken = await creerAdminEtSeConnecter();
       deposerFichier(
         "import.csv",
-        "zone_id;date_valeur;type_valeur;valeur\r\nD046;2023-12-30;vi;9\r\n",
+        "zone_id;date_valeur;type_valeur;valeur\r\nD46;2023-12-30;vi;9\r\n",
       );
 
       const { rapport } = await verifier(sessionToken, "IND-001");
@@ -165,7 +165,7 @@ describe("VerifierImportIndicateurHandler", () => {
       const sessionToken = await creerAdminEtSeConnecter();
       deposerFichier(
         "import.csv",
-        "identifiant_indic,zone_id,date_valeur,type_valeur,valeur\r\nIND-001,D046,2023-12-30,vi,9\r\n",
+        "identifiant_indic,zone_id,date_valeur,type_valeur,valeur\r\nIND-001,D46,2023-12-30,vi,9\r\n",
       );
 
       const { rapport } = await verifier(sessionToken, "IND-001");
