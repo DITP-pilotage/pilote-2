@@ -8,10 +8,6 @@ interface ArborescenceCentreAideAdminProps {
   onSelectionItem: (id: string) => void;
   onCreerGroupe: (avecContenu: boolean) => void;
   onCreerPage: () => void;
-  onDeplacer: (
-    id: string,
-    action: "monter" | "descendre" | "sortir" | "entrer",
-  ) => void;
 }
 
 export const ArborescenceCentreAideAdmin: FunctionComponent<
@@ -22,7 +18,6 @@ export const ArborescenceCentreAideAdmin: FunctionComponent<
   onSelectionItem,
   onCreerGroupe,
   onCreerPage,
-  onDeplacer,
 }) => {
   const [menuCreationGroupeOuvert, setMenuCreationGroupeOuvert] =
     useState(false);
@@ -78,7 +73,6 @@ export const ArborescenceCentreAideAdmin: FunctionComponent<
         afficherStatut
         arbre={arbre}
         itemSelectionneId={itemSelectionneId}
-        onDeplacer={onDeplacer}
         onSelectionItem={onSelectionItem}
       />
     </div>

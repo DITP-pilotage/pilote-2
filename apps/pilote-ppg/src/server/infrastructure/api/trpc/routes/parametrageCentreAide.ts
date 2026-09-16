@@ -139,7 +139,8 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
     .input(
       z.object({
         id: z.string().uuid(),
-        action: z.enum(["monter", "descendre", "sortir", "entrer"]),
+        parentId: z.string().uuid().nullable(),
+        index: z.number().int().min(0),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -147,6 +148,10 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
 
       return getContainer("parametrageCentreAide")
         .resolve("deplacerArticleCentreAideUseCase")
-        .execute({ id: input.id, action: input.action });
+        .execute({
+          id: input.id,
+          parentId: input.parentId,
+          index: input.index,
+        });
     }),
 });
