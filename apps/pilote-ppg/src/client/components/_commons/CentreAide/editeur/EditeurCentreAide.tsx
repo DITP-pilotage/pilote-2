@@ -1,3 +1,5 @@
+import { isTextSelection } from "@tiptap/core";
+import { NodeSelection } from "@tiptap/pm/state";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { FunctionComponent, ReactNode, useState } from "react";
@@ -101,6 +103,21 @@ export const EditeurCentreAide: FunctionComponent<{
       <BubbleMenu
         className="flex items-center gap-0.5 rounded-lg bg-gray-800 p-1 shadow-lg"
         editor={editor}
+        shouldShow={({ view, state, from, to }) => {
+          // Un média sélectionné est une NodeSelection non vide : sans ce filtre
+          // la bulle de texte s'ouvre dessus et chevauche sa barre de mise en
+          // page, alors qu'on ne met pas une vidéo en gras.
+          if (state.selection instanceof NodeSelection) return false;
+          const estBlocTexteVide =
+            !state.doc.textBetween(from, to).length &&
+            isTextSelection(state.selection);
+          return (
+            view.hasFocus() &&
+            !state.selection.empty &&
+            !estBlocTexteVide &&
+            editor.isEditable
+          );
+        }}
       >
         <BoutonBulle
           actif={etats.gras}
