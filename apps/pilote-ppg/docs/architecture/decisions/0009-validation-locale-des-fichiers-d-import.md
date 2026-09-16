@@ -58,10 +58,14 @@ fixtures est soumis une dernière fois à Validata, et les réponses sont commit
 comme goldens. Ces goldens sont la spécification et le critère d'acceptation. Le
 script de capture ne tourne pas en CI, qui reste entièrement hors ligne.
 
-Seule exception, décidée explicitement : quatre messages français sont
-aujourd'hui inatteignables (clés de traduction désynchronisées des schémas), et
-l'utilisateur reçoit à leur place le message brut de Validata, en anglais. Ces
-messages sont réparés.
+Seule exception, décidée explicitement : **les messages**. La capture du
+2026-09-16 a montré que Validata v0.12.5 ne renvoie plus les champs `code`,
+`note` et `description` sur lesquels notre table de traduction fait ses
+recherches. Celle-ci ne s'exécute donc plus depuis PIL-553, et 100 % des messages
+affichés viennent de Validata — en français, mais avec du markdown non rendu et
+les expressions régulières du schéma affichées à l'utilisateur. Le moteur local
+sert enfin le catalogue français écrit dans le code. Les goldens valident le
+verdict, pas le texte.
 
 ### Découpage
 
@@ -140,8 +144,12 @@ Considérée, et écartée sur trois motifs :
   milliseconde, l'aller-retour réseau et le fetch du schéma sur GitHub
   disparaissant.
 - Les messages d'erreur sont typés à la détection, au lieu d'être rétro-conçus
-  par filtrage de chaînes anglaises non documentées. Quatre messages français
-  morts redeviennent atteignables.
+  par filtrage de chaînes tierces non documentées. Le catalogue français,
+  débranché depuis la v0.12 sans que personne ne s'en aperçoive, redevient
+  effectif — et la classe de panne « un changement d'API amont débranche
+  silencieusement l'affichage » disparaît avec la dépendance.
+- `positionDeLigne` et `positionDuChamp`, aujourd'hui toujours à `-1` faute de
+  champs correspondants dans la réponse, redeviennent des valeurs réelles.
 - Le dossier `public/schema/` dupliqué à la racine du repo disparaît, ainsi que
   le projet vitest dédié aux mocks réseau et la dépendance `nock`.
 - La numérotation des lignes et des colonnes devient exacte, y compris avec des
