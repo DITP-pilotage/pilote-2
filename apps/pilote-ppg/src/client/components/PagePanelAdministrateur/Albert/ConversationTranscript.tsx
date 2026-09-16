@@ -2,6 +2,8 @@ import { $Enums } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
 import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
+import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
+import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { LIBELLES_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { clsxm } from "@/utils/clsxm";
@@ -101,6 +103,13 @@ const BadgeEvaluation = ({
   );
 };
 
+// Le transcript admin n'a pas de contexte territoire/jalon : les liens pointent
+// vers la vue nationale du chantier.
+const chantierLinkOptions = {
+  buildUrl: (chantierId: string) =>
+    buildChantierUrl({ chantierId, context: {} }),
+};
+
 type ConversationTranscriptProps = {
   messages: DetailConversation["messages"];
   llmCalls: LlmCall[];
@@ -113,50 +122,52 @@ export const ConversationTranscript = ({
   const tours = grouperParTour(messages, llmCalls);
 
   return (
-    <div className="divide-y divide-dsfr-grey-925">
-      {tours.map((tour, index) => (
-        <article className="py-8 first:pt-0 last:pb-0" key={index}>
-          {tour.question !== null && (
-            <div className="flex flex-col items-end gap-1.5 mb-5">
-              <div className="max-w-[80%] bg-dsfr-blue-france-sun-113 text-white rounded-lg rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">
-                {tour.question}
-              </div>
-              {tour.llmCall && (
-                <BadgeEvaluation evaluation={tour.llmCall.evaluation} />
-              )}
-            </div>
-          )}
-
-          {tour.reponse !== null && (
-            <div className="mb-5">
-              <AssistantMessage message={tour.reponse} isStreaming={false} />
-            </div>
-          )}
-
-          {tour.llmCall?.commentaire && (
-            <section className="bg-dsfr-warning-950/50 border-l-2 border-dsfr-warning-425 px-4 py-3 rounded-sm">
-              <Label>Commentaire de l&apos;utilisateur</Label>
-              <p className="text-sm text-dsfr-grey-50 italic whitespace-pre-wrap">
-                « {tour.llmCall.commentaire} »
-              </p>
-            </section>
-          )}
-
-          {tour.llmCall?.categoriesProbleme &&
-            tour.llmCall.categoriesProbleme.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {tour.llmCall.categoriesProbleme.map((categorie) => (
-                  <span
-                    className="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium bg-dsfr-warning-950 text-dsfr-warning-425"
-                    key={categorie}
-                  >
-                    {LIBELLES_CATEGORIES[categorie]}
-                  </span>
-                ))}
+    <ChantierLinksProvider options={chantierLinkOptions}>
+      <div className="divide-y divide-dsfr-grey-925">
+        {tours.map((tour, index) => (
+          <article className="py-8 first:pt-0 last:pb-0" key={index}>
+            {tour.question !== null && (
+              <div className="flex flex-col items-end gap-1.5 mb-5">
+                <div className="max-w-[80%] bg-dsfr-blue-france-sun-113 text-white rounded-lg rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">
+                  {tour.question}
+                </div>
+                {tour.llmCall && (
+                  <BadgeEvaluation evaluation={tour.llmCall.evaluation} />
+                )}
               </div>
             )}
-        </article>
-      ))}
-    </div>
+
+            {tour.reponse !== null && (
+              <div className="mb-5">
+                <AssistantMessage message={tour.reponse} isStreaming={false} />
+              </div>
+            )}
+
+            {tour.llmCall?.commentaire && (
+              <section className="bg-dsfr-warning-950/50 border-l-2 border-dsfr-warning-425 px-4 py-3 rounded-sm">
+                <Label>Commentaire de l&apos;utilisateur</Label>
+                <p className="text-sm text-dsfr-grey-50 italic whitespace-pre-wrap">
+                  « {tour.llmCall.commentaire} »
+                </p>
+              </section>
+            )}
+
+            {tour.llmCall?.categoriesProbleme &&
+              tour.llmCall.categoriesProbleme.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {tour.llmCall.categoriesProbleme.map((categorie) => (
+                    <span
+                      className="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium bg-dsfr-warning-950 text-dsfr-warning-425"
+                      key={categorie}
+                    >
+                      {LIBELLES_CATEGORIES[categorie]}
+                    </span>
+                  ))}
+                </div>
+              )}
+          </article>
+        ))}
+      </div>
+    </ChantierLinksProvider>
   );
 };
