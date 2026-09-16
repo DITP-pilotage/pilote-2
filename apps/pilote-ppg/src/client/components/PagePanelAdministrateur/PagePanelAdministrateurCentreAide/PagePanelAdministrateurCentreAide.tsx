@@ -15,7 +15,7 @@ import { useEditionCentreAide } from "./useEditionCentreAide";
 
 export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
   const {
-    arbre,
+    articles,
     itemSelectionneId,
     itemSelectionne,
     selectionnerItem,
@@ -32,6 +32,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     supprimer,
     publier,
     basculerVisibilite,
+    deplacerArticle,
     aDesModificationsNonPubliees,
   } = useEditionCentreAide();
 
@@ -83,10 +84,11 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
         {afficherArbo && (
           <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
             <ArborescenceCentreAideAdmin
-              arbre={arbre}
+              articles={articles}
               itemSelectionneId={itemSelectionneId}
               onCreerGroupe={creerGroupe}
               onCreerPage={creerPage}
+              onDeplacer={deplacerArticle}
               onSelectionItem={selectionnerItem}
             />
           </div>
