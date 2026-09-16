@@ -86,7 +86,8 @@ export interface RawMetadataParametrageIndicateurModel {
 }
 
 const makeStrSafer = (str: string | null): string | null => {
-  // eslint-disable-next-line no-restricted-syntax
+  // apostrophe-typographique-autorisee : le remplacement est justement le but,
+  // il neutralise les quotes simples dans les requetes SQL brutes.
   return str === null ? null : `'${(str || "").replaceAll("'", "’")}'`;
 };
 

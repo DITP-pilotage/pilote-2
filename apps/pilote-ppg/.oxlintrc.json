@@ -1,0 +1,115 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "import",
+    "react",
+    "jsx-a11y",
+    "nextjs",
+    "vitest",
+    "unicorn",
+    "oxc",
+    "promise",
+    "node"
+  ],
+  "categories": { "correctness": "error" },
+  "ignorePatterns": [
+    ".next/**",
+    "node_modules/**",
+    "out/**",
+    "public/**",
+    "scripts/**/*.js",
+    "copy-assets.js"
+  ],
+  "rules": {
+    // Regles typees, reprises a l'identique des 3 apps kpilote. Elles n'existaient
+    // pas dans la config ESLint de ppg, qui utilisait `recommended` et non
+    // `recommendedTypeChecked` : ce sont donc de nouveaux garde-fous.
+    "typescript/no-array-delete": "error",
+    "typescript/no-duplicate-type-constituents": "error",
+    "typescript/no-for-in-array": "error",
+    "typescript/no-implied-eval": "error",
+    "typescript/no-unsafe-unary-minus": "error",
+    "typescript/restrict-plus-operands": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "no-console": "error",
+
+    // --- Desactivations heritees de la config ESLint -------------------------
+    // Ces regles etaient deja explicitement `off` avant la migration. Les laisser
+    // s'allumer aurait ete un changement de politique deguise en changement
+    // d'outil. Le nombre entre parentheses est ce qu'elles remonteraient.
+    "typescript/no-wrapper-object-types": "off", // 28
+    "no-useless-escape": "off", // 25
+    "vitest/expect-expect": "off", // 19
+    "no-extra-boolean-cast": "off", // 17
+    "vitest/valid-title": "off", // 8
+    "vitest/no-conditional-expect": "off", // 3
+    "no-async-promise-executor": "off", // 2
+    "typescript/no-non-null-asserted-optional-chain": "off", // 1
+    "no-unused-expressions": "off", // 1
+
+    // --- Regles typees a activer progressivement -----------------------------
+    // Nouvelles et pertinentes, mais elles remontent 1139 violations sur du code
+    // existant : les activer d'un bloc rendrait la PR illisible et le lint rouge.
+    // A traiter regle par regle, dans l'ordre de valeur decroissante :
+    // `no-floating-promises` et `no-misused-promises` d'abord, ce sont les seules
+    // qui signalent des bugs a l'execution.
+    "typescript/unbound-method": "off", // 279
+    "typescript/no-unsafe-assignment": "off", // 194
+    "typescript/no-misused-promises": "off", // 185
+    "typescript/no-floating-promises": "off", // 102
+    "typescript/no-unnecessary-type-assertion": "off", // 92
+    "typescript/no-unsafe-argument": "off", // 66
+    "typescript/no-unsafe-member-access": "off", // 47
+    "typescript/require-await": "off", // 41
+    "vitest/require-mock-type-parameters": "off", // 36
+    "typescript/no-unsafe-enum-comparison": "off", // 26
+    "react/incompatible-library": "off", // 17
+    "react/set-state-in-effect": "off", // 16
+    "vitest/require-to-throw-message": "off", // 13
+    "typescript/no-unsafe-call": "off", // 13
+    "react/immutability": "off", // 12
+    "typescript/no-unsafe-return": "off", // 6, meme famille que les autres no-unsafe
+
+    // Nouvelles regles a faible volume, mais qui portent sur du code de rendu et
+    // des appels reels : les corriger demande de comprendre chaque site d'appel,
+    // ce qui n'a pas sa place dans une PR d'outillage. 41 violations au total.
+    "promise/valid-params": "off", // 6
+    "typescript/no-base-to-string": "off", // 6, des `${obj}` qui rendent [object Object]
+    "typescript/restrict-template-expressions": "off", // 5, meme famille
+    "react/refs": "off", // 4
+    "typescript/no-unnecessary-parameter-property-assignment": "off", // 3
+    "react/set-state-in-render": "off", // 3
+    "typescript/prefer-promise-reject-errors": "off", // 3
+    "nextjs/no-img-element": "off", // 2
+    "typescript/await-thenable": "off", // 2
+    "typescript/require-array-sort-compare": "off", // 2
+    "react/preserve-manual-memoization": "off", // 1
+    "vitest/no-disabled-tests": "off", // 1
+    "typescript/no-redundant-type-constituents": "off", // 1
+    "typescript/only-throw-error": "off", // 1
+    "typescript/no-useless-default-assignment": "off", // 1
+
+    // Accessibilite. `label-has-associated-control` etait deja `off` dans ESLint.
+    // Les deux autres sont nouvelles : `control-has-associated-label` ne cherche
+    // le libelle que sur 2 niveaux d'imbrication, elle se declenche sur des
+    // boutons qui ont bien un texte mais enveloppe plus profond. A reprendre avec
+    // l'option `depth` plutot qu'a coups de corrections, et a regarder de pres :
+    // c'est le seul bloc ou une vraie regression RGAA pourrait se cacher.
+    "jsx-a11y/label-has-associated-control": "off", // 8, deja off dans ESLint
+    "jsx-a11y/control-has-associated-label": "off", // 8
+    "jsx-a11y/prefer-tag-over-role": "off" // 6
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**/*.{ts,tsx}"],
+      "rules": { "no-console": "off" }
+    }
+  ]
+}

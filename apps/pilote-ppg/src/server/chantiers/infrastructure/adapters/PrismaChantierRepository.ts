@@ -570,8 +570,8 @@ export class PrismaChantierRepository implements ChantierRepository {
 
     const [mapSynthesesDesResultats] =
       optionsExport.listeOptionsExport.includes("synthese")
-        ? await Promise.all([
-            this.prisma.chantier_territoire
+        ? [
+            await this.prisma.chantier_territoire
               .findMany({
                 where: {
                   id: chantierIdsLecture,
@@ -599,7 +599,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                     ]),
                   ),
               ),
-          ])
+          ]
         : [];
 
     const [mapDecisionsStrategiques] =
