@@ -161,7 +161,10 @@ export function lireEntreesZip(
   // Les tailles annoncées sont vérifiées avant toute inflation : c'est ce que
   // le central directory permet et qu'une librairie de décompression ne donne
   // pas.
-  const total = central.reduce((somme, e) => somme + e.tailleDecompressee, 0);
+  const total = central.reduce(
+    (somme, entree) => somme + entree.tailleDecompressee,
+    0,
+  );
   if (total > tailleMax) {
     throw new FichierTabulaireIllisibleError(
       "trop-volumineux",
@@ -171,7 +174,7 @@ export function lireEntreesZip(
 
   const resultat = new Map<string, Buffer>();
   for (const voulue of entreesVoulues) {
-    const entree = central.find((e) => e.nom === voulue);
+    const entree = central.find((candidate) => candidate.nom === voulue);
     if (entree) {
       resultat.set(voulue, extraire(archive, entree, tailleMax));
     }

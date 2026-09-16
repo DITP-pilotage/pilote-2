@@ -83,10 +83,10 @@ describe("validerLignes", () => {
       const sansBornes = compilerSchema(
         {
           ...BRUT,
-          fields: BRUT.fields.map((c) =>
-            c.name === "valeur"
-              ? { ...c, constraints: { required: false } }
-              : c,
+          fields: BRUT.fields.map((champ) =>
+            champ.name === "valeur"
+              ? { ...champ, constraints: { required: false } }
+              : champ,
           ),
         },
         ENTETES,
@@ -126,11 +126,9 @@ describe("validerLignes", () => {
       ["IND-001", "D46", "2023-01-31", "vi", "2"],
     ]);
 
-    expect(violations).toHaveLength(1);
-    expect(violations[0]).toMatchObject({
-      type: "primary-key",
-      indexDeLigne: 1,
-    });
+    expect(
+      violations.map(({ type, indexDeLigne }) => ({ type, indexDeLigne })),
+    ).toEqual([{ type: "primary-key", indexDeLigne: 1 }]);
   });
 
   it("signale une ligne entièrement vide par deux violations", () => {

@@ -11,8 +11,18 @@ describe("lireFichierTabulaire", () => {
       "valide-pointvirgule.csv",
     );
 
-    expect(resultat.entetes[0]).toBe("identifiant_indic");
-    expect(resultat.lignes).toHaveLength(2);
+    expect(resultat.entetes).toEqual([
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur",
+    ]);
+    expect(resultat.lignes).toEqual([
+      ["IND-001", "D46", "Lot", "2023-01-31", "vi", "12.5"],
+      ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"],
+    ]);
   });
 
   it("numérote les lignes comme le tableur, en-tête comprise", async () => {

@@ -30,9 +30,10 @@ describe("lireXlsx", () => {
   it("ne décale pas la numérotation quand une ligne vide est intercalée", () => {
     const { lignes } = lireXlsx(fixture("xlsx-ligne-vide-milieu.xlsx"));
 
-    expect(lignes).toHaveLength(4);
-    expect(lignes[2]).toEqual([]);
-    expect(lignes[3][0]).toBe("IND-002");
+    expect(lignes.slice(2)).toEqual([
+      [],
+      ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"],
+    ]);
   });
 
   it("ne décale pas les colonnes quand une cellule vide est intercalée", () => {

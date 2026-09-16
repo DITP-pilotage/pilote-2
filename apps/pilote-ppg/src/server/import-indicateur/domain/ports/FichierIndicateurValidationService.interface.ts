@@ -3,6 +3,7 @@ import { DetailValidationFichier } from "@/server/import-indicateur/domain/Detai
 export type ValiderFichierPayload = {
   cheminCompletDuFichier: string;
   nomDuFichier: string;
+  /** Nom du fichier de schema, ex. "sans-contraintes.json". */
   schema: string;
   utilisateurEmail: string;
 };

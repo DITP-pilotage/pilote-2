@@ -32,7 +32,9 @@ describe("compilerSchema", () => {
       "valeur",
     ]);
 
-    expect(compile.champs.map((c) => c.indexDeColonne)).toEqual([1, 2, 3]);
+    expect(compile.champs.map((champ) => champ.indexDeColonne)).toEqual([
+      1, 2, 3,
+    ]);
   });
 
   it("marque à -1 un champ du schéma absent du fichier", () => {
