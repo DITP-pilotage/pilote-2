@@ -31,12 +31,16 @@ export class SanitizerHTML {
         "hr",
         "span",
         "iframe",
+        "video",
+        "source",
       ],
       allowedAttributes: {
-        div: ["data-type", "data-title", "data-color", "style"],
+        div: ["data-type", "data-title", "data-color", "data-src", "style"],
         a: ["href", "target", "rel"],
         img: ["src", "alt", "title", "width", "height", "draggable"],
         iframe: ["src", "frameborder", "allowfullscreen", "style", "title"],
+        video: ["src", "controls", "preload", "poster", "width", "height"],
+        source: ["src", "type"],
         span: ["style", "data-type", "data-icon-type"],
         p: ["style"],
         h1: ["style"],
@@ -64,9 +68,14 @@ export class SanitizerHTML {
       allowedSchemes: ["http", "https", "mailto"],
       allowedSchemesByTag: {
         img: ["http", "https"],
+        video: ["http", "https"],
+        source: ["http", "https"],
       },
       disallowedTagsMode: "discard",
-      allowedIframeHostnames: ["video.finances.gouv.fr"],
+      allowedIframeHostnames: [
+        "video.finances.gouv.fr",
+        "fichiers.numerique.gouv.fr",
+      ],
       allowProtocolRelative: false,
     });
     return sanitized.replace(/ \/>/g, ">");

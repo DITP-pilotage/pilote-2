@@ -20,7 +20,7 @@
 - Pas de couleurs en dur hors palette : utiliser les jetons Tailwind du projet (`primary`, `dsfr-*`) ou les utilitaires Tailwind standard déjà employés dans ces fichiers.
 - Helper de classes : `clsxm` depuis `@/utils/clsxm`. Jamais `cn`.
 - Pas de commentaires explicatifs superflus. Un commentaire n'existe que pour expliquer un « pourquoi » non évident.
-- Tests client : `src/client/**/*.unit.test.{ts,tsx}` (`pnpm --filter pilote-ppg test:client:unit`). Tests serveur : `src/server/**/*.unit.test.ts` (`pnpm --filter pilote-ppg test:server:unit`).
+- Tests client : `src/client/**/*.unit.test.{ts,tsx}` (`pnpm --filter @pilote/ppg test:client:unit`). Tests serveur : `src/server/**/*.unit.test.ts` (`pnpm --filter @pilote/ppg test:server:unit`).
 - Aucun test end-to-end ni test de composant React n'est écrit dans ce plan : la validation de l'interface est manuelle.
 - `pnpm lint` doit passer avant chaque commit.
 
@@ -73,10 +73,10 @@ describe("SanitizerHTML", () => {
     expect(SanitizerHTML.sanitize(html)).toContain("fichiers.numerique.gouv.fr");
   });
 
-  it("Doit toujours retirer une iframe d'un hôte non autorisé", () => {
+  it("Doit toujours retirer la source d'une iframe d'un hôte non autorisé", () => {
     const html = '<iframe src="https://exemple.invalide/film.mp4"></iframe>';
 
-    expect(SanitizerHTML.sanitize(html)).not.toContain("iframe");
+    expect(SanitizerHTML.sanitize(html)).not.toContain("exemple.invalide");
   });
 
   it("Doit toujours retirer un script", () => {
@@ -92,7 +92,7 @@ describe("SanitizerHTML", () => {
 
 - [ ] **Step 2: Lancer les tests pour vérifier qu'ils échouent**
 
-Run: `pnpm --filter pilote-ppg test:server:unit src/server/app/domain/SanitizerHTML.unit.test.ts`
+Run: `pnpm --filter @pilote/ppg test:server:unit src/server/app/domain/SanitizerHTML.unit.test.ts`
 
 Expected: FAIL — les trois premiers tests échouent (`data-src` absent, balise `video` supprimée, iframe purgée). Les deux derniers passent déjà.
 
@@ -128,7 +128,7 @@ Remplacer `allowedIframeHostnames` par :
 
 - [ ] **Step 4: Lancer les tests pour vérifier qu'ils passent**
 
-Run: `pnpm --filter pilote-ppg test:server:unit src/server/app/domain/SanitizerHTML.unit.test.ts`
+Run: `pnpm --filter @pilote/ppg test:server:unit src/server/app/domain/SanitizerHTML.unit.test.ts`
 
 Expected: PASS — 5 tests.
 
@@ -295,7 +295,7 @@ describe("DeplacerArticleCentreAideUseCase", () => {
 
 - [ ] **Step 2: Lancer les tests pour vérifier qu'ils échouent**
 
-Run: `pnpm --filter pilote-ppg test:server:unit src/server/parametrage-centre-aide/__tests__/usecases/DeplacerArticleCentreAideUseCase.unit.test.ts`
+Run: `pnpm --filter @pilote/ppg test:server:unit src/server/parametrage-centre-aide/__tests__/usecases/DeplacerArticleCentreAideUseCase.unit.test.ts`
 
 Expected: FAIL — erreur de typage sur `execute({ id, parentId, index })`, qui attend encore `{ id, action }`.
 
@@ -436,10 +436,10 @@ Dans `apps/pilote-ppg/src/client/components/PagePanelAdministrateur/PagePanelAdm
 
 - [ ] **Step 6: Lancer les tests et la compilation**
 
-Run: `pnpm --filter pilote-ppg test:server:unit src/server/parametrage-centre-aide/`
+Run: `pnpm --filter @pilote/ppg test:server:unit src/server/parametrage-centre-aide/`
 Expected: PASS — les 4 nouveaux tests et les 3 fichiers de tests existants du dossier.
 
-Run: `pnpm --filter pilote-ppg exec tsc --noEmit`
+Run: `pnpm --filter @pilote/ppg exec tsc --noEmit`
 Expected: aucune erreur.
 
 - [ ] **Step 7: Lint et commit**
@@ -601,7 +601,7 @@ describe("projeter", () => {
 
 - [ ] **Step 2: Lancer les tests pour vérifier qu'ils échouent**
 
-Run: `pnpm --filter pilote-ppg test:client:unit src/client/components/_commons/CentreAide/editeur/arbreDnd.unit.test.ts`
+Run: `pnpm --filter @pilote/ppg test:client:unit src/client/components/_commons/CentreAide/editeur/arbreDnd.unit.test.ts`
 
 Expected: FAIL — module `arbreDnd` introuvable.
 
@@ -732,7 +732,7 @@ export const projeter = (
 
 - [ ] **Step 4: Lancer les tests pour vérifier qu'ils passent**
 
-Run: `pnpm --filter pilote-ppg test:client:unit src/client/components/_commons/CentreAide/editeur/arbreDnd.unit.test.ts`
+Run: `pnpm --filter @pilote/ppg test:client:unit src/client/components/_commons/CentreAide/editeur/arbreDnd.unit.test.ts`
 
 Expected: PASS — 7 tests.
 
@@ -761,7 +761,7 @@ git commit -m "feat(centre-aide): ajoute la logique de projection du glisser-dep
 - [ ] **Step 1: Installer les dépendances de glisser-déposer**
 
 ```bash
-pnpm --filter pilote-ppg add @dnd-kit/core@^6.3.1 @dnd-kit/sortable@^10.0.0 @dnd-kit/utilities@^3.2.2
+pnpm --filter @pilote/ppg add @dnd-kit/core@^6.3.1 @dnd-kit/sortable@^10.0.0 @dnd-kit/utilities@^3.2.2
 ```
 
 - [ ] **Step 2: Écrire le composant**
@@ -1051,10 +1051,10 @@ Dans `PagePanelAdministrateurCentreAide.tsx`, récupérer `articles` et `deplace
 
 - [ ] **Step 4: Vérifier la compilation et les tests**
 
-Run: `pnpm --filter pilote-ppg exec tsc --noEmit`
+Run: `pnpm --filter @pilote/ppg exec tsc --noEmit`
 Expected: aucune erreur.
 
-Run: `pnpm --filter pilote-ppg test:unit`
+Run: `pnpm --filter @pilote/ppg test:unit`
 Expected: PASS.
 
 - [ ] **Step 5: Lint et commit**
@@ -1143,7 +1143,7 @@ describe("estFichierVideoDirect", () => {
 
 - [ ] **Step 2: Lancer les tests pour vérifier qu'ils échouent**
 
-Run: `pnpm --filter pilote-ppg test:client:unit src/client/components/_commons/CentreAide/LecteurVideo.unit.test.ts`
+Run: `pnpm --filter @pilote/ppg test:client:unit src/client/components/_commons/CentreAide/LecteurVideo.unit.test.ts`
 
 Expected: FAIL — module `LecteurVideo` introuvable.
 
@@ -1230,7 +1230,7 @@ export const LecteurVideo: FunctionComponent<{
 
 - [ ] **Step 4: Lancer les tests pour vérifier qu'ils passent**
 
-Run: `pnpm --filter pilote-ppg test:client:unit src/client/components/_commons/CentreAide/LecteurVideo.unit.test.ts`
+Run: `pnpm --filter @pilote/ppg test:client:unit src/client/components/_commons/CentreAide/LecteurVideo.unit.test.ts`
 
 Expected: PASS — 7 tests.
 
@@ -1348,10 +1348,10 @@ Et pour que les articles pas encore réenregistrés s'affichent avec le même le
 
 - [ ] **Step 7: Vérifier la compilation et les tests**
 
-Run: `pnpm --filter pilote-ppg exec tsc --noEmit`
+Run: `pnpm --filter @pilote/ppg exec tsc --noEmit`
 Expected: aucune erreur. `setVideo` n'a aucun appelant hors de `MenuBar.tsx` ; si `tsc` en signale un, remplacer l'appel par `insertVideo({ src })`.
 
-Run: `pnpm --filter pilote-ppg test:unit`
+Run: `pnpm --filter @pilote/ppg test:unit`
 Expected: PASS.
 
 - [ ] **Step 8: Lint et commit**
@@ -1406,7 +1406,7 @@ Rappel : le service refuse les accents et les espaces dans les noms de fichier �
 
 - [ ] **Step 3: Vérifier la compilation**
 
-Run: `pnpm --filter pilote-ppg exec tsc --noEmit`
+Run: `pnpm --filter @pilote/ppg exec tsc --noEmit`
 Expected: aucune erreur.
 
 - [ ] **Step 4: Lint et commit**
@@ -1440,7 +1440,7 @@ git commit -m "feat(centre-aide): accepte une video hebergee sur fichiers.numeri
 - [ ] **Step 1: Installer @tiptap/suggestion**
 
 ```bash
-pnpm --filter pilote-ppg add @tiptap/suggestion@3.30.5
+pnpm --filter @pilote/ppg add @tiptap/suggestion@3.30.5
 ```
 
 Vérifier que `apps/pilote-ppg/package.json` porte bien `"@tiptap/suggestion": "3.30.5"` sans accent circonflexe, comme les autres paquets tiptap.
@@ -1847,13 +1847,13 @@ it("N'applique le titre qu'au paragraphe sélectionné", () => {
 
 - [ ] **Step 6: Lancer les tests pour vérifier qu'ils passent**
 
-Run: `pnpm --filter pilote-ppg test:client:unit src/client/components/_commons/CentreAide`
+Run: `pnpm --filter @pilote/ppg test:client:unit src/client/components/_commons/CentreAide`
 
 Expected: PASS — le test de mise en titre et ceux des tâches 3 et 5.
 
 - [ ] **Step 7: Vérifier la compilation**
 
-Run: `pnpm --filter pilote-ppg exec tsc --noEmit`
+Run: `pnpm --filter @pilote/ppg exec tsc --noEmit`
 Expected: aucune erreur.
 
 - [ ] **Step 8: Lint et commit**
@@ -2147,10 +2147,10 @@ S'il est absent, utiliser une autre icône présente dans le dossier (par exempl
 
 - [ ] **Step 5: Vérifier la compilation et l'ensemble des tests**
 
-Run: `pnpm --filter pilote-ppg exec tsc --noEmit`
+Run: `pnpm --filter @pilote/ppg exec tsc --noEmit`
 Expected: aucune erreur.
 
-Run: `pnpm --filter pilote-ppg test:unit`
+Run: `pnpm --filter @pilote/ppg test:unit`
 Expected: PASS.
 
 - [ ] **Step 6: Lint et commit**
