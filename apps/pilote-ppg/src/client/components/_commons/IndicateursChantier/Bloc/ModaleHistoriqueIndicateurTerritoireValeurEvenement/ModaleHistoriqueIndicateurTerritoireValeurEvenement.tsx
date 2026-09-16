@@ -7,8 +7,6 @@ import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-ev
 import { toISODateTime } from "@/server/app/domain/Dates";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { Modale } from "@/components/shared/Modale";
-import { libelleEvenementIndicateurTerritoireValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/libelleEvenementIndicateurTerritoireValeur";
-import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
@@ -27,22 +25,141 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
     typeEvenement: string;
     valeur?: number | null;
   }) => {
-    const { description, resultat } =
-      libelleEvenementIndicateurTerritoireValeur(
-        typeEvenement as TypeEvenement,
-        valeur ?? null,
-      );
-
-    return (
-      <div>
-        {description ? <p className="fr-mb-0">{description}</p> : null}
-        {resultat ? (
+    switch (typeEvenement) {
+      case "VALEUR_CREEE":
+        return (
           <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-            → {resultat}
+            → nouvelle valeur affichée dans PILOTE : {valeur}
           </p>
-        ) : null}
-      </div>
-    );
+        );
+      case "VALEUR_MODIFIEE":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              <span className="fr-text--bold">import de données</span> par la
+              direction de projet
+            </p>
+            {valeur === null ? (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → la valeur a été supprimée de PILOTE
+              </p>
+            ) : (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → nouvelle valeur affichée dans PILOTE : {valeur}
+              </p>
+            )}
+          </div>
+        );
+      case "VALEUR_HISTORISEE":
+        return (
+          <span>
+            <span className="fr-text--bold">
+              import d'une valeur d'avancement plus récente
+            </span>{" "}
+            par la direction de projet
+          </span>
+        );
+      case "PROPOSITION_VALEUR_CREEE":
+        return (
+          <span>
+            <span className="fr-text--bold">nouvelle proposition</span> du
+            territoire : {valeur ?? "N/A"}
+          </span>
+        );
+      case "PROPOSITION_VALEUR_MODIFIEE":
+        return (
+          <span>
+            <span className="fr-text--bold">
+              modification de la proposition
+            </span>{" "}
+            du territoire : {valeur ?? "N/A"}
+          </span>
+        );
+      case "PROPOSITION_VALEUR_SUPPRIMEE":
+        return (
+          <span>
+            <span className="fr-text--bold">suppression de la proposition</span>{" "}
+            par le territoire
+          </span>
+        );
+      case "PROPOSITION_VALEUR_ACCUSEE_RECEPTION":
+        return (
+          <span>
+            <span className="fr-text--bold">
+              accusé de réception de la proposition
+            </span>{" "}
+            par la direction de projet
+          </span>
+        );
+      case "PROPOSITION_VALEUR_REFUSEE":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              proposition
+              <span className="fr-text--bold"> refusée</span> par la direction
+              de projet
+            </p>
+          </div>
+        );
+      case "PROPOSITION_VALEUR_ACCEPTEE":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              proposition
+              <span className="fr-text--bold"> acceptée</span> par la direction
+              de projet
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
+        );
+      case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              proposition
+              <span className="fr-text--bold">
+                {" "}
+                acceptée avec modification
+              </span>{" "}
+              par la direction de projet
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
+        );
+      case "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              <span className="fr-text--bold"> import de données</span> par la
+              direction de projet (la proposition en cours a été ignorée)
+            </p>
+            {valeur === null ? (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → la valeur a été supprimée de PILOTE
+              </p>
+            ) : (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → nouvelle valeur affichée dans PILOTE : {valeur}
+              </p>
+            )}
+          </div>
+        );
+      case "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE":
+        return (
+          <span>
+            <span className="fr-text--bold">
+              import d'une valeur d'avancement plus récente
+            </span>{" "}
+            par la direction de projet (la proposition en cours a été ignorée)
+          </span>
+        );
+      default:
+        return typeEvenement;
+    }
   };
 
   const backgroundEvenementValeur = ({
