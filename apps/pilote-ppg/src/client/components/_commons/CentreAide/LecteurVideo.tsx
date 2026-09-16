@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
 import { clsxm } from "@/utils/clsxm";
+import { classesMedia } from "./alignementMedia";
 
 const HOTE_FICHIERS = "fichiers.numerique.gouv.fr";
 const PARAMETRES_AUTOPLAY = ["autoplay", "auto_play", "autostart"];
@@ -38,14 +39,18 @@ export const estFichierVideoDirect = (url: string): boolean => {
 export const LecteurVideo: FunctionComponent<{
   src: string;
   titre?: string;
+  alignement?: unknown;
+  largeur?: unknown;
   className?: string;
-}> = ({ src, titre, className }) => {
+}> = ({ src, titre, alignement, largeur, className }) => {
   if (!estUrlHttpSure(src)) return null;
+
+  const classesMiseEnPage = classesMedia({ alignement, largeur });
 
   if (estFichierVideoDirect(src)) {
     return (
       <video
-        className={clsxm("w-full max-w-[560px] rounded", className)}
+        className={clsxm(classesMiseEnPage, "rounded", className)}
         controls
         preload="metadata"
         src={src}
@@ -58,7 +63,8 @@ export const LecteurVideo: FunctionComponent<{
   return (
     <div
       className={clsxm(
-        "aspect-video w-full max-w-[560px] overflow-hidden rounded",
+        classesMiseEnPage,
+        "aspect-video overflow-hidden rounded",
         className,
       )}
     >

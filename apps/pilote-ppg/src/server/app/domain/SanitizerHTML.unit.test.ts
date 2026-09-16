@@ -30,6 +30,26 @@ describe("SanitizerHTML", () => {
     );
   });
 
+  it("Doit conserver la mise en page d'un bloc vidéo", () => {
+    const html =
+      '<div data-type="video" data-src="https://video.finances.gouv.fr/x" data-align="centre" data-largeur="pleine"></div>';
+
+    const sanitized = SanitizerHTML.sanitize(html);
+
+    expect(sanitized).toContain('data-align="centre"');
+    expect(sanitized).toContain('data-largeur="pleine"');
+  });
+
+  it("Doit conserver la mise en page d'une image", () => {
+    const html =
+      '<img src="https://fichiers.numerique.gouv.fr/media/preview/item/abc/photo.png" data-align="droite" data-largeur="petite">';
+
+    const sanitized = SanitizerHTML.sanitize(html);
+
+    expect(sanitized).toContain('data-align="droite"');
+    expect(sanitized).toContain('data-largeur="petite"');
+  });
+
   it("Doit toujours retirer la source d'une iframe d'un hôte non autorisé", () => {
     const html = '<iframe src="https://exemple.invalide/film.mp4"></iframe>';
 

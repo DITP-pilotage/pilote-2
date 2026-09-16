@@ -1,5 +1,4 @@
 import { Color } from "@tiptap/extension-color";
-import Image from "@tiptap/extension-image";
 import { Link } from "@tiptap/extension-link";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -10,6 +9,7 @@ import { AccordionExtension } from "@/components/_commons/EditeurRiche/extension
 import { CalloutExtension } from "@/components/_commons/EditeurRiche/extensions/CalloutExtension";
 import { IconeExtension } from "@/components/_commons/EditeurRiche/extensions/IconeExtension";
 import { VideoExtension } from "@/components/_commons/EditeurRiche/extensions/VideoExtension";
+import { ImageMiseEnPage } from "./ImageMiseEnPage";
 import type { ActionsBlocs } from "../blocs";
 import { SlashCommand } from "./SlashCommand";
 
@@ -28,10 +28,7 @@ export const extensionsCentreAide = (
   Color,
   Underline,
   Link.configure({ openOnClick: false }),
-  Image.configure({
-    allowBase64: false,
-    HTMLAttributes: { class: "max-w-full rounded" },
-  }),
+  ImageMiseEnPage.configure({ allowBase64: false }),
   Placeholder.configure({ placeholder }),
   CalloutExtension,
   AccordionExtension,
