@@ -10,6 +10,8 @@ import { DashboardWidgetListeChantiersEnDifficulte } from "./DashboardWidgetList
 import { DashboardWidgetCartographieTauxAvancement } from "./DashboardWidgetCartographieTauxAvancement";
 import { DashboardWidgetCartographieMeteo } from "./DashboardWidgetCartographieMeteo";
 import { DashboardWidgetCartographiePropositionsValeurAvancement } from "./DashboardWidgetCartographiePropositionsValeurAvancement";
+import { DashboardWidgetEvolutionTauxAvancement } from "./DashboardWidgetEvolutionTauxAvancement";
+import { DashboardWidgetEvolutionValeurAvancement } from "./DashboardWidgetEvolutionValeurAvancement";
 import { DashboardWidgetTitreSection } from "./DashboardWidgetTitreSection";
 import { DashboardWidgetParagraph } from "./DashboardWidgetParagraph";
 
@@ -99,6 +101,24 @@ export const DashboardWidgetRegistry = ({
           maille={widget.maille}
           territoireCode={widget.territoire_code}
           chantierId={widget.chantier_id}
+          jalon={widget.jalon}
+        />
+      );
+    case "widget_evolution_taux_avancement":
+      return (
+        <DashboardWidgetEvolutionTauxAvancement
+          indicateurId={widget.indicateur_id}
+          chantierId={widget.chantier_id}
+          territoireCodes={widget.territoire_codes}
+          jalon={widget.jalon}
+        />
+      );
+    case "widget_evolution_valeur_avancement":
+      return (
+        <DashboardWidgetEvolutionValeurAvancement
+          indicateurId={widget.indicateur_id}
+          chantierId={widget.chantier_id}
+          territoireCodes={widget.territoire_codes}
           jalon={widget.jalon}
         />
       );
