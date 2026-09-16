@@ -14,10 +14,7 @@ export const DashboardWidgetEvolutionValeurAvancement = ({
   jalon: number;
 }) => (
   <DashboardPanel>
-    <DashboardWidgetTitle
-      segments={["Valeur d'avancement"]}
-      className="mb-3"
-    />
+    <DashboardWidgetTitle segments={["Valeur d'avancement"]} className="mb-3" />
     <EvolutionCourbesValeursAvancement
       indicateurId={indicateurId}
       chantierId={chantierId}
