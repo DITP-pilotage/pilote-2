@@ -1,23 +1,23 @@
 import { FunctionComponent, useState } from "react";
-import { NoeudArbre } from "@/components/_commons/CentreAide/types";
-import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
+import { ArbreCentreAideDnd } from "@/components/_commons/CentreAide/editeur/ArbreCentreAideDnd";
+import { ArticleCentreAideContrat } from "@/server/parametrage-centre-aide/app/contrats/ArticleCentreAideContrat";
 
 interface ArborescenceCentreAideAdminProps {
-  arbre: NoeudArbre[];
+  articles: ArticleCentreAideContrat[];
   itemSelectionneId: string | null;
   onSelectionItem: (id: string) => void;
   onCreerGroupe: (avecContenu: boolean) => void;
   onCreerPage: () => void;
   onDeplacer: (
     id: string,
-    action: "monter" | "descendre" | "sortir" | "entrer",
+    cible: { parentId: string | null; index: number },
   ) => void;
 }
 
 export const ArborescenceCentreAideAdmin: FunctionComponent<
   ArborescenceCentreAideAdminProps
 > = ({
-  arbre,
+  articles,
   itemSelectionneId,
   onSelectionItem,
   onCreerGroupe,
@@ -74,12 +74,11 @@ export const ArborescenceCentreAideAdmin: FunctionComponent<
         </button>
       </div>
 
-      <ArborescenceCentreAide
-        afficherStatut
-        arbre={arbre}
-        itemSelectionneId={itemSelectionneId}
+      <ArbreCentreAideDnd
+        articles={articles}
         onDeplacer={onDeplacer}
-        onSelectionItem={onSelectionItem}
+        onSelectionner={onSelectionItem}
+        selectionneId={itemSelectionneId}
       />
     </div>
   );

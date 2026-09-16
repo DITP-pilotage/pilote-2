@@ -4,6 +4,8 @@ import { Accordion } from "@/client/components/shared/Accordion";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
+import { classesMedia } from "@/client/components/_commons/CentreAide/alignementMedia";
+import { LecteurVideo } from "@/client/components/_commons/CentreAide/LecteurVideo";
 import { registreIcones } from "./registreIcones";
 
 type IconComponent = ComponentType<{ className: string; fill: string }>;
@@ -74,6 +76,44 @@ function renderNode(node: Node): ReactNode {
     if (!Icon) return null;
     return (
       <Icon className="w-5 h-5 inline-block align-middle" fill="currentColor" />
+    );
+  }
+
+  if (dataType === "video") {
+    const src = element.getAttribute("data-src");
+    if (!src) return null;
+    return (
+      <LecteurVideo
+        alignement={element.getAttribute("data-align")}
+        largeur={element.getAttribute("data-largeur")}
+        src={src}
+      />
+    );
+  }
+
+  if (element.tagName === "IMG") {
+    const src = element.getAttribute("src");
+    if (!src) return null;
+    return (
+      <img
+        alt={element.getAttribute("alt") ?? ""}
+        className={`${classesMedia({
+          alignement: element.getAttribute("data-align"),
+          largeur: element.getAttribute("data-largeur"),
+        })} rounded`}
+        src={src}
+      />
+    );
+  }
+
+  if (element.tagName === "IFRAME") {
+    const src = element.getAttribute("src");
+    if (!src) return null;
+    return (
+      <LecteurVideo
+        src={src}
+        titre={element.getAttribute("title") ?? undefined}
+      />
     );
   }
 

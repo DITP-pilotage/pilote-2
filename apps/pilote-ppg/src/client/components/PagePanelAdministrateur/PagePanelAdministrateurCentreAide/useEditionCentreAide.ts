@@ -257,8 +257,8 @@ export const useEditionCentreAide = () => {
   }, [itemSelectionneId, mutationBasculerVisibilite]);
 
   const deplacerArticle = useCallback(
-    (id: string, action: "monter" | "descendre" | "sortir" | "entrer") => {
-      mutationDeplacer.mutate({ id, action });
+    (id: string, cible: { parentId: string | null; index: number }) => {
+      mutationDeplacer.mutate({ id, ...cible });
     },
     [mutationDeplacer],
   );

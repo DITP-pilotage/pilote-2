@@ -528,7 +528,7 @@ export const MenuBar = ({
       <ModaleInsertionUrl
         onOpenChange={setModaleVideo}
         onValider={(url) => {
-          editor.chain().focus().setVideo({ src: url }).run();
+          editor.chain().focus().insertVideo({ src: url }).run();
         }}
         open={modaleVideo}
         titre="Insérer une vidéo"

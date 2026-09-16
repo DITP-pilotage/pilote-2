@@ -1,9 +1,54 @@
 import { mergeAttributes, Node } from "@tiptap/core";
+import {
+  NodeViewProps,
+  NodeViewWrapper,
+  ReactNodeViewRenderer,
+} from "@tiptap/react";
+import {
+  ALIGNEMENT_PAR_DEFAUT,
+  LARGEUR_PAR_DEFAUT,
+  lireAlignement,
+  lireLargeur,
+  type AlignementMedia,
+  type LargeurMedia,
+} from "@/client/components/_commons/CentreAide/alignementMedia";
+import { BarreMiseEnPageMedia } from "@/client/components/_commons/CentreAide/editeur/BarreMiseEnPageMedia";
+import { LecteurVideo } from "@/client/components/_commons/CentreAide/LecteurVideo";
+
+function VideoNodeView({ node, selected, updateAttributes }: NodeViewProps) {
+  const src = (node.attrs.src as string) ?? "";
+  const alignement = lireAlignement(node.attrs.alignement);
+  const largeur = lireLargeur(node.attrs.largeur);
+
+  return (
+    <NodeViewWrapper className="relative my-2" contentEditable={false}>
+      {selected && (
+        <BarreMiseEnPageMedia
+          alignement={alignement}
+          largeur={largeur}
+          onAlignement={(valeur) => updateAttributes({ alignement: valeur })}
+          onLargeur={(valeur) => updateAttributes({ largeur: valeur })}
+        />
+      )}
+      {src ? (
+        <LecteurVideo alignement={alignement} largeur={largeur} src={src} />
+      ) : (
+        <div className="rounded border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+          Vidéo sans URL
+        </div>
+      )}
+    </NodeViewWrapper>
+  );
+}
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     video: {
-      setVideo: (attrs: { src: string }) => ReturnType;
+      insertVideo: (attrs: { src: string }) => ReturnType;
+      definirMiseEnPageVideo: (attrs: {
+        alignement?: AlignementMedia;
+        largeur?: LargeurMedia;
+      }) => ReturnType;
     };
   }
 }
@@ -16,54 +61,59 @@ export const VideoExtension = Node.create({
   addAttributes() {
     return {
       src: {
-        default: null,
+        default: "",
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-src") ?? element.getAttribute("src") ?? "",
+        renderHTML: (attributes: Record<string, string>) => ({
+          "data-src": attributes.src,
+        }),
       },
-      title: {
-        default: "Lecteur vidéo",
+      alignement: {
+        default: ALIGNEMENT_PAR_DEFAUT,
+        parseHTML: (element: HTMLElement) =>
+          lireAlignement(element.getAttribute("data-align")),
+        renderHTML: (attributes: Record<string, string>) => ({
+          "data-align": attributes.alignement,
+        }),
       },
-      frameborder: {
-        default: "0",
-      },
-      allowfullscreen: {
-        default: "true",
+      largeur: {
+        default: LARGEUR_PAR_DEFAUT,
+        parseHTML: (element: HTMLElement) =>
+          lireLargeur(element.getAttribute("data-largeur")),
+        renderHTML: (attributes: Record<string, string>) => ({
+          "data-largeur": attributes.largeur,
+        }),
       },
     };
   },
 
+  // La tolerance a iframe[src] fait remonter les articles enregistres avant le
+  // changement de format ; ils sont reecrits en data-src au prochain export.
   parseHTML() {
-    return [
-      {
-        tag: "iframe[src]",
-      },
-    ];
+    return [{ tag: 'div[data-type="video"]' }, { tag: "iframe[src]" }];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return [
-      "div",
-      { style: "display: flex; justify-content: center;" },
-      [
-        "iframe",
-        mergeAttributes(HTMLAttributes, {
-          style: "max-width: 100%; width: 560px; height: 315px;",
-          frameborder: "0",
-          allowfullscreen: "true",
-          title: HTMLAttributes.title || "Lecteur vidéo",
-        }),
-      ],
-    ];
+    return ["div", mergeAttributes({ "data-type": "video" }, HTMLAttributes)];
   },
 
   addCommands() {
     return {
-      setVideo:
+      insertVideo:
         (attrs) =>
-        ({ commands }) => {
-          return commands.insertContent({
+        ({ commands }) =>
+          commands.insertContent({
             type: this.name,
-            attrs,
-          });
-        },
+            attrs: { src: attrs.src },
+          }),
+      definirMiseEnPageVideo:
+        (attrs) =>
+        ({ commands }) =>
+          commands.updateAttributes(this.name, attrs),
     };
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(VideoNodeView);
   },
 });
