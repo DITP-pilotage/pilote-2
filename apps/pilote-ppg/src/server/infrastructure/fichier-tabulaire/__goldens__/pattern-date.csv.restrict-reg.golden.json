@@ -1,0 +1,50 @@
+{
+  "versionValidata": "0.12.5",
+  "captureLe": "2026-09-16T19:18:01.342043+02:00",
+  "valid": false,
+  "stats": {
+    "errors": 2,
+    "warnings": 1,
+    "seconds": 0.008,
+    "fields": 6,
+    "rows": 1,
+    "rows_processed": 1
+  },
+  "warnings": [
+    "Colonne surnuméraire : Retirez la colonne `zone_nom` non définie dans le schéma."
+  ],
+  "errors": [
+    {
+      "type": "constraint-error",
+      "rowNumber": 2,
+      "fieldName": "zone_id",
+      "fieldNumber": 2,
+      "cell": "D46"
+    },
+    {
+      "type": "constraint-error",
+      "rowNumber": 2,
+      "fieldName": "date_valeur",
+      "fieldNumber": 4,
+      "cell": "pas-une-date"
+    }
+  ],
+  "resource_data": [
+    [
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur"
+    ],
+    [
+      "IND-001",
+      "D46",
+      "Lot",
+      "pas-une-date",
+      "vi",
+      "1"
+    ]
+  ]
+}

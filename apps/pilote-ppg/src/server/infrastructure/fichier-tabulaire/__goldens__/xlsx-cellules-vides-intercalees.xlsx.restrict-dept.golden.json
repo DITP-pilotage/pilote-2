@@ -1,0 +1,42 @@
+{
+  "versionValidata": "0.12.5",
+  "captureLe": "2026-09-16T19:18:15.635212+02:00",
+  "valid": false,
+  "stats": {
+    "errors": 1,
+    "warnings": 1,
+    "seconds": 0.005,
+    "fields": 6,
+    "rows": 1,
+    "rows_processed": 1
+  },
+  "warnings": [
+    "Colonne surnuméraire : Retirez la colonne `zone_nom` non définie dans le schéma."
+  ],
+  "errors": [
+    {
+      "type": "missing-cell",
+      "rowNumber": 2,
+      "fieldName": "valeur",
+      "fieldNumber": 6,
+      "cell": ""
+    }
+  ],
+  "resource_data": [
+    [
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur"
+    ],
+    [
+      "IND-001",
+      "D46",
+      null,
+      "2023-01-31",
+      "vi"
+    ]
+  ]
+}

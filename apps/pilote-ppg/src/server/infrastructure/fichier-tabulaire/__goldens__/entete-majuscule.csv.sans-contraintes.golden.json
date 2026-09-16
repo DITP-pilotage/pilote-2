@@ -1,0 +1,44 @@
+{
+  "versionValidata": "0.12.5",
+  "captureLe": "2026-09-16T19:17:46.851579+02:00",
+  "valid": false,
+  "stats": {
+    "errors": 1,
+    "warnings": 2,
+    "seconds": 0.006,
+    "fields": 6,
+    "rows": 1,
+    "rows_processed": 1
+  },
+  "warnings": [
+    "Colonne surnuméraire : Retirez la colonne `IDENTIFIANT_INDIC` non définie dans le schéma.",
+    "Colonne surnuméraire : Retirez la colonne `zone_nom` non définie dans le schéma."
+  ],
+  "errors": [
+    {
+      "type": "missing-label",
+      "rowNumber": null,
+      "fieldName": "identifiant_indic",
+      "fieldNumber": 7,
+      "cell": null
+    }
+  ],
+  "resource_data": [
+    [
+      "IDENTIFIANT_INDIC",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur"
+    ],
+    [
+      "IND-001",
+      "D46",
+      "Lot",
+      "2023-01-31",
+      "vi",
+      "12.5"
+    ]
+  ]
+}
