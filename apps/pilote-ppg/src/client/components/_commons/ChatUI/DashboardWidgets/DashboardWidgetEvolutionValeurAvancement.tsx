@@ -1,5 +1,6 @@
 import { EvolutionCourbesValeursAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/EvolutionCourbesValeursAvancement";
 import { DashboardPanel } from "./DashboardPanel";
+import { DashboardWidgetTitle } from "./DashboardWidgetTitle";
 
 export const DashboardWidgetEvolutionValeurAvancement = ({
   indicateurId,
@@ -13,6 +14,10 @@ export const DashboardWidgetEvolutionValeurAvancement = ({
   jalon: number;
 }) => (
   <DashboardPanel>
+    <DashboardWidgetTitle
+      segments={["Valeur d'avancement"]}
+      className="mb-3"
+    />
     <EvolutionCourbesValeursAvancement
       indicateurId={indicateurId}
       chantierId={chantierId}
