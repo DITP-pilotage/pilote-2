@@ -14,7 +14,7 @@ describe("GetEvolutionIndicateurTerritoireQuery", () => {
   });
 
   it(
-    "retourne les points d'évolution triés par date croissante",
+    "retourne les points d'évolution triés par date croissante, avec le taux d'avancement jalon quand disponible",
     createIntegrationTest(async () => {
       // Given
       const chantier = await fixtures.chantierIdentite();
@@ -39,8 +39,8 @@ describe("GetEvolutionIndicateurTerritoireQuery", () => {
           {
             date: "2024-03-01",
             valeur: 20,
-            // champs bruts supplémentaires réellement présents dans la colonne JSON,
-            // qui ne doivent jamais fuiter dans la sortie de la query
+            // taux_avancement_mandat est réellement présent dans la colonne JSON
+            // mais ne doit jamais fuiter dans la sortie de la query
             taux_avancement_jalon: 99,
             taux_avancement_mandat: 88,
           },
@@ -55,9 +55,9 @@ describe("GetEvolutionIndicateurTerritoireQuery", () => {
 
       // Then
       expect(result).toEqual([
-        { date: "01/2024", valeur: 10 },
-        { date: "03/2024", valeur: 20 },
-        { date: "06/2024", valeur: 30 },
+        { date: "01/2024", valeur: 10, taux_avancement_jalon: null },
+        { date: "03/2024", valeur: 20, taux_avancement_jalon: 99 },
+        { date: "06/2024", valeur: 30, taux_avancement_jalon: null },
       ]);
     }),
   );
