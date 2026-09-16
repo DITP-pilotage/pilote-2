@@ -4,14 +4,14 @@ import { Modale } from "@/client/components/shared/Modale";
 const EXTENSIONS_PAR_TYPE = {
   image: ["png", "jpg", "jpeg", "gif", "webp", "svg"],
   lien: ["pdf", "xlsx", "ods", "docx", "odt", "csv"],
-  video: [],
+  video: ["mp4", "webm"],
 } as const;
 
 type TypeInsertion = keyof typeof EXTENSIONS_PAR_TYPE;
 
 const DOMAINES_AUTORISES_PAR_TYPE: Partial<Record<TypeInsertion, string[]>> = {
   image: ["fichiers.numerique.gouv.fr"],
-  video: ["video.finances.gouv.fr"],
+  video: ["video.finances.gouv.fr", "fichiers.numerique.gouv.fr"],
 };
 
 function extraireIdDepuisUrl(url: string): string | null {
@@ -227,7 +227,7 @@ export const ModaleInsertionUrl = ({
                 className="border rounded px-3 py-2 text-sm"
                 id="nom-fichier"
                 onChange={(event) => setNomFichier(event.target.value)}
-                placeholder="mon_image"
+                placeholder={type === "video" ? "ma_video" : "mon_image"}
                 type="text"
                 value={nomFichier}
               />
