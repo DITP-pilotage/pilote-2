@@ -62,16 +62,14 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
         args,
       );
 
-    const evenementsGroupesParDate = regrouperEvenementsParDate(evenements);
-
     const historiqueTrie: HistoriqueIndicateurTerritoireValeurEvenementContrat =
       {};
 
-    Array.from(evenementsGroupesParDate.keys())
-      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-      .forEach((dateKey) => {
-        historiqueTrie[dateKey] = evenementsGroupesParDate
-          .get(dateKey)!
+    regrouperEvenementsParDate(evenements)
+      .reverse()
+      .forEach(({ dateValeur, evenements: evenementsDuJour }) => {
+        historiqueTrie[dateValeur] = [...evenementsDuJour]
+          .reverse()
           .map(presenterEnIndicateurTerritoireValeurEvenement);
       });
 

@@ -28,16 +28,22 @@ export function filtrerEvenementsRedondants(
   });
 }
 
+export type GroupeEvenementsParDate = {
+  dateValeur: string;
+  evenements: IndicateurTerritoireValeurEvenement[];
+};
+
 /**
  * Regroupe les événements par date de valeur et retire les événements
- * redondants au sein de chaque groupe. Chaque groupe est retourné trié par
- * ordre décroissant (forme canonique attendue par filtrerEvenementsRedondants) —
- * l'ordre des groupes entre eux et l'ordre final des événements dans chaque
- * groupe restent à la charge de l'appelant.
+ * redondants au sein de chaque groupe. Le résultat est trié du plus ancien
+ * au plus récent, à la fois entre les groupes et au sein de chaque groupe
+ * (ordre croissant) : un appelant qui veut l'ordre inverse peut simplement
+ * faire .reverse() (et .reverse() sur chaque groupe.evenements) plutôt que
+ * de retrier.
  */
 export function regrouperEvenementsParDate(
   evenements: IndicateurTerritoireValeurEvenement[],
-): Map<string, IndicateurTerritoireValeurEvenement[]> {
+): GroupeEvenementsParDate[] {
   const evenementsParDate = new Map<
     string,
     IndicateurTerritoireValeurEvenement[]
@@ -50,16 +56,18 @@ export function regrouperEvenementsParDate(
     evenementsParDate.set(dateKey, groupe);
   });
 
-  const resultat = new Map<string, IndicateurTerritoireValeurEvenement[]>();
-  evenementsParDate.forEach((evenementsDuJour, dateKey) => {
-    const evenementsDuJourTriesDesc = [...evenementsDuJour].sort(
-      (a, b) => b.ordre - a.ordre,
-    );
-    resultat.set(
-      dateKey,
-      filtrerEvenementsRedondants(evenementsDuJourTriesDesc),
-    );
-  });
+  return Array.from(evenementsParDate.entries())
+    .sort(([dateA], [dateB]) => (dateA < dateB ? -1 : 1))
+    .map(([dateValeur, evenementsDuJour]) => {
+      const evenementsDuJourTriesDesc = [...evenementsDuJour].sort(
+        (a, b) => b.ordre - a.ordre,
+      );
 
-  return resultat;
+      return {
+        dateValeur,
+        evenements: filtrerEvenementsRedondants(
+          evenementsDuJourTriesDesc,
+        ).reverse(),
+      };
+    });
 }

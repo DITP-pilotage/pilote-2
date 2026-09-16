@@ -119,10 +119,11 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
           input.territoire_code,
         );
 
-        if (
+        const estAgregeBloque =
           (maille === "NAT" && contexte.mailleNatAgregee) ||
-          (maille === "REG" && contexte.mailleRegAgregee)
-        ) {
+          (maille === "REG" && contexte.mailleRegAgregee);
+
+        if (estAgregeBloque) {
           return {
             indicateur: indicateurResume,
             territoire_code: input.territoire_code,

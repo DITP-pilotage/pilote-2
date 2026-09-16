@@ -53,38 +53,31 @@ export class GetHistoriqueIndicateurTerritoireQuery {
       ? toISODate(new Date(Math.max(...datesValeur)))
       : null;
 
-    const evenementsParDate = regrouperEvenementsParDate(evenements);
+    const groupes = regrouperEvenementsParDate(evenements).map(
+      ({ dateValeur, evenements: evenementsDuJour }) => ({
+        date_valeur: formaterDate(dateValeur, "MM/YYYY")!,
+        evenements: evenementsDuJour.map(
+          (evenement): EvenementHistoriqueLisible => {
+            const dateCreationIso = toISODateTime(evenement.dateCreation);
+            const { description, resultat } =
+              libelleEvenementIndicateurTerritoireValeur(
+                evenement.typeEvenement,
+                evenement.valeur ?? null,
+              );
 
-    const groupes = Array.from(evenementsParDate.entries())
-      .sort(([dateA], [dateB]) => (dateA < dateB ? -1 : 1))
-      .map(([dateValeur, evenementsDuJour]) => {
-        const evenementsRestants = [...evenementsDuJour].sort(
-          (a, b) => a.ordre - b.ordre,
-        );
-
-        return {
-          date_valeur: formaterDate(dateValeur, "MM/YYYY") ?? dateValeur,
-          evenements: evenementsRestants.map(
-            (evenement): EvenementHistoriqueLisible => {
-              const dateCreationIso = toISODateTime(evenement.dateCreation);
-              const { description, resultat } =
-                libelleEvenementIndicateurTerritoireValeur(
-                  evenement.typeEvenement,
-                  evenement.valeur ?? null,
-                );
-
-              return {
-                ordre: evenement.ordre,
-                date_creation:
-                  formaterDate(dateCreationIso, "DD/MM/YYYY HH[:]mm") ??
-                  dateCreationIso,
-                description,
-                resultat,
-              };
-            },
-          ),
-        };
-      });
+            return {
+              ordre: evenement.ordre,
+              date_creation: formaterDate(
+                dateCreationIso,
+                "DD/MM/YYYY HH[:]mm",
+              )!,
+              description,
+              resultat,
+            };
+          },
+        ),
+      }),
+    );
 
     return {
       nombreEvenements: evenements.length,
