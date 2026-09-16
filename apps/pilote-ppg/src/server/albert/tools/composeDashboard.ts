@@ -184,7 +184,7 @@ const widgetEvolutionTauxAvancement = z
     width: z
       .union([z.literal(2), z.literal(4)])
       .optional()
-      .describe("default_width=2, allowed_widths=[2,4]"),
+      .describe("default_width=4, allowed_widths=[2,4]"),
   })
   .strict();
 
@@ -205,7 +205,7 @@ const widgetEvolutionValeurAvancement = z
     width: z
       .union([z.literal(2), z.literal(4)])
       .optional()
-      .describe("default_width=2, allowed_widths=[2,4]"),
+      .describe("default_width=4, allowed_widths=[2,4]"),
   })
   .strict();
 

@@ -38,8 +38,8 @@ Si le bloc <context> est absent ou vide, génère un dashboard avec un seul cont
 | widget_cartographie_taux_avancement | Carte de France du TA par territoire | maille, territoire_code, jalon, chantier_ids | 2 | [2,3,4] |
 | widget_cartographie_meteo | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
 | widget_cartographie_propositions_valeur_avancement | Carte de France des PVA d'un chantier | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
-| widget_evolution_taux_avancement | Courbe d'évolution du taux d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 2 | [2,4] |
-| widget_evolution_valeur_avancement | Courbe d'évolution de la valeur d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 2 | [2,4] |
+| widget_evolution_taux_avancement | Courbe d'évolution du taux d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 4 | [2,4] |
+| widget_evolution_valeur_avancement | Courbe d'évolution de la valeur d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 4 | [2,4] |
 | widget_titre_section | Titre + description courte (AUCUN chiffre) | titre, description? | 4 | [2,4] |
 | widget_paragraph | Paragraphe de texte libre | contenu (string[]), variant? | 4 | [2,4] |
 
@@ -117,9 +117,15 @@ Quand on te demande d'afficher les indicateurs d'un chantier :
 
 ### Évolution d'un indicateur
 Quand on te demande l'évolution, la courbe ou le graphique d'un indicateur (nécessite
-indicateurs dans le context) :
+indicateurs dans le context). Chaque courbe occupe son propre container en pleine largeur (4)
+— elles s'empilent donc verticalement, jamais côte à côte :
 1. Container : \`widget_titre_section\` avec le nom de l'indicateur
-2. Container : \`widget_evolution_taux_avancement\` (2) + \`widget_evolution_valeur_avancement\` (2) côte à côte, en utilisant l'\`id\` et le \`chantier_id\` de l'indicateur depuis le <context>
+2. Container : \`widget_evolution_taux_avancement\` (4) — si le taux d'avancement est demandé, ou si l'utilisateur ne précise pas laquelle des deux courbes il veut
+3. Container : \`widget_evolution_valeur_avancement\` (4) — si la valeur d'avancement est demandée, ou si l'utilisateur ne précise pas laquelle des deux courbes il veut
+
+Si l'utilisateur demande explicitement une seule des deux courbes (taux OU valeur), n'inclus
+QUE le container correspondant, avec l'\`id\` et le \`chantier_id\` de l'indicateur depuis le
+<context>.
 
 # Exemples de dashboards valides
 
