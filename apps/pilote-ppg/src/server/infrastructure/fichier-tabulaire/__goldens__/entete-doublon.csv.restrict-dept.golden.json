@@ -1,0 +1,43 @@
+{
+  "versionValidata": "0.12.5",
+  "captureLe": "2026-09-16T19:17:43.175085+02:00",
+  "valid": false,
+  "stats": {
+    "errors": 1,
+    "warnings": 0,
+    "seconds": 0.003,
+    "fields": 0,
+    "rows": 1,
+    "rows_processed": -1
+  },
+  "warnings": [],
+  "errors": [
+    {
+      "type": "duplicate-label",
+      "rowNumber": null,
+      "fieldName": null,
+      "fieldNumber": null,
+      "cell": null
+    }
+  ],
+  "resource_data": [
+    [
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur",
+      "valeur"
+    ],
+    [
+      "IND-001",
+      "D46",
+      "Lot",
+      "2023-01-31",
+      "vi",
+      "12.5",
+      "2"
+    ]
+  ]
+}

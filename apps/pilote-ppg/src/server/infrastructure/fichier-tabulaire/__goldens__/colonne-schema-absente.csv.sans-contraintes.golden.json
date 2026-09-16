@@ -1,0 +1,31 @@
+{
+  "versionValidata": "0.12.5",
+  "captureLe": "2026-09-16T19:17:38.258667+02:00",
+  "valid": true,
+  "stats": {
+    "errors": 0,
+    "warnings": 1,
+    "seconds": 0.007,
+    "fields": 4,
+    "rows": 1,
+    "rows_processed": 1
+  },
+  "warnings": [
+    "Colonne manquante : Ajoutez la colonne manquante `valeur`."
+  ],
+  "errors": [],
+  "resource_data": [
+    [
+      "identifiant_indic",
+      "zone_id",
+      "date_valeur",
+      "type_valeur"
+    ],
+    [
+      "IND-001",
+      "D46",
+      "2023-01-31",
+      "vi"
+    ]
+  ]
+}

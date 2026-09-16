@@ -1345,7 +1345,9 @@ git commit -m "feat(ppg-import): point d'entrée lireFichierTabulaire, contrat d
 
 **Le point de performance de l'ADR :** toutes les `RegExp` sont construites **une fois ici**, pas par cellule. L'implémentation de la branche `feat/ppg-import-validation-locale` faisait `new RegExp(...)` à l'intérieur de la boucle de lignes.
 
-**Le point de parité :** `indexDeColonne` vaut `-1` pour un champ du schéma absent du fichier. Les champs à `-1` sont **ignorés** par le validateur — c'est `schema_sync`, mesuré le 2026-09-16 : `valid: true` avec un simple warning.
+**Le point de parité, affiné par les goldens :** `indexDeColonne` vaut `-1` pour un champ du schéma absent du fichier, et ces champs sont **ignorés** par le validateur — c'est `schema_sync`.
+
+**Mais l'exception mesurée compte :** une colonne absente qui appartient à la **clé primaire** est une **erreur bloquante** (`missing-label`), pas un simple warning. Vérifié : `valeur` absente (hors clé) donne `valid: true` ; `identifiant_indic` absente (dans la clé) donne `missing-label` et `valid: false`. `compilerSchema` doit donc exposer `colonnesClePrimaireAbsentes: string[]` pour que l'adapter émette l'erreur.
 
 - [ ] **Step 1 : Écrire les tests qui échouent**
 
@@ -1523,9 +1525,17 @@ git commit -m "feat(ppg-import): compilation des schémas Table Schema, regex co
   ): { violations: ViolationContrainte[]; tronque: boolean };
   ```
 
-**Avant d'écrire cette tâche**, relire le résultat du Step 6 de la Task 1 :
-- `PLAFOND_VIOLATIONS_DEFAUT` doit valoir le plafond réellement appliqué par frictionless, lu dans `beaucoup-d-erreurs.csv.sans-contraintes.golden.json`.
-- Le traitement des formes de nombre (`12,5`, `1e5`, `+5`, ` 5 `) doit reproduire le verdict des goldens `nombre-*`. Ajuster `REGEX_NOMBRE` en conséquence plutôt que de deviner.
+**Valeurs mesurées sur les goldens (Task 1, Step 6) — ne pas les redéduire :**
+- `PLAFOND_VIOLATIONS_DEFAUT = 1000`. Au-delà, frictionless cesse aussi de lire les lignes
+  (`rows_processed: 200` sur `rows: 2000`) : on s'arrête de la même façon.
+- Nombres **acceptés** : `1e5` (notation scientifique), `+5`, `-3`, ` 5 ` (espaces rognés).
+  Nombres **refusés** (`type-error`) : `12,5` (virgule décimale), `abc`.
+  D'où `REGEX_NOMBRE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/`.
+- `minimum` / `maximum` sortent chez Validata en `constraint-error` indifférencié. Nos types
+  distincts sont plus fins ; la parité porte sur `(rowNumber, fieldName)`, pas sur le type.
+- **Nouveau type de violation `missing-cell`** : une ligne comportant moins de cellules que le
+  schéma n'a de champs. Mesuré sur `xlsx-cellules-vides-intercalees` : Validata tronque les
+  cellules finales vides et émet `missing-cell` sur `valeur`.
 
 **Règles de parité mesurées le 2026-09-16 :**
 - Une ligne entièrement vide produit **deux** violations : `blank-row` **et** `primary-key`.
@@ -1649,12 +1659,13 @@ import type {
   ViolationContrainte,
 } from "@/server/infrastructure/table-schema/TableSchema.types";
 
-// À caler sur le plafond réel de frictionless, lu dans le golden
-// `beaucoup-d-erreurs.csv.sans-contraintes.golden.json` (Task 1, Step 6).
+// Mesuré sur `beaucoup-d-erreurs.csv.sans-contraintes.golden.json` : frictionless
+// plafonne à 1000 erreurs et cesse alors de lire les lignes.
 export const PLAFOND_VIOLATIONS_DEFAUT = 1000;
 
-// À caler sur les goldens `nombre-*` (Task 1, Step 6) avant de figer.
-const REGEX_NOMBRE = /^[+-]?\d+(\.\d+)?$/;
+// Mesuré sur les goldens `nombre-*` : 1e5, +5, -3 et " 5 " sont acceptés ;
+// "12,5" et "abc" produisent un type-error.
+const REGEX_NOMBRE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
 const SEPARATEUR_CLE = "␟";
 

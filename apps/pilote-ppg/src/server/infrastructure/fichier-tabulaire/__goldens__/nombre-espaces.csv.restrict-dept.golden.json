@@ -1,0 +1,35 @@
+{
+  "versionValidata": "0.12.5",
+  "captureLe": "2026-09-16T19:17:53.950867+02:00",
+  "valid": true,
+  "stats": {
+    "errors": 0,
+    "warnings": 1,
+    "seconds": 0.006,
+    "fields": 6,
+    "rows": 1,
+    "rows_processed": 1
+  },
+  "warnings": [
+    "Colonne surnuméraire : Retirez la colonne `zone_nom` non définie dans le schéma."
+  ],
+  "errors": [],
+  "resource_data": [
+    [
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur"
+    ],
+    [
+      "IND-001",
+      "D46",
+      "Lot",
+      "2023-01-31",
+      "vi",
+      " 5 "
+    ]
+  ]
+}
