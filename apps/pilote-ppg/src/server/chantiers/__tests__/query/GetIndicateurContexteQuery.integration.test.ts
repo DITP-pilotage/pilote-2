@@ -72,4 +72,24 @@ describe("GetIndicateurContexteQuery", () => {
       expect(result).toBeNull();
     }),
   );
+
+  it(
+    "retourne null quand le chantier parent n'est pas publié",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite({
+        statut: $Enums.type_statut.ARCHIVE,
+      });
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+        statut: $Enums.type_statut_indicateur.PUBLIE,
+      });
+
+      // When
+      const result = await query.execute({ indicateurId: indicateur.id });
+
+      // Then
+      expect(result).toBeNull();
+    }),
+  );
 });

@@ -23,6 +23,7 @@ export class GetIndicateurContexteQuery {
       where: {
         id: params.indicateurId,
         statut: $Enums.type_statut_indicateur.PUBLIE,
+        chantier_identite: { statut: $Enums.type_statut.PUBLIE },
       },
       include: { chantier_identite: true },
     });

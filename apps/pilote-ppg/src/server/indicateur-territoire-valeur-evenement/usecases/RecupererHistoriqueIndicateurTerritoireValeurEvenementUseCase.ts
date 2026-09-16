@@ -1,7 +1,6 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { toISODate } from "@/server/app/domain/Dates";
-import { filtrerEvenementsRedondants } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsRedondants";
+import { regrouperEvenementsParDate } from "@/server/indicateur-territoire-valeur-evenement/domain/historiqueEvenements";
 import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type HistoriqueIndicateurTerritoireValeurEvenementContrat = {
@@ -63,33 +62,17 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
         args,
       );
 
-    const evenementsGroupesParDate: Record<
-      string,
-      IndicateurTerritoireValeurEvenement[]
-    > = {};
-
-    evenements.forEach((evenement) => {
-      const dateKey = toISODate(evenement.dateValeur);
-
-      if (!evenementsGroupesParDate[dateKey]) {
-        evenementsGroupesParDate[dateKey] = [];
-      }
-
-      evenementsGroupesParDate[dateKey].push(evenement);
-    });
+    const evenementsGroupesParDate = regrouperEvenementsParDate(evenements);
 
     const historiqueTrie: HistoriqueIndicateurTerritoireValeurEvenementContrat =
       {};
 
-    Object.keys(evenementsGroupesParDate)
+    Array.from(evenementsGroupesParDate.keys())
       .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
       .forEach((dateKey) => {
-        const evenementsDuJourTriesParOrdreDecroissant =
-          evenementsGroupesParDate[dateKey].sort((a, b) => b.ordre - a.ordre);
-
-        historiqueTrie[dateKey] = filtrerEvenementsRedondants(
-          evenementsDuJourTriesParOrdreDecroissant,
-        ).map(presenterEnIndicateurTerritoireValeurEvenement);
+        historiqueTrie[dateKey] = evenementsGroupesParDate
+          .get(dateKey)!
+          .map(presenterEnIndicateurTerritoireValeurEvenement);
       });
 
     return historiqueTrie;

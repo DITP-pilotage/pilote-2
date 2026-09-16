@@ -34,7 +34,13 @@ export function createGetEvolutionIndicateurTool({
   getIndicateurContexteQuery: GetIndicateurContexteQuery;
   getEvolutionIndicateurTerritoireQuery: GetEvolutionIndicateurTerritoireQuery;
 }) {
-  return () => {
+  return ({
+    territoiresAccessibles,
+    chantiersAccessibles,
+  }: {
+    territoiresAccessibles: string[];
+    chantiersAccessibles: string[];
+  }) => {
     return tool({
       description: `Récupère l'évolution dans le temps de la valeur d'avancement d'un indicateur pour un territoire donné (série de points date/valeur).
 
@@ -43,6 +49,12 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
 ⚠️ Ne renvoie PAS le détail des actions (import, proposition, validation...) — pour ça, utilise get_historique_indicateur.`,
       inputSchema: getEvolutionIndicateurInputSchema,
       execute: async (input): Promise<GetEvolutionIndicateurOutput> => {
+        if (!territoiresAccessibles.includes(input.territoire_code)) {
+          throw new Error(
+            `Accès non autorisé au territoire ${input.territoire_code}`,
+          );
+        }
+
         const contexte = await getIndicateurContexteQuery.execute({
           indicateurId: input.indicateur_id,
         });
@@ -53,6 +65,12 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
             introuvable: true,
             _output_instructions: INDICATEUR_INTROUVABLE_INSTRUCTIONS,
           };
+        }
+
+        if (!chantiersAccessibles.includes(contexte.chantier.id)) {
+          throw new Error(
+            `Accès non autorisé au chantier ${contexte.chantier.id}`,
+          );
         }
 
         const points = await getEvolutionIndicateurTerritoireQuery.execute({

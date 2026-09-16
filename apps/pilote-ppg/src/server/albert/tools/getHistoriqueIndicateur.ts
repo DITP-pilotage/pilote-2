@@ -70,7 +70,13 @@ export function createGetHistoriqueIndicateurTool({
   getIndicateurContexteQuery: GetIndicateurContexteQuery;
   getHistoriqueIndicateurTerritoireQuery: GetHistoriqueIndicateurTerritoireQuery;
 }) {
-  return () => {
+  return ({
+    territoiresAccessibles,
+    chantiersAccessibles,
+  }: {
+    territoiresAccessibles: string[];
+    chantiersAccessibles: string[];
+  }) => {
     return tool({
       description: `Récupère l'historique des actions (import, modification, proposition, acceptation, refus...) sur la valeur d'un indicateur pour un territoire donné.
 
@@ -79,6 +85,12 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
 ⚠️ Ne renvoie PAS la tendance/courbe de la valeur dans le temps — pour ça, utilise get_evolution_indicateur.`,
       inputSchema: getHistoriqueIndicateurInputSchema,
       execute: async (input): Promise<GetHistoriqueIndicateurOutput> => {
+        if (!territoiresAccessibles.includes(input.territoire_code)) {
+          throw new Error(
+            `Accès non autorisé au territoire ${input.territoire_code}`,
+          );
+        }
+
         const contexte = await getIndicateurContexteQuery.execute({
           indicateurId: input.indicateur_id,
         });
@@ -89,6 +101,12 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
             introuvable: true,
             _output_instructions: INDICATEUR_INTROUVABLE_INSTRUCTIONS,
           };
+        }
+
+        if (!chantiersAccessibles.includes(contexte.chantier.id)) {
+          throw new Error(
+            `Accès non autorisé au chantier ${contexte.chantier.id}`,
+          );
         }
 
         const indicateurResume = {

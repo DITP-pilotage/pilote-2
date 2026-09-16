@@ -1,6 +1,5 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { filtrerEvenementsRedondants } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsRedondants";
+import { regrouperEvenementsParDate } from "@/server/indicateur-territoire-valeur-evenement/domain/historiqueEvenements";
 import { libelleEvenementIndicateurTerritoireValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/libelleEvenementIndicateurTerritoireValeur";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { toISODate, toISODateTime } from "@/server/app/domain/Dates";
@@ -54,26 +53,14 @@ export class GetHistoriqueIndicateurTerritoireQuery {
       ? toISODate(new Date(Math.max(...datesValeur)))
       : null;
 
-    const evenementsParDate = new Map<
-      string,
-      IndicateurTerritoireValeurEvenement[]
-    >();
-    evenements.forEach((evenement) => {
-      const dateKey = toISODate(evenement.dateValeur);
-      const groupe = evenementsParDate.get(dateKey) ?? [];
-      groupe.push(evenement);
-      evenementsParDate.set(dateKey, groupe);
-    });
+    const evenementsParDate = regrouperEvenementsParDate(evenements);
 
     const groupes = Array.from(evenementsParDate.entries())
       .sort(([dateA], [dateB]) => (dateA < dateB ? -1 : 1))
       .map(([dateValeur, evenementsDuJour]) => {
-        const evenementsDuJourTriesDesc = [...evenementsDuJour].sort(
-          (a, b) => b.ordre - a.ordre,
+        const evenementsRestants = [...evenementsDuJour].sort(
+          (a, b) => a.ordre - b.ordre,
         );
-        const evenementsRestants = filtrerEvenementsRedondants(
-          evenementsDuJourTriesDesc,
-        ).sort((a, b) => a.ordre - b.ordre);
 
         return {
           date_valeur: formaterDate(dateValeur, "MM/YYYY") ?? dateValeur,

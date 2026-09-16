@@ -70,7 +70,10 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-    })();
+    })({
+      territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
 
     // When
     const result = await executeTool(tool, {
@@ -101,7 +104,10 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
       const tool = createGetHistoriqueIndicateurTool({
         getIndicateurContexteQuery,
         getHistoriqueIndicateurTerritoireQuery,
-      })();
+      })({
+        territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+        chantiersAccessibles: ["CH-001"],
+      });
 
       // When
       const result = await executeTool(tool, {
@@ -143,7 +149,10 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-    })();
+    })({
+      territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
 
     // When
     const result = await executeTool(tool, {
@@ -181,7 +190,10 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-    })();
+    })({
+      territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
 
     // When
     const result = await executeTool(tool, {
@@ -233,7 +245,10 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-    })();
+    })({
+      territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
 
     // When
     const result = await executeTool(tool, {
@@ -281,7 +296,10 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-    })();
+    })({
+      territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
 
     // When
     await executeTool(tool, {
@@ -306,5 +324,58 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         ],
       }),
     );
+  });
+
+  it("rejette un territoire non accessible sans appeler la query de contexte", async () => {
+    // Given
+    const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>();
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>();
+    const tool = createGetHistoriqueIndicateurTool({
+      getIndicateurContexteQuery,
+      getHistoriqueIndicateurTerritoireQuery,
+    })({
+      territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
+
+    // When / Then
+    await expect(
+      executeTool(tool, {
+        indicateur_id: "IND-001",
+        territoire_code: "DEPT-INACCESSIBLE",
+      }),
+    ).rejects.toThrow("Accès non autorisé au territoire DEPT-INACCESSIBLE");
+    expect(getIndicateurContexteQuery.execute).not.toHaveBeenCalled();
+  });
+
+  it("rejette un chantier non accessible", async () => {
+    // Given
+    const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
+      execute: async () => ({
+        ...contexteParDefaut,
+        chantier: { id: "CH-INACCESSIBLE", nom: "Chantier test" },
+      }),
+    });
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>();
+    const tool = createGetHistoriqueIndicateurTool({
+      getIndicateurContexteQuery,
+      getHistoriqueIndicateurTerritoireQuery,
+    })({
+      territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
+
+    // When / Then
+    await expect(
+      executeTool(tool, {
+        indicateur_id: "IND-001",
+        territoire_code: "DEPT-75",
+      }),
+    ).rejects.toThrow("Accès non autorisé au chantier CH-INACCESSIBLE");
+    expect(
+      getHistoriqueIndicateurTerritoireQuery.execute,
+    ).not.toHaveBeenCalled();
   });
 });

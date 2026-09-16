@@ -17,6 +17,8 @@ const TOOL_NAMES = [
   "get_taux_avancement_territoire",
   "get_chantiers",
   "get_indicateurs",
+  "get_evolution_indicateur",
+  "get_historique_indicateur",
 ];
 
 const TOOL_CALL_START_REGEX = new RegExp(

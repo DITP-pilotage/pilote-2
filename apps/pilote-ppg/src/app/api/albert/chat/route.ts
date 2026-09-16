@@ -120,8 +120,14 @@ export async function POST(request: Request) {
       chantiersAccessibles: session.habilitations.lecture.chantiers,
     });
     const getChantierIndicateurs = createGetChantierIndicateursTool();
-    const getEvolutionIndicateur = createGetEvolutionIndicateurTool();
-    const getHistoriqueIndicateur = createGetHistoriqueIndicateurTool();
+    const getEvolutionIndicateur = createGetEvolutionIndicateurTool({
+      territoiresAccessibles,
+      chantiersAccessibles: session.habilitations.lecture.chantiers,
+    });
+    const getHistoriqueIndicateur = createGetHistoriqueIndicateurTool({
+      territoiresAccessibles,
+      chantiersAccessibles: session.habilitations.lecture.chantiers,
+    });
     const getChantierCommentaires = createGetChantierCommentairesTool({
       territoiresAccessibles,
     });

@@ -1,5 +1,5 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { filtrerEvenementsRedondants } from "@/server/indicateur-territoire-valeur-evenement/domain/filtrerEvenementsRedondants";
+import { filtrerEvenementsRedondants } from "@/server/indicateur-territoire-valeur-evenement/domain/historiqueEvenements";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
