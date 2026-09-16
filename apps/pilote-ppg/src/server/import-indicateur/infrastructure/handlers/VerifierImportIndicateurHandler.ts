@@ -8,7 +8,6 @@ import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/Pa
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { configuration } from "@/config";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 import type { Inject } from "@/server/import-indicateur/module";
 
@@ -47,11 +46,6 @@ export class VerifierFichierImportIndicateurHandler {
 
     const fichier = <File>formData.file![0];
 
-    const récupérerVariableContenuUseCase =
-      new RecupererVariableContenuUseCase();
-    const baseSchemaUrl = récupérerVariableContenuUseCase.run({
-      nomVariableContenu: "NEXT_PUBLIC_SCHEMA_VALIDATA_URL",
-    });
     const sessionToken = await getToken({
       req: {
         headers: new Headers(request.headers as Record<string, string>),
@@ -66,8 +60,6 @@ export class VerifierFichierImportIndicateurHandler {
     const report = await this.verifierFichierIndicateurImporteUseCase.execute({
       cheminCompletDuFichier: fichier.filepath,
       nomDuFichier: fichier.originalFilename as string,
-      // @ts-expect-error baseSchemaUrl ne peut être undefined
-      baseSchemaUrl,
       indicateurId: request.query.indicateurId as string,
       utilisateurAuteurDeLimportEmail: (sessionToken.user as { email: string })
         .email,
