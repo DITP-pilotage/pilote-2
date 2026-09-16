@@ -90,6 +90,14 @@ describe("detecterCapacities", () => {
       motCle: "indicateur",
       demande: "Affiche l'indicateur principal du territoire",
     },
+    {
+      motCle: "courbe",
+      demande: "Je veux voir la courbe d'évolution de cet indicateur",
+    },
+    {
+      motCle: "graphique",
+      demande: "Peux-tu tracer un graphique de cet indicateur ?",
+    },
   ])("détecte une demande de dashboard via '$motCle'", ({ demande }) => {
     // when
     const result = detecterCapacities(demande);
