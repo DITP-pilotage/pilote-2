@@ -20,7 +20,7 @@ const creerEvenement = (
       typeEvenement: overrides.typeEvenement ?? "VALEUR_CREEE",
       typeValeur: "VALEUR_AVANCEMENT",
       dateValeur: overrides.dateValeur ?? new Date("2024-01-01"),
-      valeur: overrides.valeur ?? 10,
+      valeur: overrides.valeur === undefined ? 10 : overrides.valeur,
       donneesComplementaires: undefined,
       idAuteurModification: "user1",
       correlationId: "corr1",
@@ -122,14 +122,16 @@ describe("GetHistoriqueIndicateurTerritoireQuery execute", () => {
           {
             ordre: 1,
             date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
-            description: null,
-            resultat: "nouvelle valeur affichée dans PILOTE : 10",
+            description:
+              "Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur affichée dans PILOTE : 10.",
+            categorie: "IMPORT",
           },
           {
             ordre: 2,
             date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
-            description: "import de données par la direction de projet",
-            resultat: "nouvelle valeur affichée dans PILOTE : 20",
+            description:
+              "Import direct par la direction de projet : la valeur d'avancement affichée dans PILOTE a été remplacée. Nouvelle valeur affichée dans PILOTE : 20.",
+            categorie: "IMPORT",
           },
         ],
       },
@@ -210,5 +212,55 @@ describe("GetHistoriqueIndicateurTerritoireQuery execute", () => {
       dateFin,
       typesEvenement: ["PROPOSITION_VALEUR_CREEE"],
     });
+  });
+
+  describe("libellés Albert par type d'événement", () => {
+    it.each`
+      typeEvenement                                     | valeur | description                                                                                                                                                                                                                       | categorie
+      ${"VALEUR_CREEE"}                                  | ${42}  | ${"Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur affichée dans PILOTE : 42."}                                                                            | ${"IMPORT"}
+      ${"VALEUR_MODIFIEE"}                               | ${42}  | ${"Import direct par la direction de projet : la valeur d'avancement affichée dans PILOTE a été remplacée. Nouvelle valeur affichée dans PILOTE : 42."}                                                                         | ${"IMPORT"}
+      ${"VALEUR_MODIFIEE"}                               | ${null} | ${"Import direct par la direction de projet : la valeur d'avancement a été supprimée de PILOTE pour cette date."}                                                                                                               | ${"IMPORT"}
+      ${"VALEUR_HISTORISEE"}                             | ${null} | ${"Import direct par la direction de projet : une valeur d'avancement plus récente a été importée."}                                                                                                                            | ${"IMPORT"}
+      ${"PROPOSITION_VALEUR_CREEE"}                      | ${15}  | ${"Le territoire propose une nouvelle valeur d'avancement, en attente de traitement par la direction de projet. Valeur proposée : 15."}                                                                                          | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_CREEE"}                      | ${null} | ${"Le territoire propose une nouvelle valeur d'avancement, en attente de traitement par la direction de projet. Valeur proposée : N/A."}                                                                                        | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_MODIFIEE"}                   | ${20}  | ${"Le territoire modifie sa proposition de valeur d'avancement, toujours en attente de traitement par la direction de projet. Nouvelle valeur proposée : 20."}                                                                  | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_SUPPRIMEE"}                  | ${null} | ${"Le territoire retire sa proposition de valeur d'avancement avant tout traitement par la direction de projet."}                                                                                                               | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_ACCUSEE_RECEPTION"}          | ${null} | ${"La direction de projet accuse réception de la proposition du territoire : elle est prise en compte, mais pas encore acceptée ni refusée."}                                                                                   | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_REFUSEE"}                    | ${null} | ${"La direction de projet refuse la proposition du territoire : la valeur affichée dans PILOTE ne change pas."}                                                                                                                 | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_ACCEPTEE"}                   | ${30}  | ${"La direction de projet accepte la proposition du territoire telle quelle. Nouvelle valeur affichée dans PILOTE : 30."}                                                                                                        | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION"} | ${35}  | ${"La direction de projet accepte la proposition du territoire en corrigeant sa valeur. Nouvelle valeur affichée dans PILOTE : 35."}                                                                                             | ${"PROPOSITION"}
+      ${"PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE"}    | ${12}  | ${"Un import direct par la direction de projet a pris le pas sur la proposition du territoire en cours pour cette date : elle est automatiquement écartée, sans validation. Nouvelle valeur affichée dans PILOTE : 12."}        | ${"IMPORT"}
+      ${"PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE"}    | ${null} | ${"Un import direct par la direction de projet a pris le pas sur la proposition du territoire en cours pour cette date : elle est automatiquement écartée, sans validation. La valeur a été supprimée de PILOTE."}             | ${"IMPORT"}
+      ${"PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE"}  | ${null} | ${"Une valeur d'avancement plus récente a été importée pour une date ultérieure, ce qui rend obsolète la proposition du territoire en cours sur cette date : elle est automatiquement écartée, sans validation, sans changer la valeur déjà affichée dans PILOTE."} | ${"IMPORT"}
+    `(
+      "$typeEvenement (valeur=$valeur) : description et catégorie attendues",
+      async ({ typeEvenement, valeur, description, categorie }) => {
+        // Given
+        const evenement = creerEvenement({ typeEvenement, valeur });
+        const indicateurTerritoireValeurEvenementRepository =
+          mock<IndicateurTerritoireValeurEvenementRepository>({
+            recupererHistoriqueParIndicIdEtTerritoireCode: async () => [
+              evenement,
+            ],
+          });
+        const query = new GetHistoriqueIndicateurTerritoireQuery({
+          indicateurTerritoireValeurEvenementRepository,
+        });
+
+        // When
+        const result = await query.execute({
+          indicId: "IND-001",
+          territoireCode: "DEPT-75",
+        });
+
+        // Then
+        expect(result.groupes[0].evenements[0]).toEqual({
+          ordre: 1,
+          date_creation: expect.stringMatching(/^15\/01\/2024 \d{2}:\d{2}$/),
+          description,
+          categorie,
+        });
+      },
+    );
   });
 });
