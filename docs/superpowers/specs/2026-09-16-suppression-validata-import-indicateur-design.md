@@ -107,25 +107,38 @@ n'existe dans **aucun** des 4 schémas. Validata la tolère — le message
 
 Le moteur local doit tolérer les colonnes surnuméraires sans émettre d'erreur.
 
-### 3. Plusieurs messages FR sont morts
+### 3. La table de traduction FR est morte dans son intégralité
 
-La table de traduction de `ValidataFichierIndicateurValidationService.ts` est indexée sur des chaînes
-Validata qui ne correspondent plus aux schémas :
+Validata v0.12.5 ne renvoie plus les champs sur lesquels notre code fait ses recherches.
 
-| Clé attendue dans le code | Réalité du schéma |
-|---|---|
-| `constraint "pattern" is "^IND-[0-9]{3}$"` | `^IND-([0-9]{3,4})$` |
-| `constraint "enum" is "['vi', 'va', 'vc']"` | 6 valeurs, minuscules et majuscules |
-| `constraint "pattern" is "^(R[0-9]{2,3})$"` | regex longue dans `restrict-reg.json` |
-| `constraint "enum" is "['va']"` | aucun schéma n'a `enum: ['va']` |
+```
+clés réellement renvoyées : cell, fieldName, fieldNumber, message, rowNumber, tags, title, type
+attendues par ReportErrorTask et ABSENTES : code, description, fieldPosition, note, rowPosition
+```
 
-Ces messages ne se déclenchent jamais : l'utilisateur reçoit le message brut de Validata, **en
-anglais**.
+`personnaliserValidataMessage` indexe sur `taskError.note` et `taskError.code`. Les deux valent
+`undefined`, toutes les recherches échouent, et la fonction retombe systématiquement sur
+`return taskError.message`.
 
-Par ailleurs, le message « Toutes les cellules de la ligne X sont vides » est **inatteignable** : la
-recherche teste `description` avant `note`, et la description
-`Values in the primary key fields should be unique for every row` matche en premier. Le test
-existant l'atteste — il attend lui-même le message « doublon » pour ce cas.
+**Ce ne sont donc pas quelques messages morts : c'est la totalité de la table.** Elle ne s'exécute
+plus depuis PIL-553 « Passage à la version v0.12 Validata », qui a changé le format des erreurs et
+débranché silencieusement la couche de traduction. Le changement est passé inaperçu parce que
+Validata v0.12 renvoie des messages en français, qui paraissent corrects.
+
+Ce qu'un utilisateur lit aujourd'hui en production, verbatim :
+
+> IND-XXX ne respecte pas le motif imposé
+>
+> \*\*Exemple valide\*\* : IND-001
+>
+> \*\*Détails techniques\*\* : la valeur doit respecter l'expression régulière `^IND-([0-9]{3,4})$`)
+
+Du markdown non rendu, une expression régulière brute et une parenthèse orpheline.
+
+Effets de bord de la même cause : `positionDeLigne` et `positionDuChamp` valent **toujours `-1`** en
+base (`taskError.rowPosition` et `taskError.fieldPosition` étant `undefined`), et `nom` contient le
+type Validata brut (`constraint-error`, `type-error`, `primary-key`, `blank-row`,
+`duplicate-label`).
 
 ### 4. Les tests Validata existants ne sont pas un oracle
 
@@ -137,24 +150,49 @@ que celles du code.
 Ces tests restent utiles comme **catalogue des messages FR attendus**. Ils ne peuvent pas servir de
 référence de parité.
 
-## Ce qui ne peut être établi que par la mesure
+## Comportement réel de Validata, mesuré le 2026-09-16
 
-Aucune lecture de code ne répondra aux questions suivantes. Elles conditionnent pourtant la parité :
+Capturé sur `api.validata.etalab.studio` **v0.12.5** (réponse en ~350 ms), schéma
+`sans-contraintes.json`. Ces mesures sont la référence de parité.
 
-- **Encodage** — frictionless détecte UTF-8 / BOM / cp1252 / latin-1. Excel en français exporte
-  volontiers en cp1252. Supposer UTF-8 casserait les accents, donc le verdict.
-- **`schema_sync`** — que fait Validata quand un champ du schéma est *absent* du fichier ? Le mode
-  suggère qu'il retire le champ plutôt que d'émettre une erreur.
-- **Ordre des erreurs** — visible dans l'UI.
-- **Plafond d'erreurs de frictionless** — il en a un ; il faut s'aligner dessus, pas en inventer un.
-- **Coercition des nombres** — `12,23`, `1e5`, `+5`, espaces, séparateur de milliers.
-- **Dates XLSX** — ce que rend openpyxl sur une cellule typée date, vs la valeur brute du XML.
-- **Cellules formule** — cf. PLTT-330.
-- **Sémantique du drapeau `valid`** — aujourd'hui `estValide: rapportValidata.valid`, puis le use
-  case vérifie *en plus* que la liste d'erreurs est vide.
+| Cas | Comportement observé |
+|---|---|
+| CSV séparé par `;` | délimiteur sniffé, colonnes correctement séparées |
+| CSV en cp1252 avec accents | lu correctement (`Rhône-Alpes` intact) |
+| Colonne du schéma **absente** (`valeur`) | `valid: true`, simple **warning** « Colonne manquante » |
+| Colonne **surnuméraire** (`zone_nom`) | `valid: true`, simple **warning** « Colonne surnuméraire » |
+| Ligne entièrement vide | **deux** erreurs : `blank-row` *et* `primary-key` |
+| Doublon de clé primaire | une erreur `primary-key`, `fieldName` et `cell` à `null` |
+| En-têtes dupliqués | `duplicate-label`, fatal, aucune autre erreur remontée |
+| En-tête avec espace ou majuscule | **aucune erreur Validata** — ce sont des ajouts applicatifs |
+| Template XLSX officiel | accepté |
+| `rowNumber` | 1-based, **en-tête comprise** : 1ʳᵉ ligne de données = `2` |
 
-D'où la stratégie de test ci-dessous : **la capture des goldens est la première étape du projet, pas
-la dernière.**
+Vocabulaire des types d'erreur observés : `constraint-error`, `type-error`, `primary-key`,
+`blank-row`, `duplicate-label`.
+
+Structure de la réponse : `{ schema, url, options, version, date, report: { valid, stats, warnings,
+errors }, resource_data }`, avec `stats: { errors, warnings, seconds, fields, rows, rows_processed }`.
+
+**Les `warnings` sont ignorés par notre code et n'affectent pas `valid`.** La parité impose de
+continuer à les ignorer.
+
+### Conséquences directes sur la conception
+
+- **`schema_sync` est confirmé.** Une colonne du schéma absente du fichier n'est pas une erreur.
+  La vérification `contientTousLesChamps` de la branche `feat/ppg-import-validation-locale` en fait
+  une erreur bloquante : **c'est une régression**, elle ne doit pas être reprise.
+- Les colonnes surnuméraires sont ignorées sans erreur.
+- Une ligne vide doit produire deux erreurs distinctes, pas une.
+- La détection d'encodage et de délimiteur est obligatoire, pas optionnelle.
+
+### Reste à mesurer pendant la campagne de capture
+
+- plafond d'erreurs de frictionless (nombre d'erreurs remontées sur un fichier massivement invalide)
+- coercition des nombres : `12,23`, `1e5`, `+5`, espaces, séparateur de milliers
+- dates XLSX typées, cellules formule (cf. PLTT-330), nombres stockés en texte
+- fichiers produits par LibreOffice et Google Sheets
+- comportement sur `.ods` et sur un XLSX multi-feuilles
 
 ## Architecture
 
@@ -273,15 +311,25 @@ Vocabulaire couvert, celui des 4 schémas existants : `required`, `pattern`, `en
 
 ## Messages d'erreur
 
-Décision prise : **parité stricte sur le verdict, messages FR réparés.**
+Décision prise : **parité stricte sur le verdict, catalogue FR enfin branché.**
 
-Le catalogue FR existant est repris tel quel pour tous les cas qui fonctionnent aujourd'hui. Pour les
-quatre cas actuellement morts, on sert le message français **déjà écrit dans le code mais
-inatteignable**. Aucun utilisateur ne perd quoi que ce soit : il gagne du français là où il recevait
-de l'anglais.
+La mesure a montré que 100 % des messages affichés aujourd'hui viennent de Validata, et non du
+catalogue français écrit dans le code. Ce catalogue existe, il est correct, il n'a simplement jamais
+été exécuté depuis la v0.12.
+
+Le moteur local sert ce catalogue. C'est un changement visible pour l'utilisateur, assumé, et dans le
+bon sens : plus de markdown non rendu ni d'expressions régulières à l'écran.
+
+Les goldens valident donc **le verdict** — valide/invalide, quelles lignes, quels champs, quel type
+d'erreur — et non le texte des messages. Le texte est couvert par les tests unitaires du catalogue,
+repris de la suite existante.
 
 Chaque violation étant typée dès sa détection, le message est généré directement, sans couche de
-rétro-ingénierie de chaînes tierces.
+rétro-ingénierie de chaînes tierces — et sans possibilité qu'un changement d'API la débranche
+silencieusement, comme cela s'est produit avec PIL-553.
+
+Corollaire : `positionDeLigne` et `positionDuChamp`, aujourd'hui toujours à `-1`, redeviennent des
+valeurs réelles.
 
 ## Sécurité
 
