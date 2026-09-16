@@ -1,5 +1,9 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import { ArbreCentreAideDnd } from "@/components/_commons/CentreAide/editeur/ArbreCentreAideDnd";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Icone } from "@/components/_commons/Icone";
+import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
+import { Dropdown } from "@/client/components/shared/Dropdown";
 import { ArticleCentreAideContrat } from "@/server/parametrage-centre-aide/app/contrats/ArticleCentreAideContrat";
 
 interface ArborescenceCentreAideAdminProps {
@@ -12,6 +16,7 @@ interface ArborescenceCentreAideAdminProps {
     id: string,
     cible: { parentId: string | null; index: number },
   ) => void;
+  onRenommer: (id: string, titre: string) => void;
 }
 
 export const ArborescenceCentreAideAdmin: FunctionComponent<
@@ -23,63 +28,40 @@ export const ArborescenceCentreAideAdmin: FunctionComponent<
   onCreerGroupe,
   onCreerPage,
   onDeplacer,
-}) => {
-  const [menuCreationGroupeOuvert, setMenuCreationGroupeOuvert] =
-    useState(false);
-
-  return (
-    <div className="flex flex-col h-full">
-      <div className="p-3 border-b border-gray-200 flex gap-2">
-        <div className="relative flex-1">
-          <button
-            className="w-full px-3 py-2 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
-            onClick={() =>
-              setMenuCreationGroupeOuvert(!menuCreationGroupeOuvert)
-            }
-            type="button"
-          >
+  onRenommer,
+}) => (
+  <div className="flex h-full flex-col">
+    <Dropdown.Root>
+      <Dropdown.Trigger asChild>
+        <Bouton
+          className="mx-3 mt-3 mb-1 justify-start"
+          iconLeft={
+            <Icone className="h-4 w-4 !text-current" icone={AddLineIcon} />
+          }
+          label="Créer"
+          size="sm"
+          variant="secondary"
+        />
+      </Dropdown.Trigger>
+      <Dropdown.Content align="start" className="w-56">
+        <div className="flex flex-col gap-1">
+          <Dropdown.Item onSelect={onCreerPage}>Nouvelle page</Dropdown.Item>
+          <Dropdown.Item onSelect={() => onCreerGroupe(false)}>
             Nouveau groupe
-          </button>
-          {menuCreationGroupeOuvert && (
-            <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg z-10">
-              <button
-                className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50"
-                onClick={() => {
-                  onCreerGroupe(false);
-                  setMenuCreationGroupeOuvert(false);
-                }}
-                type="button"
-              >
-                Sans contenu
-              </button>
-              <button
-                className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 border-t border-gray-100"
-                onClick={() => {
-                  onCreerGroupe(true);
-                  setMenuCreationGroupeOuvert(false);
-                }}
-                type="button"
-              >
-                Avec contenu
-              </button>
-            </div>
-          )}
+          </Dropdown.Item>
+          <Dropdown.Item onSelect={() => onCreerGroupe(true)}>
+            Nouveau groupe avec contenu
+          </Dropdown.Item>
         </div>
-        <button
-          className="flex-1 px-3 py-2 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
-          onClick={onCreerPage}
-          type="button"
-        >
-          Nouvelle page
-        </button>
-      </div>
+      </Dropdown.Content>
+    </Dropdown.Root>
 
-      <ArbreCentreAideDnd
-        articles={articles}
-        onDeplacer={onDeplacer}
-        onSelectionner={onSelectionItem}
-        selectionneId={itemSelectionneId}
-      />
-    </div>
-  );
-};
+    <ArbreCentreAideDnd
+      articles={articles}
+      onDeplacer={onDeplacer}
+      onRenommer={onRenommer}
+      onSelectionner={onSelectionItem}
+      selectionneId={itemSelectionneId}
+    />
+  </div>
+);
