@@ -31,6 +31,15 @@ Depuis avril 2026, le projet utilise **pnpm 10** (lockfile : `pnpm-lock.yaml`).
 - **Pinner à la version exacte** (pas de `^`) uniquement quand une version ultérieure est connue pour être cassée ou instable. Toujours documenter pourquoi dans ce fichier.
 - **Overrides au minimum** : chaque override est une dette. À re-tester à chaque campagne (voir section dédiée).
 - **Ne pas mélanger** bumps mineurs/sécu et majors dans une même PR. Un lot sécu "safe" rapide, puis un major par PR pour faciliter rollback et revue.
+- **Une dépendance présente des deux côtés monte des deux côtés, dans le même lot.** Depuis que
+  `pilote-ppg` est sur oxlint et TypeScript 7 comme les apps kpilote (2026-09-16), les deux moitiés
+  du monorepo partagent le même outillage : `typescript`, `oxlint`, `oxlint-tsgolint`, `prisma`,
+  `vitest`, `prettier`, `react`. Les faire diverger recrée exactement la situation qu'on vient de
+  résorber — un `pnpm-lock.yaml` partagé où deux versions du même paquet cohabitent, et des règles
+  de lint qui ne jugent pas le même code de la même façon.
+  Concrètement : avant de bumper un paquet dans une app, vérifier `pnpm why <paquet>` sur les
+  autres workspaces, et monter tout le monde ensemble. Si un workspace ne peut pas suivre,
+  **documenter pourquoi ici** plutôt que de laisser l'écart s'installer silencieusement.
 
 ## `engines` Node
 
@@ -364,6 +373,10 @@ campagne pour s'en apercevoir.
 À noter : c'est le **seul** override du fichier écrit sous la forme ciblée `parent>enfant`, celle que
 ce document recommande depuis le 2026-07-17.
 
+**Retiré le 2026-09-16.** `eslint-plugin-sonarjs` a disparu avec le passage de `pilote-ppg` à
+oxlint : l'override n'avait plus de parent. Sa condition de sortie — « quand les apps quitteront le
+pin `5.9.3` » — s'est réalisée en même temps, les 7 workspaces étant passés en TypeScript 7.0.2.
+
 #### Audit : 28 → 12 sur la campagne
 
 | Étape | Advisories |
@@ -687,12 +700,22 @@ Mesuré sur `terser` : retirer `"<5.47.0"` puis `pnpm install` laisse 5.46.2 (ve
 
 **Protocole correct** : retirer l'override → `pnpm install` → **`pnpm update <paquet> -r --depth Infinity`** → observer la résolution. C'est ce que fait `pnpm deps:campagne`.
 
-## Linting : oxlint sur kpilote, ESLint sur ppg
+## Linting : oxlint partout
 
-**Décidé le 2026-09-10.** Les 3 apps kpilote (`kpilote-api`, `kpilote-webapp`, `kpilote-admin`)
-sont passées d'ESLint à **oxlint** avec son moteur typé `tsgolint`. `pilote-ppg` et
-`pilote-ppg-auth` restent sur ESLint. `packages/kpilote-shared` et `packages/kpilote-ui` n'ont
-jamais eu de linter (`prettier --check` seul), rien n'y change.
+**Décidé le 2026-09-10, étendu le 2026-09-16.** Les 3 apps kpilote (`kpilote-api`,
+`kpilote-webapp`, `kpilote-admin`) sont passées d'ESLint à **oxlint** avec son moteur typé
+`tsgolint`, puis `pilote-ppg` a suivi. `pilote-ppg-auth` n'a pas de script de lint.
+`packages/kpilote-shared` et `packages/kpilote-ui` n'ont jamais eu de linter
+(`prettier --check` seul), rien n'y change.
+
+**Plus aucun workspace n'utilise ESLint.** Le verrou `typescript-eslint` / TypeScript 7 est donc
+levé pour tout le monorepo.
+
+Coût assumé côté ppg : les **189 règles sonarjs** et les **18 testing-library** n'ont pas
+d'équivalent oxlint, et disparaissent. En face, ppg gagne les 23 règles typées que sa configuration
+ESLint n'activait pas — elle utilisait `recommended` et non `recommendedTypeChecked`. Les 1318
+violations que le nouveau jeu remonte sur le code existant sont désactivées et chiffrées dans
+`apps/pilote-ppg/.oxlintrc.json`, à activer règle par règle.
 
 ### Pourquoi
 
@@ -760,9 +783,14 @@ Sur `pilote-ppg`, resté en TS 5.9.3, ESLint met **43,5 s** là où oxlint met *
   compilateur.
 - **Les deux peers d'oxlint sont optionnels** (`vite-plus`, `oxlint-tsgolint`), et aucun des deux
   paquets n'a de script d'installation : rien à ajouter à `onlyBuiltDependencies`.
-- **Le tsconfig de `pilote-ppg` n'est pas compatible TS 7** (`baseUrl` retiré, chemins non
-  relatifs). C'est sans conséquence tant qu'il reste sur ESLint et TS 5.9.3, mais c'est le premier
-  obstacle si on voulait l'y amener un jour.
+- ~~Le tsconfig de `pilote-ppg` n'est pas compatible TS 7.~~ **Réglé.** Le `baseUrl` a été retiré
+  et les chemins rendus relatifs, et ppg est passé en TypeScript 7.0.2 le 2026-09-16.
+  **Piège rencontré au passage, qui resservira** : installer une autre version de `typescript`
+  change le hash de peer-dependency de `@prisma/client`, donc pnpm résout **une autre copie
+  physique** du client — jamais passée par `prisma generate`. `tsc` remonte alors des centaines de
+  `Property 'X' does not exist`, qui n'ont rien à voir avec TypeScript. **Toujours relancer
+  `prisma generate` après un changement de version de TypeScript** avant de conclure quoi que ce
+  soit sur une incompatibilité.
 - **La CI n'a pas bougé** : les jobs appellent `pnpm lint` via `APP_PACKAGE`, tout le changement
   tient dans les scripts des `package.json`.
 
@@ -915,8 +943,10 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
   (`@since v25.9.0`) compile alors que `typeof storage.withScope === 'undefined'` à l'exécution —
   or `AsyncLocalStorage` est instancié dans `framework/persistence/dbStore.ts:7` et
   `framework/auth/userContext.ts:24`. 161 marqueurs `@since v25/v26` dans les typings 26.2.0.
-- **`typescript-eslint` ne supporte pas encore TypeScript 7** — ne concerne plus que `pilote-ppg`
-  et `pilote-ppg-auth` depuis que les 3 apps kpilote sont passées à oxlint (voir « Linting »). TS 7 est le portage natif Go : le
+- **`typescript-eslint` ne supporte pas encore TypeScript 7** — ⚠️ **ne concerne plus aucun
+  workspace depuis le 2026-09-16** : `pilote-ppg` est passé à oxlint à son tour, et
+  `pilote-ppg-auth` n'a pas de lint. Conservé pour mémoire, et parce que le raisonnement resservira
+  si quelqu'un veut réintroduire ESLint quelque part. TS 7 est le portage natif Go : le
   paquet npm n'expose plus l'API programmatique (`exports` réduit à `./lib/version.cjs`, ni
   `tsserver` ni `lsp` dans le paquet, donc l'impact touche aussi l'IDE). Une API existe sous
   `./unstable/*`, non stabilisée. `typescript-eslint` déclare un peer `>=4.8.4 <6.1.0` et lève
@@ -928,9 +958,10 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
   [typescript-eslint#10940](https://github.com/typescript-eslint/typescript-eslint/issues/10940) —
   **OPEN**, étiquetée `blocked by external API`, verrouillée par un mainteneur. La nuance compte :
   le support est **en attente d'une API amont stable**, pas abandonné.
-  Conséquence inchangée : **ne pas « aligner » les 3 apps kpilote sur TS 7** — elles utilisent toutes
-  `recommendedTypeChecked` avec `parserOptions.project`, leur lint casserait immédiatement. Elles
-  restent en `5.9.3` par pin exact, et c'est volontaire.
+  ~~Conséquence : ne pas « aligner » les 3 apps kpilote sur TS 7, leur lint casserait
+  immédiatement.~~ **Périmé.** Cette conclusion valait tant que les apps kpilote étaient sur
+  ESLint. Depuis leur passage à oxlint, elles sont en **TypeScript 7.0.2**, et `pilote-ppg` les a
+  rejointes le 2026-09-16. Les 7 workspaces sont désormais alignés.
   **Condition de sortie exécutable** : `pnpm view typescript-eslint peerDependencies` ne mentionne
   plus `<6.1.0`. Signal amont à surveiller : la publication de **TypeScript 7.1**, qui doit apporter
   l'API stable (aujourd'hui en builds `next`).
@@ -941,10 +972,8 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
   et celui qui compile.
 - **Phantom deps** : pnpm en mode `node-linker=isolated` refuse toute dépendance non déclarée. Si un `Cannot find module X` apparaît après upgrade, la solution est **toujours** d'ajouter `X` explicitement via `pnpm add` / `pnpm add -D`. Ne **pas** utiliser `public-hoist-pattern[]` pour contourner (cf. ADR / PRD migration npm→pnpm).
 - **Build scripts ignorés** : pnpm 10 ignore par défaut tous les `postinstall`. Toute nouvelle dep avec build natif (Prisma, sharp, esbuild, tree-sitter…) doit être ajoutée à `pnpm.onlyBuiltDependencies` dans `package.json`, sinon binaires manquants à l'exécution.
-- **`eslint-import-resolver-typescript` doit être en devDep direct** et pas seulement transitive via `eslint-config-next`. Sinon `eslint-module-utils` ne le trouve pas (il est nested) et tout le lint casse avec `Resolve error: typescript with invalid interface loaded as resolver`.
 - **`@faker-js/faker` install parfois corrompu** : après plusieurs installs successifs, `node_modules/@faker-js/faker/dist/types/locale/` peut contenir seulement une partie des `.d.ts`. Symptôme : `TS7016: Could not find a declaration file for module '@faker-js/faker/locale/fr'`. Fix : `rm -rf node_modules && pnpm install`.
 - **`@keycloak/keycloak-admin-client 26.6.0`** : prepare script cassé (`pnpm wireit` non disponible). Rester en `26.5.6` (à re-tester maintenant qu'on est sur pnpm).
-- **Deux resolvers `eslint-import-resolver-typescript` en parallèle** peuvent rendre `import/*` rules incohérentes. Vérifier `pnpm why eslint-import-resolver-typescript` après un upgrade ESLint-related.
 - **`swagger-ui-react`** pull un `react-inspector` qui a un peer dep `react ^16 || ^17 || ^18`. On est en React 19 → warnings peer tolérables (`strict-peer-dependencies=false` dans `.npmrc`), à surveiller.
 
 ## Packages à surveiller pour les prochaines itérations
@@ -965,7 +994,6 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 |---|---|---|---|
 | `@prisma/client` + `prisma` | `7.10.0` → `8.x` | 🔭 **en attente de la stable** | `ppg` et `kpilote-api` sont tous deux en **7.10.0** depuis le 2026-09-11. La ligne 8.x est en release candidate et `@prisma/client` n'a aucune 8 stable. **Décision : y aller dès la GA.** Condition de sortie et plan détaillé dans « Prisma 8 : à faire dès la sortie de la stable ». |
 | `zod` | `3.x` → `4.x` | 🔴 risqué | Rewrite. Impact sur tout `src/validation/` + tRPC inputs |
-| `eslint` + `@eslint/js` + `@eslint/compat` | `9.x` → `10.x` | 🟠 bloqué | **Attend `eslint-plugin-react` compat** (latest stable 7.37.5 ne supporte que ESLint ≤9.7). Vérifier `npm view eslint-plugin-react peerDependencies` à chaque campagne |
 | `pino` + `pino-pretty` | `8 + 10` → `10 + 13` | 🟠 medium | Transport API change. À bumper ensemble |
 | `superjson` | `1.x` → `2.x` | 🟠 medium | ESM-only. Risque sur Vitest/ts-node/seed |
 | `isomorphic-dompurify` | `1.x` → `3.x` | 🟠 medium | ESM-only (DOMPurify 3). Supprime aussi le besoin historique d'override css-tokenizer |
@@ -974,7 +1002,7 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 | `marked` | `15.x` → `18.x` | 🟡 low-medium | Renderer API modifiée |
 | `dotenv` + `dotenv-cli` + `dotenv-expand` | `16 + 7 + 11` → `17 + 11 + 12` | 🟠 medium | Parser rewrite, tester tous les `.env*` |
 | `pdfmake` | `0.2.x` → `0.3.x` | 🟠 medium | Pre-1.0, saut important |
-| `typescript` | `5.9.3` → `7.0.2` | ✅ **fait sur kpilote** | **Débloqué le 2026-09-10 par la bascule à oxlint** (voir « Linting »). Les 3 apps kpilote compilent en 7.0.2 avec un `pnpm lint` vert et 794 tests verts. `tsc` passe de **2,115 s à 0,403 s** sur `kpilote-api` (≈ 5,3×). Reste en `5.9.3` : `pilote-ppg` et `pilote-ppg-auth`, qui gardent ESLint et sont donc toujours plafonnés par le peer `<6.1.0` de `typescript-eslint`. |
+| `typescript` | `5.9.3` → `7.0.2` | ✅ **fait partout** | **Débloqué le 2026-09-10 par la bascule à oxlint** (voir « Linting »), **terminé le 2026-09-16** avec le passage de `pilote-ppg`. `tsc` passe de **2,115 s à 0,403 s** sur `kpilote-api` (≈ 5,3×). Seul `pilote-ppg-auth` reste en `5.9.3` : il n'a ni lint ni compilation, rien ne l'y pousse. |
 | `htmlparser2` | `8.x` → `12.x` | 🟡 low | 4 majors successifs |
 | `mime` | `3.x` → `4.x` | 🟡 low | ESM-only |
 | `chroma-js` | `2.x` → `3.x` | 🟡 low | Types officiels + renames |
@@ -982,11 +1010,11 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 
 ### Stratégie recommandée pour ces majors
 
-- **Bundle 1** : ESLint 10 + plugins associés (dès que `eslint-plugin-react` est compat)
-- **Bundle 2** : pino + pino-pretty
-- **Bundle 3** : dotenv family
+- ~~**Bundle 1** : ESLint 10 + plugins associés~~ — sans objet, plus aucun workspace n'utilise ESLint
+- **Bundle 1** : pino + pino-pretty
+- **Bundle 2** : dotenv family
 - **Un par un** : Prisma 7, Zod 4, superjson 2, awilix 13, faker 10, isomorphic-dompurify 3 (chacun mérite sa PR + QA E2E)
-- **Attendre** : TypeScript 7 sur les 3 apps (verrou `typescript-eslint`, cf. « Pièges connus ») ; `@hono/node-server` v2 (retirer l'override d'abord, cf. « Overrides »)
+- **Attendre** : `@hono/node-server` v2 (retirer l'override d'abord, cf. « Overrides »)
 
 ## Historique des campagnes
 

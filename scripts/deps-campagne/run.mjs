@@ -173,8 +173,9 @@ function diffInRange(avant, apres) {
 }
 
 /**
- * Les paquets d'un groupe couplé ne vont pas forcément à la même version : eslint monte en
- * 10.6.0 pendant que @eslint/js monte en 10.0.1. Annoncer « eslint -> 10.0.1 » serait faux.
+ * Les paquets d'un groupe couplé ne vont pas forcément à la même version : typescript monte
+ * en 7.1.0 pendant qu'oxlint-tsgolint monte en 7.1.2000. Annoncer « typescript -> 7.1.2000 »
+ * serait faux.
  */
 function libelleCible(groupe) {
   const versions = [...new Set(groupe.deps.map((d) => d.latest))]
