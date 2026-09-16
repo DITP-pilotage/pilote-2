@@ -36,7 +36,10 @@ const BoutonBulle: FunctionComponent<{
 
 const classesContenu = clsxm(
   classesRenduContenuHtml,
+  // prosemirror.css encadre tous les .ProseMirror : ici le document pose sur la
+  // page, sans cadre dans le cadre.
   "[&_.ProseMirror]:min-h-[calc(100dvh-20rem)] [&_.ProseMirror]:outline-none",
+  "[&_.ProseMirror]:!border-none [&_.ProseMirror]:!p-0",
   "[&_.ProseMirror_.is-empty]:before:pointer-events-none",
   "[&_.ProseMirror_.is-empty]:before:float-left",
   "[&_.ProseMirror_.is-empty]:before:h-0",

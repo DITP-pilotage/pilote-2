@@ -44,12 +44,20 @@ export const ArborescenceCentreAideAdmin: FunctionComponent<
         />
       </Dropdown.Trigger>
       <Dropdown.Content align="start" className="w-56">
-        <div className="flex flex-col gap-1">
-          <Dropdown.Item onSelect={onCreerPage}>Nouvelle page</Dropdown.Item>
-          <Dropdown.Item onSelect={() => onCreerGroupe(false)}>
+        <div className="-mx-2 flex flex-col">
+          <Dropdown.Item className="m-0 px-2 py-2" onSelect={onCreerPage}>
+            Nouvelle page
+          </Dropdown.Item>
+          <Dropdown.Item
+            className="m-0 px-2 py-2"
+            onSelect={() => onCreerGroupe(false)}
+          >
             Nouveau groupe
           </Dropdown.Item>
-          <Dropdown.Item onSelect={() => onCreerGroupe(true)}>
+          <Dropdown.Item
+            className="m-0 px-2 py-2"
+            onSelect={() => onCreerGroupe(true)}
+          >
             Nouveau groupe avec contenu
           </Dropdown.Item>
         </div>

@@ -150,8 +150,12 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                   </button>
                 </Dropdown.Trigger>
                 <Dropdown.Content align="end" className="w-60">
-                  <div className="flex flex-col gap-1">
-                    <Dropdown.Item asChild disabled={!estConsultable}>
+                  <div className="-mx-2 flex flex-col">
+                    <Dropdown.Item
+                      asChild
+                      className="m-0 px-2 py-2"
+                      disabled={!estConsultable}
+                    >
                       <a
                         className={clsxm(
                           !estConsultable && "pointer-events-none opacity-40",
@@ -163,14 +167,17 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                         Voir dans le centre d&apos;aide
                       </a>
                     </Dropdown.Item>
-                    <Dropdown.Item onSelect={basculerVisibilite}>
+                    <Dropdown.Item
+                      className="m-0 px-2 py-2"
+                      onSelect={basculerVisibilite}
+                    >
                       {itemSelectionne?.estMasque
                         ? "Rendre visible"
                         : "Masquer du centre d'aide"}
                     </Dropdown.Item>
                     <Dropdown.Divider />
                     <Dropdown.Item
-                      className="text-error hover:!bg-dsfr-warning-950"
+                      className="m-0 px-2 py-2 text-error hover:!bg-dsfr-warning-950"
                       onSelect={supprimer}
                     >
                       Supprimer définitivement
