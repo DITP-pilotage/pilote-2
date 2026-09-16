@@ -9,15 +9,27 @@ describe("lireCsv", () => {
   it("lit un CSV séparé par des points-virgules", () => {
     const lignes = lireCsv(fixture("valide-pointvirgule.csv"));
 
-    expect(lignes[0]).toHaveLength(6);
-    expect(lignes[0][0]).toBe("identifiant_indic");
+    expect(lignes[0]).toEqual([
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur",
+    ]);
   });
 
   it("lit un CSV séparé par des virgules", () => {
     const lignes = lireCsv(fixture("valide-virgule.csv"));
 
-    expect(lignes[0]).toHaveLength(6);
-    expect(lignes[0][0]).toBe("identifiant_indic");
+    expect(lignes[0]).toEqual([
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur",
+    ]);
   });
 
   it("lit le template officiel distribué aux utilisateurs", () => {
@@ -44,14 +56,22 @@ describe("lireCsv", () => {
   });
 
   it("accepte les fins de ligne LF comme les CRLF", () => {
-    expect(lireCsv(fixture("valide-lf.csv"))[0]).toHaveLength(6);
+    expect(lireCsv(fixture("valide-lf.csv"))[0]).toEqual([
+      "identifiant_indic",
+      "zone_id",
+      "zone_nom",
+      "date_valeur",
+      "type_valeur",
+      "valeur",
+    ]);
   });
 
   it("conserve une ligne vide intercalée", () => {
     const lignes = lireCsv(fixture("ligne-vide-milieu.csv"));
 
-    expect(lignes).toHaveLength(4);
-    expect(lignes[2].every((cellule) => cellule === "")).toBe(true);
-    expect(lignes[3][0]).toBe("IND-002");
+    expect(lignes.slice(2)).toEqual([
+      ["", "", "", "", "", ""],
+      ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"],
+    ]);
   });
 });

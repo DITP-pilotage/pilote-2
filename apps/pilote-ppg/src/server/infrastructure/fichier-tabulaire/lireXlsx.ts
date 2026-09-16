@@ -32,7 +32,9 @@ function decoder(texte: string): string {
 function texteDesBalisesT(fragment: string): string {
   const morceaux = fragment.match(/<t[^>]*>([\s\S]*?)<\/t>/g) ?? [];
   return morceaux
-    .map((m) => decoder(m.replace(/^<t[^>]*>/, "").replace(/<\/t>$/, "")))
+    .map((balise) =>
+      decoder(balise.replace(/^<t[^>]*>/, "").replace(/<\/t>$/, "")),
+    )
     .join("");
 }
 
