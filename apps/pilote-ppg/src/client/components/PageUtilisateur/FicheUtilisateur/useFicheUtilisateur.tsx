@@ -97,7 +97,7 @@ export default function useFicheUtilisateur(
         ) ?? []
       );
     },
-    [départements, profil, récupérerDétailsSurUnTerritoire],
+    [départements, profil],
   );
 
   const déterminerLesNomÀAfficherPourLesChantiersLecture = useCallback(

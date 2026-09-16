@@ -89,7 +89,7 @@ function persisterEnBase(
     const contexteAvecStack: Prisma.InputJsonObject | undefined =
       contexte || stackTrace
         ? ({
-            ...(contexte ?? {}),
+            ...contexte,
             ...(stackTrace ? { stack_trace: stackTrace } : {}),
           } as Prisma.InputJsonObject)
         : undefined;

@@ -1284,21 +1284,19 @@ type RenderSVGProps = {
 const createSvgMap = (contenuSVG: SVGG) => {
   const svgMap = new Map<string, (props: RenderSVGProps) => ReactNode>();
 
-  [...(contenuSVG.polygon ? [contenuSVG.polygon] : [])]
-    .flat()
-    .forEach((polygon) => {
-      svgMap.set(polygon["attr-territoire-code"], ({ key, ...props }) => (
-        <polygon key={key} points={polygon["attr-points"]} {...props} />
-      ));
-    });
+  (contenuSVG.polygon ? [contenuSVG.polygon] : []).flat().forEach((polygon) => {
+    svgMap.set(polygon["attr-territoire-code"], ({ key, ...props }) => (
+      <polygon key={key} points={polygon["attr-points"]} {...props} />
+    ));
+  });
 
-  [...(contenuSVG.path ? [contenuSVG.path] : [])].flat().forEach((path) => {
+  (contenuSVG.path ? [contenuSVG.path] : []).flat().forEach((path) => {
     svgMap.set(path["attr-territoire-code"], ({ key, ...props }) => (
       <path key={key} d={path["attr-d"]} {...props} />
     ));
   });
 
-  [...(contenuSVG.g ? [contenuSVG.g] : [])].flat().forEach((g) => {
+  (contenuSVG.g ? [contenuSVG.g] : []).flat().forEach((g) => {
     let polygons: (props: RenderSVGProps) => ReactNode = (
       _props: RenderSVGProps,
     ) => null;
