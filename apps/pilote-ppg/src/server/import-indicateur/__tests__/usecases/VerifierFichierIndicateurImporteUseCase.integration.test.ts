@@ -27,7 +27,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
   const CHEMIN_COMPLET_DU_FICHIER = "cheminCompletDuFichier";
   const NOM_DU_FICHIER = "nomDuFichier";
-  const SCHEMA = "base/schema/url/";
   const METRIC_DATE_1 = "2022-06-12";
   const METRIC_DATE_2 = "2022-12-12";
 
@@ -61,7 +60,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -79,7 +77,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   );
 
   it(
-    "quand l'indicateur possède des informations, doit concaténer le schema en metadata associé à l'indicateur",
+    "quand l'indicateur possède des informations, doit transmettre le nom du schema en metadata associé à l'indicateur",
     createIntegrationTest(async () => {
       // Given
       const detailValidationFichier = new DetailValidationFichierBuilder()
@@ -94,7 +92,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -116,9 +113,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         fichierIndicateurValidationService.validerFichier,
       ).toHaveBeenNthCalledWith(1, payloadValiderFichierCaptor);
       const payloadValiderFichier = payloadValiderFichierCaptor.value;
-      expect(payloadValiderFichier.schema).toEqual(
-        "base/schema/url/schema.json",
-      );
+      expect(payloadValiderFichier.schema).toEqual("schema.json");
     }),
   );
 
@@ -153,7 +148,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -226,7 +220,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -287,7 +280,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         const payload = {
           cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
           nomDuFichier: NOM_DU_FICHIER,
-          baseSchemaUrl: SCHEMA,
           indicateurId: "IND-001",
           utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
         };
@@ -359,7 +351,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         const payload = {
           cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
           nomDuFichier: NOM_DU_FICHIER,
-          baseSchemaUrl: SCHEMA,
           indicateurId: "IND-001",
           utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
         };
@@ -422,7 +413,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         const payload = {
           cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
           nomDuFichier: NOM_DU_FICHIER,
-          baseSchemaUrl: SCHEMA,
           indicateurId: "IND-001",
           utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
         };
@@ -477,7 +467,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -547,7 +536,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -642,7 +630,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -732,7 +719,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -818,7 +804,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -932,7 +917,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -1032,7 +1016,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -1109,7 +1092,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };
@@ -1159,7 +1141,6 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        baseSchemaUrl: SCHEMA,
         indicateurId: "IND-001",
         utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
       };

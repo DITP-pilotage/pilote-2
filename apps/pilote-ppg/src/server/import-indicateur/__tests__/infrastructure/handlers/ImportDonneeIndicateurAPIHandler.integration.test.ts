@@ -104,10 +104,10 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           donnees: [
             {
               identifiant_indic: "IND-001",
-              zone_id: "D046",
+              zone_id: "D46",
               zone_nom: "Lot",
               date_valeur: "2023-03-31",
-              type_valeur: "va",
+              type_valeur: "vi",
               valeur: "9",
             },
           ],
@@ -156,7 +156,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
       "importe un fichier conforme",
       createIntegrationTest(async () => {
         const auteurId = await creerAdminEnBase();
-        deposerCsv(["IND-001;D046;2023-03-31;va;9"]);
+        deposerCsv(["IND-001;D46;2023-03-31;vi;9"]);
 
         const response = await importer(auteurId, "multipart/form-data");
 
@@ -171,7 +171,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
       "refuse un fichier non conforme et remonte les erreurs",
       createIntegrationTest(async () => {
         const auteurId = await creerAdminEnBase();
-        deposerCsv(["IND-001;D046;2023-03-31;type-inconnu;9"]);
+        deposerCsv(["IND-001;D46;2023-03-31;type-inconnu;9"]);
 
         const response = await importer(auteurId, "multipart/form-data");
 
@@ -188,7 +188,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
       "persiste les erreurs de validation en base",
       createIntegrationTest(async () => {
         const auteurId = await creerAdminEnBase();
-        deposerCsv(["IND-001;D046;2023-03-31;type-inconnu;9"]);
+        deposerCsv(["IND-001;D46;2023-03-31;type-inconnu;9"]);
 
         await importer(auteurId, "multipart/form-data");
 
