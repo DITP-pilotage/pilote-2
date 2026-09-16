@@ -192,8 +192,23 @@ function renderBr(node: Node): ReactNode {
   return <br />;
 }
 
-export const classesRenduContenuHtml =
-  "[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2 [&_ul]:pl-6 [&_ol]:pl-8 [&_ul]:list-disc [&_ol]:list-decimal [&_blockquote]:border-l-4 [&_blockquote]:border-blue-400 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-2";
+// Echelle de titres subordonnee au titre de l'article : sans elle, un h1 saisi
+// dans le contenu s'affiche plus gros que le titre du document.
+export const classesRenduContenuHtml = [
+  "[&_p]:mb-0 [&_p]:leading-7",
+  "[&_a]:text-primary",
+  "[&_h1]:text-[22px] [&_h1]:font-bold [&_h1]:mt-8 [&_h1]:mb-3",
+  "[&_h2]:text-[19px] [&_h2]:font-bold [&_h2]:mt-7 [&_h2]:mb-2",
+  "[&_h3]:text-[17px] [&_h3]:font-bold [&_h3]:mt-6 [&_h3]:mb-2",
+  "[&_h4]:text-[15px] [&_h4]:font-bold [&_h4]:mt-5 [&_h4]:mb-2",
+  "[&_h5]:text-[15px] [&_h5]:font-bold [&_h5]:mt-4 [&_h5]:mb-1",
+  "[&_h6]:text-[14px] [&_h6]:font-bold [&_h6]:mt-4 [&_h6]:mb-1",
+  "[&_hr]:!my-6 [&_hr]:border-dsfr-grey-925",
+  "[&_ul]:pl-6 [&_ol]:pl-8 [&_ul]:list-disc [&_ol]:list-decimal",
+  "[&_blockquote]:border-l-4 [&_blockquote]:border-dsfr-blue-france-850",
+  "[&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-dsfr-mention-grey",
+  "[&_blockquote]:my-4",
+].join(" ");
 
 export const RenduContenuHtml = ({
   html,

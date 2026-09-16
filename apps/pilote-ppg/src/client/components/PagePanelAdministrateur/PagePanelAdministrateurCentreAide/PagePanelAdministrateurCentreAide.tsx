@@ -4,15 +4,11 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Book2ContourIcon } from "@/components/_commons/Icones/Book2ContourIcon";
 import { FileTextIcon } from "@/components/_commons/Icones/FileTextIcon";
+import { LARGEUR_ARTICLE } from "@/components/_commons/CentreAide/miseEnPageArticle";
 import { Dropdown } from "@/client/components/shared/Dropdown";
 import { clsxm } from "@/utils/clsxm";
 import { ArborescenceCentreAideAdmin } from "./ArborescenceCentreAide";
 import { useEditionCentreAide } from "./useEditionCentreAide";
-
-// Largeur utile de la colonne d'article dans PageCentreAidePilote :
-// max-w-screen-xl (1280) - px-6 (48) - menu (280) - gap-4 (16) - p-6 (48).
-// L'éditeur s'y aligne pour que la saisie soit fidèle à la lecture.
-const LARGEUR_COLONNE_LECTURE = "max-w-[888px]";
 
 const EtatPublication: FunctionComponent<{
   estPublie: boolean;
@@ -189,8 +185,8 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
           </header>
 
           {aContenu ? (
-            <div className="flex-1 overflow-y-auto px-8 pb-24">
-              <div className={clsxm("mx-auto w-full", LARGEUR_COLONNE_LECTURE)}>
+            <div className="flex-1 overflow-y-auto px-8 pb-24 sm:px-12">
+              <div className={clsxm("w-full", LARGEUR_ARTICLE)}>
                 <input
                   aria-label="Titre de l'article"
                   className="w-full border-none bg-transparent pt-8 pb-4 text-[26px] leading-8 font-bold text-dsfr-grey-50 outline-none placeholder:text-dsfr-grey-900"
