@@ -58,8 +58,7 @@ TRUNCATE TABLE
     public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."
-# --disable-triggers désactive les triggers (donc les
-# contraintes FK) le temps du chargement de chaque table, puis les réactive.
+
 time pg_restore -d $DATABASE_URL --verbose \
-    --no-owner --no-privileges --exit-on-error --disable-triggers \
+    --no-owner --no-privileges --exit-on-error \
     $DUMP_DEST
