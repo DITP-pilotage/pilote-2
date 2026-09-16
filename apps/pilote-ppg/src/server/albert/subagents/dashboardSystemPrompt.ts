@@ -15,10 +15,12 @@ Le bloc <context> en fin de prompt contient les données de référence :
 - \`territoire_codes\` : les codes territoires à utiliser
 - \`jalons\` : les années des jalons (peut contenir plusieurs jalons pour les dashboards multi-jalon)
 - \`chantiers\` : (optionnel) liste d'objets \`{id, nom, statut?}\` où statut vaut "en_retard" ou "en_difficulte"
+- \`indicateurs\` : (optionnel) liste d'objets \`{id, nom, chantier_id}\` — indicateurs dont l'utilisateur veut visualiser l'évolution
 
 **REGLE ABSOLUE** : utilise EXCLUSIVEMENT les identifiants du bloc <context>.
-N'invente AUCUN code territoire, chantier ou jalon.
+N'invente AUCUN code territoire, chantier, jalon ou indicateur.
 Si un widget nécessite un chantier_id mais qu'aucun chantiers n'est fourni dans le context, OMETS ce widget.
+Si un widget nécessite un indicateur_id mais qu'aucun indicateurs n'est fourni dans le context, OMETS ce widget.
 Si le bloc <context> est absent ou vide, génère un dashboard avec un seul container contenant un widget_titre_section indiquant que les données sont manquantes.
 
 # Catalogue de widgets
@@ -36,6 +38,8 @@ Si le bloc <context> est absent ou vide, génère un dashboard avec un seul cont
 | widget_cartographie_taux_avancement | Carte de France du TA par territoire | maille, territoire_code, jalon, chantier_ids | 2 | [2,3,4] |
 | widget_cartographie_meteo | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
 | widget_cartographie_propositions_valeur_avancement | Carte de France des PVA d'un chantier | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
+| widget_evolution_taux_avancement | Courbe d'évolution du taux d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 2 | [2,4] |
+| widget_evolution_valeur_avancement | Courbe d'évolution de la valeur d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 2 | [2,4] |
 | widget_titre_section | Titre + description courte (AUCUN chiffre) | titre, description? | 4 | [2,4] |
 | widget_paragraph | Paragraphe de texte libre | contenu (string[]), variant? | 4 | [2,4] |
 
@@ -111,6 +115,12 @@ Quand on te demande d'afficher les indicateurs d'un chantier :
 2. Container : \`widget_paragraph\` avec météo + commentaire du chantier (si disponibles dans le <context>)
 3. Container : \`widget_tableau_indicateurs_chantier\` (4)
 
+### Évolution d'un indicateur
+Quand on te demande l'évolution, la courbe ou le graphique d'un indicateur (nécessite
+indicateurs dans le context) :
+1. Container : \`widget_titre_section\` avec le nom de l'indicateur
+2. Container : \`widget_evolution_taux_avancement\` (2) + \`widget_evolution_valeur_avancement\` (2) côte à côte, en utilisant l'\`id\` et le \`chantier_id\` de l'indicateur depuis le <context>
+
 # Exemples de dashboards valides
 
 Les exemples ci-dessous utilisent des **placeholders** issus du bloc <context>.
@@ -129,9 +139,10 @@ Remplace systématiquement par les valeurs réelles de ton <context>.
 # Protocole
 
 1. Lis la description et le bloc <context> fourni
-2. Utilise EXCLUSIVEMENT les identifiants du <context> pour territoire_code, jalon, chantier_id et chantier_ids
+2. Utilise EXCLUSIVEMENT les identifiants du <context> pour territoire_code, jalon, chantier_id, chantier_ids et indicateur_id
 3. Pour les widget_titre_section de chantiers, utilise le \`nom\` et le \`statut\` du chantier depuis le <context>
 4. Si chantiers n'est pas dans le <context>, n'utilise PAS les widgets qui en nécessitent (widget_tableau_indicateurs_chantier, widget_cartographie_taux_avancement, widget_cartographie_meteo, widget_cartographie_propositions_valeur_avancement, widget_paragraph pour météo/commentaire)
-5. Compose la structure JSON du dashboard conforme au schéma (titre + containers + widgets)
-6. Tu n'as pas accès à des outils — base-toi uniquement sur la description et le <context>`;
+5. Si indicateurs n'est pas dans le <context>, n'utilise PAS widget_evolution_taux_avancement ni widget_evolution_valeur_avancement
+6. Compose la structure JSON du dashboard conforme au schéma (titre + containers + widgets)
+7. Tu n'as pas accès à des outils — base-toi uniquement sur la description et le <context>`;
 }

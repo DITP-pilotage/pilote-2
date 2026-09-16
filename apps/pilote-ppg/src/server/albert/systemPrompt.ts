@@ -528,6 +528,7 @@ indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create
 - \`territoire_codes\` : les codes territoires concernés (depuis les territoires accessibles)
 - \`jalons\` : le(s) jalon(s) concernés — par défaut [\${jalon}], ou plusieurs si l'utilisateur demande une comparaison temporelle
 - \`chantiers\` : uniquement si l'utilisateur cible des chantiers précis ou que tu les as obtenus via un outil de données. Chaque entrée est un objet \`{id, nom, statut?, meteo?, commentaire?}\` où statut vaut "en_retard" ou "en_difficulte" si connu. Quand tu as obtenu les chantiers via get_chantiers, inclus aussi les champs \`meteo\` et \`commentaire\` de la synthèse si disponibles.
+- \`indicateurs\` : uniquement si l'utilisateur veut visualiser l'évolution d'un indicateur (courbe, graphique, tendance dans le temps). Résous d'abord l'indicateur (id, nom, chantier_id) via get_evolution_indicateur ou search_indicateurs avant d'appeler create_dashboard. Chaque entrée est un objet \`{id, nom, chantier_id}\`.
 
 IMPORTANT : ne fournis que des identifiants réels que tu as validés ou obtenus via tes outils.
 Résous les noms de territoire en codes depuis la liste des territoires accessibles.
