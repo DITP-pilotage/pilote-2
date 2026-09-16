@@ -5,6 +5,8 @@ import {
 } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
 import { NoeudArbre } from "@/components/_commons/CentreAide/types";
+import { LARGEUR_ARTICLE } from "@/components/_commons/CentreAide/miseEnPageArticle";
+import { clsxm } from "@/utils/clsxm";
 import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectureCentreAide";
 
 const estGroupeSansContenu = (noeud: NoeudArbre) =>
@@ -63,11 +65,13 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     itemSelectionne?.contenu !== null && itemSelectionne?.contenu !== undefined;
 
   return (
-    <main className="max-w-screen-xl mx-auto px-6 py-4">
-      <div className="flex gap-4">
-        <div className="w-[280px] shrink-0 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
-          <h2 className="px-4 pt-4 pb-2 text-base font-bold border-b border-gray-200">
-            Centre d'aide PILOTE
+    // La mise en page teinte tout <main> : il doit rester pleine largeur, sinon
+    // la teinte se reduit a une bande centrale.
+    <main>
+      <div className="mx-auto flex min-h-[calc(100dvh-18rem)] max-w-screen-xl gap-6 px-6 py-8">
+        <nav className="flex w-[280px] shrink-0 flex-col overflow-hidden border border-dsfr-grey-900 bg-white">
+          <h2 className="border-b border-dsfr-grey-900 px-4 py-3 text-[15px] font-bold text-dsfr-grey-50 fr-mb-0">
+            Centre d&apos;aide PILOTE
           </h2>
           <ArborescenceCentreAide
             arbre={arbrePublie}
@@ -75,27 +79,35 @@ export const PageCentreAidePilote: FunctionComponent = () => {
             itemSelectionneId={itemSelectionneId}
             onSelectionItem={selectionnerItem}
           />
-        </div>
+        </nav>
 
         {itemSelectionne ? (
-          <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm overflow-y-auto p-6">
-            <h2 className="text-xl font-bold mb-4">
-              {itemSelectionne.titreAffiche || itemSelectionne.titre}
-            </h2>
-            {aContenu ? (
-              <div className={classesRenduContenuHtml}>
-                <RenduContenuHtml html={itemSelectionne.contenu!} />
-              </div>
-            ) : (
-              <p className="text-gray-400 text-sm">
-                Ce groupe ne contient pas de contenu.
-              </p>
-            )}
-          </div>
+          <article className="min-w-0 flex-1 overflow-y-auto border border-dsfr-grey-900 bg-white px-8 py-10 sm:px-12">
+            <div className={clsxm("w-full", LARGEUR_ARTICLE)}>
+              <h1 className="text-[26px] leading-8 font-bold text-dsfr-grey-50 fr-mb-0">
+                {itemSelectionne.titreAffiche || itemSelectionne.titre}
+              </h1>
+              {aContenu ? (
+                <div className={clsxm("mt-6", classesRenduContenuHtml)}>
+                  <RenduContenuHtml html={itemSelectionne.contenu!} />
+                </div>
+              ) : (
+                <p className="mt-6 text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+                  Cette rubrique regroupe les articles ci-contre. Choisissez-en
+                  un pour le lire.
+                </p>
+              )}
+            </div>
+          </article>
         ) : (
-          <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center justify-center text-gray-400 text-sm">
-            Sélectionnez un article pour afficher son contenu.
-          </div>
+          <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 border border-dsfr-grey-900 bg-white px-8 text-center">
+            <p className="text-[15px] font-medium text-dsfr-grey-50 fr-mb-0">
+              Aucun article ouvert
+            </p>
+            <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+              Choisissez un article dans le sommaire à gauche.
+            </p>
+          </article>
         )}
       </div>
     </main>

@@ -162,6 +162,17 @@ export const useEditionCentreAide = () => {
       },
     });
 
+  const mutationRenommer = api.parametrageCentreAide.modifier.useMutation({
+    onSuccess: () => {
+      refetchListe();
+      toast.success("Article renommé", {
+        duration: 3000,
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
   const mutationDeplacer = api.parametrageCentreAide.deplacer.useMutation({
     onSuccess: () => {
       refetchListe();
@@ -256,6 +267,31 @@ export const useEditionCentreAide = () => {
     }
   }, [itemSelectionneId, mutationBasculerVisibilite]);
 
+  const renommerArticle = useCallback(
+    (id: string, nouveauTitre: string) => {
+      const article = articles.find((item) => item.id === id);
+      if (!article) return;
+
+      mutationRenommer.mutate({
+        id,
+        titre: nouveauTitre,
+        contenu: article.contenuBrouillon ?? article.contenu,
+        type: article.type,
+        ordre: article.ordre,
+        parentId: article.parentId,
+        contenuPublie: article.contenu,
+        titrePublie: article.titre,
+        titreAffiche: article.titreAfficheBrouillon ?? article.titreAffiche,
+        titreAffichePublie: article.titreAffiche,
+        estPublie: article.estPublie,
+        estMasque: article.estMasque,
+      });
+
+      if (id === itemSelectionneId) setTitre(nouveauTitre);
+    },
+    [articles, itemSelectionneId, mutationRenommer],
+  );
+
   const deplacerArticle = useCallback(
     (id: string, cible: { parentId: string | null; index: number }) => {
       mutationDeplacer.mutate({ id, ...cible });
@@ -268,6 +304,15 @@ export const useEditionCentreAide = () => {
       mutationSupprimer.mutate({ id: itemSelectionneId });
     }
   }, [itemSelectionneId, mutationSupprimer]);
+
+  const aDesModificationsNonEnregistrees = itemSelectionne
+    ? titre !== (itemSelectionne.titreBrouillon ?? itemSelectionne.titre) ||
+      titreAffiche !==
+        (itemSelectionne.titreAfficheBrouillon ??
+          itemSelectionne.titreAffiche ??
+          "") ||
+      contenu !== (itemSelectionne.contenuBrouillon ?? itemSelectionne.contenu)
+    : false;
 
   const aDesModificationsNonPubliees = itemSelectionne
     ? calculerModificationsNonPubliees(itemSelectionne)
@@ -295,6 +340,8 @@ export const useEditionCentreAide = () => {
     depublier,
     basculerVisibilite,
     deplacerArticle,
+    renommerArticle,
     aDesModificationsNonPubliees,
+    aDesModificationsNonEnregistrees,
   };
 };

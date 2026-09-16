@@ -15,7 +15,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { FunctionComponent, useMemo, useState } from "react";
+import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { ArticleCentreAideContrat } from "@/server/parametrage-centre-aide/app/contrats/ArticleCentreAideContrat";
 import { clsxm } from "@/utils/clsxm";
 import {
@@ -34,6 +34,7 @@ interface ArbreCentreAideDndProps {
   selectionneId: string | null;
   onSelectionner: (id: string) => void;
   onDeplacer: (id: string, cible: CibleDeplacement) => void;
+  onRenommer: (id: string, titre: string) => void;
 }
 
 export const ArbreCentreAideDnd: FunctionComponent<ArbreCentreAideDndProps> = ({
@@ -41,6 +42,7 @@ export const ArbreCentreAideDnd: FunctionComponent<ArbreCentreAideDndProps> = ({
   selectionneId,
   onSelectionner,
   onDeplacer,
+  onRenommer,
 }) => {
   const [replies, setReplies] = useState<ReadonlySet<string>>(new Set());
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -140,6 +142,7 @@ export const ArbreCentreAideDnd: FunctionComponent<ArbreCentreAideDndProps> = ({
               key={noeud.id}
               noeud={noeud}
               onBasculerRepli={basculerRepli}
+              onRenommer={onRenommer}
               onSelectionner={onSelectionner}
               replie={replies.has(noeud.id)}
               selectionne={selectionneId === noeud.id}
@@ -159,6 +162,7 @@ const LigneArbre: FunctionComponent<{
   aEnfants: boolean;
   onSelectionner: (id: string) => void;
   onBasculerRepli: (id: string) => void;
+  onRenommer: (id: string, titre: string) => void;
 }> = ({
   noeud,
   depth,
@@ -167,6 +171,7 @@ const LigneArbre: FunctionComponent<{
   aEnfants,
   onSelectionner,
   onBasculerRepli,
+  onRenommer,
 }) => {
   const {
     attributes,
@@ -176,9 +181,18 @@ const LigneArbre: FunctionComponent<{
     transition,
     isDragging,
   } = useSortable({ id: noeud.id });
+  const champRenommage = useRef<HTMLInputElement>(null);
+  const [renommage, setRenommage] = useState<string | null>(null);
+
   const estGroupe = noeud.type === "GROUPE";
   const titre =
     noeud.article.titreBrouillon || noeud.article.titre || "(sans titre)";
+
+  const validerRenommage = () => {
+    const propre = renommage?.trim();
+    if (propre && propre !== titre) onRenommer(noeud.id, propre);
+    setRenommage(null);
+  };
 
   return (
     <li
@@ -188,17 +202,17 @@ const LigneArbre: FunctionComponent<{
     >
       <div
         className={clsxm(
-          "group relative flex items-center gap-1 rounded pr-2 text-sm",
+          "group relative flex items-center gap-1 rounded-sm pr-2 text-[13px]",
           selectionne
-            ? "bg-blue-50 font-medium text-blue-700"
-            : "text-gray-700 hover:bg-gray-50",
-          noeud.article.estMasque && "opacity-50",
+            ? "bg-dsfr-alt-blue-france font-medium text-primary"
+            : "text-dsfr-grey-200 hover:bg-dsfr-grey-1000",
+          noeud.article.estMasque && "opacity-45",
         )}
         style={{ paddingLeft: depth * INDENTATION + 6 }}
       >
         <button
           aria-label="Déplacer"
-          className="flex cursor-grab px-0.5 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100"
+          className="flex cursor-grab px-0.5 text-dsfr-grey-625 opacity-0 transition-opacity group-hover:opacity-100"
           type="button"
           {...attributes}
           {...listeners}
@@ -211,13 +225,13 @@ const LigneArbre: FunctionComponent<{
         {estGroupe && aEnfants ? (
           <button
             aria-label={replie ? "Déplier" : "Replier"}
-            className="flex w-3.5 shrink-0 text-gray-400"
+            className="flex w-3.5 shrink-0 text-dsfr-grey-625"
             onClick={() => onBasculerRepli(noeud.id)}
             type="button"
           >
             <span
               className={clsxm(
-                "inline-block text-xs transition-transform",
+                "inline-block text-[10px] transition-transform",
                 !replie && "rotate-90",
               )}
             >
@@ -228,24 +242,59 @@ const LigneArbre: FunctionComponent<{
           <span className="w-3.5 shrink-0" />
         )}
 
-        <button
-          className={clsxm(
-            "flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left",
-            estGroupe && "font-semibold",
-          )}
-          onClick={() => onSelectionner(noeud.id)}
-          type="button"
-        >
-          <span className="flex-1 truncate">{titre}</span>
-          <span
+        {renommage === null ? (
+          <button
             className={clsxm(
-              "size-1.5 shrink-0 rounded-full",
-              noeud.article.estPublie ? "bg-green-500" : "bg-yellow-400",
+              "flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left",
+              estGroupe && "font-medium",
             )}
-            title={noeud.article.estPublie ? "Publié" : "Brouillon"}
+            onClick={() => onSelectionner(noeud.id)}
+            onDoubleClick={() => {
+              setRenommage(titre);
+              requestAnimationFrame(() => {
+                champRenommage.current?.focus();
+                champRenommage.current?.select();
+              });
+            }}
+            title="Double-cliquez pour renommer"
+            type="button"
+          >
+            <span className="flex-1 truncate">{titre}</span>
+            <PastilleEtat article={noeud.article} />
+          </button>
+        ) : (
+          <input
+            className="min-w-0 flex-1 rounded-sm border border-primary bg-white px-1 py-1 text-[13px] text-dsfr-grey-50 outline-none"
+            onBlur={validerRenommage}
+            onChange={(event) => setRenommage(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") validerRenommage();
+              if (event.key === "Escape") setRenommage(null);
+            }}
+            ref={champRenommage}
+            value={renommage}
           />
-        </button>
+        )}
       </div>
     </li>
+  );
+};
+
+// La pastille encode l'etat de publication ; c'est le seul endroit de l'arbre ou
+// la couleur porte une information.
+const PastilleEtat: FunctionComponent<{
+  article: NoeudPlat["article"];
+}> = ({ article }) => {
+  const [couleur, libelle] = article.estMasque
+    ? ["bg-dsfr-grey-625", "Masqué"]
+    : article.estPublie
+      ? ["bg-dsfr-success-425", "Publié"]
+      : ["bg-dsfr-moutarde-main-679", "Brouillon"];
+
+  return (
+    <span
+      className={clsxm("size-1.5 shrink-0 rounded-full", couleur)}
+      title={libelle}
+    />
   );
 };
