@@ -25,7 +25,13 @@ describe("validateDashboardIdentifiers", () => {
 
     // when / then
     expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], undefined, undefined),
+      validateDashboardIdentifiers(
+        output,
+        ["REG-53"],
+        [2025],
+        undefined,
+        undefined,
+      ),
     ).not.toThrow();
   });
 
@@ -48,7 +54,13 @@ describe("validateDashboardIdentifiers", () => {
 
     // when / then
     expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], undefined, undefined),
+      validateDashboardIdentifiers(
+        output,
+        ["REG-53"],
+        [2025],
+        undefined,
+        undefined,
+      ),
     ).toThrow(/territoire non autorisé : REG-99/);
   });
 
@@ -71,7 +83,13 @@ describe("validateDashboardIdentifiers", () => {
 
     // when / then
     expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], undefined, undefined),
+      validateDashboardIdentifiers(
+        output,
+        ["REG-53"],
+        [2025],
+        undefined,
+        undefined,
+      ),
     ).toThrow(/jalon non autorisé : 2024/);
   });
 
@@ -96,7 +114,13 @@ describe("validateDashboardIdentifiers", () => {
 
     // when / then
     expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], undefined, undefined),
+      validateDashboardIdentifiers(
+        output,
+        ["REG-53"],
+        [2025],
+        undefined,
+        undefined,
+      ),
     ).toThrow(/chantier_id.*aucun.*fourni/i);
   });
 
@@ -122,7 +146,13 @@ describe("validateDashboardIdentifiers", () => {
 
     // when / then
     expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], chantiers, undefined),
+      validateDashboardIdentifiers(
+        output,
+        ["REG-53"],
+        [2025],
+        chantiers,
+        undefined,
+      ),
     ).toThrow(/chantier_id non autorisé : CH-999/);
   });
 
@@ -144,7 +174,13 @@ describe("validateDashboardIdentifiers", () => {
 
     // when / then
     expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], undefined, undefined),
+      validateDashboardIdentifiers(
+        output,
+        ["REG-53"],
+        [2025],
+        undefined,
+        undefined,
+      ),
     ).not.toThrow();
   });
 
@@ -178,7 +214,13 @@ describe("validateDashboardIdentifiers", () => {
 
     // when / then
     expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], chantiers, undefined),
+      validateDashboardIdentifiers(
+        output,
+        ["REG-53"],
+        [2025],
+        chantiers,
+        undefined,
+      ),
     ).not.toThrow();
   });
 
