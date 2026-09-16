@@ -27,6 +27,16 @@ const chantierContextSchema = z.object({
 
 export type ChantierContext = z.infer<typeof chantierContextSchema>;
 
+const indicateurContextSchema = z.object({
+  id: z.string().describe("Identifiant de l'indicateur (ex: IND-894)"),
+  nom: z.string().describe("Nom de l'indicateur"),
+  chantier_id: z
+    .string()
+    .describe("Identifiant du chantier auquel appartient l'indicateur"),
+});
+
+export type IndicateurContext = z.infer<typeof indicateurContextSchema>;
+
 export const createDashboardInputSchema = z.object({
   task: z
     .string()
@@ -51,6 +61,12 @@ export const createDashboardInputSchema = z.object({
     .describe(
       "Chantiers ciblés avec leur nom et statut. Uniquement si l'utilisateur cible des chantiers précis ou obtenus via un outil de données.",
     ),
+  indicateurs: z
+    .array(indicateurContextSchema)
+    .optional()
+    .describe(
+      "Indicateurs déjà résolus (via get_evolution_indicateur ou search_indicateurs), uniquement si l'utilisateur veut visualiser leur évolution en graphique (courbe).",
+    ),
 });
 
 export type CreateDashboardOutput = ComposeDashboardOutput;
@@ -65,11 +81,15 @@ export function validateDashboardIdentifiers(
   allowedTerritoires: string[],
   allowedJalons: number[],
   allowedChantiers: ChantierContext[] | undefined,
+  allowedIndicateurs: IndicateurContext[] | undefined,
 ): void {
   const territoireSet = new Set(allowedTerritoires);
   const jalonSet = new Set(allowedJalons);
   const chantierIdSet = allowedChantiers
     ? new Set(allowedChantiers.map((c) => c.id))
+    : undefined;
+  const indicateurChantierById = allowedIndicateurs
+    ? new Map(allowedIndicateurs.map((i) => [i.id, i.chantier_id]))
     : undefined;
 
   for (const container of output.containers) {
@@ -83,13 +103,45 @@ export function validateDashboardIdentifiers(
         );
       }
 
+      if ("territoire_codes" in widget) {
+        for (const territoireCode of widget.territoire_codes) {
+          if (!territoireSet.has(territoireCode)) {
+            throw new Error(
+              `Le subagent a utilisé un territoire non autorisé : ${territoireCode}. Territoires autorisés : ${allowedTerritoires.join(", ")}`,
+            );
+          }
+        }
+      }
+
       if ("jalon" in widget && !jalonSet.has(widget.jalon)) {
         throw new Error(
           `Le subagent a utilisé un jalon non autorisé : ${widget.jalon}. Jalons autorisés : ${allowedJalons.join(", ")}`,
         );
       }
 
-      if ("chantier_id" in widget) {
+      if ("indicateur_id" in widget) {
+        if (!indicateurChantierById) {
+          throw new Error(
+            `Le subagent a utilisé un indicateur_id (${widget.indicateur_id}) alors qu'aucun n'a été fourni.`,
+          );
+        }
+        const chantierIdAttendu = indicateurChantierById.get(
+          widget.indicateur_id,
+        );
+        if (chantierIdAttendu === undefined) {
+          throw new Error(
+            `Le subagent a utilisé un indicateur_id non autorisé : ${widget.indicateur_id}. Indicateurs autorisés : ${[...indicateurChantierById.keys()].join(", ")}`,
+          );
+        }
+        if (
+          "chantier_id" in widget &&
+          widget.chantier_id !== chantierIdAttendu
+        ) {
+          throw new Error(
+            `Le subagent a utilisé un chantier_id (${widget.chantier_id}) incohérent avec l'indicateur ${widget.indicateur_id} (chantier attendu : ${chantierIdAttendu}).`,
+          );
+        }
+      } else if ("chantier_id" in widget) {
         if (!chantierIdSet) {
           throw new Error(
             `Le subagent a utilisé un chantier_id (${widget.chantier_id}) alors qu'aucun n'a été fourni.`,
@@ -110,12 +162,16 @@ function buildSubagentPrompt(
   territoireCodes: string[],
   jalons: number[],
   chantiers: ChantierContext[] | undefined,
+  indicateurs: IndicateurContext[] | undefined,
 ): string {
   const contextLines = [
     "<context>",
     `territoire_codes: ${JSON.stringify(territoireCodes)}`,
     `jalons: ${JSON.stringify(jalons)}`,
     ...(chantiers?.length ? [`chantiers: ${JSON.stringify(chantiers)}`] : []),
+    ...(indicateurs?.length
+      ? [`indicateurs: ${JSON.stringify(indicateurs)}`]
+      : []),
     "</context>",
   ];
 
@@ -126,21 +182,33 @@ export function createCreateDashboardTool() {
   return tool({
     description: `Délègue la composition d'un dashboard à un agent spécialisé.
 Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
-un tableau de bord visuel, ou d'afficher les indicateurs d'un chantier.
-Fournis la description de ce que l'utilisateur veut visualiser ainsi que les identifiants résolus (territoire_codes, jalons, chantiers).`,
+un tableau de bord visuel, d'afficher les indicateurs d'un chantier, ou une courbe/un graphique d'évolution d'indicateur.
+Fournis la description de ce que l'utilisateur veut visualiser ainsi que les identifiants résolus (territoire_codes, jalons, chantiers, indicateurs).`,
     inputSchema: createDashboardInputSchema,
     execute: async (
-      { task, territoire_codes, jalons, chantiers },
+      { task, territoire_codes, jalons, chantiers, indicateurs },
       { abortSignal },
     ) => {
       const output = await Albert.generateStructuredOutput({
         systemPrompt: buildDashboardSystemPrompt(),
-        prompt: buildSubagentPrompt(task, territoire_codes, jalons, chantiers),
+        prompt: buildSubagentPrompt(
+          task,
+          territoire_codes,
+          jalons,
+          chantiers,
+          indicateurs,
+        ),
         schema: composeDashboardInputSchema,
         abortSignal,
       });
 
-      validateDashboardIdentifiers(output, territoire_codes, jalons, chantiers);
+      validateDashboardIdentifiers(
+        output,
+        territoire_codes,
+        jalons,
+        chantiers,
+        indicateurs,
+      );
 
       return {
         titre: output.titre,
