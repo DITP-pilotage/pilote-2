@@ -17,12 +17,15 @@ import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indic
 import {
   defineModule,
   type ExtractScope,
-  type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
 
-type ParametrageIndicateurCradle = {
+type ParametrageIndicateurExports = {
   historisationModificationRepository: HistorisationModificationRepository;
+  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
+};
+
+type ParametrageIndicateurCradle = ParametrageIndicateurExports & {
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;
   initialiserNouvelIndicateurUseCase: InitialiserNouvelIndicateurUseCase;
@@ -32,19 +35,21 @@ type ParametrageIndicateurCradle = {
   récupérerUnIndicateurUseCase: RécupérerUnIndicateurUseCase;
   importMasseMetadataIndicateurHandler: ImportMasseMetadataIndicateurHandler;
   importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
-  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
   metadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery;
   getMetadataIndicateurConfigurationQuery: GetMetadataIndicateurConfigurationQuery;
   enregistrerMetadataIndicateurHandler: EnregistrerMetadataIndicateurHandler;
 };
 
 export const parametrageIndicateurModule = defineModule<
-  NoExports,
+  ParametrageIndicateurExports,
   ParametrageIndicateurCradle
 >()({
   name: "parametrageIndicateur",
   imports: ["shared"],
-  exports: [],
+  exports: [
+    "historisationModificationRepository",
+    "metadataParametrageIndicateurRepository",
+  ],
   register: (container, { asModuleClass }) => {
     container.register({
       historisationModificationRepository: asModuleClass(
@@ -93,3 +98,4 @@ export const parametrageIndicateurModule = defineModule<
 
 type Scope = ExtractScope<typeof parametrageIndicateurModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;
+export type { ParametrageIndicateurExports };

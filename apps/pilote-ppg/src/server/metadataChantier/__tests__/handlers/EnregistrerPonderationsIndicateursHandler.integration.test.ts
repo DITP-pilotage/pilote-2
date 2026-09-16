@@ -3,14 +3,24 @@ import { createIntegrationTest } from "@/server/infrastructure/test/createIntegr
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
+import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
 
 describe("EnregistrerPonderationsIndicateursHandler", () => {
   let handler: EnregistrerPonderationsIndicateursHandler;
   const transaction = new InMemoryTransaction();
+  const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
     handler = new EnregistrerPonderationsIndicateursHandler({
       transaction,
+      metadataParametrageIndicateurRepository:
+        new PrismaMetadataParametrageIndicateurRepository(),
+      historisationModificationRepository:
+        new PrismaHistorisationModificationRepository({
+          prisma: prismaPilote,
+        }),
     });
   });
 
@@ -41,24 +51,28 @@ describe("EnregistrerPonderationsIndicateursHandler", () => {
       await fixtures.metadataParametrageIndicateurs({
         indic_id: indicateur2.indic_id,
       });
+      const auteur = await fixtures.utilisateur({});
 
       // When
-      await handler.execute({
-        lignes: [
-          {
-            indicId: indicateur1.indic_id,
-            poidsPourcentDept: null,
-            poidsPourcentReg: null,
-            poidsPourcentNat: 40,
-          },
-          {
-            indicId: indicateur2.indic_id,
-            poidsPourcentDept: null,
-            poidsPourcentReg: null,
-            poidsPourcentNat: 60,
-          },
-        ],
-      });
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur1.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 40,
+            },
+            {
+              indicId: indicateur2.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 60,
+            },
+          ],
+        },
+        auteur.id,
+      );
 
       // Then
       const parametrage1 =
@@ -103,24 +117,28 @@ describe("EnregistrerPonderationsIndicateursHandler", () => {
         indic_id: indicateur2.indic_id,
         poids_pourcent_nat_declaree: 20,
       });
+      const auteur = await fixtures.utilisateur({});
 
       // When
-      await handler.execute({
-        lignes: [
-          {
-            indicId: indicateur1.indic_id,
-            poidsPourcentDept: null,
-            poidsPourcentReg: null,
-            poidsPourcentNat: 40,
-          },
-          {
-            indicId: indicateur2.indic_id,
-            poidsPourcentDept: null,
-            poidsPourcentReg: null,
-            poidsPourcentNat: 40,
-          },
-        ],
-      });
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur1.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 40,
+            },
+            {
+              indicId: indicateur2.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 40,
+            },
+          ],
+        },
+        auteur.id,
+      );
 
       // Then
       const parametrage1 =
@@ -152,18 +170,22 @@ describe("EnregistrerPonderationsIndicateursHandler", () => {
       await fixtures.metadataParametrageIndicateurs({
         indic_id: indicateur.indic_id,
       });
+      const auteur = await fixtures.utilisateur({});
 
       // When : on enregistre une valeur DEPT/REG incohérente, non applicable, aux côtés d'un NAT correct
-      await handler.execute({
-        lignes: [
-          {
-            indicId: indicateur.indic_id,
-            poidsPourcentDept: 999,
-            poidsPourcentReg: 999,
-            poidsPourcentNat: 100,
-          },
-        ],
-      });
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur.indic_id,
+              poidsPourcentDept: 999,
+              poidsPourcentReg: 999,
+              poidsPourcentNat: 100,
+            },
+          ],
+        },
+        auteur.id,
+      );
 
       // Then : la sauvegarde réussit car DEPT/REG ne sont pas des mailles applicables à valider
       const parametrage =

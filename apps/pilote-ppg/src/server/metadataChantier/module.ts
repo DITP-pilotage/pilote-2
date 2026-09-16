@@ -4,6 +4,7 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
+import type { ParametrageIndicateurExports } from "@/server/parametrage-indicateur/module";
 import { ListerChantiersQuery } from "./queries/ListerChantiersQuery";
 import { RecupererChantierQuery } from "./queries/RecupererChantierQuery";
 import { RecupererIdSuivantQuery } from "./queries/RecupererIdSuivantQuery";
@@ -15,7 +16,7 @@ import { EnregistrerChantierHandler } from "./handlers/EnregistrerChantierHandle
 import { RecupererIndicateursPonderationsChantierQuery } from "./queries/RecupererIndicateursPonderationsChantierQuery";
 import { EnregistrerPonderationsIndicateursHandler } from "./handlers/EnregistrerPonderationsIndicateursHandler";
 
-type MetadataChantierCradle = {
+type MetadataChantierOwnCradle = {
   listerChantiersQuery: ListerChantiersQuery;
   recupererChantierQuery: RecupererChantierQuery;
   recupererIdSuivantQuery: RecupererIdSuivantQuery;
@@ -28,12 +29,15 @@ type MetadataChantierCradle = {
   enregistrerPonderationsIndicateursHandler: EnregistrerPonderationsIndicateursHandler;
 };
 
+type MetadataChantierCradle = MetadataChantierOwnCradle &
+  ParametrageIndicateurExports;
+
 export const metadataChantierModule = defineModule<
   NoExports,
   MetadataChantierCradle
 >()({
   name: "metadataChantier",
-  imports: ["shared"],
+  imports: ["shared", "parametrageIndicateur"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({
@@ -51,7 +55,7 @@ export const metadataChantierModule = defineModule<
       enregistrerPonderationsIndicateursHandler: asModuleClass(
         EnregistrerPonderationsIndicateursHandler,
       ),
-    } satisfies VerifyCradle<MetadataChantierCradle>);
+    } satisfies VerifyCradle<MetadataChantierOwnCradle>);
   },
 });
 
