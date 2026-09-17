@@ -1,4 +1,0 @@
-# Données capturées sur Validata : elles font foi telles quelles et ne doivent
-# pas être reformatées. Voir scripts/validata-goldens/README.md.
-src/server/infrastructure/fichier-tabulaire/__goldens__/
-src/server/infrastructure/fichier-tabulaire/__fixtures__/

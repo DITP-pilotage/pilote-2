@@ -91,7 +91,7 @@ export function genererMessageErreur(
 
   if (nomDuChamp === "identifiant_indic") {
     if (type === "required") {
-      return `Un indicateur ne peut etre vide. C'est le cas à la ligne ${numeroDeLigne}.`;
+      return `Un indicateur ne peut être vide. C'est le cas à la ligne ${numeroDeLigne}.`;
     }
     if (type === "pattern") {
       return `'${cellule}' n'est pas un identifiant d'indicateur valide (ligne ${numeroDeLigne}) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres.${commeParExemple} Vous pouvez vous référer au guide des indicateurs pour trouver celui du vôtre.`;
