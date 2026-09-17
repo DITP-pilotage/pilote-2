@@ -1,4 +1,0 @@
-# Les fixtures sont des octets, pas du texte : leurs fins de ligne (CRLF vs LF),
-# leur BOM et leur encodage (cp1252) font partie du cas de test. Git ne doit rien
-# normaliser, sinon la fixture cesse de correspondre au golden capté sur Validata.
-* -text

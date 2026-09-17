@@ -67,8 +67,8 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
         entete.trim().toLowerCase(),
       );
 
-      // Validata ne signale ni les espaces ni les majuscules dans l'en-tête :
-      // ces deux contrôles sont propres à l'application (mesuré le 2026-09-16).
+      // Un en-tête mal formé n'empêche pas la lecture : on le signale à
+      // l'utilisateur pour qu'il corrige son fichier, sans bloquer l'analyse.
       for (const entete of fichier.entetes) {
         if (entete.trim() !== entete) {
           erreurs.push(
@@ -90,15 +90,16 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
       const entetesEnDoublon = new Set(normalisees).size !== normalisees.length;
 
       if (entetesEnDoublon) {
-        // Mesuré : `duplicate-label` est fatal chez Validata, qui n'analyse
-        // plus le contenu du fichier au-delà.
+        // Des en-têtes en doublon rendent toute analyse ambiguë : on s'arrête
+        // là plutôt que de signaler des erreurs sur la mauvaise colonne.
         erreurs.push(
           erreurDEnTete("Il existe des entêtes en doublon dans le fichier"),
         );
       } else {
-        // Une colonne de clé primaire absente est bloquante, là où une colonne
-        // ordinaire absente est simplement ignorée (schema_sync). Validata
-        // continue malgré tout d'analyser le contenu : on fait de même.
+        // Une colonne de clé primaire absente est bloquante : sans elle on ne
+        // peut ni identifier ni dédoublonner les lignes. Une colonne ordinaire
+        // absente est en revanche simplement ignorée. Dans les deux cas on
+        // continue d'analyser le contenu, pour tout signaler d'un coup.
         for (const colonne of schema.colonnesClePrimaireAbsentes) {
           erreurs.push(
             erreurDEnTete(

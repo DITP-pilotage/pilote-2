@@ -1,57 +1,73 @@
-import { join } from "node:path";
+import {
+  construireCsv,
+  construireXlsx,
+  deposerDansUnFichierTemporaire,
+} from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
 import { lireFichierTabulaire } from "@/server/infrastructure/fichier-tabulaire/lireFichierTabulaire";
 import { FichierTabulaireIllisibleError } from "@/server/infrastructure/fichier-tabulaire/lireZip";
 
-const chemin = (nom: string) => join(__dirname, "__fixtures__", nom);
+const ENTETE = [
+  "identifiant_indic",
+  "zone_id",
+  "zone_nom",
+  "date_valeur",
+  "type_valeur",
+  "valeur",
+];
+const LIGNE = ["IND-001", "D46", "Lot", "2023-01-31", "vi", "12.5"];
+const SUIVANTE = ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"];
 
 describe("lireFichierTabulaire", () => {
   it("sépare l'en-tête des lignes de données", async () => {
-    const resultat = await lireFichierTabulaire(
-      chemin("valide-pointvirgule.csv"),
-      "valide-pointvirgule.csv",
+    const chemin = deposerDansUnFichierTemporaire(
+      "import.csv",
+      construireCsv([ENTETE, LIGNE, SUIVANTE]),
     );
 
-    expect(resultat.entetes).toEqual([
-      "identifiant_indic",
-      "zone_id",
-      "zone_nom",
-      "date_valeur",
-      "type_valeur",
-      "valeur",
-    ]);
-    expect(resultat.lignes).toEqual([
-      ["IND-001", "D46", "Lot", "2023-01-31", "vi", "12.5"],
-      ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"],
-    ]);
+    const resultat = await lireFichierTabulaire(chemin, "import.csv");
+
+    expect(resultat.entetes).toEqual(ENTETE);
+    expect(resultat.lignes).toEqual([LIGNE, SUIVANTE]);
   });
 
   it("numérote les lignes comme le tableur, en-tête comprise", async () => {
-    const resultat = await lireFichierTabulaire(
-      chemin("ligne-vide-milieu.csv"),
-      "ligne-vide-milieu.csv",
+    const chemin = deposerDansUnFichierTemporaire(
+      "import.csv",
+      construireCsv([ENTETE, LIGNE, ["", "", "", "", "", ""], SUIVANTE]),
     );
+
+    const resultat = await lireFichierTabulaire(chemin, "import.csv");
 
     expect(resultat.numerosDeLigneSource).toEqual([2, 3, 4]);
   });
 
   it("choisit le lecteur d'après l'extension, insensible à la casse", async () => {
-    const resultat = await lireFichierTabulaire(
-      chemin("xlsx-valide.xlsx"),
-      "XLSX-VALIDE.XLSX",
+    const chemin = deposerDansUnFichierTemporaire(
+      "import.xlsx",
+      construireXlsx([ENTETE, LIGNE]),
     );
 
-    expect(resultat.entetes[0]).toBe("identifiant_indic");
+    const resultat = await lireFichierTabulaire(chemin, "IMPORT.XLSX");
+
+    expect(resultat.entetes).toEqual(ENTETE);
   });
 
   it("refuse une extension non prise en charge", async () => {
-    await expect(
-      lireFichierTabulaire(chemin("valide-pointvirgule.csv"), "donnees.ods"),
-    ).rejects.toThrow(FichierTabulaireIllisibleError);
+    const chemin = deposerDansUnFichierTemporaire(
+      "donnees.ods",
+      construireCsv([ENTETE]),
+    );
+
+    await expect(lireFichierTabulaire(chemin, "donnees.ods")).rejects.toThrow(
+      FichierTabulaireIllisibleError,
+    );
   });
 
   it("refuse un fichier sans aucune ligne", async () => {
-    await expect(
-      lireFichierTabulaire(chemin("vide.csv"), "vide.csv"),
-    ).rejects.toThrow(/vide/i);
+    const chemin = deposerDansUnFichierTemporaire("vide.csv", Buffer.from(""));
+
+    await expect(lireFichierTabulaire(chemin, "vide.csv")).rejects.toThrow(
+      /vide/i,
+    );
   });
 });

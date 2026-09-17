@@ -6,8 +6,7 @@ const DELIMITEURS_CANDIDATS = [";", ",", "\t"] as const;
 /**
  * Un contenu est considéré comme UTF-8 s'il se décode sans produire de
  * caractère de remplacement. Sinon on retombe sur cp1252, que produit Excel en
- * français. Validata fait de même : une fixture cp1252 y est lue correctement
- * (mesuré le 2026-09-16).
+ * français : sans cela, les accents partent en vrille et faussent le verdict.
  */
 function decoderTexte(contenu: Buffer): string {
   const sansBom = contenu.subarray(0, 3).equals(BOM_UTF8)
@@ -48,11 +47,13 @@ export function lireCsv(contenu: Buffer): string[][] {
   return parse(texte, {
     columns: false,
     delimiter: detecterDelimiteur(texte),
-    // Les lignes vides sont conservées : Validata les signale (`blank-row`) et
-    // elles doivent garder leur numéro de ligne.
+    // Les lignes vides sont conservées : elles sont signalées à l'utilisateur
+    // et doivent garder leur numéro de ligne.
     skip_empty_lines: false,
     relax_column_count: true,
     relax_quotes: true,
-    trim: true,
+    // Pas de `trim` global : il rognerait les espaces des en-têtes avant qu'on
+    // puisse les signaler à l'utilisateur. Les cellules sont rognées au moment
+    // de la validation.
   }) as string[][];
 }

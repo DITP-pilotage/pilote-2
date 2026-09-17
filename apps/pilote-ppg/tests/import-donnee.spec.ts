@@ -83,11 +83,7 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
 
       await test.step("Vérification que le fichier n'est pas conforme", async () => {
         await pageMaj.expectFileInvalid();
-        // Le message vient du catalogue FR de l'application. Avant la
-        // suppression de Validata, l'utilisateur lisait le message brut du
-        // service tiers ("IND-97 ne respecte pas le motif imposé", suivi du
-        // markdown et de l'expression régulière du schéma) : la table de
-        // traduction ne s'exécutait plus depuis PIL-553.
+        // Le message vient du catalogue FR de l'application.
         await expect(
           page.getByText(
             "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.",

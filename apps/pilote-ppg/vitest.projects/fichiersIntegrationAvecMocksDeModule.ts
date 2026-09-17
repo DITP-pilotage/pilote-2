@@ -8,10 +8,9 @@
  * A tenir a jour : un nouveau fichier d'integration qui utilise `vi.mock` doit
  * etre ajoute ici, sinon son mock sera silencieusement ignore.
  *
- * Ces deux fichiers ne mockent plus que `ParseForm` : `node-mocks-http` ne sait
- * pas fabriquer une requete multipart que formidable saurait lire. Il n'y a en
- * revanche plus aucun appel reseau a simuler depuis la suppression de Validata,
- * les fichiers sont lus et valides pour de vrai.
+ * Ces deux fichiers ne mockent que `ParseForm` : `node-mocks-http` ne sait pas
+ * fabriquer une requete multipart que formidable saurait lire. Les fichiers
+ * eux-memes sont lus et valides pour de vrai.
  */
 export const FICHIERS_INTEGRATION_AVEC_MOCKS_DE_MODULE = [
   "src/server/import-indicateur/__tests__/infrastructure/handlers/ImportDonneeIndicateurAPIHandler.integration.test.ts",

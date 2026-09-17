@@ -53,19 +53,26 @@ Pour tout fichier d'entrée, le moteur local doit produire le même verdict que
 Validata : valide/invalide, quelles lignes, quels champs, quel type d'erreur.
 C'est ce verdict qui pilote l'import ; tout écart est une régression.
 
-La parité est établie par **mesure, pas par lecture de code** : un corpus de
-fixtures est soumis une dernière fois à Validata, et les réponses sont commitées
-comme goldens. Ces goldens sont la spécification et le critère d'acceptation. Le
-script de capture ne tourne pas en CI, qui reste entièrement hors ligne.
+La parité a été établie par **mesure, pas par lecture de code** : pendant le
+développement, un corpus de fichiers a été soumis au service pour relever son
+comportement réel, cas par cas. Ce relevé a corrigé cinq règles qui auraient été
+codées faux — plafond d'erreurs, formes de nombre acceptées, colonne manquante
+selon qu'elle appartient ou non à la clé primaire, sensibilité à la casse des
+en-têtes, cellules finales absentes.
 
-Seule exception, décidée explicitement : **les messages**. La capture du
-2026-09-16 a montré que Validata v0.12.5 ne renvoie plus les champs `code`,
-`note` et `description` sur lesquels notre table de traduction fait ses
-recherches. Celle-ci ne s'exécute donc plus depuis PIL-553, et 100 % des messages
-affichés viennent de Validata — en français, mais avec du markdown non rendu et
-les expressions régulières du schéma affichées à l'utilisateur. Le moteur local
-sert enfin le catalogue français écrit dans le code. Les goldens valident le
-verdict, pas le texte.
+Ces règles sont désormais **les nôtres** : elles vivent dans le code et dans les
+tests unitaires, qui sont lisibles et modifiables. Les données de relevé ne sont
+pas conservées — une fois la bascule faite, c'est notre comportement qui fait
+référence, et le figer sur celui d'un service disparu n'aurait fait que nous
+contraindre sans nous protéger.
+
+Seule exception, décidée explicitement : **les messages**. Le relevé a montré
+que Validata v0.12.5 ne renvoyait plus les champs `code`, `note` et `description`
+sur lesquels notre table de traduction faisait ses recherches. Celle-ci ne
+s'exécutait donc plus depuis PIL-553, et 100 % des messages affichés venaient du
+service tiers — en français, mais avec du markdown non rendu et les expressions
+régulières du schéma à l'écran. Le moteur local sert enfin le catalogue français
+écrit dans le code.
 
 ### Découpage
 

@@ -1,19 +1,16 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { deflateRawSync } from "node:zlib";
+import { construireXlsx } from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
 import {
   FichierTabulaireIllisibleError,
   lireEntreesZip,
 } from "@/server/infrastructure/fichier-tabulaire/lireZip";
 
-const FIXTURES = join(__dirname, "__fixtures__");
 const FEUILLE = "xl/worksheets/sheet1.xml";
-
-const archiveValide = () => readFileSync(join(FIXTURES, "xlsx-valide.xlsx"));
+const archive = () => construireXlsx([["identifiant_indic"], ["IND-001"]]);
 
 describe("lireEntreesZip", () => {
   it("extrait les entrées demandées et ignore les autres", () => {
-    const entrees = lireEntreesZip(archiveValide(), [FEUILLE]);
+    const entrees = lireEntreesZip(archive(), [FEUILLE]);
 
     expect([...entrees.keys()]).toEqual([FEUILLE]);
     expect(entrees.get(FEUILLE)!.toString("utf-8")).toContain(
@@ -22,22 +19,18 @@ describe("lireEntreesZip", () => {
   });
 
   it("n'extrait rien pour une entrée absente, sans lever", () => {
-    expect(lireEntreesZip(archiveValide(), ["xl/sharedStrings.xml"]).size).toBe(
-      0,
-    );
+    expect(lireEntreesZip(archive(), ["xl/sharedStrings.xml"]).size).toEqual(0);
   });
 
   it("refuse une archive dont le contenu décompressé dépasse le plafond", () => {
     expect(() =>
-      lireEntreesZip(archiveValide(), [FEUILLE], {
-        tailleDecompresseeMax: 10,
-      }),
+      lireEntreesZip(archive(), [FEUILLE], { tailleDecompresseeMax: 10 }),
     ).toThrow(FichierTabulaireIllisibleError);
   });
 
   it("refuse une archive comportant trop d'entrées", () => {
     expect(() =>
-      lireEntreesZip(archiveValide(), [FEUILLE], { nombreEntreesMax: 2 }),
+      lireEntreesZip(archive(), [FEUILLE], { nombreEntreesMax: 2 }),
     ).toThrow(/trop d'éléments/);
   });
 
@@ -57,19 +50,19 @@ describe("lireEntreesZip", () => {
   });
 
   it("refuse une entrée protégée par mot de passe", () => {
-    const archive = Buffer.from(archiveValide());
-    const positionCentral = archive.lastIndexOf(
+    const protegee = Buffer.from(archive());
+    const positionCentral = protegee.lastIndexOf(
       Buffer.from([0x50, 0x4b, 0x01, 0x02]),
     );
     // bit 0 du champ "flags" du central directory : contenu chiffré
-    archive.writeUInt16LE(0x0001, positionCentral + 8);
+    protegee.writeUInt16LE(0x0001, positionCentral + 8);
 
-    expect(() => lireEntreesZip(archive, [FEUILLE])).toThrow(/mot de passe/);
+    expect(() => lireEntreesZip(protegee, [FEUILLE])).toThrow(/mot de passe/);
   });
 
   it("borne l'inflation elle-même, pas seulement la taille annoncée", () => {
-    // Une bombe de décompression ment sur sa taille : la garde doit tenir au
-    // moment d'inflater. 10 Mo de 'A' tiennent dans ~10 Ko compressés.
+    // Une bombe de décompression ment sur sa taille : 10 Mo de 'A' tiennent
+    // dans quelques kilo-octets compressés.
     const gros = Buffer.alloc(10_000_000, 0x41);
     const compresse = deflateRawSync(gros);
 
