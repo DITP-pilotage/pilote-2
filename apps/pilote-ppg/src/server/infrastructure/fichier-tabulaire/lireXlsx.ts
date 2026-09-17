@@ -129,10 +129,9 @@ export function lireXlsx(archive: Buffer): LectureXlsx {
 
   for (let numero = 1; numero <= ligneMax; numero += 1) {
     const cellules = parLigne.get(numero) ?? new Map<number, string>();
-    // Chaque ligne s'arrête à sa propre dernière cellule renseignée : les
-    // cellules finales vides sont tronquées, comme le fait Validata. C'est ce
-    // qui permet de détecter ensuite une ligne plus courte que le schéma
-    // (`missing-cell`).
+    // Chaque ligne s'arrête à sa propre dernière cellule renseignée. C'est ce
+    // qui permet ensuite de distinguer une cellule vide d'une cellule absente,
+    // et donc de détecter une ligne plus courte que le schéma.
     const derniereColonne = Math.max(-1, ...cellules.keys());
     lignes.push(
       Array.from(

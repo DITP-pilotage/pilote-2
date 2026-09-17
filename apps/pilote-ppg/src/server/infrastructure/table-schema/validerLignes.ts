@@ -4,14 +4,15 @@ import type {
 } from "@/server/infrastructure/table-schema/TableSchema.types";
 
 /**
- * Mesuré sur Validata : frictionless plafonne à 1000 erreurs et cesse alors de
- * lire les lignes (`rows_processed: 200` sur `rows: 2000`).
+ * Au-delà de ce nombre de violations, le fichier est de toute façon à refaire :
+ * on cesse d'analyser plutôt que d'inonder l'utilisateur et la base.
  */
 export const PLAFOND_VIOLATIONS_DEFAUT = 1000;
 
 /**
- * Mesuré sur Validata : `1e5`, `+5`, `-3` et ` 5 ` sont des nombres valides ;
- * `12,5` (virgule décimale) et `abc` produisent une erreur de type.
+ * Nombres acceptés : signe optionnel, décimale au point, notation scientifique.
+ * La virgule décimale est refusée, pour lever l'ambiguïté avec le séparateur de
+ * colonnes des fichiers CSV français.
  */
 const REGEX_NOMBRE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
@@ -46,7 +47,8 @@ export function validerLignes(
       (cellule) => (cellule ?? "").trim() === "",
     );
     if (ligneEstVide) {
-      // Une ligne vide produit deux violations distinctes chez Validata.
+      // Une ligne vide est à la fois une ligne sans contenu et une clé
+      // primaire vide : les deux sont signalées, car les corriger diffère.
       ajouter({
         type: "blank-row",
         nomDuChamp: null,
@@ -71,8 +73,9 @@ export function validerLignes(
         indexDeLigne,
       };
 
-      // La ligne s'arrête avant cette colonne : Validata signale `missing-cell`,
-      // y compris sur un champ non requis.
+      // La ligne s'arrête avant cette colonne : la cellule est absente, ce qui
+      // se distingue d'une cellule présente et vide, y compris sur un champ
+      // non requis.
       if (champ.indexDeColonne >= ligne.length) {
         ajouter({ type: "missing-cell", cellule: "", ...base });
         continue;

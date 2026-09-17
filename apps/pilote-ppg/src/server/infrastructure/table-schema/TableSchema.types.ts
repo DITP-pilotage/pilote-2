@@ -57,8 +57,8 @@ export type SchemaCompile = {
   indexColonnesClePrimaire: number[];
   /**
    * Colonnes de la clé primaire absentes du fichier. Contrairement aux autres
-   * colonnes manquantes, que `schema_sync` laisse passer avec un simple
-   * warning, celles-ci sont bloquantes (mesuré sur Validata le 2026-09-16).
+   * colonnes manquantes, qui sont simplement ignorées, celles-ci sont
+   * bloquantes : sans elles, ni identification ni dédoublonnage possibles.
    */
   colonnesClePrimaireAbsentes: string[];
 };

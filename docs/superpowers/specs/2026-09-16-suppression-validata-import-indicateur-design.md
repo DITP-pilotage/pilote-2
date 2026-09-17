@@ -257,7 +257,7 @@ tard sans toucher au reste.
 ### CSV
 
 Détection d'encodage (BOM, puis heuristique UTF-8 / cp1252) et détection du délimiteur (`;` vs `,`),
-puis `csv-parse` — déjà une dépendance du projet. Le comportement cible est défini par les goldens.
+puis `csv-parse` — déjà une dépendance du projet.
 
 ### XLSX — zéro dépendance ajoutée
 
@@ -292,8 +292,8 @@ tableaux de chaînes. Cela ferme par conception la classe de vulnérabilité « 
 XLSX chiffré, ZIP64, classeurs multi-feuilles, `.ods`, `.xls` ancien format : **refus explicite avec
 message clair et trace en log**, jamais une lecture approximative. On ne devine jamais.
 
-Le périmètre exact des refus est conditionné aux goldens : si Validata acceptait un de ces formats,
-le refuser serait une régression.
+Le périmètre exact des refus a été calé sur ce que le service acceptait, pour ne pas refuser un
+fichier qui passait jusqu'ici.
 
 ## Le moteur Table Schema
 
@@ -306,7 +306,8 @@ Vocabulaire couvert, celui des 4 schémas existants : `required`, `pattern`, `en
 - **Une seule passe row-major** : pour chaque ligne, boucle sur les champs compilés, clé primaire
   calculée dans le même parcours. Bonus non lié à la performance : les erreurs sortent naturellement
   ordonnées par ligne, comme l'utilisateur les lit.
-- **Plafond d'erreurs aligné sur celui de frictionless**, déterminé par les goldens.
+- **Plafond d'erreurs** : au-delà, le fichier est de toute façon à refaire, on cesse d'analyser
+  plutôt que d'inonder l'utilisateur et la base.
 - Colonnes surnuméraires ignorées (cf. `zone_nom`).
 
 ## Messages d'erreur
@@ -320,9 +321,9 @@ catalogue français écrit dans le code. Ce catalogue existe, il est correct, il
 Le moteur local sert ce catalogue. C'est un changement visible pour l'utilisateur, assumé, et dans le
 bon sens : plus de markdown non rendu ni d'expressions régulières à l'écran.
 
-Les goldens valident donc **le verdict** — valide/invalide, quelles lignes, quels champs, quel type
-d'erreur — et non le texte des messages. Le texte est couvert par les tests unitaires du catalogue,
-repris de la suite existante.
+La parité porte donc sur **le verdict** — valide/invalide, quelles lignes, quels champs, quel type
+d'erreur — et non sur le texte des messages. Le texte est couvert par les tests unitaires du
+catalogue, repris de la suite existante.
 
 Chaque violation étant typée dès sa détection, le message est généré directement, sans couche de
 rétro-ingénierie de chaînes tierces — et sans possibilité qu'un changement d'API la débranche
@@ -363,20 +364,18 @@ Fichiers réels couvrant chaque cas, en CSV **et** XLSX quand c'est applicable :
   le même XML)
 - les 4 schémas
 
-### Étage 2 — Goldens Validata, une dernière fois
+### Étage 2 — Relevé du comportement de référence
 
-Script one-shot qui envoie chaque fixture à `api.validata.etalab.studio` et commite la réponse en
-`.golden.json`. **Les goldens sont la spécification et le critère d'acceptation de la PR : le moteur
-est fini quand le corpus passe à 100 %.**
+Pendant le développement, le corpus a été soumis au service pour relever son
+comportement réel et caler les règles du moteur : plafond d'erreurs, formes de
+nombre acceptées, traitement d'une colonne manquante selon qu'elle appartient ou
+non à la clé primaire, sensibilité à la casse des en-têtes, cellules finales
+absentes.
 
-Le script ne tourne **pas** en CI. Les goldens sont commités, la CI reste entièrement hors ligne.
-
-Fixtures synthétiques uniquement (`IND-001`, `D046`…) : aucune donnée réelle n'est envoyée au service
-tiers. C'est la seule occasion d'avoir la vérité terrain avant de couper.
-
-*Prérequis : que le service soit debout au moment de la capture. À défaut, repli sur des goldens
-dérivés de la spec frictionless, avec la perte de garantie que cela implique — à signaler
-explicitement dans la PR.*
+**Ce relevé n'est pas conservé.** Une fois la bascule faite, c'est notre
+comportement qui fait référence : les règles vivent dans le code et dans les
+tests unitaires, lisibles et modifiables, plutôt que dans des données figées sur
+un service disparu. La suite de tests est entièrement hors ligne.
 
 ### Étage 3 — Tests unitaires
 
@@ -502,8 +501,7 @@ On s'en sert pour transformer un risque aveugle en risque mesuré :
 
 | Risque | Traitement |
 |---|---|
-| Parité imparfaite sur un cas non anticipé | Le corpus de goldens est le critère d'acceptation ; tout écart est un échec de test, pas une découverte en production |
-| Validata indisponible au moment de la capture | Repli sur des goldens dérivés de la spec, signalé explicitement dans la PR |
+| Parité imparfaite sur un cas non anticipé | Le comportement de référence a été relevé cas par cas pendant le développement, puis figé dans les tests unitaires du moteur et de l'adapter |
 | Recoins d'OOXML propres à un producteur | Fixtures multi-producteurs + refus explicite plutôt que lecture approximative + log du producteur |
 | Nos propres bugs de parsing | Périmètre étroit (une feuille, cinq colonnes, chaînes et nombres), corpus, et porte de sortie documentée |
 | Variables d'environnement positionnées hors du repo | Vérification avant retrait du code de config |

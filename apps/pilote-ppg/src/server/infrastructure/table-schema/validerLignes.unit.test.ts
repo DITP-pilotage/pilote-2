@@ -71,14 +71,14 @@ describe("validerLignes", () => {
     ).toMatchObject({ type: "type", nomDuChamp: "valeur" });
   });
 
-  it("refuse la virgule comme séparateur décimal, comme Validata", () => {
+  it("refuse la virgule comme séparateur décimal", () => {
     expect(
       valider([["IND-001", "D46", "2023-01-31", "vi", "12,5"]])[0],
     ).toMatchObject({ type: "type" });
   });
 
   it.each(["1e5", "+5", "-3", "12.5", "7"])(
-    "accepte %s comme nombre, comme Validata",
+    "accepte %s comme nombre",
     (nombre) => {
       const sansBornes = compilerSchema(
         {

@@ -6,11 +6,9 @@ import type {
 /**
  * Catalogue des messages affichés à l'utilisateur.
  *
- * Ces textes existaient déjà dans l'adapter Validata, mais la table qui les
- * servait indexait sur des champs (`code`, `note`) que Validata v0.12 a cessé
- * de renvoyer : elle ne s'exécutait plus depuis PIL-553, et l'utilisateur
- * recevait les messages bruts du service tiers. Ici chaque violation est typée
- * à sa détection, donc le message est choisi directement.
+ * Chaque violation étant typée à sa détection, le message est choisi
+ * directement, sans couche de traduction intermédiaire susceptible de se
+ * désynchroniser des règles.
  */
 export function genererMessageErreur(
   violation: ViolationContrainte,
