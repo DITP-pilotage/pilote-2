@@ -129,6 +129,20 @@ const indexerCellulesDejaSignalees = (
     ),
   );
 
+/**
+ * Lignes rejetées dans leur ensemble — vides, ou en double. Une erreur sans nom
+ * de colonne porte sur la ligne entière : lui reprocher en plus le contenu de
+ * telle ou telle cellule n'apprend rien à l'utilisateur.
+ */
+const indexerLignesDejaRejetees = (
+  listeErreursValidation: ErreurValidationFichier[],
+): Set<number> =>
+  new Set(
+    listeErreursValidation
+      .filter((erreur) => !erreur.nomDuChamp)
+      .map((erreur) => erreur.numeroDeLigne),
+  );
+
 const DEFAULT_SCHEMA = "sans-contraintes.json";
 
 export class VerifierFichierIndicateurImporteUseCase {
@@ -202,11 +216,18 @@ export class VerifierFichierIndicateurImporteUseCase {
       const dejaSignalees = indexerCellulesDejaSignalees(
         report.listeErreursValidation,
       );
+      const lignesRejetees = indexerLignesDejaRejetees(
+        report.listeErreursValidation,
+      );
       const estDejaSignalee = (index: number, nomDuChamp: string) =>
         dejaSignalees.has(`${index + PREMIERE_LIGNE_DE_DONNEES}:${nomDuChamp}`);
 
       report.listeMesuresIndicateurTemporaire.forEach(
         (mesureIndicateurTemporaire, index) => {
+          if (lignesRejetees.has(index + PREMIERE_LIGNE_DE_DONNEES)) {
+            return;
+          }
+
           if (!estDejaSignalee(index, "identifiant_indic")) {
             correspondALIndicateurId(
               mesureIndicateurTemporaire,
@@ -284,7 +305,7 @@ export class VerifierFichierIndicateurImporteUseCase {
         ErreurValidationFichier.creerErreurValidationFichier({
           rapportId: report.id,
           cellule: "Cellule non définie",
-          nom: "Erreur non identifié",
+          nom: "Erreur non identifiée",
           message:
             "Une erreur est survenue lors de la validation du contenu du fichier",
           numeroDeLigne: 0,

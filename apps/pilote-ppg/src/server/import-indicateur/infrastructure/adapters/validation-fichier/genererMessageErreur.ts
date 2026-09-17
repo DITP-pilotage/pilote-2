@@ -1,7 +1,28 @@
 import type {
   SchemaCompile,
+  TypeViolation,
   ViolationContrainte,
 } from "@/server/infrastructure/table-schema/TableSchema.types";
+
+/**
+ * Le rapport d'erreurs est lu par des agents, pas par des développeurs : le
+ * type interne de la violation ne doit jamais atteindre l'écran.
+ */
+const LIBELLES: Record<TypeViolation, string> = {
+  required: "Cellule obligatoire vide",
+  pattern: "Format incorrect",
+  enum: "Valeur non autorisée",
+  type: "Valeur non numérique",
+  minimum: "Valeur trop petite",
+  maximum: "Valeur trop grande",
+  "primary-key": "Ligne en double",
+  "blank-row": "Ligne vide",
+  "missing-cell": "Colonne manquante",
+};
+
+export function libelleTypeErreur(type: TypeViolation): string {
+  return LIBELLES[type];
+}
 
 /**
  * Catalogue des messages affichés à l'utilisateur.

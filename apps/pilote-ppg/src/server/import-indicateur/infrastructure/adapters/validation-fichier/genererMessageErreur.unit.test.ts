@@ -1,5 +1,8 @@
 import { chargerSchemaBrut } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/SchemaRepository";
-import { genererMessageErreur } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/genererMessageErreur";
+import {
+  genererMessageErreur,
+  libelleTypeErreur,
+} from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/genererMessageErreur";
 import { compilerSchema } from "@/server/infrastructure/table-schema/compilerSchema";
 import type { ViolationContrainte } from "@/server/infrastructure/table-schema/TableSchema.types";
 
@@ -94,6 +97,45 @@ describe("genererMessageErreur", () => {
         indexDeLigne: 0,
       });
       expect(texte).not.toMatch(/\*\*|\^|\\d|\[0-9\]/);
+    }
+  });
+});
+
+describe("libelleTypeErreur", () => {
+  const TOUS_LES_TYPES = [
+    "required",
+    "pattern",
+    "enum",
+    "type",
+    "minimum",
+    "maximum",
+    "primary-key",
+    "blank-row",
+    "missing-cell",
+  ] as const;
+
+  it("donne un libellé français à chaque type de violation", () => {
+    expect(
+      Object.fromEntries(
+        TOUS_LES_TYPES.map((type) => [type, libelleTypeErreur(type)]),
+      ),
+    ).toEqual({
+      required: "Cellule obligatoire vide",
+      pattern: "Format incorrect",
+      enum: "Valeur non autorisée",
+      type: "Valeur non numérique",
+      minimum: "Valeur trop petite",
+      maximum: "Valeur trop grande",
+      "primary-key": "Ligne en double",
+      "blank-row": "Ligne vide",
+      "missing-cell": "Colonne manquante",
+    });
+  });
+
+  it("ne laisse jamais fuir le type interne à l'écran", () => {
+    for (const type of TOUS_LES_TYPES) {
+      expect(libelleTypeErreur(type)).not.toContain("-");
+      expect(libelleTypeErreur(type)).not.toEqual(type);
     }
   });
 });

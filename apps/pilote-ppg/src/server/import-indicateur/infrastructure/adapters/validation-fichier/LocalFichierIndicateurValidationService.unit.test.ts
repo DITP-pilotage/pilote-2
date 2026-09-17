@@ -144,7 +144,7 @@ describe("LocalFichierIndicateurValidationService", () => {
         nom: erreur.nom,
         numeroDeLigne: erreur.numeroDeLigne,
       })),
-    ).toEqual([{ nom: "primary-key", numeroDeLigne: 3 }]);
+    ).toEqual([{ nom: "Ligne en double", numeroDeLigne: 3 }]);
   });
 
   it("applique le schéma choisi, et pas un autre", async () => {

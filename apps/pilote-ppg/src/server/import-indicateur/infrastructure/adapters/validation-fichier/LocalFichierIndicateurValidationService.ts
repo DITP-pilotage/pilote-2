@@ -6,7 +6,10 @@ import type {
   ValiderFichierPayload,
 } from "@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface";
 import { supprimerLeFichier } from "@/server/import-indicateur/infrastructure/adapters/FichierService";
-import { genererMessageErreur } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/genererMessageErreur";
+import {
+  genererMessageErreur,
+  libelleTypeErreur,
+} from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/genererMessageErreur";
 import { chargerSchemaBrut } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/SchemaRepository";
 import { lireFichierTabulaire } from "@/server/infrastructure/fichier-tabulaire/lireFichierTabulaire";
 import { FichierTabulaireIllisibleError } from "@/server/infrastructure/fichier-tabulaire/lireZip";
@@ -119,7 +122,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
             ErreurValidationFichier.creerErreurValidationFichier({
               rapportId: rapport.id,
               cellule: violation.cellule ?? "Cellule non définie",
-              nom: violation.type,
+              nom: libelleTypeErreur(violation.type),
               message: genererMessageErreur(violation, schema, numeroDeLigne),
               numeroDeLigne,
               positionDeLigne: violation.indexDeLigne,
@@ -186,7 +189,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
         ErreurValidationFichier.creerErreurValidationFichier({
           rapportId: rapport.id,
           cellule: "Cellule non définie",
-          nom: illisible ? erreur.raison : "Erreur non identifié",
+          nom: illisible ? "Fichier illisible" : "Erreur non identifiée",
           message: illisible
             ? erreur.message
             : "Une erreur est survenue lors de la validation de la forme du fichier",
