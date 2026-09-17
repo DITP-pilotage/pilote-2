@@ -60,7 +60,7 @@ describe("PrismaErreurValidationFichierRepository", () => {
             .avecRapportId("a0c086eb-21e2-4f00-9ca8-4b0fcce133ad")
             .avecCellule("None")
             .avecMessage(
-              "Un indicateur ne peut être vide. C'est le cas à la ligne 2",
+              "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2",
             )
             .avecNom("Cellule vide")
             .avecNomDuChamp("indic_id")
@@ -101,7 +101,7 @@ describe("PrismaErreurValidationFichierRepository", () => {
         );
         expect(resultListeErreursValidationFichier[0].cellule).toEqual("None");
         expect(resultListeErreursValidationFichier[0].message).toEqual(
-          "Un indicateur ne peut être vide. C'est le cas à la ligne 2",
+          "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2",
         );
         expect(resultListeErreursValidationFichier[0].nom_du_champ).toEqual(
           "indic_id",

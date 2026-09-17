@@ -197,7 +197,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
             .avecRapportId("a0c086eb-21e2-4f00-9ca8-4b0fcce133ad")
             .avecCellule("None")
             .avecMessage(
-              "Un indicateur ne peut être vide. C'est le cas à la ligne 2",
+              "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2",
             )
             .avecNom("Cellule vide")
             .avecNomDuChamp("indic_id")
@@ -248,7 +248,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       expect(reportFichierData[0].nom).toEqual("Cellule vide");
       expect(reportFichierData[0].cellule).toEqual("None");
       expect(reportFichierData[0].message).toEqual(
-        "Un indicateur ne peut être vide. C'est le cas à la ligne 2",
+        "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2",
       );
       expect(reportFichierData[0].nomDuChamp).toEqual("indic_id");
       expect(reportFichierData[0].numeroDeLigne).toEqual(1);
@@ -324,7 +324,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
             new ErreurValidationFichierBuilder()
               .avecCellule("None")
               .avecMessage(
-                "Un indicateur ne peut être vide. C'est le cas à la ligne 2.",
+                "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2.",
               )
               .avecNom("Cellule vide")
               .avecNomDuChamp("indic_id")

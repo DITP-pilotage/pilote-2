@@ -95,7 +95,7 @@ describe("LocalFichierIndicateurValidationService", () => {
     ]);
 
     expect(messagesDe(rapport)).toContain(
-      "Le champ de l'en-tête 'identifiant_indic' comporte des espaces, veuillez les supprimer",
+      "Le champ de l'en-tête 'identifiant_indic' comporte des espaces, veuillez les supprimer.",
     );
   });
 
@@ -106,7 +106,7 @@ describe("LocalFichierIndicateurValidationService", () => {
     ]);
 
     expect(messagesDe(rapport)).toContain(
-      "Le champ de l'en-tête 'identifiant_indic' comporte des majuscules, veuillez les mettre en minuscule",
+      "Le champ de l'en-tête 'identifiant_indic' comporte des majuscules, veuillez les mettre en minuscules.",
     );
   });
 

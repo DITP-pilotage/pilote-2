@@ -76,7 +76,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
         if (entete.trim() !== entete) {
           erreurs.push(
             erreurDEnTete(
-              `Le champ de l'en-tête '${entete.trim()}' comporte des espaces, veuillez les supprimer`,
+              `Le champ de l'en-tête '${entete.trim()}' comporte des espaces, veuillez les supprimer.`,
               entete.trim(),
             ),
           );
@@ -84,7 +84,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
         if (entete.toLowerCase() !== entete) {
           erreurs.push(
             erreurDEnTete(
-              `Le champ de l'en-tête '${entete.toLowerCase()}' comporte des majuscules, veuillez les mettre en minuscule`,
+              `Le champ de l'en-tête '${entete.toLowerCase()}' comporte des majuscules, veuillez les mettre en minuscules.`,
               entete.toLowerCase(),
             ),
           );
