@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { construireXlsx } from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
+import {
+  construireXlsx,
+  construireXlsxNumerote,
+} from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
 import { lireXlsx } from "@/server/infrastructure/fichier-tabulaire/lireXlsx";
 
 const ENTETE = [
@@ -63,5 +66,27 @@ describe("lireXlsx", () => {
 
     expect(lignes[0]).toEqual(ENTETE);
     expect(producteur).not.toBeNull();
+  });
+
+  it("refuse un numéro de ligne au-delà de ce que le format autorise", () => {
+    // Le nombre de lignes rendues suit le plus grand numéro déclaré, pas le
+    // nombre de balises : quelques centaines d'octets suffisent sinon à faire
+    // allouer plusieurs gigaoctets.
+    const classeur = construireXlsxNumerote([
+      [1, ENTETE],
+      [100_000_000, LIGNE],
+    ]);
+
+    expect(classeur.length).toBeLessThan(2_000);
+    expect(() => lireXlsx(classeur)).toThrow(/trop de lignes/);
+  });
+
+  it("accepte le dernier numéro de ligne du format", () => {
+    const classeur = construireXlsxNumerote([
+      [1, ENTETE],
+      [1_048_576, LIGNE],
+    ]);
+
+    expect(lireXlsx(classeur).lignes).toHaveLength(1_048_576);
   });
 });

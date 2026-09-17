@@ -38,9 +38,21 @@ const echapper = (valeur: string) =>
 
 /** Classeur .xlsx minimal : un onglet, chaînes inline, cellules vides omises. */
 export function construireXlsx(lignes: string[][]): Buffer {
+  return construireXlsxNumerote(
+    lignes.map((ligne, index) => [index + 1, ligne]),
+  );
+}
+
+/**
+ * Même classeur, mais le numéro de ligne est choisi par l'appelant : c'est
+ * l'attribut `r` du XML, et non la position de la balise, qui fait foi à la
+ * lecture.
+ */
+export function construireXlsxNumerote(
+  lignes: [numero: number, cellules: string[]][],
+): Buffer {
   const rows = lignes
-    .map((ligne, index) => {
-      const numero = index + 1;
+    .map(([numero, ligne]) => {
       const cellules = ligne
         .map((valeur, colonne) => {
           if (valeur === "") return "";
