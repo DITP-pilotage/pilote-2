@@ -122,8 +122,8 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
           erreurs.push(
             erreurDEnTete(
               colonne === COLONNE_IDENTIFIANT
-                ? "L'en-tête identifiant_indic n'est pas présente"
-                : `L'en-tête ${colonne} n'est pas présente`,
+                ? "L'en-tête identifiant_indic n'est pas présent"
+                : `L'en-tête ${colonne} n'est pas présent`,
               colonne,
             ),
           );

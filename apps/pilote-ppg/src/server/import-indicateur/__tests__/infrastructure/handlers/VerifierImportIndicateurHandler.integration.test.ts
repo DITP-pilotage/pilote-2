@@ -129,7 +129,7 @@ describe("VerifierImportIndicateurHandler", () => {
 
       expect(rapport.estValide).toBe(false);
       expect(messagesDe(rapport)).toContain(
-        "'IND-XXX' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui du vôtre.",
+        "'IND-XXX' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.",
       );
     }),
   );
@@ -150,7 +150,7 @@ describe("VerifierImportIndicateurHandler", () => {
 
       expect(rapport.estValide).toBe(false);
       expect(messagesDe(rapport)).toContain(
-        "L'en-tête identifiant_indic n'est pas présente",
+        "L'en-tête identifiant_indic n'est pas présent",
       );
     }),
   );

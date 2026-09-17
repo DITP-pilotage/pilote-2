@@ -75,7 +75,7 @@ describe("LocalFichierIndicateurValidationService", () => {
 
     expect(rapport.estValide).toBe(false);
     expect(messagesDe(rapport)).toContain(
-      "L'en-tête identifiant_indic n'est pas présente",
+      "L'en-tête identifiant_indic n'est pas présent",
     );
   });
 
