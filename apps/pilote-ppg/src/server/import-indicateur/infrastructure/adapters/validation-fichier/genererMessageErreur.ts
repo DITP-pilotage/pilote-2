@@ -141,8 +141,7 @@ export function genererMessageErreur(
   }
 
   if (type === "enum") {
-    const champ = schema.champs.find((candidat) => candidat.nom === nomDuChamp);
-    const autorisees = [...(champ?.valeursAutorisees ?? [])].join(", ");
+    const autorisees = [...(champDuSchema?.valeursAutorisees ?? [])].join(", ");
     return `La valeur '${cellule}' de la colonne '${nomDuChamp}' doit être l'une des valeurs suivantes : ${autorisees} (ligne ${numeroDeLigne}).`;
   }
 
