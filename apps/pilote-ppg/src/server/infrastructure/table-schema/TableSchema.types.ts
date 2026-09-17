@@ -9,6 +9,8 @@ export type TableSchemaContraintesBrutes = {
 export type TableSchemaChampBrut = {
   name: string;
   type: "string" | "number";
+  /** Valeur d'exemple du schéma, citée dans les messages d'erreur. */
+  example?: string;
   constraints?: TableSchemaContraintesBrutes;
 };
 
@@ -41,6 +43,8 @@ export type ViolationContrainte = {
 
 export type ChampCompile = {
   nom: string;
+  /** Valeur d'exemple du schéma, citée dans les messages d'erreur. */
+  exemple: string | null;
   estNombre: boolean;
   /** -1 quand le champ est absent du fichier (schema_sync). */
   indexDeColonne: number;

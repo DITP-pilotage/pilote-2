@@ -17,6 +17,13 @@ export function genererMessageErreur(
 ): string {
   const { type, nomDuChamp, cellule } = violation;
 
+  // Les schémas portent un exemple par colonne : on le cite plutôt que de
+  // décrire le format avec un gabarit, qu'un utilisateur peut recopier tel quel.
+  const exemple = schema.champs.find(
+    (candidat) => candidat.nom === nomDuChamp,
+  )?.exemple;
+  const commeParExemple = exemple ? ` Exemple attendu : ${exemple}.` : "";
+
   if (type === "blank-row") {
     return `Toutes les cellules de la ligne ${numeroDeLigne} sont vides.`;
   }
@@ -34,16 +41,16 @@ export function genererMessageErreur(
       return `Un indicateur ne peut etre vide. C'est le cas à la ligne ${numeroDeLigne}.`;
     }
     if (type === "pattern") {
-      return "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.";
+      return `'${cellule}' n'est pas un identifiant d'indicateur valide (ligne ${numeroDeLigne}) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres.${commeParExemple} Vous pouvez vous référer au guide des indicateurs pour trouver celui du vôtre.`;
     }
   }
 
   if (nomDuChamp === "zone_id" && type === "pattern") {
-    return `La zone '${cellule}' n'est pas une zone valide pour ce type de saisie (ligne ${numeroDeLigne}).`;
+    return `La zone '${cellule}' n'est pas une zone valide pour ce type de saisie (ligne ${numeroDeLigne}).${commeParExemple}`;
   }
 
   if (nomDuChamp === "date_valeur" && type === "pattern") {
-    return `La date '${cellule}' n'est pas dans un format valide (AAAA-MM-JJ ou JJ/MM/AAAA), ligne ${numeroDeLigne}.`;
+    return `La date '${cellule}' n'est pas dans un format valide (AAAA-MM-JJ ou JJ/MM/AAAA), ligne ${numeroDeLigne}.${commeParExemple}`;
   }
 
   if (nomDuChamp === "type_valeur" && type === "enum") {
@@ -52,7 +59,7 @@ export function genererMessageErreur(
 
   if (nomDuChamp === "valeur") {
     if (type === "type") {
-      return `La valeur '${cellule}' n'est pas un nombre valide (ligne ${numeroDeLigne}). Utilisez le point comme séparateur décimal.`;
+      return `La valeur '${cellule}' n'est pas un nombre valide (ligne ${numeroDeLigne}). Utilisez le point comme séparateur décimal.${commeParExemple}`;
     }
     const champ = schema.champs.find((candidat) => candidat.nom === "valeur");
     if (type === "minimum") {
