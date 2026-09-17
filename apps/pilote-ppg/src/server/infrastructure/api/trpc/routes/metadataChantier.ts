@@ -97,6 +97,6 @@ export const metadataChantierRouter = créerRouteurTRPC({
       vérifierPermissionAdmin(ctx.session);
       await getContainer("metadataChantier")
         .resolve("enregistrerPonderationsIndicateursHandler")
-        .execute(input);
+        .execute(input, ctx.session.user.id);
     }),
 });
