@@ -69,4 +69,31 @@ describe("lireEntreesZip", () => {
     expect(compresse.length).toBeLessThan(20_000);
     expect(gros.length / compresse.length).toBeGreaterThan(100);
   });
+
+  it("refuse une archive dont l'en-tête local est hors du fichier", () => {
+    // Une archive tronquée déclare un offset qui ne tombe plus dans le
+    // fichier. Sans garde, la lecture lève une RangeError technique au lieu
+    // du message métier, et l'utilisateur ne sait pas quoi corriger.
+    const tronquee = Buffer.from(archive());
+    const positionCentral = tronquee.lastIndexOf(
+      Buffer.from([0x50, 0x4b, 0x01, 0x02]),
+    );
+    tronquee.writeUInt32LE(0xffffff00, positionCentral + 42);
+
+    expect(() => lireEntreesZip(tronquee, [FEUILLE])).toThrow(
+      FichierTabulaireIllisibleError,
+    );
+  });
+
+  it("refuse une entrée dont l'en-tête local n'a pas la bonne signature", () => {
+    const abimee = Buffer.from(archive());
+    // Le nom apparaît d'abord dans l'en-tête local, qui le précède de ses 30
+    // octets fixes ; l'occurrence suivante est celle du central directory.
+    const positionDuNom = abimee.indexOf(Buffer.from(FEUILLE, "utf-8"));
+    abimee.writeUInt32LE(0xdeadbeef, positionDuNom - 30);
+
+    expect(() => lireEntreesZip(abimee, [FEUILLE])).toThrow(
+      FichierTabulaireIllisibleError,
+    );
+  });
 });

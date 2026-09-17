@@ -4,6 +4,16 @@ import type {
   TableSchemaBrut,
 } from "@/server/infrastructure/table-schema/TableSchema.types";
 
+/**
+ * Table Schema veut qu'un motif décrive la valeur entière, comme le faisait
+ * Validata. `RegExp.test` cherche une sous-chaîne : sans cet ancrage, un motif
+ * dont l'alternation est de premier niveau — `|` a une précédence plus faible
+ * que `^` et `$` — n'est ancré que sur sa première et sa dernière branche.
+ */
+function ancrer(motif: string): RegExp {
+  return new RegExp(`^(?:${motif})$`);
+}
+
 export function compilerSchema(
   brut: TableSchemaBrut,
   entetes: string[],
@@ -24,7 +34,7 @@ export function compilerSchema(
       estNombre: champ.type === "number",
       indexDeColonne: indexDe(champ.name),
       requis: contraintes.required === true,
-      motif: contraintes.pattern ? new RegExp(contraintes.pattern) : null,
+      motif: contraintes.pattern ? ancrer(contraintes.pattern) : null,
       valeursAutorisees: contraintes.enum ? new Set(contraintes.enum) : null,
       minimum: contraintes.minimum ?? null,
       maximum: contraintes.maximum ?? null,

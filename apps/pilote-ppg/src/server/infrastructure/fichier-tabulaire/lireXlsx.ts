@@ -7,6 +7,14 @@ const FEUILLE = "xl/worksheets/sheet1.xml";
 const CHAINES_PARTAGEES = "xl/sharedStrings.xml";
 const PROPRIETES = "docProps/app.xml";
 
+/**
+ * Dernier numéro de ligne du format XLSX. Le nombre de lignes rendues suit le
+ * plus grand numéro déclaré, pas le nombre de balises `<row>` : sans ce
+ * plafond, une feuille de quelques centaines d'octets déclarant
+ * `r="100000000"` fait allouer plusieurs gigaoctets et emporte le process.
+ */
+const NUMERO_DE_LIGNE_MAX = 1_048_576;
+
 export type LectureXlsx = { lignes: string[][]; producteur: string | null };
 
 const ENTITES: Record<string, string> = {
@@ -90,6 +98,12 @@ export function lireXlsx(archive: Buffer): LectureXlsx {
     // au milieu du fichier ne doit décaler aucune des suivantes.
     const numeroLigne = Number(balise.match(/\br="(\d+)"/)?.[1] ?? 0);
     if (numeroLigne === 0) continue;
+    if (numeroLigne > NUMERO_DE_LIGNE_MAX) {
+      throw new FichierTabulaireIllisibleError(
+        "trop-de-lignes",
+        "Le classeur déclare trop de lignes pour le format .xlsx. Réenregistrez-le depuis votre tableur.",
+      );
+    }
     ligneMax = Math.max(ligneMax, numeroLigne);
 
     const cellules = new Map<number, string>();

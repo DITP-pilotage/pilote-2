@@ -2,6 +2,8 @@ import { inflateRawSync } from "node:zlib";
 
 const SIGNATURE_EOCD = 0x06054b50;
 const SIGNATURE_CENTRAL = 0x02014b50;
+const SIGNATURE_LOCALE = 0x04034b50;
+const TAILLE_ENTETE_LOCAL = 30;
 const TAILLE_EOCD = 22;
 
 const TAILLE_DECOMPRESSEE_MAX_DEFAUT = 64 * 1024 * 1024;
@@ -105,11 +107,33 @@ function extraire(
     );
   }
 
+  // L'offset vient du fichier : sur une archive tronquée il ne tombe plus
+  // dedans, et la lecture lèverait une RangeError technique à la place du
+  // message métier.
+  if (
+    entree.offsetLocal + TAILLE_ENTETE_LOCAL > archive.length ||
+    archive.readUInt32LE(entree.offsetLocal) !== SIGNATURE_LOCALE
+  ) {
+    throw new FichierTabulaireIllisibleError(
+      "zip-invalide",
+      "Le fichier n'est pas une archive lisible. Enregistrez-le au format .xlsx standard.",
+    );
+  }
+
   // L'en-tête local redéclare les longueurs de nom et d'extra, qui peuvent
   // différer de celles du central directory : on les relit ici.
   const longueurNom = archive.readUInt16LE(entree.offsetLocal + 26);
   const longueurExtra = archive.readUInt16LE(entree.offsetLocal + 28);
-  const debutDonnees = entree.offsetLocal + 30 + longueurNom + longueurExtra;
+  const debutDonnees =
+    entree.offsetLocal + TAILLE_ENTETE_LOCAL + longueurNom + longueurExtra;
+
+  if (debutDonnees + entree.tailleCompressee > archive.length) {
+    throw new FichierTabulaireIllisibleError(
+      "zip-invalide",
+      "Le fichier n'est pas une archive lisible. Enregistrez-le au format .xlsx standard.",
+    );
+  }
+
   const donnees = archive.subarray(
     debutDonnees,
     debutDonnees + entree.tailleCompressee,
