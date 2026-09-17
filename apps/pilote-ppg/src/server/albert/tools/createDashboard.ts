@@ -7,6 +7,7 @@ import {
 } from "@/server/albert/tools/composeDashboard";
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
 import { Albert } from "@/server/albert/Albert";
+import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 
 const chantierContextSchema = z.object({
   id: z.string().describe("Identifiant du chantier (ex: CH-064)"),
@@ -61,11 +62,11 @@ export const createDashboardInputSchema = z.object({
     .describe(
       "Chantiers ciblés avec leur nom et statut. Uniquement si l'utilisateur cible des chantiers précis ou obtenus via un outil de données.",
     ),
-  indicateurs: z
-    .array(indicateurContextSchema)
+  indicateur_ids: z
+    .array(z.string())
     .optional()
     .describe(
-      "Indicateurs déjà résolus (via get_evolution_indicateur ou search_indicateurs), uniquement si l'utilisateur veut visualiser leur évolution en graphique (courbe).",
+      "Identifiants IND-XXX des indicateurs dont l'utilisateur veut visualiser l'évolution en graphique (courbe). Formate un numéro seul en IND-<numéro>, ou résous-le via search_indicateurs si l'utilisateur décrit l'indicateur sans identifiant. Le nom et le chantier de rattachement sont résolus automatiquement.",
     ),
 });
 
@@ -157,6 +158,36 @@ export function validateDashboardIdentifiers(
   }
 }
 
+async function resolveIndicateurs(
+  indicateurIds: string[],
+  chantiersAccessibles: string[],
+  getIndicateurContexteQuery: GetIndicateurContexteQuery,
+): Promise<IndicateurContext[]> {
+  return Promise.all(
+    indicateurIds.map(async (indicateurId) => {
+      const contexte = await getIndicateurContexteQuery.execute({
+        indicateurId,
+      });
+
+      if (!contexte) {
+        throw new Error(`Indicateur introuvable : ${indicateurId}`);
+      }
+
+      if (!chantiersAccessibles.includes(contexte.chantier.id)) {
+        throw new Error(
+          `Accès non autorisé au chantier ${contexte.chantier.id}`,
+        );
+      }
+
+      return {
+        id: contexte.id,
+        nom: contexte.nom,
+        chantier_id: contexte.chantier.id,
+      };
+    }),
+  );
+}
+
 function buildSubagentPrompt(
   task: string,
   territoireCodes: string[],
@@ -178,43 +209,56 @@ function buildSubagentPrompt(
   return `${task}\n\n${contextLines.join("\n")}`;
 }
 
-export function createCreateDashboardTool() {
-  return tool({
-    description: `Délègue la composition d'un dashboard à un agent spécialisé.
+export function createCreateDashboardTool({
+  getIndicateurContexteQuery,
+}: {
+  getIndicateurContexteQuery: GetIndicateurContexteQuery;
+}) {
+  return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) =>
+    tool({
+      description: `Délègue la composition d'un dashboard à un agent spécialisé.
 Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
 un tableau de bord visuel, d'afficher les indicateurs d'un chantier, ou une courbe/un graphique d'évolution d'indicateur.
-Fournis la description de ce que l'utilisateur veut visualiser ainsi que les identifiants résolus (territoire_codes, jalons, chantiers, indicateurs).`,
-    inputSchema: createDashboardInputSchema,
-    execute: async (
-      { task, territoire_codes, jalons, chantiers, indicateurs },
-      { abortSignal },
-    ) => {
-      const output = await Albert.generateStructuredOutput({
-        systemPrompt: buildDashboardSystemPrompt(),
-        prompt: buildSubagentPrompt(
-          task,
+Fournis la description de ce que l'utilisateur veut visualiser ainsi que les identifiants résolus (territoire_codes, jalons, chantiers, indicateur_ids).`,
+      inputSchema: createDashboardInputSchema,
+      execute: async (
+        { task, territoire_codes, jalons, chantiers, indicateur_ids },
+        { abortSignal },
+      ) => {
+        const indicateurs = indicateur_ids
+          ? await resolveIndicateurs(
+              indicateur_ids,
+              chantiersAccessibles,
+              getIndicateurContexteQuery,
+            )
+          : undefined;
+
+        const output = await Albert.generateStructuredOutput({
+          systemPrompt: buildDashboardSystemPrompt(),
+          prompt: buildSubagentPrompt(
+            task,
+            territoire_codes,
+            jalons,
+            chantiers,
+            indicateurs,
+          ),
+          schema: composeDashboardInputSchema,
+          abortSignal,
+        });
+
+        validateDashboardIdentifiers(
+          output,
           territoire_codes,
           jalons,
           chantiers,
           indicateurs,
-        ),
-        schema: composeDashboardInputSchema,
-        abortSignal,
-      });
+        );
 
-      validateDashboardIdentifiers(
-        output,
-        territoire_codes,
-        jalons,
-        chantiers,
-        indicateurs,
-      );
-
-      return {
-        titre: output.titre,
-        containers: output.containers,
-        _output_instructions: OUTPUT_INSTRUCTIONS,
-      };
-    },
-  });
+        return {
+          titre: output.titre,
+          containers: output.containers,
+          _output_instructions: OUTPUT_INSTRUCTIONS,
+        };
+      },
+    });
 }

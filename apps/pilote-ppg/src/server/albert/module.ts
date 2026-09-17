@@ -12,6 +12,7 @@ import { createSearchChantiersTool } from "@/server/albert/tools/searchChantiers
 import { createSearchIndicateursTool } from "@/server/albert/tools/searchIndicateurs";
 import { createSearchTerritoiresTool } from "@/server/albert/tools/searchTerritoires";
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
+import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 import type { ChantierExports } from "@/server/chantiers/module";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { EnregistrerConversationUseCase } from "@/server/albert/usecases/EnregistrerConversationUseCase";
@@ -65,6 +66,7 @@ type AlbertOwnCradle = {
   createSearchIndicateursTool: ReturnType<typeof createSearchIndicateursTool>;
   createSearchTerritoiresTool: ReturnType<typeof createSearchTerritoiresTool>;
   createComposeDashboardTool: ReturnType<typeof createComposeDashboardTool>;
+  createCreateDashboardTool: ReturnType<typeof createCreateDashboardTool>;
   createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   evaluerChatUseCase: EvaluerChatUseCase;
   chatConversationRepository: ChatConversationRepository;
@@ -117,6 +119,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
         createSearchTerritoiresTool,
       ),
       createComposeDashboardTool: asModuleFunction(createComposeDashboardTool),
+      createCreateDashboardTool: asModuleFunction(createCreateDashboardTool),
       createExportRapportTool: asModuleFunction(createExportRapportTool),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
       chatConversationRepository: asModuleClass(

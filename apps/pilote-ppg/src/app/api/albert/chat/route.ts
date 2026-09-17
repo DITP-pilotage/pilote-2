@@ -12,7 +12,6 @@ import {
 } from "@/server/albert/detecteurIntention";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
-import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 import {
   calculerAccesAskAI,
   construireFeatureFlipsAskAI,
@@ -96,6 +95,9 @@ export async function POST(request: Request) {
     const createExportRapportTool = container.resolve(
       "createExportRapportTool",
     );
+    const createCreateDashboardTool = container.resolve(
+      "createCreateDashboardTool",
+    );
 
     const messagesPilote = messages as PiloteUIMessage[];
     const texteDernierMessage =
@@ -149,7 +151,9 @@ export async function POST(request: Request) {
       userId: session.user.id,
     });
 
-    const createDashboard = createCreateDashboardTool();
+    const createDashboard = createCreateDashboardTool({
+      chantiersAccessibles: session.habilitations.lecture.chantiers,
+    });
 
     const tools = {
       get_taux_avancement_territoire: getTauxAvancementTerritoire,
