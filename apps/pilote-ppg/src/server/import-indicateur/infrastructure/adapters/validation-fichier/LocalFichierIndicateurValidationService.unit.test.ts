@@ -110,6 +110,18 @@ describe("LocalFichierIndicateurValidationService", () => {
     );
   });
 
+  it("nomme chaque colonne dupliquée, même s'il y en a plusieurs", async () => {
+    const rapport = await validerCsv([
+      [...ENTETE, "valeur", "zone_id"],
+      [...LIGNE, "2", "D46"],
+    ]);
+
+    expect(messagesDe(rapport)).toEqual([
+      "La colonne 'zone_id' apparaît 2 fois dans l'en-tête. Chaque colonne ne doit y figurer qu'une seule fois.",
+      "La colonne 'valeur' apparaît 2 fois dans l'en-tête. Chaque colonne ne doit y figurer qu'une seule fois.",
+    ]);
+  });
+
   it("signale des en-têtes dupliqués sans analyser le contenu", async () => {
     const rapport = await validerCsv([
       [...ENTETE, "valeur"],
@@ -117,10 +129,17 @@ describe("LocalFichierIndicateurValidationService", () => {
     ]);
 
     // Les doublons d'en-tête sont bloquants : le contenu n'est pas analysé,
-    // donc aucune erreur de ligne ne doit remonter.
+    // donc aucune erreur de ligne ne doit remonter. La colonne fautive est
+    // nommée, sinon l'utilisateur doit la chercher lui-même.
     expect(messagesDe(rapport)).toEqual([
-      "Il existe des entêtes en doublon dans le fichier",
+      "La colonne 'valeur' apparaît 2 fois dans l'en-tête. Chaque colonne ne doit y figurer qu'une seule fois.",
     ]);
+    expect(
+      rapport.listeErreursValidation.map((erreur) => ({
+        cellule: erreur.cellule,
+        nomDuChamp: erreur.nomDuChamp,
+      })),
+    ).toEqual([{ cellule: "valeur", nomDuChamp: "valeur" }]);
   });
 
   it("numérote les erreurs avec le numéro de ligne du tableur", async () => {
