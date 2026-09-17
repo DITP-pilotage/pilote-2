@@ -120,12 +120,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
         // continue d'analyser le contenu, pour tout signaler d'un coup.
         for (const colonne of schema.colonnesClePrimaireAbsentes) {
           erreurs.push(
-            erreurDEnTete(
-              colonne === COLONNE_IDENTIFIANT
-                ? "L'en-tête identifiant_indic n'est pas présent"
-                : `L'en-tête ${colonne} n'est pas présent`,
-              colonne,
-            ),
+            erreurDEnTete(`L'en-tête ${colonne} n'est pas présent`, colonne),
           );
         }
 
