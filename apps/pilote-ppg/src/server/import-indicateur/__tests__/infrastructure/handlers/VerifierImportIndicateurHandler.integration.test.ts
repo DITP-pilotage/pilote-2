@@ -314,4 +314,23 @@ describe("VerifierImportIndicateurHandler", () => {
       }
     }),
   );
+
+  it(
+    "explique qu'un fichier vide est vide, au lieu de casser",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      // formidable refuse les fichiers vides par défaut, en levant depuis
+      // parseForm : la route renvoyait un 500 et l'écran restait muet.
+      const { statut, rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: Buffer.from(""),
+      });
+
+      expect(statut).toEqual(200);
+      expect(rapport.estValide).toBe(false);
+      expect(messagesDe(rapport)).toEqual(["Le fichier est vide."]);
+    }),
+  );
 });
