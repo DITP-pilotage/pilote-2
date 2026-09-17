@@ -11,6 +11,12 @@ import { IndicateurRepository } from "@/server/import-indicateur/domain/ports/In
 import logger from "@/server/infrastructure/Logger";
 import type { Inject } from "@/server/import-indicateur/module";
 
+/**
+ * L'en-tête occupe la ligne 1 du fichier : la première ligne de données est
+ * donc la ligne 2, comme l'affiche le tableur de l'utilisateur.
+ */
+const PREMIERE_LIGNE_DE_DONNEES = 2;
+
 const correspondALIndicateurId = (
   mesureIndicateurTemporaire: MesureIndicateurTemporaire,
   indicateurId: string,
@@ -24,10 +30,10 @@ const correspondALIndicateurId = (
         rapportId: rapportId,
         cellule: mesureIndicateurTemporaire.indicId,
         nom: "Indicateur invalide",
-        message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisis (${indicateurId})`,
-        numeroDeLigne: index + 1,
+        message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correspond pas à l'indicateur choisi (${indicateurId}), ligne ${index + PREMIERE_LIGNE_DE_DONNEES}.`,
+        numeroDeLigne: index + PREMIERE_LIGNE_DE_DONNEES,
         positionDeLigne: index,
-        nomDuChamp: "indic_id",
+        nomDuChamp: "identifiant_indic",
         positionDuChamp: -1,
       }),
     );
@@ -50,8 +56,8 @@ const verifierDateValide = (
           rapportId: reportId,
           cellule: mesureIndicateurTemporaire.metricDate,
           nom: "Date invalide",
-          message: `La date '${mesureIndicateurTemporaire.metricDate}' n'est pas une date valide`,
-          numeroDeLigne: index + 1,
+          message: `La date '${mesureIndicateurTemporaire.metricDate}' n'est pas une date valide (ligne ${index + PREMIERE_LIGNE_DE_DONNEES}).`,
+          numeroDeLigne: index + PREMIERE_LIGNE_DE_DONNEES,
           positionDeLigne: index,
           nomDuChamp: "date_valeur",
           positionDuChamp: -1,

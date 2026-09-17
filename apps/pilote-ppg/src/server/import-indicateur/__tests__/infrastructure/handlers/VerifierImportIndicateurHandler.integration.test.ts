@@ -125,7 +125,7 @@ describe("VerifierImportIndicateurHandler", () => {
 
       expect(rapport.estValide).toBe(false);
       expect(messagesDe(rapport)).toContain(
-        "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.",
+        "'IND-XXX' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui du vôtre.",
       );
     }),
   );

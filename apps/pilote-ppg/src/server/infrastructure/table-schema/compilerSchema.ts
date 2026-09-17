@@ -20,6 +20,7 @@ export function compilerSchema(
     const contraintes = champ.constraints ?? {};
     return {
       nom: champ.name,
+      exemple: champ.example ?? null,
       estNombre: champ.type === "number",
       indexDeColonne: indexDe(champ.name),
       requis: contraintes.required === true,

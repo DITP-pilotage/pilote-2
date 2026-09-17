@@ -86,12 +86,12 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
         // Le message vient du catalogue FR de l'application.
         await expect(
           page.getByText(
-            "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.",
+            "'IND-97' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui du vôtre.",
           ),
         ).toBeVisible();
         await expect(
           page.getByText(
-            `L'indicateur IND-97 ne correpond pas à l'indicateur choisis (${chantier.indicateurId})`,
+            `L'indicateur IND-97 ne correspond pas à l'indicateur choisi (${chantier.indicateurId}), ligne 2.`,
           ),
         ).toBeVisible({ timeout: 30_000 });
       });
