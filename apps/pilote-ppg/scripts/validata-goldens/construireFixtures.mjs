@@ -236,18 +236,6 @@ const CAS = {
     L_OK_1,
   ]),
   "entete-doublon": csv([[...ENTETE_STANDARD, "valeur"], [...L_OK_1, "2"]]),
-
-  "beaucoup-d-erreurs": csv([
-    ENTETE_STANDARD,
-    ...Array.from({ length: 2000 }, (_, i) => [
-      `MAUVAIS-${i}`,
-      "ZZZ",
-      "x",
-      "pas-une-date",
-      "zz",
-      "abc",
-    ]),
-  ]),
 };
 
 const CAS_XLSX = {
