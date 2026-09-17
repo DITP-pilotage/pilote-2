@@ -183,7 +183,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
 
         expect(response._getStatusCode()).toEqual(400);
         expect(data.erreurs.map((erreur) => erreur.message)).toContain(
-          "Le type de valeur doit être vi (valeur initiale), va (valeur d'avancement) ou vc (valeur cible).",
+          "Le type de valeur 'type-inconnu' n'est pas reconnu (ligne 2) : utilisez vi (valeur initiale), va (valeur d'avancement) ou vc (valeur cible).",
         );
       }),
     );
