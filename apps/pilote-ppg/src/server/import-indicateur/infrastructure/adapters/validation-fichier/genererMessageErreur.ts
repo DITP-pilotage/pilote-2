@@ -25,6 +25,36 @@ export function libelleTypeErreur(type: TypeViolation): string {
 }
 
 /**
+ * Un code de territoire porte sa maille dans son préfixe, et le motif du schéma
+ * dit quelles mailles il accepte : on le teste sur un échantillon par maille
+ * plutôt que d'analyser la description en français du schéma.
+ */
+const ECHANTILLONS_DE_MAILLE = [
+  { maille: "départementale", echantillon: "D46" },
+  { maille: "régionale", echantillon: "R84" },
+  { maille: "nationale", echantillon: "FRANCE" },
+] as const;
+
+function mailleDuCode(zone: string): string | null {
+  if (/^FRANCE$/i.test(zone)) return "nationale";
+  if (/^R/i.test(zone)) return "régionale";
+  if (/^D/i.test(zone)) return "départementale";
+  return null;
+}
+
+function maillesAcceptees(motif: RegExp | null): string[] {
+  if (!motif) return [];
+  return ECHANTILLONS_DE_MAILLE.filter(({ echantillon }) =>
+    motif.test(echantillon),
+  ).map(({ maille }) => maille);
+}
+
+function enumerer(elements: string[]): string {
+  if (elements.length <= 1) return elements.join("");
+  return `${elements.slice(0, -1).join(", ")} ou ${elements.at(-1)}`;
+}
+
+/**
  * Catalogue des messages affichés à l'utilisateur.
  *
  * Chaque violation étant typée à sa détection, le message est choisi
@@ -38,12 +68,14 @@ export function genererMessageErreur(
 ): string {
   const { type, nomDuChamp, cellule } = violation;
 
+  const champDuSchema = schema.champs.find(
+    (candidat) => candidat.nom === nomDuChamp,
+  );
   // Les schémas portent un exemple par colonne : on le cite plutôt que de
   // décrire le format avec un gabarit, qu'un utilisateur peut recopier tel quel.
-  const exemple = schema.champs.find(
-    (candidat) => candidat.nom === nomDuChamp,
-  )?.exemple;
-  const commeParExemple = exemple ? ` Exemple attendu : ${exemple}.` : "";
+  const commeParExemple = champDuSchema?.exemple
+    ? ` Exemple attendu : ${champDuSchema.exemple}.`
+    : "";
 
   if (type === "blank-row") {
     return `Toutes les cellules de la ligne ${numeroDeLigne} sont vides.`;
@@ -67,7 +99,21 @@ export function genererMessageErreur(
   }
 
   if (nomDuChamp === "zone_id" && type === "pattern") {
-    return `La zone '${cellule}' n'est pas une zone valide pour ce type de saisie (ligne ${numeroDeLigne}).${commeParExemple}`;
+    const mailleFournie = mailleDuCode(cellule ?? "");
+    const acceptees = maillesAcceptees(champDuSchema?.motif ?? null);
+
+    // Une zone de la mauvaise maille et une zone inconnue du référentiel sont
+    // deux erreurs distinctes : la première se corrige en changeant d'échelle,
+    // la seconde en corrigeant le code.
+    if (
+      mailleFournie &&
+      acceptees.length > 0 &&
+      !acceptees.includes(mailleFournie)
+    ) {
+      return `La zone '${cellule}' est une zone ${mailleFournie}, or cet indicateur ne peut être renseigné qu'à la maille ${enumerer(acceptees)} (ligne ${numeroDeLigne}).${commeParExemple}`;
+    }
+
+    return `La zone '${cellule}' n'est pas dans le référentiel des territoires (ligne ${numeroDeLigne}).${commeParExemple}`;
   }
 
   if (nomDuChamp === "date_valeur" && type === "pattern") {
@@ -82,12 +128,11 @@ export function genererMessageErreur(
     if (type === "type") {
       return `La valeur '${cellule}' n'est pas un nombre valide (ligne ${numeroDeLigne}). Utilisez le point comme séparateur décimal.${commeParExemple}`;
     }
-    const champ = schema.champs.find((candidat) => candidat.nom === "valeur");
     if (type === "minimum") {
-      return `La valeur '${cellule}' doit être supérieure ou égale à ${champ?.minimum} (ligne ${numeroDeLigne}).`;
+      return `La valeur '${cellule}' doit être supérieure ou égale à ${champDuSchema?.minimum} (ligne ${numeroDeLigne}).`;
     }
     if (type === "maximum") {
-      return `La valeur '${cellule}' doit être inférieure ou égale à ${champ?.maximum} (ligne ${numeroDeLigne}).`;
+      return `La valeur '${cellule}' doit être inférieure ou égale à ${champDuSchema?.maximum} (ligne ${numeroDeLigne}).`;
     }
   }
 
