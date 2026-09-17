@@ -191,4 +191,26 @@ describe("VerifierImportIndicateurHandler", () => {
       );
     }),
   );
+
+  it(
+    "signale une date illisible sans effacer le reste du rapport",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-001", "D46", "pas-une-date", "vi", "9"]]),
+      });
+
+      expect(rapport.estValide).toBe(false);
+      // `new Date("pas-une-date").toISOString()` leve : sans garde, l'exception
+      // remontait au catch du use case et remplacait tout le rapport par
+      // "Une erreur est survenue lors de la validation du contenu du fichier".
+      expect(messagesDe(rapport)).not.toContain(
+        "Une erreur est survenue lors de la validation du contenu du fichier",
+      );
+      expect(messagesDe(rapport).join(" ")).toContain("pas-une-date");
+    }),
+  );
 });

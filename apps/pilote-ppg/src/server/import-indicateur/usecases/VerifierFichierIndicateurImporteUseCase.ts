@@ -47,9 +47,14 @@ const verifierDateValide = (
   index: number,
 ) => {
   if (mesureIndicateurTemporaire.metricDate) {
-    const tmpDate = new Date(mesureIndicateurTemporaire.metricDate)
-      .toISOString()
-      .split("T")[0];
+    // `new Date` rend une date invalide sur n'importe quelle chaîne, et
+    // `toISOString` lève dessus. Sans cette garde, l'exception remonte au
+    // catch du use case, qui remplace alors tout le rapport par un message
+    // générique : l'utilisateur perd l'erreur qui lui aurait été utile.
+    const date = new Date(mesureIndicateurTemporaire.metricDate);
+    const estUneDate = !Number.isNaN(date.getTime());
+    const tmpDate = estUneDate ? date.toISOString().split("T")[0] : null;
+
     if (tmpDate !== mesureIndicateurTemporaire.metricDate) {
       listeErreursValidation.push(
         ErreurValidationFichier.creerErreurValidationFichier({
