@@ -485,7 +485,8 @@ On s'en sert pour transformer un risque aveugle en risque mesuré :
 - Suppression du dossier `public/schema/` **à la racine du repo**
 - Suppression du projet vitest `server-integration-mocks`, du module
   `vitest.projects/fichiersIntegrationAvecMocksDeModule.ts` et de l'`exclude` correspondant dans
-  `server-integration`, si la liste se vide comme le commentaire le prévoit
+  `server-integration` : les tests d'intégration construisent de vraies requêtes HTTP, plus aucun
+  `vi.mock` ne subsiste, et la suite retrouve un seul projet
 - Commentaire obsolète dans `PublierFichierIndicateurImporteUseCase.ts`
 
 ## Hors scope
