@@ -114,6 +114,21 @@ const verifierFormatZoneId = (
   mesureIndicateurTemporaire.mettreZoneIdEnMajuscule();
 };
 
+/**
+ * Les contrôles ci-dessus complètent ceux du moteur : ils portent sur le sens
+ * de la donnée, pas sur sa forme. Ils n'ont donc rien à dire d'une cellule que
+ * le moteur a déjà rejetée — sinon l'utilisateur lit deux lignes pour un seul
+ * problème.
+ */
+const indexerCellulesDejaSignalees = (
+  listeErreursValidation: ErreurValidationFichier[],
+): Set<string> =>
+  new Set(
+    listeErreursValidation.map(
+      (erreur) => `${erreur.numeroDeLigne}:${erreur.nomDuChamp}`,
+    ),
+  );
+
 const DEFAULT_SCHEMA = "sans-contraintes.json";
 
 export class VerifierFichierIndicateurImporteUseCase {
@@ -184,22 +199,34 @@ export class VerifierFichierIndicateurImporteUseCase {
     await this.rapportRepository.sauvegarder(report);
 
     try {
+      const dejaSignalees = indexerCellulesDejaSignalees(
+        report.listeErreursValidation,
+      );
+      const estDejaSignalee = (index: number, nomDuChamp: string) =>
+        dejaSignalees.has(`${index + PREMIERE_LIGNE_DE_DONNEES}:${nomDuChamp}`);
+
       report.listeMesuresIndicateurTemporaire.forEach(
         (mesureIndicateurTemporaire, index) => {
-          correspondALIndicateurId(
-            mesureIndicateurTemporaire,
-            indicateurId,
-            report.id,
-            report.listeErreursValidation,
-            index,
-          );
+          if (!estDejaSignalee(index, "identifiant_indic")) {
+            correspondALIndicateurId(
+              mesureIndicateurTemporaire,
+              indicateurId,
+              report.id,
+              report.listeErreursValidation,
+              index,
+            );
+          }
+
           verifierFormatDateValeur(mesureIndicateurTemporaire);
-          verifierDateValide(
-            mesureIndicateurTemporaire,
-            report.listeErreursValidation,
-            report.id,
-            index,
-          );
+          if (!estDejaSignalee(index, "date_valeur")) {
+            verifierDateValide(
+              mesureIndicateurTemporaire,
+              report.listeErreursValidation,
+              report.id,
+              index,
+            );
+          }
+
           verifierFormatTypeValeur(mesureIndicateurTemporaire);
           verifierFormatZoneId(mesureIndicateurTemporaire);
         },

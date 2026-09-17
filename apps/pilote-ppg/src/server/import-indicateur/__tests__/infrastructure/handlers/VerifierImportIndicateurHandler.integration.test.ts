@@ -213,4 +213,59 @@ describe("VerifierImportIndicateurHandler", () => {
       expect(messagesDe(rapport).join(" ")).toContain("pas-une-date");
     }),
   );
+
+  it(
+    "ne signale qu'une fois une cellule fautive",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-001", "D46", "pas-une-date", "vi", "9"]]),
+      });
+
+      // Le format et l'existence de la date sont deux contrôles distincts : le
+      // second n'a rien à ajouter sur une cellule que le premier a rejetée.
+      expect(
+        rapport.listeErreursValidation.map((erreur) => erreur.nomDuChamp),
+      ).toEqual(["date_valeur"]);
+    }),
+  );
+
+  it(
+    "vérifie toujours qu'une date bien formée existe vraiment",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      // 2023-02-30 respecte le motif du schéma mais n'existe pas.
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-001", "D46", "2023-02-30", "vi", "9"]]),
+      });
+
+      expect(rapport.estValide).toBe(false);
+      expect(messagesDe(rapport)).toContain(
+        "La date '2023-02-30' n'est pas une date valide (ligne 2).",
+      );
+    }),
+  );
+
+  it(
+    "n'ajoute pas d'erreur d'indicateur sur un identifiant déjà rejeté",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-XXX", "D46", "2026-01-31", "vi", "9"]]),
+      });
+
+      expect(
+        rapport.listeErreursValidation.map((erreur) => erreur.nomDuChamp),
+      ).toEqual(["identifiant_indic"]);
+    }),
+  );
 });
