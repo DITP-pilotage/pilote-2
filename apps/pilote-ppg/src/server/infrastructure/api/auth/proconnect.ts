@@ -1,6 +1,7 @@
 import type { OIDCConfig } from "next-auth/providers";
 import { z } from "zod";
 import { configuration } from "@/config";
+import { ACR_DOUBLE_AUTHENTIFICATION } from "@/server/authentification/domain/autoriserConnexionProConnect";
 
 export const PROVIDER_PROCONNECT = "proconnect";
 
@@ -40,6 +41,29 @@ export const decoderPayloadJwt = ({ jwt }: { jwt: string }): unknown => {
   } catch {
     throw new Error("Réponse userinfo ProConnect malformée");
   }
+};
+
+const payloadIdTokenSchema = z.object({ acr: z.string().optional() });
+
+/**
+ * L'`acr` est lu dans l'`id_token` et non dans le profil : avec
+ * `idToken: false`, le profil vient du userinfo, qui ne le porte pas.
+ *
+ * Décoder sans vérifier la signature est sûr ici : Auth.js a déjà validé
+ * l'`id_token` (signature, émetteur, nonce) avant d'appeler le userinfo.
+ */
+export const acrDepuisIdToken = ({
+  idToken,
+}: {
+  idToken: string | undefined;
+}): string | undefined => {
+  if (!idToken) {
+    return undefined;
+  }
+  const resultat = payloadIdTokenSchema.safeParse(
+    decoderPayloadJwt({ jwt: idToken }),
+  );
+  return resultat.success ? resultat.data.acr : undefined;
 };
 
 /**
@@ -94,7 +118,17 @@ export const proconnect: OIDCConfig<ProfilProConnect> = {
   clientId: configuration().proconnect.clientId,
   clientSecret: configuration().proconnect.clientSecret,
   authorization: {
-    params: { scope: "openid given_name usual_name email" },
+    params: {
+      scope: "openid given_name usual_name email",
+      // Exigence, pas garantie : l'`acr` obtenu est revérifié au callback
+      // `signIn`. Passé en objet : Auth.js le sérialise lui-même, un
+      // `JSON.stringify` ici le double-encoderait.
+      claims: {
+        id_token: {
+          acr: { essential: true, values: ACR_DOUBLE_AUTHENTIFICATION },
+        },
+      },
+    },
   },
   client: { token_endpoint_auth_method: "client_secret_post" },
   // ProConnect exige `state` et `nonce` dans la requête d'autorisation, là où

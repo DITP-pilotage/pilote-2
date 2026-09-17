@@ -2,6 +2,8 @@ const MESSAGE_GENERIQUE =
   "La connexion n'a pas abouti. Vous pouvez réessayer ci-dessous.";
 
 const MESSAGES_PAR_MOTIF: Record<string, string> = {
+  double_authentification_absente:
+    "PILOTE exige une double authentification. Configurez un second facteur d'authentification lors de votre connexion ProConnect, puis réessayez.",
   compte_inconnu:
     "Nous n'avons trouvé aucun compte PILOTE correspondant à votre adresse électronique. Votre compte doit avoir été créé au préalable par un administrateur.",
   compte_desactive:
