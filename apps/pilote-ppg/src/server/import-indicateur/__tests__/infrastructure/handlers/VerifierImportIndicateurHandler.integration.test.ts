@@ -13,7 +13,11 @@ import { requeteMultipart } from "@/server/import-indicateur/__tests__/infrastru
 type RapportDeValidation = {
   id: string;
   estValide: boolean;
-  listeErreursValidation: { message: string; nomDuChamp: string }[];
+  listeErreursValidation: {
+    nom: string;
+    message: string;
+    nomDuChamp: string;
+  }[];
 };
 
 const EMAIL_ADMIN = "ditp.admin@example.com";
@@ -266,6 +270,48 @@ describe("VerifierImportIndicateurHandler", () => {
       expect(
         rapport.listeErreursValidation.map((erreur) => erreur.nomDuChamp),
       ).toEqual(["identifiant_indic"]);
+    }),
+  );
+
+  it(
+    "ne reproche rien d'autre à une ligne entièrement vide",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([
+          ["IND-001", "D46", "2026-01-31", "vi", "9"],
+          ["", "", "", "", ""],
+        ]),
+      });
+
+      // Une ligne vide est signalée comme vide et comme clé en double. Lui
+      // reprocher en plus son identifiant n'apprendrait rien.
+      expect(
+        rapport.listeErreursValidation.map((erreur) => erreur.nom),
+      ).toEqual(["Ligne vide", "Ligne en double"]);
+    }),
+  );
+
+  it(
+    "n'affiche que des libellés français dans le rapport",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([
+          ["IND-001", "ZZZ", "2026-01-31", "zz", "abc"],
+          ["", "", "", "", ""],
+        ]),
+      });
+
+      for (const erreur of rapport.listeErreursValidation) {
+        expect(erreur.nom).not.toMatch(/^[a-z-]+$/);
+      }
     }),
   );
 });
