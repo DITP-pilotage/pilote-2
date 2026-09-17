@@ -52,7 +52,7 @@ const payloadIdTokenSchema = z.object({ acr: z.string().optional() });
  * Décoder sans vérifier la signature est sûr ici : Auth.js a déjà validé
  * l'`id_token` (signature, émetteur, nonce) avant d'appeler le userinfo.
  */
-export const acrDepuisIdToken = ({
+export const acrFromIdToken = ({
   idToken,
 }: {
   idToken: string | undefined;

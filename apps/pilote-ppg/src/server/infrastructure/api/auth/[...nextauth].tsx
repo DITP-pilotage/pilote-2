@@ -8,7 +8,7 @@ import axios from "axios";
 import logger from "@/server/infrastructure/Logger";
 import { configuration } from "@/config";
 import {
-  acrDepuisIdToken,
+  acrFromIdToken,
   proconnect,
   PROVIDER_PROCONNECT,
 } from "@/server/infrastructure/api/auth/proconnect";
@@ -324,7 +324,7 @@ export const authConfig: NextAuthConfig = {
       const statutCompteQuery =
         getContainer("gestionUtilisateur").cradle.statutCompteQuery;
 
-      const acr = acrDepuisIdToken({ idToken: account.id_token });
+      const acr = acrFromIdToken({ idToken: account.id_token });
       const motif = await autoriserConnexionProConnect({
         email: profile?.email,
         acr,
