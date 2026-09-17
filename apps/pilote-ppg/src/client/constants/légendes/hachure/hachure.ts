@@ -1,5 +1,7 @@
-import { Remplissage } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
+export const REMPLISSAGE_HACHURE = "hachures";
 
-export function estHachure(remplissage: Remplissage): boolean {
-  return /url\(#.*\)/.test(remplissage);
+export function estHachure(
+  remplissage: string,
+): remplissage is typeof REMPLISSAGE_HACHURE {
+  return remplissage === REMPLISSAGE_HACHURE;
 }

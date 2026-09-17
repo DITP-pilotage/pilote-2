@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import hachuresGrisBlanc from "@/client/constants/légendes/hachure/hachuresGrisBlanc";
+import { HachuresDiagonales } from "@/client/constants/légendes/hachure/hachures";
 import { estHachure } from "@/client/constants/légendes/hachure/hachure";
 import { Remplissage } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 
@@ -30,16 +30,17 @@ export const LegendeCartographie: FunctionComponent<
             viewBox={`0 0 ${MISE_A_LECHELLE} ${MISE_A_LECHELLE}`}
             xmlns="http://www.w3.org/2000/svg"
           >
-            <defs>
-              {estHachure(item.remplissage) && hachuresGrisBlanc.patternSVG}
-            </defs>
-            <rect
-              fill={item.remplissage}
-              height={MISE_A_LECHELLE}
-              width={MISE_A_LECHELLE}
-              x={0}
-              y={0}
-            />
+            {estHachure(item.remplissage) ? (
+              <HachuresDiagonales taille={MISE_A_LECHELLE} />
+            ) : (
+              <rect
+                fill={item.remplissage}
+                height={MISE_A_LECHELLE}
+                width={MISE_A_LECHELLE}
+                x={0}
+                y={0}
+              />
+            )}
           </svg>
           <span className="text-xs">{item.libellé}</span>
         </li>
