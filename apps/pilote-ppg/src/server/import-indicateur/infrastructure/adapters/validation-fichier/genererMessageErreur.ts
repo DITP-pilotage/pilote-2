@@ -86,7 +86,7 @@ export function genererMessageErreur(
   }
 
   if (type === "missing-cell") {
-    return `La colonne '${nomDuChamp}' est absente à la ligne ${numeroDeLigne}. Toutes les colonnes doivent être renseignées, même vides.`;
+    return `La colonne '${nomDuChamp}' est absente à la ligne ${numeroDeLigne}. Toutes les colonnes doivent être présentes, même vides.`;
   }
 
   if (nomDuChamp === "identifiant_indic") {
@@ -94,7 +94,7 @@ export function genererMessageErreur(
       return `Un indicateur ne peut être vide. C'est le cas à la ligne ${numeroDeLigne}.`;
     }
     if (type === "pattern") {
-      return `'${cellule}' n'est pas un identifiant d'indicateur valide (ligne ${numeroDeLigne}) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres.${commeParExemple} Vous pouvez vous référer au guide des indicateurs pour trouver celui du vôtre.`;
+      return `'${cellule}' n'est pas un identifiant d'indicateur valide (ligne ${numeroDeLigne}) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres.${commeParExemple} Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.`;
     }
   }
 
