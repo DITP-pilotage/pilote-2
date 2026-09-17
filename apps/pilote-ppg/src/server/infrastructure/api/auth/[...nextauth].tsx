@@ -8,6 +8,7 @@ import axios from "axios";
 import logger from "@/server/infrastructure/Logger";
 import { configuration } from "@/config";
 import {
+  acrFromIdToken,
   proconnect,
   PROVIDER_PROCONNECT,
 } from "@/server/infrastructure/api/auth/proconnect";
@@ -323,8 +324,10 @@ export const authConfig: NextAuthConfig = {
       const statutCompteQuery =
         getContainer("gestionUtilisateur").cradle.statutCompteQuery;
 
+      const acr = acrFromIdToken({ idToken: account.id_token });
       const motif = await autoriserConnexionProConnect({
         email: profile?.email,
+        acr,
         recupererStatutCompte: (email) =>
           statutCompteQuery.recuperer({ email }),
       });
@@ -337,6 +340,7 @@ export const authConfig: NextAuthConfig = {
             categorie: "auth",
             source: "nextauth.signIn",
             provider: account.provider,
+            acr,
             motif,
           },
           "Connexion ProConnect refusée",
@@ -349,6 +353,7 @@ export const authConfig: NextAuthConfig = {
           categorie: "auth",
           source: "nextauth.signIn",
           provider: account.provider,
+          acr,
         },
         "Connexion ProConnect autorisée",
       );

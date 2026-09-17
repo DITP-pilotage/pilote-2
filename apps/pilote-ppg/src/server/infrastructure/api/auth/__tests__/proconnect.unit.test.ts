@@ -1,4 +1,5 @@
 import {
+  acrFromIdToken,
   decoderPayloadJwt,
   profilProConnectSchema,
 } from "@/server/infrastructure/api/auth/proconnect";
@@ -67,5 +68,23 @@ describe("profilProConnectSchema", () => {
     });
 
     expect(resultat.success).toBe(false);
+  });
+});
+
+describe("acrFromIdToken", () => {
+  it("lit l'acr porté par l'id_token", () => {
+    const idToken = encoderJwt({ sub: "abc", acr: "eidas1-mfa" });
+
+    expect(acrFromIdToken({ idToken })).toBe("eidas1-mfa");
+  });
+
+  it("renvoie undefined si l'id_token ne porte pas d'acr", () => {
+    const idToken = encoderJwt({ sub: "abc" });
+
+    expect(acrFromIdToken({ idToken })).toBeUndefined();
+  });
+
+  it("renvoie undefined sans id_token", () => {
+    expect(acrFromIdToken({ idToken: undefined })).toBeUndefined();
   });
 });
