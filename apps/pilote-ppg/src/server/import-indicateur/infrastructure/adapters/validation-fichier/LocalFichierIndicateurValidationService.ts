@@ -32,15 +32,15 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
     });
 
     const erreurs: ErreurValidationFichier[] = [];
-    const erreurDEnTete = (message: string) =>
+    const erreurDEnTete = (message: string, colonne?: string) =>
       ErreurValidationFichier.creerErreurValidationFichier({
         rapportId: rapport.id,
-        cellule: "Cellule non définie",
+        cellule: colonne ?? "Cellule non définie",
         nom: "En-tête incorrect",
         message,
         numeroDeLigne: 1,
         positionDeLigne: 0,
-        nomDuChamp: "",
+        nomDuChamp: colonne ?? "",
         positionDuChamp: -1,
       });
 
@@ -77,6 +77,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
           erreurs.push(
             erreurDEnTete(
               `Le champ de l'en-tête '${entete.trim()}' comporte des espaces, veuillez les supprimer`,
+              entete.trim(),
             ),
           );
         }
@@ -84,20 +85,34 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
           erreurs.push(
             erreurDEnTete(
               `Le champ de l'en-tête '${entete.toLowerCase()}' comporte des majuscules, veuillez les mettre en minuscule`,
+              entete.toLowerCase(),
             ),
           );
         }
       }
 
       const indexIdentifiant = normalisees.indexOf(COLONNE_IDENTIFIANT);
-      const entetesEnDoublon = new Set(normalisees).size !== normalisees.length;
 
-      if (entetesEnDoublon) {
+      const occurrences = new Map<string, number>();
+      for (const entete of normalisees) {
+        occurrences.set(entete, (occurrences.get(entete) ?? 0) + 1);
+      }
+      const colonnesEnDoublon = [...occurrences.entries()]
+        .filter(([, nombre]) => nombre > 1)
+        .map(([colonne, nombre]) => ({ colonne, nombre }));
+
+      if (colonnesEnDoublon.length > 0) {
         // Des en-têtes en doublon rendent toute analyse ambiguë : on s'arrête
-        // là plutôt que de signaler des erreurs sur la mauvaise colonne.
-        erreurs.push(
-          erreurDEnTete("Il existe des entêtes en doublon dans le fichier"),
-        );
+        // là plutôt que de signaler des erreurs sur la mauvaise colonne. On
+        // nomme chaque colonne fautive, sinon l'utilisateur doit la chercher.
+        for (const { colonne, nombre } of colonnesEnDoublon) {
+          erreurs.push(
+            erreurDEnTete(
+              `La colonne '${colonne}' apparaît ${nombre} fois dans l'en-tête. Chaque colonne ne doit y figurer qu'une seule fois.`,
+              colonne,
+            ),
+          );
+        }
       } else {
         // Une colonne de clé primaire absente est bloquante : sans elle on ne
         // peut ni identifier ni dédoublonner les lignes. Une colonne ordinaire
@@ -109,6 +124,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
               colonne === COLONNE_IDENTIFIANT
                 ? "L'en-tête identifiant_indic n'est pas présente"
                 : `L'en-tête ${colonne} n'est pas présente`,
+              colonne,
             ),
           );
         }
