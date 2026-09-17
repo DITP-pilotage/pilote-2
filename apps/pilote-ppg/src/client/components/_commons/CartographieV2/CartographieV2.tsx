@@ -34,9 +34,11 @@ export const CartographieV2 = ({
   } | null>(null);
 
   const idHachures = useId();
-  const codesTerritoiresHachures = Object.entries(donnees)
-    .filter(([, donnee]) => estHachure(donnee.remplissage))
-    .map(([code]) => code);
+  // Restreint aux territoires réellement tracés : les données couvrent aussi
+  // d'autres mailles, et le tracé national couvrirait la carte entière.
+  const codesTerritoiresHachures = territoiresAffiches
+    .map((territoire) => territoire.code)
+    .filter((code) => estHachure(donnees[code]?.remplissage ?? ""));
 
   const hoveredDonnee = hovered?.code ? donnees[hovered.code] : null;
   const hoveredTerritoire = hovered
