@@ -15,6 +15,12 @@ export const OPTIONS_FORMULAIRE = {
   multiples: false,
   maxFiles: 1,
   maxFileSize: 25 * 1024 * 1024,
+  // formidable refuse les fichiers vides par défaut, en levant depuis parseForm
+  // — donc avant toute validation, hors de tout try/catch : la route renvoyait
+  // un 500 et l'utilisateur n'obtenait aucun message. On les laisse passer, le
+  // moteur de validation sait dire « Le fichier est vide ».
+  allowEmptyFiles: true,
+  minFileSize: 0,
   filename: (_name: string, _ext: string, part: { mimetype?: string | null }) =>
     `${_name}.${mime.getExtension(part.mimetype || "") || "unknown"}`,
 } as const;
