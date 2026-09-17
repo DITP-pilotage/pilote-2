@@ -26,7 +26,7 @@ le catalogue français de l'application. Voir l'ADR 0009.
 
 | Observation | Conséquence |
 |---|---|
-| Plafond de **1000 erreurs**, `rows_processed` s'arrête alors (200 lignes sur 2000) | `PLAFOND_VIOLATIONS_DEFAUT = 1000`, et on cesse de lire au-delà |
+| Plafond de **1000 erreurs**, `rows_processed` s'arrête alors (200 lignes sur 2000) | `PLAFOND_VIOLATIONS_DEFAUT = 1000`, et on cesse de lire au-delà. Mesuré sur un fichier de 2000 lignes toutes invalides ; `stats` renvoyait `{errors: 1000, rows: 2000, rows_processed: 200}`. La fixture et ses goldens ne sont pas conservés : ils pesaient 94 000 lignes pour une seule valeur, désormais figée dans `validerLignes.ts` et couverte par un test unitaire. |
 | `1e5`, `+5`, ` 5 `, `-3` sont des nombres valides ; `12,5` et `abc` sont des `type-error` | La regex de nombre doit accepter signe, décimale au point **et notation scientifique** |
 | `minimum` / `maximum` sortent en `constraint-error`, pas en type distinct | Nos types `minimum` / `maximum` sont plus fins ; la parité porte sur `(rowNumber, fieldName)` |
 | Colonne du schéma absente **hors clé primaire** (`valeur`) → `valid: true` + warning | `schema_sync` : le champ est ignoré |
