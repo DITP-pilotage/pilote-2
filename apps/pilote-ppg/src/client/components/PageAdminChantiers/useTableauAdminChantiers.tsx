@@ -1,9 +1,13 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
+  type OnChangeFn,
+  type SortingState,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
 import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
@@ -34,6 +38,36 @@ export const STATUT_BADGE: Record<
 };
 
 const columnHelper = createColumnHelper<ChantierAdminRow>();
+
+const DIRECTIONS_DE_TRI = ["asc", "desc"] as const;
+
+const useTri = () => {
+  const [tri, setTri] = useQueryStates(
+    {
+      sortBy: parseAsString.withDefault("updatedAt"),
+      sortDir: parseAsStringLiteral(DIRECTIONS_DE_TRI).withDefault("desc"),
+    },
+    { shallow: true, history: "replace" },
+  );
+
+  const sorting: SortingState = useMemo(
+    () => [{ id: tri.sortBy, desc: tri.sortDir === "desc" }],
+    [tri],
+  );
+
+  const onSortingChange: OnChangeFn<SortingState> = (updater) => {
+    const nouveauTri =
+      typeof updater === "function" ? updater(sorting) : updater;
+    const [premierTri] = nouveauTri;
+    void setTri(
+      premierTri
+        ? { sortBy: premierTri.id, sortDir: premierTri.desc ? "desc" : "asc" }
+        : { sortBy: "updatedAt", sortDir: "desc" },
+    );
+  };
+
+  return [sorting, onSortingChange] as const;
+};
 
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString("fr-FR", {
@@ -71,6 +105,8 @@ const useTableColumns = () =>
         id: "perimetreId",
         header: "Périmètre",
         cell: (info) => info.row.original.perimetreNom,
+        sortingFn: (rowA, rowB) =>
+          rowA.original.perimetreNom.localeCompare(rowB.original.perimetreNom),
       }),
       columnHelper.accessor("updatedAt", {
         id: "updatedAt",
@@ -83,11 +119,15 @@ const useTableColumns = () =>
 
 export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
   const columns = useTableColumns();
+  const [sorting, onSortingChange] = useTri();
 
   const table = useReactTable({
     data: chantiers,
     columns,
+    state: { sorting },
+    onSortingChange,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return { table };
