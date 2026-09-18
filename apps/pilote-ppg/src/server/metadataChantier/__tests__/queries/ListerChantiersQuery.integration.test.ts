@@ -59,10 +59,15 @@ describe("ListerChantiersQuery", () => {
       createIntegrationTest(async () => {
         // Given
         const updatedAt = new Date("2026-06-15T10:00:00.000Z");
+        const perimetre = await fixtures.metadataPerimetre({
+          perimetre_id: "PER-042",
+          per_nom: "Périmètre Fonction publique",
+        });
         await fixtures.metadataChantier({
           chantier_id: "CH-042",
           ch_nom: "Mon chantier",
           ch_state: "PUBLIE",
+          ch_per: perimetre.perimetre_id,
           updated_at: updatedAt,
         });
 
@@ -75,6 +80,8 @@ describe("ListerChantiersQuery", () => {
             chantierId: "CH-042",
             chNom: "Mon chantier",
             chState: "PUBLIE",
+            perimetreId: "PER-042",
+            perimetreNom: "Périmètre Fonction publique",
             updatedAt,
           },
         ]);
