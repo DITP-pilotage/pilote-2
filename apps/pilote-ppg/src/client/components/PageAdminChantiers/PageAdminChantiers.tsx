@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { flexRender } from "@tanstack/react-table";
 import api from "@/server/infrastructure/api/trpc/api";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import { Lien } from "@/components/_commons/Lien/Lien";
 import Loader from "@/components/_commons/Loader/Loader";
 import { clsxm } from "@/utils/clsxm";
 import { useTableauAdminChantiers } from "./useTableauAdminChantiers";
@@ -15,6 +14,7 @@ const PageAdminChantiers = () => {
   const { table } = useTableauAdminChantiers(chantiers ?? []);
   const rows = table.getRowModel().rows;
   const recherche = (table.getState().globalFilter as string | undefined) ?? "";
+  const nombreChantiersFiltres = table.getFilteredRowModel().rows.length;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -29,25 +29,15 @@ const PageAdminChantiers = () => {
             </h1>
             {!isLoading && chantiers && (
               <p className="mt-1 text-sm text-gray-500">
-                {chantiers.length} chantier{chantiers.length !== 1 ? "s" : ""}
+                {nombreChantiersFiltres} chantier
+                {nombreChantiersFiltres !== 1 ? "s" : ""}
               </p>
             )}
           </div>
-          <Link
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-sm text-sm font-medium hover:bg-dsfr-blue-france-sun-113-hover transition-colors shadow-sm"
+          <Lien
             href="/panel-administrateur/chantiers/nouveau?_action=creer-chantier"
-          >
-            <span className="text-base leading-none">+</span>
-            Créer un chantier
-          </Link>
-        </div>
-
-        <div className="mb-4 max-w-sm">
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={(event) =>
-              table.setGlobalFilter(event.target.value)
-            }
-            valeur={recherche}
+            label="+ Créer un chantier"
+            variant="button"
           />
         </div>
 
@@ -86,7 +76,7 @@ const PageAdminChantiers = () => {
                   >
                     {headerGroup.headers.map((header) => (
                       <th
-                        className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap"
                         key={header.id}
                       >
                         {header.column.getCanSort() ? (

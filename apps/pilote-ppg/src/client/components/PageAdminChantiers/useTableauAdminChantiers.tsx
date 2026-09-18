@@ -85,7 +85,7 @@ const usePagination = () => {
   const [pagination, setPagination] = useQueryStates(
     {
       pageIndex: parseAsInteger.withDefault(0),
-      pageSize: parseAsInteger.withDefault(20),
+      pageSize: parseAsInteger.withDefault(10),
     },
     { shallow: true, history: "replace" },
   );
@@ -106,7 +106,7 @@ const toStringArray = (value: unknown): string[] =>
 const useFiltresColonnes = () => {
   const [filtres, setFiltres] = useQueryStates(
     {
-      statut: parseAsArrayOf(parseAsString).withDefault([]),
+      statut: parseAsArrayOf(parseAsString).withDefault(["PUBLIE"]),
       perimetre: parseAsArrayOf(parseAsString).withDefault([]),
     },
     { shallow: true, clearOnDefault: true, history: "replace" },
@@ -179,6 +179,11 @@ const useTableColumns = () =>
       columnHelper.accessor("chNom", {
         id: "chNom",
         header: "Nom",
+        cell: (info) => (
+          <div className="max-w-sm truncate" title={info.getValue()}>
+            {info.getValue()}
+          </div>
+        ),
       }),
       columnHelper.accessor("chState", {
         id: "chState",
