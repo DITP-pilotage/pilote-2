@@ -1,13 +1,20 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type OnChangeFn,
+  type PaginationState,
   type SortingState,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from "nuqs";
 import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
@@ -69,6 +76,23 @@ const useTri = () => {
   return [sorting, onSortingChange] as const;
 };
 
+const usePagination = () => {
+  const [pagination, setPagination] = useQueryStates(
+    {
+      pageIndex: parseAsInteger.withDefault(0),
+      pageSize: parseAsInteger.withDefault(20),
+    },
+    { shallow: true, history: "replace" },
+  );
+
+  const paginationState: PaginationState = useMemo(
+    () => pagination,
+    [pagination],
+  );
+
+  return [paginationState, setPagination] as const;
+};
+
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -120,14 +144,17 @@ const useTableColumns = () =>
 export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
   const columns = useTableColumns();
   const [sorting, onSortingChange] = useTri();
+  const [pagination, setPagination] = usePagination();
 
   const table = useReactTable({
     data: chantiers,
     columns,
-    state: { sorting },
+    state: { sorting, pagination },
     onSortingChange,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return { table };

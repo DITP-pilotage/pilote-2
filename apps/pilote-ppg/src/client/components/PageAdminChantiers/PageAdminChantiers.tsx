@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { flexRender } from "@tanstack/react-table";
@@ -13,14 +13,18 @@ const PageAdminChantiers = () => {
   const { data: chantiers, isLoading } = api.metadataChantier.lister.useQuery();
   const [recherche, setRecherche] = useState("");
 
-  const chantiersFiltres = chantiers?.filter((chantier) => {
-    const q = recherche.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      chantier.chantierId.toLowerCase().includes(q) ||
-      chantier.chNom.toLowerCase().includes(q)
-    );
-  });
+  const chantiersFiltres = useMemo(
+    () =>
+      chantiers?.filter((chantier) => {
+        const q = recherche.toLowerCase().trim();
+        if (!q) return true;
+        return (
+          chantier.chantierId.toLowerCase().includes(q) ||
+          chantier.chNom.toLowerCase().includes(q)
+        );
+      }),
+    [chantiers, recherche],
+  );
 
   const { table } = useTableauAdminChantiers(chantiersFiltres ?? []);
   const rows = table.getRowModel().rows;
@@ -152,6 +156,49 @@ const PageAdminChantiers = () => {
                 ))}
               </tbody>
             </table>
+          )}
+
+          {rows.length > 0 && (
+            <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <span>Lignes par page :</span>
+                <select
+                  className="border border-gray-200 rounded-sm px-2 py-1 bg-white"
+                  onChange={(event) =>
+                    table.setPageSize(Number(event.target.value))
+                  }
+                  value={table.getState().pagination.pageSize}
+                >
+                  {[10, 20, 50].map((taille) => (
+                    <option key={taille} value={taille}>
+                      {taille}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-3">
+                <span>
+                  Page {table.getState().pagination.pageIndex + 1} sur{" "}
+                  {table.getPageCount()}
+                </span>
+                <button
+                  className="px-3 py-1 border border-gray-200 rounded-sm disabled:opacity-50"
+                  disabled={!table.getCanPreviousPage()}
+                  onClick={() => table.previousPage()}
+                  type="button"
+                >
+                  Précédent
+                </button>
+                <button
+                  className="px-3 py-1 border border-gray-200 rounded-sm disabled:opacity-50"
+                  disabled={!table.getCanNextPage()}
+                  onClick={() => table.nextPage()}
+                  type="button"
+                >
+                  Suivant
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
