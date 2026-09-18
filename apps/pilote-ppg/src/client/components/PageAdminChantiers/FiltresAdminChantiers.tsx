@@ -49,9 +49,7 @@ export const FiltresAdminChantiers = ({
             changementDeLaRechercheCallback={(event) =>
               table.setGlobalFilter(event.target.value)
             }
-            valeur={
-              (table.getState().globalFilter as string | undefined) ?? ""
-            }
+            valeur={(table.getState().globalFilter as string | undefined) ?? ""}
           />
         </div>
 
@@ -103,7 +101,10 @@ export const FiltresAdminChantiers = ({
         {aDesFiltresActifs && (
           <Bouton
             iconLeft={
-              <Icone className="w-4 h-4 mt-1 rotate-y-180" icone={ArrowGoBackIcon} />
+              <Icone
+                className="w-4 h-4 mt-1 rotate-y-180"
+                icone={ArrowGoBackIcon}
+              />
             }
             label="Réinitialiser les filtres"
             onClick={() => {

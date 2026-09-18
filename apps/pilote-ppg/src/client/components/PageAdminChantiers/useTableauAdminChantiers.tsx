@@ -24,8 +24,9 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
 
-export type ChantierAdminRow =
-  inferRouterOutputs<typeof appRouter>["metadataChantier"]["lister"][number];
+export type ChantierAdminRow = inferRouterOutputs<
+  typeof appRouter
+>["metadataChantier"]["lister"][number];
 
 export const STATUT_BADGE: Record<
   $Enums.type_statut,
