@@ -17,6 +17,7 @@ import {
   parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
+  useQueryState,
   useQueryStates,
 } from "nuqs";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -139,6 +140,28 @@ const useFiltresColonnes = () => {
   return [columnFilters, onColumnFiltersChange] as const;
 };
 
+const useRecherche = () =>
+  useQueryState(
+    "q",
+    parseAsString.withDefault("").withOptions({
+      shallow: true,
+      clearOnDefault: true,
+      history: "replace",
+    }),
+  );
+
+const filtreGlobal = (
+  row: { original: ChantierAdminRow },
+  recherche: string,
+) => {
+  const texte = recherche.toLowerCase().trim();
+  if (!texte) return true;
+  return (
+    row.original.chantierId.toLowerCase().includes(texte) ||
+    row.original.chNom.toLowerCase().includes(texte)
+  );
+};
+
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -196,19 +219,30 @@ export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
   const [sorting, onSortingChange] = useTri();
   const [pagination, setPagination] = usePagination();
   const [columnFilters, setColumnFilters] = useFiltresColonnes();
+  const [globalFilter, setRecherche] = useRecherche();
 
   const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
     setColumnFilters(updater);
     void setPagination({ pageIndex: 0 });
   };
 
+  const onGlobalFilterChange: OnChangeFn<string> = (updater) => {
+    const nouvelleRecherche =
+      typeof updater === "function" ? updater(globalFilter) : updater;
+    void setRecherche(nouvelleRecherche);
+    void setPagination({ pageIndex: 0 });
+  };
+
   const table = useReactTable({
     data: chantiers,
     columns,
-    state: { sorting, pagination, columnFilters },
+    state: { sorting, pagination, columnFilters, globalFilter },
     onSortingChange,
     onPaginationChange: setPagination,
     onColumnFiltersChange,
+    onGlobalFilterChange,
+    globalFilterFn: (row, _columnId, filterValue: string) =>
+      filtreGlobal(row, filterValue),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

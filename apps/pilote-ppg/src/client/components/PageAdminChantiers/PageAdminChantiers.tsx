@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { flexRender } from "@tanstack/react-table";
@@ -12,23 +11,10 @@ import { FiltresAdminChantiers } from "./FiltresAdminChantiers";
 const PageAdminChantiers = () => {
   const router = useRouter();
   const { data: chantiers, isLoading } = api.metadataChantier.lister.useQuery();
-  const [recherche, setRecherche] = useState("");
 
-  const chantiersFiltres = useMemo(
-    () =>
-      chantiers?.filter((chantier) => {
-        const q = recherche.toLowerCase().trim();
-        if (!q) return true;
-        return (
-          chantier.chantierId.toLowerCase().includes(q) ||
-          chantier.chNom.toLowerCase().includes(q)
-        );
-      }),
-    [chantiers, recherche],
-  );
-
-  const { table } = useTableauAdminChantiers(chantiersFiltres ?? []);
+  const { table } = useTableauAdminChantiers(chantiers ?? []);
   const rows = table.getRowModel().rows;
+  const recherche = (table.getState().globalFilter as string | undefined) ?? "";
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -59,7 +45,7 @@ const PageAdminChantiers = () => {
         <div className="mb-4 max-w-sm">
           <BarreDeRecherche
             changementDeLaRechercheCallback={(event) =>
-              setRecherche(event.target.value)
+              table.setGlobalFilter(event.target.value)
             }
             valeur={recherche}
           />
@@ -67,7 +53,7 @@ const PageAdminChantiers = () => {
 
         <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
           {!isLoading && (
-            <FiltresAdminChantiers chantiers={chantiersFiltres ?? []} table={table} />
+            <FiltresAdminChantiers chantiers={chantiers ?? []} table={table} />
           )}
 
           {isLoading ? (
