@@ -89,11 +89,10 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
             "'IND-97' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.",
           ),
         ).toBeVisible();
-        await expect(
-          page.getByText(
-            `L'indicateur IND-97 ne correspond pas à l'indicateur choisi (${chantier.indicateurId}), ligne 2.`,
-          ),
-        ).toBeVisible({ timeout: 30_000 });
+        // Pas de second message sur la même cellule : un identifiant illisible
+        // se corrige d'un seul geste, que le reproche porte sur sa forme ou
+        // sur l'indicateur visé. Verrouillé côté serveur dans
+        // VerifierFichierIndicateurImporteUseCase.integration.test.ts.
       });
 
       await test.step("Choix d'un fichier valide", async () => {

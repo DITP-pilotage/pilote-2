@@ -438,6 +438,56 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it(
+    "ne reproche pas en plus le mauvais indicateur quand l'identifiant est déjà signalé sur cette ligne",
+    createIntegrationTest(async () => {
+      // Given
+      // Un identifiant malformé est déjà rejeté par le moteur de schéma. Lui
+      // reprocher en plus de ne pas viser le bon indicateur donnerait deux
+      // lignes pour une seule correction.
+      const mesureIndicateurTemporaire = new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-97")
+        .avecZoneId("D012")
+        .avecMetricDate(METRIC_DATE_1)
+        .avecMetricType("va")
+        .avecMetricValue("20")
+        .build();
+      const erreurDeForme = new ErreurValidationFichierBuilder()
+        .avecCellule("IND-97")
+        .avecMessage(
+          "'IND-97' n'est pas un identifiant d'indicateur valide (ligne 2)",
+        )
+        .avecNom("Format incorrect")
+        .avecNomDuChamp("identifiant_indic")
+        .avecNumeroDeLigne(2)
+        .build();
+      const detailValidationFichier = new DetailValidationFichierBuilder()
+        .avecEstValide(false)
+        .avecListeErreursValidation(erreurDeForme)
+        .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire)
+        .build();
+
+      fichierIndicateurValidationService.validerFichier.mockResolvedValue(
+        detailValidationFichier,
+      );
+
+      // When
+      const report = await verifierFichierIndicateurImporteUseCase.execute({
+        cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+        nomDuFichier: NOM_DU_FICHIER,
+        indicateurId: "IND-021",
+        utilisateurAuteurDeLimportEmail: "ditp.admin@example.com",
+      });
+
+      // Then
+      expect(
+        report.listeErreursValidation.map((erreur) => erreur.message),
+      ).toEqual([
+        "'IND-97' n'est pas un identifiant d'indicateur valide (ligne 2)",
+      ]);
+    }),
+  );
+
+  it(
     "quand le fichier possède des indic_id différent de celui en paramètre, doit remonter un rapport invalide",
     createIntegrationTest(async () => {
       // Given
