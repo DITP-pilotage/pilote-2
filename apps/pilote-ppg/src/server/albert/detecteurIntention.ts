@@ -28,6 +28,8 @@ const MOTS_CLES_DASHBOARD = [
   "visualise",
   "indicateur",
   "indicateurs",
+  "courbe",
+  "graphique",
 ];
 
 const MOTS_CLES_EXPORT = [

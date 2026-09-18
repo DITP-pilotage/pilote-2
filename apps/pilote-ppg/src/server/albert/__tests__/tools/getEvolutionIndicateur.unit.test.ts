@@ -34,8 +34,8 @@ describe("createGetEvolutionIndicateurTool execute", () => {
     const getEvolutionIndicateurTerritoireQuery =
       mock<GetEvolutionIndicateurTerritoireQuery>({
         execute: async () => [
-          { date: "01/2024", valeur: 10 },
-          { date: "06/2024", valeur: 20 },
+          { date: "01/2024", valeur: 10, taux_avancement_jalon: null },
+          { date: "06/2024", valeur: 20, taux_avancement_jalon: 45 },
         ],
       });
     const tool = createGetEvolutionIndicateurTool({
@@ -54,11 +54,16 @@ describe("createGetEvolutionIndicateurTool execute", () => {
 
     // Then
     expect(result).toEqual({
-      indicateur: { id: "IND-001", nom: "Indicateur test", unite_mesure: "%" },
+      indicateur: {
+        id: "IND-001",
+        nom: "Indicateur test",
+        unite_mesure: "%",
+        chantier_id: "CH-001",
+      },
       territoire_code: "DEPT-75",
       points: [
-        { date: "01/2024", valeur: 10 },
-        { date: "06/2024", valeur: 20 },
+        { date: "01/2024", valeur: 10, taux_avancement_jalon: null },
+        { date: "06/2024", valeur: 20, taux_avancement_jalon: 45 },
       ],
       _output_instructions: expect.any(String),
     });

@@ -167,6 +167,48 @@ const widgetCartographiePropositionsValeurAvancement = z
   })
   .strict();
 
+const widgetEvolutionTauxAvancement = z
+  .object({
+    type: z.literal("widget_evolution_taux_avancement"),
+    indicateur_id: z
+      .string()
+      .describe("Identifiant canonique de l'indicateur (ex: IND-894)"),
+    chantier_id: chantierIdSchema,
+    territoire_codes: z
+      .array(territoireCodeSchema)
+      .min(1)
+      .describe(
+        "Codes des territoires à comparer sur le graphique (1 ou plusieurs)",
+      ),
+    jalon: jalonSchema,
+    width: z
+      .union([z.literal(2), z.literal(4)])
+      .optional()
+      .describe("default_width=4, allowed_widths=[2,4]"),
+  })
+  .strict();
+
+const widgetEvolutionValeurAvancement = z
+  .object({
+    type: z.literal("widget_evolution_valeur_avancement"),
+    indicateur_id: z
+      .string()
+      .describe("Identifiant canonique de l'indicateur (ex: IND-894)"),
+    chantier_id: chantierIdSchema,
+    territoire_codes: z
+      .array(territoireCodeSchema)
+      .min(1)
+      .describe(
+        "Codes des territoires à comparer sur le graphique (1 ou plusieurs)",
+      ),
+    jalon: jalonSchema,
+    width: z
+      .union([z.literal(2), z.literal(4)])
+      .optional()
+      .describe("default_width=4, allowed_widths=[2,4]"),
+  })
+  .strict();
+
 const widgetParagraph = z
   .object({
     type: z.literal("widget_paragraph"),
@@ -226,6 +268,8 @@ const widgetInputSchema = z
     widgetCartographieTauxAvancement,
     widgetCartographieMeteo,
     widgetCartographiePropositionsValeurAvancement,
+    widgetEvolutionTauxAvancement,
+    widgetEvolutionValeurAvancement,
     widgetTitreSection,
     widgetParagraph,
   ])
@@ -302,6 +346,16 @@ export function createComposeDashboardTool() {
               throw new Error(
                 `Accès non autorisé au territoire ${widget.territoire_code}. Choisis un territoire dans la liste des territoires accessibles.`,
               );
+            }
+
+            if ("territoire_codes" in widget) {
+              for (const territoireCode of widget.territoire_codes) {
+                if (!territoiresAccessibles.includes(territoireCode)) {
+                  throw new Error(
+                    `Accès non autorisé au territoire ${territoireCode}. Choisis un territoire dans la liste des territoires accessibles.`,
+                  );
+                }
+              }
             }
 
             if (widget.type === "widget_titre_section") {

@@ -242,6 +242,87 @@ describe("composeDashboardInputSchema", () => {
     });
   });
 
+  describe("widgets d'évolution d'indicateur", () => {
+    test("accepte widget_evolution_taux_avancement avec plusieurs territoires", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_evolution_taux_avancement",
+                indicateur_id: "IND-894",
+                chantier_id: "CH-001",
+                territoire_codes: ["REG-53", "DEPT-75"],
+                jalon: 2025,
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+
+    test("accepte widget_evolution_valeur_avancement avec width 4", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_evolution_valeur_avancement",
+                indicateur_id: "IND-894",
+                chantier_id: "CH-001",
+                territoire_codes: ["REG-53"],
+                jalon: 2025,
+                width: 4,
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+
+    test("rejette widget_evolution_taux_avancement sans territoire_codes", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_evolution_taux_avancement",
+                indicateur_id: "IND-894",
+                chantier_id: "CH-001",
+                territoire_codes: [],
+                jalon: 2025,
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(false);
+    });
+  });
+
   describe("widget_titre_section", () => {
     test("accepte widget_titre_section avec titre seul", () => {
       // Given
@@ -431,6 +512,31 @@ describe("createComposeDashboardTool execute", () => {
         containers: input.containers,
         _output_instructions: expect.any(String),
       });
+    });
+
+    test("rejette un widget_evolution_valeur_avancement dont un territoire_codes n'est pas habilité", async () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_evolution_valeur_avancement",
+                indicateur_id: "IND-894",
+                chantier_id: "CH-001",
+                territoire_codes: ["REG-53", "REG-99"],
+                jalon: 2025,
+              },
+            ],
+          },
+        ],
+      };
+
+      // When / Then
+      await expect(executeTool(["REG-53"], input)).rejects.toThrow(
+        /Accès non autorisé au territoire REG-99/,
+      );
     });
   });
 

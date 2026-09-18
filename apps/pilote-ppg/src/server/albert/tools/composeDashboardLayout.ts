@@ -10,6 +10,8 @@ export type WidgetType =
   | "widget_cartographie_taux_avancement"
   | "widget_cartographie_meteo"
   | "widget_cartographie_propositions_valeur_avancement"
+  | "widget_evolution_taux_avancement"
+  | "widget_evolution_valeur_avancement"
   | "widget_titre_section"
   | "widget_paragraph";
 
@@ -25,6 +27,8 @@ export const DEFAULT_WIDTHS: Record<WidgetType, number> = {
   widget_cartographie_taux_avancement: 2,
   widget_cartographie_meteo: 2,
   widget_cartographie_propositions_valeur_avancement: 2,
+  widget_evolution_taux_avancement: 4,
+  widget_evolution_valeur_avancement: 4,
   widget_titre_section: 4,
   widget_paragraph: 4,
 };
