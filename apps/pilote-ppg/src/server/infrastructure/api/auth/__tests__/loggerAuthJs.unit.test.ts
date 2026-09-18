@@ -26,7 +26,7 @@ describe("buildAuthJsErrorEvent", () => {
     });
 
     expect(buildAuthJsErrorEvent(erreur)).toMatchObject({
-      message: "Echec du flux d'authentification : OAuthCallbackError",
+      message: "Échec du flux d'authentification : OAuthCallbackError",
       context: { errorMessage: "Echec du callback" },
     });
   });
@@ -35,7 +35,7 @@ describe("buildAuthJsErrorEvent", () => {
     const erreur = new TypeError("fetch failed");
 
     expect(buildAuthJsErrorEvent(erreur)).toMatchObject({
-      message: "Echec du flux d'authentification : TypeError",
+      message: "Échec du flux d'authentification : TypeError",
     });
   });
 

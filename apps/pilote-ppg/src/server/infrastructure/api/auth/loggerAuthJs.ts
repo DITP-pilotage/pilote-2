@@ -35,7 +35,7 @@ export const buildAuthJsErrorEvent = (
   const { originalError, provider } = readCause(error.cause);
 
   return {
-    message: `Echec du flux d'authentification : ${nom}`,
+    message: `Échec du flux d'authentification : ${nom}`,
     context: {
       categorie: CATEGORIE,
       source: SOURCE,
