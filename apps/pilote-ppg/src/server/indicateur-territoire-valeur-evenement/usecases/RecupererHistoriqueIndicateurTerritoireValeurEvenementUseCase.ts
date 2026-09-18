@@ -1,7 +1,6 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { toISODate } from "@/server/app/domain/Dates";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { regrouperEvenementsParDate } from "@/server/indicateur-territoire-valeur-evenement/domain/historiqueEvenements";
 import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type HistoriqueIndicateurTerritoireValeurEvenementContrat = {
@@ -63,54 +62,16 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
         args,
       );
 
-    const historiqueGroupe: HistoriqueIndicateurTerritoireValeurEvenementContrat =
-      {};
-
-    evenements.forEach((evenement) => {
-      const dateKey = toISODate(evenement.dateValeur);
-
-      if (!historiqueGroupe[dateKey]) {
-        historiqueGroupe[dateKey] = [];
-      }
-
-      historiqueGroupe[dateKey].push(
-        presenterEnIndicateurTerritoireValeurEvenement(evenement),
-      );
-    });
-
     const historiqueTrie: HistoriqueIndicateurTerritoireValeurEvenementContrat =
       {};
 
-    Object.keys(historiqueGroupe)
-      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-      .forEach((dateKey) => {
-        historiqueTrie[dateKey] = historiqueGroupe[dateKey].sort(
-          (a, b) => b.ordre - a.ordre,
-        );
+    regrouperEvenementsParDate(evenements)
+      .reverse()
+      .forEach(({ dateValeur, evenements: evenementsDuJour }) => {
+        historiqueTrie[dateValeur] = [...evenementsDuJour]
+          .reverse()
+          .map(presenterEnIndicateurTerritoireValeurEvenement);
       });
-
-    Object.entries(historiqueTrie).forEach(([key, evenementsDuJour]) => {
-      historiqueTrie[key] = evenementsDuJour.filter((evenement, index) => {
-        const evenementSuivant = evenementsDuJour[index + 1]?.typeEvenement;
-
-        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_MODIFIEE) {
-          return ![
-            EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
-            EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
-            EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE,
-          ].includes(evenementSuivant);
-        }
-
-        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_HISTORISEE) {
-          return (
-            evenementSuivant !==
-            EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE
-          );
-        }
-
-        return true;
-      });
-    });
 
     return historiqueTrie;
   }

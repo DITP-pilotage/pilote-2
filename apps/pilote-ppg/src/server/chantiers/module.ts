@@ -61,6 +61,9 @@ import { GetChantierIndicateursQuery } from "./query/GetChantierIndicateursQuery
 import { GetChantierCommentairesQuery } from "./query/GetChantierCommentairesQuery";
 import { GetChantiersIdentiteQuery } from "./query/GetChantiersIdentiteQuery";
 import { GetIndicateursIdentiteQuery } from "./query/GetIndicateursIdentiteQuery";
+import { GetIndicateurContexteQuery } from "./query/GetIndicateurContexteQuery";
+import { GetEvolutionIndicateurTerritoireQuery } from "./query/GetEvolutionIndicateurTerritoireQuery";
+import { GetHistoriqueIndicateurTerritoireQuery } from "./query/GetHistoriqueIndicateurTerritoireQuery";
 import { GetTerritoiresIdentiteQuery } from "./query/GetTerritoiresIdentiteQuery";
 import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAvancementTerritoireQuery";
 import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
@@ -76,6 +79,9 @@ type ChantierExports = {
   getChantierObjectifsQuery: GetChantierObjectifsQuery;
   getChantiersIdentiteQuery: GetChantiersIdentiteQuery;
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
+  getIndicateurContexteQuery: GetIndicateurContexteQuery;
+  getEvolutionIndicateurTerritoireQuery: GetEvolutionIndicateurTerritoireQuery;
+  getHistoriqueIndicateurTerritoireQuery: GetHistoriqueIndicateurTerritoireQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
 };
@@ -148,6 +154,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getChantierObjectifsQuery",
     "getChantiersIdentiteQuery",
     "getIndicateursIdentiteQuery",
+    "getIndicateurContexteQuery",
+    "getEvolutionIndicateurTerritoireQuery",
+    "getHistoriqueIndicateurTerritoireQuery",
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
   ],
@@ -263,6 +272,13 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantierObjectifsQuery: asModuleClass(GetChantierObjectifsQuery),
       getChantiersIdentiteQuery: asModuleClass(GetChantiersIdentiteQuery),
       getIndicateursIdentiteQuery: asModuleClass(GetIndicateursIdentiteQuery),
+      getIndicateurContexteQuery: asModuleClass(GetIndicateurContexteQuery),
+      getEvolutionIndicateurTerritoireQuery: asModuleClass(
+        GetEvolutionIndicateurTerritoireQuery,
+      ),
+      getHistoriqueIndicateurTerritoireQuery: asModuleClass(
+        GetHistoriqueIndicateurTerritoireQuery,
+      ),
       getTerritoiresIdentiteQuery: asModuleClass(GetTerritoiresIdentiteQuery),
       recupererTauxAvancementTerritoireQuery: asModuleClass(
         RecupererTauxAvancementTerritoireQuery,

@@ -50,7 +50,7 @@ export type SearchIndicateursOutput = {
 };
 
 const OUTPUT_INSTRUCTIONS = `Présente à l'utilisateur la liste des indicateurs identifiés avec leur id, leur nom, et leur chantier de rattachement au format **CH-XXX — Nom du chantier**.
-Si un seul indicateur correspond clairement, tu peux directement enchaîner avec get_indicateurs sans demander confirmation.
+Si un seul indicateur correspond clairement, tu peux directement enchaîner sans demander confirmation, avec l'outil adapté à la demande de l'utilisateur : get_indicateurs (valeurs VI/VA/VC/TA), get_evolution_indicateur (tendance/courbe dans le temps) ou get_historique_indicateur (détail des actions), en passant l'\`id\` résolu comme indicateur_id.
 Si plusieurs indicateurs correspondent, demande à l'utilisateur de préciser celui qui l'intéresse avant d'enchaîner.
 Si la liste est vide, indique-le et invite l'utilisateur à reformuler. Ne reproduis pas le champ \`reasoning\` mot pour mot.`;
 
@@ -78,11 +78,11 @@ export function createSearchIndicateursTool({
 
 Utilise ce tool quand :
 - l'utilisateur mentionne un indicateur par thématique, libellé approximatif ou métrique (ex: « le taux d'équipement », « combien de femmes formées », « les délais »)
-- tu as besoin de résoudre un nom d'indicateur vers un identifiant avant d'appeler get_indicateurs
+- tu as besoin de résoudre un nom d'indicateur vers un identifiant avant d'appeler get_indicateurs, get_evolution_indicateur ou get_historique_indicateur
 
 Si tu as déjà ciblé un ou plusieurs chantiers (via search_chantiers ou un CH-XXX explicite), passe leurs identifiants dans \`chantier_ids\` pour scoper la recherche et améliorer la pertinence.
 
-Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id, leur nom et leur chantier de rattachement. Aucune donnée chiffrée — utilise get_indicateurs pour ça.`,
+Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id (format IND-XXX), leur nom et leur chantier de rattachement. Aucune donnée chiffrée — utilise get_indicateurs (valeurs VI/VA/VC/TA), get_evolution_indicateur (tendance) ou get_historique_indicateur (détail des actions) pour ça.`,
       inputSchema: searchIndicateursInputSchema,
       execute: async (
         { query, chantier_ids },

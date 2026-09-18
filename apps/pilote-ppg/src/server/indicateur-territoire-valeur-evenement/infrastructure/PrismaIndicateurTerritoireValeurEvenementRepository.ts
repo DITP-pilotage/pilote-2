@@ -8,6 +8,7 @@ import {
   PropositionValeurAvancementRapport,
 } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { toISODate } from "@/server/app/domain/Dates";
@@ -213,17 +214,41 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository implements Indi
       });
   }
 
+  private construireFiltresHistorique(args: {
+    indicId: string;
+    territoireCode: string;
+    dateDebut?: Date;
+    dateFin?: Date;
+    typesEvenement?: readonly TypeEvenement[];
+  }): Prisma.indicateur_territoire_valeur_evenementWhereInput {
+    return {
+      indic_id: args.indicId,
+      territoire_code: args.territoireCode,
+      ...(args.typesEvenement
+        ? { type_evenement: { in: [...args.typesEvenement] } }
+        : {}),
+      ...(args.dateDebut || args.dateFin
+        ? {
+            date_valeur: {
+              ...(args.dateDebut ? { gte: args.dateDebut } : {}),
+              ...(args.dateFin ? { lte: args.dateFin } : {}),
+            },
+          }
+        : {}),
+    };
+  }
+
   async recupererHistoriqueParIndicIdEtTerritoireCode(args: {
     indicId: string;
     territoireCode: string;
+    dateDebut?: Date;
+    dateFin?: Date;
+    typesEvenement?: readonly TypeEvenement[];
   }): Promise<IndicateurTerritoireValeurEvenement[]> {
     const lignes = await this.prisma
       .getInstance()
       .indicateur_territoire_valeur_evenement.findMany({
-        where: {
-          indic_id: args.indicId,
-          territoire_code: args.territoireCode,
-        },
+        where: this.construireFiltresHistorique(args),
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       });
 
