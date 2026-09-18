@@ -1,15 +1,19 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  type ColumnFiltersState,
   type OnChangeFn,
   type PaginationState,
   type SortingState,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import {
+  parseAsArrayOf,
   parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
@@ -93,6 +97,48 @@ const usePagination = () => {
   return [paginationState, setPagination] as const;
 };
 
+const toStringArray = (value: unknown): string[] =>
+  Array.isArray(value) && value.every((valeur) => typeof valeur === "string")
+    ? (value as string[])
+    : [];
+
+const useFiltresColonnes = () => {
+  const [filtres, setFiltres] = useQueryStates(
+    {
+      statut: parseAsArrayOf(parseAsString).withDefault([]),
+      perimetre: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    { shallow: true, clearOnDefault: true, history: "replace" },
+  );
+
+  const columnFilters: ColumnFiltersState = useMemo(() => {
+    const filtresColonnes: ColumnFiltersState = [];
+    if (filtres.statut.length > 0) {
+      filtresColonnes.push({ id: "chState", value: filtres.statut });
+    }
+    if (filtres.perimetre.length > 0) {
+      filtresColonnes.push({ id: "perimetreId", value: filtres.perimetre });
+    }
+    return filtresColonnes;
+  }, [filtres]);
+
+  const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
+    const nouveauxFiltres =
+      typeof updater === "function" ? updater(columnFilters) : updater;
+
+    void setFiltres({
+      statut: toStringArray(
+        nouveauxFiltres.find((filtre) => filtre.id === "chState")?.value,
+      ),
+      perimetre: toStringArray(
+        nouveauxFiltres.find((filtre) => filtre.id === "perimetreId")?.value,
+      ),
+    });
+  };
+
+  return [columnFilters, onColumnFiltersChange] as const;
+};
+
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -114,6 +160,8 @@ const useTableColumns = () =>
       columnHelper.accessor("chState", {
         id: "chState",
         header: "Statut",
+        enableColumnFilter: true,
+        filterFn: "arrIncludesSome",
         cell: (info) => {
           const badge = STATUT_BADGE[info.getValue()];
           return (
@@ -128,6 +176,8 @@ const useTableColumns = () =>
       columnHelper.accessor("perimetreId", {
         id: "perimetreId",
         header: "Périmètre",
+        enableColumnFilter: true,
+        filterFn: "arrIncludesSome",
         cell: (info) => info.row.original.perimetreNom,
         sortingFn: (rowA, rowB) =>
           rowA.original.perimetreNom.localeCompare(rowB.original.perimetreNom),
@@ -145,16 +195,25 @@ export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
   const columns = useTableColumns();
   const [sorting, onSortingChange] = useTri();
   const [pagination, setPagination] = usePagination();
+  const [columnFilters, setColumnFilters] = useFiltresColonnes();
+
+  const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
+    setColumnFilters(updater);
+    void setPagination({ pageIndex: 0 });
+  };
 
   const table = useReactTable({
     data: chantiers,
     columns,
-    state: { sorting, pagination },
+    state: { sorting, pagination, columnFilters },
     onSortingChange,
     onPaginationChange: setPagination,
+    onColumnFiltersChange,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return { table };

@@ -7,6 +7,7 @@ import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRech
 import Loader from "@/components/_commons/Loader/Loader";
 import { clsxm } from "@/utils/clsxm";
 import { useTableauAdminChantiers } from "./useTableauAdminChantiers";
+import { FiltresAdminChantiers } from "./FiltresAdminChantiers";
 
 const PageAdminChantiers = () => {
   const router = useRouter();
@@ -65,6 +66,10 @@ const PageAdminChantiers = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
+          {!isLoading && (
+            <FiltresAdminChantiers chantiers={chantiersFiltres ?? []} table={table} />
+          )}
+
           {isLoading ? (
             <div className="relative py-20">
               <Loader />
