@@ -2,8 +2,10 @@ import type { OIDCConfig } from "next-auth/providers";
 import { z } from "zod";
 import { configuration } from "@/config";
 import { ACR_DOUBLE_AUTHENTIFICATION } from "@/server/authentification/domain/autoriserConnexionProConnect";
-
-export const PROVIDER_PROCONNECT = "proconnect";
+import {
+  ErreurProConnect,
+  PROVIDER_PROCONNECT,
+} from "@/server/infrastructure/api/auth/ErreurProConnect";
 
 /**
  * ProConnect ne suit pas la nomenclature OIDC courante : le nom de famille est
@@ -34,12 +36,12 @@ export type ProfilProConnect = z.infer<typeof profilProConnectSchema>;
 export const decoderPayloadJwt = ({ jwt }: { jwt: string }): unknown => {
   const payload = jwt.split(".")[1];
   if (!payload) {
-    throw new Error("Réponse userinfo ProConnect malformée");
+    throw new ErreurProConnect("Réponse userinfo ProConnect malformée");
   }
   try {
     return JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
   } catch {
-    throw new Error("Réponse userinfo ProConnect malformée");
+    throw new ErreurProConnect("Réponse userinfo ProConnect malformée");
   }
 };
 
@@ -90,7 +92,7 @@ const recupererProfilProConnect = async (
 ): Promise<ProfilProConnect> => {
   const resultat = contexteUserinfoSchema.safeParse(contexte);
   if (!resultat.success) {
-    throw new Error("Endpoint userinfo ProConnect introuvable");
+    throw new ErreurProConnect("Endpoint userinfo ProConnect introuvable");
   }
   const { tokens, provider } = resultat.data;
   const url =
@@ -102,12 +104,23 @@ const recupererProfilProConnect = async (
     headers: { Authorization: `Bearer ${tokens.access_token}` },
   });
   if (!reponse.ok) {
-    throw new Error(`Appel userinfo ProConnect en échec (${reponse.status})`);
+    throw new ErreurProConnect(
+      `Appel userinfo ProConnect en échec (${reponse.status} ${reponse.statusText})`,
+    );
   }
 
-  return profilProConnectSchema.parse(
+  const resultatProfil = profilProConnectSchema.safeParse(
     decoderPayloadJwt({ jwt: await reponse.text() }),
   );
+  if (!resultatProfil.success) {
+    // Les champs manquants, pas leurs valeurs : le profil porte une identité.
+    throw new ErreurProConnect(
+      `Profil ProConnect inexploitable (champs en erreur : ${resultatProfil.error.issues
+        .map((probleme) => probleme.path.join("."))
+        .join(", ")})`,
+    );
+  }
+  return resultatProfil.data;
 };
 
 export const proconnect: OIDCConfig<ProfilProConnect> = {

@@ -10,10 +10,11 @@ import { configuration } from "@/config";
 import {
   acrFromIdToken,
   proconnect,
-  PROVIDER_PROCONNECT,
 } from "@/server/infrastructure/api/auth/proconnect";
+import { PROVIDER_PROCONNECT } from "@/server/infrastructure/api/auth/ErreurProConnect";
 import { autoriserConnexionProConnect } from "@/server/authentification/domain/autoriserConnexionProConnect";
 import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
+import { loggerAuthJs } from "@/server/infrastructure/api/auth/loggerAuthJs";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 
 export const keycloak = KeycloakProvider({
@@ -304,6 +305,7 @@ export const authConfig: NextAuthConfig = {
     ? [credentialsProvider]
     : [keycloak, proconnect],
   debug: configuration().nextAuth.debug,
+  logger: loggerAuthJs,
   session: {
     maxAge: configuration().nextAuth.sessionMaxAge,
   },

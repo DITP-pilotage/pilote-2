@@ -1,3 +1,4 @@
+import { ErreurProConnect } from "@/server/infrastructure/api/auth/ErreurProConnect";
 import {
   acrFromIdToken,
   decoderPayloadJwt,
@@ -86,5 +87,13 @@ describe("acrFromIdToken", () => {
 
   it("renvoie undefined sans id_token", () => {
     expect(acrFromIdToken({ idToken: undefined })).toBeUndefined();
+  });
+});
+
+describe("les échecs de décodage sont des ErreurProConnect", () => {
+  it("un JWT malformé", () => {
+    expect(() => decoderPayloadJwt({ jwt: "pas-un-jwt" })).toThrow(
+      ErreurProConnect,
+    );
   });
 });
