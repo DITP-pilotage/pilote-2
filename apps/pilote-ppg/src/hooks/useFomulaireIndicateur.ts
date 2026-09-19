@@ -45,20 +45,53 @@ export const useFormulaireIndicateur = (
     setEstEnChargement(true);
 
     try {
-      const detailValidationFichier: DetailValidationFichierContrat =
-        await fetch(
-          `/api/chantier/${chantierId}/indicateur/${indicateurId}/verifier`,
-          {
-            method: "POST",
-            body,
-          },
-        ).then(
-          (response) =>
-            response.json() as Promise<DetailValidationFichierContrat>,
-        );
+      const réponse = await fetch(
+        `/api/chantier/${chantierId}/indicateur/${indicateurId}/verifier`,
+        { method: "POST", body },
+      );
 
-      setRapport(detailValidationFichier);
+      // Sans ce contrôle, une réponse d'erreur renvoie du HTML, `json()` lève,
+      // et l'absence de `catch` laissait l'utilisateur devant un écran muet :
+      // le chargement s'arrêtait sans le moindre message.
+      if (!réponse.ok) {
+        setRapport({
+          id: "",
+          estValide: false,
+          listeErreursValidation: [
+            {
+              cellule: "Cellule non définie",
+              nom: "Erreur inattendue",
+              message:
+                "Le fichier n'a pas pu être vérifié. Réessayez, et si le problème persiste contactez le support de la DITP : pilote.ditp@modernisation.gouv.fr.",
+              numeroDeLigne: 0,
+              positionDeLigne: 0,
+              nomDuChamp: "",
+              positionDuChamp: -1,
+            },
+          ],
+        });
+        return;
+      }
+
+      setRapport((await réponse.json()) as DetailValidationFichierContrat);
       setFile(null);
+    } catch {
+      setRapport({
+        id: "",
+        estValide: false,
+        listeErreursValidation: [
+          {
+            cellule: "Cellule non définie",
+            nom: "Erreur inattendue",
+            message:
+              "Le fichier n'a pas pu être vérifié. Vérifiez votre connexion et réessayez.",
+            numeroDeLigne: 0,
+            positionDeLigne: 0,
+            nomDuChamp: "",
+            positionDuChamp: -1,
+          },
+        ],
+      });
     } finally {
       setEstEnChargement(false);
     }
