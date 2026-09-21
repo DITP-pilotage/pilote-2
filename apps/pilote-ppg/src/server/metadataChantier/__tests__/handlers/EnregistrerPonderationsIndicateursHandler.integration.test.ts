@@ -196,4 +196,109 @@ describe("EnregistrerPonderationsIndicateursHandler", () => {
       expect(parametrage.poids_pourcent_dept_declaree).toBe(999);
     }),
   );
+
+  it(
+    "historise la modification quand une pondération passe à 0",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const indicateur = await fixtures.metadataIndicateurHidden({
+        indic_id: "IND-001",
+        indic_parent_ch: "CH-010",
+      });
+      await fixtures.metadataIndicateurComplementaire({
+        indic_id: indicateur.indic_id,
+        indic_territorialise: false,
+      });
+      await fixtures.metadataParametrageIndicateurs({
+        indic_id: indicateur.indic_id,
+        poids_pourcent_dept_declaree: null,
+        poids_pourcent_reg_declaree: null,
+        poids_pourcent_nat_declaree: 40,
+      });
+      const auteur = await fixtures.utilisateur({});
+
+      // When
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 0,
+            },
+          ],
+        },
+        auteur.id,
+      );
+
+      // Then
+      const historisations =
+        await getPrisma().historisation_modification.findMany({
+          where: { id_objet_modifie: indicateur.indic_id },
+          select: {
+            table_modifie_id: true,
+            type_de_modification: true,
+            id_auteur: true,
+            ancienne_valeur: true,
+            nouvelle_valeur: true,
+          },
+        });
+      expect(historisations).toEqual([
+        {
+          table_modifie_id: "metadata_parametrages_indicateurs",
+          type_de_modification: "modification",
+          id_auteur: auteur.id,
+          ancienne_valeur: { poids_pourcent_nat_declaree: 40 },
+          nouvelle_valeur: { poids_pourcent_nat_declaree: 0 },
+        },
+      ]);
+    }),
+  );
+
+  it(
+    "n'historise rien quand les pondérations enregistrées sont identiques aux précédentes",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const indicateur = await fixtures.metadataIndicateurHidden({
+        indic_id: "IND-001",
+        indic_parent_ch: "CH-010",
+      });
+      await fixtures.metadataIndicateurComplementaire({
+        indic_id: indicateur.indic_id,
+        indic_territorialise: false,
+      });
+      await fixtures.metadataParametrageIndicateurs({
+        indic_id: indicateur.indic_id,
+        poids_pourcent_dept_declaree: null,
+        poids_pourcent_reg_declaree: null,
+        poids_pourcent_nat_declaree: 40,
+      });
+      const auteur = await fixtures.utilisateur({});
+
+      // When
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 40,
+            },
+          ],
+        },
+        auteur.id,
+      );
+
+      // Then
+      const historisations =
+        await getPrisma().historisation_modification.findMany({
+          where: { id_objet_modifie: indicateur.indic_id },
+        });
+      expect(historisations).toEqual([]);
+    }),
+  );
 });
