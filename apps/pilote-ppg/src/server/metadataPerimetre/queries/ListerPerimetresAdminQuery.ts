@@ -8,6 +8,7 @@ import type { Inject } from "@/server/metadataPerimetre/module";
 export interface PerimetreAdminListItem {
   perimetreId: string;
   perNom: string;
+  porteurId: string | null;
   porteurShort: string | null;
   updatedAt: string;
   deletedAt: string | null;
@@ -21,6 +22,7 @@ function toApiModel(
   return {
     perimetreId: perimetre.perimetre_id,
     perNom: perimetre.per_nom,
+    porteurId: perimetre.porteur?.porteur_id ?? null,
     porteurShort: perimetre.porteur?.porteur_short ?? null,
     updatedAt: perimetre.updated_at.toISOString(),
     deletedAt: perimetre.deleted_at?.toISOString() ?? null,
