@@ -29,5 +29,5 @@ SELECT
     metric_date,
     metric_type,
     metric_value
-FROM "dev_pilote__6230"."df3"."agg_nat_rule544"
+FROM "dev_pilote__6230"."df3"."agg_nat"
 --order by indic_id, zone_id, metric_date
