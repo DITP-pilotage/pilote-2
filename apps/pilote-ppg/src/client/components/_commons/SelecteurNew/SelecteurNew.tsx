@@ -22,6 +22,7 @@ export const SelecteurNew = <T extends string>({
   disabled = false,
   className,
   triggerClassName,
+  contentClassName,
   isRequired,
   placeholderRecherche = "Rechercher...",
 }: {
@@ -37,6 +38,7 @@ export const SelecteurNew = <T extends string>({
   disabled?: boolean;
   className?: string;
   triggerClassName?: string;
+  contentClassName?: string;
   isRequired?: boolean;
 }) => {
   return (
@@ -55,6 +57,7 @@ export const SelecteurNew = <T extends string>({
         disabled={disabled}
         showSearch={showSearch}
         placeholderRecherche={placeholderRecherche}
+        contentClassName={contentClassName}
         trigger={
           <Select.Trigger
             className={clsxm("w-50 text-left", triggerClassName, {
