@@ -1,7 +1,6 @@
 import {
   createColumnHelper,
   getCoreRowModel,
-  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -261,7 +260,6 @@ export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return { table, aDesFiltresActifs, reinitialiserLesFiltres };

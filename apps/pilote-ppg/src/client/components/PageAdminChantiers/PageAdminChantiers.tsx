@@ -10,6 +10,7 @@ import { FiltresAdminChantiers } from "./FiltresAdminChantiers";
 const PageAdminChantiers = () => {
   const router = useRouter();
   const { data: chantiers, isLoading } = api.metadataChantier.lister.useQuery();
+  const { data: perimetres } = api.metadataChantier.listerPerimetres.useQuery();
 
   const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
     useTableauAdminChantiers(chantiers ?? []);
@@ -46,7 +47,7 @@ const PageAdminChantiers = () => {
           {!isLoading && (
             <FiltresAdminChantiers
               aDesFiltresActifs={aDesFiltresActifs}
-              chantiers={chantiers ?? []}
+              perimetres={perimetres ?? []}
               reinitialiserLesFiltres={reinitialiserLesFiltres}
               table={table}
             />

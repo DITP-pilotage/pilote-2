@@ -1,5 +1,5 @@
 import { Table } from "@tanstack/react-table";
-import { useId, useMemo } from "react";
+import { useId } from "react";
 import { $Enums } from "@prisma/client";
 import { Checkbox } from "@/components/shared/Checkbox";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
@@ -7,6 +7,7 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
+import type { Perimetre } from "@/server/metadataChantier/queries/ListerPerimetresQuery";
 import { ChantierAdminRow, STATUT_BADGE } from "./useTableauAdminChantiers";
 
 const STATUTS = Object.values($Enums.type_statut);
@@ -31,12 +32,12 @@ const OptionStatut = ({
 
 export const FiltresAdminChantiers = ({
   table,
-  chantiers,
+  perimetres,
   aDesFiltresActifs,
   reinitialiserLesFiltres,
 }: {
   table: Table<ChantierAdminRow>;
-  chantiers: ChantierAdminRow[];
+  perimetres: Perimetre[];
   aDesFiltresActifs: boolean;
   reinitialiserLesFiltres: () => void;
 }) => {
@@ -46,18 +47,6 @@ export const FiltresAdminChantiers = ({
   const valeursStatut = (colonneStatut?.getFilterValue() as string[]) ?? [];
   const valeursPerimetre =
     (colonnePerimetre?.getFilterValue() as string[]) ?? [];
-
-  const nomsPerimetres = useMemo(() => {
-    const noms = new Map<string, string>();
-    chantiers.forEach((chantier) => {
-      noms.set(chantier.perimetreId, chantier.perimetreNom);
-    });
-    return noms;
-  }, [chantiers]);
-
-  const idsPerimetresDisponibles = colonnePerimetre
-    ? [...colonnePerimetre.getFacetedUniqueValues().keys()]
-    : [];
 
   return (
     <section className="flex flex-col gap-4 px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -96,12 +85,19 @@ export const FiltresAdminChantiers = ({
       <MultiSelectFiltre
         className="max-w-fit"
         classNameBouton="min-w-[20rem]"
-        getOptionLabel={(value) => nomsPerimetres.get(value) ?? value}
+        getOptionLabel={(value) =>
+          perimetres.find((perimetre) => perimetre.id === value)?.nom ?? value
+        }
         label="Périmètre"
         onChange={(nouvellesValeurs) =>
           colonnePerimetre?.setFilterValue(nouvellesValeurs)
         }
-        optionGroups={[{ label: "", options: idsPerimetresDisponibles }]}
+        optionGroups={[
+          {
+            label: "",
+            options: perimetres.map((perimetre) => perimetre.id),
+          },
+        ]}
         showGroupSelection={false}
         values={valeursPerimetre}
       />
