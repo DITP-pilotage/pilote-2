@@ -57,30 +57,17 @@ export default class ModifierUneMetadataIndicateurUseCase {
         nouvelleValeur: metadataParametrageIndicateurNouveau,
       });
 
-    if (
-      historisationModification.nouvelleValeur &&
-      Object.values(historisationModification.nouvelleValeur).some(Boolean)
-    ) {
+    if (historisationModification.aDesModifications()) {
       await this.historisationModificationRepository.sauvegarderModificationHistorisation(
         historisationModification,
       );
     }
-    if (
-      historisationParametrageModification.nouvelleValeur &&
-      Object.values(historisationParametrageModification.nouvelleValeur).some(
-        Boolean,
-      )
-    ) {
+    if (historisationParametrageModification.aDesModifications()) {
       await this.historisationModificationRepository.sauvegarderModificationHistorisation(
         historisationParametrageModification,
       );
     }
-    if (
-      historisationIndicateurComplementaireModification.nouvelleValeur &&
-      Object.values(
-        historisationIndicateurComplementaireModification.nouvelleValeur,
-      ).some(Boolean)
-    ) {
+    if (historisationIndicateurComplementaireModification.aDesModifications()) {
       await this.historisationModificationRepository.sauvegarderModificationHistorisation(
         historisationIndicateurComplementaireModification,
       );

@@ -86,6 +86,17 @@ export class HistorisationModification<
     return this._auteur_id;
   }
 
+  /**
+   * Une valeur `undefined` signifie « champ inchangé » (le diff ne conserve que les
+   * clés modifiées). `0`, `false`, `""` et `null` sont de vraies modifications.
+   */
+  aDesModifications(): boolean {
+    return (
+      this._nouvelleValeur !== null &&
+      Object.values(this._nouvelleValeur).some((valeur) => valeur !== undefined)
+    );
+  }
+
   get idObjetModifie(): string {
     return this._idObjetModifie;
   }

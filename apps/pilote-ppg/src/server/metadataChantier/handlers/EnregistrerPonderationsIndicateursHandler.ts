@@ -66,12 +66,7 @@ export class EnregistrerPonderationsIndicateursHandler {
               nouvelleValeur: nouveau,
             });
 
-          if (
-            historisationModification.nouvelleValeur &&
-            Object.values(historisationModification.nouvelleValeur).some(
-              Boolean,
-            )
-          ) {
+          if (historisationModification.aDesModifications()) {
             await this.dependencies.historisationModificationRepository.sauvegarderModificationHistorisation(
               historisationModification,
             );
