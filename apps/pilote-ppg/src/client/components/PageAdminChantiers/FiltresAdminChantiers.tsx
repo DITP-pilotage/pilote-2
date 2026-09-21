@@ -106,21 +106,19 @@ export const FiltresAdminChantiers = ({
         values={valeursPerimetre}
       />
 
-      {aDesFiltresActifs && (
-        <Bouton
-          className="pl-0"
-          iconLeft={
-            <Icone
-              className="w-4 h-4 mt-1 rotate-y-180"
-              icone={ArrowGoBackIcon}
-            />
-          }
-          label="Réinitialiser les filtres"
-          onClick={reinitialiserLesFiltres}
-          size="sm"
-          variant="link"
-        />
-      )}
+      <Bouton
+        disabled={!aDesFiltresActifs}
+        iconLeft={
+          <Icone
+            className="w-4 h-4 text-current rotate-y-180"
+            icone={ArrowGoBackIcon}
+          />
+        }
+        label="Réinitialiser les filtres"
+        onClick={reinitialiserLesFiltres}
+        size="sm"
+        variant="secondary"
+      />
     </section>
   );
 };
