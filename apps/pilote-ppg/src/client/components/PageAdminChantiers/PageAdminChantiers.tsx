@@ -11,7 +11,8 @@ const PageAdminChantiers = () => {
   const router = useRouter();
   const { data: chantiers, isLoading } = api.metadataChantier.lister.useQuery();
 
-  const { table } = useTableauAdminChantiers(chantiers ?? []);
+  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
+    useTableauAdminChantiers(chantiers ?? []);
   const rows = table.getRowModel().rows;
   const recherche = (table.getState().globalFilter as string | undefined) ?? "";
   const nombreChantiersFiltres = table.getFilteredRowModel().rows.length;
@@ -43,7 +44,12 @@ const PageAdminChantiers = () => {
 
         <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
           {!isLoading && (
-            <FiltresAdminChantiers chantiers={chantiers ?? []} table={table} />
+            <FiltresAdminChantiers
+              aDesFiltresActifs={aDesFiltresActifs}
+              chantiers={chantiers ?? []}
+              reinitialiserLesFiltres={reinitialiserLesFiltres}
+              table={table}
+            />
           )}
 
           {isLoading ? (

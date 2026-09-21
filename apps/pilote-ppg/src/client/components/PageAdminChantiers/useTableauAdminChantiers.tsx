@@ -23,6 +23,8 @@ import {
 import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
+import { Badge, type BadgeType } from "@/components/_commons/Badge";
+import { formaterDateCourte } from "@/client/utils/date/date";
 
 export type ChantierAdminRow = inferRouterOutputs<
   typeof appRouter
@@ -30,25 +32,15 @@ export type ChantierAdminRow = inferRouterOutputs<
 
 export const STATUT_BADGE: Record<
   $Enums.type_statut,
-  { label: string; className: string }
+  { label: string; type: BadgeType }
 > = {
-  BROUILLON: {
-    label: "Brouillon",
-    className: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200",
-  },
-  PUBLIE: {
-    label: "Publié",
-    className: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-200",
-  },
-  ARCHIVE: {
-    label: "Archivé",
-    className: "bg-gray-100 text-gray-500 ring-1 ring-inset ring-gray-200",
-  },
-  SUPPRIME: {
-    label: "Supprimé",
-    className: "bg-red-50 text-red-600 ring-1 ring-inset ring-red-200",
-  },
+  BROUILLON: { label: "Brouillon", type: "jaune" },
+  PUBLIE: { label: "Publié", type: "vert" },
+  ARCHIVE: { label: "Archivé", type: "gris" },
+  SUPPRIME: { label: "Supprimé", type: "rouge" },
 };
+
+const STATUTS_PAR_DEFAUT: $Enums.type_statut[] = ["PUBLIE"];
 
 const columnHelper = createColumnHelper<ChantierAdminRow>();
 
@@ -104,10 +96,14 @@ const toStringArray = (value: unknown): string[] =>
     ? (value as string[])
     : [];
 
+const ontLesMemesValeurs = (valeurs: string[], autresValeurs: string[]) =>
+  valeurs.length === autresValeurs.length &&
+  valeurs.every((valeur) => autresValeurs.includes(valeur));
+
 const useFiltresColonnes = () => {
   const [filtres, setFiltres] = useQueryStates(
     {
-      statut: parseAsArrayOf(parseAsString).withDefault(["PUBLIE"]),
+      statut: parseAsArrayOf(parseAsString).withDefault(STATUTS_PAR_DEFAUT),
       perimetre: parseAsArrayOf(parseAsString).withDefault([]),
     },
     { shallow: true, clearOnDefault: true, history: "replace" },
@@ -138,7 +134,19 @@ const useFiltresColonnes = () => {
     });
   };
 
-  return [columnFilters, onColumnFiltersChange] as const;
+  const filtresColonnesActifs =
+    !ontLesMemesValeurs(filtres.statut, STATUTS_PAR_DEFAUT) ||
+    filtres.perimetre.length > 0;
+
+  const reinitialiserFiltresColonnes = () =>
+    setFiltres({ statut: STATUTS_PAR_DEFAUT, perimetre: [] });
+
+  return {
+    columnFilters,
+    onColumnFiltersChange,
+    filtresColonnesActifs,
+    reinitialiserFiltresColonnes,
+  };
 };
 
 const useRecherche = () =>
@@ -163,13 +171,6 @@ const filtreGlobal = (
   );
 };
 
-const formatDate = (date: Date) =>
-  new Date(date).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-
 const useTableColumns = () =>
   useMemo(
     () => [
@@ -193,13 +194,7 @@ const useTableColumns = () =>
         filterFn: "arrIncludesSome",
         cell: (info) => {
           const badge = STATUT_BADGE[info.getValue()];
-          return (
-            <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.className}`}
-            >
-              {badge.label}
-            </span>
-          );
+          return <Badge type={badge.type}>{badge.label}</Badge>;
         },
       }),
       columnHelper.accessor("perimetreId", {
@@ -214,7 +209,7 @@ const useTableColumns = () =>
       columnHelper.accessor("updatedAt", {
         id: "updatedAt",
         header: "Mise à jour",
-        cell: (info) => formatDate(info.getValue()),
+        cell: (info) => formaterDateCourte(info.getValue()),
       }),
     ],
     [],
@@ -224,11 +219,24 @@ export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
   const columns = useTableColumns();
   const [sorting, onSortingChange] = useTri();
   const [pagination, setPagination] = usePagination();
-  const [columnFilters, setColumnFilters] = useFiltresColonnes();
+  const {
+    columnFilters,
+    onColumnFiltersChange: setColumnFilters,
+    filtresColonnesActifs,
+    reinitialiserFiltresColonnes,
+  } = useFiltresColonnes();
   const [globalFilter, setRecherche] = useRecherche();
+
+  const aDesFiltresActifs = filtresColonnesActifs || globalFilter !== "";
 
   const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
     setColumnFilters(updater);
+    void setPagination({ pageIndex: 0 });
+  };
+
+  const reinitialiserLesFiltres = () => {
+    void reinitialiserFiltresColonnes();
+    void setRecherche("");
     void setPagination({ pageIndex: 0 });
   };
 
@@ -256,5 +264,5 @@ export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  return { table };
+  return { table, aDesFiltresActifs, reinitialiserLesFiltres };
 };

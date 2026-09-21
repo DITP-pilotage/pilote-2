@@ -11,14 +11,35 @@ import { ChantierAdminRow, STATUT_BADGE } from "./useTableauAdminChantiers";
 
 const STATUTS = Object.values($Enums.type_statut);
 
+const OptionStatut = ({
+  statut,
+  estCoché,
+  onToggle,
+}: {
+  statut: $Enums.type_statut;
+  estCoché: boolean;
+  onToggle: () => void;
+}) => {
+  const id = useId();
+  return (
+    <label className="flex items-center gap-2 cursor-pointer" htmlFor={id}>
+      <Checkbox checked={estCoché} id={id} onCheckedChange={onToggle} />
+      {STATUT_BADGE[statut].label}
+    </label>
+  );
+};
+
 export const FiltresAdminChantiers = ({
   table,
   chantiers,
+  aDesFiltresActifs,
+  reinitialiserLesFiltres,
 }: {
   table: Table<ChantierAdminRow>;
   chantiers: ChantierAdminRow[];
+  aDesFiltresActifs: boolean;
+  reinitialiserLesFiltres: () => void;
 }) => {
-  const id = useId();
   const colonneStatut = table.getColumn("chState");
   const colonnePerimetre = table.getColumn("perimetreId");
 
@@ -38,9 +59,6 @@ export const FiltresAdminChantiers = ({
     ? [...colonnePerimetre.getFacetedUniqueValues().keys()]
     : [];
 
-  const aDesFiltresActifs =
-    valeursStatut.length > 0 || valeursPerimetre.length > 0;
-
   return (
     <section className="flex flex-col gap-4 px-6 py-4 border-b border-gray-200 bg-gray-50">
       <div className="w-full max-w-sm">
@@ -56,27 +74,20 @@ export const FiltresAdminChantiers = ({
         <span className="font-semibold whitespace-nowrap">Statut :</span>
         <div className="flex flex-wrap items-center gap-2">
           {STATUTS.map((statut) => {
-            const optionId = `${id}-${statut}`;
             const estCoché = valeursStatut.includes(statut);
             return (
-              <label
-                className="flex items-center gap-2 cursor-pointer"
-                htmlFor={optionId}
+              <OptionStatut
+                estCoché={estCoché}
                 key={statut}
-              >
-                <Checkbox
-                  checked={estCoché}
-                  id={optionId}
-                  onCheckedChange={() =>
-                    colonneStatut?.setFilterValue(
-                      estCoché
-                        ? valeursStatut.filter((valeur) => valeur !== statut)
-                        : [...valeursStatut, statut],
-                    )
-                  }
-                />
-                {STATUT_BADGE[statut].label}
-              </label>
+                onToggle={() =>
+                  colonneStatut?.setFilterValue(
+                    estCoché
+                      ? valeursStatut.filter((valeur) => valeur !== statut)
+                      : [...valeursStatut, statut],
+                  )
+                }
+                statut={statut}
+              />
             );
           })}
         </div>
@@ -105,10 +116,7 @@ export const FiltresAdminChantiers = ({
             />
           }
           label="Réinitialiser les filtres"
-          onClick={() => {
-            table.setColumnFilters([{ id: "chState", value: ["PUBLIE"] }]);
-            table.setGlobalFilter("");
-          }}
+          onClick={reinitialiserLesFiltres}
           size="sm"
           variant="link"
         />
