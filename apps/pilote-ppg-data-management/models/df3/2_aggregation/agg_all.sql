@@ -29,5 +29,5 @@ SELECT
     metric_date,
     metric_type,
     metric_value
-FROM {{ ref('agg_nat_rule544') }}
+FROM {{ ref('agg_nat') }}
 --order by indic_id, zone_id, metric_date
