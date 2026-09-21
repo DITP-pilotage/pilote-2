@@ -1,64 +1,40 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
-import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
-import { formaterDateCourte } from "@/client/utils/date/date";
-import type { PerimetreAdminListItem } from "@/server/metadataPerimetre/queries/ListerPerimetresAdminQuery";
+import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
+import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
+import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
+import { FiltreCasesACocher } from "@/components/_commons/TableauAdmin/FiltreCasesACocher";
+import { OPTIONS_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/statutReferentiel";
+import {
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  CLASSE_COLONNE_SECONDAIRE,
+} from "@/components/_commons/TableauAdmin/classesColonnes";
+import { useTableauAdminPerimetres } from "./useTableauAdminPerimetres";
 
-const LignePerimetre = ({
-  perimetre,
-}: {
-  perimetre: PerimetreAdminListItem;
-}) => {
-  const router = useRouter();
-  const supprimé = perimetre.deletedAt !== null;
-  return (
-    <tr
-      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-      key={perimetre.perimetreId}
-      onClick={() =>
-        router.push(
-          `/panel-administrateur/referentiels/perimetres/${perimetre.perimetreId}`,
-        )
-      }
-    >
-      <td className="px-6 py-4 font-mono text-xs text-gray-400">
-        {perimetre.perimetreId}
-      </td>
-      <td className="px-6 py-4 font-medium text-gray-900">
-        <span className={supprimé ? "line-through text-gray-400" : ""}>
-          {perimetre.perNom}
-        </span>
-      </td>
-      <td className="px-6 py-4 text-xs text-gray-500">
-        {perimetre.porteurShort ?? "-"}
-      </td>
-      <td className="px-6 py-4">
-        <BadgeStatutReferentiel supprimé={supprimé} />
-      </td>
-      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-        {formaterDateCourte(new Date(perimetre.updatedAt))}
-      </td>
-    </tr>
-  );
+const CLASSES_COLONNES = {
+  perimetreId: CLASSE_COLONNE_ID,
+  perNom: CLASSE_COLONNE_NOM,
+  porteurId: CLASSE_COLONNE_SECONDAIRE,
+  updatedAt: CLASSE_COLONNE_DATE,
+};
+
+const LIBELLES = {
+  aucun: "Aucun périmètre",
+  aucunResultat: "Aucun périmètre ne correspond à",
 };
 
 const PageAdminPerimetres = () => {
   const { data: perimetres, isLoading } =
     api.metadataPerimetre.lister.useQuery();
-  const [recherche, setRecherche] = useState("");
+  const { data: porteurs } = api.metadataPorteur.lister.useQuery();
+  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
+    useTableauAdminPerimetres(perimetres ?? []);
+  const nombrePerimetresFiltres = table.getFilteredRowModel().rows.length;
 
-  const perimetresFiltres = perimetres?.filter((perimetre) => {
-    const q = recherche.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      perimetre.perimetreId.toLowerCase().includes(q) ||
-      perimetre.perNom.toLowerCase().includes(q)
-    );
-  });
+  const colonnePorteur = table.getColumn("porteurId");
+  const valeursPorteur = (colonnePorteur?.getFilterValue() as string[]) ?? [];
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -71,8 +47,8 @@ const PageAdminPerimetres = () => {
             <h1 className="text-3xl font-bold text-gray-900">Périmètres</h1>
             {!isLoading && perimetres && (
               <p className="mt-1 text-sm text-gray-500">
-                {perimetres.length} périmètre
-                {perimetres.length !== 1 ? "s" : ""}
+                {nombrePerimetresFiltres} périmètre
+                {nombrePerimetresFiltres !== 1 ? "s" : ""}
               </p>
             )}
           </div>
@@ -83,63 +59,51 @@ const PageAdminPerimetres = () => {
           />
         </div>
 
-        <div className="mb-4 max-w-sm">
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={(event) =>
-              setRecherche(event.target.value)
-            }
-            valeur={recherche}
-          />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
-          {isLoading ? (
-            <div className="relative py-20">
-              <Loader />
-            </div>
-          ) : perimetresFiltres?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-              <p className="font-medium text-gray-500">
-                {recherche ? "Aucun résultat" : "Aucun périmètre"}
-              </p>
-              {recherche && (
-                <p className="text-sm mt-1">
-                  Aucun périmètre ne correspond à «&nbsp;{recherche}&nbsp;».
-                </p>
-              )}
-            </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Nom
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Porteur
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Statut
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Mise à jour
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {perimetresFiltres?.map((perimetre) => (
-                  <LignePerimetre
-                    key={perimetre.perimetreId}
-                    perimetre={perimetre}
-                  />
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <TableauAdmin
+          aDesFiltresActifs={aDesFiltresActifs}
+          classesColonnes={CLASSES_COLONNES}
+          filtres={
+            <FiltresTableauAdmin
+              aDesFiltresActifs={aDesFiltresActifs}
+              reinitialiserLesFiltres={reinitialiserLesFiltres}
+              table={table}
+            >
+              <FiltreCasesACocher
+                colonne={table.getColumn("statut")}
+                label="Statut :"
+                options={OPTIONS_STATUT_REFERENTIEL}
+              />
+              <MultiSelectFiltre
+                className="max-w-fit"
+                classNameBouton="min-w-[20rem]"
+                getOptionLabel={(value) =>
+                  porteurs?.find((porteur) => porteur.porteurId === value)
+                    ?.porteurShort ?? value
+                }
+                label="Porteur"
+                onChange={(nouvellesValeurs) =>
+                  colonnePorteur?.setFilterValue(nouvellesValeurs)
+                }
+                optionGroups={[
+                  {
+                    label: "",
+                    options: (porteurs ?? []).map(
+                      (porteur) => porteur.porteurId,
+                    ),
+                  },
+                ]}
+                showGroupSelection={false}
+                values={valeursPorteur}
+              />
+            </FiltresTableauAdmin>
+          }
+          hrefLigne={(perimetre) =>
+            `/panel-administrateur/referentiels/perimetres/${perimetre.perimetreId}`
+          }
+          isLoading={isLoading}
+          libelles={LIBELLES}
+          table={table}
+        />
       </div>
     </div>
   );

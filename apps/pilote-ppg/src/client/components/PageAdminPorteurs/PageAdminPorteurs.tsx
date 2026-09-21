@@ -1,95 +1,36 @@
-import { $Enums } from "@prisma/client";
-import { useState } from "react";
-import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
-import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
-import { formaterDateCourte } from "@/client/utils/date/date";
-import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
+import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
+import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
+import { FiltreCasesACocher } from "@/components/_commons/TableauAdmin/FiltreCasesACocher";
+import { OPTIONS_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/statutReferentiel";
+import {
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+} from "@/components/_commons/TableauAdmin/classesColonnes";
+import {
+  OPTIONS_TYPE_PORTEUR,
+  useTableauAdminPorteurs,
+} from "./useTableauAdminPorteurs";
 
-const TYPE_BADGE: Record<
-  $Enums.porteur_type,
-  { label: string; className: string }
-> = {
-  MIN: {
-    label: "Ministère",
-    className: "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200",
-  },
-  DAC: {
-    label: "DAC",
-    className: "bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-200",
-  },
-  DI: {
-    label: "DI",
-    className: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-200",
-  },
-  AUTRE: {
-    label: "Autre",
-    className: "bg-gray-100 text-gray-600 ring-1 ring-inset ring-gray-200",
-  },
+const CLASSES_COLONNES = {
+  porteurId: CLASSE_COLONNE_ID,
+  porteurShort: CLASSE_COLONNE_NOM,
+  porteurName: "text-gray-700",
+  updatedAt: CLASSE_COLONNE_DATE,
 };
 
-const LignePorteur = ({ porteur }: { porteur: PorteurAdminListItem }) => {
-  const router = useRouter();
-  const supprimé = porteur.deletedAt !== null;
-  const typeBadge =
-    porteur.porteurType && porteur.porteurType in TYPE_BADGE
-      ? TYPE_BADGE[porteur.porteurType]
-      : null;
-  return (
-    <tr
-      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-      onClick={() =>
-        router.push(
-          `/panel-administrateur/referentiels/porteurs/${porteur.porteurId}`,
-        )
-      }
-    >
-      <td className="px-6 py-4 font-mono text-xs text-gray-400">
-        {porteur.porteurId}
-      </td>
-      <td className="px-6 py-4 font-medium text-gray-900">
-        {porteur.porteurShort}
-      </td>
-      <td className="px-6 py-4 text-gray-700">
-        <span className={supprimé ? "line-through text-gray-400" : ""}>
-          {porteur.porteurName}
-        </span>
-      </td>
-      <td className="px-6 py-4">
-        {typeBadge && (
-          <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeBadge.className}`}
-          >
-            {typeBadge.label}
-          </span>
-        )}
-      </td>
-      <td className="px-6 py-4">
-        <BadgeStatutReferentiel supprimé={supprimé} />
-      </td>
-      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-        {formaterDateCourte(new Date(porteur.updatedAt))}
-      </td>
-    </tr>
-  );
+const LIBELLES = {
+  aucun: "Aucun porteur",
+  aucunResultat: "Aucun porteur ne correspond à",
 };
 
 const PageAdminPorteurs = () => {
   const { data: porteurs, isLoading } = api.metadataPorteur.lister.useQuery();
-  const [recherche, setRecherche] = useState("");
-
-  const porteursFiltres = porteurs?.filter((porteur) => {
-    const q = recherche.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      porteur.porteurId.toLowerCase().includes(q) ||
-      porteur.porteurShort.toLowerCase().includes(q) ||
-      porteur.porteurName.toLowerCase().includes(q)
-    );
-  });
+  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
+    useTableauAdminPorteurs(porteurs ?? []);
+  const nombrePorteursFiltres = table.getFilteredRowModel().rows.length;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -102,7 +43,8 @@ const PageAdminPorteurs = () => {
             <h1 className="text-3xl font-bold text-gray-900">Porteurs</h1>
             {!isLoading && porteurs && (
               <p className="mt-1 text-sm text-gray-500">
-                {porteurs.length} porteur{porteurs.length !== 1 ? "s" : ""}
+                {nombrePorteursFiltres} porteur
+                {nombrePorteursFiltres !== 1 ? "s" : ""}
               </p>
             )}
           </div>
@@ -113,63 +55,34 @@ const PageAdminPorteurs = () => {
           />
         </div>
 
-        <div className="mb-4 max-w-sm">
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={(event) =>
-              setRecherche(event.target.value)
-            }
-            valeur={recherche}
-          />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
-          {isLoading ? (
-            <div className="relative py-20">
-              <Loader />
-            </div>
-          ) : porteursFiltres?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-              <p className="font-medium text-gray-500">
-                {recherche ? "Aucun résultat" : "Aucun porteur"}
-              </p>
-              {recherche && (
-                <p className="text-sm mt-1">
-                  Aucun porteur ne correspond à «&nbsp;{recherche}&nbsp;».
-                </p>
-              )}
-            </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Sigle
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Nom
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Statut
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Mise à jour
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {porteursFiltres?.map((porteur) => (
-                  <LignePorteur key={porteur.porteurId} porteur={porteur} />
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <TableauAdmin
+          aDesFiltresActifs={aDesFiltresActifs}
+          classesColonnes={CLASSES_COLONNES}
+          filtres={
+            <FiltresTableauAdmin
+              aDesFiltresActifs={aDesFiltresActifs}
+              reinitialiserLesFiltres={reinitialiserLesFiltres}
+              table={table}
+            >
+              <FiltreCasesACocher
+                colonne={table.getColumn("statut")}
+                label="Statut :"
+                options={OPTIONS_STATUT_REFERENTIEL}
+              />
+              <FiltreCasesACocher
+                colonne={table.getColumn("porteurType")}
+                label="Type :"
+                options={OPTIONS_TYPE_PORTEUR}
+              />
+            </FiltresTableauAdmin>
+          }
+          hrefLigne={(porteur) =>
+            `/panel-administrateur/referentiels/porteurs/${porteur.porteurId}`
+          }
+          isLoading={isLoading}
+          libelles={LIBELLES}
+          table={table}
+        />
       </div>
     </div>
   );

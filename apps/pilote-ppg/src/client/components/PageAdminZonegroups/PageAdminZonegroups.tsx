@@ -1,63 +1,35 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
-import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
-import { formaterDateCourte } from "@/client/utils/date/date";
-import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
+import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
+import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
+import { FiltreCasesACocher } from "@/components/_commons/TableauAdmin/FiltreCasesACocher";
+import { OPTIONS_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/statutReferentiel";
+import {
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  CLASSE_COLONNE_SECONDAIRE,
+} from "@/components/_commons/TableauAdmin/classesColonnes";
+import { useTableauAdminZonegroups } from "./useTableauAdminZonegroups";
 
-const LigneZonegroup = ({
-  zonegroup,
-}: {
-  zonegroup: ZonegroupAdminListItem;
-}) => {
-  const router = useRouter();
-  const supprimé = zonegroup.deletedAt !== null;
-  return (
-    <tr
-      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-      onClick={() =>
-        router.push(
-          `/panel-administrateur/referentiels/zonegroups/${zonegroup.zoneGroupId}`,
-        )
-      }
-    >
-      <td className="px-6 py-4 font-mono text-xs text-gray-400">
-        {zonegroup.zoneGroupId}
-      </td>
-      <td className="px-6 py-4 font-medium text-gray-900">
-        <span className={supprimé ? "line-through text-gray-400" : ""}>
-          {zonegroup.zgName}
-        </span>
-      </td>
-      <td className="px-6 py-4 text-xs text-gray-500">
-        {zonegroup.nbZones} zone{zonegroup.nbZones !== 1 ? "s" : ""}
-      </td>
-      <td className="px-6 py-4">
-        <BadgeStatutReferentiel supprimé={supprimé} />
-      </td>
-      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-        {formaterDateCourte(new Date(zonegroup.updatedAt))}
-      </td>
-    </tr>
-  );
+const CLASSES_COLONNES = {
+  zoneGroupId: CLASSE_COLONNE_ID,
+  zgName: CLASSE_COLONNE_NOM,
+  nbZones: CLASSE_COLONNE_SECONDAIRE,
+  updatedAt: CLASSE_COLONNE_DATE,
+};
+
+const LIBELLES = {
+  aucun: "Aucun groupe de zones",
+  aucunResultat: "Aucun groupe ne correspond à",
 };
 
 const PageAdminZonegroups = () => {
   const { data: zonegroups, isLoading } =
     api.metadataZonegroup.lister.useQuery();
-  const [recherche, setRecherche] = useState("");
-
-  const zonegroupsFiltres = zonegroups?.filter((zonegroup) => {
-    const q = recherche.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      zonegroup.zoneGroupId.toLowerCase().includes(q) ||
-      zonegroup.zgName.toLowerCase().includes(q)
-    );
-  });
+  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
+    useTableauAdminZonegroups(zonegroups ?? []);
+  const nombreZonegroupsFiltres = table.getFilteredRowModel().rows.length;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -70,8 +42,8 @@ const PageAdminZonegroups = () => {
             <h1 className="text-3xl font-bold text-gray-900">Zones groupes</h1>
             {!isLoading && zonegroups && (
               <p className="mt-1 text-sm text-gray-500">
-                {zonegroups.length} zone{zonegroups.length !== 1 ? "s" : ""}{" "}
-                groupe
+                {nombreZonegroupsFiltres} zone
+                {nombreZonegroupsFiltres !== 1 ? "s" : ""} groupe
               </p>
             )}
           </div>
@@ -82,63 +54,29 @@ const PageAdminZonegroups = () => {
           />
         </div>
 
-        <div className="mb-4 max-w-sm">
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={(event) =>
-              setRecherche(event.target.value)
-            }
-            valeur={recherche}
-          />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
-          {isLoading ? (
-            <div className="relative py-20">
-              <Loader />
-            </div>
-          ) : zonegroupsFiltres?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-              <p className="font-medium text-gray-500">
-                {recherche ? "Aucun résultat" : "Aucun groupe de zones"}
-              </p>
-              {recherche && (
-                <p className="text-sm mt-1">
-                  Aucun groupe ne correspond à «&nbsp;{recherche}&nbsp;».
-                </p>
-              )}
-            </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Nom
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Zones
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Statut
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Mise à jour
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {zonegroupsFiltres?.map((zonegroup) => (
-                  <LigneZonegroup
-                    key={zonegroup.zoneGroupId}
-                    zonegroup={zonegroup}
-                  />
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <TableauAdmin
+          aDesFiltresActifs={aDesFiltresActifs}
+          classesColonnes={CLASSES_COLONNES}
+          filtres={
+            <FiltresTableauAdmin
+              aDesFiltresActifs={aDesFiltresActifs}
+              reinitialiserLesFiltres={reinitialiserLesFiltres}
+              table={table}
+            >
+              <FiltreCasesACocher
+                colonne={table.getColumn("statut")}
+                label="Statut :"
+                options={OPTIONS_STATUT_REFERENTIEL}
+              />
+            </FiltresTableauAdmin>
+          }
+          hrefLigne={(zonegroup) =>
+            `/panel-administrateur/referentiels/zonegroups/${zonegroup.zoneGroupId}`
+          }
+          isLoading={isLoading}
+          libelles={LIBELLES}
+          table={table}
+        />
       </div>
     </div>
   );
