@@ -117,18 +117,38 @@ const ListeSlash = forwardRef<ListeHandle, SuggestionProps<OptionBloc>>(
   },
 );
 
+const MARGE = 6;
+
 const render = () => {
   let composant: ReactRenderer<
     ListeHandle,
     SuggestionProps<OptionBloc>
   > | null = null;
   let boite: HTMLDivElement | null = null;
+  let ancrage: (() => DOMRect | null) | null | undefined = null;
 
-  const placer = (clientRect: (() => DOMRect | null) | null | undefined) => {
-    const rect = clientRect?.();
+  const placer = () => {
+    const rect = ancrage?.();
     if (!boite || !rect) return;
-    boite.style.top = `${rect.bottom + 6}px`;
-    boite.style.left = `${rect.left}px`;
+
+    const hauteur = boite.offsetHeight;
+    const placeEnDessous = window.innerHeight - rect.bottom - MARGE;
+    const tientAuDessus = rect.top > hauteur + MARGE;
+    boite.style.top =
+      hauteur > placeEnDessous && tientAuDessus
+        ? `${rect.top - hauteur - MARGE}px`
+        : `${rect.bottom + MARGE}px`;
+
+    const debordement = window.innerWidth - boite.offsetWidth - MARGE;
+    boite.style.left = `${Math.max(MARGE, Math.min(rect.left, debordement))}px`;
+  };
+
+  const detruire = () => {
+    window.removeEventListener("scroll", placer, true);
+    window.removeEventListener("resize", placer);
+    boite?.remove();
+    boite = null;
+    ancrage = null;
   };
 
   return {
@@ -142,24 +162,31 @@ const render = () => {
       boite.style.zIndex = "50";
       boite.appendChild(composant.element);
       document.body.appendChild(boite);
-      placer(props.clientRect);
+      ancrage = props.clientRect;
+      // Le scroll ne declenche pas onUpdate : sans ces ecoutes la boite reste
+      // la ou elle a ete posee pendant que le curseur, lui, defile.
+      window.addEventListener("scroll", placer, true);
+      window.addEventListener("resize", placer);
+      placer();
+      // La liste n'est pas encore montee au premier appel : sa hauteur vaut zero
+      // et le retournement ne peut pas etre decide.
+      requestAnimationFrame(placer);
     },
     onUpdate: (props: SuggestionProps<OptionBloc>) => {
       composant?.updateProps(props);
-      placer(props.clientRect);
+      ancrage = props.clientRect;
+      placer();
     },
     onKeyDown: (props: SuggestionKeyDownProps) => {
       if (props.event.key === "Escape") {
-        boite?.remove();
-        boite = null;
+        detruire();
         return true;
       }
       return composant?.ref?.onKeyDown(props.event) ?? false;
     },
     onExit: () => {
-      boite?.remove();
+      detruire();
       composant?.destroy();
-      boite = null;
       composant = null;
     },
   };
