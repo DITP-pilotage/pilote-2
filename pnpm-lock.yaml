@@ -874,8 +874,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(vitest@4.1.11)
       geojson2svg:
-        specifier: ^1.3.6
-        version: 1.3.6
+        specifier: ^2.0.5
+        version: 2.0.5
       jest-extended:
         specifier: 6.0.0
         version: 6.0.0(typescript@7.0.2)
@@ -5165,11 +5165,14 @@ packages:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
 
+  geojson-bbox@0.0.1:
+    resolution: {integrity: sha512-1ZuQ6SmG8X2c5a4rpiGHbjZuZOhz+Y1uCDyN1Az7552/jBziCIaJe4V1d07I6Ul9k8V8yGi6kisDlvpIjJrZ+Q==}
+
   geojson-stream@0.1.0:
     resolution: {integrity: sha512-svSg5fFXPaTiqzEBGXScA+nISaeC9rLvku2PH+wM5LToATUw2bLIrvls43ymnT9Xnp51nBPVyK9m4Af40KpJ7w==}
 
-  geojson2svg@1.3.6:
-    resolution: {integrity: sha512-DZZIszYA9VTivziUu5mM+HyMI/pyrGkF9HYahcXNB/et0atRP3fCMwFVMIw1AczOejobjfKVolJZH8GX6kaMHQ==}
+  geojson2svg@2.0.5:
+    resolution: {integrity: sha512-jWMXztmKXsJMuIu2OcENM8buAtWjDgec/29Fc/l4LC04b2+RRNNP7E88yDbnneUCVG7BFx0L2CN7SeDL5Xqf2Q==}
 
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
@@ -11539,13 +11542,17 @@ snapshots:
 
   gensync@1.0.0-beta.2: {}
 
+  geojson-bbox@0.0.1: {}
+
   geojson-stream@0.1.0:
     dependencies:
       JSONStream: 1.3.5
       through: 2.3.8
 
-  geojson2svg@1.3.6:
+  geojson2svg@2.0.5:
     dependencies:
+      extend: 3.0.2
+      geojson-bbox: 0.0.1
       multigeojson: 0.0.1
 
   get-caller-file@2.0.5: {}
