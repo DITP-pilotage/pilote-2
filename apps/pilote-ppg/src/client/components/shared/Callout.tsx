@@ -3,16 +3,42 @@
 import {
   ComponentType,
   createContext,
+  FunctionComponent,
   HTMLAttributes,
   ReactNode,
   useContext,
   useMemo,
 } from "react";
 import { clsxm } from "@/utils/clsxm";
+import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
+import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
+import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 
 export type CalloutColor =
   "info" | "success" | "warning" | "error" | "blue" | "moutarde" | "neutral";
+
+type IconeCallout = FunctionComponent<{ className?: string; fill?: string }>;
+
+// Source unique des variantes : le menu « / », le sélecteur de remplacement et
+// le rendu publié les déclaraient chacun de leur côté et avaient divergé.
+export const VARIANTES_CALLOUT: {
+  couleur: CalloutColor;
+  libelle: string;
+  Icone: IconeCallout;
+}[] = [
+  { couleur: "info", libelle: "Info", Icone: InformationPleineIcon },
+  { couleur: "success", libelle: "Succès", Icone: CheckLineIcon },
+  { couleur: "warning", libelle: "Attention", Icone: WarningIcon },
+  { couleur: "error", libelle: "Erreur", Icone: ErrorWarningIcon },
+  { couleur: "blue", libelle: "Bleu", Icone: InformationPleineIcon },
+  { couleur: "moutarde", libelle: "Moutarde", Icone: WarningIcon },
+  { couleur: "neutral", libelle: "Neutre", Icone: InformationPleineIcon },
+];
+
+export const iconeCallout = (couleur: string): IconeCallout =>
+  VARIANTES_CALLOUT.find((variante) => variante.couleur === couleur)?.Icone ??
+  InformationPleineIcon;
 
 const colorVariants: Record<
   CalloutColor,

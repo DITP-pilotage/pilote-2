@@ -1,23 +1,13 @@
-import { ComponentType, createElement, Fragment, ReactNode } from "react";
-import { Callout } from "@/client/components/shared/Callout";
+import { createElement, Fragment, ReactNode } from "react";
+import {
+  Callout,
+  CalloutColor,
+  iconeCallout,
+} from "@/client/components/shared/Callout";
 import { Accordion } from "@/client/components/shared/Accordion";
-import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
-import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
-import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
 import { classesMedia } from "@/client/components/_commons/CentreAide/alignementMedia";
 import { LecteurVideo } from "@/client/components/_commons/CentreAide/LecteurVideo";
 import { registreIcones } from "./registreIcones";
-
-type IconComponent = ComponentType<{ className: string; fill: string }>;
-
-const calloutIconMap: Record<string, IconComponent> = {
-  info: InformationPleineIcon,
-  success: InformationPleineIcon,
-  warning: WarningIcon,
-  error: ErrorWarningIcon,
-  blue: InformationPleineIcon,
-  moutarde: WarningIcon,
-};
 
 function renderChildren(element: Element): ReactNode[] {
   return Array.from(element.childNodes).map((child, index) => (
@@ -42,14 +32,11 @@ function renderNode(node: Node): ReactNode {
 
   if (dataType === "callout") {
     const color =
-      (element.getAttribute("data-color") as
-        "info" | "success" | "warning" | "error" | "blue" | "moutarde") ||
-      "info";
-    const IconeCallout = calloutIconMap[color] || InformationPleineIcon;
+      (element.getAttribute("data-color") as CalloutColor) || "info";
 
     return (
       <Callout.Root color={color}>
-        <Callout.Icon icone={IconeCallout} />
+        <Callout.Icon icone={iconeCallout(color)} />
         <Callout.Text>{renderChildren(element)}</Callout.Text>
       </Callout.Root>
     );
@@ -200,7 +187,7 @@ export const classesRenduContenuHtml = [
   "[&_h1]:text-[22px] [&_h1]:font-bold [&_h1]:mt-8 [&_h1]:mb-3",
   "[&_h2]:text-[19px] [&_h2]:font-bold [&_h2]:mt-7 [&_h2]:mb-2",
   "[&_h3]:text-[17px] [&_h3]:font-bold [&_h3]:mt-6 [&_h3]:mb-2",
-  "[&_h4]:text-[15px] [&_h4]:font-bold [&_h4]:mt-5 [&_h4]:mb-2",
+  "[&_h4]:text-[16px] [&_h4]:font-bold [&_h4]:mt-5 [&_h4]:mb-2",
   "[&_h5]:text-[15px] [&_h5]:font-bold [&_h5]:mt-4 [&_h5]:mb-1",
   "[&_h6]:text-[14px] [&_h6]:font-bold [&_h6]:mt-4 [&_h6]:mb-1",
   "[&_hr]:!my-6 [&_hr]:border-dsfr-grey-925",
