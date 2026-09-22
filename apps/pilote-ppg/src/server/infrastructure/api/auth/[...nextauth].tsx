@@ -15,6 +15,7 @@ import {
 import { autoriserConnexionProConnect } from "@/server/authentification/domain/autoriserConnexionProConnect";
 import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
@@ -321,15 +322,25 @@ export const authConfig: NextAuthConfig = {
       }
 
       const { getContainer } = await import("@/server/dependances");
-      const statutCompteQuery =
-        getContainer("gestionUtilisateur").cradle.statutCompteQuery;
+      const compteAuthentificationQuery =
+        getContainer("gestionUtilisateur").cradle.compteAuthentificationQuery;
+
+      // Le feature flip est lu via le use case et non via `configuration()` :
+      // c'est lui qui applique l'override posé depuis le panel administrateur,
+      // seule valeur qui fasse foi.
+      const featureFlips = await getContainer("legacy")
+        .resolve("recupererFeatureFlipsUseCase")
+        .run();
 
       const acr = acrFromIdToken({ idToken: account.id_token });
       const motif = await autoriserConnexionProConnect({
         email: profile?.email,
         acr,
-        recupererStatutCompte: (email) =>
-          statutCompteQuery.recuperer({ email }),
+        profilsAutorises: featureFlips.NEXT_PUBLIC_FF_PROCONNECT_DITP_ADMIN
+          ? [ProfilEnum.DITP_ADMIN]
+          : null,
+        recupererCompte: (email) =>
+          compteAuthentificationQuery.recuperer({ email }),
       });
 
       if (motif) {

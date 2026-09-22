@@ -1,10 +1,11 @@
-import { StatutCompte } from "@/server/gestion-utilisateur/domain/StatutCompte";
+import { CompteAuthentification } from "@/server/gestion-utilisateur/domain/StatutCompte";
 
 export type MotifRefusConnexion =
   | "double_authentification_absente"
   | "email_absent"
   | "compte_inconnu"
-  | "compte_desactive";
+  | "compte_desactive"
+  | "profil_non_autorise";
 
 /**
  * Niveaux eidas ProConnect qui impliquent une authentification multi-facteur.
@@ -29,16 +30,22 @@ export const ACR_DOUBLE_AUTHENTIFICATION = [
  * une identité insuffisamment authentifiée ne doit rien apprendre de
  * l'existence d'un compte PILOTE.
  *
+ * `profilsAutorises` restreint la connexion aux profils qu'elle énumère ;
+ * `null` n'impose aucune restriction. Le filtre passe en dernier : il ne parle
+ * qu'à une identité déjà authentifiée et déjà rapprochée d'un compte actif.
+ *
  * Retourne `null` si la connexion est autorisée, sinon le motif du refus.
  */
 export const autoriserConnexionProConnect = async ({
   email,
   acr,
-  recupererStatutCompte,
+  profilsAutorises,
+  recupererCompte,
 }: {
   email: string | null | undefined;
   acr: string | null | undefined;
-  recupererStatutCompte: (email: string) => Promise<StatutCompte>;
+  profilsAutorises: readonly string[] | null;
+  recupererCompte: (email: string) => Promise<CompteAuthentification>;
 }): Promise<MotifRefusConnexion | null> => {
   if (!ACR_DOUBLE_AUTHENTIFICATION.includes(acr ?? "")) {
     return "double_authentification_absente";
@@ -49,12 +56,19 @@ export const autoriserConnexionProConnect = async ({
     return "email_absent";
   }
 
-  const statut = await recupererStatutCompte(emailNormalise);
-  if (statut === "inconnu") {
+  const compte = await recupererCompte(emailNormalise);
+  if (compte.statut === "inconnu") {
     return "compte_inconnu";
   }
-  if (statut === "desactive") {
+  if (compte.statut === "desactive") {
     return "compte_desactive";
+  }
+
+  if (
+    profilsAutorises !== null &&
+    !profilsAutorises.includes(compte.profilCode ?? "")
+  ) {
+    return "profil_non_autorise";
   }
 
   return null;
