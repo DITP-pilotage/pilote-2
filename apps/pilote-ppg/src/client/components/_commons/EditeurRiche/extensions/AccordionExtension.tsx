@@ -6,6 +6,12 @@ import {
   NodeViewWrapper,
   ReactNodeViewRenderer,
 } from "@tiptap/react";
+import {
+  CLASSES_CONTENU_ACCORDEON,
+  CLASSES_DECLENCHEUR_ACCORDEON,
+  CLASSES_ENTETE_ACCORDEON,
+} from "@/client/components/shared/Accordion";
+import { clsxm } from "@/utils/clsxm";
 
 function AccordionNodeView({ node, updateAttributes, editor }: NodeViewProps) {
   const [isOpen, setIsOpen] = useState(true);
@@ -15,11 +21,11 @@ function AccordionNodeView({ node, updateAttributes, editor }: NodeViewProps) {
     <NodeViewWrapper>
       <div className="border border-gray-200 rounded my-2">
         <div
-          className="flex !mb-0 !bg-dsfr-blue-france-925 border-t !border-t-primary rounded-t"
+          className={clsxm(CLASSES_ENTETE_ACCORDEON, "rounded-t")}
           contentEditable={false}
         >
           <button
-            className="flex flex-1 items-center justify-between !p-4 font-medium !text-base text-left !mb-0 hover:!bg-dsfr-blue-france-925-hover transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+            className={CLASSES_DECLENCHEUR_ACCORDEON}
             onClick={() => setIsOpen(!isOpen)}
             type="button"
           >
@@ -54,12 +60,11 @@ function AccordionNodeView({ node, updateAttributes, editor }: NodeViewProps) {
           </button>
         </div>
         <div
-          className="!bg-dsfr-alt-blue-france transition-all duration-200 overflow-hidden"
-          style={
-            isOpen
-              ? { padding: "1rem 1.5rem 1.5rem" }
-              : { maxHeight: 0, padding: 0 }
-          }
+          className={clsxm(
+            "overflow-hidden transition-all duration-200",
+            isOpen ? CLASSES_CONTENU_ACCORDEON : "!bg-dsfr-alt-blue-france",
+          )}
+          style={isOpen ? undefined : { maxHeight: 0, padding: 0 }}
         >
           <NodeViewContent />
         </div>
