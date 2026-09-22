@@ -826,8 +826,8 @@ importers:
         specifier: 6.1.6
         version: 6.1.6
       '@types/convict-format-with-validator':
-        specifier: 6.0.5
-        version: 6.0.5
+        specifier: 6.0.6
+        version: 6.0.6
       '@types/d3-selection':
         specifier: ^3.0.11
         version: 3.0.11
@@ -3815,8 +3815,8 @@ packages:
   '@types/chroma-js@2.4.5':
     resolution: {integrity: sha512-6ISjhzJViaPCy2q2e6PgK+8HcHQDQ0V2LDiKmYAh+jJlLqDa6HbwDh0wOevHY0kHHUx0iZwjSRbVD47WOUx5EQ==}
 
-  '@types/convict-format-with-validator@6.0.5':
-    resolution: {integrity: sha512-C2a0tbzs2V99BmCOZMgMbu1T5Oi31Ui1Yp8zVU4VH4BB8DwiJkREoEjENBvJyrCJpBrRYK1h+YRv8mCWnuWedQ==}
+  '@types/convict-format-with-validator@6.0.6':
+    resolution: {integrity: sha512-OOVxygMg3pn3VM+QMDIjGsPEaVyRjxM0+gn5uXw199xPLENIIYvVaOI8LpCasMAmdQRXw0sFMDNs/dbvZ25xTg==}
 
   '@types/convict@6.1.6':
     resolution: {integrity: sha512-1B6jqWHWQud+7yyWAqbxnPmzlHrrOtJzZr1DhhYJ/NbpS4irfZSnq+N5Fm76J9LNRlUZvCmYxTVhhohWRvtqHw==}
@@ -10488,7 +10488,7 @@ snapshots:
 
   '@types/chroma-js@2.4.5': {}
 
-  '@types/convict-format-with-validator@6.0.5':
+  '@types/convict-format-with-validator@6.0.6':
     dependencies:
       '@types/convict': 6.1.6
 
