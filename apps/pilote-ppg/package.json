@@ -68,7 +68,7 @@
     "@gouvfr/dsfr": "1.15.2",
     "@hookform/resolvers": "^5.9.1",
     "@keycloak/keycloak-admin-client": "26.7.3",
-    "@next/env": "16.1.2",
+    "@next/env": "16.3.5",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "7.10.0",
     "@socialgouv/matomo-next": "1.13.1",
