@@ -9,10 +9,11 @@ import {
   Callout,
   CalloutColor,
   iconeCallout,
-  VARIANTES_CALLOUT,
 } from "@/client/components/shared/Callout";
 
-function CalloutNodeView({ node, updateAttributes, editor }: NodeViewProps) {
+// La variante se choisit a l'insertion, dans le menu « / » : l'encadre affiche
+// donc en edition exactement ce qui sera publie.
+function CalloutNodeView({ node }: NodeViewProps) {
   const color = (node.attrs.color as CalloutColor) || "info";
 
   return (
@@ -20,23 +21,6 @@ function CalloutNodeView({ node, updateAttributes, editor }: NodeViewProps) {
       <Callout.Root color={color}>
         <Callout.Icon icone={iconeCallout(color)} />
         <div className="flex-1 min-w-0">
-          {editor.isEditable && (
-            <div contentEditable={false} className="mb-2">
-              <select
-                className="text-xs border rounded px-1 py-0.5 bg-white"
-                onChange={(event) =>
-                  updateAttributes({ color: event.target.value })
-                }
-                value={color}
-              >
-                {VARIANTES_CALLOUT.map(({ couleur, libelle }) => (
-                  <option key={couleur} value={couleur}>
-                    {libelle}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
           <NodeViewContent className="text-sm leading-relaxed" />
         </div>
       </Callout.Root>
