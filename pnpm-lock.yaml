@@ -937,8 +937,8 @@ importers:
   apps/pilote-ppg-auth:
     dependencies:
       '@hono/node-server':
-        specifier: ^1.19.17
-        version: 1.19.17(hono@4.13.7)
+        specifier: ^2.1.1
+        version: 2.1.1(hono@4.13.7)
       '@hono/zod-validator':
         specifier: ^0.7.6
         version: 0.7.6(hono@4.13.7)(zod@4.5.4)
