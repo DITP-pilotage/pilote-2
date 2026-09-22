@@ -579,8 +579,8 @@ importers:
         specifier: 7.10.0
         version: 7.10.0(prisma@7.10.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(magicast@0.5.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(typescript@7.0.2)
       '@socialgouv/matomo-next':
-        specifier: 1.13.1
-        version: 1.13.1(next@16.3.5(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.78.0))(react@19.2.8)
+        specifier: 1.14.2
+        version: 1.14.2(next@16.3.5(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.78.0))(react@19.2.8)
       '@tanstack/react-query':
         specifier: ^5.102.8
         version: 5.102.8(react@19.2.8)
@@ -3248,8 +3248,8 @@ packages:
   '@sinclair/typebox@0.27.12':
     resolution: {integrity: sha512-hhyNJ+nbR6ZR7pToHvllEFun9TL0sbL+tk/ON75lo+Xas054uez98qRbsuNt7MBCyZKK4+8Yli/OAGZhmfBZ/g==}
 
-  '@socialgouv/matomo-next@1.13.1':
-    resolution: {integrity: sha512-X1772JUsZmGVFfE+rG2k+eWelW1HcEUqq6J8YxviKX4nRDh/jS0Royjft1vKMYPEEdTLrLJK/gvIftq6Rwk+ng==}
+  '@socialgouv/matomo-next@1.14.2':
+    resolution: {integrity: sha512-K7blGIQdkV9+ihxxtR/ABxeMsTTet/MiIluPW7BMkBBmoTOhWKzIfxzjc1MrLvZHC5aInCLeuNdW8hRMi4jkog==}
     engines: {node: '>=24.0.0', pnpm: '>=10.0.0'}
     peerDependencies:
       next: '>= 13.0.0'
@@ -9980,7 +9980,7 @@ snapshots:
 
   '@sinclair/typebox@0.27.12': {}
 
-  '@socialgouv/matomo-next@1.13.1(next@16.3.5(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.78.0))(react@19.2.8)':
+  '@socialgouv/matomo-next@1.14.2(next@16.3.5(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.78.0))(react@19.2.8)':
     dependencies:
       next: 16.3.5(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.78.0)
       react: 19.2.8
