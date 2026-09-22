@@ -179,7 +179,7 @@
     "oxlint": "^1.82.0",
     "oxlint-tsgolint": "~7.0.2001",
     "pino-pretty": "^10.3.1",
-    "playwright-core": "1.59.1",
+    "playwright-core": "1.63.0",
     "portless": "^0.11.1",
     "prettier": "^3.9.6",
     "prisma": "7.10.0",
