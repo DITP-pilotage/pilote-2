@@ -678,8 +678,8 @@ importers:
         specifier: ^1.11.23
         version: 1.11.23
       dotenv:
-        specifier: 16.4.5
-        version: 16.4.5
+        specifier: 17.4.2
+        version: 17.4.2
       dotenv-cli:
         specifier: ^7.4.4
         version: 7.4.4

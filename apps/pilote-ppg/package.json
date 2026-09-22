@@ -104,7 +104,7 @@
     "d3-selection": "^3.0.0",
     "d3-zoom": "^3.0.0",
     "dayjs": "^1.11.23",
-    "dotenv": "16.4.5",
+    "dotenv": "17.4.2",
     "dotenv-cli": "^7.4.4",
     "dotenv-expand": "11.0.6",
     "echarts": "^6.1.0",
