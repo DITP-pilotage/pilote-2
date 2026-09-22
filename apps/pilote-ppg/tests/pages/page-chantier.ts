@@ -277,10 +277,8 @@ export class PageChantier extends BasePage {
   }
 
   async expectPageNotFound(): Promise<void> {
-    await this.page.waitForLoadState("networkidle");
-    await expect(
-      this.page.getByRole("heading", { name: /Avancement du chantier/ }),
-    ).not.toBeVisible();
+    // En dev, Next sert son 404 par défaut tant que la page 404 custom n'est pas compilée.
+    await expect(this.page).toHaveTitle(/Page non trouvée|404/);
   }
 
   async expectHistoriqueCommentaire(

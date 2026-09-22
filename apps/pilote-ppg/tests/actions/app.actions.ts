@@ -3,7 +3,6 @@ import { PageAccueilNonConnecte } from "../pages/page-accueil-non-connecte";
 import { PageConnexion } from "../pages/page-connexion";
 import { PageLogin } from "../pages/page-login";
 import { PageAccueil } from "../pages/page-accueil";
-import { HeaderComponent } from "../components/header.component";
 import { E2ETestContext } from "../e2e-test-context";
 
 export class AppActions {
@@ -12,7 +11,26 @@ export class AppActions {
     private readonly e2eContext: E2ETestContext,
   ) {}
 
+  /**
+   * Connexion par l'API NextAuth plutôt que par le formulaire : le provider
+   * credentials est appelé directement, ce qui pose le cookie de session dans le
+   * contexte sans traverser les quatre pages du parcours de connexion. Le parcours
+   * complet reste couvert par `loginViaFormulaire`.
+   */
   async loginAs(
+    username = process.env.E2E_USERNAME!,
+    password = process.env.DEV_PASSWORD!,
+  ): Promise<PageAccueil> {
+    await this.authentifierParCookie(username, password);
+
+    await this.page.goto("/");
+    await this.dismissPostLoginModals();
+    await this.page.waitForSelector("div#main");
+
+    return new PageAccueil(this.page, this.e2eContext);
+  }
+
+  async loginViaFormulaire(
     username = process.env.E2E_USERNAME!,
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
@@ -23,8 +41,8 @@ export class AppActions {
     await pageAccueilNonConnecte.goto();
     await pageAccueilNonConnecte.header.clickLogin();
 
-    // L'écran de choix du mode de connexion s'intercale désormais entre le
-    // point d'entrée de l'en-tête et le formulaire.
+    // L'écran de choix du mode de connexion s'intercale entre le point d'entrée
+    // de l'en-tête et le formulaire.
     const pageConnexion = new PageConnexion(this.page);
     await pageConnexion.choisirConnexionParIdentifiants();
 
@@ -43,9 +61,36 @@ export class AppActions {
     username: string,
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
-    const header = new HeaderComponent(this.page);
-    await header.logout();
+    await this.page.context().clearCookies();
     return this.loginAs(username, password);
+  }
+
+  private async authentifierParCookie(
+    username: string,
+    password: string,
+  ): Promise<void> {
+    const { csrfToken } = (await (
+      await this.page.request.get("/api/auth/csrf")
+    ).json()) as { csrfToken: string };
+
+    const reponse = await this.page.request.post(
+      "/api/auth/callback/credentials",
+      {
+        form: { csrfToken, username, password, callbackUrl: "/" },
+        maxRedirects: 0,
+      },
+    );
+
+    const redirection = reponse.headers().location ?? "";
+    const cookies = await this.page.context().cookies();
+    const sessionPosee = cookies.some((cookie) =>
+      cookie.name.includes("session-token"),
+    );
+    if (!sessionPosee || /error=/.test(redirection)) {
+      throw new Error(
+        `Connexion refusée pour ${username} (statut ${reponse.status()}, redirection vers ${redirection})`,
+      );
+    }
   }
 
   private async dismissPostLoginModals(): Promise<void> {

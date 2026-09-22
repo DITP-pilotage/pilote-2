@@ -10,6 +10,6 @@ test("doit arriver sur la landing page", async ({ page, e2eContext }) => {
 
 test("doit pouvoir se connecter", async ({ page, e2eContext }) => {
   const appActions = new AppActions(page, e2eContext);
-  const pageAccueil = await appActions.loginAs();
+  const pageAccueil = await appActions.loginViaFormulaire();
   await pageAccueil.header.expectUserLoggedIn();
 });

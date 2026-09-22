@@ -49,7 +49,6 @@ export class PageAccueil extends BasePage {
   }
 
   async selectChantier(chantierName: string): Promise<PageChantier> {
-    await this.page.waitForLoadState("networkidle");
     await this.page
       .getByRole("table")
       .getByRole("cell", { name: chantierName })
