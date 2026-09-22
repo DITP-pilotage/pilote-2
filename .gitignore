@@ -24,8 +24,13 @@ yarn-error.log*
 .idea/
 .vscode/
 .cursor/
-.claude/
-!.claude/skills/feature/SKILL.md
+# Git ne redescend pas dans un dossier exclu : re-inclure un fichier profond suppose
+# d'abord re-inclure chaque dossier parent. Un skill partagé s'ajoute ici, dossier entier.
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/deps-campagne/
+!.claude/skills/feature/
 
 # misc
 qodana.yaml
