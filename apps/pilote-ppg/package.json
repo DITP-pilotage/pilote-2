@@ -144,7 +144,7 @@
     "ws": "8.21.3",
     "yaml": "^2.9.0",
     "zod": "^4.5.4",
-    "zustand": "5.0.11"
+    "zustand": "5.0.15"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
