@@ -52,7 +52,7 @@
     "echarts-for-react": "3.0.6",
     "hono": "^4.13.7",
     "hono-rate-limiter": "^0.5.4",
-    "iron-session": "^8.0.4",
+    "iron-session": "^9.0.1",
     "ky": "^2.1.0",
     "lucide-react": "^1.42.0",
     "neverthrow": "^8.2.0",
