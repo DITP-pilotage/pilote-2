@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/react";
 import type { ComponentType } from "react";
+import { VARIANTES_CALLOUT } from "@/client/components/shared/Callout";
 import { registreIcones } from "@/components/_commons/EditeurRiche/registreIcones";
 
 type ComposantIcone = ComponentType<{ className?: string; fill?: string }>;
@@ -22,14 +23,7 @@ export type ActionsBlocs = {
 const icone = (nom: string): ComposantIcone =>
   registreIcones[nom] ?? registreIcones.InformationPleineIcon;
 
-const COULEURS_CALLOUT = [
-  { color: "info", label: "Info", icone: "InformationPleineIcon" },
-  { color: "success", label: "Succès", icone: "CheckLineIcon" },
-  { color: "warning", label: "Attention", icone: "WarningIcon" },
-  { color: "error", label: "Alerte", icone: "ErrorWarningIcon" },
-] as const;
-
-const NIVEAUX_TITRE = [1, 2, 3, 4, 5, 6] as const;
+export const NIVEAUX_TITRE = [1, 2, 3, 4, 5, 6] as const;
 
 export const construireOptionsBlocs = (
   editor: Editor,
@@ -39,12 +33,11 @@ export const construireOptionsBlocs = (
     label: "Encadré",
     keywords: "callout encadre info alerte",
     Icone: icone("InformationPleineIcon"),
-    sousOptions: COULEURS_CALLOUT.map((variante) => ({
-      label: variante.label,
-      keywords: `callout ${variante.label.toLowerCase()}`,
-      Icone: icone(variante.icone),
-      run: () =>
-        editor.chain().focus().insertCallout({ color: variante.color }).run(),
+    sousOptions: VARIANTES_CALLOUT.map(({ couleur, libelle, Icone }) => ({
+      label: libelle,
+      keywords: `callout ${libelle.toLowerCase()}`,
+      Icone,
+      run: () => editor.chain().focus().insertCallout({ color: couleur }).run(),
     })),
   },
   {
@@ -78,6 +71,12 @@ export const construireOptionsBlocs = (
     run: () => actions.ouvrirIcone?.(),
   },
   {
+    label: "Paragraphe",
+    keywords: "paragraphe texte normal",
+    Icone: icone("ParagraphIcon"),
+    run: () => editor.chain().focus().setParagraph().run(),
+  },
+  {
     label: "Titre",
     keywords: "titre heading h1 h2 h3 h4 h5 h6",
     Icone: icone("FontSizeIcon"),
@@ -87,6 +86,12 @@ export const construireOptionsBlocs = (
       Icone: icone(`Heading${niveau}Icon`),
       run: () => editor.chain().focus().toggleHeading({ level: niveau }).run(),
     })),
+  },
+  {
+    label: "Citation",
+    keywords: "citation quote blockquote",
+    Icone: icone("BlockquoteIcon"),
+    run: () => editor.chain().focus().toggleBlockquote().run(),
   },
   {
     label: "Liste à puces",

@@ -5,6 +5,19 @@ import { ComponentProps } from "react";
 import { clsxm } from "@/utils/clsxm";
 import "./accordion.css";
 
+// Source unique des classes : la NodeView de l'editeur les redeclarait et le
+// contenu avait fini decale de 8px par rapport a son en-tete.
+export const CLASSES_ENTETE_ACCORDEON =
+  "flex !mb-0 !bg-dsfr-blue-france-925 border-t !border-t-primary";
+
+export const CLASSES_DECLENCHEUR_ACCORDEON = clsxm(
+  "flex flex-1 items-center justify-between !p-4 font-medium !text-base text-left !mb-0",
+  "hover:!bg-dsfr-blue-france-925-hover transition-colors",
+  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
+);
+
+export const CLASSES_CONTENU_ACCORDEON = "!bg-dsfr-alt-blue-france px-4 py-3";
+
 export const Accordion = Object.assign({}, RadixAccordion, {
   Item: ({
     children,
@@ -26,10 +39,7 @@ export const Accordion = Object.assign({}, RadixAccordion, {
   }: ComponentProps<typeof RadixAccordion.Header>) => (
     <RadixAccordion.Header
       {...props}
-      className={clsxm(
-        "flex !mb-0 !bg-dsfr-blue-france-925 border-t !border-t-primary",
-        props.className,
-      )}
+      className={clsxm(CLASSES_ENTETE_ACCORDEON, props.className)}
     >
       {children}
     </RadixAccordion.Header>
@@ -40,13 +50,7 @@ export const Accordion = Object.assign({}, RadixAccordion, {
   }: ComponentProps<typeof RadixAccordion.Trigger>) => (
     <RadixAccordion.Trigger
       {...props}
-      className={clsxm(
-        "flex flex-1 items-center justify-between !p-4 font-medium !text-base text-left !mb-0",
-        "hover:!bg-dsfr-blue-france-925-hover transition-colors",
-        "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
-        "group",
-        props.className,
-      )}
+      className={clsxm(CLASSES_DECLENCHEUR_ACCORDEON, "group", props.className)}
     >
       {children}
       <svg
@@ -72,8 +76,7 @@ export const Accordion = Object.assign({}, RadixAccordion, {
     <RadixAccordion.Content
       {...props}
       className={clsxm(
-        "!bg-dsfr-alt-blue-france",
-        "px-6",
+        CLASSES_CONTENU_ACCORDEON,
         "overflow-hidden",
         "accordion-content",
         props.className,
