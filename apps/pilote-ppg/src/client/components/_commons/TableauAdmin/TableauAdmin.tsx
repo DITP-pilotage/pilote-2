@@ -1,4 +1,6 @@
-import { LigneTableau, TableauDe } from "../Tableau/typesTableau";
+import { Table } from "@tanstack/react-table";
+import { LigneTableau } from "../Tableau/typesTableau";
+import { type FeaturesTableauAdmin } from "./featuresTableauAdmin";
 import { useRouter } from "next/router";
 import { flexRender } from "@tanstack/react-table";
 import type { ReactNode } from "react";
@@ -59,7 +61,7 @@ export function TableauAdmin<TRow extends LigneTableau>({
   classesColonnes = {},
   libelles,
 }: {
-  table: TableauDe<TRow>;
+  table: Table<FeaturesTableauAdmin, TRow>;
   isLoading: boolean;
   filtres: ReactNode;
   aDesFiltresActifs: boolean;
@@ -156,8 +158,8 @@ export function TableauAdmin<TRow extends LigneTableau>({
             table.setPageSize(tailleDePage)
           }
           nombreDePages={table.getPageCount()}
-          numeroDePageCourante={table.getState().pagination.pageIndex + 1}
-          tailleDePage={table.getState().pagination.pageSize}
+          numeroDePageCourante={table.store.state.pagination.pageIndex + 1}
+          tailleDePage={table.store.state.pagination.pageSize}
         />
       )}
     </div>

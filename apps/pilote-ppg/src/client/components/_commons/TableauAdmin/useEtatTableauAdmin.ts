@@ -1,4 +1,5 @@
 import {
+  type Table,
   columnFilteringFeature,
   createFilteredRowModel,
   createPaginatedRowModel,
@@ -13,23 +14,14 @@ import {
   type Row,
   type SortingState,
 } from "@tanstack/react-table";
-import { LigneTableau, TableauDe } from "../Tableau/typesTableau";
+import { LigneTableau } from "../Tableau/typesTableau";
+import {
+  featuresTableauAdmin,
+  type FeaturesTableauAdmin,
+} from "./featuresTableauAdmin";
 
-/**
- * Jeu de features partagé par les quatre tableaux d'administration.
- * L'ordre suit la règle amont : une feature prérequis est déclarée avant le slot
- * de modèle de lignes qui en dépend, et `globalFilteringFeature` exige
- * `columnFilteringFeature`.
- */
-export const featuresTableauAdmin = tableFeatures({
-  columnFilteringFeature,
-  globalFilteringFeature,
-  rowSortingFeature,
-  rowPaginationFeature,
-  filteredRowModel: createFilteredRowModel(),
-  sortedRowModel: createSortedRowModel(),
-  paginatedRowModel: createPaginatedRowModel(),
-});
+export { featuresTableauAdmin };
+
 import { useMemo } from "react";
 import {
   parseAsArrayOf,
@@ -253,7 +245,7 @@ export const useEtatTableauAdmin = <TRow extends LigneTableau>({
  * à refaire le cast `getFilterValue() as string[]`.
  */
 export const useFiltreColonne = <TRow extends LigneTableau>(
-  table: TableauDe<TRow>,
+  table: Table<FeaturesTableauAdmin, TRow>,
   colonneId: string,
 ) => {
   const colonne = table.getColumn(colonneId);

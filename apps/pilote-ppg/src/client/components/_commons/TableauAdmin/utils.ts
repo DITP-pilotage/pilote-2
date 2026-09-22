@@ -1,4 +1,5 @@
-import { LigneTableau, TableauDe } from "../Tableau/typesTableau";
+import { LigneTableau } from "../Tableau/typesTableau";
+import { type FeaturesTableauAdmin } from "./featuresTableauAdmin";
 import type { Table } from "@tanstack/react-table";
 
 export type StatutReferentiel = "ACTIF" | "SUPPRIME";
@@ -14,5 +15,5 @@ export const statutReferentielDe = (
  * l'état de la table.
  */
 export const lireRechercheGlobale = <TRow extends LigneTableau>(
-  table: TableauDe<TRow>,
-): string => (table.getState().globalFilter as string | undefined) ?? "";
+  table: Table<FeaturesTableauAdmin, TRow>,
+): string => table.store.state.globalFilter ?? "";

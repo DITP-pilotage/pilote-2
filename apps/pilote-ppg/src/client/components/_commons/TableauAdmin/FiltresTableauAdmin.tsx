@@ -1,4 +1,5 @@
-import { LigneTableau, TableauDe } from "../Tableau/typesTableau";
+import { LigneTableau } from "../Tableau/typesTableau";
+import { type FeaturesTableauAdmin } from "./featuresTableauAdmin";
 import type { Table } from "@tanstack/react-table";
 import type { ReactNode } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
@@ -13,7 +14,7 @@ export function FiltresTableauAdmin<TRow extends LigneTableau>({
   reinitialiserLesFiltres,
   children,
 }: {
-  table: TableauDe<TRow>;
+  table: Table<FeaturesTableauAdmin, TRow>;
   aDesFiltresActifs: boolean;
   reinitialiserLesFiltres: () => void;
   children: ReactNode;
