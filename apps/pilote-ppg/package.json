@@ -64,7 +64,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@faker-js/faker": "^10.6.0",
-    "@getbrevo/brevo": "^3.0.4",
+    "@getbrevo/brevo": "^6.0.3",
     "@gouvfr/dsfr": "1.15.2",
     "@hookform/resolvers": "^5.9.1",
     "@keycloak/keycloak-admin-client": "26.7.3",
