@@ -23,10 +23,7 @@ export const FiltresAdminChantiers = ({
   aDesFiltresActifs: boolean;
   reinitialiserLesFiltres: () => void;
 }) => {
-  const [valeursStatut, setValeursStatut] = useFiltreColonne(
-    table,
-    "chState",
-  );
+  const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "chState");
   const [valeursPerimetre, setValeursPerimetre] = useFiltreColonne(
     table,
     "perimetreId",

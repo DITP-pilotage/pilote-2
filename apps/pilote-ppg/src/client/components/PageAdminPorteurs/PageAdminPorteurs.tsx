@@ -34,10 +34,7 @@ const PageAdminPorteurs = () => {
   const nombrePorteursFiltres = table.getFilteredRowModel().rows.length;
 
   const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
-  const [valeursType, setValeursType] = useFiltreColonne(
-    table,
-    "porteurType",
-  );
+  const [valeursType, setValeursType] = useFiltreColonne(table, "porteurType");
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
