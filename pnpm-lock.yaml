@@ -702,8 +702,8 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       htmlparser2:
-        specifier: ^8.0.2
-        version: 8.0.2
+        specifier: ^12.0.0
+        version: 12.0.0
       isomorphic-dompurify:
         specifier: ^1.13.0
         version: 1.13.0
@@ -5299,9 +5299,6 @@ packages:
   htmlparser2@12.0.0:
     resolution: {integrity: sha512-Tz7u1i95/g2x2jz81+x0FBVhBhY5aRTvD3tXXdFaljuNdzDLJ8UGNRrTcj2cgQvAg3iW/h77Fz15nLW0L0CrZw==}
     engines: {node: '>=20.19.0'}
-
-  htmlparser2@8.0.2:
-    resolution: {integrity: sha512-GYdjWKDkbRLkZ5geuHs5NY1puJ+PXwP7+fHPRz06Eirsb9ugf6d8kkXav6ADhcODhFFPMIXyxkxSuMf3D6NCFA==}
 
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
@@ -11691,13 +11688,6 @@ snapshots:
       domhandler: 6.0.1
       domutils: 4.0.2
       entities: 8.1.0
-
-  htmlparser2@8.0.2:
-    dependencies:
-      domelementtype: 2.3.0
-      domhandler: 5.0.3
-      domutils: 3.2.2
-      entities: 4.5.0
 
   http-proxy-agent@7.0.2:
     dependencies:
