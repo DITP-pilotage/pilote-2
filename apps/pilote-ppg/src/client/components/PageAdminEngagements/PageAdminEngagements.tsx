@@ -1,64 +1,38 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
-import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
-import { formaterDateCourte } from "@/client/utils/date/date";
-import type { EngagementAdminListItem } from "@/server/metadataEngagement/queries/ListerEngagementsAdminQuery";
+import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
+import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
+import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
+import { useFiltreColonne } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
+import {
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  CLASSE_COLONNE_SECONDAIRE,
+  OPTIONS_STATUT_REFERENTIEL,
+} from "@/components/_commons/TableauAdmin/constants";
+import { useTableauAdminEngagements } from "./useTableauAdminEngagements";
 
-const LigneEngagement = ({
-  engagement,
-}: {
-  engagement: EngagementAdminListItem;
-}) => {
-  const router = useRouter();
-  const supprimé = engagement.deletedAt !== null;
-  return (
-    <tr
-      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-      onClick={() =>
-        router.push(
-          `/panel-administrateur/referentiels-deprecies/engagements/${engagement.engagementId}`,
-        )
-      }
-    >
-      <td className="px-6 py-4 font-mono text-xs text-gray-400">
-        {engagement.engagementId}
-      </td>
-      <td className="px-6 py-4 font-medium text-gray-900">
-        {engagement.engagementShort}
-      </td>
-      <td className="px-6 py-4 text-gray-700">
-        <span className={supprimé ? "line-through text-gray-400" : ""}>
-          {engagement.engagementName}
-        </span>
-      </td>
-      <td className="px-6 py-4">
-        <BadgeStatutReferentiel supprimé={supprimé} />
-      </td>
-      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-        {formaterDateCourte(new Date(engagement.updatedAt))}
-      </td>
-    </tr>
-  );
+const CLASSES_COLONNES = {
+  engagementId: CLASSE_COLONNE_ID,
+  engagementShort: CLASSE_COLONNE_SECONDAIRE,
+  engagementName: CLASSE_COLONNE_NOM,
+  updatedAt: CLASSE_COLONNE_DATE,
+};
+
+const LIBELLES = {
+  aucun: "Aucun engagement",
+  aucunResultat: "Aucun engagement ne correspond à",
 };
 
 const PageAdminEngagements = () => {
   const { data: engagements, isLoading } =
     api.metadataEngagement.lister.useQuery();
-  const [recherche, setRecherche] = useState("");
+  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
+    useTableauAdminEngagements(engagements ?? []);
+  const nombreEngagementsFiltres = table.getFilteredRowModel().rows.length;
 
-  const engagementsFiltres = engagements?.filter((engagement) => {
-    const termeRecherche = recherche.toLowerCase().trim();
-    if (!termeRecherche) return true;
-    return (
-      engagement.engagementId.toLowerCase().includes(termeRecherche) ||
-      engagement.engagementShort.toLowerCase().includes(termeRecherche) ||
-      engagement.engagementName.toLowerCase().includes(termeRecherche)
-    );
-  });
+  const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -71,8 +45,8 @@ const PageAdminEngagements = () => {
             <h1 className="text-3xl font-bold text-gray-900">Engagements</h1>
             {!isLoading && engagements && (
               <p className="mt-1 text-sm text-gray-500">
-                {engagements.length} engagement
-                {engagements.length !== 1 ? "s" : ""}
+                {nombreEngagementsFiltres} engagement
+                {nombreEngagementsFiltres !== 1 ? "s" : ""}
               </p>
             )}
           </div>
@@ -83,63 +57,30 @@ const PageAdminEngagements = () => {
           />
         </div>
 
-        <div className="mb-4 max-w-sm">
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={(event) =>
-              setRecherche(event.target.value)
-            }
-            valeur={recherche}
-          />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
-          {isLoading ? (
-            <div className="relative py-20">
-              <Loader />
-            </div>
-          ) : engagementsFiltres?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-              <p className="font-medium text-gray-500">
-                {recherche ? "Aucun résultat" : "Aucun engagement"}
-              </p>
-              {recherche && (
-                <p className="text-sm mt-1">
-                  Aucun engagement ne correspond à «&nbsp;{recherche}&nbsp;».
-                </p>
-              )}
-            </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Code
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Nom
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Statut
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Mise à jour
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {engagementsFiltres?.map((engagement) => (
-                  <LigneEngagement
-                    engagement={engagement}
-                    key={engagement.engagementId}
-                  />
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <TableauAdmin
+          aDesFiltresActifs={aDesFiltresActifs}
+          classesColonnes={CLASSES_COLONNES}
+          filtres={
+            <FiltresTableauAdmin
+              aDesFiltresActifs={aDesFiltresActifs}
+              reinitialiserLesFiltres={reinitialiserLesFiltres}
+              table={table}
+            >
+              <GroupeCasesACocher
+                label="Statut :"
+                onChange={setValeursStatut}
+                options={OPTIONS_STATUT_REFERENTIEL}
+                values={valeursStatut}
+              />
+            </FiltresTableauAdmin>
+          }
+          hrefLigne={(engagement) =>
+            `/panel-administrateur/referentiels-deprecies/engagements/${engagement.engagementId}`
+          }
+          isLoading={isLoading}
+          libelles={LIBELLES}
+          table={table}
+        />
       </div>
     </div>
   );
