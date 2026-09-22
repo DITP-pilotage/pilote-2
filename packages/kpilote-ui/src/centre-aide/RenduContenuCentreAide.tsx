@@ -9,7 +9,7 @@ export const classesRenduBase =
 
 const ATTRS_DATA = ['data-type', 'data-color', 'data-title', 'data-icon-type', 'data-src']
 
-const rendreEnfants = (element: Element): ReactNode =>
+const rendreEnfants = (element: Element): ReactNode[] =>
   Array.from(element.childNodes).map((enfant, index) => (
     <Fragment key={index}>{rendreNoeud(enfant)}</Fragment>
   ))
@@ -36,10 +36,8 @@ const rendreNoeud = (noeud: Node): ReactNode => {
   if (tag === 'br' || tag === 'img' || tag === 'hr') {
     return createElement(tag, props)
   }
-  return createElement(tag, props, ...toArray(rendreEnfants(element)))
+  return createElement(tag, props, ...rendreEnfants(element))
 }
-
-const toArray = (noeud: ReactNode): ReactNode[] => (Array.isArray(noeud) ? noeud : [noeud])
 
 export function RenduContenuCentreAide({ html, className }: { html: string; className?: string }) {
   if (!html) return null

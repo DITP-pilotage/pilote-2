@@ -1,19 +1,19 @@
-const store = new Map<string, string>();
+const store = new Map<string, string>()
 
 export const acmeChallengeStore = {
   set(token: string, keyAuthorization: string): void {
-    store.set(token, keyAuthorization);
+    store.set(token, keyAuthorization)
   },
   get(token: string): string | undefined {
-    return store.get(token);
+    return store.get(token)
   },
   delete(token: string): boolean {
-    return store.delete(token);
+    return store.delete(token)
   },
   clear(): void {
-    store.clear();
+    store.clear()
   },
   size(): number {
-    return store.size;
+    return store.size
   },
-};
+}

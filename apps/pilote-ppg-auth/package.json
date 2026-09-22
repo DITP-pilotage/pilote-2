@@ -13,7 +13,8 @@
     "start": "node acme-proxy/dist/server.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware acme-proxy && tsc --noEmit && prettier --check ."
   },
   "dependencies": {
     "@hono/node-server": "^2.1.1",
@@ -24,6 +25,9 @@
   "devDependencies": {
     "@types/node": "^26.5.0",
     "esbuild": "^0.28.2",
+    "oxlint": "^1.82.0",
+    "oxlint-tsgolint": "~7.0.2001",
+    "prettier": "^3.9.6",
     "tsx": "^4.23.13",
     "typescript": "7.0.2",
     "vitest": "^5.0.0"
