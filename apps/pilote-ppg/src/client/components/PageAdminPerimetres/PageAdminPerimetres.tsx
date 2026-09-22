@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
@@ -33,6 +34,17 @@ const PageAdminPerimetres = () => {
   const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
     useTableauAdminPerimetres(perimetres ?? []);
   const nombrePerimetresFiltres = table.getFilteredRowModel().rows.length;
+
+  const libellesPorteursParId = useMemo(
+    () =>
+      new Map(
+        (porteurs ?? []).map((porteur) => [
+          porteur.porteurId,
+          porteur.porteurShort,
+        ]),
+      ),
+    [porteurs],
+  );
 
   const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
   const [valeursPorteur, setValeursPorteur] = useFiltreColonne(
@@ -82,8 +94,7 @@ const PageAdminPerimetres = () => {
                 className="max-w-fit"
                 classNameBouton="min-w-[20rem]"
                 getOptionLabel={(value) =>
-                  porteurs?.find((porteur) => porteur.porteurId === value)
-                    ?.porteurShort ?? value
+                  libellesPorteursParId.get(value) ?? value
                 }
                 label="Porteur"
                 onChange={setValeursPorteur}
