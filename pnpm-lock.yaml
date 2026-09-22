@@ -744,8 +744,8 @@ importers:
         specifier: ^8.23.0
         version: 8.23.0
       pino:
-        specifier: ^8.21.0
-        version: 8.21.0
+        specifier: ^10.3.1
+        version: 10.3.1
       radix-ui:
         specifier: ^1.6.7
         version: 1.6.7(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4997,10 +4997,6 @@ packages:
   fast-querystring@1.1.2:
     resolution: {integrity: sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==}
 
-  fast-redact@3.5.0:
-    resolution: {integrity: sha512-dwsoQlS7h9hMeYUq1W++23NDcBLV4KqONnITDV9DjfS3q1SgDGVrBdvvTLUotWtPSD7asWDV9/CmsZPy8Hf70A==}
-    engines: {node: '>=6'}
-
   fast-safe-stringify@2.1.1:
     resolution: {integrity: sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==}
 
@@ -6183,18 +6179,11 @@ packages:
     resolution: {integrity: sha512-ttXRkkOz6WWC95KeY9+xxWL6AtImwbyMHrL1mSwqwW9u+vLp/WIElvHvCSDg0xO/Dzrggz1zv3rN5ovTRVowKg==}
     hasBin: true
 
-  pino-std-serializers@6.2.2:
-    resolution: {integrity: sha512-cHjPPsE+vhj/tnhCy/wiMh3M3z3h/j15zHQX+S9GkTBgqJuTuJzYJ4gUyACLhDaJ7kk9ba9iRDmbH2tJU03OiA==}
-
   pino-std-serializers@7.1.0:
     resolution: {integrity: sha512-BndPH67/JxGExRgiX1dX0w1FvZck5Wa4aal9198SrRhZjH3GxKQUKIBnYJTdj2HDN3UQAS06HlfcSbQj2OHmaw==}
 
   pino@10.3.1:
     resolution: {integrity: sha512-r34yH/GlQpKZbU1BvFFqOjhISRo1MNx1tWYsYvmj6KIRHSPMT2+yHOEb1SG6NMvRoHRF0a07kCOox/9yakl1vg==}
-    hasBin: true
-
-  pino@8.21.0:
-    resolution: {integrity: sha512-ip4qdzjkAyDDZklUaZkcRFb2iA118H9SgRh8yzTkSQK8HilsOJF7rSY8HoW5+I0M46AZgX/pxbprf2vvzQCE0Q==}
     hasBin: true
 
   pkce-challenge@5.0.1:
@@ -6303,9 +6292,6 @@ packages:
         optional: true
       typescript:
         optional: true
-
-  process-warning@3.0.0:
-    resolution: {integrity: sha512-mqn0kFRl0EoqhnL0GQ0veqFHyIN1yig9RHh/InzORTUiZHFRAur+aMtRkELNwGs9aNwKS6tg/An4NYBPGwvtzQ==}
 
   process-warning@5.1.0:
     resolution: {integrity: sha512-jQSaVHsPgtyw60e1rQ/A+/ArPEj/S8pS/vFnyGa/gYFXrKk/6RuDkoqVDQ5NI5MmS01698ltlAk0NoDBNLujRw==}
@@ -6900,9 +6886,6 @@ packages:
     resolution: {integrity: sha512-CN9BVxWhgS/hRxtUMjtC2uRWSTcSfQFHMDWma6sKKfIivCD91sM+FOPfvwoaRMqCSrUpe1nv3jDamd9eEQ4y+w==}
     engines: {node: '>=10'}
     hasBin: true
-
-  thread-stream@2.7.0:
-    resolution: {integrity: sha512-qQiRWsU/wvNolI6tbbCKd9iKaTnCXsTwVxhhKM6nctPdujTyztjlbUkUTUymidWcMnZ5pWR0ej4a0tjsW021vw==}
 
   thread-stream@4.2.0:
     resolution: {integrity: sha512-e2zZ96wSChazBsbENf/Pcm/4swHt2cEKQ92rhUjkL9GCKiTDJIaTBenjE/m9DXi0QBmTMDkFDdOomUy20A1tDQ==}
@@ -11221,8 +11204,6 @@ snapshots:
     dependencies:
       fast-decode-uri-component: 1.0.1
 
-  fast-redact@3.5.0: {}
-
   fast-safe-stringify@2.1.1: {}
 
   fast-string-truncated-width@3.0.3: {}
@@ -12590,8 +12571,6 @@ snapshots:
       sonic-boom: 4.2.1
       strip-json-comments: 5.0.3
 
-  pino-std-serializers@6.2.2: {}
-
   pino-std-serializers@7.1.0: {}
 
   pino@10.3.1:
@@ -12607,20 +12586,6 @@ snapshots:
       safe-stable-stringify: 2.5.0
       sonic-boom: 4.2.1
       thread-stream: 4.2.0
-
-  pino@8.21.0:
-    dependencies:
-      atomic-sleep: 1.0.0
-      fast-redact: 3.5.0
-      on-exit-leak-free: 2.1.2
-      pino-abstract-transport: 1.2.0
-      pino-std-serializers: 6.2.2
-      process-warning: 3.0.0
-      quick-format-unescaped: 4.0.4
-      real-require: 0.2.0
-      safe-stable-stringify: 2.5.0
-      sonic-boom: 3.8.1
-      thread-stream: 2.7.0
 
   pkce-challenge@5.0.1: {}
 
@@ -12718,8 +12683,6 @@ snapshots:
       - magicast
       - react
       - react-dom
-
-  process-warning@3.0.0: {}
 
   process-warning@5.1.0: {}
 
@@ -13408,10 +13371,6 @@ snapshots:
       commander: 2.20.3
       source-map-support: 0.5.21
     optional: true
-
-  thread-stream@2.7.0:
-    dependencies:
-      real-require: 0.2.0
 
   thread-stream@4.2.0:
     dependencies:

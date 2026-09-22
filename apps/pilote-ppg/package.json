@@ -126,7 +126,7 @@
     "nuqs": "^2.10.1",
     "pdfmake": "^0.2.23",
     "pg": "^8.23.0",
-    "pino": "^8.21.0",
+    "pino": "^10.3.1",
     "radix-ui": "^1.6.7",
     "react": "^19.2.8",
     "react-accessible-dropdown-menu-hook": "^4.0.1",
