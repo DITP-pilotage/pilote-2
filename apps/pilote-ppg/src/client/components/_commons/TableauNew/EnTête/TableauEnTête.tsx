@@ -1,3 +1,4 @@
+import { LigneTableau } from "../../Tableau/typesTableau";
 import { flexRender, SortDirection } from "@tanstack/react-table";
 import BoutonsDeTri from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri";
 import TableauEnTêteProps from "./TableauEnTête.interface";
@@ -13,7 +14,9 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
-export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
+export default function TableauEnTête<T extends LigneTableau>({
+  tableau,
+}: TableauEnTêteProps<T>) {
   return (
     <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925">
       {tableau.getHeaderGroups().map((headerGroup) => (

@@ -1,18 +1,19 @@
+import { LigneTableau, TableauDe } from "./typesTableau";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import "@gouvfr/dsfr/dist/component/notice/notice.min.css";
 import { useCallback } from "react";
-import { Table } from "@tanstack/react-table";
+
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import TableauEnTête from "./EnTête/TableauEnTête";
 import TableauContenu from "./Contenu/TableauContenu";
 import TableauPagination from "./Pagination/TableauPagination";
 
-interface TableauProps<T extends object> {
-  tableau: Table<T>;
+interface TableauProps<T extends LigneTableau> {
+  tableau: TableauDe<T>;
   titre: string;
 }
 
-export default function Tableau<T extends object>({
+export default function Tableau<T extends LigneTableau>({
   tableau,
   titre,
 }: TableauProps<T>) {

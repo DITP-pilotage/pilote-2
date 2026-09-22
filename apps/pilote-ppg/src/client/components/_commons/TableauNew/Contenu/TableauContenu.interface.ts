@@ -1,5 +1,5 @@
-import { Table } from "@tanstack/react-table";
+import { LigneTableau, TableauDe } from "../../Tableau/typesTableau";
 
-export default interface TableauContenuProps<T> {
-  tableau: Table<T>;
+export default interface TableauContenuProps<T extends LigneTableau> {
+  tableau: TableauDe<T>;
 }

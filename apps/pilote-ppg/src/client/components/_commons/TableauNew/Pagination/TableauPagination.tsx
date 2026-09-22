@@ -1,15 +1,16 @@
+import { LigneTableau, TableauDe } from "../../Tableau/typesTableau";
 import "@gouvfr/dsfr/dist/component/pagination/pagination.min.css";
 import { parseAsInteger, useQueryStates } from "nuqs";
-import { Table } from "@tanstack/react-table";
+
 import TableauPaginationÉlément from "./Élément/TableauPaginationÉlément";
 
-interface TableauPaginationProps<T> {
+interface TableauPaginationProps<T extends LigneTableau> {
   nombreDePages: number;
-  tableau: Table<T>;
+  tableau: TableauDe<T>;
   initialPageSize?: number;
 }
 
-export default function TableauPagination<T>({
+export default function TableauPagination<T extends LigneTableau>({
   tableau,
   nombreDePages,
   initialPageSize = 20,

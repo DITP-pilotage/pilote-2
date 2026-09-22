@@ -1,15 +1,35 @@
 import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
+  columnFilteringFeature,
+  createFilteredRowModel,
+  createPaginatedRowModel,
+  createSortedRowModel,
+  globalFilteringFeature,
+  rowPaginationFeature,
+  rowSortingFeature,
+  tableFeatures,
   type ColumnFiltersState,
   type OnChangeFn,
   type PaginationState,
   type Row,
   type SortingState,
-  type Table,
 } from "@tanstack/react-table";
+import { LigneTableau, TableauDe } from "../Tableau/typesTableau";
+
+/**
+ * Jeu de features partagé par les quatre tableaux d'administration.
+ * L'ordre suit la règle amont : une feature prérequis est déclarée avant le slot
+ * de modèle de lignes qui en dépend, et `globalFilteringFeature` exige
+ * `columnFilteringFeature`.
+ */
+export const featuresTableauAdmin = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowSortingFeature,
+  rowPaginationFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+});
 import { useMemo } from "react";
 import {
   parseAsArrayOf,
@@ -171,7 +191,7 @@ const correspondALaRecherche = (champs: string[], recherche: string) => {
   return champs.some((champ) => champ.toLowerCase().includes(texte));
 };
 
-export const useEtatTableauAdmin = <TRow>({
+export const useEtatTableauAdmin = <TRow extends LigneTableau>({
   filtres,
   champsRecherche,
 }: {
@@ -215,12 +235,12 @@ export const useEtatTableauAdmin = <TRow>({
       onPaginationChange: setPagination,
       onColumnFiltersChange,
       onGlobalFilterChange,
-      globalFilterFn: (row: Row<TRow>, _columnId: string, recherche: string) =>
-        correspondALaRecherche(champsRecherche(row.original), recherche),
-      getCoreRowModel: getCoreRowModel<TRow>(),
-      getSortedRowModel: getSortedRowModel<TRow>(),
-      getPaginationRowModel: getPaginationRowModel<TRow>(),
-      getFilteredRowModel: getFilteredRowModel<TRow>(),
+      globalFilterFn: (
+        row: Row<typeof featuresTableauAdmin, TRow>,
+        _columnId: string,
+        recherche: string,
+      ) => correspondALaRecherche(champsRecherche(row.original), recherche),
+      features: featuresTableauAdmin,
     },
     aDesFiltresActifs,
     reinitialiserLesFiltres,
@@ -232,8 +252,8 @@ export const useEtatTableauAdmin = <TRow>({
  * (GroupeCasesACocher, MultiSelectFiltre…) sans que chaque page admin ait
  * à refaire le cast `getFilterValue() as string[]`.
  */
-export const useFiltreColonne = <TRow>(
-  table: Table<TRow>,
+export const useFiltreColonne = <TRow extends LigneTableau>(
+  table: TableauDe<TRow>,
   colonneId: string,
 ) => {
   const colonne = table.getColumn(colonneId);

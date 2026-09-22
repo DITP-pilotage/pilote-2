@@ -1,5 +1,6 @@
+import { LigneTableau, TableauDe } from "../Tableau/typesTableau";
 import { useRouter } from "next/router";
-import { flexRender, type Table } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 import type { ReactNode } from "react";
 import Loader from "@/components/_commons/Loader/Loader";
 import { PaginationCompacte } from "@/components/_commons/PaginationCompacte/PaginationCompacte";
@@ -49,7 +50,7 @@ const EtatVide = ({
   );
 };
 
-export function TableauAdmin<TRow>({
+export function TableauAdmin<TRow extends LigneTableau>({
   table,
   isLoading,
   filtres,
@@ -58,7 +59,7 @@ export function TableauAdmin<TRow>({
   classesColonnes = {},
   libelles,
 }: {
-  table: Table<TRow>;
+  table: TableauDe<TRow>;
   isLoading: boolean;
   filtres: ReactNode;
   aDesFiltresActifs: boolean;

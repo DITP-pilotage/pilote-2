@@ -1,10 +1,13 @@
-import { flexRender, Table } from "@tanstack/react-table";
+import { LigneTableau, TableauDe } from "../typesTableau";
+import { flexRender } from "@tanstack/react-table";
 
-interface TableauContenuProps<T> {
-  tableau: Table<T>;
+interface TableauContenuProps<T extends LigneTableau> {
+  tableau: TableauDe<T>;
 }
 
-export default function TableauContenu<T>({ tableau }: TableauContenuProps<T>) {
+export default function TableauContenu<T extends LigneTableau>({
+  tableau,
+}: TableauContenuProps<T>) {
   return (
     <tbody>
       {tableau.getRowModel().rows.map((row) => (
