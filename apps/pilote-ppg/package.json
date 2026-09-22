@@ -106,7 +106,7 @@
     "dayjs": "^1.11.23",
     "dotenv": "17.4.2",
     "dotenv-cli": "^11.0.0",
-    "dotenv-expand": "11.0.6",
+    "dotenv-expand": "1000.0.0",
     "echarts": "^6.1.0",
     "fast-xml-parser": "5.11.1",
     "form-data": "^4.0.6",
