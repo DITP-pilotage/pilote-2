@@ -1,6 +1,6 @@
 import {
   createColumnHelper,
-  filterFn_arrIncludesSome,
+  filterFn_arrHas,
   useTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -65,7 +65,7 @@ const useTableColumns = () =>
           id: "chState",
           header: "Statut",
           enableColumnFilter: true,
-          filterFn: filterFn_arrIncludesSome,
+          filterFn: filterFn_arrHas,
           cell: (info) => {
             const badge = STATUT_BADGE[info.getValue()];
             return <Badge type={badge.type}>{badge.label}</Badge>;
@@ -75,7 +75,7 @@ const useTableColumns = () =>
           id: "perimetreId",
           header: "Périmètre",
           enableColumnFilter: true,
-          filterFn: filterFn_arrIncludesSome,
+          filterFn: filterFn_arrHas,
           cell: (info) => info.row.original.perimetreNom,
           sortFn: (rowA, rowB) =>
             rowA.original.perimetreNom.localeCompare(

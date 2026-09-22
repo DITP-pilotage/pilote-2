@@ -1,4 +1,3 @@
-import { LigneTableau } from "../../Tableau/typesTableau";
 import { flexRender, SortDirection } from "@tanstack/react-table";
 import BoutonsDeTri from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri";
 import TableauEnTêteProps from "./TableauEnTête.interface";

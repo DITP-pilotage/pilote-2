@@ -1,4 +1,3 @@
-import { LigneTableau } from "../../Tableau/typesTableau";
 import { flexRender } from "@tanstack/react-table";
 import TableauContenuProps from "./TableauContenu.interface";
 

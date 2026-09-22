@@ -1,6 +1,6 @@
 import {
   createColumnHelper,
-  filterFn_arrIncludesSome,
+  filterFn_arrHas,
   useTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -57,7 +57,7 @@ const useTableColumns = () =>
           id: "porteurId",
           header: "Porteur",
           enableColumnFilter: true,
-          filterFn: filterFn_arrIncludesSome,
+          filterFn: filterFn_arrHas,
           cell: (info) => info.row.original.porteurShort ?? "-",
           sortFn: (rowA, rowB) =>
             (rowA.original.porteurShort ?? "").localeCompare(
@@ -70,7 +70,7 @@ const useTableColumns = () =>
             id: "statut",
             header: "Statut",
             enableColumnFilter: true,
-            filterFn: filterFn_arrIncludesSome,
+            filterFn: filterFn_arrHas,
             cell: (info) => (
               <BadgeStatutReferentiel
                 supprimé={info.getValue() === "SUPPRIME"}

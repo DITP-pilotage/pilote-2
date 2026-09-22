@@ -3,7 +3,6 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import Tableau from "@/components/_commons/Tableau/Tableau";
 import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
-import { IndicateurDétailsParTerritoire } from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/IndicateurTendance";

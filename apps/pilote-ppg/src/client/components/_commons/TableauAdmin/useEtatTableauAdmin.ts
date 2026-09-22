@@ -1,18 +1,10 @@
 import {
-  type Table,
-  columnFilteringFeature,
-  createFilteredRowModel,
-  createPaginatedRowModel,
-  createSortedRowModel,
-  globalFilteringFeature,
-  rowPaginationFeature,
-  rowSortingFeature,
-  tableFeatures,
   type ColumnFiltersState,
   type OnChangeFn,
   type PaginationState,
   type Row,
   type SortingState,
+  type Table,
 } from "@tanstack/react-table";
 import { LigneTableau } from "../Tableau/typesTableau";
 import {
