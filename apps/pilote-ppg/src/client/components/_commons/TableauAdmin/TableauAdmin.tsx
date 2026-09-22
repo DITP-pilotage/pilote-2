@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Loader from "@/components/_commons/Loader/Loader";
 import { PaginationCompacte } from "@/components/_commons/PaginationCompacte/PaginationCompacte";
 import { clsxm } from "@/utils/clsxm";
+import { lireRechercheGlobale } from "./utils";
 
 export type LibellesTableauAdmin = {
   aucun: string;
@@ -67,7 +68,7 @@ export function TableauAdmin<TRow>({
 }) {
   const router = useRouter();
   const rows = table.getRowModel().rows;
-  const recherche = (table.getState().globalFilter as string | undefined) ?? "";
+  const recherche = lireRechercheGlobale(table);
 
   return (
     <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">

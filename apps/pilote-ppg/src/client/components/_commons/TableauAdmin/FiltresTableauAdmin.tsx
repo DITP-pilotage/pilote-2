@@ -4,6 +4,7 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
+import { lireRechercheGlobale } from "./utils";
 
 export function FiltresTableauAdmin<TRow>({
   table,
@@ -23,7 +24,7 @@ export function FiltresTableauAdmin<TRow>({
           changementDeLaRechercheCallback={(event) =>
             table.setGlobalFilter(event.target.value)
           }
-          valeur={(table.getState().globalFilter as string | undefined) ?? ""}
+          valeur={lireRechercheGlobale(table)}
         />
       </div>
 
