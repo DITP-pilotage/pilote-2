@@ -1,9 +1,9 @@
-import { flexRender, SortDirection, Table } from "@tanstack/react-table";
+import { flexRender, SortDirection } from "@tanstack/react-table";
 import { FunctionComponent } from "react";
-import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
+import type { TableauDesChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers";
 
 interface TableauRéformesEnTêteProps {
-  tableau: Table<ChantierVueDEnsemble>;
+  tableau: TableauDesChantiers;
 }
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {

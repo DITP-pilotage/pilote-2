@@ -1,5 +1,5 @@
-import { LigneTableau, TableauDe } from "../../Tableau/typesTableau";
+import { TableauAvecEnTetes } from "../../Tableau/typesTableau";
 
-export default interface TableauEnTêteProps<T extends LigneTableau> {
-  tableau: TableauDe<T>;
+export default interface TableauEnTêteProps<TContexte extends object> {
+  tableau: TableauAvecEnTetes<TContexte>;
 }

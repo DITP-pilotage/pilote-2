@@ -14,9 +14,9 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
-export default function TableauEnTête<T extends LigneTableau>({
+export default function TableauEnTête<TContexte extends object>({
   tableau,
-}: TableauEnTêteProps<T>) {
+}: TableauEnTêteProps<TContexte>) {
   return (
     <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925">
       {tableau.getHeaderGroups().map((headerGroup) => (

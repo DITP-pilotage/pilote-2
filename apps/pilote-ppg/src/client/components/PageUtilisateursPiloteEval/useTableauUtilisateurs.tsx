@@ -1,10 +1,15 @@
 import {
+  columnFilteringFeature,
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
+  createFilteredRowModel,
+  createSortedRowModel,
+  globalFilteringFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
+  type Row,
+  type SortingState,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { formaterDate } from "@/client/utils/date/date";
@@ -12,43 +17,59 @@ import { UtilisateurPiloteEval } from "@/server/evaluation/queries/ListerUtilisa
 
 type UtilisateurRow = UtilisateurPiloteEval;
 
-const columnHelper = createColumnHelper<UtilisateurRow>();
+/**
+ * `globalFilteringFeature` et `filteredRowModel` exigent `columnFilteringFeature`,
+ * `sortedRowModel` exige `rowSortingFeature` : chaque prérequis précède le slot
+ * qui en dépend. `columnVisibilityFeature` alimente le `row.getVisibleCells()`
+ * du rendu des lignes.
+ */
+const features = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowSortingFeature,
+  columnVisibilityFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+});
+
+const columnHelper = createColumnHelper<typeof features, UtilisateurRow>();
 
 const useTableColumns = () => {
   return useMemo(
-    () => [
-      columnHelper.accessor("email", {
-        header: "Email",
-        cell: (info) => (
-          <div
-            className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
-            title={info.getValue()}
-          >
-            {info.getValue()}
-          </div>
-        ),
-      }),
-      columnHelper.accessor("nom", {
-        header: "Nom",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("prenom", {
-        header: "Prénom",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("profilCode", {
-        header: "Profil",
-        cell: (info) => (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-dsfr-blue-france-925 text-dsfr-blue-france-sun-113">
-            {info.getValue()}
-          </span>
-        ),
-      }),
-      columnHelper.accessor("dateDerniereModification", {
-        header: "Dernière modification",
-        cell: (info) => formaterDate(info.getValue(), "DD/MM/YYYY") ?? "-",
-      }),
-    ],
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor("email", {
+          header: "Email",
+          cell: (info) => (
+            <div
+              className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
+              title={info.getValue()}
+            >
+              {info.getValue()}
+            </div>
+          ),
+        }),
+        columnHelper.accessor("nom", {
+          header: "Nom",
+          cell: (info) => info.getValue(),
+        }),
+        columnHelper.accessor("prenom", {
+          header: "Prénom",
+          cell: (info) => info.getValue(),
+        }),
+        columnHelper.accessor("profilCode", {
+          header: "Profil",
+          cell: (info) => (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-dsfr-blue-france-925 text-dsfr-blue-france-sun-113">
+              {info.getValue()}
+            </span>
+          ),
+        }),
+        columnHelper.accessor("dateDerniereModification", {
+          header: "Dernière modification",
+          cell: (info) => formaterDate(info.getValue(), "DD/MM/YYYY") ?? "-",
+        }),
+      ]),
     [],
   );
 };
@@ -64,19 +85,21 @@ export const useTableauUtilisateurs = ({
     { id: "dateDerniereModification", desc: true },
   ]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: utilisateurs,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     state: {
       globalFilter,
       sorting,
     },
     onGlobalFilterChange: setGlobalFilter,
     onSortingChange: setSorting,
-    globalFilterFn: (row, _columnId, filterValue) => {
+    globalFilterFn: (
+      row: Row<typeof features, UtilisateurRow>,
+      _columnId: string,
+      filterValue: string,
+    ) => {
       const search = filterValue.toLowerCase();
       const utilisateur = row.original;
 

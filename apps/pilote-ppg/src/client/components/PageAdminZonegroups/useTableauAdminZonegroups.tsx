@@ -1,8 +1,13 @@
-import { createColumnHelper, useReactTable } from "@tanstack/react-table";
+import {
+  createColumnHelper,
+  filterFn_arrIncludesSome,
+  useTable,
+} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
+  featuresTableauAdmin,
   useEtatTableauAdmin,
   type ConfigFiltreColonne,
 } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
@@ -17,54 +22,60 @@ const champsRecherche = (zonegroup: ZonegroupAdminListItem) => [
   zonegroup.zgName,
 ];
 
-const columnHelper = createColumnHelper<ZonegroupAdminListItem>();
+const columnHelper = createColumnHelper<
+  typeof featuresTableauAdmin,
+  ZonegroupAdminListItem
+>();
 
 const useTableColumns = () =>
   useMemo(
-    () => [
-      columnHelper.accessor("zoneGroupId", {
-        id: "zoneGroupId",
-        header: "ID",
-      }),
-      columnHelper.accessor("zgName", {
-        id: "zgName",
-        header: "Nom",
-        cell: (info) => (
-          <span
-            className={
-              info.row.original.deletedAt !== null
-                ? "line-through text-gray-400"
-                : ""
-            }
-          >
-            {info.getValue()}
-          </span>
-        ),
-      }),
-      columnHelper.accessor("nbZones", {
-        id: "nbZones",
-        header: "Zones",
-        cell: (info) =>
-          `${info.getValue()} zone${info.getValue() !== 1 ? "s" : ""}`,
-      }),
-      columnHelper.accessor(
-        (zonegroup) => statutReferentielDe(zonegroup.deletedAt),
-        {
-          id: "statut",
-          header: "Statut",
-          enableColumnFilter: true,
-          filterFn: "arrIncludesSome",
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor("zoneGroupId", {
+          id: "zoneGroupId",
+          header: "ID",
+        }),
+        columnHelper.accessor("zgName", {
+          id: "zgName",
+          header: "Nom",
           cell: (info) => (
-            <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
+            <span
+              className={
+                info.row.original.deletedAt !== null
+                  ? "line-through text-gray-400"
+                  : ""
+              }
+            >
+              {info.getValue()}
+            </span>
           ),
-        },
-      ),
-      columnHelper.accessor("updatedAt", {
-        id: "updatedAt",
-        header: "Mise à jour",
-        cell: (info) => formaterDateCourte(new Date(info.getValue())),
-      }),
-    ],
+        }),
+        columnHelper.accessor("nbZones", {
+          id: "nbZones",
+          header: "Zones",
+          cell: (info) =>
+            `${info.getValue()} zone${info.getValue() !== 1 ? "s" : ""}`,
+        }),
+        columnHelper.accessor(
+          (zonegroup) => statutReferentielDe(zonegroup.deletedAt),
+          {
+            id: "statut",
+            header: "Statut",
+            enableColumnFilter: true,
+            filterFn: filterFn_arrIncludesSome,
+            cell: (info) => (
+              <BadgeStatutReferentiel
+                supprimé={info.getValue() === "SUPPRIME"}
+              />
+            ),
+          },
+        ),
+        columnHelper.accessor("updatedAt", {
+          id: "updatedAt",
+          header: "Mise à jour",
+          cell: (info) => formaterDateCourte(new Date(info.getValue())),
+        }),
+      ]),
     [],
   );
 
@@ -78,7 +89,7 @@ export const useTableauAdminZonegroups = (
       champsRecherche,
     });
 
-  const table = useReactTable({ data: zonegroups, columns, ...optionsTable });
+  const table = useTable({ data: zonegroups, columns, ...optionsTable });
 
   return { table, aDesFiltresActifs, reinitialiserLesFiltres };
 };

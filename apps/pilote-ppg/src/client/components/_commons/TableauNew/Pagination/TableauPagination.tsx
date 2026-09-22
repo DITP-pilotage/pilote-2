@@ -1,20 +1,20 @@
-import { LigneTableau, TableauDe } from "../../Tableau/typesTableau";
+import { TableauPaginable } from "../../Tableau/typesTableau";
 import "@gouvfr/dsfr/dist/component/pagination/pagination.min.css";
 import { parseAsInteger, useQueryStates } from "nuqs";
 
 import TableauPaginationÉlément from "./Élément/TableauPaginationÉlément";
 
-interface TableauPaginationProps<T extends LigneTableau> {
+interface TableauPaginationProps {
   nombreDePages: number;
-  tableau: TableauDe<T>;
+  tableau: TableauPaginable;
   initialPageSize?: number;
 }
 
-export default function TableauPagination<T extends LigneTableau>({
+export default function TableauPagination({
   tableau,
   nombreDePages,
   initialPageSize = 20,
-}: TableauPaginationProps<T>) {
+}: TableauPaginationProps) {
   const [pagination, setPagination] = useQueryStates(
     {
       pageIndex: parseAsInteger.withDefault(1),

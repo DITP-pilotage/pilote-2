@@ -3,9 +3,10 @@ import { FunctionComponent, useCallback } from "react";
 import { useRouter } from "next/router";
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
+import { featuresTableauChantiers } from "../useRapportDétailléTableauChantiers";
 
 interface TableauChantiersContenuProps {
-  tableau: Table<DonnéesTableauChantiers>;
+  tableau: Table<typeof featuresTableauChantiers, DonnéesTableauChantiers>;
 }
 
 const RapportDétailléTableauChantiersContenu: FunctionComponent<
@@ -14,7 +15,7 @@ const RapportDétailléTableauChantiersContenu: FunctionComponent<
   const router = useRouter();
 
   const auClicSurLaLigne = useCallback(
-    (row: Row<DonnéesTableauChantiers>) => {
+    (row: Row<typeof featuresTableauChantiers, DonnéesTableauChantiers>) => {
       if (row.getIsGrouped()) {
         row.getToggleExpandedHandler()();
       } else {

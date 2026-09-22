@@ -1,11 +1,12 @@
 import {
   ColumnSort,
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+  createSortedRowModel,
+  rowPaginationFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
 import { ChangeEvent, useCallback } from "react";
 import {
@@ -29,9 +30,26 @@ import { Icone } from "@/components/_commons/Icone";
 import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
-const reactTableColonnesHelper =
-  createColumnHelper<UtilisateurListeGestionContrat>();
-const colonnes = [
+/**
+ * La pagination est manuelle : les lignes arrivent déjà découpées côté serveur,
+ * donc aucun `paginatedRowModel` n'est déclaré, seule la feature l'est pour
+ * l'état et les APIs de navigation.
+ */
+export const featuresTableauAdminUtilisateurs = tableFeatures({
+  columnVisibilityFeature,
+  rowSortingFeature,
+  rowPaginationFeature,
+  sortedRowModel: createSortedRowModel(),
+});
+
+export type FeaturesTableauAdminUtilisateurs =
+  typeof featuresTableauAdminUtilisateurs;
+
+const reactTableColonnesHelper = createColumnHelper<
+  typeof featuresTableauAdminUtilisateurs,
+  UtilisateurListeGestionContrat
+>();
+const colonnes = reactTableColonnesHelper.columns([
   reactTableColonnesHelper.accessor("email", {
     header: "Adresse électronique",
     cell: (props) => props.getValue(),
@@ -58,7 +76,7 @@ const colonnes = [
     {
       header: "Dernière modification",
       cell: (props) => props.getValue(),
-      sortingFn: (a, b) => {
+      sortFn: (a, b) => {
         const dateA = new Date(a.original.dateModification);
         const dateB = new Date(b.original.dateModification);
 
@@ -96,7 +114,7 @@ const colonnes = [
       );
     },
   }),
-];
+]);
 
 export const useTableauPageAdminUtilisateurs = (
   utilisateurs: UtilisateurListeGestionContrat[],
@@ -165,7 +183,8 @@ export const useTableauPageAdminUtilisateurs = (
     [setPagination, setValeurDeLaRecherche],
   );
 
-  const tableau = useReactTable({
+  const tableau = useTable({
+    features: featuresTableauAdminUtilisateurs,
     data: utilisateurs,
     columns: colonnes,
     state: {
@@ -175,11 +194,7 @@ export const useTableauPageAdminUtilisateurs = (
         territoire: estAutoriseAVoirLaColonneTerritoire,
       },
     },
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
     pageCount: Math.ceil(nombreUtilisateur / pagination.pageSize),
     manualPagination: true,

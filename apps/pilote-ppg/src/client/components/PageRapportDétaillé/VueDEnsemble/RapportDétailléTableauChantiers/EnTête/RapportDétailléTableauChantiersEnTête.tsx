@@ -1,9 +1,10 @@
 import { flexRender, Table } from "@tanstack/react-table";
 import { FunctionComponent } from "react";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
+import { featuresTableauChantiers } from "../useRapportDétailléTableauChantiers";
 
 interface TableauChantiersEnTêteProps {
-  tableau: Table<DonnéesTableauChantiers>;
+  tableau: Table<typeof featuresTableauChantiers, DonnéesTableauChantiers>;
 }
 
 const RapportDétailléTableauChantiersEnTête: FunctionComponent<

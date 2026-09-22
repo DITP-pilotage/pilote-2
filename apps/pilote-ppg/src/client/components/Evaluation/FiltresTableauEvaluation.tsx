@@ -1,5 +1,5 @@
-import { Table } from "@tanstack/react-table";
 import { useId } from "react";
+import type { TableEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 import { Icone } from "@/components/_commons/Icone";
 import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
@@ -100,7 +100,11 @@ const TagsFiltre = ({
   </div>
 );
 
-export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
+export function FiltresTableauEvaluation({
+  table,
+}: {
+  table: TableEvaluation;
+}) {
   return (
     <section className="space-y-2 px-6 pb-6">
       <header className="flex items-baseline gap-2 border-t pt-3">

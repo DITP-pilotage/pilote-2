@@ -1,4 +1,4 @@
-import { LigneTableau, TableauDe } from "./typesTableau";
+import { TableauComplet } from "./typesTableau";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import "@gouvfr/dsfr/dist/component/notice/notice.min.css";
 import { useCallback } from "react";
@@ -8,15 +8,18 @@ import TableauEnTête from "./EnTête/TableauEnTête";
 import TableauContenu from "./Contenu/TableauContenu";
 import TableauPagination from "./Pagination/TableauPagination";
 
-interface TableauProps<T extends LigneTableau> {
-  tableau: TableauDe<T>;
+interface TableauProps<
+  TContexteEnTete extends object,
+  TContexteCellule extends object,
+> {
+  tableau: TableauComplet<TContexteEnTete, TContexteCellule>;
   titre: string;
 }
 
-export default function Tableau<T extends LigneTableau>({
-  tableau,
-  titre,
-}: TableauProps<T>) {
+export default function Tableau<
+  TContexteEnTete extends object,
+  TContexteCellule extends object,
+>({ tableau, titre }: TableauProps<TContexteEnTete, TContexteCellule>) {
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("sm");
 
   const changementDePageCallback = useCallback(
@@ -39,8 +42,8 @@ export default function Tableau<T extends LigneTableau>({
         <>
           <table className="tableau table">
             <caption className="fr-sr-only">{titre}</caption>
-            {!estVueTuile && <TableauEnTête<T> tableau={tableau} />}
-            <TableauContenu<T> tableau={tableau} />
+            {!estVueTuile && <TableauEnTête tableau={tableau} />}
+            <TableauContenu tableau={tableau} />
           </table>
           <TableauPagination
             changementDePageCallback={changementDePageCallback}

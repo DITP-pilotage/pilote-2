@@ -88,7 +88,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
       <div className="fr-table">
         <table className="tableau table fr-m-0 fr-p-0">
           <caption className="fr-sr-only">Tableau des utilisateurs</caption>
-          <TableauEnTête<UtilisateurListeGestionContrat> tableau={tableau} />
+          <TableauEnTête tableau={tableau} />
           <TableauAdminUtilisateursContenu tableau={tableau} />
         </table>
         <TableauPagination

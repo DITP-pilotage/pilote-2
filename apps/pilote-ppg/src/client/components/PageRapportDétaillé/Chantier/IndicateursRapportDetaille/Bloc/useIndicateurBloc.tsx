@@ -1,9 +1,13 @@
 import {
+  columnGroupingFeature,
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+  createPaginatedRowModel,
+  createSortedRowModel,
+  rowPaginationFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
 import { useCallback, useEffect, useState } from "react";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
@@ -47,8 +51,19 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
   },
 };
 
-const reactTableColonnesHelper =
-  createColumnHelper<IndicateurDétailsParTerritoire>();
+const features = tableFeatures({
+  columnGroupingFeature,
+  columnVisibilityFeature,
+  rowSortingFeature,
+  rowPaginationFeature,
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+});
+
+const reactTableColonnesHelper = createColumnHelper<
+  typeof features,
+  IndicateurDétailsParTerritoire
+>();
 
 export default function useIndicateurBloc(
   détailsIndicateur: DétailsIndicateurTerritoire,
@@ -76,7 +91,7 @@ export default function useIndicateurBloc(
     }
   }, [détailsIndicateur, metÀJourDétailsParTerritoires, typeDeRéforme]);
 
-  const colonnes = [
+  const colonnes = reactTableColonnesHelper.columns([
     reactTableColonnesHelper.accessor("territoireNom", {
       header: "Territoire(s)",
       id: "territoire",
@@ -147,9 +162,10 @@ export default function useIndicateurBloc(
       enableSorting: false,
       enableGrouping: false,
     }),
-  ];
+  ]);
 
-  const tableau = useReactTable({
+  const tableau = useTable({
+    features,
     data: indicateurDétailsParTerritoires,
     columns: colonnes,
     state: {
@@ -167,9 +183,6 @@ export default function useIndicateurBloc(
             indicateurTuile: false,
           },
     },
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const dateDeMiseAJourIndicateur = territoireSélectionné

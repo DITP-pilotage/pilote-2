@@ -1,25 +1,38 @@
-import { Cell, flexRender, Table } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 import Link from "next/link";
 import { FunctionComponent } from "react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
-import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
+import type { TableauDesChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers";
 import { clsxm } from "@/utils/clsxm";
 
-function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
-  return (
-    !cell.getIsGrouped() &&
-    (cell.getIsAggregated()
-      ? flexRender(
-          cell.column.columnDef.aggregatedCell ?? cell.column.columnDef.cell,
-          cell.getContext(),
-        )
-      : flexRender(cell.column.columnDef.cell, cell.getContext()))
-  );
+type LigneDeChantiers = ReturnType<
+  TableauDesChantiers["getRowModel"]
+>["rows"][number];
+
+type CelluleDeChantiers = ReturnType<
+  LigneDeChantiers["getVisibleCells"]
+>[number];
+
+/**
+ * En v9 `cell.getIsAggregated()` n'est vrai que si la colonne porte une fonction
+ * d'agrégation résolue, alors que la v8 le renvoyait pour toute cellule d'une
+ * ligne de regroupement. On retient ici la règle v8 : sur une ligne de
+ * regroupement, c'est le gabarit agrégé qui s'affiche.
+ */
+function afficherContenuDeLaCellule(cellule: CelluleDeChantiers) {
+  if (cellule.getIsGrouped()) {
+    return null;
+  }
+
+  const gabarit = cellule.row.getIsGrouped()
+    ? (cellule.column.columnDef.aggregatedCell ?? cellule.column.columnDef.cell)
+    : cellule.column.columnDef.cell;
+
+  return flexRender(gabarit, cellule.getContext());
 }
 
 interface TableauChantiersContenuProps {
-  tableau: Table<DonnéesTableauChantiers>;
+  tableau: TableauDesChantiers;
   territoireCode: string;
   jalon: number;
   chantiersSontArchives: boolean;

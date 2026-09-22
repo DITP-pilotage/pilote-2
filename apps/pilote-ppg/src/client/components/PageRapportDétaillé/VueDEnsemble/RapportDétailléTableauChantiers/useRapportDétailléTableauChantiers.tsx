@@ -1,7 +1,13 @@
 import {
+  columnFilteringFeature,
+  columnGroupingFeature,
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  globalFilteringFeature,
+  rowExpandingFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
 import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
@@ -12,14 +18,32 @@ import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/Tablea
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import RapportDétailléTableauChantiersProps from "./RapportDétailléTableauChantiers.interface";
 
+/**
+ * Le tableau n'expose aucun modèle de lignes dérivé : il affiche les chantiers
+ * tels quels. Les features restent néanmoins nécessaires, car les colonnes
+ * déclarent `enableSorting`, `enableGlobalFilter` et `enableGrouping`, et le
+ * contenu appelle `getVisibleCells`, `getIsGrouped` et
+ * `getToggleExpandedHandler` sur chaque ligne.
+ */
+export const featuresTableauChantiers = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
+  columnGroupingFeature,
+  columnVisibilityFeature,
+  rowExpandingFeature,
+  rowSortingFeature,
+});
+
+const reactTableColonnesHelper = createColumnHelper<
+  typeof featuresTableauChantiers,
+  DonnéesTableauChantiers
+>();
+
 export default function useRapportDétailléTableauChantiers(
   données: RapportDétailléTableauChantiersProps["données"],
   chantiersSontArchives: boolean,
 ) {
-  const reactTableColonnesHelper =
-    createColumnHelper<DonnéesTableauChantiers>();
-
-  const colonnesTableauChantiers = [
+  const colonnesTableauChantiers = reactTableColonnesHelper.columns([
     reactTableColonnesHelper.accessor("nom", {
       header: "Chantiers",
       id: "nom",
@@ -112,11 +136,11 @@ export default function useRapportDétailléTableauChantiers(
         width: "5.5rem",
       },
     }),
-  ];
-  const tableau = useReactTable({
+  ]);
+  const tableau = useTable({
+    features: featuresTableauChantiers,
     data: données,
     columns: colonnesTableauChantiers,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   return {

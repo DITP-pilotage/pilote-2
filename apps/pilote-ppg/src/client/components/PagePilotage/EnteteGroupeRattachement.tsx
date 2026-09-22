@@ -1,5 +1,4 @@
-import { Row } from "@tanstack/react-table";
-import { FicheEvaluationRow } from "@/components/PagePilotage/useTableauPilotage";
+import { LignePilotage } from "@/components/PagePilotage/useTableauPilotage";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 import { LockUnlockIcon } from "@/components/_commons/Icones/LockUnlockIcon";
@@ -14,7 +13,7 @@ export const EnteteGroupeRattachement = ({
   rowGroup,
   columnCount,
 }: {
-  rowGroup: Row<FicheEvaluationRow>;
+  rowGroup: LignePilotage;
   columnCount: number;
 }) => {
   const ficheGroup = rowGroup.original;

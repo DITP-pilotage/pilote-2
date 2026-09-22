@@ -1,10 +1,9 @@
 import React from "react";
-import { Row } from "@tanstack/react-table";
 import { $Enums } from "@prisma/client";
 import {
   ETAPES,
-  FicheEvaluationRow,
   getInformationsAffichageCellule,
+  LignePilotage,
 } from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
 import { Icone } from "@/client/components/_commons/Icone";
@@ -19,15 +18,15 @@ export function EvaluationsBlock<T extends { id: string | number }>({
   getMoyenne,
 }: {
   items: T[];
-  rowGroup: Row<FicheEvaluationRow>;
+  rowGroup: LignePilotage;
   getEvaluation(options: {
     item: T;
-    row: Row<FicheEvaluationRow>;
+    row: LignePilotage;
     etape: $Enums.etape_evaluation_enum;
   }): number | null;
-  getTooltipLabel?(options: { item: T; row: Row<FicheEvaluationRow> }): string;
+  getTooltipLabel?(options: { item: T; row: LignePilotage }): string;
   getMoyenne(options: {
-    row: Row<FicheEvaluationRow>;
+    row: LignePilotage;
     etape: $Enums.etape_evaluation_enum;
   }): number | null;
 }) {

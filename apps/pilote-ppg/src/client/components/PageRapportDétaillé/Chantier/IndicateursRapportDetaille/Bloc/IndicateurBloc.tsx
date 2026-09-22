@@ -78,7 +78,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               </div>
             </div>
           </div>
-          <Tableau<IndicateurDétailsParTerritoire>
+          <Tableau
             tableau={tableau}
             titre={`Tableau de l'indicateur : ${indicateur.nom}`}
           />

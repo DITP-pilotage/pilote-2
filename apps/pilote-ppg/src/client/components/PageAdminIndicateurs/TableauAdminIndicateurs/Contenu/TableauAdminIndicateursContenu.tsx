@@ -1,9 +1,13 @@
-import { flexRender, Table } from "@tanstack/react-table";
+import { flexRender, type Table } from "@tanstack/react-table";
 import { FunctionComponent } from "react";
+import type { FeaturesTableauAdminIndicateurs } from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
 import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 
 interface TableauAdminIndicateursContenuProps {
-  tableau: Table<MetadataParametrageIndicateurInformationContrat>;
+  tableau: Table<
+    FeaturesTableauAdminIndicateurs,
+    MetadataParametrageIndicateurInformationContrat
+  >;
 }
 
 const TableauAdminIndicateursContenu: FunctionComponent<
