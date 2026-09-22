@@ -137,6 +137,21 @@ Pour chaque unité, comparer la version du `package.json` à celle réellement r
 (`pnpm why <paquet> -r`, ou le lockfile). **Une divergence est un PROUVÉ majeur** qui annule le
 verdict de l'oracle sur ce commit. Le signaler avant tout le reste.
 
+### Garde-fou : chaque subagent vérifie le sol sur lequel il marche
+
+Le parent peut se tromper de terrain. Un worktree ouvert pour autre chose, un `cd` oublié, et
+les subagents analysent un checkout **sans les bumps** — c'est-à-dire exactement l'inverse de ce
+qu'on leur demande de vérifier, sans qu'aucun message d'erreur ne le signale.
+
+Donc : **donner à chaque subagent le chemin absolu du checkout et le nom de la branche**, et lui
+demander de **confirmer la version réellement résolue avant de conclure quoi que ce soit**. Cette
+vérification n'est pas une politesse, c'est la première étape de son analyse : un agent qui
+conclut sans l'avoir faite rend un verdict sur un paquet qu'il n'a peut-être jamais vu.
+
+Un écart entre la version attendue et celle trouvée n'est pas un détail à contourner : l'agent
+s'arrête et le remonte. C'est ce qui permet au parent de corriger le tir avant que la moitié des
+unités ne soient à refaire.
+
 Sept questions, elles, ne se périment pas — les poser à l'unité concernée :
 
 - **Un major qui casse l'oracle lui-même** (le compilateur, la toolchain de lint). Si l'oracle
