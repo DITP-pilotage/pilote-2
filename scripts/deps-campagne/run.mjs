@@ -202,6 +202,15 @@ function appliquerGroupe(groupe) {
 function main() {
   verifierPrealables()
 
+  // Les exclusions de quarantaine sont des trous volontaires dans la mitigation
+  // supply-chain. Trois campagnes de suite en ont laissé d'échues en place, faute que
+  // quoi que ce soit les regarde : on les regarde d'abord, et on ne bloque pas dessus —
+  // c'est un constat à porter au rapport, pas une raison de ne pas bumper.
+  const quarantaine = run(['node', 'scripts/deps-campagne/verifier-quarantaine.mjs'])
+  for (const ligne of quarantaine.stdout.trim().split('\n').filter(Boolean)) {
+    journal(`quarantaine : ${ligne}`)
+  }
+
   const date = aujourdhui()
   const depart = lireOutdated()
   const audit = run(['pnpm', 'audit', '--json'])

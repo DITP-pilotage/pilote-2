@@ -27,6 +27,7 @@
     "database:init-force": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} database:init-force",
     "database:migration": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} database:migration",
     "deps:campagne": "node scripts/deps-campagne/run.mjs",
+    "deps:quarantaine": "node scripts/deps-campagne/verifier-quarantaine.mjs",
     "deps:campagne:test": "node --test \"scripts/deps-campagne/lib/**/*.test.mjs\""
   },
   "pnpm": {

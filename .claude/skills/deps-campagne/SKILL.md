@@ -285,11 +285,31 @@ git log -S '"<paquet>"' --oneline -- package.json
   (version de Node du projet, major déjà passé, correctif publié en amont).
 - Override non documenté → l'ajouter au tableau avec ce qu'on a trouvé.
 - **`minimumReleaseAgeExclude` porte des conditions de sortie au même titre que les overrides.**
-  Chaque exclusion est un trou volontaire dans la mitigation supply-chain ; les temporaires ont
-  une date de retrait écrite en commentaire. Vérifier chacune : la version qu'elle protégeait
-  a-t-elle franchi la quarantaine ? (`npm view <paquet>@<version> time`, à comparer aux 14 jours).
-  Condition remplie → proposer le retrait, preuve à l'appui. Une exclusion dont l'échéance est
-  passée est une régression de sécurité silencieuse, pas une ligne de config oubliée.
+  Chaque exclusion est un trou volontaire dans la mitigation supply-chain. `pnpm deps:quarantaine`
+  les vérifie et le moteur le joue en ouverture de campagne ; il sort en non-zéro dès qu'une
+  exclusion est retirable, sans échéance ou invérifiable. **Reporter ses verdicts, ne pas
+  refaire le travail à la main.**
+
+  Ce que la commande sépare, et qu'il ne faut pas confondre :
+
+  | Statut | Ce que ça veut dire | Geste |
+  |---|---|---|
+  | `permanente` | `# expire: jamais` — politique, pas contournement | ne pas y toucher |
+  | `en-cours` | échéance à venir | rien |
+  | `retirable` | échéance passée **et** version verrouillée mûre | proposer le retrait |
+  | `echue-mais-prematuree` | échéance passée mais version encore fraîche | **ne pas retirer** |
+  | `sans-echeance` | viole la règle n°2 de DEPENDENCIES.md | écrire l'échéance |
+  | `echue-non-verifiable` | motif glob, pas de version unique | vérifier à la main |
+
+  La distinction `retirable` / `echue-mais-prematuree` est le cœur du sujet : l'échéance écrite
+  dans le commentaire n'est qu'une **estimation humaine**, la vérité est la date de publication
+  au registre. Retirer une exclusion dont la version est encore fraîche rouvre une fenêtre où une
+  re-résolution (`pnpm update`, `pnpm deploy --legacy`) ne trouve aucune version mûre — c'est
+  précisément le piège documenté pour `deepmerge-ts`.
+
+  Toute nouvelle exclusion doit porter son marqueur `# expire: <AAAA-MM-JJ|jamais>` : sans lui
+  elle est invisible au vérificateur, et une exclusion que personne ne regarde est une régression
+  de sécurité silencieuse, pas une ligne de config oubliée.
 
 ## 9. Ouvrir la PR
 
