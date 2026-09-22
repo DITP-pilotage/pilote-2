@@ -1,4 +1,4 @@
-import { EmailCampaignsApi } from "@getbrevo/brevo";
+import { BrevoClient } from "@getbrevo/brevo";
 import { configuration } from "@/config";
 import { Newsletter } from "@/server/actualites/domain/Newsletter";
 import { NewsletterRepository } from "@/server/actualites/domain/ports/NewsletterRepository";
@@ -9,44 +9,29 @@ const estUneCampagneMinutePilote = (name: string | undefined): boolean =>
   (name ?? "").toUpperCase().includes(FILTRE_NOM_CAMPAGNE);
 
 export class BrevoNewsletterRepository implements NewsletterRepository {
-  private readonly emailCampaignsApi: EmailCampaignsApi;
+  private readonly brevo: BrevoClient;
 
   constructor() {
-    this.emailCampaignsApi = new EmailCampaignsApi();
-    this.emailCampaignsApi.setApiKey(0, configuration().brevo.apiKey);
-    // Workaround: bug SDK Brevo — getEmailCampaign passe campaignId en `data` sur une requête GET,
-    // ce qui fait planter Axios ("Data after transformation must be a string…")
-    this.emailCampaignsApi.addInterceptor((requestOptions) => {
-      if (requestOptions.method === "GET") {
-        delete requestOptions.data;
-      }
-      return Promise.resolve();
-    });
+    this.brevo = new BrevoClient({ apiKey: configuration().brevo.apiKey });
   }
 
   async listerNewsletters(): Promise<Newsletter[]> {
-    const { body } = await this.emailCampaignsApi.getEmailCampaigns(
-      undefined,
-      "sent",
-      undefined,
-      undefined,
-      undefined,
-      50,
-      undefined,
-      "desc",
-    );
+    const { campaigns } = await this.brevo.emailCampaigns.getEmailCampaigns({
+      status: "sent",
+      limit: 50,
+      sort: "desc",
+    });
 
-    return (body.campaigns ?? [])
+    return (campaigns ?? [])
       .filter(
         (campaign) =>
           estUneCampagneMinutePilote(campaign.name) &&
-          campaign.id != null &&
           campaign.subject != null &&
           campaign.sentDate != null &&
           campaign.shareLink != null,
       )
       .map((campaign) => ({
-        id: campaign.id!,
+        id: campaign.id,
         sujet: campaign.subject!,
         dateEnvoi: new Date(campaign.sentDate!).toISOString(),
         lienArchive: campaign.shareLink!,
@@ -54,22 +39,24 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
   }
 
   async recupererParId(id: number): Promise<Newsletter | null> {
-    const { body } = await this.emailCampaignsApi.getEmailCampaign(id);
+    const campagne = await this.brevo.emailCampaigns.getEmailCampaign({
+      campaignId: id,
+    });
 
     if (
-      !estUneCampagneMinutePilote(body.name) ||
-      body.subject == null ||
-      body.sentDate == null ||
-      body.shareLink == null
+      !estUneCampagneMinutePilote(campagne.name) ||
+      campagne.subject == null ||
+      campagne.sentDate == null ||
+      campagne.shareLink == null
     ) {
       return null;
     }
 
     return {
-      id: body.id,
-      sujet: body.subject,
-      dateEnvoi: new Date(body.sentDate).toISOString(),
-      lienArchive: body.shareLink,
+      id: campagne.id,
+      sujet: campagne.subject,
+      dateEnvoi: new Date(campagne.sentDate).toISOString(),
+      lienArchive: campagne.shareLink,
     };
   }
 }
