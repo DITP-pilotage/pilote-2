@@ -185,7 +185,7 @@
     "prisma": "7.10.0",
     "proj4": "^2.22.0",
     "reproject": "^1.2.7",
-    "sass": "1.78.0",
+    "sass": "1.104.0",
     "tailwindcss": "^4.3.3",
     "typescript": "7.0.2",
     "vite-tsconfig-paths": "^6.1.1",
