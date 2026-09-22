@@ -10,6 +10,33 @@ const challengeBodySchema = z.object({
   keyAuthorization: z.string().min(1),
 });
 
+/**
+ * En-têtes hop-by-hop (RFC 9110 §7.6.1) : ils décrivent le lien avec le client, pas le
+ * message. Un proxy qui les recopie décrit à l'amont une connexion qui n'existe pas.
+ *
+ * `transfer-encoding` est le cas qui mordait : un client qui streame sans Content-Length
+ * fait passer node en `chunked`, le proxy recopiait l'en-tête, et fetch refusait d'envoyer
+ * une requête annoncée chunked dont il gère lui-même le cadrage — d'où un 502 sur toute
+ * requête à corps streamé.
+ */
+const EN_TETES_DE_TRANSPORT = new Set([
+  "connection",
+  "keep-alive",
+  "proxy-authenticate",
+  "proxy-authorization",
+  "te",
+  "trailer",
+  "transfer-encoding",
+  "upgrade",
+]);
+
+const sansEnTetesDeTransport = (enTetes: Record<string, string>) =>
+  Object.fromEntries(
+    Object.entries(enTetes).filter(
+      ([nom]) => !EN_TETES_DE_TRANSPORT.has(nom.toLowerCase()),
+    ),
+  );
+
 export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
   const app = new Hono();
 
@@ -48,7 +75,7 @@ export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
       return await proxy(target, {
         raw: c.req.raw,
         headers: {
-          ...c.req.header(),
+          ...sansEnTetesDeTransport(c.req.header()),
           "x-forwarded-host":
             c.req.header("x-forwarded-host") ?? c.req.header("host") ?? "",
         },

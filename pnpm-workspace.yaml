@@ -16,19 +16,3 @@ minimumReleaseAgeExclude:
   # next et @next/* relèvent d'une politique permanente, pas d'un contournement daté.
   - next
   - "@next/*"
-  # expire: 2026-08-03
-  # next-auth est épinglé en exact 5.0.0-beta.32 (campagne du 2026-07-27, 5 advisories
-  # Auth.js dont 2 critical), publiée le 2026-07-20 : encore sous quarantaine. Le lock la
-  # réutilise sans broncher, mais `pnpm deploy --legacy` (deploy-bundle des apps kpilote)
-  # re-résout et n'a aucun fallback sur un pin exact -> build cassé.
-  # @auth/core est du même lot : next-auth l'épingle en exact 0.41.3, publiée le même jour.
-  - next-auth
-  - "@auth/core"
-  # expire: 2026-09-04
-  # TEMPORAIRE : contournement assume pour fermer la derniere advisory high
-  # corrigeable de kpilote-api (deepmerge-ts < 8.0.0, stack exhaustion, tiree par
-  # @prisma/config). Le lock epingle 8.0.2, publiee le 2026-08-21 : elle franchit les
-  # 14 j de quarantaine le 2026-09-04. A RETIRER APRES CETTE DATE. La retirer avant
-  # ouvrirait une fenetre ou une re-resolution (pnpm update, pnpm deploy --legacy)
-  # ne trouverait aucune version mure satisfaisant l'override ">=8.0.0 <9".
-  - deepmerge-ts
