@@ -6,6 +6,8 @@ import { defineConfig, devices } from "@playwright/test";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require("dotenv").config({ path: ".env.e2e" });
 
+const videoEnabled = process.env.E2E_VIDEO === "on";
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -18,19 +20,24 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: 2,
+  retries: process.env.CI ? 2 : 0,
   timeout: 90_000,
   globalTimeout: 1_400_000,
   outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
-  /* Run serially for test isolation */
-  workers: 3,
+  /* Un fichier = un worker ; les tests d'un même fichier restent en série sauf opt-in
+     par test.describe.configure. Le runner CI n'a que deux vCPU. */
+  workers: process.env.CI ? 2 : 4,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]
     : [
+        ["list"],
         [
           "html",
-          { open: "always", outputFolder: "/tmp/pilote-playwright/report" },
+          {
+            open: videoEnabled ? "always" : "on-failure",
+            outputFolder: "/tmp/pilote-playwright/report",
+          },
         ],
       ],
   webServer: {
@@ -49,7 +56,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
-    video: process.env.E2E_VIDEO === "on" ? "on" : "retain-on-failure",
+    /* "retain-on-failure" enregistre toujours et ne jette qu'à la fin : hors E2E_VIDEO=on, on coupe vraiment. */
+    video: videoEnabled ? "on" : "off",
     screenshot: "only-on-failure",
     actionTimeout: 30_000,
     navigationTimeout: 45_000,

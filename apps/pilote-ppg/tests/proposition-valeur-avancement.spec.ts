@@ -11,6 +11,10 @@ const PREFET_DEPT = "pva.prefet.dept@example.com";
 const COORDINATEUR_REG = "pva.coordinateur.reg@example.com";
 const EQUIPE_DIR_PROJET = "pva.dir.projet@example.com";
 
+// Chaque test travaille sur son propre indicateur (IND-021 à IND-024) : ils
+// peuvent tourner en parallèle.
+test.describe.configure({ mode: "parallel" });
+
 test.describe("Proposition de valeur d'avancement (PVA)", () => {
   test("Coordinateur département propose, Direction accuse réception puis accepte", async ({
     page,

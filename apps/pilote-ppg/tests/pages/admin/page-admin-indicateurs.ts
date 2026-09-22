@@ -70,27 +70,50 @@ export class PageAdminIndicateurs extends BasePage {
 
   async rechercherIndicateur(texte: string): Promise<void> {
     await this.barreRecherche.fill(texte);
-    await this.page.waitForTimeout(600);
+    await expect(this.barreRecherche).toHaveValue(texte);
   }
 
   async effacerRecherche(): Promise<void> {
     await this.barreRecherche.clear();
-    await this.page.waitForTimeout(600);
+    await expect(this.barreRecherche).toHaveValue("");
   }
 
   async filtrerParTerritorialise(): Promise<void> {
-    await this.toggleTerritorialise.click();
-    await this.page.waitForTimeout(600);
+    await this.attendreRechargementDuListing(() =>
+      this.toggleTerritorialise.click(),
+    );
+    await expect(this.toggleTerritorialise).toBeChecked();
   }
 
   async filtrerParBarometre(): Promise<void> {
-    await this.toggleBarometre.click();
-    await this.page.waitForTimeout(600);
+    await this.attendreRechargementDuListing(() =>
+      this.toggleBarometre.click(),
+    );
+    await expect(this.toggleBarometre).toBeChecked();
   }
 
   async reinitialiserFiltres(): Promise<void> {
-    await this.boutonReinitialiserFiltres.click();
-    await this.page.waitForTimeout(600);
+    await this.attendreRechargementDuListing(() =>
+      this.boutonReinitialiserFiltres.click(),
+    );
+    await expect(this.toggleTerritorialise).not.toBeChecked();
+    await expect(this.toggleBarometre).not.toBeChecked();
+  }
+
+  /**
+   * Le listing est filtré côté serveur : le compteur et le tableau ne sont à jour
+   * qu'une fois la réponse tRPC reçue, pas dès que le filtre est coché.
+   */
+  private async attendreRechargementDuListing(
+    action: () => Promise<void>,
+  ): Promise<void> {
+    const rechargement = this.page.waitForResponse((reponse) =>
+      decodeURIComponent(reponse.url()).includes(
+        "listerMetadataIndicateurFiltrés",
+      ),
+    );
+    await action();
+    await rechargement;
   }
 
   async allerPageSuivante(): Promise<void> {
