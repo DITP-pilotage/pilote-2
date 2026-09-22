@@ -121,11 +121,17 @@ suivante. Elle se **dérive au run**, en croisant pour chaque paquet :
 
 ### Vérification obligatoire avant tout dispatch : le manifeste dit-il la vérité ?
 
-Le dépôt impose `minimumReleaseAge` (quarantaine, voir `pnpm-workspace.yaml`), et **`pnpm outdated`
-n'en sait rien** : il lit le dist-tag `latest` du registre. Le moteur fait ensuite
-`pnpm add paquet@<latest>`. Si la cible est trop fraîche, ou si un override la plafonne, alors
-**le manifeste déclare une version que le lockfile n'a pas** — et l'oracle a validé du code qui
-tourne sur l'ancienne. Son vert ne vaut rien.
+Le dépôt impose `minimumReleaseAge` (quarantaine, voir `pnpm-workspace.yaml`). **`pnpm outdated`
+la respecte** — vérifié en pnpm 10.28.2 : un paquet dont seules des versions trop fraîches
+existent n'apparaît pas dans sa sortie, et réapparaît avec `--config.minimumReleaseAge=0`. Le
+moteur ne peut donc pas viser une version sous quarantaine ; il atterrit sur **la plus haute
+version mûre**, et c'est pour ça qu'une cible peut légitimement différer de la `latest` du
+registre. Ne pas lire cet écart comme un bug.
+
+Le manifeste peut mentir quand même, par un **autre** mécanisme : un **override** qui plafonne
+le paquet. Le `package.json` déclare alors une version que le lockfile n'a pas, et l'oracle a
+validé du code tournant sur l'ancienne — son vert ne vaut rien. C'est le mode d'échec constaté
+sur `@hono/node-server` lors d'une campagne précédente.
 
 Pour chaque unité, comparer la version du `package.json` à celle réellement résolue
 (`pnpm why <paquet> -r`, ou le lockfile). **Une divergence est un PROUVÉ majeur** qui annule le
