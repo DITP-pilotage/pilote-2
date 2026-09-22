@@ -1,6 +1,7 @@
 import {
   estFichierVideoDirect,
   estUrlHttpSure,
+  estUrlMediaFichiers,
   sansAutoplay,
 } from "@/client/components/_commons/CentreAide/LecteurVideo";
 
@@ -45,5 +46,31 @@ describe("estFichierVideoDirect", () => {
     expect(estFichierVideoDirect("https://video.finances.gouv.fr/x")).toBe(
       false,
     );
+  });
+});
+
+describe("estUrlMediaFichiers", () => {
+  it("Doit reconnaître l'adresse qui sert le binaire", () => {
+    expect(
+      estUrlMediaFichiers(
+        "https://fichiers.numerique.gouv.fr/media/preview/item/77d479ac-5d13-4f1f-a44c-856e45e16cec/ma_video.mp4",
+      ),
+    ).toBe(true);
+  });
+
+  it("Doit refuser l'adresse de l'explorateur, qui rend une page et non le média", () => {
+    expect(
+      estUrlMediaFichiers(
+        "https://fichiers.numerique.gouv.fr/explorer/items/files/77d479ac-5d13-4f1f-a44c-856e45e16cec",
+      ),
+    ).toBe(false);
+  });
+
+  it("Doit refuser un autre hôte", () => {
+    expect(
+      estUrlMediaFichiers(
+        "https://video.finances.gouv.fr/media/preview/item/x/y.mp4",
+      ),
+    ).toBe(false);
   });
 });
