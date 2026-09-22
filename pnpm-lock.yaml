@@ -561,8 +561,8 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4
       '@gouvfr/dsfr':
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.15.2
+        version: 1.15.2
       '@hookform/resolvers':
         specifier: ^5.9.1
         version: 5.9.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.20.0)(react-hook-form@7.87.0(react@19.2.8))(valibot@1.4.2(typescript@7.0.2))(zod@4.5.4)
@@ -1617,9 +1617,9 @@ packages:
   '@getbrevo/brevo@3.0.4':
     resolution: {integrity: sha512-MtsqqsB9MjMEDYKP3QBHGRJmYbUBHCYH2RxA4DHeB8sbm0TEraoaiOfng0kBebPplR9WSvf6jXw+ri10bGP/aA==}
 
-  '@gouvfr/dsfr@1.11.0':
-    resolution: {integrity: sha512-RD+kUk9iJJ4B7xFdAFCNQz0LRqYiMy9dajlKfgnmDPSrYHm+JCJpYCzXhNjYyp4FJggMafRd1ZqJJ6KW6aM0Jw==}
-    engines: {node: '>=18.16.1'}
+  '@gouvfr/dsfr@1.15.2':
+    resolution: {integrity: sha512-IrV/a/eV6KE06Az8Ky3wN2h0INka+ntk5UWuJg/T+ST7/tMUvIWC8fZi9azx+2YsqMFGgAkocIHxeVbPoLHAUQ==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   '@hono/node-server@1.19.17':
     resolution: {integrity: sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ==}
@@ -8483,7 +8483,7 @@ snapshots:
       - debug
       - supports-color
 
-  '@gouvfr/dsfr@1.11.0': {}
+  '@gouvfr/dsfr@1.15.2': {}
 
   '@hono/node-server@1.19.17(hono@4.13.7)':
     dependencies:
