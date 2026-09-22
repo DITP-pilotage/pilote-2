@@ -1,15 +1,115 @@
 import { isTextSelection } from "@tiptap/core";
 import { NodeSelection } from "@tiptap/pm/state";
-import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
+import {
+  Editor,
+  EditorContent,
+  useEditor,
+  useEditorState,
+} from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { FunctionComponent, ReactNode, useState } from "react";
+import {
+  FunctionComponent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { ClearFormatIcon } from "@/components/_commons/Icones/ClearFormatIcon";
 import { ModaleInsertionIcone } from "@/components/_commons/EditeurRiche/ModaleInsertionIcone";
 import { ModaleInsertionUrl } from "@/components/_commons/EditeurRiche/ModaleInsertionUrl";
 import { classesRenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { clsxm } from "@/utils/clsxm";
+import { NIVEAUX_TITRE } from "./blocs";
 import { extensionsCentreAide } from "./extensions";
 
 type ModaleOuverte = "image" | "video" | "lien" | "icone" | null;
+
+type StyleBloc = {
+  libelle: string;
+  appliquer: (editor: Editor) => void;
+  estActif: (editor: Editor) => boolean;
+};
+
+const STYLES_BLOC: StyleBloc[] = [
+  {
+    libelle: "Paragraphe",
+    appliquer: (editor) => editor.chain().focus().setParagraph().run(),
+    estActif: (editor) =>
+      editor.isActive("paragraph") && !editor.isActive("blockquote"),
+  },
+  ...NIVEAUX_TITRE.map((niveau) => ({
+    libelle: `Titre H${niveau}`,
+    appliquer: (editor: Editor) =>
+      editor.chain().focus().setHeading({ level: niveau }).run(),
+    estActif: (editor: Editor) => editor.isActive("heading", { level: niveau }),
+  })),
+  {
+    libelle: "Citation",
+    appliquer: (editor) => editor.chain().focus().toggleBlockquote().run(),
+    estActif: (editor) => editor.isActive("blockquote"),
+  },
+];
+
+const STYLE_PAR_DEFAUT = "Paragraphe";
+
+const SelecteurBloc: FunctionComponent<{
+  libelleCourant: string;
+  onChoisir: (style: StyleBloc) => void;
+}> = ({ libelleCourant, onChoisir }) => {
+  const [ouvert, setOuvert] = useState(false);
+  const conteneur = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ouvert) return;
+    const fermerSiDehors = (event: PointerEvent) => {
+      if (!conteneur.current?.contains(event.target as Node)) setOuvert(false);
+    };
+    document.addEventListener("pointerdown", fermerSiDehors);
+    return () => document.removeEventListener("pointerdown", fermerSiDehors);
+  }, [ouvert]);
+
+  return (
+    <div className="relative" ref={conteneur}>
+      <button
+        aria-expanded={ouvert}
+        aria-label="Style de bloc"
+        className="flex h-8 items-center gap-1 rounded px-2 text-xs whitespace-nowrap text-white/90 transition-colors hover:bg-white/15"
+        onClick={() => setOuvert((etat) => !etat)}
+        onMouseDown={(event) => event.preventDefault()}
+        title="Style de bloc"
+        type="button"
+      >
+        {libelleCourant}
+        <span aria-hidden className="text-[10px]">
+          ▾
+        </span>
+      </button>
+      {ouvert && (
+        <div className="absolute top-full left-0 z-10 mt-1 w-40 overflow-hidden rounded-md border border-gray-200 bg-white py-1 shadow-lg">
+          {STYLES_BLOC.map((style) => (
+            <button
+              className={clsxm(
+                "flex w-full items-center justify-between px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-100",
+                style.libelle === libelleCourant &&
+                  "font-semibold text-primary",
+              )}
+              key={style.libelle}
+              onClick={() => {
+                onChoisir(style);
+                setOuvert(false);
+              }}
+              onMouseDown={(event) => event.preventDefault()}
+              type="button"
+            >
+              {style.libelle}
+              {style.libelle === libelleCourant && <span aria-hidden>✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const BoutonBulle: FunctionComponent<{
   actif: boolean;
@@ -76,6 +176,10 @@ export const EditeurCentreAide: FunctionComponent<{
       souligne: instance?.isActive("underline") ?? false,
       barre: instance?.isActive("strike") ?? false,
       lien: instance?.isActive("link") ?? false,
+      styleBloc: instance
+        ? (STYLES_BLOC.find((style) => style.estActif(instance))?.libelle ??
+          STYLE_PAR_DEFAUT)
+        : STYLE_PAR_DEFAUT,
     }),
   });
 
@@ -122,6 +226,11 @@ export const EditeurCentreAide: FunctionComponent<{
           );
         }}
       >
+        <SelecteurBloc
+          libelleCourant={etats.styleBloc}
+          onChoisir={(style) => style.appliquer(editor)}
+        />
+        <span aria-hidden className="mx-1 h-5 w-px bg-white/20" />
         <BoutonBulle
           actif={etats.gras}
           label="Gras"
@@ -157,6 +266,15 @@ export const EditeurCentreAide: FunctionComponent<{
           onClick={() => setModale("lien")}
         >
           <span className="text-sm">🔗</span>
+        </BoutonBulle>
+        <BoutonBulle
+          actif={false}
+          label="Effacer la mise en forme"
+          onClick={() =>
+            editor.chain().focus().unsetAllMarks().clearNodes().run()
+          }
+        >
+          <ClearFormatIcon className="h-4 w-4" fill="currentColor" />
         </BoutonBulle>
       </BubbleMenu>
 
