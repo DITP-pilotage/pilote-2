@@ -24,8 +24,9 @@ export default defineConfig({
   timeout: 90_000,
   globalTimeout: 1_400_000,
   outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
-  /* Les specs qui écrivent partagent le chantier CH-129 / IND-021 : un seul worker. */
-  workers: 1,
+  /* Un fichier = un worker ; les tests d'un même fichier restent en série sauf opt-in
+     par test.describe.configure. Le runner CI n'a que deux vCPU. */
+  workers: process.env.CI ? 2 : 4,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]

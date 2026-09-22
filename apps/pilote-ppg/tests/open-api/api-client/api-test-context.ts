@@ -51,9 +51,12 @@ export class ApiTestContext {
       salt: "authjs.session-token",
     });
 
+    // La ligne token_api_information est une donnée de test partagée par tous les
+    // fichiers open-api : on la crée si elle manque et on ne la supprime jamais,
+    // sinon un fichier en parallèle perd son token (403) au dispose d'un autre.
     await prisma.token_api_information.upsert({
       where: { email: config.email },
-      update: { date_creation: new Date().toISOString() },
+      update: {},
       create: {
         email: config.email,
         date_creation: new Date().toISOString(),
@@ -84,9 +87,5 @@ export class ApiTestContext {
     if (this.client) {
       await this.client.dispose();
     }
-
-    await prisma.token_api_information.deleteMany({
-      where: { email: this.userEmail },
-    });
   }
 }

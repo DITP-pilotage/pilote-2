@@ -21,7 +21,7 @@ export class AppActions {
     username = process.env.E2E_USERNAME!,
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
-    await this.authentifierParCookie(username, password);
+    await this.loginViaCookie(username, password);
 
     await this.page.goto("/");
     await this.dismissPostLoginModals();
@@ -65,20 +65,21 @@ export class AppActions {
     return this.loginAs(username, password);
   }
 
-  private async authentifierParCookie(
+  private async loginViaCookie(
     username: string,
     password: string,
   ): Promise<void> {
-    const { csrfToken } = (await (
-      await this.page.request.get("/api/auth/csrf")
-    ).json()) as { csrfToken: string };
+    // Le proxy portless (HTTP/2) coupe parfois une connexion à froid sous charge :
+    // on retente les deux requêtes plutôt que de faire échouer le test.
+    const { csrfToken } = (await this.retry(async () =>
+      (await this.page.request.get("/api/auth/csrf")).json(),
+    )) as { csrfToken: string };
 
-    const reponse = await this.page.request.post(
-      "/api/auth/callback/credentials",
-      {
+    const reponse = await this.retry(() =>
+      this.page.request.post("/api/auth/callback/credentials", {
         form: { csrfToken, username, password, callbackUrl: "/" },
         maxRedirects: 0,
-      },
+      }),
     );
 
     const redirection = reponse.headers().location ?? "";
@@ -91,6 +92,18 @@ export class AppActions {
         `Connexion refusée pour ${username} (statut ${reponse.status()}, redirection vers ${redirection})`,
       );
     }
+  }
+
+  private async retry<T>(action: () => Promise<T>, attempts = 3): Promise<T> {
+    let lastError: unknown;
+    for (let attempt = 0; attempt < attempts; attempt++) {
+      try {
+        return await action();
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    throw lastError;
   }
 
   private async dismissPostLoginModals(): Promise<void> {

@@ -3,6 +3,9 @@ import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageChantier } from "./pages/page-chantier";
 
+// Lecture seule (visibilité par profil, widget PVA) : les tests sont indépendants.
+test.describe.configure({ mode: "parallel" });
+
 test.describe("Consultation des données d'un chantier — Isolation par profil", () => {
   const chantierId = "129";
 
