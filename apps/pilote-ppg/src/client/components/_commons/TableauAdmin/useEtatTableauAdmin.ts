@@ -8,6 +8,7 @@ import {
   type PaginationState,
   type Row,
   type SortingState,
+  type Table,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import {
@@ -224,4 +225,21 @@ export const useEtatTableauAdmin = <TRow>({
     aDesFiltresActifs,
     reinitialiserLesFiltres,
   };
+};
+
+/**
+ * Lit et met à jour les valeurs sélectionnées d'un filtre de colonne
+ * (GroupeCasesACocher, MultiSelectFiltre…) sans que chaque page admin ait
+ * à refaire le cast `getFilterValue() as string[]`.
+ */
+export const useFiltreColonne = <TRow>(
+  table: Table<TRow>,
+  colonneId: string,
+) => {
+  const colonne = table.getColumn(colonneId);
+  const valeurs = toStringArray(colonne?.getFilterValue());
+  const setValeurs = (nouvellesValeurs: string[]) =>
+    colonne?.setFilterValue(nouvellesValeurs);
+
+  return [valeurs, setValeurs] as const;
 };

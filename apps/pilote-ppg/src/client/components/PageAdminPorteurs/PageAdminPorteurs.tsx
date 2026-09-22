@@ -3,6 +3,7 @@ import { Lien } from "@/components/_commons/Lien/Lien";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
 import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
+import { useFiltreColonne } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
 import {
   CLASSE_COLONNE_DATE,
   CLASSE_COLONNE_ID,
@@ -32,11 +33,11 @@ const PageAdminPorteurs = () => {
     useTableauAdminPorteurs(porteurs ?? []);
   const nombrePorteursFiltres = table.getFilteredRowModel().rows.length;
 
-  const colonneStatut = table.getColumn("statut");
-  const valeursStatut = (colonneStatut?.getFilterValue() as string[]) ?? [];
-
-  const colonneType = table.getColumn("porteurType");
-  const valeursType = (colonneType?.getFilterValue() as string[]) ?? [];
+  const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
+  const [valeursType, setValeursType] = useFiltreColonne(
+    table,
+    "porteurType",
+  );
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -72,17 +73,13 @@ const PageAdminPorteurs = () => {
             >
               <GroupeCasesACocher
                 label="Statut :"
-                onChange={(nouvellesValeurs) =>
-                  colonneStatut?.setFilterValue(nouvellesValeurs)
-                }
+                onChange={setValeursStatut}
                 options={OPTIONS_STATUT_REFERENTIEL}
                 values={valeursStatut}
               />
               <GroupeCasesACocher
                 label="Type :"
-                onChange={(nouvellesValeurs) =>
-                  colonneType?.setFilterValue(nouvellesValeurs)
-                }
+                onChange={setValeursType}
                 options={OPTIONS_TYPE_PORTEUR}
                 values={valeursType}
               />

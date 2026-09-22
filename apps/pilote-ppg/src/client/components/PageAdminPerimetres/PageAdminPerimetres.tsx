@@ -4,6 +4,7 @@ import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/Multi
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
 import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
+import { useFiltreColonne } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
 import {
   CLASSE_COLONNE_DATE,
   CLASSE_COLONNE_ID,
@@ -33,11 +34,11 @@ const PageAdminPerimetres = () => {
     useTableauAdminPerimetres(perimetres ?? []);
   const nombrePerimetresFiltres = table.getFilteredRowModel().rows.length;
 
-  const colonneStatut = table.getColumn("statut");
-  const valeursStatut = (colonneStatut?.getFilterValue() as string[]) ?? [];
-
-  const colonnePorteur = table.getColumn("porteurId");
-  const valeursPorteur = (colonnePorteur?.getFilterValue() as string[]) ?? [];
+  const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
+  const [valeursPorteur, setValeursPorteur] = useFiltreColonne(
+    table,
+    "porteurId",
+  );
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -73,9 +74,7 @@ const PageAdminPerimetres = () => {
             >
               <GroupeCasesACocher
                 label="Statut :"
-                onChange={(nouvellesValeurs) =>
-                  colonneStatut?.setFilterValue(nouvellesValeurs)
-                }
+                onChange={setValeursStatut}
                 options={OPTIONS_STATUT_REFERENTIEL}
                 values={valeursStatut}
               />
@@ -87,9 +86,7 @@ const PageAdminPerimetres = () => {
                     ?.porteurShort ?? value
                 }
                 label="Porteur"
-                onChange={(nouvellesValeurs) =>
-                  colonnePorteur?.setFilterValue(nouvellesValeurs)
-                }
+                onChange={setValeursPorteur}
                 optionGroups={[
                   {
                     label: "",

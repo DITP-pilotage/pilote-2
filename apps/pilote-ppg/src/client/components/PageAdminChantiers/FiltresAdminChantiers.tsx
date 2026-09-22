@@ -3,6 +3,7 @@ import { $Enums } from "@prisma/client";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
 import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
+import { useFiltreColonne } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
 import type { Perimetre } from "@/server/metadataChantier/queries/ListerPerimetresQuery";
 import { ChantierAdminRow, STATUT_BADGE } from "./useTableauAdminChantiers";
 
@@ -22,12 +23,14 @@ export const FiltresAdminChantiers = ({
   aDesFiltresActifs: boolean;
   reinitialiserLesFiltres: () => void;
 }) => {
-  const colonneStatut = table.getColumn("chState");
-  const valeursStatut = (colonneStatut?.getFilterValue() as string[]) ?? [];
-
-  const colonnePerimetre = table.getColumn("perimetreId");
-  const valeursPerimetre =
-    (colonnePerimetre?.getFilterValue() as string[]) ?? [];
+  const [valeursStatut, setValeursStatut] = useFiltreColonne(
+    table,
+    "chState",
+  );
+  const [valeursPerimetre, setValeursPerimetre] = useFiltreColonne(
+    table,
+    "perimetreId",
+  );
 
   return (
     <FiltresTableauAdmin
@@ -37,9 +40,7 @@ export const FiltresAdminChantiers = ({
     >
       <GroupeCasesACocher
         label="Statut :"
-        onChange={(nouvellesValeurs) =>
-          colonneStatut?.setFilterValue(nouvellesValeurs)
-        }
+        onChange={setValeursStatut}
         options={OPTIONS_STATUT}
         values={valeursStatut}
       />
@@ -51,9 +52,7 @@ export const FiltresAdminChantiers = ({
           perimetres.find((perimetre) => perimetre.id === value)?.nom ?? value
         }
         label="Périmètre"
-        onChange={(nouvellesValeurs) =>
-          colonnePerimetre?.setFilterValue(nouvellesValeurs)
-        }
+        onChange={setValeursPerimetre}
         optionGroups={[
           {
             label: "",
