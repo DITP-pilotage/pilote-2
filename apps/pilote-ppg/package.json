@@ -165,7 +165,7 @@
     "@types/luxon": "^3.7.5",
     "@types/mime": "^4.0.0",
     "@types/node": "^26.5.0",
-    "@types/pdfmake": "0.2.12",
+    "@types/pdfmake": "0.3.3",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
