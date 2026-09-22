@@ -162,6 +162,10 @@ export const EditeurCentreAide: FunctionComponent<{
     }),
     content: contenu,
     immediatelyRender: false,
+    // classesRenduContenuHtml fait ici autorite sur la mise en page du contenu :
+    // ce marqueur exempte l'editeur des regles de prosemirror.css qui la
+    // contredisent, sans toucher aux editeurs qui en dependent encore.
+    editorProps: { attributes: { class: "contenu-mis-en-page" } },
     onUpdate: ({ editor: instance }) =>
       onChange(instance.isEmpty ? "" : instance.getHTML()),
   });
