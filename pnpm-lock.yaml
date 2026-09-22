@@ -820,8 +820,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       '@types/chroma-js':
-        specifier: ^2.4.5
-        version: 2.4.5
+        specifier: ^3.1.2
+        version: 3.1.2
       '@types/convict':
         specifier: 6.1.6
         version: 6.1.6
@@ -3793,8 +3793,8 @@ packages:
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
-  '@types/chroma-js@2.4.5':
-    resolution: {integrity: sha512-6ISjhzJViaPCy2q2e6PgK+8HcHQDQ0V2LDiKmYAh+jJlLqDa6HbwDh0wOevHY0kHHUx0iZwjSRbVD47WOUx5EQ==}
+  '@types/chroma-js@3.1.2':
+    resolution: {integrity: sha512-YBTQqArPN8A0niHXCwrO1z5x++a+6l0mLBykncUpr23oIPW7L4h39s6gokdK/bDrPmSh8+TjMmrhBPnyiaWPmQ==}
 
   '@types/convict-format-with-validator@6.0.6':
     resolution: {integrity: sha512-OOVxygMg3pn3VM+QMDIjGsPEaVyRjxM0+gn5uXw199xPLENIIYvVaOI8LpCasMAmdQRXw0sFMDNs/dbvZ25xTg==}
@@ -10149,7 +10149,7 @@ snapshots:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
 
-  '@types/chroma-js@2.4.5': {}
+  '@types/chroma-js@3.1.2': {}
 
   '@types/convict-format-with-validator@6.0.6':
     dependencies:
