@@ -3,14 +3,14 @@ import { Lien } from "@/components/_commons/Lien/Lien";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
-import { FiltreCasesACocher } from "@/components/_commons/TableauAdmin/FiltreCasesACocher";
-import { OPTIONS_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/statutReferentiel";
+import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
 import {
   CLASSE_COLONNE_DATE,
   CLASSE_COLONNE_ID,
   CLASSE_COLONNE_NOM,
   CLASSE_COLONNE_SECONDAIRE,
-} from "@/components/_commons/TableauAdmin/classesColonnes";
+  OPTIONS_STATUT_REFERENTIEL,
+} from "@/components/_commons/TableauAdmin/constants";
 import { useTableauAdminPerimetres } from "./useTableauAdminPerimetres";
 
 const CLASSES_COLONNES = {
@@ -32,6 +32,9 @@ const PageAdminPerimetres = () => {
   const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
     useTableauAdminPerimetres(perimetres ?? []);
   const nombrePerimetresFiltres = table.getFilteredRowModel().rows.length;
+
+  const colonneStatut = table.getColumn("statut");
+  const valeursStatut = (colonneStatut?.getFilterValue() as string[]) ?? [];
 
   const colonnePorteur = table.getColumn("porteurId");
   const valeursPorteur = (colonnePorteur?.getFilterValue() as string[]) ?? [];
@@ -68,10 +71,13 @@ const PageAdminPerimetres = () => {
               reinitialiserLesFiltres={reinitialiserLesFiltres}
               table={table}
             >
-              <FiltreCasesACocher
-                colonne={table.getColumn("statut")}
+              <GroupeCasesACocher
                 label="Statut :"
+                onChange={(nouvellesValeurs) =>
+                  colonneStatut?.setFilterValue(nouvellesValeurs)
+                }
                 options={OPTIONS_STATUT_REFERENTIEL}
+                values={valeursStatut}
               />
               <MultiSelectFiltre
                 className="max-w-fit"

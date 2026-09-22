@@ -6,11 +6,8 @@ import {
   useEtatTableauAdmin,
   type ConfigFiltreColonne,
 } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { filtreParListeDeValeurs } from "@/components/_commons/TableauAdmin/filtreParListeDeValeurs";
-import {
-  FILTRE_STATUT_REFERENTIEL,
-  statutReferentielDe,
-} from "@/components/_commons/TableauAdmin/statutReferentiel";
+import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
+import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
 import type { PerimetreAdminListItem } from "@/server/metadataPerimetre/queries/ListerPerimetresAdminQuery";
 
 const FILTRES: ConfigFiltreColonne[] = [
@@ -51,7 +48,7 @@ const useTableColumns = () =>
         id: "porteurId",
         header: "Porteur",
         enableColumnFilter: true,
-        filterFn: filtreParListeDeValeurs,
+        filterFn: "arrIncludesSome",
         cell: (info) => info.row.original.porteurShort ?? "-",
         sortingFn: (rowA, rowB) =>
           (rowA.original.porteurShort ?? "").localeCompare(
@@ -64,7 +61,7 @@ const useTableColumns = () =>
           id: "statut",
           header: "Statut",
           enableColumnFilter: true,
-          filterFn: filtreParListeDeValeurs,
+          filterFn: "arrIncludesSome",
           cell: (info) => (
             <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
           ),

@@ -1,7 +1,7 @@
 import type { Table } from "@tanstack/react-table";
 import { $Enums } from "@prisma/client";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
-import { FiltreCasesACocher } from "@/components/_commons/TableauAdmin/FiltreCasesACocher";
+import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
 import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
 import type { Perimetre } from "@/server/metadataChantier/queries/ListerPerimetresQuery";
 import { ChantierAdminRow, STATUT_BADGE } from "./useTableauAdminChantiers";
@@ -22,6 +22,9 @@ export const FiltresAdminChantiers = ({
   aDesFiltresActifs: boolean;
   reinitialiserLesFiltres: () => void;
 }) => {
+  const colonneStatut = table.getColumn("chState");
+  const valeursStatut = (colonneStatut?.getFilterValue() as string[]) ?? [];
+
   const colonnePerimetre = table.getColumn("perimetreId");
   const valeursPerimetre =
     (colonnePerimetre?.getFilterValue() as string[]) ?? [];
@@ -32,10 +35,13 @@ export const FiltresAdminChantiers = ({
       reinitialiserLesFiltres={reinitialiserLesFiltres}
       table={table}
     >
-      <FiltreCasesACocher
-        colonne={table.getColumn("chState")}
+      <GroupeCasesACocher
         label="Statut :"
+        onChange={(nouvellesValeurs) =>
+          colonneStatut?.setFilterValue(nouvellesValeurs)
+        }
         options={OPTIONS_STATUT}
+        values={valeursStatut}
       />
 
       <MultiSelectFiltre

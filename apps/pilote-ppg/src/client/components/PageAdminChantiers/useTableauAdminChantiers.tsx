@@ -9,7 +9,6 @@ import {
   useEtatTableauAdmin,
   type ConfigFiltreColonne,
 } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { filtreParListeDeValeurs } from "@/components/_commons/TableauAdmin/filtreParListeDeValeurs";
 
 export type ChantierAdminRow = inferRouterOutputs<
   typeof appRouter
@@ -57,7 +56,7 @@ const useTableColumns = () =>
         id: "chState",
         header: "Statut",
         enableColumnFilter: true,
-        filterFn: filtreParListeDeValeurs,
+        filterFn: "arrIncludesSome",
         cell: (info) => {
           const badge = STATUT_BADGE[info.getValue()];
           return <Badge type={badge.type}>{badge.label}</Badge>;
@@ -67,7 +66,7 @@ const useTableColumns = () =>
         id: "perimetreId",
         header: "Périmètre",
         enableColumnFilter: true,
-        filterFn: filtreParListeDeValeurs,
+        filterFn: "arrIncludesSome",
         cell: (info) => info.row.original.perimetreNom,
         sortingFn: (rowA, rowB) =>
           rowA.original.perimetreNom.localeCompare(rowB.original.perimetreNom),

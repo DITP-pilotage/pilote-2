@@ -6,11 +6,8 @@ import {
   useEtatTableauAdmin,
   type ConfigFiltreColonne,
 } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { filtreParListeDeValeurs } from "@/components/_commons/TableauAdmin/filtreParListeDeValeurs";
-import {
-  FILTRE_STATUT_REFERENTIEL,
-  statutReferentielDe,
-} from "@/components/_commons/TableauAdmin/statutReferentiel";
+import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
+import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
 import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
 
 const FILTRES: ConfigFiltreColonne[] = [FILTRE_STATUT_REFERENTIEL];
@@ -56,7 +53,7 @@ const useTableColumns = () =>
           id: "statut",
           header: "Statut",
           enableColumnFilter: true,
-          filterFn: filtreParListeDeValeurs,
+          filterFn: "arrIncludesSome",
           cell: (info) => (
             <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
           ),

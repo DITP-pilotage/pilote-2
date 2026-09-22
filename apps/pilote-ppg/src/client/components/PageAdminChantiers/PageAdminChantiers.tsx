@@ -5,7 +5,7 @@ import {
   CLASSE_COLONNE_DATE,
   CLASSE_COLONNE_ID,
   CLASSE_COLONNE_NOM,
-} from "@/components/_commons/TableauAdmin/classesColonnes";
+} from "@/components/_commons/TableauAdmin/constants";
 import { useTableauAdminChantiers } from "./useTableauAdminChantiers";
 import { FiltresAdminChantiers } from "./FiltresAdminChantiers";
 

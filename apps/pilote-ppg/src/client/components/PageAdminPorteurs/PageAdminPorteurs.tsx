@@ -2,13 +2,13 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
-import { FiltreCasesACocher } from "@/components/_commons/TableauAdmin/FiltreCasesACocher";
-import { OPTIONS_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/statutReferentiel";
+import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
 import {
   CLASSE_COLONNE_DATE,
   CLASSE_COLONNE_ID,
   CLASSE_COLONNE_NOM,
-} from "@/components/_commons/TableauAdmin/classesColonnes";
+  OPTIONS_STATUT_REFERENTIEL,
+} from "@/components/_commons/TableauAdmin/constants";
 import {
   OPTIONS_TYPE_PORTEUR,
   useTableauAdminPorteurs,
@@ -31,6 +31,12 @@ const PageAdminPorteurs = () => {
   const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
     useTableauAdminPorteurs(porteurs ?? []);
   const nombrePorteursFiltres = table.getFilteredRowModel().rows.length;
+
+  const colonneStatut = table.getColumn("statut");
+  const valeursStatut = (colonneStatut?.getFilterValue() as string[]) ?? [];
+
+  const colonneType = table.getColumn("porteurType");
+  const valeursType = (colonneType?.getFilterValue() as string[]) ?? [];
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -64,15 +70,21 @@ const PageAdminPorteurs = () => {
               reinitialiserLesFiltres={reinitialiserLesFiltres}
               table={table}
             >
-              <FiltreCasesACocher
-                colonne={table.getColumn("statut")}
+              <GroupeCasesACocher
                 label="Statut :"
+                onChange={(nouvellesValeurs) =>
+                  colonneStatut?.setFilterValue(nouvellesValeurs)
+                }
                 options={OPTIONS_STATUT_REFERENTIEL}
+                values={valeursStatut}
               />
-              <FiltreCasesACocher
-                colonne={table.getColumn("porteurType")}
+              <GroupeCasesACocher
                 label="Type :"
+                onChange={(nouvellesValeurs) =>
+                  colonneType?.setFilterValue(nouvellesValeurs)
+                }
                 options={OPTIONS_TYPE_PORTEUR}
+                values={valeursType}
               />
             </FiltresTableauAdmin>
           }

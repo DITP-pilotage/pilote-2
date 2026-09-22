@@ -1,4 +1,3 @@
-import type { Column } from "@tanstack/react-table";
 import { useId } from "react";
 import { Checkbox } from "@/components/shared/Checkbox";
 
@@ -22,35 +21,32 @@ const OptionCase = ({
   );
 };
 
-export function FiltreCasesACocher<TRow>({
+export function GroupeCasesACocher({
   label,
-  colonne,
   options,
+  values,
+  onChange,
 }: {
   label: string;
-  colonne: Column<TRow, unknown> | undefined;
   options: OptionCaseACocher[];
+  values: string[];
+  onChange: (values: string[]) => void;
 }) {
-  const valeursCochées =
-    (colonne?.getFilterValue() as string[] | undefined) ?? [];
-
   return (
     <div className="flex items-center gap-2 text-sm">
       <span className="font-semibold whitespace-nowrap">{label}</span>
       <div className="flex flex-wrap items-center gap-2">
         {options.map((option) => {
-          const estCoché = valeursCochées.includes(option.valeur);
+          const estCoché = values.includes(option.valeur);
           return (
             <OptionCase
               estCoché={estCoché}
               key={option.valeur}
               onToggle={() =>
-                colonne?.setFilterValue(
+                onChange(
                   estCoché
-                    ? valeursCochées.filter(
-                        (valeur) => valeur !== option.valeur,
-                      )
-                    : [...valeursCochées, option.valeur],
+                    ? values.filter((valeur) => valeur !== option.valeur)
+                    : [...values, option.valeur],
                 )
               }
               option={option}

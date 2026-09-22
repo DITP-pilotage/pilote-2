@@ -7,11 +7,8 @@ import {
   useEtatTableauAdmin,
   type ConfigFiltreColonne,
 } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { filtreParListeDeValeurs } from "@/components/_commons/TableauAdmin/filtreParListeDeValeurs";
-import {
-  FILTRE_STATUT_REFERENTIEL,
-  statutReferentielDe,
-} from "@/components/_commons/TableauAdmin/statutReferentiel";
+import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
+import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
 import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
 export const TYPE_BADGE: Record<
@@ -83,7 +80,7 @@ const useTableColumns = () =>
         id: "porteurType",
         header: "Type",
         enableColumnFilter: true,
-        filterFn: filtreParListeDeValeurs,
+        filterFn: "arrIncludesSome",
         cell: (info) => {
           const type = info.getValue();
           const typeBadge =
@@ -105,7 +102,7 @@ const useTableColumns = () =>
           id: "statut",
           header: "Statut",
           enableColumnFilter: true,
-          filterFn: filtreParListeDeValeurs,
+          filterFn: "arrIncludesSome",
           cell: (info) => (
             <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
           ),
