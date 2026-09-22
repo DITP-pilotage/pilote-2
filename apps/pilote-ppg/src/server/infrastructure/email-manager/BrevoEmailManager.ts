@@ -53,6 +53,7 @@ export class BrevoEmailManager implements EmailManager {
       PRENOM: prenom,
       NOM: nom,
       PROFIL: profil,
+      _PIXEL_TRACKING_CONSENT: true,
     };
     contact.listIds = listesDiffusionIds;
     await this.contactsApi.createContact(contact);
