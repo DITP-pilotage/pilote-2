@@ -57,7 +57,7 @@ const buildApp = () => {
   return app
 }
 
-describe.sequential('middleware authContext', () => {
+describe('middleware authContext', { concurrent: false }, () => {
   beforeEach(() => {
     verifyJwt.mockReset()
     lookup.mockReset()

@@ -17,9 +17,9 @@ export default async function handle(
     .then(() => {
       response.status(200).json({});
     })
-    .catch((error) => {
+    .catch((error: unknown) => {
       response.status(500).json({
-        message: error.message,
+        message: error instanceof Error ? error.message : String(error),
       });
     });
 }

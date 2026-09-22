@@ -7,7 +7,7 @@ import { buildMe } from '@/tests/factories/api'
 import { buildLogoutResponse, buildRefreshResponse } from '@/tests/factories/bff'
 import { apiUrl, bffUrl, server } from '@/tests/server'
 
-describe.sequential('auth singleton', () => {
+describe('auth singleton', { concurrent: false }, () => {
   beforeEach(() => {
     tokenStore.clear()
   })

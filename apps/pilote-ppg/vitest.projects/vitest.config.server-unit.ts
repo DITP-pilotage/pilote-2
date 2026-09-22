@@ -1,8 +1,7 @@
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineProject } from "vitest/config";
 
 export default defineProject({
-  plugins: [tsconfigPaths()],
+  resolve: { tsconfigPaths: true },
   test: {
     name: "server-unit",
     root: "./",

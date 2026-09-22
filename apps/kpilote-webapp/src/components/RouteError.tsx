@@ -7,7 +7,7 @@ import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Section } from '@pilote/kpilote-ui/Section'
 
-const isNotFoundError = (error: Error): boolean => {
+const isNotFoundError = (error: unknown): boolean => {
   return error instanceof HTTPError && error.response.status === 404
 }
 
@@ -33,7 +33,10 @@ export function RouteError({ error, reset }: ErrorComponentProps) {
   return (
     <Section>
       <div className="space-y-4">
-        <EmptyState title="Erreur lors du chargement" description={error.message} />
+        <EmptyState
+          title="Erreur lors du chargement"
+          description={error instanceof Error ? error.message : String(error)}
+        />
         <div className="flex justify-center">
           <Button type="button" onClick={reset}>
             Réessayer

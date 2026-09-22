@@ -23,7 +23,7 @@ describe('isApiOrigin', () => {
   })
 })
 
-describe.sequential('apiClient beforeRequest', () => {
+describe('apiClient beforeRequest', { concurrent: false }, () => {
   afterEach(() => {
     tokenStore.clear()
   })
@@ -58,7 +58,7 @@ describe.sequential('apiClient beforeRequest', () => {
   })
 })
 
-describe.sequential('apiClient retry on 401', () => {
+describe('apiClient retry on 401', { concurrent: false }, () => {
   beforeEach(() => {
     tokenStore.clear()
   })
