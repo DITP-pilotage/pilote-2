@@ -392,12 +392,6 @@ const config = convict({
       doc: "Affiche le bouton ProConnect sur l'écran de connexion",
       env: "NEXT_PUBLIC_FF_PROCONNECT",
     },
-    proconnectDitpAdmin: {
-      format: Boolean,
-      default: false,
-      doc: "Réserve la connexion ProConnect aux comptes de profil DITP_ADMIN",
-      env: "NEXT_PUBLIC_FF_PROCONNECT_DITP_ADMIN",
-    },
   },
   analytics: {
     doc: "Matomo Analytics",

@@ -131,10 +131,10 @@ export async function proxy(request: NextRequest) {
       const email = utilisateurDuToken.success
         ? utilisateurDuToken.data.email
         : undefined;
-      const compteAuthentificationQuery =
-        getContainer("gestionUtilisateur").cradle.compteAuthentificationQuery;
+      const statutCompteQuery =
+        getContainer("gestionUtilisateur").cradle.statutCompteQuery;
       const statut = email
-        ? (await compteAuthentificationQuery.recuperer({ email })).statut
+        ? await statutCompteQuery.recuperer({ email })
         : "inconnu";
 
       if (statut !== "actif") {
