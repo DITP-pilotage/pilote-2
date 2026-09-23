@@ -50,6 +50,13 @@ pnpm test:client
 # Server-side tests only
 pnpm test:server
 
+# Unit tests only (client + server)
+pnpm test:unit
+
+# Integration tests only
+pnpm test:server:integration
+pnpm test:client:integration
+
 # E2E tests with Playwright
 pnpm test:e2e
 ```
@@ -122,7 +129,7 @@ Development setup requires:
 
 - **Frontend**: Next.js 14, React 18, TypeScript, Emotion/styled-components
 - **Backend**: tRPC, Prisma 6, NextAuth.js, Awilix (DI)
-- **Testing**: Jest, Playwright, Testing Library
+- **Testing**: Vitest, Playwright, Testing Library
 - **Database**: PostgreSQL, Prisma migrations
 - **Auth**: Keycloak integration
 - **Validation**: Zod schemas
@@ -147,7 +154,8 @@ When working on PVA functionality, focus on:
 - no unnecessary comment other than given when then in tests case. You may still write a comment to emphasize test-specific data required for the test to be properly setup
 - no 1 or 2 character variable. eg e -> error, ev -> event
 - When it's possible, use $Enums from @prisma to handle values and types
-- Never launch tests by yourself, the user will ALWAYS launch them by himself
+- You may launch unit and integration tests by yourself (`pnpm test:unit`, `pnpm test:server:integration`, `pnpm test:client:integration`), scoped to the relevant files when possible
+- E2E tests are fast now but don't need to run on every change: after significant work (new feature, large refactor, cross-cutting change), ask the user whether they should be launched (`pnpm test:e2e`)
 - write ADR in french
 - use this ADR as the base structure for writing ADRs : @docs/architecture/decisions/0001-record-architecture-decisions.md
 
