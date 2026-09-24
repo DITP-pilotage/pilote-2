@@ -50,8 +50,10 @@ export const FILTRES_CAMPAGNE = [
 ]
 
 /**
- * Apps qui portent réellement un tsc. kpilote-shared et kpilote-ui n'ont que prettier.
- * Chacune exige une étape de codegen AVANT tsc, sinon les types n'existent pas encore :
+ * Workspaces qui portent réellement un tsc — les 7, depuis que kpilote-shared et kpilote-ui
+ * ont reçu le leur (ils n'avaient que prettier, donc aucun filet de typage : leurs erreurs
+ * étaient invisibles, y compris celles qu'une campagne introduisait).
+ * Certaines exigent une étape de codegen AVANT tsc, sinon les types n'existent pas encore :
  * - kpilote-api : `prisma generate --sql` introspecte les tables réelles => BASE OBLIGATOIRE
  * - webapp/admin : `tsr generate` produit les types de routes TanStack Router
  */
@@ -71,18 +73,25 @@ const APPS_TYPEES = [
     tsc: ['node', '--stack-size=8000', './node_modules/typescript/bin/tsc'],
   },
   { pkg: 'pilote-ppg-auth' },
+  { pkg: '@pilote/kpilote-ui' },
+  { pkg: '@pilote/kpilote-shared' },
 ]
 
 /**
- * Apps qui portent un script `lint`. `pilote-ppg-auth` n'en a PAS — il n'a qu'un
- * `typecheck`, déjà couvert par l'oracle rapide via APPS_TYPEES. L'inclure ici ferait
- * échouer l'oracle sur un script inexistant, ce qui se lirait comme une régression.
+ * Workspaces qui portent un script `lint` — les 7 désormais. pilote-ppg-auth, kpilote-ui et
+ * kpilote-shared n'en avaient pas (ou seulement `prettier --check`) : leur lint est passé à
+ * `oxlint --type-aware && tsc --noEmit && prettier --check`, comme les quatre autres.
+ * Ne remettre un workspace hors de cette liste que s'il perd vraiment son script : l'oracle
+ * échouerait sur une commande inexistante, ce qui se lirait comme une régression.
  */
 const APPS_LINTEES = [
   '@pilote/kpilote-api',
   '@pilote/kpilote-webapp',
   '@pilote/kpilote-admin',
   '@pilote/ppg',
+  'pilote-ppg-auth',
+  '@pilote/kpilote-ui',
+  '@pilote/kpilote-shared',
 ]
 
 /**
@@ -145,7 +154,20 @@ export function verifierBaseAccessible() {
  */
 export function verifierBaseTestPpgAccessible() {
   const { code } = run(
-    ['pnpm', '-F', '@pilote/ppg', 'exec', 'dotenv', '-e', '.env.test', '--', 'prisma', 'db', 'execute', '--stdin'],
+    [
+      'pnpm',
+      '-F',
+      '@pilote/ppg',
+      'exec',
+      'dotenv',
+      '-e',
+      '.env.test',
+      '--',
+      'prisma',
+      'db',
+      'execute',
+      '--stdin',
+    ],
     {
       input: 'SELECT 1;',
     },
