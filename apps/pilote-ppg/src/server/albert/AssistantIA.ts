@@ -135,6 +135,26 @@ export class AssistantIA {
     };
   }
 
+  /**
+   * Les noms des outils que verrait l'agent pour cette conversation, sans
+   * appeler le modèle : la liste est arrêtée avant l'appel LLM.
+   */
+  static outilsCharges({
+    messages,
+    habilitations,
+    userId,
+  }: {
+    messages: PiloteUIMessage[];
+    habilitations: Habilitations;
+    userId: string;
+  }): string[] {
+    const capacities = this.detecterCapacitiesDepuisMessages(messages);
+
+    return Object.keys(
+      this.construireTools({ habilitations, capacities, userId }),
+    );
+  }
+
   static async streamText({
     chatId,
     messages,

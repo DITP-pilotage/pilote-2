@@ -1,141 +1,163 @@
 import { createScorer, evalite } from "evalite";
-import {
-  type Capacities,
-  detecterCapacities,
-} from "@/server/albert/detecteurIntention";
+import { AssistantIA } from "@/server/albert/AssistantIA";
+import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
+import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 /**
- * Niveau 1 — détection d'intention par mots-clés.
+ * Niveau 1 — outils chargés selon la conversation.
  *
- * `detecterCapacities` conditionne l'exposition de `create_dashboard` et
- * `export_rapport` : une capacity non détectée retire l'outil du ToolSet, donc
- * l'agent ne PEUT pas l'appeler. Un faux négatif ici plafonne le niveau 2.
+ * `create_dashboard` et `export_rapport` ne sont exposés à l'agent que si
+ * l'intention est détectée. La suite passe par le vrai câblage
+ * d'`AssistantIA`, sans appeler le modèle : la liste d'outils est arrêtée avant
+ * l'appel LLM, donc le résultat est déterministe.
  *
- * Aucun LLM, aucune base. L'intérêt de le passer en eval plutôt qu'en test
- * unitaire est le score partiel : les quatre capacities sont notées séparément,
- * donc une régression qui n'en casse qu'une se lit comme 0,75 et non comme un
- * échec opaque.
- *
- * Référence observée le 2026-09-10 : 96 % sur 6 cas, en 400 ms.
- *
- * Un seul cas sous la barre, à 75 % : « Donne-moi une vue d'ensemble de la
- * situation » active `dashboard` en plus de `synthese`. « vue » figure dans les
- * mots-clés dashboard et « vue d'ensemble » dans ceux de synthèse ; le premier
- * match l'emporte. Conséquence réelle : `create_dashboard` est exposé sur une
- * demande de synthèse. C'est un constat sur le détecteur, pas un cas à corriger.
+ * Référence observée le 2026-09-24 : 100 % sur 6 cas, en 5 ms.
  */
 
-type KeywordCase = {
-  message: string;
+const OUTILS_CONDITIONNELS = ["create_dashboard", "export_rapport"] as const;
+type OutilConditionnel = (typeof OUTILS_CONDITIONNELS)[number];
+
+type Case = {
+  messages: PiloteUIMessage[];
   reason: string;
 };
 
-const CASES: { input: KeywordCase; expected: Capacities }[] = [
+const PERIMETRE_VIDE = { chantiers: [], territoires: [], périmètres: [] };
+
+const HABILITATIONS: Habilitations = {
+  lecture: PERIMETRE_VIDE,
+  saisieCommentaire: PERIMETRE_VIDE,
+  saisieIndicateur: PERIMETRE_VIDE,
+  responsabilite: PERIMETRE_VIDE,
+  gestionUtilisateur: PERIMETRE_VIDE,
+};
+
+const utilisateur = (text: string): PiloteUIMessage => ({
+  id: text,
+  role: "user",
+  parts: [{ type: "text", text }],
+});
+
+const assistantAvecDashboard: PiloteUIMessage = {
+  id: "dashboard-compose",
+  role: "assistant",
+  parts: [
+    { type: "text", text: "Voici le tableau de bord de la Bretagne." },
+    {
+      type: "tool-create_dashboard",
+      toolCallId: "call-1",
+      state: "output-available",
+      input: {
+        task: "Tableau de bord Bretagne",
+        territoire_codes: ["REG-53"],
+        jalons: [2026],
+      },
+      output: { titre: "Bretagne", containers: [], _output_instructions: "" },
+    },
+  ],
+};
+
+const CASES: { input: Case; expected: OutilConditionnel[] }[] = [
   {
     input: {
-      message: "Fais-moi une synthèse de l'avancement du chantier CH-004",
-      reason: "synthèse explicite, rien d'autre",
-    },
-    expected: {
-      synthese: true,
-      dashboard: false,
-      exportRapport: false,
-      inclureSousTerritoires: false,
-    },
-  },
-  {
-    input: {
-      message: "Affiche un tableau de bord des indicateurs de la Bretagne",
+      messages: [
+        utilisateur(
+          "Affiche un tableau de bord des indicateurs de la Bretagne",
+        ),
+      ],
       reason: "dashboard explicite",
     },
-    expected: {
-      synthese: false,
-      dashboard: true,
-      exportRapport: false,
-      inclureSousTerritoires: false,
-    },
+    expected: ["create_dashboard"],
   },
   {
     input: {
-      message: "Exporte-moi un rapport Markdown sur la Bretagne",
+      messages: [
+        utilisateur("Exporte-moi un rapport Markdown sur la Bretagne"),
+      ],
       reason: "export explicite",
     },
-    expected: {
-      synthese: false,
-      dashboard: false,
-      exportRapport: true,
-      inclureSousTerritoires: false,
-    },
+    expected: ["export_rapport"],
   },
   {
     input: {
-      message: "Fais la synthèse de la Bretagne et ses departements",
-      reason: "synthèse + sous-territoires",
+      messages: [
+        utilisateur("Fais-moi une synthèse de l'avancement du chantier CH-004"),
+      ],
+      reason: "synthèse : aucun outil conditionnel",
     },
-    expected: {
-      synthese: true,
-      dashboard: false,
-      exportRapport: false,
-      inclureSousTerritoires: true,
-    },
+    expected: [],
   },
   {
     input: {
-      message: "Quel est le taux d'avancement de la Bretagne ?",
-      reason: "question factuelle : aucune capacity ne doit s'activer",
+      messages: [utilisateur("Quel est le taux d'avancement de la Bretagne ?")],
+      reason: "question factuelle : aucun outil conditionnel",
     },
-    expected: {
-      synthese: false,
-      dashboard: false,
-      exportRapport: false,
-      inclureSousTerritoires: false,
-    },
+    expected: [],
   },
   {
     input: {
-      message: "Donne-moi une vue d'ensemble de la situation",
+      messages: [utilisateur("Donne-moi une vue d'ensemble de la situation")],
       reason:
-        "PIÈGE : « vue d'ensemble » est une synthèse, mais « vue » est aussi un mot-clé dashboard",
+        "RÉGRESSION : « vue » était un mot-clé dashboard et chargeait create_dashboard sur une synthèse",
     },
-    expected: {
-      synthese: true,
-      dashboard: false,
-      exportRapport: false,
-      inclureSousTerritoires: false,
+    expected: [],
+  },
+  {
+    input: {
+      messages: [
+        utilisateur("Affiche un tableau de bord de la Bretagne"),
+        assistantAvecDashboard,
+        utilisateur("Ajoute les chantiers en retard"),
+      ],
+      reason:
+        "HISTORIQUE : un dashboard déjà composé garde create_dashboard pour le retoucher",
     },
+    expected: ["create_dashboard"],
   },
 ];
 
-const capacityScorer = createScorer<KeywordCase, Capacities, Capacities>({
-  name: "Capacities",
-  description: "Une note par capacity, moyenne sur les quatre.",
-  scorer: ({ output, expected }) => {
-    const keys = Object.keys(output) as (keyof Capacities)[];
-    const mismatches = keys.filter((key) => output[key] !== expected?.[key]);
+const conditionnels = (outils: string[]) =>
+  outils.filter((outil): outil is OutilConditionnel =>
+    (OUTILS_CONDITIONNELS as readonly string[]).includes(outil),
+  );
 
-    return {
-      score: (keys.length - mismatches.length) / keys.length,
-      metadata:
-        mismatches.length === 0
-          ? "les quatre capacities sont correctes"
-          : `incorrectes : ${mismatches.join(", ")}`,
-    };
-  },
-});
+const scorerOutil = (outil: OutilConditionnel) =>
+  createScorer<Case, string[], OutilConditionnel[]>({
+    name: outil,
+    description: `${outil} est chargé si et seulement si il est attendu.`,
+    scorer: ({ output, expected }) => {
+      const charge = output.includes(outil);
+      const attendu = expected?.includes(outil) ?? false;
 
-const listActive = (capacities: Capacities | undefined) =>
-  Object.entries(capacities ?? {})
-    .filter(([, active]) => active)
-    .map(([nom]) => nom)
-    .join(", ") || "—";
+      return {
+        score: charge === attendu ? 1 : 0,
+        metadata: `chargé : ${charge ? "oui" : "non"} — attendu : ${attendu ? "oui" : "non"}`,
+      };
+    },
+  });
 
-evalite<KeywordCase, Capacities, Capacities>("Détection par mots-clés", {
+const derniereQuestion = (messages: PiloteUIMessage[]) =>
+  messages
+    .filter((message) => message.role === "user")
+    .at(-1)
+    ?.parts.flatMap((part) => (part.type === "text" ? [part.text] : []))
+    .join(" ") ?? "";
+
+evalite<Case, string[], OutilConditionnel[]>("1 · Outils chargés", {
   data: () => CASES,
-  task: (input) => Promise.resolve(detecterCapacities(input.message)),
-  scorers: [capacityScorer],
+  task: (input) =>
+    Promise.resolve(
+      AssistantIA.outilsCharges({
+        messages: input.messages,
+        habilitations: HABILITATIONS,
+        userId: "eval",
+      }),
+    ),
+  scorers: OUTILS_CONDITIONNELS.map(scorerOutil),
   columns: ({ input, output, expected }) => [
+    { label: "Message", value: derniereQuestion(input.messages) },
     { label: "Motif", value: input.reason },
-    { label: "Détecté", value: listActive(output) },
-    { label: "Attendu", value: listActive(expected) },
+    { label: "Chargés", value: conditionnels(output).join(", ") || "—" },
+    { label: "Attendus", value: expected?.join(", ") || "—" },
   ],
 });
