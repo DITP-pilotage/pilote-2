@@ -160,8 +160,11 @@ export function assemblerIndicateursAMettreAJour(entree: {
       chantierNom: identite.chantierNom,
       indicateurId,
       nom: identite.nom,
+      periodicite: identite.periodicite,
       manques: ordreManques.filter((manque) => fusion.manques.has(manque)),
       nbTerritoires: fusion.nbTerritoires,
+      nbTerritoiresApplicables:
+        applicablesParId.get(indicateurId) ?? fusion.nbTerritoires,
     });
   }
 

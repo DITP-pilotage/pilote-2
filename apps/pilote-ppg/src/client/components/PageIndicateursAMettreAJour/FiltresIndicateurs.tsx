@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
-import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import { SegmentedControl } from "@/components/shared/SegmentedControl";
+import { FiltreChantiers } from "./FiltreChantiers";
 
 const OPTIONS_MAILLE = [
   { valeur: "TOUTES", libelle: "Toutes" },
@@ -29,10 +29,6 @@ export const FiltresIndicateurs = ({
   setMailleFiltre,
   optionsChantiers,
 }: FiltresIndicateursProps) => {
-  const nomsChantiers = new Map(
-    optionsChantiers.map((chantier) => [chantier.id, chantier.nom]),
-  );
-
   return (
     <div className="flex flex-col gap-3 md:flex-row md:items-center">
       <div className="md:w-96">
@@ -43,28 +39,10 @@ export const FiltresIndicateurs = ({
           valeur={recherche}
         />
       </div>
-      <MultiSelectFiltre
-        className="md:w-auto"
-        classNameBouton="min-w-[18rem]"
-        getOptionLabel={(chantierId) =>
-          nomsChantiers.get(chantierId) ?? chantierId
-        }
-        getPlaceholder={(valeurs) => {
-          if (valeurs.length === 0) return "Tous mes chantiers";
-          if (valeurs.length === 1)
-            return nomsChantiers.get(valeurs[0]) ?? valeurs[0];
-          return `${valeurs.length} chantiers`;
-        }}
-        label="Chantier"
-        onChange={setChantiersFiltres}
-        optionGroups={[
-          {
-            label: "",
-            options: optionsChantiers.map((chantier) => chantier.id),
-          },
-        ]}
-        showGroupSelection={false}
-        values={chantiersFiltres}
+      <FiltreChantiers
+        chantiersFiltres={chantiersFiltres}
+        optionsChantiers={optionsChantiers}
+        setChantiersFiltres={setChantiersFiltres}
       />
       <SegmentedControl.Root
         aria-label="Filtrer par maille"

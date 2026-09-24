@@ -23,8 +23,10 @@ export interface IndicateurAParametrer {
   chantierNom: string;
   indicateurId: string;
   nom: string;
+  periodicite: string | null;
   manques: ManqueParametrage[];
   nbTerritoires: number;
+  nbTerritoiresApplicables: number;
 }
 
 export interface IndicateursAMettreAJour {

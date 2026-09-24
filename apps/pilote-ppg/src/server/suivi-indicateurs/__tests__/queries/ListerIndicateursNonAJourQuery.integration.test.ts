@@ -180,6 +180,26 @@ describe("ListerIndicateursNonAJourQuery", () => {
         id: "IND-907",
         chantier_id: chantier.id,
         nom: "Taux de recours",
+        periodicite: "Annuelle",
+      });
+      // DEPT-02 est applicable et entièrement paramétré : compté uniquement dans les territoires applicables
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: "DEPT-02",
+        zone_id: "D02",
+        code_insee: "02",
+        maille: $Enums.Maille.DEPT,
+      });
+      await fixtures.indicateurTerritoire({
+        id: indicateur.id,
+        chantier_id: chantier.id,
+        territoire_code: "DEPT-02",
+        zone_id: "D02",
+        code_insee: "02",
+        maille: $Enums.Maille.DEPT,
+        est_applicable: true,
+        est_a_jour: true,
+        valeur_initiale: 3,
       });
       await fixtures.indicateurTerritoire({
         id: indicateur.id,
@@ -216,8 +236,10 @@ describe("ListerIndicateursNonAJourQuery", () => {
             chantierNom: "Chantier CH-905",
             indicateurId: "IND-907",
             nom: "Taux de recours",
+            periodicite: "Annuelle",
             manques: ["VALEUR_INITIALE", "VALEUR_CIBLE"],
             nbTerritoires: 2,
+            nbTerritoiresApplicables: 3,
           },
         ],
       });

@@ -1,30 +1,24 @@
 import { useMemo, useState } from "react";
 import {
-  aggregationFn_max,
   columnFilteringFeature,
   columnGroupingFeature,
   createColumnHelper,
   createFilteredRowModel,
   createGroupedRowModel,
   createPaginatedRowModel,
-  createSortedRowModel,
-  filterFn_arrIncludes,
   filterFn_arrHas,
+  filterFn_arrIncludes,
   globalFilteringFeature,
-  rowAggregationFeature,
-  rowExpandingFeature,
   rowPaginationFeature,
-  rowSortingFeature,
-  sortFn_basic,
   tableFeatures,
   useTable,
-  type ExpandedState,
   type PaginationState,
-  type SortingState,
   type Row,
 } from "@tanstack/react-table";
-import { type $Enums } from "@prisma/client";
-import type { IndicateurNonAJour } from "@/server/suivi-indicateurs/domain/IndicateursAMettreAJour";
+import type {
+  IndicateurAParametrer,
+  ManqueParametrage,
+} from "@/server/suivi-indicateurs/domain/IndicateursAMettreAJour";
 import {
   correspondALaRecherche,
   extraireOptionsChantiers,
@@ -32,31 +26,24 @@ import {
   TAILLE_DE_PAGE_CHANTIERS_PAR_DEFAUT,
 } from "./tableauChantiers";
 
-export const featuresIndicateursNonAJour = tableFeatures({
+const featuresAParametrer = tableFeatures({
   columnFilteringFeature,
   globalFilteringFeature,
-  rowSortingFeature,
   columnGroupingFeature,
-  rowAggregationFeature,
-  rowExpandingFeature,
   rowPaginationFeature,
   filteredRowModel: createFilteredRowModel(),
   groupedRowModel: createGroupedRowModel(),
-  sortedRowModel: createSortedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
 });
 
-// Référence stable, voir REGROUPEMENT_PAR_CHANTIER.
-const TRI_PAR_RETARD_DECROISSANT: SortingState = [{ id: "retard", desc: true }];
-
-export type LigneIndicateurNonAJour = Row<
-  typeof featuresIndicateursNonAJour,
-  IndicateurNonAJour
+export type LigneAParametrer = Row<
+  typeof featuresAParametrer,
+  IndicateurAParametrer
 >;
 
 const columnHelper = createColumnHelper<
-  typeof featuresIndicateursNonAJour,
-  IndicateurNonAJour
+  typeof featuresAParametrer,
+  IndicateurAParametrer
 >();
 
 const colonnes = columnHelper.columns([
@@ -65,30 +52,19 @@ const colonnes = columnHelper.columns([
     filterFn: filterFn_arrHas,
   }),
   columnHelper.accessor("nom", { id: "nom" }),
-  columnHelper.accessor("mailles", {
-    id: "mailles",
+  columnHelper.accessor("manques", {
+    id: "manques",
     filterFn: filterFn_arrIncludes,
     enableGlobalFilter: false,
   }),
-  columnHelper.accessor(
-    (indicateur) => indicateur.retardMaxJours ?? undefined,
-    {
-      id: "retard",
-      aggregationFn: aggregationFn_max,
-      sortFn: sortFn_basic,
-      sortUndefined: "last",
-      enableGlobalFilter: false,
-    },
-  ),
 ]);
 
-export const useTableauIndicateursNonAJour = (
-  indicateurs: IndicateurNonAJour[],
-) => {
+export const useTableauAParametrer = (indicateurs: IndicateurAParametrer[]) => {
   const [recherche, setRecherche] = useState("");
   const [chantiersFiltres, setChantiersFiltres] = useState<string[]>([]);
-  const [mailleFiltre, setMailleFiltre] = useState<$Enums.Maille | null>(null);
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [manqueFiltre, setManqueFiltre] = useState<ManqueParametrage | null>(
+    null,
+  );
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: TAILLE_DE_PAGE_CHANTIERS_PAR_DEFAUT,
@@ -99,9 +75,9 @@ export const useTableauIndicateursNonAJour = (
       ...(chantiersFiltres.length > 0
         ? [{ id: "chantier", value: chantiersFiltres }]
         : []),
-      ...(mailleFiltre ? [{ id: "mailles", value: [mailleFiltre] }] : []),
+      ...(manqueFiltre ? [{ id: "manques", value: [manqueFiltre] }] : []),
     ],
-    [chantiersFiltres, mailleFiltre],
+    [chantiersFiltres, manqueFiltre],
   );
 
   const optionsChantiers = useMemo(
@@ -110,7 +86,7 @@ export const useTableauIndicateursNonAJour = (
   );
 
   const tableau = useTable({
-    features: featuresIndicateursNonAJour,
+    features: featuresAParametrer,
     data: indicateurs,
     columns: colonnes,
     getRowId: (indicateur) => indicateur.indicateurId,
@@ -118,19 +94,14 @@ export const useTableauIndicateursNonAJour = (
       globalFilter: recherche,
       columnFilters,
       grouping: REGROUPEMENT_PAR_CHANTIER,
-      sorting: TRI_PAR_RETARD_DECROISSANT,
-      expanded,
       pagination,
     },
     globalFilterFn: (
-      row: LigneIndicateurNonAJour,
+      row: LigneAParametrer,
       _columnId: string,
       texteRecherche: string,
     ) => correspondALaRecherche(row.original, texteRecherche),
-    onExpandedChange: setExpanded,
     onPaginationChange: setPagination,
-    getRowCanExpand: (row) => !row.getIsGrouped(),
-    autoResetExpanded: false,
   });
 
   return {
@@ -140,8 +111,8 @@ export const useTableauIndicateursNonAJour = (
     setRecherche,
     chantiersFiltres,
     setChantiersFiltres,
-    mailleFiltre,
-    setMailleFiltre,
+    manqueFiltre,
+    setManqueFiltre,
     optionsChantiers,
   };
 };

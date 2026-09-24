@@ -100,7 +100,7 @@ describe("assemblerIndicateursAMettreAJour", () => {
     // Given
     const entree = {
       identites: [identite("IND-003", "CH-002")],
-      applicables: [],
+      applicables: [{ indicateurId: "IND-003", nbTerritoires: 101 }],
       enRetard: [],
       aParametrer: [
         {
@@ -131,8 +131,10 @@ describe("assemblerIndicateursAMettreAJour", () => {
         chantierNom: "Chantier CH-002",
         indicateurId: "IND-003",
         nom: "Indicateur IND-003",
+        periodicite: "Trimestrielle",
         manques: ["VALEUR_INITIALE", "VALEUR_CIBLE"],
         nbTerritoires: 3,
+        nbTerritoiresApplicables: 101,
       },
     ]);
   });
