@@ -112,8 +112,7 @@ export function toolSelectionEval({
         { label: "Motif", value: input.reason },
         {
           label: "Outils appelés",
-          value:
-            output.toolCalls.map((call) => call.toolName).join(" → ") || "—",
+          value: output.toolCalls.map(decrireAppel).join("\n→ ") || "—",
         },
         // Le scorer ne juge que la sélection d'outils : un cas peut sortir à
         // 100 % alors que l'outil a renvoyé vide et que l'agent répond « aucun
@@ -122,4 +121,8 @@ export function toolSelectionEval({
       ],
     },
   );
+}
+
+function decrireAppel({ toolName, input }: ObservedToolCall) {
+  return `${toolName}(${JSON.stringify(input ?? {})})`;
 }

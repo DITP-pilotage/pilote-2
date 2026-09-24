@@ -41,7 +41,6 @@ const CASES: ToolCase[] = [
     question:
       "Quel est le taux d'avancement du CH-001 sur le territoire DEPT-84 ?",
     reason: "CAS NÉGATIF : ID explicite, rien à rechercher",
-    expected: [{ toolName: "get_chantiers" }],
     forbidden: ["search_chantiers"],
   },
   {

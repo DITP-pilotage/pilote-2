@@ -79,7 +79,11 @@ describe("scoreExpectedTools", () => {
 
     expect(result).toEqual({
       score: 0,
-      metadata: "outils interdits appelés : search_chantiers",
+      metadata: {
+        verdict: "outils interdits appelés : search_chantiers",
+        attendus: ["get_chantiers"],
+        interdits: ["search_chantiers"],
+      },
     });
   });
 
@@ -148,5 +152,37 @@ describe("scoreExpectedTools", () => {
     });
 
     expect(result.score).toBe(0);
+  });
+
+  it("décrit les appels attendus avec leurs arguments", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        { toolName: "get_chantiers", input: { view: "en_retard" } },
+      ]),
+      expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
+    });
+
+    expect(result.metadata).toEqual({
+      verdict: "tous les appels attendus sont présents",
+      attendus: ['get_chantiers({"view":"en_retard"})'],
+      interdits: [],
+    });
+  });
+
+  it("ne vérifie que les outils interdits quand le cas n'a pas d'attente", () => {
+    const result = scoreExpectedTools({
+      output: turn([{ toolName: "get_indicateurs" }]),
+      expected: undefined,
+      forbidden: ["search_chantiers"],
+    });
+
+    expect(result).toEqual({
+      score: 1,
+      metadata: {
+        verdict: "aucun outil interdit appelé",
+        attendus: "aucune attente",
+        interdits: ["search_chantiers"],
+      },
+    });
   });
 });

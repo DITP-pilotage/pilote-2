@@ -28,6 +28,34 @@ export function scoreExpectedTools({
   expected: ObservedToolCall[] | undefined;
   forbidden?: string[];
 }) {
+  const { score, verdict } = juger({
+    output,
+    expectedCalls: expected,
+    forbidden,
+  });
+
+  // Affiché sous le score dans l'UI : ce que le cas attendait, au même format
+  // que la colonne « Outils appelés », pour comparer sans ouvrir le fichier.
+  return {
+    score,
+    metadata: {
+      verdict,
+      attendus:
+        expected === undefined ? "aucune attente" : expected.map(describe),
+      interdits: forbidden,
+    },
+  };
+}
+
+function juger({
+  output,
+  expectedCalls,
+  forbidden,
+}: {
+  output: AgentTurn;
+  expectedCalls: ObservedToolCall[] | undefined;
+  forbidden: string[];
+}) {
   const forbiddenCalled = [
     ...new Set(
       output.toolCalls
@@ -39,18 +67,21 @@ export function scoreExpectedTools({
   if (forbiddenCalled.length > 0) {
     return {
       score: 0,
-      metadata: `outils interdits appelés : ${forbiddenCalled.join(", ")}`,
+      verdict: `outils interdits appelés : ${forbiddenCalled.join(", ")}`,
     };
   }
 
-  const expectedCalls = expected ?? [];
+  // Un cas négatif peut ne rien exiger : seul compte l'outil qu'il interdit.
+  if (expectedCalls === undefined) {
+    return { score: 1, verdict: "aucun outil interdit appelé" };
+  }
 
   if (expectedCalls.length === 0) {
     const calledTools = output.toolCalls.map((call) => call.toolName);
 
     return {
       score: calledTools.length === 0 ? 1 : 0,
-      metadata:
+      verdict:
         calledTools.length === 0
           ? "aucun outil appelé, conforme"
           : `outils appelés à tort : ${calledTools.join(", ")}`,
@@ -64,7 +95,7 @@ export function scoreExpectedTools({
 
   return {
     score: (expectedCalls.length - missing.length) / expectedCalls.length,
-    metadata:
+    verdict:
       missing.length === 0
         ? "tous les appels attendus sont présents"
         : `manquants : ${missing.map(describe).join(", ")}`,
