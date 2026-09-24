@@ -1,4 +1,3 @@
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "evalite/config";
 
 /**
@@ -9,14 +8,14 @@ import { defineConfig } from "evalite/config";
  */
 export default defineConfig({
   // Les evals importent le code de prod via les alias `@/...` du tsconfig.
-  // Sans ce plugin, tous les imports d'Albert cassent.
+  // Sans `tsconfigPaths`, tous les imports d'Albert cassent.
   //
   // `ssr.noExternal` reprend vitest.projects/vitest.config.server-integration.ts :
   // next-auth importe `next/server` sans extension, ce que l'ESM de Node refuse
   // tant que le paquet n'est pas transforme par Vite. Le container `albert` tire
   // le module d'authentification, donc l'eval passe par ce chemin.
   viteConfig: {
-    plugins: [tsconfigPaths()],
+    resolve: { tsconfigPaths: true },
     ssr: { noExternal: ["next-auth"] },
 
     // `globals` : integrationTestSetup utilise `beforeEach` / `afterAll` sans
