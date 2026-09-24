@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import type { AgentTurn, ObservedToolCall } from "./types";
 
 /**
@@ -10,7 +11,9 @@ import type { AgentTurn, ObservedToolCall } from "./types";
  * `include_sous_territoires` — elle plafonnerait à 0,5 à vie, ce qui se lirait
  * comme une régression alors que c'est l'attente qui est mal écrite.
  *
- * Ici, un appel correspond s'il porte AU MOINS les arguments attendus.
+ * Ici, un appel correspond s'il porte AU MOINS les arguments attendus. Chaque
+ * argument attendu est comparé par valeur : `chantier_ids: ["CH-018"]` doit
+ * valoir exactement ce tableau.
  *
  * La sélection en sous-ensemble tolère les appels en trop : sans `forbidden`,
  * un cas négatif passerait même si l'agent appelle aussi l'outil qu'il ne
@@ -75,7 +78,7 @@ function matches(call: ObservedToolCall, expectedCall: ObservedToolCall) {
   const actualInput = (call.input ?? {}) as Record<string, unknown>;
 
   return Object.entries(expectedCall.input as Record<string, unknown>).every(
-    ([key, value]) => actualInput[key] === value,
+    ([key, value]) => isDeepStrictEqual(actualInput[key], value),
   );
 }
 

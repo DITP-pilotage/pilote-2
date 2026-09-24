@@ -92,4 +92,23 @@ describe("scoreExpectedTools", () => {
 
     expect(result.score).toBe(1);
   });
+
+  it("compare les arguments tableaux par valeur", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "search_indicateurs",
+          input: { query: "lecture", chantier_ids: ["CH-018"] },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "search_indicateurs",
+          input: { chantier_ids: ["CH-018"] },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(1);
+  });
 });
