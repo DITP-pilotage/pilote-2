@@ -11,12 +11,13 @@ import { toolSelectionEval } from "./toolSelectionEval";
  *
  * Les négatifs couvrent les trois façons de donner l'ID que le prompt système
  * reconnaît : chantier explicite, IND-XXX explicite, numéro seul à compléter
- * en IND-XXX.
+ * en IND-XXX. Chacun précise le territoire : les outils de données l'exigent,
+ * et sans lui l'agent demande une précision au lieu d'appeler un outil.
  */
 
 const CASES: ToolCase[] = [
   {
-    question: "Quels indicateurs on a sur l'éducation nationale ?",
+    question: "Liste tous les indicateurs qui concernent l'éducation nationale",
     reason: "recherche exploratoire par thématique, sans chantier",
     expected: [{ toolName: "search_indicateurs" }],
   },
@@ -37,7 +38,7 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Quels sont les indicateurs du CH-018 ?",
+    question: "Quels sont les indicateurs du CH-018 au national ?",
     reason: "CAS NÉGATIF : chantier explicite, ses indicateurs sans recherche",
     expected: [
       { toolName: "get_indicateurs", input: { chantier_id: "CH-018" } },
@@ -45,7 +46,7 @@ const CASES: ToolCase[] = [
     forbidden: ["search_indicateurs"],
   },
   {
-    question: "Comment évolue l'IND-894 ?",
+    question: "Comment évolue l'IND-894 au national ?",
     reason: "CAS NÉGATIF : IND-XXX explicite, rien à rechercher",
     expected: [
       {
@@ -56,7 +57,7 @@ const CASES: ToolCase[] = [
     forbidden: ["search_indicateurs"],
   },
   {
-    question: "Donne-moi l'historique de l'indicateur 894",
+    question: "Donne-moi l'historique de l'indicateur 894 au national",
     reason: "CAS NÉGATIF : numéro seul, à compléter en IND-894 sans rechercher",
     expected: [
       {

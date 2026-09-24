@@ -10,9 +10,9 @@ import { toolSelectionEval } from "./toolSelectionEval";
  * l'enchaînement relève du niveau 3.
  *
  * Les cas « écologie » ne font varier que le mot qui désigne le chantier
- * (chantier, PPG, politique) : si l'un décroche, c'est le vocabulaire qui est
- * en cause, pas la thématique. « Écologie » n'apparaît dans aucun nom de
- * chantier du monde de base.
+ * (chantier, PPG, politique prioritaire) : si l'un décroche, c'est le
+ * vocabulaire qui est en cause, pas la thématique. « Écologie » n'apparaît
+ * dans aucun nom de chantier du monde de base.
  */
 
 const CASES: ToolCase[] = [
@@ -33,8 +33,8 @@ const CASES: ToolCase[] = [
     expected: [{ toolName: "search_chantiers" }],
   },
   {
-    question: "Quelle politique sur l'écologie ?",
-    reason: "vocabulaire « politique »",
+    question: "Quelle politique prioritaire sur l'écologie ?",
+    reason: "vocabulaire « politique prioritaire »",
     expected: [{ toolName: "search_chantiers" }],
   },
   {
