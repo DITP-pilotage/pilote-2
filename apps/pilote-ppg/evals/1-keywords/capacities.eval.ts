@@ -110,22 +110,22 @@ const capacityScorer = createScorer<KeywordCase, Capacities, Capacities>({
   name: "Capacities",
   description: "Une note par capacity, moyenne sur les quatre.",
   scorer: ({ output, expected }) => {
-    const cles = Object.keys(output) as (keyof Capacities)[];
-    const fausses = cles.filter((cle) => output[cle] !== expected?.[cle]);
+    const keys = Object.keys(output) as (keyof Capacities)[];
+    const mismatches = keys.filter((key) => output[key] !== expected?.[key]);
 
     return {
-      score: (cles.length - fausses.length) / cles.length,
+      score: (keys.length - mismatches.length) / keys.length,
       metadata:
-        fausses.length === 0
+        mismatches.length === 0
           ? "les quatre capacities sont correctes"
-          : `incorrectes : ${fausses.join(", ")}`,
+          : `incorrectes : ${mismatches.join(", ")}`,
     };
   },
 });
 
-const listerActives = (capacities: Capacities | undefined) =>
+const listActive = (capacities: Capacities | undefined) =>
   Object.entries(capacities ?? {})
-    .filter(([, actif]) => actif)
+    .filter(([, active]) => active)
     .map(([nom]) => nom)
     .join(", ") || "—";
 
@@ -135,7 +135,7 @@ evalite<KeywordCase, Capacities, Capacities>("Détection par mots-clés", {
   scorers: [capacityScorer],
   columns: ({ input, output, expected }) => [
     { label: "Motif", value: input.reason },
-    { label: "Détecté", value: listerActives(output) },
-    { label: "Attendu", value: listerActives(expected) },
+    { label: "Détecté", value: listActive(output) },
+    { label: "Attendu", value: listActive(expected) },
   ],
 });

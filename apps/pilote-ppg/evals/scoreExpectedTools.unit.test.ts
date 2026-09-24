@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { scoreExpectedTools } from "./scoreExpectedTools";
 import type { AgentTurn } from "./types";
 
-const tour = (toolCalls: AgentTurn["toolCalls"]): AgentTurn => ({
+const turn = (toolCalls: AgentTurn["toolCalls"]): AgentTurn => ({
   toolCalls,
   text: "",
   stepCount: toolCalls.length,
@@ -10,23 +10,23 @@ const tour = (toolCalls: AgentTurn["toolCalls"]): AgentTurn => ({
 
 describe("scoreExpectedTools", () => {
   it("note 1 quand aucun outil n'est attendu et qu'aucun n'est appelé", () => {
-    const resultat = scoreExpectedTools({ output: tour([]), expected: [] });
+    const result = scoreExpectedTools({ output: turn([]), expected: [] });
 
-    expect(resultat.score).toBe(1);
+    expect(result.score).toBe(1);
   });
 
   it("note 0 quand aucun outil n'est attendu mais qu'un outil est appelé", () => {
-    const resultat = scoreExpectedTools({
-      output: tour([{ toolName: "get_chantiers" }]),
+    const result = scoreExpectedTools({
+      output: turn([{ toolName: "get_chantiers" }]),
       expected: [],
     });
 
-    expect(resultat.score).toBe(0);
+    expect(result.score).toBe(0);
   });
 
   it("matche les arguments en sous-ensemble : les arguments en trop sont libres", () => {
-    const resultat = scoreExpectedTools({
-      output: tour([
+    const result = scoreExpectedTools({
+      output: turn([
         {
           toolName: "get_chantiers",
           input: {
@@ -39,23 +39,23 @@ describe("scoreExpectedTools", () => {
       expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
     });
 
-    expect(resultat.score).toBe(1);
+    expect(result.score).toBe(1);
   });
 
   it("note 0 quand un argument attendu diffère", () => {
-    const resultat = scoreExpectedTools({
-      output: tour([
+    const result = scoreExpectedTools({
+      output: turn([
         { toolName: "get_chantiers", input: { view: "en_difficulte" } },
       ]),
       expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
     });
 
-    expect(resultat.score).toBe(0);
+    expect(result.score).toBe(0);
   });
 
   it("note la proportion d'appels attendus retrouvés", () => {
-    const resultat = scoreExpectedTools({
-      output: tour([
+    const result = scoreExpectedTools({
+      output: turn([
         { toolName: "get_chantiers", input: { view: "en_retard" } },
       ]),
       expected: [
@@ -64,6 +64,6 @@ describe("scoreExpectedTools", () => {
       ],
     });
 
-    expect(resultat.score).toBe(0.5);
+    expect(result.score).toBe(0.5);
   });
 });

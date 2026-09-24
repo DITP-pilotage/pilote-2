@@ -54,10 +54,11 @@ const CASES: Case[] = [
 ];
 
 evalite<Case, AgentTurn, ObservedToolCall[]>("create_dashboard", {
-  data: () => CASES.map((cas) => ({ input: cas, expected: cas.expected })),
+  data: () =>
+    CASES.map((testCase) => ({ input: testCase, expected: testCase.expected })),
 
   task: async (input) => {
-    let sortie: AgentTurn | undefined;
+    let turn: AgentTurn | undefined;
 
     await createIntegrationTest(
       async () => {
@@ -72,7 +73,7 @@ evalite<Case, AgentTurn, ObservedToolCall[]>("create_dashboard", {
           territoire: BRETAGNE,
         });
 
-        const resultat = await AssistantIA.generateText({
+        const result = await AssistantIA.generateText({
           chatId: randomUUID(),
           question: input.question,
           habilitations: world.habilitations,
@@ -80,21 +81,21 @@ evalite<Case, AgentTurn, ObservedToolCall[]>("create_dashboard", {
           userId: world.userId,
         });
 
-        sortie = {
-          toolCalls: resultat.steps.flatMap((step) =>
+        turn = {
+          toolCalls: result.steps.flatMap((step) =>
             step.toolCalls.map((call) => ({
               toolName: call.toolName,
               input: call.input,
             })),
           ),
-          text: resultat.text,
-          stepCount: resultat.steps.length,
+          text: result.text,
+          stepCount: result.steps.length,
         };
       },
       { timeout: EVAL_TIMEOUT_MS },
     )();
 
-    return sortie!;
+    return turn!;
   },
 
   trialCount: 3,

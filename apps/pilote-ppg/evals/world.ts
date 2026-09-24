@@ -80,7 +80,7 @@ const CHANTIERS = [
  * commentaires, objectifs) renverraient sinon du vide, ce qui pousse l'agent à
  * enchaîner d'autres appels et brouille la mesure de sélection d'outils.
  */
-const CHANTIERS_DETAILLES = ["CH-001", "CH-004", "CH-007"];
+const DETAILED_CHANTIERS = ["CH-001", "CH-004", "CH-007"];
 
 export const NATIONAL_TERRITORY = "NAT-FR";
 
@@ -106,12 +106,12 @@ export const BRETAGNE = {
  */
 export const EVAL_TIMEOUT_MS = 400_000;
 
-async function seedChantierDetaille({
+async function seedDetailedChantier({
   chantierId,
-  auteurId,
+  authorId,
 }: {
   chantierId: string;
-  auteurId: string;
+  authorId: string;
 }) {
   // `est_applicable` n'a pas de valeur par defaut en base et le `where` de
   // GetChantiersQuery filtre dessus : sans ce champ, le chantier n'existe pas
@@ -149,16 +149,16 @@ async function seedChantierDetaille({
     code_insee: "FR",
     type: "freins_a_lever",
     contenu: `Frein identifié sur le ${chantierId} : délais de recrutement.`,
-    auteur_creation_id: auteurId,
-    auteur_modification_id: auteurId,
+    auteur_creation_id: authorId,
+    auteur_modification_id: authorId,
   });
 
   await fixtures.objectifChantier({
     chantier_id: chantierId,
     type: "notre_ambition",
     contenu: `Objectif principal du ${chantierId}.`,
-    auteur_creation_id: auteurId,
-    auteur_modification_id: auteurId,
+    auteur_creation_id: authorId,
+    auteur_modification_id: authorId,
   });
 }
 
@@ -167,14 +167,14 @@ async function seedChantierDetaille({
  * étrangère, et l'assistant y écrit à chaque tour comme en production.
  */
 export async function seedEvalWorld(): Promise<EvalWorld> {
-  const utilisateur = await fixtures.utilisateur({});
+  const user = await fixtures.utilisateur({});
 
   for (const chantier of CHANTIERS) {
     await fixtures.chantierIdentite(chantier);
   }
 
-  for (const chantierId of CHANTIERS_DETAILLES) {
-    await seedChantierDetaille({ chantierId, auteurId: utilisateur.id });
+  for (const chantierId of DETAILED_CHANTIERS) {
+    await seedDetailedChantier({ chantierId, authorId: user.id });
   }
 
   const chantiersAccessibles = CHANTIERS.map((chantier) => chantier.id);
@@ -188,21 +188,21 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
     (territoire) => territoire.code,
   );
 
-  const perimetreComplet = {
+  const fullPerimetre = {
     chantiers: chantiersAccessibles,
     territoires: territoiresAccessibles,
     périmètres: [],
   };
 
   return {
-    userId: utilisateur.id,
+    userId: user.id,
     chantiers: CHANTIERS,
     habilitations: {
-      lecture: perimetreComplet,
-      saisieCommentaire: perimetreComplet,
-      saisieIndicateur: perimetreComplet,
-      responsabilite: perimetreComplet,
-      gestionUtilisateur: perimetreComplet,
+      lecture: fullPerimetre,
+      saisieCommentaire: fullPerimetre,
+      saisieIndicateur: fullPerimetre,
+      responsabilite: fullPerimetre,
+      gestionUtilisateur: fullPerimetre,
     },
   };
 }

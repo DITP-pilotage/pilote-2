@@ -4,7 +4,7 @@ import { AssistantIA } from "@/server/albert/AssistantIA";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { BRETAGNE, EVAL_TIMEOUT_MS, seedEvalWorld } from "../world";
 import {
-  seedChantierAvecTaux,
+  seedChantierWithTaux,
   seedChantierEnDifficulte,
   seedChantierEnRetard,
 } from "../seeds";
@@ -84,10 +84,11 @@ const CASES: Case[] = [
 ];
 
 evalite<Case, AgentTurn, ObservedToolCall[]>("Scénarios envoyés", {
-  data: () => CASES.map((cas) => ({ input: cas, expected: cas.expected })),
+  data: () =>
+    CASES.map((testCase) => ({ input: testCase, expected: testCase.expected })),
 
   task: async (input) => {
-    let sortie: AgentTurn | undefined;
+    let turn: AgentTurn | undefined;
 
     await createIntegrationTest(
       async () => {
@@ -96,7 +97,7 @@ evalite<Case, AgentTurn, ObservedToolCall[]>("Scénarios envoyés", {
         // Un territoire avec de quoi produire une vraie synthèse. Sans ça, les
         // outils renvoient vide et le juge note l'absence de données plutôt
         // que la qualité de la rédaction.
-        await seedChantierAvecTaux({
+        await seedChantierWithTaux({
           chantierId: "CH-001",
           territoire: BRETAGNE,
           taux: 62,
@@ -110,7 +111,7 @@ evalite<Case, AgentTurn, ObservedToolCall[]>("Scénarios envoyés", {
           territoire: BRETAGNE,
         });
 
-        const resultat = await AssistantIA.generateText({
+        const result = await AssistantIA.generateText({
           chatId: randomUUID(),
           question: input.question,
           habilitations: world.habilitations,
@@ -118,21 +119,21 @@ evalite<Case, AgentTurn, ObservedToolCall[]>("Scénarios envoyés", {
           userId: world.userId,
         });
 
-        sortie = {
-          toolCalls: resultat.steps.flatMap((step) =>
+        turn = {
+          toolCalls: result.steps.flatMap((step) =>
             step.toolCalls.map((call) => ({
               toolName: call.toolName,
               input: call.input,
             })),
           ),
-          text: resultat.text,
-          stepCount: resultat.steps.length,
+          text: result.text,
+          stepCount: result.steps.length,
         };
       },
       { timeout: EVAL_TIMEOUT_MS },
     )();
 
-    return sortie!;
+    return turn!;
   },
 
   // Un juge LLM n'est pas stable non plus : deux passages montrent l'écart

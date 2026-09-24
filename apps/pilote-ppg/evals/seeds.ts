@@ -9,7 +9,7 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
  * du seuil — un cas d'eval ne doit pas basculer sur un arrondi.
  */
 
-export type Rattachement = {
+export type TerritoireRef = {
   territoire_code: string;
   code_insee: string;
   maille: "NAT" | "REG" | "DEPT";
@@ -18,9 +18,9 @@ export type Rattachement = {
 
 const ECART_EN_RETARD = -15;
 const ECART_A_L_HEURE = 2;
-const JALON_COURANT = 2025;
+const CURRENT_JALON = 2025;
 
-async function seedRattachement({
+async function seedChantierTerritoire({
   chantierId,
   territoire,
   meteo,
@@ -28,7 +28,7 @@ async function seedRattachement({
   taux,
 }: {
   chantierId: string;
-  territoire: Rattachement;
+  territoire: TerritoireRef;
   meteo: string;
   ecart: number;
   taux: number;
@@ -46,7 +46,7 @@ async function seedRattachement({
   await fixtures.chantierTerritoireJalon({
     id: chantierId,
     ...territoire,
-    jalon: JALON_COURANT,
+    jalon: CURRENT_JALON,
     ecart,
     taux_avancement: taux,
   });
@@ -77,9 +77,9 @@ export async function seedChantierEnRetard({
   territoire,
 }: {
   chantierId: string;
-  territoire: Rattachement;
+  territoire: TerritoireRef;
 }) {
-  await seedRattachement({
+  await seedChantierTerritoire({
     chantierId,
     territoire,
     meteo: "SOLEIL",
@@ -93,9 +93,9 @@ export async function seedChantierEnDifficulte({
   territoire,
 }: {
   chantierId: string;
-  territoire: Rattachement;
+  territoire: TerritoireRef;
 }) {
-  await seedRattachement({
+  await seedChantierTerritoire({
     chantierId,
     territoire,
     meteo: "ORAGE",
@@ -104,16 +104,16 @@ export async function seedChantierEnDifficulte({
   });
 }
 
-export async function seedChantierAvecTaux({
+export async function seedChantierWithTaux({
   chantierId,
   territoire,
   taux,
 }: {
   chantierId: string;
-  territoire: Rattachement;
+  territoire: TerritoireRef;
   taux: number;
 }) {
-  await seedRattachement({
+  await seedChantierTerritoire({
     chantierId,
     territoire,
     meteo: "SOLEIL",

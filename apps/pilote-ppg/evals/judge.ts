@@ -26,7 +26,7 @@ import { Albert } from "@/server/albert/Albert";
 export const JUDGE_MODEL = "deepseek-v4-flash";
 
 const verdictSchema = z.object({
-  note: z
+  score: z
     .number()
     .min(0)
     .max(1)
@@ -36,7 +36,7 @@ const verdictSchema = z.object({
     .describe("Une phrase expliquant la note, en français."),
 });
 
-const PROMPT_JUGE = `Tu es évaluateur de la qualité des réponses d'un assistant destiné aux agents publics français qui pilotent les chantiers prioritaires du gouvernement.
+const JUDGE_PROMPT = `Tu es évaluateur de la qualité des réponses d'un assistant destiné aux agents publics français qui pilotent les chantiers prioritaires du gouvernement.
 
 Tu notes UNIQUEMENT selon le critère qui t'est donné. Tu es strict et factuel.
 
@@ -58,40 +58,40 @@ Livrables produits par un outil :
  * sur DEFAULT_MODEL. On refait ici le meme appel avec le modele du juge, en
  * gardant `Output.object` et temperature 0 comme en production.
  */
-async function demanderVerdict({
-  critere,
+async function askVerdict({
+  criterion,
   question,
-  reponse,
-  outilsAppeles,
+  answer,
+  calledTools,
 }: {
-  critere: string;
+  criterion: string;
   question: string;
-  reponse: string;
+  answer: string;
   /**
    * `undefined` quand l'appelant ne sait pas quels outils ont tourné — le juge
    * n'entend alors pas parler d'outils du tout. À distinguer du tableau vide,
    * qui affirme qu'aucun outil n'a été appelé.
    */
-  outilsAppeles: string[] | undefined;
+  calledTools: string[] | undefined;
 }) {
-  const resultat = await generateText({
+  const result = await generateText({
     model: Albert.createProvider().chat(JUDGE_MODEL),
-    system: PROMPT_JUGE,
+    system: JUDGE_PROMPT,
     prompt: [
-      `CRITÈRE À ÉVALUER : ${critere}`,
+      `CRITÈRE À ÉVALUER : ${criterion}`,
       ``,
       `QUESTION DE L'UTILISATEUR :`,
       question,
-      ...(outilsAppeles
+      ...(calledTools
         ? [
             ``,
             `OUTILS APPELÉS PAR L'ASSISTANT :`,
-            outilsAppeles.length > 0 ? outilsAppeles.join(", ") : "aucun",
+            calledTools.length > 0 ? calledTools.join(", ") : "aucun",
           ]
         : []),
       ``,
       `RÉPONSE DE L'ASSISTANT :`,
-      reponse,
+      answer,
     ].join("\n"),
     output: Output.object<z.infer<typeof verdictSchema>>({
       schema: verdictSchema,
@@ -99,7 +99,7 @@ async function demanderVerdict({
     temperature: 0,
   });
 
-  return resultat.output;
+  return result.output;
 }
 
 /**
@@ -132,15 +132,15 @@ export function createJudgeScorer<TInput extends { question: string }>({
     name,
     description: `Juge LLM (${JUDGE_MODEL}) — ${criterion}`,
     scorer: async ({ input, output }) => {
-      const verdict = await demanderVerdict({
-        critere: criterion,
+      const verdict = await askVerdict({
+        criterion,
         question: input.question,
-        reponse: output.text,
+        answer: output.text,
         // Volontairement `undefined` et non `[]` quand la tâche ne fournit pas
         // de tool calls : la calibration du juge soumet des réponses écrites à
         // la main, où la notion d'outil appelé n'a pas de sens. Les confondre
         // conduit le juge à déduire la fabrication de l'absence d'appel.
-        outilsAppeles: output.toolCalls?.map((call) => call.toolName),
+        calledTools: output.toolCalls?.map((call) => call.toolName),
       });
 
       // SPIKE : le tableau du terminal n'affiche pas les metadata, seulement le
@@ -148,11 +148,11 @@ export function createJudgeScorer<TInput extends { question: string }>({
       // — a retirer si les evals passent en CI, l'UI web les montre nativement.
       // eslint-disable-next-line no-console
       console.error(
-        `    [juge:${name}] ${verdict.note} — ${verdict.justification}`,
+        `    [juge:${name}] ${verdict.score} — ${verdict.justification}`,
       );
 
       return {
-        score: verdict.note,
+        score: verdict.score,
         metadata: verdict.justification,
       };
     },

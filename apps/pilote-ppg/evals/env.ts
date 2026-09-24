@@ -15,29 +15,29 @@ import dotenv from "dotenv";
  * lit `DATABASE_URL` des son import, donc tout doit passer avant lui.
  */
 
-const CHEMIN_ENV_TEST = ".env.test";
-const CHEMIN_SECRETS = ".env.evals.local";
+const TEST_ENV_PATH = ".env.test";
+const SECRETS_PATH = ".env.evals.local";
 
 /**
  * `.env.test` est versionne et ne contient que des valeurs factices — une cle
  * d'API n'y a pas sa place. Les secrets propres aux evals vivent donc dans un
  * fichier local ignore par git, applique par-dessus.
  */
-dotenv.config({ path: CHEMIN_SECRETS, override: true });
+dotenv.config({ path: SECRETS_PATH, override: true });
 
-const databaseUrlAttendue = dotenv.parse(
-  readFileSync(CHEMIN_ENV_TEST),
+const expectedDatabaseUrl = dotenv.parse(
+  readFileSync(TEST_ENV_PATH),
 ).DATABASE_URL;
 
-if (!databaseUrlAttendue) {
-  throw new Error(`${CHEMIN_ENV_TEST} ne definit pas DATABASE_URL.`);
+if (!expectedDatabaseUrl) {
+  throw new Error(`${TEST_ENV_PATH} ne definit pas DATABASE_URL.`);
 }
 
-if (process.env.DATABASE_URL !== databaseUrlAttendue) {
+if (process.env.DATABASE_URL !== expectedDatabaseUrl) {
   throw new Error(
     [
       `Les evals doivent tourner sur la base de test, pas sur ${process.env.DATABASE_URL}.`,
-      `Attendu (${CHEMIN_ENV_TEST}) : ${databaseUrlAttendue}`,
+      `Attendu (${TEST_ENV_PATH}) : ${expectedDatabaseUrl}`,
       "Lancez-les via `pnpm eval`, qui force DOTENV_CONFIG_PATH=.env.test.",
     ].join("\n"),
   );
@@ -49,7 +49,7 @@ if (process.env.DATABASE_URL !== databaseUrlAttendue) {
 if (!process.env.ALBERT_API_KEY) {
   throw new Error(
     [
-      `ALBERT_API_KEY est absent. Creez ${CHEMIN_SECRETS} (ignore par git) avec :`,
+      `ALBERT_API_KEY est absent. Creez ${SECRETS_PATH} (ignore par git) avec :`,
       "  ALBERT_API_KEY=<votre cle, recopiee depuis .env>",
     ].join("\n"),
   );

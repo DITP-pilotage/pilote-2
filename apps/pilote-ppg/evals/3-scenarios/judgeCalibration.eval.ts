@@ -15,28 +15,28 @@ import { createJudgeScorer, JUDGE_MODEL } from "../judge";
 
 type CalibrationCase = {
   question: string;
-  reponse: string;
-  motif: string;
+  answer: string;
+  reason: string;
   /** Note attendue approximative, pour lire le tableau d'un coup d'oeil. */
   expected: "haut" | "bas";
 };
 
-const CAS: { input: CalibrationCase }[] = [
+const CASES: { input: CalibrationCase }[] = [
   {
     input: {
       question: "Quel est le taux d'avancement du chantier CH-004 ?",
-      reponse:
+      answer:
         "**CH-004 — Lutter contre la fraude fiscale, douanière et sociale**\n- Taux d'avancement : 66,7 %\n- Jalon : 2026\n- Territoire : NAT-FR",
-      motif: "BON : chiffré, sourcé, structuré",
+      reason: "BON : chiffré, sourcé, structuré",
       expected: "haut",
     },
   },
   {
     input: {
       question: "Quel est le taux d'avancement du chantier CH-004 ?",
-      reponse:
+      answer:
         "**CH-004** affiche un taux d'avancement de 92,4 % au 3e trimestre, en hausse de 14 points depuis la réforme de 2024 portée par le ministre Dupont, avec 1 847 contrôles supplémentaires.",
-      motif:
+      reason:
         "MAUVAIS : chiffres et noms inventés, aucun ne vient de l'outillage",
       expected: "bas",
     },
@@ -44,18 +44,18 @@ const CAS: { input: CalibrationCase }[] = [
   {
     input: {
       question: "Donne-moi les objectifs du chantier CH-004",
-      reponse:
+      answer:
         "Il est important de noter que les objectifs d'un chantier prioritaire s'inscrivent dans une démarche globale de transformation de l'action publique. Dans ce cadre, il convient de souligner que de nombreux leviers peuvent être mobilisés afin d'atteindre les cibles fixées.",
-      motif: "MAUVAIS : remplissage, aucune donnée, inexploitable",
+      reason: "MAUVAIS : remplissage, aucune donnée, inexploitable",
       expected: "bas",
     },
   },
   {
     input: {
       question: "Quels chantiers sont signalés en alerte ?",
-      reponse:
+      answer:
         "Pour quel territoire souhaitez-vous cette information ? Vous pouvez préciser la France entière (NAT-FR) ou une région (ex. REG-53).",
-      motif:
+      reason:
         "BON : demande de précision légitime, explicitement tolérée par le prompt du juge",
       expected: "haut",
     },
@@ -65,9 +65,9 @@ const CAS: { input: CalibrationCase }[] = [
 evalite<CalibrationCase, { text: string }>(
   `Calibration du juge (${JUDGE_MODEL})`,
   {
-    data: () => CAS,
+    data: () => CASES,
     // Pas d'agent : on soumet directement la reponse ecrite a la main.
-    task: (input) => ({ text: input.reponse }),
+    task: (input) => ({ text: input.answer }),
     trialCount: 2,
     scorers: [
       createJudgeScorer<CalibrationCase>({
@@ -82,7 +82,7 @@ evalite<CalibrationCase, { text: string }>(
       }),
     ],
     columns: ({ input }) => [
-      { label: "Motif", value: input.motif },
+      { label: "Motif", value: input.reason },
       { label: "Attendu", value: input.expected },
     ],
   },

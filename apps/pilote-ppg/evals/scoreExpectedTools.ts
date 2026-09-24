@@ -19,45 +19,46 @@ export function scoreExpectedTools({
   output: AgentTurn;
   expected: ObservedToolCall[] | undefined;
 }) {
-  const attendus = expected ?? [];
+  const expectedCalls = expected ?? [];
 
-  if (attendus.length === 0) {
-    const appeles = output.toolCalls.map((call) => call.toolName);
+  if (expectedCalls.length === 0) {
+    const calledTools = output.toolCalls.map((call) => call.toolName);
 
     return {
-      score: appeles.length === 0 ? 1 : 0,
+      score: calledTools.length === 0 ? 1 : 0,
       metadata:
-        appeles.length === 0
+        calledTools.length === 0
           ? "aucun outil appelé, conforme"
-          : `outils appelés à tort : ${appeles.join(", ")}`,
+          : `outils appelés à tort : ${calledTools.join(", ")}`,
     };
   }
 
-  const manquants = attendus.filter(
-    (attendu) => !output.toolCalls.some((appel) => correspond(appel, attendu)),
+  const missing = expectedCalls.filter(
+    (expectedCall) =>
+      !output.toolCalls.some((call) => matches(call, expectedCall)),
   );
 
   return {
-    score: (attendus.length - manquants.length) / attendus.length,
+    score: (expectedCalls.length - missing.length) / expectedCalls.length,
     metadata:
-      manquants.length === 0
+      missing.length === 0
         ? "tous les appels attendus sont présents"
-        : `manquants : ${manquants.map(decrire).join(", ")}`,
+        : `manquants : ${missing.map(describe).join(", ")}`,
   };
 }
 
-function correspond(appel: ObservedToolCall, attendu: ObservedToolCall) {
-  if (appel.toolName !== attendu.toolName) return false;
-  if (attendu.input === undefined) return true;
+function matches(call: ObservedToolCall, expectedCall: ObservedToolCall) {
+  if (call.toolName !== expectedCall.toolName) return false;
+  if (expectedCall.input === undefined) return true;
 
-  const reel = (appel.input ?? {}) as Record<string, unknown>;
+  const actualInput = (call.input ?? {}) as Record<string, unknown>;
 
-  return Object.entries(attendu.input as Record<string, unknown>).every(
-    ([cle, valeur]) => reel[cle] === valeur,
+  return Object.entries(expectedCall.input as Record<string, unknown>).every(
+    ([key, value]) => actualInput[key] === value,
   );
 }
 
-function decrire(call: ObservedToolCall) {
+function describe(call: ObservedToolCall) {
   return call.input === undefined
     ? call.toolName
     : `${call.toolName}(${JSON.stringify(call.input)})`;
