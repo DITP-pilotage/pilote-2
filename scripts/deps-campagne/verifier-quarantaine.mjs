@@ -13,10 +13,10 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 import {
-  lireExclusions,
-  lireMinimumReleaseAge,
-  verdictQuarantaine,
-  versionsVerrouillees,
+  readExclusions,
+  readMinimumReleaseAge,
+  getQuarantineVerdict,
+  findLockedVersions,
   STATUTS_EN_DEFAUT,
 } from './lib/quarantaine.mjs'
 import { run } from './lib/shell.mjs'
@@ -40,8 +40,8 @@ function main() {
   const yaml = readFileSync(`${RACINE}/pnpm-workspace.yaml`, 'utf8')
   const lockfile = readFileSync(`${RACINE}/pnpm-lock.yaml`, 'utf8')
 
-  const exclusions = lireExclusions(yaml)
-  const minimumReleaseAgeMinutes = lireMinimumReleaseAge(yaml)
+  const exclusions = readExclusions(yaml)
+  const minimumReleaseAgeMinutes = readMinimumReleaseAge(yaml)
   const aujourdhui = new Date()
 
   if (exclusions.length === 0) {
@@ -50,11 +50,11 @@ function main() {
   }
 
   const verdicts = exclusions.map((exclusion) => {
-    const versions = versionsVerrouillees(exclusion.paquet, lockfile)
+    const versions = findLockedVersions(exclusion.paquet, lockfile)
     // La plus récente : c'est elle qui décide si l'exclusion est encore nécessaire.
     const version = versions.sort().at(-1) ?? null
     return {
-      ...verdictQuarantaine({
+      ...getQuarantineVerdict({
         paquet: exclusion.paquet,
         expire: exclusion.expire,
         publieeLe: version ? publieeLe(exclusion.paquet, version) : null,

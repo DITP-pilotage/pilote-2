@@ -18,7 +18,7 @@
  */
 
 /** Valeur de `minimumReleaseAge` déclarée dans pnpm-workspace.yaml, en minutes. */
-export function lireMinimumReleaseAge(texteYaml) {
+export function readMinimumReleaseAge(texteYaml) {
   const trouve = /^minimumReleaseAge\s*:\s*(\d+)/m.exec(texteYaml)
   return trouve ? Number(trouve[1]) : 0
 }
@@ -33,7 +33,7 @@ export function lireMinimumReleaseAge(texteYaml) {
  * Un motif glob ("@next/*") ne désigne pas un paquet unique : on rend une liste vide
  * plutôt que d'inventer une résolution.
  */
-export function versionsVerrouillees(paquet, lockfile) {
+export function findLockedVersions(paquet, lockfile) {
   if (paquet.includes('*')) return []
   const echappe = paquet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const motif = new RegExp(`^ {2}'?${echappe}@([^'(:\\s]+)`, 'gm')
@@ -49,7 +49,7 @@ const MARQUEUR = /^#\s*expire\s*:\s*(\S+)/i
  * que tout parseur jette. Le marqueur `# expire: <date|jamais>` doit précéder l'entrée,
  * éventuellement séparé d'elle par d'autres lignes de commentaire explicatives.
  */
-export function lireExclusions(texteYaml) {
+export function readExclusions(texteYaml) {
   const lignes = texteYaml.split('\n')
   const debut = lignes.findIndex((l) => /^minimumReleaseAgeExclude\s*:/.test(l))
   if (debut === -1) return []
@@ -92,7 +92,7 @@ const JOUR_MS = 86_400_000
  * `publieeLe` est la date de publication de la version verrouillée (null si inconnue, par
  * exemple pour un motif glob comme "@next/*" qui ne désigne pas un paquet unique).
  */
-export function verdictQuarantaine({
+export function getQuarantineVerdict({
   paquet,
   expire,
   publieeLe,

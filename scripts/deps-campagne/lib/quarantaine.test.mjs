@@ -2,10 +2,10 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 import {
-  lireExclusions,
-  lireMinimumReleaseAge,
-  verdictQuarantaine,
-  versionsVerrouillees,
+  readExclusions,
+  readMinimumReleaseAge,
+  getQuarantineVerdict,
+  findLockedVersions,
 } from './quarantaine.mjs'
 
 const YAML = `packages:
@@ -28,7 +28,7 @@ autreCle: valeur
 `
 
 test('lit les exclusions avec leur échéance déclarée', () => {
-  assert.deepEqual(lireExclusions(YAML), [
+  assert.deepEqual(readExclusions(YAML), [
     { paquet: 'next', expire: 'jamais' },
     { paquet: '@next/*', expire: 'jamais' },
     { paquet: 'next-auth', expire: '2026-08-03' },
@@ -39,18 +39,18 @@ test('lit les exclusions avec leur échéance déclarée', () => {
 })
 
 test('ferme le bloc à la première clé non indentée', () => {
-  assert.equal(lireExclusions(YAML).some((e) => e.paquet.includes('autreCle')), false)
+  assert.equal(readExclusions(YAML).some((e) => e.paquet.includes('autreCle')), false)
 })
 
 test('rend une liste vide si la clé est absente', () => {
-  assert.deepEqual(lireExclusions('packages:\n  - "apps/*"\n'), [])
+  assert.deepEqual(readExclusions('packages:\n  - "apps/*"\n'), [])
 })
 
 const LE_22 = new Date('2026-09-22T00:00:00Z')
 const QUARANTAINE = 20160
 
 test('une exclusion sans échéance est en défaut', () => {
-  const v = verdictQuarantaine({
+  const v = getQuarantineVerdict({
     paquet: 'x', expire: null, publieeLe: null,
     aujourdhui: LE_22, minimumReleaseAgeMinutes: QUARANTAINE,
   })
@@ -58,7 +58,7 @@ test('une exclusion sans échéance est en défaut', () => {
 })
 
 test('une politique permanente est laissée tranquille', () => {
-  const v = verdictQuarantaine({
+  const v = getQuarantineVerdict({
     paquet: 'next', expire: 'jamais', publieeLe: null,
     aujourdhui: LE_22, minimumReleaseAgeMinutes: QUARANTAINE,
   })
@@ -66,7 +66,7 @@ test('une politique permanente est laissée tranquille', () => {
 })
 
 test('échéance non atteinte : rien à faire', () => {
-  const v = verdictQuarantaine({
+  const v = getQuarantineVerdict({
     paquet: 'x', expire: '2026-10-01', publieeLe: new Date('2026-09-20T00:00:00Z'),
     aujourdhui: LE_22, minimumReleaseAgeMinutes: QUARANTAINE,
   })
@@ -75,7 +75,7 @@ test('échéance non atteinte : rien à faire', () => {
 })
 
 test('échéance dépassée ET version mûre : retirable', () => {
-  const v = verdictQuarantaine({
+  const v = getQuarantineVerdict({
     paquet: 'deepmerge-ts', expire: '2026-09-04', publieeLe: new Date('2026-08-21T00:00:00Z'),
     aujourdhui: LE_22, minimumReleaseAgeMinutes: QUARANTAINE,
   })
@@ -85,7 +85,7 @@ test('échéance dépassée ET version mûre : retirable', () => {
 })
 
 test("échéance dépassée mais version encore fraîche : NE PAS retirer", () => {
-  const v = verdictQuarantaine({
+  const v = getQuarantineVerdict({
     paquet: 'x', expire: '2026-09-04', publieeLe: new Date('2026-09-18T00:00:00Z'),
     aujourdhui: LE_22, minimumReleaseAgeMinutes: QUARANTAINE,
   })
@@ -94,7 +94,7 @@ test("échéance dépassée mais version encore fraîche : NE PAS retirer", () =
 })
 
 test('échéance dépassée et version inconnue : à vérifier à la main', () => {
-  const v = verdictQuarantaine({
+  const v = getQuarantineVerdict({
     paquet: '@next/*', expire: '2026-09-04', publieeLe: null,
     aujourdhui: LE_22, minimumReleaseAgeMinutes: QUARANTAINE,
   })
@@ -102,7 +102,7 @@ test('échéance dépassée et version inconnue : à vérifier à la main', () =
 })
 
 test('une échéance illisible est signalée, pas ignorée', () => {
-  const v = verdictQuarantaine({
+  const v = getQuarantineVerdict({
     paquet: 'x', expire: 'bientôt', publieeLe: null,
     aujourdhui: LE_22, minimumReleaseAgeMinutes: QUARANTAINE,
   })
@@ -131,26 +131,26 @@ snapshots:
 `
 
 test('trouve la version d\'un paquet non scopé', () => {
-  assert.deepEqual(versionsVerrouillees('next-auth', LOCKFILE), ['5.0.0-beta.32'])
+  assert.deepEqual(findLockedVersions('next-auth', LOCKFILE), ['5.0.0-beta.32'])
 })
 
 test('trouve la version d\'un paquet scopé, dont la clé est quotée dans le lockfile', () => {
-  assert.deepEqual(versionsVerrouillees('@auth/core', LOCKFILE), ['0.41.3'])
+  assert.deepEqual(findLockedVersions('@auth/core', LOCKFILE), ['0.41.3'])
 })
 
 test('rend toutes les versions quand il y en a plusieurs', () => {
-  assert.deepEqual(versionsVerrouillees('deepmerge-ts', LOCKFILE).sort(), ['7.1.5', '8.0.2'])
+  assert.deepEqual(findLockedVersions('deepmerge-ts', LOCKFILE).sort(), ['7.1.5', '8.0.2'])
 })
 
 test('ne résout pas un motif glob', () => {
-  assert.deepEqual(versionsVerrouillees('@next/*', LOCKFILE), [])
+  assert.deepEqual(findLockedVersions('@next/*', LOCKFILE), [])
 })
 
 test('ne confond pas un paquet avec un autre dont il est le préfixe', () => {
-  assert.deepEqual(versionsVerrouillees('next', LOCKFILE), [])
+  assert.deepEqual(findLockedVersions('next', LOCKFILE), [])
 })
 
 test('lit minimumReleaseAge', () => {
-  assert.equal(lireMinimumReleaseAge(YAML), 20160)
-  assert.equal(lireMinimumReleaseAge('packages:\n  - "apps/*"\n'), 0)
+  assert.equal(readMinimumReleaseAge(YAML), 20160)
+  assert.equal(readMinimumReleaseAge('packages:\n  - "apps/*"\n'), 0)
 })
