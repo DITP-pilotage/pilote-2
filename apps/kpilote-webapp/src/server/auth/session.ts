@@ -1,9 +1,11 @@
 import type { Context } from 'hono'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { sealData, unsealData } from 'iron-session'
+import { z } from 'zod'
 
 import { providerSchema, type Provider } from '@/server/auth/oidc'
 import { serverEnv } from '@/server/env'
+import { logger } from '@/server/logger'
 
 const SESSION_COOKIE = 'mb_session'
 const PKCE_COOKIE = 'mb_pkce'
@@ -11,22 +13,47 @@ const LAST_PROVIDER_COOKIE = 'mb_last_provider'
 const COOKIE_PATH = '/auth'
 const LAST_PROVIDER_MAX_AGE_SECONDS = 60 * 60 * 24 * 180
 
-export type SessionPayload = {
-  refreshToken: string
-  sub: string
-  idToken: string
-  provider: Provider
-}
+const sessionSchema = z.object({
+  refreshToken: z.string(),
+  sub: z.string(),
+  idToken: z.string(),
+  provider: providerSchema,
+})
+export type SessionPayload = z.infer<typeof sessionSchema>
 
-export type PkcePayload = {
-  codeVerifier: string
-  state: string
-  nonce: string
-  provider: Provider
-  redirect?: string
-}
+const pkceSchema = z.object({
+  codeVerifier: z.string(),
+  state: z.string(),
+  nonce: z.string(),
+  provider: providerSchema,
+  redirect: z.string().optional(),
+})
+export type PkcePayload = z.infer<typeof pkceSchema>
 
 const sealOptions = { password: serverEnv.SESSION_SECRET }
+
+// iron-session 9 ne lève plus d'erreur sur un cookie illisible : il renvoie `{}`.
+// Le schéma est donc le seul rempart contre une session vide ou partielle.
+const readSealedCookie = async <T>(
+  context: Context,
+  name: string,
+  schema: z.ZodType<T>,
+): Promise<T | null> => {
+  const raw = getCookie(context, name)
+  if (!raw) return null
+  const data = await unsealData(raw, {
+    ...sealOptions,
+    onUnsealError: (reason) => {
+      if (reason === 'expired') return
+      logger.warn(
+        { event: 'auth.cookie.rejected', cookie: name, reason },
+        'Rejected unreadable auth cookie',
+      )
+    },
+  })
+  const parsed = schema.safeParse(data)
+  return parsed.success ? parsed.data : null
+}
 
 export const writeSession = async (
   context: Context,
@@ -43,15 +70,8 @@ export const writeSession = async (
   })
 }
 
-export const readSession = async (context: Context): Promise<SessionPayload | null> => {
-  const raw = getCookie(context, SESSION_COOKIE)
-  if (!raw) return null
-  try {
-    return await unsealData<SessionPayload>(raw, sealOptions)
-  } catch {
-    return null
-  }
-}
+export const readSession = (context: Context): Promise<SessionPayload | null> =>
+  readSealedCookie(context, SESSION_COOKIE, sessionSchema)
 
 export const clearSession = (context: Context) => {
   deleteCookie(context, SESSION_COOKIE, { path: COOKIE_PATH })
@@ -68,15 +88,8 @@ export const writePkce = async (context: Context, payload: PkcePayload) => {
   })
 }
 
-export const readPkce = async (context: Context): Promise<PkcePayload | null> => {
-  const raw = getCookie(context, PKCE_COOKIE)
-  if (!raw) return null
-  try {
-    return await unsealData<PkcePayload>(raw, sealOptions)
-  } catch {
-    return null
-  }
-}
+export const readPkce = (context: Context): Promise<PkcePayload | null> =>
+  readSealedCookie(context, PKCE_COOKIE, pkceSchema)
 
 export const clearPkce = (context: Context) => {
   deleteCookie(context, PKCE_COOKIE, { path: COOKIE_PATH })
