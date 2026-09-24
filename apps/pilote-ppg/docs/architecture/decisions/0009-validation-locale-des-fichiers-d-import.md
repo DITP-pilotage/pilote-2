@@ -15,12 +15,12 @@ dépendance dure : quand il tombe, plus aucun import n'est possible.
 
 Il tombe régulièrement. Historique :
 
-| Ticket | Date | Sujet |
-|---|---|---|
-| PIL-450 | 2024-10 | Import de données down (MAJ Validata) |
-| PIL-553 | 2025-01 | Passage forcé à Validata v0.12 |
+| Ticket   | Date    | Sujet                                                   |
+| -------- | ------- | ------------------------------------------------------- |
+| PIL-450  | 2024-10 | Import de données down (MAJ Validata)                   |
+| PIL-553  | 2025-01 | Passage forcé à Validata v0.12                          |
 | PIL-1279 | 2026-02 | Comportement non identifié sur un fichier de chargement |
-| PLTT-330 | 2024-01 | Import formule Excel « undefined » |
+| PLTT-330 | 2024-01 | Import formule Excel « undefined »                      |
 
 La dépendance est en réalité double : on appelle Validata, et Validata va
 chercher le schéma de validation sur `raw.githubusercontent.com`. C'est la raison
@@ -80,13 +80,18 @@ Le code générique est séparé du domaine métier, selon le critère : **le no
 sait pas ce qu'est un indicateur, l'adapter ne sait pas ce qu'est une regex de
 schéma.**
 
-- `server/infrastructure/fichier-tabulaire/` — lecture CSV/XLSX vers
-  `string[][]`. Générique, réutilisable : quatre autres endroits de ppg parsent
-  déjà du CSV à la main.
-- `server/infrastructure/table-schema/` — moteur de contraintes frictionless.
-  Générique, candidat à extraction.
-- `import-indicateur/infrastructure/adapters/validation-fichier/` — l'adapter qui
-  implémente le port existant et produit les messages métier.
+Tout vit dans `import-indicateur/infrastructure/adapters/validation-fichier/`,
+le seul contexte consommateur :
+
+- `tabular-file/` — lecture CSV/XLSX vers `string[][]`. Générique,
+  réutilisable : quatre autres endroits de ppg parsent déjà du CSV à la main.
+- `table-schema/` — moteur de contraintes frictionless. Générique, candidat à
+  extraction.
+- à la racine — l'adapter qui implémente le port existant et produit les
+  messages métier.
+
+Les deux sous-dossiers génériques n'importent rien du contexte : le jour où un
+second contexte en a besoin, ils remontent tels quels dans un noyau partagé.
 
 Pas de package workspace : le seul consommateur est `pilote-ppg`, et la frontière
 avec les packages `kpilote-*` est délibérée. Le noyau est néanmoins écrit comme
@@ -108,13 +113,13 @@ Un `.xlsx` est un zip de XML, et Node fournit tout le nécessaire :
   attributs de position `r` plutôt qu'en comptant les éléments.
 
 **Aucune clé d'objet n'est construite depuis le contenu du fichier.** Cela ferme
-*par conception* la classe de vulnérabilité « prototype pollution » — celle du
+_par conception_ la classe de vulnérabilité « prototype pollution » — celle du
 CVE de SheetJS — au lieu de la déléguer à la vigilance d'un mainteneur.
 
 ### Interdictions explicites
 
 - **`xlsx` / SheetJS est interdit côté serveur.** `xlsx@0.18.5` est présent dans
-  `apps/kpilote-webapp` avec deux advisories *high* sans correctif atteignable
+  `apps/kpilote-webapp` avec deux advisories _high_ sans correctif atteignable
   (`patched_versions: <0.0.0` — SheetJS a quitté le registre npm). Le risque n'y
   est toléré que parce que le code s'exécute dans le navigateur, où le rayon
   d'action se limite à la session de l'utilisateur. Côté Node, dans un process
@@ -181,16 +186,16 @@ Considérée, et écartée sur trois motifs :
 
 Décidés maintenant plutôt que renégociés plus tard. Si l'un des deux est atteint,
 on bascule le lecteur XLSX sur une librairie tierce derrière
-`lireFichierTabulaire` :
+`readTabularFile` :
 
 - le taux de rejet pour format non supporté dépasse **2 % des imports sur un mois
   glissant**, mesuré sur `application_log`, ou
 - le coût de maintenance du lecteur dépasse **5 jours-homme par an**.
 
 Ce repli reste bon marché **parce que** le contrat de frontière
-(`lireFichierTabulaire(chemin, nom) → { entetes, lignes, numerosDeLigneSource }`)
+(`readTabularFile(chemin, nom) → { entetes, lignes, numerosDeLigneSource }`)
 ne laisse fuiter aucun type de librairie. Le trajet inverse — partir d'une
 librairie pour revenir à du code maison — est celui qui devient impossible,
-parce qu'à ce moment-là le comportement de la librairie *est devenu* la
+parce qu'à ce moment-là le comportement de la librairie _est devenu_ la
 spécification, quirks compris. C'est la situation dont `kpilote-webapp` n'arrive
 pas à sortir avec `xlsx`.

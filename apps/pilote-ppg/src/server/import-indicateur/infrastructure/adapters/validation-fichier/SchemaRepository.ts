@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { TableSchemaBrut } from "@/server/infrastructure/table-schema/TableSchema.types";
+import type { TableSchemaBrut } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/TableSchema.types";
 
 export const SCHEMAS_AUTORISES = [
   "sans-contraintes.json",

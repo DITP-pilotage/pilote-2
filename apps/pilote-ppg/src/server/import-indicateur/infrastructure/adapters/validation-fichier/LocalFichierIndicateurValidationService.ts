@@ -11,11 +11,11 @@ import {
   libelleTypeErreur,
 } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/genererMessageErreur";
 import { chargerSchemaBrut } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/SchemaRepository";
-import { lireFichierTabulaire } from "@/server/infrastructure/fichier-tabulaire/lireFichierTabulaire";
-import { FichierTabulaireIllisibleError } from "@/server/infrastructure/fichier-tabulaire/lireZip";
+import { readTabularFile } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readTabularFile";
+import { FichierTabulaireIllisibleError } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readZip";
 import logger from "@/server/infrastructure/Logger";
-import { compilerSchema } from "@/server/infrastructure/table-schema/compilerSchema";
-import { validerLignes } from "@/server/infrastructure/table-schema/validerLignes";
+import { compileSchema } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/compileSchema";
+import { validateRows } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/validateRows";
 
 const COLONNE_IDENTIFIANT = "identifiant_indic";
 
@@ -45,11 +45,11 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
       });
 
     try {
-      const fichier = await lireFichierTabulaire(
+      const fichier = await readTabularFile(
         cheminCompletDuFichier,
         nomDuFichier,
       );
-      const schema = compilerSchema(
+      const schema = compileSchema(
         chargerSchemaBrut(nomDuSchema),
         fichier.entetes,
       );
@@ -124,7 +124,7 @@ export class LocalFichierIndicateurValidationService implements FichierIndicateu
           );
         }
 
-        const { violations, tronque } = validerLignes(schema, fichier.lignes);
+        const { violations, tronque } = validateRows(schema, fichier.lignes);
 
         for (const violation of violations) {
           const numeroDeLigne =

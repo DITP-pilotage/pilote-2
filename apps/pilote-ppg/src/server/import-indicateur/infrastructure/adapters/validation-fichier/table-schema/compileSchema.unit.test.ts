@@ -1,5 +1,5 @@
-import { compilerSchema } from "@/server/infrastructure/table-schema/compilerSchema";
-import type { TableSchemaBrut } from "@/server/infrastructure/table-schema/TableSchema.types";
+import { compileSchema } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/compileSchema";
+import type { TableSchemaBrut } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/TableSchema.types";
 
 const SCHEMA_BRUT: TableSchemaBrut = {
   name: "test",
@@ -23,9 +23,9 @@ const SCHEMA_BRUT: TableSchemaBrut = {
   primaryKey: ["identifiant_indic", "type_valeur"],
 };
 
-describe("compilerSchema", () => {
+describe("compileSchema", () => {
   it("résout l'index de chaque colonne d'après les en-têtes du fichier", () => {
-    const compile = compilerSchema(SCHEMA_BRUT, [
+    const compile = compileSchema(SCHEMA_BRUT, [
       "zone_id",
       "identifiant_indic",
       "type_valeur",
@@ -38,7 +38,7 @@ describe("compilerSchema", () => {
   });
 
   it("marque à -1 un champ du schéma absent du fichier", () => {
-    const compile = compilerSchema(SCHEMA_BRUT, [
+    const compile = compileSchema(SCHEMA_BRUT, [
       "identifiant_indic",
       "type_valeur",
     ]);
@@ -48,14 +48,14 @@ describe("compilerSchema", () => {
   });
 
   it("signale séparément une colonne de clé primaire absente", () => {
-    const compile = compilerSchema(SCHEMA_BRUT, ["type_valeur", "valeur"]);
+    const compile = compileSchema(SCHEMA_BRUT, ["type_valeur", "valeur"]);
 
     expect(compile.colonnesClePrimaireAbsentes).toEqual(["identifiant_indic"]);
     expect(compile.indexColonnesClePrimaire).toEqual([0]);
   });
 
   it("compile le motif une seule fois, en RegExp", () => {
-    const compile = compilerSchema(SCHEMA_BRUT, ["identifiant_indic"]);
+    const compile = compileSchema(SCHEMA_BRUT, ["identifiant_indic"]);
 
     expect(compile.champs[0].motif).toBeInstanceOf(RegExp);
     expect(compile.champs[0].motif!.test("IND-001")).toBe(true);
@@ -63,14 +63,14 @@ describe("compilerSchema", () => {
   });
 
   it("compile l'énumération en Set", () => {
-    const compile = compilerSchema(SCHEMA_BRUT, ["type_valeur"]);
+    const compile = compileSchema(SCHEMA_BRUT, ["type_valeur"]);
 
     expect(compile.champs[1].valeursAutorisees).toBeInstanceOf(Set);
     expect(compile.champs[1].valeursAutorisees!.has("vi")).toBe(true);
   });
 
   it("résout les colonnes en ignorant la casse et les espaces de l'en-tête", () => {
-    const compile = compilerSchema(SCHEMA_BRUT, [
+    const compile = compileSchema(SCHEMA_BRUT, [
       " IDENTIFIANT_INDIC ",
       "type_valeur",
     ]);
@@ -86,7 +86,7 @@ describe("compilerSchema", () => {
     const motifDesDates =
       "^(20[0-9]{2}-(0?[0-9]|1[012])-([0-2]?[0-9]|3[01]))|(([0-2]?[0-9]|3[01])\\/(0?[0-9]|1[012])\\/(20)?[0-9]{2})|(0?[0-9]|1[012])-([0-2]?[0-9]|3[01])-([0-9]{2})$";
 
-    const schema = compilerSchema(
+    const schema = compileSchema(
       {
         name: "dates",
         fields: [

@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { extname } from "node:path";
-import { lireCsv } from "@/server/infrastructure/fichier-tabulaire/lireCsv";
-import { lireXlsx } from "@/server/infrastructure/fichier-tabulaire/lireXlsx";
-import { FichierTabulaireIllisibleError } from "@/server/infrastructure/fichier-tabulaire/lireZip";
+import { readCsv } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readCsv";
+import { readXlsx } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readXlsx";
+import { FichierTabulaireIllisibleError } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readZip";
 
 export type FichierTabulaire = {
   entetes: string[];
@@ -13,7 +13,7 @@ export type FichierTabulaire = {
   producteur: string | null;
 };
 
-export async function lireFichierTabulaire(
+export async function readTabularFile(
   chemin: string,
   nom: string,
 ): Promise<FichierTabulaire> {
@@ -24,9 +24,9 @@ export async function lireFichierTabulaire(
   let producteur: string | null = null;
 
   if (extension === ".csv") {
-    brutes = lireCsv(contenu);
+    brutes = readCsv(contenu);
   } else if (extension === ".xlsx") {
-    const lecture = lireXlsx(contenu);
+    const lecture = readXlsx(contenu);
     brutes = lecture.lignes;
     producteur = lecture.producteur;
   } else {

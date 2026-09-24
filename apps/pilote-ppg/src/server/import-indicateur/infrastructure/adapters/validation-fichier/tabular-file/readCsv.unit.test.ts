@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { construireCsv } from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
-import { lireCsv } from "@/server/infrastructure/fichier-tabulaire/lireCsv";
+import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";
+import { readCsv } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readCsv";
 
 const ENTETE = [
   "identifiant_indic",
@@ -13,14 +13,14 @@ const ENTETE = [
 ];
 const LIGNE = ["IND-001", "D46", "Lot", "2023-01-31", "vi", "12.5"];
 
-describe("lireCsv", () => {
+describe("readCsv", () => {
   it("lit un CSV séparé par des points-virgules", () => {
-    expect(lireCsv(construireCsv([ENTETE, LIGNE]))).toEqual([ENTETE, LIGNE]);
+    expect(readCsv(construireCsv([ENTETE, LIGNE]))).toEqual([ENTETE, LIGNE]);
   });
 
   it("lit un CSV séparé par des virgules", () => {
     expect(
-      lireCsv(construireCsv([ENTETE, LIGNE], { delimiteur: "," })),
+      readCsv(construireCsv([ENTETE, LIGNE], { delimiteur: "," })),
     ).toEqual([ENTETE, LIGNE]);
   });
 
@@ -28,14 +28,14 @@ describe("lireCsv", () => {
     // Ce template est séparé par des points-virgules : sans détection du
     // délimiteur, il serait lu comme une colonne unique et l'import échouerait.
     const officiel = readFileSync(
-      join(__dirname, "../../../../public/model/template_import_PILOTE.csv"),
+      join(process.cwd(), "public", "model", "template_import_PILOTE.csv"),
     );
 
-    expect(lireCsv(officiel)[0]).toEqual(ENTETE);
+    expect(readCsv(officiel)[0]).toEqual(ENTETE);
   });
 
   it("retire le BOM de la première cellule", () => {
-    expect(lireCsv(construireCsv([ENTETE], { bom: true }))[0]).toEqual(ENTETE);
+    expect(readCsv(construireCsv([ENTETE], { bom: true }))[0]).toEqual(ENTETE);
   });
 
   it("décode un fichier encodé en cp1252", () => {
@@ -44,12 +44,12 @@ describe("lireCsv", () => {
       { encodage: "cp1252" },
     );
 
-    expect(lireCsv(contenu)[1][2]).toEqual("Rhône-Alpes");
+    expect(readCsv(contenu)[1][2]).toEqual("Rhône-Alpes");
   });
 
   it("accepte les fins de ligne LF comme les CRLF", () => {
     expect(
-      lireCsv(construireCsv([ENTETE, LIGNE], { finDeLigne: "\n" })),
+      readCsv(construireCsv([ENTETE, LIGNE], { finDeLigne: "\n" })),
     ).toEqual([ENTETE, LIGNE]);
   });
 
@@ -57,7 +57,7 @@ describe("lireCsv", () => {
     const vide = ["", "", "", "", "", ""];
     const suivante = ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"];
 
-    expect(lireCsv(construireCsv([ENTETE, LIGNE, vide, suivante]))).toEqual([
+    expect(readCsv(construireCsv([ENTETE, LIGNE, vide, suivante]))).toEqual([
       ENTETE,
       LIGNE,
       vide,

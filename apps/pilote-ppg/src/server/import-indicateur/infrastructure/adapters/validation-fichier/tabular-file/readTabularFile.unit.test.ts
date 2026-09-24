@@ -2,9 +2,9 @@ import {
   construireCsv,
   construireXlsx,
   deposerDansUnFichierTemporaire,
-} from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
-import { lireFichierTabulaire } from "@/server/infrastructure/fichier-tabulaire/lireFichierTabulaire";
-import { FichierTabulaireIllisibleError } from "@/server/infrastructure/fichier-tabulaire/lireZip";
+} from "@/server/import-indicateur/app/builder/TabularFile.builder";
+import { readTabularFile } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readTabularFile";
+import { FichierTabulaireIllisibleError } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readZip";
 
 const ENTETE = [
   "identifiant_indic",
@@ -17,14 +17,14 @@ const ENTETE = [
 const LIGNE = ["IND-001", "D46", "Lot", "2023-01-31", "vi", "12.5"];
 const SUIVANTE = ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"];
 
-describe("lireFichierTabulaire", () => {
+describe("readTabularFile", () => {
   it("sépare l'en-tête des lignes de données", async () => {
     const chemin = deposerDansUnFichierTemporaire(
       "import.csv",
       construireCsv([ENTETE, LIGNE, SUIVANTE]),
     );
 
-    const resultat = await lireFichierTabulaire(chemin, "import.csv");
+    const resultat = await readTabularFile(chemin, "import.csv");
 
     expect(resultat.entetes).toEqual(ENTETE);
     expect(resultat.lignes).toEqual([LIGNE, SUIVANTE]);
@@ -36,7 +36,7 @@ describe("lireFichierTabulaire", () => {
       construireCsv([ENTETE, LIGNE, ["", "", "", "", "", ""], SUIVANTE]),
     );
 
-    const resultat = await lireFichierTabulaire(chemin, "import.csv");
+    const resultat = await readTabularFile(chemin, "import.csv");
 
     expect(resultat.numerosDeLigneSource).toEqual([2, 3, 4]);
   });
@@ -47,7 +47,7 @@ describe("lireFichierTabulaire", () => {
       construireXlsx([ENTETE, LIGNE]),
     );
 
-    const resultat = await lireFichierTabulaire(chemin, "IMPORT.XLSX");
+    const resultat = await readTabularFile(chemin, "IMPORT.XLSX");
 
     expect(resultat.entetes).toEqual(ENTETE);
   });
@@ -58,7 +58,7 @@ describe("lireFichierTabulaire", () => {
       construireCsv([ENTETE]),
     );
 
-    await expect(lireFichierTabulaire(chemin, "donnees.ods")).rejects.toThrow(
+    await expect(readTabularFile(chemin, "donnees.ods")).rejects.toThrow(
       FichierTabulaireIllisibleError,
     );
   });
@@ -66,8 +66,6 @@ describe("lireFichierTabulaire", () => {
   it("refuse un fichier sans aucune ligne", async () => {
     const chemin = deposerDansUnFichierTemporaire("vide.csv", Buffer.from(""));
 
-    await expect(lireFichierTabulaire(chemin, "vide.csv")).rejects.toThrow(
-      /vide/i,
-    );
+    await expect(readTabularFile(chemin, "vide.csv")).rejects.toThrow(/vide/i);
   });
 });

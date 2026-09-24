@@ -1,16 +1,16 @@
 import { deflateRawSync } from "node:zlib";
-import { construireXlsx } from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
+import { construireXlsx } from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import {
   FichierTabulaireIllisibleError,
-  lireEntreesZip,
-} from "@/server/infrastructure/fichier-tabulaire/lireZip";
+  readZipEntries,
+} from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readZip";
 
 const FEUILLE = "xl/worksheets/sheet1.xml";
 const archive = () => construireXlsx([["identifiant_indic"], ["IND-001"]]);
 
-describe("lireEntreesZip", () => {
+describe("readZipEntries", () => {
   it("extrait les entrées demandées et ignore les autres", () => {
-    const entrees = lireEntreesZip(archive(), [FEUILLE]);
+    const entrees = readZipEntries(archive(), [FEUILLE]);
 
     expect([...entrees.keys()]).toEqual([FEUILLE]);
     expect(entrees.get(FEUILLE)!.toString("utf-8")).toContain(
@@ -19,23 +19,23 @@ describe("lireEntreesZip", () => {
   });
 
   it("n'extrait rien pour une entrée absente, sans lever", () => {
-    expect(lireEntreesZip(archive(), ["xl/sharedStrings.xml"]).size).toEqual(0);
+    expect(readZipEntries(archive(), ["xl/sharedStrings.xml"]).size).toEqual(0);
   });
 
   it("refuse une archive dont le contenu décompressé dépasse le plafond", () => {
     expect(() =>
-      lireEntreesZip(archive(), [FEUILLE], { tailleDecompresseeMax: 10 }),
+      readZipEntries(archive(), [FEUILLE], { tailleDecompresseeMax: 10 }),
     ).toThrow(FichierTabulaireIllisibleError);
   });
 
   it("refuse une archive comportant trop d'entrées", () => {
     expect(() =>
-      lireEntreesZip(archive(), [FEUILLE], { nombreEntreesMax: 2 }),
+      readZipEntries(archive(), [FEUILLE], { nombreEntreesMax: 2 }),
     ).toThrow(/trop d'éléments/);
   });
 
   it("refuse un fichier qui n'est pas une archive", () => {
-    expect(() => lireEntreesZip(Buffer.from("pas un zip"), [FEUILLE])).toThrow(
+    expect(() => readZipEntries(Buffer.from("pas un zip"), [FEUILLE])).toThrow(
       FichierTabulaireIllisibleError,
     );
   });
@@ -46,7 +46,7 @@ describe("lireEntreesZip", () => {
     eocd.writeUInt16LE(0xffff, 8);
     eocd.writeUInt16LE(0xffff, 10);
 
-    expect(() => lireEntreesZip(eocd, [FEUILLE])).toThrow(/ZIP64/);
+    expect(() => readZipEntries(eocd, [FEUILLE])).toThrow(/ZIP64/);
   });
 
   it("refuse une entrée protégée par mot de passe", () => {
@@ -57,7 +57,7 @@ describe("lireEntreesZip", () => {
     // bit 0 du champ "flags" du central directory : contenu chiffré
     protegee.writeUInt16LE(0x0001, positionCentral + 8);
 
-    expect(() => lireEntreesZip(protegee, [FEUILLE])).toThrow(/mot de passe/);
+    expect(() => readZipEntries(protegee, [FEUILLE])).toThrow(/mot de passe/);
   });
 
   it("borne l'inflation elle-même, pas seulement la taille annoncée", () => {
@@ -80,7 +80,7 @@ describe("lireEntreesZip", () => {
     );
     tronquee.writeUInt32LE(0xffffff00, positionCentral + 42);
 
-    expect(() => lireEntreesZip(tronquee, [FEUILLE])).toThrow(
+    expect(() => readZipEntries(tronquee, [FEUILLE])).toThrow(
       FichierTabulaireIllisibleError,
     );
   });
@@ -92,7 +92,7 @@ describe("lireEntreesZip", () => {
     const positionDuNom = abimee.indexOf(Buffer.from(FEUILLE, "utf-8"));
     abimee.writeUInt32LE(0xdeadbeef, positionDuNom - 30);
 
-    expect(() => lireEntreesZip(abimee, [FEUILLE])).toThrow(
+    expect(() => readZipEntries(abimee, [FEUILLE])).toThrow(
       FichierTabulaireIllisibleError,
     );
   });

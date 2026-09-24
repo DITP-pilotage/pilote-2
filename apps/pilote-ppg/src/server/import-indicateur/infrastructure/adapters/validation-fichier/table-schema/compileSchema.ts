@@ -2,7 +2,7 @@ import type {
   ChampCompile,
   SchemaCompile,
   TableSchemaBrut,
-} from "@/server/infrastructure/table-schema/TableSchema.types";
+} from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/TableSchema.types";
 
 /**
  * Table Schema veut qu'un motif décrive la valeur entière, comme le faisait
@@ -14,7 +14,7 @@ function ancrer(motif: string): RegExp {
   return new RegExp(`^(?:${motif})$`);
 }
 
-export function compilerSchema(
+export function compileSchema(
   brut: TableSchemaBrut,
   entetes: string[],
 ): SchemaCompile {

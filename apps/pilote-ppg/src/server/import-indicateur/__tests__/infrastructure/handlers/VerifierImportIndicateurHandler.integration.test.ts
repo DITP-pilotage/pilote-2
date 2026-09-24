@@ -6,7 +6,7 @@ import { prisma } from "@/server/db/prisma";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/server/infrastructure/test/NextAuthHelper";
-import { construireCsv } from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
+import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import { requeteMultipart } from "@/server/import-indicateur/__tests__/infrastructure/handlers/requeteImport.builder";
 
 // node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.

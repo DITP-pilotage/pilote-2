@@ -1,7 +1,7 @@
 import {
   FichierTabulaireIllisibleError,
-  lireEntreesZip,
-} from "@/server/infrastructure/fichier-tabulaire/lireZip";
+  readZipEntries,
+} from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readZip";
 
 const FEUILLE = "xl/worksheets/sheet1.xml";
 const CHAINES_PARTAGEES = "xl/sharedStrings.xml";
@@ -61,8 +61,8 @@ function indexColonne(reference: string): number {
   return index - 1;
 }
 
-export function lireXlsx(archive: Buffer): LectureXlsx {
-  const entrees = lireEntreesZip(archive, [
+export function readXlsx(archive: Buffer): LectureXlsx {
+  const entrees = readZipEntries(archive, [
     FEUILLE,
     CHAINES_PARTAGEES,
     PROPRIETES,

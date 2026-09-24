@@ -4,7 +4,7 @@ import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { construireCsv } from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
+import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import {
   requeteJson,
   requeteMultipart,

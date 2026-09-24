@@ -3,8 +3,8 @@ import {
   genererMessageErreur,
   libelleTypeErreur,
 } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/genererMessageErreur";
-import { compilerSchema } from "@/server/infrastructure/table-schema/compilerSchema";
-import type { ViolationContrainte } from "@/server/infrastructure/table-schema/TableSchema.types";
+import { compileSchema } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/compileSchema";
+import type { ViolationContrainte } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/TableSchema.types";
 
 const COLONNES = [
   "identifiant_indic",
@@ -14,7 +14,7 @@ const COLONNES = [
   "valeur",
 ];
 
-const schema = compilerSchema(
+const schema = compileSchema(
   chargerSchemaBrut("sans-contraintes.json"),
   COLONNES,
 );
@@ -111,7 +111,7 @@ describe("message sur la zone", () => {
         cellule: zone,
         indexDeLigne: 0,
       },
-      compilerSchema(chargerSchemaBrut(nomDuSchema), COLONNES),
+      compileSchema(chargerSchemaBrut(nomDuSchema), COLONNES),
       2,
     );
 

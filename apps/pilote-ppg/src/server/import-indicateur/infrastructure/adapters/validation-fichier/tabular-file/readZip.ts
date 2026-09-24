@@ -161,7 +161,7 @@ function extraire(
   }
 }
 
-export function lireEntreesZip(
+export function readZipEntries(
   archive: Buffer,
   entreesVoulues: string[],
   limites: {

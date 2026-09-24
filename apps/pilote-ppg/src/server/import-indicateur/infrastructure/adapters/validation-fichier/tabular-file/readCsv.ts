@@ -41,7 +41,7 @@ function detecterDelimiteur(texte: string): string {
   return meilleur;
 }
 
-export function lireCsv(contenu: Buffer): string[][] {
+export function readCsv(contenu: Buffer): string[][] {
   const texte = decoderTexte(contenu);
 
   return parse(texte, {

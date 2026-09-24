@@ -3,8 +3,8 @@ import { join } from "node:path";
 import {
   construireXlsx,
   construireXlsxNumerote,
-} from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
-import { lireXlsx } from "@/server/infrastructure/fichier-tabulaire/lireXlsx";
+} from "@/server/import-indicateur/app/builder/TabularFile.builder";
+import { readXlsx } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readXlsx";
 
 const ENTETE = [
   "identifiant_indic",
@@ -17,9 +17,9 @@ const ENTETE = [
 const LIGNE = ["IND-001", "D46", "Lot", "2023-01-31", "vi", "12.5"];
 const SUIVANTE = ["IND-002", "R84", "ARA", "2023-02-28", "va", "7"];
 
-describe("lireXlsx", () => {
+describe("readXlsx", () => {
   it("lit les en-têtes et les lignes de données", () => {
-    expect(lireXlsx(construireXlsx([ENTETE, LIGNE])).lignes).toEqual([
+    expect(readXlsx(construireXlsx([ENTETE, LIGNE])).lignes).toEqual([
       ENTETE,
       LIGNE,
     ]);
@@ -33,7 +33,7 @@ describe("lireXlsx", () => {
       SUIVANTE,
     ]);
 
-    expect(lireXlsx(classeur).lignes).toEqual([ENTETE, LIGNE, [], SUIVANTE]);
+    expect(readXlsx(classeur).lignes).toEqual([ENTETE, LIGNE, [], SUIVANTE]);
   });
 
   it("ne décale pas les colonnes quand une cellule vide est intercalée", () => {
@@ -44,7 +44,7 @@ describe("lireXlsx", () => {
 
     // La cellule intercalée garde sa place ; la cellule finale vide, absente du
     // XML, laisse la ligne plus courte que l'en-tête.
-    expect(lireXlsx(classeur).lignes[1]).toEqual([
+    expect(readXlsx(classeur).lignes[1]).toEqual([
       "IND-001",
       "D46",
       "",
@@ -54,15 +54,15 @@ describe("lireXlsx", () => {
   });
 
   it("n'expose aucun producteur quand docProps/app.xml est absent", () => {
-    expect(lireXlsx(construireXlsx([ENTETE])).producteur).toBeNull();
+    expect(readXlsx(construireXlsx([ENTETE])).producteur).toBeNull();
   });
 
   it("lit le template XLSX officiel et nomme son producteur", () => {
     const officiel = readFileSync(
-      join(__dirname, "../../../../public/model/template_import_PILOTE.xlsx"),
+      join(process.cwd(), "public", "model", "template_import_PILOTE.xlsx"),
     );
 
-    const { lignes, producteur } = lireXlsx(officiel);
+    const { lignes, producteur } = readXlsx(officiel);
 
     expect(lignes[0]).toEqual(ENTETE);
     expect(producteur).not.toBeNull();
@@ -78,7 +78,7 @@ describe("lireXlsx", () => {
     ]);
 
     expect(classeur.length).toBeLessThan(2_000);
-    expect(() => lireXlsx(classeur)).toThrow(/trop de lignes/);
+    expect(() => readXlsx(classeur)).toThrow(/trop de lignes/);
   });
 
   it("accepte le dernier numéro de ligne du format", () => {
@@ -87,6 +87,6 @@ describe("lireXlsx", () => {
       [1_048_576, LIGNE],
     ]);
 
-    expect(lireXlsx(classeur).lignes).toHaveLength(1_048_576);
+    expect(readXlsx(classeur).lignes).toHaveLength(1_048_576);
   });
 });

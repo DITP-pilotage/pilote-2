@@ -1,7 +1,7 @@
 import type {
   SchemaCompile,
   ViolationContrainte,
-} from "@/server/infrastructure/table-schema/TableSchema.types";
+} from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/TableSchema.types";
 
 /**
  * Au-delà de ce nombre de violations, le fichier est de toute façon à refaire :
@@ -18,7 +18,7 @@ const REGEX_NOMBRE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
 const SEPARATEUR_CLE = "␟";
 
-export function validerLignes(
+export function validateRows(
   schema: SchemaCompile,
   lignes: string[][],
   plafond: number = PLAFOND_VIOLATIONS_DEFAUT,

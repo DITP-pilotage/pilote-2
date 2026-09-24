@@ -1,6 +1,6 @@
-import { compilerSchema } from "@/server/infrastructure/table-schema/compilerSchema";
-import type { TableSchemaBrut } from "@/server/infrastructure/table-schema/TableSchema.types";
-import { validerLignes } from "@/server/infrastructure/table-schema/validerLignes";
+import { compileSchema } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/compileSchema";
+import type { TableSchemaBrut } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/TableSchema.types";
+import { validateRows } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/validateRows";
 
 const ENTETES = [
   "identifiant_indic",
@@ -34,11 +34,10 @@ const BRUT: TableSchemaBrut = {
   primaryKey: ["identifiant_indic", "zone_id", "date_valeur", "type_valeur"],
 };
 
-const schema = compilerSchema(BRUT, ENTETES);
-const valider = (lignes: string[][]) =>
-  validerLignes(schema, lignes).violations;
+const schema = compileSchema(BRUT, ENTETES);
+const valider = (lignes: string[][]) => validateRows(schema, lignes).violations;
 
-describe("validerLignes", () => {
+describe("validateRows", () => {
   it("ne signale rien sur une ligne conforme", () => {
     expect(valider([["IND-001", "D46", "2023-01-31", "vi", "12.5"]])).toEqual(
       [],
@@ -80,7 +79,7 @@ describe("validerLignes", () => {
   it.each(["1e5", "+5", "-3", "12.5", "7"])(
     "accepte %s comme nombre",
     (nombre) => {
-      const sansBornes = compilerSchema(
+      const sansBornes = compileSchema(
         {
           ...BRUT,
           fields: BRUT.fields.map((champ) =>
@@ -93,7 +92,7 @@ describe("validerLignes", () => {
       );
 
       expect(
-        validerLignes(sansBornes, [
+        validateRows(sansBornes, [
           ["IND-001", "D46", "2023-01-31", "vi", nombre],
         ]).violations,
       ).toEqual([]);
@@ -139,7 +138,7 @@ describe("validerLignes", () => {
   });
 
   it("ignore un champ du schéma absent du fichier", () => {
-    const partiel = compilerSchema(BRUT, [
+    const partiel = compileSchema(BRUT, [
       "identifiant_indic",
       "zone_id",
       "date_valeur",
@@ -147,7 +146,7 @@ describe("validerLignes", () => {
     ]);
 
     expect(
-      validerLignes(partiel, [["IND-001", "D46", "2023-01-31", "vi"]])
+      validateRows(partiel, [["IND-001", "D46", "2023-01-31", "vi"]])
         .violations,
     ).toEqual([]);
   });
@@ -161,7 +160,7 @@ describe("validerLignes", () => {
       "abc",
     ]);
 
-    const resultat = validerLignes(schema, lignes, 10);
+    const resultat = validateRows(schema, lignes, 10);
 
     expect(resultat.violations).toHaveLength(10);
     expect(resultat.tronque).toBe(true);

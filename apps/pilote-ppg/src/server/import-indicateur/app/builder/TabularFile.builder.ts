@@ -158,7 +158,7 @@ export function deposerDansUnFichierTemporaire(
   nom: string,
   contenu: Buffer,
 ): string {
-  const chemin = join(mkdtempSync(join(tmpdir(), "fichier-tabulaire-")), nom);
+  const chemin = join(mkdtempSync(join(tmpdir(), "tabular-file-")), nom);
   writeFileSync(chemin, contenu);
   return chemin;
 }

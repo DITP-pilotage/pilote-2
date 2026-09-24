@@ -2,7 +2,7 @@ import {
   construireCsv,
   construireXlsx,
   deposerDansUnFichierTemporaire,
-} from "@/server/infrastructure/fichier-tabulaire/fichierTabulaire.builder";
+} from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import { LocalFichierIndicateurValidationService } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/LocalFichierIndicateurValidationService";
 
 const ENTETE = [

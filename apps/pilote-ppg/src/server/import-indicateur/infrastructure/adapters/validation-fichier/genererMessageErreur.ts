@@ -2,7 +2,7 @@ import type {
   SchemaCompile,
   TypeViolation,
   ViolationContrainte,
-} from "@/server/infrastructure/table-schema/TableSchema.types";
+} from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/TableSchema.types";
 
 /**
  * Le rapport d'erreurs est lu par des agents, pas par des développeurs : le
