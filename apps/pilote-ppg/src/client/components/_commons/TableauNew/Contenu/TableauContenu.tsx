@@ -1,7 +1,9 @@
 import { flexRender } from "@tanstack/react-table";
 import TableauContenuProps from "./TableauContenu.interface";
 
-export default function TableauContenu<T>({ tableau }: TableauContenuProps<T>) {
+export default function TableauContenu<TContexte extends object>({
+  tableau,
+}: TableauContenuProps<TContexte>) {
   return (
     <tbody>
       {tableau.getRowModel().rows.map((row) => (

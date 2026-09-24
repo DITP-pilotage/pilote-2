@@ -1,16 +1,27 @@
 import {
+  aggregationFn_extent,
+  aggregationFn_sum,
+  columnFilteringFeature,
+  columnGroupingFeature,
+  columnVisibilityFeature,
+  constructAggregationFn,
   createColumnHelper,
+  createExpandedRowModel,
+  createFilteredRowModel,
+  createGroupedRowModel,
+  createPaginatedRowModel,
+  createSortedRowModel,
   ExpandedState,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getFilteredRowModel,
-  getGroupedRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
+  globalFilteringFeature,
   GroupingState,
-  useReactTable,
+  rowAggregationFeature,
+  rowExpandingFeature,
+  rowPaginationFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import {
   parseAsBoolean,
   parseAsInteger,
@@ -39,6 +50,56 @@ import TableauChantiersProps, {
 import TableauChantiersTuileChantier from "./Tuile/Chantier/TableauChantiersTuileChantier";
 import TableauChantiersTuileMinistère from "./Tuile/Ministère/TableauChantiersTuileMinistère";
 import TableauChantiersTuileMinistèreProps from "./Tuile/Ministère/TableauChantiersTuileMinistère.interface";
+
+const features = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowSortingFeature,
+  columnGroupingFeature,
+  rowAggregationFeature,
+  rowExpandingFeature,
+  rowPaginationFeature,
+  columnVisibilityFeature,
+  aggregationFns: {
+    extent: aggregationFn_extent,
+    sum: aggregationFn_sum,
+  },
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  groupedRowModel: createGroupedRowModel(),
+  expandedRowModel: createExpandedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+});
+
+const reactTableColonnesHelper = createColumnHelper<
+  typeof features,
+  DonnéesTableauChantiers
+>();
+
+const moyenneAvancementDesChantiers = constructAggregationFn<
+  typeof features,
+  DonnéesTableauChantiers,
+  number | null,
+  number | null
+>({
+  aggregate: ({ rows }) =>
+    calculerMoyenne(rows.map((chantierRow) => chantierRow.original.avancement)),
+});
+
+const ministèrePorteurDesChantiers = constructAggregationFn<
+  typeof features,
+  DonnéesTableauChantiers,
+  unknown,
+  TableauChantiersTuileMinistèreProps["ministère"]
+>({
+  aggregate: ({ rows }) => ({
+    nom: rows[0].original.porteur?.nom ?? "",
+    icône: rows[0].original.porteur?.icône ?? null,
+    avancement: calculerMoyenne(
+      rows.map((chantierRow) => chantierRow.original.avancement),
+    ),
+  }),
+});
 
 export const useTableauChantiers = (
   données: TableauChantiersProps["données"],
@@ -80,254 +141,242 @@ export const useTableauChantiers = (
 
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("lg");
 
-  const reactTableColonnesHelper =
-    createColumnHelper<DonnéesTableauChantiers>();
-
-  const colonnesTableauChantiers = [
-    reactTableColonnesHelper.accessor("porteur.nom", {
-      header: "Porteur",
-      id: "porteur",
-      cell: (cellContext) => cellContext.getValue(),
-      enableGrouping: true,
-    }),
-    reactTableColonnesHelper.accessor("nom", {
-      header: "Chantiers",
-      id: "nom",
-      aggregatedCell: (aggregatedCellContext) => (
-        <div className="flex gap-2 ">
-          <div>
-            <IconeMinistere
-              className="text-dsfr-blue-france-sun-113"
-              icone={aggregatedCellContext.row.original.porteur?.icône}
-            />
-          </div>
-          <span className="font-bold">
-            {aggregatedCellContext.row.original.porteur?.nom ?? ""}
-          </span>
-        </div>
-      ),
-      cell: (cellContext) =>
-        cellContext.table.getColumn("porteur")?.getIsGrouped() ? (
-          <div className="ml-10">
-            <span>{cellContext.getValue()}</span>
-          </div>
-        ) : (
-          <div className="flex gap-2">
-            <div>
-              <IconeMinistere
-                className="text-dsfr-blue-france-sun-113"
-                icone={cellContext.row.original.porteur?.icône}
-              />
+  const colonnesTableauChantiers = useMemo(
+    () =>
+      reactTableColonnesHelper.columns([
+        reactTableColonnesHelper.accessor("porteur.nom", {
+          header: "Porteur",
+          id: "porteur",
+          cell: (cellContext) => cellContext.getValue(),
+          enableGrouping: true,
+        }),
+        reactTableColonnesHelper.accessor("nom", {
+          header: "Chantiers",
+          id: "nom",
+          aggregatedCell: (aggregatedCellContext) => (
+            <div className="flex gap-2 ">
+              <div>
+                <IconeMinistere
+                  className="text-dsfr-blue-france-sun-113"
+                  icone={aggregatedCellContext.row.original.porteur?.icône}
+                />
+              </div>
+              <span className="font-bold">
+                {aggregatedCellContext.row.original.porteur?.nom ?? ""}
+              </span>
             </div>
-            {cellContext.getValue()}
-          </div>
-        ),
-      enableSorting: false,
-      enableGrouping: false,
-      meta: {
-        width: "20rem",
-      },
-    }),
-    reactTableColonnesHelper.accessor("typologie", {
-      header: () => (
-        <div className="flex align-center no-wrap">
-          <span>Typologie</span>
-          <Infobulle classNameBouton="infobulle-header-typologie">
-            {infobulles.chantiers.listeDesChantiersHeaderTypologie}
-          </Infobulle>
-        </div>
-      ),
-      id: "typologie",
-      enableSorting: false,
-      cell: (cellContext) => (
-        <TypologiesPictos typologies={cellContext.getValue()} />
-      ),
-      enableGrouping: false,
-      meta: {
-        width: "6.5rem",
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.accessor("météo", {
-      header: () => (
-        <div className="flex align-center no-wrap">
-          <span>Météo</span>
-          <Infobulle classNameBouton="infobulle-header-meteo">
-            {infobulles.chantiers.listeDesChantiersHeaderMeteo}
-          </Infobulle>
-        </div>
-      ),
-      id: "météo",
-      cell: (cellContext) => (
-        <TableauRéformesMétéo
-          chantiersSontArchives={chantiersSontArchives}
-          dateDeMàjDonnéesQualitatives={
-            cellContext.row.original.dateDeMàjDonnéesQualitatives
-          }
-          météo={cellContext.getValue()}
-        />
-      ),
-      enableGlobalFilter: false,
-      enableGrouping: false,
-      meta: {
-        width: "8rem",
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.accessor("dateDeMàjDonnéesQualitatives", {
-      id: "dateDeMàjDonnéesQualitatives",
-      cell: (cellContext) => cellContext.getValue(),
-      enableGrouping: false,
-    }),
-    reactTableColonnesHelper.accessor("tendance", {
-      header: () => (
-        <div className="flex align-center no-wrap">
-          <span>Tendance</span>
-          <Infobulle classNameBouton="infobulle-header-tendance">
-            {infobulles.chantiers.listeDesChantiersHeaderTendance}
-          </Infobulle>
-        </div>
-      ),
-      id: "tendance",
-      cell: (cellContext) => (
-        <BadgeTendance
-          estArchive={chantiersSontArchives}
-          tendance={cellContext.getValue()}
-        />
-      ),
-      enableGrouping: false,
-      meta: {
-        width: "9rem",
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.accessor("avancement", {
-      header: () => (
-        <div className="flex align-center no-wrap">
-          <span className="whitespace-normal break-normal">
-            {`Avancement ${jalon}`}
-          </span>
-          <Infobulle classNameBouton="infobulle-header-taux-avancement">
-            {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}
-          </Infobulle>
-        </div>
-      ),
-      id: "avancement",
-      cell: (cellContext) => (
-        <TableauRéformesAvancement
-          avancement={cellContext.getValue()}
-          dateDeMàjDonnéesQuantitatives={
-            cellContext.row.original.dateDeMàjDonnéesQuantitatives
-          }
-          estArchive={chantiersSontArchives}
-        />
-      ),
-      enableGlobalFilter: false,
-      enableGrouping: false,
-      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
-        return calculerMoyenne(
-          chantiersDuMinistèreRow.map(
-            (chantierRow) => chantierRow.original.avancement,
           ),
-        );
-      },
-      aggregatedCell: (avancement) => (
-        <TableauRéformesAvancement
-          avancement={avancement.getValue() ?? null}
-          estArchive={chantiersSontArchives}
-        />
-      ),
-      meta: {
-        width: "8rem",
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.accessor("dateDeMàjDonnéesQuantitatives", {
-      id: "dateDeMàjDonnéesQuantitatives",
-      cell: (cellContext) => cellContext.getValue(),
-      enableGrouping: false,
-    }),
-    reactTableColonnesHelper.accessor("écart", {
-      header: () => (
-        <div className="flex align-center no-wrap">
-          <span>{`Écart ${jalon}`}</span>
-          <Infobulle classNameBouton="infobulle-header-écart">
-            {infobulles.chantiers.listeDesChantiersHeaderEcart}
-          </Infobulle>
-        </div>
-      ),
-      id: "écart",
-      cell: (cellContext) => (
-        <TableauChantiersEcart
-          ecart={cellContext.getValue()}
-          estArchive={chantiersSontArchives}
-        />
-      ),
-      enableGrouping: false,
-      aggregatedCell: () => null,
-      meta: {
-        width: "4.5rem",
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.display({
-      id: "dérouler-groupe",
-      aggregatedCell: (aggregatedCellContext) => (
-        <button
-          className={clsxm(
-            chantiersSontArchives ? "!text-dsfr-grey-925" : "!text-primary",
-          )}
-          type="button"
-        >
-          {aggregatedCellContext.row.getIsExpanded() ? (
-            <Icone className="!text-current" icone={ArrowSLineIcon} />
-          ) : (
-            <Icone className="!text-current" icone={ArrowSLine2Icon} />
-          )}
-        </button>
-      ),
-      meta: {
-        width: "3.5rem",
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.display({
-      id: "chantier-tuile",
-      cell: (chantierCellContext) => (
-        <TableauChantiersTuileChantier
-          afficherIcône={
-            !chantierCellContext.table.getColumn("porteur")?.getIsGrouped()
-          }
-          chantier={chantierCellContext.row.original}
-          chantiersSontArchives={chantiersSontArchives}
-        />
-      ),
-      aggregatedCell: (aggregatedCellContext) => (
-        <TableauChantiersTuileMinistère
-          estArchive={chantiersSontArchives}
-          estDéroulé={aggregatedCellContext.row.getIsExpanded()}
-          ministère={
-            aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps["ministère"]
-          }
-        />
-      ),
-      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
-        return {
-          nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? "",
-          icône: chantiersDuMinistèreRow[0].original.porteur?.icône ?? null,
-          avancement: calculerMoyenne(
-            chantiersDuMinistèreRow.map(
-              (chantierRow) => chantierRow.original.avancement,
+          cell: (cellContext) =>
+            cellContext.table.getColumn("porteur")?.getIsGrouped() ? (
+              <div className="ml-10">
+                <span>{cellContext.getValue()}</span>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <div>
+                  <IconeMinistere
+                    className="text-dsfr-blue-france-sun-113"
+                    icone={cellContext.row.original.porteur?.icône}
+                  />
+                </div>
+                {cellContext.getValue()}
+              </div>
             ),
+          enableSorting: false,
+          enableGrouping: false,
+          meta: {
+            width: "20rem",
+          },
+        }),
+        reactTableColonnesHelper.accessor("typologie", {
+          header: () => (
+            <div className="flex align-center no-wrap">
+              <span>Typologie</span>
+              <Infobulle classNameBouton="infobulle-header-typologie">
+                {infobulles.chantiers.listeDesChantiersHeaderTypologie}
+              </Infobulle>
+            </div>
           ),
-        } as TableauChantiersTuileMinistèreProps["ministère"];
-      },
-      enableSorting: false,
-      enableGrouping: false,
-    }),
-  ];
+          id: "typologie",
+          enableSorting: false,
+          cell: (cellContext) => (
+            <TypologiesPictos typologies={cellContext.getValue()} />
+          ),
+          enableGrouping: false,
+          meta: {
+            width: "6.5rem",
+            tabIndex: -1,
+          },
+        }),
+        reactTableColonnesHelper.accessor("météo", {
+          header: () => (
+            <div className="flex align-center no-wrap">
+              <span>Météo</span>
+              <Infobulle classNameBouton="infobulle-header-meteo">
+                {infobulles.chantiers.listeDesChantiersHeaderMeteo}
+              </Infobulle>
+            </div>
+          ),
+          id: "météo",
+          cell: (cellContext) => (
+            <TableauRéformesMétéo
+              chantiersSontArchives={chantiersSontArchives}
+              dateDeMàjDonnéesQualitatives={
+                cellContext.row.original.dateDeMàjDonnéesQualitatives
+              }
+              météo={cellContext.getValue()}
+            />
+          ),
+          enableGlobalFilter: false,
+          enableGrouping: false,
+          meta: {
+            width: "8rem",
+            tabIndex: -1,
+          },
+        }),
+        reactTableColonnesHelper.accessor("dateDeMàjDonnéesQualitatives", {
+          id: "dateDeMàjDonnéesQualitatives",
+          cell: (cellContext) => cellContext.getValue(),
+          enableGrouping: false,
+        }),
+        reactTableColonnesHelper.accessor("tendance", {
+          header: () => (
+            <div className="flex align-center no-wrap">
+              <span>Tendance</span>
+              <Infobulle classNameBouton="infobulle-header-tendance">
+                {infobulles.chantiers.listeDesChantiersHeaderTendance}
+              </Infobulle>
+            </div>
+          ),
+          id: "tendance",
+          cell: (cellContext) => (
+            <BadgeTendance
+              estArchive={chantiersSontArchives}
+              tendance={cellContext.getValue()}
+            />
+          ),
+          enableGrouping: false,
+          meta: {
+            width: "9rem",
+            tabIndex: -1,
+          },
+        }),
+        reactTableColonnesHelper.accessor("avancement", {
+          header: () => (
+            <div className="flex align-center no-wrap">
+              <span className="whitespace-normal break-normal">
+                {`Avancement ${jalon}`}
+              </span>
+              <Infobulle classNameBouton="infobulle-header-taux-avancement">
+                {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}
+              </Infobulle>
+            </div>
+          ),
+          id: "avancement",
+          cell: (cellContext) => (
+            <TableauRéformesAvancement
+              avancement={cellContext.getValue()}
+              dateDeMàjDonnéesQuantitatives={
+                cellContext.row.original.dateDeMàjDonnéesQuantitatives
+              }
+              estArchive={chantiersSontArchives}
+            />
+          ),
+          enableGlobalFilter: false,
+          enableGrouping: false,
+          aggregationFn: moyenneAvancementDesChantiers,
+          maxAggregationDepth: Infinity,
+          aggregatedCell: (avancement) => (
+            <TableauRéformesAvancement
+              avancement={avancement.getValue() ?? null}
+              estArchive={chantiersSontArchives}
+            />
+          ),
+          meta: {
+            width: "8rem",
+            tabIndex: -1,
+          },
+        }),
+        reactTableColonnesHelper.accessor("dateDeMàjDonnéesQuantitatives", {
+          id: "dateDeMàjDonnéesQuantitatives",
+          cell: (cellContext) => cellContext.getValue(),
+          enableGrouping: false,
+        }),
+        reactTableColonnesHelper.accessor("écart", {
+          header: () => (
+            <div className="flex align-center no-wrap">
+              <span>{`Écart ${jalon}`}</span>
+              <Infobulle classNameBouton="infobulle-header-écart">
+                {infobulles.chantiers.listeDesChantiersHeaderEcart}
+              </Infobulle>
+            </div>
+          ),
+          id: "écart",
+          cell: (cellContext) => (
+            <TableauChantiersEcart
+              ecart={cellContext.getValue()}
+              estArchive={chantiersSontArchives}
+            />
+          ),
+          enableGrouping: false,
+          aggregatedCell: () => null,
+          meta: {
+            width: "4.5rem",
+            tabIndex: -1,
+          },
+        }),
+        reactTableColonnesHelper.display({
+          id: "dérouler-groupe",
+          aggregatedCell: (aggregatedCellContext) => (
+            <button
+              className={clsxm(
+                chantiersSontArchives ? "!text-dsfr-grey-925" : "!text-primary",
+              )}
+              type="button"
+            >
+              {aggregatedCellContext.row.getIsExpanded() ? (
+                <Icone className="!text-current" icone={ArrowSLineIcon} />
+              ) : (
+                <Icone className="!text-current" icone={ArrowSLine2Icon} />
+              )}
+            </button>
+          ),
+          meta: {
+            width: "3.5rem",
+            tabIndex: -1,
+          },
+        }),
+        reactTableColonnesHelper.display({
+          id: "chantier-tuile",
+          cell: (chantierCellContext) => (
+            <TableauChantiersTuileChantier
+              afficherIcône={
+                !chantierCellContext.table.getColumn("porteur")?.getIsGrouped()
+              }
+              chantier={chantierCellContext.row.original}
+              chantiersSontArchives={chantiersSontArchives}
+            />
+          ),
+          aggregatedCell: (aggregatedCellContext) => (
+            <TableauChantiersTuileMinistère
+              estArchive={chantiersSontArchives}
+              estDéroulé={aggregatedCellContext.row.getIsExpanded()}
+              ministère={aggregatedCellContext.getValue<
+                TableauChantiersTuileMinistèreProps["ministère"]
+              >()}
+            />
+          ),
+          aggregationFn: ministèrePorteurDesChantiers,
+          maxAggregationDepth: Infinity,
+          enableSorting: false,
+          enableGrouping: false,
+        }),
+      ]),
+    [chantiersSontArchives, jalon],
+  );
 
-  const tableau = useReactTable({
+  const tableau = useTable({
+    features,
     data: données,
     columns: colonnesTableauChantiers,
     state: {
@@ -363,12 +412,6 @@ export const useTableauChantiers = (
         : Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) + 1,
     autoResetExpanded: false,
     onExpandedChange: setExpanded,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getGroupedRowModel: getGroupedRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const changementDeLaRechercheCallback = useCallback(
@@ -388,3 +431,12 @@ export const useTableauChantiers = (
     estVueTuile,
   };
 };
+
+/**
+ * Le tableau des chantiers enregistre regroupement, agrégation et expansion, qui
+ * débordent du jeu minimal de `TableauDe`. Les composants de présentation qui lui
+ * sont propres s'appuient donc sur son type concret.
+ */
+export type TableauDesChantiers = ReturnType<
+  typeof useTableauChantiers
+>["tableau"];

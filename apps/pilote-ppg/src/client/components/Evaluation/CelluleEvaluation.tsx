@@ -1,7 +1,8 @@
 import { $Enums } from "@prisma/client";
-import { Row } from "@tanstack/react-table";
+import type { Row } from "@tanstack/react-table";
 import { useFormState } from "react-hook-form";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
+import type { featuresTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
@@ -13,7 +14,7 @@ import { BadgeType } from "@/components/Evaluation/BadgeType";
 export const CelluleEvaluation = ({
   row,
 }: {
-  row: Row<TableauEvaluationRow>;
+  row: Row<typeof featuresTableauEvaluation, TableauEvaluationRow>;
 }) => {
   const ligne = row.original;
   const onAutosave = useHandleAutosave();

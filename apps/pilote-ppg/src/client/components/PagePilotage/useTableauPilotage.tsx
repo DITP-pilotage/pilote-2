@@ -1,8 +1,13 @@
 import {
+  columnGroupingFeature,
   createColumnHelper,
-  getCoreRowModel,
-  getGroupedRowModel,
-  useReactTable,
+  createGroupedRowModel,
+  Row,
+  RowSelectionState,
+  rowSelectionFeature,
+  Table,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
@@ -31,13 +36,22 @@ export type FicheEvaluationRow = {
   synthese: Record<string, number | null>;
 };
 
-const columnHelper = createColumnHelper<FicheEvaluationRow>();
+const features = tableFeatures({
+  columnGroupingFeature,
+  rowSelectionFeature,
+  groupedRowModel: createGroupedRowModel(),
+});
 
-const columns = [
+export type LignePilotage = Row<typeof features, FicheEvaluationRow>;
+export type TablePilotage = Table<typeof features, FicheEvaluationRow>;
+
+const columnHelper = createColumnHelper<typeof features, FicheEvaluationRow>();
+
+const columns = columnHelper.columns([
   columnHelper.accessor("rattachementGroupeCode", {
     id: "rattachementGroupeCode",
   }),
-];
+]);
 
 export const ETAPES: { key: $Enums.etape_evaluation_enum; label: string }[] = [
   { key: "AUTO_EVALUATION", label: "ÉVAL" },
@@ -92,7 +106,7 @@ export const useTableauPilotage = () => {
   const { fichesEvaluation, criteres } =
     pagePilotage.useServerSidePropsContext().pilotage;
 
-  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const data = useMemo<FicheEvaluationRow[]>(() => {
     return fichesEvaluation.map((fiche) => ({
@@ -118,11 +132,10 @@ export const useTableauPilotage = () => {
     }));
   }, [fichesEvaluation]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getGroupedRowModel: getGroupedRowModel(),
     initialState: {
       grouping: ["rattachementGroupeCode"],
     },

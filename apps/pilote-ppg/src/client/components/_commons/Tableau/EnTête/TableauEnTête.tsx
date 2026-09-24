@@ -1,8 +1,9 @@
-import { flexRender, SortDirection, Table } from "@tanstack/react-table";
+import { TableauAvecEnTetes } from "../typesTableau";
+import { flexRender, SortDirection } from "@tanstack/react-table";
 import BoutonsDeTri from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri";
 
-interface TableauEnTêteProps<T> {
-  tableau: Table<T>;
+interface TableauEnTêteProps<TContexte extends object> {
+  tableau: TableauAvecEnTetes<TContexte>;
 }
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
@@ -16,7 +17,9 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
-export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
+export default function TableauEnTête<TContexte extends object>({
+  tableau,
+}: TableauEnTêteProps<TContexte>) {
   return (
     <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925">
       {tableau.getHeaderGroups().map((headerGroup) => (

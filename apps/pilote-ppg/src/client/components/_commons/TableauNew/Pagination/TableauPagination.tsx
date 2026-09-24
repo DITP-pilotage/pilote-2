@@ -1,19 +1,20 @@
+import { TableauPaginable } from "../../Tableau/typesTableau";
 import "@gouvfr/dsfr/dist/component/pagination/pagination.min.css";
 import { parseAsInteger, useQueryStates } from "nuqs";
-import { Table } from "@tanstack/react-table";
+
 import TableauPaginationÉlément from "./Élément/TableauPaginationÉlément";
 
-interface TableauPaginationProps<T> {
+interface TableauPaginationProps {
   nombreDePages: number;
-  tableau: Table<T>;
+  tableau: TableauPaginable;
   initialPageSize?: number;
 }
 
-export default function TableauPagination<T>({
+export default function TableauPagination({
   tableau,
   nombreDePages,
   initialPageSize = 20,
-}: TableauPaginationProps<T>) {
+}: TableauPaginationProps) {
   const [pagination, setPagination] = useQueryStates(
     {
       pageIndex: parseAsInteger.withDefault(1),

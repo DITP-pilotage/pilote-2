@@ -4,7 +4,6 @@ import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRech
 import Loader from "@/components/_commons/Loader/Loader";
 import Titre from "@/components/_commons/Titre/Titre";
 import TableauEnTête from "@/components/_commons/Tableau/EnTête/TableauEnTête";
-import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import TableauAdminIndicateursContenu from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu";
 import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauPagination";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
@@ -99,9 +98,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
           <div className="fr-table">
             <table className="tableau table fr-m-0 fr-p-0 w-full">
               <caption className="fr-sr-only">Tableau des indicateurs</caption>
-              <TableauEnTête<MetadataParametrageIndicateurInformationContrat>
-                tableau={tableau}
-              />
+              <TableauEnTête tableau={tableau} />
               <TableauAdminIndicateursContenu tableau={tableau} />
             </table>
             <TableauPagination

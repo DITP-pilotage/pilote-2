@@ -1,10 +1,16 @@
 import {
+  columnFilteringFeature,
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+  createFilteredRowModel,
+  createPaginatedRowModel,
+  createSortedRowModel,
+  globalFilteringFeature,
+  rowPaginationFeature,
+  rowSortingFeature,
+  sortFn_alphanumericCaseSensitive,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
 import {
   ChangeEvent,
@@ -24,9 +30,26 @@ import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
-const reactTableColonnesHelper =
-  createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
-const colonnes = [
+export const featuresTableauAdminIndicateurs = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
+  columnVisibilityFeature,
+  rowSortingFeature,
+  rowPaginationFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  sortFns: { alphanumericCaseSensitive: sortFn_alphanumericCaseSensitive },
+});
+
+export type FeaturesTableauAdminIndicateurs =
+  typeof featuresTableauAdminIndicateurs;
+
+const reactTableColonnesHelper = createColumnHelper<
+  typeof featuresTableauAdminIndicateurs,
+  MetadataParametrageIndicateurInformationContrat
+>();
+const colonnes = reactTableColonnesHelper.columns([
   reactTableColonnesHelper.accessor("indicParentCh", {
     header: "Chantier associé",
     cell: (props) => props.getValue(),
@@ -37,12 +60,12 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor("indicId", {
     header: "Identifiant indicateur",
-    sortingFn: "alphanumericCaseSensitive",
+    sortFn: "alphanumericCaseSensitive",
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("indicNom", {
     header: "Nom de l'indicateur",
-    sortingFn: "auto",
+    sortFn: "auto",
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor(
@@ -51,7 +74,7 @@ const colonnes = [
     {
       header: "Dernière modification",
       cell: (props) => props.getValue(),
-      sortingFn: (a, b) => {
+      sortFn: (a, b) => {
         const dateA = new Date(a.original.dateDerniereModification);
         const dateB = new Date(b.original.dateDerniereModification);
 
@@ -69,7 +92,7 @@ const colonnes = [
   ),
   reactTableColonnesHelper.accessor("indicHiddenPilote", {
     header: "Actif / Inactif",
-    sortingFn: "auto",
+    sortFn: "auto",
     cell: (props) => {
       return (
         <div className="flex justify-center">
@@ -82,7 +105,7 @@ const colonnes = [
       );
     },
   }),
-];
+]);
 
 export default function useTableauPageAdminIndicateurs() {
   const filtresActifs = filtresModifierIndicateursActifsStore();
@@ -135,7 +158,14 @@ export default function useTableauPageAdminIndicateurs() {
     [setValeurDeLaRecherche],
   );
 
-  const tableau = useReactTable({
+  /**
+   * `globalFilter` est piloté de l'extérieur par la barre de recherche, jamais
+   * par la table : aucun `onGlobalFilterChange` n'est donc nécessaire. `useTable`
+   * resynchronise `options.state` dans ses atomes à chaque commit, donc la
+   * recherche reste réactive.
+   */
+  const tableau = useTable({
+    features: featuresTableauAdminIndicateurs,
     data: metadataIndicateurs,
     columns: colonnes,
 
@@ -164,10 +194,6 @@ export default function useTableauPageAdminIndicateurs() {
         },
       ],
     },
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const changementDePageCallback = useCallback(

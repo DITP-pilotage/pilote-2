@@ -1,5 +1,5 @@
-import { Table } from "@tanstack/react-table";
+import { TableauAvecLignes } from "../../Tableau/typesTableau";
 
-export default interface TableauContenuProps<T> {
-  tableau: Table<T>;
+export default interface TableauContenuProps<TContexte extends object> {
+  tableau: TableauAvecLignes<TContexte>;
 }

@@ -1,27 +1,13 @@
-import {
-  SendSmtpEmail,
-  TransactionalEmailsApi,
-  ContactsApi,
-  CreateContact,
-  UpdateContact,
-} from "@getbrevo/brevo";
+import { BrevoClient } from "@getbrevo/brevo";
 import { configuration } from "@/config";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 import { EmailManager } from "./EmailManager";
 
 export class BrevoEmailManager implements EmailManager {
-  private readonly transactionalEmailsApi: TransactionalEmailsApi;
-
-  private readonly contactsApi: ContactsApi;
+  private readonly brevo: BrevoClient;
 
   constructor() {
-    const apiKey = configuration().brevo.apiKey;
-
-    this.transactionalEmailsApi = new TransactionalEmailsApi();
-    this.transactionalEmailsApi.setApiKey(0, apiKey);
-
-    this.contactsApi = new ContactsApi();
-    this.contactsApi.setApiKey(0, apiKey);
+    this.brevo = new BrevoClient({ apiKey: configuration().brevo.apiKey });
   }
 
   async sendTransactionalEmail(
@@ -33,11 +19,16 @@ export class BrevoEmailManager implements EmailManager {
     const recipients = overrideEmail
       ? [{ email: overrideEmail }]
       : destinataires;
-    const email = new SendSmtpEmail();
-    email.to = recipients;
-    email.templateId = templateId;
-    email.params = params;
-    await this.transactionalEmailsApi.sendTransacEmail(email);
+    await this.brevo.transactionalEmails.sendTransacEmail(
+      {
+        to: recipients,
+        templateId,
+        params: params as Record<string, unknown>,
+      },
+      // L'envoi n'est pas idempotent et le SDK rejoue les POST sur 408/429/5xx :
+      // un 5xx reçu après acceptation côté Brevo enverrait l'email deux fois.
+      { maxRetries: 0 },
+    );
   }
 
   async createContact(
@@ -47,20 +38,20 @@ export class BrevoEmailManager implements EmailManager {
     profil: ProfilCode,
     listesDiffusionIds: number[],
   ): Promise<void> {
-    const contact = new CreateContact();
-    contact.email = email;
-    contact.attributes = {
-      PRENOM: prenom,
-      NOM: nom,
-      PROFIL: profil,
-      _PIXEL_TRACKING_CONSENT: true,
-    };
-    contact.listIds = listesDiffusionIds;
-    await this.contactsApi.createContact(contact);
+    await this.brevo.contacts.createContact({
+      email,
+      attributes: {
+        PRENOM: prenom,
+        NOM: nom,
+        PROFIL: profil,
+        _PIXEL_TRACKING_CONSENT: true,
+      },
+      listIds: listesDiffusionIds,
+    });
   }
 
   async deleteContact(email: string): Promise<void> {
-    await this.contactsApi.deleteContact(email);
+    await this.brevo.contacts.deleteContact({ identifier: email });
   }
 
   async updateContact(
@@ -80,23 +71,21 @@ export class BrevoEmailManager implements EmailManager {
       brevoAttributes.PROFIL = attributes.profil;
     }
 
-    const updatePayload: UpdateContact = {
+    await this.brevo.contacts.updateContact({
+      identifier: email,
       attributes: brevoAttributes,
       listIds: listesDiffusionAAjouterIds,
       unlinkListIds: listesDiffusionASupprimerIds,
-    };
-
-    await this.contactsApi.updateContact(email, updatePayload);
+    });
   }
 
   async addContactToLists(
     email: string,
     listesDiffusionIds: number[],
   ): Promise<void> {
-    const updatePayload: UpdateContact = {
+    await this.brevo.contacts.updateContact({
+      identifier: email,
       listIds: listesDiffusionIds,
-    };
-
-    await this.contactsApi.updateContact(email, updatePayload);
+    });
   }
 }

@@ -1,10 +1,14 @@
-import { flexRender, Row, Table } from "@tanstack/react-table";
+import { flexRender, type Table } from "@tanstack/react-table";
 import { FunctionComponent, useCallback } from "react";
 import { useRouter } from "next/router";
+import type { FeaturesTableauAdminUtilisateurs } from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 
 interface TableauAdminUtilisateursContenuProps {
-  tableau: Table<UtilisateurListeGestionContrat>;
+  tableau: Table<
+    FeaturesTableauAdminUtilisateurs,
+    UtilisateurListeGestionContrat
+  >;
 }
 
 const TableauAdminUtilisateursContenu: FunctionComponent<
@@ -13,8 +17,8 @@ const TableauAdminUtilisateursContenu: FunctionComponent<
   const router = useRouter();
 
   const auClicSurLaLigne = useCallback(
-    (row: Row<UtilisateurListeGestionContrat>) => {
-      router.push(`/admin/utilisateur/${row.original.id}`);
+    (identifiantUtilisateur: string) => {
+      router.push(`/admin/utilisateur/${identifiantUtilisateur}`);
     },
     [router],
   );
@@ -25,7 +29,7 @@ const TableauAdminUtilisateursContenu: FunctionComponent<
         <tr
           className="cursor-pointer even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
           key={row.id}
-          onClick={() => auClicSurLaLigne(row)}
+          onClick={() => auClicSurLaLigne(row.original.id)}
         >
           {row.getVisibleCells().map((cell) => (
             <td

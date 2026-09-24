@@ -1,8 +1,13 @@
-import { createColumnHelper, useReactTable } from "@tanstack/react-table";
+import {
+  createColumnHelper,
+  filterFn_arrHas,
+  useTable,
+} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
+  featuresTableauAdmin,
   useEtatTableauAdmin,
   type ConfigFiltreColonne,
 } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
@@ -14,45 +19,49 @@ const FILTRES: ConfigFiltreColonne[] = [FILTRE_STATUT_REFERENTIEL];
 
 const champsRecherche = (axe: AxeAdminListItem) => [axe.axeId, axe.axeName];
 
-const columnHelper = createColumnHelper<AxeAdminListItem>();
+const columnHelper = createColumnHelper<
+  typeof featuresTableauAdmin,
+  AxeAdminListItem
+>();
 
 const useTableColumns = () =>
   useMemo(
-    () => [
-      columnHelper.accessor("axeId", {
-        id: "axeId",
-        header: "ID",
-      }),
-      columnHelper.accessor("axeName", {
-        id: "axeName",
-        header: "Nom",
-        cell: (info) => (
-          <span
-            className={
-              info.row.original.deletedAt !== null
-                ? "line-through text-gray-400"
-                : ""
-            }
-          >
-            {info.getValue()}
-          </span>
-        ),
-      }),
-      columnHelper.accessor((axe) => statutReferentielDe(axe.deletedAt), {
-        id: "statut",
-        header: "Statut",
-        enableColumnFilter: true,
-        filterFn: "arrIncludesSome",
-        cell: (info) => (
-          <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
-        ),
-      }),
-      columnHelper.accessor("updatedAt", {
-        id: "updatedAt",
-        header: "Mise à jour",
-        cell: (info) => formaterDateCourte(new Date(info.getValue())),
-      }),
-    ],
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor("axeId", {
+          id: "axeId",
+          header: "ID",
+        }),
+        columnHelper.accessor("axeName", {
+          id: "axeName",
+          header: "Nom",
+          cell: (info) => (
+            <span
+              className={
+                info.row.original.deletedAt !== null
+                  ? "line-through text-gray-400"
+                  : ""
+              }
+            >
+              {info.getValue()}
+            </span>
+          ),
+        }),
+        columnHelper.accessor((axe) => statutReferentielDe(axe.deletedAt), {
+          id: "statut",
+          header: "Statut",
+          enableColumnFilter: true,
+          filterFn: filterFn_arrHas,
+          cell: (info) => (
+            <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
+          ),
+        }),
+        columnHelper.accessor("updatedAt", {
+          id: "updatedAt",
+          header: "Mise à jour",
+          cell: (info) => formaterDateCourte(new Date(info.getValue())),
+        }),
+      ]),
     [],
   );
 
@@ -64,7 +73,7 @@ export const useTableauAdminAxes = (axes: AxeAdminListItem[]) => {
       champsRecherche,
     });
 
-  const table = useReactTable({ data: axes, columns, ...optionsTable });
+  const table = useTable({ data: axes, columns, ...optionsTable });
 
   return { table, aDesFiltresActifs, reinitialiserLesFiltres };
 };

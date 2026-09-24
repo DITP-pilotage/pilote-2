@@ -1,3 +1,5 @@
+import { LigneTableau } from "../Tableau/typesTableau";
+import { type FeaturesTableauAdmin } from "./featuresTableauAdmin";
 import type { Table } from "@tanstack/react-table";
 import type { ReactNode } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
@@ -6,13 +8,13 @@ import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { lireRechercheGlobale } from "./utils";
 
-export function FiltresTableauAdmin<TRow>({
+export function FiltresTableauAdmin<TRow extends LigneTableau>({
   table,
   aDesFiltresActifs,
   reinitialiserLesFiltres,
   children,
 }: {
-  table: Table<TRow>;
+  table: Table<FeaturesTableauAdmin, TRow>;
   aDesFiltresActifs: boolean;
   reinitialiserLesFiltres: () => void;
   children: ReactNode;

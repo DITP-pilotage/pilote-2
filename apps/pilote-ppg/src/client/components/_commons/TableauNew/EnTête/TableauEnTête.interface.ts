@@ -1,5 +1,5 @@
-import { Table } from "@tanstack/react-table";
+import { TableauAvecEnTetes } from "../../Tableau/typesTableau";
 
-export default interface TableauEnTêteProps<T> {
-  tableau: Table<T>;
+export default interface TableauEnTêteProps<TContexte extends object> {
+  tableau: TableauAvecEnTetes<TContexte>;
 }

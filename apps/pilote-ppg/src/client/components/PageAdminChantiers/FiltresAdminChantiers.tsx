@@ -1,4 +1,5 @@
 import type { Table } from "@tanstack/react-table";
+import type { FeaturesTableauAdmin } from "@/components/_commons/TableauAdmin/featuresTableauAdmin";
 import { $Enums } from "@prisma/client";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
@@ -18,7 +19,7 @@ export const FiltresAdminChantiers = ({
   aDesFiltresActifs,
   reinitialiserLesFiltres,
 }: {
-  table: Table<ChantierAdminRow>;
+  table: Table<FeaturesTableauAdmin, ChantierAdminRow>;
   perimetres: Perimetre[];
   aDesFiltresActifs: boolean;
   reinitialiserLesFiltres: () => void;

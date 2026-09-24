@@ -1,9 +1,8 @@
 import { ComponentType, PropsWithChildren, ReactNode } from "react";
-import { Table } from "@tanstack/react-table";
 import { $Enums } from "@prisma/client";
 import {
   ETAPES,
-  FicheEvaluationRow,
+  TablePilotage,
 } from "@/components/PagePilotage/useTableauPilotage";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
@@ -100,24 +99,27 @@ export const TableauPilotageHeader = ({
   columnsCount,
   fichesSelectionneesIds,
 }: {
-  table: Table<FicheEvaluationRow>;
+  table: TablePilotage;
   columnsCount: number;
   fichesSelectionneesIds: string[];
 }) => {
   const { criteres } = pagePilotage.useServerSidePropsContext().pilotage;
   const maxObjectifs = useObjectifsCount();
   const selectedCount = fichesSelectionneesIds.length;
+  const toutesLignesSelectionnees = table.getIsAllRowsSelected();
+  const selectionIndeterminee =
+    table.getIsSomeRowsSelected() && !toutesLignesSelectionnees;
 
   return (
     <>
       <div className="px-4 py-2 flex items-center gap-2 sticky left-0 top-0 bg-white z-10">
         <input
-          checked={table.getIsAllRowsSelected()}
+          checked={toutesLignesSelectionnees}
           className="cursor-pointer"
           onChange={table.getToggleAllRowsSelectedHandler()}
           ref={(el) => {
             if (el) {
-              el.indeterminate = table.getIsSomeRowsSelected();
+              el.indeterminate = selectionIndeterminee;
             }
           }}
           type="checkbox"

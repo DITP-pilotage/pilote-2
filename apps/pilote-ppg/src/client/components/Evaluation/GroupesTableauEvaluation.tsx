@@ -1,7 +1,11 @@
-import { Table } from "@tanstack/react-table";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
+import type { TableEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 
-export function GroupesTableauEvaluation<T>({ table }: { table: Table<T> }) {
+export function GroupesTableauEvaluation({
+  table,
+}: {
+  table: TableEvaluation;
+}) {
   const groupableColumns = table
     .getAllColumns()
     .filter(
@@ -9,7 +13,7 @@ export function GroupesTableauEvaluation<T>({ table }: { table: Table<T> }) {
         column.getCanGroup() && column.columnDef.meta?.grouping !== undefined,
     );
 
-  const currentGrouping = table.getState().grouping[0] ?? null;
+  const currentGrouping = table.state.grouping[0] ?? null;
 
   if (groupableColumns.length === 0) return null;
 

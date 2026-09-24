@@ -2,13 +2,19 @@ import { useCallback, useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import {
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  rowPaginationFeature,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
 import type { ApplicationLogEntree } from "@/server/application-log/queries/ListerLogsQuery";
 import api from "@/server/infrastructure/api/trpc/api";
 
-const columnHelper = createColumnHelper<ApplicationLogEntree>();
+const features = tableFeatures({ rowPaginationFeature });
+
+const columnHelper = createColumnHelper<
+  typeof features,
+  ApplicationLogEntree
+>();
 
 const TAILLE_PAGE = 50;
 
@@ -48,39 +54,40 @@ export function useTableauLogs() {
   const totalPages = Math.ceil(data.total / TAILLE_PAGE);
 
   const columns = useMemo(
-    () => [
-      columnHelper.accessor("timestamp", {
-        header: "Timestamp",
-        id: "timestamp",
-      }),
-      columnHelper.accessor("level", {
-        header: "Niveau",
-        id: "level",
-      }),
-      columnHelper.accessor("categorie", {
-        header: "Catégorie",
-        id: "categorie",
-      }),
-      columnHelper.accessor("message", {
-        header: "Message",
-        id: "message",
-      }),
-      columnHelper.accessor("source", {
-        header: "Source",
-        id: "source",
-      }),
-      columnHelper.display({
-        id: "expand",
-        header: "",
-      }),
-    ],
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor("timestamp", {
+          header: "Timestamp",
+          id: "timestamp",
+        }),
+        columnHelper.accessor("level", {
+          header: "Niveau",
+          id: "level",
+        }),
+        columnHelper.accessor("categorie", {
+          header: "Catégorie",
+          id: "categorie",
+        }),
+        columnHelper.accessor("message", {
+          header: "Message",
+          id: "message",
+        }),
+        columnHelper.accessor("source", {
+          header: "Source",
+          id: "source",
+        }),
+        columnHelper.display({
+          id: "expand",
+          header: "",
+        }),
+      ]),
     [],
   );
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: data.logs,
     columns,
-    getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: totalPages,
     state: {

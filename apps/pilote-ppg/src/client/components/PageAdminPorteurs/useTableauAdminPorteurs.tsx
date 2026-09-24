@@ -1,9 +1,14 @@
-import { createColumnHelper, useReactTable } from "@tanstack/react-table";
+import {
+  createColumnHelper,
+  filterFn_arrHas,
+  useTable,
+} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { $Enums } from "@prisma/client";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
+  featuresTableauAdmin,
   useEtatTableauAdmin,
   type ConfigFiltreColonne,
 } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
@@ -48,72 +53,78 @@ const champsRecherche = (porteur: PorteurAdminListItem) => [
   porteur.porteurName,
 ];
 
-const columnHelper = createColumnHelper<PorteurAdminListItem>();
+const columnHelper = createColumnHelper<
+  typeof featuresTableauAdmin,
+  PorteurAdminListItem
+>();
 
 const useTableColumns = () =>
   useMemo(
-    () => [
-      columnHelper.accessor("porteurId", {
-        id: "porteurId",
-        header: "ID",
-      }),
-      columnHelper.accessor("porteurShort", {
-        id: "porteurShort",
-        header: "Sigle",
-      }),
-      columnHelper.accessor("porteurName", {
-        id: "porteurName",
-        header: "Nom",
-        cell: (info) => (
-          <span
-            className={
-              info.row.original.deletedAt !== null
-                ? "line-through text-gray-400"
-                : ""
-            }
-          >
-            {info.getValue()}
-          </span>
-        ),
-      }),
-      columnHelper.accessor("porteurType", {
-        id: "porteurType",
-        header: "Type",
-        enableColumnFilter: true,
-        filterFn: "arrIncludesSome",
-        cell: (info) => {
-          const type = info.getValue();
-          const typeBadge =
-            type && type in TYPE_BADGE ? TYPE_BADGE[type] : null;
-          return (
-            typeBadge && (
-              <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeBadge.className}`}
-              >
-                {typeBadge.label}
-              </span>
-            )
-          );
-        },
-      }),
-      columnHelper.accessor(
-        (porteur) => statutReferentielDe(porteur.deletedAt),
-        {
-          id: "statut",
-          header: "Statut",
-          enableColumnFilter: true,
-          filterFn: "arrIncludesSome",
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor("porteurId", {
+          id: "porteurId",
+          header: "ID",
+        }),
+        columnHelper.accessor("porteurShort", {
+          id: "porteurShort",
+          header: "Sigle",
+        }),
+        columnHelper.accessor("porteurName", {
+          id: "porteurName",
+          header: "Nom",
           cell: (info) => (
-            <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
+            <span
+              className={
+                info.row.original.deletedAt !== null
+                  ? "line-through text-gray-400"
+                  : ""
+              }
+            >
+              {info.getValue()}
+            </span>
           ),
-        },
-      ),
-      columnHelper.accessor("updatedAt", {
-        id: "updatedAt",
-        header: "Mise à jour",
-        cell: (info) => formaterDateCourte(new Date(info.getValue())),
-      }),
-    ],
+        }),
+        columnHelper.accessor("porteurType", {
+          id: "porteurType",
+          header: "Type",
+          enableColumnFilter: true,
+          filterFn: filterFn_arrHas,
+          cell: (info) => {
+            const type = info.getValue();
+            const typeBadge =
+              type && type in TYPE_BADGE ? TYPE_BADGE[type] : null;
+            return (
+              typeBadge && (
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeBadge.className}`}
+                >
+                  {typeBadge.label}
+                </span>
+              )
+            );
+          },
+        }),
+        columnHelper.accessor(
+          (porteur) => statutReferentielDe(porteur.deletedAt),
+          {
+            id: "statut",
+            header: "Statut",
+            enableColumnFilter: true,
+            filterFn: filterFn_arrHas,
+            cell: (info) => (
+              <BadgeStatutReferentiel
+                supprimé={info.getValue() === "SUPPRIME"}
+              />
+            ),
+          },
+        ),
+        columnHelper.accessor("updatedAt", {
+          id: "updatedAt",
+          header: "Mise à jour",
+          cell: (info) => formaterDateCourte(new Date(info.getValue())),
+        }),
+      ]),
     [],
   );
 
@@ -125,7 +136,7 @@ export const useTableauAdminPorteurs = (porteurs: PorteurAdminListItem[]) => {
       champsRecherche,
     });
 
-  const table = useReactTable({ data: porteurs, columns, ...optionsTable });
+  const table = useTable({ data: porteurs, columns, ...optionsTable });
 
   return { table, aDesFiltresActifs, reinitialiserLesFiltres };
 };
