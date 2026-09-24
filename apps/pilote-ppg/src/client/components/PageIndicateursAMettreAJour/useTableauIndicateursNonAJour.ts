@@ -9,7 +9,7 @@ import {
   createPaginatedRowModel,
   createSortedRowModel,
   filterFn_arrIncludes,
-  filterFn_equalsString,
+  filterFn_arrHas,
   globalFilteringFeature,
   rowAggregationFeature,
   rowExpandingFeature,
@@ -65,7 +65,7 @@ const columnHelper = createColumnHelper<
 const colonnes = columnHelper.columns([
   columnHelper.accessor("chantierId", {
     id: "chantier",
-    filterFn: filterFn_equalsString,
+    filterFn: filterFn_arrHas,
   }),
   columnHelper.accessor("nom", { id: "nom" }),
   columnHelper.accessor("mailles", {
@@ -89,7 +89,7 @@ export const useTableauIndicateursNonAJour = (
   indicateurs: IndicateurNonAJour[],
 ) => {
   const [recherche, setRecherche] = useState("");
-  const [chantierFiltre, setChantierFiltre] = useState<string | null>(null);
+  const [chantiersFiltres, setChantiersFiltres] = useState<string[]>([]);
   const [mailleFiltre, setMailleFiltre] = useState<$Enums.Maille | null>(null);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [pagination, setPagination] = useState<PaginationState>({
@@ -99,10 +99,12 @@ export const useTableauIndicateursNonAJour = (
 
   const columnFilters = useMemo(
     () => [
-      ...(chantierFiltre ? [{ id: "chantier", value: chantierFiltre }] : []),
+      ...(chantiersFiltres.length > 0
+        ? [{ id: "chantier", value: chantiersFiltres }]
+        : []),
       ...(mailleFiltre ? [{ id: "mailles", value: [mailleFiltre] }] : []),
     ],
-    [chantierFiltre, mailleFiltre],
+    [chantiersFiltres, mailleFiltre],
   );
 
   const optionsChantiers = useMemo(
@@ -152,8 +154,8 @@ export const useTableauIndicateursNonAJour = (
     pagination,
     recherche,
     setRecherche,
-    chantierFiltre,
-    setChantierFiltre,
+    chantiersFiltres,
+    setChantiersFiltres,
     mailleFiltre,
     setMailleFiltre,
     optionsChantiers,
