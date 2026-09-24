@@ -1,4 +1,5 @@
 import { defineConfig } from "evalite/config";
+import { createSqliteStorage } from "evalite/sqlite-storage";
 
 /**
  * SPIKE — configuration Evalite du POC.
@@ -7,6 +8,12 @@ import { defineConfig } from "evalite/config";
  * branche sur vitest.projects/, et `pnpm test` reste inchange.
  */
 export default defineConfig({
+  // Par defaut Evalite garde les resultats en memoire : chaque ouverture de
+  // l'UI repart de zero, et un run complet prend une quinzaine de minutes.
+  // La base reste locale, ignoree par git : elle pese plusieurs dizaines de Mo
+  // et grossit a chaque run.
+  storage: () => createSqliteStorage("./evals/evalite.db"),
+
   // Les evals importent le code de prod via les alias `@/...` du tsconfig.
   // Sans `tsconfigPaths`, tous les imports d'Albert cassent.
   //

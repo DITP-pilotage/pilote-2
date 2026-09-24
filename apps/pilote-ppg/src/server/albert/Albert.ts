@@ -23,12 +23,32 @@ export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   return wrapLanguageModel({ model, middleware: devToolsMiddleware() });
 }
 
+type ModelWrapper = (model: LanguageModelV4) => LanguageModelV4;
+
+/**
+ * Enveloppe appliquée à TOUS les modèles qu'Albert instancie, sous-agents
+ * compris. L'identité en production : seul un harnais externe l'enregistre —
+ * les evals y branchent le traçage d'Evalite, sans que ce fichier importe
+ * evalite.
+ */
+let modelWrapper: ModelWrapper = (model) => model;
+
+function createModel(modelId: string) {
+  return modelWrapper(
+    withOptionalDevTools(Albert.createProvider().chat(modelId)),
+  );
+}
+
 const DEFAULT_MODEL = "openweight-large";
 
 const TEMPERATURE_STREAM_TEXT = 0.2;
 const TEMPERATURE_STRUCTURED_OUTPUT = 0;
 
 export class Albert {
+  static registerModelWrapper(wrapper: ModelWrapper) {
+    modelWrapper = wrapper;
+  }
+
   static createProvider() {
     return createOpenAI({
       baseURL: "https://albert.api.etalab.gouv.fr/v1",
@@ -93,9 +113,8 @@ export class Albert {
     schema: T;
     abortSignal?: AbortSignal;
   }): Promise<z.infer<T>> {
-    const albertProvider = this.createProvider();
     const result = await generateText({
-      model: withOptionalDevTools(albertProvider.chat(DEFAULT_MODEL)),
+      model: createModel(DEFAULT_MODEL),
       system: systemPrompt,
       prompt,
       stopWhen: stepCountIs(5),
@@ -133,10 +152,8 @@ export class Albert {
     tools?: ToolSet;
     model?: string;
   }) {
-    const albertProvider = this.createProvider();
-
     const result = await generateText({
-      model: withOptionalDevTools(albertProvider.chat(model)),
+      model: createModel(model),
       system: systemPrompt,
       prompt,
       tools,
@@ -164,11 +181,10 @@ export class Albert {
     tools?: ToolSet;
     model?: string;
   }) {
-    const albertProvider = this.createProvider();
     const modelMessages = await convertToModelMessages(messages);
 
     return aiStreamText({
-      model: withOptionalDevTools(albertProvider.chat(model)),
+      model: createModel(model),
       system: systemPrompt,
       messages: modelMessages,
       tools,
