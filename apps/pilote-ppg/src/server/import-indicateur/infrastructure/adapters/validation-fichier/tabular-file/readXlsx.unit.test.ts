@@ -89,4 +89,21 @@ describe("readXlsx", () => {
 
     expect(readXlsx(classeur).lignes).toHaveLength(1_048_576);
   });
+
+  it("refuse une colonne au-delà de ce que le format autorise", () => {
+    const ligne: string[] = [];
+    ligne[16_384] = "IND-001";
+    const classeur = construireXlsxNumerote([[1, ligne]]);
+
+    expect(classeur.length).toBeLessThan(2_000);
+    expect(() => readXlsx(classeur)).toThrow(/trop de colonnes/);
+  });
+
+  it("accepte la dernière colonne du format", () => {
+    const ligne: string[] = [];
+    ligne[16_383] = "IND-001";
+    const classeur = construireXlsxNumerote([[1, ligne]]);
+
+    expect(readXlsx(classeur).lignes[0]).toHaveLength(16_384);
+  });
 });

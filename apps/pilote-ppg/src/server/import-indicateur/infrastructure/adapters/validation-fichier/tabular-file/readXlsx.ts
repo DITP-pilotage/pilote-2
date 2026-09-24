@@ -15,6 +15,9 @@ const PROPRIETES = "docProps/app.xml";
  */
 const NUMERO_DE_LIGNE_MAX = 1_048_576;
 
+/** Dernier index de colonne (XFD, 0-based) : même raison, par ligne cette fois. */
+const INDEX_DE_COLONNE_MAX = 16_383;
+
 export type LectureXlsx = { lignes: string[][]; producteur: string | null };
 
 const ENTITES: Record<string, string> = {
@@ -116,6 +119,12 @@ export function readXlsx(archive: Buffer): LectureXlsx {
       const reference = cellule.match(/\br="([A-Z]+\d+)"/)?.[1];
       if (!reference) continue;
       const colonne = indexColonne(reference);
+      if (colonne > INDEX_DE_COLONNE_MAX) {
+        throw new FichierTabulaireIllisibleError(
+          "trop-de-colonnes",
+          "Le classeur déclare trop de colonnes pour le format .xlsx. Réenregistrez-le depuis votre tableur.",
+        );
+      }
 
       const type = cellule.match(/\bt="([^"]+)"/)?.[1] ?? "n";
       let valeur = "";

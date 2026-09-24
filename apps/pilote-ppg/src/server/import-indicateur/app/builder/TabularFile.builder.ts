@@ -36,6 +36,15 @@ export function construireCsv(
 const echapper = (valeur: string) =>
   valeur.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
+/** 0 -> "A", 25 -> "Z", 26 -> "AA". */
+function lettresColonne(index: number): string {
+  let lettres = "";
+  for (let reste = index + 1; reste > 0; reste = Math.floor((reste - 1) / 26)) {
+    lettres = String.fromCharCode(65 + ((reste - 1) % 26)) + lettres;
+  }
+  return lettres;
+}
+
 /** Classeur .xlsx minimal : un onglet, chaînes inline, cellules vides omises. */
 export function construireXlsx(lignes: string[][]): Buffer {
   return construireXlsxNumerote(
@@ -56,7 +65,7 @@ export function construireXlsxNumerote(
       const cellules = ligne
         .map((valeur, colonne) => {
           if (valeur === "") return "";
-          const reference = `${String.fromCharCode(65 + colonne)}${numero}`;
+          const reference = `${lettresColonne(colonne)}${numero}`;
           return `<c r="${reference}" t="inlineStr"><is><t xml:space="preserve">${echapper(valeur)}</t></is></c>`;
         })
         .join("");
