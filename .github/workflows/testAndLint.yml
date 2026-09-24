@@ -317,6 +317,24 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-ui'
 
+  kpilote-admin-test:
+    name: "kpilote-admin: tests"
+    needs: changes
+    if: needs.changes.outputs['kpilote-admin'] == 'true' || needs.changes.outputs['kpilote-ui'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run test command
+        run: pnpm test
+        env:
+          APP_PACKAGE: '@pilote/kpilote-admin'
+
   kpilote-admin-lint:
     name: "kpilote-admin: lint"
     needs: changes
