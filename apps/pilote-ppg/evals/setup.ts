@@ -12,7 +12,7 @@ import { rateLimitModel } from "./rateLimitModel";
  * l'API renvoie encore des « Too Many Requests », ou pour accélérer un run
  * quand elle est peu chargée.
  */
-const REQUETES_PAR_MINUTE = Number(process.env.EVAL_REQUETES_PAR_MINUTE ?? 30);
+const REQUETES_PAR_MINUTE = Number(process.env.EVAL_REQUETES_PAR_MINUTE ?? 15);
 
 const limiterLeDebit = rateLimitModel({
   requetesParMinute: REQUETES_PAR_MINUTE,
