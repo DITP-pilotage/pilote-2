@@ -6,17 +6,22 @@ import {
   createColumnHelper,
   createFilteredRowModel,
   createGroupedRowModel,
+  createPaginatedRowModel,
   createSortedRowModel,
   filterFn_arrIncludes,
   filterFn_equalsString,
   globalFilteringFeature,
   rowAggregationFeature,
   rowExpandingFeature,
+  rowPaginationFeature,
   rowSortingFeature,
   sortFn_basic,
   tableFeatures,
   useTable,
   type ExpandedState,
+  type GroupingState,
+  type PaginationState,
+  type SortingState,
   type Row,
 } from "@tanstack/react-table";
 import { type $Enums } from "@prisma/client";
@@ -29,10 +34,20 @@ export const featuresIndicateursNonAJour = tableFeatures({
   columnGroupingFeature,
   rowAggregationFeature,
   rowExpandingFeature,
+  rowPaginationFeature,
   filteredRowModel: createFilteredRowModel(),
   groupedRowModel: createGroupedRowModel(),
   sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
 });
+
+export const TAILLES_DE_PAGE_CHANTIERS = [1, 3, 5, 10];
+const TAILLE_DE_PAGE_CHANTIERS_PAR_DEFAUT = 3;
+
+// Références stables : un nouveau tableau à chaque rendu fait recalculer les
+// row models groupé et trié, qui remettent alors la page courante à 0.
+const REGROUPEMENT_PAR_CHANTIER: GroupingState = ["chantier"];
+const TRI_PAR_RETARD_DECROISSANT: SortingState = [{ id: "retard", desc: true }];
 
 export type LigneIndicateurNonAJour = Row<
   typeof featuresIndicateursNonAJour,
@@ -77,6 +92,10 @@ export const useTableauIndicateursNonAJour = (
   const [chantierFiltre, setChantierFiltre] = useState<string | null>(null);
   const [mailleFiltre, setMailleFiltre] = useState<$Enums.Maille | null>(null);
   const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: TAILLE_DE_PAGE_CHANTIERS_PAR_DEFAUT,
+  });
 
   const columnFilters = useMemo(
     () => [
@@ -109,9 +128,10 @@ export const useTableauIndicateursNonAJour = (
     state: {
       globalFilter: recherche,
       columnFilters,
-      grouping: ["chantier"],
-      sorting: [{ id: "retard", desc: true }],
+      grouping: REGROUPEMENT_PAR_CHANTIER,
+      sorting: TRI_PAR_RETARD_DECROISSANT,
       expanded,
+      pagination,
     },
     globalFilterFn: (
       row: LigneIndicateurNonAJour,
@@ -122,12 +142,14 @@ export const useTableauIndicateursNonAJour = (
         normaliser(texteRecherche),
       ),
     onExpandedChange: setExpanded,
+    onPaginationChange: setPagination,
     getRowCanExpand: (row) => !row.getIsGrouped(),
     autoResetExpanded: false,
   });
 
   return {
     tableau,
+    pagination,
     recherche,
     setRecherche,
     chantierFiltre,

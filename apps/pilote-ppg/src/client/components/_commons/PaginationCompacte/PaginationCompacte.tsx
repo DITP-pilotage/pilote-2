@@ -9,6 +9,7 @@ export function PaginationCompacte({
   nombreDePages,
   tailleDePage,
   taillesDePage = TAILLES_DE_PAGE_PAR_DEFAUT,
+  libelleTaillePage = "Lignes par page :",
   changementDePageCallback,
   changementTailleDePageCallback,
 }: {
@@ -16,6 +17,7 @@ export function PaginationCompacte({
   nombreDePages: number;
   tailleDePage: number;
   taillesDePage?: number[];
+  libelleTaillePage?: string;
   changementDePageCallback: (numeroDePage: number) => void;
   changementTailleDePageCallback: (tailleDePage: number) => void;
 }) {
@@ -24,7 +26,7 @@ export function PaginationCompacte({
   return (
     <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200 text-sm text-gray-500">
       <div className="flex items-center gap-2">
-        <label htmlFor={idSelecteurTaillePage}>Lignes par page :</label>
+        <label htmlFor={idSelecteurTaillePage}>{libelleTaillePage}</label>
         <SelecteurNew
           contentClassName="md:!min-w-[var(--radix-select-trigger-width)] !max-w-[var(--radix-select-trigger-width)]"
           htmlName={idSelecteurTaillePage}
