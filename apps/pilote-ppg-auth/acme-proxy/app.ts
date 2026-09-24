@@ -11,15 +11,11 @@ const challengeBodySchema = z.object({
 });
 
 /**
- * En-têtes hop-by-hop (RFC 9110 §7.6.1) : ils décrivent le lien avec le client, pas le
- * message. Un proxy qui les recopie décrit à l'amont une connexion qui n'existe pas.
- *
- * `transfer-encoding` est le cas qui mordait : un client qui streame sans Content-Length
- * fait passer node en `chunked`, le proxy recopiait l'en-tête, et fetch refusait d'envoyer
- * une requête annoncée chunked dont il gère lui-même le cadrage — d'où un 502 sur toute
- * requête à corps streamé.
+ * En-têtes hop-by-hop (RFC 9110 §7.6.1) : propres à la connexion client, ils ne se
+ * relaient pas. Recopier `transfer-encoding: chunked` faisait refuser la requête par
+ * fetch, d'où un 502 sur tout corps streamé.
  */
-const EN_TETES_DE_TRANSPORT = new Set([
+const HOP_BY_HOP_HEADERS = new Set([
   "connection",
   "keep-alive",
   "proxy-authenticate",
@@ -30,10 +26,10 @@ const EN_TETES_DE_TRANSPORT = new Set([
   "upgrade",
 ]);
 
-const sansEnTetesDeTransport = (enTetes: Record<string, string>) =>
+const withoutHopByHopHeaders = (headers: Record<string, string>) =>
   Object.fromEntries(
-    Object.entries(enTetes).filter(
-      ([nom]) => !EN_TETES_DE_TRANSPORT.has(nom.toLowerCase()),
+    Object.entries(headers).filter(
+      ([name]) => !HOP_BY_HOP_HEADERS.has(name.toLowerCase()),
     ),
   );
 
@@ -75,7 +71,7 @@ export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
       return await proxy(target, {
         raw: c.req.raw,
         headers: {
-          ...sansEnTetesDeTransport(c.req.header()),
+          ...withoutHopByHopHeaders(c.req.header()),
           "x-forwarded-host":
             c.req.header("x-forwarded-host") ?? c.req.header("host") ?? "",
         },
