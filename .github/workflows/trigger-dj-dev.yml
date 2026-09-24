@@ -15,7 +15,7 @@ on:
 jobs:
   trigger-scalingo:
     name: "Lancement datajobs pour l'environ : ${{inputs.environment}}"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
     - name: "Vérification horaire"
       run: |

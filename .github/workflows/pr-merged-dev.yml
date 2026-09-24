@@ -13,7 +13,7 @@ jobs:
     # When the PR is merged
     # https://stackoverflow.com/a/61565445/21676629
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: get infos pr
         id: PR
@@ -23,26 +23,31 @@ jobs:
           github-token: ${{ github.token }}
           sha: ${{ github.event.pull_request.head.sha }}
       - name: "Envoi message Tchap"
-        uses: indiesdev/curl@v1.1
-        with:
-          url: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_TECH_EVENTS }}/send/m.room.message"
-          method: POST
-          accept: 200,201,204
-          headers: '{ "Authorization": "Bearer ${{ secrets.TCHAP_ACCESS_TOKEN }}" }'
-          body: '{"body": "","format":"org.matrix.custom.html","formatted_body":"<h2>[pr-dev] ${{ steps.PR.outputs.pr_title }}</h2> Nouvelle PR mergée <i>en dev</i>. <br> <blockquote><a href=\"${{ steps.PR.outputs.pr_url }}\">PR ${{ steps.PR.outputs.number }}</a> <br> <a href=\"https://data-ditp.atlassian.net/wiki/search?spaces=LRSVU&labels=pr-${{ steps.PR.outputs.number }}\">Articles de doc</a></blockquote>","msgtype":"m.text"}'
-          timeout: 6000
-          retries: 3
+        env:
+          TCHAP_URL: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_TECH_EVENTS }}/send/m.room.message"
+          TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
+          BODY: ""
+          FORMATTED_BODY: >-
+            <h2>[pr-dev] ${{ steps.PR.outputs.pr_title }}</h2> Nouvelle PR mergée <i>en dev</i>. <br> <blockquote><a href="${{ steps.PR.outputs.pr_url }}">PR ${{ steps.PR.outputs.number }}</a> <br> <a href="https://data-ditp.atlassian.net/wiki/search?spaces=LRSVU&labels=pr-${{ steps.PR.outputs.number }}">Articles de doc</a></blockquote>
+        run: |
+          jq -n --arg body "$BODY" --arg formatted "$FORMATTED_BODY" \
+            '{body: $body, format: "org.matrix.custom.html", formatted_body: $formatted, msgtype: "m.text"}' |
+            curl --fail-with-body --silent --show-error --max-time 6 --retry 3 --retry-all-errors \
+              -X POST "$TCHAP_URL" \
+              -H "Authorization: Bearer $TCHAP_ACCESS_TOKEN" \
+              -H "Content-Type: application/json" \
+              --data-binary @-
   update_dbt_doc:
     name: "Mise à jour de la doc dbt"
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       pages: write
       contents: write
     timeout-minutes: 5
     steps:
       - name: "checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: "Vérifier changements data_management/"

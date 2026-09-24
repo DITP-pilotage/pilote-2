@@ -32,10 +32,10 @@ jobs:
   seed:
     name: "Seed de dev-kpilote-api"
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
