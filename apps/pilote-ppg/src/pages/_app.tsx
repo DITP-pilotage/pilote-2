@@ -3,7 +3,6 @@ import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import "@gouvfr/dsfr/dist/component/connect/connect.min.css";
 import "@/client/styles/app.scss";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import { useEffect, useState } from "react";
@@ -19,25 +18,11 @@ import { Tooltip } from "@/components/shared/Tooltip";
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
-// Props spécifiques pour l'AppComponent
-interface MyAppProps extends AppProps {
-  nonce?: string;
-}
-
-type WindowAvecNonce = Window & { __nonce?: string };
-
-function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
+function MonApplication({ Component, pageProps }: AppProps) {
   useDétecterLargeurDÉcran();
 
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
-
-  // Utiliser le nonce passé par les props (côté serveur) ou le récupérer depuis window (côté client)
-  const nonce =
-    appNonce ||
-    (typeof window !== "undefined"
-      ? (window as WindowAvecNonce).__nonce || ""
-      : "");
 
   const débutChargement = () => {
     setPageEnCoursDeChargement(true);
@@ -45,6 +30,10 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
   const finChargement = () => {
     setPageEnCoursDeChargement(false);
   };
+
+  useEffect(() => {
+    void import("@gouvfr/dsfr/dist/dsfr.module.min.js");
+  }, []);
 
   useEffect(() => {
     Router.events.on("routeChangeStart", débutChargement);
@@ -89,8 +78,6 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
 
   return (
     <NuqsAdapter>
-      <Script nonce={nonce} src="/js/dsfr/dsfr.module.min.js" type="module" />
-      <Script noModule nonce={nonce} src="/js/dsfr/dsfr.nomodule.min.js" />
       <Head>
         <title>Pilote - Chargement compte utilisateur</title>
         <link href="/favicon/apple-touch-icon.png" rel="apple-touch-icon" />

@@ -63,7 +63,6 @@ export const EnTete = () => {
                   <div className="fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0">
                     <button
                       aria-controls="modale-menu-principal"
-                      aria-haspopup="menu"
                       className="fr-btn--menu fr-btn"
                       data-fr-opened="false"
                       id="bouton-menu-principal"
@@ -77,7 +76,7 @@ export const EnTete = () => {
               </div>
             </div>
             <div className="fr-header__tools">
-              <div className="fr-header__tools-links">
+              <div className="hidden min-[62em]:flex min-[62em]:flex-row min-[62em]:justify-end min-[62em]:gap-2">
                 <div className="flex align-center gap-4">
                   <BoutonContacterEquipePilote />
                   <ClientOnly>
