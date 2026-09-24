@@ -1,5 +1,9 @@
 import { FormEvent, useState } from "react";
 import { Modale } from "@/client/components/shared/Modale";
+import {
+  estUrlMediaFichiers,
+  HOTE_FICHIERS,
+} from "@/client/components/_commons/CentreAide/LecteurVideo";
 
 const EXTENSIONS_PAR_TYPE = {
   image: ["png", "jpg", "jpeg", "gif", "webp", "svg"],
@@ -10,8 +14,8 @@ const EXTENSIONS_PAR_TYPE = {
 type TypeInsertion = keyof typeof EXTENSIONS_PAR_TYPE;
 
 const DOMAINES_AUTORISES_PAR_TYPE: Partial<Record<TypeInsertion, string[]>> = {
-  image: ["fichiers.numerique.gouv.fr"],
-  video: ["video.finances.gouv.fr", "fichiers.numerique.gouv.fr"],
+  image: [HOTE_FICHIERS],
+  video: ["video.finances.gouv.fr", HOTE_FICHIERS],
 };
 
 function extraireIdDepuisUrl(url: string): string | null {
@@ -28,7 +32,7 @@ function construireUrlMedia(
   extension: string,
 ): string {
   const nomFichierEncode = encodeURIComponent(nomFichier);
-  return `https://fichiers.numerique.gouv.fr/media/preview/item/${identifiant}/${nomFichierEncode}.${extension}`;
+  return `https://${HOTE_FICHIERS}/media/preview/item/${identifiant}/${nomFichierEncode}.${extension}`;
 }
 
 export const ModaleInsertionUrl = ({
@@ -85,26 +89,42 @@ export const ModaleInsertionUrl = ({
     }
 
     if (mode === "direct") {
-      if (!urlDirecte.trim()) {
+      const url = urlDirecte.trim();
+      if (!url) {
         setErreur("L'URL est requise.");
         return;
       }
       const domainesAutorises = DOMAINES_AUTORISES_PAR_TYPE[type];
       if (domainesAutorises) {
+        let hostname: string;
         try {
-          const hostname = new URL(urlDirecte.trim()).hostname;
-          if (!domainesAutorises.some((domaine) => hostname === domaine)) {
-            setErreur(
-              `L'URL doit provenir de : ${domainesAutorises.join(", ")}`,
-            );
-            return;
-          }
+          hostname = new URL(url).hostname;
         } catch {
           setErreur("L'URL saisie n'est pas valide.");
           return;
         }
+        if (!domainesAutorises.some((domaine) => hostname === domaine)) {
+          setErreur(`L'URL doit provenir de : ${domainesAutorises.join(", ")}`);
+          return;
+        }
+        // L'adresse qu'on copie depuis l'explorateur ouvre la page du fichier,
+        // pas le media : telle quelle elle donne un lecteur vide (PIL-1795).
+        if (hostname === HOTE_FICHIERS && !estUrlMediaFichiers(url)) {
+          if (!avecFichiersNumeriques || !extraireIdDepuisUrl(url)) {
+            setErreur(
+              "Cette adresse ne contient pas l'identifiant du fichier. Ouvrez le fichier dans l'explorateur et copiez l'adresse affichée par le navigateur.",
+            );
+            return;
+          }
+          setUrlFichier(url);
+          setMode("constructeur");
+          setErreur(
+            "Cette adresse ouvre la page du fichier, pas le média : complétez son nom et son extension ci-dessous.",
+          );
+          return;
+        }
       }
-      onValider(urlDirecte.trim());
+      onValider(url);
     } else {
       const identifiant = extraireIdDepuisUrl(urlFichier);
       if (!identifiant) {

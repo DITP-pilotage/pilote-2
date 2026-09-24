@@ -83,14 +83,16 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
 
       await test.step("Vérification que le fichier n'est pas conforme", async () => {
         await pageMaj.expectFileInvalid();
-        await expect(
-          page.getByText(/IND-97 ne respecte pas le motif imposé/),
-        ).toBeVisible();
+        // Le message vient du catalogue FR de l'application.
         await expect(
           page.getByText(
-            `L'indicateur IND-97 ne correpond pas à l'indicateur choisis (${chantier.indicateurId})`,
+            "'IND-97' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.",
           ),
-        ).toBeVisible({ timeout: 30_000 });
+        ).toBeVisible();
+        // Pas de second message sur la même cellule : un identifiant illisible
+        // se corrige d'un seul geste, que le reproche porte sur sa forme ou
+        // sur l'indicateur visé. Verrouillé côté serveur dans
+        // VerifierFichierIndicateurImporteUseCase.integration.test.ts.
       });
 
       await test.step("Choix d'un fichier valide", async () => {

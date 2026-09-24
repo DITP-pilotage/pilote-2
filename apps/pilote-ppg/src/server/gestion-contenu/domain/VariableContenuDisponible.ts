@@ -48,7 +48,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_PAGE_ACTUALITES: boolean;
   NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS: boolean;
   NEXT_PUBLIC_FF_PROCONNECT: boolean;
-  NEXT_PUBLIC_FF_PROCONNECT_DITP_ADMIN: boolean;
 }
 
 type FeatureFlipConfig = ReturnType<typeof configuration>["featureFlip"];
@@ -269,11 +268,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     label: "Connexion ProConnect",
   },
   {
-    envKey: "NEXT_PUBLIC_FF_PROCONNECT_DITP_ADMIN",
-    configKey: "proconnectDitpAdmin",
-    label: "Connexion ProConnect — réservée aux DITP Admin",
-  },
-  {
     envKey: "NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS",
     configKey: "exportCsvWidgets",
     label: "Export csv des widgets",
@@ -317,7 +311,6 @@ export const FEATURE_FLIP_CONFIG_KEY_MAP: Record<
 /** Variables non-FF exposées via useEnv */
 const VARIABLE_CONTENU_NON_FF = [
   "NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION",
-  "NEXT_PUBLIC_SCHEMA_VALIDATA_URL",
   "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
 ] as const;
 
@@ -328,6 +321,5 @@ export const VARIABLE_CONTENU_DISPONIBLE_ENV = [
 
 export type VariableContenuDisponibleEnv = Record<FeatureFlipKey, boolean> & {
   NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION: number;
-  NEXT_PUBLIC_SCHEMA_VALIDATA_URL: string;
   NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE: string;
 };

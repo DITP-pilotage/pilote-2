@@ -20,7 +20,7 @@ on:
 jobs:
   renouveler:
     name: "Renouveler ${{ matrix.environnement }} / ${{ matrix.application }}"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: ${{ matrix.environnement }}
     strategy:
       fail-fast: false
@@ -32,7 +32,7 @@ jobs:
       SCALINGO_API_BASE: https://api.osc-secnum-fr1.scalingo.com
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Résoudre la cible (domaine, app, routes de challenge)
         id: cible

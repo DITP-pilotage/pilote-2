@@ -245,7 +245,7 @@ const LigneArbre: FunctionComponent<{
         {renommage === null ? (
           <button
             className={clsxm(
-              "flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left",
+              "flex min-w-0 flex-1 items-start gap-2 py-1.5 text-left",
               estGroupe && "font-medium",
             )}
             onClick={() => onSelectionner(noeud.id)}
@@ -259,7 +259,7 @@ const LigneArbre: FunctionComponent<{
             title="Double-cliquez pour renommer"
             type="button"
           >
-            <span className="flex-1 truncate">{titre}</span>
+            <span className="min-w-0 flex-1 break-words">{titre}</span>
             <PastilleEtat article={noeud.article} />
           </button>
         ) : (
@@ -293,7 +293,7 @@ const PastilleEtat: FunctionComponent<{
 
   return (
     <span
-      className={clsxm("size-1.5 shrink-0 rounded-full", couleur)}
+      className={clsxm("mt-1.5 size-1.5 shrink-0 rounded-full", couleur)}
       title={libelle}
     />
   );

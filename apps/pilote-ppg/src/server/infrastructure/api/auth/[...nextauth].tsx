@@ -10,12 +10,12 @@ import { configuration } from "@/config";
 import {
   acrFromIdToken,
   proconnect,
-  PROVIDER_PROCONNECT,
 } from "@/server/infrastructure/api/auth/proconnect";
+import { PROVIDER_PROCONNECT } from "@/server/infrastructure/api/auth/ErreurProConnect";
 import { autoriserConnexionProConnect } from "@/server/authentification/domain/autoriserConnexionProConnect";
 import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
+import { loggerAuthJs } from "@/server/infrastructure/api/auth/loggerAuthJs";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
@@ -305,6 +305,7 @@ export const authConfig: NextAuthConfig = {
     ? [credentialsProvider]
     : [keycloak, proconnect],
   debug: configuration().nextAuth.debug,
+  logger: loggerAuthJs,
   session: {
     maxAge: configuration().nextAuth.sessionMaxAge,
   },
@@ -322,25 +323,15 @@ export const authConfig: NextAuthConfig = {
       }
 
       const { getContainer } = await import("@/server/dependances");
-      const compteAuthentificationQuery =
-        getContainer("gestionUtilisateur").cradle.compteAuthentificationQuery;
-
-      // Le feature flip est lu via le use case et non via `configuration()` :
-      // c'est lui qui applique l'override posé depuis le panel administrateur,
-      // seule valeur qui fasse foi.
-      const featureFlips = await getContainer("legacy")
-        .resolve("recupererFeatureFlipsUseCase")
-        .run();
+      const statutCompteQuery =
+        getContainer("gestionUtilisateur").cradle.statutCompteQuery;
 
       const acr = acrFromIdToken({ idToken: account.id_token });
       const motif = await autoriserConnexionProConnect({
         email: profile?.email,
         acr,
-        profilsAutorises: featureFlips.NEXT_PUBLIC_FF_PROCONNECT_DITP_ADMIN
-          ? [ProfilEnum.DITP_ADMIN]
-          : null,
-        recupererCompte: (email) =>
-          compteAuthentificationQuery.recuperer({ email }),
+        recupererStatutCompte: (email) =>
+          statutCompteQuery.recuperer({ email }),
       });
 
       if (motif) {

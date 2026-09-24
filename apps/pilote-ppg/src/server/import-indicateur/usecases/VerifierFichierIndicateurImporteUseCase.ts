@@ -11,6 +11,12 @@ import { IndicateurRepository } from "@/server/import-indicateur/domain/ports/In
 import logger from "@/server/infrastructure/Logger";
 import type { Inject } from "@/server/import-indicateur/module";
 
+/**
+ * L'en-tête occupe la ligne 1 du fichier : la première ligne de données est
+ * donc la ligne 2, comme l'affiche le tableur de l'utilisateur.
+ */
+const PREMIERE_LIGNE_DE_DONNEES = 2;
+
 const correspondALIndicateurId = (
   mesureIndicateurTemporaire: MesureIndicateurTemporaire,
   indicateurId: string,
@@ -24,10 +30,10 @@ const correspondALIndicateurId = (
         rapportId: rapportId,
         cellule: mesureIndicateurTemporaire.indicId,
         nom: "Indicateur invalide",
-        message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisis (${indicateurId})`,
-        numeroDeLigne: index + 1,
+        message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correspond pas à l'indicateur choisi (${indicateurId}), ligne ${index + PREMIERE_LIGNE_DE_DONNEES}.`,
+        numeroDeLigne: index + PREMIERE_LIGNE_DE_DONNEES,
         positionDeLigne: index,
-        nomDuChamp: "indic_id",
+        nomDuChamp: "identifiant_indic",
         positionDuChamp: -1,
       }),
     );
@@ -41,17 +47,22 @@ const verifierDateValide = (
   index: number,
 ) => {
   if (mesureIndicateurTemporaire.metricDate) {
-    const tmpDate = new Date(mesureIndicateurTemporaire.metricDate)
-      .toISOString()
-      .split("T")[0];
+    // `new Date` rend une date invalide sur n'importe quelle chaîne, et
+    // `toISOString` lève dessus. Sans cette garde, l'exception remonte au
+    // catch du use case, qui remplace alors tout le rapport par un message
+    // générique : l'utilisateur perd l'erreur qui lui aurait été utile.
+    const date = new Date(mesureIndicateurTemporaire.metricDate);
+    const estUneDate = !Number.isNaN(date.getTime());
+    const tmpDate = estUneDate ? date.toISOString().split("T")[0] : null;
+
     if (tmpDate !== mesureIndicateurTemporaire.metricDate) {
       listeErreursValidation.push(
         ErreurValidationFichier.creerErreurValidationFichier({
           rapportId: reportId,
           cellule: mesureIndicateurTemporaire.metricDate,
           nom: "Date invalide",
-          message: `La date '${mesureIndicateurTemporaire.metricDate}' n'est pas une date valide`,
-          numeroDeLigne: index + 1,
+          message: `La date '${mesureIndicateurTemporaire.metricDate}' n'est pas une date valide (ligne ${index + PREMIERE_LIGNE_DE_DONNEES}).`,
+          numeroDeLigne: index + PREMIERE_LIGNE_DE_DONNEES,
           positionDeLigne: index,
           nomDuChamp: "date_valeur",
           positionDuChamp: -1,
@@ -103,6 +114,35 @@ const verifierFormatZoneId = (
   mesureIndicateurTemporaire.mettreZoneIdEnMajuscule();
 };
 
+/**
+ * Les contrôles ci-dessus complètent ceux du moteur : ils portent sur le sens
+ * de la donnée, pas sur sa forme. Ils n'ont donc rien à dire d'une cellule que
+ * le moteur a déjà rejetée — sinon l'utilisateur lit deux lignes pour un seul
+ * problème.
+ */
+const indexerCellulesDejaSignalees = (
+  listeErreursValidation: ErreurValidationFichier[],
+): Set<string> =>
+  new Set(
+    listeErreursValidation.map(
+      (erreur) => `${erreur.numeroDeLigne}:${erreur.nomDuChamp}`,
+    ),
+  );
+
+/**
+ * Lignes rejetées dans leur ensemble — vides, ou en double. Une erreur sans nom
+ * de colonne porte sur la ligne entière : lui reprocher en plus le contenu de
+ * telle ou telle cellule n'apprend rien à l'utilisateur.
+ */
+const indexerLignesDejaRejetees = (
+  listeErreursValidation: ErreurValidationFichier[],
+): Set<number> =>
+  new Set(
+    listeErreursValidation
+      .filter((erreur) => !erreur.nomDuChamp)
+      .map((erreur) => erreur.numeroDeLigne),
+  );
+
 const DEFAULT_SCHEMA = "sans-contraintes.json";
 
 export class VerifierFichierIndicateurImporteUseCase {
@@ -141,14 +181,12 @@ export class VerifierFichierIndicateurImporteUseCase {
   async execute({
     cheminCompletDuFichier,
     nomDuFichier,
-    baseSchemaUrl,
     indicateurId,
     utilisateurAuteurDeLimportEmail,
     isAdmin = false,
   }: {
     cheminCompletDuFichier: string;
     nomDuFichier: string;
-    baseSchemaUrl: string;
     indicateurId: string;
     utilisateurAuteurDeLimportEmail: string;
     isAdmin?: boolean;
@@ -167,7 +205,7 @@ export class VerifierFichierIndicateurImporteUseCase {
       {
         cheminCompletDuFichier,
         nomDuFichier,
-        schema: `${baseSchemaUrl}${schema}`,
+        schema,
         utilisateurEmail: utilisateurAuteurDeLimportEmail,
       },
     );
@@ -175,22 +213,41 @@ export class VerifierFichierIndicateurImporteUseCase {
     await this.rapportRepository.sauvegarder(report);
 
     try {
+      const dejaSignalees = indexerCellulesDejaSignalees(
+        report.listeErreursValidation,
+      );
+      const lignesRejetees = indexerLignesDejaRejetees(
+        report.listeErreursValidation,
+      );
+      const estDejaSignalee = (index: number, nomDuChamp: string) =>
+        dejaSignalees.has(`${index + PREMIERE_LIGNE_DE_DONNEES}:${nomDuChamp}`);
+
       report.listeMesuresIndicateurTemporaire.forEach(
         (mesureIndicateurTemporaire, index) => {
-          correspondALIndicateurId(
-            mesureIndicateurTemporaire,
-            indicateurId,
-            report.id,
-            report.listeErreursValidation,
-            index,
-          );
+          if (lignesRejetees.has(index + PREMIERE_LIGNE_DE_DONNEES)) {
+            return;
+          }
+
+          if (!estDejaSignalee(index, "identifiant_indic")) {
+            correspondALIndicateurId(
+              mesureIndicateurTemporaire,
+              indicateurId,
+              report.id,
+              report.listeErreursValidation,
+              index,
+            );
+          }
+
           verifierFormatDateValeur(mesureIndicateurTemporaire);
-          verifierDateValide(
-            mesureIndicateurTemporaire,
-            report.listeErreursValidation,
-            report.id,
-            index,
-          );
+          if (!estDejaSignalee(index, "date_valeur")) {
+            verifierDateValide(
+              mesureIndicateurTemporaire,
+              report.listeErreursValidation,
+              report.id,
+              index,
+            );
+          }
+
           verifierFormatTypeValeur(mesureIndicateurTemporaire);
           verifierFormatZoneId(mesureIndicateurTemporaire);
         },
@@ -248,7 +305,7 @@ export class VerifierFichierIndicateurImporteUseCase {
         ErreurValidationFichier.creerErreurValidationFichier({
           rapportId: report.id,
           cellule: "Cellule non définie",
-          nom: "Erreur non identifié",
+          nom: "Erreur non identifiée",
           message:
             "Une erreur est survenue lors de la validation du contenu du fichier",
           numeroDeLigne: 0,

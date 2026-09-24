@@ -10,7 +10,7 @@ const BadgesStatut: FunctionComponent<{ noeud: NoeudArbre }> = ({ noeud }) => {
   const aModifsNonPubliees = aDesModificationsNonPubliees(noeud);
 
   return (
-    <div className="flex gap-1 shrink-0 ml-auto">
+    <div className="flex gap-1 shrink-0 mt-1.5">
       {noeud.estPublie && !aModifsNonPubliees && (
         <span className="w-2 h-2 rounded-full bg-green-500" title="Publié" />
       )}
@@ -74,7 +74,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
         } ${afficherStatut && noeud.estMasque ? "opacity-50" : ""}`}
       >
         <button
-          className={`flex-1 text-left py-2 flex items-center gap-2 min-w-0 ${
+          className={`flex-1 text-left py-2 flex items-start gap-2 min-w-0 ${
             estDesactive
               ? "cursor-default text-gray-500"
               : estSelectionne
@@ -87,7 +87,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
           type="button"
         >
           <span
-            className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
+            className={`flex-1 min-w-0 text-sm break-words ${estGroupe ? "font-semibold" : ""}`}
           >
             {titre}
           </span>

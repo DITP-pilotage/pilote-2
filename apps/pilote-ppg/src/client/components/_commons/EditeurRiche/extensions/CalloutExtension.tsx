@@ -1,4 +1,3 @@
-import { ComponentType } from "react";
 import { mergeAttributes, Node } from "@tiptap/core";
 import {
   NodeViewContent,
@@ -6,69 +5,22 @@ import {
   NodeViewWrapper,
   ReactNodeViewRenderer,
 } from "@tiptap/react";
-import { Callout, CalloutColor } from "@/client/components/shared/Callout";
-import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
-import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
-import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
-
-const CALLOUT_COLORS: CalloutColor[] = [
-  "info",
-  "success",
-  "warning",
-  "error",
-  "blue",
-  "moutarde",
-  "neutral",
-];
-
-const colorIconMap: Record<
+import {
+  Callout,
   CalloutColor,
-  ComponentType<{ className: string; fill: string }>
-> = {
-  info: InformationPleineIcon,
-  success: InformationPleineIcon,
-  warning: WarningIcon,
-  error: ErrorWarningIcon,
-  blue: InformationPleineIcon,
-  moutarde: WarningIcon,
-  neutral: InformationPleineIcon,
-};
+  iconeCallout,
+} from "@/client/components/shared/Callout";
 
-const colorLabels: Record<CalloutColor, string> = {
-  info: "Info",
-  success: "Succès",
-  warning: "Attention",
-  error: "Erreur",
-  blue: "Bleu",
-  moutarde: "Moutarde",
-  neutral: "Neutre",
-};
-
-function CalloutNodeView({ node, updateAttributes, editor }: NodeViewProps) {
+// La variante se choisit a l'insertion, dans le menu « / » : l'encadre affiche
+// donc en edition exactement ce qui sera publie.
+function CalloutNodeView({ node }: NodeViewProps) {
   const color = (node.attrs.color as CalloutColor) || "info";
 
   return (
     <NodeViewWrapper>
       <Callout.Root color={color}>
-        <Callout.Icon icone={colorIconMap[color]} />
+        <Callout.Icon icone={iconeCallout(color)} />
         <div className="flex-1 min-w-0">
-          {editor.isEditable && (
-            <div contentEditable={false} className="mb-2">
-              <select
-                className="text-xs border rounded px-1 py-0.5 bg-white"
-                onChange={(event) =>
-                  updateAttributes({ color: event.target.value })
-                }
-                value={color}
-              >
-                {CALLOUT_COLORS.map((c) => (
-                  <option key={c} value={c}>
-                    {colorLabels[c]}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
           <NodeViewContent className="text-sm leading-relaxed" />
         </div>
       </Callout.Root>

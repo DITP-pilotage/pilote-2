@@ -28,12 +28,15 @@
     margin-bottom: 0;
   }
 
-  h4 {
+  /* Ces trois regles decrivent la mise en page du contenu, pas l'ergonomie
+     d'edition : un editeur qui porte deja classesRenduContenuHtml s'en exempte
+     avec .contenu-mis-en-page, sinon son rendu contredit la publication. */
+  &:not(.contenu-mis-en-page) h4 {
     margin-top: 0.5rem !important;
     margin-bottom: 0.5rem !important;
   }
 
-  hr {
+  &:not(.contenu-mis-en-page) hr {
     margin: 2rem 0.5rem;
     border: none;
     border-top: 2px solid rgba(13 13 13 / 10%);
@@ -75,7 +78,7 @@
     height: auto;
   }
 
-  blockquote {
+  &:not(.contenu-mis-en-page) blockquote {
     padding-left: 1rem;
     border-left: 2px solid rgba(13 13 13 / 10%);
   }

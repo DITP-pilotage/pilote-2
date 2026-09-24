@@ -52,7 +52,7 @@ export class PublierFichierIndicateurImporteUseCase {
 
     const listeIndicateursData = listeMesuresIndicateurTemporaire.map(
       (mesureIndicateurTemporaire) =>
-        // En arrivant ici on a déjà vérifié les valeurs par validata, on est donc sur que les valeurs sont présentes d'où le as string
+        // Les valeurs ont déjà été validées à l'étape de vérification : elles sont présentes, d'où le as string.
         // TODO: Pour plus de clarté on pourrait créer un nouveau type MesureIndicateurTemporaireVerifie avec des valeurs figés à string
         IndicateurData.createIndicateurData({
           rapportId: mesureIndicateurTemporaire.rapportId,

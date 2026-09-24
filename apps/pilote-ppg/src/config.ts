@@ -124,11 +124,6 @@ const config = convict({
       default: "ToBeDefined",
       env: "IMPORT_CLIENT_SECRET",
     },
-    urlValidata: {
-      format: String,
-      default: "https://api.validata.etalab.studio/validate",
-      env: "URL_VALIDATA",
-    },
   },
   export: {
     csvChantiersChunkSize: {
@@ -392,12 +387,6 @@ const config = convict({
       doc: "Affiche le bouton ProConnect sur l'écran de connexion",
       env: "NEXT_PUBLIC_FF_PROCONNECT",
     },
-    proconnectDitpAdmin: {
-      format: Boolean,
-      default: false,
-      doc: "Réserve la connexion ProConnect aux comptes de profil DITP_ADMIN",
-      env: "NEXT_PUBLIC_FF_PROCONNECT_DITP_ADMIN",
-    },
   },
   analytics: {
     doc: "Matomo Analytics",
@@ -529,12 +518,6 @@ const config = convict({
     default: "2000-01-31",
     doc: "Date (mois-année) avant laquelle afficher encore les VA,VC,TA de l année dernière",
     env: "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
-  },
-  schemaValidataUrl: {
-    format: String,
-    default:
-      "https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/apps/pilote-ppg/public/schema/",
-    env: "NEXT_PUBLIC_SCHEMA_VALIDATA_URL",
   },
   askAITerritoireEmails: {
     format: String,

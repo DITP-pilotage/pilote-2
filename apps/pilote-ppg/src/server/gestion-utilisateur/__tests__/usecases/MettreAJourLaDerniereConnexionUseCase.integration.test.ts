@@ -43,6 +43,20 @@ describe("MettreAJourLaDerniereConnexionUseCase", () => {
   );
 
   it(
+    "n'interrompt pas la connexion quand aucun compte ne porte cet email",
+    createIntegrationTest(async () => {
+      // When / Then
+      await expect(
+        useCase.execute({
+          email: "inconnu@exemple.gouv.fr",
+          date: new Date("2026-09-08T12:00:00Z"),
+          provider: "proconnect",
+        }),
+      ).resolves.toBeUndefined();
+    }),
+  );
+
+  it(
     "écrase le provider précédent à la connexion suivante",
     createIntegrationTest(async () => {
       // Given

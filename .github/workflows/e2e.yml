@@ -39,13 +39,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -101,7 +101,7 @@ jobs:
 
       - name: Upload test results
         id: upload-results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report-${{ github.run_number }}
@@ -112,18 +112,17 @@ jobs:
 
       - name: Notify Tchap on failure
         if: failure()
-        uses: indiesdev/curl@v1.1
-        with:
-          url: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_E2E }}/send/m.room.message"
-          method: POST
-          accept: 200,201,204
-          headers: '{ "Authorization": "Bearer ${{ secrets.TCHAP_ACCESS_TOKEN }}" }'
-          body: |
-            {
-              "body": "❌ Tests E2E ÉCHEC",
-              "format": "org.matrix.custom.html",
-              "formatted_body": "<h2>❌ Tests E2E ÉCHEC</h2><h3>📊 Résultats des tests :</h3><ul><li><strong>Total :</strong> ${{ steps.test-results.outputs.total_tests }} tests</li><li><strong>✅ Réussis :</strong> ${{ steps.test-results.outputs.passed_tests }}</li><li><strong>❌ Échoués :</strong> ${{ steps.test-results.outputs.failed_tests }}</li><li><strong>⚠️ Instables :</strong> ${{ steps.test-results.outputs.flaky_tests }}</li><li><strong>⏭️ Ignorés :</strong> ${{ steps.test-results.outputs.skipped_tests }}</li><li><strong>⏱️ Durée :</strong> ${{ steps.test-results.outputs.duration }}ms</li></ul><h3>🔍 Tests échoués :</h3><p>${{ steps.test-results.outputs.failed_test_names }}</p><h3>🔗 Liens utiles :</h3><ul><li><strong>Commit :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}\">${{ github.sha }}</a></li><li><strong>Workflow :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Voir les logs</a></li><li><strong>Artefacts :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Télécharger les rapports</a></li><li><strong>Environnement :</strong> <a href=\"${{ env.BASE_URL }}\">${{ env.BASE_URL }}</a></li></ul><p><em>Branche : ${{ github.ref_name }} | Déclenché par : ${{ github.actor }}</em></p>",
-              "msgtype": "m.text"
-            }
-          timeout: 6000
-          retries: 3
+        env:
+          TCHAP_URL: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_E2E }}/send/m.room.message"
+          TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
+          BODY: "❌ Tests E2E ÉCHEC"
+          FORMATTED_BODY: >-
+            <h2>❌ Tests E2E ÉCHEC</h2><h3>📊 Résultats des tests :</h3><ul><li><strong>Total :</strong> ${{ steps.test-results.outputs.total_tests }} tests</li><li><strong>✅ Réussis :</strong> ${{ steps.test-results.outputs.passed_tests }}</li><li><strong>❌ Échoués :</strong> ${{ steps.test-results.outputs.failed_tests }}</li><li><strong>⚠️ Instables :</strong> ${{ steps.test-results.outputs.flaky_tests }}</li><li><strong>⏭️ Ignorés :</strong> ${{ steps.test-results.outputs.skipped_tests }}</li><li><strong>⏱️ Durée :</strong> ${{ steps.test-results.outputs.duration }}ms</li></ul><h3>🔍 Tests échoués :</h3><p>${{ steps.test-results.outputs.failed_test_names }}</p><h3>🔗 Liens utiles :</h3><ul><li><strong>Commit :</strong> <a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}">${{ github.sha }}</a></li><li><strong>Workflow :</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Voir les logs</a></li><li><strong>Artefacts :</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Télécharger les rapports</a></li><li><strong>Environnement :</strong> <a href="${{ env.BASE_URL }}">${{ env.BASE_URL }}</a></li></ul><p><em>Branche : ${{ github.ref_name }} | Déclenché par : ${{ github.actor }}</em></p>
+        run: |
+          jq -n --arg body "$BODY" --arg formatted "$FORMATTED_BODY" \
+            '{body: $body, format: "org.matrix.custom.html", formatted_body: $formatted, msgtype: "m.text"}' |
+            curl --fail-with-body --silent --show-error --max-time 6 --retry 3 --retry-all-errors \
+              -X POST "$TCHAP_URL" \
+              -H "Authorization: Bearer $TCHAP_ACCESS_TOKEN" \
+              -H "Content-Type: application/json" \
+              --data-binary @-

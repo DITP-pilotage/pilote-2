@@ -77,7 +77,7 @@ export async function proxy(request: NextRequest) {
   if (isDev) {
     response.headers.set(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/; font-src 'self'; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com https://sh1.sendinblue.com; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/ https://fichiers.numerique.gouv.fr/",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/; font-src 'self'; connect-src https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com https://sh1.sendinblue.com; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/ https://fichiers.numerique.gouv.fr/",
     );
   } else {
     response.headers.set(
@@ -87,7 +87,7 @@ export async function proxy(request: NextRequest) {
        style-src 'self' 'unsafe-inline';
        img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/;
        font-src 'self' data:;
-       connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self';
+       connect-src https://stats.beta.gouv.fr/ 'self';
        frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com https://sh1.sendinblue.com;
        object-src 'none';
        base-uri 'self';
@@ -131,10 +131,10 @@ export async function proxy(request: NextRequest) {
       const email = utilisateurDuToken.success
         ? utilisateurDuToken.data.email
         : undefined;
-      const compteAuthentificationQuery =
-        getContainer("gestionUtilisateur").cradle.compteAuthentificationQuery;
+      const statutCompteQuery =
+        getContainer("gestionUtilisateur").cradle.statutCompteQuery;
       const statut = email
-        ? (await compteAuthentificationQuery.recuperer({ email })).statut
+        ? await statutCompteQuery.recuperer({ email })
         : "inconnu";
 
       if (statut !== "actif") {
