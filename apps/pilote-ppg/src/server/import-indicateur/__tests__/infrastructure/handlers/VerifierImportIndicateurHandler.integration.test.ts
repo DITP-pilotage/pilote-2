@@ -1,56 +1,37 @@
-import nock from "nock";
-import { createMocks } from "node-mocks-http";
-import { anyString, mock } from "vitest-mock-extended";
-import PersistentFile from "formidable/PersistentFile";
-import { NextApiRequest, NextApiResponse } from "next";
 import { randomUUID } from "node:crypto";
-import { ReportErrorBuilder } from "@/server/import-indicateur/app/builder/ReportErrorBuilder";
-import { ReportValidataWithDataBuilder } from "@/server/import-indicateur/app/builder/ReportValidataWithDataBuilder";
+import { anyString } from "vitest-mock-extended";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
-import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/server/infrastructure/test/NextAuthHelper";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/server/infrastructure/test/NextAuthHelper";
+import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";
+import { requeteMultipart } from "@/server/import-indicateur/__tests__/infrastructure/handlers/requeteImport.builder";
 
-vi.mock("@/server/import-indicateur/infrastructure/handlers/ParseForm", () => ({
-  parseForm: () => ({
-    file: mock<PersistentFile>(),
-  }),
-}));
-vi.mock(
-  "@/server/import-indicateur/infrastructure/adapters/FichierService.ts",
-  () => ({
-    recupererFichier: () => "fichierRécupéré",
-    supprimerLeFichier: () => "fichierSupprimé",
-  }),
-);
+// node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
+type RapportDeValidation = {
+  id: string;
+  estValide: boolean;
+  listeErreursValidation: {
+    nom: string;
+    message: string;
+    nomDuChamp: string;
+  }[];
+};
 
-const DONNEE_DATE_1 = "2023-12-30";
-const DONNEE_DATE_2 = "31/12/2023";
+const EMAIL_ADMIN = "ditp.admin@example.com";
+const COLONNES = [
+  "identifiant_indic",
+  "zone_id",
+  "date_valeur",
+  "type_valeur",
+  "valeur",
+];
 
-// Il y a un pb si on set un env var différente pour ces tests => to fix
-const BASE_URL_VALIDATA = "https://api.validata.etalab.studio";
+const csv = (lignes: string[][]) => construireCsv([COLONNES, ...lignes]);
 
-// next-auth v5 lit les cookies depuis le header "cookie", pas depuis req.cookies
-async function createMocksAvecSessionToken(
-  sessionToken: string,
-  indicateurId: string,
-) {
-  return createMocks<NextApiRequest, NextApiResponse>({
-    method: "POST",
-    body: new FormData(),
-    cookies: {
-      "authjs.session-token": sessionToken,
-    },
-    headers: {
-      cookie: `authjs.session-token=${sessionToken}`,
-    },
-    query: { indicateurId },
-  });
-}
-
-async function creeUnUtilisateurEnBase() {
+async function creerAdminEtSeConnecter() {
   const auteurId = randomUUID();
   await prisma.utilisateur.create({
     data: {
@@ -59,395 +40,297 @@ async function creeUnUtilisateurEnBase() {
       nom: "John",
       prenom: "Doe",
       date_creation: new Date().toISOString(),
-      profil: {
-        connect: {
-          code: ProfilEnum.DITP_ADMIN,
-        },
-      },
+      profil: { connect: { code: ProfilEnum.DITP_ADMIN } },
     },
   });
-  return auteurId;
+
+  const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
+    .avecEmail(EMAIL_ADMIN)
+    .avecProfil(ProfilEnum.DITP_ADMIN)
+    .avecHabilitationsLecture([], [], [])
+    .build();
+  await getContainer("authentification")
+    .resolve("utilisateurRepository")
+    .créerOuMettreÀJour(utilisateur, auteurId);
+
+  return getNextAuthSessionTokenPourUtilisateurEmail(EMAIL_ADMIN);
 }
 
-describe("VerifierImportIndicateurHandler", () => {
-  describe("Quand le fichier envoyé est correct", () => {
-    it(
-      "doit retourner que le fichier est valide",
-      createIntegrationTest(async () => {
-        // Given
-        const auteurId = await creeUnUtilisateurEnBase();
-        const report = new ReportValidataWithDataBuilder()
-          .avecValid(true)
-          .avecResourceData(
-            [
-              "identifiant_indic",
-              "zone_id",
-              "date_valeur",
-              "type_valeur",
-              "valeur",
-            ],
-            ["IND-001", "D001", DONNEE_DATE_1, "vi", "9"],
-            ["IND-001", "D004", DONNEE_DATE_2, "vc", "3"],
-          )
-          .build();
-
-        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-          .avecEmail("ditp.admin@example.com")
-          .avecProfil(ProfilEnum.DITP_ADMIN)
-          .avecHabilitationsLecture([], [], [])
-          .build();
-        await getContainer("authentification")
-          .resolve("utilisateurRepository")
-          .créerOuMettreÀJour(utilisateur, auteurId);
-
-        nock(BASE_URL_VALIDATA)
-          .post("/validate")
-          .reply(
-            200,
-            JSON.stringify({ report, resource_data: report.resource_data }),
-          );
-
-        // When
-        const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
-          "ditp.admin@example.com",
-        );
-        const { req, res } = await createMocksAvecSessionToken(
-          sessionToken,
-          "IND-001",
-        );
-
-        await getContainer("importIndicateur")
-          .resolve("verifierFichierImportIndicateurHandler")
-          .handle(req, res);
-
-        // Then
-        expect(res._getStatusCode()).toEqual(200);
-        expect(res._getJSONData()).toStrictEqual({
-          id: anyString(),
-          estValide: true,
-          listeErreursValidation: [],
-        });
-      }),
-    );
-
-    it(
-      "doit sauvegarder les données du fichier",
-      createIntegrationTest(async () => {
-        // Given
-        const auteurId = await creeUnUtilisateurEnBase();
-        const report = new ReportValidataWithDataBuilder()
-          .avecValid(true)
-          .avecResourceData(
-            [
-              "identifiant_indic",
-              "zone_id",
-              "date_valeur",
-              "type_valeur",
-              "valeur",
-            ],
-            ["IND-001", "D001", DONNEE_DATE_1, "vi", "9"],
-            ["IND-001", "D004", DONNEE_DATE_2, "vc", "3"],
-          )
-          .build();
-        nock(BASE_URL_VALIDATA)
-          .post("/validate")
-          .reply(
-            200,
-            JSON.stringify({ report, resource_data: report.resource_data }),
-          );
-
-        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-          .avecEmail("ditp.admin@example.com")
-          .avecProfil(ProfilEnum.DITP_ADMIN)
-          .avecHabilitationsLecture([], [], [])
-          .build();
-        await getContainer("authentification")
-          .resolve("utilisateurRepository")
-          .créerOuMettreÀJour(utilisateur, auteurId);
-
-        const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
-          "ditp.admin@example.com",
-        );
-        const { req, res } = await createMocksAvecSessionToken(
-          sessionToken,
-          "IND-001",
-        );
-
-        // When
-        await getContainer("importIndicateur")
-          .resolve("verifierFichierImportIndicateurHandler")
-          .handle(req, res);
-
-        // Then
-        const listeDonneesFichier =
-          await prisma.mesure_indicateur_temporaire.findMany({
-            orderBy: { indic_id: "asc" },
-          });
-        expect(listeDonneesFichier).toHaveLength(2);
-        expect(listeDonneesFichier[0].indic_id).toEqual("IND-001");
-        expect(listeDonneesFichier[0].zone_id).toEqual("D001");
-        expect(listeDonneesFichier[0].metric_date).toEqual(DONNEE_DATE_1);
-        expect(listeDonneesFichier[0].metric_type).toEqual("vi");
-        expect(listeDonneesFichier[0].metric_value).toEqual("9");
-
-        expect(listeDonneesFichier[1].indic_id).toEqual("IND-001");
-        expect(listeDonneesFichier[1].zone_id).toEqual("D004");
-        expect(listeDonneesFichier[1].metric_date).toEqual("2023-12-31");
-        expect(listeDonneesFichier[1].metric_type).toEqual("vc");
-        expect(listeDonneesFichier[1].metric_value).toEqual("3");
-      }),
-    );
-
-    it(
-      "doit sauvegarder le rapport pour lié à l'utilisateur",
-      createIntegrationTest(async () => {
-        // Given
-        const auteurId = await creeUnUtilisateurEnBase();
-        const report = new ReportValidataWithDataBuilder()
-          .avecValid(true)
-          .avecResourceData(
-            [
-              "identifiant_indic",
-              "zone_id",
-              "date_valeur",
-              "type_valeur",
-              "valeur",
-            ],
-            ["IND-001", "D001", DONNEE_DATE_1, "vi", "9"],
-            ["IND-001", "D004", DONNEE_DATE_2, "vc", "3"],
-          )
-          .build();
-        nock(BASE_URL_VALIDATA)
-          .post("/validate")
-          .reply(
-            200,
-            JSON.stringify({ report, resource_data: report.resource_data }),
-          );
-
-        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-          .avecEmail("ditp.admin@example.com")
-          .avecProfil(ProfilEnum.DITP_ADMIN)
-          .avecHabilitationsLecture([], [], [])
-          .build();
-        await getContainer("authentification")
-          .resolve("utilisateurRepository")
-          .créerOuMettreÀJour(utilisateur, auteurId);
-
-        const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
-          "ditp.admin@example.com",
-        );
-        const { req, res } = await createMocksAvecSessionToken(
-          sessionToken,
-          "IND-001",
-        );
-
-        // When
-        await getContainer("importIndicateur")
-          .resolve("verifierFichierImportIndicateurHandler")
-          .handle(req, res);
-
-        // Then
-        const listeRapport =
-          await prisma.rapport_import_mesure_indicateur.findMany();
-        expect(listeRapport).toHaveLength(1);
-
-        expect(listeRapport[0].utilisateurEmail).toEqual(
-          "ditp.admin@example.com",
-        );
-      }),
-    );
+async function verifier({
+  sessionToken,
+  indicateurId,
+  contenu,
+  nomDuFichier = "import.csv",
+}: {
+  sessionToken: string;
+  indicateurId: string;
+  contenu: Buffer;
+  nomDuFichier?: string;
+}) {
+  const { request, response } = requeteMultipart({
+    contenu,
+    nomDuFichier,
+    indicateurId,
+    sessionToken,
   });
 
+  await getContainer("importIndicateur")
+    .resolve("verifierFichierImportIndicateurHandler")
+    .handle(request, response);
+
+  return {
+    statut: response._getStatusCode(),
+    rapport: response._getJSONData() as RapportDeValidation,
+  };
+}
+
+const messagesDe = (rapport: RapportDeValidation) =>
+  rapport.listeErreursValidation.map((erreur) => erreur.message);
+
+describe("VerifierImportIndicateurHandler", () => {
   it(
-    "Quand le fichier envoyé est incorrect, doit retourner les erreurs du fichier",
+    "valide un fichier CSV conforme et persiste ses mesures temporaires",
     createIntegrationTest(async () => {
-      // Given
-      const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-          new ReportErrorBuilder()
-            .avecCell("cellule 2")
-            .avecName("nom 2")
-            .avecFieldName("nom du champ 2")
-            .avecFieldPosition(2)
-            .avecMessage("message 2")
-            .avecRowNumber(2)
-            .avecRowPosition(2)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D001", "30/12/2023", "vi", "9"],
-          ["IND-001", "D004", "31/12/2023", "vc", "3"],
-        )
-        .build();
+      const sessionToken = await creerAdminEtSeConnecter();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-        .avecEmail("ditp.admin@example.com")
-        .avecProfil(ProfilEnum.DITP_ADMIN)
-        .avecHabilitationsLecture([], [], [])
-        .build();
-      await getContainer("authentification")
-        .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur, auteurId);
-
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
-
-      // When
-      const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
-        "ditp.admin@example.com",
-      );
-      const { req, res } = await createMocksAvecSessionToken(
+      const { statut, rapport } = await verifier({
         sessionToken,
-        "IND-001",
-      );
+        indicateurId: "IND-001",
+        contenu: csv([
+          ["IND-001", "D46", "2023-12-30", "vi", "9"],
+          ["IND-001", "D04", "2023-12-31", "vc", "3"],
+        ]),
+      });
 
-      await getContainer("importIndicateur")
-        .resolve("verifierFichierImportIndicateurHandler")
-        .handle(req, res);
-
-      // Then
-      expect(res._getStatusCode()).toEqual(200);
-      expect(res._getJSONData()).toStrictEqual({
+      expect(statut).toEqual(200);
+      expect(rapport).toStrictEqual({
         id: anyString(),
-        estValide: false,
-        listeErreursValidation: [
-          {
-            cellule: "cellule 1",
-            nom: "nom 1",
-            message: "message 1",
-            numeroDeLigne: 1,
-            positionDeLigne: 0,
-            nomDuChamp: "nom du champ 1",
-            positionDuChamp: 1,
-          },
-          {
-            cellule: "cellule 2",
-            nom: "nom 2",
-            message: "message 2",
-            numeroDeLigne: 2,
-            positionDeLigne: 1,
-            nomDuChamp: "nom du champ 2",
-            positionDuChamp: 2,
-          },
-        ],
+        estValide: true,
+        listeErreursValidation: [],
+      });
+      expect(
+        await prisma.mesure_indicateur_temporaire.count({
+          where: { rapport_id: rapport.id },
+        }),
+      ).toEqual(2);
+    }),
+  );
+
+  it(
+    "refuse un identifiant au mauvais format, avec un message en français",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-XXX",
+        contenu: csv([["IND-XXX", "D46", "2023-12-30", "vi", "9"]]),
+      });
+
+      expect(rapport.estValide).toBe(false);
+      expect(messagesDe(rapport)).toContain(
+        "'IND-XXX' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.",
+      );
+    }),
+  );
+
+  it(
+    "signale l'absence de l'en-tête identifiant_indic",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: construireCsv([
+          ["zone_id", "date_valeur", "type_valeur", "valeur"],
+          ["D46", "2023-12-30", "vi", "9"],
+        ]),
+      });
+
+      expect(rapport.estValide).toBe(false);
+      expect(messagesDe(rapport)).toContain(
+        "L'en-tête identifiant_indic n'est pas présent",
+      );
+    }),
+  );
+
+  it(
+    "lit un CSV séparé par des virgules comme un CSV séparé par des points-virgules",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: construireCsv(
+          [COLONNES, ["IND-001", "D46", "2023-12-30", "vi", "9"]],
+          { delimiteur: "," },
+        ),
+      });
+
+      expect(rapport).toStrictEqual({
+        id: anyString(),
+        estValide: true,
+        listeErreursValidation: [],
       });
     }),
   );
 
   it(
-    "Quand le fichier envoyé est incorrect, doit sauvegarder les erreurs du fichier",
+    "refuse un format de fichier non pris en charge avec un message explicite",
     createIntegrationTest(async () => {
-      // Given
-      const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-          new ReportErrorBuilder()
-            .avecCell("cellule 2")
-            .avecName("nom 2")
-            .avecFieldName("nom du champ 2")
-            .avecFieldPosition(2)
-            .avecMessage("message 2")
-            .avecRowNumber(2)
-            .avecRowPosition(2)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D001", "30/12/2023", "vi", "9"],
-          ["IND-001", "D004", "31/12/2023", "vc", "3"],
-        )
-        .build();
+      const sessionToken = await creerAdminEtSeConnecter();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
-        .avecEmail("ditp.admin@example.com")
-        .avecProfil(ProfilEnum.DITP_ADMIN)
-        .avecHabilitationsLecture([], [], [])
-        .build();
-      await getContainer("authentification")
-        .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur, auteurId);
-
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
-
-      // When
-      const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
-        "ditp.admin@example.com",
-      );
-      const { req, res } = await createMocksAvecSessionToken(
+      const { rapport } = await verifier({
         sessionToken,
-        "IND-001",
-      );
+        indicateurId: "IND-001",
+        nomDuFichier: "import.ods",
+        contenu: Buffer.from("peu importe"),
+      });
 
-      await getContainer("importIndicateur")
-        .resolve("verifierFichierImportIndicateurHandler")
-        .handle(req, res);
-
-      // Then
-      expect(res._getStatusCode()).toEqual(200);
-      const listeErreursValidationFichier =
-        await prisma.erreur_validation_fichier.findMany();
-      expect(listeErreursValidationFichier[0].cellule).toEqual("cellule 1");
-      expect(listeErreursValidationFichier[0].nom).toEqual("nom 1");
-      expect(listeErreursValidationFichier[0].message).toEqual("message 1");
-      expect(listeErreursValidationFichier[0].numero_de_ligne).toEqual(1);
-      expect(listeErreursValidationFichier[0].position_de_ligne).toEqual(0);
-      expect(listeErreursValidationFichier[0].nom_du_champ).toEqual(
-        "nom du champ 1",
+      expect(rapport.estValide).toBe(false);
+      expect(messagesDe(rapport)).toContain(
+        "Le format « .ods » n'est pas pris en charge. Importez un fichier .csv ou .xlsx.",
       );
-      expect(listeErreursValidationFichier[0].position_du_champ).toEqual(1);
+    }),
+  );
 
-      expect(listeErreursValidationFichier[1].cellule).toEqual("cellule 2");
-      expect(listeErreursValidationFichier[1].nom).toEqual("nom 2");
-      expect(listeErreursValidationFichier[1].message).toEqual("message 2");
-      expect(listeErreursValidationFichier[1].numero_de_ligne).toEqual(2);
-      expect(listeErreursValidationFichier[1].position_de_ligne).toEqual(1);
-      expect(listeErreursValidationFichier[1].nom_du_champ).toEqual(
-        "nom du champ 2",
+  it(
+    "signale une date illisible sans effacer le reste du rapport",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-001", "D46", "pas-une-date", "vi", "9"]]),
+      });
+
+      expect(rapport.estValide).toBe(false);
+      // `new Date("pas-une-date").toISOString()` leve : sans garde, l'exception
+      // remontait au catch du use case et remplacait tout le rapport par
+      // "Une erreur est survenue lors de la validation du contenu du fichier".
+      expect(messagesDe(rapport)).not.toContain(
+        "Une erreur est survenue lors de la validation du contenu du fichier",
       );
-      expect(listeErreursValidationFichier[1].position_du_champ).toEqual(2);
+      expect(messagesDe(rapport).join(" ")).toContain("pas-une-date");
+    }),
+  );
+
+  it(
+    "ne signale qu'une fois une cellule fautive",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-001", "D46", "pas-une-date", "vi", "9"]]),
+      });
+
+      // Le format et l'existence de la date sont deux contrôles distincts : le
+      // second n'a rien à ajouter sur une cellule que le premier a rejetée.
+      expect(
+        rapport.listeErreursValidation.map((erreur) => erreur.nomDuChamp),
+      ).toEqual(["date_valeur"]);
+    }),
+  );
+
+  it(
+    "vérifie toujours qu'une date bien formée existe vraiment",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      // 2023-02-30 respecte le motif du schéma mais n'existe pas.
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-001", "D46", "2023-02-30", "vi", "9"]]),
+      });
+
+      expect(rapport.estValide).toBe(false);
+      expect(messagesDe(rapport)).toContain(
+        "La date '2023-02-30' n'est pas une date valide (ligne 2).",
+      );
+    }),
+  );
+
+  it(
+    "n'ajoute pas d'erreur d'indicateur sur un identifiant déjà rejeté",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([["IND-XXX", "D46", "2026-01-31", "vi", "9"]]),
+      });
+
+      expect(
+        rapport.listeErreursValidation.map((erreur) => erreur.nomDuChamp),
+      ).toEqual(["identifiant_indic"]);
+    }),
+  );
+
+  it(
+    "ne reproche rien d'autre à une ligne entièrement vide",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([
+          ["IND-001", "D46", "2026-01-31", "vi", "9"],
+          ["", "", "", "", ""],
+        ]),
+      });
+
+      // Une ligne vide est signalée comme vide et comme clé en double. Lui
+      // reprocher en plus son identifiant n'apprendrait rien.
+      expect(
+        rapport.listeErreursValidation.map((erreur) => erreur.nom),
+      ).toEqual(["Ligne vide", "Ligne en double"]);
+    }),
+  );
+
+  it(
+    "n'affiche que des libellés français dans le rapport",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: csv([
+          ["IND-001", "ZZZ", "2026-01-31", "zz", "abc"],
+          ["", "", "", "", ""],
+        ]),
+      });
+
+      for (const erreur of rapport.listeErreursValidation) {
+        expect(erreur.nom).not.toMatch(/^[a-z-]+$/);
+      }
+    }),
+  );
+
+  it(
+    "explique qu'un fichier vide est vide, au lieu de casser",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      // formidable refuse les fichiers vides par défaut, en levant depuis
+      // parseForm : la route renvoyait un 500 et l'écran restait muet.
+      const { statut, rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        contenu: Buffer.from(""),
+      });
+
+      expect(statut).toEqual(200);
+      expect(rapport.estValide).toBe(false);
+      expect(messagesDe(rapport)).toEqual(["Le fichier est vide."]);
     }),
   );
 });
