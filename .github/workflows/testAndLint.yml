@@ -12,7 +12,7 @@ env:
 jobs:
   changes:
     name: Detect changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       pilote-ppg: ${{ steps.filter.outputs.pilote-ppg }}
       pilote-ppg-data-management: ${{ steps.filter.outputs.pilote-ppg-data-management }}
@@ -22,8 +22,8 @@ jobs:
       kpilote-ui: ${{ steps.filter.outputs.kpilote-ui }}
       kpilote-admin: ${{ steps.filter.outputs.kpilote-admin }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -58,14 +58,14 @@ jobs:
     name: "pilote-ppg: unit tests"
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       # `prisma generate` n'ouvre aucune connexion, mais prisma.config.ts resout
       # DATABASE_URL au chargement et leve si elle manque. Meme URL factice que le
       # job de lint.
       DATABASE_URL: postgresql://inutilise:inutilise@127.0.0.1:1/inutilise
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -82,7 +82,7 @@ jobs:
     name: "pilote-ppg: integration tests"
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     services:
       postgres:
         image: postgres:16.6-alpine
@@ -98,7 +98,7 @@ jobs:
         ports:
           - 7433:5432
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -115,7 +115,7 @@ jobs:
     name: "pilote-ppg: lint"
     needs: changes
     if: needs.changes.outputs['pilote-ppg'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       # Depuis Prisma 7, prisma.config.ts resout DATABASE_URL au chargement et leve si
       # elle manque, ce qui casse meme `prisma generate`. Or ce lint ne se connecte a
@@ -124,7 +124,7 @@ jobs:
       # lint fait `prisma generate --sql`, qui introspecte les tables reelles.)
       DATABASE_URL: postgresql://inutilise:inutilise@127.0.0.1:1/inutilise
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -138,7 +138,7 @@ jobs:
     name: "kpilote-api: tests"
     needs: changes
     if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres?connection_limit=50
     services:
@@ -156,7 +156,7 @@ jobs:
         ports:
           - 5435:5432
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -187,7 +187,7 @@ jobs:
     name: "kpilote-api: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       # `prisma generate --sql` introspects tables to type TypedSQL queries — a real DB is required
       DATABASE_URL: postgresql://postgres:postgres@localhost:5436/postgres
@@ -206,7 +206,7 @@ jobs:
         ports:
           - 5436:5432
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -228,9 +228,9 @@ jobs:
     name: "kpilote-webapp: tests"
     needs: changes
     if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -249,9 +249,9 @@ jobs:
     name: "kpilote-webapp: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -267,9 +267,9 @@ jobs:
     name: "kpilote-shared: tests"
     needs: changes
     if: needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -285,9 +285,9 @@ jobs:
     name: "kpilote-shared: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -303,9 +303,9 @@ jobs:
     name: "kpilote-ui: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-ui'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -321,9 +321,9 @@ jobs:
     name: "kpilote-admin: lint"
     needs: changes
     if: needs.changes.outputs['kpilote-admin'] == 'true' || needs.changes.outputs['kpilote-ui'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node and packages
         uses: ./.github/actions/setupNodeAndPackages
@@ -339,10 +339,10 @@ jobs:
     name: "pilote-ppg-data-management: SQL lint"
     needs: changes
     if: needs.changes.outputs['pilote-ppg-data-management'] == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Install SQLFluff

@@ -24,7 +24,7 @@ on:
 jobs:
   test-store:
     name: "Test store ${{ matrix.environnement }} / ${{ matrix.application }}"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: ${{ matrix.environnement }}
     strategy:
       fail-fast: false
@@ -33,7 +33,7 @@ jobs:
         application: [webapp, auth]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Résoudre la cible (domaine, routes de challenge)
         id: cible
