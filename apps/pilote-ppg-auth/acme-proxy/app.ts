@@ -10,6 +10,29 @@ const challengeBodySchema = z.object({
   keyAuthorization: z.string().min(1),
 });
 
+/**
+ * En-têtes hop-by-hop (RFC 9110 §7.6.1) : propres à la connexion client, ils ne se
+ * relaient pas. Recopier `transfer-encoding: chunked` faisait refuser la requête par
+ * fetch, d'où un 502 sur tout corps streamé.
+ */
+const HOP_BY_HOP_HEADERS = new Set([
+  "connection",
+  "keep-alive",
+  "proxy-authenticate",
+  "proxy-authorization",
+  "te",
+  "trailer",
+  "transfer-encoding",
+  "upgrade",
+]);
+
+const withoutHopByHopHeaders = (headers: Record<string, string>) =>
+  Object.fromEntries(
+    Object.entries(headers).filter(
+      ([name]) => !HOP_BY_HOP_HEADERS.has(name.toLowerCase()),
+    ),
+  );
+
 export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
   const app = new Hono();
 
@@ -48,7 +71,7 @@ export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
       return await proxy(target, {
         raw: c.req.raw,
         headers: {
-          ...c.req.header(),
+          ...withoutHopByHopHeaders(c.req.header()),
           "x-forwarded-host":
             c.req.header("x-forwarded-host") ?? c.req.header("host") ?? "",
         },
