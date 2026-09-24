@@ -1,4 +1,7 @@
 import { useId } from "react";
+import Link from "next/link";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { Badge } from "@/components/_commons/Badge";
 import { clsxm } from "@/utils/clsxm";
 import { GRILLE_INDICATEUR, LigneIndicateur } from "./LigneIndicateur";
@@ -28,12 +31,13 @@ export const CarteChantier = ({
         <Badge type="rouge">
           {nombre} indicateur{nombre > 1 ? "s" : ""} non à jour
         </Badge>
-        <a
-          className="fr-link fr-text--sm"
+        <Link
+          className="inline-flex items-center gap-1 !bg-none text-sm font-medium text-primary hover:underline"
           href={`/chantier/${chantierId}/NAT-FR`}
         >
           Voir le chantier
-        </a>
+          <Icone className="h-4 w-4 !text-current" icone={ArrowLine1Icon} />
+        </Link>
       </div>
       <div
         aria-hidden

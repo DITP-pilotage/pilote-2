@@ -1,4 +1,8 @@
+import Link from "next/link";
 import { Progress } from "@/components/shared/Progress";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { clsxm } from "@/utils/clsxm";
 import { BadgeRetard } from "./BadgeRetard";
@@ -30,12 +34,13 @@ export const LigneIndicateur = ({
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <a
-              className="fr-link font-medium"
+            <Link
+              className="line-clamp-2 !bg-none font-medium leading-snug !text-current hover:!text-primary hover:underline"
               href={`/chantier/${indicateur.chantierId}/indicateurs`}
+              title={indicateur.nom}
             >
               {indicateur.nom}
-            </a>
+            </Link>
             <span className="text-xs text-dsfr-mention-grey">
               {indicateur.indicateurId}
               {indicateur.periodicite ? ` · ${indicateur.periodicite}` : ""}
@@ -86,18 +91,15 @@ export const LigneIndicateur = ({
         <button
           aria-expanded={estDeplie}
           aria-label={`Afficher le détail par territoire de ${indicateur.nom}`}
-          className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm justify-center max-md:w-full"
+          className="flex h-9 items-center justify-center gap-1 rounded-lg text-sm font-medium text-primary hover:bg-dsfr-blue-france-925 max-md:w-full md:w-9"
           onClick={() => ligne.getToggleExpandedHandler()()}
           type="button"
         >
-          <span
-            aria-hidden
-            className={clsxm(
-              "fr-icon-arrow-down-s-line transition-transform",
-              estDeplie && "rotate-180",
-            )}
+          <Icone
+            className="h-5 w-5 !text-current"
+            icone={estDeplie ? ArrowSLineIcon : ArrowSLine2Icon}
           />
-          <span className="fr-ml-1w md:hidden">
+          <span className="md:hidden">
             {estDeplie ? "Masquer le détail" : "Voir le détail"}
           </span>
         </button>

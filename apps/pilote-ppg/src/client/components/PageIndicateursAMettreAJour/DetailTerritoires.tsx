@@ -89,7 +89,7 @@ export const DetailTerritoires = ({
           </span>
           {indicateur.responsablesDonneesMails.map((email) => (
             <a
-              className="fr-link fr-text--sm break-all"
+              className="break-all !bg-none text-sm text-primary hover:underline"
               href={`mailto:${email}`}
               key={email}
             >

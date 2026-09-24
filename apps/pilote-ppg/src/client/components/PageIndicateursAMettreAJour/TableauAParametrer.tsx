@@ -49,7 +49,7 @@ export const TableauAParametrer = ({
             {indicateur.nbTerritoires > 1 ? "s" : ""}
           </span>
           <a
-            className="fr-link fr-text--sm md:justify-self-end"
+            className="!bg-none text-sm font-medium text-primary hover:underline md:justify-self-end"
             href={`/chantier/${indicateur.chantierId}/indicateurs`}
           >
             Compléter les valeurs
