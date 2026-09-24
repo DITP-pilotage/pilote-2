@@ -793,6 +793,32 @@ Même motif pour `@types/node`, dont le plafond `^24.13.3` n'a jamais été rest
 **Une campagne dont les verdicts ne sont pas suivis d'effet reproduit les mêmes majors
 tous les quinze jours.**
 
+### Overrides ajoutés le 2026-09-24 — `evalite`
+
+`evalite@1.0.0-beta.16` (devDependency de ppg, #2443) épingle `@fastify/static ^8.2.0` et
+`file-type ^19.6.0`, et c'est son seul consommateur de ces deux paquets. Dependabot a ouvert
+5 alertes dans l'heure :
+
+| Override | Advisories fermées | Condition de sortie |
+|---|---|---|
+| `evalite>@fastify/static: >=10.1.2 <11` | GHSA-83w8-p2f5-377r (**high**, `<=10.1.0`), GHSA-8pvw-jcv7-9cmj (`<=10.1.1`), GHSA-pr96-94w5-mx2h et GHSA-x428-ghpx-8j92 (`>=8 <=9.1.0`) | `evalite` déclare `@fastify/static >=10.1.2` |
+| `evalite>file-type: >=21.3.1 <22` | GHSA-5v7r-6r5c-r473 (`>=13 <21.3.1`) | `evalite` déclare `file-type >=21.3.1` |
+
+- **Ciblés sur le parent**, pas globaux : rien d'autre dans l'arbre ne tire ces paquets, et un
+  override global ferait monter en major le premier nouveau consommateur sans qu'il le voie.
+- **Deux majors forcés** (8 → 10, 19 → 21). Vérifié contre le code d'`evalite` : il n'utilise
+  que `register(fastifyStatic, { root })` + `reply.sendFile` (la rupture v10 porte sur
+  `setHeaders`, qu'il n'utilise pas) et `fileTypeFromBuffer` (inchangé en v21). Smoke test sur
+  `createServer` : UI et `/api/server-state` servis, `/../package.json` et
+  `/%2e%2e/package.json` retombent sur `index.html`, un PNG est détecté.
+- **Exposition réelle faible** : serveur local lancé par `pnpm eval:dev`, jamais déployé. Les
+  overrides servent à garder l'audit lisible, pas à fermer un risque de production.
+- Résolution : `@fastify/static` **10.1.3** (10.1.4, du 2026-09-17, est retenue par la
+  quarantaine) et `file-type` **21.3.4**. `pnpm audit` : 9 → 4, soit le socle connu
+  `xlsx` + `mysql2`.
+- `evalite` 1.0.0-beta.16 date du 2026-02-20 et `latest` est toujours `0.19.0` : la condition de
+  sortie peut attendre longtemps. À re-tester à chaque campagne comme les autres.
+
 ### Règles pour ajouter un override
 
 1. **Documenter la raison ici** (CVE, bug upstream, conflit de résolution), avec un lien vers l'issue/CVE.
