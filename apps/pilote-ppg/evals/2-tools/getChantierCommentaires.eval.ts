@@ -4,21 +4,30 @@ import { toolSelectionEval } from "./toolSelectionEval";
 /**
  * Niveau 2 — `get_chantier_commentaires`.
  *
- * Pas de fixtures de cas : `CH-001`, `CH-004` et `CH-007` portent un
- * commentaire posé par le monde de base.
+ * L'agent appelle l'outil quand l'utilisateur demande les commentaires d'un
+ * chantier. Ils sont de plusieurs types (freins, actions à venir, réussites,
+ * décisions stratégiques, commentaires sur les données…) : quand la question
+ * en vise un, l'appel doit filtrer sur ce type.
  *
- * Le cas négatif nomme un territoire : sans lui, l'agent demande une précision
- * — légitimement, `get_indicateurs` en a besoin — et le cas mesure alors la
- * clarification au lieu de la discrimination entre commentaires et
- * indicateurs. Premier jet à 67 % pour cette raison.
+ * Les négatifs portent sur ce qui ressemble à un commentaire sans en être un
+ * côté produit : les objectifs (« ce qu'il reste à faire », « ce qui a déjà
+ * été fait »), exposés par `get_chantier_objectifs`. Ils forment des paires
+ * avec « actions prévues » et « réussites à valoriser », qui sont bien des
+ * commentaires.
  *
- * Référence observée le 2026-09-10 : 100 % isolement, 89 % dans un run enchaine — un essai ou l agent demande une precision au lieu d appeler l outil. Variabilite du modele, pas une regression.
+ * Les décisions stratégiques ont leur propre section sur la page chantier,
+ * mais Albert les expose comme un type de commentaire : la question ne dit
+ * jamais « commentaire ». Leur restriction aux profils nationaux relève des
+ * habilitations, pas de ce niveau.
+ *
+ * Les questions précisent le territoire, que l'outil exige. Les objectifs ne
+ * sont pas territorialisés : les négatifs s'en passent.
  */
 
 const CASES: ToolCase[] = [
   {
-    question: "Quels sont les commentaires les plus récents sur le CH-004 ?",
-    reason: "accès aux commentaires par identifiant",
+    question: "Quels sont les commentaires sur le CH-004 au national ?",
+    reason: "demande générique : tous les types, sans filtre",
     expected: [
       {
         toolName: "get_chantier_commentaires",
@@ -27,23 +36,77 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question:
-      "Quelles difficultés sont remontées dans les commentaires du CH-001 ?",
-    reason: "formulation métier : « difficultés remontées » = commentaires",
+    question: "Quels sont les freins à lever sur le CH-004 au national ?",
+    reason: "type freins_a_lever",
     expected: [
       {
         toolName: "get_chantier_commentaires",
-        input: { chantier_id: "CH-001" },
+        input: { chantier_id: "CH-004", types: ["freins_a_lever"] },
       },
     ],
   },
   {
-    question:
-      "Donne-moi les indicateurs du chantier CH-001 pour la France entière",
-    reason: "CAS NÉGATIF : les indicateurs relèvent de get_indicateurs",
+    question: "Quelles actions sont prévues sur le CH-004 au national ?",
+    reason: "type actions_a_venir, à ne pas confondre avec l'objectif a_faire",
     expected: [
-      { toolName: "get_indicateurs", input: { chantier_id: "CH-001" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-004", types: ["actions_a_venir"] },
+      },
     ],
+    forbidden: ["get_chantier_objectifs"],
+  },
+  {
+    question: "Quelles réussites sont à valoriser sur le CH-004 au national ?",
+    reason:
+      "type actions_a_valoriser, à ne pas confondre avec l'objectif deja_fait",
+    expected: [
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-004", types: ["actions_a_valoriser"] },
+      },
+    ],
+    forbidden: ["get_chantier_objectifs"],
+  },
+  {
+    question:
+      "Comment la Bretagne explique-t-elle ses résultats sur le CH-005 ?",
+    reason: "type territorial commentaires_sur_les_donnees",
+    expected: [
+      {
+        toolName: "get_chantier_commentaires",
+        input: {
+          chantier_id: "CH-005",
+          types: ["commentaires_sur_les_donnees"],
+        },
+      },
+    ],
+  },
+  {
+    question: "Qu'a-t-on décidé en réunion Élysée-Matignon sur le CH-004 ?",
+    reason: "type decision_strategique, sans le mot « commentaire »",
+    expected: [
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-004", types: ["decision_strategique"] },
+      },
+    ],
+  },
+  {
+    question: "Qu'est-ce qu'il reste à faire sur le CH-004 ?",
+    reason: "CAS NÉGATIF : objectif a_faire, pas un commentaire",
+    expected: [
+      { toolName: "get_chantier_objectifs", input: { chantier_id: "CH-004" } },
+    ],
+    forbidden: ["get_chantier_commentaires"],
+  },
+  {
+    question: "Qu'est-ce qui a déjà été fait sur le CH-004 ?",
+    reason: "CAS NÉGATIF : objectif deja_fait, pas un commentaire",
+    expected: [
+      { toolName: "get_chantier_objectifs", input: { chantier_id: "CH-004" } },
+    ],
+    forbidden: ["get_chantier_commentaires"],
   },
 ];
 

@@ -111,4 +111,42 @@ describe("scoreExpectedTools", () => {
 
     expect(result.score).toBe(1);
   });
+
+  it("accepte un argument tableau qui contient au moins les valeurs attendues", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["freins_a_lever", "actions_a_venir"] },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["freins_a_lever"] },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(1);
+  });
+
+  it("note 0 quand une valeur attendue manque dans un argument tableau", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["actions_a_venir"] },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["freins_a_lever"] },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(0);
+  });
 });

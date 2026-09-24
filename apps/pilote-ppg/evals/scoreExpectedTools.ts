@@ -11,9 +11,9 @@ import type { AgentTurn, ObservedToolCall } from "./types";
  * `include_sous_territoires` — elle plafonnerait à 0,5 à vie, ce qui se lirait
  * comme une régression alors que c'est l'attente qui est mal écrite.
  *
- * Ici, un appel correspond s'il porte AU MOINS les arguments attendus. Chaque
- * argument attendu est comparé par valeur : `chantier_ids: ["CH-018"]` doit
- * valoir exactement ce tableau.
+ * Ici, un appel correspond s'il porte AU MOINS les arguments attendus, comparés
+ * par valeur. Un argument tableau doit contenir AU MOINS les valeurs attendues :
+ * `types: ["freins_a_lever"]` accepte un appel qui demande aussi d'autres types.
  *
  * La sélection en sous-ensemble tolère les appels en trop : sans `forbidden`,
  * un cas négatif passerait même si l'agent appelle aussi l'outil qu'il ne
@@ -78,8 +78,18 @@ function matches(call: ObservedToolCall, expectedCall: ObservedToolCall) {
   const actualInput = (call.input ?? {}) as Record<string, unknown>;
 
   return Object.entries(expectedCall.input as Record<string, unknown>).every(
-    ([key, value]) => isDeepStrictEqual(actualInput[key], value),
+    ([key, value]) => matchesValue(actualInput[key], value),
   );
+}
+
+function matchesValue(actual: unknown, expected: unknown) {
+  if (Array.isArray(expected) && Array.isArray(actual)) {
+    return expected.every((expectedItem) =>
+      actual.some((actualItem) => isDeepStrictEqual(actualItem, expectedItem)),
+    );
+  }
+
+  return isDeepStrictEqual(actual, expected);
 }
 
 function describe(call: ObservedToolCall) {
