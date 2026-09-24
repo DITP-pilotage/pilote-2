@@ -4,7 +4,7 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
     sequence: { concurrent: true },
-    pool: 'threads',
+    pool: 'forks',
     maxWorkers: 10,
     testTimeout: 30_000,
     globalSetup: ['./src/test/globalSetup.ts'],
