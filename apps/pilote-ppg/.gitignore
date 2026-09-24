@@ -22,3 +22,8 @@
 .env
 .env.e2e
 .env.test
+.env.evals.local
+.devtools
+
+# Historique local des runs Evalite (plusieurs dizaines de Mo)
+evals/evalite.db*

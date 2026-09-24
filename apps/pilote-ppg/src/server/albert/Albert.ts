@@ -14,7 +14,7 @@ import { Prisma } from "@prisma/client";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { z } from "zod";
 import { configuration } from "@/config";
-import { prisma } from "@/server/db/prisma";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   if (!configuration().albert.devTools) {
@@ -23,12 +23,32 @@ export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   return wrapLanguageModel({ model, middleware: devToolsMiddleware() });
 }
 
+type ModelWrapper = (model: LanguageModelV4) => LanguageModelV4;
+
+/**
+ * Enveloppe appliquée à TOUS les modèles qu'Albert instancie, sous-agents
+ * compris. L'identité en production : seul un harnais externe l'enregistre —
+ * les evals y branchent le traçage d'Evalite, sans que ce fichier importe
+ * evalite.
+ */
+let modelWrapper: ModelWrapper = (model) => model;
+
+function createModel(modelId: string) {
+  return modelWrapper(
+    withOptionalDevTools(Albert.createProvider().chat(modelId)),
+  );
+}
+
 const DEFAULT_MODEL = "openweight-large";
 
 const TEMPERATURE_STREAM_TEXT = 0.2;
 const TEMPERATURE_STRUCTURED_OUTPUT = 0;
 
 export class Albert {
+  static registerModelWrapper(wrapper: ModelWrapper) {
+    modelWrapper = wrapper;
+  }
+
   static createProvider() {
     return createOpenAI({
       baseURL: "https://albert.api.etalab.gouv.fr/v1",
@@ -67,7 +87,10 @@ export class Albert {
     };
     const usage = évènement?.finalStep?.usage ?? évènement?.usage;
 
-    await prisma.llm_calls.create({
+    // `getPrisma()` et non le client global : sans ça, l'écriture sort de la
+    // transaction ambiante quand il y en a une. En production il n'y en a pas,
+    // le comportement est donc inchangé.
+    await getPrisma().llm_calls.create({
       data: {
         chat_id: chatId,
         model,
@@ -90,9 +113,8 @@ export class Albert {
     schema: T;
     abortSignal?: AbortSignal;
   }): Promise<z.infer<T>> {
-    const albertProvider = this.createProvider();
     const result = await generateText({
-      model: withOptionalDevTools(albertProvider.chat(DEFAULT_MODEL)),
+      model: createModel(DEFAULT_MODEL),
       system: systemPrompt,
       prompt,
       stopWhen: stepCountIs(5),
@@ -104,6 +126,44 @@ export class Albert {
       abortSignal,
     });
     return result.output;
+  }
+
+  /**
+   * Pendant non streamé de `streamText` : mêmes modèle, température et
+   * `stopWhen`, même écriture dans `llm_calls`. Renvoie le résultat complet,
+   * `steps` compris — ce que le flux ne permet pas d'inspecter.
+   *
+   * `generateText` de `ai` n'expose pas de `onFinish`, la persistance se fait
+   * donc après l'attente. `finalStep.usage` porte la même sémantique que dans
+   * l'évènement de `streamText`.
+   */
+  static async generateText({
+    chatId,
+    prompt,
+    systemPrompt,
+    userId,
+    tools,
+    model = DEFAULT_MODEL,
+  }: {
+    chatId: string;
+    prompt: string;
+    systemPrompt: string;
+    userId: string;
+    tools?: ToolSet;
+    model?: string;
+  }) {
+    const result = await generateText({
+      model: createModel(model),
+      system: systemPrompt,
+      prompt,
+      tools,
+      stopWhen: stepCountIs(50),
+      temperature: TEMPERATURE_STREAM_TEXT,
+    });
+
+    await Albert.saveLlmCall({ chatId, userId, event: result, model });
+
+    return result;
   }
 
   static async streamText({
@@ -121,11 +181,10 @@ export class Albert {
     tools?: ToolSet;
     model?: string;
   }) {
-    const albertProvider = this.createProvider();
     const modelMessages = await convertToModelMessages(messages);
 
     return aiStreamText({
-      model: withOptionalDevTools(albertProvider.chat(model)),
+      model: createModel(model),
       system: systemPrompt,
       messages: modelMessages,
       tools,
