@@ -106,6 +106,16 @@ describe("detecterCapacities", () => {
     expect(result.dashboard).toBe(true);
   });
 
+  it("ne détecte pas de dashboard sur une demande de vue d'ensemble", () => {
+    // when
+    const result = detecterCapacities(
+      "Donne-moi une vue d'ensemble de la situation",
+    );
+
+    // then
+    expect(result.dashboard).toBe(false);
+  });
+
   it("détecte un export via 'exporte'", () => {
     // when
     const result = detecterCapacities("Exporte ce rapport en PDF");

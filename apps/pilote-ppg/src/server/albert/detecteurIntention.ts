@@ -22,7 +22,6 @@ const MOTS_CLES_DASHBOARD = [
   "widget",
   "cartographie",
   "carte",
-  "vue",
   "affiche",
   "montre",
   "visualise",
