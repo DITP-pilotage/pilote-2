@@ -7,10 +7,16 @@ packages:
 # https://pnpm.io/settings#minimumreleaseage
 minimumReleaseAge: 20160
 # https://pnpm.io/settings#minimumreleaseageexclude
+# Chaque entrée porte un marqueur `# expire: <AAAA-MM-JJ|jamais>` que
+# `pnpm deps:quarantaine` lit pour décider si l'exclusion est encore justifiée. Une
+# exclusion est un trou volontaire dans la mitigation supply-chain : sans échéance
+# lisible par une machine, personne ne le referme (constaté trois campagnes de suite).
 minimumReleaseAgeExclude:
+  # expire: jamais
+  # next et @next/* relèvent d'une politique permanente, pas d'un contournement daté.
   - next
   - "@next/*"
-  # TEMPORAIRE : à retirer après le 2026-08-03 22:57 UTC.
+  # expire: 2026-08-03
   # next-auth est épinglé en exact 5.0.0-beta.32 (campagne du 2026-07-27, 5 advisories
   # Auth.js dont 2 critical), publiée le 2026-07-20 : encore sous quarantaine. Le lock la
   # réutilise sans broncher, mais `pnpm deploy --legacy` (deploy-bundle des apps kpilote)
@@ -18,6 +24,7 @@ minimumReleaseAgeExclude:
   # @auth/core est du même lot : next-auth l'épingle en exact 0.41.3, publiée le même jour.
   - next-auth
   - "@auth/core"
+  # expire: 2026-09-04
   # TEMPORAIRE : contournement assume pour fermer la derniere advisory high
   # corrigeable de kpilote-api (deepmerge-ts < 8.0.0, stack exhaustion, tiree par
   # @prisma/config). Le lock epingle 8.0.2, publiee le 2026-08-21 : elle franchit les
