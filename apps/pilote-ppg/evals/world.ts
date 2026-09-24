@@ -179,10 +179,10 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
 
   const chantiersAccessibles = CHANTIERS.map((chantier) => chantier.id);
 
-  // Les territoires ne sont pas semés : `integrationTestSetup` les épargne du
-  // TRUNCATE, comme le référentiel des profils. On prend donc le référentiel
-  // réel — sinon une question sur la Bretagne porterait sur un territoire
-  // inexistant, et l'agent aurait raison de ne pas appeler l'outil.
+  // Les territoires ne sont pas semés : le référentiel est chargé dans la base
+  // de test par `prisma db seed` (`pnpm test:database:init`). On prend donc le
+  // référentiel réel — sinon une question sur la Bretagne porterait sur un
+  // territoire inexistant, et l'agent aurait raison de ne pas appeler l'outil.
   const territoires = await getPrisma().territoire.findMany();
   const territoiresAccessibles = territoires.map(
     (territoire) => territoire.code,

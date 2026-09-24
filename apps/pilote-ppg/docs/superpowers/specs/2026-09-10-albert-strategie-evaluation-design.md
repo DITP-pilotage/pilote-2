@@ -107,8 +107,8 @@ Deux étages, tous deux dans la transaction annulée à la sortie.
 **Le monde de base**, partagé par tous les niveaux qui touchent la base : un
 utilisateur — `llm_calls.utilisateur_id` porte une clé étrangère et l'assistant
 y écrit à chaque tour comme en production — vingt chantiers aux intitulés
-réalistes et volontairement proches, et le référentiel des territoires, épargné
-du TRUNCATE par `integrationTestSetup`.
+réalistes et volontairement proches, et le référentiel des territoires, chargé
+dans la base de test par `prisma db seed`.
 
 Le volume des chantiers n'est pas cosmétique : `search_chantiers` injecte la
 liste entière des chantiers accessibles dans le prompt de son sous-agent. Avec
@@ -152,10 +152,12 @@ evals/
   4-edge-cases/
 ```
 
-`fileParallelism: false` est déjà en place et devient indispensable : le
-`beforeEach` de `integrationTestSetup` fait un `TRUNCATE ... CASCADE`, donc deux
-fichiers d'eval en parallèle se videraient la base mutuellement. Le découpage
-en une suite par outil multiplie les fichiers, ce réglage n'est plus optionnel.
+`fileParallelism: false` est déjà en place et devient indispensable :
+`maxConcurrency: 1` ne plafonne que les cas d'un même fichier, et deux fichiers
+en parallèle doubleraient le débit vers l'API Albert, qui sature dès deux
+requêtes. Tous les fichiers sèment aussi le même monde, aux mêmes identifiants :
+leurs transactions se bloqueraient sur les mêmes lignes. Le découpage en une
+suite par outil multiplie les fichiers, ce réglage n'est plus optionnel.
 
 ## Ce qui est repris du POC, ce qui est jeté
 

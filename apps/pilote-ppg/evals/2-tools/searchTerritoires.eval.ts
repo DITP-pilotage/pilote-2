@@ -9,8 +9,8 @@ import type { AgentTurn, ObservedToolCall } from "../types";
 /**
  * Niveau 2 — `search_territoires`.
  *
- * Le référentiel des territoires est épargné du TRUNCATE : les cas s'appuient
- * sur les vrais codes, pas sur des fixtures.
+ * Le référentiel des territoires vient du seed de la base de test : les cas
+ * s'appuient sur les vrais codes, pas sur des fixtures.
  *
  * Les cas portent sur les déclencheurs que l'outil revendique — numéro de
  * département, regroupement géographique — et non sur des noms de région. Le

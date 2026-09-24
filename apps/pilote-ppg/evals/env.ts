@@ -5,11 +5,11 @@ import dotenv from "dotenv";
  * Environnement des evals : surcouche locale, puis garde-fous.
  *
  * `pnpm eval` force `DOTENV_CONFIG_PATH=.env.test`, donc `.env` n'est jamais
- * lu — c'est delibere. Les evals reutilisent `integrationTestSetup`, dont le
- * `beforeEach` fait un `TRUNCATE TABLE ... CASCADE` sur tout le schema : si
- * `DATABASE_URL` pointait sur la base de dev, ce TRUNCATE la viderait sans le
- * moindre message. Le cout d'un oubli de la variable dans un script est donc la
- * base de dev, d'ou les controles ci-dessous.
+ * lu — c'est delibere. Chaque cas tourne dans une transaction annulee, donc
+ * rien n'est ecrit, mais les evals doivent raisonner sur le monde qu'elles
+ * sement et sur rien d'autre : sur la base de dev, les vrais chantiers se
+ * meleraient au monde et les scores ne seraient plus comparables d'un run a
+ * l'autre. D'ou les controles ci-dessous.
  *
  * Module a effet de bord, importe en premier par `setup.ts` : le client Prisma
  * lit `DATABASE_URL` des son import, donc tout doit passer avant lui.

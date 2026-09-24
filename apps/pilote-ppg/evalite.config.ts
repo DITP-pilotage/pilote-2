@@ -18,11 +18,12 @@ export default defineConfig({
     resolve: { tsconfigPaths: true },
     ssr: { noExternal: ["next-auth"] },
 
-    // `globals` : integrationTestSetup utilise `beforeEach` / `afterAll` sans
-    // les importer. `fileParallelism` : son `beforeEach` TRUNCATE tout le
-    // schema, donc deux fichiers d'eval en parallele se videraient la base
-    // mutuellement — `maxConcurrency` ne couvre pas ce cas, il ne plafonne que
-    // les cas concurrents A L'INTERIEUR d'un fichier.
+    // `globals` : integrationTestSetup utilise `beforeAll` / `afterAll` sans
+    // les importer. `fileParallelism` : `maxConcurrency` ne plafonne que les
+    // cas concurrents A L'INTERIEUR d'un fichier ; deux fichiers en parallele
+    // doubleraient le debit vers l'API Albert, qui sature des 2 requetes. Et
+    // tous les fichiers sement le meme monde, aux memes identifiants : leurs
+    // transactions se bloqueraient sur les memes lignes.
     test: { globals: true, fileParallelism: false },
   },
 

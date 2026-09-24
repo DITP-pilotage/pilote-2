@@ -10,7 +10,7 @@ import type { AgentTurn, ObservedToolCall } from "../types";
  * Niveau 2 — `get_taux_avancement_territoire`.
  *
  * Pas de fixtures de cas : l'outil est interrogé sur des territoires du
- * référentiel, que `integrationTestSetup` épargne du TRUNCATE.
+ * référentiel, chargé dans la base de test par `prisma db seed`.
  *
  * Référence observée le 2026-09-10 : 100 % sur 12 essais. Les trois formulations territoriales et le cas negatif tiennent.
  */
