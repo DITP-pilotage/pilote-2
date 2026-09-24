@@ -96,9 +96,14 @@ export function toolSelectionEval({
       scorers: [
         {
           name: "Outils attendus",
-          description: "L'appel doit porter au moins les arguments attendus.",
-          scorer: ({ output, expected }) =>
-            scoreExpectedTools({ output, expected }),
+          description:
+            "L'appel doit porter au moins les arguments attendus, et aucun outil interdit ne doit être appelé.",
+          scorer: ({ input, output, expected }) =>
+            scoreExpectedTools({
+              output,
+              expected,
+              forbidden: input.forbidden,
+            }),
         },
       ],
 

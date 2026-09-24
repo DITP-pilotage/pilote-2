@@ -66,4 +66,30 @@ describe("scoreExpectedTools", () => {
 
     expect(result.score).toBe(0.5);
   });
+
+  it("note 0 quand un outil interdit est appelé, même si les attendus sont présents", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        { toolName: "search_chantiers" },
+        { toolName: "get_chantiers" },
+      ]),
+      expected: [{ toolName: "get_chantiers" }],
+      forbidden: ["search_chantiers"],
+    });
+
+    expect(result).toEqual({
+      score: 0,
+      metadata: "outils interdits appelés : search_chantiers",
+    });
+  });
+
+  it("note les attendus quand aucun outil interdit n'est appelé", () => {
+    const result = scoreExpectedTools({
+      output: turn([{ toolName: "get_chantiers" }]),
+      expected: [{ toolName: "get_chantiers" }],
+      forbidden: ["search_chantiers"],
+    });
+
+    expect(result.score).toBe(1);
+  });
 });

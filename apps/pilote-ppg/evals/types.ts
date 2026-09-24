@@ -19,4 +19,6 @@ export type ToolCase = {
   /** Ce que le cas cherche à vérifier. Affiché en colonne. */
   reason: string;
   expected: ObservedToolCall[];
+  /** Outils qui ne doivent pas être appelés : un seul appel note le cas à 0. */
+  forbidden?: string[];
 };

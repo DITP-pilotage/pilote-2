@@ -11,14 +11,35 @@ import type { AgentTurn, ObservedToolCall } from "./types";
  * comme une régression alors que c'est l'attente qui est mal écrite.
  *
  * Ici, un appel correspond s'il porte AU MOINS les arguments attendus.
+ *
+ * La sélection en sous-ensemble tolère les appels en trop : sans `forbidden`,
+ * un cas négatif passerait même si l'agent appelle aussi l'outil qu'il ne
+ * devait pas appeler. Un seul outil interdit appelé suffit à noter 0.
  */
 export function scoreExpectedTools({
   output,
   expected,
+  forbidden = [],
 }: {
   output: AgentTurn;
   expected: ObservedToolCall[] | undefined;
+  forbidden?: string[];
 }) {
+  const forbiddenCalled = [
+    ...new Set(
+      output.toolCalls
+        .map((call) => call.toolName)
+        .filter((toolName) => forbidden.includes(toolName)),
+    ),
+  ];
+
+  if (forbiddenCalled.length > 0) {
+    return {
+      score: 0,
+      metadata: `outils interdits appelés : ${forbiddenCalled.join(", ")}`,
+    };
+  }
+
   const expectedCalls = expected ?? [];
 
   if (expectedCalls.length === 0) {
