@@ -1,4 +1,4 @@
-import { Content } from "pdfmake/interfaces";
+import { CanvasElement, Content } from "pdfmake/interfaces";
 import { lexer, Token, Tokens } from "marked";
 import { COLORS } from "@/server/evaluation/handlers/pdfFactories";
 
@@ -95,12 +95,41 @@ function convertInlineTokens(tokens: Token[]): Content[] {
   return result;
 }
 
-function convertListItem(item: Tokens.ListItem): Content {
+// Roboto n'a pas de glyphe ☐ / ☑ : la case est dessinée.
+function caseACocher(cochee: boolean): CanvasElement[] {
+  const cadre: CanvasElement = {
+    type: "rect",
+    x: 0,
+    y: 1.5,
+    w: 7,
+    h: 7,
+    lineWidth: 0.7,
+    lineColor: COLORS.text,
+  };
+  if (!cochee) {
+    return [cadre];
+  }
+  return [
+    cadre,
+    {
+      type: "polyline",
+      points: [
+        { x: 1.5, y: 5 },
+        { x: 3, y: 6.8 },
+        { x: 5.8, y: 2.8 },
+      ],
+      lineWidth: 1,
+      lineColor: COLORS.text,
+    },
+  ];
+}
+
+function convertListItemTokens(tokens: Token[]): Content {
   if (
-    item.tokens.length === 1 &&
-    (item.tokens[0].type === "text" || item.tokens[0].type === "paragraph")
+    tokens.length === 1 &&
+    (tokens[0].type === "text" || tokens[0].type === "paragraph")
   ) {
-    const inner = item.tokens[0] as Tokens.Text | Tokens.Paragraph;
+    const inner = tokens[0] as Tokens.Text | Tokens.Paragraph;
     if (inner.tokens && inner.tokens.length > 0) {
       return { text: convertInlineTokens(inner.tokens), fontSize: 9 };
     }
@@ -108,8 +137,26 @@ function convertListItem(item: Tokens.ListItem): Content {
   }
 
   return {
-    stack: convertBlockTokens(item.tokens),
+    stack: convertBlockTokens(tokens),
     fontSize: 9,
+  };
+}
+
+function convertListItem(
+  item: Tokens.ListItem,
+): Content & { listType?: "none" } {
+  const contenu = convertListItemTokens(
+    item.tokens.filter((token) => token.type !== "checkbox"),
+  );
+  if (!item.task) {
+    return contenu;
+  }
+  return {
+    listType: "none",
+    columns: [
+      { canvas: caseACocher(item.checked ?? false), width: 11 },
+      contenu,
+    ],
   };
 }
 
@@ -182,7 +229,8 @@ function convertBlockTokens(tokens: Token[]): Content[] {
         });
         break;
       }
-      case "space": {
+      case "space":
+      case "def": {
         break;
       }
       default: {

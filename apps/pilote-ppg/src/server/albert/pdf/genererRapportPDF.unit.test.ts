@@ -16,6 +16,11 @@ const rapport: RapportInput = {
           contenu: "Un paragraphe avec `du code` et du **gras**.",
         },
         {
+          type: "paragraphe",
+          contenu:
+            "Voir [la source][1].\n\n[1]: https://exemple.fr\n\n- [x] Fait\n- [ ] À faire",
+        },
+        {
           type: "tableau",
           en_tetes: ["Indicateur", "Valeur"],
           lignes: [["Taux", "42 %"]],

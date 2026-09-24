@@ -22,4 +22,8 @@ pdfmake.setFonts({
 // Courier apporte ses propres métriques AFM, que pdfmake 0.3 ne charge plus d'office.
 pdfmake.addFontContainer(policeCourier);
 
+// Nos documents n'embarquent aucune ressource distante : sans cette règle, une image
+// ou une police désignée par une URL serait téléchargée côté serveur (SSRF).
+pdfmake.setUrlAccessPolicy(() => false);
+
 export { pdfmake };
