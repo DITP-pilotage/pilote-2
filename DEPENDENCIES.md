@@ -656,6 +656,142 @@ en général une contrainte de protocole.
 Les quatre restantes sont `xlsx` ×2 et `mysql2` ×2, toutes deux traitées ci-dessus. **Aucune n'est
 fermable par un bump.**
 
+### Verdicts du 2026-09-22 — 13 overrides au banc d'essai
+
+**Porteurs : 2. Inertes : 11, dont 4 dont le sélecteur ne matche plus rien.**
+
+| Override | Type | Banc d'essai | Condition de sortie | Remplie ? |
+|---|---|---|---|---|
+| `hono` | plancher | **PORTEUR** (verdict contesté, voir ci-dessous) | « quand tous les parents auront bumpé » | ✅ |
+| `deepmerge-ts` | plancher | **PORTEUR** — 7.1.5 sans lui | « bump amont de Prisma » | ❌ |
+| `postcss` | plancher | inerte | « quand next relèvera son pin » | ✅ **enfin** |
+| `sharp` | plancher | inerte | *non documentée* | ✅ de fait |
+| `undici@>=7 <8` | plancher | inerte | *non documentée* | ✅ de fait |
+| `js-yaml@<4` | plancher | inerte | *non documentée* | ✅ de fait |
+| `fast-uri@>=3 <4` | plancher | inerte | « bump des chaînes ajv » — **inexécutable** | ✅ par un autre chemin |
+| `brace-expansion@>=2 <3` | plancher | inerte | *non documentée* | ✅ de fait |
+| `tar@>=7 <8` | **sélecteur vide** | — | *non documentée* | sans objet |
+| `brace-expansion@<2` | **sélecteur vide** | — | *non documentée* | sans objet |
+| `brace-expansion@>=5 <6` | **sélecteur vide** | — | *non documentée* | sans objet |
+| `js-yaml@>=4 <5` | **sélecteur vide** | — | *non documentée* | sans objet |
+| `immutable@>=4 <5` | **ERREUR DE SÉLECTEUR** | inerte par accident | *non documentée* | ❌ |
+
+#### 🔴 « Sans objet » et « erreur de sélecteur » ne sont pas la même chose
+
+Cette campagne exhibe quatre fois un override dont le sélecteur ne matche plus rien, et
+le vocabulaire actuel du document ne distingue pas les deux causes. Il le devrait, parce
+qu'elles n'appellent pas la même action.
+
+**Sans objet** — la cible a quitté l'arbre, le sélecteur reste juste.
+`tar` est parti avec `@tailwindcss/postcss` 4.3.3 (`@tailwindcss/oxide` 4.1.12 tirait
+`tar ^7.4.3`, la 4.3.3 n'a plus aucune dépendance). `brace-expansion@<2` et
+`js-yaml@>=4 <5` sont partis avec `@getbrevo/brevo` 6.0.3, qui emportait une chaîne
+eslint 8 / glob 7 / minimatch 3. `brace-expansion@>=5 <6` avait perdu son porteur encore
+avant, à la bascule oxlint du 2026-09-16.
+Aucun n'est la conséquence d'une correction amont, et **toutes ces transitives reviennent
+au premier paquet réinstallé**. Ne pas supprimer. C'est le précédent `@xmldom/xmldom`,
+qu'il est temps d'ériger en règle.
+
+**Erreur de sélecteur** — l'arbre a changé de majeure, le sélecteur est resté sur
+l'ancienne. C'est le cas d'`immutable@>=4 <5`, et c'est le seul vrai défaut des treize.
+L'arbre est passé en 5.1.9 avec `sass` 1.104.0. Or les deux advisories high
+(GHSA-xvcm-6775-5m9r, GHSA-v56q-mh7h-f735) **couvrent aussi la ligne 5.x**, correctif
+5.1.8. `sass` déclare `^5.1.5`, et **5.1.5, 5.1.6 et 5.1.7 sont toutes sous le correctif
+et toutes dans ce caret**. L'override ne protège donc plus rien : la conformité actuelle
+tient au hasard que la dernière 5.x publiée soit au-dessus du correctif.
+**À corriger.**
+
+#### ⚠️ Le banc d'essai est contredit par le lockfile sur trois verdicts
+
+Vérifié en lecture seule sur le lockfile de la tête de branche :
+
+| Le banc dit | Le lockfile dit |
+|---|---|
+| `tar` → se résout en 7.5.22 | **0 entrée `tar@`**, `pnpm why tar` vide |
+| `brace-expansion@>=5 <6` → 5.0.9 | seule la ligne 2.1.4 existe |
+| `hono` → 4.11.4 sans l'override | 4.13.7 seule, et les apps déclarent `^4.13.7` |
+
+Hypothèse sur le mécanisme, à instruire : le banc retire l'override puis lance
+`pnpm update <paquet> -r --depth Infinity`. Sur un paquet **absent de l'arbre**, cette
+commande peut le faire entrer depuis le registre et produire un **verdict fantôme**.
+Aucune suppression d'override ne devrait être décidée sur un verdict non recoupé avec
+le lockfile.
+
+#### La condition de sortie de `postcss` est enfin remplie — avec une marge nulle
+
+Le document la donnait comme « structurellement impossible » parce que `next@16.2.6`
+épinglait `postcss: 8.4.31` en exact. **`next@16.3.5` épingle désormais `8.5.23`.**
+Mais 8.5.23 est *exactement* le plancher de l'advisory : le pin amont est au niveau du
+correctif, pas au-dessus. À la prochaine révision à la hausse, `next` repasse
+mécaniquement dessous et l'override redevient porteur du jour au lendemain — c'est le
+motif « plancher repassé sous son advisory », constaté trois campagnes de suite.
+
+#### La condition de sortie de `fast-uri` est inexécutable et doit être réécrite
+
+Elle dit « bump des chaînes ajv ». `ajv@8.20.0`, le latest, déclare toujours `^3.0.1` :
+cette condition ne sera jamais cochée. La condition réelle, celle qui s'est effectivement
+réalisée, est « fast-uri maintient un backport 3.x au-dessus du plancher d'advisory,
+atteignable par le caret d'ajv ». À remplacer, sinon la ligne restera barrée indéfiniment.
+
+#### 🔴 Cinq overrides n'ont aucune condition de sortie écrite
+
+`sharp`, `tar`, `undici`, les trois `brace-expansion` et les deux `js-yaml` n'ont qu'une
+colonne « Cible CVE » héritée du tableau de juillet. C'est une violation de la règle n°2
+de ce document (« Définir une condition de sortie »), et la conséquence est mécanique :
+**aucun banc d'essai ne pourra jamais les cocher**. C'est la dette dormante déjà décrite
+pour `immutable` — « une condition de sortie écrite n'est utile que si quelqu'un la teste ».
+
+#### Quarantaine : trois exclusions périmées
+
+| Exclusion | Échéance écrite | Retard | Version visée | Âge |
+|---|---|---|---|---|
+| `next-auth` | 2026-08-03 | **50 j** | 5.0.0-beta.32 | 63 j |
+| `@auth/core` | 2026-08-03 | **50 j** | 0.41.3 | 63 j |
+| `deepmerge-ts` | 2026-09-04 | **18 j** | 8.0.2 | 31 j |
+
+Les trois conditions sont remplies : les versions ont franchi les 14 jours. Ce sont des
+trous volontaires dans la mitigation supply-chain, laissés ouverts après échéance.
+**Attention à ne pas confondre deux gestes sur `deepmerge-ts`** : l'exclusion de
+quarantaine peut partir, mais **l'override `>=8.0.0 <9` doit rester** — `@prisma/config`
+épingle toujours `deepmerge-ts: "7.1.5"` en exact, y compris dans sa ligne 8.
+
+`next` et `@next/*` n'ont pas de date : politique permanente, ne pas y toucher.
+
+#### Trou neuf : la ligne `js-yaml` 5.x n'est couverte par aucun override
+
+Elle existe en amont avec une advisory (plancher 5.2.2, GHSA-pm4m-ph32-ghv5). Si un outil
+tire `js-yaml` 5, rien ne le garde.
+
+#### Corrections d'état à porter ailleurs dans ce document
+
+- Le tableau des overrides décrit encore 15-16 entrées dont `@hono/node-server`,
+  `@xmldom/xmldom` et `eslint-plugin-sonarjs>typescript`. Il n'en reste que **13**.
+- Tout le dossier « mensonge de manifeste » de `@hono/node-server` est de l'**historique
+  résolu** : l'override a été supprimé par #2392 le 2026-09-11, les 5 apps déclarent 2.1.1
+  et le lockfile l'installe. À marquer clos, sinon le lecteur croit le piège actif.
+- La ligne 26 affirme une configuration `.npmrc` (`node-linker`, `auto-install-peers`,
+  `strict-peer-dependencies`). **Ce fichier n'existe pas**, ni dans git ni sur le disque.
+  Ce sont les défauts de pnpm 10 qui s'appliquent.
+- `pilote-ppg-auth` est décrit comme n'ayant « ni lint ni compilation ». **Faux** : il a un
+  `typecheck` (`tsc --noEmit`, tsconfig strict) et 3 fichiers de tests vitest. Seul le lint
+  manquait — il a été ajouté depuis.
+- La ligne de backlog `chroma-js` annonce des « types officiels » embarqués en 3.x.
+  **Démenti par la mesure** : `chroma-js` 3.2.0 ne livre aucun `.d.ts`, `@types/chroma-js`
+  reste requis.
+- Les notes sur `isomorphic-dompurify` (« ESM-only ») sont fausses pour la 4.1.0, qui est
+  duale CJS/ESM ; et l'override `css-tokenizer` qu'elles mentionnent n'existe plus.
+
+#### 🔴 Décision écrite le 2026-09-10, jamais appliquée
+
+Le document conclut que `prisma 8.1.0-dev.2` est « à abandonner, la cible correcte est
+`prisma@7.10.0` », avec le mécanisme détaillé. **`apps/kpilote-api/package.json` porte
+toujours `"prisma": "8.1.0-dev.2"`**, déjà sur `dev`, jamais reverté. Le gel annoncé est
+en place : `8.1.0-dev.2` étant supérieur à tout au sens semver, `pnpm outdated` ne
+signalera plus jamais prisma sur cette app.
+Même motif pour `@types/node`, dont le plafond `^24.13.3` n'a jamais été restauré.
+**Une campagne dont les verdicts ne sont pas suivis d'effet reproduit les mêmes majors
+tous les quinze jours.**
+
 ### Règles pour ajouter un override
 
 1. **Documenter la raison ici** (CVE, bug upstream, conflit de résolution), avec un lien vers l'issue/CVE.
