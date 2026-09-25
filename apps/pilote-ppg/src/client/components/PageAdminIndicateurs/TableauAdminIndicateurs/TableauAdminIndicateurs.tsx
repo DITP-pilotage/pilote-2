@@ -9,7 +9,11 @@ import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauP
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { Tableau } from "@/components/shared/Tableau";
+import {
+  SANS_ESPACEMENT_TEXTE_DSFR,
+  Tableau,
+} from "@/components/shared/Tableau";
+import { clsxm } from "@/utils/clsxm";
 
 const TableauAdminIndicateurs: FunctionComponent = () => {
   const {
@@ -96,7 +100,9 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
               </div>
             </div>
           </div>
-          <div className="relative pt-4 mb-10">
+          <div
+            className={clsxm("relative pt-4 mb-10", SANS_ESPACEMENT_TEXTE_DSFR)}
+          >
             <Tableau>
               <caption className="sr-only">Tableau des indicateurs</caption>
               <TableauEnTête tableau={tableau} />

@@ -8,7 +8,11 @@ import Titre from "@/components/_commons/Titre/Titre";
 import TableauAdminUtilisateursContenu from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import Tag from "@/components/_commons/Tag/Tag";
-import { Tableau } from "@/components/shared/Tableau";
+import {
+  SANS_ESPACEMENT_TEXTE_DSFR,
+  Tableau,
+} from "@/components/shared/Tableau";
+import { clsxm } from "@/utils/clsxm";
 
 const TableauAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
@@ -85,7 +89,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
           }}
         />
       </div>
-      <div className="relative pt-4 mb-10">
+      <div className={clsxm("relative pt-4 mb-10", SANS_ESPACEMENT_TEXTE_DSFR)}>
         <Tableau>
           <caption className="sr-only">Tableau des utilisateurs</caption>
           <TableauEnTête tableau={tableau} />
