@@ -290,6 +290,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_RAPPORT_RESPONSABLES_DONNEES",
     },
+    pageIndicateursNonAJour: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PAGE_INDICATEURS_NON_A_JOUR",
+    },
     creationCompteArs: {
       format: Boolean,
       default: false,

@@ -33,6 +33,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: boolean;
   NEXT_PUBLIC_FF_RAPPORT_PVA: boolean;
   NEXT_PUBLIC_FF_RAPPORT_RESPONSABLES_DONNEES: boolean;
+  NEXT_PUBLIC_FF_PAGE_INDICATEURS_NON_A_JOUR: boolean;
   NEXT_PUBLIC_FF_CREATION_COMPTE_ARS: boolean;
   NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES: boolean;
   NEXT_PUBLIC_FF_ACCES_PILOTE: boolean;
@@ -196,6 +197,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_RAPPORT_RESPONSABLES_DONNEES",
     configKey: "rapportResponsablesDonnees",
     label: "Rapport responsables de données",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_PAGE_INDICATEURS_NON_A_JOUR",
+    configKey: "pageIndicateursNonAJour",
+    label: "Page indicateurs à mettre à jour",
   },
   {
     envKey: "NEXT_PUBLIC_FF_CREATION_COMPTE_ARS",

@@ -25,6 +25,11 @@ const PROFIL_AUTORISE_A_LIRE_RAPPORTS_HEBDOMADAIRES = new Set([
   ProfilEnum.COORDINATEUR_REGION,
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
 ]);
+const PROFIL_AUTORISE_A_LIRE_INDICATEURS_NON_A_JOUR = new Set([
+  ProfilEnum.EQUIPE_DIR_PROJET,
+  ProfilEnum.SECRETARIAT_GENERAL,
+  ProfilEnum.DITP_ADMIN,
+]);
 
 export default class Habilitation {
   constructor(
@@ -136,6 +141,20 @@ export default class Habilitation {
 
   estAutoriseAAccederAuxRapportsHebdomadaires() {
     return PROFIL_AUTORISE_A_LIRE_RAPPORTS_HEBDOMADAIRES.has(
+      this.dependencies.profil,
+    );
+  }
+
+  verifierAutorisationLectureIndicateursNonAJour() {
+    if (!this.estAutoriseAAccederAuxIndicateursNonAJour()) {
+      throw new UnauthorizedError(
+        "Vous n'êtes pas autorisé a effectuer cette action",
+      );
+    }
+  }
+
+  estAutoriseAAccederAuxIndicateursNonAJour() {
+    return PROFIL_AUTORISE_A_LIRE_INDICATEURS_NON_A_JOUR.has(
       this.dependencies.profil,
     );
   }

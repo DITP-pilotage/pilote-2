@@ -37,6 +37,7 @@ import { metadataZonegroupModule } from "./metadataZonegroup/module";
 import { metadataAxeModule } from "./metadataAxe/module";
 import { metadataPpgModule } from "./metadataPpg/module";
 import { metadataEngagementModule } from "./metadataEngagement/module";
+import { suiviIndicateursModule } from "./suivi-indicateurs/module";
 
 const allModules = [
   sharedModule,
@@ -71,6 +72,7 @@ const allModules = [
   metadataAxeModule,
   metadataPpgModule,
   metadataEngagementModule,
+  suiviIndicateursModule,
 ];
 
 // Compile-time check: errors with missing module name(s) if allModules is not exhaustive
@@ -123,6 +125,7 @@ function registerContainer(): ContainerDependencies {
     metadataAxe: getContainer("metadataAxe"),
     metadataPpg: getContainer("metadataPpg"),
     metadataEngagement: getContainer("metadataEngagement"),
+    suiviIndicateurs: getContainer("suiviIndicateurs"),
   };
 }
 

@@ -18,6 +18,7 @@ const CATEGORIE_PAR_ROUTEUR_TRPC: Record<RouteurTRPC, CategorieLog> = {
   gestionTokenAPI: "auth",
   habilitationsCoordinateur: "utilisateur",
   indicateur: "indicateur",
+  indicateursNonAJour: "indicateur",
   metadataAxe: "referentiel",
   metadataChantier: "referentiel",
   metadataEngagement: "referentiel",

@@ -44,12 +44,25 @@ const estAutoriseAAccederAuxRapportsHebdomadaires = (
   return habilitation.estAutoriseAAccederAuxRapportsHebdomadaires();
 };
 
+const estAutoriseAAccederAuxIndicateursNonAJour = (session: Session | null) => {
+  if (!session) {
+    return false;
+  }
+  return new HabilitationGestionUtilisateur({
+    habilitations: session.habilitations,
+    profil: session.profil,
+  }).estAutoriseAAccederAuxIndicateursNonAJour();
+};
+
 export const NavigationPilote = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
   const ffRapportCoordinateurs = useEnv("NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS");
   const ffPageActualites = useEnv("NEXT_PUBLIC_FF_PAGE_ACTUALITES");
+  const ffPageIndicateursNonAJour = useEnv(
+    "NEXT_PUBLIC_FF_PAGE_INDICATEURS_NON_A_JOUR",
+  );
   const { vérifierSuiviCompletudeEstDisponibleEstIndisponible } =
     useNavigation();
 
@@ -102,6 +115,16 @@ export const NavigationPilote = () => {
           accessible:
             estAutoriseAAccederAuxRapportsHebdomadaires(session) &&
             ffRapportCoordinateurs,
+          prefetch: false,
+          target: "_self",
+        },
+        {
+          nom: "Mes indicateurs à mettre à jour",
+          lien: "/indicateurs-a-mettre-a-jour",
+          matcher: "/indicateurs-a-mettre-a-jour",
+          accessible:
+            estAutoriseAAccederAuxIndicateursNonAJour(session) &&
+            ffPageIndicateursNonAJour,
           prefetch: false,
           target: "_self",
         },

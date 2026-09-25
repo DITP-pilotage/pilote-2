@@ -13,6 +13,7 @@ import { commentaireRouter } from "./commentaire";
 import { decisionStrategiqueRouter } from "./decisionStrategique";
 import { objectifRouter } from "./objectif";
 import { indicateurRouter } from "./indicateur";
+import { indicateursNonAJourRouter } from "@/server/infrastructure/api/trpc/routes/indicateursNonAJour";
 import { propositionValeurAvancementRouter } from "./propositionValeurAvancement";
 import { territoireRouter } from "./territoire";
 import { périmètreMinistérielRouter } from "./périmètreMinistériel";
@@ -37,6 +38,7 @@ export const appRouter = créerRouteurTRPC({
   decisionStrategique: decisionStrategiqueRouter,
   objectif: objectifRouter,
   indicateur: indicateurRouter,
+  indicateursNonAJour: indicateursNonAJourRouter,
   territoire: territoireRouter,
   utilisateur: utilisateurRouter,
   metadataIndicateur: metadataIndicateurRouter,
