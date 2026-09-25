@@ -32,6 +32,7 @@ export const Utilisateur = () => {
       <Dropdown.Trigger asChild>
         <button
           className="flex items-center !text-sm !p-0 !text-primary"
+          data-fr-prevent-conceal
           name="Utilisateur connecté"
           type="button"
         >
