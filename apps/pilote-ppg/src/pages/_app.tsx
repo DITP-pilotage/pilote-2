@@ -31,6 +31,8 @@ function MonApplication({ Component, pageProps }: AppProps) {
     setPageEnCoursDeChargement(false);
   };
 
+  // Le JS DSFR lit `window` dès son import (impossible côté serveur) et modifie le DOM
+  // au démarrage : on le charge après l'hydratation pour ne pas désynchroniser React.
   useEffect(() => {
     void import("@gouvfr/dsfr/dist/dsfr.module.min.js");
   }, []);
