@@ -1,11 +1,5 @@
-import { randomUUID } from "node:crypto";
-import { evalite } from "evalite";
-import { AssistantIA } from "@/server/albert/AssistantIA";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { BRETAGNE, EVAL_TIMEOUT_MS, seedEvalWorld } from "../world";
-import { seedChantierEnDifficulte, seedChantierEnRetard } from "../seeds";
-import { scoreExpectedTools } from "../scoreExpectedTools";
-import type { AgentTurn, ObservedToolCall } from "../types";
+import type { ToolCase } from "../types";
+import { toolSelectionEval } from "./toolSelectionEval";
 
 /**
  * Niveau 2 — `create_dashboard`.
@@ -23,13 +17,7 @@ import type { AgentTurn, ObservedToolCall } from "../types";
  * les deux outils de la même façon — la différence vient de l'agent.
  */
 
-type Case = {
-  question: string;
-  reason: string;
-  expected: ObservedToolCall[];
-};
-
-const CASES: Case[] = [
+const CASES: ToolCase[] = [
   {
     question:
       "Compose un tableau de bord de la Bretagne avec le taux d'avancement et les chantiers en retard",
@@ -53,68 +41,8 @@ const CASES: Case[] = [
   },
 ];
 
-evalite<Case, AgentTurn, ObservedToolCall[]>("create_dashboard", {
-  data: () =>
-    CASES.map((testCase) => ({ input: testCase, expected: testCase.expected })),
-
-  task: async (input) => {
-    let turn: AgentTurn | undefined;
-
-    await createIntegrationTest(
-      async () => {
-        const world = await seedEvalWorld();
-
-        await seedChantierEnRetard({
-          chantierId: "CH-005",
-          territoire: BRETAGNE,
-        });
-        await seedChantierEnDifficulte({
-          chantierId: "CH-006",
-          territoire: BRETAGNE,
-        });
-
-        const result = await AssistantIA.generateText({
-          chatId: randomUUID(),
-          question: input.question,
-          habilitations: world.habilitations,
-          agentContext: undefined,
-          userId: world.userId,
-        });
-
-        turn = {
-          toolCalls: result.steps.flatMap((step) =>
-            step.toolCalls.map((call) => ({
-              toolName: call.toolName,
-              input: call.input,
-            })),
-          ),
-          text: result.text,
-          stepCount: result.steps.length,
-        };
-      },
-      { timeout: EVAL_TIMEOUT_MS },
-    )();
-
-    return turn!;
-  },
-
-  trialCount: 3,
-
-  scorers: [
-    {
-      name: "Outils attendus",
-      description: "L'appel doit porter au moins les arguments attendus.",
-      scorer: ({ output, expected }) =>
-        scoreExpectedTools({ output, expected }),
-    },
-  ],
-
-  columns: ({ input, output }) => [
-    { label: "Motif", value: input.reason },
-    {
-      label: "Outils appelés",
-      value: output.toolCalls.map((call) => call.toolName).join(" → ") || "—",
-    },
-    { label: "Réponse", value: output.text.slice(0, 120) },
-  ],
+toolSelectionEval({
+  famille: "rendu",
+  tool: "create_dashboard",
+  cases: CASES,
 });

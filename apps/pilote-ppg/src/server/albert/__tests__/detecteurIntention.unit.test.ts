@@ -83,14 +83,6 @@ describe("detecterCapacities", () => {
       demande: "Affiche la cartographie des taux d'avancement",
     },
     {
-      motCle: "indicateurs",
-      demande: "Montre-moi les indicateurs du chantier CH-064",
-    },
-    {
-      motCle: "indicateur",
-      demande: "Affiche l'indicateur principal du territoire",
-    },
-    {
       motCle: "courbe",
       demande: "Je veux voir la courbe d'évolution de cet indicateur",
     },
@@ -104,6 +96,16 @@ describe("detecterCapacities", () => {
 
     // then
     expect(result.dashboard).toBe(true);
+  });
+
+  it("ne détecte pas de dashboard sur une simple recherche d'indicateurs", () => {
+    // when
+    const result = detecterCapacities(
+      "Quels indicateurs on a sur l'éducation nationale ?",
+    );
+
+    // then
+    expect(result.dashboard).toBe(false);
   });
 
   it("ne détecte pas de dashboard sur une demande de vue d'ensemble", () => {

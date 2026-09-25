@@ -1,105 +1,64 @@
-import { randomUUID } from "node:crypto";
-import { evalite } from "evalite";
-import { AssistantIA } from "@/server/albert/AssistantIA";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { EVAL_TIMEOUT_MS, seedEvalWorld } from "../world";
-import { scoreExpectedTools } from "../scoreExpectedTools";
-import type { AgentTurn, ObservedToolCall } from "../types";
+import type { ToolCase } from "../types";
+import { toolSelectionEval } from "./toolSelectionEval";
 
 /**
  * Niveau 2 — `search_chantiers`.
  *
- * `seedEvalWorld` sème vingt chantiers groupés par thème et volontairement
- * proches : trois sur les violences faites aux femmes, trois sur la santé,
- * trois sur le logement, deux sur le handicap. C'est ce qui rend la recherche
- * discriminante — l'outil injecte la liste entière dans le prompt de son
- * sous-agent.
+ * L'agent appelle l'outil quand l'utilisateur parle d'un chantier sans donner
+ * son identifiant : soit pour lister des chantiers, soit pour résoudre un ID
+ * avant un autre appel. Seul l'appel de `search_chantiers` est vérifié ici ;
+ * l'enchaînement relève du niveau 3.
  *
- * Référence observée le 2026-09-10 : 100 % sur 9 essais. La recherche thematique discrimine bien parmi les vingt chantiers semes.
+ * Les cas « écologie » ne font varier que le mot qui désigne le chantier
+ * (chantier, PPG, politique prioritaire) : si l'un décroche, c'est le
+ * vocabulaire qui est en cause, pas la thématique. « Écologie » n'apparaît
+ * dans aucun nom de chantier du monde de base.
  */
 
-type Case = {
-  question: string;
-  reason: string;
-  expected: ObservedToolCall[];
-};
-
-const CASES: Case[] = [
+const CASES: ToolCase[] = [
   {
     question:
-      "Quels sont les chantiers qui traitent des violences sexistes et sexuelles ?",
-    reason: "thématique sans identifiant : passe par la recherche sémantique",
+      "Quel est le taux d'avancement du chantier sur les violences sexistes sur le territoire DEPT-84 ?",
+    reason: "chantier désigné par sa thématique : l'ID est à résoudre",
     expected: [{ toolName: "search_chantiers" }],
   },
   {
-    question: "Y a-t-il un chantier sur l'accès aux soins ?",
-    reason: "thématique proche de plusieurs chantiers santé du monde de base",
+    question: "Quels chantiers sur l'écologie ?",
+    reason: "recherche exploratoire, thématique absente des noms",
+    expected: [{ toolName: "search_chantiers" }],
+  },
+  {
+    question: "Quelle PPG sur l'écologie ?",
+    reason: "vocabulaire « PPG », synonyme de chantier pour le prompt système",
+    expected: [{ toolName: "search_chantiers" }],
+  },
+  {
+    question: "Quelle politique prioritaire sur l'écologie ?",
+    reason: "vocabulaire « politique prioritaire »",
     expected: [{ toolName: "search_chantiers" }],
   },
   {
     question:
-      "Donne-moi les indicateurs du chantier CH-004 pour la France entière",
+      "Quel est le taux d'avancement du CH-001 sur le territoire DEPT-84 ?",
+    reason: "CAS NÉGATIF : ID explicite, rien à rechercher",
+    forbidden: ["search_chantiers"],
+  },
+  {
+    question: "Quel indicateur mesure les émissions de CO₂ ?",
     reason:
-      "CAS NÉGATIF : identifiant déjà fourni, le prompt interdit de rechercher",
-    expected: [
-      { toolName: "get_indicateurs", input: { chantier_id: "CH-004" } },
-    ],
+      "thématique d'indicateur : search_chantiers toléré pour scoper la recherche",
+    expected: [{ toolName: "search_indicateurs" }],
+  },
+  {
+    question: "Quels chantiers sont en retard dans le Finistère ?",
+    reason: "CAS NÉGATIF : « chantiers » sans thématique, rien à rechercher",
+    expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
+    forbidden: ["search_chantiers"],
   },
 ];
 
-evalite<Case, AgentTurn, ObservedToolCall[]>("search_chantiers", {
-  data: () =>
-    CASES.map((testCase) => ({ input: testCase, expected: testCase.expected })),
-
-  task: async (input) => {
-    let turn: AgentTurn | undefined;
-
-    await createIntegrationTest(
-      async () => {
-        const world = await seedEvalWorld();
-
-        const result = await AssistantIA.generateText({
-          chatId: randomUUID(),
-          question: input.question,
-          habilitations: world.habilitations,
-          agentContext: undefined,
-          userId: world.userId,
-        });
-
-        turn = {
-          toolCalls: result.steps.flatMap((step) =>
-            step.toolCalls.map((call) => ({
-              toolName: call.toolName,
-              input: call.input,
-            })),
-          ),
-          text: result.text,
-          stepCount: result.steps.length,
-        };
-      },
-      { timeout: EVAL_TIMEOUT_MS },
-    )();
-
-    return turn!;
-  },
-
-  trialCount: 3,
-
-  scorers: [
-    {
-      name: "Outils attendus",
-      description: "L'appel doit porter au moins les arguments attendus.",
-      scorer: ({ output, expected }) =>
-        scoreExpectedTools({ output, expected }),
-    },
-  ],
-
-  columns: ({ input, output }) => [
-    { label: "Motif", value: input.reason },
-    {
-      label: "Outils appelés",
-      value: output.toolCalls.map((call) => call.toolName).join(" → ") || "—",
-    },
-    { label: "Réponse", value: output.text.slice(0, 120) },
-  ],
+toolSelectionEval({
+  famille: "recherche",
+  tool: "search_chantiers",
+  cases: CASES,
 });
