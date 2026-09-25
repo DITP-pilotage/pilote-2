@@ -1,5 +1,10 @@
 import { TableauAvecLignes } from "../typesTableau";
 import { flexRender } from "@tanstack/react-table";
+import {
+  TableauCellule,
+  TableauCorps,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 
 interface TableauContenuProps<TContexte extends object> {
   tableau: TableauAvecLignes<TContexte>;
@@ -9,19 +14,19 @@ export default function TableauContenu<TContexte extends object>({
   tableau,
 }: TableauContenuProps<TContexte>) {
   return (
-    <tbody>
+    <TableauCorps>
       {tableau.getRowModel().rows.map((row) => (
-        <tr key={row.id}>
+        <TableauLigne key={row.id}>
           {row.getVisibleCells().map((cell) => (
-            <td
-              className="fr-py-0 fr-py-md-1w fr-px-1v fr-px-lg-2w"
+            <TableauCellule
+              className="py-0 md:py-2 px-1 min-[62rem]:px-4"
               key={cell.id}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </td>
+            </TableauCellule>
           ))}
-        </tr>
+        </TableauLigne>
       ))}
-    </tbody>
+    </TableauCorps>
   );
 }

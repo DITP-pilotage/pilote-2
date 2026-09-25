@@ -1,5 +1,9 @@
 import { flexRender, Table } from "@tanstack/react-table";
 import { FunctionComponent } from "react";
+import {
+  TableauCelluleEnTete,
+  TableauEnTete,
+} from "@/components/shared/Tableau";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
 import { featuresTableauChantiers } from "../useRapportDétailléTableauChantiers";
 
@@ -11,11 +15,11 @@ const RapportDétailléTableauChantiersEnTête: FunctionComponent<
   TableauChantiersEnTêteProps
 > = ({ tableau }) => {
   return (
-    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925">
+    <TableauEnTete className="bg-dsfr-blue-france-925 border border-dsfr-grey-925">
       {tableau.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
-            <th
+            <TableauCelluleEnTete
               className="first:rounded-tl-lg last:rounded-tr-lg"
               key={header.id}
               style={{
@@ -28,11 +32,11 @@ const RapportDétailléTableauChantiersEnTête: FunctionComponent<
                   header.getContext(),
                 )}
               </p>
-            </th>
+            </TableauCelluleEnTete>
           ))}
         </tr>
       ))}
-    </thead>
+    </TableauEnTete>
   );
 };
 

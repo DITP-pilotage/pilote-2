@@ -1,8 +1,8 @@
 import { TableauComplet } from "./typesTableau";
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import "@gouvfr/dsfr/dist/component/notice/notice.min.css";
 import { useCallback } from "react";
 
+import { Tableau as TableauHtml } from "@/components/shared/Tableau";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import TableauEnTête from "./EnTête/TableauEnTête";
 import TableauContenu from "./Contenu/TableauContenu";
@@ -28,7 +28,7 @@ export default function Tableau<
   );
 
   return (
-    <section className="fr-table fr-m-0 fr-p-0 overflow-x-auto">
+    <section className="relative overflow-x-auto">
       {tableau.getRowModel().rows.length === 0 ? (
         <div className="fr-notice fr-notice--info">
           <div className="fr-container">
@@ -40,11 +40,11 @@ export default function Tableau<
         </div>
       ) : (
         <>
-          <table className="tableau table">
-            <caption className="fr-sr-only">{titre}</caption>
+          <TableauHtml>
+            <caption className="sr-only">{titre}</caption>
             {!estVueTuile && <TableauEnTête tableau={tableau} />}
             <TableauContenu tableau={tableau} />
-          </table>
+          </TableauHtml>
           <TableauPagination
             changementDePageCallback={changementDePageCallback}
             nombreDePages={tableau.getPageCount()}

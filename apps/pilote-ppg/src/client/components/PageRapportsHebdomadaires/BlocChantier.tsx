@@ -1,7 +1,14 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Accordion } from "@/components/shared/Accordion";
 import { clsxm } from "@/utils/clsxm";
+import {
+  Tableau,
+  TableauCellule,
+  TableauCelluleEnTete,
+  TableauCorps,
+  TableauEnTete,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import {
   type SectionChantier,
@@ -56,43 +63,51 @@ export const BlocChantier = ({
               </Accordion.Trigger>
             </Accordion.Header>
             <Accordion.Content className="!bg-transparent !px-0 !pb-0 !pt-0">
-              <div className="fr-table fr-mb-0 fr-pt-0">
-                <table className="table">
-                  <thead className="bg-dsfr-blue-france-925">
+              <div className="relative">
+                <Tableau>
+                  <TableauEnTete className="bg-dsfr-blue-france-925">
                     <tr>
-                      <th>Territoire</th>
-                      <th className="text-right">Type de donnée</th>
-                      <th className="text-right">Date de la valeur</th>
-                      <th className="text-right">Nouvelle valeur</th>
-                      <th className="text-right">Saisi le</th>
+                      <TableauCelluleEnTete>Territoire</TableauCelluleEnTete>
+                      <TableauCelluleEnTete className="text-right">
+                        Type de donnée
+                      </TableauCelluleEnTete>
+                      <TableauCelluleEnTete className="text-right">
+                        Date de la valeur
+                      </TableauCelluleEnTete>
+                      <TableauCelluleEnTete className="text-right">
+                        Nouvelle valeur
+                      </TableauCelluleEnTete>
+                      <TableauCelluleEnTete className="text-right">
+                        Saisi le
+                      </TableauCelluleEnTete>
                     </tr>
-                  </thead>
-                  <tbody className="bg-transparent">
+                  </TableauEnTete>
+                  <TableauCorps className="bg-transparent">
                     {indicateur.territoires.map((territoire) => (
-                      <tr
+                      <TableauLigne
                         key={`${territoire.code}-${territoire.typeValeur}-${territoire.dateValeur}`}
                       >
-                        <td>{territoire.nom}</td>
-                        <td className="text-right">
+                        <TableauCellule>{territoire.nom}</TableauCellule>
+                        <TableauCellule className="text-right">
                           {formatterTypeValeur(territoire.typeValeur)}
-                        </td>
-                        <td className="text-right">
+                        </TableauCellule>
+                        <TableauCellule className="text-right">
                           {PiloteDateFormatter.isoMonthFranceMetropolitaine(
                             territoire.dateValeur,
                           )}
-                        </td>
-                        <td className="text-right">
+                        </TableauCellule>
+                        <TableauCellule className="text-right">
                           {territoire.valeur?.toLocaleString("fr-FR") ?? "—"}
-                        </td>
-                        <td className="text-right">
+                        </TableauCellule>
+                        <TableauCellule className="text-right">
                           {PiloteDateFormatter.isoDateFranceMetropolitaine(
                             territoire.dateEvenement,
                           )}
-                        </td>
-                      </tr>
+                        </TableauCellule>
+                      </TableauLigne>
                     ))}
-                  </tbody>
-                </table>
+                  </TableauCorps>
+                </Tableau>
               </div>
             </Accordion.Content>
           </Accordion.Item>

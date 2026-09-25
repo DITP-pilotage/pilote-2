@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import "@gouvfr/dsfr/dist/component/notice/notice.min.css";
 import { FunctionComponent } from "react";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
@@ -9,6 +8,7 @@ import TableauRéformesEnTête from "@/client/components/PageAccueil/TableauRéf
 import { SelecteurGroupementTableauChantier } from "./SelecteurGroupementTableauChantier";
 import TableauChantiersProps from "./TableauChantiers.interface";
 import TableauChantiersContenu from "./Contenu/TableauChantiersContenu";
+import { Tableau } from "@/components/shared/Tableau";
 
 const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   nombreTotalChantiersAvecAlertes,
@@ -32,7 +32,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   );
 
   return (
-    <section className="fr-table fr-m-0 fr-p-0 text-dsfr-grey-50">
+    <section className="relative text-dsfr-grey-50">
       <div className="flex flex-col justify-between 2xl:flex-row gap-4 2xl:items-end w-full mb-4">
         <div className="flex flex-col 2xl:flex-row gap-4">
           <div className="w-80">
@@ -60,8 +60,8 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
         </div>
       ) : (
         <>
-          <table className="tableau table">
-            <caption className="fr-sr-only">Liste des chantiers</caption>
+          <Tableau>
+            <caption className="sr-only">Liste des chantiers</caption>
             {!estVueTuile ? <TableauRéformesEnTête tableau={tableau} /> : null}
             <TableauChantiersContenu
               chantiersSontArchives={chantiersSontArchives}
@@ -69,7 +69,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               tableau={tableau}
               territoireCode={territoireCode}
             />
-          </table>
+          </Tableau>
           <TableauPagination
             initialPageSize={50}
             nombreDePages={tableau.getPageCount()}

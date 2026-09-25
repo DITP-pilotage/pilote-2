@@ -1,6 +1,11 @@
 import { flexRender, Row, Table } from "@tanstack/react-table";
 import { FunctionComponent, useCallback } from "react";
 import { useRouter } from "next/router";
+import {
+  TableauCellule,
+  TableauCorps,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
 import { featuresTableauChantiers } from "../useRapportDétailléTableauChantiers";
@@ -26,21 +31,21 @@ const RapportDétailléTableauChantiersContenu: FunctionComponent<
   );
 
   return (
-    <tbody>
+    <TableauCorps>
       {tableau.getRowModel().rows.map((row) => (
-        <tr
+        <TableauLigne
           className="ligne-chantier cursor-pointer even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
           key={row.id}
           onClick={() => auClicSurLaLigne(row)}
         >
           {row.getVisibleCells().map((cell) => (
-            <td key={cell.id}>
+            <TableauCellule key={cell.id}>
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </td>
+            </TableauCellule>
           ))}
-        </tr>
+        </TableauLigne>
       ))}
-    </tbody>
+    </TableauCorps>
   );
 };
 

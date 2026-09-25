@@ -1,4 +1,11 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
+import {
+  Tableau,
+  TableauCellule,
+  TableauCelluleEnTete,
+  TableauCorps,
+  TableauEnTete,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 import api from "@/server/infrastructure/api/trpc/api";
 import { type CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
@@ -14,27 +21,29 @@ export const TableauUtilisateurs = ({
   );
 
   return (
-    <div className="fr-table fr-mb-0 fr-pt-0">
-      <table className="table">
-        <thead className="bg-dsfr-blue-france-925">
+    <div className="relative">
+      <Tableau>
+        <TableauEnTete className="bg-dsfr-blue-france-925">
           <tr>
-            <th>Prénom</th>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Profil</th>
+            <TableauCelluleEnTete>Prénom</TableauCelluleEnTete>
+            <TableauCelluleEnTete>Nom</TableauCelluleEnTete>
+            <TableauCelluleEnTete>Email</TableauCelluleEnTete>
+            <TableauCelluleEnTete>Profil</TableauCelluleEnTete>
           </tr>
-        </thead>
-        <tbody className="bg-transparent">
+        </TableauEnTete>
+        <TableauCorps className="bg-transparent">
           {comptes.map((compte) => (
-            <tr key={compte.email}>
-              <td>{compte.prenom}</td>
-              <td>{compte.nom}</td>
-              <td>{compte.email}</td>
-              <td>{profilParCode.get(compte.profil) ?? compte.profil}</td>
-            </tr>
+            <TableauLigne key={compte.email}>
+              <TableauCellule>{compte.prenom}</TableauCellule>
+              <TableauCellule>{compte.nom}</TableauCellule>
+              <TableauCellule>{compte.email}</TableauCellule>
+              <TableauCellule>
+                {profilParCode.get(compte.profil) ?? compte.profil}
+              </TableauCellule>
+            </TableauLigne>
           ))}
-        </tbody>
-      </table>
+        </TableauCorps>
+      </Tableau>
     </div>
   );
 };
