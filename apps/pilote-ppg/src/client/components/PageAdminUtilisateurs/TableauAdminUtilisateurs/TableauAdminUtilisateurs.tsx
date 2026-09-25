@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTableauPageAdminUtilisateurs } from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs";
@@ -9,6 +8,11 @@ import Titre from "@/components/_commons/Titre/Titre";
 import TableauAdminUtilisateursContenu from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import Tag from "@/components/_commons/Tag/Tag";
+import {
+  SANS_ESPACEMENT_TEXTE_DSFR,
+  Tableau,
+} from "@/components/shared/Tableau";
+import { clsxm } from "@/utils/clsxm";
 
 const TableauAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
@@ -85,12 +89,12 @@ const TableauAdminUtilisateurs: FunctionComponent<{
           }}
         />
       </div>
-      <div className="fr-table">
-        <table className="tableau table fr-m-0 fr-p-0">
-          <caption className="fr-sr-only">Tableau des utilisateurs</caption>
+      <div className={clsxm("relative pt-4 mb-10", SANS_ESPACEMENT_TEXTE_DSFR)}>
+        <Tableau>
+          <caption className="sr-only">Tableau des utilisateurs</caption>
           <TableauEnTête tableau={tableau} />
           <TableauAdminUtilisateursContenu tableau={tableau} />
-        </table>
+        </Tableau>
         <TableauPagination
           nombreDePages={tableau.getPageCount()}
           tableau={tableau}

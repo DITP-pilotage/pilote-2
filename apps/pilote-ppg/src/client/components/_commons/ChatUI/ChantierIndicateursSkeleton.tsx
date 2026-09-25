@@ -1,3 +1,12 @@
+import {
+  Tableau,
+  TableauCellule,
+  TableauCelluleEnTete,
+  TableauCorps,
+  TableauEnTete,
+  TableauLigne,
+} from "@/components/shared/Tableau";
+
 const SkeletonBar = ({ className }: { className?: string }) => (
   <div className={`bg-gray-200 rounded ${className ?? ""}`} />
 );
@@ -5,42 +14,42 @@ const SkeletonBar = ({ className }: { className?: string }) => (
 export const ChantierIndicateursSkeleton = () => {
   return (
     <div className="animate-pulse overflow-hidden">
-      <div className="fr-table fr-p-0 fr-m-0">
-        <table className="!table">
-          <thead>
+      <div className="relative">
+        <Tableau>
+          <TableauEnTete>
             <tr>
               {["w-24", "w-28", "w-28", "w-28", "w-32"].map((width, index) => (
-                <th key={index} scope="col">
+                <TableauCelluleEnTete key={index} scope="col">
                   <SkeletonBar className={`h-4 ${width}`} />
-                </th>
+                </TableauCelluleEnTete>
               ))}
             </tr>
-          </thead>
-          <tbody>
+          </TableauEnTete>
+          <TableauCorps>
             {[0, 1, 2].map((row) => (
-              <tr key={row}>
-                <td>
+              <TableauLigne key={row}>
+                <TableauCellule>
                   <SkeletonBar className="h-4 w-40" />
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   <SkeletonBar className="h-4 w-16" />
                   <SkeletonBar className="h-3 w-20 mt-1" />
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   <SkeletonBar className="h-4 w-16" />
                   <SkeletonBar className="h-3 w-20 mt-1" />
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   <SkeletonBar className="h-4 w-16" />
                   <SkeletonBar className="h-3 w-20 mt-1" />
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   <SkeletonBar className="h-4 w-full" />
-                </td>
-              </tr>
+                </TableauCellule>
+              </TableauLigne>
             ))}
-          </tbody>
-        </table>
+          </TableauCorps>
+        </Tableau>
       </div>
     </div>
   );

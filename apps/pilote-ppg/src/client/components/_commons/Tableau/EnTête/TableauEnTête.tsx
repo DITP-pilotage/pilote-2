@@ -1,5 +1,9 @@
 import { TableauAvecEnTetes } from "../typesTableau";
 import { flexRender, SortDirection } from "@tanstack/react-table";
+import {
+  TableauCelluleEnTete,
+  TableauEnTete,
+} from "@/components/shared/Tableau";
 import BoutonsDeTri from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri";
 
 interface TableauEnTêteProps<TContexte extends object> {
@@ -21,15 +25,15 @@ export default function TableauEnTête<TContexte extends object>({
   tableau,
 }: TableauEnTêteProps<TContexte>) {
   return (
-    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925">
+    <TableauEnTete className="bg-dsfr-blue-france-925 border border-dsfr-grey-925">
       {tableau.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
-            <th
+            <TableauCelluleEnTete
               aria-sort={renseignerAttributAriaSort(
                 header.column.getIsSorted(),
               )}
-              className="fr-py-1w fr-px-1v fr-px-lg-2w first:rounded-tl-lg last:rounded-tr-lg"
+              className="py-2 px-1 min-[62rem]:px-4 first:rounded-tl-lg last:rounded-tr-lg"
               key={header.id}
               style={{
                 width: header.column.columnDef.meta?.width ?? undefined,
@@ -52,10 +56,10 @@ export default function TableauEnTête<TContexte extends object>({
                   nomColonneÀTrier={header.column.columnDef.id ?? ""}
                 />
               )}
-            </th>
+            </TableauCelluleEnTete>
           ))}
         </tr>
       ))}
-    </thead>
+    </TableauEnTete>
   );
 }

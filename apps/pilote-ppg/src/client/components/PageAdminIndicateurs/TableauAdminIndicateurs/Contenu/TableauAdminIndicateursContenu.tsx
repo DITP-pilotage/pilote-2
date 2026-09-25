@@ -1,6 +1,11 @@
 import { flexRender, type Table } from "@tanstack/react-table";
 import { FunctionComponent } from "react";
 import type { FeaturesTableauAdminIndicateurs } from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
+import {
+  TableauCellule,
+  TableauCorps,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 
 interface TableauAdminIndicateursContenuProps {
@@ -14,18 +19,18 @@ const TableauAdminIndicateursContenu: FunctionComponent<
   TableauAdminIndicateursContenuProps
 > = ({ tableau }) => {
   return (
-    <tbody>
+    <TableauCorps>
       {tableau
         .getRowModel()
         .rows.filter(Boolean)
         .map((row) => (
-          <tr
+          <TableauLigne
             className="cursor-pointer even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
             key={row.id}
           >
             {row.getVisibleCells().map((cell) => (
-              <td
-                className="fr-p-1w max-w-[20px] overflow-hidden text-ellipsis whitespace-nowrap"
+              <TableauCellule
+                className="p-2 max-w-[20px] overflow-hidden text-ellipsis whitespace-nowrap"
                 key={cell.id}
                 title={cell.row.getValue(cell.column.id) || ""}
               >
@@ -35,11 +40,11 @@ const TableauAdminIndicateursContenu: FunctionComponent<
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </a>
-              </td>
+              </TableauCellule>
             ))}
-          </tr>
+          </TableauLigne>
         ))}
-    </tbody>
+    </TableauCorps>
   );
 };
 
