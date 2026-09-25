@@ -2,7 +2,11 @@ import { TableauComplet } from "./typesTableau";
 import "@gouvfr/dsfr/dist/component/notice/notice.min.css";
 import { useCallback } from "react";
 
-import { Tableau as TableauHtml } from "@/components/shared/Tableau";
+import {
+  SANS_ESPACEMENT_TEXTE_DSFR,
+  Tableau as TableauHtml,
+} from "@/components/shared/Tableau";
+import { clsxm } from "@/utils/clsxm";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import TableauEnTête from "./EnTête/TableauEnTête";
 import TableauContenu from "./Contenu/TableauContenu";
@@ -28,7 +32,9 @@ export default function Tableau<
   );
 
   return (
-    <section className="relative overflow-x-auto">
+    <section
+      className={clsxm("relative overflow-x-auto", SANS_ESPACEMENT_TEXTE_DSFR)}
+    >
       {tableau.getRowModel().rows.length === 0 ? (
         <div className="fr-notice fr-notice--info">
           <div className="fr-container">

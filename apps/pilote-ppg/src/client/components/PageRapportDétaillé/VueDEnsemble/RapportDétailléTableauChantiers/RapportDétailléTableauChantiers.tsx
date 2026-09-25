@@ -4,7 +4,11 @@ import useRapportDétailléTableauChantiers from "@/components/PageRapportDétai
 import RapportDétailléTableauChantiersProps from "./RapportDétailléTableauChantiers.interface";
 import RapportDétailléTableauChantiersEnTête from "./EnTête/RapportDétailléTableauChantiersEnTête";
 import RapportDétailléTableauChantiersContenu from "./Contenu/RapportDétailléTableauChantiersContenu";
-import { Tableau } from "@/components/shared/Tableau";
+import {
+  SANS_ESPACEMENT_TEXTE_DSFR,
+  Tableau,
+} from "@/components/shared/Tableau";
+import { clsxm } from "@/utils/clsxm";
 
 const RapportDétailléTableauChantiers: FunctionComponent<
   RapportDétailléTableauChantiersProps
@@ -15,7 +19,12 @@ const RapportDétailléTableauChantiers: FunctionComponent<
   );
 
   return (
-    <section className="relative overflow-x-auto [&_tbody_a]:no-underline [&_tbody_a]:bg-none">
+    <section
+      className={clsxm(
+        "relative overflow-x-auto [&_tbody_a]:no-underline [&_tbody_a]:bg-none",
+        SANS_ESPACEMENT_TEXTE_DSFR,
+      )}
+    >
       {tableau.getRowModel().rows.length === 0 ? (
         <div className="fr-notice fr-notice--info">
           <div className="fr-container">
