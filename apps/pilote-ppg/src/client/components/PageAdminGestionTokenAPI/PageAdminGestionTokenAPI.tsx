@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { FunctionComponent } from "react";
 import { FormProvider } from "react-hook-form";
 import Titre from "@/components/_commons/Titre/Titre";
@@ -6,6 +5,14 @@ import Bloc from "@/client/components/_commons/Bloc/Bloc";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import TokenAPIForm from "@/components/PageAdminGestionTokenAPI/TokenAPIForm/TokenAPIForm";
+import {
+  Tableau,
+  TableauCellule,
+  TableauCelluleEnTete,
+  TableauCorps,
+  TableauEnTete,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 
 const PageAdminGestionTokenAPI: FunctionComponent<{
@@ -53,20 +60,26 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                 </form>
               </FormProvider>
               <div className="fr-container fr-mt-2w w-full">
-                <table className="fr-table fr-mb-3 fr-p-0 w-full">
-                  <thead>
+                <Tableau className="mb-10">
+                  <TableauEnTete>
                     <tr>
-                      <th>Émail</th>
-                      <th>Date d'expiration</th>
-                      <th>Action</th>
+                      <TableauCelluleEnTete>Émail</TableauCelluleEnTete>
+                      <TableauCelluleEnTete>
+                        Date d'expiration
+                      </TableauCelluleEnTete>
+                      <TableauCelluleEnTete>Action</TableauCelluleEnTete>
                     </tr>
-                  </thead>
-                  <tbody>
+                  </TableauEnTete>
+                  <TableauCorps>
                     {listeTokenAPIInformation.map((tokenAPIInformation) => (
-                      <tr key={tokenAPIInformation.email}>
-                        <td>{tokenAPIInformation.email}</td>
-                        <td>{tokenAPIInformation.dateExpiration}</td>
-                        <td>
+                      <TableauLigne key={tokenAPIInformation.email}>
+                        <TableauCellule>
+                          {tokenAPIInformation.email}
+                        </TableauCellule>
+                        <TableauCellule>
+                          {tokenAPIInformation.dateExpiration}
+                        </TableauCellule>
+                        <TableauCellule>
                           <button
                             aria-controls="supprimer-token"
                             className="fr-btn"
@@ -79,11 +92,11 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                           >
                             Supprimer le token API
                           </button>
-                        </td>
-                      </tr>
+                        </TableauCellule>
+                      </TableauLigne>
                     ))}
-                  </tbody>
-                </table>
+                  </TableauCorps>
+                </Tableau>
               </div>
             </Bloc>
           </div>

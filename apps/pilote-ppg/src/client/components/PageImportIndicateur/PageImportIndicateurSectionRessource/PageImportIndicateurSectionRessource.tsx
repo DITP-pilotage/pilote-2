@@ -3,6 +3,14 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import "@gouvfr/dsfr/dist/component/download/download.min.css";
+import {
+  Tableau,
+  TableauCellule,
+  TableauCelluleEnTete,
+  TableauCorps,
+  TableauEnTete,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 
 const PageImportIndicateurSectionRessource: FunctionComponent = () => {
   return (
@@ -99,185 +107,185 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
                 .SECTION_EXPLICATION_IMPORT.FORMAT_ACCEPTE
             }
           </p>
-          <table className="fr-table fr-mb-3 fr-p-0 w-full">
-            <thead>
+          <Tableau className="mb-10">
+            <TableauEnTete>
               <tr>
-                <th>
+                <TableauCelluleEnTete>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE
                       .IDENTIFIANT_INDIC
                   }
-                </th>
-                <th>
+                </TableauCelluleEnTete>
+                <TableauCelluleEnTete>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_ID
                   }
-                </th>
-                <th>
+                </TableauCelluleEnTete>
+                <TableauCelluleEnTete>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_NOM
                   }
-                </th>
-                <th>
+                </TableauCelluleEnTete>
+                <TableauCelluleEnTete>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE
                       .DATE_VALEUR
                   }
-                </th>
-                <th>
+                </TableauCelluleEnTete>
+                <TableauCelluleEnTete>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE
                       .TYPE_VALEUR
                   }
-                </th>
-                <th>
+                </TableauCelluleEnTete>
+                <TableauCelluleEnTete>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.VALEUR
                   }
-                </th>
+                </TableauCelluleEnTete>
               </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
+            </TableauEnTete>
+            <TableauCorps>
+              <TableauLigne>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
                       .IDENTIFIANT_INDIC
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
                       .ZONE_ID
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
                       .ZONE_NOM
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
                       .DATE_VALEUR
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
                       .TYPE_VALEUR
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
                       .VALEUR
                   }
-                </td>
-              </tr>
-              <tr>
-                <td>
+                </TableauCellule>
+              </TableauLigne>
+              <TableauLigne>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
                       .IDENTIFIANT_INDIC
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
                       .ZONE_ID
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
                       .ZONE_NOM
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
                       .DATE_VALEUR
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
                       .TYPE_VALEUR
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
                       .VALEUR
                   }
-                </td>
-              </tr>
-              <tr>
-                <td>
+                </TableauCellule>
+              </TableauLigne>
+              <TableauLigne>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
                       .IDENTIFIANT_INDIC
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
                       .ZONE_ID
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
                       .ZONE_NOM
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
                       .DATE_VALEUR
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
                       .TYPE_VALEUR
                   }
-                </td>
-                <td>
+                </TableauCellule>
+                <TableauCellule>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                       .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
                       .VALEUR
                   }
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </TableauCellule>
+              </TableauLigne>
+            </TableauCorps>
+          </Tableau>
           <Titre baliseHtml="h3">
             {
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE

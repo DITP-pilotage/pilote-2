@@ -15,6 +15,7 @@ import {
   doitAfficherPropositionAcceptee,
 } from "@/components/_commons/IndicateursChantier/Bloc/BaseLignesPropositionValeurAvancement";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import { TableauCellule } from "@/components/shared/Tableau";
 
 export const LignesPropositionValeurAvancementV2 = ({
   propositionEstVisible,
@@ -65,7 +66,7 @@ export const LignesPropositionValeurAvancementV2 = ({
               },
             )}
           >
-            <td colSpan={8}>
+            <TableauCellule className="p-3 md:p-4" colSpan={8}>
               <div className="flex w-full align-center justify-end gap-4">
                 {!estPropositionAccuseeReception(
                   detailIndicateurDuTerritoire,
@@ -93,7 +94,7 @@ export const LignesPropositionValeurAvancementV2 = ({
                   territoireCode={territoireCode}
                 />
               </div>
-            </td>
+            </TableauCellule>
           </tr>
         )}
       </BaseLignesPropositionValeurAvancement>
@@ -114,7 +115,7 @@ export const LignesPropositionValeurAvancementV2 = ({
           datajobsExecution,
         ) ? null : (
           <tr className="ligne-modification-proposition-valeur-davancement !bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679">
-            <td colSpan={8}>
+            <TableauCellule className="p-3 md:p-4" colSpan={8}>
               <div className="flex w-full justify-end">
                 <BoutonModifierProposition />
                 <BoutonSupprimerProposition
@@ -124,7 +125,7 @@ export const LignesPropositionValeurAvancementV2 = ({
                   territoireCode={territoireCode}
                 />
               </div>
-            </td>
+            </TableauCellule>
           </tr>
         )}
       </BaseLignesPropositionValeurAvancement>

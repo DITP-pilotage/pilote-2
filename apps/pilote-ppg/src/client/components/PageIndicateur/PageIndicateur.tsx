@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Link from "next/link";
 import { FormProvider } from "react-hook-form";
 import { FunctionComponent } from "react";
