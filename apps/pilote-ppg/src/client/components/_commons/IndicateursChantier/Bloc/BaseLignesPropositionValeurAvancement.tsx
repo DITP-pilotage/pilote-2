@@ -12,6 +12,7 @@ import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution
 import { CelluleStatutProposition } from "@/components/_commons/IndicateursChantier/Bloc/CelluleStatutProposition";
 import { BarreDeProgressionAVenir } from "@/components/_commons/IndicateursChantier/Bloc/BarreDeProgressionAVenir";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import { TableauCellule } from "@/components/shared/Tableau";
 
 export const doitAfficherPropositionAcceptee = (
   detailIndicateur: DétailsIndicateur,
@@ -88,17 +89,17 @@ export const BaseLignesPropositionValeurAvancement = ({
             estAutoriseAProposerUneValeurAvancement
           }
         />
-        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200 min-h-8 align-top">
+        <TableauCellule className="p-0 md:py-2 text-center text-dsfr-grey-200 min-h-8 align-top">
           <ValeurEtDate
             date={detailIndicateurDuTerritoire.dateValeurInitiale}
             unité={detailIndicateurDuTerritoire.unite}
             valeur={detailIndicateurDuTerritoire.valeurInitiale}
           />
-        </td>
+        </TableauCellule>
         {estPropositionSurLeBonJalon ? (
           <>
             {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
-            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm !text-current text-center min-h-8 align-top">
+            <TableauCellule className="p-0 md:py-2 !text-current text-center min-h-8 align-top">
               <ValeurEtDate
                 date={
                   detailIndicateurDuTerritoire.proposition.dateValeurAvancement
@@ -108,15 +109,15 @@ export const BaseLignesPropositionValeurAvancement = ({
                   detailIndicateurDuTerritoire.proposition.valeurAvancement
                 }
               />
-            </td>
-            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200 min-h-8 align-top">
+            </TableauCellule>
+            <TableauCellule className="p-0 md:py-2 text-center text-dsfr-grey-200 min-h-8 align-top">
               <ValeurEtDate
                 date={detailIndicateurDuTerritoire.dateValeurCibleAnnuelle}
                 unité={detailIndicateurDuTerritoire.unite}
                 valeur={detailIndicateurDuTerritoire.valeurCibleAnnuelle}
               />
-            </td>
-            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm !text-current min-h-8 align-top">
+            </TableauCellule>
+            <TableauCellule className="px-4 py-0 md:py-2 !text-current min-h-8 align-top">
               {detailIndicateurDuTerritoire.proposition.statutTauxAvancement ===
               "EN_COURS" ? (
                 <BarreDeProgressionAVenir variante={varianteBarreProgression} />
@@ -133,10 +134,10 @@ export const BaseLignesPropositionValeurAvancement = ({
                   variante={varianteBarreProgression}
                 />
               )}
-            </td>
+            </TableauCellule>
           </>
         ) : (
-          <td colSpan={3} />
+          <TableauCellule className="p-3 md:p-4" colSpan={3} />
         )}
       </tr>
       {children}

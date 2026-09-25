@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";

@@ -5,6 +5,14 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import { wording } from "@/client/utils/i18n/i18n";
 import FormulairePublierImportIndicateur from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireImportIndicateur/FormulairePublierImportIndicateur";
 import { usePublierIndicateur } from "@/hooks/usePublierIndicateur";
+import {
+  Tableau,
+  TableauCellule,
+  TableauCelluleEnTete,
+  TableauCorps,
+  TableauEnTete,
+  TableauLigne,
+} from "@/components/shared/Tableau";
 
 const EtapePublierFichier: FunctionComponent<{
   estFichierPublie: boolean;
@@ -64,64 +72,74 @@ const EtapePublierFichier: FunctionComponent<{
                 isPending={isPending}
                 publierLeFichier={publierLeFichier}
               />
-              <table className="fr-table fr-my-3w fr-p-0 w-full">
-                <thead>
+              <Tableau className="my-6">
+                <TableauEnTete>
                   <tr>
-                    <th>
+                    <TableauCelluleEnTete>
                       {
                         wording.PAGE_IMPORT_MESURE_INDICATEUR
                           .SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER
                           .TABLEAU_PREVISUALISATION.ENTETE.IDENTIFIANT_INDIC
                       }
-                    </th>
-                    <th>
+                    </TableauCelluleEnTete>
+                    <TableauCelluleEnTete>
                       {
                         wording.PAGE_IMPORT_MESURE_INDICATEUR
                           .SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER
                           .TABLEAU_PREVISUALISATION.ENTETE.ZONE_ID
                       }
-                    </th>
-                    <th>
+                    </TableauCelluleEnTete>
+                    <TableauCelluleEnTete>
                       {
                         wording.PAGE_IMPORT_MESURE_INDICATEUR
                           .SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER
                           .TABLEAU_PREVISUALISATION.ENTETE.DATE_VALEUR
                       }
-                    </th>
-                    <th>
+                    </TableauCelluleEnTete>
+                    <TableauCelluleEnTete>
                       {
                         wording.PAGE_IMPORT_MESURE_INDICATEUR
                           .SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER
                           .TABLEAU_PREVISUALISATION.ENTETE.TYPE_VALEUR
                       }
-                    </th>
-                    <th>
+                    </TableauCelluleEnTete>
+                    <TableauCelluleEnTete>
                       {
                         wording.PAGE_IMPORT_MESURE_INDICATEUR
                           .SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER
                           .TABLEAU_PREVISUALISATION.ENTETE.VALEUR
                       }
-                    </th>
+                    </TableauCelluleEnTete>
                   </tr>
-                </thead>
-                <tbody>
+                </TableauEnTete>
+                <TableauCorps>
                   {rapportImport?.listeMesuresIndicateurTemporaire.map(
                     (mesureIndicateurTemporaire) => {
                       return (
-                        <tr
+                        <TableauLigne
                           key={`${mesureIndicateurTemporaire.metricType}-${mesureIndicateurTemporaire.zoneId}`}
                         >
-                          <td>{mesureIndicateurTemporaire.indicId}</td>
-                          <td>{mesureIndicateurTemporaire.zoneId}</td>
-                          <td>{mesureIndicateurTemporaire.metricDate}</td>
-                          <td>{mesureIndicateurTemporaire.metricType}</td>
-                          <td>{mesureIndicateurTemporaire.metricValue}</td>
-                        </tr>
+                          <TableauCellule>
+                            {mesureIndicateurTemporaire.indicId}
+                          </TableauCellule>
+                          <TableauCellule>
+                            {mesureIndicateurTemporaire.zoneId}
+                          </TableauCellule>
+                          <TableauCellule>
+                            {mesureIndicateurTemporaire.metricDate}
+                          </TableauCellule>
+                          <TableauCellule>
+                            {mesureIndicateurTemporaire.metricType}
+                          </TableauCellule>
+                          <TableauCellule>
+                            {mesureIndicateurTemporaire.metricValue}
+                          </TableauCellule>
+                        </TableauLigne>
                       );
                     },
                   )}
-                </tbody>
-              </table>
+                </TableauCorps>
+              </Tableau>
               <FormulairePublierImportIndicateur
                 isPending={isPending}
                 publierLeFichier={publierLeFichier}

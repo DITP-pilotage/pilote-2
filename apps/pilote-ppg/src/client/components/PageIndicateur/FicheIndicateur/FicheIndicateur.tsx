@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { FunctionComponent } from "react";
 import SectionTableauIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur";
 import SectionDétailsMetadataIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur";
