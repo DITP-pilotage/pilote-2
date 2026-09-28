@@ -1,6 +1,9 @@
 import { DateTime } from "luxon";
 import type { inferRouterOutputs } from "@trpc/server";
 import { clsxm } from "@/utils/clsxm";
+import { Table } from "@/components/shared/Table";
+import { DataTableEmpty } from "@/components/shared/DataTable/Empty";
+import { PaginationView } from "@/components/shared/DataTable/Pagination";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
 
 type ListerOutput = inferRouterOutputs<
@@ -85,112 +88,132 @@ export const AlbertDashboardTable = ({
 
   if (!enChargement && conversations.length === 0) {
     return (
-      <div className="!p-10 !text-center !text-dsfr-mention-grey !border !border-dsfr-grey-925 !rounded-md">
-        Aucune conversation pour ces filtres
-      </div>
+      <DataTableEmpty
+        empty={{ title: "Aucune conversation pour ces filtres" }}
+        hasActiveFilters={false}
+        onResetFilters={() => {}}
+      />
     );
   }
 
+  const ariaSort = (champ: TriDashboard["champ"]) =>
+    tri.champ === champ
+      ? tri.direction === "desc"
+        ? "descending"
+        : "ascending"
+      : undefined;
+
   return (
     <div>
-      <div className="!overflow-x-auto !border !border-dsfr-grey-925 !rounded-md !bg-white">
-        <table className="!w-full !text-sm">
-          <thead className="!bg-dsfr-grey-1000">
-            <tr>
-              <th className="!text-left !px-4 !py-2">Conversation</th>
-              <th className="!text-left !px-4 !py-2">Profil</th>
-              <th className="!text-left !px-4 !py-2">
-                <ColonneTri
-                  champ="createdAt"
-                  label="Créé le"
-                  onTriChange={onTriChange}
-                  tri={tri}
-                />
-              </th>
-              <th className="!text-left !px-4 !py-2">
-                <ColonneTri
-                  champ="updatedAt"
-                  label="MAJ"
-                  onTriChange={onTriChange}
-                  tri={tri}
-                />
-              </th>
-              <th className="!text-center !px-4 !py-2">👍</th>
-              <th className="!text-center !px-4 !py-2">👎</th>
-              <th className="!text-center !px-4 !py-2">💬</th>
-            </tr>
-          </thead>
-          <tbody>
-            {conversations.map((conversation) => (
-              <tr
-                className={clsxm(
-                  "!border-t !border-dsfr-grey-925 !cursor-pointer even:!bg-dsfr-grey-1000 hover:!bg-dsfr-grey-900",
-                  enChargement && "!opacity-60",
-                )}
-                key={conversation.id}
-                onClick={() => onLigneClick(conversation.id)}
-              >
-                <td className="!px-4 !py-3">
-                  <div className="!font-medium !text-dsfr-grey-50">
-                    {conversation.titre || "Sans titre"}
+      <Table.Root
+        bordered={false}
+        caption="Conversations Albert"
+        captionHidden
+        className="!w-full !text-sm"
+        containerClassName="!border !border-dsfr-grey-925 !rounded-md !bg-white"
+      >
+        <Table.Header className="!bg-dsfr-grey-1000">
+          <Table.Row>
+            <Table.ColumnHeaderCell className="!text-left !px-4 !py-2">
+              Conversation
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="!text-left !px-4 !py-2">
+              Profil
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell
+              aria-sort={ariaSort("createdAt")}
+              className="!text-left !px-4 !py-2"
+            >
+              <ColonneTri
+                champ="createdAt"
+                label="Créé le"
+                onTriChange={onTriChange}
+                tri={tri}
+              />
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell
+              aria-sort={ariaSort("updatedAt")}
+              className="!text-left !px-4 !py-2"
+            >
+              <ColonneTri
+                champ="updatedAt"
+                label="MAJ"
+                onTriChange={onTriChange}
+                tri={tri}
+              />
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="!text-center !px-4 !py-2">
+              <span aria-hidden="true">👍</span>
+              <span className="sr-only">Pouces levés</span>
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="!text-center !px-4 !py-2">
+              <span aria-hidden="true">👎</span>
+              <span className="sr-only">Pouces baissés</span>
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="!text-center !px-4 !py-2">
+              <span aria-hidden="true">💬</span>
+              <span className="sr-only">Commentaires</span>
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body zebra={false}>
+          {conversations.map((conversation) => (
+            <Table.Row
+              className={clsxm(
+                "relative !border-t !border-dsfr-grey-925 even:!bg-dsfr-grey-1000 hover:!bg-dsfr-grey-900",
+                enChargement && "!opacity-60",
+              )}
+              key={conversation.id}
+            >
+              <Table.RowHeaderCell className="!px-4 !py-3">
+                <button
+                  className="!font-medium !text-dsfr-grey-50 text-left after:absolute after:inset-0 after:content-['']"
+                  onClick={() => onLigneClick(conversation.id)}
+                  type="button"
+                >
+                  {conversation.titre || "Sans titre"}
+                </button>
+                {conversation.extraitPremierMessageUser && (
+                  <div className="!text-xs !text-dsfr-mention-grey !mt-1 !line-clamp-1">
+                    {conversation.extraitPremierMessageUser}
                   </div>
-                  {conversation.extraitPremierMessageUser && (
-                    <div className="!text-xs !text-dsfr-mention-grey !mt-1 !line-clamp-1">
-                      {conversation.extraitPremierMessageUser}
-                    </div>
-                  )}
-                </td>
-                <td className="!px-4 !py-3">
-                  <span className="!inline-block !px-2 !py-1 !text-xs !bg-dsfr-grey-1000 !rounded">
-                    {conversation.utilisateur.profilNom}
-                  </span>
-                </td>
-                <td className="!px-4 !py-3 !whitespace-nowrap">
-                  {formatterDateCourte(conversation.createdAt)}
-                </td>
-                <td className="!px-4 !py-3 !whitespace-nowrap">
-                  {formatterDateCourte(conversation.updatedAt)}
-                </td>
-                <td className="!px-4 !py-3 !text-center">
-                  <Compteur valeur={conversation.nbPouce} />
-                </td>
-                <td className="!px-4 !py-3 !text-center">
-                  <Compteur valeur={conversation.nbPouceBas} />
-                </td>
-                <td className="!px-4 !py-3 !text-center">
-                  <Compteur valeur={conversation.nbCommentaire} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                )}
+              </Table.RowHeaderCell>
+              <Table.Cell className="!px-4 !py-3">
+                <span className="!inline-block !px-2 !py-1 !text-xs !bg-dsfr-grey-1000 !rounded">
+                  {conversation.utilisateur.profilNom}
+                </span>
+              </Table.Cell>
+              <Table.Cell className="!px-4 !py-3 !whitespace-nowrap">
+                {formatterDateCourte(conversation.createdAt)}
+              </Table.Cell>
+              <Table.Cell className="!px-4 !py-3 !whitespace-nowrap">
+                {formatterDateCourte(conversation.updatedAt)}
+              </Table.Cell>
+              <Table.Cell className="!px-4 !py-3 !text-center">
+                <Compteur valeur={conversation.nbPouce} />
+              </Table.Cell>
+              <Table.Cell className="!px-4 !py-3 !text-center">
+                <Compteur valeur={conversation.nbPouceBas} />
+              </Table.Cell>
+              <Table.Cell className="!px-4 !py-3 !text-center">
+                <Compteur valeur={conversation.nbCommentaire} />
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
 
       <div className="!flex !items-center !justify-between !mt-4 !text-sm !text-dsfr-mention-grey">
         <span>
           {debut} – {fin} sur {total}
         </span>
-        <div className="!flex !gap-2">
-          <button
-            className="!px-3 !py-1 !border !border-dsfr-grey-900 !rounded-md disabled:!opacity-50"
-            disabled={page <= 1}
-            onClick={() => onPageChange(page - 1)}
-            type="button"
-          >
-            Précédent
-          </button>
-          <span>
-            Page {page} / {nbPages}
-          </span>
-          <button
-            className="!px-3 !py-1 !border !border-dsfr-grey-900 !rounded-md disabled:!opacity-50"
-            disabled={page >= nbPages}
-            onClick={() => onPageChange(page + 1)}
-            type="button"
-          >
-            Suivant
-          </button>
-        </div>
+        <PaginationView
+          className="mt-0 mb-0"
+          onPageChange={(pageIndex) => onPageChange(pageIndex + 1)}
+          pageCount={nbPages}
+          pageIndex={page - 1}
+        />
       </div>
     </div>
   );

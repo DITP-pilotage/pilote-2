@@ -7,6 +7,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { $Enums } from "@prisma/client";
+import { parseAsSorting } from "@/components/shared/DataTable/urlParsers";
 import api from "@/server/infrastructure/api/trpc/api";
 import {
   AlbertDashboardFilters,
@@ -20,8 +21,7 @@ import { ConversationDetailModale } from "@/components/PagePanelAdministrateur/A
 
 const TAILLE_PAGE = 25;
 
-const champsTri = ["createdAt", "updatedAt"] as const;
-const directionsTri = ["asc", "desc"] as const;
+const CHAMPS_TRI = ["createdAt", "updatedAt"] as const;
 const categoriesProbleme = Object.values($Enums.llm_call_categorie_probleme);
 
 export const AlbertDashboard = () => {
@@ -36,8 +36,7 @@ export const AlbertDashboard = () => {
         parseAsStringLiteral(categoriesProbleme),
       ).withDefault([]),
       profilCodes: parseAsArrayOf(parseAsString).withDefault([]),
-      triChamp: parseAsStringLiteral(champsTri).withDefault("updatedAt"),
-      triDirection: parseAsStringLiteral(directionsTri).withDefault("desc"),
+      sort: parseAsSorting.withDefault([{ id: "updatedAt", desc: true }]),
       conversationOuverteId: parseAsString,
     },
     { history: "push", shallow: false, clearOnDefault: true },
@@ -52,9 +51,14 @@ export const AlbertDashboard = () => {
     profilCodes: params.profilCodes,
   };
 
+  const [triURL] = params.sort;
+  const triValide =
+    triURL && (CHAMPS_TRI as readonly string[]).includes(triURL.id)
+      ? triURL
+      : { id: "updatedAt", desc: true };
   const tri: TriDashboard = {
-    champ: params.triChamp,
-    direction: params.triDirection,
+    champ: triValide.id as (typeof CHAMPS_TRI)[number],
+    direction: triValide.desc ? "desc" : "asc",
   };
 
   const { data, isLoading } = api.albert.conversations.listerToutes.useQuery({
@@ -86,8 +90,7 @@ export const AlbertDashboard = () => {
   const changerTri = (nouveauTri: TriDashboard) => {
     setParams({
       page: 1,
-      triChamp: nouveauTri.champ,
-      triDirection: nouveauTri.direction,
+      sort: [{ id: nouveauTri.champ, desc: nouveauTri.direction === "desc" }],
     });
   };
 
