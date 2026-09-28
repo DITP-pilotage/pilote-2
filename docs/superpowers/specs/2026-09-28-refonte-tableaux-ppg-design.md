@@ -76,7 +76,7 @@ export const Table = Object.assign(Root, {
 
 | Partie | Élément | Comportement |
 |---|---|---|
-| `Root` | `<div>` défilant + `<table>` | Conteneur `overflow-x-auto` avec `role="region"`, `tabIndex={0}`, `aria-labelledby` vers la caption (WCAG 2.1.1). Prop `caption: ReactNode` **obligatoire** (RGAA 5.4), `captionHidden` pour la passer en `sr-only`. Applique aussi la neutralisation des marges de texte DSFR (`[--text-spacing:0] [--title-spacing:0]`) tant que le CSS global DSFR est chargé. |
+| `Root` | `<div>` défilant + `<table>` | Conteneur `overflow-x-auto` qui reçoit `role="region"`, `tabIndex={0}` et `aria-labelledby` vers la caption (WCAG 2.1.1) **seulement quand le tableau déborde** (`ResizeObserver`). Prop `caption: ReactNode` **obligatoire** (RGAA 5.4), `captionHidden` pour la passer en `sr-only`. Applique aussi la neutralisation des marges de texte DSFR (`[--text-spacing:0] [--title-spacing:0]`) tant que le CSS global DSFR est chargé. |
 | `Caption` | `<caption>` | Rendue par `Root` ; exportée pour les cas où l'appelant veut la composer. |
 | `Header` / `Body` / `Footer` | `thead` / `tbody` / `tfoot` | Styles `.fr-table`. |
 | `Row` | `<tr>` | Zébrage par défaut (`zebra`, désactivable). |
@@ -146,7 +146,7 @@ La page ne voit **jamais** `Table.*` pour un tableau tanstack : les primitives s
 
 **`Root`** : `AppTable` (provider) + `Table.Root` + caption + `LiveRegion`. Sans ligne, rend à la place du tableau le bloc d'état vide. Sous `sm` avec `tile`, rend `TileList` à la place du tableau.
 
-**`Header`** : boucle sur `getHeaderGroups()`, `Table.ColumnHeaderCell` par en-tête, largeur depuis `meta.width`, `aria-sort` (`ascending` | `descending` | `none`) sur chaque colonne triable, `SortButtons` si la colonne est triable et que `meta.sortButton !== false`.
+**`Header`** : boucle sur `getHeaderGroups()`, `Table.ColumnHeaderCell` par en-tête, largeur depuis `meta.width`, `aria-sort` (`ascending` | `descending`) sur la seule colonne triée, `SortButtons` si la colonne est triable et que `meta.sortButton !== false`.
 
 **`SortButtons`** : les deux boutons actuels (croissant, décroissant) au visuel identique, nommés « Trier par {libellé}, ordre croissant|décroissant », avec `aria-pressed` ; le sens courant est aussi porté par `aria-sort` sur le `<th>`. Libellé depuis `meta.label`, sinon `header` s'il s'agit d'une chaîne.
 
@@ -251,13 +251,13 @@ Correspondance avec les 11 exigences transmises par la session accessibilité :
 |---|---|---|
 | 1 | Titre de tableau (RGAA 5.4 / 5.6) | `caption` obligatoire sur `Table.Root`, `captionHidden` |
 | 2 | `scope`, jamais de `<th>` vide | `ColumnHeaderCell` / `RowHeaderCell` |
-| 3 | `aria-sort` + `<button>` « Trier par » | `Header`, `SortButtons` |
-| 4 | Annonces | `LiveRegion` |
+| 3 | `aria-sort` + `<button>` « Trier par » | `Header`, `SortButtons` : `aria-sort` sur la seule colonne triée, `aria-pressed` toujours présent sur les deux boutons |
+| 4 | Annonces | `LiveRegion` (une par tableau, montée vide dès le premier rendu) |
 | 5 | Pagination nommée, `aria-current`, bords désactivés | `Pagination` |
-| 6 | Un seul lien nommé par ligne | `Body` + `getRowHref` / `rowHeader` |
+| 6 | Un seul lien nommé par ligne | `Body` + `getRowHref` / `rowHeader` ; focus visible sur toute la ligne (`tr:has(> th > a:focus-visible)`) ; tuile-lien nommée par `tileLabel`, sans interactif à l'intérieur |
 | 7 | Cibles 24 × 24 px | primitives |
 | 8 | Focus visible | primitives |
-| 9 | Conteneur défilant atteignable au clavier | `Table.Root` |
+| 9 | Conteneur défilant atteignable au clavier | `Table.Root` : `role="region"` + `tabindex="0"` + `aria-labelledby` posés **seulement quand le tableau déborde** (`ResizeObserver`), pour ne pas ajouter d'arrêt de tabulation inutile (RGAA 12.8) |
 | 10 | Sémantique en vue tuile | `TileList` (`<ul>`/`<li>`) |
 | 11 | État vide annoncé | `Empty` (`role="status"`) |
 

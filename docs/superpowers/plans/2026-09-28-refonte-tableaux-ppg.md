@@ -84,6 +84,7 @@ Les tâches 9 à 16 migrent les pages (fichiers listés dans chaque tâche) ; la
 **Interfaces:**
 - Produces : `Table` (`Root`, `Header`, `Body`, `Footer`, `Row`, `ColumnHeaderCell`, `RowHeaderCell`, `Cell`), `DSFR_TEXT_SPACING_RESET`, `INTERACTIVE_IN_CELL`, type `TableRootProps`.
 - `Table.Root` props : `caption: ReactNode` (obligatoire), `captionHidden?: boolean`, `bordered?: boolean` (défaut `true`), `containerClassName?: string`, + props de `<table>`.
+- Le conteneur ne devient une zone atteignable au clavier (`role="region"`, `tabIndex={0}`, `aria-labelledby` vers la légende) **que lorsque le tableau déborde horizontalement** (`scrollWidth > clientWidth`, mesuré au montage et via `ResizeObserver`) : sinon il ajouterait un arrêt de tabulation inutile sur chaque tableau (RGAA 12.8, remarque de PIL-1818).
 - `Table.Body` props : `zebra?: boolean` (défaut `true`) + props de `<tbody>`.
 - `Table.ColumnHeaderCell` props : props de `<th>` avec `children: ReactNode` **obligatoire**, `scope` par défaut `"col"`.
 - `Table.RowHeaderCell` : `<th scope="row">`, même rendu qu'une `Cell` (graisse normale, pour ne pas changer le visuel des colonnes principales).
@@ -130,14 +131,35 @@ const renderTable = (props: { captionHidden?: boolean } = {}) =>
   );
 
 describe("Table", () => {
-  it("nomme le tableau et sa zone de défilement par la légende", () => {
+  it("nomme le tableau par sa légende", () => {
     renderTable();
 
     expect(
       screen.getByRole("table", { name: "Liste des chantiers" }),
     ).toBeInTheDocument();
-    const region = screen.getByRole("region", { name: "Liste des chantiers" });
-    expect(region).toHaveAttribute("tabindex", "0");
+  });
+
+  it("n'ajoute pas d'arrêt de tabulation quand le tableau ne déborde pas", () => {
+    renderTable();
+
+    expect(screen.queryByRole("region")).not.toBeInTheDocument();
+  });
+
+  it("rend la zone de défilement atteignable au clavier quand le tableau déborde", () => {
+    const scrollWidth = vi
+      .spyOn(Element.prototype, "scrollWidth", "get")
+      .mockReturnValue(800);
+    const clientWidth = vi
+      .spyOn(Element.prototype, "clientWidth", "get")
+      .mockReturnValue(300);
+
+    renderTable();
+
+    expect(
+      screen.getByRole("region", { name: "Liste des chantiers" }),
+    ).toHaveAttribute("tabindex", "0");
+    scrollWidth.mockRestore();
+    clientWidth.mockRestore();
   });
 
   it("masque visuellement la légende sans la retirer de l'arbre d'accessibilité", () => {
@@ -215,8 +237,35 @@ Expected : FAIL, `Failed to resolve import "@/components/shared/Table"`.
 `apps/pilote-ppg/src/client/components/shared/Table.tsx` :
 
 ```tsx
-import { ComponentPropsWithoutRef, ReactNode, useId } from "react";
+import {
+  ComponentPropsWithoutRef,
+  ReactNode,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import { clsxm } from "@/utils/clsxm";
+
+const useHorizontalOverflow = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [overflowing, setOverflowing] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const update = () =>
+      setOverflowing(element.scrollWidth > element.clientWidth);
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    if (element.firstElementChild) observer.observe(element.firstElementChild);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, overflowing] as const;
+};
 
 export const DSFR_TEXT_SPACING_RESET = "[--text-spacing:0] [--title-spacing:0]";
 
@@ -244,17 +293,19 @@ function Root({
   ...props
 }: TableRootProps) {
   const captionId = useId();
+  const [containerRef, overflowing] = useHorizontalOverflow();
   return (
     <div
-      aria-labelledby={captionId}
       className={clsxm(
         "relative w-full overflow-x-auto",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dsfr-focus",
         DSFR_TEXT_SPACING_RESET,
         containerClassName,
       )}
-      role="region"
-      tabIndex={0}
+      ref={containerRef}
+      {...(overflowing
+        ? { role: "region", tabIndex: 0, "aria-labelledby": captionId }
+        : {})}
     >
       <table
         className={clsxm(
@@ -372,7 +423,7 @@ Le trait bas de l'en-tête est porté par les `ColumnHeaderCell` (`border-b`) : 
 - [ ] **Step 5 : lancer le test**
 
 Run : `pnpm exec vitest run --project client src/client/components/shared/Table.unit.test.tsx`
-Expected : PASS (6 tests).
+Expected : PASS (8 tests).
 
 - [ ] **Step 6 : lint et commit**
 
@@ -616,6 +667,7 @@ Commit : `refactor(PIL-1822): pose le socle DataTable (types, meta de colonnes, 
   - `DataTableHeaderProps = { className?: string; cellClassName?: string }` ;
   - `DataTableBodyProps = { className?: string; zebra?: boolean; rowClassName?: string | ((row: AnyRow) => string | undefined) }` (complété à la tâche 4) ;
   - `getDataTableConfig(table)` → `{ rowHeader?, getRowHref?, tile? }` lu dans `table.options.meta.dataTable` (complété aux tâches 5 et 7).
+- Règles d'accessibilité du tri (PIL-1818) : `aria-sort` n'est posé **que sur la colonne triée** (jamais `none` sur les autres, jamais deux colonnes annoncées triées) ; les deux boutons portent toujours `aria-pressed` (`"true"`/`"false"`).
 - Règles du factory : `columnVisibilityFeature` forcée (`Header`/`Body` utilisent `getHeaderGroups`/`getVisibleCells` ; sans elle `row.getVisibleCells is not a function`, constaté pendant l'exploration) ; `columnMeta: metaHelper<DataTableColumnMeta>()` ; `defaultColumn: { enableSorting: false }` (tri opt-in par colonne). Les briques sont liées à l'instance une seule fois (`useMemo` sur `table`) : leur identité est stable d'un rendu à l'autre.
 - Conséquence du helper `createAppColumnHelper` : un `accessor` **fonction** exige un `id` (contrairement au helper core) — à ajouter lors des migrations.
 
@@ -722,14 +774,25 @@ describe("createDataTableHook", () => {
     ).toEqual(["Chantier B", "Chantier A"]);
   });
 
-  it("ne rend triables que les colonnes qui le déclarent", () => {
+  it("n'annonce un ordre que sur la colonne effectivement triée", async () => {
     render(<TableauAvecTri />);
-
-    expect(
+    const ordres = () =>
       screen
         .getAllByRole("columnheader")
-        .map((cellule) => cellule.getAttribute("aria-sort")),
-    ).toEqual(["none", "none", null]);
+        .map((cellule) => cellule.getAttribute("aria-sort"));
+
+    expect(ordres()).toEqual([null, null, null]);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Trier par Nom, ordre décroissant" }),
+    );
+
+    expect(ordres()).toEqual(["descending", null, null]);
+    expect(
+      screen
+        .getAllByRole("button", { name: /Trier par Nom/ })
+        .map((bouton) => bouton.getAttribute("aria-pressed")),
+    ).toEqual(["false", "true"]);
   });
 
   it("trie au clic et reflète l'ordre dans aria-sort et aria-pressed", async () => {
@@ -937,7 +1000,7 @@ function DataTableColumnHeader({
 
   return (
     <Table.ColumnHeaderCell
-      aria-sort={sortable ? toAriaSort(sorted) : undefined}
+      aria-sort={sorted ? toAriaSort(sorted) : undefined}
       className={clsxm(cellClassName, meta?.headerClassName)}
       colSpan={header.colSpan > 1 ? header.colSpan : undefined}
       style={meta?.width ? { width: meta.width } : undefined}
@@ -1249,6 +1312,7 @@ Commit : `refactor(PIL-1822): ajoute le factory DataTable (createTableHook) et l
 - Consumes : `getDataTableConfig` (`rowHeader`, `getRowHref`) (tâche 3) ; `hasFeature`, `getColumnMeta` (tâche 2).
 - Produces :
   - avec `getRowHref` et `rowHeader` : la cellule `rowHeader` contient **un seul** `<a>` (`next/link`) nommé par son contenu, dont la zone couvre toute la ligne (`after:absolute after:inset-0`, `<tr>` en `relative`) ; les autres éléments interactifs de la ligne passent au-dessus (`relative z-10`) ; aucune autre ancre n'est ajoutée ;
+  - le focus du lien est rendu visible **sur toute la ligne** (`outline` DSFR 2 px sur le `<tr>` via `:has(> th > a:focus-visible)`, l'outline propre du lien étant alors retiré) — RGAA 10.7 ; l'ordre de tabulation reste lien principal puis actions de la ligne tant que la colonne `rowHeader` précède les colonnes d'actions (à respecter dans les migrations) ;
   - si `getRowHref(row)` renvoie `undefined`, la ligne n'a pas de lien ;
   - lignes de groupe (`columnGroupingFeature` + `row.getIsGrouped()`) : la cellule groupée (si sa colonne est visible) contient un `<button type="button" aria-expanded>` qui déplie/replie (`row.getToggleExpandedHandler()`) ; toutes les autres cellules d'une ligne de groupe rendent `columnDef.aggregatedCell ?? columnDef.cell` — **règle v8 conservée volontairement** : en v9 `cell.getIsAggregated()` n'est vrai que si la colonne a une `aggregationFn`, or l'accueil déclare des `aggregatedCell` sans fonction d'agrégation (colonnes `nom`, `écart`, `dérouler-groupe`) ; pas de lien sur une ligne de groupe ;
   - prop `cellClassName?: string` sur `table.Body`, appliquée à toutes les cellules (avant `meta.cellClassName`) ;
@@ -1366,7 +1430,10 @@ describe("table.Body", () => {
     render(<TableauPlat />);
 
     const ligne = screen.getByRole("link", { name: "Eau" }).closest("tr");
-    expect(ligne).toHaveClass("relative");
+    expect(ligne).toHaveClass(
+      "relative",
+      "[&:has(>th>a:focus-visible)]:outline-2",
+    );
     expect(screen.getByRole("link", { name: "Eau" })).toHaveClass(
       "after:absolute",
     );
@@ -1430,6 +1497,9 @@ export type DataTableBodyProps = {
   renderGroupCell?: (cell: AnyCell) => ReactNode;
 };
 
+const ROW_LINK_FOCUS =
+  "[&:has(>th>a:focus-visible)]:outline-2 [&:has(>th>a:focus-visible)]:-outline-offset-2 [&:has(>th>a:focus-visible)]:outline-dsfr-focus";
+
 const ABOVE_ROW_LINK =
   "[&_:is(a,button,input,select,textarea)]:relative [&_:is(a,button,input,select,textarea)]:z-10";
 
@@ -1482,7 +1552,7 @@ function DataTableRow({
   return (
     <Table.Row
       className={clsxm(
-        href && "relative",
+        href && ["relative", ROW_LINK_FOCUS],
         typeof rowClassName === "function" ? rowClassName(row) : rowClassName,
       )}
     >
@@ -1504,7 +1574,7 @@ function DataTableRow({
             >
               {href ? (
                 <Link
-                  className="after:absolute after:inset-0 after:content-['']"
+                  className="after:absolute after:inset-0 after:content-[''] focus-visible:!outline-none"
                   href={href}
                 >
                   {content}
@@ -1587,7 +1657,7 @@ Commit : `refactor(PIL-1822): rend les lignes de tableau cliquables par un lien 
 - Consumes : `Table.Root` (tâche 1) ; `AnyTable`, `EmptyConfig`, `EmptyMessage`, `hasFeature`, `getColumnLabel` (tâche 2) ; `getDataTableConfig`, `DataTableRoot`, `table.hasActiveFilters()` / `table.resetFilters()` via `bindBricks` (tâche 3).
 - Produces :
   - `DataTableEmpty` : bloc `role="status"` qui recode `fr-notice--info` (fond `dsfr-info-950`, texte `dsfr-flat-info`, `py-4`, titre gras précédé de l'icône `InformationPleineIcon` 24 px) ; avec `{ noData, noResults }`, affiche `noResults` quand des filtres sont actifs, avec un bouton « Réinitialiser les filtres » ;
-  - `DataTableLiveRegion` : `aria-live="polite"`, `aria-atomic="true"`, `sr-only` ; annonce le tri (« Trié par {libellé}, ordre croissant|décroissant », « Tri retiré »), la page (« Page {n} sur {total} ») et le nombre de résultats après un filtre ou une recherche (« {n} résultat(s) », « Aucun résultat ») ; rien au premier rendu ;
+  - `DataTableLiveRegion` : **une seule par tableau, montée vide dès le premier rendu** (une région insérée au moment de l'annonce n'est pas lue), `aria-live="polite"`, `aria-atomic="true"`, `sr-only` ; annonce le tri (« Trié par {libellé}, ordre croissant|décroissant », « Tri retiré »), la page (« Page {n} sur {total} ») et le nombre de résultats après un filtre ou une recherche (« {n} résultat(s) », « Aucun résultat ») ; rien au premier rendu ;
   - `DataTableTileList` : sous le point de rupture `tileBreakpoint` (option de `useDataTable`, défaut `"sm"` ; store `estLargeurDÉcranActuelleMoinsLargeQue`, comparaison inclusive : `"sm"` = largeur < 768 px, `"lg"` = < 1280 px) et si `tile` est fourni, `<ul>`/`<li>` nommée par la légende à la place du `<table>` ; si `getRowHref(row)` renvoie une URL, la tuile est enveloppée dans un `next/link` (`block`) ; prop `tileClassName?: (row) => string | undefined` sur `table.Root` pour styler chaque `<li>` ;
   - `Root` : ordre de décision → aucune ligne et `empty` fourni : état vide ; sinon vue tuile si applicable ; sinon `Table.Root`. La région d'annonces est toujours rendue.
 
@@ -1638,7 +1708,13 @@ function Tableau({
     data,
     columns: colonnes,
     search: (chantier) => [chantier.nom],
-    ...(avecTuile ? { tile: (row) => <p>{`Tuile ${row.original.nom}`}</p> } : {}),
+    ...(avecTuile
+      ? {
+          tile: (row) => <p>{`Tuile ${row.original.nom}`}</p>,
+          getRowHref: (row) => `/chantier/${row.original.id}`,
+          tileLabel: (row) => row.original.nom,
+        }
+      : {}),
   });
   return (
     <>
@@ -1732,6 +1808,11 @@ describe("table.Root", () => {
         .getAllByRole("listitem")
         .map((item) => item.textContent),
     ).toEqual(["Tuile Eau", "Tuile Air"]);
+    expect(
+      within(liste)
+        .getAllByRole("link")
+        .map((lien) => lien.getAttribute("aria-label")),
+    ).toEqual(["Eau", "Air"]);
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
     revenirEnDesktop();
   });
@@ -1870,12 +1951,14 @@ export function DataTableTileList({
   caption,
   tile,
   getRowHref,
+  tileLabel,
   tileClassName,
 }: {
   table: AnyTable;
   caption: ReactNode;
   tile: (row: AnyRow) => ReactNode;
   getRowHref?: (row: AnyRow) => string | undefined;
+  tileLabel?: (row: AnyRow) => string;
   tileClassName?: (row: AnyRow) => string | undefined;
 }) {
   const captionId = useId();
@@ -1890,7 +1973,11 @@ export function DataTableTileList({
           return (
             <li className={clsxm(tileClassName?.(row))} key={row.id}>
               {href ? (
-                <Link className="block no-underline bg-none" href={href}>
+                <Link
+                  aria-label={tileLabel?.(row)}
+                  className="block no-underline bg-none"
+                  href={href}
+                >
                   {tile(row)}
                 </Link>
               ) : (
@@ -1938,7 +2025,8 @@ export function DataTableRoot({
   hasActiveFilters: boolean;
   onResetFilters: () => void;
 }) {
-  const { tile, tileBreakpoint, getRowHref } = getDataTableConfig(table);
+  const { tile, tileBreakpoint, tileLabel, getRowHref } =
+    getDataTableConfig(table);
   const isNarrow = estLargeurDÉcranActuelleMoinsLargeQue(tileBreakpoint ?? "sm");
 
   const content =
@@ -1955,6 +2043,7 @@ export function DataTableRoot({
         table={table}
         tile={tile}
         tileClassName={tileClassName}
+        tileLabel={tileLabel}
       />
     ) : (
       <Table.Root {...props}>{children}</Table.Root>
@@ -2006,9 +2095,9 @@ const bindBricks = (table: AnyTable) => {
 
 - [ ] **Step 6 bis : option `tileBreakpoint`**
 
-Dans `config.ts`, ajouter l'import `import type { PointDeRuptureÉcran } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore.interface";` et le champ `tileBreakpoint?: PointDeRuptureÉcran;` à `DataTableConfig`.
+Dans `config.ts`, ajouter l'import `import type { PointDeRuptureÉcran } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore.interface";` et les champs `tileBreakpoint?: PointDeRuptureÉcran;` et `tileLabel?: (row: AnyRow) => string;` à `DataTableConfig`.
 
-Dans `createDataTableHook.tsx` : ajouter `tileBreakpoint?: PointDeRuptureÉcran;` à `DataTableOptions` (même import), le déstructurer dans `useDataTable`, et l'ajouter à l'objet `dataTable` :
+Dans `createDataTableHook.tsx` : ajouter `tileBreakpoint?: PointDeRuptureÉcran;` et `tileLabel?: (row: Row<AppFeatures<F>, TData>) => string;` à `DataTableOptions` (même import), les déstructurer dans `useDataTable`, et les ajouter à l'objet `dataTable` :
 
 ```tsx
     const dataTable: DataTableConfig = {
@@ -2016,8 +2105,11 @@ Dans `createDataTableHook.tsx` : ajouter `tileBreakpoint?: PointDeRuptureÉcran;
       getRowHref: getRowHref as DataTableConfig["getRowHref"],
       tile: tile as DataTableConfig["tile"],
       tileBreakpoint,
+      tileLabel: tileLabel as DataTableConfig["tileLabel"],
     };
 ```
+
+`tileLabel` borne le nom accessible du lien d'une tuile (sinon tout le texte de la carte devient le nom du lien). Une tuile enveloppée dans un lien ne doit contenir **aucun** élément interactif (axe `nested-interactive`) ; même règle pour un bouton de groupe.
 
 - [ ] **Step 7 : lancer les tests**
 
@@ -3365,7 +3457,7 @@ Dans les trois : `th` → `Table.ColumnHeaderCell`, `td` → `Table.Cell`.
 - [ ] **Step 8 : Pilote Eval (balisage seul)**
 
 `Evaluation/TableauEvaluation.tsx` (lignes 193-229) : `<table className="table-fixed w-full border-collapse">` → `<Table.Root bordered={false} caption={titre} captionHidden className="table-fixed w-full border-collapse">` ; `tbody` → `Table.Body zebra={false} className="bg-transparent"` ; `tr` → `Table.Row` ; `td` → `Table.Cell` avec **exactement** les classes existantes (`border border-gray-300 px-4 first:!border-l-0 last:!border-r-0 align-top` + `w-auto` conditionnel) et `p-0` retiré du défaut en ajoutant `py-0` si le rendu l'exige. Le `<colgroup>` reste tel quel. Hooks, filtres, `setTimeout` : inchangés.
-`PageUtilisateursPiloteEval/TableauUtilisateurs.tsx` : `table.w-full border-collapse` → `<Table.Root bordered={false} caption="Utilisateurs de Pilote Eval" captionHidden className="w-full border-collapse">` ; `thead tr` et `th` gardent leurs classes (`Table.Header className="bg-transparent"`, `Table.ColumnHeaderCell` avec `px-4 py-3 cursor-pointer select-none hover:bg-dsfr-blue-france-925-hover`) et reçoivent `aria-sort` (`"ascending"`/`"descending"`/`"none"` selon `header.column.getIsSorted()`) ; corps `Table.Body zebra={false}` avec les classes et l'alternance existantes. Pas d'autre changement.
+`PageUtilisateursPiloteEval/TableauUtilisateurs.tsx` : `table.w-full border-collapse` → `<Table.Root bordered={false} caption="Utilisateurs de Pilote Eval" captionHidden className="w-full border-collapse">` ; `thead tr` et `th` gardent leurs classes (`Table.Header className="bg-transparent"`, `Table.ColumnHeaderCell` avec `px-4 py-3 cursor-pointer select-none hover:bg-dsfr-blue-france-925-hover`) et reçoivent `aria-sort` (`"ascending"`/`"descending"`) **uniquement sur la colonne triée** (`header.column.getIsSorted()` non faux ; rien sur les autres) ; corps `Table.Body zebra={false}` avec les classes et l'alternance existantes. Pas d'autre changement.
 
 - [ ] **Step 9 : vérifier**
 
@@ -4158,6 +4250,7 @@ Dans `useTableauChantiers.tsx` :
         />
       ),
     tileBreakpoint: "lg",
+    tileLabel: (row) => row.original.nom ?? "",
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,
@@ -4354,7 +4447,7 @@ puis `triChamp: tri.id as (typeof CHAMPS_TRI)[number]`, `triDirection: tri.desc 
 
 - [ ] **Step 3 : Albert — tableau**
 
-`AlbertDashboardTable.tsx` : `table.!w-full !text-sm` → `<Table.Root bordered={false} caption="Conversations Albert" captionHidden className="!w-full !text-sm" containerClassName="!border !border-dsfr-grey-925 !rounded-md !bg-white">` ; `thead.!bg-dsfr-grey-1000` → `Table.Header` ; `th` → `Table.ColumnHeaderCell className="!text-left !px-4 !py-2"`, avec `aria-sort` (`"ascending"`/`"descending"`/`"none"`) sur « Créé le » et « MAJ » selon `tri` ; en-têtes 👍 👎 💬 : `<span aria-hidden="true">👍</span><span className="sr-only">Pouces levés</span>` (resp. « Pouces baissés », « Commentaires »). Lignes : `Table.Row className="relative !border-t !border-dsfr-grey-925 even:!bg-dsfr-grey-1000 hover:!bg-dsfr-grey-900"` (+ `!opacity-60` en chargement), **sans** `onClick` ; la cellule « Conversation » devient `Table.RowHeaderCell` et son titre un bouton qui couvre la ligne :
+`AlbertDashboardTable.tsx` : `table.!w-full !text-sm` → `<Table.Root bordered={false} caption="Conversations Albert" captionHidden className="!w-full !text-sm" containerClassName="!border !border-dsfr-grey-925 !rounded-md !bg-white">` ; `thead.!bg-dsfr-grey-1000` → `Table.Header` ; `th` → `Table.ColumnHeaderCell className="!text-left !px-4 !py-2"`, avec `aria-sort` (`"ascending"`/`"descending"`) **uniquement** sur celle des deux colonnes « Créé le » / « MAJ » qui est triée (`tri.champ`) ; en-têtes 👍 👎 💬 : `<span aria-hidden="true">👍</span><span className="sr-only">Pouces levés</span>` (resp. « Pouces baissés », « Commentaires »). Lignes : `Table.Row className="relative !border-t !border-dsfr-grey-925 even:!bg-dsfr-grey-1000 hover:!bg-dsfr-grey-900"` (+ `!opacity-60` en chargement), **sans** `onClick` ; la cellule « Conversation » devient `Table.RowHeaderCell` et son titre un bouton qui couvre la ligne :
 
 ```tsx
 <button
