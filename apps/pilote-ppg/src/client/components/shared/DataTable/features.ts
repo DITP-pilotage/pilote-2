@@ -10,7 +10,7 @@ export type FeatureName =
   | "columnFacetingFeature";
 
 export const hasFeature = (table: AnyTable, feature: FeatureName) =>
-  feature in table.features;
+  feature in table._features;
 
 export const getColumnMeta = (column: AnyColumn) =>
   column.columnDef.meta as DataTableColumnMeta | undefined;
