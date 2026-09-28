@@ -1,10 +1,10 @@
 import {
   parseAsBoolean,
-  parseAsInteger,
   parseAsString,
   useQueryState,
   useQueryStates,
 } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
@@ -85,8 +85,8 @@ export const FiltresSelectionUnique: FunctionComponent<
   );
 
   const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
+    "page",
+    parseAsTablePage.withOptions({
       shallow: false,
     }),
   );
@@ -106,7 +106,7 @@ export const FiltresSelectionUnique: FunctionComponent<
       sauvegarderFiltres(filtresAlertesReset);
     }
     sauvegarderFiltres({ [categorieDeFiltre]: valeur });
-    setPagination(1);
+    setPagination(null);
     setListeFiltresNew(valeur);
   };
 

@@ -1,10 +1,8 @@
-import { z } from "zod";
 import {
   createLoader,
   parseAsArrayOf,
   parseAsBoolean,
   parseAsInteger,
-  parseAsJson,
   parseAsString,
   parseAsStringLiteral,
 } from "nuqs/server";
@@ -12,18 +10,17 @@ import {
   mailles,
   maillesInternes,
 } from "@/server/domain/maille/Maille.interface";
-
-const sortingSchema = z.object({ id: z.string(), desc: z.boolean() });
+import {
+  parseAsSorting,
+  parseAsTablePage,
+} from "@/components/shared/DataTable/urlParsers";
 
 const filtresParsers = {
   jalon: parseAsInteger,
   maille: parseAsStringLiteral([...maillesInternes]).withDefault(
     "departementale",
   ),
-  sort: parseAsJson(sortingSchema.parse).withDefault({
-    id: "avancement",
-    desc: false,
-  }),
+  sort: parseAsSorting.withDefault([{ id: "avancement", desc: false }]),
   perimetres: parseAsArrayOf(parseAsString).withDefault([]),
   axes: parseAsArrayOf(parseAsString).withDefault([]),
   statut: parseAsStringLiteral([
@@ -50,7 +47,7 @@ const filtresParsers = {
 
 export const loadAccueilSearchParams = createLoader({
   ...filtresParsers,
-  pageIndex: parseAsInteger.withDefault(1),
+  page: parseAsTablePage,
   pageSize: parseAsInteger.withDefault(50),
 });
 

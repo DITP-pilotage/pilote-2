@@ -1,10 +1,10 @@
 import {
   parseAsBoolean,
-  parseAsInteger,
   ParserBuilder,
   useQueryState,
   useQueryStates,
 } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 
@@ -45,8 +45,8 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
   });
 
   const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
+    "page",
+    parseAsTablePage.withOptions({
       shallow: false,
     }),
   );
@@ -75,7 +75,7 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
                   id={filtre}
                   onChange={() => {
                     sauvegarderFiltres({ [filtre]: !filtresNew[filtre] });
-                    setPagination(1);
+                    setPagination(null);
                     return setListeFiltresNew({
                       ...filtresNew,
                       [filtre]: !filtresNew[filtre],

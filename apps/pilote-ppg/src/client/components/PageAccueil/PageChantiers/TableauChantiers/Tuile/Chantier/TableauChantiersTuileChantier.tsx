@@ -15,7 +15,7 @@ const TableauChantiersTuileChantier: FunctionComponent<{
   return (
     <div>
       <div className="grid grid-cols-[auto_max-content]">
-        <div className="fr-mb-0 fr-ml-n1w flex gap-2">
+        <div className="mb-0 -ml-2 flex gap-2">
           {afficherIcône ? (
             <IconeMinistere
               className="text-dsfr-blue-france-sun-113"
@@ -26,7 +26,7 @@ const TableauChantiersTuileChantier: FunctionComponent<{
         </div>
         <TypologiesPictos typologies={chantier.typologie} />
       </div>
-      <div className="fr-mt-1w fr-ml-5v grid grid-cols-[2.5rem_auto_1.5rem_2.75rem] gap-x-4 items-baseline whitespace-nowrap">
+      <div className="mt-2 ml-5 grid grid-cols-[2.5rem_auto_1.5rem_2.75rem] gap-x-4 items-baseline whitespace-nowrap">
         <div className="flex self-start">
           <TableauRéformesMétéo
             chantiersSontArchives={chantiersSontArchives}

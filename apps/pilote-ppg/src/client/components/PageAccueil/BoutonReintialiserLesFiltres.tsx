@@ -1,9 +1,5 @@
-import {
-  parseAsBoolean,
-  parseAsInteger,
-  parseAsString,
-  useQueryStates,
-} from "nuqs";
+import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { reinitialiserFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
@@ -12,7 +8,7 @@ export const BoutonReintialiserLesFiltres = () => {
   const [, setFiltres] = useQueryStates(
     {
       maille: parseAsString.withDefault(""),
-      pageIndex: parseAsInteger.withDefault(1),
+      page: parseAsTablePage,
       perimetres: parseAsString.withDefault(""),
       statut: parseAsString.withDefault(""),
       axes: parseAsString.withDefault(""),

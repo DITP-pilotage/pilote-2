@@ -33,7 +33,7 @@ const SélecteurMaille: FunctionComponent<{
     sauvegarderFiltres({ territoireCode: initialeTerritoireCode, maille });
 
     delete router.query._action;
-    delete router.query.pageIndex;
+    delete router.query.page;
     return router.push(
       {
         pathname,

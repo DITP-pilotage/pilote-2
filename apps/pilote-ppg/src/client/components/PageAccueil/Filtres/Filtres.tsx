@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { parseAsString, useQueryStates } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FiltresSelectionMultiple } from "@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
@@ -31,7 +32,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
   const [, setFiltres] = useQueryStates(
     {
       maille: parseAsString.withDefault(""),
-      pageIndex: parseAsInteger.withDefault(1),
+      page: parseAsTablePage,
       axes: parseAsString.withDefault(""),
       territorialisation: parseAsString.withDefault(""),
     },
@@ -90,7 +91,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
               sauvegarderFiltres({ axes: nouveauFiltre });
               return setFiltres({
                 axes: nouveauFiltre.join(","),
-                pageIndex: 1,
+                page: null,
               });
             }}
           />
@@ -111,7 +112,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
                 return setFiltres({
                   territorialisation: nouveauFiltre.join(","),
                   maille: nouvelleMaille,
-                  pageIndex: 1,
+                  page: null,
                 });
               }}
             />

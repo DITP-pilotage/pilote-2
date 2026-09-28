@@ -10,36 +10,36 @@ const TableauChantiersTuileMinistère: FunctionComponent<
   TableauChantiersTuileMinistèreProps
 > = ({ ministère, estDéroulé, estArchive }) => {
   return (
-    <div className="grid grid-cols-[auto_max-content]">
-      <div>
-        <div className="fr-mb-0 fr-ml-n1w">
-          <div className="flex gap-2">
-            <div>
+    <span className="grid grid-cols-[auto_max-content]">
+      <span className="block">
+        <span className="block mb-0 -ml-2">
+          <span className="flex gap-2">
+            <span className="block">
               <IconeMinistere
                 className="text-dsfr-blue-france-sun-113"
                 icone={ministère.icône}
               />
-            </div>
+            </span>
             {ministère?.nom}
-          </div>
-        </div>
-        <div className="fr-mx-3w fr-mt-1v max-w-60">
+          </span>
+        </span>
+        <span className="block mx-6 mt-1 max-w-60">
           <BarreDeProgression
             fond="blanc"
             taille="sm"
             valeur={ministère.avancement}
             variante={estArchive ? "secondaire" : "primaire"}
           />
-        </div>
-      </div>
-      <button type="button">
+        </span>
+      </span>
+      <span aria-hidden="true">
         {estDéroulé ? (
           <Icone icone={ArrowSLineIcon} />
         ) : (
           <Icone icone={ArrowSLine2Icon} />
         )}
-      </button>
-    </div>
+      </span>
+    </span>
   );
 };
 

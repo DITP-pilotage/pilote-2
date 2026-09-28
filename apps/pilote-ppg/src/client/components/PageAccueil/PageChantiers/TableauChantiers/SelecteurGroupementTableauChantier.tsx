@@ -1,4 +1,5 @@
-import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { SegmentedControl } from "@/components/shared/SegmentedControl";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { Icone } from "@/components/_commons/Icone";
@@ -14,8 +15,8 @@ export const SelecteurGroupementTableauChantier = () => {
   );
 
   const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
+    "page",
+    parseAsTablePage.withOptions({
       shallow: false,
     }),
   );
@@ -26,7 +27,7 @@ export const SelecteurGroupementTableauChantier = () => {
         if (!value) return;
         const grouper = value === "ministere";
         sauvegarderFiltres({ groupeParMinistere: grouper });
-        setPagination(1);
+        setPagination(null);
         await setEstGroupe(grouper);
       }}
       type="single"

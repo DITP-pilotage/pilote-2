@@ -16,7 +16,7 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
 
   await test.step(`Navigation vers la page chantier "${chantier.nom}"`, async () => {
     await expect(
-      page.getByRole("table").getByRole("cell", { name: chantier.nom }),
+      page.getByRole("table").getByRole("link", { name: chantier.nom }),
     ).toBeVisible();
     const pageChantier = await pageAccueil.selectChantier(chantier.nom);
 

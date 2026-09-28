@@ -1,5 +1,6 @@
 import { Suspense, useCallback } from "react";
-import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
@@ -174,14 +175,14 @@ const TuileAlerte = ({
   );
 
   const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
+    "page",
+    parseAsTablePage.withOptions({
       shallow: false,
     }),
   );
 
   const onClick = useCallback(() => {
-    setPagination(1);
+    setPagination(null);
     sauvegarderFiltres({ [nomCritère]: !filtreAlerte });
     setFiltreAlerte(!filtreAlerte);
   }, [nomCritère, filtreAlerte, setFiltreAlerte, setPagination]);

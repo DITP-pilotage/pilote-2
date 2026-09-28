@@ -25,7 +25,7 @@ export const getServerSideProps = async (
   const session = await auth(context);
   const searchParams = loadAccueilSearchParams(query);
 
-  const pageIndex = searchParams.pageIndex;
+  const page = searchParams.page;
   const pageSize = searchParams.pageSize;
   const jalonParDefaut = getAnneeDateDeBascule(
     new Date(),
@@ -79,7 +79,7 @@ export const getServerSideProps = async (
     };
   }
 
-  const sorting = searchParams.sort;
+  const [sorting = { id: "avancement", desc: false }] = searchParams.sort;
 
   const filtres: FiltreQueryParams = {
     perimetres: searchParams.perimetres,
@@ -228,7 +228,7 @@ export const getServerSideProps = async (
   const chantierIds = chantiersAvecAlertes.map((chantier) => chantier.id);
 
   const chantiersPaginesAvecAlertes = chantiersAvecAlertes.splice(
-    (pageIndex - 1) * pageSize,
+    page * pageSize,
     pageSize,
   );
 

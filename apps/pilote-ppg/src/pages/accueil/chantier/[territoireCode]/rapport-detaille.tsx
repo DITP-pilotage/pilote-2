@@ -152,7 +152,7 @@ export const getServerSideProps: GetServerSideProps<
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
 
-  const sorting = searchParams.sort;
+  const [sorting = { id: "avancement", desc: false }] = searchParams.sort;
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 

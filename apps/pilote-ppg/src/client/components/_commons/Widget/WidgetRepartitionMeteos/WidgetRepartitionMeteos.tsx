@@ -1,5 +1,6 @@
 import { Suspense, useCallback } from "react";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import {
   libellesMeteos,
   MeteoSaisissable,
@@ -87,8 +88,8 @@ const TuilesMeteos = ({
   );
 
   const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
+    "page",
+    parseAsTablePage.withOptions({
       shallow: false,
     }),
   );
@@ -101,7 +102,7 @@ const TuilesMeteos = ({
       } else {
         arrMeteoFiltre.push(meteo);
       }
-      setPagination(1);
+      setPagination(null);
       sauvegarderFiltres({ meteos: arrMeteoFiltre });
       return setMeteos(arrMeteoFiltre.join(","));
     },
