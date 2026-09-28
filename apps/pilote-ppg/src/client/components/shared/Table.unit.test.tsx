@@ -85,8 +85,8 @@ describe("Table", () => {
     ).toEqual(["Nom", "Actions"]);
   });
 
-  it("zèbre les lignes du corps par défaut et permet de le désactiver", () => {
-    const { rerender } = render(
+  it("zèbre toujours les lignes du corps", () => {
+    render(
       <Table.Root caption="Zèbre">
         <Table.Body>
           <Table.Row>
@@ -97,20 +97,7 @@ describe("Table", () => {
     );
     expect(
       within(screen.getByRole("table")).getAllByRole("rowgroup")[0],
-    ).toHaveClass("[&>tr:nth-child(even)]:bg-dsfr-grey-1000");
-
-    rerender(
-      <Table.Root caption="Zèbre">
-        <Table.Body zebra={false}>
-          <Table.Row>
-            <Table.Cell>1</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table.Root>,
-    );
-    expect(
-      within(screen.getByRole("table")).getAllByRole("rowgroup")[0],
-    ).not.toHaveClass("[&>tr:nth-child(even)]:bg-dsfr-grey-1000");
+    ).toHaveClass("table-zebra");
   });
 
   it("exige un contenu pour chaque en-tête de colonne", () => {

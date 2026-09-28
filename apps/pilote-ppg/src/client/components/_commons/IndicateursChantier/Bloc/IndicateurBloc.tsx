@@ -225,11 +225,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     </Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
-                <Table.Body className="bg-none" zebra={false}>
-                  <Table.Row
-                    className="bg-transparent"
-                    key={détailTerritoireSélectionné.nomAffiché}
-                  >
+                <Table.Body>
+                  <Table.Row key={détailTerritoireSélectionné.nomAffiché}>
                     <Table.RowHeaderCell className="mb-0 !text-sm bold text-primary min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
                       {détailTerritoireSélectionné.nomAffiché}
                     </Table.RowHeaderCell>

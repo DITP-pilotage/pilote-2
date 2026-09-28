@@ -207,7 +207,7 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                     />
                   ))}
                 </colgroup>
-                <Table.Body className="bg-transparent" zebra={false}>
+                <Table.Body>
                   {rows.map((row) => {
                     return (
                       <Table.Row key={row.id}>

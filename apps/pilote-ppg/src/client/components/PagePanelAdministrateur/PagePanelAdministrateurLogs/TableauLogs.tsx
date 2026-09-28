@@ -176,7 +176,7 @@ export const TableauLogs: FunctionComponent = () => {
               </Table.Row>
             ))}
           </Table.Header>
-          <Table.Body zebra={false}>
+          <Table.Body>
             {table.getRowModel().rows.map((row, index) => {
               const log = row.original;
               return (
@@ -185,7 +185,7 @@ export const TableauLogs: FunctionComponent = () => {
                     className={
                       index % 2 === 1
                         ? "bg-dsfr-grey-1000 hover:bg-dsfr-grey-975-hover"
-                        : "hover:bg-dsfr-grey-975-hover"
+                        : "bg-white hover:bg-dsfr-grey-975-hover"
                     }
                   >
                     <Table.Cell

@@ -154,11 +154,11 @@ export const AlbertDashboardTable = ({
             </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body zebra={false}>
+        <Table.Body>
           {conversations.map((conversation) => (
             <Table.Row
               className={clsxm(
-                "relative even:bg-dsfr-grey-1000 hover:bg-dsfr-grey-975-hover",
+                "relative hover:bg-dsfr-grey-975-hover",
                 enChargement && "!opacity-60",
               )}
               key={conversation.id}

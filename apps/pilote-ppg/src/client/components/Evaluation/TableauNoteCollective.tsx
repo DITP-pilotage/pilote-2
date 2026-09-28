@@ -65,7 +65,7 @@ export const TableauNoteCollective = () => {
             </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body className="!divide-y !divide-dsfr-grey-925" zebra={false}>
+        <Table.Body className="!divide-y !divide-dsfr-grey-925">
           {chantiersEvaluation.length === 0 ? (
             <Table.Row>
               <Table.Cell

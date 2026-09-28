@@ -75,10 +75,7 @@ export const TableauUtilisateurs = () => {
               </Table.Row>
             ))}
           </Table.Header>
-          <Table.Body
-            className="divide-y divide-dsfr-grey-925 text-sm"
-            zebra={false}
-          >
+          <Table.Body className="divide-y divide-dsfr-grey-925 text-sm">
             {table.getRowModel().rows.map((row, index) => (
               <Table.Row
                 className={`cursor-pointer transition-colors hover:bg-dsfr-alt-blue-france ${

@@ -41,7 +41,7 @@ const IndicateurBlocIndicateurTuile = () => {
             </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body className="bg-none [&_tr]:!bg-[unset]" zebra={false}>
+        <Table.Body>
           <Table.Row>
             <Table.RowHeaderCell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 w-36 font-bold leading-5">
               Valeur initiale

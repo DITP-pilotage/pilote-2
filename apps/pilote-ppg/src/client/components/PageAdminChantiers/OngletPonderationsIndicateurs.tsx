@@ -187,7 +187,7 @@ const OngletPonderationsIndicateurs = ({
               ))}
             </Table.Row>
           </Table.Header>
-          <Table.Body className="bg-transparent" zebra={false}>
+          <Table.Body>
             {ponderations.map((ponderation, index) => (
               <LignePonderation
                 control={reactHookForm.control}

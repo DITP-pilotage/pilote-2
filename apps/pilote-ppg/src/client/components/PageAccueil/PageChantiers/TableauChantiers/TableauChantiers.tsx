@@ -69,7 +69,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
                 : lignesFeuille,
             )
           }
-          zebra={false}
         />
       </table.Root>
       <table.Pagination />

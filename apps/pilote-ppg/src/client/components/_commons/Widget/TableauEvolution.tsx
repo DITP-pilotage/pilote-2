@@ -61,7 +61,7 @@ export const TableauEvolution = ({
           ))}
         </Table.Row>
       </Table.Header>
-      <Table.Body className="bg-transparent" zebra={false}>
+      <Table.Body>
         {lignes.map((ligne) => (
           <Table.Row
             key={ligne.territoireCode}
@@ -70,7 +70,7 @@ export const TableauEvolution = ({
             <Table.RowHeaderCell
               className={clsxm(
                 CELLULE,
-                "sticky left-0 bg-white z-10 min-w-[130px] py-2 pr-2 md:py-2 md:pr-2 pl-0 md:pl-0",
+                "sticky left-0 bg-inherit z-10 min-w-[130px] py-2 pr-2 md:py-2 md:pr-2 pl-0 md:pl-0",
               )}
             >
               <TerritoireLabel

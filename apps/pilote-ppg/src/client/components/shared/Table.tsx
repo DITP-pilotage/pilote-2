@@ -101,21 +101,8 @@ function Header({ className, ...props }: ComponentPropsWithoutRef<"thead">) {
   );
 }
 
-function Body({
-  zebra = true,
-  className,
-  ...props
-}: ComponentPropsWithoutRef<"tbody"> & { zebra?: boolean }) {
-  return (
-    <tbody
-      className={clsxm(
-        "bg-white",
-        zebra && "[&>tr:nth-child(even)]:bg-dsfr-grey-1000",
-        className,
-      )}
-      {...props}
-    />
-  );
+function Body({ className, ...props }: ComponentPropsWithoutRef<"tbody">) {
+  return <tbody className={clsxm("table-zebra", className)} {...props} />;
 }
 
 function Footer({ className, ...props }: ComponentPropsWithoutRef<"tfoot">) {

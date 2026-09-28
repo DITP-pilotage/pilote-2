@@ -418,3 +418,13 @@ html {
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* Zèbre des tableaux hors couche et sans !important : toute classe Tailwind de
+   fond posée sur une ligne (toutes en !important) l'emporte. */
+.table-zebra > tr {
+  background-color: #fff;
+}
+
+.table-zebra > tr:nth-child(even) {
+  background-color: #f6f6f6;
+}

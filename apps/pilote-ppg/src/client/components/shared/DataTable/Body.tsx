@@ -14,7 +14,6 @@ export type DataTableBodyProps = {
   className?: string;
   cellClassName?: string;
   cellTitle?: boolean;
-  zebra?: boolean;
   rowClassName?: string | ((row: AnyRow) => string | undefined);
   renderGroupCell?: (cell: AnyCell) => ReactNode;
 };
@@ -130,12 +129,11 @@ export function DataTableBody({
   className,
   cellClassName,
   cellTitle,
-  zebra,
   rowClassName,
   renderGroupCell,
 }: DataTableBodyProps & { table: AnyTable }) {
   return (
-    <Table.Body className={clsxm(className)} zebra={zebra}>
+    <Table.Body className={clsxm(className)}>
       {table.getRowModel().rows.map((row: AnyRow) => (
         <DataTableRow
           cellClassName={cellClassName}
