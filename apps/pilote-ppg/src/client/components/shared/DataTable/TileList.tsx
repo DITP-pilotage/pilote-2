@@ -25,7 +25,10 @@ export function DataTableTileList({
       <p className="sr-only" id={captionId}>
         {caption}
       </p>
-      <ul aria-labelledby={captionId} className="flex flex-col">
+      <ul
+        aria-labelledby={captionId}
+        className="flex flex-col list-none m-0 [--ul-start:0] [--li-bottom:0]"
+      >
         {table.getRowModel().rows.map((row: AnyRow) => {
           const href = row.getIsGrouped?.() ? undefined : getRowHref?.(row);
           return (

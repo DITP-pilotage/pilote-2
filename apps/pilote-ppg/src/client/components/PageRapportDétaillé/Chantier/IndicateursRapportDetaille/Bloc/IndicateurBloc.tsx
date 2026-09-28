@@ -107,7 +107,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     `Avancement ${jalon}`,
                   ].map((libellé) => (
                     <Table.ColumnHeaderCell
-                      className="py-2 md:py-2 px-1 md:px-1 min-[992px]:px-4 first:rounded-tl-lg last:rounded-tr-lg max-[49rem]:!text-xs"
+                      className="py-2 md:py-2 px-1 md:px-1 min-[992px]:px-4 max-[49rem]:!text-xs"
                       key={libellé}
                     >
                       {libellé}

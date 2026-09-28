@@ -17,7 +17,7 @@ const RapportDétailléTableauChantiers: FunctionComponent<
       containerClassName="m-0 p-0 [&_tbody_a]:no-underline [&_tbody_a]:bg-none"
       empty={{ title: "Aucun chantier à afficher." }}
     >
-      <table.Header cellClassName="first:rounded-tl-lg last:rounded-tr-lg" />
+      <table.Header />
       <table.Body rowClassName="even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover" />
     </table.Root>
   );

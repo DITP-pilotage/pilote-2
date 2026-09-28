@@ -108,10 +108,10 @@ describe("table.Root", () => {
     render(<Tableau data={chantiers} />);
 
     await userEvent.click(
-      screen.getByRole("button", { name: "Trier par Nom, ordre décroissant" }),
+      screen.getByRole("button", { name: "Nom, trier par ordre croissant" }),
     );
 
-    expect(screen.getByText("Trié par Nom, ordre décroissant")).toHaveAttribute(
+    expect(screen.getByText("Trié par Nom, ordre croissant")).toHaveAttribute(
       "aria-live",
       "polite",
     );

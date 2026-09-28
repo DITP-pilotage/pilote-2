@@ -10,7 +10,7 @@ import {
   hasFeature,
   toAriaSort,
 } from "./features";
-import { SortButtons } from "./SortButtons";
+import { ColumnSortButton } from "./ColumnSortButton";
 import type { AnyTable } from "./types";
 
 export type DataTableHeaderProps = {
@@ -49,10 +49,9 @@ function DataTableColumnHeader({
       {header.isPlaceholder ? (
         <span className="sr-only">{label}</span>
       ) : sortable && meta?.sortButton !== false ? (
-        <span className="inline-flex items-center gap-2">
+        <ColumnSortButton column={column}>
           <table.FlexRender header={header} />
-          <SortButtons column={column} label={label} />
-        </span>
+        </ColumnSortButton>
       ) : (
         <table.FlexRender header={header} />
       )}

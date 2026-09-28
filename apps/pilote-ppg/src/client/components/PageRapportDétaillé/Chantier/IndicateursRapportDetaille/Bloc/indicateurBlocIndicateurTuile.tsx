@@ -36,10 +36,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
       >
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell className="py-1 md:py-1 border-b-0 rounded-tl-lg">
+            <Table.ColumnHeaderCell className="py-1 md:py-1 border-b-0">
               Territoire
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="py-1 md:py-1 border-b-0 rounded-tr-lg">
+            <Table.ColumnHeaderCell className="py-1 md:py-1 border-b-0">
               {indicateurDétailsParTerritoire.territoireNom}
             </Table.ColumnHeaderCell>
           </Table.Row>

@@ -87,11 +87,7 @@ describe("createDataTableHook", () => {
       within(tableau)
         .getAllByRole("columnheader")
         .map((cellule) => cellule.textContent),
-    ).toEqual([
-      "NomTrier par Nom, ordre croissantTrier par Nom, ordre décroissant",
-      "Avancement",
-      "Identifiant",
-    ]);
+    ).toEqual(["Nom, trier par ordre croissant", "Avancement", "Identifiant"]);
     expect(
       within(tableau)
         .getAllByRole("rowheader")
@@ -109,34 +105,38 @@ describe("createDataTableHook", () => {
     expect(ordres()).toEqual([null, null, null]);
 
     await userEvent.click(
-      screen.getByRole("button", { name: "Trier par Nom, ordre décroissant" }),
+      screen.getByRole("button", { name: "Nom, trier par ordre croissant" }),
     );
 
-    expect(ordres()).toEqual(["descending", null, null]);
-    expect(
-      screen
-        .getAllByRole("button", { name: /Trier par Nom/ })
-        .map((bouton) => bouton.getAttribute("aria-pressed")),
-    ).toEqual(["false", "true"]);
+    expect(ordres()).toEqual(["ascending", null, null]);
   });
 
-  it("trie au clic et reflète l'ordre dans aria-sort et aria-pressed", async () => {
+  it("trie au clic puis inverse l'ordre sans jamais retirer le tri", async () => {
     render(<TableauAvecTri />);
 
-    const bouton = screen.getByRole("button", {
-      name: "Trier par Nom, ordre croissant",
-    });
-    await userEvent.click(bouton);
-
+    await userEvent.click(
+      screen.getByRole("button", { name: "Nom, trier par ordre croissant" }),
+    );
     expect(lignesDuCorps(screen.getByRole("table"))).toEqual([
       ["Chantier A", "50", "a"],
       ["Chantier B", "20", "b"],
     ]);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Nom, trier par ordre décroissant" }),
+    );
+    expect(screen.getAllByRole("columnheader")[0]).toHaveAttribute(
+      "aria-sort",
+      "descending",
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Nom, trier par ordre croissant" }),
+    );
     expect(screen.getAllByRole("columnheader")[0]).toHaveAttribute(
       "aria-sort",
       "ascending",
     );
-    expect(bouton).toHaveAttribute("aria-pressed", "true");
   });
 
   it("n'affiche pas de bouton pour une colonne triée depuis l'extérieur", () => {
