@@ -17,6 +17,10 @@ import type { DataTableConfig } from "./config";
 import { hasFeature } from "./features";
 import { createSearchFilterFn } from "./filterFns";
 import { DataTableHeader, type DataTableHeaderProps } from "./Header";
+import {
+  DataTablePagination,
+  type DataTablePaginationProps,
+} from "./Pagination";
 import { DataTableRoot, type DataTableRootProps } from "./Root";
 import type { PointDeRuptureÉcran } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore.interface";
 import type { AnyTable, DataTableColumnMeta } from "./types";
@@ -51,6 +55,10 @@ type DataTableBricks = {
   resetFilters: () => void;
 };
 
+type PaginationBricks<F> = F extends { rowPaginationFeature: unknown }
+  ? { Pagination: (props: DataTablePaginationProps) => ReactNode }
+  : NoComponents;
+
 export type DataTable<
   F extends TableFeatures,
   TData extends RowData,
@@ -62,7 +70,8 @@ export type DataTable<
   NoComponents,
   NoComponents
 > &
-  DataTableBricks;
+  DataTableBricks &
+  PaginationBricks<F>;
 
 const bindBricks = (getTable: () => AnyTable) => {
   const bricks: DataTableBricks = {
@@ -93,7 +102,16 @@ const bindBricks = (getTable: () => AnyTable) => {
       }
     },
   };
-  return bricks;
+  return {
+    ...bricks,
+    ...(hasFeature(getTable(), "rowPaginationFeature")
+      ? {
+          Pagination: (props: DataTablePaginationProps) => (
+            <DataTablePagination table={getTable()} {...props} />
+          ),
+        }
+      : {}),
+  };
 };
 
 export function createDataTableHook<F extends TableFeatures>(features: F) {

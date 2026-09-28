@@ -57,6 +57,8 @@ function TableauMinimal() {
   });
   // @ts-expect-error une table sans rowSortingFeature n'expose pas setSorting
   void table.setSorting;
+  // @ts-expect-error une table sans rowPaginationFeature n'expose pas Pagination
+  void table.Pagination;
   return (
     <table.Root caption="Minimal">
       <table.Header />
