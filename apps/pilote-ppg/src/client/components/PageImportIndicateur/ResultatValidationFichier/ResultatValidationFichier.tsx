@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import { wording } from "@/client/utils/i18n/i18n";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
+import { Table } from "@/components/shared/Table";
 
 interface ResultatValidationFichierProps {
   rapport: DetailValidationFichierContrat;
@@ -59,58 +59,62 @@ const ResultatValidationFichier: FunctionComponent<
           <h5 className="fr-mt-3w">
             Rapport d'erreur de la validation du fichier
           </h5>
-          <table className="fr-table fr-m-0 fr-p-0">
-            <thead>
-              <tr>
-                <th>
+          <Table.Root
+            caption="Rapport d'erreur de la validation du fichier"
+            captionHidden
+            containerClassName="m-0 p-0"
+          >
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeaderCell>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                       .ETAPE_CHARGER_FICHIER.TABLEAU_ERREUR.ENTETE.NOM
                   }
-                </th>
-                <th>
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                       .ETAPE_CHARGER_FICHIER.TABLEAU_ERREUR.ENTETE.CELLULE
                   }
-                </th>
-                <th>
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                       .ETAPE_CHARGER_FICHIER.TABLEAU_ERREUR.ENTETE.MESSAGE
                   }
-                </th>
-                <th>
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                       .ETAPE_CHARGER_FICHIER.TABLEAU_ERREUR.ENTETE.NOM_DU_CHAMP
                   }
-                </th>
-                <th>
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>
                   {
                     wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                       .ETAPE_CHARGER_FICHIER.TABLEAU_ERREUR.ENTETE
                       .POSITION_DE_LIGNE
                   }
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+                </Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {rapport.listeErreursValidation.map((erreur) => {
                 return (
-                  <tr
+                  <Table.Row
                     key={`${erreur.cellule}-${erreur.numeroDeLigne}-${erreur.positionDeLigne}`}
                   >
-                    <td>{erreur.nom}</td>
-                    <td>{erreur.cellule}</td>
-                    <td>{erreur.message}</td>
-                    <td>{erreur.nomDuChamp}</td>
-                    <td>{erreur.positionDeLigne}</td>
-                  </tr>
+                    <Table.Cell>{erreur.nom}</Table.Cell>
+                    <Table.Cell>{erreur.cellule}</Table.Cell>
+                    <Table.Cell>{erreur.message}</Table.Cell>
+                    <Table.Cell>{erreur.nomDuChamp}</Table.Cell>
+                    <Table.Cell>{erreur.positionDeLigne}</Table.Cell>
+                  </Table.Row>
                 );
               })}
-            </tbody>
-          </table>
+            </Table.Body>
+          </Table.Root>
         </div>
       )}
     </section>

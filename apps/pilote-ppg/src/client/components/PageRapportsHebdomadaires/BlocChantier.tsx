@@ -1,6 +1,6 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Accordion } from "@/components/shared/Accordion";
+import { Table } from "@/components/shared/Table";
 import { clsxm } from "@/utils/clsxm";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import {
@@ -56,44 +56,54 @@ export const BlocChantier = ({
               </Accordion.Trigger>
             </Accordion.Header>
             <Accordion.Content className="!bg-transparent !px-0 !pb-0 !pt-0">
-              <div className="fr-table fr-mb-0 fr-pt-0">
-                <table className="table">
-                  <thead className="bg-dsfr-blue-france-925">
-                    <tr>
-                      <th>Territoire</th>
-                      <th className="text-right">Type de donnée</th>
-                      <th className="text-right">Date de la valeur</th>
-                      <th className="text-right">Nouvelle valeur</th>
-                      <th className="text-right">Saisi le</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-transparent">
-                    {indicateur.territoires.map((territoire) => (
-                      <tr
-                        key={`${territoire.code}-${territoire.typeValeur}-${territoire.dateValeur}`}
-                      >
-                        <td>{territoire.nom}</td>
-                        <td className="text-right">
-                          {formatterTypeValeur(territoire.typeValeur)}
-                        </td>
-                        <td className="text-right">
-                          {PiloteDateFormatter.isoMonthFranceMetropolitaine(
-                            territoire.dateValeur,
-                          )}
-                        </td>
-                        <td className="text-right">
-                          {territoire.valeur?.toLocaleString("fr-FR") ?? "—"}
-                        </td>
-                        <td className="text-right">
-                          {PiloteDateFormatter.isoDateFranceMetropolitaine(
-                            territoire.dateEvenement,
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <Table.Root
+                caption={`Valeurs saisies pour ${indicateur.nom}`}
+                captionHidden
+                containerClassName="mb-0 pt-0"
+              >
+                <Table.Header className="bg-dsfr-blue-france-925">
+                  <Table.Row>
+                    <Table.ColumnHeaderCell>Territoire</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-right">
+                      Type de donnée
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-right">
+                      Date de la valeur
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-right">
+                      Nouvelle valeur
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-right">
+                      Saisi le
+                    </Table.ColumnHeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body className="bg-transparent">
+                  {indicateur.territoires.map((territoire) => (
+                    <Table.Row
+                      key={`${territoire.code}-${territoire.typeValeur}-${territoire.dateValeur}`}
+                    >
+                      <Table.Cell>{territoire.nom}</Table.Cell>
+                      <Table.Cell className="text-right">
+                        {formatterTypeValeur(territoire.typeValeur)}
+                      </Table.Cell>
+                      <Table.Cell className="text-right">
+                        {PiloteDateFormatter.isoMonthFranceMetropolitaine(
+                          territoire.dateValeur,
+                        )}
+                      </Table.Cell>
+                      <Table.Cell className="text-right">
+                        {territoire.valeur?.toLocaleString("fr-FR") ?? "—"}
+                      </Table.Cell>
+                      <Table.Cell className="text-right">
+                        {PiloteDateFormatter.isoDateFranceMetropolitaine(
+                          territoire.dateEvenement,
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Root>
             </Accordion.Content>
           </Accordion.Item>
         ))}

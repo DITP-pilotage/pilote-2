@@ -11,7 +11,10 @@ import {
   usePonderationsIndicateursForm,
 } from "@/components/PageAdminChantiers/usePonderationsIndicateursForm";
 import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
+import { Table } from "@/components/shared/Table";
 import { clsxm } from "@/utils/clsxm";
+
+const CELLULE = "text-[length:inherit] leading-[inherit]";
 
 const LignePonderation = ({
   control,
@@ -28,17 +31,23 @@ const LignePonderation = ({
   index: number;
   ponderation: IndicateurPonderation;
 }) => (
-  <tr className="border-t border-dsfr-grey-1000">
-    <td
-      className="px-4 py-3 text-dsfr-grey-50 truncate"
+  <Table.Row className="border-t border-dsfr-grey-1000">
+    <Table.Cell
+      className={clsxm(
+        CELLULE,
+        "px-4 py-3 md:px-4 md:py-3 text-dsfr-grey-50 truncate",
+      )}
       title={`${ponderation.indicId} - ${ponderation.indicNom}`}
     >
       {ponderation.indicId} - {ponderation.indicNom}
-    </td>
+    </Table.Cell>
     {MAILLES.map((maille) => {
       const applicable = ponderation.maillesApplicables.includes(maille);
       return (
-        <td className="px-4 py-2 text-right" key={maille}>
+        <Table.Cell
+          className={clsxm(CELLULE, "px-4 py-2 md:px-4 md:py-2 text-right")}
+          key={maille}
+        >
           <Controller
             control={control}
             name={`lignes.${index}.${CHAMP_POIDS_PAR_MAILLE[maille]}`}
@@ -63,10 +72,10 @@ const LignePonderation = ({
               />
             )}
           />
-        </td>
+        </Table.Cell>
       );
     })}
-  </tr>
+  </Table.Row>
 );
 
 const PiedTableauPonderations = ({
@@ -76,14 +85,24 @@ const PiedTableauPonderations = ({
   sommesParMaille: Partial<Record<Maille, number>>;
   erreursSommes: Partial<Record<Maille, string>>;
 }) => (
-  <tfoot>
-    <tr className="border-t-2 border-dsfr-grey-925 bg-dsfr-grey-1000">
-      <td className="px-4 py-3 font-semibold text-dsfr-grey-50">Somme</td>
+  <Table.Footer>
+    <Table.Row className="border-t-2 border-dsfr-grey-925 bg-dsfr-grey-1000">
+      <Table.Cell
+        className={clsxm(
+          CELLULE,
+          "px-4 py-3 md:px-4 md:py-3 font-semibold text-dsfr-grey-50",
+        )}
+      >
+        Somme
+      </Table.Cell>
       {MAILLES.map((maille) => {
         const somme = sommesParMaille[maille];
         const enErreur = !!erreursSommes[maille];
         return (
-          <td className="px-4 py-3 text-right" key={maille}>
+          <Table.Cell
+            className={clsxm(CELLULE, "px-4 py-3 md:px-4 md:py-3 text-right")}
+            key={maille}
+          >
             <span
               className={clsxm(
                 "inline-flex items-center gap-1 font-semibold",
@@ -100,11 +119,11 @@ const PiedTableauPonderations = ({
                 </Infobulle>
               )}
             </span>
-          </td>
+          </Table.Cell>
         );
       })}
-    </tr>
-  </tfoot>
+    </Table.Row>
+  </Table.Footer>
 );
 
 const OngletPonderationsIndicateurs = ({
@@ -140,21 +159,36 @@ const OngletPonderationsIndicateurs = ({
       </div>
 
       <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925">
-        <table className="w-full table-fixed text-sm">
-          <thead>
-            <tr className="bg-dsfr-grey-1000 text-xs uppercase text-dsfr-mention-grey">
-              <th className="text-left px-4 py-3 font-medium">Indicateur</th>
+        <Table.Root
+          bordered={false}
+          caption="Pondération des indicateurs par maille"
+          captionHidden
+          className="w-full table-fixed text-sm"
+        >
+          <Table.Header className="bg-transparent text-inherit">
+            <Table.Row className="bg-dsfr-grey-1000 text-xs uppercase text-dsfr-mention-grey">
+              <Table.ColumnHeaderCell
+                className={clsxm(
+                  CELLULE,
+                  "text-left px-4 py-3 md:px-4 md:py-3 font-medium border-b-0",
+                )}
+              >
+                Indicateur
+              </Table.ColumnHeaderCell>
               {MAILLES.map((maille) => (
-                <th
-                  className="w-36 text-right px-4 py-3 font-medium"
+                <Table.ColumnHeaderCell
+                  className={clsxm(
+                    CELLULE,
+                    "w-36 text-right px-4 py-3 md:px-4 md:py-3 font-medium border-b-0",
+                  )}
                   key={maille}
                 >
                   {LIBELLÉ_MAILLE[maille]} (%)
-                </th>
+                </Table.ColumnHeaderCell>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body className="bg-transparent" zebra={false}>
             {ponderations.map((ponderation, index) => (
               <LignePonderation
                 control={reactHookForm.control}
@@ -163,12 +197,12 @@ const OngletPonderationsIndicateurs = ({
                 ponderation={ponderation}
               />
             ))}
-          </tbody>
+          </Table.Body>
           <PiedTableauPonderations
             erreursSommes={erreursSommes}
             sommesParMaille={sommesParMaille}
           />
-        </table>
+        </Table.Root>
       </div>
 
       <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">

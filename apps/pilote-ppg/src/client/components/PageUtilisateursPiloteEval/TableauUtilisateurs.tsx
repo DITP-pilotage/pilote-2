@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { flexRender } from "@tanstack/react-table";
 import { pageUtilisateursPiloteEval } from "@/components/PageUtilisateursPiloteEval/PageUtilisateursServerSideContext";
 import { useTableauUtilisateurs } from "@/components/PageUtilisateursPiloteEval/useTableauUtilisateurs";
+import { Table } from "@/components/shared/Table";
 
 export const TableauUtilisateurs = () => {
   const { utilisateurs } =
@@ -30,64 +31,77 @@ export const TableauUtilisateurs = () => {
           value={globalFilter ?? ""}
         />
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr
-                  className="bg-dsfr-blue-france-925 border-b-2 text-left font-bold text-sm"
-                  key={headerGroup.id}
-                >
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      className="px-4 py-3 cursor-pointer select-none hover:bg-dsfr-blue-france-925-hover"
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div className="flex items-center gap-2">
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {header.column.getIsSorted() === "asc" ? (
-                            <span>↑</span>
-                          ) : header.column.getIsSorted() === "desc" ? (
-                            <span>↓</span>
-                          ) : (
-                            <span className="opacity-30">↕</span>
-                          )}
-                        </div>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="divide-y divide-dsfr-grey-925 text-sm">
-              {table.getRowModel().rows.map((row, index) => (
-                <tr
-                  className={`cursor-pointer transition-colors hover:bg-dsfr-alt-blue-france ${
-                    index % 2 === 0 ? "bg-white" : "bg-dsfr-grey-1000"
-                  }`}
-                  key={row.id}
-                  onClick={() =>
-                    router.push(`/evaluation/utilisateur/${row.original.id}`)
-                  }
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td className="px-4 py-3" key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table.Root
+          bordered={false}
+          caption="Utilisateurs de Pilote Eval"
+          captionHidden
+          className="w-full border-collapse"
+        >
+          <Table.Header className="bg-transparent">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Table.Row
+                className="bg-dsfr-blue-france-925 border-b-2 text-left font-bold text-sm"
+                key={headerGroup.id}
+              >
+                {headerGroup.headers.map((header) => (
+                  <Table.ColumnHeaderCell
+                    aria-sort={
+                      header.column.getIsSorted() === "asc"
+                        ? "ascending"
+                        : header.column.getIsSorted() === "desc"
+                          ? "descending"
+                          : undefined
+                    }
+                    className="text-[length:inherit] leading-[inherit] px-4 py-3 md:px-4 md:py-3 border-b-0 cursor-pointer select-none hover:bg-dsfr-blue-france-925-hover"
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    {header.isPlaceholder ? null : (
+                      <div className="flex items-center gap-2">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                        {header.column.getIsSorted() === "asc" ? (
+                          <span>↑</span>
+                        ) : header.column.getIsSorted() === "desc" ? (
+                          <span>↓</span>
+                        ) : (
+                          <span className="opacity-30">↕</span>
+                        )}
+                      </div>
+                    )}
+                  </Table.ColumnHeaderCell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Header>
+          <Table.Body
+            className="divide-y divide-dsfr-grey-925 text-sm"
+            zebra={false}
+          >
+            {table.getRowModel().rows.map((row, index) => (
+              <Table.Row
+                className={`cursor-pointer transition-colors hover:bg-dsfr-alt-blue-france ${
+                  index % 2 === 0 ? "bg-white" : "bg-dsfr-grey-1000"
+                }`}
+                key={row.id}
+                onClick={() =>
+                  router.push(`/evaluation/utilisateur/${row.original.id}`)
+                }
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <Table.Cell
+                    className="text-[length:inherit] leading-[inherit] px-4 py-3 md:px-4 md:py-3"
+                    key={cell.id}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
 
         {table.getRowModel().rows.length === 0 && (
           <p className="text-center text-dsfr-grey-625 py-4">
