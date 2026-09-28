@@ -1,13 +1,16 @@
+import { useCallback } from "react";
 import {
   parseAsArrayOf,
   parseAsBoolean,
-  parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
   useQueryStates,
 } from "nuqs";
 import { $Enums } from "@prisma/client";
-import { parseAsSorting } from "@/components/shared/DataTable/urlParsers";
+import {
+  parseAsSortingAmong,
+  parseAsTablePage,
+} from "@/components/shared/DataTable/urlParsers";
 import api from "@/server/infrastructure/api/trpc/api";
 import {
   AlbertDashboardFilters,
@@ -15,19 +18,18 @@ import {
 } from "@/components/PagePanelAdministrateur/Albert/AlbertDashboardFilters";
 import {
   AlbertDashboardTable,
-  type TriDashboard,
+  CHAMPS_TRI_ALBERT,
+  TAILLE_PAGE_ALBERT,
+  TRI_ALBERT_PAR_DEFAUT,
 } from "@/components/PagePanelAdministrateur/Albert/AlbertDashboardTable";
 import { ConversationDetailModale } from "@/components/PagePanelAdministrateur/Albert/ConversationDetailModale";
 
-const TAILLE_PAGE = 25;
-
-const CHAMPS_TRI = ["createdAt", "updatedAt"] as const;
 const categoriesProbleme = Object.values($Enums.llm_call_categorie_probleme);
 
 export const AlbertDashboard = () => {
   const [params, setParams] = useQueryStates(
     {
-      page: parseAsInteger.withDefault(1),
+      page: parseAsTablePage,
       recherche: parseAsString.withDefault(""),
       avecPouce: parseAsBoolean.withDefault(false),
       avecPouceBas: parseAsBoolean.withDefault(false),
@@ -36,7 +38,9 @@ export const AlbertDashboard = () => {
         parseAsStringLiteral(categoriesProbleme),
       ).withDefault([]),
       profilCodes: parseAsArrayOf(parseAsString).withDefault([]),
-      sort: parseAsSorting.withDefault([{ id: "updatedAt", desc: true }]),
+      sort: parseAsSortingAmong(CHAMPS_TRI_ALBERT).withDefault([
+        TRI_ALBERT_PAR_DEFAUT,
+      ]),
       conversationOuverteId: parseAsString,
     },
     { history: "push", shallow: false, clearOnDefault: true },
@@ -51,19 +55,11 @@ export const AlbertDashboard = () => {
     profilCodes: params.profilCodes,
   };
 
-  const [triURL] = params.sort;
-  const triValide =
-    triURL && (CHAMPS_TRI as readonly string[]).includes(triURL.id)
-      ? triURL
-      : { id: "updatedAt", desc: true };
-  const tri: TriDashboard = {
-    champ: triValide.id as (typeof CHAMPS_TRI)[number],
-    direction: triValide.desc ? "desc" : "asc",
-  };
+  const [tri = TRI_ALBERT_PAR_DEFAUT] = params.sort;
 
   const { data, isLoading } = api.albert.conversations.listerToutes.useQuery({
-    page: params.page,
-    taillePage: TAILLE_PAGE,
+    page: params.page + 1,
+    taillePage: TAILLE_PAGE_ALBERT,
     recherche: filtres.recherche || undefined,
     avecPouce: filtres.avecPouce || undefined,
     avecPouceBas: filtres.avecPouceBas || undefined,
@@ -71,13 +67,13 @@ export const AlbertDashboard = () => {
     categories: filtres.categories.length > 0 ? filtres.categories : undefined,
     profilCodes:
       filtres.profilCodes.length > 0 ? filtres.profilCodes : undefined,
-    triChamp: tri.champ,
-    triDirection: tri.direction,
+    triChamp: tri.id,
+    triDirection: tri.desc ? "desc" : "asc",
   });
 
   const changerFiltres = (nouveauxFiltres: FiltresDashboard) => {
     setParams({
-      page: 1,
+      page: 0,
       recherche: nouveauxFiltres.recherche,
       avecPouce: nouveauxFiltres.avecPouce,
       avecPouceBas: nouveauxFiltres.avecPouceBas,
@@ -87,12 +83,10 @@ export const AlbertDashboard = () => {
     });
   };
 
-  const changerTri = (nouveauTri: TriDashboard) => {
-    setParams({
-      page: 1,
-      sort: [{ id: nouveauTri.champ, desc: nouveauTri.direction === "desc" }],
-    });
-  };
+  const ouvrirConversation = useCallback(
+    (id: string) => setParams({ conversationOuverteId: id }),
+    [setParams],
+  );
 
   return (
     <div>
@@ -108,13 +102,8 @@ export const AlbertDashboard = () => {
       <AlbertDashboardTable
         conversations={data?.items ?? []}
         enChargement={isLoading}
-        onLigneClick={(id) => setParams({ conversationOuverteId: id })}
-        onPageChange={(page) => setParams({ page })}
-        onTriChange={changerTri}
-        page={params.page}
-        taillePage={TAILLE_PAGE}
+        onLigneClick={ouvrirConversation}
         total={data?.total ?? 0}
-        tri={tri}
       />
 
       {params.conversationOuverteId && (
