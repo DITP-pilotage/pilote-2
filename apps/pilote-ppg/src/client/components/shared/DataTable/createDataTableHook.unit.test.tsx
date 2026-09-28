@@ -60,6 +60,8 @@ function TableauMinimal() {
   void table.setSorting;
   // @ts-expect-error une table sans rowPaginationFeature n'expose pas Pagination
   void table.Pagination;
+  // @ts-expect-error une table sans filtrage n'expose pas Filters
+  void table.Filters;
   return (
     <table.Root caption="Minimal">
       <table.Header />

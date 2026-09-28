@@ -15,6 +15,7 @@ import { type ReactNode, useMemo, useRef, useState } from "react";
 import { DataTableBody, type DataTableBodyProps } from "./Body";
 import { type DataTableConfig, getDataTableConfig } from "./config";
 import { hasFeature } from "./features";
+import { DataTableFilters, type DataTableFiltersProps } from "./Filters";
 import { createSearchFilterFn } from "./filterFns";
 import { DataTableHeader, type DataTableHeaderProps } from "./Header";
 import {
@@ -57,6 +58,12 @@ type DataTableBricks = {
   resetFilters: () => void;
 };
 
+type FiltersBricks<F> = F extends { columnFilteringFeature: unknown }
+  ? { Filters: (props: DataTableFiltersProps) => ReactNode }
+  : F extends { globalFilteringFeature: unknown }
+    ? { Filters: (props: DataTableFiltersProps) => ReactNode }
+    : NoComponents;
+
 type PaginationBricks<F> = F extends { rowPaginationFeature: unknown }
   ? { Pagination: (props: DataTablePaginationProps) => ReactNode }
   : NoComponents;
@@ -73,7 +80,8 @@ export type DataTable<
   NoComponents
 > &
   DataTableBricks &
-  PaginationBricks<F>;
+  PaginationBricks<F> &
+  FiltersBricks<F>;
 
 const bindBricks = (getTable: () => AnyTable) => {
   const bricks: DataTableBricks = {
@@ -114,6 +122,19 @@ const bindBricks = (getTable: () => AnyTable) => {
       ? {
           Pagination: (props: DataTablePaginationProps) => (
             <DataTablePagination table={getTable()} {...props} />
+          ),
+        }
+      : {}),
+    ...(hasFeature(getTable(), "columnFilteringFeature") ||
+    hasFeature(getTable(), "globalFilteringFeature")
+      ? {
+          Filters: (props: DataTableFiltersProps) => (
+            <DataTableFilters
+              hasActiveFilters={bricks.hasActiveFilters()}
+              onResetFilters={bricks.resetFilters}
+              table={getTable()}
+              {...props}
+            />
           ),
         }
       : {}),
