@@ -1,4 +1,5 @@
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { TriChantiers } from "./TriChantiers";
 
 export type FiltreQueryParams = {
   perimetres: string[];
@@ -10,7 +11,4 @@ export type FiltreQueryParams = {
   valeurDeLaRecherche: string;
 };
 
-export type SortingParams = {
-  desc: boolean;
-  id: string;
-};
+export type SortingParams = TriChantiers;

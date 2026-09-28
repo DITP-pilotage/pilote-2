@@ -1,76 +1,52 @@
 import { FunctionComponent } from "react";
-import SélecteurCustom from "@/components/_commons/SelecteurCustom/SélecteurAvecRecherche/SélecteurCustom";
+import { Select } from "@/components/shared/Select";
 import { SortButtons } from "@/components/shared/DataTable/SortButtons";
-import type { AnyColumn } from "@/components/shared/DataTable/types";
+import {
+  CRITERES_TRI_CHANTIERS,
+  type CritereTriChantiers,
+  TRI_CHANTIERS_PAR_DEFAUT,
+} from "@/server/chantiers/app/contrats/TriChantiers";
+import { LIBELLES_TRI_CHANTIERS } from "./libellesTriChantiers";
 import type { ChantiersTable } from "./useTableauChantiers";
-
-const listeColonnesÀtrier = [
-  {
-    libellé: "Taux d'avancement",
-    valeur: "avancement",
-    désactivé: false,
-  },
-  {
-    libellé: "Météo",
-    valeur: "météo",
-    désactivé: false,
-  },
-  {
-    libellé: "Date de mise à jour des données",
-    valeur: "dateDeMàjDonnéesQuantitatives",
-    désactivé: process.env.NEXT_PUBLIC_FF_TRI_DATES !== "true",
-  },
-  {
-    libellé: "Date de mise à jour de la météo et de la synthèse des résultats",
-    valeur: "dateDeMàjDonnéesQualitatives",
-    désactivé: process.env.NEXT_PUBLIC_FF_TRI_DATES !== "true",
-  },
-  {
-    libellé: "Tendance",
-    valeur: "tendance",
-    désactivé: false,
-  },
-  {
-    libellé: "Écart",
-    valeur: "écart",
-    désactivé: false,
-  },
-];
-
-const TRI_PAR_DÉFAUT = { id: "avancement", desc: false };
 
 export const TableauChantiersActionsDeTri: FunctionComponent<{
   table: ChantiersTable;
 }> = ({ table }) => {
-  const [triURL] = table.store.state.sorting;
-  const tri =
-    triURL &&
-    listeColonnesÀtrier.some((colonne) => colonne.valeur === triURL.id)
-      ? triURL
-      : TRI_PAR_DÉFAUT;
+  const [tri = TRI_CHANTIERS_PAR_DEFAUT] = table.store.state.sorting;
+  const critère = tri.id as CritereTriChantiers;
+  const trier = (id: string, desc: boolean) => table.setSorting([{ id, desc }]);
 
   return (
-    <div className="flex align-end w-full max-w-[22rem] gap-2">
-      <div className="flex flex-col gap-1 mb-0 sélecteur-colonne-à-trier">
+    <div className="flex items-end gap-2">
+      <div className="flex flex-col gap-1">
         <label className="text-sm/6" htmlFor="tri-tableau-chantiers">
           Trier par
         </label>
-        <SélecteurCustom
-          htmlName="tri-tableau-chantiers"
-          options={listeColonnesÀtrier}
-          valeurModifiéeCallback={(triSélectionné) =>
-            table.setSorting([{ id: triSélectionné, desc: tri.desc }])
+        <Select.Root
+          onValueChange={(critèreSélectionné) =>
+            trier(critèreSélectionné, tri.desc)
           }
-          valeurSélectionnée={tri.id}
-        />
+          value={critère}
+        >
+          <Select.Trigger className="w-64 text-left" id="tri-tableau-chantiers">
+            <span className="line-clamp-1">
+              <Select.Value />
+            </span>
+          </Select.Trigger>
+          <Select.Content>
+            {CRITERES_TRI_CHANTIERS.map((critèreProposé) => (
+              <Select.Item key={critèreProposé} value={critèreProposé}>
+                {LIBELLES_TRI_CHANTIERS[critèreProposé]}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
       </div>
       <div className="mb-2">
         <SortButtons
-          column={table.getColumn(tri.id) as AnyColumn}
-          label={
-            listeColonnesÀtrier.find((colonne) => colonne.valeur === tri.id)
-              ?.libellé ?? tri.id
-          }
+          direction={tri.desc ? "desc" : "asc"}
+          label={LIBELLES_TRI_CHANTIERS[critère]}
+          onChange={(direction) => trier(critère, direction === "desc")}
         />
       </div>
     </div>

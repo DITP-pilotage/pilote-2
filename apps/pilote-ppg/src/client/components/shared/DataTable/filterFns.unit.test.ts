@@ -1,28 +1,49 @@
+import { renderHook } from "@testing-library/react";
+import { stockFeatures, useTable } from "@tanstack/react-table";
 import {
   createSearchFilterFn,
   filterFnOneOf,
 } from "@/components/shared/DataTable/filterFns";
 
-const ligne = <T>(valeur: T, original: object = {}) =>
-  ({ getValue: () => valeur, original }) as never;
+type Utilisateur = { statut: string; nom: string; email: string };
+
+const lignes = (...utilisateurs: Partial<Utilisateur>[]) =>
+  renderHook(() =>
+    useTable<typeof stockFeatures, Partial<Utilisateur>>({
+      features: stockFeatures,
+      data: utilisateurs,
+      columns: [{ accessorKey: "statut" }],
+    }),
+  ).result.current.getCoreRowModel().rows;
+
+const ligne = (utilisateur: Partial<Utilisateur>) => {
+  const [premiereLigne] = lignes(utilisateur);
+  return premiereLigne;
+};
 
 describe("filterFnOneOf", () => {
   it("laisse passer toutes les lignes quand aucune valeur n'est sélectionnée", () => {
-    expect(filterFnOneOf(ligne("actif"), "statut", [], () => {})).toBe(true);
+    expect(
+      filterFnOneOf(ligne({ statut: "actif" }), "statut", [], () => {}),
+    ).toBe(true);
   });
 
   it("garde les lignes dont la valeur fait partie de la sélection", () => {
     expect(
-      [ligne("actif"), ligne("inactif"), ligne("archive")].map((row) =>
+      lignes(
+        { statut: "actif" },
+        { statut: "inactif" },
+        { statut: "archive" },
+      ).map((row) =>
         filterFnOneOf(row, "statut", ["actif", "archive"], () => {}),
       ),
     ).toEqual([true, false, true]);
   });
 
   it("accepte une valeur unique en guise de sélection", () => {
-    expect(filterFnOneOf(ligne("actif"), "statut", "actif", () => {})).toBe(
-      true,
-    );
+    expect(
+      filterFnOneOf(ligne({ statut: "actif" }), "statut", "actif", () => {}),
+    ).toBe(true);
   });
 
   it("se retire automatiquement quand la sélection est vide", () => {
@@ -32,22 +53,22 @@ describe("filterFnOneOf", () => {
 });
 
 describe("createSearchFilterFn", () => {
-  const rechercher = createSearchFilterFn<{ nom: string; email: string }>(
-    (utilisateur) => [utilisateur.nom, utilisateur.email],
+  const rechercher = createSearchFilterFn<Partial<Utilisateur>>(
+    (utilisateur) => [utilisateur.nom ?? "", utilisateur.email ?? ""],
   );
 
   it("trouve une ligne sans tenir compte de la casse ni des accents", () => {
     const utilisateur = { nom: "Élodie Martin", email: "elodie@gouv.fr" };
     expect(
       ["elodie", "MARTIN", "gouv.fr", "dupont"].map((recherche) =>
-        rechercher(ligne(null, utilisateur), "", recherche, () => {}),
+        rechercher(ligne(utilisateur), "", recherche, () => {}),
       ),
     ).toEqual([true, true, true, false]);
   });
 
   it("laisse passer toutes les lignes quand la recherche est vide", () => {
     expect(
-      rechercher(ligne(null, { nom: "A", email: "a@b.c" }), "", "  ", () => {}),
+      rechercher(ligne({ nom: "A", email: "a@b.c" }), "", "  ", () => {}),
     ).toBe(true);
   });
 });

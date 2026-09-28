@@ -48,7 +48,7 @@ function DataTableColumnHeader({
     >
       {header.isPlaceholder ? (
         <span className="sr-only">{label}</span>
-      ) : sortable && meta?.sortButton !== false ? (
+      ) : sortable ? (
         <ColumnSortButton column={column}>
           <table.FlexRender header={header} />
         </ColumnSortButton>

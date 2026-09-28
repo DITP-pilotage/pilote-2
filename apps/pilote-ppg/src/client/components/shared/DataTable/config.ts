@@ -13,6 +13,7 @@ export type DataTableConfig = {
   tileBreakpoint?: PointDeRuptureÉcran;
   tileLabel?: (row: AnyRow) => string;
   urlFilters?: { hasActiveFilters: boolean; resetFilters: () => void };
+  sortingLabels?: Record<string, string>;
 };
 
 export const getDataTableConfig = (table: AnyTable): DataTableConfig =>

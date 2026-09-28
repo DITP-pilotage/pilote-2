@@ -68,6 +68,27 @@ describe("useUrlTableState", () => {
     },
   );
 
+  it("n'accepte que les critères de tri listés quand des libellés sont fournis", () => {
+    const rendreAvecCriteres = (searchParams: string) =>
+      renderHook(
+        () =>
+          useUrlTableState({
+            sorting: {
+              default: [{ id: "avancement", desc: false }],
+              labels: { avancement: "Taux d'avancement", météo: "Météo" },
+            },
+          }),
+        { wrapper: withNuqsTestingAdapter({ searchParams }) },
+      ).result.current.state.sorting;
+
+    expect(rendreAvecCriteres("?sort=météo.desc")).toEqual([
+      { id: "météo", desc: true },
+    ]);
+    expect(rendreAvecCriteres("?sort=nom.asc")).toEqual([
+      { id: "avancement", desc: false },
+    ]);
+  });
+
   it("revient au tri par défaut quand le tri est retiré", async () => {
     const { result, derniereUrl } = rendre("?sort=nom.asc");
 

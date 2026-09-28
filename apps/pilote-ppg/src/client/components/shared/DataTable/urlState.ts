@@ -9,14 +9,19 @@ import {
   parseAsArrayOf,
   parseAsInteger,
   parseAsString,
+  type SingleParserBuilder,
   throttle,
   useQueryStates,
 } from "nuqs";
 import { useMemo } from "react";
-import { parseAsSorting, parseAsTablePage } from "./urlParsers";
+import {
+  parseAsSorting,
+  parseAsSortingAmong,
+  parseAsTablePage,
+} from "./urlParsers";
 
 export type UrlStateConfig = {
-  sorting?: { default?: SortingState };
+  sorting?: { default?: SortingState; labels?: Record<string, string> };
   pagination?: { pageSize?: number };
   globalFilter?: boolean;
   columnFilters?: Array<{
@@ -42,8 +47,6 @@ const toStringArray = (value: unknown): string[] =>
 const sameValues = (left: string[], right: string[]) =>
   left.length === right.length && left.every((value) => right.includes(value));
 
-type Query = Record<string, unknown>;
-
 export type UrlTableState = {
   state: {
     sorting?: SortingState;
@@ -65,60 +68,64 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
   const configKey = JSON.stringify(config ?? null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const stableConfig = useMemo(() => config, [configKey]);
-  const filters = stableConfig?.columnFilters ?? [];
+  const filters = useMemo(
+    () => stableConfig?.columnFilters ?? [],
+    [stableConfig],
+  );
 
-  const parsers = useMemo(
-    () => ({
-      ...(stableConfig?.sorting
-        ? {
-            sort: parseAsSorting.withDefault(
-              stableConfig.sorting.default ?? [],
-            ),
-          }
-        : {}),
-      ...(stableConfig?.pagination
-        ? {
-            page: parseAsTablePage,
-            pageSize: parseAsInteger.withDefault(
-              stableConfig.pagination.pageSize ?? 10,
-            ),
-          }
-        : {}),
-      ...(stableConfig?.globalFilter
-        ? { q: parseAsString.withDefault("") }
-        : {}),
-      ...Object.fromEntries(
-        (stableConfig?.columnFilters ?? []).map((filter) => [
+  const tableParsers = useMemo(() => {
+    const sortingLabels = stableConfig?.sorting?.labels;
+    const sortParser: SingleParserBuilder<SortingState> = sortingLabels
+      ? parseAsSortingAmong(Object.keys(sortingLabels))
+      : parseAsSorting;
+    return {
+      sort: sortParser.withDefault(stableConfig?.sorting?.default ?? []),
+      page: parseAsTablePage,
+      pageSize: parseAsInteger.withDefault(
+        stableConfig?.pagination?.pageSize ?? 10,
+      ),
+      q: parseAsString.withDefault(""),
+    };
+  }, [stableConfig]);
+
+  const filterParsers = useMemo(
+    () =>
+      Object.fromEntries(
+        filters.map((filter) => [
           filter.param,
           parseAsArrayOf(parseAsString).withDefault(filter.default ?? []),
         ]),
       ),
-    }),
-    [stableConfig],
+    [filters],
   );
 
-  const [query, setQuery] = useQueryStates(parsers, {
+  const options = {
     clearOnDefault: true,
     shallow: stableConfig?.shallow ?? true,
     history: stableConfig?.history ?? "replace",
     ...(stableConfig?.throttleMs
       ? { limitUrlUpdates: throttle(stableConfig.throttleMs) }
       : {}),
-  });
-  const values = query as Query;
-  const update = setQuery as unknown as (
-    updater: (previous: Query) => Query | null,
-  ) => Promise<URLSearchParams>;
+  };
+  const [query, setQuery] = useQueryStates(tableParsers, options);
+  const [filterValues, setFilterValues] = useQueryStates(
+    filterParsers,
+    options,
+  );
 
-  const toColumnFilters = (source: Query): ColumnFiltersState =>
+  const toColumnFilters = (
+    source: Record<string, string[]>,
+  ): ColumnFiltersState =>
     filters
-      .filter((filter) => toStringArray(source[filter.param]).length > 0)
+      .filter((filter) => (source[filter.param] ?? []).length > 0)
       .map((filter) => ({
         id: filter.columnId,
-        value: toStringArray(source[filter.param]),
+        value: source[filter.param] ?? [],
       }));
 
-  const firstPage = stableConfig?.pagination ? { page: null } : {};
+  const backToFirstPage = () => {
+    if (stableConfig?.pagination) void setQuery({ page: null });
+  };
 
   if (stableConfig == null) {
     return {
@@ -130,70 +137,64 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
   }
 
   const state = {
-    ...(stableConfig.sorting ? { sorting: values.sort as SortingState } : {}),
+    ...(stableConfig.sorting ? { sorting: query.sort } : {}),
     ...(stableConfig.pagination
-      ? {
-          pagination: {
-            pageIndex: values.page as number,
-            pageSize: values.pageSize as number,
-          },
-        }
+      ? { pagination: { pageIndex: query.page, pageSize: query.pageSize } }
       : {}),
-    ...(stableConfig.globalFilter ? { globalFilter: values.q as string } : {}),
-    ...(filters.length > 0 ? { columnFilters: toColumnFilters(values) } : {}),
+    ...(stableConfig.globalFilter ? { globalFilter: query.q } : {}),
+    ...(filters.length > 0
+      ? { columnFilters: toColumnFilters(filterValues) }
+      : {}),
   };
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) =>
-    void update((previous) => {
-      const next = resolve(updater, previous.sort as SortingState);
+    void setQuery((previous) => {
+      const next = resolve(updater, previous.sort);
       return { sort: next.length > 0 ? next : null };
     });
 
   const onPaginationChange: OnChangeFn<PaginationState> = (updater) =>
-    void update((previous) => {
+    void setQuery((previous) => {
       const next = resolve(updater, {
-        pageIndex: previous.page as number,
-        pageSize: previous.pageSize as number,
+        pageIndex: previous.page,
+        pageSize: previous.pageSize,
       });
       return { page: next.pageIndex, pageSize: next.pageSize };
     });
 
-  const onGlobalFilterChange: OnChangeFn<string> = (updater) =>
-    void update((previous) => ({
-      q: resolve(updater, previous.q as string) ?? "",
-      ...firstPage,
-    }));
+  const onGlobalFilterChange: OnChangeFn<string> = (updater) => {
+    void setQuery((previous) => ({ q: resolve(updater, previous.q) ?? "" }));
+    backToFirstPage();
+  };
 
-  const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) =>
-    void update((previous) => {
+  const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
+    void setFilterValues((previous) => {
       const next = resolve(updater, toColumnFilters(previous));
-      return {
-        ...Object.fromEntries(
-          filters.map((filter) => [
-            filter.param,
-            toStringArray(
-              next.find((columnFilter) => columnFilter.id === filter.columnId)
-                ?.value,
-            ),
-          ]),
-        ),
-        ...firstPage,
-      };
+      return Object.fromEntries(
+        filters.map((filter) => [
+          filter.param,
+          toStringArray(
+            next.find((columnFilter) => columnFilter.id === filter.columnId)
+              ?.value,
+          ),
+        ]),
+      );
     });
+    backToFirstPage();
+  };
 
   const hasActiveFilters =
     filters.some(
       (filter) =>
-        !sameValues(toStringArray(values[filter.param]), filter.default ?? []),
+        !sameValues(filterValues[filter.param] ?? [], filter.default ?? []),
     ) ||
-    (stableConfig.globalFilter === true && (values.q as string).trim() !== "");
+    (stableConfig.globalFilter === true && query.q.trim() !== "");
 
-  const resetFilters = () =>
-    void update(() => ({
-      ...Object.fromEntries(filters.map((filter) => [filter.param, null])),
-      ...(stableConfig.globalFilter ? { q: null } : {}),
-      ...firstPage,
-    }));
+  const resetFilters = () => {
+    void setFilterValues(null);
+    if (stableConfig.globalFilter) void setQuery({ q: null });
+    backToFirstPage();
+  };
 
   return {
     state,

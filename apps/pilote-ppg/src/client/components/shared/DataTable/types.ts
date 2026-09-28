@@ -23,7 +23,6 @@ export type FilterDescriptor =
 
 export type DataTableColumnMeta = {
   label?: string;
-  sortButton?: boolean;
   width?: string;
   headerClassName?: string;
   cellClassName?: string;

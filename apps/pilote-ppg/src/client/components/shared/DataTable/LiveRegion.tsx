@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { getDataTableConfig } from "./config";
 import { getColumnLabel, hasFeature } from "./features";
-import type { AnyTable } from "./types";
+import type { AnyColumn, AnyTable } from "./types";
 
 const plural = (count: number) =>
   count === 0 ? "Aucun résultat" : `${count} résultat${count > 1 ? "s" : ""}`;
@@ -8,8 +9,12 @@ const plural = (count: number) =>
 function describeSorting(table: AnyTable) {
   const [first] = table.store.state.sorting ?? [];
   if (!first) return "Tri retiré";
-  const column = table.getColumn(first.id);
-  const label = column ? getColumnLabel(column) : first.id;
+  const column = table
+    .getAllLeafColumns()
+    .find((leafColumn: AnyColumn) => leafColumn.id === first.id);
+  const label =
+    getDataTableConfig(table).sortingLabels?.[first.id] ??
+    (column ? getColumnLabel(column) : first.id);
   return `Trié par ${label}, ordre ${first.desc ? "décroissant" : "croissant"}`;
 }
 

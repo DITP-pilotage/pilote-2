@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { TRI_CHANTIERS_PAR_DEFAUT } from "@/server/chantiers/app/contrats/TriChantiers";
 import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
@@ -152,7 +153,7 @@ export const getServerSideProps: GetServerSideProps<
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
 
-  const [sorting = { id: "avancement", desc: false }] = searchParams.sort;
+  const [sorting = TRI_CHANTIERS_PAR_DEFAUT] = searchParams.sort;
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 

@@ -9,7 +9,6 @@ import {
   createFilteredRowModel,
   createGroupedRowModel,
   createPaginatedRowModel,
-  createSortedRowModel,
   ExpandedState,
   globalFilteringFeature,
   GroupingState,
@@ -39,6 +38,8 @@ import {
   type AppFeatures,
   createDataTableHook,
 } from "@/components/shared/DataTable/createDataTableHook";
+import { TRI_CHANTIERS_PAR_DEFAUT } from "@/server/chantiers/app/contrats/TriChantiers";
+import { LIBELLES_TRI_CHANTIERS } from "./libellesTriChantiers";
 import TableauChantiersProps, {
   DonnéesTableauChantiers,
 } from "./TableauChantiers.interface";
@@ -59,7 +60,6 @@ const features = tableFeatures({
     sum: aggregationFn_sum,
   },
   filteredRowModel: createFilteredRowModel(),
-  sortedRowModel: createSortedRowModel(),
   groupedRowModel: createGroupedRowModel(),
   expandedRowModel: createExpandedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
@@ -153,7 +153,6 @@ export const useTableauChantiers = (
             </div>
           ),
           id: "typologie",
-          enableSorting: false,
           cell: (cellContext) => (
             <TypologiesPictos typologies={cellContext.getValue()} />
           ),
@@ -172,7 +171,6 @@ export const useTableauChantiers = (
             </div>
           ),
           id: "météo",
-          enableSorting: true,
           cell: (cellContext) => (
             <TableauRéformesMétéo
               chantiersSontArchives={chantiersSontArchives}
@@ -186,15 +184,7 @@ export const useTableauChantiers = (
           enableGrouping: false,
           meta: {
             width: "8rem",
-            sortButton: false,
           },
-        }),
-        reactTableColonnesHelper.accessor("dateDeMàjDonnéesQualitatives", {
-          id: "dateDeMàjDonnéesQualitatives",
-          enableSorting: true,
-          meta: { sortButton: false },
-          cell: (cellContext) => cellContext.getValue(),
-          enableGrouping: false,
         }),
         reactTableColonnesHelper.accessor("tendance", {
           header: () => (
@@ -206,7 +196,6 @@ export const useTableauChantiers = (
             </div>
           ),
           id: "tendance",
-          enableSorting: true,
           cell: (cellContext) => (
             <BadgeTendance
               estArchive={chantiersSontArchives}
@@ -216,7 +205,6 @@ export const useTableauChantiers = (
           enableGrouping: false,
           meta: {
             width: "9rem",
-            sortButton: false,
           },
         }),
         reactTableColonnesHelper.accessor("avancement", {
@@ -231,7 +219,6 @@ export const useTableauChantiers = (
             </div>
           ),
           id: "avancement",
-          enableSorting: true,
           cell: (cellContext) => (
             <TableauRéformesAvancement
               avancement={cellContext.getValue()}
@@ -253,15 +240,7 @@ export const useTableauChantiers = (
           ),
           meta: {
             width: "8rem",
-            sortButton: false,
           },
-        }),
-        reactTableColonnesHelper.accessor("dateDeMàjDonnéesQuantitatives", {
-          id: "dateDeMàjDonnéesQuantitatives",
-          enableSorting: true,
-          meta: { sortButton: false },
-          cell: (cellContext) => cellContext.getValue(),
-          enableGrouping: false,
         }),
         reactTableColonnesHelper.accessor("écart", {
           header: () => (
@@ -273,7 +252,6 @@ export const useTableauChantiers = (
             </div>
           ),
           id: "écart",
-          enableSorting: true,
           cell: (cellContext) => (
             <TableauChantiersEcart
               ecart={cellContext.getValue()}
@@ -284,7 +262,6 @@ export const useTableauChantiers = (
           aggregatedCell: () => null,
           meta: {
             width: "4.5rem",
-            sortButton: false,
           },
         }),
         reactTableColonnesHelper.display({
@@ -375,6 +352,7 @@ export const useTableauChantiers = (
     tileLabel: (row) => row.original.nom ?? "",
     manualPagination: true,
     manualSorting: true,
+    enableSorting: false,
     manualFiltering: true,
     rowCount: nombreTotalChantiersAvecAlertes,
     autoResetExpanded: false,
@@ -384,13 +362,14 @@ export const useTableauChantiers = (
       expanded,
       columnVisibility: {
         porteur: false,
-        dateDeMàjDonnéesQualitatives: false,
-        dateDeMàjDonnéesQuantitatives: false,
         "dérouler-groupe": estGroupe,
       },
     },
     urlState: {
-      sorting: { default: [{ id: "avancement", desc: false }] },
+      sorting: {
+        default: [TRI_CHANTIERS_PAR_DEFAUT],
+        labels: LIBELLES_TRI_CHANTIERS,
+      },
       pagination: { pageSize: 50 },
       globalFilter: true,
       shallow: false,

@@ -69,6 +69,35 @@ function Tableau({
   );
 }
 
+function TableauTriHorsColonnes({ data }: { data: Chantier[] }) {
+  const table = hook.useDataTable<Chantier>({
+    data,
+    columns: colonnes,
+    manualSorting: true,
+    enableSorting: false,
+    urlState: {
+      sorting: {
+        default: [{ id: "nom", desc: false }],
+        labels: { nom: "Nom", dateDeMaj: "Date de mise à jour" },
+      },
+    },
+  });
+  return (
+    <>
+      <button
+        onClick={() => table.setSorting([{ id: "dateDeMaj", desc: true }])}
+        type="button"
+      >
+        Trier par date
+      </button>
+      <table.Root caption="Chantiers">
+        <table.Header />
+        <table.Body />
+      </table.Root>
+    </>
+  );
+}
+
 const chantiers = [
   { id: "1", nom: "Eau" },
   { id: "2", nom: "Air" },
@@ -115,6 +144,18 @@ describe("table.Root", () => {
       "aria-live",
       "polite",
     );
+  });
+
+  it("annonce un tri qui ne correspond à aucune colonne avec son libellé", async () => {
+    render(<TableauTriHorsColonnes data={chantiers} />);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Trier par date" }),
+    );
+
+    expect(
+      screen.getByText("Trié par Date de mise à jour, ordre décroissant"),
+    ).toHaveAttribute("aria-live", "polite");
   });
 
   it("annonce le nombre de résultats après une recherche", async () => {

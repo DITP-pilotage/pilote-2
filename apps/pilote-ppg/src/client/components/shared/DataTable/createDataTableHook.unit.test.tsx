@@ -24,8 +24,7 @@ const colonnesAvecTri = (() => {
     helper.accessor("nom", { header: "Nom", enableSorting: true }),
     helper.accessor("avancement", {
       header: "Avancement",
-      enableSorting: true,
-      meta: { sortButton: false },
+      enableSorting: false,
     }),
     helper.accessor("id", { header: "Identifiant" }),
   ]);
@@ -139,11 +138,11 @@ describe("createDataTableHook", () => {
     );
   });
 
-  it("n'affiche pas de bouton pour une colonne triée depuis l'extérieur", () => {
+  it("n'affiche pas de bouton de tri sur une colonne non triable", () => {
     render(<TableauAvecTri />);
 
     expect(
-      screen.queryByRole("button", { name: /Trier par Avancement/ }),
+      screen.queryByRole("button", { name: /^Avancement, trier/ }),
     ).not.toBeInTheDocument();
   });
 

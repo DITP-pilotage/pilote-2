@@ -28,4 +28,18 @@ export const parseAsSorting = createParser<SortingState>({
     ),
 });
 
+export const parseAsSortingAmong = <Id extends string>(ids: readonly Id[]) =>
+  createParser<Array<{ id: Id; desc: boolean }>>({
+    parse: (value) => {
+      const sorting = parseAsSorting.parse(value);
+      return sorting?.every((sort) =>
+        (ids as readonly string[]).includes(sort.id),
+      )
+        ? (sorting as Array<{ id: Id; desc: boolean }>)
+        : null;
+    },
+    serialize: parseAsSorting.serialize,
+    eq: parseAsSorting.eq,
+  });
+
 export const parseAsTablePage = parseAsIndex.withDefault(0);

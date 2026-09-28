@@ -1,5 +1,4 @@
 import { clsxm } from "@/utils/clsxm";
-import type { AnyColumn } from "./types";
 
 type Direction = "asc" | "desc";
 
@@ -47,32 +46,28 @@ function SortDirectionButton({
 }
 
 export function SortButtons({
-  column,
+  direction,
   label,
+  onChange,
 }: {
-  column: AnyColumn;
+  direction: Direction;
   label: string;
+  onChange: (direction: Direction) => void;
 }) {
-  const sorted = column.getIsSorted();
-  const toggle = (direction: Direction) =>
-    sorted === direction
-      ? column.clearSorting()
-      : column.toggleSorting(direction === "desc");
-
   return (
     <span className="inline-flex items-center min-[576px]:flex-row min-[576px]:items-start">
       <SortDirectionButton
-        active={sorted === "asc"}
+        active={direction === "asc"}
         className="mr-1"
         direction="asc"
         label={`Trier par ${label}, ordre croissant`}
-        onClick={() => toggle("asc")}
+        onClick={() => onChange("asc")}
       />
       <SortDirectionButton
-        active={sorted === "desc"}
+        active={direction === "desc"}
         direction="desc"
         label={`Trier par ${label}, ordre décroissant`}
-        onClick={() => toggle("desc")}
+        onClick={() => onChange("desc")}
       />
     </span>
   );

@@ -4,7 +4,7 @@ import {
   metaHelper,
   tableFeatures,
   type AppReactTable,
-  type CreateTableHookOptions,
+  type CreateTableHookResult,
   type Row,
   type RowData,
   type TableFeatures,
@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { type ReactNode, useMemo, useRef, useState } from "react";
 import { DataTableBody, type DataTableBodyProps } from "./Body";
-import { type DataTableConfig, getDataTableConfig } from "./config";
+import { getDataTableConfig } from "./config";
 import { hasFeature } from "./features";
 import { DataTableFilters, type DataTableFiltersProps } from "./Filters";
 import { createSearchFilterFn } from "./filterFns";
@@ -141,18 +141,34 @@ const bindBricks = (getTable: () => AnyTable) => {
   };
 };
 
-export function createDataTableHook<F extends TableFeatures>(features: F) {
-  type Features = AppFeatures<F>;
-
-  const hook = createTableHook({
-    features: { ...features, ...dataTableBaseFeatures },
-    defaultColumn: { enableSorting: false },
-  } as unknown as CreateTableHookOptions<
-    Features,
+export type DataTableHook<F extends TableFeatures> = {
+  useDataTable: <TData extends RowData>(
+    options: DataTableOptions<F, TData>,
+  ) => DataTable<AppFeatures<F>, TData>;
+  createColumnHelper: CreateTableHookResult<
+    AppFeatures<F>,
     NoComponents,
     NoComponents,
     NoComponents
-  >);
+  >["createAppColumnHelper"];
+  features: AppFeatures<F>;
+};
+
+export function createDataTableHook<F extends TableFeatures>(
+  features: F,
+): DataTableHook<F>;
+export function createDataTableHook(
+  features: TableFeatures,
+): DataTableHook<TableFeatures> {
+  const hook = createTableHook<
+    AppFeatures<TableFeatures>,
+    NoComponents,
+    NoComponents,
+    NoComponents
+  >({
+    features: { ...features, ...dataTableBaseFeatures },
+    defaultColumn: { enableSorting: false },
+  });
 
   function useDataTable<TData extends RowData>({
     rowHeader,
@@ -163,14 +179,7 @@ export function createDataTableHook<F extends TableFeatures>(features: F) {
     search,
     urlState,
     ...tableOptions
-  }: DataTableOptions<F, TData>): DataTable<Features, TData> {
-    const dataTable: DataTableConfig = {
-      rowHeader,
-      getRowHref: getRowHref as DataTableConfig["getRowHref"],
-      tile: tile as DataTableConfig["tile"],
-      tileBreakpoint,
-      tileLabel: tileLabel as DataTableConfig["tileLabel"],
-    };
+  }: DataTableOptions<TableFeatures, TData>) {
     const url = useUrlTableState(urlState);
     const table = hook.useAppTable<TData>({
       ...(urlState?.pagination ? { autoResetPageIndex: false } : {}),
@@ -181,7 +190,12 @@ export function createDataTableHook<F extends TableFeatures>(features: F) {
       meta: {
         ...tableOptions.meta,
         dataTable: {
-          ...dataTable,
+          rowHeader,
+          getRowHref,
+          tile,
+          tileBreakpoint,
+          tileLabel,
+          sortingLabels: urlState?.sorting?.labels,
           ...(urlState
             ? {
                 urlFilters: {
@@ -192,17 +206,13 @@ export function createDataTableHook<F extends TableFeatures>(features: F) {
             : {}),
         },
       },
-    } as never);
+    });
 
-    const tableRef = useRef(table as unknown as AnyTable);
-    tableRef.current = table as unknown as AnyTable;
+    const tableRef = useRef<AnyTable>(table);
+    tableRef.current = table;
     const [bricks] = useState(() => bindBricks(() => tableRef.current));
 
-    return useMemo(
-      () =>
-        Object.assign(table, bricks) as unknown as DataTable<Features, TData>,
-      [table, bricks],
-    );
+    return useMemo(() => Object.assign(table, bricks), [table, bricks]);
   }
 
   return {

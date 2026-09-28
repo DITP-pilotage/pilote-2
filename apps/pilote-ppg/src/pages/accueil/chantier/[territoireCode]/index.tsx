@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { TRI_CHANTIERS_PAR_DEFAUT } from "@/server/chantiers/app/contrats/TriChantiers";
 import assert from "node:assert/strict";
 import { useEnv } from "@/client/hooks/useEnv";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
@@ -79,7 +80,7 @@ export const getServerSideProps = async (
     };
   }
 
-  const [sorting = { id: "avancement", desc: false }] = searchParams.sort;
+  const [sorting = TRI_CHANTIERS_PAR_DEFAUT] = searchParams.sort;
 
   const filtres: FiltreQueryParams = {
     perimetres: searchParams.perimetres,
