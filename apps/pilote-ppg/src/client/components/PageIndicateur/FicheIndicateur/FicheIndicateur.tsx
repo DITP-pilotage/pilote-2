@@ -30,7 +30,7 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
             informationHistorisationIndicateur
           }
         />
-        <section className="fr-accordion">
+        <section className="fr-accordion focus-within:z-auto">
           <h2 className="fr-accordion__title">
             <button
               aria-controls="accordion-identity"
@@ -52,7 +52,7 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
             />
           </div>
         </section>
-        <section className="fr-accordion">
+        <section className="fr-accordion focus-within:z-auto">
           <h2 className="fr-accordion__title">
             <button
               aria-controls="accordion-parametrage"
@@ -101,7 +101,7 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
             />
           </div>
         </section>
-        <section className="fr-accordion">
+        <section className="fr-accordion focus-within:z-auto">
           <h2 className="fr-accordion__title">
             <button
               aria-controls="accordion-autres-informations"
