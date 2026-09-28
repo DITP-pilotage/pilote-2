@@ -57,6 +57,28 @@ describe("useUrlTableState", () => {
     ]);
   });
 
+  it.each(["?sort=nom.constructor", "?sort=nom.toString"])(
+    "ignore un sens de tri issu du prototype (%s)",
+    (searchParams) => {
+      const { result } = rendre(searchParams);
+
+      expect(result.current.state.sorting).toEqual([
+        { id: "updatedAt", desc: true },
+      ]);
+    },
+  );
+
+  it("revient au tri par défaut quand le tri est retiré", async () => {
+    const { result, derniereUrl } = rendre("?sort=nom.asc");
+
+    act(() => result.current.handlers.onSortingChange?.([]));
+
+    expect(result.current.state.sorting).toEqual([
+      { id: "updatedAt", desc: true },
+    ]);
+    await waitFor(() => expect(derniereUrl()).toBe(""));
+  });
+
   it("écrit le tri au format colonne.sens", async () => {
     const { result, derniereUrl } = rendre();
 

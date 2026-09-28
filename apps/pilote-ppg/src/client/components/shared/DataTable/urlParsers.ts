@@ -8,7 +8,7 @@ export const parseAsSorting = createParser<SortingState>({
     const sorting = value.split(",").map((part) => {
       const separator = part.lastIndexOf(".");
       const direction = part.slice(separator + 1);
-      if (separator <= 0 || !(direction in DIRECTIONS)) return null;
+      if (separator <= 0 || !Object.hasOwn(DIRECTIONS, direction)) return null;
       return {
         id: part.slice(0, separator),
         desc: DIRECTIONS[direction as keyof typeof DIRECTIONS],
