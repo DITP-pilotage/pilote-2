@@ -18,6 +18,7 @@ import { hasFeature } from "./features";
 import { createSearchFilterFn } from "./filterFns";
 import { DataTableHeader, type DataTableHeaderProps } from "./Header";
 import { DataTableRoot, type DataTableRootProps } from "./Root";
+import type { PointDeRuptureÉcran } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore.interface";
 import type { AnyTable, DataTableColumnMeta } from "./types";
 
 const dataTableBaseFeatures = tableFeatures({
@@ -37,6 +38,8 @@ export type DataTableOptions<
   rowHeader?: string;
   getRowHref?: (row: Row<AppFeatures<F>, TData>) => string | undefined;
   tile?: (row: Row<AppFeatures<F>, TData>) => ReactNode;
+  tileBreakpoint?: PointDeRuptureÉcran;
+  tileLabel?: (row: Row<AppFeatures<F>, TData>) => string;
   search?: (row: TData) => string[];
 };
 
@@ -63,7 +66,14 @@ export type DataTable<
 
 const bindBricks = (getTable: () => AnyTable) => {
   const bricks: DataTableBricks = {
-    Root: (props) => <DataTableRoot table={getTable()} {...props} />,
+    Root: (props) => (
+      <DataTableRoot
+        hasActiveFilters={bricks.hasActiveFilters()}
+        onResetFilters={bricks.resetFilters}
+        table={getTable()}
+        {...props}
+      />
+    ),
     Header: (props) => <DataTableHeader table={getTable()} {...props} />,
     Body: (props) => <DataTableBody table={getTable()} {...props} />,
     hasActiveFilters: () => {
@@ -103,6 +113,8 @@ export function createDataTableHook<F extends TableFeatures>(features: F) {
     rowHeader,
     getRowHref,
     tile,
+    tileBreakpoint,
+    tileLabel,
     search,
     ...tableOptions
   }: DataTableOptions<F, TData>): DataTable<Features, TData> {
@@ -110,6 +122,8 @@ export function createDataTableHook<F extends TableFeatures>(features: F) {
       rowHeader,
       getRowHref: getRowHref as DataTableConfig["getRowHref"],
       tile: tile as DataTableConfig["tile"],
+      tileBreakpoint,
+      tileLabel: tileLabel as DataTableConfig["tileLabel"],
     };
     const table = hook.useAppTable<TData>({
       ...tableOptions,
