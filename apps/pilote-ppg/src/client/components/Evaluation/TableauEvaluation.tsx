@@ -192,7 +192,6 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
               <FiltresTableauEvaluation table={table} />
 
               <Table.Root
-                bordered={false}
                 caption={titre}
                 captionHidden
                 className="table-fixed w-full border-collapse"

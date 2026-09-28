@@ -152,7 +152,7 @@ export default function useTableauPageAdminIndicateurs() {
     a.remove();
   };
 
-  const tableau = adminIndicateurs.useDataTable({
+  const table = adminIndicateurs.useDataTable({
     data: metadataIndicateurs,
     columns: colonnes,
     rowHeader: "indicNom",
@@ -177,10 +177,10 @@ export default function useTableauPageAdminIndicateurs() {
 
   const changementDeLaRechercheCallback = useCallback(
     (event: ChangeEvent<HTMLInputElement>) =>
-      tableau.setGlobalFilter(event.target.value),
-    [tableau],
+      table.setGlobalFilter(event.target.value),
+    [table],
   );
-  const valeurDeLaRecherche = tableau.store.state.globalFilter ?? "";
+  const valeurDeLaRecherche = table.store.state.globalFilter ?? "";
 
   const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -232,7 +232,7 @@ export default function useTableauPageAdminIndicateurs() {
     alerte,
     définirLeFichier,
     verifierLeFichier,
-    tableau,
+    table,
     estEnChargement,
     valeurDeLaRecherche,
     exporterLesIndicateurs,

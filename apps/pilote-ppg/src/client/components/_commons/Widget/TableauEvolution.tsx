@@ -32,18 +32,17 @@ export const TableauEvolution = ({
 }) => {
   return (
     <Table.Root
-      bordered={false}
       caption="Évolution des valeurs par territoire et par jalon"
       captionHidden
       className="w-full border-collapse"
       containerClassName="text-xs"
     >
-      <Table.Header className="bg-transparent text-inherit">
+      <Table.Header>
         <Table.Row>
           <Table.ColumnHeaderCell
             className={clsxm(
               CELLULE,
-              "sticky left-0 bg-white z-10 min-w-[130px] p-0 md:p-0 border-b-0",
+              "sticky left-0 bg-dsfr-blue-france-925 z-10 min-w-[130px] p-0 md:p-0",
             )}
           >
             <span className="sr-only">Territoire</span>
@@ -53,7 +52,7 @@ export const TableauEvolution = ({
               key={jalon}
               className={clsxm(
                 CELLULE,
-                "px-3 py-2 md:px-3 md:py-2 text-center whitespace-nowrap border-b-0",
+                "px-3 py-2 md:px-3 md:py-2 text-center whitespace-nowrap",
                 jalon === jalonActif ? "font-bold" : "font-semibold",
               )}
             >

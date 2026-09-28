@@ -14,7 +14,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   jalon,
   chantiersSontArchives,
 }) => {
-  const { tableau, changementDeLaRechercheCallback, valeurDeLaRecherche } =
+  const { table, changementDeLaRechercheCallback, valeurDeLaRecherche } =
     useTableauChantiers(
       données,
       ministèresDisponibles,
@@ -43,10 +43,10 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
         </div>
         <div className="flex 2xl:flex-row gap-4 items-end">
           <SelecteurGroupementTableauChantier />
-          <TableauChantiersActionsDeTri tableau={tableau} />
+          <TableauChantiersActionsDeTri table={table} />
         </div>
       </div>
-      <tableau.Root
+      <table.Root
         caption="Liste des chantiers"
         captionHidden
         empty={{
@@ -58,11 +58,8 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           clsxm("px-4 py-2", row.getIsGrouped() ? ligneGroupe : lignesFeuille)
         }
       >
-        <tableau.Header
-          cellClassName="px-2 md:px-2 first:rounded-tl-lg last:rounded-tr-lg max-[78rem]:!text-xs"
-          className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925"
-        />
-        <tableau.Body
+        <table.Header cellClassName="px-4 md:px-4 first:rounded-tl-lg last:rounded-tr-lg max-[78rem]:!text-xs" />
+        <table.Body
           cellClassName="px-4 py-2 md:px-4 md:py-2"
           rowClassName={(row) =>
             clsxm(
@@ -74,8 +71,8 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           }
           zebra={false}
         />
-      </tableau.Root>
-      <tableau.Pagination />
+      </table.Root>
+      <table.Pagination />
     </section>
   );
 };

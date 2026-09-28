@@ -32,7 +32,6 @@ export const TableauUtilisateurs = () => {
         />
 
         <Table.Root
-          bordered={false}
           caption="Utilisateurs de Pilote Eval"
           captionHidden
           className="w-full border-collapse"

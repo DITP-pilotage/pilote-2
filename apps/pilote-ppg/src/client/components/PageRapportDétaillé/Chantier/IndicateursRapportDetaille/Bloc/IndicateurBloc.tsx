@@ -97,7 +97,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               captionHidden
               containerClassName="m-0 p-0"
             >
-              <Table.Header className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925">
+              <Table.Header>
                 <Table.Row>
                   {[
                     "Territoire(s)",

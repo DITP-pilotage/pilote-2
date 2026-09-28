@@ -12,7 +12,7 @@ export const recupererLesNomsDesTerritoires = (
   territoiresListe: Territoire[],
 ): string[] => {
   if (!profilsTerritoriaux.includes(utilisateurProfil)) {
-    return ["Tous les territoire"];
+    return ["Tous les territoires"];
   }
 
   const maillesUtilisateur = profilsDépartementaux.includes(utilisateurProfil)

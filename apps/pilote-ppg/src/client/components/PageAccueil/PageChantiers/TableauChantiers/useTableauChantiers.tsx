@@ -332,7 +332,7 @@ export const useTableauChantiers = (
     ),
   );
 
-  const tableau = accueilChantiers.useDataTable({
+  const table = accueilChantiers.useDataTable({
     data: données,
     columns: colonnesTableauChantiers,
     rowHeader: "nom",
@@ -400,13 +400,11 @@ export const useTableauChantiers = (
   });
 
   return {
-    tableau,
+    table,
     changementDeLaRechercheCallback: (event: ChangeEvent<HTMLInputElement>) =>
-      tableau.setGlobalFilter(event.target.value),
-    valeurDeLaRecherche: tableau.store.state.globalFilter ?? "",
+      table.setGlobalFilter(event.target.value),
+    valeurDeLaRecherche: table.store.state.globalFilter ?? "",
   };
 };
 
-export type TableauDesChantiers = ReturnType<
-  typeof useTableauChantiers
->["tableau"];
+export type ChantiersTable = ReturnType<typeof useTableauChantiers>["table"];

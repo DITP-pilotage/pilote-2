@@ -96,7 +96,7 @@ function DataTableRow({
             >
               {href ? (
                 <Link
-                  className="after:absolute after:inset-0 after:content-[''] focus-visible:!outline-none"
+                  className="bg-none after:absolute after:inset-0 after:content-[''] focus-visible:!outline-none"
                   href={href}
                 >
                   {content}

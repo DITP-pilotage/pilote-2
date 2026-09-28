@@ -40,7 +40,6 @@ export function TableauAdmin<TRow extends RowData>({
         <>
           <table.Filters />
           <table.Root
-            bordered={false}
             caption={caption}
             captionHidden
             empty={{

@@ -147,20 +147,18 @@ export const TableauLogs: FunctionComponent = () => {
         />
       ) : (
         <Table.Root
-          bordered={false}
           caption="Journal applicatif"
           captionHidden
           className="w-full text-sm"
-          containerClassName="border border-dsfr-grey-925 rounded-lg"
         >
-          <Table.Header className="bg-dsfr-grey-1000">
+          <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <Table.ColumnHeaderCell
                     className={clsxm(
                       CELLULE,
-                      "px-4 py-3 md:px-4 md:py-3 font-medium text-dsfr-mention-grey border-dsfr-grey-925",
+                      "px-4 py-3 md:px-4 md:py-3",
                       header.id === "expand" && "w-10",
                     )}
                     key={header.id}
@@ -179,11 +177,17 @@ export const TableauLogs: FunctionComponent = () => {
             ))}
           </Table.Header>
           <Table.Body zebra={false}>
-            {table.getRowModel().rows.map((row) => {
+            {table.getRowModel().rows.map((row, index) => {
               const log = row.original;
               return (
                 <Fragment key={row.id}>
-                  <Table.Row className="border-b border-dsfr-grey-925 hover:bg-dsfr-grey-1000">
+                  <Table.Row
+                    className={
+                      index % 2 === 1
+                        ? "bg-dsfr-grey-1000 hover:bg-dsfr-grey-975-hover"
+                        : "hover:bg-dsfr-grey-975-hover"
+                    }
+                  >
                     <Table.Cell
                       className={clsxm(
                         CELLULE,
@@ -205,17 +209,14 @@ export const TableauLogs: FunctionComponent = () => {
                       </span>
                     </Table.Cell>
                     <Table.Cell
-                      className={clsxm(
-                        CELLULE,
-                        "px-4 py-2 md:px-4 md:py-2 text-gray-700",
-                      )}
+                      className={clsxm(CELLULE, "px-4 py-2 md:px-4 md:py-2")}
                     >
                       {libelleCategorieLog(log.categorie)}
                     </Table.Cell>
                     <Table.Cell
                       className={clsxm(
                         CELLULE,
-                        "px-4 py-2 md:px-4 md:py-2 max-w-[400px] truncate text-gray-800",
+                        "px-4 py-2 md:px-4 md:py-2 max-w-[400px] truncate",
                       )}
                     >
                       {log.message}

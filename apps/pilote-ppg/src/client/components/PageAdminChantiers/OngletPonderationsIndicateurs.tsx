@@ -160,17 +160,16 @@ const OngletPonderationsIndicateurs = ({
 
       <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925">
         <Table.Root
-          bordered={false}
           caption="Pondération des indicateurs par maille"
           captionHidden
           className="w-full table-fixed text-sm"
         >
-          <Table.Header className="bg-transparent text-inherit">
-            <Table.Row className="bg-dsfr-grey-1000 text-xs uppercase text-dsfr-mention-grey">
+          <Table.Header>
+            <Table.Row>
               <Table.ColumnHeaderCell
                 className={clsxm(
                   CELLULE,
-                  "text-left px-4 py-3 md:px-4 md:py-3 font-medium border-b-0",
+                  "text-left px-4 py-3 md:px-4 md:py-3",
                 )}
               >
                 Indicateur
@@ -179,7 +178,7 @@ const OngletPonderationsIndicateurs = ({
                 <Table.ColumnHeaderCell
                   className={clsxm(
                     CELLULE,
-                    "w-36 text-right px-4 py-3 md:px-4 md:py-3 font-medium border-b-0",
+                    "w-36 text-right px-4 py-3 md:px-4 md:py-3",
                   )}
                   key={maille}
                 >

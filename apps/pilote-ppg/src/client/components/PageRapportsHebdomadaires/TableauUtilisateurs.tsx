@@ -19,7 +19,7 @@ export const TableauUtilisateurs = ({
       captionHidden
       containerClassName="mb-0 pt-0"
     >
-      <Table.Header className="bg-dsfr-blue-france-925">
+      <Table.Header>
         <Table.Row>
           <Table.ColumnHeaderCell>Prénom</Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell>Nom</Table.ColumnHeaderCell>

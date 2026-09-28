@@ -10,7 +10,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
   nombreUtilisateur: number;
 }> = ({ listeUtilisateurs, nombreUtilisateur }) => {
-  const { tableau, changementDeLaRechercheCallback, valeurDeLaRecherche } =
+  const { table, changementDeLaRechercheCallback, valeurDeLaRecherche } =
     useTableauPageAdminUtilisateurs(listeUtilisateurs, nombreUtilisateur);
 
   const [typeCompte, setTypeCompte] = useQueryState(
@@ -25,7 +25,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   const modifierFiltre = (
     typeCompteAAfficher: ["actif", "desactive"] | ["actif"] | ["desactive"],
   ) => {
-    tableau.setPageIndex(0);
+    table.setPageIndex(0);
     return setTypeCompte(typeCompteAAfficher.join(","));
   };
 
@@ -75,23 +75,21 @@ const TableauAdminUtilisateurs: FunctionComponent<{
           }}
         />
       </div>
-      <tableau.Root
+      <table.Root
         caption="Tableau des utilisateurs"
         captionHidden
         className="m-0 p-0"
+        containerClassName="mt-4"
         empty={{ title: "Aucun compte ne correspond à votre recherche." }}
       >
-        <tableau.Header
-          cellClassName="py-2 md:py-2 px-1 md:px-1 min-[992px]:px-4 first:rounded-tl-lg last:rounded-tr-lg"
-          className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925"
-        />
-        <tableau.Body
+        <table.Header cellClassName="py-2 md:py-2" />
+        <table.Body
           cellClassName="py-2 md:py-2 max-w-[10px] overflow-hidden text-ellipsis whitespace-nowrap"
           cellTitle
           rowClassName="even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
         />
-      </tableau.Root>
-      <tableau.Pagination />
+      </table.Root>
+      <table.Pagination />
     </section>
   );
 };

@@ -61,7 +61,7 @@ export const BlocChantier = ({
                 captionHidden
                 containerClassName="mb-0 pt-0"
               >
-                <Table.Header className="bg-dsfr-blue-france-925">
+                <Table.Header>
                   <Table.Row>
                     <Table.ColumnHeaderCell>Territoire</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell className="text-right">

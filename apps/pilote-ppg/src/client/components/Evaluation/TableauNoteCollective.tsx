@@ -44,7 +44,6 @@ export const TableauNoteCollective = () => {
       </header>
 
       <Table.Root
-        bordered={false}
         caption={`Objectifs collectifs applicables pour ${nomTerritoire}`}
         captionHidden
         className="min-w-full"

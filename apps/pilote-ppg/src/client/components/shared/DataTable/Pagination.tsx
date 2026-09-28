@@ -117,7 +117,7 @@ export function PaginationView({
     <div className={clsxm("flex flex-col items-center mt-11 mb-20", className)}>
       {pageCount > 1 && (
         <nav aria-label="Pagination du tableau">
-          <ul className="flex flex-row flex-wrap items-center [&>li:first-child>*]:ml-0 [&>li:last-child>*]:mr-0">
+          <ul className="flex flex-row flex-wrap items-center list-none m-0 p-0 [&>li]:p-0 [&>li:first-child>*]:ml-0 [&>li:last-child>*]:mr-0">
             <li className="hidden min-[576px]:block">
               <EdgeButton
                 disabled={isFirst}

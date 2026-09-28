@@ -106,23 +106,21 @@ export const AlbertDashboardTable = ({
   return (
     <div>
       <Table.Root
-        bordered={false}
         caption="Conversations Albert"
         captionHidden
-        className="!w-full !text-sm"
-        containerClassName="!border !border-dsfr-grey-925 !rounded-md !bg-white"
+        className="text-sm"
       >
-        <Table.Header className="!bg-dsfr-grey-1000">
+        <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell className="!text-left !px-4 !py-2">
+            <Table.ColumnHeaderCell className="px-4 py-2 md:px-4 md:py-2">
               Conversation
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="!text-left !px-4 !py-2">
+            <Table.ColumnHeaderCell className="px-4 py-2 md:px-4 md:py-2">
               Profil
             </Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell
               aria-sort={ariaSort("createdAt")}
-              className="!text-left !px-4 !py-2"
+              className="px-4 py-2 md:px-4 md:py-2"
             >
               <ColonneTri
                 champ="createdAt"
@@ -133,7 +131,7 @@ export const AlbertDashboardTable = ({
             </Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell
               aria-sort={ariaSort("updatedAt")}
-              className="!text-left !px-4 !py-2"
+              className="px-4 py-2 md:px-4 md:py-2"
             >
               <ColonneTri
                 champ="updatedAt"
@@ -142,15 +140,15 @@ export const AlbertDashboardTable = ({
                 tri={tri}
               />
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="!text-center !px-4 !py-2">
+            <Table.ColumnHeaderCell className="px-4 py-2 md:px-4 md:py-2 text-center">
               <span aria-hidden="true">👍</span>
               <span className="sr-only">Pouces levés</span>
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="!text-center !px-4 !py-2">
+            <Table.ColumnHeaderCell className="px-4 py-2 md:px-4 md:py-2 text-center">
               <span aria-hidden="true">👎</span>
               <span className="sr-only">Pouces baissés</span>
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="!text-center !px-4 !py-2">
+            <Table.ColumnHeaderCell className="px-4 py-2 md:px-4 md:py-2 text-center">
               <span aria-hidden="true">💬</span>
               <span className="sr-only">Commentaires</span>
             </Table.ColumnHeaderCell>
@@ -160,7 +158,7 @@ export const AlbertDashboardTable = ({
           {conversations.map((conversation) => (
             <Table.Row
               className={clsxm(
-                "relative !border-t !border-dsfr-grey-925 even:!bg-dsfr-grey-1000 hover:!bg-dsfr-grey-900",
+                "relative even:bg-dsfr-grey-1000 hover:bg-dsfr-grey-975-hover",
                 enChargement && "!opacity-60",
               )}
               key={conversation.id}

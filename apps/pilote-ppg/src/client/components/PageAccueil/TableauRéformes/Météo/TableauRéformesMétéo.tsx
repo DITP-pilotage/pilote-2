@@ -31,7 +31,7 @@ const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> =
 }) => {
   return (
     <div
-      className={clsxm("flex flex-column items-center !w-auto", {
+      className={clsxm("inline-flex flex-col items-center", {
         "grayscale-100": chantiersSontArchives,
       })}
     >

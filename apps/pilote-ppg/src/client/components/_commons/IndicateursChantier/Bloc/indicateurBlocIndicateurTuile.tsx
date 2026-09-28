@@ -27,12 +27,11 @@ const IndicateurBlocIndicateurTuile = () => {
   return (
     <div>
       <Table.Root
-        bordered={false}
         caption={`Indicateur pour ${detailTerritoireSelectionne.nom}`}
         captionHidden
         className="p-0 pb-4 w-full table overflow-hidden bg-white"
       >
-        <Table.Header className="bg-dsfr-blue-france-925 bg-none">
+        <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell className="py-1 md:py-1 border-b-0 rounded-tl-lg">
               Territoire

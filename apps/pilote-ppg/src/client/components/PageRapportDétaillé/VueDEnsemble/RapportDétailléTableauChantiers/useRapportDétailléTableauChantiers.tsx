@@ -105,7 +105,7 @@ export default function useRapportDétailléTableauChantiers(
       },
     }),
   ]);
-  const tableau = rapportDétailléTableauChantiers.useDataTable({
+  const table = rapportDétailléTableauChantiers.useDataTable({
     data: données,
     columns: colonnesTableauChantiers,
     rowHeader: "nom",
@@ -113,6 +113,6 @@ export default function useRapportDétailléTableauChantiers(
   });
 
   return {
-    tableau,
+    table,
   };
 }

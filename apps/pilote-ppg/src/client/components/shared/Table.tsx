@@ -47,7 +47,7 @@ export type TableRootProps = Omit<
 function Root({
   caption,
   captionHidden = false,
-  bordered = true,
+  bordered = false,
   containerClassName,
   className,
   children,
@@ -95,7 +95,7 @@ function Root({
 function Header({ className, ...props }: ComponentPropsWithoutRef<"thead">) {
   return (
     <thead
-      className={clsxm("bg-dsfr-grey-1000 text-dsfr-grey-50", className)}
+      className={clsxm("bg-dsfr-blue-france-925 text-dsfr-grey-50", className)}
       {...props}
     />
   );

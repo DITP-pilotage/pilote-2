@@ -100,7 +100,7 @@ export const useTableauPageAdminUtilisateurs = (
     ProfilEnum.DITP_PILOTAGE,
   ].includes(session!.profil);
 
-  const tableau = adminUtilisateurs.useDataTable({
+  const table = adminUtilisateurs.useDataTable({
     data: utilisateurs,
     columns: colonnes,
     rowHeader: "email",
@@ -123,13 +123,13 @@ export const useTableauPageAdminUtilisateurs = (
 
   const changementDeLaRechercheCallback = useCallback(
     (event: ChangeEvent<HTMLInputElement>) =>
-      tableau.setGlobalFilter(event.target.value),
-    [tableau],
+      table.setGlobalFilter(event.target.value),
+    [table],
   );
 
   return {
-    tableau,
+    table,
     changementDeLaRechercheCallback,
-    valeurDeLaRecherche: tableau.store.state.globalFilter ?? "",
+    valeurDeLaRecherche: table.store.state.globalFilter ?? "",
   };
 };
