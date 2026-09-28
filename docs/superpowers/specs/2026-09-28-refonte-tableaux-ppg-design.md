@@ -43,7 +43,7 @@ Problèmes constatés :
 
 ## Conventions
 
-- Termes techniques en anglais (`Table`, `DataTable`, `SortButton`, `Pagination`, `useDataTable`…), noms d'entités métier en français (`chantier`, `indicateur`…).
+- Termes techniques en anglais (`Table`, `DataTable`, `SortButtons`, `Pagination`, `useDataTable`…), noms d'entités métier en français (`chantier`, `indicateur`…).
 - `clsxm` pour fusionner les classes, la classe de l'appelant l'emporte.
 - Couleurs via la config Tailwind (`dsfr-*`, `primary`), jamais de couleur en dur.
 - Composés via `Object.assign(Root, { … })`.
@@ -59,7 +59,7 @@ src/client/components/shared/
     urlState.ts                 # synchronisation nuqs
     filterFns.ts                # oneOf, search
     Root.tsx  Header.tsx  Body.tsx  Empty.tsx  Pagination.tsx
-    SortButton.tsx  Filters.tsx  LiveRegion.tsx  TileList.tsx
+    SortButtons.tsx  Filters.tsx  LiveRegion.tsx  TileList.tsx
     types.ts                    # DataTableColumnMeta
     *.unit.test.tsx
 ```
@@ -103,7 +103,7 @@ Le factory appelle `createTableHook` avec :
 - `columnMeta: metaHelper<DataTableColumnMeta>()` : meta typées pour toutes les tables ;
 - `filterFns: { oneOf, … }` ;
 - `defaultColumn: { enableSorting: false }` : le tri est **opt-in par colonne** ;
-- l'enregistrement **conditionnel** des briques : `SortButton` seulement si `rowSortingFeature`, `Pagination` seulement si `rowPaginationFeature`, `Filters` seulement si `columnFilteringFeature` ou `globalFilteringFeature`. Côté page, `table.Pagination` n'existe au typage que si la pagination est déclarée.
+- l'enregistrement **conditionnel** des briques : `Pagination` seulement si `rowPaginationFeature`, `Filters` seulement si `columnFilteringFeature` ou `globalFilteringFeature`. Côté page, `table.Pagination` n'existe au typage que si la pagination est déclarée.
 
 Le cast `as unknown as` nécessaire (TypeScript ne réduit pas les options avec un `TFeatures` générique) est **confiné au factory**. Côté page, le typage est exact.
 
@@ -127,7 +127,7 @@ const table = useDataTable({
 
 Il enveloppe `useAppTable`. L'instance retournée porte `Root`, `Header`, `Body`, `Pagination`, `Filters`, et les méthodes `hasActiveFilters()` et `resetFilters()`.
 
-**Re-renders** : `useDataTable` s'abonne au minimum d'état (sélecteur v9) ; chaque brique s'abonne à sa tranche via `table.Subscribe` (`Pagination` → `pagination`, `Filters` → filtres, `LiveRegion` → ce qu'elle annonce). Un changement de filtre ne re-rend plus toutes les cellules.
+**Re-renders** : `useDataTable` s'abonne à tout l'état, comme `useTable` par défaut ; `Pagination` s'abonne à sa tranche via `table.Subscribe`. Pas d'optimisation plus fine tant qu'aucune page migrée n'en a besoin.
 
 #### Usage type
 
@@ -146,9 +146,9 @@ La page ne voit **jamais** `Table.*` pour un tableau tanstack : les primitives s
 
 **`Root`** : `AppTable` (provider) + `Table.Root` + caption + `LiveRegion`. Sans ligne, rend à la place du tableau le bloc d'état vide. Sous `sm` avec `tile`, rend `TileList` à la place du tableau.
 
-**`Header`** : boucle sur `getHeaderGroups()`, `Table.ColumnHeaderCell` par en-tête, largeur depuis `meta.width`, `aria-sort` (`ascending` | `descending` | `none`) sur chaque colonne triable, `SortButton` si la colonne est triable et que `meta.sortButton !== false`.
+**`Header`** : boucle sur `getHeaderGroups()`, `Table.ColumnHeaderCell` par en-tête, largeur depuis `meta.width`, `aria-sort` (`ascending` | `descending` | `none`) sur chaque colonne triable, `SortButtons` si la colonne est triable et que `meta.sortButton !== false`.
 
-**`SortButton`** : vrai `<button>` dans le `<th>`, nommé « Trier par {libellé} » (le sens courant est porté par `aria-sort`, pas par le libellé), flèche décorative. Libellé depuis `meta.label`, sinon `header` s'il s'agit d'une chaîne.
+**`SortButtons`** : les deux boutons actuels (croissant, décroissant) au visuel identique, nommés « Trier par {libellé}, ordre croissant|décroissant », avec `aria-pressed` ; le sens courant est aussi porté par `aria-sort` sur le `<th>`. Libellé depuis `meta.label`, sinon `header` s'il s'agit d'une chaîne.
 
 **`Body`** : boucle `getRowModel().rows` → `getVisibleCells()` → `table.FlexRender`. La colonne `rowHeader` est rendue en `Table.RowHeaderCell`.
 
@@ -161,15 +161,14 @@ La page ne voit **jamais** `Table.*` pour un tableau tanstack : les primitives s
 
 **`Filters`** : panneau généré depuis les colonnes (`meta.filter`), repris de `FiltresTableauEvaluation` :
 
-- types `checkboxes`, `multiselect`, `tags` ; libellés, options (`getOptions(column)`, par défaut depuis `facetedUniqueValues` : toutes les valeurs du jeu de données, sans `facetedRowModel`) ;
 - recherche globale si `search` est fourni ;
 - filtres portés par des colonnes masquées (filtres « techniques ») autorisés ;
-- dépendances déclaratives : `filter: { …, resets: ["critereId"] }` remet à zéro les filtres listés quand celui-ci change, `hidden: (table) => boolean` ;
+- types `checkboxes` et `multiselect` à options statiques `{ value, label }` (ceux des référentiels admin) ; `tags`, `resets` et `hidden` ne sont pas repris tant que Pilote Eval, seul à les utiliser, n'est pas migré ;
 - bouton « Réinitialiser les filtres » (désactivé sans filtre actif).
 
 **`LiveRegion`** : `aria-live="polite"`, `sr-only`, dans `Root`. Annonce « Trié par {libellé}, ordre croissant|décroissant », « Page {n} sur {total} », « {n} résultats » / « Aucun résultat » après un filtre ou une recherche.
 
-**`TileList`** : sous `sm` (store `useLargeurDÉcranStore` existant), `<ul>` / `<li>` de cartes rendues par `tile(row)`, nom accessible = caption. La sémantique de liste remplace l'actuel « tableau d'une seule colonne sans en-tête ». Pagination et état vide inchangés. `tile` reçoit la `row` : il peut distinguer lignes de groupe et lignes feuilles (tuiles chantier / ministère de l'accueil).
+**`TileList`** : sous le point de rupture `tileBreakpoint` (défaut `sm`, `lg` pour l'accueil ; store `useLargeurDÉcranStore` existant), `<ul>` / `<li>` de cartes rendues par `tile(row)`, nom accessible = caption. La sémantique de liste remplace l'actuel « tableau d'une seule colonne sans en-tête ». Pagination et état vide inchangés. `tile` reçoit la `row` : il peut distinguer lignes de groupe et lignes feuilles (tuiles chantier / ministère de l'accueil).
 
 ### `DataTableColumnMeta`
 
@@ -178,9 +177,9 @@ type DataTableColumnMeta = {
   label?: string;                 // libellé texte (tri, annonces) quand header n'est pas une chaîne
   sortButton?: boolean;           // false : triable depuis l'extérieur, pas de bouton, aria-sort conservé
   width?: string;
-  sticky?: { side: "left"; offset?: number; lastInGroup?: boolean };
-  grouping?: { label: string };
-  filter?: FilterDescriptor;      // checkboxes | multiselect | tags (+ resets, hidden)
+  headerClassName?: string;
+  cellClassName?: string;
+  filter?: FilterDescriptor;      // checkboxes | multiselect
 };
 ```
 
@@ -222,15 +221,16 @@ urlState: {
 |---|---|
 | Rapports hebdomadaires ×2, ChatUI ×2, `TableauEvolution` (+ TA/VA), `TableauNoteCollective`, pondérations, token API, 3 écrans d'import, `IndicateurBloc` (chantier) et les 2 tuiles `indicateurBlocIndicateurTuile` | `Table.*` (statiques) |
 | Accueil chantiers (grouping, expanding, pagination et tri serveur, tuiles chantier/ministère) | `DataTable` |
-| Rapport détaillé (chantiers, `IndicateurBloc`) | `DataTable` |
+| Rapport détaillé (chantiers) | `DataTable` |
+| Rapport détaillé (`IndicateurBloc`, une seule ligne) | `Table.*` (statique) |
 | Admin indicateurs, admin utilisateurs | `DataTable` |
 | `TableauAdmin` et ses 7 pages | `DataTable` ; `TableauAdmin` devient une composition de briques, `useEtatTableauAdmin` et `useFiltreColonne` disparaissent au profit de `urlState` et `Filters` |
-| Logs, Albert | `DataTable` (paginations maison remplacées) |
+| Logs, Albert | `Table.*` + `PaginationView` partagée (lignes de détail en `colSpan` pour les logs, données tRPC paginées et triées côté serveur pour Albert) |
 | Evaluation, utilisateurs PiloteEval | **Minimal** : balisage `<table>` → `Table.*` ; hooks, filtres et `setTimeout` inchangés |
 
 Au passage :
 
-- les 2 fichiers `indicateurBlocIndicateurTuile.tsx` quasi identiques sont fusionnés ;
+- les 2 fichiers `indicateurBlocIndicateurTuile.tsx` restent distincts (sources de données et variantes différentes) mais passent sur les primitives ;
 - la clé manquante du fragment dans `TableauNoteCollective` est corrigée ;
 - la caption tronquée d'`IndicateurBloc` (« Un tableau de l'indicateur :' ») reçoit le nom de l'indicateur ;
 - le `pageCount` de l'accueil est corrigé par construction.
@@ -251,7 +251,7 @@ Correspondance avec les 11 exigences transmises par la session accessibilité :
 |---|---|---|
 | 1 | Titre de tableau (RGAA 5.4 / 5.6) | `caption` obligatoire sur `Table.Root`, `captionHidden` |
 | 2 | `scope`, jamais de `<th>` vide | `ColumnHeaderCell` / `RowHeaderCell` |
-| 3 | `aria-sort` + `<button>` « Trier par » | `Header`, `SortButton` |
+| 3 | `aria-sort` + `<button>` « Trier par » | `Header`, `SortButtons` |
 | 4 | Annonces | `LiveRegion` |
 | 5 | Pagination nommée, `aria-current`, bords désactivés | `Pagination` |
 | 6 | Un seul lien nommé par ligne | `Body` + `getRowHref` / `rowHeader` |
@@ -265,7 +265,7 @@ Les icônes des tableaux passent par le wrapper `_commons/Icones` (dont `aria-hi
 
 ## Vérification
 
-- **Tests Vitest** (`*.unit.test.tsx`, projet `client`) sur `Table.*` et `DataTable/*` uniquement : sémantique (`scope`, caption, région défilante), `aria-sort` et tri, pagination (`aria-current`, bords désactivés, `pageCount`), état vide (`noData`/`noResults`), annonces, lien unique par ligne, filtres (`oneOf`, `resets`, `hidden`), enregistrement conditionnel des briques (`@ts-expect-error`), `urlState` (formats, remise à la page 1, mises à jour successives). Pas de tests de pages.
+- **Tests Vitest** (`*.unit.test.tsx`, projet `client`) sur `Table.*` et `DataTable/*` uniquement : sémantique (`scope`, caption, région défilante), `aria-sort` et tri, pagination (`aria-current`, bords désactivés, `pageCount`), état vide (`noData`/`noResults`), annonces, lien unique par ligne, filtres (`oneOf`, panneau généré), enregistrement conditionnel des briques (`@ts-expect-error`), `urlState` (formats, remise à la page 1, mises à jour successives). Pas de tests de pages.
 - Tests existants adaptés : `TableauPagination.integration.test.tsx` (remplacé par ceux de `Pagination`), `filtreColonne.unit.test.tsx`.
 - `pnpm lint` (oxlint + tsc + format) avant chaque commit.
 - **Rendu** : vérifié par l'utilisateur dans le navigateur (fidélité DSFR).
