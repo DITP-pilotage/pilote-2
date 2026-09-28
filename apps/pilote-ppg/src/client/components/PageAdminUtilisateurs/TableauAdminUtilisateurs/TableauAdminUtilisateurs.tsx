@@ -1,12 +1,8 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTableauPageAdminUtilisateurs } from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs";
-import TableauEnTête from "@/components/_commons/TableauNew/EnTête/TableauEnTête";
-import TableauPagination from "@/components/_commons/TableauNew/Pagination/TableauPagination";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Titre from "@/components/_commons/Titre/Titre";
-import TableauAdminUtilisateursContenu from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import Tag from "@/components/_commons/Tag/Tag";
 
@@ -14,12 +10,8 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
   nombreUtilisateur: number;
 }> = ({ listeUtilisateurs, nombreUtilisateur }) => {
-  const {
-    tableau,
-    changementDeLaRechercheCallback,
-    valeurDeLaRecherche,
-    setPagination,
-  } = useTableauPageAdminUtilisateurs(listeUtilisateurs, nombreUtilisateur);
+  const { tableau, changementDeLaRechercheCallback, valeurDeLaRecherche } =
+    useTableauPageAdminUtilisateurs(listeUtilisateurs, nombreUtilisateur);
 
   const [typeCompte, setTypeCompte] = useQueryState(
     "typeCompte",
@@ -33,9 +25,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   const modifierFiltre = (
     typeCompteAAfficher: ["actif", "desactive"] | ["actif"] | ["desactive"],
   ) => {
-    setPagination({
-      pageIndex: 1,
-    });
+    tableau.setPageIndex(0);
     return setTypeCompte(typeCompteAAfficher.join(","));
   };
 
@@ -85,17 +75,23 @@ const TableauAdminUtilisateurs: FunctionComponent<{
           }}
         />
       </div>
-      <div className="fr-table">
-        <table className="tableau table fr-m-0 fr-p-0">
-          <caption className="fr-sr-only">Tableau des utilisateurs</caption>
-          <TableauEnTête tableau={tableau} />
-          <TableauAdminUtilisateursContenu tableau={tableau} />
-        </table>
-        <TableauPagination
-          nombreDePages={tableau.getPageCount()}
-          tableau={tableau}
+      <tableau.Root
+        caption="Tableau des utilisateurs"
+        captionHidden
+        className="m-0 p-0"
+        empty={{ title: "Aucun compte ne correspond à votre recherche." }}
+      >
+        <tableau.Header
+          cellClassName="py-2 md:py-2 px-1 md:px-1 min-[992px]:px-4 first:rounded-tl-lg last:rounded-tr-lg"
+          className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925"
         />
-      </div>
+        <tableau.Body
+          cellClassName="py-2 md:py-2 max-w-[10px] overflow-hidden text-ellipsis whitespace-nowrap"
+          cellTitle
+          rowClassName="even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
+        />
+      </tableau.Root>
+      <tableau.Pagination />
     </section>
   );
 };

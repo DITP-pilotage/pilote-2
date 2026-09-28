@@ -1,95 +1,65 @@
 import {
-  ColumnSort,
-  columnVisibilityFeature,
-  createColumnHelper,
-  createSortedRowModel,
+  columnFilteringFeature,
+  globalFilteringFeature,
   rowPaginationFeature,
   rowSortingFeature,
   tableFeatures,
-  useTable,
 } from "@tanstack/react-table";
 import { ChangeEvent, useCallback } from "react";
-import {
-  parseAsArrayOf,
-  parseAsInteger,
-  parseAsJson,
-  parseAsString,
-  useQueryState,
-  useQueryStates,
-} from "nuqs";
-import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { formaterDate } from "@/client/utils/date/date";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import {
-  PAGE_INDEX_DEFAUT,
-  TAILLE_DEFAUT_PAGINATION_UTILISATEUR,
-} from "@/client/constants/constantes";
+import { TAILLE_DEFAUT_PAGINATION_UTILISATEUR } from "@/client/constants/constantes";
+import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
-/**
- * La pagination est manuelle : les lignes arrivent déjà découpées côté serveur,
- * donc aucun `paginatedRowModel` n'est déclaré, seule la feature l'est pour
- * l'état et les APIs de navigation.
- */
-export const featuresTableauAdminUtilisateurs = tableFeatures({
-  columnVisibilityFeature,
+const featuresTableauAdminUtilisateurs = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
   rowSortingFeature,
   rowPaginationFeature,
-  sortedRowModel: createSortedRowModel(),
 });
 
-export type FeaturesTableauAdminUtilisateurs =
-  typeof featuresTableauAdminUtilisateurs;
-
-const reactTableColonnesHelper = createColumnHelper<
-  typeof featuresTableauAdminUtilisateurs,
-  UtilisateurListeGestionContrat
->();
+const adminUtilisateurs = createDataTableHook(featuresTableauAdminUtilisateurs);
+const reactTableColonnesHelper =
+  adminUtilisateurs.createColumnHelper<UtilisateurListeGestionContrat>();
 const colonnes = reactTableColonnesHelper.columns([
   reactTableColonnesHelper.accessor("email", {
     header: "Adresse électronique",
+    enableSorting: true,
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("nom", {
     header: "Nom",
+    enableSorting: true,
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("prénom", {
     header: "Prénom",
+    enableSorting: true,
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("profil", {
     header: "Profil",
+    enableSorting: true,
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("fonction", {
     header: "Fonction",
+    enableSorting: true,
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor(
     (row) =>
       `${formaterDate(row.dateModification, "DD/MM/YYYY")} par ${row.auteurModification}`,
     {
+      id: "Dernière modification",
       header: "Dernière modification",
+      enableSorting: true,
       cell: (props) => props.getValue(),
-      sortFn: (a, b) => {
-        const dateA = new Date(a.original.dateModification);
-        const dateB = new Date(b.original.dateModification);
-
-        if (dateA.getTime() > dateB.getTime()) {
-          return 1;
-        }
-
-        if (dateA.getTime() < dateB.getTime()) {
-          return -1;
-        }
-
-        return 0;
-      },
     },
   ),
   reactTableColonnesHelper.accessor(
@@ -105,6 +75,9 @@ const colonnes = reactTableColonnesHelper.columns([
     cell: (props) => {
       return (
         <div className="flex justify-center">
+          <span className="sr-only">
+            {props.getValue() === "desactive" ? "Désactivé" : "Actif"}
+          </span>
           {props.getValue() === "desactive" ? (
             <Icone className="text-error" icone={CloseCircleIcon} />
           ) : (
@@ -127,84 +100,36 @@ export const useTableauPageAdminUtilisateurs = (
     ProfilEnum.DITP_PILOTAGE,
   ].includes(session!.profil);
 
-  const [pagination, setPagination] = useQueryStates(
-    {
-      pageIndex: parseAsInteger.withDefault(PAGE_INDEX_DEFAUT),
-      pageSize: parseAsInteger.withDefault(
-        TAILLE_DEFAUT_PAGINATION_UTILISATEUR,
-      ),
-    },
-    {
-      history: "push",
-      shallow: false,
-    },
-  );
-
-  const ZodSchemaSorting = z.object({
-    id: z
-      .string()
-      .regex(/email|nom|prénom|profil|fonction|Dernière modification/),
-    desc: z.boolean(),
-  });
-
-  const [sorting, setSorting] = useQueryState(
-    "sort",
-    parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse))
-      .withDefault([
-        {
-          id: "Dernière modification",
-          desc: true,
-        },
-      ])
-      .withOptions({
-        shallow: false,
-        clearOnDefault: true,
-        history: "push",
-      }),
-  );
-
-  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState(
-    "q",
-    parseAsString.withDefault("").withOptions({
-      shallow: false,
-      clearOnDefault: true,
-      history: "push",
-      throttleMs: 400,
-    }),
-  );
-
-  const changementDeLaRechercheCallback = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setPagination({
-        pageIndex: 1,
-      });
-      setValeurDeLaRecherche(event.target.value);
-    },
-    [setPagination, setValeurDeLaRecherche],
-  );
-
-  const tableau = useTable({
-    features: featuresTableauAdminUtilisateurs,
+  const tableau = adminUtilisateurs.useDataTable({
     data: utilisateurs,
     columns: colonnes,
-    state: {
-      pagination,
-      sorting,
-      columnVisibility: {
-        territoire: estAutoriseAVoirLaColonneTerritoire,
-      },
-    },
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    pageCount: Math.ceil(nombreUtilisateur / pagination.pageSize),
+    rowHeader: "email",
+    getRowHref: (row) => `/admin/utilisateur/${row.original.id}`,
     manualPagination: true,
+    manualSorting: true,
+    rowCount: nombreUtilisateur,
+    state: {
+      columnVisibility: { territoire: estAutoriseAVoirLaColonneTerritoire },
+    },
+    urlState: {
+      sorting: { default: [{ id: "Dernière modification", desc: true }] },
+      pagination: { pageSize: TAILLE_DEFAUT_PAGINATION_UTILISATEUR },
+      globalFilter: true,
+      shallow: false,
+      history: "push",
+      throttleMs: 400,
+    },
   });
 
+  const changementDeLaRechercheCallback = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) =>
+      tableau.setGlobalFilter(event.target.value),
+    [tableau],
+  );
+
   return {
-    nombreElementPage: nombreUtilisateur,
     tableau,
-    valeurDeLaRecherche,
     changementDeLaRechercheCallback,
-    setPagination,
+    valeurDeLaRecherche: tableau.store.state.globalFilter ?? "",
   };
 };

@@ -81,7 +81,7 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
   };
 
   const {
-    pageIndex,
+    page,
     pageSize,
     sort: sorting,
     q: valeurDeLaRecherche,
@@ -114,7 +114,7 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
     getContainer("gestionUtilisateur")
       .resolve("recupererListeUtilisateursUseCase")
       .run({
-        sorting: Array.isArray(sorting) ? sorting : [sorting],
+        sorting,
         valeurDeLaRecherche: valeurDeLaRecherche,
       }),
     getContainer("gestionUtilisateur")
@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
       listePerimetresMinisterielSelectionnable,
       listeTerritoiresSelectionnable,
       listeUtilisateurs: utilisateursFiltrés
-        .splice((pageIndex - 1) * pageSize, pageSize)
+        .splice(page * pageSize, pageSize)
         .map((utilisateur) =>
           presenterEnUtilisateurListeGestionContrat(
             utilisateur,
