@@ -59,9 +59,9 @@ export const LignesPropositionValeurAvancementV2 = ({
             className={clsx(
               "ligne-modification-proposition-valeur-davancement",
               {
-                "!bg-dsfr-info-950 !text-dsfr-info-main-525":
+                "bg-dsfr-info-950 text-dsfr-info-main-525":
                   estPropositionAccuseeReception(detailIndicateurDuTerritoire),
-                "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
+                "bg-dsfr-moutarde-main-975 text-dsfr-moutarde-main-679":
                   !estPropositionAccuseeReception(detailIndicateurDuTerritoire),
               },
             )}
@@ -114,7 +114,7 @@ export const LignesPropositionValeurAvancementV2 = ({
           detailIndicateurDuTerritoire,
           datajobsExecution,
         ) ? null : (
-          <Table.Row className="ligne-modification-proposition-valeur-davancement !bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679">
+          <Table.Row className="ligne-modification-proposition-valeur-davancement bg-dsfr-moutarde-main-975 text-dsfr-moutarde-main-679">
             <Table.Cell colSpan={8}>
               <div className="flex w-full justify-end">
                 <BoutonModifierProposition />

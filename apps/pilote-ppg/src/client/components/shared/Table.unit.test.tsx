@@ -97,7 +97,9 @@ describe("Table", () => {
     );
     expect(
       within(screen.getByRole("table")).getAllByRole("rowgroup")[0],
-    ).toHaveClass("table-zebra");
+    ).toHaveClass(
+      "[&>tr:nth-child(even)]:[--table-row-bg:theme(colors.dsfr-grey-1000)]",
+    );
   });
 
   it("exige un contenu pour chaque en-tête de colonne", () => {

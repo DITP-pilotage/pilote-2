@@ -102,7 +102,15 @@ function Header({ className, ...props }: ComponentPropsWithoutRef<"thead">) {
 }
 
 function Body({ className, ...props }: ComponentPropsWithoutRef<"tbody">) {
-  return <tbody className={clsxm("table-zebra", className)} {...props} />;
+  return (
+    <tbody
+      className={clsxm(
+        "[--table-row-bg:theme(colors.white)] [&>tr:nth-child(even)]:[--table-row-bg:theme(colors.dsfr-grey-1000)]",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 function Footer({ className, ...props }: ComponentPropsWithoutRef<"tfoot">) {
@@ -110,7 +118,9 @@ function Footer({ className, ...props }: ComponentPropsWithoutRef<"tfoot">) {
 }
 
 function Row({ className, ...props }: ComponentPropsWithoutRef<"tr">) {
-  return <tr className={clsxm(className)} {...props} />;
+  return (
+    <tr className={clsxm("bg-(color:--table-row-bg)", className)} {...props} />
+  );
 }
 
 const CELL = "p-3 md:p-4 text-left align-middle text-sm/6";

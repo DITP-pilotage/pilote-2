@@ -67,12 +67,12 @@ export const BaseLignesPropositionValeurAvancement = ({
     <>
       <Table.Row
         className={clsx("ligne-modification-proposition-valeur-davancement", {
-          "!bg-dsfr-grey-925 !text-dsfr-grey-200": estChantierArchive,
-          "!bg-dsfr-info-950 !text-dsfr-info-main-525":
+          "bg-dsfr-grey-925 text-dsfr-grey-200": estChantierArchive,
+          "bg-dsfr-info-950 text-dsfr-info-main-525":
             !estChantierArchive &&
             (estPropositionAccuseeReception(detailIndicateurDuTerritoire) ||
               afficherPropositionAcceptee),
-          "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
+          "bg-dsfr-moutarde-main-975 text-dsfr-moutarde-main-679":
             !estChantierArchive &&
             !estPropositionAccuseeReception(detailIndicateurDuTerritoire) &&
             !estPropositionAccepteeOuAccepteeAvecModification(
