@@ -78,6 +78,7 @@ module.exports = {
         "dsfr-purple-glycine-text": "#6e445a",
         "dsfr-blue-ecume-850": "#bfccfb",
         "dsfr-flat-info": "#0063cb",
+        "dsfr-focus": "#0A76F6",
         "pilote-gris-moyen": "#bababa",
         "pilote-loader-green": "#3c763d",
         "pilote-loader-bg": "#e5e9eb",
