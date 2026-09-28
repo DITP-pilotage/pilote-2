@@ -10,8 +10,8 @@ pilote-ppg affiche une trentaine de tableaux, construits de cinq façons différ
 
 | Famille | Nombre | Exemples |
 |---|---|---|
-| Primitives `shared/Tableau` + hook tanstack propre | 5 | accueil chantiers, rapport détaillé, admin indicateurs, admin utilisateurs, `IndicateurBloc` (rapport détaillé) |
-| Primitives `shared/Tableau`, statiques | 4 | rapports hebdomadaires ×2, ChatUI ×2 |
+| `.fr-table` + `_commons/Tableau(New)` (en-tête, pagination) + hook tanstack propre | 5 | accueil chantiers, rapport détaillé, admin indicateurs, admin utilisateurs, `IndicateurBloc` (rapport détaillé) |
+| `.fr-table` direct, statiques | 4 | rapports hebdomadaires ×2, ChatUI ×2 |
 | `_commons/TableauAdmin` (Tailwind gris, `<table>` brut) | 7 pages | axes, chantiers, engagements, périmètres, porteurs, PPG, zonegroups |
 | `<table>` brut + hook tanstack propre | 3 | Evaluation, utilisateurs PiloteEval, logs |
 | `<table>` brut sans tanstack | 11 | `IndicateurBloc` (chantier) et ses tuiles, `TableauEvolution`, `TableauNoteCollective`, pondérations, Albert, token API, 3 écrans d'import |
@@ -19,7 +19,7 @@ pilote-ppg affiche une trentaine de tableaux, construits de cinq façons différ
 Problèmes constatés :
 
 - **Duplication** : `_commons/Tableau` et `_commons/TableauNew` sont deux copies (en-tête, pagination DSFR, tri) ; `TableauNew/Contenu` est mort. Le générique `_commons/Tableau` n'a qu'un consommateur ; les autres recopient l'assemblage (wrapper, état vide `fr-notice`, caption, en-tête, corps, pagination). La boucle d'en-tête + `aria-sort` existe 4 fois, la boucle `rows → cells → flexRender` une dizaine de fois, 5 paginations et 4 UI de tri sont faites main.
-- **Nommage** : les primitives s'appellent `Tableau*` et le générique aussi, d'où l'alias `Tableau as TableauHtml`.
+- **Nommage** : tout s'appelle `Tableau*` (générique, `TableauNew`, `TableauAdmin`, pages), sans primitive partagée. La branche `fix/tableaux-dsfr-vers-tailwind`, abandonnée, avait introduit `shared/Tableau.tsx` et l'alias `Tableau as TableauHtml` ; ils n'existent pas sur `dev`.
 - **DSFR** : 5 fichiers portent encore `fr-table`, les états vides utilisent `fr-notice`, les paginations `fr-pagination`, plusieurs en-têtes des `fr-text--sm`/`fr-mb-0`.
 - **Accessibilité** (mesures axe-core de PIL-1818, 33 pages) : 126 liens vides (chaque cellule de `TableauChantiersContenu` est un `<a tabindex="-1">` vide, 38 par page d'accueil ; 20 liens icônes seules sur l'admin indicateurs), 39 cibles < 24 px, 5 `<th>` vides, 6 tableaux sur 24 ont une `<caption>`, 2 un `scope`.
 - **Typage v9** : un composant partagé ne peut pas typer sa prop sur `Table<TFeatures, TData>` (jeux de features incompatibles entre eux, `Table<any>` = intersection des 16 features). `typesTableau.ts` contourne par des contrats structurels faits main. L'augmentation globale de `ColumnMeta` (`react-table.d.ts`) est typée `Column<any, any>`/`Table<any, any>`, donc fausse pour toute table réelle.
@@ -84,7 +84,7 @@ export const Table = Object.assign(Root, {
 | `RowHeaderCell` | `<th scope="row">` | Cellule principale d'une ligne. |
 | `Cell` | `<td>` | Styles `.fr-table`. |
 
-**Fidélité DSFR.** La référence est le rendu actuel sur `dev` (DSFR 1.15.2 appliqué au balisage existant). Les valeurs (couleurs, paddings, typographie, bordure basse de l'en-tête, zébrage) sont relevées dans `@gouvfr/dsfr/dist/component/table/table.css` pour les sélecteurs qui s'appliquent à ce balisage, et reportées en Tailwind. Les primitives actuelles de `shared/Tableau.tsx` (reprises de `.fr-table` 1.11) servent de point de départ et sont vérifiées contre ce CSS.
+**Fidélité DSFR.** La référence est le rendu actuel sur `dev` (DSFR 1.15.2 appliqué au balisage existant). Les valeurs (couleurs, paddings, typographie, bordure basse de l'en-tête, zébrage) sont relevées dans `@gouvfr/dsfr/dist/component/table/table.css` pour les sélecteurs qui s'appliquent à ce balisage, et reportées en Tailwind.
 
 **Interactifs en cellule** : cible de 24 × 24 px minimum (WCAG 2.5.8) et focus toujours visible (`focus-visible:outline`, jamais d'`outline-none` sans remplacement, RGAA 10.7).
 
@@ -235,7 +235,7 @@ Au passage :
 - la caption tronquée d'`IndicateurBloc` (« Un tableau de l'indicateur :' ») reçoit le nom de l'indicateur ;
 - le `pageCount` de l'accueil est corrigé par construction.
 
-**Suppressions** : `_commons/Tableau` (dont `typesTableau.ts`, `BoutonsDeTri`, `FlècheDeTri`), `_commons/TableauNew`, `shared/Tableau.tsx` (remplacé par `shared/Table.tsx`), les `…EnTête` / `…Contenu` dupliqués, les imports `@gouvfr/dsfr/dist/component/table/table.min.css` (y compris les 3 devenus morts dans `PageUtilisateur`, `PageIndicateur`, `FicheIndicateur`), l'augmentation globale de `ColumnMeta`.
+**Suppressions** : `_commons/Tableau` (dont `typesTableau.ts`, `BoutonsDeTri`, `FlècheDeTri`), `_commons/TableauNew`, les `…EnTête` / `…Contenu` dupliqués, les imports `@gouvfr/dsfr/dist/component/table/table.min.css` (y compris les 3 devenus morts dans `PageUtilisateur`, `PageIndicateur`, `FicheIndicateur`), l'augmentation globale de `ColumnMeta`.
 
 **Effets visibles assumés** :
 
