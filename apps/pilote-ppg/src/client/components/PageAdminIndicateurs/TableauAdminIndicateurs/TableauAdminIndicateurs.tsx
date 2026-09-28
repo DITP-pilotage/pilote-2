@@ -3,9 +3,6 @@ import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/Ta
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Loader from "@/components/_commons/Loader/Loader";
 import Titre from "@/components/_commons/Titre/Titre";
-import TableauEnTête from "@/components/_commons/Tableau/EnTête/TableauEnTête";
-import TableauAdminIndicateursContenu from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu";
-import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauPagination";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -18,7 +15,6 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
     définirLeFichier,
     verifierLeFichier,
     estEnChargement,
-    changementDePageCallback,
     changementDeLaRechercheCallback,
     valeurDeLaRecherche,
     exporterLesIndicateurs,
@@ -95,18 +91,22 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
               </div>
             </div>
           </div>
-          <div className="fr-table">
-            <table className="tableau table fr-m-0 fr-p-0 w-full">
-              <caption className="fr-sr-only">Tableau des indicateurs</caption>
-              <TableauEnTête tableau={tableau} />
-              <TableauAdminIndicateursContenu tableau={tableau} />
-            </table>
-            <TableauPagination
-              changementDePageCallback={changementDePageCallback}
-              nombreDePages={tableau.getPageCount()}
-              numéroDePageInitiale={1}
+          <tableau.Root
+            caption="Tableau des indicateurs"
+            captionHidden
+            className="m-0 p-0 w-full"
+          >
+            <tableau.Header
+              cellClassName="py-2 md:py-2 px-1 md:px-1 min-[992px]:px-4 first:rounded-tl-lg last:rounded-tr-lg max-[49rem]:!text-xs"
+              className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925"
             />
-          </div>
+            <tableau.Body
+              cellClassName="p-2 md:p-2 max-w-[20px] overflow-hidden text-ellipsis whitespace-nowrap"
+              cellTitle
+              rowClassName="even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
+            />
+          </tableau.Root>
+          <tableau.Pagination />
         </>
       )}
     </section>

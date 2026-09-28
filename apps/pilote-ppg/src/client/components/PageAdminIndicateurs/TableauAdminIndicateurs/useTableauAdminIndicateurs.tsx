@@ -1,7 +1,5 @@
 import {
   columnFilteringFeature,
-  columnVisibilityFeature,
-  createColumnHelper,
   createFilteredRowModel,
   createPaginatedRowModel,
   createSortedRowModel,
@@ -10,7 +8,6 @@ import {
   rowSortingFeature,
   sortFn_alphanumericCaseSensitive,
   tableFeatures,
-  useTable,
 } from "@tanstack/react-table";
 import {
   ChangeEvent,
@@ -19,6 +16,7 @@ import {
   useCallback,
   useState,
 } from "react";
+import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
 import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
 import api from "@/server/infrastructure/api/trpc/api";
 import { filtresModifierIndicateursActifsStore } from "@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore";
@@ -30,10 +28,9 @@ import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
-export const featuresTableauAdminIndicateurs = tableFeatures({
+const featuresTableauAdminIndicateurs = tableFeatures({
   columnFilteringFeature,
   globalFilteringFeature,
-  columnVisibilityFeature,
   rowSortingFeature,
   rowPaginationFeature,
   filteredRowModel: createFilteredRowModel(),
@@ -42,29 +39,29 @@ export const featuresTableauAdminIndicateurs = tableFeatures({
   sortFns: { alphanumericCaseSensitive: sortFn_alphanumericCaseSensitive },
 });
 
-export type FeaturesTableauAdminIndicateurs =
-  typeof featuresTableauAdminIndicateurs;
-
-const reactTableColonnesHelper = createColumnHelper<
-  typeof featuresTableauAdminIndicateurs,
-  MetadataParametrageIndicateurInformationContrat
->();
+const adminIndicateurs = createDataTableHook(featuresTableauAdminIndicateurs);
+const reactTableColonnesHelper =
+  adminIndicateurs.createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
 const colonnes = reactTableColonnesHelper.columns([
   reactTableColonnesHelper.accessor("indicParentCh", {
     header: "Chantier associé",
+    enableSorting: true,
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("chantierNom", {
     header: "Nom du chantier",
+    enableSorting: true,
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("indicId", {
     header: "Identifiant indicateur",
+    enableSorting: true,
     sortFn: "alphanumericCaseSensitive",
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("indicNom", {
     header: "Nom de l'indicateur",
+    enableSorting: true,
     sortFn: "auto",
     cell: (props) => props.getValue(),
   }),
@@ -72,7 +69,9 @@ const colonnes = reactTableColonnesHelper.columns([
     (row) =>
       `${formaterDate(row.dateDerniereModification, "DD/MM/YYYY")} par ${row.auteurDerniereModification}`,
     {
+      id: "Dernière modification",
       header: "Dernière modification",
+      enableSorting: true,
       cell: (props) => props.getValue(),
       sortFn: (a, b) => {
         const dateA = new Date(a.original.dateDerniereModification);
@@ -92,10 +91,14 @@ const colonnes = reactTableColonnesHelper.columns([
   ),
   reactTableColonnesHelper.accessor("indicHiddenPilote", {
     header: "Actif / Inactif",
+    enableSorting: true,
     sortFn: "auto",
     cell: (props) => {
       return (
         <div className="flex justify-center">
+          <span className="sr-only">
+            {props.getValue() ? "Inactif" : "Actif"}
+          </span>
           {props.getValue() ? (
             <Icone className="!text-error" icone={CloseCircleIcon} />
           ) : (
@@ -109,8 +112,6 @@ const colonnes = reactTableColonnesHelper.columns([
 
 export default function useTableauPageAdminIndicateurs() {
   const filtresActifs = filtresModifierIndicateursActifsStore();
-
-  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState("");
 
   const [file, setFile] = useState<File | null>(null);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
@@ -151,24 +152,12 @@ export default function useTableauPageAdminIndicateurs() {
     a.remove();
   };
 
-  const changementDeLaRechercheCallback = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setValeurDeLaRecherche(event.target.value);
-    },
-    [setValeurDeLaRecherche],
-  );
-
-  /**
-   * `globalFilter` est piloté de l'extérieur par la barre de recherche, jamais
-   * par la table : aucun `onGlobalFilterChange` n'est donc nécessaire. `useTable`
-   * resynchronise `options.state` dans ses atomes à chaque commit, donc la
-   * recherche reste réactive.
-   */
-  const tableau = useTable({
-    features: featuresTableauAdminIndicateurs,
+  const tableau = adminIndicateurs.useDataTable({
     data: metadataIndicateurs,
     columns: colonnes,
-
+    rowHeader: "indicNom",
+    getRowHref: (row) =>
+      `/panel-administrateur/indicateurs/${row.original.indicId}`,
     globalFilterFn: (ligne, colonneId, texteRecherché) => {
       const valeurCellule = ligne.getValue<Chantier>(colonneId);
       return (
@@ -179,27 +168,19 @@ export default function useTableauPageAdminIndicateurs() {
         )
       );
     },
-    state: {
-      globalFilter: valeurDeLaRecherche,
-    },
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 20,
-      },
-      sorting: [
-        {
-          id: "Dernière modification",
-          desc: true,
-        },
-      ],
+    urlState: {
+      sorting: { default: [{ id: "Dernière modification", desc: true }] },
+      pagination: { pageSize: 20 },
+      globalFilter: true,
     },
   });
 
-  const changementDePageCallback = useCallback(
-    (numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1),
+  const changementDeLaRechercheCallback = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) =>
+      tableau.setGlobalFilter(event.target.value),
     [tableau],
   );
+  const valeurDeLaRecherche = tableau.store.state.globalFilter ?? "";
 
   const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -253,7 +234,6 @@ export default function useTableauPageAdminIndicateurs() {
     verifierLeFichier,
     tableau,
     estEnChargement,
-    changementDePageCallback,
     valeurDeLaRecherche,
     exporterLesIndicateurs,
     changementDeLaRechercheCallback,
