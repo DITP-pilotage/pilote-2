@@ -8,6 +8,7 @@ import {
   estPropositionAccuseeReception,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { Table } from "@/components/shared/Table";
 
 export const CelluleStatutProposition = ({
   estAutoriseAProposerUneValeurAvancement,
@@ -109,7 +110,7 @@ export const CelluleStatutProposition = ({
   }
 
   return (
-    <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm min-h-8 align-top">
+    <Table.Cell className="mb-0 text-sm/6 min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
       <div className="flex align-center selecteur-infobulle-conteneur">
         <span className="texte-proposition font-bold">
           {labelStatutProposition}
@@ -165,6 +166,6 @@ export const CelluleStatutProposition = ({
           )}
         </div>
       )}
-    </td>
+    </Table.Cell>
   );
 };
