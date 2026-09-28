@@ -12,6 +12,7 @@ export type DataTableConfig = {
   tile?: (row: AnyRow) => ReactNode;
   tileBreakpoint?: PointDeRuptureÉcran;
   tileLabel?: (row: AnyRow) => string;
+  urlFilters?: { hasActiveFilters: boolean; resetFilters: () => void };
 };
 
 export const getDataTableConfig = (table: AnyTable): DataTableConfig =>

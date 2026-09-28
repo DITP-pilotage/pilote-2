@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import {
   aggregationFns,
@@ -10,6 +10,7 @@ import {
   tableFeatures,
 } from "@tanstack/react-table";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
+import { render } from "@/components/shared/DataTable/testUtils";
 
 type Chantier = { id: string; nom: string; ministere: string; taux: number };
 

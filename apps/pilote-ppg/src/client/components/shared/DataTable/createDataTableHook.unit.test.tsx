@@ -1,4 +1,4 @@
-import { render, renderHook, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import {
   createSortedRowModel,
@@ -6,6 +6,7 @@ import {
   tableFeatures,
 } from "@tanstack/react-table";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
+import { render, renderHook } from "@/components/shared/DataTable/testUtils";
 
 type Chantier = { id: string; nom: string; avancement: number };
 

@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { type ReactNode, useMemo, useRef, useState } from "react";
 import { DataTableBody, type DataTableBodyProps } from "./Body";
-import type { DataTableConfig } from "./config";
+import { type DataTableConfig, getDataTableConfig } from "./config";
 import { hasFeature } from "./features";
 import { createSearchFilterFn } from "./filterFns";
 import { DataTableHeader, type DataTableHeaderProps } from "./Header";
@@ -24,6 +24,7 @@ import {
 import { DataTableRoot, type DataTableRootProps } from "./Root";
 import type { PointDeRuptureÉcran } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore.interface";
 import type { AnyTable, DataTableColumnMeta } from "./types";
+import { type UrlStateConfig, useUrlTableState } from "./urlState";
 
 const dataTableBaseFeatures = tableFeatures({
   columnVisibilityFeature,
@@ -45,6 +46,7 @@ export type DataTableOptions<
   tileBreakpoint?: PointDeRuptureÉcran;
   tileLabel?: (row: Row<AppFeatures<F>, TData>) => string;
   search?: (row: TData) => string[];
+  urlState?: UrlStateConfig;
 };
 
 type DataTableBricks = {
@@ -86,6 +88,8 @@ const bindBricks = (getTable: () => AnyTable) => {
     Header: (props) => <DataTableHeader table={getTable()} {...props} />,
     Body: (props) => <DataTableBody table={getTable()} {...props} />,
     hasActiveFilters: () => {
+      const urlFilters = getDataTableConfig(getTable()).urlFilters;
+      if (urlFilters) return urlFilters.hasActiveFilters;
       const state = getTable().store.state;
       return (
         (state.columnFilters?.length ?? 0) > 0 ||
@@ -94,6 +98,8 @@ const bindBricks = (getTable: () => AnyTable) => {
     },
     resetFilters: () => {
       const table = getTable();
+      const urlFilters = getDataTableConfig(table).urlFilters;
+      if (urlFilters) return urlFilters.resetFilters();
       if (hasFeature(table, "columnFilteringFeature")) {
         table.resetColumnFilters(true);
       }
@@ -134,6 +140,7 @@ export function createDataTableHook<F extends TableFeatures>(features: F) {
     tileBreakpoint,
     tileLabel,
     search,
+    urlState,
     ...tableOptions
   }: DataTableOptions<F, TData>): DataTable<Features, TData> {
     const dataTable: DataTableConfig = {
@@ -143,10 +150,27 @@ export function createDataTableHook<F extends TableFeatures>(features: F) {
       tileBreakpoint,
       tileLabel: tileLabel as DataTableConfig["tileLabel"],
     };
+    const url = useUrlTableState(urlState);
     const table = hook.useAppTable<TData>({
+      ...(urlState?.pagination ? { autoResetPageIndex: false } : {}),
       ...tableOptions,
+      ...url.handlers,
+      state: { ...url.state, ...tableOptions.state },
       ...(search ? { globalFilterFn: createSearchFilterFn(search) } : {}),
-      meta: { ...tableOptions.meta, dataTable },
+      meta: {
+        ...tableOptions.meta,
+        dataTable: {
+          ...dataTable,
+          ...(urlState
+            ? {
+                urlFilters: {
+                  hasActiveFilters: url.hasActiveFilters,
+                  resetFilters: url.resetFilters,
+                },
+              }
+            : {}),
+        },
+      },
     } as never);
 
     const tableRef = useRef(table as unknown as AnyTable);

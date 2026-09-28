@@ -1,10 +1,4 @@
-import {
-  act,
-  render,
-  renderHook,
-  screen,
-  within,
-} from "@testing-library/react";
+import { act, renderHook, screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import {
   columnFilteringFeature,
@@ -15,6 +9,7 @@ import {
   tableFeatures,
 } from "@tanstack/react-table";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
+import { render } from "@/components/shared/DataTable/testUtils";
 import { actionsLargeurDÉcranStore } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 
 type Chantier = { id: string; nom: string };
