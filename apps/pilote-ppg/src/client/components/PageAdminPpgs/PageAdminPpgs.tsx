@@ -1,24 +1,7 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
-import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
-import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
-import { useFiltreColonne } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import {
-  CLASSE_COLONNE_DATE,
-  CLASSE_COLONNE_ID,
-  CLASSE_COLONNE_NOM,
-  CLASSE_COLONNE_SECONDAIRE,
-  OPTIONS_STATUT_REFERENTIEL,
-} from "@/components/_commons/TableauAdmin/constants";
 import { useTableauAdminPpgs } from "./useTableauAdminPpgs";
-
-const CLASSES_COLONNES = {
-  ppgId: CLASSE_COLONNE_ID,
-  ppgNom: CLASSE_COLONNE_NOM,
-  ppgAxe: CLASSE_COLONNE_SECONDAIRE,
-  updatedAt: CLASSE_COLONNE_DATE,
-};
 
 const LIBELLES = {
   aucun: "Aucun PPG",
@@ -27,11 +10,8 @@ const LIBELLES = {
 
 const PageAdminPpgs = () => {
   const { data: ppgs, isLoading } = api.metadataPpg.lister.useQuery();
-  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useTableauAdminPpgs(ppgs ?? []);
+  const table = useTableauAdminPpgs(ppgs ?? []);
   const nombrePpgsFiltres = table.getFilteredRowModel().rows.length;
-
-  const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -56,25 +36,7 @@ const PageAdminPpgs = () => {
         </div>
 
         <TableauAdmin
-          aDesFiltresActifs={aDesFiltresActifs}
-          classesColonnes={CLASSES_COLONNES}
-          filtres={
-            <FiltresTableauAdmin
-              aDesFiltresActifs={aDesFiltresActifs}
-              reinitialiserLesFiltres={reinitialiserLesFiltres}
-              table={table}
-            >
-              <GroupeCasesACocher
-                label="Statut :"
-                onChange={setValeursStatut}
-                options={OPTIONS_STATUT_REFERENTIEL}
-                values={valeursStatut}
-              />
-            </FiltresTableauAdmin>
-          }
-          hrefLigne={(ppg) =>
-            `/panel-administrateur/referentiels-deprecies/ppgs/${ppg.ppgId}`
-          }
+          caption="Liste des PPG"
           isLoading={isLoading}
           libelles={LIBELLES}
           table={table}

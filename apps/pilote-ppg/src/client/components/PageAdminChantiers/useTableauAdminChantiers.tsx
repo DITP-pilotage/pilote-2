@@ -1,8 +1,3 @@
-import {
-  createColumnHelper,
-  filterFn_arrHas,
-  useTable,
-} from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
@@ -10,10 +5,16 @@ import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
 import { Badge, type BadgeType } from "@/components/_commons/Badge";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
-  featuresTableauAdmin,
-  useEtatTableauAdmin,
-  type ConfigFiltreColonne,
-} from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+} from "@/components/_commons/TableauAdmin/constants";
+import {
+  tableauAdmin,
+  urlStateAdmin,
+} from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
+import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
+import type { Perimetre } from "@/server/metadataChantier/queries/ListerPerimetresQuery";
 
 export type ChantierAdminRow = inferRouterOutputs<
   typeof appRouter
@@ -29,32 +30,33 @@ export const STATUT_BADGE: Record<
   SUPPRIME: { label: "Supprimé", type: "rouge" },
 };
 
-const FILTRES: ConfigFiltreColonne[] = [
-  { parametre: "statut", colonneId: "chState", valeursParDefaut: ["PUBLIE"] },
-  { parametre: "perimetre", colonneId: "perimetreId", valeursParDefaut: [] },
-];
+const OPTIONS_STATUT = Object.values($Enums.type_statut).map((statut) => ({
+  value: statut,
+  label: STATUT_BADGE[statut].label,
+}));
 
 const champsRecherche = (chantier: ChantierAdminRow) => [
   chantier.chantierId,
   chantier.chNom,
 ];
 
-const columnHelper = createColumnHelper<
-  typeof featuresTableauAdmin,
-  ChantierAdminRow
->();
+const columnHelper = tableauAdmin.createColumnHelper<ChantierAdminRow>();
 
-const useTableColumns = () =>
+const useTableColumns = (perimetres: Perimetre[] | undefined) =>
   useMemo(
     () =>
       columnHelper.columns([
         columnHelper.accessor("chantierId", {
           id: "chantierId",
           header: "ID",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_ID },
         }),
         columnHelper.accessor("chNom", {
           id: "chNom",
           header: "Nom",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_NOM },
           cell: (info) => (
             <div className="max-w-sm truncate" title={info.getValue()}>
               {info.getValue()}
@@ -64,8 +66,15 @@ const useTableColumns = () =>
         columnHelper.accessor("chState", {
           id: "chState",
           header: "Statut",
-          enableColumnFilter: true,
-          filterFn: filterFn_arrHas,
+          enableSorting: true,
+          filterFn: filterFnOneOf,
+          meta: {
+            filter: {
+              type: "checkboxes",
+              label: "Statut :",
+              options: OPTIONS_STATUT,
+            },
+          },
           cell: (info) => {
             const badge = STATUT_BADGE[info.getValue()];
             return <Badge type={badge.type}>{badge.label}</Badge>;
@@ -74,8 +83,20 @@ const useTableColumns = () =>
         columnHelper.accessor("perimetreId", {
           id: "perimetreId",
           header: "Périmètre",
-          enableColumnFilter: true,
-          filterFn: filterFn_arrHas,
+          enableSorting: true,
+          filterFn: filterFnOneOf,
+          meta: {
+            filter: {
+              type: "multiselect",
+              label: "Périmètre",
+              options: (perimetres ?? []).map((perimetre) => ({
+                value: perimetre.id,
+                label: perimetre.nom,
+              })),
+              className: "max-w-fit",
+              buttonClassName: "min-w-[20rem]",
+            },
+          },
           cell: (info) => info.row.original.perimetreNom,
           sortFn: (rowA, rowB) =>
             rowA.original.perimetreNom.localeCompare(
@@ -85,21 +106,27 @@ const useTableColumns = () =>
         columnHelper.accessor("updatedAt", {
           id: "updatedAt",
           header: "Mise à jour",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_DATE },
           cell: (info) => formaterDateCourte(info.getValue()),
         }),
       ]),
-    [],
+    [perimetres],
   );
 
-export const useTableauAdminChantiers = (chantiers: ChantierAdminRow[]) => {
-  const columns = useTableColumns();
-  const { optionsTable, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useEtatTableauAdmin<ChantierAdminRow>({
-      filtres: FILTRES,
-      champsRecherche,
-    });
-
-  const table = useTable({ data: chantiers, columns, ...optionsTable });
-
-  return { table, aDesFiltresActifs, reinitialiserLesFiltres };
-};
+export const useTableauAdminChantiers = (
+  chantiers: ChantierAdminRow[],
+  perimetres: Perimetre[] | undefined,
+) =>
+  tableauAdmin.useDataTable({
+    data: chantiers,
+    columns: useTableColumns(perimetres),
+    rowHeader: "chNom",
+    getRowHref: (row) =>
+      `/panel-administrateur/chantiers/${row.original.chantierId}`,
+    search: champsRecherche,
+    urlState: urlStateAdmin([
+      { param: "statut", columnId: "chState", default: ["PUBLIE"] },
+      { param: "perimetre", columnId: "perimetreId" },
+    ]),
+  });

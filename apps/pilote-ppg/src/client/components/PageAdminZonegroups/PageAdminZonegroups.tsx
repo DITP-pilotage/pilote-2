@@ -1,24 +1,7 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
-import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
-import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
-import { useFiltreColonne } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import {
-  CLASSE_COLONNE_DATE,
-  CLASSE_COLONNE_ID,
-  CLASSE_COLONNE_NOM,
-  CLASSE_COLONNE_SECONDAIRE,
-  OPTIONS_STATUT_REFERENTIEL,
-} from "@/components/_commons/TableauAdmin/constants";
 import { useTableauAdminZonegroups } from "./useTableauAdminZonegroups";
-
-const CLASSES_COLONNES = {
-  zoneGroupId: CLASSE_COLONNE_ID,
-  zgName: CLASSE_COLONNE_NOM,
-  nbZones: CLASSE_COLONNE_SECONDAIRE,
-  updatedAt: CLASSE_COLONNE_DATE,
-};
 
 const LIBELLES = {
   aucun: "Aucun groupe de zones",
@@ -28,11 +11,8 @@ const LIBELLES = {
 const PageAdminZonegroups = () => {
   const { data: zonegroups, isLoading } =
     api.metadataZonegroup.lister.useQuery();
-  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useTableauAdminZonegroups(zonegroups ?? []);
+  const table = useTableauAdminZonegroups(zonegroups ?? []);
   const nombreZonegroupsFiltres = table.getFilteredRowModel().rows.length;
-
-  const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -58,25 +38,7 @@ const PageAdminZonegroups = () => {
         </div>
 
         <TableauAdmin
-          aDesFiltresActifs={aDesFiltresActifs}
-          classesColonnes={CLASSES_COLONNES}
-          filtres={
-            <FiltresTableauAdmin
-              aDesFiltresActifs={aDesFiltresActifs}
-              reinitialiserLesFiltres={reinitialiserLesFiltres}
-              table={table}
-            >
-              <GroupeCasesACocher
-                label="Statut :"
-                onChange={setValeursStatut}
-                options={OPTIONS_STATUT_REFERENTIEL}
-                values={valeursStatut}
-              />
-            </FiltresTableauAdmin>
-          }
-          hrefLigne={(zonegroup) =>
-            `/panel-administrateur/referentiels/zonegroups/${zonegroup.zoneGroupId}`
-          }
+          caption="Liste des groupes de zones"
           isLoading={isLoading}
           libelles={LIBELLES}
           table={table}

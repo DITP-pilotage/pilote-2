@@ -1,5 +1,10 @@
-import type { ConfigFiltreColonne } from "./useEtatTableauAdmin";
-import type { StatutReferentiel } from "./utils";
+import type { FilterDescriptor } from "@/components/shared/DataTable/types";
+
+export type StatutReferentiel = "ACTIF" | "SUPPRIME";
+
+export const statutReferentielDe = (
+  deletedAt: string | null,
+): StatutReferentiel => (deletedAt === null ? "ACTIF" : "SUPPRIME");
 
 export const CLASSE_COLONNE_ID = "font-mono text-xs text-gray-400";
 export const CLASSE_COLONNE_NOM = "font-medium text-gray-900";
@@ -14,8 +19,17 @@ export const OPTIONS_STATUT_REFERENTIEL: {
   { valeur: "SUPPRIME", label: "Supprimé" },
 ];
 
-export const FILTRE_STATUT_REFERENTIEL: ConfigFiltreColonne = {
-  parametre: "statut",
-  colonneId: "statut",
-  valeursParDefaut: ["ACTIF"],
+export const FILTRE_STATUT_REFERENTIEL = {
+  param: "statut",
+  columnId: "statut",
+  default: ["ACTIF"],
 };
+
+export const filtreStatutReferentiel = {
+  type: "checkboxes",
+  label: "Statut :",
+  options: OPTIONS_STATUT_REFERENTIEL.map((option) => ({
+    value: option.valeur,
+    label: option.label,
+  })),
+} as const satisfies FilterDescriptor;

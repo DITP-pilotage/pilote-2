@@ -1,13 +1,7 @@
-import { Table } from "@tanstack/react-table";
-import { LigneTableau } from "../Tableau/typesTableau";
-import { type FeaturesTableauAdmin } from "./featuresTableauAdmin";
-import { useRouter } from "next/router";
-import { flexRender } from "@tanstack/react-table";
 import type { ReactNode } from "react";
+import type { RowData } from "@tanstack/react-table";
 import Loader from "@/components/_commons/Loader/Loader";
-import { PaginationCompacte } from "@/components/_commons/PaginationCompacte/PaginationCompacte";
-import { clsxm } from "@/utils/clsxm";
-import { lireRechercheGlobale } from "./utils";
+import type { TableAdmin } from "./tableauAdminDataTable";
 
 export type LibellesTableauAdmin = {
   aucun: string;
@@ -16,151 +10,65 @@ export type LibellesTableauAdmin = {
   iconeVide?: string;
 };
 
-const EtatVide = ({
-  recherche,
-  aDesFiltresActifs,
-  libelles,
-}: {
-  recherche: string;
-  aDesFiltresActifs: boolean;
-  libelles: LibellesTableauAdmin;
-}) => {
-  const titre =
-    recherche || aDesFiltresActifs ? "Aucun résultat" : libelles.aucun;
-
-  let description: ReactNode;
-  if (recherche) {
-    description = (
-      <>
-        {libelles.aucunResultat} «&nbsp;{recherche}&nbsp;».
-      </>
-    );
-  } else if (aDesFiltresActifs) {
-    description = "Aucun élément ne correspond aux filtres sélectionnés.";
-  } else {
-    description = libelles.invitationCreation;
-  }
-
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-      {libelles.iconeVide && (
-        <p className="text-4xl mb-3">{libelles.iconeVide}</p>
-      )}
-      <p className="font-medium text-gray-500">{titre}</p>
-      {description && <p className="text-sm mt-1">{description}</p>}
-    </div>
-  );
-};
-
-export function TableauAdmin<TRow extends LigneTableau>({
+export function TableauAdmin<TRow extends RowData>({
   table,
   isLoading,
-  filtres,
-  aDesFiltresActifs,
-  hrefLigne,
-  classesColonnes = {},
+  caption,
   libelles,
 }: {
-  table: Table<FeaturesTableauAdmin, TRow>;
+  table: TableAdmin<TRow>;
   isLoading: boolean;
-  filtres: ReactNode;
-  aDesFiltresActifs: boolean;
-  hrefLigne: (ligne: TRow) => string;
-  classesColonnes?: Record<string, string>;
+  caption: string;
   libelles: LibellesTableauAdmin;
 }) {
-  const router = useRouter();
-  const rows = table.getRowModel().rows;
-  const recherche = lireRechercheGlobale(table);
+  const recherche = table.store.state.globalFilter ?? "";
+  const descriptionSansResultat: ReactNode = recherche ? (
+    <>
+      {libelles.aucunResultat} «&nbsp;{recherche}&nbsp;».
+    </>
+  ) : (
+    "Aucun élément ne correspond aux filtres sélectionnés."
+  );
 
   return (
-    <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
-      {!isLoading && filtres}
-
+    <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925 overflow-hidden">
       {isLoading ? (
         <div className="relative py-20">
           <Loader />
         </div>
-      ) : rows.length === 0 ? (
-        <EtatVide
-          aDesFiltresActifs={aDesFiltresActifs}
-          libelles={libelles}
-          recherche={recherche}
-        />
       ) : (
-        <table className="w-full text-sm">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr
-                className="border-b border-gray-200 bg-gray-50"
-                key={headerGroup.id}
-              >
-                {headerGroup.headers.map((header) => (
-                  <th
-                    className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap"
-                    key={header.id}
-                  >
-                    {header.column.getCanSort() ? (
-                      <button
-                        className="flex items-center gap-1 !p-0 !font-semibold !text-gray-500 hover:!text-gray-700"
-                        onClick={header.column.getToggleSortingHandler()}
-                        type="button"
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                        {{ asc: " ↑", desc: " ↓" }[
-                          header.column.getIsSorted() as string
-                        ] ?? ""}
-                      </button>
-                    ) : (
-                      flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {rows.map((row) => (
-              <tr
-                className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-                key={row.id}
-                onClick={() => router.push(hrefLigne(row.original))}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    className={clsxm(
-                      "px-6 py-4",
-                      classesColonnes[cell.column.id],
-                    )}
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      {rows.length > 0 && (
-        <PaginationCompacte
-          changementDePageCallback={(numeroDePage) =>
-            table.setPageIndex(numeroDePage - 1)
-          }
-          changementTailleDePageCallback={(tailleDePage) =>
-            table.setPageSize(tailleDePage)
-          }
-          nombreDePages={table.getPageCount()}
-          numeroDePageCourante={table.store.state.pagination.pageIndex + 1}
-          tailleDePage={table.store.state.pagination.pageSize}
-        />
+        <>
+          <table.Filters />
+          <table.Root
+            bordered={false}
+            caption={caption}
+            captionHidden
+            empty={{
+              noData: {
+                title: libelles.aucun,
+                description: libelles.iconeVide ? (
+                  <>
+                    <span aria-hidden="true">{libelles.iconeVide}</span>{" "}
+                    {libelles.invitationCreation}
+                  </>
+                ) : (
+                  libelles.invitationCreation
+                ),
+              },
+              noResults: {
+                title: "Aucun résultat",
+                description: descriptionSansResultat,
+              },
+            }}
+          >
+            <table.Header />
+            <table.Body />
+          </table.Root>
+          <table.Pagination
+            className="my-0 px-6 py-3"
+            pageSizeOptions={[10, 20, 50]}
+          />
+        </>
       )}
     </div>
   );

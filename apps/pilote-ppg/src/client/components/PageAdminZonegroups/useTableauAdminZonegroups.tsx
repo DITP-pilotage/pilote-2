@@ -1,31 +1,28 @@
-import {
-  createColumnHelper,
-  filterFn_arrHas,
-  useTable,
-} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
-  featuresTableauAdmin,
-  useEtatTableauAdmin,
-  type ConfigFiltreColonne,
-} from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
-import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  CLASSE_COLONNE_SECONDAIRE,
+  FILTRE_STATUT_REFERENTIEL,
+  filtreStatutReferentiel,
+  statutReferentielDe,
+} from "@/components/_commons/TableauAdmin/constants";
+import {
+  tableauAdmin,
+  urlStateAdmin,
+} from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
+import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
 import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
-
-const FILTRES: ConfigFiltreColonne[] = [FILTRE_STATUT_REFERENTIEL];
 
 const champsRecherche = (zonegroup: ZonegroupAdminListItem) => [
   zonegroup.zoneGroupId,
   zonegroup.zgName,
 ];
 
-const columnHelper = createColumnHelper<
-  typeof featuresTableauAdmin,
-  ZonegroupAdminListItem
->();
+const columnHelper = tableauAdmin.createColumnHelper<ZonegroupAdminListItem>();
 
 const useTableColumns = () =>
   useMemo(
@@ -34,10 +31,14 @@ const useTableColumns = () =>
         columnHelper.accessor("zoneGroupId", {
           id: "zoneGroupId",
           header: "ID",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_ID },
         }),
         columnHelper.accessor("zgName", {
           id: "zgName",
           header: "Nom",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_NOM },
           cell: (info) => (
             <span
               className={
@@ -53,6 +54,8 @@ const useTableColumns = () =>
         columnHelper.accessor("nbZones", {
           id: "nbZones",
           header: "Zones",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_SECONDAIRE },
           cell: (info) =>
             `${info.getValue()} zone${info.getValue() !== 1 ? "s" : ""}`,
         }),
@@ -61,8 +64,9 @@ const useTableColumns = () =>
           {
             id: "statut",
             header: "Statut",
-            enableColumnFilter: true,
-            filterFn: filterFn_arrHas,
+            enableSorting: true,
+            filterFn: filterFnOneOf,
+            meta: { filter: filtreStatutReferentiel },
             cell: (info) => (
               <BadgeStatutReferentiel
                 supprimé={info.getValue() === "SUPPRIME"}
@@ -73,6 +77,8 @@ const useTableColumns = () =>
         columnHelper.accessor("updatedAt", {
           id: "updatedAt",
           header: "Mise à jour",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_DATE },
           cell: (info) => formaterDateCourte(new Date(info.getValue())),
         }),
       ]),
@@ -81,15 +87,13 @@ const useTableColumns = () =>
 
 export const useTableauAdminZonegroups = (
   zonegroups: ZonegroupAdminListItem[],
-) => {
-  const columns = useTableColumns();
-  const { optionsTable, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useEtatTableauAdmin<ZonegroupAdminListItem>({
-      filtres: FILTRES,
-      champsRecherche,
-    });
-
-  const table = useTable({ data: zonegroups, columns, ...optionsTable });
-
-  return { table, aDesFiltresActifs, reinitialiserLesFiltres };
-};
+) =>
+  tableauAdmin.useDataTable({
+    data: zonegroups,
+    columns: useTableColumns(),
+    rowHeader: "zgName",
+    getRowHref: (row) =>
+      `/panel-administrateur/referentiels/zonegroups/${row.original.zoneGroupId}`,
+    search: champsRecherche,
+    urlState: urlStateAdmin([FILTRE_STATUT_REFERENTIEL]),
+  });
