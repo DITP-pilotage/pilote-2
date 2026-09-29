@@ -4,47 +4,63 @@ import { toolSelectionEval } from "./toolSelectionEval";
 /**
  * Niveau 2 — `display_choices`.
  *
- * Le prompt système porte des interdits explicites sur cet outil : pas de
- * confirmation oui/non, pas de proposition de refaire un dashboard, rien à quoi
- * l'utilisateur puisse répondre en une phrase libre. Le cas négatif les couvre.
+ * L'agent doit appeler l'outil dans chaque situation où il a un doute et fait
+ * choisir l'utilisateur parmi une liste finie d'options qu'il a identifiées.
+ * Les cas ambigus s'appuient sur le monde de base : trois chantiers logement,
+ * deux handicap, deux sur les violences faites aux femmes. « Le 84 » est à la
+ * fois REG-84 (Auvergne-Rhône-Alpes) et DEPT-84 (Vaucluse) ; précisé
+ * « région » ou « département », il ne l'est plus.
  *
- * Le monde de base sème trois chantiers logement aux intitulés proches, ce qui
- * donne au deuxième cas une ambiguïté réelle à arbitrer.
+ * Les négatifs n'ont rien à départager : un seul chantier correspond, ou la
+ * maille est précisée. Sur une salutation, aucun outil : proposer un menu de
+ * ce que l'agent sait faire serait une faute.
  *
- * Référence observée le 2026-09-10 : 61 %. C'est la mesure de la défaillance
- * prioritaire — Albert devine au lieu de demander.
- *
- *  - Demande sans territoire : `display_choices` 1 essai sur 3. Les deux autres,
- *    l'agent choisit un territoire à la place de l'utilisateur et appelle
- *    `get_chantiers_signales` directement. Le chiffre du POC est reproduit.
- *  - Chantier ambigu, trois candidats « logement » : `display_choices` 0 sur 3.
- *    L'agent trouve bien les candidats via `search_chantiers`, puis les liste
- *    EN TEXTE au lieu d'offrir un choix structuré.
- *  - Cas négatif : 100 %, l'interdit tient.
- *
- * Le second point est le plus net : ce n'est pas que l'agent ignore
- * l'ambiguïté, c'est qu'il la traite en prose. Même travers que sur
- * `export_rapport`, où il rédige le rapport plutôt que d'appeler l'outil.
+ * Suite attendue dans le rouge tant que PIL-1834 n'est pas traité : le prompt
+ * système ne dit jamais quand utiliser l'outil, et les workflows de recherche
+ * demandent de lister les candidats en texte.
  */
 
 const CASES: ToolCase[] = [
   {
-    question: "Quels chantiers sont signalés en alerte ?",
-    reason:
-      "sous-spécifiée : aucun territoire. L'agent doit proposer un choix, pas deviner",
+    question: "Fais-moi la synthèse du chantier sur le logement en Bretagne",
+    reason: "trois chantiers logement : choix à faire",
     expected: [{ toolName: "display_choices" }],
   },
   {
-    question: "Fais-moi la synthèse du chantier sur le logement",
-    reason: "trois chantiers logement dans le monde de base : ambiguïté réelle",
-    expected: [
-      { toolName: "search_chantiers" },
-      { toolName: "display_choices" },
-    ],
+    question:
+      "Quels sont les indicateurs du chantier sur le handicap au national ?",
+    reason: "deux chantiers handicap : choix à faire",
+    expected: [{ toolName: "display_choices" }],
+  },
+  {
+    question:
+      "Quelle est l'ambition du chantier sur les violences faites aux femmes ?",
+    reason: "deux chantiers violences faites aux femmes : choix à faire",
+    expected: [{ toolName: "display_choices" }],
+  },
+  {
+    question: "Quel est le taux d'avancement dans le 84 ?",
+    reason: "« le 84 » : région ou département",
+    expected: [{ toolName: "display_choices" }],
+  },
+  {
+    question: "Quelle est l'ambition du chantier sur l'habitat indigne ?",
+    reason: "CAS NÉGATIF : un seul chantier correspond",
+    forbidden: ["display_choices"],
+  },
+  {
+    question: "Quel est le taux d'avancement de la région 84 ?",
+    reason: "CAS NÉGATIF : maille précisée, REG-84 sans ambiguïté",
+    forbidden: ["display_choices"],
+  },
+  {
+    question: "Quel est le taux d'avancement du département 84 ?",
+    reason: "CAS NÉGATIF : maille précisée, DEPT-84 sans ambiguïté",
+    forbidden: ["display_choices"],
   },
   {
     question: "Bonjour, tu peux m'aider ?",
-    reason: "CAS NÉGATIF : salutation sans intention de données, aucun outil",
+    reason: "CAS NÉGATIF : salutation, aucun outil, pas de menu",
     expected: [],
   },
 ];

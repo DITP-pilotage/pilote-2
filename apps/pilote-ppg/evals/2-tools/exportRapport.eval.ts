@@ -4,44 +4,56 @@ import { toolSelectionEval } from "./toolSelectionEval";
 /**
  * Niveau 2 — `export_rapport`.
  *
- * Même dépendance au détecteur d'intention que `create_dashboard` : l'outil
- * n'existe dans le ToolSet que si l'intention d'export est repérée.
+ * L'outil n'est exposé que si le détecteur d'intention repère un mot-clé
+ * (export, rapport, télécharger, pdf, markdown). Côté produit, « rapport »
+ * désigne un fichier : l'agent doit l'exporter, et respecter le format quand
+ * il est demandé.
  *
- * Référence observée le 2026-09-10 : 67 %.
+ * Les négatifs contiennent un mot-clé sans intention d'export : « par
+ * rapport à », ou « télécharger » dans une question hors périmètre.
  *
- * CONSTAT : l'agent rédige le rapport DANS LE CHAT au lieu d'appeler l'outil
- * d'export. Sur la demande explicite de rapport Markdown, il récupère bien les
- * données puis répond « # Synthèse pour… » sans jamais appeler
- * `export_rapport` — 3 essais sur 3. Sur « télécharger un PDF », l'outil n'est
- * appelé qu'une fois sur trois.
- *
- * L'utilisateur qui demande un fichier n'en obtient donc pas. Même travers que
- * sur `display_choices` : le texte l'emporte sur l'outil structuré.
- *
- * Le cas négatif tient à 100 % : une demande de synthèse simple ne déclenche
- * pas d'export.
+ * Sur une demande directe, le prompt système prévoit un workflow complet
+ * (synthèse, indicateurs, export) : seul l'appel à `export_rapport` est vérifié
+ * ici ; l'enchaînement relève du niveau 3.
  */
 
 const CASES: ToolCase[] = [
   {
-    question:
-      "Crée un rapport de synthèse de la Bretagne incluant le taux d'avancement et les chantiers en retard. Format Markdown",
-    reason: "demande d'export explicite, reprise du scénario de l'interface",
-    expected: [
-      { toolName: "get_taux_avancement_territoire" },
-      { toolName: "get_chantiers", input: { view: "en_retard" } },
-      { toolName: "export_rapport" },
-    ],
+    question: "Exporte-moi un rapport PDF sur la Bretagne",
+    reason: "export explicite, format PDF demandé",
+    expected: [{ toolName: "export_rapport", input: { format: "pdf" } }],
   },
   {
-    question: "Je voudrais télécharger un PDF de la situation de la Bretagne",
-    reason: "« télécharger » et « pdf » sont des mots-clés export",
+    question:
+      "Crée un rapport de synthèse de la Bretagne incluant le taux d'avancement et les chantiers en retard. Format Markdown",
+    reason: "scénario de l'écran d'accueil, format Markdown demandé",
+    expected: [{ toolName: "export_rapport", input: { format: "markdown" } }],
+  },
+  {
+    question: "Je voudrais télécharger la situation de la Bretagne",
+    reason: "« télécharger » : export sans le mot « rapport »",
     expected: [{ toolName: "export_rapport" }],
   },
   {
-    question: "Fais-moi la synthèse de la Bretagne",
-    reason: "CAS NÉGATIF : synthèse dans le chat, pas d'export de fichier",
-    expected: [{ toolName: "get_taux_avancement_territoire" }],
+    question: "Fais-moi un rapport sur la Bretagne",
+    reason: "« rapport » seul : un fichier, pas une synthèse dans le chat",
+    expected: [{ toolName: "export_rapport" }],
+  },
+  {
+    question: "Comment se situe la Bretagne par rapport à la médiane ?",
+    reason: "CAS NÉGATIF : « par rapport à » expose l'outil sans intention",
+    forbidden: ["export_rapport"],
+  },
+  {
+    question:
+      "Quels chantiers ont progressé en Bretagne par rapport à l'an dernier ?",
+    reason: "CAS NÉGATIF : « par rapport à » dans une comparaison",
+    forbidden: ["export_rapport"],
+  },
+  {
+    question: "Comment télécharger les données depuis PILOTE ?",
+    reason: "CAS NÉGATIF : « télécharger » dans une question hors périmètre",
+    forbidden: ["export_rapport"],
   },
 ];
 
