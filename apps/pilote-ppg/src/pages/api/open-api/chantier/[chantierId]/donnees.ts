@@ -3,18 +3,15 @@ import assert from "node:assert";
 import logger from "@/server/infrastructure/Logger";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
+import { recupererUtilisateurAuthentifieOpenApi } from "@/server/app/open-api/endpointOpenApi";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 const handle = async (request: NextApiRequest, response: NextApiResponse) => {
-  const bearerToken = request.headers["authorization"];
-
   assert(request.query.chantierId, "Le chantier id est obligatoire");
 
-  const token = (bearerToken || "").split(" ")[1];
-  const utilisateurAuthentifie = await getContainer("legacy")
-    .resolve("utilisateurAuthentifieJWTService")
-    .recupererUtilisateurAuthentifie(token);
+  const utilisateurAuthentifie =
+    await recupererUtilisateurAuthentifieOpenApi(request);
 
   switch (request.method) {
     case "GET": {
