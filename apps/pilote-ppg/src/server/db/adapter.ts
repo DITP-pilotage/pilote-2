@@ -77,6 +77,18 @@ function poolAvecParseursPrets(pool: pg.Pool): pg.Pool {
   });
 }
 
+// La base Scalingo plafonne a 30 connexions, partagees avec pilote-ppg-data-management,
+// les migrations et les `scalingo run`. Pendant un deploiement, l'ancien et le nouveau
+// conteneur cohabitent : deux pools de 8 laissent encore une marge.
+const TAILLE_POOL_PAR_DEFAUT = 8;
+
+function taillePool(): number {
+  const valeur = Number.parseInt(process.env.DATABASE_POOL_MAX ?? "", 10);
+  return Number.isInteger(valeur) && valeur > 0
+    ? valeur
+    : TAILLE_POOL_PAR_DEFAUT;
+}
+
 export function creerAdapter(): PrismaPg {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
@@ -84,6 +96,10 @@ export function creerAdapter(): PrismaPg {
       "DATABASE_URL est requis pour construire l'adapter Prisma.",
     );
   }
-  const pool = new pg.Pool({ connectionString });
+  const pool = new pg.Pool({
+    connectionString,
+    max: taillePool(),
+    connectionTimeoutMillis: 5_000,
+  });
   return new PrismaPg(poolAvecParseursPrets(pool));
 }

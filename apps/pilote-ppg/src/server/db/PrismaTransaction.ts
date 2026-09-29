@@ -13,6 +13,7 @@ export class PrismaTransaction implements Transaction {
 
     return prisma.$transaction((tx) => txStore.run(tx, scope), {
       timeout: 30_000,
+      maxWait: 10_000,
     });
   }
 }

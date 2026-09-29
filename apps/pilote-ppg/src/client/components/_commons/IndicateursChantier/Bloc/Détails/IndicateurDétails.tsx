@@ -143,16 +143,18 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           donnéesCartographieValeurAvancementTerritorialisées ||
           (chantierEstTerritorialisé && indicateurDetailsMode === "widget") ? (
             <>
-              <Suspense>
-                <ComparaisonTerritoiresIndicateur
-                  indicateurId={indicateur.id}
-                  chantierId={chantierId}
-                  jalon={jalon}
-                  maille={mailleQuery}
-                  territoireCode={territoireCode}
-                  unite={indicateur.unité}
-                />
-              </Suspense>
+              {futOuvert ? (
+                <Suspense>
+                  <ComparaisonTerritoiresIndicateur
+                    indicateurId={indicateur.id}
+                    chantierId={chantierId}
+                    jalon={jalon}
+                    maille={mailleQuery}
+                    territoireCode={territoireCode}
+                    unite={indicateur.unité}
+                  />
+                </Suspense>
+              ) : null}
             </>
           ) : (
             <div className="fr-container">
