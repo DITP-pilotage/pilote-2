@@ -37,7 +37,6 @@ describe("RecupererFeatureFlipsUseCase", () => {
         comparaisonTerritoires: false,
         pvaValeurDifferente: false,
         lienContactBrevo: false,
-        reorganisationPageAccueil: false,
       },
     } as ReturnType<typeof configuration>);
 
@@ -71,7 +70,6 @@ describe("RecupererFeatureFlipsUseCase", () => {
         comparaisonTerritoires: false,
         pvaValeurDifferente: false,
         lienContactBrevo: false,
-        reorganisationPageAccueil: false,
       },
     } as ReturnType<typeof configuration>);
 
