@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { useSession } from "next-auth/react";
-import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { profilsTerritoriaux } from "@/server/domain/utilisateur/Utilisateur.interface";
 
@@ -344,7 +344,7 @@ export const EtapeDonneeChantierACollecter = () => {
         ) : null}
       </div>
       <div className="w-full flex justify-end fr-mt-2w">
-        <Dialog.Close asChild>
+        <Modale.Close asChild>
           <button
             className="fr-link fr-mr-2w"
             title="Fermer la fenêtre modale"
@@ -352,7 +352,7 @@ export const EtapeDonneeChantierACollecter = () => {
           >
             Annuler
           </button>
-        </Dialog.Close>
+        </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
           onClick={() => setEtapeCourante(2)}

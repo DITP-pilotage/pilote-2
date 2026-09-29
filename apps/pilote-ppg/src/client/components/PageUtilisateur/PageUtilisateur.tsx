@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
-import { Dialog } from "radix-ui";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
@@ -118,13 +117,13 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         <span className="uppercase">{utilisateur.nom}.</span>
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
-                        <Dialog.Close asChild>
+                        <Modale.Close asChild>
                           <Bouton
                             className="!mr-2"
                             label="Annuler"
                             variant="secondary"
                           />
-                        </Dialog.Close>
+                        </Modale.Close>
                         <Bouton
                           label="Confirmer la désactivation"
                           onClick={desactiverUtilisateur}
@@ -175,13 +174,13 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         transmis automatiquement.
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
-                        <Dialog.Close asChild>
+                        <Modale.Close asChild>
                           <Bouton
                             className="!mr-2"
                             label="Annuler"
                             variant="secondary"
                           />
-                        </Dialog.Close>
+                        </Modale.Close>
                         <Bouton
                           label="Confirmer la réactivation"
                           onClick={reactiverUtilisateur}

@@ -1,5 +1,5 @@
 import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
-import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 
 export const EtapePerimetreExport = () => {
   const [isAvecFiltre, setIsAvecFiltre] = useQueryState(
@@ -58,7 +58,7 @@ export const EtapePerimetreExport = () => {
         </div>
       </div>
       <div className="w-full flex justify-end fr-mt-2w">
-        <Dialog.Close asChild>
+        <Modale.Close asChild>
           <button
             className="fr-link fr-mr-2w"
             title="Fermer la fenêtre modale"
@@ -66,7 +66,7 @@ export const EtapePerimetreExport = () => {
           >
             Annuler
           </button>
-        </Dialog.Close>
+        </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
           onClick={() => setEtapeCourante(1)}

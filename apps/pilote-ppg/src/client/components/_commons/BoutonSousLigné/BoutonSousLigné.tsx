@@ -2,14 +2,10 @@ import { ComponentProps, forwardRef, ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
 
 type Props = ComponentProps<"button"> & {
-  dataFrOpened?: boolean;
   iconLeft?: ReactNode;
 };
 export const BoutonSousLigné = forwardRef<HTMLButtonElement, Props>(
-  function BoutonSousLigné(
-    { className, dataFrOpened, iconLeft, children, ...props },
-    ref,
-  ) {
+  function BoutonSousLigné({ className, iconLeft, children, ...props }, ref) {
     return (
       <button
         className={clsxm(
@@ -19,7 +15,6 @@ export const BoutonSousLigné = forwardRef<HTMLButtonElement, Props>(
             "!opacity-80": props.disabled,
           },
         )}
-        data-fr-opened={dataFrOpened}
         {...props}
         ref={ref}
       >

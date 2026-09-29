@@ -1,5 +1,4 @@
 import { FunctionComponent, ReactNode } from "react";
-import { Dialog } from "radix-ui";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
@@ -159,14 +158,14 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
             type="submit"
             variant="primary"
           />
-          <Dialog.Close asChild>
+          <Modale.Close asChild>
             <Bouton
               iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
               label="Annuler"
               type="button"
               variant="secondary"
             />
-          </Dialog.Close>
+          </Modale.Close>
           <BoutonSousLigné
             disabled={!form.formState.isValid}
             iconLeft={

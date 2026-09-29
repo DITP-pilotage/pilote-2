@@ -1,5 +1,5 @@
 import { parseAsInteger, useQueryState } from "nuqs";
-import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
 export const EtapeDonneeEnCoursDeTelechargement = () => {
@@ -19,7 +19,7 @@ export const EtapeDonneeEnCoursDeTelechargement = () => {
         type="succès"
       />
       <div className="w-full flex justify-end fr-mt-2w">
-        <Dialog.Close asChild>
+        <Modale.Close asChild>
           <button
             className="fr-link fr-mr-2w"
             title="Fermer la fenêtre modale"
@@ -27,7 +27,7 @@ export const EtapeDonneeEnCoursDeTelechargement = () => {
           >
             Annuler
           </button>
-        </Dialog.Close>
+        </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
           onClick={() => setEtapeCourante(4)}

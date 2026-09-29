@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
-import { Dialog } from "radix-ui";
 import { Modale } from "@/components/shared/Modale";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -38,7 +37,7 @@ export const ModaleRenseignerService: FunctionComponent<
           page "Mon espace".
         </p>
         <div className="fr-mt-4w flex justify-end gap-3">
-          <Dialog.Close asChild>
+          <Modale.Close asChild>
             <button
               className="fr-btn fr-btn--secondary"
               title="Fermer la fenêtre modale"
@@ -46,7 +45,7 @@ export const ModaleRenseignerService: FunctionComponent<
             >
               Plus tard
             </button>
-          </Dialog.Close>
+          </Modale.Close>
           <Link
             className="fr-btn"
             href="/mon-profil-utilisateur"

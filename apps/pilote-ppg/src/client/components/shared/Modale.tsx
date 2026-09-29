@@ -81,3 +81,5 @@ export const Modale = ({
     </Dialog.Root>
   );
 };
+
+Modale.Close = Dialog.Close;

@@ -1,5 +1,5 @@
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
-import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 
 export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
   const [optionsExport] = useQueryState(
@@ -87,7 +87,7 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
         </div>
       </div>
       <div className="w-full flex justify-end fr-mt-2w">
-        <Dialog.Close asChild>
+        <Modale.Close asChild>
           <button
             className="fr-link fr-mr-2w"
             title="Fermer la fenêtre modale"
@@ -95,7 +95,7 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
           >
             Annuler
           </button>
-        </Dialog.Close>
+        </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
           onClick={() => setEtapeCourante(2)}
