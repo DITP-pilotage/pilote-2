@@ -6,7 +6,6 @@ import Utilisateur, {
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { useEnv } from "@/client/hooks/useEnv";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
@@ -21,8 +20,6 @@ const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set([
 
 export default function usePageUtilisateur(utilisateur: Utilisateur) {
   const router = useRouter();
-
-  const tokenAPIEstDisponible = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
 
   const mutationDesactiverUtilisateur = api.utilisateur.desactiver.useMutation({
     onSuccess: () => {
@@ -155,7 +152,6 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     modificationEstImpossible,
     donnneContenuBandeau,
     habilitationsAGenererUnTokenDAuthentification,
-    vérifierFFTokenAPIEstDisponible: tokenAPIEstDisponible,
     fermerLaModaleDeReactivationUtilisateur,
     reactiverUtilisateur,
   };

@@ -165,26 +165,6 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
     },
-    ficheConducteur: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
-    },
-    ficheTerritoriale: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-    },
-    gestionTokenAPI: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
-    },
-    docsAPI: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_DOCS_API",
-    },
     ppgArchive: {
       format: Boolean,
       default: false,
@@ -194,11 +174,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
-    },
-    videoAccueil: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_VIDEO_ACCUEIL",
     },
     pvaValeurDifferente: {
       format: Boolean,
@@ -214,16 +189,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO",
-    },
-    panelAdmin: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_PANEL_ADMIN",
-    },
-    monProfil: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_MON_PROFIL",
     },
     rapportCoordinateurs: {
       format: Boolean,

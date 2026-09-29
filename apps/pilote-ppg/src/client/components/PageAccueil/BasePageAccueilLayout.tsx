@@ -3,7 +3,6 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
-import { useEnv } from "@/client/hooks/useEnv";
 import { useAskAIAccess } from "@/components/PageAccueil/useAskAIAccess";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
@@ -86,11 +85,8 @@ export const BasePageAccueilLayout: FunctionComponent<
   emailAutoriseAskAITerritoire,
   children,
 }) => {
-  const ffVideoAccueil = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
-  const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
-  const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
   const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
     useAskAIAccess({ emailAutoriseAskAITerritoire });
 
@@ -104,16 +100,14 @@ export const BasePageAccueilLayout: FunctionComponent<
     !PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE.has(session?.profil || "");
 
   const doitAfficherModaleRenseignerService =
-    !!monProfilEstDisponible &&
-    (profil.service == null || profil.fonction == null);
+    profil.service == null || profil.fonction == null;
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [isModaleInfolettreOpen, setIsModaleInfolettreOpen] = useState(
     doitAfficherLaModaleInfolettreInitial,
   );
-  const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
-    ffVideoAccueil && !aDejaVuVideoAccueil,
-  );
+  const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] =
+    useState(!aDejaVuVideoAccueil);
   const [isModaleRenseignerServiceOpen, setIsModaleRenseignerServiceOpen] =
     useState(doitAfficherModaleRenseignerService);
 
@@ -153,8 +147,7 @@ export const BasePageAccueilLayout: FunctionComponent<
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>
             <div className="inline-flex flex-col gap-1">
-              {ffFicheTerritoriale &&
-              estAutoriséAConsulterLaFicheTerritoriale(
+              {estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",
               ) ? (
                 <BoutonNavigationFicheTerritoriale

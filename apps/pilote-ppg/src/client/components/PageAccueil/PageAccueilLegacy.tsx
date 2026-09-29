@@ -4,7 +4,6 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
-import { useEnv } from "@/client/hooks/useEnv";
 import PageChantiers from "@/components/PageAccueil/PageChantiers/PageChantiers";
 import { useAskAIAccess } from "@/components/PageAccueil/useAskAIAccess";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
@@ -82,23 +81,18 @@ export const PageAccueilLegacy = ({
       session?.profil || "",
     );
 
-  const ffVideoAccueil = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
-  const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const profil = useProfilUtilisateurConnecte();
-  const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
   const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
     useAskAIAccess({ emailAutoriseAskAITerritoire });
   const doitAfficherModaleRenseignerService =
-    !!monProfilEstDisponible &&
-    (profil.service == null || profil.fonction == null);
+    profil.service == null || profil.fonction == null;
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [isModaleInfolettreOpen, setIsModaleInfolettreOpen] = useState(
     doitAfficherLaModaleInfolettre,
   );
-  const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
-    ffVideoAccueil && !aDejaVuVideoAccueil,
-  );
+  const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] =
+    useState(!aDejaVuVideoAccueil);
   const [isModaleRenseignerServiceOpen, setIsModaleRenseignerServiceOpen] =
     useState(doitAfficherModaleRenseignerService);
 
@@ -144,8 +138,7 @@ export const PageAccueilLegacy = ({
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>
             <div className="inline-flex flex-column gap-1">
-              {ffFicheTerritoriale &&
-              estAutoriséAConsulterLaFicheTerritoriale(
+              {estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",
               ) ? (
                 <BoutonNavigationFicheTerritoriale

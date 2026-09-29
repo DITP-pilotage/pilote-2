@@ -1,6 +1,5 @@
 import { FunctionComponent, useMemo, useState } from "react";
 import Link from "next/link";
-import { useEnv } from "@/client/hooks/useEnv";
 import { clsxm } from "@/utils/clsxm";
 
 interface MenuLateralPanelAdministrateurProps {
@@ -21,20 +20,8 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
   MenuLateralPanelAdministrateurProps
 > = ({ pageActive }) => {
   const [estReplie, setEstReplie] = useState(false);
-  const ffGestionTokenAPI = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
 
   const menuItems = useMemo<MenuItem[]>(() => {
-    const gestionTokenItem: MenuItem[] = ffGestionTokenAPI
-      ? [
-          {
-            type: "item",
-            label: "Token API",
-            href: "/panel-administrateur/gestion-token-api",
-            pageKey: "gestion-token-api",
-          },
-        ]
-      : [];
-
     return [
       {
         type: "item",
@@ -42,7 +29,12 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         href: "/panel-administrateur/message-information",
         pageKey: "message-information",
       },
-      ...gestionTokenItem,
+      {
+        type: "item",
+        label: "Token API",
+        href: "/panel-administrateur/gestion-token-api",
+        pageKey: "gestion-token-api",
+      },
       {
         type: "item",
         label: "Indicateurs des chantiers",
@@ -142,7 +134,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         pageKey: "logs",
       },
     ];
-  }, [ffGestionTokenAPI]);
+  }, []);
 
   return (
     <nav

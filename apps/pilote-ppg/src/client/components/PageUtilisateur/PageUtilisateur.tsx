@@ -30,7 +30,6 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
     modificationEstImpossible,
     donnneContenuBandeau,
     habilitationsAGenererUnTokenDAuthentification,
-    vérifierFFTokenAPIEstDisponible,
     reactiverUtilisateur,
   } = usePageUtilisateur(utilisateur);
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
@@ -86,8 +85,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     >
                       Modifier
                     </Link>
-                    {vérifierFFTokenAPIEstDisponible &&
-                    habilitationsAGenererUnTokenDAuthentification(
+                    {habilitationsAGenererUnTokenDAuthentification(
                       // @ts-expect-error session est forcément not null içi
                       session,
                       utilisateur.profil,

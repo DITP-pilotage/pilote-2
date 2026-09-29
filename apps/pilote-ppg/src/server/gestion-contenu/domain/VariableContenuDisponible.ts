@@ -5,14 +5,8 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TEXTE: string;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE: string;
   NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: boolean;
-  NEXT_PUBLIC_FF_FICHE_CONDUCTEUR: boolean;
-  NEXT_PUBLIC_FF_GESTION_TOKEN_API: boolean;
-  NEXT_PUBLIC_FF_DOCS_API: boolean;
   NEXT_PUBLIC_FF_PPG_ARCHIVE: boolean;
   NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR: boolean;
-  NEXT_PUBLIC_FF_VIDEO_ACCUEIL: boolean;
-  NEXT_PUBLIC_FF_PANEL_ADMIN: boolean;
-  NEXT_PUBLIC_FF_MON_PROFIL: boolean;
   NEXT_PUBLIC_FF_ASK_AI: boolean;
   NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: boolean;
   NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: boolean;
@@ -26,7 +20,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_CREATION_COMPTE_ARS: boolean;
   NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES: boolean;
   NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES: boolean;
-  NEXT_PUBLIC_FF_FICHE_TERRITORIALE: boolean;
   NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE: boolean;
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
   NEXT_PUBLIC_FF_REPARTITION_METEOS_V2: boolean;
@@ -53,21 +46,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     label: "Application indisponible",
   },
   {
-    envKey: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
-    configKey: "ficheConducteur",
-    label: "Fiche conducteur",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
-    configKey: "gestionTokenAPI",
-    label: "Gestion token API",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_DOCS_API",
-    configKey: "docsAPI",
-    label: "Documentation API",
-  },
-  {
     envKey: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
     configKey: "ppgArchive",
     label: "PPG archive",
@@ -76,21 +54,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
     configKey: "poserUneQuestionIndicateur",
     label: "Poser une question indicateur",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_VIDEO_ACCUEIL",
-    configKey: "videoAccueil",
-    label: "Vidéo accueil",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_PANEL_ADMIN",
-    configKey: "panelAdmin",
-    label: "Panel administrateur",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_MON_PROFIL",
-    configKey: "monProfil",
-    label: "Mon profil",
   },
   { envKey: "NEXT_PUBLIC_FF_ASK_AI", configKey: "askAI", label: "Ask AI" },
   {
@@ -152,11 +115,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
     configKey: "comparaisonTerritoires",
     label: "Comparaison territoires",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-    configKey: "ficheTerritoriale",
-    label: "Fiche territoriale",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE",
