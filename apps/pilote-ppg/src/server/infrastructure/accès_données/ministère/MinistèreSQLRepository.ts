@@ -1,4 +1,4 @@
-import { ministere, perimetre, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import MinistèreRepository from "@/server/domain/ministère/MinistèreRepository.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
@@ -70,27 +70,5 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
         order by CASE WHEN p.ministere_id = '1009' THEN 0 ELSE 1 END, m.nom, p.ministere_id;
     `;
     return queryResults.map((queryResult) => this.parseMinistère(queryResult));
-  }
-
-  async récupérerToutesLesIconesAssociéesÀLeurPérimètre(): Promise<
-    { perimetre_id: perimetre["id"]; icone: ministere["icone"] }[]
-  > {
-    return prisma.$queryRaw`
-      SELECT p.id AS perimetre_id, m.icone
-      FROM perimetre p
-      LEFT JOIN ministere m ON p.ministere_id = m.id
-      WHERE m.icone IS NOT NULL
-`;
-  }
-
-  async récupérerLesNomsAssociésÀLeurPérimètre(
-    périmètresIds: perimetre["id"][],
-  ): Promise<{ perimetre_id: perimetre["id"]; nom: ministere["nom"] }[]> {
-    return prisma.$queryRaw`
-      SELECT p.id AS perimetre_id, m.nom
-      FROM perimetre p
-      LEFT JOIN ministere m ON p.ministere_id = m.id
-      WHERE p.id = ANY (${périmètresIds})
-  `;
   }
 }

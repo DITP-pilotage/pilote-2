@@ -9,7 +9,7 @@ import useModalePropositionValeurAvancementV2, {
 import Input from "@/components/_commons/Input/Input";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
-import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";

@@ -8,7 +8,7 @@ import {
   UseFormRegisterReturn,
 } from "react-hook-form";
 import clsx from "clsx";
-import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 
 interface TexteAreaLabelProps {
