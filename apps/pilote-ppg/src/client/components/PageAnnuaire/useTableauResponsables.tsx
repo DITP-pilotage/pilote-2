@@ -11,11 +11,14 @@ import { tableauAnnuaire } from "./featuresAnnuaire";
 import {
   cleCouple,
   clePersonne,
+  comparerChantiersPuisTerritoires,
+  comparerPersonnes,
   type FiltreAvecGroupes,
   filtreChantiers,
   filtreTerritoires,
   type LigneResponsable,
   lignesResponsables,
+  nomComplet,
 } from "./lignesAnnuaire";
 import { tuileAnnuaire } from "./tuileAnnuaire";
 
@@ -59,8 +62,7 @@ const champsRecherche = (ligne: LigneResponsable) => [
   ligne.chantier.nom,
   ligne.territoire.nom,
   ligne.territoire.regionNom,
-  ligne.personne.prenom,
-  ligne.personne.nom,
+  nomComplet(ligne.personne),
   ligne.personne.email,
   ligne.personne.fonction ?? "",
 ];
@@ -80,6 +82,8 @@ const useColonnes = (
           id: "couple",
           header: "Chantier",
           enableSorting: true,
+          sortFn: (ligneA, ligneB) =>
+            comparerChantiersPuisTerritoires(ligneA.original, ligneB.original),
           cell: ({ row }) => (
             <span className="text-sm font-medium">
               {row.original.chantier.nom}
@@ -105,9 +109,9 @@ const useColonnes = (
           header: "Responsables et adresses e-mail",
           cell: ({ row }) => (
             <ListePersonnes
-              personnes={row.subRows.map(
-                (sousLigne) => sousLigne.original.personne,
-              )}
+              personnes={row.subRows
+                .map((sousLigne) => sousLigne.original.personne)
+                .sort(comparerPersonnes)}
             />
           ),
         }),
@@ -115,6 +119,11 @@ const useColonnes = (
           id: "responsable",
           header: "Responsable et adresse e-mail",
           enableSorting: true,
+          sortFn: (ligneA, ligneB) =>
+            comparerPersonnes(
+              ligneA.original.personne,
+              ligneB.original.personne,
+            ),
           cell: ({ row }) => <BlocPersonne personne={row.original.personne} />,
         }),
         columnHelper.display({
@@ -122,7 +131,9 @@ const useColonnes = (
           header: "Chantiers et territoires",
           cell: ({ row }) => (
             <ListeAffectations
-              affectations={row.subRows.map((sousLigne) => sousLigne.original)}
+              affectations={row.subRows
+                .map((sousLigne) => sousLigne.original)
+                .sort(comparerChantiersPuisTerritoires)}
             />
           ),
         }),
@@ -187,7 +198,7 @@ export const useTableauResponsables = (
     tileLabel: (row) =>
       regroupement === "couple"
         ? `${row.original.chantier.nom} · ${row.original.territoire.nom}`
-        : `${row.original.personne.prenom} ${row.original.personne.nom}`,
+        : nomComplet(row.original.personne),
     state: { columnVisibility: visibilite(regroupement) },
     urlState: {
       grouping: {

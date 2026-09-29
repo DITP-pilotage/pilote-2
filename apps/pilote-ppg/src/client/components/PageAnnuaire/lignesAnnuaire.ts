@@ -61,6 +61,39 @@ export const clePersonne = (personne: PersonneAnnuaire) =>
 export const cleCouple = (ligne: LigneResponsable) =>
   `${ligne.chantier.nom}|${ligne.chantier.id}|${cleTerritoire(ligne.territoire)}`;
 
+const collator = new Intl.Collator("fr", {
+  sensitivity: "base",
+  numeric: true,
+});
+
+// Régions d'abord, puis départements, chacun par nom (sans tenir compte de la casse ni des accents).
+export const comparerTerritoires = (
+  gauche: TerritoireAnnuaire,
+  droite: TerritoireAnnuaire,
+) =>
+  Number(gauche.maille !== "REG") - Number(droite.maille !== "REG") ||
+  collator.compare(gauche.nom, droite.nom) ||
+  collator.compare(gauche.code, droite.code);
+
+export const comparerPersonnes = (
+  gauche: PersonneAnnuaire,
+  droite: PersonneAnnuaire,
+) =>
+  collator.compare(gauche.nom, droite.nom) ||
+  collator.compare(gauche.prenom, droite.prenom) ||
+  collator.compare(gauche.id, droite.id);
+
+export const comparerChantiersPuisTerritoires = (
+  gauche: { chantier: ChantierAnnuaire; territoire: TerritoireAnnuaire },
+  droite: { chantier: ChantierAnnuaire; territoire: TerritoireAnnuaire },
+) =>
+  collator.compare(gauche.chantier.nom, droite.chantier.nom) ||
+  collator.compare(gauche.chantier.id, droite.chantier.id) ||
+  comparerTerritoires(gauche.territoire, droite.territoire);
+
+export const nomComplet = (personne: PersonneAnnuaire) =>
+  `${personne.prenom} ${personne.nom}`;
+
 export type FiltreAvecGroupes = {
   options: FilterOption[];
   groups: { label: string; values: string[] }[];
@@ -73,9 +106,7 @@ export function filtreTerritoires(
     ...new Map(
       territoires.map((territoire) => [territoire.code, territoire]),
     ).values(),
-  ].sort((gauche, droite) =>
-    cleTerritoire(gauche).localeCompare(cleTerritoire(droite), "fr"),
-  );
+  ].sort(comparerTerritoires);
   return {
     options: uniques.map((territoire) => ({
       value: territoire.code,
@@ -102,6 +133,6 @@ export function filtreChantiers(chantiers: ChantierAnnuaire[]): FilterOption[] {
   return [
     ...new Map(chantiers.map((chantier) => [chantier.id, chantier])).values(),
   ]
-    .sort((gauche, droite) => gauche.nom.localeCompare(droite.nom, "fr"))
+    .sort((gauche, droite) => collator.compare(gauche.nom, droite.nom))
     .map((chantier) => ({ value: chantier.id, label: chantier.nom }));
 }

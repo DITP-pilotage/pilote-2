@@ -10,10 +10,13 @@ import { tableauAnnuaire } from "./featuresAnnuaire";
 import {
   clePersonne,
   cleTerritoire,
+  comparerPersonnes,
+  comparerTerritoires,
   type FiltreAvecGroupes,
   type LigneCoordinateur,
   filtreTerritoires,
   lignesCoordinateurs,
+  nomComplet,
 } from "./lignesAnnuaire";
 import { tuileAnnuaire } from "./tuileAnnuaire";
 
@@ -54,8 +57,7 @@ const visibilite = (regroupement: RegroupementCoordinateurs) =>
 const champsRecherche = (ligne: LigneCoordinateur) => [
   ligne.territoire.nom,
   ligne.territoire.regionNom,
-  ligne.personne.prenom,
-  ligne.personne.nom,
+  nomComplet(ligne.personne),
   ligne.personne.email,
   ligne.personne.fonction ?? "",
 ];
@@ -72,6 +74,11 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
           id: "territoire",
           header: "Territoire",
           enableSorting: true,
+          sortFn: (ligneA, ligneB) =>
+            comparerTerritoires(
+              ligneA.original.territoire,
+              ligneB.original.territoire,
+            ),
           cell: ({ row }) => (
             <CelluleTerritoire territoire={row.original.territoire} />
           ),
@@ -88,9 +95,9 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
           header: "Coordinateurs et adresses e-mail",
           cell: ({ row }) => (
             <ListePersonnes
-              personnes={row.subRows.map(
-                (sousLigne) => sousLigne.original.personne,
-              )}
+              personnes={row.subRows
+                .map((sousLigne) => sousLigne.original.personne)
+                .sort(comparerPersonnes)}
             />
           ),
         }),
@@ -98,6 +105,11 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
           id: "coordinateur",
           header: "Coordinateur et adresse e-mail",
           enableSorting: true,
+          sortFn: (ligneA, ligneB) =>
+            comparerPersonnes(
+              ligneA.original.personne,
+              ligneB.original.personne,
+            ),
           cell: ({ row }) => <BlocPersonne personne={row.original.personne} />,
         }),
         columnHelper.display({
@@ -105,9 +117,9 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
           header: "Territoires",
           cell: ({ row }) => (
             <ListeTerritoires
-              territoires={row.subRows.map(
-                (sousLigne) => sousLigne.original.territoire,
-              )}
+              territoires={row.subRows
+                .map((sousLigne) => sousLigne.original.territoire)
+                .sort(comparerTerritoires)}
             />
           ),
         }),
@@ -156,7 +168,7 @@ export const useTableauCoordinateurs = (
     tileLabel: (row) =>
       regroupement === "territoire"
         ? row.original.territoire.nom
-        : `${row.original.personne.prenom} ${row.original.personne.nom}`,
+        : nomComplet(row.original.personne),
     state: { columnVisibility: visibilite(regroupement) },
     urlState: {
       grouping: {
