@@ -15,17 +15,11 @@ import { useEnv } from "@/client/hooks/useEnv";
 const InformationsEspaceConnecte = () => {
   const { data: session } = useSession();
   const ffPiloteEval = useEnv("NEXT_PUBLIC_FF_PILOTE_EVAL");
-  const ffAccesPilote = useEnv("NEXT_PUBLIC_FF_ACCES_PILOTE");
-
-  const peutVoirLeBoutonApplicationsPilote =
-    ffPiloteEval && (ffAccesPilote || session?.profil === "DITP_ADMIN");
 
   if (session?.user != null)
     return (
       <>
-        {peutVoirLeBoutonApplicationsPilote ? (
-          <BoutonApplicationsPilote />
-        ) : null}
+        {ffPiloteEval ? <BoutonApplicationsPilote /> : null}
         <Utilisateur />
       </>
     );

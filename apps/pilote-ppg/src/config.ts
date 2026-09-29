@@ -180,21 +180,6 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
     },
-    suiviCompletude: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
-    },
-    alerteMAJIndicateur: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR",
-    },
-    voirHistoriqueProposition: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
-    },
     docsAPI: {
       format: Boolean,
       default: false,
@@ -295,16 +280,6 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
     },
-    historiqueAlbert: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
-    },
-    accesPilote: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ACCES_PILOTE",
-    },
     comparaisonTerritoires: {
       format: Boolean,
       default: false,
@@ -335,11 +310,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
-    },
-    pageActualites: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_PAGE_ACTUALITES",
     },
     exportCsvWidgets: {
       format: Boolean,

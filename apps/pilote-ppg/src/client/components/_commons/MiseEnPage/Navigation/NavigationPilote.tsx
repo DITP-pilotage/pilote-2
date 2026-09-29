@@ -11,11 +11,7 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import HabilitationGestionUtilisateur from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { useEnv } from "@/client/hooks/useEnv";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import {
-  BaseNavigation,
-  LienNavigation,
-  useNavigation,
-} from "./BaseNavigation";
+import { BaseNavigation, LienNavigation } from "./BaseNavigation";
 
 const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
   if (!session) {
@@ -49,9 +45,6 @@ export const NavigationPilote = () => {
   const router = useRouter();
 
   const ffRapportCoordinateurs = useEnv("NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS");
-  const ffPageActualites = useEnv("NEXT_PUBLIC_FF_PAGE_ACTUALITES");
-  const { vérifierSuiviCompletudeEstDisponibleEstIndisponible } =
-    useNavigation();
 
   const filtresActifs = getFiltresActifs();
 
@@ -133,9 +126,7 @@ export const NavigationPilote = () => {
           nom: "Suivi de la complétude",
           lien: "https://copilot-metabase.osc-secnum-fr1.scalingo.io/dashboard/39-tableau-de-bord-de-conformite-pilote",
           matcher: "/suivicompletude",
-          accessible:
-            Boolean(vérifierSuiviCompletudeEstDisponibleEstIndisponible) &&
-            estAdministrateurOuPilotage(session!),
+          accessible: estAdministrateurOuPilotage(session!),
           prefetch: false,
           target: "_blank",
         },
@@ -143,7 +134,7 @@ export const NavigationPilote = () => {
           nom: "Actualités",
           lien: "/actualites",
           matcher: "/actualites",
-          accessible: ffPageActualites,
+          accessible: true,
           prefetch: false,
           target: "_self",
         },

@@ -2,15 +2,8 @@ import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonS
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
 import { Icone } from "@/components/_commons/Icone";
 import { Time1Icon } from "@/components/_commons/Icones/Time1Icon";
-import { useEnv } from "@/client/hooks/useEnv";
 
 export const BoutonVoirHistorique = () => {
-  const ffVoirHistoriqueProposition = useEnv(
-    "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
-  );
-
-  if (!ffVoirHistoriqueProposition) return null;
-
   return (
     <ModaleHistoriqueIndicateurTerritoireValeurEvenement>
       <BoutonSousLigné

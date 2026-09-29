@@ -25,14 +25,9 @@ export const useNavigation = () => {
   const applicationEstDisponible = useEnv(
     "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
   );
-  const suiviCompletudeEstDisponible = useEnv(
-    "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
-  );
 
   return {
     vérifierValeurApplicationEstIndisponible: applicationEstDisponible,
-    vérifierSuiviCompletudeEstDisponibleEstIndisponible:
-      suiviCompletudeEstDisponible,
   };
 };
 

@@ -7,8 +7,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: boolean;
   NEXT_PUBLIC_FF_FICHE_CONDUCTEUR: boolean;
   NEXT_PUBLIC_FF_GESTION_TOKEN_API: boolean;
-  NEXT_PUBLIC_FF_SUIVI_COMPLETUDE: boolean;
-  NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR: boolean;
   NEXT_PUBLIC_FF_DOCS_API: boolean;
   NEXT_PUBLIC_FF_PPG_ARCHIVE: boolean;
   NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR: boolean;
@@ -21,24 +19,20 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE: boolean;
   NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE: boolean;
   NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR: boolean;
-  NEXT_PUBLIC_FF_HISTORIQUE_ALBERT: boolean;
   NEXT_PUBLIC_FF_PILOTE_EVAL: boolean;
   NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: boolean;
   NEXT_PUBLIC_FF_RAPPORT_PVA: boolean;
   NEXT_PUBLIC_FF_RAPPORT_RESPONSABLES_DONNEES: boolean;
   NEXT_PUBLIC_FF_CREATION_COMPTE_ARS: boolean;
   NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES: boolean;
-  NEXT_PUBLIC_FF_ACCES_PILOTE: boolean;
   NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES: boolean;
   NEXT_PUBLIC_FF_FICHE_TERRITORIALE: boolean;
-  NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE: boolean;
   NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE: boolean;
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
   NEXT_PUBLIC_FF_REPARTITION_METEOS_V2: boolean;
   NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2: boolean;
   NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER: boolean;
   NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL: boolean;
-  NEXT_PUBLIC_FF_PAGE_ACTUALITES: boolean;
   NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS: boolean;
   NEXT_PUBLIC_FF_PROCONNECT: boolean;
 }
@@ -67,16 +61,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
     configKey: "gestionTokenAPI",
     label: "Gestion token API",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
-    configKey: "suiviCompletude",
-    label: "Suivi complétude",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR",
-    configKey: "alerteMAJIndicateur",
-    label: "Alerte MAJ indicateur",
   },
   {
     envKey: "NEXT_PUBLIC_FF_DOCS_API",
@@ -135,11 +119,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     label: "Ask AI — ouverture Coordinateurs région et département",
   },
   {
-    envKey: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
-    configKey: "historiqueAlbert",
-    label: "Albert — historique des conversations",
-  },
-  {
     envKey: "NEXT_PUBLIC_FF_PILOTE_EVAL",
     configKey: "piloteEval",
     label: "Pilote Eval",
@@ -170,11 +149,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     label: "Masquer indicateurs non applicables",
   },
   {
-    envKey: "NEXT_PUBLIC_FF_ACCES_PILOTE",
-    configKey: "accesPilote",
-    label: "Accès Pilote",
-  },
-  {
     envKey: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
     configKey: "comparaisonTerritoires",
     label: "Comparaison territoires",
@@ -183,11 +157,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
     configKey: "ficheTerritoriale",
     label: "Fiche territoriale",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
-    configKey: "voirHistoriqueProposition",
-    label: "Voir historique des propositions",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE",
@@ -218,11 +187,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
     configKey: "reorganisationPageAccueil",
     label: "Réorganisation page accueil en sections",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_PAGE_ACTUALITES",
-    configKey: "pageActualites",
-    label: "Page actualités (newsletters Brevo)",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PROCONNECT",
