@@ -69,7 +69,8 @@ const CASES: ToolCase[] = [
     forbidden: ["get_indicateurs"],
   },
   {
-    question: "Qui a importé les dernières valeurs de l'IND-004 au national ?",
+    question:
+      "Quand ont été importées les dernières valeurs de l'IND-004 au national ?",
     reason: "CAS NÉGATIF : historique des actions → get_historique_indicateur",
     forbidden: ["get_indicateurs"],
   },
