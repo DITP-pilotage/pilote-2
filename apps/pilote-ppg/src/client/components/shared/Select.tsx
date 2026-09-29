@@ -119,7 +119,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
   }: ComponentProps<typeof SelectPrimitive.Label>) => (
     <SelectPrimitive.Label
       className={clsxm(
-        "px-4 py-1 !text-xs font-bold textdsfr-grey-200 uppercase",
+        "px-4 py-1 !text-xs font-bold text-dsfr-grey-200 uppercase",
         className,
       )}
       {...props}

@@ -6,6 +6,7 @@ import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/M
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
+import { clsxm } from "@/utils/clsxm";
 
 const TableauChantiersTuileChantier: FunctionComponent<{
   chantier: DonnéesTableauChantiers;
@@ -13,45 +14,48 @@ const TableauChantiersTuileChantier: FunctionComponent<{
   chantiersSontArchives: boolean;
 }> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
   return (
-    <div>
-      <div className="grid grid-cols-[auto_max-content]">
-        <div className="fr-mb-0 fr-ml-n1w flex gap-2">
-          {afficherIcône ? (
-            <IconeMinistere
-              className="text-dsfr-blue-france-sun-113"
-              icone={chantier.porteur?.icône}
-            />
-          ) : null}
-          {chantier.nom ?? undefined}
+    <div className="flex flex-col gap-3">
+      <div className="flex items-start gap-2">
+        {afficherIcône ? (
+          <IconeMinistere
+            className="shrink-0 w-5 h-5 mt-0.5 text-dsfr-blue-france-sun-113"
+            icone={chantier.porteur?.icône}
+          />
+        ) : null}
+        <span className="grow">{chantier.nom ?? undefined}</span>
+        <div className="shrink-0 [&_svg]:w-5 [&_svg]:h-5">
+          <TypologiesPictos typologies={chantier.typologie} />
         </div>
-        <TypologiesPictos typologies={chantier.typologie} />
       </div>
-      <div className="fr-mt-1w fr-ml-5v grid grid-cols-[2.5rem_auto_1.5rem_2.75rem] gap-x-4 items-baseline whitespace-nowrap">
-        <div className="flex self-start">
-          <TableauRéformesMétéo
-            chantiersSontArchives={chantiersSontArchives}
-            dateDeMàjDonnéesQualitatives={chantier.dateDeMàjDonnéesQualitatives}
-            météo={chantier.météo}
-            taille="sm"
-          />
-        </div>
-        <div className="grow max-w-48 h-8">
-          <TableauRéformesAvancement
-            avancement={chantier.avancement}
-            dateDeMàjDonnéesQuantitatives={
-              chantier.dateDeMàjDonnéesQuantitatives
-            }
-            estArchive={chantiersSontArchives}
-          />
-        </div>
-        <PictoTendance
-          estArchive={chantiersSontArchives}
-          tendance={chantier.tendance}
-        />
-        <EcartTuileChantier
+      <div
+        className={clsxm(
+          "grid grid-cols-[3rem_minmax(0,12rem)_1.5rem_2.75rem] gap-x-4 items-start whitespace-nowrap [&>:first-child_svg]:w-8 [&>:first-child_svg]:h-8",
+          afficherIcône && "pl-7",
+        )}
+      >
+        <TableauRéformesMétéo
           chantiersSontArchives={chantiersSontArchives}
-          ecart={chantier.écart}
+          dateDeMàjDonnéesQualitatives={chantier.dateDeMàjDonnéesQualitatives}
+          météo={chantier.météo}
+          taille="sm"
         />
+        <TableauRéformesAvancement
+          avancement={chantier.avancement}
+          dateDeMàjDonnéesQuantitatives={chantier.dateDeMàjDonnéesQuantitatives}
+          estArchive={chantiersSontArchives}
+        />
+        <div className="flex h-8 items-center">
+          <PictoTendance
+            estArchive={chantiersSontArchives}
+            tendance={chantier.tendance}
+          />
+        </div>
+        <div className="flex h-8 items-center">
+          <EcartTuileChantier
+            chantiersSontArchives={chantiersSontArchives}
+            ecart={chantier.écart}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,28 +1,25 @@
-import {
-  createColumnHelper,
-  filterFn_arrHas,
-  useTable,
-} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
-  featuresTableauAdmin,
-  useEtatTableauAdmin,
-  type ConfigFiltreColonne,
-} from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
-import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  CLASSE_COLONNE_SECONDAIRE,
+  FILTRE_STATUT_REFERENTIEL,
+  filtreStatutReferentiel,
+  statutReferentielDe,
+} from "@/components/_commons/TableauAdmin/constants";
+import {
+  tableauAdmin,
+  urlStateAdmin,
+} from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
+import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
 import type { PpgAdminListItem } from "@/server/metadataPpg/queries/ListerPpgsAdminQuery";
-
-const FILTRES: ConfigFiltreColonne[] = [FILTRE_STATUT_REFERENTIEL];
 
 const champsRecherche = (ppg: PpgAdminListItem) => [ppg.ppgId, ppg.ppgNom];
 
-const columnHelper = createColumnHelper<
-  typeof featuresTableauAdmin,
-  PpgAdminListItem
->();
+const columnHelper = tableauAdmin.createColumnHelper<PpgAdminListItem>();
 
 const useTableColumns = () =>
   useMemo(
@@ -31,10 +28,14 @@ const useTableColumns = () =>
         columnHelper.accessor("ppgId", {
           id: "ppgId",
           header: "ID",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_ID },
         }),
         columnHelper.accessor("ppgNom", {
           id: "ppgNom",
           header: "Nom",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_NOM },
           cell: (info) => (
             <span
               className={
@@ -50,13 +51,16 @@ const useTableColumns = () =>
         columnHelper.accessor("ppgAxe", {
           id: "ppgAxe",
           header: "Axe",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_SECONDAIRE },
           cell: (info) => info.getValue() ?? "—",
         }),
         columnHelper.accessor((ppg) => statutReferentielDe(ppg.deletedAt), {
           id: "statut",
           header: "Statut",
-          enableColumnFilter: true,
-          filterFn: filterFn_arrHas,
+          enableSorting: true,
+          filterFn: filterFnOneOf,
+          meta: { filter: filtreStatutReferentiel },
           cell: (info) => (
             <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
           ),
@@ -64,21 +68,21 @@ const useTableColumns = () =>
         columnHelper.accessor("updatedAt", {
           id: "updatedAt",
           header: "Mise à jour",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_DATE },
           cell: (info) => formaterDateCourte(new Date(info.getValue())),
         }),
       ]),
     [],
   );
 
-export const useTableauAdminPpgs = (ppgs: PpgAdminListItem[]) => {
-  const columns = useTableColumns();
-  const { optionsTable, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useEtatTableauAdmin<PpgAdminListItem>({
-      filtres: FILTRES,
-      champsRecherche,
-    });
-
-  const table = useTable({ data: ppgs, columns, ...optionsTable });
-
-  return { table, aDesFiltresActifs, reinitialiserLesFiltres };
-};
+export const useTableauAdminPpgs = (ppgs: PpgAdminListItem[]) =>
+  tableauAdmin.useDataTable({
+    data: ppgs,
+    columns: useTableColumns(),
+    rowHeader: "ppgNom",
+    getRowHref: (row) =>
+      `/panel-administrateur/referentiels-deprecies/ppgs/${row.original.ppgId}`,
+    search: champsRecherche,
+    urlState: urlStateAdmin([FILTRE_STATUT_REFERENTIEL]),
+  });

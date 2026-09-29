@@ -31,6 +31,7 @@ import {
   getFichesEvaluationParDefaut,
 } from "./form";
 import { FiltresTableauEvaluation } from "./FiltresTableauEvaluation";
+import { Table } from "@/components/shared/Table";
 
 export type TableauEvaluationRow =
   | {
@@ -190,7 +191,11 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
               </div>
               <FiltresTableauEvaluation table={table} />
 
-              <table className="table-fixed w-full border-collapse">
+              <Table.Root
+                caption={titre}
+                captionHidden
+                className="table-fixed w-full border-collapse"
+              >
                 <colgroup>
                   {table.getHeaderGroups()[0].headers.map((header) => (
                     <col
@@ -202,14 +207,15 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                     />
                   ))}
                 </colgroup>
-                <tbody>
+                <Table.Body>
                   {rows.map((row) => {
                     return (
-                      <tr key={row.id}>
+                      <Table.Row key={row.id}>
                         {row.getVisibleCells().map((cell) => (
-                          <td
+                          <Table.Cell
                             className={clsxm(
-                              "border border-gray-300 px-4",
+                              "text-[length:inherit] leading-[inherit]",
+                              "border border-gray-300 px-4 md:px-4 py-0 md:py-0",
                               "first:!border-l-0 last:!border-r-0",
                               "align-top",
                               cell.column.id === "id" && "w-auto",
@@ -220,13 +226,13 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                               cell.column.columnDef.cell,
                               cell.getContext(),
                             )}
-                          </td>
+                          </Table.Cell>
                         ))}
-                      </tr>
+                      </Table.Row>
                     );
                   })}
-                </tbody>
-              </table>
+                </Table.Body>
+              </Table.Root>
             </form>
           </div>
         </FormProvider>

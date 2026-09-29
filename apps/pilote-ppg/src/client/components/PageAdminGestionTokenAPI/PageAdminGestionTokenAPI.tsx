@@ -1,7 +1,8 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { FunctionComponent } from "react";
 import { FormProvider } from "react-hook-form";
 import Titre from "@/components/_commons/Titre/Titre";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Table } from "@/components/shared/Table";
 import Bloc from "@/client/components/_commons/Bloc/Bloc";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -53,37 +54,44 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                 </form>
               </FormProvider>
               <div className="fr-container fr-mt-2w w-full">
-                <table className="fr-table fr-mb-3 fr-p-0 w-full">
-                  <thead>
-                    <tr>
-                      <th>Émail</th>
-                      <th>Date d'expiration</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <Table.Root
+                  caption="Jetons d'API"
+                  captionHidden
+                  className="w-full"
+                  containerClassName="p-0"
+                >
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.ColumnHeaderCell>Émail</Table.ColumnHeaderCell>
+                      <Table.ColumnHeaderCell>
+                        Date d'expiration
+                      </Table.ColumnHeaderCell>
+                      <Table.ColumnHeaderCell>Action</Table.ColumnHeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
                     {listeTokenAPIInformation.map((tokenAPIInformation) => (
-                      <tr key={tokenAPIInformation.email}>
-                        <td>{tokenAPIInformation.email}</td>
-                        <td>{tokenAPIInformation.dateExpiration}</td>
-                        <td>
-                          <button
+                      <Table.Row key={tokenAPIInformation.email}>
+                        <Table.Cell>{tokenAPIInformation.email}</Table.Cell>
+                        <Table.Cell>
+                          {tokenAPIInformation.dateExpiration}
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Bouton
                             aria-controls="supprimer-token"
-                            className="fr-btn"
+                            label="Supprimer le token API"
                             onClick={() =>
                               supprimerTokenAPI({
                                 email: tokenAPIInformation.email,
                               })
                             }
-                            type="button"
-                          >
-                            Supprimer le token API
-                          </button>
-                        </td>
-                      </tr>
+                            variant="primary"
+                          />
+                        </Table.Cell>
+                      </Table.Row>
                     ))}
-                  </tbody>
-                </table>
+                  </Table.Body>
+                </Table.Root>
               </div>
             </Bloc>
           </div>

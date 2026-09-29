@@ -15,6 +15,7 @@ import {
   doitAfficherPropositionAcceptee,
 } from "@/components/_commons/IndicateursChantier/Bloc/BaseLignesPropositionValeurAvancement";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import { Table } from "@/components/shared/Table";
 
 export const LignesPropositionValeurAvancementV2 = ({
   propositionEstVisible,
@@ -54,18 +55,18 @@ export const LignesPropositionValeurAvancementV2 = ({
           detailIndicateurDuTerritoire,
           datajobsExecution,
         ) ? null : (
-          <tr
+          <Table.Row
             className={clsx(
               "ligne-modification-proposition-valeur-davancement",
               {
-                "!bg-dsfr-info-950 !text-dsfr-info-main-525":
+                "bg-dsfr-info-950 text-dsfr-info-main-525":
                   estPropositionAccuseeReception(detailIndicateurDuTerritoire),
-                "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
+                "bg-dsfr-moutarde-main-975 text-dsfr-moutarde-main-679":
                   !estPropositionAccuseeReception(detailIndicateurDuTerritoire),
               },
             )}
           >
-            <td colSpan={8}>
+            <Table.Cell colSpan={8}>
               <div className="flex w-full align-center justify-end gap-4">
                 {!estPropositionAccuseeReception(
                   detailIndicateurDuTerritoire,
@@ -93,8 +94,8 @@ export const LignesPropositionValeurAvancementV2 = ({
                   territoireCode={territoireCode}
                 />
               </div>
-            </td>
-          </tr>
+            </Table.Cell>
+          </Table.Row>
         )}
       </BaseLignesPropositionValeurAvancement>
     );
@@ -113,8 +114,8 @@ export const LignesPropositionValeurAvancementV2 = ({
           detailIndicateurDuTerritoire,
           datajobsExecution,
         ) ? null : (
-          <tr className="ligne-modification-proposition-valeur-davancement !bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679">
-            <td colSpan={8}>
+          <Table.Row className="ligne-modification-proposition-valeur-davancement bg-dsfr-moutarde-main-975 text-dsfr-moutarde-main-679">
+            <Table.Cell colSpan={8}>
               <div className="flex w-full justify-end">
                 <BoutonModifierProposition />
                 <BoutonSupprimerProposition
@@ -124,8 +125,8 @@ export const LignesPropositionValeurAvancementV2 = ({
                   territoireCode={territoireCode}
                 />
               </div>
-            </td>
-          </tr>
+            </Table.Cell>
+          </Table.Row>
         )}
       </BaseLignesPropositionValeurAvancement>
     );

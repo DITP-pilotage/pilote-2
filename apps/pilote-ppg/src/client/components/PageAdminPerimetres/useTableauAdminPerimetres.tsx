@@ -1,46 +1,45 @@
-import {
-  createColumnHelper,
-  filterFn_arrHas,
-  useTable,
-} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
-  featuresTableauAdmin,
-  useEtatTableauAdmin,
-  type ConfigFiltreColonne,
-} from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
-import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
-import type { PerimetreAdminListItem } from "@/server/metadataPerimetre/queries/ListerPerimetresAdminQuery";
-
-const FILTRES: ConfigFiltreColonne[] = [
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  CLASSE_COLONNE_SECONDAIRE,
   FILTRE_STATUT_REFERENTIEL,
-  { parametre: "porteur", colonneId: "porteurId", valeursParDefaut: [] },
-];
+  filtreStatutReferentiel,
+  statutReferentielDe,
+} from "@/components/_commons/TableauAdmin/constants";
+import {
+  tableauAdmin,
+  urlStateAdmin,
+} from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
+import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
+import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
+import type { PerimetreAdminListItem } from "@/server/metadataPerimetre/queries/ListerPerimetresAdminQuery";
 
 const champsRecherche = (perimetre: PerimetreAdminListItem) => [
   perimetre.perimetreId,
   perimetre.perNom,
 ];
 
-const columnHelper = createColumnHelper<
-  typeof featuresTableauAdmin,
-  PerimetreAdminListItem
->();
+const columnHelper = tableauAdmin.createColumnHelper<PerimetreAdminListItem>();
 
-const useTableColumns = () =>
+const useTableColumns = (porteurs: PorteurAdminListItem[] | undefined) =>
   useMemo(
     () =>
       columnHelper.columns([
         columnHelper.accessor("perimetreId", {
           id: "perimetreId",
           header: "ID",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_ID },
         }),
         columnHelper.accessor("perNom", {
           id: "perNom",
           header: "Nom",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_NOM },
           cell: (info) => (
             <span
               className={
@@ -56,8 +55,21 @@ const useTableColumns = () =>
         columnHelper.accessor("porteurId", {
           id: "porteurId",
           header: "Porteur",
-          enableColumnFilter: true,
-          filterFn: filterFn_arrHas,
+          enableSorting: true,
+          filterFn: filterFnOneOf,
+          meta: {
+            cellClassName: CLASSE_COLONNE_SECONDAIRE,
+            filter: {
+              type: "multiselect",
+              label: "Porteur",
+              options: (porteurs ?? []).map((porteur) => ({
+                value: porteur.porteurId,
+                label: porteur.porteurShort,
+              })),
+              className: "max-w-fit",
+              buttonClassName: "min-w-[20rem]",
+            },
+          },
           cell: (info) => info.row.original.porteurShort ?? "-",
           sortFn: (rowA, rowB) =>
             (rowA.original.porteurShort ?? "").localeCompare(
@@ -69,8 +81,9 @@ const useTableColumns = () =>
           {
             id: "statut",
             header: "Statut",
-            enableColumnFilter: true,
-            filterFn: filterFn_arrHas,
+            enableSorting: true,
+            filterFn: filterFnOneOf,
+            meta: { filter: filtreStatutReferentiel },
             cell: (info) => (
               <BadgeStatutReferentiel
                 supprimé={info.getValue() === "SUPPRIME"}
@@ -81,23 +94,27 @@ const useTableColumns = () =>
         columnHelper.accessor("updatedAt", {
           id: "updatedAt",
           header: "Mise à jour",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_DATE },
           cell: (info) => formaterDateCourte(new Date(info.getValue())),
         }),
       ]),
-    [],
+    [porteurs],
   );
 
 export const useTableauAdminPerimetres = (
   perimetres: PerimetreAdminListItem[],
-) => {
-  const columns = useTableColumns();
-  const { optionsTable, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useEtatTableauAdmin<PerimetreAdminListItem>({
-      filtres: FILTRES,
-      champsRecherche,
-    });
-
-  const table = useTable({ data: perimetres, columns, ...optionsTable });
-
-  return { table, aDesFiltresActifs, reinitialiserLesFiltres };
-};
+  porteurs: PorteurAdminListItem[] | undefined,
+) =>
+  tableauAdmin.useDataTable({
+    data: perimetres,
+    columns: useTableColumns(porteurs),
+    rowHeader: "perNom",
+    getRowHref: (row) =>
+      `/panel-administrateur/referentiels/perimetres/${row.original.perimetreId}`,
+    search: champsRecherche,
+    urlState: urlStateAdmin([
+      FILTRE_STATUT_REFERENTIEL,
+      { param: "porteur", columnId: "porteurId" },
+    ]),
+  });

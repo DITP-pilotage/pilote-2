@@ -5,12 +5,10 @@ import {
   columnGroupingFeature,
   columnVisibilityFeature,
   constructAggregationFn,
-  createColumnHelper,
   createExpandedRowModel,
   createFilteredRowModel,
   createGroupedRowModel,
   createPaginatedRowModel,
-  createSortedRowModel,
   ExpandedState,
   globalFilteringFeature,
   GroupingState,
@@ -19,20 +17,12 @@ import {
   rowPaginationFeature,
   rowSortingFeature,
   tableFeatures,
-  useTable,
 } from "@tanstack/react-table";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
-import {
-  parseAsBoolean,
-  parseAsInteger,
-  parseAsString,
-  useQueryState,
-  useQueryStates,
-} from "nuqs";
+import { ChangeEvent, useMemo, useState } from "react";
+import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
 import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
 import { calculerMoyenne } from "@/client/utils/statistiques/statistiques";
-import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
@@ -44,12 +34,17 @@ import { Icone } from "@/components/_commons/Icone";
 import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { clsxm } from "@/utils/clsxm";
+import {
+  type AppFeatures,
+  createDataTableHook,
+} from "@/components/shared/DataTable/createDataTableHook";
+import { TRI_CHANTIERS_PAR_DEFAUT } from "@/server/chantiers/app/contrats/TriChantiers";
+import { LIBELLES_TRI_CHANTIERS } from "./libellesTriChantiers";
 import TableauChantiersProps, {
   DonnéesTableauChantiers,
 } from "./TableauChantiers.interface";
 import TableauChantiersTuileChantier from "./Tuile/Chantier/TableauChantiersTuileChantier";
 import TableauChantiersTuileMinistère from "./Tuile/Ministère/TableauChantiersTuileMinistère";
-import TableauChantiersTuileMinistèreProps from "./Tuile/Ministère/TableauChantiersTuileMinistère.interface";
 
 const features = tableFeatures({
   columnFilteringFeature,
@@ -65,19 +60,17 @@ const features = tableFeatures({
     sum: aggregationFn_sum,
   },
   filteredRowModel: createFilteredRowModel(),
-  sortedRowModel: createSortedRowModel(),
   groupedRowModel: createGroupedRowModel(),
   expandedRowModel: createExpandedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
 });
 
-const reactTableColonnesHelper = createColumnHelper<
-  typeof features,
-  DonnéesTableauChantiers
->();
+const accueilChantiers = createDataTableHook(features);
+const reactTableColonnesHelper =
+  accueilChantiers.createColumnHelper<DonnéesTableauChantiers>();
 
 const moyenneAvancementDesChantiers = constructAggregationFn<
-  typeof features,
+  AppFeatures<typeof features>,
   DonnéesTableauChantiers,
   number | null,
   number | null
@@ -86,49 +79,14 @@ const moyenneAvancementDesChantiers = constructAggregationFn<
     calculerMoyenne(rows.map((chantierRow) => chantierRow.original.avancement)),
 });
 
-const ministèrePorteurDesChantiers = constructAggregationFn<
-  typeof features,
-  DonnéesTableauChantiers,
-  unknown,
-  TableauChantiersTuileMinistèreProps["ministère"]
->({
-  aggregate: ({ rows }) => ({
-    nom: rows[0].original.porteur?.nom ?? "",
-    icône: rows[0].original.porteur?.icône ?? null,
-    avancement: calculerMoyenne(
-      rows.map((chantierRow) => chantierRow.original.avancement),
-    ),
-  }),
-});
-
 export const useTableauChantiers = (
   données: TableauChantiersProps["données"],
   ministèresDisponibles: Ministère[],
   nombreTotalChantiersAvecAlertes: number,
   chantiersSontArchives: boolean,
   jalon: number,
+  territoireCode: string,
 ) => {
-  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState(
-    "q",
-    parseAsString.withDefault("").withOptions({
-      shallow: false,
-      clearOnDefault: true,
-      history: "push",
-      throttleMs: 200,
-    }),
-  );
-
-  const [pagination, setPagination] = useQueryStates(
-    {
-      pageIndex: parseAsInteger.withDefault(1),
-      pageSize: parseAsInteger.withDefault(50),
-    },
-    {
-      history: "push",
-      shallow: false,
-    },
-  );
-
   const [estGroupe] = useQueryState(
     "groupeParMinistere",
     parseAsBoolean.withDefault(false),
@@ -138,8 +96,6 @@ export const useTableauChantiers = (
     ministèresDisponibles.length > 1 && estGroupe ? ["porteur"] : [];
 
   const [expanded, setExpanded] = useState<ExpandedState>(true);
-
-  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("lg");
 
   const colonnesTableauChantiers = useMemo(
     () =>
@@ -182,7 +138,6 @@ export const useTableauChantiers = (
                 {cellContext.getValue()}
               </div>
             ),
-          enableSorting: false,
           enableGrouping: false,
           meta: {
             width: "20rem",
@@ -198,14 +153,12 @@ export const useTableauChantiers = (
             </div>
           ),
           id: "typologie",
-          enableSorting: false,
           cell: (cellContext) => (
             <TypologiesPictos typologies={cellContext.getValue()} />
           ),
           enableGrouping: false,
           meta: {
             width: "6.5rem",
-            tabIndex: -1,
           },
         }),
         reactTableColonnesHelper.accessor("météo", {
@@ -231,13 +184,7 @@ export const useTableauChantiers = (
           enableGrouping: false,
           meta: {
             width: "8rem",
-            tabIndex: -1,
           },
-        }),
-        reactTableColonnesHelper.accessor("dateDeMàjDonnéesQualitatives", {
-          id: "dateDeMàjDonnéesQualitatives",
-          cell: (cellContext) => cellContext.getValue(),
-          enableGrouping: false,
         }),
         reactTableColonnesHelper.accessor("tendance", {
           header: () => (
@@ -258,7 +205,6 @@ export const useTableauChantiers = (
           enableGrouping: false,
           meta: {
             width: "9rem",
-            tabIndex: -1,
           },
         }),
         reactTableColonnesHelper.accessor("avancement", {
@@ -294,13 +240,7 @@ export const useTableauChantiers = (
           ),
           meta: {
             width: "8rem",
-            tabIndex: -1,
           },
-        }),
-        reactTableColonnesHelper.accessor("dateDeMàjDonnéesQuantitatives", {
-          id: "dateDeMàjDonnéesQuantitatives",
-          cell: (cellContext) => cellContext.getValue(),
-          enableGrouping: false,
         }),
         reactTableColonnesHelper.accessor("écart", {
           header: () => (
@@ -322,121 +262,128 @@ export const useTableauChantiers = (
           aggregatedCell: () => null,
           meta: {
             width: "4.5rem",
-            tabIndex: -1,
           },
         }),
         reactTableColonnesHelper.display({
           id: "dérouler-groupe",
-          aggregatedCell: (aggregatedCellContext) => (
-            <button
-              className={clsxm(
-                chantiersSontArchives ? "!text-dsfr-grey-925" : "!text-primary",
-              )}
-              type="button"
-            >
-              {aggregatedCellContext.row.getIsExpanded() ? (
-                <Icone className="!text-current" icone={ArrowSLineIcon} />
-              ) : (
-                <Icone className="!text-current" icone={ArrowSLine2Icon} />
-              )}
-            </button>
-          ),
+          header: () => <span className="sr-only">Déplier le groupe</span>,
+          aggregatedCell: (aggregatedCellContext) => {
+            const estDéroulé = aggregatedCellContext.row.getIsExpanded();
+            const ministère =
+              aggregatedCellContext.row.original.porteur?.nom ?? "";
+            return (
+              <button
+                aria-expanded={estDéroulé}
+                className={clsxm(
+                  "after:absolute after:inset-0 after:content-['']",
+                  chantiersSontArchives
+                    ? "!text-dsfr-grey-925"
+                    : "!text-primary",
+                )}
+                onClick={aggregatedCellContext.row.getToggleExpandedHandler()}
+                type="button"
+              >
+                <span className="sr-only">
+                  {`${estDéroulé ? "Replier" : "Déplier"} ${ministère}`}
+                </span>
+                <Icone
+                  className="!text-current"
+                  icone={estDéroulé ? ArrowSLineIcon : ArrowSLine2Icon}
+                />
+              </button>
+            );
+          },
           meta: {
             width: "3.5rem",
-            tabIndex: -1,
+            label: "Déplier le groupe",
           },
-        }),
-        reactTableColonnesHelper.display({
-          id: "chantier-tuile",
-          cell: (chantierCellContext) => (
-            <TableauChantiersTuileChantier
-              afficherIcône={
-                !chantierCellContext.table.getColumn("porteur")?.getIsGrouped()
-              }
-              chantier={chantierCellContext.row.original}
-              chantiersSontArchives={chantiersSontArchives}
-            />
-          ),
-          aggregatedCell: (aggregatedCellContext) => (
-            <TableauChantiersTuileMinistère
-              estArchive={chantiersSontArchives}
-              estDéroulé={aggregatedCellContext.row.getIsExpanded()}
-              ministère={aggregatedCellContext.getValue<
-                TableauChantiersTuileMinistèreProps["ministère"]
-              >()}
-            />
-          ),
-          aggregationFn: ministèrePorteurDesChantiers,
-          maxAggregationDepth: Infinity,
-          enableSorting: false,
-          enableGrouping: false,
         }),
       ]),
     [chantiersSontArchives, jalon],
   );
 
-  const tableau = useTable({
-    features,
-    data: données,
-    columns: colonnesTableauChantiers,
-    state: {
-      pagination,
-      grouping: regroupement,
-      expanded,
-      columnVisibility: estVueTuile
-        ? {
-            porteur: false,
-            nom: false,
-            météo: false,
-            dateDeMàjDonnéesQualitatives: false,
-            avancement: false,
-            dateDeMàjDonnéesQuantitatives: false,
-            typologie: false,
-            tendance: false,
-            écart: false,
-            "dérouler-groupe": false,
-          }
-        : {
-            porteur: false,
-            "chantier-tuile": false,
-            dateDeMàjDonnéesQualitatives: false,
-            dateDeMàjDonnéesQuantitatives: false,
-            "dérouler-groupe": estGroupe,
-          },
-    },
-    manualPagination: true,
-    onPaginationChange: setPagination,
-    pageCount:
-      nombreTotalChantiersAvecAlertes % 10 === 0
-        ? Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize)
-        : Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) + 1,
-    autoResetExpanded: false,
-    onExpandedChange: setExpanded,
-  });
-
-  const changementDeLaRechercheCallback = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setPagination({
-        pageIndex: 1,
-      });
-      setValeurDeLaRecherche(event.target.value);
-    },
-    [setPagination, setValeurDeLaRecherche],
+  const [mailleSelectionnee] = useQueryState(
+    "maille",
+    parseAsStringLiteral(["departementale", "regionale"]).withDefault(
+      "departementale",
+    ),
   );
 
+  const table = accueilChantiers.useDataTable({
+    data: données,
+    columns: colonnesTableauChantiers,
+    rowHeader: "nom",
+    getRowHref: (row) => {
+      const mailleRedirection =
+        !row.original.maillesApplicables.includes("departementale") &&
+        row.original.maillesApplicables.includes("regionale")
+          ? "regionale"
+          : mailleSelectionnee;
+      return `/chantier/${row.original.id}/${territoireCode}?maille=${mailleRedirection}&jalon=${jalon}`;
+    },
+    tile: (row) =>
+      row.getIsGrouped() ? (
+        <button
+          aria-expanded={row.getIsExpanded()}
+          className="w-full text-left"
+          onClick={row.getToggleExpandedHandler()}
+          type="button"
+        >
+          <TableauChantiersTuileMinistère
+            estArchive={chantiersSontArchives}
+            estDéroulé={row.getIsExpanded()}
+            ministère={{
+              nom: row.original.porteur?.nom ?? "",
+              icône: row.original.porteur?.icône ?? null,
+              avancement: calculerMoyenne(
+                row.getLeafRows().map((feuille) => feuille.original.avancement),
+              ),
+            }}
+          />
+        </button>
+      ) : (
+        <TableauChantiersTuileChantier
+          afficherIcône={regroupement.length === 0}
+          chantier={row.original}
+          chantiersSontArchives={chantiersSontArchives}
+        />
+      ),
+    tileBreakpoint: "lg",
+    tileLabel: (row) => row.original.nom ?? "",
+    manualPagination: true,
+    manualSorting: true,
+    enableSorting: false,
+    manualFiltering: true,
+    rowCount: nombreTotalChantiersAvecAlertes,
+    autoResetExpanded: false,
+    onExpandedChange: setExpanded,
+    state: {
+      grouping: regroupement,
+      expanded,
+      columnVisibility: {
+        porteur: false,
+        "dérouler-groupe": estGroupe,
+      },
+    },
+    urlState: {
+      sorting: {
+        default: [TRI_CHANTIERS_PAR_DEFAUT],
+        labels: LIBELLES_TRI_CHANTIERS,
+      },
+      pagination: { pageSize: 50 },
+      globalFilter: true,
+      shallow: false,
+      history: "push",
+      throttleMs: 200,
+    },
+  });
+
   return {
-    tableau,
-    changementDeLaRechercheCallback,
-    valeurDeLaRecherche,
-    estVueTuile,
+    table,
+    changementDeLaRechercheCallback: (event: ChangeEvent<HTMLInputElement>) =>
+      table.setGlobalFilter(event.target.value),
+    valeurDeLaRecherche: table.store.state.globalFilter ?? "",
   };
 };
 
-/**
- * Le tableau des chantiers enregistre regroupement, agrégation et expansion, qui
- * débordent du jeu minimal de `TableauDe`. Les composants de présentation qui lui
- * sont propres s'appuient donc sur son type concret.
- */
-export type TableauDesChantiers = ReturnType<
-  typeof useTableauChantiers
->["tableau"];
+export type ChantiersTable = ReturnType<typeof useTableauChantiers>["table"];

@@ -1,10 +1,11 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { parseAsString, useQueryStates } from "nuqs";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Titre from "@/components/_commons/Titre/Titre";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { MultiSelectTerritoire } from "@/components/_commons/MultiSelectNew/MultiSelectTerritoire/MultiSelectTerritoire";
 import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelectNew/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier";
@@ -55,11 +56,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
         ].includes(profil.code),
       );
 
-  const [, setPagination] = useQueryStates(
-    {
-      pageIndex: parseAsInteger.withDefault(1),
-      pageSize: parseAsInteger.withDefault(20),
-    },
+  const [, setPage] = useQueryStates(
+    { page: parseAsTablePage },
     {
       history: "push",
       shallow: false,
@@ -92,9 +90,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
         .join(",")
         .localeCompare(listeValues.filter(Boolean).sort().join(","))
     ) {
-      setPagination({
-        pageIndex: 1,
-      });
+      setPage({ page: null });
       setFiltres({ [idFiltre]: listeValues.filter(Boolean).join(",") });
     }
   };

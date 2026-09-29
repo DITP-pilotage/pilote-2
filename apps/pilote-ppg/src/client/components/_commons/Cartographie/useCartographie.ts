@@ -98,7 +98,7 @@ export default function useCartographie(
       code = "NAT-FR";
     }
 
-    delete router.query.pageIndex;
+    delete router.query.page;
 
     if (listeTerritoiresCompares.includes(territoireCodeSelectionnee)) {
       listeTerritoiresCompares.splice(

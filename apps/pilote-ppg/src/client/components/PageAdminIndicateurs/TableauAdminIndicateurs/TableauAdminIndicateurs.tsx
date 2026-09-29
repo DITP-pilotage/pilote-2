@@ -3,22 +3,18 @@ import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/Ta
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Loader from "@/components/_commons/Loader/Loader";
 import Titre from "@/components/_commons/Titre/Titre";
-import TableauEnTête from "@/components/_commons/Tableau/EnTête/TableauEnTête";
-import TableauAdminIndicateursContenu from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu";
-import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauPagination";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
 const TableauAdminIndicateurs: FunctionComponent = () => {
   const {
-    tableau,
+    table,
     file,
     alerte,
     définirLeFichier,
     verifierLeFichier,
     estEnChargement,
-    changementDePageCallback,
     changementDeLaRechercheCallback,
     valeurDeLaRecherche,
     exporterLesIndicateurs,
@@ -75,8 +71,8 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
                   baliseHtml="h2"
                   className="fr-h4 fr-mb-0 fr-text-title--blue-france"
                 >
-                  {tableau.getFilteredRowModel().rows.length}{" "}
-                  {tableau.getFilteredRowModel().rows.length > 1
+                  {table.getFilteredRowModel().rows.length}{" "}
+                  {table.getFilteredRowModel().rows.length > 1
                     ? "indicateurs"
                     : "indicateur"}
                 </Titre>
@@ -84,29 +80,30 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
               <div className="fr-col-12 fr-col-md-6 flex justify-center min-[576px]:justify-start min-[1050px]:justify-end">
                 <button
                   className="fr-btn fr-text"
-                  disabled={tableau.getFilteredRowModel().rows.length === 0}
+                  disabled={table.getFilteredRowModel().rows.length === 0}
                   onClick={exporterLesIndicateurs}
                   title="Export les indicateurs"
                   type="button"
                 >
                   Exporter{" "}
-                  {`${tableau.getFilteredRowModel().rows.length === 1 ? "l'indicateur" : `les ${tableau.getFilteredRowModel().rows.length} indicateurs`}`}
+                  {`${table.getFilteredRowModel().rows.length === 1 ? "l'indicateur" : `les ${table.getFilteredRowModel().rows.length} indicateurs`}`}
                 </button>
               </div>
             </div>
           </div>
-          <div className="fr-table">
-            <table className="tableau table fr-m-0 fr-p-0 w-full">
-              <caption className="fr-sr-only">Tableau des indicateurs</caption>
-              <TableauEnTête tableau={tableau} />
-              <TableauAdminIndicateursContenu tableau={tableau} />
-            </table>
-            <TableauPagination
-              changementDePageCallback={changementDePageCallback}
-              nombreDePages={tableau.getPageCount()}
-              numéroDePageInitiale={1}
+          <table.Root
+            caption="Tableau des indicateurs"
+            captionHidden
+            className="m-0 p-0 w-full"
+          >
+            <table.Header cellClassName="p-2 md:p-2 max-[49rem]:text-xs" />
+            <table.Body
+              cellClassName="p-2 md:p-2 max-w-[20px] overflow-hidden text-ellipsis whitespace-nowrap"
+              cellTitle
+              rowClassName="even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
             />
-          </div>
+          </table.Root>
+          <table.Pagination />
         </>
       )}
     </section>

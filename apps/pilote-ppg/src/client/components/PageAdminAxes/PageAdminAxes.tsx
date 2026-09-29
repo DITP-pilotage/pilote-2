@@ -1,22 +1,7 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
-import { FiltresTableauAdmin } from "@/components/_commons/TableauAdmin/FiltresTableauAdmin";
-import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
-import { useFiltreColonne } from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import {
-  CLASSE_COLONNE_DATE,
-  CLASSE_COLONNE_ID,
-  CLASSE_COLONNE_NOM,
-  OPTIONS_STATUT_REFERENTIEL,
-} from "@/components/_commons/TableauAdmin/constants";
 import { useTableauAdminAxes } from "./useTableauAdminAxes";
-
-const CLASSES_COLONNES = {
-  axeId: CLASSE_COLONNE_ID,
-  axeName: CLASSE_COLONNE_NOM,
-  updatedAt: CLASSE_COLONNE_DATE,
-};
 
 const LIBELLES = {
   aucun: "Aucun axe",
@@ -25,11 +10,8 @@ const LIBELLES = {
 
 const PageAdminAxes = () => {
   const { data: axes, isLoading } = api.metadataAxe.lister.useQuery();
-  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useTableauAdminAxes(axes ?? []);
+  const table = useTableauAdminAxes(axes ?? []);
   const nombreAxesFiltres = table.getFilteredRowModel().rows.length;
-
-  const [valeursStatut, setValeursStatut] = useFiltreColonne(table, "statut");
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -54,25 +36,7 @@ const PageAdminAxes = () => {
         </div>
 
         <TableauAdmin
-          aDesFiltresActifs={aDesFiltresActifs}
-          classesColonnes={CLASSES_COLONNES}
-          filtres={
-            <FiltresTableauAdmin
-              aDesFiltresActifs={aDesFiltresActifs}
-              reinitialiserLesFiltres={reinitialiserLesFiltres}
-              table={table}
-            >
-              <GroupeCasesACocher
-                label="Statut :"
-                onChange={setValeursStatut}
-                options={OPTIONS_STATUT_REFERENTIEL}
-                values={valeursStatut}
-              />
-            </FiltresTableauAdmin>
-          }
-          hrefLigne={(axe) =>
-            `/panel-administrateur/referentiels-deprecies/axes/${axe.axeId}`
-          }
+          caption="Liste des axes"
           isLoading={isLoading}
           libelles={LIBELLES}
           table={table}

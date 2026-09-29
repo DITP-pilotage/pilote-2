@@ -1,5 +1,6 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent, useCallback } from "react";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
@@ -25,8 +26,8 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
     }),
   );
   const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
+    "page",
+    parseAsTablePage.withOptions({
       shallow: false,
     }),
   );
@@ -55,7 +56,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
           arrPerimetreFiltre.push(périmètre.id),
         );
       }
-      setPagination(1);
+      setPagination(null);
       sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
       return setPerimetres(arrPerimetreFiltre.join(","));
     },
@@ -71,7 +72,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
       } else {
         arrPerimetreFiltre.push(périmètre.id);
       }
-      setPagination(1);
+      setPagination(null);
       sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
       return setPerimetres(arrPerimetreFiltre.join(","));
     },

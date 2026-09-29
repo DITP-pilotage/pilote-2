@@ -1,14 +1,4 @@
-import {
-  columnFilteringFeature,
-  columnGroupingFeature,
-  columnVisibilityFeature,
-  createColumnHelper,
-  globalFilteringFeature,
-  rowExpandingFeature,
-  rowSortingFeature,
-  tableFeatures,
-  useTable,
-} from "@tanstack/react-table";
+import { tableFeatures } from "@tanstack/react-table";
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
 import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
@@ -16,28 +6,14 @@ import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
+import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
+import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import RapportDétailléTableauChantiersProps from "./RapportDétailléTableauChantiers.interface";
 
-/**
- * Le tableau n'expose aucun modèle de lignes dérivé : il affiche les chantiers
- * tels quels. Les features restent néanmoins nécessaires, car les colonnes
- * déclarent `enableSorting`, `enableGlobalFilter` et `enableGrouping`, et le
- * contenu appelle `getVisibleCells`, `getIsGrouped` et
- * `getToggleExpandedHandler` sur chaque ligne.
- */
-export const featuresTableauChantiers = tableFeatures({
-  columnFilteringFeature,
-  globalFilteringFeature,
-  columnGroupingFeature,
-  columnVisibilityFeature,
-  rowExpandingFeature,
-  rowSortingFeature,
-});
+const rapportDétailléTableauChantiers = createDataTableHook(tableFeatures({}));
 
-const reactTableColonnesHelper = createColumnHelper<
-  typeof featuresTableauChantiers,
-  DonnéesTableauChantiers
->();
+const reactTableColonnesHelper =
+  rapportDétailléTableauChantiers.createColumnHelper<DonnéesTableauChantiers>();
 
 export default function useRapportDétailléTableauChantiers(
   données: RapportDétailléTableauChantiersProps["données"],
@@ -58,7 +34,6 @@ export default function useRapportDétailléTableauChantiers(
           {cellContext.getValue()}
         </div>
       ),
-      enableSorting: false,
       meta: {
         width: "auto",
       },
@@ -67,7 +42,6 @@ export default function useRapportDétailléTableauChantiers(
     reactTableColonnesHelper.accessor("typologie", {
       header: "Typologie",
       id: "typologie",
-      enableSorting: false,
       cell: (cellContext) => (
         <TypologiesPictos typologies={cellContext.getValue()} />
       ),
@@ -87,7 +61,6 @@ export default function useRapportDétailléTableauChantiers(
           météo={cellContext.getValue()}
         />
       ),
-      enableGlobalFilter: false,
       meta: {
         width: "8rem",
       },
@@ -95,14 +68,12 @@ export default function useRapportDétailléTableauChantiers(
     reactTableColonnesHelper.accessor("tendance", {
       header: "Tendance",
       id: "tendance",
-      enableSorting: false,
       cell: (cellContext) => (
         <BadgeTendance
           estArchive={chantiersSontArchives}
           tendance={cellContext.getValue()}
         />
       ),
-      enableGrouping: false,
       meta: {
         width: "7.5rem",
       },
@@ -119,7 +90,6 @@ export default function useRapportDétailléTableauChantiers(
           estArchive={chantiersSontArchives}
         />
       ),
-      enableGlobalFilter: false,
       meta: {
         width: "11rem",
       },
@@ -127,23 +97,22 @@ export default function useRapportDétailléTableauChantiers(
     reactTableColonnesHelper.accessor("écart", {
       header: "Écart",
       id: "écart",
-      enableSorting: false,
       cell: (cellContext) => (
         <TableauChantiersEcart ecart={cellContext.getValue()} />
       ),
-      enableGrouping: false,
       meta: {
         width: "5.5rem",
       },
     }),
   ]);
-  const tableau = useTable({
-    features: featuresTableauChantiers,
+  const table = rapportDétailléTableauChantiers.useDataTable({
     data: données,
     columns: colonnesTableauChantiers,
+    rowHeader: "nom",
+    getRowHref: (row) => `#${htmlId.chantier(row.original.id)}`,
   });
 
   return {
-    tableau,
+    table,
   };
 }

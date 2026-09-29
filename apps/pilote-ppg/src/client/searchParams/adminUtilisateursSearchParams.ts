@@ -1,21 +1,16 @@
-import { z } from "zod";
 import {
   createLoader,
   parseAsArrayOf,
   parseAsInteger,
-  parseAsJson,
   parseAsString,
   parseAsStringLiteral,
 } from "nuqs/server";
+import { TAILLE_DEFAUT_PAGINATION_UTILISATEUR } from "@/client/constants/constantes";
 import {
-  PAGE_INDEX_DEFAUT,
-  TAILLE_DEFAUT_PAGINATION_UTILISATEUR,
-} from "@/client/constants/constantes";
+  parseAsSorting,
+  parseAsTablePage,
+} from "@/components/shared/DataTable/urlParsers";
 import { profilsCodes } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-
-const sortingArraySchema = z.array(
-  z.object({ id: z.string(), desc: z.boolean() }),
-);
 
 export const loadAdminUtilisateursSearchParams = createLoader({
   chantiers: parseAsArrayOf(parseAsString).withDefault([]),
@@ -27,9 +22,9 @@ export const loadAdminUtilisateursSearchParams = createLoader({
   typeCompte: parseAsArrayOf(
     parseAsStringLiteral(["actif", "desactive"]),
   ).withDefault(["actif", "desactive"]),
-  pageIndex: parseAsInteger.withDefault(PAGE_INDEX_DEFAUT),
+  page: parseAsTablePage,
   pageSize: parseAsInteger.withDefault(TAILLE_DEFAUT_PAGINATION_UTILISATEUR),
-  sort: parseAsJson(sortingArraySchema.parse).withDefault([
+  sort: parseAsSorting.withDefault([
     { id: "Dernière modification", desc: true },
   ]),
   q: parseAsString.withDefault(""),

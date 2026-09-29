@@ -1,28 +1,22 @@
-import {
-  createColumnHelper,
-  filterFn_arrHas,
-  useTable,
-} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
-  featuresTableauAdmin,
-  useEtatTableauAdmin,
-  type ConfigFiltreColonne,
-} from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
-import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  FILTRE_STATUT_REFERENTIEL,
+  filtreStatutReferentiel,
+  statutReferentielDe,
+} from "@/components/_commons/TableauAdmin/constants";
+import {
+  tableauAdmin,
+  urlStateAdmin,
+} from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
+import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
 import type { AxeAdminListItem } from "@/server/metadataAxe/queries/ListerAxesAdminQuery";
 
-const FILTRES: ConfigFiltreColonne[] = [FILTRE_STATUT_REFERENTIEL];
-
-const champsRecherche = (axe: AxeAdminListItem) => [axe.axeId, axe.axeName];
-
-const columnHelper = createColumnHelper<
-  typeof featuresTableauAdmin,
-  AxeAdminListItem
->();
+const columnHelper = tableauAdmin.createColumnHelper<AxeAdminListItem>();
 
 const useTableColumns = () =>
   useMemo(
@@ -31,10 +25,14 @@ const useTableColumns = () =>
         columnHelper.accessor("axeId", {
           id: "axeId",
           header: "ID",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_ID },
         }),
         columnHelper.accessor("axeName", {
           id: "axeName",
           header: "Nom",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_NOM },
           cell: (info) => (
             <span
               className={
@@ -50,8 +48,9 @@ const useTableColumns = () =>
         columnHelper.accessor((axe) => statutReferentielDe(axe.deletedAt), {
           id: "statut",
           header: "Statut",
-          enableColumnFilter: true,
-          filterFn: filterFn_arrHas,
+          enableSorting: true,
+          filterFn: filterFnOneOf,
+          meta: { filter: filtreStatutReferentiel },
           cell: (info) => (
             <BadgeStatutReferentiel supprimé={info.getValue() === "SUPPRIME"} />
           ),
@@ -59,21 +58,21 @@ const useTableColumns = () =>
         columnHelper.accessor("updatedAt", {
           id: "updatedAt",
           header: "Mise à jour",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_DATE },
           cell: (info) => formaterDateCourte(new Date(info.getValue())),
         }),
       ]),
     [],
   );
 
-export const useTableauAdminAxes = (axes: AxeAdminListItem[]) => {
-  const columns = useTableColumns();
-  const { optionsTable, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useEtatTableauAdmin<AxeAdminListItem>({
-      filtres: FILTRES,
-      champsRecherche,
-    });
-
-  const table = useTable({ data: axes, columns, ...optionsTable });
-
-  return { table, aDesFiltresActifs, reinitialiserLesFiltres };
-};
+export const useTableauAdminAxes = (axes: AxeAdminListItem[]) =>
+  tableauAdmin.useDataTable({
+    data: axes,
+    columns: useTableColumns(),
+    rowHeader: "axeName",
+    getRowHref: (row) =>
+      `/panel-administrateur/referentiels-deprecies/axes/${row.original.axeId}`,
+    search: (axe) => [axe.axeId, axe.axeName],
+    urlState: urlStateAdmin([FILTRE_STATUT_REFERENTIEL]),
+  });

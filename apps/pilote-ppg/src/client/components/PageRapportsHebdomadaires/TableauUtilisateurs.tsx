@@ -1,4 +1,4 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
+import { Table } from "@/components/shared/Table";
 import api from "@/server/infrastructure/api/trpc/api";
 import { type CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
@@ -14,27 +14,31 @@ export const TableauUtilisateurs = ({
   );
 
   return (
-    <div className="fr-table fr-mb-0 fr-pt-0">
-      <table className="table">
-        <thead className="bg-dsfr-blue-france-925">
-          <tr>
-            <th>Prénom</th>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Profil</th>
-          </tr>
-        </thead>
-        <tbody className="bg-transparent">
-          {comptes.map((compte) => (
-            <tr key={compte.email}>
-              <td>{compte.prenom}</td>
-              <td>{compte.nom}</td>
-              <td>{compte.email}</td>
-              <td>{profilParCode.get(compte.profil) ?? compte.profil}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table.Root
+      caption="Utilisateurs concernés par le rapport"
+      captionHidden
+      containerClassName="mb-0 pt-0"
+    >
+      <Table.Header>
+        <Table.Row>
+          <Table.ColumnHeaderCell>Prénom</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Nom</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Profil</Table.ColumnHeaderCell>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body className="bg-transparent">
+        {comptes.map((compte) => (
+          <Table.Row key={compte.email}>
+            <Table.Cell>{compte.prenom}</Table.Cell>
+            <Table.Cell>{compte.nom}</Table.Cell>
+            <Table.Cell>{compte.email}</Table.Cell>
+            <Table.Cell>
+              {profilParCode.get(compte.profil) ?? compte.profil}
+            </Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table.Root>
   );
 };

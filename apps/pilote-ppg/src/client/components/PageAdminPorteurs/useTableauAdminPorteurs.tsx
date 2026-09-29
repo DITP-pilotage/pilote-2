@@ -1,19 +1,20 @@
-import {
-  createColumnHelper,
-  filterFn_arrHas,
-  useTable,
-} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { $Enums } from "@prisma/client";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
-  featuresTableauAdmin,
-  useEtatTableauAdmin,
-  type ConfigFiltreColonne,
-} from "@/components/_commons/TableauAdmin/useEtatTableauAdmin";
-import { FILTRE_STATUT_REFERENTIEL } from "@/components/_commons/TableauAdmin/constants";
-import { statutReferentielDe } from "@/components/_commons/TableauAdmin/utils";
+  CLASSE_COLONNE_DATE,
+  CLASSE_COLONNE_ID,
+  CLASSE_COLONNE_NOM,
+  FILTRE_STATUT_REFERENTIEL,
+  filtreStatutReferentiel,
+  statutReferentielDe,
+} from "@/components/_commons/TableauAdmin/constants";
+import {
+  tableauAdmin,
+  urlStateAdmin,
+} from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
+import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
 import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
 export const TYPE_BADGE: Record<
@@ -38,14 +39,9 @@ export const TYPE_BADGE: Record<
   },
 };
 
-export const OPTIONS_TYPE_PORTEUR = Object.entries(TYPE_BADGE).map(
+const OPTIONS_TYPE_PORTEUR = Object.entries(TYPE_BADGE).map(
   ([valeur, { label }]) => ({ valeur, label }),
 );
-
-const FILTRES: ConfigFiltreColonne[] = [
-  FILTRE_STATUT_REFERENTIEL,
-  { parametre: "type", colonneId: "porteurType", valeursParDefaut: [] },
-];
 
 const champsRecherche = (porteur: PorteurAdminListItem) => [
   porteur.porteurId,
@@ -53,10 +49,7 @@ const champsRecherche = (porteur: PorteurAdminListItem) => [
   porteur.porteurName,
 ];
 
-const columnHelper = createColumnHelper<
-  typeof featuresTableauAdmin,
-  PorteurAdminListItem
->();
+const columnHelper = tableauAdmin.createColumnHelper<PorteurAdminListItem>();
 
 const useTableColumns = () =>
   useMemo(
@@ -65,14 +58,20 @@ const useTableColumns = () =>
         columnHelper.accessor("porteurId", {
           id: "porteurId",
           header: "ID",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_ID },
         }),
         columnHelper.accessor("porteurShort", {
           id: "porteurShort",
           header: "Sigle",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_NOM },
         }),
         columnHelper.accessor("porteurName", {
           id: "porteurName",
           header: "Nom",
+          enableSorting: true,
+          meta: { cellClassName: "text-gray-700" },
           cell: (info) => (
             <span
               className={
@@ -88,8 +87,18 @@ const useTableColumns = () =>
         columnHelper.accessor("porteurType", {
           id: "porteurType",
           header: "Type",
-          enableColumnFilter: true,
-          filterFn: filterFn_arrHas,
+          enableSorting: true,
+          filterFn: filterFnOneOf,
+          meta: {
+            filter: {
+              type: "checkboxes",
+              label: "Type :",
+              options: OPTIONS_TYPE_PORTEUR.map((option) => ({
+                value: option.valeur,
+                label: option.label,
+              })),
+            },
+          },
           cell: (info) => {
             const type = info.getValue();
             const typeBadge =
@@ -110,8 +119,9 @@ const useTableColumns = () =>
           {
             id: "statut",
             header: "Statut",
-            enableColumnFilter: true,
-            filterFn: filterFn_arrHas,
+            enableSorting: true,
+            filterFn: filterFnOneOf,
+            meta: { filter: filtreStatutReferentiel },
             cell: (info) => (
               <BadgeStatutReferentiel
                 supprimé={info.getValue() === "SUPPRIME"}
@@ -122,21 +132,24 @@ const useTableColumns = () =>
         columnHelper.accessor("updatedAt", {
           id: "updatedAt",
           header: "Mise à jour",
+          enableSorting: true,
+          meta: { cellClassName: CLASSE_COLONNE_DATE },
           cell: (info) => formaterDateCourte(new Date(info.getValue())),
         }),
       ]),
     [],
   );
 
-export const useTableauAdminPorteurs = (porteurs: PorteurAdminListItem[]) => {
-  const columns = useTableColumns();
-  const { optionsTable, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useEtatTableauAdmin<PorteurAdminListItem>({
-      filtres: FILTRES,
-      champsRecherche,
-    });
-
-  const table = useTable({ data: porteurs, columns, ...optionsTable });
-
-  return { table, aDesFiltresActifs, reinitialiserLesFiltres };
-};
+export const useTableauAdminPorteurs = (porteurs: PorteurAdminListItem[]) =>
+  tableauAdmin.useDataTable({
+    data: porteurs,
+    columns: useTableColumns(),
+    rowHeader: "porteurName",
+    getRowHref: (row) =>
+      `/panel-administrateur/referentiels/porteurs/${row.original.porteurId}`,
+    search: champsRecherche,
+    urlState: urlStateAdmin([
+      FILTRE_STATUT_REFERENTIEL,
+      { param: "type", columnId: "porteurType" },
+    ]),
+  });

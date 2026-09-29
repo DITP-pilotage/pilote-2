@@ -3,7 +3,6 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import { IndicateurDétails } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
@@ -22,6 +21,7 @@ import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChant
 import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { useIndicateurBloc } from "./useIndicateurBloc";
+import { Table } from "@/components/shared/Table";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
@@ -188,67 +188,64 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
             {estVueTuile ? (
               <IndicateurBlocIndicateurTuile />
             ) : (
-              <table className="fr-table w-full border-collapse fr-mb-0">
-                <caption className="fr-sr-only">
-                  Un tableau de l'indicateur :'
-                </caption>
-                <thead className="fr-background-transparent text-center">
-                  <tr>
-                    <th className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w" />
-                    <th className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm" />
-                    <th
-                      className="fr-background-contrast-grey border-b border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
+              <Table.Root
+                caption={`Tableau de l'indicateur : ${indicateur.nom}`}
+                captionHidden
+                className="w-full border-collapse"
+                containerClassName="mb-0"
+              >
+                <Table.Header className="bg-transparent text-center">
+                  <Table.Row>
+                    <Table.Cell className="mb-0 p-2 pl-4 md:p-2 md:py-2 md:pl-4" />
+                    <Table.Cell className="mb-0 !text-sm p-0 md:p-0 md:py-2" />
+                    <Table.ColumnHeaderCell
+                      className="bg-dsfr-contrast-grey border-b border-b-high-grey text-center mb-0 !text-sm bold p-0 md:p-0 md:py-2"
                       colSpan={3}
                     >
                       <div className="flex align-center justify-center">
-                        <span className="fr-pr-1v">
-                          DONNÉES À ÉCHÉANCE {jalon}
-                        </span>
+                        <span className="pr-1">DONNÉES À ÉCHÉANCE {jalon}</span>
                       </div>
-                    </th>
-                  </tr>
-                  <tr className="border-b border-b-high-grey">
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold no-wrap">
+                    </Table.ColumnHeaderCell>
+                  </Table.Row>
+                  <Table.Row className="border-b border-b-high-grey">
+                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm bold no-wrap px-2 md:py-2 md:px-2 border-b-0">
                       Territoire(s)
-                    </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur initiale
-                    </th>
-                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur d'avancement
-                    </th>
-                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur cible
-                    </th>
-                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
                       taux d'avancement
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-none">
-                  <tr
-                    className="bg-transparent"
-                    key={détailTerritoireSélectionné.nomAffiché}
-                  >
-                    <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w !text-sm bold text-primary min-h-8 align-top">
+                    </Table.ColumnHeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  <Table.Row key={détailTerritoireSélectionné.nomAffiché}>
+                    <Table.RowHeaderCell className="mb-0 !text-sm bold text-primary min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
                       {détailTerritoireSélectionné.nomAffiché}
-                    </td>
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center min-h-8 align-top">
+                    </Table.RowHeaderCell>
+                    <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurInitiale}
                         unité={detailIndicateurDuTerritoire.unite}
                         valeur={detailIndicateurDuTerritoire.valeurInitiale}
                       />
-                    </td>
+                    </Table.Cell>
                     {/* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center min-h-8 align-top">
+                    <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurAvancement}
                         unité={detailIndicateurDuTerritoire.unite}
                         valeur={detailIndicateurDuTerritoire.valeurAvancement}
                       />
-                    </td>
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center min-h-8 align-top">
+                    </Table.Cell>
+                    <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                       <ValeurEtDate
                         date={
                           detailIndicateurDuTerritoire.dateValeurCibleAnnuelle
@@ -258,8 +255,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           detailIndicateurDuTerritoire.valeurCibleAnnuelle
                         }
                       />
-                    </td>
-                    <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm flex min-h-8 align-top">
+                    </Table.Cell>
+                    <Table.Cell className="mb-0 !text-sm flex min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
                       <BarreDeProgression
                         afficherTexte
                         fond="gris-clair"
@@ -275,8 +272,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         valeur={detailIndicateurDuTerritoire.avancement.annuel}
                         variante="secondaire"
                       />
-                    </td>
-                  </tr>
+                    </Table.Cell>
+                  </Table.Row>
                   {détailTerritoireSélectionné.code === territoireCode ? (
                     !(
                       estAutoriseAProposerUneValeurAvancement &&
@@ -301,14 +298,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         <Fragment
                           key={informationIndicateurComparé.territoireNom}
                         >
-                          <tr
+                          <Table.Row
                             className="border-t border-t-dsfr-grey-625 bg-transparent"
                             key={informationIndicateurComparé.territoireNom}
                           >
-                            <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w !text-sm fr-text-title--light-blue-france min-h-8 align-top">
+                            <Table.RowHeaderCell className="mb-0 !text-sm text-dsfr-flat-info min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
                               {informationIndicateurComparé.territoireNom}
-                            </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center min-h-8 align-top">
+                            </Table.RowHeaderCell>
+                            <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -322,8 +319,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .valeurInitiale
                                 }
                               />
-                            </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center min-h-8 align-top">
+                            </Table.Cell>
+                            <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -337,8 +334,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .valeurAvancement
                                 }
                               />
-                            </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center min-h-8 align-top">
+                            </Table.Cell>
+                            <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -352,8 +349,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .valeurCibleAnnuelle
                                 }
                               />
-                            </td>
-                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm min-h-8 align-top">
+                            </Table.Cell>
+                            <Table.Cell className="mb-0 !text-sm min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
                               <BarreDeProgression
                                 afficherTexte
                                 fond="gris-clair"
@@ -365,14 +362,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                                 variante="secondaire-light"
                               />
-                            </td>
-                          </tr>
+                            </Table.Cell>
+                          </Table.Row>
                         </Fragment>
                       ) : null;
                     },
                   )}
-                </tbody>
-              </table>
+                </Table.Body>
+              </Table.Root>
             )}
             <IndicateurDétails
               cartographieDroiteIndicateur={cartographieDroiteIndicateur}

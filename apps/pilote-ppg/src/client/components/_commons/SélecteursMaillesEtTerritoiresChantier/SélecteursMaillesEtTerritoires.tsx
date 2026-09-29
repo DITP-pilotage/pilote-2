@@ -96,7 +96,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<
       delete router.query.estEnAlerteTauxAvancementNonCalculé;
       delete router.query.estEnAlerteÉcart;
     }
-    delete router.query.pageIndex;
+    delete router.query.page;
     delete router.query._action;
 
     const { maille } = territoireCodeVersMailleCodeInsee(

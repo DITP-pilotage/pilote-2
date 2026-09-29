@@ -1,19 +1,7 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
-import {
-  CLASSE_COLONNE_DATE,
-  CLASSE_COLONNE_ID,
-  CLASSE_COLONNE_NOM,
-} from "@/components/_commons/TableauAdmin/constants";
 import { useTableauAdminChantiers } from "./useTableauAdminChantiers";
-import { FiltresAdminChantiers } from "./FiltresAdminChantiers";
-
-const CLASSES_COLONNES = {
-  chantierId: CLASSE_COLONNE_ID,
-  chNom: CLASSE_COLONNE_NOM,
-  updatedAt: CLASSE_COLONNE_DATE,
-};
 
 const LIBELLES = {
   aucun: "Aucun chantier",
@@ -26,8 +14,7 @@ const PageAdminChantiers = () => {
   const { data: chantiers, isLoading } = api.metadataChantier.lister.useQuery();
   const { data: perimetres } = api.metadataChantier.listerPerimetres.useQuery();
 
-  const { table, aDesFiltresActifs, reinitialiserLesFiltres } =
-    useTableauAdminChantiers(chantiers ?? []);
+  const table = useTableauAdminChantiers(chantiers ?? [], perimetres);
   const nombreChantiersFiltres = table.getFilteredRowModel().rows.length;
 
   return (
@@ -56,19 +43,7 @@ const PageAdminChantiers = () => {
         </div>
 
         <TableauAdmin
-          aDesFiltresActifs={aDesFiltresActifs}
-          classesColonnes={CLASSES_COLONNES}
-          filtres={
-            <FiltresAdminChantiers
-              aDesFiltresActifs={aDesFiltresActifs}
-              perimetres={perimetres ?? []}
-              reinitialiserLesFiltres={reinitialiserLesFiltres}
-              table={table}
-            />
-          }
-          hrefLigne={(chantier) =>
-            `/panel-administrateur/chantiers/${chantier.chantierId}`
-          }
+          caption="Liste des chantiers"
           isLoading={isLoading}
           libelles={LIBELLES}
           table={table}

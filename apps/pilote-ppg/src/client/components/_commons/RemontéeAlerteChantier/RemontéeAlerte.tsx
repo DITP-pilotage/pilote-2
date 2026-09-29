@@ -1,4 +1,5 @@
-import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
+import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
@@ -25,8 +26,8 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({
     }),
   );
   const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
+    "page",
+    parseAsTablePage.withOptions({
       shallow: false,
     }),
   );
@@ -39,7 +40,7 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({
       )}
       disabled={nombre === null}
       onClick={() => {
-        setPagination(1);
+        setPagination(null);
         sauvegarderFiltres({ [nomCritère]: !filtreAlerte });
         setFiltreAlerte(!filtreAlerte);
       }}

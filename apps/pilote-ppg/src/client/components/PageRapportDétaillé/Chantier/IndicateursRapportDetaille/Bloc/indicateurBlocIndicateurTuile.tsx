@@ -2,6 +2,7 @@ import { FunctionComponent } from "react";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { formaterDate } from "@/client/utils/date/date";
 import { IndicateurDétailsParTerritoire } from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface";
+import { Table } from "@/components/shared/Table";
 
 interface IndicateurDétailsParTerritoireProps {
   indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire;
@@ -28,21 +29,27 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
 
   return (
     <div>
-      <table className="fr-p-0 fr-pb-2w table overflow-hidden bg-white">
-        <thead className="bg-dsfr-blue-france-925 bg-none">
-          <tr>
-            <th className="fr-py-1v rounded-tl-lg">Territoire</th>
-            <th className="fr-py-1v rounded-tr-lg">
+      <Table.Root
+        caption={`Indicateur pour ${indicateurDétailsParTerritoire.territoireNom}`}
+        captionHidden
+        className="p-0 pb-4 table overflow-hidden bg-white"
+      >
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeaderCell className="py-1 md:py-1 border-b-0">
+              Territoire
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="py-1 md:py-1 border-b-0">
               {indicateurDétailsParTerritoire.territoireNom}
-            </th>
-          </tr>
-        </thead>
-        <tbody className="[&_tr]:!bg-[unset]">
-          <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <Table.Row>
+            <Table.RowHeaderCell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               Valeur initiale
-            </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
+            </Table.RowHeaderCell>
+            <Table.Cell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {valeurInitiale !== null && valeurInitiale !== undefined
                   ? valeurInitiale?.toLocaleString() + unitéAffichée
@@ -53,13 +60,13 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   ({formaterDate(dateValeurInitiale, "MM/YYYY")})
                 </span>
               )}
-            </td>
-          </tr>
-          <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
+            </Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.RowHeaderCell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               Valeur d'avancement
-            </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
+            </Table.RowHeaderCell>
+            <Table.Cell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {valeurAvancement !== null && valeurAvancement !== undefined
                   ? valeurAvancement?.toLocaleString() + unitéAffichée
@@ -70,15 +77,15 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   ({formaterDate(dateValeurAvancement, "MM/YYYY")})
                 </span>
               )}
-            </td>
-          </tr>
-          <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
+            </Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.RowHeaderCell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier"
                 ? "Cible " + new Date().getFullYear().toString()
                 : "Cible"}
-            </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
+            </Table.RowHeaderCell>
+            <Table.Cell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {valeurCibleAnnuelle !== null &&
                 valeurCibleAnnuelle !== undefined
@@ -90,15 +97,15 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   ({formaterDate(dateValeurCibleAnnuelle, "MM/YYYY")})
                 </span>
               )}
-            </td>
-          </tr>
-          <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
+            </Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.RowHeaderCell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier"
                 ? "Avancement " + new Date().getFullYear().toString()
                 : "Avancement"}
-            </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5 min-h-8 align-top">
+            </Table.RowHeaderCell>
+            <Table.Cell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 leading-5 min-h-8 align-top">
               <BarreDeProgression
                 afficherTexte
                 fond="gris-clair"
@@ -107,13 +114,13 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                 valeur={avancement.annuel}
                 variante={typeDeRéforme === "chantier" ? "secondaire" : "rose"}
               />
-            </td>
-          </tr>
-          <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
+            </Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.RowHeaderCell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier" ? "Cible 2026" : "Cible"}
-            </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
+            </Table.RowHeaderCell>
+            <Table.Cell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {Boolean(valeurCible)
                   ? valeurCible?.toLocaleString() + unitéAffichée
@@ -124,13 +131,13 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   ({formaterDate(dateValeurCible, "MM/YYYY")})
                 </span>
               )}
-            </td>
-          </tr>
-          <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
+            </Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.RowHeaderCell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier" ? "Avancement 2026" : "Avancement"}
-            </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5 min-h-8 align-top">
+            </Table.RowHeaderCell>
+            <Table.Cell className="pt-2 pb-0 pr-0 md:pt-2 md:pb-0 md:pr-0 leading-5 min-h-8 align-top">
               <BarreDeProgression
                 afficherTexte
                 fond="gris-clair"
@@ -139,10 +146,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                 valeur={avancement.global}
                 variante={typeDeRéforme === "chantier" ? "primaire" : "rose"}
               />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
     </div>
   );
 };
