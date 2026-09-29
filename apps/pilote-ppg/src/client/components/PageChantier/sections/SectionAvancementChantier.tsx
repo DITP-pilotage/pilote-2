@@ -4,18 +4,11 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { AvancementChantierWidget } from "@/components/PageChantier/AvancementChantierWidget/AvancementChantierWidget";
-import { useEnv } from "@/client/hooks/useEnv";
 import { BasePageChantierSection } from "./BasePageChantierSection";
 
 const useInfobulle = () => {
   const { indicateurPondérations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
-  const ffInfobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
-
-  if (!ffInfobullePonderation) {
-    return null;
-  }
-
   if (indicateurPondérations.length === 0) {
     return INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(
       territoireSélectionné.maille,

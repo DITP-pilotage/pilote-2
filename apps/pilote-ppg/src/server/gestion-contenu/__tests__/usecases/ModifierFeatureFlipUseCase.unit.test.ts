@@ -16,8 +16,8 @@ describe("ModifierFeatureFlipUseCase", () => {
   it("doit mettre à jour uniquement les clés autorisées", async () => {
     // Given
     const featureFlips = {
-      NEXT_PUBLIC_FF_ALERTES: true,
-      NEXT_PUBLIC_FF_ALERTES_BAISSE: false,
+      NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: true,
+      NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: false,
     } as const;
 
     // When
@@ -28,11 +28,11 @@ describe("ModifierFeatureFlipUseCase", () => {
       2,
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenCalledWith(
-      "NEXT_PUBLIC_FF_ALERTES",
+      "NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS",
       true,
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenCalledWith(
-      "NEXT_PUBLIC_FF_ALERTES_BAISSE",
+      "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
       false,
     );
   });
@@ -40,7 +40,7 @@ describe("ModifierFeatureFlipUseCase", () => {
   it("doit ignorer les clés qui ne font pas partie des feature flips autorisés", async () => {
     // Given - clé inventée qui ne fait pas partie de FEATURE_FLIP_KEYS
     const featureFlips = {
-      NEXT_PUBLIC_FF_ALERTES: true,
+      NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: true,
       CLE_INCONNUE: true,
     } as Record<string, boolean>;
 
@@ -52,7 +52,7 @@ describe("ModifierFeatureFlipUseCase", () => {
       1,
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenCalledWith(
-      "NEXT_PUBLIC_FF_ALERTES",
+      "NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS",
       true,
     );
   });

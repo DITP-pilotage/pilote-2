@@ -155,25 +155,10 @@ const config = convict({
     env: "CONN_STR_DEST",
   },
   featureFlip: {
-    infobullePonderation: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_INFOBULLE_PONDERATION",
-    },
     limiteCaracteresPublication: {
       format: Number,
       default: 6000,
       env: "NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION",
-    },
-    alertes: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_ALERTES",
-    },
-    alertesBaisse: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ALERTES_BAISSE",
     },
     applicationIndisponible: {
       format: Boolean,

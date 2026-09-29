@@ -4,9 +4,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE: boolean;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TEXTE: string;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE: string;
-  NEXT_PUBLIC_FF_INFOBULLE_PONDERATION: boolean;
-  NEXT_PUBLIC_FF_ALERTES: boolean;
-  NEXT_PUBLIC_FF_ALERTES_BAISSE: boolean;
   NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: boolean;
   NEXT_PUBLIC_FF_FICHE_CONDUCTEUR: boolean;
   NEXT_PUBLIC_FF_GESTION_TOKEN_API: boolean;
@@ -56,17 +53,6 @@ interface FeatureFlipDefinition {
 
 /** Source unique de vérité pour tous les feature flips */
 const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
-  {
-    envKey: "NEXT_PUBLIC_FF_INFOBULLE_PONDERATION",
-    configKey: "infobullePonderation",
-    label: "Infobulle pondération",
-  },
-  { envKey: "NEXT_PUBLIC_FF_ALERTES", configKey: "alertes", label: "Alertes" },
-  {
-    envKey: "NEXT_PUBLIC_FF_ALERTES_BAISSE",
-    configKey: "alertesBaisse",
-    label: "Alertes baisse",
-  },
   {
     envKey: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
     configKey: "applicationIndisponible",

@@ -11,7 +11,6 @@ import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/Pé
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ppg from "@/server/domain/ppg/Ppg.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
-import { useEnv } from "@/client/hooks/useEnv";
 
 interface PremièrePageImpressionRapportDétailléProps {
   territoireSélectionné: DétailTerritoire | null;
@@ -28,7 +27,6 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
   ministères,
   axes,
 }) => {
-  const ffAlertes = useEnv("NEXT_PUBLIC_FF_ALERTES");
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(""),
     axes: parseAsString.withDefault(""),
@@ -219,7 +217,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
               </ul>
             </li>
           )}
-          {ffAlertes && filtresAlertes.length > 0 && (
+          {filtresAlertes.length > 0 && (
             <li className="pb-0">
               <span className="fr-text--bold text-[1.3rem] leading-7">
                 Alerte(s) sélectionnée(s)

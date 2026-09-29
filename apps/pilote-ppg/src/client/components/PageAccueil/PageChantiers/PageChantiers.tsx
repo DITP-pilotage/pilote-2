@@ -72,7 +72,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   jalonParDefaut,
   moyenneTerritoire,
 }) => {
-  const ffAlertesBaisse = useEnv("NEXT_PUBLIC_FF_ALERTES_BAISSE");
   const featureComparaisonTerritoires = useEnv(
     "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
   );
@@ -273,17 +272,16 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
               {remontéesAlertes.map(
-                ({ nomCritère, libellé, nombre, estActivée }) =>
-                  (ffAlertesBaisse || nomCritère !== "estEnAlerteBaisse") && (
-                    <div key={libellé} title={libellé}>
-                      <RemontéeAlerte
-                        estActivée={estActivée}
-                        libellé={libellé}
-                        nomCritère={nomCritère}
-                        nombre={nombre}
-                      />
-                    </div>
-                  ),
+                ({ nomCritère, libellé, nombre, estActivée }) => (
+                  <div key={libellé} title={libellé}>
+                    <RemontéeAlerte
+                      estActivée={estActivée}
+                      libellé={libellé}
+                      nomCritère={nomCritère}
+                      nombre={nombre}
+                    />
+                  </div>
+                ),
               )}
             </div>
           </div>
