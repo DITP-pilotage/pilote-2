@@ -36,11 +36,11 @@ export const Infobulle: FunctionComponent<
 
   return (
     <Popover.Root onOpenChange={setEstOuverte} open={estOuverte}>
-      <Popover.Anchor className="relative inline-flex">
+      <Popover.Anchor className="relative inline-flex items-center">
         <button
           aria-describedby={estOuverte ? idContenu : undefined}
           className={clsxm(
-            "flex justify-center align-center !text-primary",
+            "inline-flex items-center justify-center rounded-full !p-0 !text-primary transition-opacity hover:!bg-transparent hover:opacity-75",
             classNameBouton,
           )}
           onBlur={fermer}

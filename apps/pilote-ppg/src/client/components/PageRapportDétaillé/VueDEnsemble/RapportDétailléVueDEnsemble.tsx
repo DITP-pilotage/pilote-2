@@ -67,10 +67,10 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
       <div className="fr-mt-3w grid grid-cols-1 gap-6 min-[62rem]:grid-cols-2 print:grid-cols-2 print:break-inside-avoid">
         <Bloc>
           <section>
-            <TitreInfobulleConteneur>
+            <TitreInfobulleConteneur className="fr-mb-2w">
               <Titre
                 baliseHtml="h2"
-                className="fr-text--lg fr-mb-2w fr-py-1v"
+                className="fr-text--lg fr-mb-0 fr-py-1v"
                 estInline
               >
                 Taux d'avancement moyen

@@ -60,10 +60,10 @@ export const PageFicheTerritoriale: FunctionComponent<
               <div className="fiche-territoriale__avancement--moyen fr-mb-1w">
                 <Bloc>
                   <div className="flex flex-column align-center">
-                    <TitreInfobulleConteneur>
+                    <TitreInfobulleConteneur className="fr-mb-2w">
                       <Titre
                         baliseHtml="h2"
-                        className="fr-text--md fr-mb-2w fr-py-1v"
+                        className="fr-text--md fr-mb-0 fr-py-1v"
                         estInline
                       >
                         Taux d'avancement moyen
