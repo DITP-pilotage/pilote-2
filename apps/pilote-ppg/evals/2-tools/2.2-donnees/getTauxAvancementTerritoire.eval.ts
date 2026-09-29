@@ -1,5 +1,5 @@
-import type { ToolCase } from "../types";
-import { toolSelectionEval } from "./toolSelectionEval";
+import type { ToolCase } from "../../types";
+import { toolSelectionEval } from "../toolSelectionEval";
 
 /**
  * Niveau 2 — `get_taux_avancement_territoire`.
