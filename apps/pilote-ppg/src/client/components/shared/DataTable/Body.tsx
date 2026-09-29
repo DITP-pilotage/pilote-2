@@ -27,10 +27,11 @@ const ABOVE_ROW_LINK =
 function renderCellContent(
   cell: AnyCell,
   isGroupRow: boolean,
+  canExpand: boolean,
   renderGroupCell: DataTableBodyProps["renderGroupCell"],
 ) {
   const row = cell.row;
-  if (isGroupRow && cell.getIsGrouped()) {
+  if (isGroupRow && canExpand && cell.getIsGrouped()) {
     return (
       <button
         aria-expanded={row.getIsExpanded()}
@@ -68,6 +69,7 @@ function DataTableRow({
   const { rowHeader, getRowHref } = getDataTableConfig(table);
   const isGroupRow =
     hasFeature(table, "columnGroupingFeature") && row.getIsGrouped();
+  const canExpand = hasFeature(table, "rowExpandingFeature");
   const href = isGroupRow ? undefined : getRowHref?.(row);
 
   return (
@@ -79,7 +81,12 @@ function DataTableRow({
     >
       {row.getVisibleCells().map((cell: AnyCell) => {
         const meta = getColumnMeta(cell.column);
-        const content = renderCellContent(cell, isGroupRow, renderGroupCell);
+        const content = renderCellContent(
+          cell,
+          isGroupRow,
+          canExpand,
+          renderGroupCell,
+        );
         const value = cellTitle ? cell.getValue() : undefined;
         const title =
           typeof value === "string" || typeof value === "number"

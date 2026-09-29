@@ -43,9 +43,14 @@ function ColumnFilter({ column }: { column: AnyColumn }) {
       }
       label={filter.label}
       onChange={onChange}
-      optionGroups={[
-        { label: "", options: filter.options.map((option) => option.value) },
-      ]}
+      optionGroups={
+        filter.groups?.map((group) => ({
+          label: group.label,
+          options: group.values,
+        })) ?? [
+          { label: "", options: filter.options.map((option) => option.value) },
+        ]
+      }
       showGroupSelection={false}
       values={values}
     />

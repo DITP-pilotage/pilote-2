@@ -17,6 +17,7 @@ export type FilterDescriptor =
       type: "multiselect";
       label: string;
       options: FilterOption[];
+      groups?: { label: string; values: string[] }[];
       className?: string;
       buttonClassName?: string;
     };
