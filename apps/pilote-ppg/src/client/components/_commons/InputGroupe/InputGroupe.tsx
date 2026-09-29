@@ -1,3 +1,4 @@
+import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import { FunctionComponent, useId, useRef } from "react";
 import { useSession } from "next-auth/react";
 import InputGroupeProps from "@/components/_commons/InputGroupe/InputGroupe.interface";

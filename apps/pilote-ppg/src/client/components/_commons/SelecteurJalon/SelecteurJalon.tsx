@@ -1,3 +1,4 @@
+import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import { FunctionComponent } from "react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useSelecteurJalon } from "./useSelecteurJalon";

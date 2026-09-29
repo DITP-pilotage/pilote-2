@@ -1,3 +1,4 @@
+import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import { FunctionComponent, useId, useRef } from "react";
 import MultiSelectProps from "@/components/_commons/MultiSelect/MultiSelect.interface";
 import MultiSelectGroupe from "@/components/_commons/MultiSelect/MultiSelectGroupe";
