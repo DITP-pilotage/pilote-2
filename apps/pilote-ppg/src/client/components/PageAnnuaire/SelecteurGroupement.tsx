@@ -6,19 +6,20 @@ export function SelecteurGroupement<T extends string>({
   valeur,
   onChange,
 }: {
-  options: readonly { value: T; label: string }[];
+  options: readonly { value: T; label: string; aide: string }[];
   valeur: T;
   onChange: (valeur: T) => void;
 }) {
   const libelleId = useId();
+  const aide = options.find((option) => option.value === valeur)?.aide;
   return (
     <div
       aria-labelledby={libelleId}
-      className="flex items-center gap-2 text-sm"
+      className="flex flex-wrap items-center gap-3 border-b border-dsfr-grey-925 bg-white px-6 py-3 text-sm"
       role="group"
     >
-      <span className="font-semibold" id={libelleId}>
-        Grouper par :
+      <span className="font-medium text-dsfr-grey-200" id={libelleId}>
+        Regrouper par
       </span>
       <div className="flex flex-wrap items-center gap-2">
         {options.map((option) => (
@@ -32,6 +33,7 @@ export function SelecteurGroupement<T extends string>({
           </ButtonTag>
         ))}
       </div>
+      {aide && <span className="text-dsfr-mention-grey">{aide}</span>}
     </div>
   );
 }

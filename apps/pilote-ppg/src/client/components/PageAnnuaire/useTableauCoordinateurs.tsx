@@ -21,8 +21,16 @@ import {
 import { tuileAnnuaire } from "./tuileAnnuaire";
 
 export const REGROUPEMENTS_COORDINATEURS = [
-  { value: "territoire", label: "Territoire" },
-  { value: "coordinateur", label: "Coordinateur" },
+  {
+    value: "territoire",
+    label: "Territoire",
+    aide: "Une ligne par territoire, avec tous ses coordinateurs.",
+  },
+  {
+    value: "coordinateur",
+    label: "Coordinateur",
+    aide: "Une ligne par coordinateur, avec tous ses territoires.",
+  },
 ] as const;
 
 export type RegroupementCoordinateurs =

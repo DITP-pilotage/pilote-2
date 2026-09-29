@@ -91,6 +91,12 @@ export const comparerChantiersPuisTerritoires = (
   collator.compare(gauche.chantier.id, droite.chantier.id) ||
   comparerTerritoires(gauche.territoire, droite.territoire);
 
+export const pluriel = (
+  nombre: number,
+  singulier: string,
+  plurielMot: string,
+) => `${nombre} ${nombre > 1 ? plurielMot : singulier}`;
+
 export const nomComplet = (personne: PersonneAnnuaire) =>
   `${personne.prenom} ${personne.nom}`;
 

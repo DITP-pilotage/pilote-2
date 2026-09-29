@@ -23,8 +23,16 @@ import {
 import { tuileAnnuaire } from "./tuileAnnuaire";
 
 export const REGROUPEMENTS_RESPONSABLES = [
-  { value: "couple", label: "Chantier et territoire" },
-  { value: "responsable", label: "Responsable" },
+  {
+    value: "couple",
+    label: "Chantier et territoire",
+    aide: "Une ligne par couple chantier – territoire, avec tous ses responsables.",
+  },
+  {
+    value: "responsable",
+    label: "Responsable",
+    aide: "Une ligne par responsable, avec tous ses chantiers et territoires.",
+  },
 ] as const;
 
 export type RegroupementResponsables =

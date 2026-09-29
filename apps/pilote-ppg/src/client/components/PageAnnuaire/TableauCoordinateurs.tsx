@@ -1,6 +1,7 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { SelecteurGroupement } from "./SelecteurGroupement";
+import { TableauAnnuaire } from "./TableauAnnuaire";
+import { pluriel } from "./lignesAnnuaire";
 import {
   REGROUPEMENTS_COORDINATEURS,
   useTableauCoordinateurs,
@@ -9,23 +10,29 @@ import {
 export function TableauCoordinateurs() {
   const { data, isLoading } = api.annuaire.coordinateurs.useQuery();
   const { table, regroupement } = useTableauCoordinateurs(data);
+  const nombrePersonnes = new Set(
+    table.getFilteredRowModel().rows.map((ligne) => ligne.original.personne.id),
+  ).size;
 
   return (
-    <div className="flex flex-col gap-4">
-      <SelecteurGroupement
-        onChange={(valeur) => table.setGrouping([valeur])}
-        options={REGROUPEMENTS_COORDINATEURS}
-        valeur={regroupement}
-      />
-      <TableauAdmin
-        caption="Coordinateurs PILOTE"
-        isLoading={isLoading}
-        libelles={{
-          aucun: "Aucun coordinateur",
-          aucunResultat: "Aucun coordinateur ne correspond à",
-        }}
-        table={table}
-      />
-    </div>
+    <TableauAnnuaire
+      caption="Coordinateurs PILOTE"
+      isLoading={isLoading}
+      libelleAucun="Aucun coordinateur"
+      libelleResultats={pluriel(
+        nombrePersonnes,
+        "coordinateur",
+        "coordinateurs",
+      )}
+      placeholderRecherche="Territoire, nom, e-mail…"
+      selecteurGroupement={
+        <SelecteurGroupement
+          onChange={(valeur) => table.setGrouping([valeur])}
+          options={REGROUPEMENTS_COORDINATEURS}
+          valeur={regroupement}
+        />
+      }
+      table={table}
+    />
   );
 }

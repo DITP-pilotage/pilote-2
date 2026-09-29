@@ -8,6 +8,13 @@ const ONGLETS = [
   { value: "responsables", label: "Responsables locaux" },
 ] as const;
 
+const DESCRIPTIONS = {
+  coordinateurs:
+    "Interlocuteurs PILOTE de chaque région et de chaque département. Un territoire peut avoir plusieurs coordinateurs, et un coordinateur plusieurs territoires.",
+  responsables:
+    "Personnes habilitées en responsabilité sur un chantier pour une région ou un département. Un couple chantier – territoire peut compter plusieurs responsables.",
+};
+
 type Onglet = (typeof ONGLETS)[number]["value"];
 
 const VALEURS_ONGLETS = ONGLETS.map((onglet) => onglet.value);
@@ -44,11 +51,13 @@ const PageAnnuaire = () => {
   });
 
   return (
-    <div className="min-h-screen bg-dsfr-alt-blue-france">
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-dsfr-grey-50">Annuaire</h1>
-          <p className="!mb-0 mt-1 text-dsfr-grey-200">
+        <div className="mb-6 flex flex-col gap-2">
+          <h1 className="!mb-0 text-3xl font-bold tracking-tight text-dsfr-grey-50">
+            Annuaire
+          </h1>
+          <p className="!mb-0 max-w-3xl text-base text-dsfr-grey-200">
             Retrouvez les coordinateurs PILOTE de chaque territoire et les
             responsables locaux de chaque chantier.
           </p>
@@ -65,7 +74,10 @@ const PageAnnuaire = () => {
           }}
           value={onglet}
         >
-          <div className="mt-6">
+          <p className="!mb-0 mt-4 text-sm text-dsfr-mention-grey">
+            {DESCRIPTIONS[onglet]}
+          </p>
+          <div className="mt-4">
             {onglet === "coordinateurs" ? (
               <TableauCoordinateurs />
             ) : (
