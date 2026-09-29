@@ -15,7 +15,7 @@ import {
   statutBrouillonEtPublie,
   statutPublie,
 } from "@/client/constants/statut";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { clsxm } from "@/utils/clsxm";
 
 type AvailableFiltres = "statut";

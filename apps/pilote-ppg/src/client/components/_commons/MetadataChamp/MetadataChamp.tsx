@@ -7,7 +7,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import Input from "@/components/_commons/Input/Input";
 import TextArea from "@/components/_commons/TextArea/TextArea";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";

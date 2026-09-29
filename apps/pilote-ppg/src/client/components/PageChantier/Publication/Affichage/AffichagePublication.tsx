@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Publication } from "@/components/PageChantier/Publication/Publication.interface";

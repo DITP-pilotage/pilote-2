@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";

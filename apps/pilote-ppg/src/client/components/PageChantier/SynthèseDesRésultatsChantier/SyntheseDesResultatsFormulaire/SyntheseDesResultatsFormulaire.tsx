@@ -22,7 +22,7 @@ import {
   CONSIGNE_SYNTHÈSE_DES_RÉSULTATS,
   LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS,
 } from "@/client/constants/libellesSyntheseDesResultats";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { extractVisibleText } from "@/utils/extractVisibleText";
 import { SelecteurMeteo } from "./SelecteurMeteo";

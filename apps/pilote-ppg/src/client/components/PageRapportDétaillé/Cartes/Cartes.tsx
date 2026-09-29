@@ -5,7 +5,7 @@ import CartographieMétéo from "@/components/_commons/Cartographie/Cartographie
 import Titre from "@/components/_commons/Titre/Titre";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import { AvancementsGlobauxTerritoriauxMoyensContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";

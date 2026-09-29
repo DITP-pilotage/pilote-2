@@ -27,7 +27,7 @@ import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChan
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import infobulles from "@/client/constants/infobulles";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import { Icone } from "@/components/_commons/Icone";

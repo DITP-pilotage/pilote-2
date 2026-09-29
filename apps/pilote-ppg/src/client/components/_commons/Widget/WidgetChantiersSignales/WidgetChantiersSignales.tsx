@@ -9,7 +9,7 @@ import { clsxm } from "@/utils/clsxm";
 import api from "@/server/infrastructure/api/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";

@@ -8,7 +8,7 @@ import { BoutonImpression } from "@/components/_commons/BoutonImpression/BoutonI
 import { AvancementsFicheTerritoriale } from "@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import RépartitionMétéo from "@/components/_commons/RépartitionMétéo/RépartitionMétéo";
 import { TableauFicheTerritoriale } from "@/components/PageFicheTerritoriale/TableauFicheTerritoriale";

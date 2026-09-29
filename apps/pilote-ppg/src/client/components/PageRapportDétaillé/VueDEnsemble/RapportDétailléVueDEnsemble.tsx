@@ -9,7 +9,7 @@ import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import RemontéeAlerte from "@/components/_commons/RemontéeAlerte/RemontéeAlerte";
 import {

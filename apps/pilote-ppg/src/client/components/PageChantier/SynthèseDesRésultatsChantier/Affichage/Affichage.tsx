@@ -3,7 +3,7 @@ import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/Boutons
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
