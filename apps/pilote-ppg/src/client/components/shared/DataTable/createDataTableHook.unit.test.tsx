@@ -1,10 +1,17 @@
 import { screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import {
+  createPaginatedRowModel,
   createSortedRowModel,
+  rowPaginationFeature,
   rowSortingFeature,
   tableFeatures,
 } from "@tanstack/react-table";
+import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
+import {
+  renderHook as renderHookWithoutUrl,
+  waitFor,
+} from "@testing-library/react";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
 import { render, renderHook } from "@/components/shared/DataTable/testUtils";
 
@@ -68,6 +75,17 @@ function TableauMinimal() {
     </table.Root>
   );
 }
+
+const avecPagination = createDataTableHook(
+  tableFeatures({
+    rowPaginationFeature,
+    paginatedRowModel: createPaginatedRowModel(),
+  }),
+);
+const colonnesAvecPagination = (() => {
+  const helper = avecPagination.createColumnHelper<Chantier>();
+  return helper.columns([helper.accessor("nom", { header: "Nom" })]);
+})();
 
 const lignesDuCorps = (tableau: HTMLElement) =>
   within(tableau)
@@ -169,5 +187,28 @@ describe("createDataTableHook", () => {
     rerender();
 
     expect(result.current.Root).toBe(premierRoot);
+  });
+
+  it("revient sur la dernière page existante quand la page de l'URL la dépasse", async () => {
+    const { result, rerender } = renderHookWithoutUrl(
+      ({ data }: { data: Chantier[] }) =>
+        avecPagination.useDataTable({
+          data,
+          columns: colonnesAvecPagination,
+          urlState: { pagination: { pageSize: 1 } },
+        }),
+      {
+        initialProps: { data: chantiers },
+        wrapper: withNuqsTestingAdapter({ searchParams: "?page=2" }),
+      },
+    );
+    expect(result.current.store.state.pagination.pageIndex).toBe(1);
+
+    rerender({ data: chantiers.slice(0, 1) });
+
+    await waitFor(() =>
+      expect(result.current.store.state.pagination.pageIndex).toBe(0),
+    );
+    expect(result.current.getRowModel().rows).toHaveLength(1);
   });
 });

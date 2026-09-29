@@ -110,6 +110,16 @@ describe("useUrlTableState", () => {
     await waitFor(() => expect(derniereUrl()).toBe("sort=nom.asc"));
   });
 
+  it("revient à la première page quand le tri change", async () => {
+    const { result, derniereUrl } = rendre("?page=4");
+
+    act(() =>
+      result.current.handlers.onSortingChange?.([{ id: "nom", desc: false }]),
+    );
+
+    await waitFor(() => expect(derniereUrl()).toBe("sort=nom.asc"));
+  });
+
   it("revient à la première page quand un filtre change", async () => {
     const { result, derniereUrl } = rendre("?page=4");
 

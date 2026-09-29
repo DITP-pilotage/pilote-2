@@ -14,6 +14,8 @@ import {
   ChangeEventHandler,
   FormEventHandler,
   useCallback,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
@@ -174,6 +176,13 @@ export default function useTableauPageAdminIndicateurs() {
       globalFilter: true,
     },
   });
+
+  const filtresPrécédents = useRef(filtresActifs);
+  useEffect(() => {
+    if (filtresPrécédents.current === filtresActifs) return;
+    filtresPrécédents.current = filtresActifs;
+    table.setPageIndex(0);
+  }, [filtresActifs, table]);
 
   const changementDeLaRechercheCallback = useCallback(
     (event: ChangeEvent<HTMLInputElement>) =>

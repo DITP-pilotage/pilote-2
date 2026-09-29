@@ -150,7 +150,10 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
   const onSortingChange: OnChangeFn<SortingState> = (updater) =>
     void setQuery((previous) => {
       const next = resolve(updater, previous.sort);
-      return { sort: next.length > 0 ? next : null };
+      return {
+        sort: next.length > 0 ? next : null,
+        ...(stableConfig.pagination ? { page: null } : {}),
+      };
     });
 
   const onPaginationChange: OnChangeFn<PaginationState> = (updater) =>

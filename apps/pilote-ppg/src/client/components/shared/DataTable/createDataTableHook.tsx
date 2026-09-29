@@ -11,7 +11,7 @@ import {
   type TableOptions,
   type TableState,
 } from "@tanstack/react-table";
-import { type ReactNode, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { DataTableBody, type DataTableBodyProps } from "./Body";
 import { getDataTableConfig } from "./config";
 import { hasFeature } from "./features";
@@ -211,6 +211,18 @@ export function createDataTableHook(
     const tableRef = useRef<AnyTable>(table);
     tableRef.current = table;
     const [bricks] = useState(() => bindBricks(() => tableRef.current));
+
+    const pageIndex = url.state.pagination?.pageIndex ?? 0;
+    const pageCount =
+      urlState?.pagination &&
+      hasFeature(tableRef.current, "rowPaginationFeature")
+        ? tableRef.current.getPageCount()
+        : 0;
+    useEffect(() => {
+      if (pageCount > 0 && pageIndex >= pageCount) {
+        tableRef.current.setPageIndex(pageCount - 1);
+      }
+    }, [pageIndex, pageCount]);
 
     return useMemo(() => Object.assign(table, bricks), [table, bricks]);
   }
