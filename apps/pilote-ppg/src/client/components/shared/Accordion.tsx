@@ -3,6 +3,8 @@
 import { Accordion as RadixAccordion } from "radix-ui";
 import { ComponentProps } from "react";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import "./accordion.css";
 
 // Source unique des classes : la NodeView de l'editeur les redeclarait et le
@@ -53,20 +55,10 @@ export const Accordion = Object.assign({}, RadixAccordion, {
       className={clsxm(CLASSES_DECLENCHEUR_ACCORDEON, "group", props.className)}
     >
       {children}
-      <svg
-        className="w-5 h-5 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M19 9l-7 7-7-7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-        />
-      </svg>
+      <Icone
+        className="w-5 h-5 text-current transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180"
+        icone={ArrowSLine2Icon}
+      />
     </RadixAccordion.Trigger>
   ),
   Content: ({

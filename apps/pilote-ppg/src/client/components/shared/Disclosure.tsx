@@ -1,6 +1,8 @@
 import { Accordion } from "radix-ui";
 import { ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import "./accordion.css";
 
 export const Disclosure = ({
@@ -29,22 +31,11 @@ export const Disclosure = ({
 };
 
 export const DisclosureIndicator = ({ className }: { className?: string }) => (
-  <svg
-    aria-hidden="true"
+  <Icone
     className={clsxm(
-      "w-4 h-4 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180",
+      "w-4 h-4 text-current transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180",
       className,
     )}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M19 9l-7 7-7-7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-    />
-  </svg>
+    icone={ArrowSLine2Icon}
+  />
 );

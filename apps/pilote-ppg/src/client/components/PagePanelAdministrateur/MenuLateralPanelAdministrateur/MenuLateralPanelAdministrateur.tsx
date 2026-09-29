@@ -1,6 +1,8 @@
 import { FunctionComponent, useMemo, useState } from "react";
 import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLine3Icon } from "@/components/_commons/Icones/ArrowSLine3Icon";
 
 interface MenuLateralPanelAdministrateurProps {
   pageActive: string;
@@ -154,22 +156,13 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         title={estReplie ? "Déplier le menu" : "Replier le menu"}
         type="button"
       >
-        <svg
+        <Icone
           className={clsxm(
-            "w-3 h-3 transition-transform duration-200",
+            "w-3 h-3 text-current transition-transform duration-200",
             estReplie && "rotate-180",
           )}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M15 19l-7-7 7-7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-          />
-        </svg>
+          icone={ArrowSLine3Icon}
+        />
       </button>
 
       {!estReplie && (
