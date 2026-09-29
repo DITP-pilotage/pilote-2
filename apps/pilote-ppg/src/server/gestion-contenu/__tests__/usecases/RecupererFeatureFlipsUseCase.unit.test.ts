@@ -24,16 +24,12 @@ describe("RecupererFeatureFlipsUseCase", () => {
     vi.mocked(configuration).mockReturnValue({
       featureFlip: {
         featureFlipAdmin: false,
-        nouvellePageAccueil: false,
-        rapportDetaille: true,
         infobullePonderation: false,
-        dateMeteo: false,
         alertes: true,
         alertesBaisse: false,
         applicationIndisponible: false,
         ficheConducteur: false,
         gestionTokenAPI: false,
-        taAnnuel: false,
         suiviCompletude: false,
         alerteMAJIndicateur: false,
         docsAPI: false,
@@ -45,7 +41,7 @@ describe("RecupererFeatureFlipsUseCase", () => {
         askAI: false,
         piloteEval: false,
         rapportCoordinateurs: false,
-        rapportPva: false,
+        rapportPva: true,
         creationCompteArs: false,
         masquerIndicateursNonApplicables: false,
         accesPilote: false,
@@ -62,9 +58,9 @@ describe("RecupererFeatureFlipsUseCase", () => {
     const result = await recupererFeatureFlipsUseCase.run();
 
     // Then
-    expect(result.NEXT_PUBLIC_FF_RAPPORT_DETAILLE).toBe(true);
+    expect(result.NEXT_PUBLIC_FF_RAPPORT_PVA).toBe(true);
     expect(result.NEXT_PUBLIC_FF_ALERTES).toBe(true);
-    expect(result.NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL).toBe(false);
+    expect(result.NEXT_PUBLIC_FF_ALERTES_BAISSE).toBe(false);
     expect(
       gestionContenuRepository.recupererMapVariableContenuParListeDeNom,
     ).not.toHaveBeenCalled();
@@ -75,16 +71,12 @@ describe("RecupererFeatureFlipsUseCase", () => {
     vi.mocked(configuration).mockReturnValue({
       featureFlip: {
         featureFlipAdmin: true,
-        nouvellePageAccueil: false,
-        rapportDetaille: true,
         infobullePonderation: false,
-        dateMeteo: false,
         alertes: true,
         alertesBaisse: false,
         applicationIndisponible: false,
         ficheConducteur: false,
         gestionTokenAPI: false,
-        taAnnuel: false,
         suiviCompletude: false,
         alerteMAJIndicateur: false,
         docsAPI: false,
@@ -96,7 +88,7 @@ describe("RecupererFeatureFlipsUseCase", () => {
         askAI: false,
         piloteEval: false,
         rapportCoordinateurs: false,
-        rapportPva: false,
+        rapportPva: true,
         creationCompteArs: false,
         masquerIndicateursNonApplicables: false,
         accesPilote: false,
@@ -109,11 +101,11 @@ describe("RecupererFeatureFlipsUseCase", () => {
       },
     } as ReturnType<typeof configuration>);
 
-    // DB override : alertes passe à false, nouvellePageAccueil passe à true
+    // DB override : alertes passe à false, alertesBaisse passe à true
     gestionContenuRepository.recupererMapVariableContenuParListeDeNom.mockResolvedValue(
       {
         NEXT_PUBLIC_FF_ALERTES: false,
-        NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL: true,
+        NEXT_PUBLIC_FF_ALERTES_BAISSE: true,
       },
     );
 
@@ -122,7 +114,7 @@ describe("RecupererFeatureFlipsUseCase", () => {
 
     // Then
     expect(result.NEXT_PUBLIC_FF_ALERTES).toBe(false);
-    expect(result.NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL).toBe(true);
-    expect(result.NEXT_PUBLIC_FF_RAPPORT_DETAILLE).toBe(true);
+    expect(result.NEXT_PUBLIC_FF_ALERTES_BAISSE).toBe(true);
+    expect(result.NEXT_PUBLIC_FF_RAPPORT_PVA).toBe(true);
   });
 });

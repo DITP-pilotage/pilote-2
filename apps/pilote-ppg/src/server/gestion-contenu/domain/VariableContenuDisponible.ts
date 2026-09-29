@@ -4,16 +4,12 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE: boolean;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TEXTE: string;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE: string;
-  NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL: boolean;
-  NEXT_PUBLIC_FF_RAPPORT_DETAILLE: boolean;
   NEXT_PUBLIC_FF_INFOBULLE_PONDERATION: boolean;
-  NEXT_PUBLIC_FF_DATE_METEO: boolean;
   NEXT_PUBLIC_FF_ALERTES: boolean;
   NEXT_PUBLIC_FF_ALERTES_BAISSE: boolean;
   NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: boolean;
   NEXT_PUBLIC_FF_FICHE_CONDUCTEUR: boolean;
   NEXT_PUBLIC_FF_GESTION_TOKEN_API: boolean;
-  NEXT_PUBLIC_FF_TA_ANNUEL: boolean;
   NEXT_PUBLIC_FF_SUIVI_COMPLETUDE: boolean;
   NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR: boolean;
   NEXT_PUBLIC_FF_DOCS_API: boolean;
@@ -61,24 +57,9 @@ interface FeatureFlipDefinition {
 /** Source unique de vérité pour tous les feature flips */
 const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
   {
-    envKey: "NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL",
-    configKey: "nouvellePageAccueil",
-    label: "Nouvelle page d'accueil",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_RAPPORT_DETAILLE",
-    configKey: "rapportDetaille",
-    label: "Rapport détaillé",
-  },
-  {
     envKey: "NEXT_PUBLIC_FF_INFOBULLE_PONDERATION",
     configKey: "infobullePonderation",
     label: "Infobulle pondération",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_DATE_METEO",
-    configKey: "dateMeteo",
-    label: "Date météo",
   },
   { envKey: "NEXT_PUBLIC_FF_ALERTES", configKey: "alertes", label: "Alertes" },
   {
@@ -100,11 +81,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
     configKey: "gestionTokenAPI",
     label: "Gestion token API",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_TA_ANNUEL",
-    configKey: "taAnnuel",
-    label: "TA annuel",
   },
   {
     envKey: "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",

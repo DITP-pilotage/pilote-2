@@ -155,25 +155,10 @@ const config = convict({
     env: "CONN_STR_DEST",
   },
   featureFlip: {
-    nouvellePageAccueil: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL",
-    },
-    rapportDetaille: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_RAPPORT_DETAILLE",
-    },
     infobullePonderation: {
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_INFOBULLE_PONDERATION",
-    },
-    dateMeteo: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_DATE_METEO",
     },
     limiteCaracteresPublication: {
       format: Number,
@@ -204,11 +189,6 @@ const config = convict({
       format: Boolean,
       default: true,
       env: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-    },
-    taAnnuel: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_TA_ANNUEL",
     },
     gestionTokenAPI: {
       format: Boolean,

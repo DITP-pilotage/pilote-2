@@ -17,7 +17,7 @@ describe("ModifierFeatureFlipUseCase", () => {
     // Given
     const featureFlips = {
       NEXT_PUBLIC_FF_ALERTES: true,
-      NEXT_PUBLIC_FF_DATE_METEO: false,
+      NEXT_PUBLIC_FF_ALERTES_BAISSE: false,
     } as const;
 
     // When
@@ -32,7 +32,7 @@ describe("ModifierFeatureFlipUseCase", () => {
       true,
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenCalledWith(
-      "NEXT_PUBLIC_FF_DATE_METEO",
+      "NEXT_PUBLIC_FF_ALERTES_BAISSE",
       false,
     );
   });
