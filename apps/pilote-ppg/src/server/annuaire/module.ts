@@ -5,9 +5,11 @@ import {
   type VerifyCradle,
 } from "@/server/module-system";
 import { ListerCoordinateursAnnuaireQuery } from "./queries/ListerCoordinateursAnnuaireQuery";
+import { ListerResponsablesAnnuaireQuery } from "./queries/ListerResponsablesAnnuaireQuery";
 
 type AnnuaireCradle = {
   listerCoordinateursAnnuaireQuery: ListerCoordinateursAnnuaireQuery;
+  listerResponsablesAnnuaireQuery: ListerResponsablesAnnuaireQuery;
 };
 
 export const annuaireModule = defineModule<NoExports, AnnuaireCradle>()({
@@ -18,6 +20,9 @@ export const annuaireModule = defineModule<NoExports, AnnuaireCradle>()({
     container.register({
       listerCoordinateursAnnuaireQuery: asModuleClass(
         ListerCoordinateursAnnuaireQuery,
+      ),
+      listerResponsablesAnnuaireQuery: asModuleClass(
+        ListerResponsablesAnnuaireQuery,
       ),
     } satisfies VerifyCradle<AnnuaireCradle>);
   },
