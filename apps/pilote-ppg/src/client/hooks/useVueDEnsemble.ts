@@ -1,11 +1,28 @@
 import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
 import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
-import { useRemontéesAlertesChantiers } from "./useRemontéesAlertesChantiers";
+import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
+import { useRemontéesAlertesChantiers } from "@/client/hooks/useRemontéesAlertesChantiers";
+
+type ChantierPourVueDEnsemble = Pick<
+  ChantierAccueilContratV2,
+  | "id"
+  | "nom"
+  | "avancement"
+  | "météo"
+  | "estBaromètre"
+  | "estTerritorialisé"
+  | "statut"
+  | "responsables"
+  | "tendance"
+  | "ecart"
+  | "dateDeMàjDonnéesQualitatives"
+  | "dateDeMàjDonnéesQuantitatives"
+  | "maillesApplicables"
+>;
 
 export default function useVueDEnsemble(
-  chantiersFiltrés: ChantierRapportDetailleContrat[],
+  chantiersFiltrés: ChantierPourVueDEnsemble[],
   territoireCode: string,
   filtresComptesCalculés: Record<TypeAlerteChantier, number>,
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat,
