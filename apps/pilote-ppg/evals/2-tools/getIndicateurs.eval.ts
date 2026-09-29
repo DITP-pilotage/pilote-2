@@ -4,40 +4,74 @@ import { toolSelectionEval } from "./toolSelectionEval";
 /**
  * Niveau 2 — `get_indicateurs`.
  *
- * Pas de fixtures de cas : `CH-001`, `CH-004` et `CH-007` sont dotés d'un
- * indicateur par le monde de base.
+ * L'agent appelle l'outil quand l'utilisateur demande les valeurs des
+ * indicateurs d'un chantier (VI, VA, VC, TA), ou des informations sur un
+ * indicateur. Les questions précisent le territoire, que l'outil exige.
  *
- * Toutes les questions nomment un territoire. Sans lui, l'agent demande une
- * précision — légitimement, `get_indicateurs` en a besoin — et le cas mesure
- * alors la clarification au lieu de la résolution d'identifiant. Premier
- * jet à 89 % pour cette raison.
+ * Le TA des indicateurs est un positif, le TA du chantier un négatif : la
+ * description de l'outil l'écarte explicitement au profit de `get_chantiers`,
+ * et l'agent s'y est trompé dans la suite `search_chantiers`.
  *
- * Référence observée le 2026-09-10 : 100 % sur 9 essais, une fois le territoire ajoute aux questions.
+ * Les autres négatifs portent sur les outils qui parlent aussi d'un indicateur
+ * sans en donner les valeurs : l'évolution dans le temps et l'historique des
+ * actions. Plusieurs chemins y répondent : seul `get_indicateurs` est interdit.
  */
 
 const CASES: ToolCase[] = [
   {
     question:
-      "Donne-moi les indicateurs du chantier CH-004 pour la France entière",
-    reason: "identifiant et territoire explicites",
+      "Quelles sont les valeurs des indicateurs du CH-004 au national ?",
+    reason: "valeurs des indicateurs d'un chantier",
     expected: [
       { toolName: "get_indicateurs", input: { chantier_id: "CH-004" } },
     ],
   },
   {
     question:
-      "Quelles sont les valeurs des indicateurs de CH-007 pour la France entière ?",
-    reason: "identifiant sans le mot « chantier », toujours résoluble",
+      "Donne-moi la valeur actuelle et la cible des indicateurs du CH-007 en Bretagne",
+    reason: "vocabulaire VA / VC, territoire régional",
     expected: [
       { toolName: "get_indicateurs", input: { chantier_id: "CH-007" } },
     ],
   },
   {
-    question: "Donne-moi les objectifs du chantier CH-004",
-    reason: "CAS NÉGATIF : objectifs et indicateurs sont deux outils distincts",
+    question:
+      "Quel est le taux d'avancement des indicateurs du CH-001 au national ?",
+    reason: "TA des indicateurs, à distinguer du TA du chantier",
     expected: [
-      { toolName: "get_chantier_objectifs", input: { chantier_id: "CH-004" } },
+      { toolName: "get_indicateurs", input: { chantier_id: "CH-001" } },
     ],
+  },
+  {
+    question:
+      "Quelles étaient les valeurs des indicateurs du CH-004 au national en 2024 ?",
+    reason: "jalon passé transmis",
+    expected: [
+      {
+        toolName: "get_indicateurs",
+        input: { chantier_id: "CH-004", jalon: 2024 },
+      },
+    ],
+  },
+  {
+    question: "Où en est l'indicateur IND-894 au national ?",
+    reason: "un seul indicateur : son chantier est à retrouver",
+    expected: [{ toolName: "get_indicateurs" }],
+  },
+  {
+    question: "Comment évolue l'IND-004 au national ?",
+    reason: "CAS NÉGATIF : évolution dans le temps → get_evolution_indicateur",
+    forbidden: ["get_indicateurs"],
+  },
+  {
+    question: "Quel est le taux d'avancement du CH-004 au national ?",
+    reason: "CAS NÉGATIF : TA du chantier → get_chantiers",
+    forbidden: ["get_indicateurs"],
+  },
+  {
+    question: "Qui a importé les dernières valeurs de l'IND-004 au national ?",
+    reason: "CAS NÉGATIF : historique des actions → get_historique_indicateur",
+    forbidden: ["get_indicateurs"],
   },
 ];
 
