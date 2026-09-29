@@ -13,8 +13,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * les questions portent sur le « quand » et le « quoi », jamais sur le « qui ».
  *
  * Le cas PVA suit la description de l'outil (`type_filtre: "PROPOSITIONS"`),
- * que le prompt système contredit en déclarant les PVA indisponibles : il
- * restera rouge tant que PIL-1833 (point 16) n'est pas tranché.
+ * que le prompt système contredit en déclarant les PVA indisponibles
+ * (PIL-1833, point 16). Observé le 2026-09-29 : 3/3, la description de l'outil
+ * l'emporte.
  *
  * Les négatifs portent sur l'évolution de la valeur dans le temps, et sur les
  * chantiers ayant une PVA en attente, qui relèvent des signalements.
@@ -67,7 +68,7 @@ const CASES: ToolCase[] = [
   {
     question:
       "Quelles propositions de valeur ont été faites sur l'IND-004 au national ?",
-    reason: "PVA : filtre PROPOSITIONS, contredit par le prompt (PIL-1833)",
+    reason: "PVA : filtre PROPOSITIONS",
     expected: [
       {
         toolName: "get_historique_indicateur",
