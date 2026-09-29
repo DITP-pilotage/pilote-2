@@ -1,7 +1,7 @@
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import type { Inject } from "@/server/profil-utilisateur/module";
 
-type ProfilUtilisateurViewModel = {
+export type ProfilUtilisateurViewModel = {
   id: string;
   prenom: string;
   nom: string;
