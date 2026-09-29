@@ -10,7 +10,6 @@ export default interface RubriquesIndicateursProps {
   indicateurs: Indicateur[];
   listeRubriquesIndicateurs: ÉlémentPageIndicateursType[];
   territoireCode?: string;
-  typeDeRéforme: "chantier";
   categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
   jalon: number;
 }
