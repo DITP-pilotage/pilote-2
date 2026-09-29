@@ -36,7 +36,7 @@ export const Infobulle: FunctionComponent<
 
   return (
     <Popover.Root onOpenChange={setEstOuverte} open={estOuverte}>
-      <Popover.Anchor className="relative inline-flex items-center">
+      <Popover.Anchor className="relative ml-2 inline-flex items-center">
         <button
           aria-describedby={estOuverte ? idContenu : undefined}
           className={clsxm(
