@@ -81,9 +81,10 @@ export class PageChantier extends BasePage {
     await expect(
       this.page.getByRole("heading", { name: /Responsables/ }),
     ).toBeVisible();
-    await expect(this.page.getByText(/^Minimum$/)).toBeVisible();
-    await expect(this.page.getByText(/^Médiane$/)).toBeVisible();
-    await expect(this.page.getByText(/^Maximum$/)).toBeVisible();
+    await expect(
+      this.page.getByText(/^Taux d'avancement du chantier$/),
+    ).toBeVisible();
+    await expect(this.page.getByText(/^Evolution temporelle$/)).toBeVisible();
     await expect(
       this.page.getByRole("heading", {
         name: /^Météo et synthèse des résultats$/,
@@ -150,9 +151,10 @@ export class PageChantier extends BasePage {
     await expect(
       this.page.getByRole("heading", { name: /Responsables/ }),
     ).toBeVisible();
-    await expect(this.page.getByText(/^Minimum$/)).toBeVisible();
-    await expect(this.page.getByText(/^Médiane$/)).toBeVisible();
-    await expect(this.page.getByText(/^Maximum$/)).toBeVisible();
+    await expect(
+      this.page.getByText(/^Taux d'avancement du chantier$/),
+    ).toBeVisible();
+    await expect(this.page.getByText(/^Evolution temporelle$/)).toBeVisible();
     await expect(
       this.page.getByRole("heading", {
         name: /^Météo et synthèse des résultats$/,
