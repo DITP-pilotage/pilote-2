@@ -1,6 +1,6 @@
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
+import { ChantierPourAgregation } from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur";
 
 export default interface ChantierRepository {
   recupererLaRepartitionMeteo(

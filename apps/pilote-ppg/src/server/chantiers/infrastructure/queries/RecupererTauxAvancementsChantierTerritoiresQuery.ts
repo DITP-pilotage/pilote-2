@@ -1,4 +1,4 @@
-import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
+import { ChantierPourAgregation } from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur";
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import { Inject } from "@/server/chantiers/module";
 import {

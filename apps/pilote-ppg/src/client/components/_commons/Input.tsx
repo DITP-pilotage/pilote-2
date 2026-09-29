@@ -7,7 +7,7 @@ import {
   useRef,
 } from "react";
 import { clsxm } from "@/utils/clsxm";
-import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
+import { MessageErreur } from "@/components/_commons/MessageErreur";
 
 export type InputRef = {
   focus: () => void;
