@@ -165,6 +165,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
     },
+    annuaire: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ANNUAIRE",
+    },
     ppgArchive: {
       format: Boolean,
       default: false,

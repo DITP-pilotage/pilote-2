@@ -45,6 +45,7 @@ export const NavigationPilote = () => {
   const router = useRouter();
 
   const ffRapportCoordinateurs = useEnv("NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS");
+  const ffAnnuaire = useEnv("NEXT_PUBLIC_FF_ANNUAIRE");
 
   const filtresActifs = getFiltresActifs();
 
@@ -95,6 +96,14 @@ export const NavigationPilote = () => {
           accessible:
             estAutoriseAAccederAuxRapportsHebdomadaires(session) &&
             ffRapportCoordinateurs,
+          prefetch: false,
+          target: "_self",
+        },
+        {
+          nom: "Annuaire",
+          lien: "/annuaire",
+          matcher: "/annuaire",
+          accessible: ffAnnuaire,
           prefetch: false,
           target: "_self",
         },
