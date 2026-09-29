@@ -6,14 +6,14 @@ import {
   validationPropositionValeurAvancement,
   validationAccepterPropositionValeurAvancement,
   validationRefuserPropositionValeurAvancement,
-  validationSuppressionValeurAvancementV2,
+  validationSuppressionValeurAvancement,
   validationAccuserReceptionPropositionValeurAvancement,
   validationAccepterAvecModificationPropositionValeurAvancement,
 } from "@/validation/proposition-valeur-avancement";
 import { getContainer } from "@/server/dependances";
 
 export const propositionValeurAvancementRouter = créerRouteurTRPC({
-  creerV2: procédureProtégée
+  creer: procédureProtégée
     .input(validationPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const idAuteur = ctx.session.user.id ?? "";
@@ -81,8 +81,8 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
-  supprimerV2: procédureProtégée
-    .input(validationSuppressionValeurAvancementV2)
+  supprimer: procédureProtégée
+    .input(validationSuppressionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.id ?? "";
 

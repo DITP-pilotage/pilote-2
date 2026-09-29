@@ -4,7 +4,7 @@ import { Session } from "next-auth";
 import {
   FiltreAccueil,
   getFiltresActifs,
-} from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+} from "@/stores/useFiltresStore/useFiltresStore";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";

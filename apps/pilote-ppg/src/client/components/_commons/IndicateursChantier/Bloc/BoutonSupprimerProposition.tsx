@@ -1,6 +1,6 @@
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { ModaleSuppressionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancementV2/ModaleSuppressionValeurAvancementV2";
+import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { Icone } from "@/components/_commons/Icone";
 import { Delete1Icon } from "@/components/_commons/Icones/Delete1Icon";
@@ -17,7 +17,7 @@ export const BoutonSupprimerProposition = ({
   détailTerritoireSélectionné: DétailTerritoire;
 }) => {
   return (
-    <ModaleSuppressionValeurAvancementV2
+    <ModaleSuppressionValeurAvancement
       detailIndicateur={detailIndicateur}
       indicateur={indicateur}
       territoireCode={territoireCode}
@@ -31,6 +31,6 @@ export const BoutonSupprimerProposition = ({
         <Icone className="h-4 w-4 text-current" icone={Delete1Icon} />
         Supprimer la proposition
       </button>
-    </ModaleSuppressionValeurAvancementV2>
+    </ModaleSuppressionValeurAvancement>
   );
 };

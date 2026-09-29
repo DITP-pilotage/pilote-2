@@ -1,12 +1,3 @@
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Tooltip,
-} from "chart.js";
 import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
@@ -17,19 +8,9 @@ import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/Ind
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { Icone } from "@/components/_commons/Icone";
-import { useIndicateurEvolution } from "./useIndicateurEvolution";
-import useIndicateurEvolutionNew from "./useIndicateurEvolutionNew";
+import useIndicateurEvolution from "./useIndicateurEvolution";
 import { BaseIndicateurEvolution } from "./BaseIndicateurEvolution";
 import { ChartConfig, IndicatorMetadata } from "./types";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-);
 
 export const IndicateurEvolution: FunctionComponent<{
   indicateurDetailsParTerritoiresCompares: IndicateurDetailsParTerritoire[];
@@ -58,7 +39,8 @@ export const IndicateurEvolution: FunctionComponent<{
     indicateurDetailsParTerritoiresCompares,
   ]);
 
-  const { donnéesParTerritoire } = useIndicateurEvolution();
+  const aDesValeurs =
+    detailIndicateurDuTerritoire.historiquesValeurs.length > 0;
 
   const {
     getOptions,
@@ -69,7 +51,7 @@ export const IndicateurEvolution: FunctionComponent<{
     periodeSelectionnee,
     changerLaPeriodeSelectionnee,
     periodesSelectionnablesZoom,
-  } = useIndicateurEvolutionNew({
+  } = useIndicateurEvolution({
     tousLesIndicateursDetails,
   });
 
@@ -171,7 +153,7 @@ export const IndicateurEvolution: FunctionComponent<{
           <div className="fr-container">
             <BaseIndicateurEvolution
               chartConfig={chartConfig}
-              donnéesParTerritoire={donnéesParTerritoire}
+              aDesValeurs={aDesValeurs}
               indicateur={indicatorMetadata}
               mode="impression"
               ref={composantRef}
@@ -183,7 +165,7 @@ export const IndicateurEvolution: FunctionComponent<{
       <BaseIndicateurEvolution
         actions={actionButtons}
         chartConfig={chartConfig}
-        donnéesParTerritoire={donnéesParTerritoire}
+        aDesValeurs={aDesValeurs}
         indicateur={indicatorMetadata}
         mode="default"
       />

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import { HistoriquePublication } from "@/components/PageChantier/PublicationV2/Historique/HistoriquePublication";
+import { HistoriquePublication } from "@/components/PageChantier/Publication/Historique/HistoriquePublication";
 
 export const HistoriqueDecisionStrategique = () => {
   const [open, setOpen] = useState(false);

@@ -103,7 +103,7 @@ export const getServerSideProps = async (
       valeurFFPpgArchive,
     ] = await Promise.all([
       getContainer("chantiers")
-        .resolve("recupererChantierUseCaseV2")
+        .resolve("recupererChantierUseCase")
         .run(chantierId, session.habilitations, session.profil, jalon),
       getContainer("legacy")
         .resolve("indicateurRepository")
@@ -133,7 +133,7 @@ export const getServerSideProps = async (
         .resolve("recupererBrouillonDecisionStrategiqueQuery")
         .run(chantierId, session.user!.id),
       getContainer("chantiers")
-        .resolve("recupererDetailsIndicateursV2UseCase")
+        .resolve("recupererDetailsIndicateursUseCase")
         .run(
           chantierId,
           territoireCode,
@@ -227,7 +227,7 @@ export const getServerSideProps = async (
       string,
       DétailsIndicateurTerritoire
     > = await getContainer("chantiers")
-      .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
+      .resolve("listerDetailsIndicateurTerritoireUseCase")
       .run(
         listeIndicateurId,
         chantierId,

@@ -50,7 +50,7 @@ const etatInitial = {
   estEnAlerteAbscenceTauxAvancementDepartemental: false,
   estEnAlertePossedePropositionsValeurAvancement: false,
 };
-const useFiltresStoreNew = create<FiltresStore>((set, get) => ({
+const useFiltresStore = create<FiltresStore>((set, get) => ({
   filtresActifs: etatInitial,
   actions: {
     sauvegarderFiltres: (filtre: Partial<FiltreAccueil>) =>
@@ -69,7 +69,7 @@ const useFiltresStoreNew = create<FiltresStore>((set, get) => ({
 }));
 
 export const sauvegarderFiltres =
-  useFiltresStoreNew.getState().actions.sauvegarderFiltres;
+  useFiltresStore.getState().actions.sauvegarderFiltres;
 export const reinitialiserFiltres =
-  useFiltresStoreNew.getState().actions.reinitialiserFiltres;
-export const getFiltresActifs = useFiltresStoreNew.getState().actions.get;
+  useFiltresStore.getState().actions.reinitialiserFiltres;
+export const getFiltresActifs = useFiltresStore.getState().actions.get;

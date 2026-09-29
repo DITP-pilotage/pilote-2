@@ -7,7 +7,7 @@ import {
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
-import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 import { useEnv } from "@/client/hooks/useEnv";
 import {
   statutArchive,

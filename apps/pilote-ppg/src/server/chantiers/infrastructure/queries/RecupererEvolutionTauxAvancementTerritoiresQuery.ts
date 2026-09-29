@@ -11,7 +11,7 @@ export type EvolutionTAResult = {
 
 export class RecupererEvolutionTauxAvancementTerritoiresQuery {
   constructor(
-    private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCaseV2">,
+    private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCase">,
   ) {}
 
   async execute(params: {
@@ -21,14 +21,13 @@ export class RecupererEvolutionTauxAvancementTerritoiresQuery {
     habilitations: Habilitations;
     profil: ProfilCode;
   }): Promise<EvolutionTAResult> {
-    const result =
-      await this.deps.listerDetailsIndicateurTerritoireUseCaseV2.run(
-        [params.indicateurId],
-        params.chantierId,
-        params.habilitations,
-        params.profil,
-        params.jalon,
-      );
+    const result = await this.deps.listerDetailsIndicateurTerritoireUseCase.run(
+      [params.indicateurId],
+      params.chantierId,
+      params.habilitations,
+      params.profil,
+      params.jalon,
+    );
 
     const details = result[params.indicateurId] ?? {};
 

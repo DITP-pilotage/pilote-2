@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { GetIndicateurPVACountTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/GetIndicateurPVACountTerritoiresQuery";
-import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
+import { ListerDetailsIndicateurTerritoireUseCase } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCase";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { PrismaTerritoireRepository } from "@/server/chantiers/infrastructure/adapters/PrismaTerritoireRepository";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
@@ -42,8 +42,8 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
     });
 
     query = new GetIndicateurPVACountTerritoiresQuery({
-      listerDetailsIndicateurTerritoireUseCaseV2:
-        new ListerDetailsIndicateurTerritoireUseCaseV2({
+      listerDetailsIndicateurTerritoireUseCase:
+        new ListerDetailsIndicateurTerritoireUseCase({
           indicateurRepository,
           datajobsExecutionQueries,
         }),

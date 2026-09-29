@@ -6,7 +6,7 @@ import {
   useRef,
 } from "react";
 import * as echarts from "echarts";
-import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
+import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolution";
 import type {
   ChartDisplayMode,
   TerritoireEvolutionDonnees,

@@ -1,6 +1,6 @@
 import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
-import { reinitialiserFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { reinitialiserFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 

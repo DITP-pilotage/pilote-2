@@ -5,7 +5,7 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ppg from "@/server/domain/ppg/Ppg.interface";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";

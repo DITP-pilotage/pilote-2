@@ -4,7 +4,7 @@ import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
-import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { clsxm } from "@/utils/clsxm";
 import api from "@/server/infrastructure/api/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";

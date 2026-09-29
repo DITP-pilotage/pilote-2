@@ -9,7 +9,7 @@ import { UtilisateurRepository } from "@/server/chantiers/domain/ports/Utilisate
 import { presenterEnChantierContrat } from "@/server/chantiers/app/contrats/ChantierContrat";
 import type { Inject } from "@/server/chantiers/module";
 
-export default class RecupererChantierUseCaseV2 {
+export default class RecupererChantierUseCase {
   private chantierRepository: ChantierRepository;
 
   private ministereRepository: MinistereRepository;

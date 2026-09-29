@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
-import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { getFiltresActifs } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import { GovernmentIcon } from "@/components/_commons/Icones/GovernmentIcon";

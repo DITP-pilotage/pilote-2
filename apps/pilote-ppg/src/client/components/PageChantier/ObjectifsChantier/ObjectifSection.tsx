@@ -4,7 +4,7 @@ import {
   libellésTypesObjectif,
   TypeObjectif,
 } from "@/client/constants/libellésObjectif";
-import { PublicationSection } from "@/components/PageChantier/PublicationV2/PublicationSection";
+import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
 import { Accordion } from "@/components/shared/Accordion";
 import {
   ObjectifV2,

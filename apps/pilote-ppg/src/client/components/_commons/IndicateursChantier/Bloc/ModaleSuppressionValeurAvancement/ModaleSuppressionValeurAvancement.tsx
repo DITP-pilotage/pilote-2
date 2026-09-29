@@ -9,12 +9,12 @@ import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/propos
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
-import useModaleSuppressionValeurAvancementV2, {
+import useModaleSuppressionValeurAvancement, {
   EtapeSuppressionPropositionValeurAvancement,
   Stepper,
-} from "./useModaleSuppressionValeurAvancementV2";
+} from "./useModaleSuppressionValeurAvancement";
 
-export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
+export const ModaleSuppressionValeurAvancement: FunctionComponent<
   PropsWithChildren<{
     indicateur: Indicateur;
     detailIndicateur: DétailsIndicateur;
@@ -37,7 +37,7 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
     setEtapePropositionValeurAvancement,
     etapeSuivanteEstDesactive,
     isPending,
-  } = useModaleSuppressionValeurAvancementV2({
+  } = useModaleSuppressionValeurAvancement({
     indicateur,
     detailIndicateur,
     territoireCode,

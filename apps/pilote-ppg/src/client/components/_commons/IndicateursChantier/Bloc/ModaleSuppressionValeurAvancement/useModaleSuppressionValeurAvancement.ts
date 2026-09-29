@@ -40,7 +40,7 @@ export const Stepper: Record<
     },
 };
 
-const useModaleSuppressionValeurAvancementV2 = ({
+const useModaleSuppressionValeurAvancement = ({
   detailIndicateur,
   indicateur,
   territoireCode,
@@ -57,7 +57,7 @@ const useModaleSuppressionValeurAvancementV2 = ({
   );
 
   const mutationSupprimerPropositionValeurAvancement =
-    api.propositionValeurAvancement.supprimerV2.useMutation({
+    api.propositionValeurAvancement.supprimer.useMutation({
       onSuccess: () => {
         setEtapePropositionValeurAvancement(null);
       },
@@ -94,4 +94,4 @@ const useModaleSuppressionValeurAvancementV2 = ({
   };
 };
 
-export default useModaleSuppressionValeurAvancementV2;
+export default useModaleSuppressionValeurAvancement;

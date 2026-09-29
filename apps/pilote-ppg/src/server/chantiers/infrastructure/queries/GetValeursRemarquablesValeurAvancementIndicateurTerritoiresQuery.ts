@@ -9,7 +9,7 @@ import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 export class GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery {
   constructor(
-    private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCaseV2">,
+    private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCase">,
   ) {}
 
   async execute(params: {
@@ -20,14 +20,13 @@ export class GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery {
     habilitations: Habilitations;
     profil: ProfilCode;
   }) {
-    const result =
-      await this.deps.listerDetailsIndicateurTerritoireUseCaseV2.run(
-        [params.indicateurId],
-        params.chantierId,
-        params.habilitations,
-        params.profil,
-        params.jalon,
-      );
+    const result = await this.deps.listerDetailsIndicateurTerritoireUseCase.run(
+      [params.indicateurId],
+      params.chantierId,
+      params.habilitations,
+      params.profil,
+      params.jalon,
+    );
 
     const details = result[params.indicateurId] ?? {};
     const prefixeMaille = params.maille === "regionale" ? "REG-" : "DEPT-";

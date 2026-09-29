@@ -13,7 +13,7 @@ import {
   LIMITE_CARACTÈRES_COMMENTAIRE,
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
-import { AffichagePublication } from "@/components/PageChantier/PublicationV2/Affichage/AffichagePublication";
+import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
 import {
   pageChantier,
   useTerritoireSelectionne,
@@ -21,7 +21,7 @@ import {
 import {
   PublicationBrouillon,
   Publication,
-} from "@/components/PageChantier/PublicationV2/Publication.interface";
+} from "@/components/PageChantier/Publication/Publication.interface";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { extractVisibleText } from "@/utils/extractVisibleText";
 
