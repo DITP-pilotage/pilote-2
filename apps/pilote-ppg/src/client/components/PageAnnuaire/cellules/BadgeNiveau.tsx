@@ -3,11 +3,11 @@ import { clsxm } from "@/utils/clsxm";
 
 const NIVEAUX: Record<MailleAnnuaire, { libelle: string; classes: string }> = {
   REG: {
-    libelle: "Régional",
+    libelle: "Région",
     classes: "bg-dsfr-blue-france-950 text-primary ring-dsfr-blue-france-850",
   },
   DEPT: {
-    libelle: "Départemental",
+    libelle: "Département",
     classes: "bg-white text-dsfr-grey-200 ring-dsfr-grey-925",
   },
 };

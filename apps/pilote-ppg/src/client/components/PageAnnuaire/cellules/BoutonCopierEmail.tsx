@@ -1,13 +1,16 @@
 import { toast } from "sonner";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { clsxm } from "@/utils/clsxm";
 
 export function BoutonCopierEmail({
   email,
   nomComplet,
+  className,
 }: {
   email: string;
   nomComplet: string;
+  className?: string;
 }) {
   const libelle = `Copier l'adresse e-mail de ${nomComplet}`;
 
@@ -23,7 +26,10 @@ export function BoutonCopierEmail({
   return (
     <button
       aria-label={libelle}
-      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded hover:bg-dsfr-blue-france-950 focus-visible:outline-2 focus-visible:outline-dsfr-focus"
+      className={clsxm(
+        "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded hover:bg-dsfr-blue-france-950 focus-visible:outline-2 focus-visible:outline-dsfr-focus",
+        className,
+      )}
       onClick={() => void copier()}
       title={libelle}
       type="button"

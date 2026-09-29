@@ -2,6 +2,19 @@ import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurA
 import type { PersonneAnnuaire } from "@/server/annuaire/queries/personnesAnnuaire";
 import { BoutonCopierEmail } from "./BoutonCopierEmail";
 
+// Coupure de ligne autorisée juste après « @ » plutôt qu'au milieu d'un mot.
+function EmailSecable({ email }: { email: string }) {
+  const position = email.indexOf("@");
+  if (position === -1) return <>{email}</>;
+  return (
+    <>
+      {email.slice(0, position + 1)}
+      <wbr />
+      {email.slice(position + 1)}
+    </>
+  );
+}
+
 export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
   const nomComplet = `${personne.prenom} ${personne.nom}`;
 
@@ -15,15 +28,19 @@ export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
           service={personne.service}
         />
       </p>
-      <div className="flex items-center gap-1">
+      <p className="!m-0 text-sm [overflow-wrap:anywhere]">
         <a
-          className="bg-none text-sm text-primary underline decoration-primary/30 decoration-1 underline-offset-4 break-all hover:decoration-primary"
+          className="bg-none text-primary underline decoration-primary/30 decoration-1 underline-offset-4 hover:decoration-primary"
           href={`mailto:${personne.email}`}
         >
-          {personne.email}
+          <EmailSecable email={personne.email} />
         </a>
-        <BoutonCopierEmail email={personne.email} nomComplet={nomComplet} />
-      </div>
+        <BoutonCopierEmail
+          className="-my-2 ml-1 align-middle"
+          email={personne.email}
+          nomComplet={nomComplet}
+        />
+      </p>
     </div>
   );
 }

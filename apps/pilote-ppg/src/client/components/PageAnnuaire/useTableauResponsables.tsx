@@ -3,7 +3,7 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
 import type { FilterOption } from "@/components/shared/DataTable/types";
 import type { AnnuaireResponsables } from "@/server/annuaire/queries/ListerResponsablesAnnuaireQuery";
-import { BadgeNiveau } from "./cellules/BadgeNiveau";
+import { LibelleChantier, libelleChantier } from "./cellules/LibelleChantier";
 import { BlocPersonne } from "./cellules/BlocPersonne";
 import { CelluleTerritoire } from "./cellules/CelluleTerritoire";
 import { ListeAffectations, ListePersonnes } from "./cellules/Listes";
@@ -44,13 +44,12 @@ const VALEURS_REGROUPEMENT = REGROUPEMENTS_RESPONSABLES.map(
 const REGROUPEMENT_PAR_DEFAUT: RegroupementResponsables = "couple";
 
 const COLONNES_VISIBLES: Record<RegroupementResponsables, string[]> = {
-  couple: ["couple", "territoire", "niveau", "responsables"],
+  couple: ["couple", "territoire", "responsables"],
   responsable: ["responsable", "chantiersTerritoires"],
 };
 const COLONNES = [
   "couple",
   "territoire",
-  "niveau",
   "responsables",
   "responsable",
   "chantiersTerritoires",
@@ -67,6 +66,7 @@ const visibilite = (regroupement: RegroupementResponsables) =>
   );
 
 const champsRecherche = (ligne: LigneResponsable) => [
+  ligne.chantier.id,
   ligne.chantier.nom,
   ligne.territoire.nom,
   ligne.territoire.regionNom,
@@ -90,31 +90,25 @@ const useColonnes = (
           id: "couple",
           header: "Chantier",
           enableSorting: true,
+          meta: { width: "40%" },
           sortFn: (ligneA, ligneB) =>
             comparerChantiersPuisTerritoires(ligneA.original, ligneB.original),
           cell: ({ row }) => (
-            <span className="text-sm font-medium">
-              {row.original.chantier.nom}
-            </span>
+            <LibelleChantier chantier={row.original.chantier} />
           ),
         }),
         columnHelper.display({
           id: "territoire",
           header: "Territoire",
+          meta: { width: "20%" },
           cell: ({ row }) => (
             <CelluleTerritoire territoire={row.original.territoire} />
           ),
         }),
         columnHelper.display({
-          id: "niveau",
-          header: "Niveau",
-          cell: ({ row }) => (
-            <BadgeNiveau maille={row.original.territoire.maille} />
-          ),
-        }),
-        columnHelper.display({
           id: "responsables",
           header: "Responsables et adresses e-mail",
+          meta: { width: "40%" },
           cell: ({ row }) => (
             <ListePersonnes
               personnes={row.subRows
@@ -127,6 +121,7 @@ const useColonnes = (
           id: "responsable",
           header: "Responsable et adresse e-mail",
           enableSorting: true,
+          meta: { width: "30%" },
           sortFn: (ligneA, ligneB) =>
             comparerPersonnes(
               ligneA.original.personne,
@@ -137,6 +132,7 @@ const useColonnes = (
         columnHelper.display({
           id: "chantiersTerritoires",
           header: "Chantiers et territoires",
+          meta: { width: "70%" },
           cell: ({ row }) => (
             <ListeAffectations
               affectations={row.subRows
@@ -205,7 +201,7 @@ export const useTableauResponsables = (
     tileBreakpoint: "lg",
     tileLabel: (row) =>
       regroupement === "couple"
-        ? `${row.original.chantier.nom} · ${row.original.territoire.nom}`
+        ? `${libelleChantier(row.original.chantier)} · ${row.original.territoire.nom}`
         : nomComplet(row.original.personne),
     state: { columnVisibility: visibilite(regroupement) },
     urlState: {

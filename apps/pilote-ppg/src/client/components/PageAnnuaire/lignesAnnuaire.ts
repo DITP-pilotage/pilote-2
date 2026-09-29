@@ -140,5 +140,8 @@ export function filtreChantiers(chantiers: ChantierAnnuaire[]): FilterOption[] {
     ...new Map(chantiers.map((chantier) => [chantier.id, chantier])).values(),
   ]
     .sort((gauche, droite) => collator.compare(gauche.nom, droite.nom))
-    .map((chantier) => ({ value: chantier.id, label: chantier.nom }));
+    .map((chantier) => ({
+      value: chantier.id,
+      label: `${chantier.id} - ${chantier.nom}`,
+    }));
 }

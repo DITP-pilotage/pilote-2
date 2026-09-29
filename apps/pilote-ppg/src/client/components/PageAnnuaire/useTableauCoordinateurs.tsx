@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
 import type { AnnuaireCoordinateurs } from "@/server/annuaire/queries/ListerCoordinateursAnnuaireQuery";
-import { BadgeNiveau } from "./cellules/BadgeNiveau";
 import { BlocPersonne } from "./cellules/BlocPersonne";
 import { CelluleTerritoire } from "./cellules/CelluleTerritoire";
 import { ListePersonnes, ListeTerritoires } from "./cellules/Listes";
@@ -42,12 +41,11 @@ const VALEURS_REGROUPEMENT = REGROUPEMENTS_COORDINATEURS.map(
 const REGROUPEMENT_PAR_DEFAUT: RegroupementCoordinateurs = "territoire";
 
 const COLONNES_VISIBLES: Record<RegroupementCoordinateurs, string[]> = {
-  territoire: ["territoire", "niveau", "coordinateurs"],
+  territoire: ["territoire", "coordinateurs"],
   coordinateur: ["coordinateur", "territoires"],
 };
 const COLONNES = [
   "territoire",
-  "niveau",
   "coordinateurs",
   "coordinateur",
   "territoires",
@@ -82,6 +80,7 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
           id: "territoire",
           header: "Territoire",
           enableSorting: true,
+          meta: { width: "32%" },
           sortFn: (ligneA, ligneB) =>
             comparerTerritoires(
               ligneA.original.territoire,
@@ -92,15 +91,9 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
           ),
         }),
         columnHelper.display({
-          id: "niveau",
-          header: "Niveau",
-          cell: ({ row }) => (
-            <BadgeNiveau maille={row.original.territoire.maille} />
-          ),
-        }),
-        columnHelper.display({
           id: "coordinateurs",
           header: "Coordinateurs et adresses e-mail",
+          meta: { width: "68%" },
           cell: ({ row }) => (
             <ListePersonnes
               personnes={row.subRows
@@ -113,6 +106,7 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
           id: "coordinateur",
           header: "Coordinateur et adresse e-mail",
           enableSorting: true,
+          meta: { width: "36%" },
           sortFn: (ligneA, ligneB) =>
             comparerPersonnes(
               ligneA.original.personne,
@@ -123,6 +117,7 @@ const useColonnes = (filtre: FiltreAvecGroupes) =>
         columnHelper.display({
           id: "territoires",
           header: "Territoires",
+          meta: { width: "64%" },
           cell: ({ row }) => (
             <ListeTerritoires
               territoires={row.subRows

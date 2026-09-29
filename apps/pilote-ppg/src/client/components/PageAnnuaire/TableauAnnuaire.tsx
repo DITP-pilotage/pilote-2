@@ -40,6 +40,7 @@ export function TableauAnnuaire<TData extends RowData>({
           <table.Root
             caption={caption}
             captionHidden
+            className="table-fixed"
             empty={{
               noData: { title: libelleAucun },
               noResults: {

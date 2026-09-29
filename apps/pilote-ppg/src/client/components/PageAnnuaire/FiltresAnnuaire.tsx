@@ -2,7 +2,6 @@ import { useId } from "react";
 import type { RowData } from "@tanstack/react-table";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
-import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { LoupeContourIcon } from "@/components/_commons/Icones/LoupeContourIcon";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import type {
@@ -86,7 +85,7 @@ function FiltreColonne({
         {filtre.label}
       </span>
       <MultiSelectFiltre
-        classNameBouton={`${CLASSE_CHAMP} !px-3 !py-0 !font-normal !border !border-dsfr-grey-850 !border-b !border-b-dsfr-grey-850 !rounded-md !bg-white`}
+        classNameBouton={`${CLASSE_CHAMP} !px-3 !py-0 !font-normal !border !border-dsfr-grey-850 !border-b !border-b-dsfr-grey-850 !rounded-md !bg-white !text-left`}
         getOptionLabel={(valeur) =>
           filtre.options.find((option) => option.value === valeur)?.label ??
           valeur
@@ -119,26 +118,6 @@ function FiltreColonne({
   );
 }
 
-function Etiquette({
-  libelle,
-  onRetirer,
-}: {
-  libelle: string;
-  onRetirer: () => void;
-}) {
-  return (
-    <button
-      aria-label={`Retirer le filtre ${libelle}`}
-      className="inline-flex items-center gap-1.5 rounded-full bg-dsfr-blue-france-950 py-1 pl-3 pr-2 text-xs font-medium text-primary hover:bg-dsfr-blue-france-925 focus-visible:outline-2 focus-visible:outline-dsfr-focus"
-      onClick={onRetirer}
-      type="button"
-    >
-      {libelle}
-      <Icone className="h-3.5 w-3.5 text-current" icone={CloseLineIcon} />
-    </button>
-  );
-}
-
 export function FiltresAnnuaire<TData extends RowData>({
   table,
   placeholderRecherche,
@@ -152,34 +131,6 @@ export function FiltresAnnuaire<TData extends RowData>({
     .getAllLeafColumns()
     .filter((column) => filtreDe(column) != null);
   const recherche = String(table.state.globalFilter ?? "");
-
-  const etiquettes = [
-    ...colonnesFiltrables.flatMap((column) => {
-      const filtre = filtreDe(column);
-      if (!filtre) return [];
-      const valeurs = toStringArray(column.getFilterValue());
-      return valeurs.map((valeur) => ({
-        cle: `${column.id}-${valeur}`,
-        libelle: `${filtre.label} : ${
-          filtre.options.find((option) => option.value === valeur)?.label ??
-          valeur
-        }`,
-        retirer: () =>
-          column.setFilterValue(
-            valeurs.filter((valeurCourante) => valeurCourante !== valeur),
-          ),
-      }));
-    }),
-    ...(recherche.trim()
-      ? [
-          {
-            cle: "recherche",
-            libelle: `Recherche : « ${recherche.trim()} »`,
-            retirer: () => table.setGlobalFilter(""),
-          },
-        ]
-      : []),
-  ];
 
   return (
     <section
@@ -213,13 +164,6 @@ export function FiltresAnnuaire<TData extends RowData>({
         >
           {libelleResultats}
         </span>
-        {etiquettes.map((etiquette) => (
-          <Etiquette
-            key={etiquette.cle}
-            libelle={etiquette.libelle}
-            onRetirer={etiquette.retirer}
-          />
-        ))}
         <button
           className="ml-auto inline-flex h-8 items-center gap-1.5 rounded-md border border-primary bg-white px-3 text-sm font-medium text-primary hover:bg-dsfr-blue-france-950 disabled:cursor-not-allowed disabled:border-dsfr-grey-925 disabled:text-dsfr-grey-625 disabled:hover:bg-white"
           disabled={!table.hasActiveFilters()}

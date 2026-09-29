@@ -84,8 +84,10 @@ export const MultiSelectFiltre = ({
             )}
             type="button"
           >
-            {getPlaceholder()}
-            <Icone className="text-current" icone={ArrowSLine2Icon} />
+            <span className="min-w-0 truncate" title={getPlaceholder()}>
+              {getPlaceholder()}
+            </span>
+            <Icone className="shrink-0 text-current" icone={ArrowSLine2Icon} />
           </button>
         </Dropdown.Trigger>
 
