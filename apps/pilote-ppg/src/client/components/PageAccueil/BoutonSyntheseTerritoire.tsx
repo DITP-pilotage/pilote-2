@@ -1,9 +1,9 @@
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
+import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 
 export const BoutonSyntheseTerritoire = ({
   territoireCode,
@@ -15,7 +15,6 @@ export const BoutonSyntheseTerritoire = ({
   scenarios: ChatScenarios;
 }) => {
   const { open } = useAlbertConversation();
-  const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
 
   return (
     <button
@@ -24,11 +23,10 @@ export const BoutonSyntheseTerritoire = ({
       onClick={() =>
         open({
           scenarios,
-          agentContext: {
-            jalon,
+          agentContext: construireAgentContextTerritoire({
             territoireCode,
-            instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
-          },
+            jalon,
+          }),
         })
       }
       type="button"

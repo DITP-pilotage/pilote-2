@@ -98,21 +98,3 @@ export async function seedChantierEnDifficulte({
     taux: 58,
   });
 }
-
-export async function seedChantierWithTaux({
-  chantierId,
-  territoire,
-  taux,
-}: {
-  chantierId: string;
-  territoire: TerritoireRef;
-  taux: number;
-}) {
-  await seedChantierTerritoire({
-    chantierId,
-    territoire,
-    meteo: "SOLEIL",
-    ecart: ECART_A_L_HEURE,
-    taux,
-  });
-}
