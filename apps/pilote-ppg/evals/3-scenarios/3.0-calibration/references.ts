@@ -320,7 +320,10 @@ const RETARD: CalibrationCase[] = [
     family: "chantiersEnRetard",
     label: "Valeur actuelle fausse",
     broken: "Chiffres exacts",
-    evidence: retard({ from: "valeur actuelle 250", to: "valeur actuelle 210" }),
+    evidence: retard({
+      from: "valeur actuelle 250",
+      to: "valeur actuelle 210",
+    }),
   },
   {
     family: "chantiersEnRetard",
@@ -1213,8 +1216,7 @@ const tauxBretagne = (jalon: number, taux: string) => ({
   jalon,
   taux_avancement_global: taux,
   mediane_repartition: taux === "- %" ? "- %" : "65%",
-  position_mediane:
-    taux === "- %" ? null : ("EN_RETARD" as "EN_RETARD" | null),
+  position_mediane: taux === "- %" ? null : ("EN_RETARD" as "EN_RETARD" | null),
 });
 
 const jalons = ({

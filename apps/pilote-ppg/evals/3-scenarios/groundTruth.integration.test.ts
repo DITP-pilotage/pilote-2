@@ -63,9 +63,9 @@ describe("readGroundTruth", () => {
       });
 
       // Then
-      expect(
-        truth.indicateurs.map((resultat) => resultat.chantier_id),
-      ).toEqual(["CH-005", "CH-006"]);
+      expect(truth.indicateurs.map((resultat) => resultat.chantier_id)).toEqual(
+        ["CH-005", "CH-006"],
+      );
     }),
   );
 });

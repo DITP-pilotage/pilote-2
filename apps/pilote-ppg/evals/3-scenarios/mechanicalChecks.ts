@@ -64,8 +64,8 @@ export function checkHeadings({
   text: string;
   titles: string[];
 }): CheckResult {
-  const headings = [...text.matchAll(/^\s{0,3}#{1,6}\s+(.+)$/gm)].map(
-    (match) => normalize(match[1].replace(/[*_]/g, "")),
+  const headings = [...text.matchAll(/^\s{0,3}#{1,6}\s+(.+)$/gm)].map((match) =>
+    normalize(match[1].replace(/[*_]/g, "")),
   );
   const manquants = titles.filter(
     (title) => !headings.some((heading) => heading.includes(normalize(title))),

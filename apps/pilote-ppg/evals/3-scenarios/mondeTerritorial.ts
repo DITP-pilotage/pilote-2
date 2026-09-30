@@ -293,11 +293,7 @@ const PEUPLEMENT_2024 = [
   },
 ];
 
-export async function seedMondeTerritorial({
-  authorId,
-}: {
-  authorId: string;
-}) {
+export async function seedMondeTerritorial({ authorId }: { authorId: string }) {
   for (const { territoire, chantiers } of PEUPLEMENT_2025) {
     await seedTerritoire({
       territoire,
