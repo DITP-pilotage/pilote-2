@@ -1,6 +1,7 @@
 import { PrismaUtilisateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaUtilisateurRepository";
 import { prisma } from "@/server/db/prisma";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("PrismaUtilisateurRepository", () => {
   let prismaUtilisateurRepository: PrismaUtilisateurRepository;
@@ -359,6 +360,30 @@ describe("PrismaUtilisateurRepository", () => {
 
         // Then
         expect(utilisateurs).toHaveLength(0);
+      }),
+    );
+  });
+
+  describe("#recupererParIds", () => {
+    it(
+      "ignore les identifiants qui ne sont pas des UUID au lieu de faire échouer la requête",
+      createIntegrationTest(async () => {
+        // Given
+        const utilisateur = await fixtures.utilisateur({
+          prenom: "Léa",
+          nom: "Martin",
+        });
+
+        // When
+        const utilisateurParId =
+          await prismaUtilisateurRepository.recupererParIds([
+            utilisateur.id,
+            "pas-un-uuid",
+            "",
+          ]);
+
+        // Then
+        expect([...utilisateurParId.keys()]).toEqual([utilisateur.id]);
       }),
     );
   });

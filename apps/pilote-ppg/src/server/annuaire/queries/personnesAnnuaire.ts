@@ -1,5 +1,5 @@
 import { $Enums, type Prisma } from "@prisma/client";
-import type { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { getServiceLibelle } from "@/utils/referentiel-services";
 
 export type PersonneAnnuaire = {
@@ -20,8 +20,6 @@ export type TerritoireAnnuaire = {
   regionCode: string;
   regionNom: string;
 };
-
-type ClientPrisma = ReturnType<PrismaPilote["getInstance"]>;
 
 export const MAILLES_ANNUAIRE: MailleAnnuaire[] = [
   $Enums.Maille.REG,
@@ -58,58 +56,32 @@ export function versTerritoireAnnuaire(
   };
 }
 
-const FORMAT_UUID =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-export async function lirePersonnes(
-  prisma: ClientPrisma,
-  ids: string[],
-): Promise<Map<string, PersonneAnnuaire>> {
-  const idsValides = [...new Set(ids)].filter((id) => FORMAT_UUID.test(id));
-  if (idsValides.length === 0) return new Map();
-
-  const utilisateurs = await prisma.utilisateur.findMany({
-    where: { id: { in: idsValides } },
-    select: {
-      id: true,
-      prenom: true,
-      nom: true,
-      email: true,
-      fonction: true,
-      service: true,
-      service_autre: true,
-      perimetre_ministeriel: true,
-    },
-  });
-
-  return new Map(
-    utilisateurs.map((utilisateur) => [
-      utilisateur.id,
-      {
-        id: utilisateur.id,
-        prenom: utilisateur.prenom,
-        nom: utilisateur.nom,
-        email: utilisateur.email,
-        fonction: utilisateur.fonction,
-        service: getServiceLibelle(
-          utilisateur.perimetre_ministeriel,
-          utilisateur.service,
-          utilisateur.service_autre,
-        ),
-      },
-    ]),
-  );
+export function versPersonneAnnuaire(
+  utilisateur: UtilisateurEnrichi,
+): PersonneAnnuaire {
+  return {
+    id: utilisateur.id,
+    prenom: utilisateur.prenom,
+    nom: utilisateur.nom,
+    email: utilisateur.email,
+    fonction: utilisateur.fonction,
+    service: getServiceLibelle(
+      utilisateur.perimetre_ministeriel,
+      utilisateur.service,
+      utilisateur.service_autre,
+    ),
+  };
 }
 
 export function personnesRetenues(
   affectations: { personneId: string }[],
-  personnes: Map<string, PersonneAnnuaire>,
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ): PersonneAnnuaire[] {
   const ids = [
     ...new Set(affectations.map((affectation) => affectation.personneId)),
   ];
   return ids.flatMap((id) => {
-    const personne = personnes.get(id);
-    return personne ? [personne] : [];
+    const utilisateur = utilisateurParId.get(id);
+    return utilisateur ? [versPersonneAnnuaire(utilisateur)] : [];
   });
 }

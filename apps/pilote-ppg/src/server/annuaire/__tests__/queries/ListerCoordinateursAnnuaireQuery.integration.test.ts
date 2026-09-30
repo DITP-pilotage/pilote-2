@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { $Enums } from "@prisma/client";
+import { PrismaUtilisateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaUtilisateurRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { ListerCoordinateursAnnuaireQuery } from "@/server/annuaire/queries/ListerCoordinateursAnnuaireQuery";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
@@ -33,6 +34,7 @@ describe("ListerCoordinateursAnnuaireQuery", () => {
   beforeEach(() => {
     query = new ListerCoordinateursAnnuaireQuery({
       prisma: new PrismaPilote(),
+      utilisateurRepository: new PrismaUtilisateurRepository(),
     });
   });
 

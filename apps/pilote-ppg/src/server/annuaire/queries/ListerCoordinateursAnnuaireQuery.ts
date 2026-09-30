@@ -1,7 +1,7 @@
+import type { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/annuaire/module";
 import {
-  lirePersonnes,
   MAILLES_ANNUAIRE,
   type PersonneAnnuaire,
   personnesRetenues,
@@ -22,9 +22,14 @@ export type AnnuaireCoordinateurs = {
 
 export class ListerCoordinateursAnnuaireQuery {
   private readonly prisma: PrismaPilote;
+  private readonly utilisateurRepository: UtilisateurRepository;
 
-  constructor({ prisma }: Inject<"prisma">) {
+  constructor({
+    prisma,
+    utilisateurRepository,
+  }: Inject<"prisma" | "utilisateurRepository">) {
     this.prisma = prisma;
+    this.utilisateurRepository = utilisateurRepository;
   }
 
   async run(): Promise<AnnuaireCoordinateurs> {
@@ -43,20 +48,19 @@ export class ListerCoordinateursAnnuaireQuery {
       },
     });
 
-    const personnes = await lirePersonnes(
-      prisma,
+    const utilisateurParId = await this.utilisateurRepository.recupererParIds(
       lignes.flatMap((ligne) => ligne.coordinateurs_territoriaux_ids),
     );
 
     const affectations = lignes.flatMap((ligne) => {
       const territoire = versTerritoireAnnuaire(ligne.territoire);
       return ligne.coordinateurs_territoriaux_ids
-        .filter((id) => personnes.has(id))
+        .filter((id) => utilisateurParId.has(id))
         .map((personneId) => ({ personneId, territoire }));
     });
 
     return {
-      personnes: personnesRetenues(affectations, personnes),
+      personnes: personnesRetenues(affectations, utilisateurParId),
       affectations,
     };
   }

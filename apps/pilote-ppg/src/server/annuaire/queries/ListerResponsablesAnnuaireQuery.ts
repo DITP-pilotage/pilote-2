@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
+import type { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/annuaire/module";
 import {
-  lirePersonnes,
   MAILLES_ANNUAIRE,
   type PersonneAnnuaire,
   personnesRetenues,
@@ -26,9 +26,14 @@ export type AnnuaireResponsables = {
 
 export class ListerResponsablesAnnuaireQuery {
   private readonly prisma: PrismaPilote;
+  private readonly utilisateurRepository: UtilisateurRepository;
 
-  constructor({ prisma }: Inject<"prisma">) {
+  constructor({
+    prisma,
+    utilisateurRepository,
+  }: Inject<"prisma" | "utilisateurRepository">) {
     this.prisma = prisma;
+    this.utilisateurRepository = utilisateurRepository;
   }
 
   async run(): Promise<AnnuaireResponsables> {
@@ -51,8 +56,7 @@ export class ListerResponsablesAnnuaireQuery {
       },
     });
 
-    const personnes = await lirePersonnes(
-      prisma,
+    const utilisateurParId = await this.utilisateurRepository.recupererParIds(
       lignes.flatMap((ligne) => ligne.responsables_locaux_ids),
     );
 
@@ -63,12 +67,12 @@ export class ListerResponsablesAnnuaireQuery {
       };
       const territoire = versTerritoireAnnuaire(ligne.territoire);
       return ligne.responsables_locaux_ids
-        .filter((id) => personnes.has(id))
+        .filter((id) => utilisateurParId.has(id))
         .map((personneId) => ({ personneId, chantier, territoire }));
     });
 
     return {
-      personnes: personnesRetenues(affectations, personnes),
+      personnes: personnesRetenues(affectations, utilisateurParId),
       affectations,
     };
   }
