@@ -253,11 +253,11 @@ const SYNTHESE: CalibrationCase[] = [
   },
   {
     family: "syntheseTerritoire",
-    label: "Résumé délayé",
-    broken: "Résumés condensés",
+    label: "Cause inventée dans un résumé",
+    broken: "Résumés fidèles",
     evidence: synthese({
       from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-      to: "> Deux postes d'urgentistes sont vacants à Brest et Quimper. Cette situation pèse sur le fonctionnement des services. Le délai médian de passage a remonté au premier semestre. Une régulation téléphonique a été mise en place au printemps. Les équipes restent mobilisées sur l'ensemble de la région.",
+      to: "> Deux postes d'urgentistes sont vacants à Brest et Quimper à la suite d'un conflit social avec l'agence régionale de santé, et le délai médian de passage a remonté au premier semestre.",
     }),
   },
   {
@@ -1325,6 +1325,15 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
  * unitaire vérifie que chacun échoue son critère, et lui seul.
  */
 export const MECHANICAL_MUTANTS: CalibrationCase[] = [
+  {
+    family: "syntheseTerritoire",
+    label: "Résumé délayé",
+    broken: "Résumés en 1 à 2 phrases",
+    evidence: synthese({
+      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
+      to: "> Le délai médian de passage a remonté au premier semestre. Deux postes d'urgentistes sont vacants à Brest et Quimper. Une régulation téléphonique fonctionne depuis mars.",
+    }),
+  },
   {
     family: "syntheseTerritoire",
     label: "Commentaire de synthèse recopié",

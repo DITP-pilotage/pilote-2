@@ -11,6 +11,7 @@ import {
   checkNoToolName,
   checkNoVerbatim,
   checkOfficialCodes,
+  checkResumesCourts,
   checkTableTerritories,
 } from "./mechanicalChecks";
 
@@ -37,6 +38,28 @@ describe("checkNoVerbatim", () => {
         sources: [commentaire],
       }).ok,
     ).toBe(true);
+  });
+});
+
+describe("checkResumesCourts", () => {
+  test("accepte des résumés d'une ou deux phrases sous les chantiers", () => {
+    expect(
+      checkResumesCourts({
+        text: "**CH-005 — Urgences**\n> Deux postes sont vacants. Le délai remonte à 4 h 10.\n\n**CH-006 — Prévention**\n> Pas de commentaire disponible",
+      }).ok,
+    ).toBe(true);
+  });
+
+  test("signale un résumé de plus de deux phrases", () => {
+    expect(
+      checkResumesCourts({
+        text: "> Deux postes sont vacants. La situation pèse. Le délai remonte.",
+      }),
+    ).toEqual({
+      ok: false,
+      detail:
+        "résumé de 3 phrases : « Deux postes sont vacants. La situation pèse. Le délai remonte. »",
+    });
   });
 });
 

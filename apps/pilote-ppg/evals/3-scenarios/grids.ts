@@ -12,6 +12,7 @@ import {
   checkNoFigure,
   checkNoLink,
   checkNoVerbatim,
+  checkResumesCourts,
   checkTableTerritories,
 } from "./mechanicalChecks";
 
@@ -36,16 +37,23 @@ const territoirePrincipalEstUnDepartement = (evidence: Evidence) =>
   )?.maille === "DEPT";
 
 /**
- * La règle « Commentaires » du prompt est découpée en trois critères. La
- * recopie et la mention d'absence sont mécaniques : la calibration du 30/09 a
- * montré que le juge ne les voyait pas (0/3 sur leurs mutants). Le juge ne
- * garde que la condensation, qui demande de lire.
+ * La règle « Commentaires » du prompt est découpée en quatre critères. La
+ * longueur, la recopie et la mention d'absence sont mécaniques : les
+ * calibrations du 30/09 ont montré que le juge ne les voyait pas (0/3 sur
+ * leurs mutants). Le juge ne garde que la fidélité au commentaire, qui
+ * demande de lire.
  */
-const RESUMES_CONDENSES = judged({
-  id: "Résumés condensés",
+const RESUMES_COURTS = mechanical({
+  id: "Résumés en 1 à 2 phrases",
   rule: "Commentaires : condense en 1-2 phrases factuelles",
+  check: (evidence) => checkResumesCourts({ text: evidence.matter }),
+});
+
+const RESUMES_FIDELES = judged({
+  id: "Résumés fidèles",
+  rule: "Commentaires : extrais uniquement les idées clés sans interprétation ni jugement",
   instruction:
-    "Sous chaque chantier listé dont la fiche porte un commentaire de synthèse, le résumé tient en 1 à 2 phrases factuelles tirées de ce commentaire, sans idée qui n'y figure pas.",
+    "Sous chaque chantier listé dont la fiche porte un commentaire de synthèse, le résumé ne contient que des idées présentes dans ce commentaire. Une cause, un chiffre, une action ou une conséquence qui n'y figure pas est non conforme. La longueur du résumé n'est pas jugée ici.",
 });
 
 const PAS_DE_RECOPIE_DES_SYNTHESES = mechanical({
@@ -105,7 +113,8 @@ function contenusDesCommentairesRecus(evidence: Evidence): string[] {
 }
 
 const COMMENTAIRES_DU_GABARIT = [
-  RESUMES_CONDENSES,
+  RESUMES_COURTS,
+  RESUMES_FIDELES,
   PAS_DE_RECOPIE_DES_SYNTHESES,
   ABSENCE_SIGNALEE,
 ];
@@ -247,7 +256,7 @@ export const GRIDS = {
         id: "Difficultés tirées des commentaires",
         rule: "Commentaires : extrais les idées clés sans interprétation",
         instruction:
-          "Les difficultés citées proviennent des commentaires reçus (délais, postes vacants, fermetures de lignes…), reformulées, sans difficulté inventée.",
+          "Chaque difficulté citée provient des commentaires reçus (délais, postes vacants, fermetures de lignes…). Une difficulté qui n'y figure pas est non conforme. Ce critère ne juge que l'invention : l'absence de difficultés relève de « Trois volets », et reste conforme ici.",
       }),
     ],
   }),
@@ -416,7 +425,7 @@ export const GRIDS = {
         id: "Widgets conformes à la demande",
         rule: "create_dashboard : task décrit ce que l'utilisateur veut voir",
         instruction:
-          "Types de widgets disponibles : taux_avancement_territoire (TA d'un territoire), mediane_avancement_territoire, nombre_chantiers_en_retard, nombre_chantiers_en_difficulte, valeurs_remarquables_avancement, tableau_indicateurs_chantier (indicateurs d'un chantier), liste_chantiers_en_retard, liste_chantiers_en_difficulte, cartographie_taux_avancement, cartographie_meteo (météo d'un chantier par territoire), cartographie_propositions_valeur_avancement, evolution_taux_avancement, evolution_valeur_avancement, titre_section, paragraph. Chaque élément que la demande énumère pour une section est présent avec le widget qui lui correspond (un paragraphe pour la météo et le commentaire de synthèse), et aucun widget étranger à la demande n'est ajouté.",
+          "Types de widgets disponibles : taux_avancement_territoire (TA d'un territoire), mediane_avancement_territoire, nombre_chantiers_en_retard, nombre_chantiers_en_difficulte, valeurs_remarquables_avancement, tableau_indicateurs_chantier (indicateurs d'un chantier), liste_chantiers_en_retard, liste_chantiers_en_difficulte, cartographie_taux_avancement, cartographie_meteo (météo d'un chantier par territoire), cartographie_propositions_valeur_avancement, evolution_taux_avancement, evolution_valeur_avancement, titre_section, paragraph. Chaque élément que la demande énumère pour une section est présent avec le widget qui lui correspond (un paragraphe pour la météo et le commentaire de synthèse), et aucun widget étranger à la demande n'est ajouté. Ne juge que les TYPES de widgets et leur répartition en sections : la largeur (`width`, où 4 est la pleine largeur) relève de la mise en page et n'est pas jugée, pas plus que le contenu des paragraphes.",
       }),
     ],
   }),
