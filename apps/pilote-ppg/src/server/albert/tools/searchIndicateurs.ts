@@ -89,13 +89,15 @@ Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id (
         { abortSignal },
       ): Promise<SearchIndicateursOutput> => {
         const accessibleSet = new Set(chantiersAccessibles);
+        // Le LLM passe souvent `chantier_ids: []` : un tableau vide vaut « pas de filtre ».
+        const filtreChantiers =
+          chantier_ids !== undefined && chantier_ids.length > 0;
 
-        const chantierIdsScope =
-          chantier_ids !== undefined
-            ? chantier_ids.filter((id) => accessibleSet.has(id))
-            : chantiersAccessibles;
+        const chantierIdsScope = filtreChantiers
+          ? chantier_ids.filter((id) => accessibleSet.has(id))
+          : chantiersAccessibles;
 
-        if (chantier_ids !== undefined && chantierIdsScope.length === 0) {
+        if (filtreChantiers && chantierIdsScope.length === 0) {
           return {
             indicateurs: [],
             reasoning:
