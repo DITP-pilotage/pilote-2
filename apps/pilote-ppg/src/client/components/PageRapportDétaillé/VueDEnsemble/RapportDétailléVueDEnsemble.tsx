@@ -9,7 +9,7 @@ import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import RemontéeAlerte from "@/components/_commons/RemontéeAlerte/RemontéeAlerte";
 import {
@@ -67,10 +67,10 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
       <div className="fr-mt-3w grid grid-cols-1 gap-6 min-[62rem]:grid-cols-2 print:grid-cols-2 print:break-inside-avoid">
         <Bloc>
           <section>
-            <TitreInfobulleConteneur>
+            <TitreInfobulleConteneur className="fr-mb-2w">
               <Titre
                 baliseHtml="h2"
-                className="fr-text--lg fr-mb-2w fr-py-1v"
+                className="fr-text--lg fr-mb-0 fr-py-1v"
                 estInline
               >
                 Taux d'avancement moyen

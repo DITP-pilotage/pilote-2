@@ -2,7 +2,7 @@ import { Fragment, PropsWithChildren, useState } from "react";
 import clsx from "clsx";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODateTime } from "@/server/app/domain/Dates";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";

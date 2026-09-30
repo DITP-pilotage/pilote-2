@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 

@@ -6,7 +6,7 @@ import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNo
 import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
 import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
 import { AnnexeTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/AnnexeTextareaAutoEvaluation";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } =

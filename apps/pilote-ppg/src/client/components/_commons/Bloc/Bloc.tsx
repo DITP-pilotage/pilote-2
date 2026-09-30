@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { clsxm } from "@/utils/clsxm";
 
 interface BlocProps {

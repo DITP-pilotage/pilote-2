@@ -12,7 +12,7 @@ import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { Publication } from "@/components/PageChantier/Publication/Publication.interface";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { extractVisibleText } from "@/utils/extractVisibleText";

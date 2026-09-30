@@ -8,7 +8,7 @@ import { BoutonImpression } from "@/components/_commons/BoutonImpression/BoutonI
 import { AvancementsFicheTerritoriale } from "@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import RépartitionMétéo from "@/components/_commons/RépartitionMétéo/RépartitionMétéo";
 import { TableauFicheTerritoriale } from "@/components/PageFicheTerritoriale/TableauFicheTerritoriale";
@@ -60,10 +60,10 @@ export const PageFicheTerritoriale: FunctionComponent<
               <div className="fiche-territoriale__avancement--moyen fr-mb-1w">
                 <Bloc>
                   <div className="flex flex-column align-center">
-                    <TitreInfobulleConteneur>
+                    <TitreInfobulleConteneur className="fr-mb-2w">
                       <Titre
                         baliseHtml="h2"
-                        className="fr-text--md fr-mb-2w fr-py-1v"
+                        className="fr-text--md fr-mb-0 fr-py-1v"
                         estInline
                       >
                         Taux d'avancement moyen

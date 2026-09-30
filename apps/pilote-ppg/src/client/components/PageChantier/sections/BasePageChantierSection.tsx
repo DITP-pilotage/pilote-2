@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import clsx from "clsx";
 import Titre from "@/components/_commons/Titre/Titre";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 

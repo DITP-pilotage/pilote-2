@@ -10,7 +10,7 @@ const TitreInfobulleConteneur: FunctionComponent<
   TitreInfobulleConteneurProps
 > = ({ className, children }) => {
   return (
-    <div className={clsxm("relative flex align-center", className)}>
+    <div className={clsxm("relative flex items-center", className)}>
       {children}
     </div>
   );

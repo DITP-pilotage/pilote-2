@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react";
-import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import { Progress } from "@/components/shared/Progress";
 import { clsxm } from "@/utils/clsxm";
 

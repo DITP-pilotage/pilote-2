@@ -1,6 +1,6 @@
 import { Control, Controller } from "react-hook-form";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/shared/Infobulle";
 import {
   MAILLES,
   Maille,
