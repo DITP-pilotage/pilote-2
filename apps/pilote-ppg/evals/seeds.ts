@@ -1,4 +1,5 @@
 import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { indicateurDuChantier } from "./world";
 
 /**
  * Briques de données réutilisables, appelées depuis la `task` d'un cas.
@@ -55,14 +56,8 @@ async function seedChantierTerritoire({
   // demandent systématiquement « et les valeurs de leurs indicateurs » ; sans
   // lui, l'agent produit une section « Aucun indicateur disponible » que le
   // juge note — à juste titre — comme du remplissage.
-  const indicateur = await fixtures.indicateurIdentite({
-    chantier_id: chantierId,
-    id: `IND-${chantierId.slice(3)}-${territoire.code_insee}`,
-    nom: `Indicateur de suivi du ${chantierId}`,
-  });
-
   await fixtures.indicateurTerritoire({
-    id: indicateur.id,
+    id: indicateurDuChantier(chantierId),
     chantier_id: chantierId,
     ...territoire,
     est_applicable: true,

@@ -18,5 +18,11 @@ export type ToolCase = {
   question: string;
   /** Ce que le cas cherche à vérifier. Affiché en colonne. */
   reason: string;
-  expected: ObservedToolCall[];
+  /**
+   * Appels attendus. `[]` : aucun outil ne doit être appelé. Absent : rien
+   * n'est exigé, seuls les outils interdits sont vérifiés.
+   */
+  expected?: ObservedToolCall[];
+  /** Outils qui ne doivent pas être appelés : un seul appel note le cas à 0. */
+  forbidden?: string[];
 };

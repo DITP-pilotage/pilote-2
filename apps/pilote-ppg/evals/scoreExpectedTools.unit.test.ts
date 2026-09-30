@@ -66,4 +66,123 @@ describe("scoreExpectedTools", () => {
 
     expect(result.score).toBe(0.5);
   });
+
+  it("note 0 quand un outil interdit est appelé, même si les attendus sont présents", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        { toolName: "search_chantiers" },
+        { toolName: "get_chantiers" },
+      ]),
+      expected: [{ toolName: "get_chantiers" }],
+      forbidden: ["search_chantiers"],
+    });
+
+    expect(result).toEqual({
+      score: 0,
+      metadata: {
+        verdict: "outils interdits appelés : search_chantiers",
+        attendus: ["get_chantiers"],
+        interdits: ["search_chantiers"],
+      },
+    });
+  });
+
+  it("note les attendus quand aucun outil interdit n'est appelé", () => {
+    const result = scoreExpectedTools({
+      output: turn([{ toolName: "get_chantiers" }]),
+      expected: [{ toolName: "get_chantiers" }],
+      forbidden: ["search_chantiers"],
+    });
+
+    expect(result.score).toBe(1);
+  });
+
+  it("compare les arguments tableaux par valeur", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "search_indicateurs",
+          input: { query: "lecture", chantier_ids: ["CH-018"] },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "search_indicateurs",
+          input: { chantier_ids: ["CH-018"] },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(1);
+  });
+
+  it("accepte un argument tableau qui contient au moins les valeurs attendues", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["freins_a_lever", "actions_a_venir"] },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["freins_a_lever"] },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(1);
+  });
+
+  it("note 0 quand une valeur attendue manque dans un argument tableau", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["actions_a_venir"] },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "get_chantier_commentaires",
+          input: { types: ["freins_a_lever"] },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(0);
+  });
+
+  it("décrit les appels attendus avec leurs arguments", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        { toolName: "get_chantiers", input: { view: "en_retard" } },
+      ]),
+      expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
+    });
+
+    expect(result.metadata).toEqual({
+      verdict: "tous les appels attendus sont présents",
+      attendus: ['get_chantiers({"view":"en_retard"})'],
+      interdits: [],
+    });
+  });
+
+  it("ne vérifie que les outils interdits quand le cas n'a pas d'attente", () => {
+    const result = scoreExpectedTools({
+      output: turn([{ toolName: "get_indicateurs" }]),
+      expected: undefined,
+      forbidden: ["search_chantiers"],
+    });
+
+    expect(result).toEqual({
+      score: 1,
+      metadata: {
+        verdict: "aucun outil interdit appelé",
+        attendus: "aucune attente",
+        interdits: ["search_chantiers"],
+      },
+    });
+  });
 });

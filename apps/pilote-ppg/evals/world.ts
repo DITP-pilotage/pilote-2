@@ -76,6 +76,133 @@ const CHANTIERS = [
 ];
 
 /**
+ * Un indicateur par chantier, aux libellés réalistes : `search_indicateurs`
+ * injecte la liste entière dans le prompt de son sous-agent, comme
+ * `search_chantiers` pour les chantiers. Des libellés génériques
+ * (« Indicateur du CH-001 ») rendraient chaque recherche vide, et l'agent
+ * rebondirait sur d'autres outils.
+ *
+ * L'identifiant reprend le numéro du chantier (IND-001 pour CH-001), sauf
+ * IND-894 : un identifiant à trois chiffres qui ne double aucun chantier, pour
+ * les cas qui citent un indicateur par son numéro (« l'indicateur 894 »).
+ */
+const INDICATEURS = [
+  {
+    id: "IND-001",
+    chantier_id: "CH-001",
+    nom: "Nombre de victimes de violences sexuelles accompagnées",
+  },
+  {
+    id: "IND-002",
+    chantier_id: "CH-002",
+    nom: "Nombre de téléphones grave danger attribués",
+  },
+  {
+    id: "IND-003",
+    chantier_id: "CH-003",
+    nom: "Écart de rémunération entre les femmes et les hommes",
+  },
+  {
+    id: "IND-004",
+    chantier_id: "CH-004",
+    nom: "Nombre de maisons de santé pluriprofessionnelles",
+  },
+  {
+    id: "IND-005",
+    chantier_id: "CH-005",
+    nom: "Délai médian de passage aux urgences",
+  },
+  {
+    id: "IND-006",
+    chantier_id: "CH-006",
+    nom: "Taux de couverture vaccinale contre la grippe des plus de 65 ans",
+  },
+  {
+    id: "IND-007",
+    chantier_id: "CH-007",
+    nom: "Nombre de rénovations énergétiques de logements financées",
+  },
+  {
+    id: "IND-008",
+    chantier_id: "CH-008",
+    nom: "Nombre de logements indignes traités",
+  },
+  {
+    id: "IND-009",
+    chantier_id: "CH-009",
+    nom: "Nombre de logements sociaux agréés",
+  },
+  {
+    id: "IND-010",
+    chantier_id: "CH-010",
+    nom: "Part des établissements recevant du public accessibles",
+  },
+  {
+    id: "IND-011",
+    chantier_id: "CH-011",
+    nom: "Taux d'emploi des personnes en situation de handicap",
+  },
+  {
+    id: "IND-012",
+    chantier_id: "CH-012",
+    nom: "Nombre de contrats d'apprentissage signés",
+  },
+  {
+    id: "IND-013",
+    chantier_id: "CH-013",
+    nom: "Nombre de demandeurs d'emploi de longue durée accompagnés",
+  },
+  {
+    id: "IND-014",
+    chantier_id: "CH-014",
+    nom: "Nombre de personnes tuées sur les routes",
+  },
+  {
+    id: "IND-015",
+    chantier_id: "CH-015",
+    nom: "Puissance installée d'énergies renouvelables",
+  },
+  {
+    id: "IND-016",
+    chantier_id: "CH-016",
+    nom: "Émissions de CO₂ du secteur des transports",
+  },
+  {
+    id: "IND-017",
+    chantier_id: "CH-017",
+    nom: "Nombre de classes dédoublées en éducation prioritaire",
+  },
+  {
+    id: "IND-018",
+    chantier_id: "CH-018",
+    nom: "Part des élèves maîtrisant les fondamentaux en mathématiques en fin de CM2",
+  },
+  {
+    id: "IND-894",
+    chantier_id: "CH-018",
+    nom: "Part des élèves lisant couramment en fin de CE1",
+  },
+  {
+    id: "IND-019",
+    chantier_id: "CH-019",
+    nom: "Part des locaux raccordables à la fibre",
+  },
+  {
+    id: "IND-020",
+    chantier_id: "CH-020",
+    nom: "Nombre de personnes accompagnées par un conseiller numérique",
+  },
+];
+
+/**
+ * L'indicateur d'un chantier dans le monde de base, pour y rattacher des
+ * valeurs territoriales.
+ */
+export function indicateurDuChantier(chantierId: string) {
+  return `IND-${chantierId.slice(3)}`;
+}
+
+/**
  * Chantiers dotés de données rattachées. Les tools de détail (indicateurs,
  * commentaires, objectifs) renverraient sinon du vide, ce qui pousse l'agent à
  * enchaîner d'autres appels et brouille la mesure de sélection d'outils.
@@ -125,14 +252,8 @@ async function seedDetailedChantier({
     est_applicable: true,
   });
 
-  const indicateur = await fixtures.indicateurIdentite({
-    chantier_id: chantierId,
-    id: `IND-${chantierId.slice(3)}`,
-    nom: `Indicateur principal du ${chantierId}`,
-  });
-
   await fixtures.indicateurTerritoire({
-    id: indicateur.id,
+    id: indicateurDuChantier(chantierId),
     chantier_id: chantierId,
     territoire_code: NATIONAL_TERRITORY,
   });
@@ -171,6 +292,10 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
 
   for (const chantier of CHANTIERS) {
     await fixtures.chantierIdentite(chantier);
+  }
+
+  for (const indicateur of INDICATEURS) {
+    await fixtures.indicateurIdentite(indicateur);
   }
 
   for (const chantierId of DETAILED_CHANTIERS) {

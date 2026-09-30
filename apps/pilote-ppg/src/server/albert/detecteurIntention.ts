@@ -25,8 +25,6 @@ const MOTS_CLES_DASHBOARD = [
   "affiche",
   "montre",
   "visualise",
-  "indicateur",
-  "indicateurs",
   "courbe",
   "graphique",
 ];
