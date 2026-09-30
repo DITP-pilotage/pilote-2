@@ -1,5 +1,6 @@
-import { Fragment, PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Accordion } from "@/components/shared/Accordion";
 import clsx from "clsx";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
@@ -223,26 +224,38 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
           <p>Aucun événement trouvé pour cet indicateur sur ce territoire.</p>
         </Alerte>
       ) : (
-        <div className="historique-container fr-mt-2w">
+        <Accordion.Root
+          className="historique-container fr-mt-2w"
+          defaultValue={
+            datesTriees.length > 0
+              ? [`accordion-rubrique-${indicateur.id}-${datesTriees[0]}-0`]
+              : []
+          }
+          type="multiple"
+        >
           {datesTriees.map((dateIso, index) => {
             const evenements = historique[dateIso];
             const dateFormatee = formaterDate(dateIso, "MM/YYYY");
 
             return (
-              <Fragment
+              <Accordion.Item
+                className="border-b-0"
                 key={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
+                value={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
               >
-                <button
-                  aria-controls={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
-                  aria-expanded={index === 0}
-                  className="fr-accordion__btn !bg-dsfr-blue-france-850 !texte-primary fr-py-0 fr-px-3v fr-mb-1v"
-                  type="button"
+                <Accordion.Header
+                  asChild
+                  className="border-t-0 !bg-transparent"
                 >
-                  Valeur d'avancement à la date du {dateFormatee}
-                </button>
-                <div
-                  className="fr-collapse"
-                  id={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
+                  <div>
+                    <Accordion.Trigger className="!bg-dsfr-blue-france-850 !text-primary !py-0 !px-3 mb-1">
+                      Valeur d'avancement à la date du {dateFormatee}
+                    </Accordion.Trigger>
+                  </div>
+                </Accordion.Header>
+                <Accordion.Content
+                  className="!bg-transparent"
+                  innerClassName="p-0"
                 >
                   <div className="fr-my-2w">
                     <div className="fr-grid-row fr-p-3v bg-dsfr-contrast-grey">
@@ -309,11 +322,11 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                       );
                     })}
                   </div>
-                </div>
-              </Fragment>
+                </Accordion.Content>
+              </Accordion.Item>
             );
           })}
-        </div>
+        </Accordion.Root>
       )}
     </Modale>
   );

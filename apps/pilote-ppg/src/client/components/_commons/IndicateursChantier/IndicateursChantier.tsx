@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Accordion } from "@/components/shared/Accordion";
 import IndicateurBloc from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -57,65 +58,85 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
         );
 
         if (indicateursDeCetteRubrique.length > 0) {
+          const valeurAccordeon = `accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`;
+
           return (
             <section
               className="mb-6 last-of-type:mb-0"
               id={rubriqueIndicateur.ancre}
               key={rubriqueIndicateur.ancre}
             >
-              <button
-                aria-controls={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
-                aria-expanded={rubriqueIndicateur.estAccordeonOuvert}
-                className={clsxm(
-                  "fr-accordion__btn border-b rounded-t-lg fr-py-0 fr-px-3v !text-black",
-                  {
-                    "!bg-dsfr-blue-france-925 !border-dsfr-blue-france-sun-113":
-                      chantier.statut !== "ARCHIVE",
-                    "!bg-dsfr-grey-925 !border-dsfr-grey-200":
-                      chantier.statut === "ARCHIVE",
-                  },
-                )}
-                type="button"
+              <Accordion.Root
+                collapsible
+                defaultValue={
+                  rubriqueIndicateur.isOpenByDefault
+                    ? valeurAccordeon
+                    : undefined
+                }
+                type="single"
               >
-                <TitreRubrique
-                  classNameTitre={
-                    chantier.statut === "ARCHIVE"
-                      ? "!m-0 !text-dsfr-grey-200"
-                      : "!m-0"
-                  }
-                  nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
-                  rubriqueDescription={rubriqueIndicateur.description}
-                  rubriqueNom={rubriqueIndicateur.nom}
-                />
-              </button>
-              <div
-                className="fr-collapse"
-                id={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
-              >
-                {indicateursDeCetteRubrique
-                  .sort((a, b) =>
-                    comparerIndicateur(
-                      a,
-                      b,
-                      détailsIndicateurs[a.id][territoireCode]?.ponderation,
-                      détailsIndicateurs[b.id][territoireCode]?.ponderation,
-                    ),
-                  )
-                  .map((indicateur) => {
-                    return (
-                      <IndicateurBloc
-                        estAutoriseAAccepterLesPropositionsDeValeurAvancement={
-                          estAutoriseAAccepterLesPropositionsDeValeurAvancement
-                        }
-                        estAutoriseAProposerUneValeurAvancement={
-                          estAutoriseAProposerUneValeurAvancement
-                        }
-                        indicateur={indicateur}
-                        key={indicateur.id}
-                      />
-                    );
-                  })}
-              </div>
+                <Accordion.Item className="border-b-0" value={valeurAccordeon}>
+                  <Accordion.Header
+                    asChild
+                    className="border-t-0 !bg-transparent"
+                  >
+                    <div>
+                      <Accordion.Trigger
+                        className={clsxm(
+                          "min-h-10 border-b rounded-t-lg !py-0 !px-3 !text-black",
+                          {
+                            "!bg-dsfr-blue-france-925 !border-dsfr-blue-france-sun-113":
+                              chantier.statut !== "ARCHIVE",
+                            "!bg-dsfr-grey-925 !border-dsfr-grey-200":
+                              chantier.statut === "ARCHIVE",
+                          },
+                        )}
+                      >
+                        <TitreRubrique
+                          classNameTitre={
+                            chantier.statut === "ARCHIVE"
+                              ? "!m-0 !text-dsfr-grey-200"
+                              : "!m-0"
+                          }
+                          nombreIndicateurRubrique={
+                            indicateursDeCetteRubrique.length
+                          }
+                          rubriqueDescription={rubriqueIndicateur.description}
+                          rubriqueNom={rubriqueIndicateur.nom}
+                        />
+                      </Accordion.Trigger>
+                    </div>
+                  </Accordion.Header>
+                  <Accordion.Content
+                    className="!bg-transparent"
+                    innerClassName="p-0"
+                  >
+                    {indicateursDeCetteRubrique
+                      .sort((a, b) =>
+                        comparerIndicateur(
+                          a,
+                          b,
+                          détailsIndicateurs[a.id][territoireCode]?.ponderation,
+                          détailsIndicateurs[b.id][territoireCode]?.ponderation,
+                        ),
+                      )
+                      .map((indicateur) => {
+                        return (
+                          <IndicateurBloc
+                            estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+                              estAutoriseAAccepterLesPropositionsDeValeurAvancement
+                            }
+                            estAutoriseAProposerUneValeurAvancement={
+                              estAutoriseAProposerUneValeurAvancement
+                            }
+                            indicateur={indicateur}
+                            key={indicateur.id}
+                          />
+                        );
+                      })}
+                  </Accordion.Content>
+                </Accordion.Item>
+              </Accordion.Root>
             </section>
           );
         }
