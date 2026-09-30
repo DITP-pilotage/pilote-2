@@ -1,4 +1,12 @@
 import { FunctionComponent } from "react";
+import {
+  Accordion,
+  CLASSES_DECLENCHEUR_ACCORDEON_DSFR,
+  CLASSES_ENTETE_ACCORDEON_DSFR,
+  CLASSES_CONTENU_ACCORDEON_DSFR,
+  CLASSES_INTERIEUR_ACCORDEON_DSFR,
+  CLASSES_ITEM_ACCORDEON_DSFR,
+} from "@/components/shared/Accordion";
 import SectionTableauIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur";
 import SectionDétailsMetadataIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur";
 import SectionDétailsMetadataParametreCalculIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur";
@@ -9,7 +17,6 @@ import SectionDétailsMetadataParametreIndicateurRegionale from "@/components/Pa
 import SectionDétailsMetadataParametreIndicateurNationale from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale";
 import SectionDétailsMetadataParametrePonderationIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur";
 import FicheIndicateurProps from "./FicheIndicateur.interface";
-import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
 
 const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
   indicateur,
@@ -30,98 +37,115 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
             informationHistorisationIndicateur
           }
         />
-        <section className="fr-accordion focus-within:z-auto">
-          <h2 className="fr-accordion__title">
-            <button
-              aria-controls="accordion-identity"
-              aria-expanded="true"
-              className="fr-accordion__btn"
-              type="button"
+        <Accordion.Root defaultValue={["accordion-identity"]} type="multiple">
+          <Accordion.Item
+            className={CLASSES_ITEM_ACCORDEON_DSFR}
+            value="accordion-identity"
+          >
+            <Accordion.Header asChild className={CLASSES_ENTETE_ACCORDEON_DSFR}>
+              <h2>
+                <Accordion.Trigger
+                  className={CLASSES_DECLENCHEUR_ACCORDEON_DSFR}
+                >
+                  Identité indicateur
+                </Accordion.Trigger>
+              </h2>
+            </Accordion.Header>
+            <Accordion.Content
+              className={CLASSES_CONTENU_ACCORDEON_DSFR}
+              innerClassName={CLASSES_INTERIEUR_ACCORDEON_DSFR}
             >
-              Identité indicateur
-            </button>
-          </h2>
-          <div className="fr-collapse" id="accordion-identity">
-            <SectionDétailsMetadataIndicateur
-              chantiers={chantiers}
-              estEnCoursDeModification={estEnCoursDeModification}
-              indicateur={indicateur}
-              mapInformationMetadataIndicateur={
-                mapInformationMetadataIndicateur
-              }
-            />
-          </div>
-        </section>
-        <section className="fr-accordion focus-within:z-auto">
-          <h2 className="fr-accordion__title">
-            <button
-              aria-controls="accordion-parametrage"
-              aria-expanded="false"
-              className="fr-accordion__btn"
-              type="button"
+              <SectionDétailsMetadataIndicateur
+                chantiers={chantiers}
+                estEnCoursDeModification={estEnCoursDeModification}
+                indicateur={indicateur}
+                mapInformationMetadataIndicateur={
+                  mapInformationMetadataIndicateur
+                }
+              />
+            </Accordion.Content>
+          </Accordion.Item>
+          <Accordion.Item
+            className={CLASSES_ITEM_ACCORDEON_DSFR}
+            value="accordion-parametrage"
+          >
+            <Accordion.Header asChild className={CLASSES_ENTETE_ACCORDEON_DSFR}>
+              <h2>
+                <Accordion.Trigger
+                  className={CLASSES_DECLENCHEUR_ACCORDEON_DSFR}
+                >
+                  Paramétrages
+                </Accordion.Trigger>
+              </h2>
+            </Accordion.Header>
+            <Accordion.Content
+              className={CLASSES_CONTENU_ACCORDEON_DSFR}
+              innerClassName={CLASSES_INTERIEUR_ACCORDEON_DSFR}
             >
-              Paramétrages
-            </button>
-          </h2>
-          <div className="fr-collapse" id="accordion-parametrage">
-            <SectionDétailsMetadataParametreIndicateurDepartementale
-              estEnCoursDeModification={estEnCoursDeModification}
-              indicateur={indicateur}
-              mapInformationMetadataIndicateur={
-                mapInformationMetadataIndicateur
-              }
-            />
-            <SectionDétailsMetadataParametreIndicateurRegionale
-              estEnCoursDeModification={estEnCoursDeModification}
-              indicateur={indicateur}
-              mapInformationMetadataIndicateur={
-                mapInformationMetadataIndicateur
-              }
-            />
-            <SectionDétailsMetadataParametreIndicateurNationale
-              estEnCoursDeModification={estEnCoursDeModification}
-              indicateur={indicateur}
-              mapInformationMetadataIndicateur={
-                mapInformationMetadataIndicateur
-              }
-            />
-            <SectionDétailsMetadataParametreCalculIndicateur
-              estEnCoursDeModification={estEnCoursDeModification}
-              indicateur={indicateur}
-              mapInformationMetadataIndicateur={
-                mapInformationMetadataIndicateur
-              }
-            />
-            <SectionDétailsMetadataParametrePonderationIndicateur
-              estEnCoursDeModification={estEnCoursDeModification}
-              indicateur={indicateur}
-              mapInformationMetadataIndicateur={
-                mapInformationMetadataIndicateur
-              }
-            />
-          </div>
-        </section>
-        <section className="fr-accordion focus-within:z-auto">
-          <h2 className="fr-accordion__title">
-            <button
-              aria-controls="accordion-autres-informations"
-              aria-expanded="false"
-              className="fr-accordion__btn"
-              type="button"
+              <SectionDétailsMetadataParametreIndicateurDepartementale
+                estEnCoursDeModification={estEnCoursDeModification}
+                indicateur={indicateur}
+                mapInformationMetadataIndicateur={
+                  mapInformationMetadataIndicateur
+                }
+              />
+              <SectionDétailsMetadataParametreIndicateurRegionale
+                estEnCoursDeModification={estEnCoursDeModification}
+                indicateur={indicateur}
+                mapInformationMetadataIndicateur={
+                  mapInformationMetadataIndicateur
+                }
+              />
+              <SectionDétailsMetadataParametreIndicateurNationale
+                estEnCoursDeModification={estEnCoursDeModification}
+                indicateur={indicateur}
+                mapInformationMetadataIndicateur={
+                  mapInformationMetadataIndicateur
+                }
+              />
+              <SectionDétailsMetadataParametreCalculIndicateur
+                estEnCoursDeModification={estEnCoursDeModification}
+                indicateur={indicateur}
+                mapInformationMetadataIndicateur={
+                  mapInformationMetadataIndicateur
+                }
+              />
+              <SectionDétailsMetadataParametrePonderationIndicateur
+                estEnCoursDeModification={estEnCoursDeModification}
+                indicateur={indicateur}
+                mapInformationMetadataIndicateur={
+                  mapInformationMetadataIndicateur
+                }
+              />
+            </Accordion.Content>
+          </Accordion.Item>
+          <Accordion.Item
+            className={CLASSES_ITEM_ACCORDEON_DSFR}
+            value="accordion-autres-informations"
+          >
+            <Accordion.Header asChild className={CLASSES_ENTETE_ACCORDEON_DSFR}>
+              <h2>
+                <Accordion.Trigger
+                  className={CLASSES_DECLENCHEUR_ACCORDEON_DSFR}
+                >
+                  Autres informations
+                </Accordion.Trigger>
+              </h2>
+            </Accordion.Header>
+            <Accordion.Content
+              className={CLASSES_CONTENU_ACCORDEON_DSFR}
+              innerClassName={CLASSES_INTERIEUR_ACCORDEON_DSFR}
             >
-              Autres informations
-            </button>
-          </h2>
-          <div className="fr-collapse" id="accordion-autres-informations">
-            <SectionDétailsMetadataAutresIndicateur
-              estEnCoursDeModification={estEnCoursDeModification}
-              indicateur={indicateur}
-              mapInformationMetadataIndicateur={
-                mapInformationMetadataIndicateur
-              }
-            />
-          </div>
-        </section>
+              <SectionDétailsMetadataAutresIndicateur
+                estEnCoursDeModification={estEnCoursDeModification}
+                indicateur={indicateur}
+                mapInformationMetadataIndicateur={
+                  mapInformationMetadataIndicateur
+                }
+              />
+            </Accordion.Content>
+          </Accordion.Item>
+        </Accordion.Root>
       </div>
     </div>
   );

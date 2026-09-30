@@ -1,4 +1,13 @@
 import { FunctionComponent, Suspense, useState } from "react";
+import { clsxm } from "@/utils/clsxm";
+import {
+  Accordion,
+  CLASSES_DECLENCHEUR_ACCORDEON_DSFR,
+  CLASSES_ENTETE_ACCORDEON_DSFR,
+  CLASSES_CONTENU_ACCORDEON_DSFR,
+  CLASSES_INTERIEUR_ACCORDEON_DSFR,
+  CLASSES_ITEM_ACCORDEON_DSFR,
+} from "@/components/shared/Accordion";
 import { parseAsString, useQueryState } from "nuqs";
 import { IndicateurEvolution } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurEvolution";
 import IndicateurSpécifications from "@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications";
@@ -89,21 +98,26 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   );
 
   return (
-    <div className="fr-accordions-group">
-      <section className="fr-accordion focus-within:z-auto print:hidden">
-        <h3 className="fr-accordion__title">
-          <button
-            aria-controls={`détails-${indicateur.id}`}
-            aria-expanded="false"
-            className="fr-accordion__btn"
-            onClick={() => setFutOuvert(true)}
-            title={nomDefinitionDeLindicateur}
-            type="button"
-          >
-            {nomDefinitionDeLindicateur}
-          </button>
-        </h3>
-        <div className="fr-collapse" id={`détails-${indicateur.id}`}>
+    <Accordion.Root type="multiple">
+      <Accordion.Item
+        className={clsxm(CLASSES_ITEM_ACCORDEON_DSFR, "print:hidden")}
+        value={`détails-${indicateur.id}`}
+      >
+        <Accordion.Header asChild className={CLASSES_ENTETE_ACCORDEON_DSFR}>
+          <h3>
+            <Accordion.Trigger
+              className={CLASSES_DECLENCHEUR_ACCORDEON_DSFR}
+              onClick={() => setFutOuvert(true)}
+              title={nomDefinitionDeLindicateur}
+            >
+              {nomDefinitionDeLindicateur}
+            </Accordion.Trigger>
+          </h3>
+        </Accordion.Header>
+        <Accordion.Content
+          className={CLASSES_CONTENU_ACCORDEON_DSFR}
+          innerClassName={CLASSES_INTERIEUR_ACCORDEON_DSFR}
+        >
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
               <div className="fr-col-12">
@@ -120,24 +134,26 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
               </div>
             </div>
           </div>
-        </div>
-      </section>
-      <section className="fr-accordion focus-within:z-auto print:hidden">
-        <h3 className="fr-accordion__title">
-          <button
-            aria-controls={`repartition-geographique-et-evolution-${indicateur.id}`}
-            aria-expanded="false"
-            className="fr-accordion__btn"
-            onClick={() => setFutOuvert(true)}
-            title={nomRepartitionGeographiqueEtEvolution}
-            type="button"
-          >
-            {nomRepartitionGeographiqueEtEvolution}
-          </button>
-        </h3>
-        <div
-          className="fr-collapse"
-          id={`repartition-geographique-et-evolution-${indicateur.id}`}
+        </Accordion.Content>
+      </Accordion.Item>
+      <Accordion.Item
+        className={clsxm(CLASSES_ITEM_ACCORDEON_DSFR, "print:hidden")}
+        value={`repartition-geographique-et-evolution-${indicateur.id}`}
+      >
+        <Accordion.Header asChild className={CLASSES_ENTETE_ACCORDEON_DSFR}>
+          <h3>
+            <Accordion.Trigger
+              className={CLASSES_DECLENCHEUR_ACCORDEON_DSFR}
+              onClick={() => setFutOuvert(true)}
+              title={nomRepartitionGeographiqueEtEvolution}
+            >
+              {nomRepartitionGeographiqueEtEvolution}
+            </Accordion.Trigger>
+          </h3>
+        </Accordion.Header>
+        <Accordion.Content
+          className={CLASSES_CONTENU_ACCORDEON_DSFR}
+          innerClassName={CLASSES_INTERIEUR_ACCORDEON_DSFR}
         >
           {donnéesCartographieAvancementTerritorialisées ||
           donnéesCartographieValeurAvancementTerritorialisées ||
@@ -232,8 +248,8 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
               </div>
             </div>
           )}
-        </div>
-      </section>
-    </div>
+        </Accordion.Content>
+      </Accordion.Item>
+    </Accordion.Root>
   );
 };

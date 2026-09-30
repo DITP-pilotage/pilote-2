@@ -1,8 +1,15 @@
 import { FunctionComponent } from "react";
+import {
+  Accordion,
+  CLASSES_DECLENCHEUR_ACCORDEON_DSFR,
+  CLASSES_ENTETE_ACCORDEON_DSFR,
+  CLASSES_CONTENU_ACCORDEON_DSFR,
+  CLASSES_INTERIEUR_ACCORDEON_DSFR,
+  CLASSES_ITEM_ACCORDEON_DSFR,
+} from "@/components/shared/Accordion";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { useNouveautés } from "./useNouveautés";
-import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
 import "@gouvfr/dsfr/dist/component/input/input.min.css";
 
 const Nouveautés: FunctionComponent = () => {
@@ -52,31 +59,40 @@ const Nouveautés: FunctionComponent = () => {
                               Version{" "}
                               {`${element.version} du ${new Date(element.date).toLocaleDateString("fr-FR")}`}
                             </h2>
-                            <section className="fr-accordion">
-                              <h3 className="fr-accordion__title">
-                                <button
-                                  aria-controls={`accordion-${index}`}
-                                  aria-expanded="false"
-                                  className="fr-accordion__btn"
-                                  type="button"
-                                >
-                                  Voir le détail
-                                </button>
-                              </h3>
-                              <div
-                                className="fr-collapse"
-                                id={`accordion-${index}`}
+                            <Accordion.Root collapsible type="single">
+                              <Accordion.Item
+                                className={CLASSES_ITEM_ACCORDEON_DSFR}
+                                value={`accordion-${index}`}
                               >
-                                <div className="fr-mb-2w">
+                                <Accordion.Header
+                                  asChild
+                                  className={CLASSES_ENTETE_ACCORDEON_DSFR}
+                                >
+                                  <h3>
+                                    <Accordion.Trigger
+                                      className={
+                                        CLASSES_DECLENCHEUR_ACCORDEON_DSFR
+                                      }
+                                    >
+                                      Voir le détail
+                                    </Accordion.Trigger>
+                                  </h3>
+                                </Accordion.Header>
+                                <Accordion.Content
+                                  className={CLASSES_CONTENU_ACCORDEON_DSFR}
+                                  innerClassName={
+                                    CLASSES_INTERIEUR_ACCORDEON_DSFR
+                                  }
+                                >
                                   <div
                                     className="fr-content"
                                     dangerouslySetInnerHTML={{
                                       __html: element.contenu,
                                     }}
                                   />
-                                </div>
-                              </div>
-                            </section>
+                                </Accordion.Content>
+                              </Accordion.Item>
+                            </Accordion.Root>
                           </div>
                         </div>
                       );

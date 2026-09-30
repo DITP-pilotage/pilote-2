@@ -55,7 +55,7 @@ export const BlocChantier = ({
                 {indicateur.id} - {indicateur.nom}
               </Accordion.Trigger>
             </Accordion.Header>
-            <Accordion.Content className="!bg-transparent !px-0 !pb-0 !pt-0">
+            <Accordion.Content className="!bg-transparent" innerClassName="p-0">
               <Table.Root
                 caption={`Valeurs saisies pour ${indicateur.nom}`}
                 captionHidden

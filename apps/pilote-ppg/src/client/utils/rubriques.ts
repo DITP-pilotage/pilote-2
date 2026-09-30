@@ -11,7 +11,7 @@ export type CategoriesIndicateur =
 export type ÉlémentPageIndicateursType = Rubrique & {
   categorieIndicateur: CategoriesIndicateur;
   description: string | null;
-  estAccordeonOuvert: boolean;
+  isOpenByDefault: boolean;
 };
 
 export const listeRubriquesIndicateursChantier: ÉlémentPageIndicateursType[] = [
@@ -20,7 +20,7 @@ export const listeRubriquesIndicateursChantier: ÉlémentPageIndicateursType[] =
     ancre: "participation_ta",
     categorieIndicateur: "participation_ta",
     description: null,
-    estAccordeonOuvert: true,
+    isOpenByDefault: true,
   },
   {
     nom: "Indicateurs non pris en compte dans le taux d'avancement du territoire et/ou de la maille",
@@ -28,7 +28,7 @@ export const listeRubriquesIndicateursChantier: ÉlémentPageIndicateursType[] =
     categorieIndicateur: "non_participation_ta",
     description:
       "Ces indicateurs ne sont pas pris en compte pour le territoire. Toutefois, ils peuvent être pris en compte dans le calcul du taux d'avancement pour d'autres territoires ou d'autres mailles géographiques",
-    estAccordeonOuvert: false,
+    isOpenByDefault: false,
   },
   {
     nom: "Autres indicateurs",
@@ -36,7 +36,7 @@ export const listeRubriquesIndicateursChantier: ÉlémentPageIndicateursType[] =
     categorieIndicateur: "autre",
     description:
       "Ces indicateurs ne sont jamais pris en compte pour calculer le taux d'avancement de la PPG. Ils sont présentés pour donner des informations complémentaires sur l'impact et le déploiement de la PPG",
-    estAccordeonOuvert: false,
+    isOpenByDefault: false,
   },
 ];
 

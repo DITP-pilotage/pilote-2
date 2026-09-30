@@ -1,4 +1,7 @@
 import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
+import { Icone } from "@/components/_commons/Icone";
+import { Collapsible } from "@/components/shared/Collapsible";
 import { FunctionComponent, useState } from "react";
 import { Tag } from "@/components/_commons/Tag/Tag";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
@@ -11,7 +14,6 @@ import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { listeStatuts } from "@/client/constants/statut";
 import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
-import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 
 interface FiltresActifsProps {
@@ -97,38 +99,34 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
   );
 
   return (
-    <div
+    <Collapsible.Root
       className="sticky w-full top-0 z-[1] bg-dsfr-blue-france-925 shadow-[0_6px_18px_var(--shadow-color)] max-[992px]:top-14"
       id="filtres-actifs"
+      onOpenChange={setEstOuvert}
+      open={estOuvert}
     >
-      <div
-        aria-controls="filtres-actifs"
-        aria-expanded={estOuvert}
-        className="fr-accordion__btn flex items-center justify-between px-6 pt-6 pb-4 cursor-pointer"
-        onClick={() => setEstOuvert(!estOuvert)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            setEstOuvert(!estOuvert);
-          }
-        }}
-        role="button"
-        tabIndex={0}
-      >
-        <div className="flex gap-2">
-          <div className="flex align-center gap-1">
-            <span className="bold text-xs mb-0">{nombreFiltresActifs}</span>
-            <span className="text-xs">
-              {nombreFiltresActifs > 1
-                ? "filtres actifs sur cette page"
-                : "filtre actif sur cette page"}
-            </span>
-          </div>
-          <BoutonReintialiserLesFiltres />
-        </div>
+      <div className="flex items-center gap-2 px-6 pt-6 pb-4">
+        <Collapsible.Trigger className="flex items-center gap-1 text-left">
+          <span className="bold text-xs mb-0">{nombreFiltresActifs}</span>
+          <span className="text-xs">
+            {nombreFiltresActifs > 1
+              ? "filtres actifs sur cette page"
+              : "filtre actif sur cette page"}
+          </span>
+        </Collapsible.Trigger>
+        <BoutonReintialiserLesFiltres />
+        <Collapsible.Trigger
+          aria-hidden="true"
+          className="group ml-auto flex self-stretch items-center pl-4"
+          tabIndex={-1}
+        >
+          <Icone
+            className="w-5 h-5 text-current transition-transform duration-200 group-data-[state=open]:rotate-180"
+            icone={ArrowSLine2Icon}
+          />
+        </Collapsible.Trigger>
       </div>
-      <div
-        className={`${estOuvert ? "fr-collapse--expanded px-6 pb-4" : "fr-collapse"}`}
-      >
+      <Collapsible.Content className="px-6 pb-4">
         {filtres.estEnAlerteTauxAvancementNonCalculé ||
         filtres.estEnAlerteÉcart ||
         filtres.estEnAlerteBaisse ||
@@ -483,7 +481,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             </div>
           </div>
         ) : null}
-      </div>
-    </div>
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 };
