@@ -1,5 +1,6 @@
 import { evalite } from "evalite";
 import { askJudge } from "../askJudge";
+import { calibrationColumns } from "../columns";
 import type { JudgedCriterion } from "../grid";
 import { GRIDS } from "../grids";
 import { JUDGE_MODEL, type Verdict } from "../judge";
@@ -85,16 +86,14 @@ for (const family of familles) {
         },
       ],
 
-      columns: ({ input, output }) => [
-        { label: "Cas", value: input.label },
-        { label: "Critère cassé", value: input.broken ?? "—" },
-        {
-          label: "Verdicts",
-          value: Object.entries(output)
-            .map(([id, verdict]) => `${verdict.conforme ? "✓" : "✗"} ${id}`)
-            .join("\n"),
-        },
-      ],
+      columns: ({ input, output }) =>
+        calibrationColumns({
+          label: input.label,
+          broken: input.broken,
+          question: input.evidence.question,
+          matter: input.evidence.matter,
+          verdict: output,
+        }),
     },
   );
 }

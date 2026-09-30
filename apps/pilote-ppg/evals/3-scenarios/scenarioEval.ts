@@ -7,6 +7,7 @@ import { EVAL_TIMEOUT_MS, seedEvalWorld, type EvalProfile } from "../world";
 import { scoreExpectedTools } from "../scoreExpectedTools";
 import type { AgentTurn, ObservedToolCall } from "../types";
 import { askJudge } from "./askJudge";
+import { scenarioColumns } from "./columns";
 import { extractMatter, maskedTerritories, type Evidence } from "./evidence";
 import type { Criterion, Grid, JudgedCriterion } from "./grid";
 import { readGroundTruth } from "./groundTruth";
@@ -144,28 +145,6 @@ function criterionScorer({
   });
 }
 
-function decrireAppel({ toolName, input }: ObservedToolCall) {
-  return `${toolName}(${JSON.stringify(input ?? {})})`;
-}
-
-function decrireWidgets(turn: ScenarioTurn) {
-  const { dashboard } = extractMatter({
-    kind: "dashboard",
-    text: "",
-    toolCalls: turn.toolCalls,
-    toolResults: turn.toolResults,
-  });
-
-  return (
-    dashboard?.containers
-      .map(
-        (container, index) =>
-          `${index + 1}. ${container.widgets.map((widget) => widget.type.replace("widget_", "")).join(", ")}`,
-      )
-      .join("\n") ?? "—"
-  );
-}
-
 /**
  * Tout ce qu'une suite de niveau 3 partage : le monde territorial, le tour
  * d'agent avec le profil et le contexte de l'accueil, la fiche de vérité, et
@@ -275,18 +254,16 @@ export function scenarioEval({
         ),
       ],
 
-      columns: ({ input, output }) => [
-        { label: "Scénario", value: input.reason },
-        { label: "Profil", value: input.profile ?? profile },
-        {
-          label: "Outils appelés",
-          value: output.toolCalls.map(decrireAppel).join("\n→ ") || "—",
-        },
-        { label: "Réponse", value: output.text.slice(0, 500) },
-        ...(grid.matter === "dashboard"
-          ? [{ label: "Widgets", value: decrireWidgets(output) }]
-          : []),
-      ],
+      columns: ({ input, output }) =>
+        scenarioColumns({
+          reason: input.reason,
+          profile: input.profile ?? profile,
+          question: input.question,
+          toolCalls: output.toolCalls,
+          toolResults: output.toolResults,
+          text: output.text,
+          withWidgets: grid.matter === "dashboard",
+        }),
     },
   );
 }
