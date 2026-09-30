@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { useEnv } from "@/client/hooks/useEnv";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Axe from "@/server/domain/axe/Axe.interface";
+import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { objectEntries } from "@/client/utils/objects/objects";
@@ -109,17 +110,28 @@ export const getServerSideProps = async (
       searchParams.estEnAlertePossedePropositionsValeurAvancement,
   };
 
-  const [ministères, axes] =
+  const [
+    [ministères, axes],
+    doitAfficherModaleVideoAccueil,
+    doitAfficherLaModaleInfolettre,
+  ] = await Promise.all([
     session.habilitations.lecture.chantiers.length === 0
-      ? [[], []]
-      : await Promise.all([
+      ? Promise.resolve<[Ministère[], Axe[]]>([[], []])
+      : Promise.all([
           getContainer("legacy")
             .resolve("ministèreRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
           getContainer("legacy")
             .resolve("axeRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
-        ]);
+        ]),
+    getContainer("gestionUtilisateur")
+      .resolve("recupererEtatVisualisationVideoAccueilUseCase")
+      .execute(session.user.id),
+    getContainer("gestionUtilisateur")
+      .resolve("recupererEtatModaleInscriptionUseCase")
+      .execute(session.user.id),
+  ]);
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 
@@ -185,32 +197,27 @@ export const getServerSideProps = async (
         })
       : chantiers;
 
-  const repartitionMeteosChantiers = await getContainer("legacy")
-    .resolve("recupererRepartitionsMeteoChantiersUseCase")
-    .run(
-      territoireCode,
-      filtres,
-      axes,
-      chantiersAvecAlertes.map((chantierAvecAlerte) => chantierAvecAlerte.id),
-    )
-    .then(presenterEnRépartitionsMétéosChantiersContrat);
+  const chantierIdsAvecAlertes = chantiersAvecAlertes.map(
+    (chantier) => chantier.id,
+  );
 
-  const avancementsAgrégés = await getContainer("chantiers")
-    .resolve("récupérerStatistiquesAvancementChantiersUseCase")
-    .run(
-      chantiersAvecAlertes.map((chantier) => chantier.id),
-      mailleQuery,
-      session.habilitations,
-      jalon,
-    )
-    .then(presenterEnAvancementsStatistiquesAccueilContrat);
-
-  const { agregat: donneesTerritoiresAgregees } = await getContainer("legacy")
-    .resolve("agregerAvancementsChantiersUseCase")
-    .run(
-      chantiersAvecAlertes.map((chantier) => chantier.id),
-      jalon,
-    );
+  const [
+    repartitionMeteosChantiers,
+    avancementsAgrégés,
+    { agregat: donneesTerritoiresAgregees },
+  ] = await Promise.all([
+    getContainer("legacy")
+      .resolve("recupererRepartitionsMeteoChantiersUseCase")
+      .run(territoireCode, filtres, axes, chantierIdsAvecAlertes)
+      .then(presenterEnRépartitionsMétéosChantiersContrat),
+    getContainer("chantiers")
+      .resolve("récupérerStatistiquesAvancementChantiersUseCase")
+      .run(chantierIdsAvecAlertes, mailleQuery, session.habilitations, jalon)
+      .then(presenterEnAvancementsStatistiquesAccueilContrat),
+    getContainer("legacy")
+      .resolve("agregerAvancementsChantiersUseCase")
+      .run(chantierIdsAvecAlertes, jalon),
+  ]);
 
   const moyenneTerritoire =
     donneesTerritoiresAgregees[mailleChantier].territoires[territoireCode]
@@ -226,23 +233,12 @@ export const getServerSideProps = async (
   }));
 
   const nombreTotalChantiersAvecAlertes = chantiersAvecAlertes.length;
-  const chantierIds = chantiersAvecAlertes.map((chantier) => chantier.id);
+  const chantierIds = chantierIdsAvecAlertes;
 
   const chantiersPaginesAvecAlertes = chantiersAvecAlertes.splice(
     page * pageSize,
     pageSize,
   );
-
-  const doitAfficherModaleVideoAccueil = await getContainer(
-    "gestionUtilisateur",
-  )
-    .resolve("recupererEtatVisualisationVideoAccueilUseCase")
-    .execute(session.user.id);
-  const doitAfficherLaModaleInfolettre = await getContainer(
-    "gestionUtilisateur",
-  )
-    .resolve("recupererEtatModaleInscriptionUseCase")
-    .execute(session.user.id);
 
   const emailAutoriseAskAITerritoire = estEmailAutoriseAskAITerritoire(
     session.user.email,

@@ -1,4 +1,4 @@
-import { Fragment, PropsWithChildren } from "react";
+import { Fragment, PropsWithChildren, useState } from "react";
 import clsx from "clsx";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
@@ -15,8 +15,9 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
   const { indicateur, chantier, territoireSélectionné } =
     useBlocIndicateurContext();
 
+  const [open, setOpen] = useState(false);
   const { historique, isLoading } =
-    useModaleHistoriqueIndicateurTerritoireValeurEvenement();
+    useModaleHistoriqueIndicateurTerritoireValeurEvenement(open);
 
   const mapperEvenementEnLibelle = ({
     typeEvenement,
@@ -187,6 +188,8 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
 
   return (
     <Modale
+      onOpenChange={setOpen}
+      open={open}
       title="Historique des actions sur les valeurs d'avancement"
       trigger={children}
     >
