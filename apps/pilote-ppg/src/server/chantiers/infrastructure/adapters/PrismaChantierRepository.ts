@@ -13,7 +13,10 @@ import {
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
+import {
+  PrismaChantier,
+  PrismaChantierPourTerritoire,
+} from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -31,6 +34,63 @@ class ErreurChantierPermission extends Error {
     );
   }
 }
+
+const CHANTIER_IDENTITE_SELECT = {
+  id: true,
+  nom: true,
+  axe: true,
+  ppg: true,
+  perimetre_ids: true,
+  ate: true,
+  ministeres: true,
+  statut: true,
+  cible_attendue: true,
+  est_barometre: true,
+  est_territorialise: true,
+  possede_taux_avancement_departemental: true,
+  possede_taux_avancement_regional: true,
+  possede_meteo_departemental: true,
+  possede_meteo_regional: true,
+  directeurs_administration_centrale: true,
+  directions_administration_centrale: true,
+  directeurs_projet_ids: true,
+  mailles_applicables: true,
+} satisfies Prisma.chantier_identiteSelect;
+
+const chantierTerritoireSelect = (jalons: number[]) =>
+  ({
+    territoire_code: true,
+    id: true,
+    code_insee: true,
+    maille: true,
+    ecart: true,
+    donnees_maille_source: true,
+    taux_avancement_mandat_valeur_precedente: true,
+    meteo: true,
+    tendance: true,
+    derniere_maj_date_qualitative: true,
+    date_taux_avancement_mandat: true,
+    est_applicable: true,
+    responsables_locaux_ids: true,
+    coordinateurs_territoriaux_ids: true,
+    taux_avancement_mandat: true,
+    nombre_propositions_valeur_actuelle: true,
+    nombre_propositions_valeur_actuelle_ponderee: true,
+    date_taux_avancement_mandat_valeur_precedente: true,
+    chantier_territoire_jalon: {
+      select: {
+        taux_avancement: true,
+        date_taux_avancement: true,
+        ecart: true,
+        jalon: true,
+      },
+      where: {
+        jalon: {
+          in: jalons,
+        },
+      },
+    },
+  }) satisfies Prisma.chantier_territoireSelect;
 
 export class PrismaChantierRepository implements ChantierRepository {
   private prismaClient: PrismaPilote;
@@ -1160,14 +1220,14 @@ export class PrismaChantierRepository implements ChantierRepository {
     }));
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilités(
+  private async resolveChantierFilters(
     chantiersLectureIds: string[],
-    territoiresLectureIds: string[],
-    profil: ProfilCode,
     filtres: FiltreQueryParams,
     territoireCode: string,
-    jalons: number[],
-  ): Promise<PrismaChantier[]> {
+  ): Promise<{
+    chantierIds: string[];
+    whereOptions: Prisma.chantier_identiteWhereInput;
+  }> {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
@@ -1291,6 +1351,23 @@ export class PrismaChantierRepository implements ChantierRepository {
         );
     }
 
+    return { chantierIds, whereOptions };
+  }
+
+  async récupérerLesEntréesDeTousLesChantiersHabilités(
+    chantiersLectureIds: string[],
+    territoiresLectureIds: string[],
+    profil: ProfilCode,
+    filtres: FiltreQueryParams,
+    territoireCode: string,
+    jalons: number[],
+  ): Promise<PrismaChantier[]> {
+    const { chantierIds, whereOptions } = await this.resolveChantierFilters(
+      chantiersLectureIds,
+      filtres,
+      territoireCode,
+    );
+
     return this.prisma.chantier_identite.findMany({
       where: {
         NOT: {
@@ -1305,25 +1382,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         id: "asc",
       },
       select: {
-        id: true,
-        nom: true,
-        axe: true,
-        ppg: true,
-        perimetre_ids: true,
-        ate: true,
-        ministeres: true,
-        statut: true,
-        cible_attendue: true,
-        est_barometre: true,
-        est_territorialise: true,
-        possede_taux_avancement_departemental: true,
-        possede_taux_avancement_regional: true,
-        possede_meteo_departemental: true,
-        possede_meteo_regional: true,
-        directeurs_administration_centrale: true,
-        directions_administration_centrale: true,
-        directeurs_projet_ids: true,
-        mailles_applicables: true,
+        ...CHANTIER_IDENTITE_SELECT,
         chantier_territoire: {
           where: {
             territoire_code: {
@@ -1333,41 +1392,151 @@ export class PrismaChantierRepository implements ChantierRepository {
             },
             est_applicable: true,
           },
-          select: {
-            territoire_code: true,
-            id: true,
-            code_insee: true,
-            maille: true,
-            ecart: true,
-            donnees_maille_source: true,
-            taux_avancement_mandat_valeur_precedente: true,
-            meteo: true,
-            tendance: true,
-            derniere_maj_date_qualitative: true,
-            date_taux_avancement_mandat: true,
-            est_applicable: true,
-            responsables_locaux_ids: true,
-            coordinateurs_territoriaux_ids: true,
-            taux_avancement_mandat: true,
-            nombre_propositions_valeur_actuelle: true,
-            nombre_propositions_valeur_actuelle_ponderee: true,
-            date_taux_avancement_mandat_valeur_precedente: true,
-            chantier_territoire_jalon: {
-              select: {
-                taux_avancement: true,
-                date_taux_avancement: true,
-                ecart: true,
-                jalon: true,
-              },
-              where: {
-                jalon: {
-                  in: jalons,
-                },
-              },
-            },
-          },
+          select: chantierTerritoireSelect(jalons),
         },
       },
     });
+  }
+  async listChantiersHabilitesByTerritoire(
+    chantiersLectureIds: string[],
+    territoiresLectureIds: string[],
+    profil: ProfilCode,
+    filtres: FiltreQueryParams,
+    territoireCode: string,
+    jalon: number,
+    jalonParDefaut: number,
+  ): Promise<PrismaChantierPourTerritoire[]> {
+    const visibleTerritoireCodes = profilsTerritoriaux.includes(profil)
+      ? undefined
+      : [...territoiresLectureIds, "NAT-FR"];
+    if (
+      visibleTerritoireCodes &&
+      !visibleTerritoireCodes.includes(territoireCode)
+    ) {
+      return [];
+    }
+
+    const { chantierIds, whereOptions } = await this.resolveChantierFilters(
+      chantiersLectureIds,
+      filtres,
+      territoireCode,
+    );
+
+    const [
+      chantiers,
+      chantierIdsWithChildProposition,
+      chantierIdsWithDepartement,
+      chantierIdsWithTauxDepartemental,
+    ] = await Promise.all([
+      this.prisma.chantier_identite.findMany({
+        where: {
+          NOT: {
+            ministeres: {
+              isEmpty: true,
+            },
+          },
+          id: { in: chantierIds },
+          ...whereOptions,
+        },
+        orderBy: {
+          id: "asc",
+        },
+        select: {
+          ...CHANTIER_IDENTITE_SELECT,
+          chantier_territoire: {
+            where: {
+              territoire_code: territoireCode,
+              est_applicable: true,
+            },
+            select: chantierTerritoireSelect([jalon, jalonParDefaut]),
+          },
+        },
+      }),
+      this.findChantierIdsWithPropositionInChildTerritoire(
+        chantierIds,
+        territoireCode,
+        visibleTerritoireCodes,
+      ),
+      this.findDistinctChantierIds({
+        id: { in: chantierIds },
+        maille: "DEPT",
+        est_applicable: true,
+        territoire_code: { in: visibleTerritoireCodes },
+      }),
+      this.prisma.chantier_territoire_jalon
+        .findMany({
+          where: {
+            id: { in: chantierIds },
+            jalon: jalonParDefaut,
+            taux_avancement: { not: null },
+            chantier_territoire: {
+              maille: "DEPT",
+              est_applicable: true,
+              territoire_code: { in: visibleTerritoireCodes },
+            },
+          },
+          distinct: ["id"],
+          select: { id: true },
+        })
+        .then((rows) => new Set(rows.map((row) => row.id))),
+    ]);
+
+    return chantiers.map((chantier) => ({
+      ...chantier,
+      aUnePropositionValeurAvancementDansUnTerritoireEnfant:
+        chantierIdsWithChildProposition.has(chantier.id),
+      aUnTauxAvancementDepartemental:
+        !chantierIdsWithDepartement.has(chantier.id) ||
+        chantierIdsWithTauxDepartemental.has(chantier.id),
+    }));
+  }
+
+  private async findChantierIdsWithPropositionInChildTerritoire(
+    chantierIds: string[],
+    territoireCode: string,
+    visibleTerritoireCodes: string[] | undefined,
+  ): Promise<Set<string>> {
+    if (territoireCode.startsWith("NAT")) {
+      return this.findDistinctChantierIds({
+        id: { in: chantierIds },
+        maille: { in: ["DEPT", "REG"] },
+        est_applicable: true,
+        nombre_propositions_valeur_actuelle: { gt: 0 },
+        territoire_code: { in: visibleTerritoireCodes },
+      });
+    }
+
+    if (territoireCode.startsWith("REG")) {
+      const departements = await this.prisma.territoire.findMany({
+        where: { code_parent: territoireCode },
+        select: { code: true },
+      });
+      const visibleDepartementCodes = departements
+        .map((departement) => departement.code)
+        .filter(
+          (code) =>
+            !visibleTerritoireCodes || visibleTerritoireCodes.includes(code),
+        );
+      return this.findDistinctChantierIds({
+        id: { in: chantierIds },
+        maille: "DEPT",
+        est_applicable: true,
+        nombre_propositions_valeur_actuelle: { gt: 0 },
+        territoire_code: { in: visibleDepartementCodes },
+      });
+    }
+
+    return new Set();
+  }
+
+  private async findDistinctChantierIds(
+    where: Prisma.chantier_territoireWhereInput,
+  ): Promise<Set<string>> {
+    const rows = await this.prisma.chantier_territoire.findMany({
+      where,
+      distinct: ["id"],
+      select: { id: true },
+    });
+    return new Set(rows.map((row) => row.id));
   }
 }

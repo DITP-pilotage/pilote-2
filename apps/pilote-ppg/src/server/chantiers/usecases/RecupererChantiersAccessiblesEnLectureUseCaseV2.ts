@@ -9,7 +9,6 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
-import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
 import {
   ChantierAccueilContratV2,
   MailleChantierContrat,
@@ -204,14 +203,8 @@ const appliquerTri =
 export class RecupererChantiersAccessiblesEnLectureUseCaseV2 {
   private readonly chantierRepository: ChantierRepository;
 
-  private readonly territoireRepository: TerritoireRepository;
-
-  constructor({
-    chantierRepository,
-    territoireRepository,
-  }: Inject<"chantierRepository" | "territoireRepository">) {
+  constructor({ chantierRepository }: Inject<"chantierRepository">) {
     this.chantierRepository = chantierRepository;
-    this.territoireRepository = territoireRepository;
   }
 
   async run(
@@ -242,46 +235,33 @@ export class RecupererChantiersAccessiblesEnLectureUseCaseV2 {
       valeurDeLaRecherche: filtres.valeurDeLaRecherche,
     };
 
-    const territoires = await this.territoireRepository.récupérerTousNew();
-
-    return this.chantierRepository
-      .récupérerLesEntréesDeTousLesChantiersHabilités(
+    const chantiers =
+      await this.chantierRepository.listChantiersHabilitesByTerritoire(
         chantiersLecture,
         territoiresLecture,
         profil,
         filtresPourChantier,
         territoireCode,
-        [jalon, jalonParDefaut],
-      )
-      .then((listePrismaChantier) =>
-        listePrismaChantier
-          .reduce((acc, chantierIdentite) => {
-            // on devrait pouvoir appliquer le filtre plus tôt
-            const chantierTerritoireSelectionne =
-              chantierIdentite.chantier_territoire.find(
-                (chantierTerritoire) =>
-                  chantierTerritoire.territoire_code === territoireCode,
-              );
-            if (
-              chantierTerritoireSelectionne?.est_applicable &&
-              appliquerFiltre(mailleChantier, profil)(chantierIdentite)
-            ) {
-              return [
-                ...acc,
-                presenterEnChantierAccueilContratV2(
-                  chantierIdentite,
-                  territoires,
-                  ministères,
-                  territoireCode,
-                  profil,
-                  jalon,
-                  jalonParDefaut,
-                ),
-              ];
-            }
-            return acc;
-          }, [] as ChantierAccueilContratV2[])
-          .sort(appliquerTri(sorting, mailleChantier, territoireCode)),
+        jalon,
+        jalonParDefaut,
       );
+
+    return chantiers
+      .filter(
+        (chantier) =>
+          chantier.chantier_territoire[0]?.est_applicable &&
+          appliquerFiltre(mailleChantier, profil)(chantier),
+      )
+      .map((chantier) =>
+        presenterEnChantierAccueilContratV2(
+          chantier,
+          ministères,
+          territoireCode,
+          profil,
+          jalon,
+          jalonParDefaut,
+        ),
+      )
+      .sort(appliquerTri(sorting, mailleChantier, territoireCode));
   }
 }

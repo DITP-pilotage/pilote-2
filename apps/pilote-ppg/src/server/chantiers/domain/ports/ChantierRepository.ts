@@ -5,7 +5,10 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
+import {
+  PrismaChantier,
+  PrismaChantierPourTerritoire,
+} from "@/server/chantiers/domain/PrismaChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
@@ -54,4 +57,13 @@ export interface ChantierRepository {
     territoireCode: string,
     jalons: number[],
   ): Promise<PrismaChantier[]>;
+  listChantiersHabilitesByTerritoire(
+    chantiersLectureIds: string[],
+    territoiresLectureIds: string[],
+    profil: ProfilCode,
+    filtres: FiltreQueryParams,
+    territoireCode: string,
+    jalon: number,
+    jalonParDefaut: number,
+  ): Promise<PrismaChantierPourTerritoire[]>;
 }

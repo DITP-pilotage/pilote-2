@@ -3039,4 +3039,235 @@ describe("PrismaChantierRepository", () => {
       }),
     );
   });
+  describe("#listChantiersHabilitesByTerritoire", () => {
+    const filtresParDefaut: FiltreQueryParams = {
+      perimetres: [],
+      axes: [],
+      statut: [],
+      meteos: [],
+      territorialisation: [],
+      estBarometre: false,
+      valeurDeLaRecherche: "",
+    };
+
+    const tousLesTerritoires = [
+      "NAT-FR",
+      "REG-84",
+      "REG-32",
+      "DEPT-01",
+      "DEPT-02",
+      "DEPT-26",
+    ];
+
+    const mailleDuTerritoire = (territoireCode: string) =>
+      territoireCode.startsWith("NAT")
+        ? "NAT"
+        : territoireCode.startsWith("REG")
+          ? "REG"
+          : "DEPT";
+
+    const creerChantier = async (
+      id: string,
+      territoires: {
+        territoire_code: string;
+        nombre_propositions_valeur_actuelle?: number;
+        est_applicable?: boolean;
+      }[],
+    ) => {
+      await fixtures.chantierIdentite({
+        id,
+        nom: `Chantier ${id}`,
+        ministeres: ["1009"],
+        ministeres_acronymes: ["MINA"],
+      });
+      for (const territoire of territoires) {
+        await fixtures.chantierTerritoire({
+          id,
+          maille: mailleDuTerritoire(territoire.territoire_code),
+          code_insee: territoire.territoire_code.split("-")[1],
+          territoire_code: territoire.territoire_code,
+          zone_id: territoire.territoire_code,
+          nombre_propositions_valeur_actuelle:
+            territoire.nombre_propositions_valeur_actuelle ?? 0,
+          est_applicable: territoire.est_applicable ?? true,
+        });
+      }
+    };
+
+    const lister = (
+      territoireCode: string,
+      territoiresLectureIds = tousLesTerritoires,
+    ) =>
+      prismaChantierRepository
+        .listChantiersHabilitesByTerritoire(
+          ["CH-001"],
+          territoiresLectureIds,
+          ProfilEnum.DITP_ADMIN,
+          filtresParDefaut,
+          territoireCode,
+          2026,
+          2025,
+        )
+        .then((chantiers) =>
+          chantiers.map((chantier) => ({
+            id: chantier.id,
+            territoires: chantier.chantier_territoire.map(
+              (chantierTerritoire) => chantierTerritoire.territoire_code,
+            ),
+            aUnePropositionValeurAvancementDansUnTerritoireEnfant:
+              chantier.aUnePropositionValeurAvancementDansUnTerritoireEnfant,
+            aUnTauxAvancementDepartemental:
+              chantier.aUnTauxAvancementDepartemental,
+          })),
+        );
+
+    it(
+      "ne ramène que la ligne du territoire demandé",
+      createIntegrationTest(async () => {
+        await creerChantier("CH-001", [
+          { territoire_code: "NAT-FR" },
+          { territoire_code: "REG-84" },
+          { territoire_code: "DEPT-01" },
+        ]);
+
+        const result = await lister("DEPT-01");
+
+        expect(result).toEqual([
+          {
+            id: "CH-001",
+            territoires: ["DEPT-01"],
+            aUnePropositionValeurAvancementDansUnTerritoireEnfant: false,
+            aUnTauxAvancementDepartemental: false,
+          },
+        ]);
+      }),
+    );
+
+    it(
+      "au national, signale une proposition portée par un département visible",
+      createIntegrationTest(async () => {
+        await creerChantier("CH-001", [
+          { territoire_code: "NAT-FR" },
+          {
+            territoire_code: "DEPT-01",
+            nombre_propositions_valeur_actuelle: 2,
+          },
+        ]);
+
+        const result = await lister("NAT-FR");
+
+        expect(result).toEqual([
+          expect.objectContaining({
+            aUnePropositionValeurAvancementDansUnTerritoireEnfant: true,
+          }),
+        ]);
+      }),
+    );
+
+    it(
+      "au national, ignore une proposition portée par un département hors habilitation",
+      createIntegrationTest(async () => {
+        await creerChantier("CH-001", [
+          { territoire_code: "NAT-FR" },
+          {
+            territoire_code: "DEPT-01",
+            nombre_propositions_valeur_actuelle: 2,
+          },
+        ]);
+
+        const result = await lister("NAT-FR", ["REG-84"]);
+
+        expect(result).toEqual([
+          expect.objectContaining({
+            aUnePropositionValeurAvancementDansUnTerritoireEnfant: false,
+          }),
+        ]);
+      }),
+    );
+
+    it(
+      "en région, ne retient que les propositions de ses propres départements",
+      createIntegrationTest(async () => {
+        await creerChantier("CH-001", [
+          { territoire_code: "REG-84" },
+          {
+            territoire_code: "DEPT-02",
+            nombre_propositions_valeur_actuelle: 1,
+          },
+        ]);
+
+        const sansDepartementDeLaRegion = await lister("REG-84");
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          maille: "DEPT",
+          code_insee: "26",
+          territoire_code: "DEPT-26",
+          zone_id: "DEPT-26",
+          nombre_propositions_valeur_actuelle: 3,
+          est_applicable: true,
+        });
+        const avecDepartementDeLaRegion = await lister("REG-84");
+
+        expect([
+          sansDepartementDeLaRegion[0]
+            .aUnePropositionValeurAvancementDansUnTerritoireEnfant,
+          avecDepartementDeLaRegion[0]
+            .aUnePropositionValeurAvancementDansUnTerritoireEnfant,
+        ]).toEqual([false, true]);
+      }),
+    );
+
+    it(
+      "considère le taux départemental présent quand aucun département n'est applicable",
+      createIntegrationTest(async () => {
+        await creerChantier("CH-001", [
+          { territoire_code: "NAT-FR" },
+          { territoire_code: "DEPT-01", est_applicable: false },
+        ]);
+
+        const result = await lister("NAT-FR");
+
+        expect(result).toEqual([
+          expect.objectContaining({ aUnTauxAvancementDepartemental: true }),
+        ]);
+      }),
+    );
+
+    it(
+      "considère le taux départemental présent dès qu'un département en a un au jalon par défaut",
+      createIntegrationTest(async () => {
+        await creerChantier("CH-001", [
+          { territoire_code: "NAT-FR" },
+          { territoire_code: "DEPT-01" },
+          { territoire_code: "DEPT-02" },
+        ]);
+        // taux au jalon sélectionné (2026) seulement : ne compte pas
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "DEPT-02",
+          code_insee: "02",
+          maille: "DEPT",
+          zone_id: "DEPT-02",
+          jalon: 2026,
+          taux_avancement: 40,
+        });
+        const sansTauxAuJalonParDefaut = await lister("NAT-FR");
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "DEPT-01",
+          jalon: 2025,
+          taux_avancement: 30,
+        });
+        const avecTauxAuJalonParDefaut = await lister("NAT-FR");
+
+        expect([
+          sansTauxAuJalonParDefaut[0].aUnTauxAvancementDepartemental,
+          avecTauxAuJalonParDefaut[0].aUnTauxAvancementDepartemental,
+        ]).toEqual([false, true]);
+      }),
+    );
+  });
 });
