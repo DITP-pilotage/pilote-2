@@ -110,7 +110,9 @@ export class AppActions {
     const videoModal = this.page
       .getByRole("dialog")
       .getByRole("button", { name: /vidéo/ });
-    const newsletterModal = this.page.getByRole("button", { name: /Fermer.*/ });
+    const newsletterModal = this.page
+      .getByRole("dialog", { name: "Ne manquez pas les actualités de PILOTE" })
+      .getByRole("button", { name: /Fermer/ });
 
     if (await videoModal.isVisible({ timeout: 4000 }).catch(() => false)) {
       await videoModal.click();

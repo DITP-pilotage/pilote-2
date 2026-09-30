@@ -255,31 +255,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
     },
-    repartitionMeteosV2: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_REPARTITION_METEOS_V2",
-    },
     featureFlipAdmin: {
       format: Boolean,
       default: false,
       doc: "Active la lecture des feature flips depuis la DB (gestion_contenu) au lieu des env vars uniquement",
       env: "FF_FEATURE_FLIP_ADMIN",
-    },
-    chantiersSignalesV2: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2",
-    },
-    refontePageChantier: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER",
-    },
-    reorganisationPageAccueil: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
     },
     exportCsvWidgets: {
       format: Boolean,

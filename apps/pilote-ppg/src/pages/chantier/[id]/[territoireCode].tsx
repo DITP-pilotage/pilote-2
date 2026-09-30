@@ -2,9 +2,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
-import PageChantierLegacy from "@/components/PageChantier/PageChantierLegacy";
 import { PageChantier } from "@/components/PageChantier/PageChantier";
-import { useEnv } from "@/client/hooks/useEnv";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -294,7 +292,6 @@ const NextPageChantier: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = (props) => {
   const { chantierInformations, territoireCode, profil } = props;
-  const ffRefontePageChantier = useEnv("NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER");
 
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === "NAT-FR";
@@ -310,10 +307,8 @@ const NextPageChantier: FunctionComponent<
       estUnProfilDROM &&
       !chantierInformations.estUnChantierDROM ? (
         <ChoixTerritoire />
-      ) : ffRefontePageChantier ? (
-        <PageChantier key={territoireCode} />
       ) : (
-        <PageChantierLegacy key={territoireCode} />
+        <PageChantier key={territoireCode} />
       )}
     </pageChantier.ServerSidePropsProvider>
   );

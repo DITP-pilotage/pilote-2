@@ -1,7 +1,6 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { TRI_CHANTIERS_PAR_DEFAUT } from "@/server/chantiers/app/contrats/TriChantiers";
 import assert from "node:assert/strict";
-import { useEnv } from "@/client/hooks/useEnv";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
@@ -18,7 +17,6 @@ import { getContainer } from "@/server/dependances";
 import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchParams";
 import { PageAccueil } from "@/components/PageAccueil/PageAccueil";
-import { PageAccueilLegacy } from "@/components/PageAccueil/PageAccueilLegacy";
 import { estEmailAutoriseAskAITerritoire } from "@/server/albert/emailsAutorisesAskAITerritoire";
 
 export const getServerSideProps = async (
@@ -280,15 +278,7 @@ export const getServerSideProps = async (
 const ChantierLayout = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const ffReorganisationPageAccueil = useEnv(
-    "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
-  );
-
-  return ffReorganisationPageAccueil ? (
-    <PageAccueil {...props} />
-  ) : (
-    <PageAccueilLegacy {...props} />
-  );
+  return <PageAccueil {...props} />;
 };
 
 export default ChantierLayout;
