@@ -115,6 +115,90 @@ export function checkChantiersCited({
       };
 }
 
+/**
+ * Neuf mots d'affilée repris d'un commentaire : au-delà d'une expression
+ * figée (« le délai médian de passage »), c'est une phrase recopiée.
+ * Calibration du 30/09 : le juge ne voyait pas la recopie (0/3), d'où cette
+ * vérification mécanique.
+ */
+const FENETRE_RECOPIE = 9;
+
+function mots(text: string) {
+  return normalize(text.replace(/<[^>]+>/g, " "))
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+export function checkNoVerbatim({
+  text,
+  sources,
+}: {
+  text: string;
+  sources: string[];
+}): CheckResult {
+  const texte = ` ${mots(text).join(" ")} `;
+
+  for (const source of sources) {
+    const motsSource = mots(source);
+    for (
+      let debut = 0;
+      debut + FENETRE_RECOPIE <= motsSource.length;
+      debut += 1
+    ) {
+      const passage = motsSource
+        .slice(debut, debut + FENETRE_RECOPIE)
+        .join(" ");
+      if (texte.includes(` ${passage} `)) {
+        return { ok: false, detail: `passage recopié : « ${passage} »` };
+      }
+    }
+  }
+
+  return { ok: true, detail: "aucun passage recopié" };
+}
+
+const MENTION_ABSENCE = "pas de commentaire disponible";
+
+/**
+ * La mention doit figurer SOUS chaque chantier sans commentaire : entre sa
+ * citation et celle du chantier suivant. Présente ailleurs dans la réponse,
+ * elle ne dit rien de ce chantier-là.
+ */
+export function checkAbsenceSignalee({
+  text,
+  chantierIds,
+}: {
+  text: string;
+  chantierIds: string[];
+}): CheckResult {
+  const citations = [...text.matchAll(/CH-\d{3}/g)].map((match) => ({
+    id: match[0],
+    index: match.index ?? 0,
+  }));
+
+  const sansMention = chantierIds.filter((chantierId) => {
+    const sections = citations
+      .map((citation, position) => ({ citation, position }))
+      .filter(({ citation }) => citation.id === chantierId)
+      .map(({ citation, position }) => {
+        const suivante = citations
+          .slice(position + 1)
+          .find((autre) => autre.id !== chantierId);
+        return text.slice(citation.index, suivante?.index ?? text.length);
+      });
+    return !sections.some((section) =>
+      normalize(section).includes(MENTION_ABSENCE),
+    );
+  });
+
+  return sansMention.length === 0
+    ? { ok: true, detail: "absence de commentaire signalée" }
+    : {
+        ok: false,
+        detail: `« Pas de commentaire disponible » absent sous : ${sansMention.join(", ")}`,
+      };
+}
+
 function tableRows(text: string) {
   return text.split("\n").filter((line) => /^\s*\|.*\|\s*$/.test(line));
 }

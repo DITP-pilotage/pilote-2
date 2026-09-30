@@ -1,7 +1,8 @@
 import type { Evidence } from "./evidence";
 import { BASE_IDS, grid, judged, mechanical } from "./grid";
-import { chantiersAttendus } from "./truth";
+import { chantiersAttendus, synthesesDesChantiers } from "./truth";
 import {
+  checkAbsenceSignalee,
   checkChantiersCited,
   checkContains,
   checkExactAnswer,
@@ -10,6 +11,7 @@ import {
   checkNoChantierTable,
   checkNoFigure,
   checkNoLink,
+  checkNoVerbatim,
   checkTableTerritories,
 } from "./mechanicalChecks";
 
@@ -33,12 +35,80 @@ const territoirePrincipalEstUnDepartement = (evidence: Evidence) =>
       territoire.code === evidence.truth.tauxAvancement[0]?.territoire_code,
   )?.maille === "DEPT";
 
+/**
+ * La règle « Commentaires » du prompt est découpée en trois critères. La
+ * recopie et la mention d'absence sont mécaniques : la calibration du 30/09 a
+ * montré que le juge ne les voyait pas (0/3 sur leurs mutants). Le juge ne
+ * garde que la condensation, qui demande de lire.
+ */
 const RESUMES_CONDENSES = judged({
   id: "Résumés condensés",
-  rule: "Commentaires : condense en 1-2 phrases factuelles, jamais in extenso ; « Pas de commentaire disponible » sinon",
+  rule: "Commentaires : condense en 1-2 phrases factuelles",
   instruction:
-    "Sous chaque chantier listé, un résumé de 1 à 2 phrases du commentaire de synthèse de la fiche, reformulé et non recopié mot pour mot. Un chantier dont la synthèse n'a pas de commentaire (commentaire null dans la fiche) porte « Pas de commentaire disponible », SAUF sur un territoire MASQUÉ, où l'indication que le commentaire n'est pas accessible en tient lieu.",
+    "Sous chaque chantier listé dont la fiche porte un commentaire de synthèse, le résumé tient en 1 à 2 phrases factuelles tirées de ce commentaire, sans idée qui n'y figure pas.",
 });
+
+const PAS_DE_RECOPIE_DES_SYNTHESES = mechanical({
+  id: "Pas de recopie",
+  rule: "Commentaires : ne reproduis jamais un commentaire mot pour mot in extenso",
+  check: (evidence) =>
+    checkNoVerbatim({
+      text: evidence.matter,
+      sources: synthesesDesChantiers(evidence.truth).flatMap((synthese) =>
+        synthese.commentaire ? [synthese.commentaire] : [],
+      ),
+    }),
+});
+
+/**
+ * Les chantiers dont aucune synthèse n'a de commentaire, hors territoires
+ * masqués : là, c'est la restriction d'accès qu'il faut signaler, et
+ * « Restriction signalée » le vérifie.
+ */
+function chantiersSansCommentaire(evidence: Evidence) {
+  const visibles = synthesesDesChantiers(evidence.truth).filter(
+    (synthese) => !evidence.maskedTerritories.includes(synthese.territoireCode),
+  );
+  const ids = [...new Set(visibles.map((synthese) => synthese.chantierId))];
+  return ids.filter((chantierId) =>
+    visibles
+      .filter((synthese) => synthese.chantierId === chantierId)
+      .every((synthese) => synthese.commentaire === null),
+  );
+}
+
+const ABSENCE_SIGNALEE = mechanical({
+  id: "Absence de commentaire signalée",
+  rule: "Commentaires : si aucun commentaire n'est disponible, écris « Pas de commentaire disponible »",
+  check: (evidence) =>
+    checkAbsenceSignalee({
+      text: evidence.matter,
+      chantierIds: chantiersSansCommentaire(evidence),
+    }),
+  applicable: (evidence) => chantiersSansCommentaire(evidence).length > 0,
+});
+
+function contenusDesCommentairesRecus(evidence: Evidence): string[] {
+  return evidence.toolResults
+    .filter((result) => result.toolName === "get_chantier_commentaires")
+    .flatMap(
+      (result) =>
+        (
+          result.output as {
+            resultats?: { commentaires: { contenu: string }[] }[];
+          }
+        ).resultats ?? [],
+    )
+    .flatMap((resultat) =>
+      resultat.commentaires.map((commentaire) => commentaire.contenu),
+    );
+}
+
+const COMMENTAIRES_DU_GABARIT = [
+  RESUMES_CONDENSES,
+  PAS_DE_RECOPIE_DES_SYNTHESES,
+  ABSENCE_SIGNALEE,
+];
 
 const TABLEAU_COMPARATIF = mechanical({
   id: "Tableau comparatif",
@@ -130,7 +200,7 @@ export const GRIDS = {
         instruction:
           "Chaque chantier listé porte son écart en points et le libellé de sa météo, conformes à la fiche.",
       }),
-      RESUMES_CONDENSES,
+      ...COMMENTAIRES_DU_GABARIT,
       judged({
         id: "Maille nommée",
         rule: "Factualité : n'affirme rien de faux ; le gabarit écrit « de la région » quel que soit le territoire",
@@ -209,7 +279,7 @@ export const GRIDS = {
         instruction:
           "Les chantiers en retard ou en difficulté présents dans plusieurs territoires sont regroupés en « communs » avec la liste des territoires concernés ; les autres sont rangés sous leur territoire.",
       }),
-      RESUMES_CONDENSES,
+      ...COMMENTAIRES_DU_GABARIT,
     ],
   }),
 
@@ -367,11 +437,16 @@ export const GRIDS = {
         instruction:
           "Les actions citées (recrutements, ouvertures, campagnes…) proviennent des commentaires reçus. Si les données reçues signalent des types non accessibles, la réponse dit que ces informations relèvent de la vue nationale, et non qu'il n'y en a pas.",
       }),
-      judged({
+      // « Synthétise » est une demande explicite de reformulation : ici, la
+      // restitution en verbatim que demande l'outil ne s'applique pas.
+      mechanical({
         id: "Pas de recopie",
         rule: "Commentaires : condense et reformule, ne reproduis jamais un commentaire in extenso",
-        instruction:
-          "Aucun commentaire n'est recopié mot pour mot sur plus d'une phrase : l'utilisateur a demandé une synthèse.",
+        check: (evidence) =>
+          checkNoVerbatim({
+            text: evidence.matter,
+            sources: contenusDesCommentairesRecus(evidence),
+          }),
       }),
     ],
   }),
