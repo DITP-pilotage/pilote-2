@@ -398,7 +398,7 @@ const COMPARAISON: CalibrationCase[] = [
       muter({
         reference: COMPARAISON_REFERENCE,
         from: "Les Pays de la Loire devancent la Bretagne de 19 points",
-        to: "La Bretagne devance les Pays de la Loire",
+        to: "La Bretagne devance les Pays de la Loire de 19 points",
       }),
     ),
   },
@@ -580,7 +580,10 @@ const SECTIONS_CHANTIERS = [
   sectionChantier({
     ...CH_005,
     meteo: "Appuis nécessaires",
-    commentaire: "Deux postes d'urgentistes sont vacants à Brest et Quimper.",
+    // Le commentaire de synthèse tel que la fiche le porte : la demande dit
+    // « la météo et le commentaire de synthèse », un résumé n'y répond pas.
+    commentaire:
+      "Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
   }),
   sectionChantier({
     ...CH_006,
@@ -642,10 +645,11 @@ const DASHBOARD: CalibrationCase[] = [
     evidence: tableauDeBord(
       dashboardAvec([
         ...SECTION_TERRITOIRE,
-        // La demande porte sur le NOMBRE de chantiers en retard, pas sur leur
-        // liste : un widget de liste est étranger à la demande.
+        // Rien dans la demande n'appelle les valeurs remarquables. Une liste
+        // des chantiers en retard ne convenait pas : la demande dit
+        // « récupère la liste des chantiers », et le juge l'y retrouvait.
         {
-          type: "widget_liste_chantiers_en_retard",
+          type: "widget_valeurs_remarquables_avancement",
           territoire_code: "REG-53",
           jalon: 2025,
         },
@@ -661,7 +665,8 @@ const RAPPORT_QUESTION =
 
 const RAPPORT_REPONSE = "Votre rapport est disponible au téléchargement.";
 
-const RAPPORT_REFERENCE = `# Synthèse Bretagne
+const RAPPORT_REFERENCE = `RAPPORT EXPORTÉ :
+# Synthèse Bretagne
 
 ## Taux d'avancement
 Le TA 2025 de la Bretagne est de 51%, pour une médiane des régions à 65%.
@@ -1000,7 +1005,7 @@ const CHANTIER_RESULTS = [
 
 const CHANTIER_REFERENCE = `## CH-005 — Réduire les délais de passage aux urgences, en Bretagne
 
-Le chantier est en retard de 15 points sur la médiane, avec une météo « Appuis nécessaires ». Deux postes d'urgentistes restent vacants et le délai médian de passage a remonté au premier semestre.
+Le chantier est en retard de 15 points sur la médiane, avec une météo « Appuis nécessaires ».
 
 ## Position face aux autres territoires
 
@@ -1008,7 +1013,7 @@ Sur ce chantier, la Bretagne (écart de -15 points) se situe derrière les Pays 
 
 ## Difficultés remontées dans les commentaires
 
-La fermeture estivale de deux lignes de SMUR explique la hausse du délai au premier semestre, et la donnée de juin reste provisoire.`;
+Deux postes d'urgentistes sont vacants à Brest et Quimper. La fermeture estivale de deux lignes de SMUR explique la hausse du délai au premier semestre, et la donnée de juin reste provisoire.`;
 
 const syntheseChantier = (matter: string) =>
   evidence({
