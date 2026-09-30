@@ -300,3 +300,49 @@ Relevées au fil des lots 1 à 4 (2026-09-29 / 30), hors périmètre des PR qui 
 | `territoire.récupérerListe` | Passe encore par le use case legacy, où `[]` signifie « aucun territoire » ; la version `gestionUtilisateur` traite `[]` comme « tous » — comportement **voulu** (décision 2026-09-30). | Migrer la route tRPC sur la version `gestionUtilisateur` en tenant compte de cette sémantique | S |
 | Modale d'export : course sur l'URL | `BoutonExportDesDonnees` ouvre la modale via le paramètre `isModaleExportCsvOuverte` (nuqs) ; chaque étape écrivait `etapeCourante` seule, ce qui pouvait réécrire l'URL avant que l'ouverture y soit inscrite et refermer la modale (`export-csv-chantier.spec.ts` échouait lancé seul). **Corrigé** : les étapes passent par `useExportStep`, qui écrit l'étape et l'ouverture ensemble. | — | fait |
 | E2E « Direction accepte avec modification » | Échec observé une seule fois en suite complète (2026-09-30) : le bouton « Prendre une décision » de IND-023 n'apparaît pas avant l'ouverture de la modale. Non reproduit ensuite (5 lancements isolés, 3 suites complètes). | Si l'échec revient, vérifier que la proposition du territoire est bien enregistrée avant le changement d'utilisateur (données partagées entre tests) | S |
+
+---
+
+## 13. État d'avancement (2026-09-30)
+
+Chantier mis en pause pour merger la stack du lot 4, faire la recette et la mise en production avant de reprendre.
+
+### 13.1 Fait
+
+| Lot | PR | État |
+|---|---|---|
+| 0 — E2E alignés sur les flags de prod, seed sans `migrate reset` (garde-fous `E2E_SEED_AUTORISE` + base locale) | #2457 | mergée |
+| 1 — code mort, suffixes `V2`/`New`, déplacements, retrait de chart.js | #2460 | mergée |
+| 2 — hooks de vue d'ensemble, sélecteur de service, outil Albert sur la query, routes open-api, `Interrupteur`, `Modale.Close`, tuile d'indicateur partagée | #2462 | mergée |
+| 3 bis — 19 feature flags acquis retirés (`ACCES_PILOTE` conservé pour Pilote Eval) | #2463 | mergée |
+| Infobulle sur `Popover` (radix) dans `shared/`, chevrons sur les icônes locales, centrage et zone de survol | #2464 | mergée |
+| 3a — pages Legacy chantier et accueil supprimées, flags de bascule retirés | #2465 | mergée |
+| 3b — props SSR du Legacy élaguées (une requête SQL de moins par chargement de l'accueil et de la page chantier) | #2469 | mergée |
+| 4 — alertes reproduisant l'alerte DSFR en Tailwind | #2471 | **stack ouverte** |
+| 4 — spec § 12 + `shared/Badge` reproduisant le badge DSFR | #2472 | **stack ouverte** (sur #2471) |
+| 4 — accordéons DSFR sur `shared/Accordion` (radix), `shared/Collapsible` | #2473 | **stack ouverte** (sur #2472) |
+| 4 — `shared/RadioGroup` (radix) + modale d'export qui ne se referme plus | #2476 | **stack ouverte** (sur #2473) |
+
+La stack #2471 → #2476 se fusionne avec `dev` sans conflit (vérifié après #2466) ; lint, tests et E2E (59/59) verts en haut de pile.
+
+### 13.2 Recette avant MEP
+
+Les lots 1 à 3 changent peu le rendu ; le lot 4 change l'apparence de composants présents sur presque tous les écrans. Points à vérifier :
+
+- **Pages refondues seules en prod** (lot 3) : accueil (sections, cartographie, météos, chantiers signalés, tableau), page chantier (bloc avancement, répartition géographique, comparaison de territoires), anciennes URL avec `carteChG` / `carteChD` sans erreur.
+- **Flags retirés** (lot 3 bis) : menu utilisateur (mon profil, panel admin), lien « Docs API » du pied de page, entrée « Token API » du panel admin, page actualités, fiche territoriale, fiche conducteur, historique Albert, alerte de mise à jour des indicateurs. Les surcharges restées en base pour ces clés sont ignorées ; les lignes disparaissent du panneau feature flipping.
+- **Alertes** (#2471) : gestion des comptes (création, modification, désactivation), modales de proposition de valeur (encarts info et succès), publications de la page chantier, infolettre, import d'indicateur, message d'information du panel admin.
+- **Badges** (#2472) : météo, tendance et écart du tableau des chantiers, écart du bloc avancement (page chantier), statut des chantiers (admin), fiche territoriale, « Désactivé depuis… » (fiche utilisateur), « Bientôt disponible » (ProConnect).
+- **Accordéons** (#2473) : rubriques et détails d'indicateurs (page chantier), objectifs (ouverture, fermeture, survol, impression dépliée), historique d'une valeur, fiche indicateur (admin), nouveautés, bandeau des filtres actifs (accueil).
+- **Radios** (#2476) : export des données (étapes 1 et 2, enchaînement jusqu'au téléchargement), décision sur une proposition de valeur (accepter, accepter avec modification, refuser).
+- **Infobulles** (#2464) : ouverture au survol, au focus et au clic, position près des bords.
+- **Déploiement** : les échecs `deploy/sclng` du 2026-09-30 venaient d'un incident Scalingo sur `osc-secnum-fr1` (déploiements lents, `crashed-error` / `aborted`), pas du code ; relancer les déploiements des applications restées en échec une fois l'incident levé.
+
+### 13.3 Reste à faire
+
+- **Lot 4, convergences restantes** : `MultiSelect` → `MultiSelectNew` (§ 5.2) ; tags et toggles vers `SegmentedControl` / `PillToggleGroup` et un `shared/Tag` (§ 6) ; `SynthèseDesRésultats` portée sur `Publication` (§ 8) ; « Mise en avant » (`fr-callout`) et `shared/Callout` rapprochés du DSFR.
+- **Lot 5** : `shared/Button`, champs de formulaire unifiés, sélecteurs sur `shared/Select` / `Picker` (dont `Sélecteur` → `SelecteurNew`, 14 appelants), barres latérales sans JS DSFR, `CartographieV2` partout, fin du conteneur `legacy`.
+- **Flags restants** : `PPG_ARCHIVE`, `COMPARAISON_TERRITOIRES` (acquis en prod, retrait à faire).
+- **Serveur** : fusion des use cases de liste de chantiers accueil / rapport (§ 7.2) — à coordonner avec les optimisations de performance en cours sur ces use cases.
+- **Corrections repérées** : voir § 12 (préfixe `!`, `align-center`, bouton imbriqué, `app.scss`, triangles de tri, `territoire.récupérerListe`, instabilité E2E à surveiller).
+- `shared/Accordion` : si d'autres écrans ont besoin du rendu DSFR, transformer les classes `CLASSES_*_ACCORDEON_DSFR` en variante sur `Accordion.Root`.
