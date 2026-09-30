@@ -1,6 +1,9 @@
 import { FunctionComponent } from "react";
-import { Badge } from "@/components/_commons/Badge";
-import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
+import { Badge } from "@/components/shared/Badge";
+import {
+  definirCouleurEcartArrondi,
+  VARIANTE_BADGE_ECART,
+} from "@/client/utils/chantier/écart/écart";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 
 interface EcartTauxAvancementPPGProps {
@@ -18,11 +21,15 @@ const EcartTauxAvancementPPG: FunctionComponent<
   }
 
   return (
-    <Badge type={estArchive ? "gris" : couleurEcartArrondi.couleur}>
-      <p className="fr-text--xs fr-mr-1v">{couleurEcartArrondi.commentaire}</p>:
-      <p className="fr-text--xs fr-ml-1v">
-        {couleurEcartArrondi.ecartArrondi.toFixed(1)}
-      </p>
+    <Badge
+      taille="sm"
+      variante={
+        estArchive
+          ? "defaut"
+          : VARIANTE_BADGE_ECART[couleurEcartArrondi.couleur]
+      }
+    >
+      {`${couleurEcartArrondi.commentaire} : ${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
     </Badge>
   );
 };

@@ -29,9 +29,7 @@ export class PageUtilisateurDetail extends BasePage {
   }
 
   private get badgeDesactive() {
-    return this.page.locator(".fr-badge--error", {
-      hasText: "Désactivé depuis",
-    });
+    return this.page.getByText(/^Désactivé depuis le /);
   }
 
   private get dialog() {

@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+import { Badge } from "@/components/shared/Badge";
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { DetailsDroitsUtilisateur } from "@/components/PageUtilisateur/DétailsDroitsUtilisateur/DetailsDroitsUtilisateur";
@@ -18,9 +19,9 @@ const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
         Utilisateur
       </Titre>
       {!!utilisateur.dateDesactivation && (
-        <p className="fr-badge fr-badge--error fr-badge--no-icon">
+        <Badge variante="erreur">
           {`Désactivé depuis le ${formaterDate(utilisateur.dateDesactivation, "DD/MM/YYYY")}`}
-        </p>
+        </Badge>
       )}
       <TableauUtilisateur utilisateur={utilisateur} />
       <DetailsDroitsUtilisateur

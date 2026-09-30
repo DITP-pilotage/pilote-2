@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/utility/colors/colors.css";
+import { Badge } from "@/components/shared/Badge";
 
 import { FunctionComponent } from "react";
 import HeaderFicheTerritoriale from "@/components/PageFicheTerritoriale/HeaderFicheTerritoriale";
@@ -166,15 +167,15 @@ export const PageFicheTerritoriale: FunctionComponent<
                 </Titre>
                 <div className="flex align-center">
                   <div />
-                  <span className="fr-text--xs fr-m-0 fr-ml-2w fr-badge fr-badge--no-icon fr-badge--success">
+                  <Badge className="ml-4" taille="sm" variante="succes">
                     Avancement positif
-                  </span>
-                  <span className="fr-text--xs fr-m-0 fr-ml-2w fr-badge fr-badge--no-icon fr-badge--warning">
+                  </Badge>
+                  <Badge className="ml-4" taille="sm" variante="attention">
                     Léger retard
-                  </span>
-                  <span className="fr-text--xs fr-m-0 fr-ml-2w fr-badge fr-badge--no-icon fr-badge--error">
+                  </Badge>
+                  <Badge className="ml-4" taille="sm" variante="erreur">
                     Retard important
-                  </span>
+                  </Badge>
                 </div>
               </div>
               <TableauFicheTerritoriale

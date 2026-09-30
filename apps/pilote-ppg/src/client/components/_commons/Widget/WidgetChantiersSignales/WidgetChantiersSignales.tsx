@@ -1,4 +1,6 @@
 import { Suspense, useCallback } from "react";
+import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
+import { Badge } from "@/components/shared/Badge";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
@@ -12,7 +14,6 @@ import Titre from "@/components/_commons/Titre/Titre";
 import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
-import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 
 type AlerteDefinition = {
   nomCritère: TypeAlerteChantier;
@@ -75,7 +76,12 @@ export const WidgetChantiersSignales = ({
       >
         <TitreInfobulleConteneur className="justify-between fr-mb-2w">
           <div className="flex items-center gap-2">
-            <BadgeIcône type="warning" />
+            <Badge
+              aria-hidden="true"
+              className="px-1"
+              icone={WarningIcon}
+              variante="attention"
+            />
             <Titre
               baliseHtml="h2"
               className="fr-text--lg fr-mb-0 fr-py-1v !text-dsfr-warning-425"

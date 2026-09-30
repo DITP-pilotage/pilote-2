@@ -1,5 +1,5 @@
 import { ComponentType, FunctionComponent } from "react";
-import { Badge, BadgeType } from "@/components/_commons/Badge";
+import { Badge, VarianteBadge } from "@/components/shared/Badge";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowRightUp1Icon } from "@/components/_commons/Icones/ArrowRightUp1Icon";
 import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
@@ -8,11 +8,11 @@ import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 
 export const badgeTypeÀPartirDeLaTendance: Record<
   NonNullable<ChantierTendance>,
-  BadgeType
+  VarianteBadge
 > = {
-  HAUSSE: "vert",
-  BAISSE: "rouge",
-  STAGNATION: "bleu",
+  HAUSSE: "succes",
+  BAISSE: "erreur",
+  STAGNATION: "info",
 };
 
 export const libelléÀPartirDeLaTendance: Record<
@@ -42,7 +42,10 @@ export const BadgeTendance: FunctionComponent<{
   }
 
   return (
-    <Badge type={estArchive ? "gris" : badgeTypeÀPartirDeLaTendance[tendance]}>
+    <Badge
+      taille="sm"
+      variante={estArchive ? "defaut" : badgeTypeÀPartirDeLaTendance[tendance]}
+    >
       <div className="flex align-center pr-1">
         <Icone
           className="w-3 h-3 text-current"

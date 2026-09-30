@@ -1,4 +1,13 @@
+import type { VarianteBadge } from "@/components/shared/Badge";
+
 type CouleurEcart = "rouge" | "bleu" | "vert" | "gris";
+
+export const VARIANTE_BADGE_ECART: Record<CouleurEcart, VarianteBadge> = {
+  rouge: "erreur",
+  bleu: "info",
+  vert: "succes",
+  gris: "defaut",
+};
 type Avancement = "EN AVANCE" | "DANS LA MEDIANE" | "EN RETARD" | "ARCHIVE";
 
 export function definirCouleurEcartArrondi(

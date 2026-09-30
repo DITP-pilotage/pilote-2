@@ -7,7 +7,7 @@ import {
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
 import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
 import { isDefined } from "@/client/utils/predicates";
-import { Badge } from "@/components/_commons/Badge";
+import { Badge } from "@/components/shared/Badge";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
@@ -50,7 +50,7 @@ export const ObjectifsRapportDetaille = ({
                   </div>
                 </>
               ) : (
-                <Badge type="gris">Non renseigné</Badge>
+                <Badge taille="sm">Non renseigné</Badge>
               )}
             </div>
           </Fragment>

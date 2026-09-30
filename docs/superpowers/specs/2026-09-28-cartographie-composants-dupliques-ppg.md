@@ -283,3 +283,18 @@ Retirer un flag touche : `config.ts` (`featureFlip`), `server/gestion-contenu/do
 | `MASQUER_INDICATEURS_NON_APPLICABLES` | inactif | `SectionIndicateurs.tsx:25`, `RapportDétailléChantier.tsx:50` — à trancher |
 | `PVA_VALEUR_DIFFERENTE` | inactif | `ModalePropositionValeurAvancementV2.tsx:48` — **à garder** (décision 2026-09-29) : sélecteur de mois pour proposer une valeur sur une échéance pas encore mesurée (PIL-866), fonctionnalité voulue mais pas encore ouverte |
 | `PILOTE_EVAL` | inactif | disparaît avec la suppression de Pilote Eval (§ 9) |
+
+---
+
+## 12. Corrections repérées pendant le refacto
+
+Relevées au fil des lots 1 à 4 (2026-09-29 / 30), hors périmètre des PR qui les ont fait apparaître.
+
+| Sujet | Constat | Cible | Effort |
+|---|---|---|---|
+| Préfixe `!` des classes Tailwind | `tailwind.config.js` a `important: true` : toutes les utilitaires sont déjà `!important`. Le préfixe `!` est redondant (**1 086 classes, dont 324 `!text-…` dans 140 fichiers**) et fausse `clsxm` / `twMerge`, qui ne considère pas `!text-white` et `text-dsfr-…` comme concurrentes : les deux restent, et c'est l'ordre dans la feuille qui décide. Exemple vécu : l'icône blanche de `Alerte` restait bleue avec `!text-white` sur `Icone` (couleur par défaut `text-dsfr-blue-france-sun-113`). | Retirer le préfixe `!` là où il sert à surcharger une classe par défaut d'un composant (`Icone`, boutons, liens…), puis partout ; vérifier au cas par cas les `!` qui combattent une règle DSFR non utilitaire | M (mécanique, rendu à contrôler) |
+| `align-center` | Classe inexistante en Tailwind (il faut `items-center`), **87 occurrences** : l'alignement vertical attendu ne se fait pas. Corrigé pour `TitreInfobulleConteneur` et `Infobulle` (#2464). | Remplacer par `items-center` en vérifiant chaque rendu (certains écrans s'appuient peut-être sur l'étirement actuel) | S–M |
+| `<button>` dans `<button>` | Page chantier : une infobulle placée dans un bouton (déclencheur ou en-tête) — erreur d'hydratation signalée dans les logs E2E. | Sortir l'infobulle du bouton | S |
+| `app.scss` | `@import "tailwindcss"` passe par Sass, qui avertit de la dépréciation de `@import` (retrait en Dart Sass 3). Le fichier ne semble utiliser aucune fonctionnalité Sass. | Renommer en `app.css` après vérification (pas de `$`, d'imbrication ni de mixin) | S |
+| Triangles de tri du `DataTable` | SVG 12 × 6 écrits en dur ; les `ArrowSFill*` dessinent le triangle dans une boîte 24 × 24. | Laisser, ou icône dédiée au bon cadrage | S |
+| `territoire.récupérerListe` | Passe encore par le use case legacy, où `[]` signifie « aucun territoire » ; la version `gestionUtilisateur` traite `[]` comme « tous » — comportement **voulu** (décision 2026-09-30). | Migrer la route tRPC sur la version `gestionUtilisateur` en tenant compte de cette sémantique | S |
