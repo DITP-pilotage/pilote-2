@@ -11,60 +11,7 @@ import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetC
 import type { EvalUser } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
 import { JALON_COURANT } from "./territoires";
-
-/** Ce que la fiche doit lire pour un cas. */
-export type TruthScope = {
-  territoires: string[];
-  /** Défaut : le jalon courant. */
-  jalons?: number[];
-  includeSousTerritoires?: boolean;
-  /** Chantiers dont la fiche lit les commentaires, sur le premier territoire. */
-  chantiersCommentes?: string[];
-  /** Lit les indicateurs des chantiers en retard et en difficulté. */
-  indicateurs?: boolean;
-};
-
-export type GroundTruth = {
-  territoires: { code: string; nom: string; maille: string }[];
-  tauxAvancement: GetTauxAvancementTerritoireResult[];
-  chantiersEnRetard: GetChantiersResult[];
-  chantiersEnDifficulte: GetChantiersResult[];
-  indicateurs: GetChantierIndicateursResult[];
-  commentaires: GetChantierCommentairesOutput[];
-};
-
-type ChantierRef = { id: string; nom: string };
-
-function chantiersDistincts(resultats: GetChantiersResult[]): ChantierRef[] {
-  const parId = new Map<string, string>();
-  for (const resultat of resultats) {
-    for (const chantier of resultat.chantiers) {
-      parId.set(chantier.chantier.id, chantier.chantier.nom);
-    }
-  }
-
-  return [...parId.entries()]
-    .sort(([idA], [idB]) => idA.localeCompare(idB))
-    .map(([id, nom]) => ({ id, nom }));
-}
-
-/** Les chantiers qu'une réponse doit citer, sans doublon, triés par identifiant. */
-export function chantiersAttendus({
-  truth,
-  view,
-}: {
-  truth: GroundTruth;
-  view: "en_retard" | "en_difficulte" | "tous";
-}): ChantierRef[] {
-  if (view === "en_retard") return chantiersDistincts(truth.chantiersEnRetard);
-  if (view === "en_difficulte") {
-    return chantiersDistincts(truth.chantiersEnDifficulte);
-  }
-  return chantiersDistincts([
-    ...truth.chantiersEnRetard,
-    ...truth.chantiersEnDifficulte,
-  ]);
-}
+import { chantiersDistincts, type GroundTruth, type TruthScope } from "./truth";
 
 /**
  * Ce que la réponse doit couvrir, lu par les outils de production avec les
