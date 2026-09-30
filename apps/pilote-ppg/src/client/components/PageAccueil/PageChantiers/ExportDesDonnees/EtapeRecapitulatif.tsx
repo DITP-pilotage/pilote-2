@@ -1,9 +1,7 @@
 import {
   parseAsBoolean,
-  parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
-  useQueryState,
   useQueryStates,
 } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
@@ -14,6 +12,7 @@ import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelec
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
+import { useExportStep } from "./useExportStep";
 
 const ressources = {
   chantiers: {
@@ -75,13 +74,7 @@ export const EtapeRecapitulatif = ({
 }: {
   territoireCodeSelectionne: string;
 }) => {
-  const [, setEtapeCourante] = useQueryState(
-    "etapeCourante",
-    parseAsInteger.withOptions({
-      shallow: true,
-      history: "push",
-    }),
-  );
+  const { goToStep } = useExportStep();
 
   const dataBasculeValeurAnneePrecedente = useEnv(
     "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
@@ -278,7 +271,7 @@ export const EtapeRecapitulatif = ({
             document.body.append(a);
             a.click();
             a.remove();
-            setEtapeCourante(5);
+            goToStep(5);
           }
         }}
       >
@@ -294,7 +287,7 @@ export const EtapeRecapitulatif = ({
           </Modale.Close>
           <button
             className="!text-primary font-medium !border !border-primary !py-2 !px-4"
-            onClick={() => setEtapeCourante(3)}
+            onClick={() => goToStep(3)}
             type="button"
           >
             Étape précédente

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { useSession } from "next-auth/react";
 import { Modale } from "@/components/shared/Modale";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { profilsTerritoriaux } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { useExportStep } from "./useExportStep";
 
 export const EtapeDonneeChantierACollecter = () => {
   const { data: session } = useSession();
@@ -15,13 +16,7 @@ export const EtapeDonneeChantierACollecter = () => {
     }),
   );
 
-  const [, setEtapeCourante] = useQueryState(
-    "etapeCourante",
-    parseAsInteger.withOptions({
-      shallow: true,
-      history: "push",
-    }),
-  );
+  const { goToStep } = useExportStep();
 
   const [afficherDetail, setAfficherDetail] = useState<boolean>(false);
 
@@ -355,14 +350,14 @@ export const EtapeDonneeChantierACollecter = () => {
         </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
-          onClick={() => setEtapeCourante(2)}
+          onClick={() => goToStep(2)}
           type="button"
         >
           Étape précédente
         </button>
         <button
           className="fr-btn fr-mr-2w"
-          onClick={() => setEtapeCourante(4)}
+          onClick={() => goToStep(4)}
           type="button"
         >
           Étape suivante

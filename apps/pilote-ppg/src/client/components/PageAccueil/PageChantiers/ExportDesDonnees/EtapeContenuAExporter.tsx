@@ -1,20 +1,26 @@
-import {
-  parseAsInteger,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryState,
-} from "nuqs";
+import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
 import { MiseEnAvant } from "@/components/_commons/MiseEnAvant/MiseEnAvant";
+import { RadioGroup } from "@/components/shared/RadioGroup";
+import { useExportStep } from "./useExportStep";
+
+const TYPES_EXPORT = [
+  "chantiers",
+  "indicateurs",
+  "historique-indicateurs",
+] as const;
+
+type TypeExport = (typeof TYPES_EXPORT)[number];
+
+const estTypeExport = (valeur: string): valeur is TypeExport =>
+  TYPES_EXPORT.some((typeExport) => typeExport === valeur);
 
 export const EtapeContenuAExporter = () => {
   const [typeExport, setTypeExport] = useQueryState(
     "typeExport",
-    parseAsStringLiteral(["chantiers", "indicateurs", "historique-indicateurs"])
-      .withDefault("chantiers")
-      .withOptions({
-        shallow: true,
-      }),
+    parseAsStringLiteral(TYPES_EXPORT).withDefault("chantiers").withOptions({
+      shallow: true,
+    }),
   );
   const [, setOptionsExport] = useQueryState(
     "optionsExport",
@@ -23,17 +29,9 @@ export const EtapeContenuAExporter = () => {
     }),
   );
 
-  const [, setEtapeCourante] = useQueryState(
-    "etapeCourante",
-    parseAsInteger.withOptions({
-      shallow: true,
-      history: "push",
-    }),
-  );
+  const { goToStep } = useExportStep();
 
-  const modifierTypeExport = (
-    typeExportADefinir: "chantiers" | "indicateurs" | "historique-indicateurs",
-  ) => {
+  const modifierTypeExport = (typeExportADefinir: TypeExport) => {
     if (
       typeExportADefinir === "chantiers" ||
       typeExportADefinir === "indicateurs"
@@ -76,52 +74,30 @@ export const EtapeContenuAExporter = () => {
         Dans un premier temps, indiquez les éléments dont vous souhaitez
         exporter les données :
       </p>
-      <div className="fr-fieldset__element" key="chantiers">
-        <div className="fr-radio-group">
-          <input
-            checked={typeExport === "chantiers"}
-            id="chantiers"
-            name="ressource-à-exporter"
-            onChange={() => modifierTypeExport("chantiers")}
-            type="radio"
-          />
-          <label className="fr-label" htmlFor="chantiers">
-            les chantiers
-          </label>
-        </div>
-      </div>
-      <div className="fr-fieldset__element" key="indicateurs">
-        <div className="fr-radio-group">
-          <input
-            checked={typeExport === "indicateurs"}
-            id="indicateurs"
-            name="ressource-à-exporter"
-            onChange={() => modifierTypeExport("indicateurs")}
-            type="radio"
-          />
-          <label className="fr-label" htmlFor="indicateurs">
-            les indicateurs des chantiers
-          </label>
-        </div>
-      </div>
-      <div className="fr-fieldset__element" key="historique-indicateurs">
-        <div className="fr-radio-group">
-          <input
-            checked={typeExport === "historique-indicateurs"}
-            id="historique-indicateurs"
-            name="ressource-à-exporter"
-            onChange={() => modifierTypeExport("historique-indicateurs")}
-            type="radio"
-          />
-          <label className="fr-label" htmlFor="historique-indicateurs">
-            l'historique des indicateurs
-          </label>
-          <span className="fr-label fr-text--xs !text-dsfr-mention-grey fr-mb-0">
-            Cet historique recense l'ensemble des valeurs d'avancement pour
-            chaque indicateur et chaque territoire.
-          </span>
-        </div>
-      </div>
+      <RadioGroup.Root
+        name="ressource-à-exporter"
+        onValueChange={(valeur) => {
+          if (estTypeExport(valeur)) modifierTypeExport(valeur);
+        }}
+        value={typeExport}
+      >
+        <RadioGroup.Item
+          id="chantiers"
+          libelle="les chantiers"
+          value="chantiers"
+        />
+        <RadioGroup.Item
+          id="indicateurs"
+          libelle="les indicateurs des chantiers"
+          value="indicateurs"
+        />
+        <RadioGroup.Item
+          aide="Cet historique recense l'ensemble des valeurs d'avancement pour chaque indicateur et chaque territoire."
+          id="historique-indicateurs"
+          libelle="l'historique des indicateurs"
+          value="historique-indicateurs"
+        />
+      </RadioGroup.Root>
       <div className="w-full flex justify-end fr-mt-2w">
         <Modale.Close asChild>
           <button
@@ -134,7 +110,7 @@ export const EtapeContenuAExporter = () => {
         </Modale.Close>
         <button
           className="fr-btn fr-mr-2w"
-          onClick={() => setEtapeCourante(2)}
+          onClick={() => goToStep(2)}
           type="button"
         >
           Étape suivante

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
+import { useExportStep } from "./useExportStep";
 
 export const EtapeDonneeIndicateurACollecter = () => {
   const [optionsExport, setOptionsExport] = useQueryState(
@@ -11,13 +12,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
     }),
   );
 
-  const [, setEtapeCourante] = useQueryState(
-    "etapeCourante",
-    parseAsInteger.withOptions({
-      shallow: true,
-      history: "push",
-    }),
-  );
+  const { goToStep } = useExportStep();
 
   const [afficherDetail, setAfficherDetail] = useState<boolean>(false);
 
@@ -348,14 +343,14 @@ export const EtapeDonneeIndicateurACollecter = () => {
         </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
-          onClick={() => setEtapeCourante(2)}
+          onClick={() => goToStep(2)}
           type="button"
         >
           Étape précédente
         </button>
         <button
           className="fr-btn fr-mr-2w"
-          onClick={() => setEtapeCourante(4)}
+          onClick={() => goToStep(4)}
           type="button"
         >
           Étape suivante
