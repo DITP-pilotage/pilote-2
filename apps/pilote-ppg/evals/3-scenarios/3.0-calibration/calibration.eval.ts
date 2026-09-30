@@ -24,6 +24,9 @@ import { CALIBRATION_CASES, type CalibrationCase } from "./references";
  * d'indicateur fausse détectée 1/3), « Position face à la médiane » (2/3),
  * « Trois volets » (2/3), « Difficultés tirées des commentaires » (2/3),
  * « Actions identifiées » (1/3).
+ * Quatrième calibration (second run) : mêmes 5 critères non fiables ;
+ * « Chiffres exacts » prend aussi le seuil « 10 points » du gabarit pour un
+ * chiffre inventé.
  */
 
 const judgedCriteria = (testCase: CalibrationCase) =>

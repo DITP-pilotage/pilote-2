@@ -14,6 +14,7 @@ import { scenarioEval } from "../scenarioEval";
  *
  * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 67 %.
  * Les quatre départements sont dans le tableau ; analyse des écarts 1/3.
+ * Second run du 2026-09-30 : outils 100 %, forme 100 %, fond 67 %.
  */
 
 scenarioEval({

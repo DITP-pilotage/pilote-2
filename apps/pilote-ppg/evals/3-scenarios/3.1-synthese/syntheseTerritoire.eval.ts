@@ -15,6 +15,7 @@ import { scenarioEval } from "../scenarioEval";
  * le 35). Sur le Finistère, un essai sur trois conclut « aucun chantier en
  * retard » sans avoir interrogé les vues, et un autre écrit « le TA de la
  * région » pour un département.
+ * Second run du 2026-09-30 : outils 93 %, forme 86 %, fond 97 %.
  */
 
 const workflowSynthese = (territoire_code: string) => [

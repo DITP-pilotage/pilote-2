@@ -18,6 +18,7 @@ import { scenarioEval } from "../scenarioEval";
  * en retard n'est jamais interrogée (0/3 sur chaque cas), d'où un gabarit
  * incomplet. « Pas de commentaire disponible » manque sous CH-006 (0/3 sur
  * la Bretagne).
+ * Second run du 2026-09-30 : outils 78 %, forme 67 %, fond 94 %.
  */
 
 const workflowSynthese = (territoire_code: string) => [

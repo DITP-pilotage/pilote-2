@@ -11,6 +11,8 @@ import { scenarioEval } from "../scenarioEval";
  * Référence observée le 2026-09-30 : outils 83 %, forme 53 %, fond 33 %.
  * `export_rapport` n'est jamais appelé (0/3) : le rapport est rédigé dans
  * le chat, comme au niveau 2 (PIL-1833, point 14).
+ * Second run du 2026-09-30 : outils 83 %, forme 60 %, fond 33 % ; export
+ * toujours 0/3.
  */
 
 const territoire = { territoire_code: "REG-53" };
