@@ -13,6 +13,7 @@ import { scenarioEval } from "../scenarioEval";
  * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 96 %.
  * 2023 sans données est dit, sans invention (3/3). Sur « l'année
  * précédente », l'évolution en points manque dans un essai sur trois.
+ * Second run du 2026-09-30 : outils 100 %, forme 100 %, fond 100 %.
  */
 
 const tauxBretagne = (jalon: number) => ({

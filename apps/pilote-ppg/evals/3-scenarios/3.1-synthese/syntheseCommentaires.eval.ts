@@ -21,6 +21,7 @@ import { scenarioEval } from "../scenarioEval";
  * Dans 3 essais sur 9, la réponse ne synthétise rien et se limite à dire
  * que les types d'actions sont inaccessibles. Passages recopiés dans
  * 5 essais sur 9.
+ * Second run du 2026-09-30 : outils 100 %, forme 83 %, fond 94 %.
  */
 
 const commentairesDe = (chantier_id: string) => ({

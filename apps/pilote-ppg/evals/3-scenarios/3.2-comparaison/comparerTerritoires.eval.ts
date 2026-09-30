@@ -18,6 +18,8 @@ import { scenarioEval } from "../scenarioEval";
  * Aucune analyse des écarts (0/3 sur chaque cas) : le gabarit comparaison
  * n'étant pas chargé, Albert s'en tient au tableau. REG-84 n'est jamais
  * nommé Auvergne-Rhône-Alpes (0/3), seulement « la région 84 ».
+ * Second run du 2026-09-30 : outils 100 %, forme 96 %, fond 61 % ; REG-84 nommé
+ * Auvergne-Rhône-Alpes 2/3.
  */
 
 const tauxDe = (territoire_code: string) => ({

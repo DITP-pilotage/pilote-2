@@ -23,6 +23,7 @@ import { scenarioEval } from "../scenarioEval";
  * difficultés des commentaires que porte déjà `get_chantiers`, et le juge
  * note le fond à 100 %. L'attente d'outils est à trancher avec le produit.
  * Codes météo bruts (NUAGE, COUVERT) dans 5 essais sur 6.
+ * Second run du 2026-09-30 : outils 50 %, forme 75 %, fond 100 %.
  */
 
 const MESSAGE = (territoire: string) =>

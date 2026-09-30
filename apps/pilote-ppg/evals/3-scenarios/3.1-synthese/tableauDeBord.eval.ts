@@ -12,6 +12,8 @@ import { scenarioEval } from "../scenarioEval";
  *
  * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 100 %.
  * Widgets conformes à la demande, une section par chantier.
+ * Second run du 2026-09-30 : outils 100 %, forme 93 %, fond 100 % ; un essai
+ * regroupe CH-005 et CH-006 dans la même section.
  */
 
 scenarioEval({

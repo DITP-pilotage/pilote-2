@@ -14,6 +14,7 @@ import { scenarioEval } from "../scenarioEval";
  * Les valeurs d'indicateur sont données (le renvoi vers le dashboard
  * redouté n'a pas lieu). Code météo NUAGE cité dans 3 essais sur 6, et
  * une recommandation côté coordinateur (1/3).
+ * Second run du 2026-09-30 : outils 100 %, forme 92 %, fond 94 %.
  */
 
 const MESSAGE =

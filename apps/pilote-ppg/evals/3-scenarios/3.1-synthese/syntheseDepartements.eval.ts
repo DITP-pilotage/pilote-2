@@ -12,6 +12,8 @@ import { scenarioEval } from "../scenarioEval";
  * Référence observée le 2026-09-30 : outils 100 %, forme 93 %, fond 100 %.
  * Gabarit comparaison suivi ; codes météo bruts et commentaire recopié
  * dans un essai sur trois.
+ * Second run du 2026-09-30 : outils 100 %, forme 89 %, fond 100 % ; recopie
+ * 0/3.
  */
 
 const avecSousTerritoires = {

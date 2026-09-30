@@ -16,6 +16,7 @@ import { scenarioEval } from "../scenarioEval";
  * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 50 %.
  * Un seul appel avec les sous-territoires (3/3), malgré l'absence de la
  * consigne. Pas d'analyse des écarts (0/3).
+ * Second run du 2026-09-30 : outils 100 %, forme 100 %, fond 50 %.
  */
 
 scenarioEval({
