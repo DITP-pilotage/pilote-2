@@ -60,3 +60,13 @@ export type PrismaChantier = EntreePrismaChantierIdentite & {
 export type EntreePrismaChantier = EntreePrismaChantierTerritoire & {
   chantier_territoire_jalon: EntreePrismaChantierTerritoireJalon[];
 };
+
+/**
+ * Chantier chargé pour un seul territoire : `chantier_territoire` ne contient que la
+ * ligne de ce territoire. Les deux indicateurs qui dépendent d'autres territoires
+ * sont calculés en base plutôt que déduits de toutes les lignes.
+ */
+export type PrismaChantierPourTerritoire = PrismaChantier & {
+  aUnePropositionValeurAvancementDansUnTerritoireEnfant: boolean;
+  aUnTauxAvancementDepartemental: boolean;
+};
