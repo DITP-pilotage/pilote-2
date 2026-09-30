@@ -1,12 +1,8 @@
-import {
-  parseAsInteger,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryState,
-} from "nuqs";
+import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
 import { MiseEnAvant } from "@/components/_commons/MiseEnAvant/MiseEnAvant";
 import { RadioGroup } from "@/components/shared/RadioGroup";
+import { useExportStep } from "./useExportStep";
 
 const TYPES_EXPORT = [
   "chantiers",
@@ -33,13 +29,7 @@ export const EtapeContenuAExporter = () => {
     }),
   );
 
-  const [, setEtapeCourante] = useQueryState(
-    "etapeCourante",
-    parseAsInteger.withOptions({
-      shallow: true,
-      history: "push",
-    }),
-  );
+  const { goToStep } = useExportStep();
 
   const modifierTypeExport = (typeExportADefinir: TypeExport) => {
     if (
@@ -120,7 +110,7 @@ export const EtapeContenuAExporter = () => {
         </Modale.Close>
         <button
           className="fr-btn fr-mr-2w"
-          onClick={() => setEtapeCourante(2)}
+          onClick={() => goToStep(2)}
           type="button"
         >
           Étape suivante

@@ -1,6 +1,7 @@
-import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
 import { RadioGroup } from "@/components/shared/RadioGroup";
+import { useExportStep } from "./useExportStep";
 
 export const EtapePerimetreExport = () => {
   const [isAvecFiltre, setIsAvecFiltre] = useQueryState(
@@ -10,13 +11,7 @@ export const EtapePerimetreExport = () => {
     }),
   );
 
-  const [, setEtapeCourante] = useQueryState(
-    "etapeCourante",
-    parseAsInteger.withOptions({
-      shallow: true,
-      history: "push",
-    }),
-  );
+  const { goToStep } = useExportStep();
 
   return (
     <div>
@@ -50,14 +45,14 @@ export const EtapePerimetreExport = () => {
         </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
-          onClick={() => setEtapeCourante(1)}
+          onClick={() => goToStep(1)}
           type="button"
         >
           Étape précédente
         </button>
         <button
           className="fr-btn fr-mr-2w"
-          onClick={() => setEtapeCourante(3)}
+          onClick={() => goToStep(3)}
           type="button"
         >
           Étape suivante

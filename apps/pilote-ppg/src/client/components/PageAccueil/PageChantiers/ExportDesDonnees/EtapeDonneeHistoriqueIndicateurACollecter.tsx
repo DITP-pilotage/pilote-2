@@ -1,5 +1,6 @@
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
+import { useExportStep } from "./useExportStep";
 
 export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
   const [optionsExport] = useQueryState(
@@ -11,13 +12,7 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
       }),
   );
 
-  const [, setEtapeCourante] = useQueryState(
-    "etapeCourante",
-    parseAsInteger.withOptions({
-      shallow: true,
-      history: "push",
-    }),
-  );
+  const { goToStep } = useExportStep();
 
   return (
     <div>
@@ -98,14 +93,14 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
         </Modale.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
-          onClick={() => setEtapeCourante(2)}
+          onClick={() => goToStep(2)}
           type="button"
         >
           Étape précédente
         </button>
         <button
           className="fr-btn fr-mr-2w"
-          onClick={() => setEtapeCourante(4)}
+          onClick={() => goToStep(4)}
           type="button"
         >
           Étape suivante
