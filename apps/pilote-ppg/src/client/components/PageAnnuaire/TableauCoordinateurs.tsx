@@ -18,13 +18,12 @@ export function TableauCoordinateurs() {
     <TableauAnnuaire
       caption="Coordinateurs PILOTE"
       isLoading={isLoading}
-      libelleAucun="Aucun coordinateur"
       libelleResultats={pluriel(
         nombrePersonnes,
         "coordinateur",
         "coordinateurs",
       )}
-      placeholderRecherche="Territoire, nom, e-mail…"
+      libelleAucun="Aucun coordinateur"
       selecteurGroupement={
         <SelecteurGroupement
           onChange={(valeur) => table.setGrouping([valeur])}

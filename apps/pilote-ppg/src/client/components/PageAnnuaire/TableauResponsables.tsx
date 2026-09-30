@@ -18,9 +18,8 @@ export function TableauResponsables() {
     <TableauAnnuaire
       caption="Responsables locaux"
       isLoading={isLoading}
-      libelleAucun="Aucun responsable"
       libelleResultats={pluriel(nombrePersonnes, "responsable", "responsables")}
-      placeholderRecherche="Chantier, territoire, nom, e-mail…"
+      libelleAucun="Aucun responsable"
       selecteurGroupement={
         <SelecteurGroupement
           onChange={(valeur) => table.setGrouping([valeur])}

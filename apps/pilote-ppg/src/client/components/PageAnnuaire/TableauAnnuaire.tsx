@@ -1,13 +1,21 @@
 import type { ReactNode } from "react";
 import type { RowData } from "@tanstack/react-table";
 import Loader from "@/components/_commons/Loader/Loader";
-import { FiltresAnnuaire, type TableAnnuaire } from "./FiltresAnnuaire";
+import type {
+  AppFeatures,
+  DataTable,
+} from "@/components/shared/DataTable/createDataTableHook";
+import type { featuresAnnuaire } from "./featuresAnnuaire";
+
+export type TableAnnuaire<TData extends RowData> = DataTable<
+  AppFeatures<typeof featuresAnnuaire>,
+  TData
+>;
 
 export function TableauAnnuaire<TData extends RowData>({
   table,
   isLoading,
   caption,
-  placeholderRecherche,
   libelleResultats,
   libelleAucun,
   selecteurGroupement,
@@ -15,7 +23,6 @@ export function TableauAnnuaire<TData extends RowData>({
   table: TableAnnuaire<TData>;
   isLoading: boolean;
   caption: string;
-  placeholderRecherche: string;
   libelleResultats: string;
   libelleAucun: string;
   selecteurGroupement: ReactNode;
@@ -31,11 +38,7 @@ export function TableauAnnuaire<TData extends RowData>({
         </div>
       ) : (
         <>
-          <FiltresAnnuaire
-            libelleResultats={libelleResultats}
-            placeholderRecherche={placeholderRecherche}
-            table={table}
-          />
+          <table.Filters layout="inline" resultats={libelleResultats} />
           {selecteurGroupement}
           <table.Root
             caption={caption}
