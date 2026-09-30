@@ -29,7 +29,7 @@ export const validationPropositionValeurAvancement = z.object({
   territoireCode: z.string(),
 });
 
-export const validationSuppressionValeurAvancementV2 = z.object({
+export const validationSuppressionValeurAvancement = z.object({
   indicId: z.string(),
   territoireCode: z.string(),
   dateValeurAvancement: z.string(),

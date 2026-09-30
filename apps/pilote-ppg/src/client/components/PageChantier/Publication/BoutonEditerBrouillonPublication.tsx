@@ -7,8 +7,8 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import {
   PublicationBrouillon,
   Publication,
-} from "@/components/PageChantier/PublicationV2/Publication.interface";
-import { ModaleFormulairePublication } from "@/components/PageChantier/PublicationV2/ModaleFormulairePublication";
+} from "@/components/PageChantier/Publication/Publication.interface";
+import { ModaleFormulairePublication } from "@/components/PageChantier/Publication/ModaleFormulairePublication";
 
 export const BoutonEditerBrouillonPublication = ({
   commentaire,

@@ -9,7 +9,7 @@ import {
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import type { Inject } from "@/server/chantiers/module";
 
-export class ListerDetailsIndicateurTerritoireUseCaseV2 {
+export class ListerDetailsIndicateurTerritoireUseCase {
   private readonly indicateurRepository: IndicateurRepository;
 
   private readonly datajobsExecutionQueries: DatajobsExecutionQueries;

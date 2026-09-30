@@ -12,7 +12,7 @@ export type ValeurAvancementIndicateurTerritoire = {
 
 export class RecupererValeursAvancementIndicateurTerritoiresQuery {
   constructor(
-    private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCaseV2">,
+    private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCase">,
   ) {}
 
   async execute(params: {
@@ -22,14 +22,13 @@ export class RecupererValeursAvancementIndicateurTerritoiresQuery {
     habilitations: Habilitations;
     profil: ProfilCode;
   }): Promise<ValeurAvancementIndicateurTerritoire[]> {
-    const result =
-      await this.deps.listerDetailsIndicateurTerritoireUseCaseV2.run(
-        [params.indicateurId],
-        params.chantierId,
-        params.habilitations,
-        params.profil,
-        params.jalon,
-      );
+    const result = await this.deps.listerDetailsIndicateurTerritoireUseCase.run(
+      [params.indicateurId],
+      params.chantierId,
+      params.habilitations,
+      params.profil,
+      params.jalon,
+    );
 
     const details = result[params.indicateurId] ?? {};
 

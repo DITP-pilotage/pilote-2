@@ -11,10 +11,12 @@ import { CartographieÉlémentDeLégende } from "@/client/components/_commons/Ca
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from "@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
-import { CartographieType } from "@/components/PageChantier/Cartes/Cartes";
 import { useCartographieMeteo } from "./useCartographieMeteo";
 import { useCartographiePropositionValeur } from "./useCartographiePropositionValeur";
 import { useCartographieAvancement } from "./useCartographieAvancement";
+
+export type CartographieType =
+  "avancementJalon" | "meteo" | "propositionValeur";
 
 const CartographieAvecSelecteur: FunctionComponent<{
   chantierMailles: Record<Maille, TerritoiresDonnées>;

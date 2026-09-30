@@ -1,7 +1,7 @@
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { SegmentedControl } from "@/components/shared/SegmentedControl";
-import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 import { Icone } from "@/components/_commons/Icone";
 import { BuildingLineIcon } from "@/components/_commons/Icones/BuildingLineIcon";
 import { ListUnorderedIcon } from "@/components/_commons/Icones/ListUnorderedIcon";

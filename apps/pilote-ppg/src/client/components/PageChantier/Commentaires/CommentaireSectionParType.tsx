@@ -9,7 +9,7 @@ import {
   complementsConsigneGeneriqueCommentaire,
 } from "@/client/constants/libellesCommentaire";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import { PublicationSection } from "@/components/PageChantier/PublicationV2/PublicationSection";
+import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
 import { HistoriqueCommentaire } from "@/components/PageChantier/Commentaires/Historique/HistoriqueCommentaire";
 import { useCommentaireActions } from "./useCommentaireActions";
 

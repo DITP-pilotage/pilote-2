@@ -7,7 +7,7 @@ import {
   Merge,
   UseFormRegisterReturn,
 } from "react-hook-form";
-import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { clsxm } from "@/utils/clsxm";
 
 interface InputAvecLabelProps {

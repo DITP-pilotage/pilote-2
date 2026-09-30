@@ -245,7 +245,7 @@ export class RecupererChantiersAccessiblesEnLectureUseCaseV2 {
     const territoires = await this.territoireRepository.récupérerTousNew();
 
     return this.chantierRepository
-      .récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+      .récupérerLesEntréesDeTousLesChantiersHabilités(
         chantiersLecture,
         territoiresLecture,
         profil,

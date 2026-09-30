@@ -2,8 +2,8 @@ import ChantierRepository from "@/server/domain/chantier/ChantierRepository.inte
 import {
   AgregateurListeChantiersParTerritoire,
   ChantierPourAgregation,
-} from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
-import { AgregatParTerritoire } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur.interface";
+} from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur";
+import { AgregatParTerritoire } from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur.interface";
 
 export class AgregerAvancementsChantiersUseCase {
   private chantierRepository: ChantierRepository;

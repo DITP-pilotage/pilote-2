@@ -1160,7 +1160,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     }));
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+  async récupérerLesEntréesDeTousLesChantiersHabilités(
     chantiersLectureIds: string[],
     territoiresLectureIds: string[],
     profil: ProfilCode,

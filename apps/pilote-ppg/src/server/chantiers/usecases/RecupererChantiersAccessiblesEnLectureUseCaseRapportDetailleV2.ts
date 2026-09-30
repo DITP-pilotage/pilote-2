@@ -252,7 +252,7 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
     const territoires = await this.territoireRepository.récupérerTousNew();
 
     const listePrismaChantier =
-      await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+      await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
         chantiersLecture,
         territoiresLecture,
         profil,

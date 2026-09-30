@@ -4,7 +4,7 @@ import {
   useQueryStates,
   parseAsBoolean,
 } from "nuqs";
-import { FiltreAccueil } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { FiltreAccueil } from "@/stores/useFiltresStore/useFiltresStore";
 import { buildJalons } from "@/client/utils/jalons";
 
 const listeKeyPositiveBooleanExclusion = new Set(["brouillon"]);

@@ -19,7 +19,7 @@ import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { PrismaUtilisateurRepository } from "./infrastructure/adapters/PrismaUtilisateurRepository";
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
-import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetailsIndicateursV2UseCase";
+import { RecupererDetailsIndicateursUseCase } from "./usecases/RecupererDetailsIndicateursUseCase";
 import { RecupererChantiersAccessiblesEnLectureUseCaseV2 } from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseV2";
 import RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2 from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2";
 import { ExportCsvDesChantiersUseCase } from "./usecases/ExportCsvDesChantiersUseCase";
@@ -28,8 +28,8 @@ import { ExportCsvDesIndicateursUseCase } from "./usecases/ExportCsvDesIndicateu
 import { ExportCsvDesHistoriquesIndicateursUseCase } from "./usecases/ExportCsvDesHistoriquesIndicateursUseCase";
 import { MinistereRepository } from "./domain/ports/MinistereRepository";
 import PrismaMinistereRepository from "./infrastructure/adapters/PrismaMinistereRepository";
-import RecupererChantierUseCaseV2 from "./usecases/RecupererChantierUseCaseV2";
-import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "./usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
+import RecupererChantierUseCase from "./usecases/RecupererChantierUseCase";
+import { ListerDetailsIndicateurTerritoireUseCase } from "./usecases/ListerDetailsIndicateurTerritoireUseCase";
 import { RapportPropositionsAvancementRepository } from "./domain/ports/RapportPropositionsAvancementRepository";
 import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/adapters/PrismaRapportPropositionsAvancementRepository";
 import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
@@ -102,11 +102,11 @@ type ChantierOwnCradle = ChantierExports & {
   récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
-  recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
+  recupererDetailsIndicateursUseCase: RecupererDetailsIndicateursUseCase;
   recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
   recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
-  recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
-  listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
+  recupererChantierUseCase: RecupererChantierUseCase;
+  listerDetailsIndicateurTerritoireUseCase: ListerDetailsIndicateurTerritoireUseCase;
   rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
   creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
@@ -199,8 +199,8 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       envoyerLesRapportsResponsablesDonneesUseCase: asModuleClass(
         EnvoyerLesRapportsResponsablesDonneesUseCase,
       ),
-      recupererDetailsIndicateursV2UseCase: asModuleClass(
-        RecupererDetailsIndicateursV2UseCase,
+      recupererDetailsIndicateursUseCase: asModuleClass(
+        RecupererDetailsIndicateursUseCase,
       ),
       recupererChantiersAccessiblesEnLectureUseCaseV2: asModuleClass(
         RecupererChantiersAccessiblesEnLectureUseCaseV2,
@@ -209,9 +209,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
         asModuleClass(
           RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2,
         ),
-      recupererChantierUseCaseV2: asModuleClass(RecupererChantierUseCaseV2),
-      listerDetailsIndicateurTerritoireUseCaseV2: asModuleClass(
-        ListerDetailsIndicateurTerritoireUseCaseV2,
+      recupererChantierUseCase: asModuleClass(RecupererChantierUseCase),
+      listerDetailsIndicateurTerritoireUseCase: asModuleClass(
+        ListerDetailsIndicateurTerritoireUseCase,
       ),
       recupererChantiersQuery: asModuleClass(
         RecupererChantiersApplicablesParTerritoiresQuery,

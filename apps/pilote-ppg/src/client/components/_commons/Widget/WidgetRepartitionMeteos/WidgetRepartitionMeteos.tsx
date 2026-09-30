@@ -5,7 +5,7 @@ import {
   libellesMeteos,
   MeteoSaisissable,
 } from "@/server/domain/météo/Météo.interface";
-import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { RepartitionMeteoChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { clsxm } from "@/utils/clsxm";

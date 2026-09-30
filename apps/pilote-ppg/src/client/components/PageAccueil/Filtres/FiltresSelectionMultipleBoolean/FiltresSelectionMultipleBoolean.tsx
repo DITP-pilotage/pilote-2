@@ -6,7 +6,7 @@ import {
 } from "nuqs";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
-import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 
 type AvailableFiltres = "estBarometre" | "estTerritorialise";
 

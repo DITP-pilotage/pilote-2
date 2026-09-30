@@ -1,6 +1,6 @@
 import { Select } from "@/components/shared/Select";
 import { clsxm } from "@/utils/clsxm";
-import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import {
   Picker,
   type PickerOption,

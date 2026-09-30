@@ -1,91 +1,75 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { create } from "zustand";
-import { objectKeys } from "@/client/utils/objects/objects";
-import FiltresStore, {
-  FiltreCatégorieTuple,
-  FiltresActifs,
-} from "./useFiltresStore.interface";
 
-const filtresActifsInitiaux: FiltresActifs = {
-  périmètresMinistériels: [],
-  axes: [],
-  filtresTypologie: [],
-  filtresAlerte: [],
-};
+export interface FiltreAccueil {
+  territoireCode: string;
+  perimetres: string[];
+  axes: string[];
+  meteos: string[];
+  maille: string;
+  territorialisation: string[];
+  q: string;
+  statut: string;
+  jalon: string;
+  groupeParMinistere: boolean;
+  estBarometre: boolean;
+  estTerritorialise: boolean;
+  estEnAlerteTauxAvancementNonCalculé: boolean;
+  estEnAlerteÉcart: boolean;
+  estEnAlerteBaisse: boolean;
+  estEnAlerteMétéoNonRenseignée: boolean;
+  estEnAlerteAbscenceTauxAvancementDepartemental: boolean;
+  estEnAlertePossedePropositionsValeurAvancement: boolean;
+}
 
-const useFiltresStore = create<FiltresStore>((set, get) => ({
-  filtresActifs: filtresActifsInitiaux,
+interface FiltresStore {
+  filtresActifs: FiltreAccueil;
   actions: {
-    activerUnFiltre: (filtre, catégorieDeFiltre) =>
-      set((étatActuel) => ({
+    sauvegarderFiltres: (filtre: Partial<FiltreAccueil>) => void;
+    reinitialiserFiltres: () => void;
+    get: () => FiltreAccueil;
+  };
+}
+
+const etatInitial = {
+  perimetres: [] as string[],
+  axes: [] as string[],
+  meteos: [] as string[],
+  territoireCode: "",
+  maille: "",
+  territorialisation: [] as string[],
+  q: "",
+  statut: "PUBLIE",
+  jalon: "",
+  groupeParMinistere: false,
+  estBarometre: false,
+  estTerritorialise: false,
+  estEnAlerteTauxAvancementNonCalculé: false,
+  estEnAlerteÉcart: false,
+  estEnAlerteBaisse: false,
+  estEnAlerteMétéoNonRenseignée: false,
+  estEnAlerteAbscenceTauxAvancementDepartemental: false,
+  estEnAlertePossedePropositionsValeurAvancement: false,
+};
+const useFiltresStore = create<FiltresStore>((set, get) => ({
+  filtresActifs: etatInitial,
+  actions: {
+    sauvegarderFiltres: (filtre: Partial<FiltreAccueil>) =>
+      set((etatActuel) => ({
         filtresActifs: {
-          ...étatActuel.filtresActifs,
-          [catégorieDeFiltre]: [
-            ...étatActuel.filtresActifs[catégorieDeFiltre],
-            filtre,
-          ],
+          ...etatActuel.filtresActifs,
+          ...filtre,
         },
       })),
-
-    changerÉtatDuFiltre: (filtre, catégorieDeFiltre) => {
-      if (get().actions.estActif(filtre.id, catégorieDeFiltre)) {
-        get().actions.désactiverUnFiltre(filtre.id, catégorieDeFiltre);
-      } else {
-        get().actions.activerUnFiltre(filtre, catégorieDeFiltre);
-      }
-    },
-
-    désactiverUnFiltre: (filtreId, catégorieDeFiltre) =>
-      set((étatActuel) => ({
-        filtresActifs: {
-          ...étatActuel.filtresActifs,
-          [catégorieDeFiltre]: étatActuel.filtresActifs[
-            catégorieDeFiltre
-          ].filter((filtreActif) => filtreActif.id !== filtreId),
-        },
+    reinitialiserFiltres: () =>
+      set(() => ({
+        filtresActifs: etatInitial,
       })),
-
-    désactiverTousLesFiltres: () =>
-      set(() => ({ filtresActifs: filtresActifsInitiaux })),
-
-    estActif: (filtreId, catégorieDeFiltre) =>
-      get().filtresActifs[catégorieDeFiltre].some(
-        (filtre) => filtre.id === filtreId,
-      ),
-
-    récupérerFiltresActifsDUneCatégorie: (catégorieDeFiltre) =>
-      get().filtresActifs[catégorieDeFiltre],
-
-    récupérerNombreFiltresActifsDUneCatégorie: (catégorieDeFiltre) =>
-      get().actions.récupérerFiltresActifsDUneCatégorie(catégorieDeFiltre)
-        .length,
-
-    récupérerNombreFiltresActifs: () =>
-      get().actions.récupérerFiltresActifsAvecLeursCatégories().length,
-
-    récupérerCatégories: () => objectKeys(get().filtresActifs),
-
-    récupérerFiltresActifsAvecLeursCatégories: () => {
-      let filtreEtCatégorie: FiltreCatégorieTuple[] = [];
-
-      get()
-        .actions.récupérerCatégories()
-        .forEach((catégorie) =>
-          get()
-            .actions.récupérerFiltresActifsDUneCatégorie(catégorie)
-            .forEach((filtre) => {
-              filtreEtCatégorie.push({
-                catégorie,
-                filtre,
-              });
-            }),
-        );
-      return filtreEtCatégorie;
-    },
+    get: () => get().filtresActifs,
   },
 }));
 
-export const actions = () =>
-  useFiltresStore((étatActuel) => étatActuel.actions);
-export const filtresActifs = () =>
-  useFiltresStore((étatActuel) => étatActuel.filtresActifs);
+export const sauvegarderFiltres =
+  useFiltresStore.getState().actions.sauvegarderFiltres;
+export const reinitialiserFiltres =
+  useFiltresStore.getState().actions.reinitialiserFiltres;
+export const getFiltresActifs = useFiltresStore.getState().actions.get;

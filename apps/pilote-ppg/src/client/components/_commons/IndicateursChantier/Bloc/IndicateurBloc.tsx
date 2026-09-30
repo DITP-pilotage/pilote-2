@@ -11,7 +11,7 @@ import IndicateurBlocIndicateurTuile from "@/components/_commons/IndicateursChan
 import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/IndicateurTendance";
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
 import { BlocIndicateurProvider } from "@/components/PageChantier/useBlocIndicateurContext";
-import { LignesPropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancementV2";
+import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
 import {
   pageChantier,
   useTerritoireSelectionne,
@@ -281,7 +281,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         null &&
                       detailIndicateurDuTerritoire.proposition == null
                     ) ? (
-                      <LignesPropositionValeurAvancementV2
+                      <LignesPropositionValeurAvancement
                         estAutoriseAAccepterLesPropositionsDeValeurAvancement={
                           estAutoriseAAccepterLesPropositionsDeValeurAvancement
                         }

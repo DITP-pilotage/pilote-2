@@ -1,102 +1,18 @@
-import {
-  chantier_identite as PrismaChantierIdentite,
-  chantier_territoire as PrismaChantierTerritoire,
-  chantier_territoire_jalon as PrismaChantierTerritoireJalon,
-  Prisma,
-  type_statut,
-} from "@prisma/client";
+import { Prisma, type_statut } from "@prisma/client";
 import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
-import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import {
-  ProfilCode,
-  profilsTerritoriaux,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ChantierPourAgregation } from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-class ErreurChantierNonTrouvé extends Error {
-  constructor(idChantier: string) {
-    super(`Erreur: chantier '${idChantier}' non trouvé.`);
-  }
-}
-
-export class ErreurChantierPermission extends Error {
-  constructor(idChantier: string) {
-    super(
-      `Erreur de Permission: l'utilisateur n'a pas le droit de lecture pour le chantier '${idChantier}'.`,
-    );
-  }
-}
 
 export default class ChantierSQLRepository implements ChantierRepository {
   private readonly prismaPilote: PrismaPilote;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {
     this.prismaPilote = prisma;
-  }
-
-  async récupérerLesEntréesDUnChantier(
-    id: string,
-    habilitations: Habilitations,
-    profil: ProfilCode,
-    jalon: number,
-  ): Promise<
-    PrismaChantierIdentite & {
-      chantier_territoire: (PrismaChantierTerritoire & {
-        chantier_territoire_jalon: PrismaChantierTerritoireJalon[];
-      })[];
-    }
-  > {
-    const prisma = this.prismaPilote.getInstance();
-    const habilitation = new Habilitation(habilitations);
-    const listeChantiersIdsAccessiblesEnLecture =
-      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-
-    let listeTerritoireAccessibleEnLecture =
-      habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-
-    const peutAccéderAuChantier =
-      listeChantiersIdsAccessiblesEnLecture.includes(id);
-
-    if (!peutAccéderAuChantier) {
-      throw new ErreurChantierPermission(id);
-    }
-
-    const chantier = await prisma.chantier_identite.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        chantier_territoire: {
-          where: {
-            territoire_code: {
-              in: profilsTerritoriaux.includes(profil)
-                ? undefined
-                : [...listeTerritoireAccessibleEnLecture, "NAT-FR"],
-            },
-          },
-          include: {
-            chantier_territoire_jalon: {
-              where: {
-                jalon,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!chantier) {
-      throw new ErreurChantierNonTrouvé(id);
-    }
-
-    return chantier;
   }
 
   async recupererLaRepartitionMeteo(

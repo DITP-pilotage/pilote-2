@@ -1,11 +1,11 @@
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
-import { ModalePropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
+import { ModalePropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/ModalePropositionValeurAvancement";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 
 export const BoutonProposerValeur = () => {
   return (
-    <ModalePropositionValeurAvancementV2>
+    <ModalePropositionValeurAvancement>
       <BoutonSousLigné
         className="fr-link--xs !text-dsfr-mention-grey"
         iconLeft={<Icone className="text-current h-3 w-3" icone={Icone1Icon} />}
@@ -13,6 +13,6 @@ export const BoutonProposerValeur = () => {
       >
         Proposer une autre valeur d'avancement
       </BoutonSousLigné>
-    </ModalePropositionValeurAvancementV2>
+    </ModalePropositionValeurAvancement>
   );
 };

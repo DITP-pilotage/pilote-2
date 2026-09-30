@@ -18,7 +18,7 @@ import {
   InformationIndicateurContrat,
   presenterEnInformationIndicateurContrat,
 } from "@/server/app/contrats/InformationIndicateurContrat";
-import { getFiltresActifs } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { getFiltresActifs } from "@/stores/useFiltresStore/useFiltresStore";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
@@ -66,7 +66,7 @@ export async function getServerSideProps(
   }
 
   const chantier = await getContainer("chantiers")
-    .resolve("recupererChantierUseCaseV2")
+    .resolve("recupererChantierUseCase")
     .run(params.id, session.habilitations, session.profil, jalon);
 
   const indicateurRepository = getContainer("legacy").resolve(

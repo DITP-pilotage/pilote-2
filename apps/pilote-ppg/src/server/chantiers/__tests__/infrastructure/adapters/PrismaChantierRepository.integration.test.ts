@@ -1769,7 +1769,7 @@ describe("PrismaChantierRepository", () => {
     );
   });
 
-  describe("#récupérerLesEntréesDeTousLesChantiersHabilitésNew", () => {
+  describe("#récupérerLesEntréesDeTousLesChantiersHabilités", () => {
     it(
       "quand on est profil territoriale et que les filtres sont laissés par défault, doit remonter les chantiers demandés",
       createIntegrationTest(async () => {
@@ -1876,7 +1876,7 @@ describe("PrismaChantierRepository", () => {
 
         // When
         const result =
-          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
             chantiersLectureIds,
             territoiresLectureIds,
             profil,
@@ -2013,7 +2013,7 @@ describe("PrismaChantierRepository", () => {
 
         // When
         const result =
-          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
             chantiersLectureIds,
             territoiresLectureIds,
             profil,
@@ -2134,7 +2134,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,
@@ -2242,7 +2242,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,
@@ -2351,7 +2351,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,
@@ -2453,7 +2453,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,
@@ -2580,7 +2580,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,
@@ -2697,7 +2697,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,
@@ -2824,7 +2824,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,
@@ -2947,7 +2947,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result =
-            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(
               chantiersLectureIds,
               territoiresLectureIds,
               profil,

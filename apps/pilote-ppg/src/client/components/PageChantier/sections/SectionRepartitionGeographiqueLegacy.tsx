@@ -1,10 +1,11 @@
 import { parseAsString, useQueryState } from "nuqs";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
+import CartographieAvecSelecteur, {
+  CartographieType,
+} from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
 import { useEnv } from "@/client/hooks/useEnv";
 import { ComparaisonTerritoires } from "@/components/PageChantier/ComparaisonTerritoires/ComparaisonTerritoires";
-import { CartographieType } from "@/components/PageChantier/Cartes/Cartes";
 import {
   pageChantier,
   useTerritoireSelectionne,

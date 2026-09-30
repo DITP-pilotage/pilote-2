@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
-import AlertePublication from "@/components/PageChantier/PublicationV2/AlertePublication";
-import { AffichagePublication } from "@/components/PageChantier/PublicationV2/Affichage/AffichagePublication";
-import FormulairePublication from "@/components/PageChantier/PublicationV2/FormulairePublication";
-import { BoutonNouvellePublication } from "@/components/PageChantier/PublicationV2/BoutonNouvellePublication";
-import { BoutonEditerBrouillonPublication } from "@/components/PageChantier/PublicationV2/BoutonEditerBrouillonPublication";
+import AlertePublication from "@/components/PageChantier/Publication/AlertePublication";
+import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
+import FormulairePublication from "@/components/PageChantier/Publication/FormulairePublication";
+import { BoutonNouvellePublication } from "@/components/PageChantier/Publication/BoutonNouvellePublication";
+import { BoutonEditerBrouillonPublication } from "@/components/PageChantier/Publication/BoutonEditerBrouillonPublication";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import {
   PublicationBrouillon,

@@ -23,7 +23,7 @@ import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
-import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { getFiltresActifs } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";

@@ -2,14 +2,14 @@ import { FunctionComponent, PropsWithChildren } from "react";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 
-import useModalePropositionValeurAvancementV2, {
+import useModalePropositionValeurAvancement, {
   EtapePropositionValeurAvancement,
   Stepper,
-} from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/useModalePropositionValeurAvancementV2";
+} from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/useModalePropositionValeurAvancement";
 import Input from "@/components/_commons/Input/Input";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
-import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
@@ -19,7 +19,7 @@ import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 
-export const ModalePropositionValeurAvancementV2: FunctionComponent<
+export const ModalePropositionValeurAvancement: FunctionComponent<
   PropsWithChildren
 > = ({ children }) => {
   const utilisateur = useProfilUtilisateurConnecte();
@@ -34,7 +34,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
     estUneModificationDeProposition,
     optionsMois,
     isPending,
-  } = useModalePropositionValeurAvancementV2();
+  } = useModalePropositionValeurAvancement();
 
   const refreshRouter = useRefreshRouter();
   const {

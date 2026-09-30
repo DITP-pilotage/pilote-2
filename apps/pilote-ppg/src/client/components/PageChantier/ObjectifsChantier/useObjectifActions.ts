@@ -6,7 +6,7 @@ import {
   ObjectifV2AvecNomAuteur,
   TypeObjectif,
 } from "@/server/domain/chantier/objectif/Objectif.interface";
-import { PublicationActions } from "@/components/PageChantier/PublicationV2/Publication.interface";
+import { PublicationActions } from "@/components/PageChantier/Publication/Publication.interface";
 
 export const useObjectifActions = ({
   chantierId,

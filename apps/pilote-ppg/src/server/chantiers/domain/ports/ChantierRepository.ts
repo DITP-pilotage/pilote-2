@@ -46,7 +46,7 @@ export interface ChantierRepository {
   }: {
     listeChantiersIds: string[];
   }): Promise<RapportDirecteurProjetChantierInformation[]>;
-  récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+  récupérerLesEntréesDeTousLesChantiersHabilités(
     chantiersLectureIds: string[],
     territoiresLectureIds: string[],
     profil: ProfilCode,

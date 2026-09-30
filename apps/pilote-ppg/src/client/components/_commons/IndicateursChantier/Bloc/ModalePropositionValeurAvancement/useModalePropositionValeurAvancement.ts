@@ -133,7 +133,7 @@ const genererOptionsMois = (
   return options;
 };
 
-const useModalePropositionValeurAvancementV2 = () => {
+const useModalePropositionValeurAvancement = () => {
   const { indicateur, detailIndicateurDuTerritoire, territoireCode } =
     useBlocIndicateurContext();
 
@@ -145,7 +145,7 @@ const useModalePropositionValeurAvancementV2 = () => {
   );
 
   const mutationCreerPropositonValeurAvancement =
-    api.propositionValeurAvancement.creerV2.useMutation({
+    api.propositionValeurAvancement.creer.useMutation({
       onSuccess: async () => {
         // TODO(PVA/CHAN/2025-08-18): rafraichir les données de la page
         // await router.replace(router.asPath);
@@ -273,4 +273,4 @@ const useModalePropositionValeurAvancementV2 = () => {
   };
 };
 
-export default useModalePropositionValeurAvancementV2;
+export default useModalePropositionValeurAvancement;

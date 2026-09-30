@@ -19,7 +19,7 @@ import {
 } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { objectEntries } from "@/client/utils/objects/objects";
 import Axe from "@/server/domain/axe/Axe.interface";
-import { AgrégateurChantierRapportDetailleParTerritoire } from "@/client/utils/chantier/agrégateurRapportDetailleNew/agrégateur";
+import { AgrégateurChantierRapportDetailleParTerritoire } from "@/client/utils/chantier/agrégateurRapportDetaille/agrégateur";
 import { AvancementChantierRapportDetaille } from "@/components/PageRapportDétaillé/AvancementChantierRapportDetaille";
 import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";

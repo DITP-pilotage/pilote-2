@@ -5,7 +5,7 @@ import { presenterEnDetailsIndicateursContrat } from "@/server/chantiers/app/con
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import type { Inject } from "@/server/chantiers/module";
 
-export class RecupererDetailsIndicateursV2UseCase {
+export class RecupererDetailsIndicateursUseCase {
   private readonly indicateurRepository: IndicateurRepository;
 
   private readonly datajobsExecutionQueries: DatajobsExecutionQueries;

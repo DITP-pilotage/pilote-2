@@ -6,7 +6,7 @@ import {
   MeteoSaisissable,
   meteosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
-import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { clsxm } from "@/utils/clsxm";

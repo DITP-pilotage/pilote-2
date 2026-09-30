@@ -1,5 +1,5 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { PublicationSection } from "@/components/PageChantier/PublicationV2/PublicationSection";
+import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
   consignesEcritureDecisionStrategique,

@@ -2,7 +2,7 @@ import { parseAsBoolean, useQueryState } from "nuqs";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { clsxm } from "@/utils/clsxm";
-import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresStore";
 
 interface RemontéeAlerteProps {
   nombre: number | null;

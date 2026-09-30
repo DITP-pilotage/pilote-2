@@ -281,5 +281,5 @@ Retirer un flag touche : `config.ts` (`featureFlip`), `server/gestion-contenu/do
 | `EXPORT_CSV_WIDGETS` | inactif | `_commons/Widget/ExportableWidget.tsx:18` |
 | `POSER_UNE_QUESTION_INDICATEUR` | inactif | `IndicateurSpécifications.tsx:28` — à trancher : fonctionnalité abandonnée ? |
 | `MASQUER_INDICATEURS_NON_APPLICABLES` | inactif | `SectionIndicateurs.tsx:25`, `RapportDétailléChantier.tsx:50` — à trancher |
-| `PVA_VALEUR_DIFFERENTE` | inactif | `ModalePropositionValeurAvancementV2.tsx:48` — à trancher avant le renommage PVA du lot 1 (garder le flag ou supprimer la branche) |
+| `PVA_VALEUR_DIFFERENTE` | inactif | `ModalePropositionValeurAvancementV2.tsx:48` — **à garder** (décision 2026-09-29) : sélecteur de mois pour proposer une valeur sur une échéance pas encore mesurée (PIL-866), fonctionnalité voulue mais pas encore ouverte |
 | `PILOTE_EVAL` | inactif | disparaît avec la suppression de Pilote Eval (§ 9) |

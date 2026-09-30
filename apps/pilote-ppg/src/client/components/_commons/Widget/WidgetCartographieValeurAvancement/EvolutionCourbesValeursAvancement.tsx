@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import type { TerritoireEvolutionDonnees } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
-import useIndicateurEvolutionNew from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
+import useIndicateurEvolution from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolution";
 import LineChart from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";
 import { useModeExport } from "@/components/_commons/Widget/ModeExportContext";
 
@@ -51,7 +51,7 @@ export const EvolutionCourbesValeursAvancement = ({
     periodesSelectionnablesZoom,
     changerLaPeriodeSelectionnee,
     periodeSelectionnee,
-  } = useIndicateurEvolutionNew({
+  } = useIndicateurEvolution({
     tousLesIndicateursDetails,
     jalon,
   });

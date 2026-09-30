@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { ECOption } from "./useIndicateurEvolutionNew";
+import type { ECOption } from "./useIndicateurEvolution";
 
 export type ChartDisplayMode = "default" | "compact";
 

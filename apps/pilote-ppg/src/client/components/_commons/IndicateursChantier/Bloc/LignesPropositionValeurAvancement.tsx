@@ -17,7 +17,7 @@ import {
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { Table } from "@/components/shared/Table";
 
-export const LignesPropositionValeurAvancementV2 = ({
+export const LignesPropositionValeurAvancement = ({
   propositionEstVisible,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   estAutoriseAProposerUneValeurAvancement,

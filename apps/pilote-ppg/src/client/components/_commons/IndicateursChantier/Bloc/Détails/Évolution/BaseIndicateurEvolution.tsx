@@ -1,5 +1,4 @@
 import { forwardRef, type ReactNode } from "react";
-import type { ChartData } from "chart.js";
 import Titre from "@/client/components/_commons/Titre/Titre";
 import { LogoPilote } from "@/components/_commons/LogoPilote";
 import LineChart from "./LineChart/LineChart";
@@ -16,13 +15,10 @@ export const BaseIndicateurEvolution = forwardRef<
     actions?: ReactNode;
     indicateur: IndicatorMetadata;
     chartConfig: ChartConfig;
-    donnéesParTerritoire: ChartData<"line">;
+    aDesValeurs: boolean;
   }
->(({ mode, actions, indicateur, chartConfig, donnéesParTerritoire }, ref) => {
+>(({ mode, actions, indicateur, chartConfig, aDesValeurs }, ref) => {
   const modeImpression = mode === "impression";
-  const hasData = donnéesParTerritoire.datasets.some(
-    (dataset) => dataset.data.length > 0,
-  );
 
   return (
     <section className="!p-10" ref={ref}>
@@ -38,7 +34,7 @@ export const BaseIndicateurEvolution = forwardRef<
         {actions}
       </div>
 
-      {hasData ? (
+      {aDesValeurs ? (
         <div className="grid">
           <div className="min-h-80 overflow-hidden">
             <LineChart {...chartConfig} modeImpression={modeImpression} />

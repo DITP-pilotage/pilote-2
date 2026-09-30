@@ -4,8 +4,8 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
-import { ModaleFormulairePublication } from "@/components/PageChantier/PublicationV2/ModaleFormulairePublication";
+import { Publication } from "@/components/PageChantier/Publication/Publication.interface";
+import { ModaleFormulairePublication } from "@/components/PageChantier/Publication/ModaleFormulairePublication";
 
 export const BoutonNouvellePublication = ({
   commentaire,

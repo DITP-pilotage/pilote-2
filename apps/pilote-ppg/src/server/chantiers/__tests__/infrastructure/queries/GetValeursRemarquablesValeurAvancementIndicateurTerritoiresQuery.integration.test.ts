@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery";
-import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
+import { ListerDetailsIndicateurTerritoireUseCase } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCase";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
@@ -89,8 +89,8 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
 
     query =
       new GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery({
-        listerDetailsIndicateurTerritoireUseCaseV2:
-          new ListerDetailsIndicateurTerritoireUseCaseV2({
+        listerDetailsIndicateurTerritoireUseCase:
+          new ListerDetailsIndicateurTerritoireUseCase({
             indicateurRepository,
             datajobsExecutionQueries,
           }),

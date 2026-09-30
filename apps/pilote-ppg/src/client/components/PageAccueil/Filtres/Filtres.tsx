@@ -5,7 +5,7 @@ import { FiltresSelectionMultiple } from "@/components/PageAccueil/Filtres/Filtr
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Titre from "@/components/_commons/Titre/Titre";
-import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { calculerNouvelleMaille } from "@/components/PageAccueil/Filtres/utils";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";

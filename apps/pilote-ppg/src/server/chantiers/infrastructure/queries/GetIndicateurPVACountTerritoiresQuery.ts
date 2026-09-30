@@ -7,7 +7,7 @@ import { PVATerritoireViewModel } from "./GetChantierPVACountTerritoiresQuery";
 export class GetIndicateurPVACountTerritoiresQuery {
   constructor(
     private readonly deps: Inject<
-      "listerDetailsIndicateurTerritoireUseCaseV2" | "territoireRepository"
+      "listerDetailsIndicateurTerritoireUseCase" | "territoireRepository"
     >,
   ) {}
 
@@ -18,14 +18,13 @@ export class GetIndicateurPVACountTerritoiresQuery {
     habilitations: Habilitations;
     profil: ProfilCode;
   }): Promise<PVATerritoireViewModel[]> {
-    const result =
-      await this.deps.listerDetailsIndicateurTerritoireUseCaseV2.run(
-        [params.indicateurId],
-        params.chantierId,
-        params.habilitations,
-        params.profil,
-        params.jalon,
-      );
+    const result = await this.deps.listerDetailsIndicateurTerritoireUseCase.run(
+      [params.indicateurId],
+      params.chantierId,
+      params.habilitations,
+      params.profil,
+      params.jalon,
+    );
 
     const details = result[params.indicateurId] ?? {};
 

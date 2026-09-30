@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { RecupererTauxAvancementIndicateurTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererTauxAvancementIndicateurTerritoiresQuery";
-import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
+import { ListerDetailsIndicateurTerritoireUseCase } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCase";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -38,8 +38,8 @@ describe("RecupererTauxAvancementIndicateurTerritoiresQuery", () => {
     });
 
     query = new RecupererTauxAvancementIndicateurTerritoiresQuery({
-      listerDetailsIndicateurTerritoireUseCaseV2:
-        new ListerDetailsIndicateurTerritoireUseCaseV2({
+      listerDetailsIndicateurTerritoireUseCase:
+        new ListerDetailsIndicateurTerritoireUseCase({
           indicateurRepository,
           datajobsExecutionQueries,
         }),
