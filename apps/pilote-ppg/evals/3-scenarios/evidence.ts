@@ -67,9 +67,9 @@ export function extractMatter({
       (call) => call.toolName === "export_rapport",
     );
     const rapport = exportCall
-      ? buildRapportMarkdown(
+      ? `RAPPORT EXPORTÉ :\n${buildRapportMarkdown(
           exportCall.input as Parameters<typeof buildRapportMarkdown>[0],
-        )
+        )}`
       : "AUCUN RAPPORT EXPORTÉ : l'assistant n'a pas appelé l'outil d'export.";
     return {
       matter: `${rapport}\n\nRÉPONSE DU CHAT :\n${text}`,

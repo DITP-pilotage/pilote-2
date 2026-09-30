@@ -50,6 +50,9 @@ describe("extractMatter", () => {
       toolResults: [],
     });
 
+    // Sans cet en-tête, le juge prenait le rapport pour une réponse de chat
+    // et concluait qu'aucun rapport n'était fourni (calibration du 30/09).
+    expect(matter.startsWith("RAPPORT EXPORTÉ :\n")).toBe(true);
     expect(matter).toContain("Synthèse Bretagne");
     expect(matter).toContain("Chantiers en retard");
     expect(matter).toContain(

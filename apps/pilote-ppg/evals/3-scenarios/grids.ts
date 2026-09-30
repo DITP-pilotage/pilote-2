@@ -130,7 +130,7 @@ const ANALYSE_DES_ECARTS = judged({
   id: "Analyse des écarts",
   rule: "Comparaison : décris factuellement qui est en avance, qui est en retard, de combien de points",
   instruction:
-    "La réponse dit quel territoire est devant, lequel est derrière, et de combien de points de taux d'avancement, avec des valeurs conformes aux données reçues.",
+    "La réponse dit quel territoire est devant, lequel est derrière, et de combien de points de taux d'avancement. Le territoire annoncé devant doit être celui dont le taux est le plus élevé dans les données reçues : un classement inversé est non conforme, même si les chiffres cités sont justes.",
 });
 
 const POSITION_MEDIANE = judged({
@@ -198,7 +198,7 @@ export const GRIDS = {
         id: "Écart et météo",
         rule: "Gabarit mono_territoire : écart en points et météo (libellé) pour chaque chantier",
         instruction:
-          "Chaque chantier listé porte son écart en points et le libellé de sa météo, conformes à la fiche.",
+          "Chaque chantier listé porte son écart en points et le libellé de sa météo. Un écart absent sous un chantier est non conforme, même s'il est cité ailleurs. Le libellé de météo correspond à la météo de la fiche ; l'exactitude des chiffres relève de « Chiffres exacts ».",
       }),
       ...COMMENTAIRES_DU_GABARIT,
       judged({
@@ -241,7 +241,7 @@ export const GRIDS = {
         id: "Situé face aux autres territoires",
         rule: "Comparer des territoires entre eux",
         instruction:
-          "Le chantier est situé face à au moins un autre territoire avec des valeurs chiffrées (taux ou écart) issues des données reçues. Une position sans chiffre est non conforme.",
+          "Le chantier est situé face à au moins un autre territoire avec des valeurs chiffrées (taux ou écart) ÉCRITES dans la réponse. Une position énoncée sans chiffre (« derrière », « devant ») est non conforme, même si les données reçues permettraient de la chiffrer.",
       }),
       judged({
         id: "Difficultés tirées des commentaires",
@@ -303,13 +303,13 @@ export const GRIDS = {
         id: "Écart par chantier",
         rule: "get_chantiers en_retard : indique l'écart par rapport à la médiane (en points) et la météo",
         instruction:
-          "Chaque chantier en retard porte son écart à la médiane en points et sa météo (libellé), conformes à la fiche.",
+          "Chaque chantier en retard porte son écart à la médiane en points et le libellé de sa météo. L'exactitude des chiffres relève de « Chiffres exacts ».",
       }),
       judged({
         id: "Valeurs des indicateurs",
         rule: "Demande : les valeurs des indicateurs de chaque chantier en retard (VI, VA, VC, TA)",
         instruction:
-          "Pour chaque chantier en retard, la réponse donne les valeurs de ses indicateurs (valeur initiale, actuelle, cible, taux d'avancement) conformes à la fiche. Renvoyer vers un tableau de bord ou dire que l'affichage est impossible est non conforme.",
+          "Pour chaque chantier en retard, la réponse DONNE les valeurs de ses indicateurs (valeur initiale, actuelle, cible, taux d'avancement). Renvoyer vers un tableau de bord ou dire que l'affichage est impossible est non conforme. L'exactitude des valeurs relève de « Chiffres exacts », pas de ce critère.",
       }),
     ],
   }),
@@ -429,7 +429,7 @@ export const GRIDS = {
         id: "Une synthèse par chantier",
         rule: "Demande : synthétise les commentaires de chaque chantier cité",
         instruction:
-          "Chaque chantier de la demande a sa propre synthèse, au format CH-XXX — Nom. Un chantier sans commentaire dans les données reçues est signalé comme tel, sans contenu inventé.",
+          "Chaque chantier de la demande a sa propre synthèse, au format CH-XXX — Nom. Pour un chantier dont les données reçues ne contiennent AUCUN commentaire, la réponse dit qu'il n'y en a pas : lui attribuer un contenu, quel qu'il soit, est non conforme.",
       }),
       judged({
         id: "Actions identifiées",
@@ -471,13 +471,13 @@ export const GRIDS = {
         id: "Évolution entre jalons",
         rule: "Workflow b : compare les résultats et présente l'évolution",
         instruction:
-          "Si des données existent aux deux jalons, la réponse donne le taux à chaque jalon et l'évolution en points avec son sens (hausse ou baisse), conformes aux données reçues.",
+          "Un taux « - % » ou null dans les données reçues signifie qu'il n'y a PAS de données pour ce jalon : dans ce cas, ce critère est conforme sans autre vérification. Si les deux jalons ont un taux chiffré, la réponse donne le taux à chaque jalon et l'évolution en points, avec le bon sens : hausse si le taux du jalon le plus récent est plus élevé, baisse sinon.",
       }),
       judged({
         id: "Données indisponibles dites",
         rule: "Gestion des erreurs : si aucun résultat n'est disponible pour un jalon, indique que les données ne sont pas disponibles",
         instruction:
-          "Si les données reçues pour un jalon sont vides ou sans taux, la réponse le dit explicitement au lieu d'afficher une valeur ; sinon ce critère est conforme.",
+          "Un taux « - % » ou null dans les données reçues signifie qu'il n'y a pas de données pour ce jalon. Dans ce cas, la réponse le dit explicitement ; la passer sous silence ou afficher une valeur est non conforme. Si les deux jalons ont un taux chiffré, ce critère est conforme.",
       }),
     ],
   }),
