@@ -18,11 +18,51 @@ import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Hab
  * ambigus à proposer.
  */
 
+export type EvalProfile = "ditp" | "coordinateur";
+
+export type EvalUser = {
+  userId: string;
+  habilitations: Habilitations;
+};
+
 export type EvalWorld = {
+  /** Profil DITP, gardé au premier niveau pour les suites de niveau 2. */
   userId: string;
   habilitations: Habilitations;
   chantiers: { id: string; nom: string }[];
+  users: Record<EvalProfile, EvalUser>;
 };
+
+/**
+ * Le coordinateur territorial de l'écran d'accueil : lecture sur la Bretagne
+ * et ses départements. Le prompt système qu'il reçoit ne liste que ces codes,
+ * et les outils masquent le qualitatif des autres territoires.
+ */
+export const PERIMETRE_COORDINATEUR = [
+  "REG-53",
+  "DEPT-22",
+  "DEPT-29",
+  "DEPT-35",
+  "DEPT-56",
+];
+
+function habilitationsSur({
+  chantiers,
+  territoires,
+}: {
+  chantiers: string[];
+  territoires: string[];
+}): Habilitations {
+  const perimetre = { chantiers, territoires, périmètres: [] };
+
+  return {
+    lecture: perimetre,
+    saisieCommentaire: perimetre,
+    saisieIndicateur: perimetre,
+    responsabilite: perimetre,
+    gestionUtilisateur: perimetre,
+  };
+}
 
 /**
  * Identifiants stables et lisibles : un cas d'eval qui échoue doit pouvoir se
@@ -309,25 +349,31 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
   // référentiel réel — sinon une question sur la Bretagne porterait sur un
   // territoire inexistant, et l'agent aurait raison de ne pas appeler l'outil.
   const territoires = await getPrisma().territoire.findMany();
-  const territoiresAccessibles = territoires.map(
-    (territoire) => territoire.code,
-  );
 
-  const fullPerimetre = {
-    chantiers: chantiersAccessibles,
-    territoires: territoiresAccessibles,
-    périmètres: [],
+  const ditp: EvalUser = {
+    userId: user.id,
+    habilitations: habilitationsSur({
+      chantiers: chantiersAccessibles,
+      territoires: territoires.map((territoire) => territoire.code),
+    }),
+  };
+
+  const coordinateurUser = await fixtures.utilisateur({
+    profilCode: "COORDINATEUR_REGION",
+  });
+
+  const coordinateur: EvalUser = {
+    userId: coordinateurUser.id,
+    habilitations: habilitationsSur({
+      chantiers: chantiersAccessibles,
+      territoires: PERIMETRE_COORDINATEUR,
+    }),
   };
 
   return {
-    userId: user.id,
+    userId: ditp.userId,
+    habilitations: ditp.habilitations,
     chantiers: CHANTIERS,
-    habilitations: {
-      lecture: fullPerimetre,
-      saisieCommentaire: fullPerimetre,
-      saisieIndicateur: fullPerimetre,
-      responsabilite: fullPerimetre,
-      gestionUtilisateur: fullPerimetre,
-    },
+    users: { ditp, coordinateur },
   };
 }
