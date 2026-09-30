@@ -86,7 +86,7 @@ const BASE: Criterion[] = [
     id: BASE_IDS.exactFigures,
     rule: "Factualité : n'invente jamais de données ni de chiffres absents des résultats des outils",
     instruction:
-      "Ne vérifie que les nombres ÉCRITS EN CHIFFRES dans la matière (taux, médiane, écart, valeur d'indicateur, date). Chacun figure dans les DONNÉES REÇUES PAR L'ASSISTANT, ou s'en déduit par un calcul simple et juste (une différence de taux par exemple). Un nombre introuvable ou faux est non conforme ; cite-le dans la preuve. Un arrondi à l'unité est conforme. Ne relèvent PAS de ce critère : un sens de variation (hausse, baisse), une position (en retard, dans la médiane), un libellé, un nombre écrit en lettres dans un commentaire, ni l'absence d'un chiffre.",
+      "Ne vérifie que les nombres ÉCRITS EN CHIFFRES dans la matière (taux, médiane, écart, valeur d'indicateur, date). Chacun figure dans les DONNÉES REÇUES PAR L'ASSISTANT, ou s'en déduit par un calcul simple et juste (une différence de taux par exemple). Un nombre introuvable ou faux est non conforme ; cite-le dans la preuve. Un arrondi à l'unité est conforme. Ne relèvent PAS de ce critère : un sens de variation (hausse, baisse), une position (en retard, dans la médiane), un libellé, un nombre écrit en lettres dans un commentaire, ni l'absence d'un chiffre. Exemple : « une baisse de 8 points » quand le taux passe de 43 % à 51 % cite un nombre juste (8) ; le sens erroné relève d'un autre critère, et ce critère-ci est conforme.",
   }),
   judged({
     id: BASE_IDS.restriction,

@@ -1,4 +1,14 @@
-import { buildJudgePrompt, toVerdict } from "./judge";
+import { buildJudgePrompt, rawVerdictSchema, toVerdict } from "./judge";
+
+describe("rawVerdictSchema", () => {
+  test("demande la preuve avant le verdict, pour que le juge tranche après avoir lu", () => {
+    // Calibration du 30/09 : avec le verdict en premier, la preuve disait
+    // « non conforme » sous un booléen conforme.
+    const champs = Object.keys(rawVerdictSchema.shape.verdicts.element.shape);
+
+    expect(champs).toEqual(["critere", "preuve", "conforme"]);
+  });
+});
 import { judged } from "./grid";
 import type { Evidence } from "./evidence";
 

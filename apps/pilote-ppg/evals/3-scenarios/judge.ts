@@ -15,16 +15,23 @@ export const JUDGE_MODEL = "deepseek-v4-flash";
 
 export type Verdict = Record<string, { conforme: boolean; preuve: string }>;
 
+/**
+ * La preuve AVANT le verdict : le modèle écrit dans l'ordre du schéma. Avec
+ * le booléen en premier, il tranchait puis justifiait, et la calibration du
+ * 30/09 a relevé des preuves « non conforme » sous des verdicts conformes.
+ */
 export const rawVerdictSchema = z.object({
   verdicts: z.array(
     z.object({
       critere: z.string().describe("Identifiant exact du critère, recopié."),
-      conforme: z.boolean(),
       preuve: z
         .string()
         .describe(
-          "Extrait cité de la réponse, ou ce qui manque, en une phrase.",
+          "Extrait cité de la réponse, ou ce qui manque, en une phrase. À écrire AVANT de décider.",
         ),
+      conforme: z
+        .boolean()
+        .describe("La conclusion de la preuve qui précède, et rien d'autre."),
     }),
   ),
 });
@@ -37,7 +44,8 @@ Règles :
 - Juge chaque critère indépendamment des autres. Un défaut ne compte que pour le critère qu'il concerne.
 - Appuie-toi sur la FICHE DE VÉRITÉ et sur les DONNÉES REÇUES PAR L'ASSISTANT, jamais sur tes propres connaissances.
 - Un critère est conforme ou non conforme, sans intermédiaire.
-- Pour chaque critère, cite en preuve un extrait de la matière jugée, ou nomme précisément ce qui manque.
+- Pour chaque critère, écris d'abord la preuve : un extrait de la matière jugée, ou ce qui manque précisément. Décide ensuite : le verdict suit la preuve, jamais l'inverse.
+- Un défaut qui relève d'un autre critère ne rend pas celui-ci non conforme.
 - Rends un verdict pour chaque critère listé, et seulement pour eux, en recopiant son identifiant.`;
 
 function sansInstructions(output: unknown): unknown {

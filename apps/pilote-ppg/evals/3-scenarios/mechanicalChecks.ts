@@ -157,6 +157,33 @@ export function checkNoVerbatim({
   return { ok: true, detail: "aucun passage recopié" };
 }
 
+const PHRASES_MAX = 2;
+
+function compterPhrases(text: string) {
+  return text.split(/[.!?…](?:\s+|$)/).filter((phrase) => phrase.trim()).length;
+}
+
+/**
+ * Les gabarits placent le résumé d'un commentaire dans une citation
+ * markdown (`> …`) sous chaque chantier. Compter ses phrases est mécanique :
+ * la calibration du 30/09 a montré que le juge comptait mal (0/3 sur un
+ * résumé de cinq phrases).
+ */
+export function checkResumesCourts({ text }: { text: string }): CheckResult {
+  const tropLongs = text
+    .split("\n")
+    .filter((line) => /^\s*>/.test(line))
+    .map((line) => line.replace(/^\s*>\s?/, "").trim())
+    .filter((resume) => compterPhrases(resume) > PHRASES_MAX);
+
+  return tropLongs.length === 0
+    ? { ok: true, detail: "résumés d'une ou deux phrases" }
+    : {
+        ok: false,
+        detail: `résumé de ${compterPhrases(tropLongs[0])} phrases : « ${tropLongs[0]} »`,
+      };
+}
+
 const MENTION_ABSENCE = "pas de commentaire disponible";
 
 /**
