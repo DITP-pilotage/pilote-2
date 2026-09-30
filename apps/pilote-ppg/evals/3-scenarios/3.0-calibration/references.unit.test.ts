@@ -1,6 +1,22 @@
 import type { Criterion, MechanicalCriterion } from "../grid";
 import { GRIDS } from "../grids";
-import { CALIBRATION_CASES } from "./references";
+import { CALIBRATION_CASES, MECHANICAL_MUTANTS } from "./references";
+
+describe("mutants mécaniques", () => {
+  test.each(
+    MECHANICAL_MUTANTS.map((mutant) => [mutant.label, mutant] as const),
+  )("« %s » échoue son critère, et lui seul", (_label, mutant) => {
+    // When
+    const echecs = GRIDS[mutant.family].criteria
+      .filter(estMecanique)
+      .filter((criterion) => criterion.applicable?.(mutant.evidence) ?? true)
+      .filter((criterion) => !criterion.check(mutant.evidence).ok)
+      .map((criterion) => criterion.id);
+
+    // Then
+    expect(echecs).toEqual([mutant.broken]);
+  });
+});
 
 const estMecanique = (criterion: Criterion): criterion is MechanicalCriterion =>
   criterion.kind === "mechanical";

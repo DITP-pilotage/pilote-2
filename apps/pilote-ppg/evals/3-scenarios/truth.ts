@@ -47,6 +47,26 @@ export function chantiersDistincts(
     .map(([id, nom]) => ({ id, nom }));
 }
 
+/**
+ * Les commentaires de synthèse de la fiche, chantier par chantier et
+ * territoire par territoire : `null` quand la synthèse n'en a pas, ou qu'il
+ * est masqué hors du périmètre de l'utilisateur.
+ */
+export function synthesesDesChantiers(truth: GroundTruth): {
+  chantierId: string;
+  territoireCode: string;
+  commentaire: string | null;
+}[] {
+  return [...truth.chantiersEnRetard, ...truth.chantiersEnDifficulte].flatMap(
+    (resultat) =>
+      resultat.chantiers.map((chantier) => ({
+        chantierId: chantier.chantier.id,
+        territoireCode: resultat.territoire_code,
+        commentaire: chantier.synthese?.commentaire ?? null,
+      })),
+  );
+}
+
 /** Les chantiers qu'une réponse doit citer, sans doublon, triés par identifiant. */
 export function chantiersAttendus({
   truth,

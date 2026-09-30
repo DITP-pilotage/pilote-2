@@ -253,18 +253,12 @@ const SYNTHESE: CalibrationCase[] = [
   },
   {
     family: "syntheseTerritoire",
-    label: "Commentaire recopié",
+    label: "Résumé délayé",
     broken: "Résumés condensés",
     evidence: synthese({
       from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
+      to: "> Deux postes d'urgentistes sont vacants à Brest et Quimper. Cette situation pèse sur le fonctionnement des services. Le délai médian de passage a remonté au premier semestre. Une régulation téléphonique a été mise en place au printemps. Les équipes restent mobilisées sur l'ensemble de la région.",
     }),
-  },
-  {
-    family: "syntheseTerritoire",
-    label: "Commentaire manquant non signalé",
-    broken: "Résumés condensés",
-    evidence: synthese({ from: "> Pas de commentaire disponible\n\n", to: "" }),
   },
   {
     family: "syntheseTerritoire",
@@ -279,7 +273,20 @@ const SYNTHESE: CalibrationCase[] = [
     family: "syntheseTerritoire",
     label: "Écart omis",
     broken: "Écart et météo",
-    evidence: synthese({ from: "**Écart** : -15 points\\\n", to: "" }),
+    // L'écart disparaît aussi de la synthèse de tendance : sinon le juge le
+    // retrouve là et note, à raison, que le chiffre est donné.
+    evidence: evidence({
+      question: SYNTHESE_QUESTION,
+      matter: muter({
+        reference: muter({
+          reference: SYNTHESE_REFERENCE,
+          from: "**Écart** : -15 points\\\n",
+          to: "",
+        }),
+        from: "le retard porte sur un chantier de santé, avec un écart de 15 points.",
+        to: "le retard porte sur un chantier de santé.",
+      }),
+    }),
   },
 ];
 
@@ -502,18 +509,6 @@ const COMMENTAIRES: CalibrationCase[] = [
         reference: COMMENTAIRES_REFERENCE,
         from: "Les actions à venir et à valoriser relèvent de la vue nationale, à laquelle vous n'avez pas accès.",
         to: "Aucune action à venir ni à valoriser n'a été identifiée.",
-      }),
-    ),
-  },
-  {
-    family: "commentaires",
-    label: "Commentaire recopié",
-    broken: "Pas de recopie",
-    evidence: commentaires(
-      muter({
-        reference: COMMENTAIRES_REFERENCE,
-        from: "Un numéro de régulation départemental unique fonctionne depuis mars. Action engagée : le recrutement de deux urgentistes par contrat de territoire, dont la signature est attendue en novembre.",
-        to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
       }),
     ),
   },
@@ -1317,4 +1312,39 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
   ...COMMENTAIRES,
   ...DASHBOARD,
   ...RAPPORT,
+];
+
+/**
+ * Des défauts que le juge ne voyait pas (calibration du 30/09 : 0/3), passés
+ * en critères mécaniques. Ils ne vont pas à la calibration du juge : un test
+ * unitaire vérifie que chacun échoue son critère, et lui seul.
+ */
+export const MECHANICAL_MUTANTS: CalibrationCase[] = [
+  {
+    family: "syntheseTerritoire",
+    label: "Commentaire de synthèse recopié",
+    broken: "Pas de recopie",
+    evidence: synthese({
+      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
+      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
+    }),
+  },
+  {
+    family: "syntheseTerritoire",
+    label: "Commentaire manquant non signalé",
+    broken: "Absence de commentaire signalée",
+    evidence: synthese({ from: "> Pas de commentaire disponible\n\n", to: "" }),
+  },
+  {
+    family: "commentaires",
+    label: "Commentaire reçu recopié",
+    broken: "Pas de recopie",
+    evidence: commentaires(
+      muter({
+        reference: COMMENTAIRES_REFERENCE,
+        from: "Un numéro de régulation départemental unique fonctionne depuis mars. Action engagée : le recrutement de deux urgentistes par contrat de territoire, dont la signature est attendue en novembre.",
+        to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
+      }),
+    ),
+  },
 ];

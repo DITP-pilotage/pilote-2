@@ -1,4 +1,5 @@
 import {
+  checkAbsenceSignalee,
   checkChantiersCited,
   checkExactAnswer,
   checkHasTable,
@@ -8,9 +9,58 @@ import {
   checkNoLink,
   checkNoMeteoCode,
   checkNoToolName,
+  checkNoVerbatim,
   checkOfficialCodes,
   checkTableTerritories,
 } from "./mechanicalChecks";
+
+describe("checkNoVerbatim", () => {
+  const commentaire =
+    "<p>Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre.</p>";
+
+  test("signale un passage recopié mot pour mot, malgré la casse, les accents et le HTML", () => {
+    expect(
+      checkNoVerbatim({
+        text: "> Le délai médian de passage remonte à 4 h 10 au premier semestre, selon le territoire.",
+        sources: [commentaire],
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "passage recopié : « le delai median de passage remonte a 4 h »",
+    });
+  });
+
+  test("laisse passer une reformulation qui reprend quelques mots", () => {
+    expect(
+      checkNoVerbatim({
+        text: "> Deux postes d'urgentistes sont vacants, et le délai médian de passage a remonté.",
+        sources: [commentaire],
+      }).ok,
+    ).toBe(true);
+  });
+});
+
+describe("checkAbsenceSignalee", () => {
+  const text = [
+    "**CH-005 — Réduire les délais de passage aux urgences**",
+    "> Deux postes restent vacants.",
+    "**CH-006 — Développer la prévention en santé**",
+    "> Pas de commentaire disponible",
+  ].join("\n");
+
+  test("accepte la mention sous le chantier sans commentaire", () => {
+    expect(checkAbsenceSignalee({ text, chantierIds: ["CH-006"] }).ok).toBe(
+      true,
+    );
+  });
+
+  test("signale un chantier dont la mention manque sous lui, même présente ailleurs", () => {
+    expect(checkAbsenceSignalee({ text, chantierIds: ["CH-005"] })).toEqual({
+      ok: false,
+      detail: "« Pas de commentaire disponible » absent sous : CH-005",
+    });
+  });
+});
 
 describe("checkNoToolName", () => {
   test("signale un nom d'outil cité dans la réponse", () => {
