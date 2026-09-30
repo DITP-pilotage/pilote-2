@@ -7,13 +7,10 @@ import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerritoire";
-import calculerChantierAvancements from "@/client/utils/chantier/avancement/calculerChantierAvancementsNew";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
@@ -48,8 +45,6 @@ export const getServerSideProps = async (
       new Date(),
       configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
-  const cartographieGaucheChantier = searchParams.carteChG;
-  const cartographieDroiteChantier = searchParams.carteChD;
   const cartographieGaucheIndicateur = searchParams.carteIndG;
   const cartographieDroiteIndicateur = searchParams.carteIndD;
 
@@ -98,7 +93,6 @@ export const getServerSideProps = async (
       décisionStratégique,
       brouillonDecisionStrategique,
       détailsIndicateurs,
-      avancementsAgrégés,
       valeurFFPpgArchive,
       bootstrap,
     ] = await Promise.all([
@@ -141,10 +135,6 @@ export const getServerSideProps = async (
           session.habilitations,
           jalon,
         ),
-      getContainer("chantiers")
-        .resolve("récupérerStatistiquesAvancementChantiersUseCase")
-        .run([chantierId], mailleQuery, session.habilitations, jalon)
-        .then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RecupererVariableContenuUseCase().run({
         nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
       }),
@@ -172,14 +162,6 @@ export const getServerSideProps = async (
 
       return redirigeLaPage(destination);
     }
-
-    const avancements = calculerChantierAvancements(
-      chantier,
-      mailleSelectionnee,
-      territoireCode,
-      territoireSélectionné.codeParent,
-      avancementsAgrégés ?? null,
-    );
 
     const indicateurPondérations =
       !détailsIndicateurs || !territoireSélectionné
@@ -211,16 +193,6 @@ export const getServerSideProps = async (
       chantierTerritoireSélectionné?.responsableLocal ?? [];
     const listeCoordinateursTerritorials =
       chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
-
-    const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType =
-      {
-        ppgEcartMedian: chantierTerritoireSélectionné?.écart,
-        ppgTendanceChantier: chantierTerritoireSélectionné?.tendance,
-        ppgTauxDAvancementValeurPrecedente:
-          chantierTerritoireSélectionné?.avancementPrécédent.global,
-        ppgDateTauxDAvancementValeurPrecedente:
-          chantierTerritoireSélectionné?.dateTauxAvancementPrecedent,
-      };
 
     const listeIndicateurId = indicateurs.map((indicateur) => indicateur.id);
 
@@ -265,17 +237,13 @@ export const getServerSideProps = async (
         brouillonDecisionStrategique,
         détailsIndicateurs,
         detailsIndicateursTerritoire,
-        avancements,
         indicateurPondérations,
         chantier,
         listeResponsablesLocaux,
         listeCoordinateursTerritorials,
         jalon,
-        cartographieGaucheChantier,
-        cartographieDroiteChantier,
         cartographieDroiteIndicateur,
         cartographieGaucheIndicateur,
-        donneesComparaisonDuTauxDAvancement,
         datajobsExecution,
       },
     };

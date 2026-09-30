@@ -6,11 +6,9 @@ import Axe from "@/server/domain/axe/Axe.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { objectEntries } from "@/client/utils/objects/objects";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
@@ -202,36 +200,20 @@ export const getServerSideProps = async (
     (chantier) => chantier.id,
   );
 
-  const [
-    repartitionMeteosChantiers,
-    avancementsAgrégés,
-    { agregat: donneesTerritoiresAgregees },
-  ] = await Promise.all([
-    getContainer("legacy")
-      .resolve("recupererRepartitionsMeteoChantiersUseCase")
-      .run(territoireCode, filtres, axes, chantierIdsAvecAlertes)
-      .then(presenterEnRépartitionsMétéosChantiersContrat),
-    getContainer("chantiers")
-      .resolve("récupérerStatistiquesAvancementChantiersUseCase")
-      .run(chantierIdsAvecAlertes, mailleQuery, session.habilitations, jalon)
-      .then(presenterEnAvancementsStatistiquesAccueilContrat),
-    getContainer("legacy")
-      .resolve("agregerAvancementsChantiersUseCase")
-      .run(chantierIdsAvecAlertes, jalon),
-  ]);
+  const [avancementsAgrégés, { agregat: donneesTerritoiresAgregees }] =
+    await Promise.all([
+      getContainer("chantiers")
+        .resolve("récupérerStatistiquesAvancementChantiersUseCase")
+        .run(chantierIdsAvecAlertes, mailleQuery, session.habilitations, jalon)
+        .then(presenterEnAvancementsStatistiquesAccueilContrat),
+      getContainer("legacy")
+        .resolve("agregerAvancementsChantiersUseCase")
+        .run(chantierIdsAvecAlertes, jalon),
+    ]);
 
   const moyenneTerritoire =
     donneesTerritoiresAgregees[mailleChantier].territoires[territoireCode]
       .repartition.avancements.annuel.moyenne;
-  const avancementsGlobauxTerritoriauxMoyens = objectEntries({
-    ...donneesTerritoiresAgregees.regionale.territoires,
-    ...donneesTerritoiresAgregees.departementale.territoires,
-  }).map(([territoireCodeDonnee, territoire]) => ({
-    valeur: territoire.repartition.avancements.global.moyenne,
-    valeurAnnuelle: territoire.repartition.avancements.annuel.moyenne,
-    territoireCode: territoireCodeDonnee as string,
-    estApplicable: true,
-  }));
 
   const nombreTotalChantiersAvecAlertes = chantiersAvecAlertes.length;
   const chantierIds = chantierIdsAvecAlertes;
@@ -265,8 +247,6 @@ export const getServerSideProps = async (
       mailleQuery,
       filtresComptesCalculés,
       avancementsAgrégés,
-      avancementsGlobauxTerritoriauxMoyens,
-      repartitionMeteosChantiers,
       aDejaVuVideoAccueil: doitAfficherModaleVideoAccueil,
       doitAfficherLaModaleInfolettre,
       moyenneTerritoire,

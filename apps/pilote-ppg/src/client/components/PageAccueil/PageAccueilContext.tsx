@@ -3,11 +3,7 @@ import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/Chanti
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
-import {
-  AvancementsGlobauxTerritoriauxMoyensContrat,
-  AvancementsStatistiquesAccueilContrat,
-} from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
+import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 
 export interface PageAccueilContextValue {
   chantiers: ChantierAccueilContratV2[];
@@ -19,8 +15,6 @@ export interface PageAccueilContextValue {
   mailleQuery: MailleInterne;
   filtresComptesCalculés: Record<TypeAlerteChantier, number>;
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat;
-  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
-  repartitionMeteosChantiers: RepartitionMeteoContrat;
   jalon: number;
   jalonParDefaut: number;
   moyenneTerritoire: number | null;

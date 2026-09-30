@@ -25,9 +25,6 @@ export const PageAccueil: FunctionComponent<PageAccueilProps> = (props) => {
     mailleQuery: props.mailleQuery,
     filtresComptesCalculés: props.filtresComptesCalculés,
     avancementsAgrégés: props.avancementsAgrégés,
-    avancementsGlobauxTerritoriauxMoyens:
-      props.avancementsGlobauxTerritoriauxMoyens,
-    repartitionMeteosChantiers: props.repartitionMeteosChantiers,
     jalon: props.jalon,
     jalonParDefaut: props.jalonParDefaut,
     moyenneTerritoire: props.moyenneTerritoire,
