@@ -8,4 +8,5 @@ export default interface AlerteProps {
   message?: ReactNode;
   classesSupplementaires?: string;
   classesMessagePolice?: string;
+  children?: ReactNode;
 }

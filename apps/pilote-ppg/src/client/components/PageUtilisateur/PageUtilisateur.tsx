@@ -139,13 +139,13 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                     ) : null}
                     {tokenAPIInformation ? (
-                      <div className="fr-alert fr-alert--info fr-alert--sm fr-mt-2w">
+                      <Alerte type="info" classesSupplementaires="fr-mt-2w">
                         <p className="fr-text--sm">
                           Information : Un token est déjà actif pour cet
                           utilisateur. La génération d'un nouveau token
                           supprimera ce token actif.
                         </p>
-                      </div>
+                      </Alerte>
                     ) : null}
                   </div>
                 )}

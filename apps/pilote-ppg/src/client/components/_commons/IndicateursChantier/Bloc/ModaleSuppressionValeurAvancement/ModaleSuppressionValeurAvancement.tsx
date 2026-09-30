@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -237,15 +238,13 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                       </span>
                     </p>
                   </div>
-                  <div className="fr-alert fr-alert--info">
-                    <h3 className="fr-alert__title">
-                      Rappel sur la documentation des propositions
-                    </h3>
+                  <Alerte type="info">
+                    <h3>Rappel sur la documentation des propositions</h3>
                     <p>
                       La proposition initiale et la suppression de celle-ci
                       resteront visibles dans l'historique de l'indicateur.
                     </p>
-                  </div>
+                  </Alerte>
                   <div className="w-full flex justify-end fr-mt-2w">
                     <button
                       className="fr-btn fr-btn--secondary fr-mr-2w"
@@ -274,8 +273,8 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
           </FormProvider>
         </>
       ) : (
-        <div className="fr-alert fr-alert--success fr-mt-2w">
-          <h3 className="fr-alert__title">
+        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+          <h3>
             La proposition de valeur d'avancement a correctement été supprimée
           </h3>
           <span>
@@ -283,7 +282,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
             une heure. Veuillez noter que, dans cet intervalle, il n'est pas
             possible de faire une autre proposition pour cet indicateur.
           </span>
-        </div>
+        </Alerte>
       )}
     </Modale>
   );

@@ -14,6 +14,7 @@ module.exports = {
         success: "#18753C",
         warning: "#B34000",
         "pilote-yellow": "#F9B233",
+        "dsfr-info-425": "#0063CB",
         "dsfr-info-main-525": "#0078F3",
         "dsfr-info-950": "#E8EDFF",
         "dsfr-warning-950": "#FFE9E6",

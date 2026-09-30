@@ -98,7 +98,9 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async expectSuccesModification(): Promise<void> {
-    await expect(this.page.locator(".fr-alert--success")).toBeVisible({
+    await expect(
+      this.page.locator('[role="status"][data-color="success"]'),
+    ).toBeVisible({
       timeout: 10_000,
     });
   }

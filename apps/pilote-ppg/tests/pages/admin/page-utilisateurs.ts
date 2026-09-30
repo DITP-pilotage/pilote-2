@@ -51,7 +51,9 @@ export class PageAdminUtilisateurs extends BasePage {
   }
 
   private get alerteSucces() {
-    return this.page.locator("#alerte.fr-alert--success .fr-alert__title");
+    return this.page
+      .locator('[role="status"][data-color="success"]')
+      .getByRole("heading");
   }
 
   private get lienGestionDesComptes() {

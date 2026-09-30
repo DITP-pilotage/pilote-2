@@ -300,8 +300,6 @@ export class PageChantier extends BasePage {
     await dialog.getByRole("textbox").fill(`Un commentaire test e2e ${id}`);
     await dialog.getByRole("button", { name: "Publier", exact: true }).click();
 
-    await this.page.waitForSelector("#alerte");
-
     await expect(
       this.page.getByText("Votre nouveau commentaire a bien été publié"),
     ).toBeVisible();

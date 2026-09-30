@@ -31,7 +31,9 @@ test.describe("Écran de choix du mode de connexion", () => {
   }) => {
     await page.goto("/connexion?motif=compte_desactive");
 
-    await expect(page.locator(".fr-alert--error")).toContainText("désactivé");
+    await expect(
+      page.locator('[role="alert"][data-color="error"]'),
+    ).toContainText("désactivé");
     await expect(
       page.getByRole("link", { name: "pilote.ditp@modernisation.gouv.fr" }),
     ).toBeVisible();
