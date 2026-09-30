@@ -2,19 +2,6 @@ import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurA
 import type { PersonneAnnuaire } from "@/server/annuaire/queries/personnesAnnuaire";
 import { BoutonCopierEmail } from "./BoutonCopierEmail";
 
-// Coupure de ligne autorisée juste après « @ » plutôt qu'au milieu d'un mot.
-function EmailSecable({ email }: { email: string }) {
-  const position = email.indexOf("@");
-  if (position === -1) return <>{email}</>;
-  return (
-    <>
-      {email.slice(0, position + 1)}
-      <wbr />
-      {email.slice(position + 1)}
-    </>
-  );
-}
-
 export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
   const nomComplet = `${personne.prenom} ${personne.nom}`;
 
@@ -33,7 +20,7 @@ export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
           className="bg-none text-primary underline decoration-primary/30 decoration-1 underline-offset-4 hover:decoration-primary"
           href={`mailto:${personne.email}`}
         >
-          <EmailSecable email={personne.email} />
+          {personne.email}
         </a>
         <BoutonCopierEmail
           className="-my-2 ml-1 align-middle"

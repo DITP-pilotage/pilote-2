@@ -1,10 +1,7 @@
 import type { ReactNode } from "react";
+import type { RowData } from "@tanstack/react-table";
 import Loader from "@/components/_commons/Loader/Loader";
-import type { DataTableBodyProps } from "@/components/shared/DataTable/Body";
-import type { DataTableFiltersProps } from "@/components/shared/DataTable/Filters";
-import type { DataTableHeaderProps } from "@/components/shared/DataTable/Header";
-import type { DataTablePaginationProps } from "@/components/shared/DataTable/Pagination";
-import type { DataTableRootProps } from "@/components/shared/DataTable/Root";
+import type { TableAdmin } from "./tableauAdminDataTable";
 
 export type LibellesTableauAdmin = {
   aucun: string;
@@ -13,22 +10,13 @@ export type LibellesTableauAdmin = {
   iconeVide?: string;
 };
 
-type TableauAdminTable = {
-  Filters: (props: DataTableFiltersProps) => ReactNode;
-  Root: (props: DataTableRootProps) => ReactNode;
-  Header: (props: DataTableHeaderProps) => ReactNode;
-  Body: (props: DataTableBodyProps) => ReactNode;
-  Pagination: (props: DataTablePaginationProps) => ReactNode;
-  store: { state: { globalFilter?: string } };
-};
-
-export function TableauAdmin({
+export function TableauAdmin<TRow extends RowData>({
   table,
   isLoading,
   caption,
   libelles,
 }: {
-  table: TableauAdminTable;
+  table: TableAdmin<TRow>;
   isLoading: boolean;
   caption: string;
   libelles: LibellesTableauAdmin;
