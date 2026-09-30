@@ -66,7 +66,9 @@ for (const family of familles) {
           description: "Tous les critères intacts sont jugés conformes.",
           scorer: ({ input, output }) => {
             const fauxSignalements = Object.entries(output)
-              .filter(([id, verdict]) => id !== input.broken && !verdict.conforme)
+              .filter(
+                ([id, verdict]) => id !== input.broken && !verdict.conforme,
+              )
               .map(([id, verdict]) => `${id} : ${verdict.preuve}`);
             return {
               score: fauxSignalements.length === 0 ? 1 : 0,

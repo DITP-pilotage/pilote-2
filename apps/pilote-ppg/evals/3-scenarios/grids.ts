@@ -29,7 +29,8 @@ const nomsDuTableau = (evidence: Evidence) =>
 
 const territoirePrincipalEstUnDepartement = (evidence: Evidence) =>
   evidence.truth.territoires.find(
-    (territoire) => territoire.code === evidence.truth.tauxAvancement[0]?.territoire_code,
+    (territoire) =>
+      territoire.code === evidence.truth.tauxAvancement[0]?.territoire_code,
   )?.maille === "DEPT";
 
 const RESUMES_CONDENSES = judged({

@@ -88,7 +88,10 @@ export async function readGroundTruth({
     commentaires.push(
       await executeTool<GetChantierCommentairesOutput>({
         tool: tools.getChantierCommentaires,
-        input: { chantier_id: chantierId, territoire_code: territoirePrincipal },
+        input: {
+          chantier_id: chantierId,
+          territoire_code: territoirePrincipal,
+        },
       }),
     );
   }
