@@ -14,7 +14,10 @@ import { scenarioEval } from "../scenarioEval";
  * Auvergne-Rhône-Alpes (au niveau 2, « le 84 » était présenté comme le Grand
  * Est).
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 93 %, fond 50 %.
+ * Aucune analyse des écarts (0/3 sur chaque cas) : le gabarit comparaison
+ * n'étant pas chargé, Albert s'en tient au tableau. REG-84 n'est jamais
+ * nommé Auvergne-Rhône-Alpes (0/3), seulement « la région 84 ».
  */
 
 const tauxDe = (territoire_code: string) => ({

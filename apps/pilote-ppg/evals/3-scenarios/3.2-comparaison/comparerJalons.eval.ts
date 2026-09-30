@@ -10,7 +10,9 @@ import { scenarioEval } from "../scenarioEval";
  * sont pas disponibles, sans inventer. « l'année précédente » vérifie la
  * résolution d'un jalon relatif au jalon courant.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 96 %.
+ * 2023 sans données est dit, sans invention (3/3). Sur « l'année
+ * précédente », l'évolution en points manque dans un essai sur trois.
  */
 
 const tauxBretagne = (jalon: number) => ({

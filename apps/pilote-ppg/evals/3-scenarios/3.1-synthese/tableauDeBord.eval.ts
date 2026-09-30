@@ -10,7 +10,8 @@ import { scenarioEval } from "../scenarioEval";
  * seul le choix des widgets est jugé. La « pleine largeur » relève du code de
  * mise en page, elle n'est pas notée.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 100 %.
+ * Widgets conformes à la demande, une section par chantier.
  */
 
 scenarioEval({

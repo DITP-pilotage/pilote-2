@@ -10,7 +10,10 @@ import { scenarioEval } from "../scenarioEval";
  * (PIL-1833, point 7). « Valeurs des indicateurs » mesure si l'agent donne
  * quand même les valeurs.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 88 %, fond 94 %.
+ * Les valeurs d'indicateur sont données (le renvoi vers le dashboard
+ * redouté n'a pas lieu). Code météo NUAGE cité dans 3 essais sur 6, et
+ * une recommandation côté coordinateur (1/3).
  */
 
 const MESSAGE =

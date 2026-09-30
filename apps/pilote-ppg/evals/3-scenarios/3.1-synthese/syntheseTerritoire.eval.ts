@@ -10,7 +10,11 @@ import { scenarioEval } from "../scenarioEval";
  * Le gabarit écrit « le TA de la région » quel que soit le territoire : le
  * critère « Maille nommée » le mesure sur les deux départements.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 93 %, forme 87 %, fond 94 %.
+ * Le commentaire de synthèse de CH-005 est recopié (0/3 sur la Bretagne et
+ * le 35). Sur le Finistère, un essai sur trois conclut « aucun chantier en
+ * retard » sans avoir interrogé les vues, et un autre écrit « le TA de la
+ * région » pour un département.
  */
 
 const workflowSynthese = (territoire_code: string) => [

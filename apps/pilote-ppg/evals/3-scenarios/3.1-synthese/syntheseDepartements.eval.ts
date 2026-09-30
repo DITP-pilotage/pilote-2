@@ -9,7 +9,9 @@ import { scenarioEval } from "../scenarioEval";
  * COMPARAISON : la grille le suit. Que ce soit le bon rendu pour une
  * « synthèse de X et ses départements » est une question pour le produit.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 93 %, fond 100 %.
+ * Gabarit comparaison suivi ; codes météo bruts et commentaire recopié
+ * dans un essai sur trois.
  */
 
 const avecSousTerritoires = {

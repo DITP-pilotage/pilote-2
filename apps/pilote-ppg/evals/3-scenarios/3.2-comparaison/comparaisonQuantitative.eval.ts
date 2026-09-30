@@ -11,7 +11,9 @@ import { scenarioEval } from "../scenarioEval";
  * « le département 84 » est la moitié coordinateur du piège du 84 : DEPT-84
  * est le Vaucluse.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 93 %, fond 61 %.
+ * Analyse des écarts absente sur deux cas (0/3). DEPT-84 est nommé
+ * Vaucluse dans 2 essais sur 3.
  */
 
 const tauxDe = (territoire_code: string) => ({

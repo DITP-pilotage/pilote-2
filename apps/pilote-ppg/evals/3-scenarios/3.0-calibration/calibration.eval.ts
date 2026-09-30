@@ -18,7 +18,11 @@ import { CALIBRATION_CASES, type CalibrationCase } from "./references";
  * suites, mais son score y est marqué : on ne conclut rien sur Albert d'un
  * critère que le juge ne sait pas vérifier.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30, troisième calibration : 15 critères
+ * jugés fiables sur 20. Non fiables : « Chiffres exacts » (valeur
+ * d'indicateur fausse détectée 1/3), « Position face à la médiane » (2/3),
+ * « Trois volets » (2/3), « Difficultés tirées des commentaires » (2/3),
+ * « Actions identifiées » (1/3).
  */
 
 const judgedCriteria = (testCase: CalibrationCase) =>
