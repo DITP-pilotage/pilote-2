@@ -1,7 +1,8 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { FormProvider } from "react-hook-form";
+import { Controller, FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
+import { RadioGroup } from "@/components/shared/RadioGroup";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 
@@ -159,85 +160,67 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     Indiquez la décision que vous souhaitez prendre concernant
                     cette proposition :
                   </p>
-                  <div className="fr-fieldset__element">
-                    <div className="fr-radio-group">
-                      <input
-                        {...reactHookForm.register("decision")}
-                        id="accepter"
-                        type="radio"
-                        value="accepter"
-                      />
-                      <label className="fr-label" htmlFor="accepter">
-                        accepter la proposition
-                      </label>
-                    </div>
-                  </div>
-                  <div className="fr-fieldset__element">
-                    <div className="fr-radio-group">
-                      <input
-                        {...reactHookForm.register("decision")}
-                        id="accepter-avec-modification"
-                        type="radio"
-                        value="accepter-avec-modification"
-                      />
-                      <label
-                        className="fr-label"
-                        htmlFor="accepter-avec-modification"
+                  <Controller
+                    control={reactHookForm.control}
+                    name="decision"
+                    render={({ field }) => (
+                      <RadioGroup.Root
+                        name={field.name}
+                        onValueChange={field.onChange}
+                        value={field.value}
                       >
-                        accepter la proposition avec modification
-                      </label>
-                      <label
-                        className="fr-label fr-text--xs texte-gris fr-pl-4w"
-                        htmlFor="accepter-avec-modification"
-                      >
-                        Le cas échéant, veuillez renseigner dans le tableau
-                        ci-dessous la valeur modifiée que vous souhaitez valider
-                        pour cet indicateur* :
-                      </label>
-                    </div>
-                    <div className="fr-pl-4w">
-                      <p className="fr-text texte-warning fr-text--xs text-italic">
-                        *ce champ est obligatoire
-                      </p>
-                      <Input
-                        className="fr-input--sm !w-auto"
-                        classNameGroupe="fr-mb-1v"
-                        disabled={
-                          reactHookForm.watch("decision") !==
-                          "accepter-avec-modification"
-                        }
-                        erreurMessage={
-                          reactHookForm.formState.errors.valeurModification
-                            ?.message
-                        }
-                        htmlName="valeurModification"
-                        register={reactHookForm.register("valeurModification")}
-                        type="number"
-                      />
-                      <span className="flex texte-gris fr-text--xs">
-                        (
-                        {formaterDate(
-                          detailIndicateur.proposition?.dateValeurAvancement,
-                          "MM/YYYY",
-                        )}
-                        )
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="fr-fieldset__element">
-                    <div className="fr-radio-group">
-                      <input
-                        {...reactHookForm.register("decision")}
-                        id="refuser"
-                        type="radio"
-                        value="refuser"
-                      />
-                      <label className="fr-label" htmlFor="refuser">
-                        refuser la proposition
-                      </label>
-                    </div>
-                  </div>
+                        <RadioGroup.Item
+                          id="accepter"
+                          libelle="accepter la proposition"
+                          value="accepter"
+                        />
+                        <div className="flex flex-col gap-2">
+                          <RadioGroup.Item
+                            aide="Le cas échéant, veuillez renseigner dans le tableau ci-dessous la valeur modifiée que vous souhaitez valider pour cet indicateur* :"
+                            id="accepter-avec-modification"
+                            libelle="accepter la proposition avec modification"
+                            value="accepter-avec-modification"
+                          />
+                          <div className="pl-8">
+                            <p className="fr-text texte-warning fr-text--xs text-italic">
+                              *ce champ est obligatoire
+                            </p>
+                            <Input
+                              className="fr-input--sm !w-auto"
+                              classNameGroupe="fr-mb-1v"
+                              disabled={
+                                reactHookForm.watch("decision") !==
+                                "accepter-avec-modification"
+                              }
+                              erreurMessage={
+                                reactHookForm.formState.errors
+                                  .valeurModification?.message
+                              }
+                              htmlName="valeurModification"
+                              register={reactHookForm.register(
+                                "valeurModification",
+                              )}
+                              type="number"
+                            />
+                            <span className="flex texte-gris fr-text--xs">
+                              (
+                              {formaterDate(
+                                detailIndicateur.proposition
+                                  ?.dateValeurAvancement,
+                                "MM/YYYY",
+                              )}
+                              )
+                            </span>
+                          </div>
+                        </div>
+                        <RadioGroup.Item
+                          id="refuser"
+                          libelle="refuser la proposition"
+                          value="refuser"
+                        />
+                      </RadioGroup.Root>
+                    )}
+                  />
 
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
