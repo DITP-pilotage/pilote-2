@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+import { Badge } from "@/components/shared/Badge";
 import { useEnv } from "@/client/hooks/useEnv";
 
 type BoutonProConnectProps = {
@@ -36,12 +37,9 @@ export const BoutonProConnect = ({ onClick }: BoutonProConnectProps) => {
       </button>
       {ffProConnect ? null : (
         <p className="fr-mt-1w fr-mb-1w">
-          <span
-            className="fr-badge fr-badge--sm fr-badge--info fr-badge--no-icon"
-            id="proconnect-a-venir"
-          >
+          <Badge id="proconnect-a-venir" taille="sm" variante="info">
             Bientôt disponible
-          </span>
+          </Badge>
         </p>
       )}
       <p className="fr-mb-0">

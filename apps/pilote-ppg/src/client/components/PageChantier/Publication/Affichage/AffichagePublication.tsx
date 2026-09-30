@@ -3,7 +3,7 @@ import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonS
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/shared/Infobulle";
-import { Badge } from "@/components/_commons/Badge";
+import { Badge } from "@/components/shared/Badge";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Publication } from "@/components/PageChantier/Publication/Publication.interface";
 import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
@@ -32,7 +32,7 @@ export const AffichagePublication = ({
   }, [commentaire?.contenu]);
 
   if (!commentaire) {
-    return <Badge type="gris">Non renseigné</Badge>;
+    return <Badge taille="sm">Non renseigné</Badge>;
   }
 
   return (

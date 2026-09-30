@@ -1,4 +1,6 @@
 import { FunctionComponent } from "react";
+import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
+import { Badge } from "@/components/shared/Badge";
 import Encart from "@/components/_commons/Encart/Encart";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
@@ -8,7 +10,6 @@ import usePageRapportDétaillé from "@/components/PageRapportDétaillé/usePage
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
-import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 import { Infobulle } from "@/components/shared/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import RemontéeAlerte from "@/components/_commons/RemontéeAlerte/RemontéeAlerte";
@@ -123,7 +124,12 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         <div className="fr-pt-3w fr-px-2w fr-px-md-0">
           <div className="fr-mb-2w ">
             <TitreInfobulleConteneur>
-              <BadgeIcône type="warning" />
+              <Badge
+                aria-hidden="true"
+                className="px-1"
+                icone={WarningIcon}
+                variante="attention"
+              />
               <Titre
                 baliseHtml="h2"
                 className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w text-warning"

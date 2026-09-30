@@ -9,7 +9,7 @@ import {
 import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import { isDefined } from "@/client/utils/predicates";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
-import { Badge } from "@/components/_commons/Badge";
+import { Badge } from "@/components/shared/Badge";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 interface CommentairesRapportDetailleProps {
@@ -57,7 +57,7 @@ const CommentairesRapportDetaille: FunctionComponent<
                   </div>
                 </>
               ) : (
-                <Badge type="gris">Non renseigné</Badge>
+                <Badge taille="sm">Non renseigné</Badge>
               )}
             </div>
           </Fragment>

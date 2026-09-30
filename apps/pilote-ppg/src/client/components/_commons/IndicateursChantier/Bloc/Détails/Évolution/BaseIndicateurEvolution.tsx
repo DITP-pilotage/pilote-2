@@ -1,4 +1,5 @@
 import { forwardRef, type ReactNode } from "react";
+import { Badge } from "@/components/shared/Badge";
 import Titre from "@/client/components/_commons/Titre/Titre";
 import { LogoPilote } from "@/components/_commons/LogoPilote";
 import LineChart from "./LineChart/LineChart";
@@ -41,7 +42,7 @@ export const BaseIndicateurEvolution = forwardRef<
           </div>
         </div>
       ) : (
-        <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
+        <Badge>Non renseigné</Badge>
       )}
 
       {modeImpression ? (

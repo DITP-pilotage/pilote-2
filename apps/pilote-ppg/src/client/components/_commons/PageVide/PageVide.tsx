@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+import { Badge } from "@/components/shared/Badge";
 import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";
 import technicalError from "@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg";
 import { FunctionComponent } from "react";
@@ -18,9 +19,9 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
             <Titre baliseHtml="h1" className="fr-my-auto">
               {titre}
             </Titre>
-            <p className="fr-badge fr-ml-3w fr-my-auto bg-dsfr-purple-glycine-950 text-dsfr-purple-glycine-text max-h-8">
+            <Badge className="ml-6 my-auto bg-dsfr-purple-glycine-950 text-dsfr-purple-glycine-text">
               À venir
-            </p>
+            </Badge>
           </div>
           <Bloc>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">

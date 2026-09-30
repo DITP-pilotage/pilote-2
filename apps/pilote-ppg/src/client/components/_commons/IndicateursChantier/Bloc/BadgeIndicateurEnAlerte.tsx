@@ -1,5 +1,6 @@
-import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 import { useIndicateurAlerteDateMaj } from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
+import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
+import { Badge } from "@/components/shared/Badge";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const BadgeIndicateurEnAlerte = () => {
@@ -10,7 +11,12 @@ export const BadgeIndicateurEnAlerte = () => {
 
   return (
     <span className="fr-mr-1v">
-      <BadgeIcône type="warning" />
+      <Badge
+        aria-hidden="true"
+        className="px-1"
+        icone={WarningIcon}
+        variante="attention"
+      />
     </span>
   );
 };

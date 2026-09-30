@@ -1,5 +1,5 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { Badge } from "@/components/_commons/Badge";
+import { Badge } from "@/components/shared/Badge";
 import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
@@ -33,7 +33,7 @@ export const DecisionsStrategiquesRapportDetaille = ({
             </div>
           </>
         ) : (
-          <Badge type="gris">Non renseigné</Badge>
+          <Badge taille="sm">Non renseigné</Badge>
         )}
       </div>
     </Bloc>

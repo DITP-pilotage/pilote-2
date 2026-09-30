@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Badge } from "@/components/shared/Badge";
 import { ChantierFicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
@@ -9,12 +10,12 @@ const classBadge = (
   tauxAvancementNational: number | null,
 ) => {
   return tauxAvancementNational === null
-    ? ""
+    ? "defaut"
     : tauxAvancement >= tauxAvancementNational
-      ? "fr-badge--success"
+      ? "succes"
       : tauxAvancement >= tauxAvancementNational - 10
-        ? "fr-badge--warning"
-        : "fr-badge--error";
+        ? "attention"
+        : "erreur";
 };
 
 export const TableauFicheTerritoriale: FunctionComponent<{
@@ -140,11 +141,15 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                     </div>
                     <div className="fr-col-2 flex flex-column justify-center">
                       {indicateur.tauxAvancement !== null ? (
-                        <span
-                          className={`fr-text--xs fr-m-0 fr-badge fr-badge--no-icon ${classBadge(indicateur.tauxAvancement, indicateur.tauxAvancementNational)}`}
+                        <Badge
+                          taille="sm"
+                          variante={classBadge(
+                            indicateur.tauxAvancement,
+                            indicateur.tauxAvancementNational,
+                          )}
                         >
                           {`${indicateur.tauxAvancement.toFixed(0)}%`}
-                        </span>
+                        </Badge>
                       ) : (
                         <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem]">
                           Paramètre(s) de calcul manquant(s)

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
-import { Badge, type BadgeType } from "@/components/_commons/Badge";
+import { Badge, type VarianteBadge } from "@/components/shared/Badge";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
   CLASSE_COLONNE_DATE,
@@ -22,12 +22,12 @@ export type ChantierAdminRow = inferRouterOutputs<
 
 export const STATUT_BADGE: Record<
   $Enums.type_statut,
-  { label: string; type: BadgeType }
+  { label: string; type: VarianteBadge }
 > = {
-  BROUILLON: { label: "Brouillon", type: "jaune" },
-  PUBLIE: { label: "Publié", type: "vert" },
-  ARCHIVE: { label: "Archivé", type: "gris" },
-  SUPPRIME: { label: "Supprimé", type: "rouge" },
+  BROUILLON: { label: "Brouillon", type: "vert-tilleul" },
+  PUBLIE: { label: "Publié", type: "succes" },
+  ARCHIVE: { label: "Archivé", type: "defaut" },
+  SUPPRIME: { label: "Supprimé", type: "erreur" },
 };
 
 const OPTIONS_STATUT = Object.values($Enums.type_statut).map((statut) => ({
@@ -77,7 +77,11 @@ const useTableColumns = (perimetres: Perimetre[] | undefined) =>
           },
           cell: (info) => {
             const badge = STATUT_BADGE[info.getValue()];
-            return <Badge type={badge.type}>{badge.label}</Badge>;
+            return (
+              <Badge taille="sm" variante={badge.type}>
+                {badge.label}
+              </Badge>
+            );
           },
         }),
         columnHelper.accessor("perimetreId", {
