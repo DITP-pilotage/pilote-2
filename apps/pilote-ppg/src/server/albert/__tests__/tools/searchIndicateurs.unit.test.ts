@@ -78,6 +78,46 @@ describe("createSearchIndicateursTool execute", () => {
     });
   });
 
+  test("cherche dans tous les chantiers accessibles quand chantier_ids est un tableau vide", async () => {
+    // Given
+    vi.spyOn(Albert, "generateStructuredOutput").mockResolvedValue({
+      indicateurs: [
+        {
+          id: "IND-014",
+          nom: "Mortalité routière",
+          chantier: { id: "CH-002", nom: "Chantier CH-002" },
+        },
+      ],
+      reasoning: "test",
+    });
+    const { tool, execute } = buildTool({
+      indicateurs: [indicateur("IND-014", "Mortalité routière", "CH-002")],
+      chantiersAccessibles: ["CH-001", "CH-002"],
+    });
+
+    // When
+    const result = await executeTool(tool, {
+      query: "mortalité routière",
+      chantier_ids: [],
+    });
+
+    // Then
+    expect(execute).toHaveBeenCalledWith({
+      chantierIds: ["CH-001", "CH-002"],
+    });
+    expect(result).toEqual({
+      indicateurs: [
+        {
+          id: "IND-014",
+          nom: "Mortalité routière",
+          chantier: { id: "CH-002", nom: "Chantier CH-002" },
+        },
+      ],
+      reasoning: "test",
+      _output_instructions: expect.any(String),
+    });
+  });
+
   test("filtre les identifiants hallucinés par le sous-agent", async () => {
     // Given
     vi.spyOn(Albert, "generateStructuredOutput").mockResolvedValue({
