@@ -1,12 +1,19 @@
-import { Badge, type BadgeType } from "@/components/_commons/Badge";
+import { Badge, type VarianteBadge } from "@/components/shared/Badge";
 import type { MailleAnnuaire } from "@/server/annuaire/queries/personnesAnnuaire";
 
-const NIVEAUX: Record<MailleAnnuaire, { libelle: string; type: BadgeType }> = {
-  REG: { libelle: "Région", type: "gris" },
-  DEPT: { libelle: "Département", type: "bleu" },
+const NIVEAUX: Record<
+  MailleAnnuaire,
+  { libelle: string; variante: VarianteBadge }
+> = {
+  REG: { libelle: "Région", variante: "defaut" },
+  DEPT: { libelle: "Département", variante: "info" },
 };
 
 export function BadgeNiveau({ maille }: { maille: MailleAnnuaire }) {
   const niveau = NIVEAUX[maille];
-  return <Badge type={niveau.type}>{niveau.libelle}</Badge>;
+  return (
+    <Badge taille="sm" variante={niveau.variante}>
+      {niveau.libelle}
+    </Badge>
+  );
 }
