@@ -13,7 +13,9 @@ import { scenarioEval } from "../scenarioEval";
  * attend « et ses départements » : la consigne impérative sur les
  * sous-territoires n'est pas injectée (PIL-1833, point 12).
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 50 %.
+ * Un seul appel avec les sous-territoires (3/3), malgré l'absence de la
+ * consigne. Pas d'analyse des écarts (0/3).
  */
 
 scenarioEval({

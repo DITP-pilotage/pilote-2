@@ -18,7 +18,11 @@ import { scenarioEval } from "../scenarioEval";
  * sont hors périmètre : « Restriction signalée » s'applique si l'agent les
  * interroge.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 42 %, forme 79 %, fond 100 %.
+ * `get_chantier_commentaires` n'est jamais appelé : Albert tire les
+ * difficultés des commentaires que porte déjà `get_chantiers`, et le juge
+ * note le fond à 100 %. L'attente d'outils est à trancher avec le produit.
+ * Codes météo bruts (NUAGE, COUVERT) dans 5 essais sur 6.
  */
 
 const MESSAGE = (territoire: string) =>

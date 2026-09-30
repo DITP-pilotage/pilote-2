@@ -17,7 +17,10 @@ import { scenarioEval } from "../scenarioEval";
  * « Synthétise » est une demande explicite de reformulation : « Pas de
  * recopie » s'applique ici, alors que l'outil restitue sinon en verbatim.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 86 %, fond 83 %.
+ * Dans 3 essais sur 9, la réponse ne synthétise rien et se limite à dire
+ * que les types d'actions sont inaccessibles. Passages recopiés dans
+ * 5 essais sur 9.
  */
 
 const commentairesDe = (chantier_id: string) => ({

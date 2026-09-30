@@ -12,7 +12,8 @@ import { scenarioEval } from "../scenarioEval";
  * « l'un ou l'autre » : il n'exige que l'outil, et « Territoires du tableau »
  * vérifie le résultat. La ligne de la région n'est pas pénalisée.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 67 %.
+ * Les quatre départements sont dans le tableau ; analyse des écarts 1/3.
  */
 
 scenarioEval({

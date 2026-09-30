@@ -13,7 +13,11 @@ import { scenarioEval } from "../scenarioEval";
  * commentaires et tendances sont masqués, « Restriction signalée »
  * s'applique.
  *
- * Référence observée : à compléter au premier run.
+ * Référence observée le 2026-09-30 : outils 63 %, forme 64 %, fond 94 %.
+ * Albert lit « les difficultés » comme la seule vue en difficulté : la vue
+ * en retard n'est jamais interrogée (0/3 sur chaque cas), d'où un gabarit
+ * incomplet. « Pas de commentaire disponible » manque sous CH-006 (0/3 sur
+ * la Bretagne).
  */
 
 const workflowSynthese = (territoire_code: string) => [
