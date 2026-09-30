@@ -1,6 +1,7 @@
 import {
   checkAbsenceSignalee,
   checkChantiersCited,
+  checkContains,
   checkExactAnswer,
   checkHasTable,
   checkHeadings,
@@ -127,6 +128,29 @@ describe("typographie d'Albert", () => {
         chantierIds: ["CH-006"],
       }).ok,
     ).toBe(true);
+  });
+
+  test("tolère un tiret demi-cadratin ou court à la place du cadratin (revue du 30/09)", () => {
+    expect([
+      checkContains({
+        text: "**Synthèse – chantiers en retard** : un chantier.",
+        fragments: ["Synthèse — chantiers en retard"],
+      }),
+      checkContains({
+        text: "**Synthèse - chantiers en retard** : un chantier.",
+        fragments: ["Synthèse — chantiers en retard"],
+      }),
+    ]).toEqual([
+      { ok: true, detail: "mentions présentes" },
+      { ok: true, detail: "mentions présentes" },
+    ]);
+  });
+
+  test("signale un code officiel écrit avec un tiret demi-cadratin", () => {
+    expect(checkOfficialCodes({ text: "CH–5 sur REG–53" })).toEqual({
+      ok: false,
+      detail: "codes mal formés : CH-5",
+    });
   });
 
   test("repère un tableau de chantiers écrit avec un trait d'union insécable", () => {
@@ -363,6 +387,15 @@ describe("checkNoLink et checkExactAnswer", () => {
       checkNoLink({ text: "Téléchargez-le ici : https://pilote.gouv.fr/r.md" })
         .ok,
     ).toBe(false);
+  });
+
+  test("checkExactAnswer ignore la ponctuation finale (revue du 30/09)", () => {
+    expect(
+      checkExactAnswer({
+        text: "Votre rapport est disponible au téléchargement",
+        expected: "Votre rapport est disponible au téléchargement.",
+      }),
+    ).toEqual({ ok: true, detail: "réponse attendue" });
   });
 
   test("checkExactAnswer ignore les espaces en trop", () => {

@@ -11,14 +11,17 @@
 export type CheckResult = { ok: boolean; detail: string };
 
 /**
- * Ramène la typographie d'Albert à l'ASCII usuel : traits d'union
- * insécables (U+2010, U+2011), apostrophes courbes (U+2018, U+2019, U+02BC)
- * et espaces insécables (U+00A0, U+202F). Le tiret demi-cadratin et le
- * cadratin, qui séparent `CH-XXX — Nom`, sont conservés.
+ * Ramène la typographie d'Albert à l'ASCII usuel : tous les tirets (U+2010
+ * à U+2015, dont l'insécable, le demi-cadratin et le cadratin, et le signe
+ * moins U+2212) deviennent un trait d'union, les apostrophes courbes
+ * (U+2018, U+2019, U+02BC) une apostrophe, les espaces insécables (U+00A0,
+ * U+202F) une espace. « CH‑005 », « CH–005 » et « CH-005 » sont ainsi le
+ * même code, et « Synthèse – chantiers » la même mention que « Synthèse —
+ * chantiers ».
  */
 export function typographie(text: string): string {
   return text
-    .replace(/[‐‑]/g, "-")
+    .replace(/[‐-―−]/g, "-")
     .replace(/[‘’ʼ]/g, "'")
     .replace(/[  ]/g, " ");
 }
@@ -307,7 +310,9 @@ export function checkExactAnswer({
   text: string;
   expected: string;
 }): CheckResult {
-  return normalize(text) === normalize(expected)
+  const sansPonctuationFinale = (valeur: string) =>
+    normalize(valeur).replace(/[.!…\s]+$/, "");
+  return sansPonctuationFinale(text) === sansPonctuationFinale(expected)
     ? { ok: true, detail: "réponse attendue" }
     : { ok: false, detail: `réponse : « ${text.trim().slice(0, 120)} »` };
 }

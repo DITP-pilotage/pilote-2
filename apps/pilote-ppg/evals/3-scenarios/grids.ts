@@ -97,20 +97,51 @@ const ABSENCE_SIGNALEE = mechanical({
   applicable: (evidence) => chantiersSansCommentaire(evidence).length > 0,
 });
 
+type CommentaireRecu = { contenu: string } | null | undefined;
+
+type ResultatChantiers = {
+  chantiers?: {
+    synthese?: { commentaire: string | null } | null;
+    commentaires?: {
+      donnees: CommentaireRecu;
+      autresResultats: CommentaireRecu;
+    };
+  }[];
+};
+
+/**
+ * Tous les commentaires que l'agent a reçus, quel que soit l'outil : ceux de
+ * `get_chantier_commentaires`, mais aussi le commentaire de synthèse et les
+ * commentaires territoriaux que porte `get_chantiers`. Revue du 30/09 : Albert
+ * lit les commentaires par `get_chantiers`, et une recopie depuis cette
+ * source passait inaperçue.
+ */
 function contenusDesCommentairesRecus(evidence: Evidence): string[] {
-  return evidence.toolResults
-    .filter((result) => result.toolName === "get_chantier_commentaires")
-    .flatMap(
-      (result) =>
-        (
-          result.output as {
-            resultats?: { commentaires: { contenu: string }[] }[];
-          }
-        ).resultats ?? [],
-    )
-    .flatMap((resultat) =>
-      resultat.commentaires.map((commentaire) => commentaire.contenu),
-    );
+  return evidence.toolResults.flatMap((result) => {
+    const resultats =
+      (result.output as { resultats?: unknown[] }).resultats ?? [];
+
+    if (result.toolName === "get_chantier_commentaires") {
+      return (resultats as { commentaires: { contenu: string }[] }[]).flatMap(
+        (resultat) =>
+          resultat.commentaires.map((commentaire) => commentaire.contenu),
+      );
+    }
+
+    if (result.toolName === "get_chantiers") {
+      return (resultats as ResultatChantiers[]).flatMap((resultat) =>
+        (resultat.chantiers ?? []).flatMap((chantier) =>
+          [
+            chantier.synthese?.commentaire,
+            chantier.commentaires?.donnees?.contenu,
+            chantier.commentaires?.autresResultats?.contenu,
+          ].filter((contenu): contenu is string => Boolean(contenu)),
+        ),
+      );
+    }
+
+    return [];
+  });
 }
 
 const COMMENTAIRES_DU_GABARIT = [
