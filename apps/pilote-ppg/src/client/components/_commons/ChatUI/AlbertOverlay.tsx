@@ -1,5 +1,4 @@
 import { Dialog } from "radix-ui";
-import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
@@ -17,13 +16,8 @@ import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 const BOUTON_ICONE =
   "flex h-8 w-8 items-center justify-center text-primary transition-colors hover:bg-dsfr-alt-blue-france";
 
-// Isolated in its own component: useEnv relies on useSuspenseQuery and must
-// only suspend the content of an open modal, never the whole application.
 const ConversationHistory = ({ chatId }: { chatId: string }) => {
-  const isHistoryEnabled = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
   const { selectConversation, startNewConversation } = useAlbertConversation();
-
-  if (!isHistoryEnabled) return null;
 
   return (
     <ConversationHistoryDrawer

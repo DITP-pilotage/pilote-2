@@ -8,7 +8,6 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import AvancementChantier from "@/components/PageChantier/AvancementChantier/AvancementChantier";
-import { useEnv } from "@/client/hooks/useEnv";
 
 export const SectionAvancementChantierLegacy = () => {
   const {
@@ -21,7 +20,6 @@ export const SectionAvancementChantierLegacy = () => {
     jalon,
     donneesComparaisonDuTauxDAvancement,
   } = pageChantier.useServerSidePropsContext();
-  const ffInfobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
 
   const territoireSélectionné = useTerritoireSelectionne();
 
@@ -43,29 +41,27 @@ export const SectionAvancementChantierLegacy = () => {
         >
           Avancement du chantier
         </Titre>
-        {ffInfobullePonderation ? (
-          indicateurPondérations.length === 0 ? (
-            <Infobulle>
-              {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(
-                territoireSélectionné.maille,
-              )}
-            </Infobulle>
-          ) : indicateurPondérations.length === 1 ? (
-            <Infobulle>
-              {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(
-                territoireSélectionné.maille,
-                indicateurPondérations[0],
-              )}
-            </Infobulle>
-          ) : (
-            <Infobulle>
-              {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(
-                territoireSélectionné.maille,
-                indicateurPondérations,
-              )}
-            </Infobulle>
-          )
-        ) : null}
+        {indicateurPondérations.length === 0 ? (
+          <Infobulle>
+            {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(
+              territoireSélectionné.maille,
+            )}
+          </Infobulle>
+        ) : indicateurPondérations.length === 1 ? (
+          <Infobulle>
+            {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(
+              territoireSélectionné.maille,
+              indicateurPondérations[0],
+            )}
+          </Infobulle>
+        ) : (
+          <Infobulle>
+            {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(
+              territoireSélectionné.maille,
+              indicateurPondérations,
+            )}
+          </Infobulle>
+        )}
       </TitreInfobulleConteneur>
       <AvancementChantier
         avancements={avancements}

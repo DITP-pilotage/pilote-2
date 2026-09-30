@@ -6,7 +6,6 @@ import assert from "node:assert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
 import { PageFicheConducteur } from "@/components/PageFicheConducteur/PageFicheConducteur";
-import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { estAutoriséAConsulterLaFicheConducteur } from "@/client/utils/fiche-conducteur/fiche-conducteur";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
@@ -23,16 +22,7 @@ export const getServerSideProps: GetServerSideProps<{
   const { query } = context;
   const session = await auth(context);
 
-  const estFicheConducteurDisponible =
-    new RecupererVariableContenuUseCase().run({
-      nomVariableContenu: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
-    });
-
-  if (
-    !estFicheConducteurDisponible ||
-    !session ||
-    !estAutoriséAConsulterLaFicheConducteur(session.profil)
-  ) {
+  if (!session || !estAutoriséAConsulterLaFicheConducteur(session.profil)) {
     throw new Error("Not connected or not authorized ?");
   }
 

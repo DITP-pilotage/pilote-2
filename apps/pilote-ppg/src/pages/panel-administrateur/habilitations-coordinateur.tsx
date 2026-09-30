@@ -13,18 +13,6 @@ export const getServerSideProps = async (
 ) => {
   const session = await auth(context);
 
-  const featureFlips = await getContainer("legacy")
-    .resolve("recupererFeatureFlipsUseCase")
-    .run();
-
-  if (!featureFlips["NEXT_PUBLIC_FF_PANEL_ADMIN"]) {
-    return {
-      redirect: {
-        destination: "/404",
-      },
-    };
-  }
-
   if (!session) {
     return {
       redirect: {

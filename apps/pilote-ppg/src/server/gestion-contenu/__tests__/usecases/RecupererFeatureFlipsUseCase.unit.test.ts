@@ -24,34 +24,17 @@ describe("RecupererFeatureFlipsUseCase", () => {
     vi.mocked(configuration).mockReturnValue({
       featureFlip: {
         featureFlipAdmin: false,
-        nouvellePageAccueil: false,
-        rapportDetaille: true,
-        infobullePonderation: false,
-        dateMeteo: false,
-        alertes: true,
-        alertesBaisse: false,
         applicationIndisponible: false,
-        ficheConducteur: false,
-        gestionTokenAPI: false,
-        taAnnuel: false,
-        suiviCompletude: false,
-        alerteMAJIndicateur: false,
-        docsAPI: false,
         ppgArchive: false,
         poserUneQuestionIndicateur: false,
-        videoAccueil: false,
-        panelAdmin: false,
-        monProfil: false,
         askAI: false,
         piloteEval: false,
-        rapportCoordinateurs: false,
-        rapportPva: false,
+        rapportCoordinateurs: true,
+        rapportPva: true,
         creationCompteArs: false,
         masquerIndicateursNonApplicables: false,
         accesPilote: false,
         comparaisonTerritoires: false,
-        ficheTerritoriale: false,
-        voirHistoriqueProposition: false,
         pvaValeurDifferente: false,
         lienContactBrevo: false,
         reorganisationPageAccueil: false,
@@ -62,9 +45,9 @@ describe("RecupererFeatureFlipsUseCase", () => {
     const result = await recupererFeatureFlipsUseCase.run();
 
     // Then
-    expect(result.NEXT_PUBLIC_FF_RAPPORT_DETAILLE).toBe(true);
-    expect(result.NEXT_PUBLIC_FF_ALERTES).toBe(true);
-    expect(result.NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL).toBe(false);
+    expect(result.NEXT_PUBLIC_FF_RAPPORT_PVA).toBe(true);
+    expect(result.NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS).toBe(true);
+    expect(result.NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE).toBe(false);
     expect(
       gestionContenuRepository.recupererMapVariableContenuParListeDeNom,
     ).not.toHaveBeenCalled();
@@ -75,45 +58,28 @@ describe("RecupererFeatureFlipsUseCase", () => {
     vi.mocked(configuration).mockReturnValue({
       featureFlip: {
         featureFlipAdmin: true,
-        nouvellePageAccueil: false,
-        rapportDetaille: true,
-        infobullePonderation: false,
-        dateMeteo: false,
-        alertes: true,
-        alertesBaisse: false,
         applicationIndisponible: false,
-        ficheConducteur: false,
-        gestionTokenAPI: false,
-        taAnnuel: false,
-        suiviCompletude: false,
-        alerteMAJIndicateur: false,
-        docsAPI: false,
         ppgArchive: false,
         poserUneQuestionIndicateur: false,
-        videoAccueil: false,
-        panelAdmin: false,
-        monProfil: false,
         askAI: false,
         piloteEval: false,
-        rapportCoordinateurs: false,
-        rapportPva: false,
+        rapportCoordinateurs: true,
+        rapportPva: true,
         creationCompteArs: false,
         masquerIndicateursNonApplicables: false,
         accesPilote: false,
         comparaisonTerritoires: false,
-        ficheTerritoriale: false,
-        voirHistoriqueProposition: false,
         pvaValeurDifferente: false,
         lienContactBrevo: false,
         reorganisationPageAccueil: false,
       },
     } as ReturnType<typeof configuration>);
 
-    // DB override : alertes passe à false, nouvellePageAccueil passe à true
+    // DB override : rapportCoordinateurs passe à false, applicationIndisponible passe à true
     gestionContenuRepository.recupererMapVariableContenuParListeDeNom.mockResolvedValue(
       {
-        NEXT_PUBLIC_FF_ALERTES: false,
-        NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL: true,
+        NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: false,
+        NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: true,
       },
     );
 
@@ -121,8 +87,8 @@ describe("RecupererFeatureFlipsUseCase", () => {
     const result = await recupererFeatureFlipsUseCase.run();
 
     // Then
-    expect(result.NEXT_PUBLIC_FF_ALERTES).toBe(false);
-    expect(result.NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL).toBe(true);
-    expect(result.NEXT_PUBLIC_FF_RAPPORT_DETAILLE).toBe(true);
+    expect(result.NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS).toBe(false);
+    expect(result.NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE).toBe(true);
+    expect(result.NEXT_PUBLIC_FF_RAPPORT_PVA).toBe(true);
   });
 });

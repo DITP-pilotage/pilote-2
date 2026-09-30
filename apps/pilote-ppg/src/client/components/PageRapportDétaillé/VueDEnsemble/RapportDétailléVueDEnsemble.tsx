@@ -21,7 +21,6 @@ import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrat
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import RepartitionsMeteosRapportDetaille from "@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
-import { useEnv } from "@/client/hooks/useEnv";
 import RapportDétailléTableauChantiers from "./RapportDétailléTableauChantiers/RapportDétailléTableauChantiers";
 
 interface RapportDétailléVueDEnsembleProps {
@@ -51,7 +50,6 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
   chantiersSontArchives,
   moyenneTauxAvancementTerritoire,
 }) => {
-  const ffAlertesBaisse = useEnv("NEXT_PUBLIC_FF_ALERTES_BAISSE");
   const { donnéesTableauChantiers, remontéesAlertes } = usePageRapportDétaillé(
     chantiers,
     territoireCode,
@@ -139,18 +137,15 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
             </TitreInfobulleConteneur>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters">
-            {remontéesAlertes.map(
-              ({ nomCritère, libellé, nombre, estActivée }) =>
-                (ffAlertesBaisse || nomCritère !== "estEnAlerteBaisse") && (
-                  <div className="fr-col" key={libellé}>
-                    <RemontéeAlerte
-                      estActivée={estActivée}
-                      libellé={libellé}
-                      nombre={nombre}
-                    />
-                  </div>
-                ),
-            )}
+            {remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
+              <div className="fr-col" key={libellé}>
+                <RemontéeAlerte
+                  estActivée={estActivée}
+                  libellé={libellé}
+                  nombre={nombre}
+                />
+              </div>
+            ))}
           </div>
         </div>
       )}

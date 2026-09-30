@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import Script from "next/script";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import data from "../../doc/api/pilote-api.yml";
 
 declare global {
@@ -10,20 +9,9 @@ declare global {
   }
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const estDocsAPIActive = new RecupererVariableContenuUseCase().run({
-    nomVariableContenu: "NEXT_PUBLIC_FF_DOCS_API",
-  }) as boolean;
-
-  return estDocsAPIActive
-    ? { props: { spec: data } }
-    : {
-        redirect: {
-          destination: "404",
-          permanent: true,
-        },
-      };
-};
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: { spec: data },
+});
 
 const SwaggerUIPOC = ({
   spec,

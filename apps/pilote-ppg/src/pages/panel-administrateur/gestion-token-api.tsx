@@ -20,11 +20,7 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (context) => {
   const { query } = context;
   const session = await auth(context);
-  if (
-    process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API !== "true" ||
-    !session ||
-    !estAutoriséAModifierLesTokensAPI(session.profil)
-  ) {
+  if (!session || !estAutoriséAModifierLesTokensAPI(session.profil)) {
     return {
       redirect: {
         destination: "/",

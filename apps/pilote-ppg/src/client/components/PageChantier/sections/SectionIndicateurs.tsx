@@ -20,7 +20,6 @@ export const SectionIndicateurs = () => {
     detailsIndicateursTerritoire,
     territoiresCompares,
   } = pageChantier.useServerSidePropsContext();
-  const ffAlerteMAJIndicateur = useEnv("NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR");
   const ffMasquerIndicateursNonApplicables = useEnv(
     "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
   );
@@ -41,7 +40,6 @@ export const SectionIndicateurs = () => {
 
   const alerteMiseAJourIndicateur =
     estAutoriseAVoirLesAlertesMAJIndicateurs &&
-    !!ffAlerteMAJIndicateur &&
     Object.values(détailsIndicateurs)
       .flatMap((values) => Object.values(values))
       .reduce((acc, val) => {

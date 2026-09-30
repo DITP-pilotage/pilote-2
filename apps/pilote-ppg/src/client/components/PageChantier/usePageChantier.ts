@@ -6,7 +6,6 @@ import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from "@/client/com
 import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
-import { useEnv } from "@/client/hooks/useEnv";
 
 const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
@@ -21,7 +20,6 @@ const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([
 export const usePageChantier = () => {
   const { data: session } = useSession();
   const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
-  const ffFicheConducteur = useEnv("NEXT_PUBLIC_FF_FICHE_CONDUCTEUR");
 
   const { listeTerritoires, récupérerDétailsSurUnTerritoire } =
     useTerritoireHabilitation();
@@ -83,7 +81,6 @@ export const usePageChantier = () => {
       estAutoriseAImporterSurLeChantier);
 
   const estAutoriseAVoirLeBoutonFicheConducteur =
-    !!ffFicheConducteur &&
     estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
   const estAutoriseAVoirLesAlertesMAJIndicateurs =

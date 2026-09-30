@@ -4,31 +4,15 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE: boolean;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TEXTE: string;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE: string;
-  NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL: boolean;
-  NEXT_PUBLIC_FF_RAPPORT_DETAILLE: boolean;
-  NEXT_PUBLIC_FF_INFOBULLE_PONDERATION: boolean;
-  NEXT_PUBLIC_FF_DATE_METEO: boolean;
-  NEXT_PUBLIC_FF_ALERTES: boolean;
-  NEXT_PUBLIC_FF_ALERTES_BAISSE: boolean;
   NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: boolean;
-  NEXT_PUBLIC_FF_FICHE_CONDUCTEUR: boolean;
-  NEXT_PUBLIC_FF_GESTION_TOKEN_API: boolean;
-  NEXT_PUBLIC_FF_TA_ANNUEL: boolean;
-  NEXT_PUBLIC_FF_SUIVI_COMPLETUDE: boolean;
-  NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR: boolean;
-  NEXT_PUBLIC_FF_DOCS_API: boolean;
   NEXT_PUBLIC_FF_PPG_ARCHIVE: boolean;
   NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR: boolean;
-  NEXT_PUBLIC_FF_VIDEO_ACCUEIL: boolean;
-  NEXT_PUBLIC_FF_PANEL_ADMIN: boolean;
-  NEXT_PUBLIC_FF_MON_PROFIL: boolean;
   NEXT_PUBLIC_FF_ASK_AI: boolean;
   NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: boolean;
   NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: boolean;
   NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE: boolean;
   NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE: boolean;
   NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR: boolean;
-  NEXT_PUBLIC_FF_HISTORIQUE_ALBERT: boolean;
   NEXT_PUBLIC_FF_PILOTE_EVAL: boolean;
   NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: boolean;
   NEXT_PUBLIC_FF_RAPPORT_PVA: boolean;
@@ -37,15 +21,12 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES: boolean;
   NEXT_PUBLIC_FF_ACCES_PILOTE: boolean;
   NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES: boolean;
-  NEXT_PUBLIC_FF_FICHE_TERRITORIALE: boolean;
-  NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE: boolean;
   NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE: boolean;
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
   NEXT_PUBLIC_FF_REPARTITION_METEOS_V2: boolean;
   NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2: boolean;
   NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER: boolean;
   NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL: boolean;
-  NEXT_PUBLIC_FF_PAGE_ACTUALITES: boolean;
   NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS: boolean;
   NEXT_PUBLIC_FF_PROCONNECT: boolean;
 }
@@ -61,65 +42,9 @@ interface FeatureFlipDefinition {
 /** Source unique de vérité pour tous les feature flips */
 const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
   {
-    envKey: "NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL",
-    configKey: "nouvellePageAccueil",
-    label: "Nouvelle page d'accueil",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_RAPPORT_DETAILLE",
-    configKey: "rapportDetaille",
-    label: "Rapport détaillé",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_INFOBULLE_PONDERATION",
-    configKey: "infobullePonderation",
-    label: "Infobulle pondération",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_DATE_METEO",
-    configKey: "dateMeteo",
-    label: "Date météo",
-  },
-  { envKey: "NEXT_PUBLIC_FF_ALERTES", configKey: "alertes", label: "Alertes" },
-  {
-    envKey: "NEXT_PUBLIC_FF_ALERTES_BAISSE",
-    configKey: "alertesBaisse",
-    label: "Alertes baisse",
-  },
-  {
     envKey: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
     configKey: "applicationIndisponible",
     label: "Application indisponible",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
-    configKey: "ficheConducteur",
-    label: "Fiche conducteur",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
-    configKey: "gestionTokenAPI",
-    label: "Gestion token API",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_TA_ANNUEL",
-    configKey: "taAnnuel",
-    label: "TA annuel",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
-    configKey: "suiviCompletude",
-    label: "Suivi complétude",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR",
-    configKey: "alerteMAJIndicateur",
-    label: "Alerte MAJ indicateur",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_DOCS_API",
-    configKey: "docsAPI",
-    label: "Documentation API",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
@@ -130,21 +55,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
     configKey: "poserUneQuestionIndicateur",
     label: "Poser une question indicateur",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_VIDEO_ACCUEIL",
-    configKey: "videoAccueil",
-    label: "Vidéo accueil",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_PANEL_ADMIN",
-    configKey: "panelAdmin",
-    label: "Panel administrateur",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_MON_PROFIL",
-    configKey: "monProfil",
-    label: "Mon profil",
   },
   { envKey: "NEXT_PUBLIC_FF_ASK_AI", configKey: "askAI", label: "Ask AI" },
   {
@@ -171,11 +81,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
     configKey: "askAICoordinateur",
     label: "Ask AI — ouverture Coordinateurs région et département",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
-    configKey: "historiqueAlbert",
-    label: "Albert — historique des conversations",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PILOTE_EVAL",
@@ -218,16 +123,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     label: "Comparaison territoires",
   },
   {
-    envKey: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-    configKey: "ficheTerritoriale",
-    label: "Fiche territoriale",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
-    configKey: "voirHistoriqueProposition",
-    label: "Voir historique des propositions",
-  },
-  {
     envKey: "NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE",
     configKey: "pvaValeurDifferente",
     label: "PVA valeur différente",
@@ -256,11 +151,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
     configKey: "reorganisationPageAccueil",
     label: "Réorganisation page accueil en sections",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_PAGE_ACTUALITES",
-    configKey: "pageActualites",
-    label: "Page actualités (newsletters Brevo)",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PROCONNECT",

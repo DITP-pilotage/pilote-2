@@ -1,11 +1,8 @@
 import "@gouvfr/dsfr/dist/component/footer/footer.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import { useEnv } from "@/client/hooks/useEnv";
 
 const PiedDePage: FunctionComponent = () => {
-  const estBoutonDocsAPIAffiche = useEnv("NEXT_PUBLIC_FF_DOCS_API");
-
   return (
     <footer className="fr-footer print:hidden" id="footer" role="contentinfo">
       <div className="fr-container">
@@ -49,20 +46,18 @@ const PiedDePage: FunctionComponent = () => {
                 Données personnelles et cookies
               </Link>
             </li>
-            {estBoutonDocsAPIAffiche ? (
-              <li
-                className="fr-footer__bottom-item"
-                title="Données personnelles et cookies"
+            <li
+              className="fr-footer__bottom-item"
+              title="Données personnelles et cookies"
+            >
+              <Link
+                className="fr-footer__bottom-link"
+                href="/swagger"
+                prefetch={false}
               >
-                <Link
-                  className="fr-footer__bottom-link"
-                  href="/swagger"
-                  prefetch={false}
-                >
-                  Docs API
-                </Link>
-              </li>
-            ) : null}
+                Docs API
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

@@ -155,85 +155,15 @@ const config = convict({
     env: "CONN_STR_DEST",
   },
   featureFlip: {
-    nouvellePageAccueil: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL",
-    },
-    rapportDetaille: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_RAPPORT_DETAILLE",
-    },
-    infobullePonderation: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_INFOBULLE_PONDERATION",
-    },
-    dateMeteo: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_DATE_METEO",
-    },
     limiteCaracteresPublication: {
       format: Number,
       default: 6000,
       env: "NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION",
     },
-    alertes: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_ALERTES",
-    },
-    alertesBaisse: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ALERTES_BAISSE",
-    },
     applicationIndisponible: {
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
-    },
-    ficheConducteur: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
-    },
-    ficheTerritoriale: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-    },
-    taAnnuel: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_TA_ANNUEL",
-    },
-    gestionTokenAPI: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
-    },
-    suiviCompletude: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
-    },
-    alerteMAJIndicateur: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR",
-    },
-    voirHistoriqueProposition: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
-    },
-    docsAPI: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_DOCS_API",
     },
     ppgArchive: {
       format: Boolean,
@@ -244,11 +174,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
-    },
-    videoAccueil: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_VIDEO_ACCUEIL",
     },
     pvaValeurDifferente: {
       format: Boolean,
@@ -264,16 +189,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO",
-    },
-    panelAdmin: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_PANEL_ADMIN",
-    },
-    monProfil: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_MON_PROFIL",
     },
     rapportCoordinateurs: {
       format: Boolean,
@@ -330,11 +245,6 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
     },
-    historiqueAlbert: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
-    },
     accesPilote: {
       format: Boolean,
       default: false,
@@ -370,11 +280,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
-    },
-    pageActualites: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_PAGE_ACTUALITES",
     },
     exportCsvWidgets: {
       format: Boolean,

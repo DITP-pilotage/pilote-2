@@ -8,7 +8,6 @@ import { BoutonSeDeconnecter } from "@/components/_commons/BoutonSeDeconnecter";
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
-import { useEnv } from "@/client/hooks/useEnv";
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
@@ -21,11 +20,7 @@ export const Utilisateur = () => {
   const session = useSession();
   const { email, prenom, nom } = useProfilUtilisateurConnecte();
 
-  const panelAdminEstDisponible = useEnv("NEXT_PUBLIC_FF_PANEL_ADMIN");
-  const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-
-  const showPanelAdministrateur =
-    panelAdminEstDisponible && peutAccederPanelAdministrateur(session);
+  const showPanelAdministrateur = peutAccederPanelAdministrateur(session);
 
   return (
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
@@ -55,18 +50,14 @@ export const Utilisateur = () => {
           <span className="text-sm">{email}</span>
         </div>
 
-        {monProfilEstDisponible || showPanelAdministrateur ? (
-          <Dropdown.Divider />
-        ) : null}
+        <Dropdown.Divider />
 
-        {monProfilEstDisponible ? (
-          <Dropdown.Item asChild>
-            <Link href="/mon-profil-utilisateur">
-              <Dropdown.Icone icone={Account1Icon} />
-              Mon profil utilisateur
-            </Link>
-          </Dropdown.Item>
-        ) : null}
+        <Dropdown.Item asChild>
+          <Link href="/mon-profil-utilisateur">
+            <Dropdown.Icone icone={Account1Icon} />
+            Mon profil utilisateur
+          </Link>
+        </Dropdown.Item>
         {showPanelAdministrateur ? (
           <Dropdown.Item asChild>
             <Link href="/panel-administrateur/parametrage-metadata-indicateur">
