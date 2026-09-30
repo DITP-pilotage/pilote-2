@@ -12,8 +12,129 @@ import {
   checkNoVerbatim,
   checkOfficialCodes,
   checkResumesCourts,
+  checkSectionsDashboard,
   checkTableTerritories,
 } from "./mechanicalChecks";
+
+describe("checkSectionsDashboard", () => {
+  const titre = (texte: string) => ({
+    type: "widget_titre_section",
+    titre: texte,
+  });
+  const meteo = (chantier_id: string) => ({
+    type: "widget_cartographie_meteo",
+    chantier_id,
+  });
+  const taux = {
+    type: "widget_taux_avancement_territoire",
+    territoire_code: "REG-53",
+  };
+
+  test("découpe les sections aux titres, pas aux conteneurs (structure du run du 30/09)", () => {
+    const containers = [
+      { widgets: [titre("Bretagne")] },
+      { widgets: [taux] },
+      { widgets: [titre("CH-005 — Urgences")] },
+      { widgets: [meteo("CH-005")] },
+      { widgets: [titre("CH-006 — Prévention")] },
+      { widgets: [meteo("CH-006")] },
+    ];
+
+    expect(
+      checkSectionsDashboard({ containers, chantierIds: ["CH-005", "CH-006"] }),
+    ).toEqual({
+      ok: true,
+      detail: "une section par chantier : CH-005, CH-006",
+    });
+  });
+
+  test("sans titre de section, chaque conteneur est une section", () => {
+    const containers = [
+      { widgets: [taux] },
+      { widgets: [meteo("CH-005")] },
+      { widgets: [meteo("CH-006")] },
+    ];
+
+    expect(
+      checkSectionsDashboard({ containers, chantierIds: ["CH-005", "CH-006"] })
+        .ok,
+    ).toBe(true);
+  });
+
+  test("signale une section qui mélange deux chantiers", () => {
+    const containers = [
+      { widgets: [taux] },
+      { widgets: [meteo("CH-005"), meteo("CH-006")] },
+    ];
+
+    expect(
+      checkSectionsDashboard({ containers, chantierIds: ["CH-005", "CH-006"] }),
+    ).toEqual({
+      ok: false,
+      detail: "sections chantier : CH-005+CH-006, attendu CH-005, CH-006",
+    });
+  });
+
+  test("signale une première section qui porte sur un chantier", () => {
+    expect(
+      checkSectionsDashboard({
+        containers: [{ widgets: [meteo("CH-005")] }],
+        chantierIds: ["CH-005"],
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "la première section porte sur un chantier",
+    });
+  });
+});
+
+describe("typographie d'Albert", () => {
+  // Run du 30/09 : Albert écrit « CH‑005 » (trait d'union insécable U+2011),
+  // « Côtes‑d’Armor » (apostrophe U+2019) et « 46 % » (espace fine U+202F).
+  // Sans normalisation, ces réponses échouaient des critères qu'elles
+  // respectaient.
+  const tableau =
+    "| Territoire | TA |\n|---|---|\n| DEPT‑22 – Côtes‑d’Armor | 46 % |\n| DEPT‑35 – Ille‑et‑Vilaine | 46 % |";
+
+  test("retrouve les territoires écrits avec des traits d'union insécables et une apostrophe courbe", () => {
+    expect(
+      checkTableTerritories({
+        text: tableau,
+        noms: ["Côtes-d'Armor", "Ille-et-Vilaine"],
+      }).ok,
+    ).toBe(true);
+  });
+
+  test("retrouve un chantier cité avec un trait d'union insécable", () => {
+    expect(
+      checkChantiersCited({
+        text: "**CH‑005 — Réduire les délais de passage aux urgences**",
+        chantiers: [
+          { id: "CH-005", nom: "Réduire les délais de passage aux urgences" },
+        ],
+      }).ok,
+    ).toBe(true);
+  });
+
+  test("tient un code à trait d'union insécable pour un code officiel", () => {
+    expect(checkOfficialCodes({ text: "CH‑005 sur REG‑53" }).ok).toBe(true);
+  });
+
+  test("délimite la section d'un chantier cité avec un trait d'union insécable", () => {
+    expect(
+      checkAbsenceSignalee({
+        text: "**CH‑005 — Urgences**\n> Deux postes.\n**CH‑006 — Prévention**\n> Pas de commentaire disponible",
+        chantierIds: ["CH-006"],
+      }).ok,
+    ).toBe(true);
+  });
+
+  test("repère un tableau de chantiers écrit avec un trait d'union insécable", () => {
+    expect(
+      checkNoChantierTable({ text: "| Chantier |\n|---|\n| CH‑005 |" }).ok,
+    ).toBe(false);
+  });
+});
 
 describe("checkNoVerbatim", () => {
   const commentaire =
