@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -226,17 +227,15 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       </p>
                     )}
                   </div>
-                  <div className="fr-alert fr-alert--info">
-                    <h3 className="fr-alert__title">
-                      Accusé de réception : ce que cela implique
-                    </h3>
+                  <Alerte type="info">
+                    <h3>Accusé de réception : ce que cela implique</h3>
                     <p>
                       Le territoire ne pourra plus intervenir sur cet indicateur
                       tant que vous n'aurez pas pris une décision (accepter,
                       accepter avec modification ou refuser) ou procédé à un
                       nouvel import de données.
                     </p>
-                  </div>
+                  </Alerte>
                   <div className="w-full flex justify-end fr-mt-2w">
                     <button
                       className="fr-btn fr-btn--secondary fr-mr-2w"
@@ -265,8 +264,8 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
           </FormProvider>
         </>
       ) : (
-        <div className="fr-alert fr-alert--success fr-mt-2w">
-          <h3 className="fr-alert__title">
+        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+          <h3>
             L'accusé de réception de cette proposition de valeur d'avancement a
             bien été enregistré
           </h3>
@@ -275,7 +274,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
             sa proposition. Le cas échéant, nous vous invitons à engager le
             dialogue avec le territoire afin d'étayer votre future décision.
           </span>
-        </div>
+        </Alerte>
       )}
     </Modale>
   );

@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 
@@ -411,10 +412,8 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       </span>
                     </p>
                   </div>
-                  <div className="fr-alert fr-alert--info">
-                    <h3 className="fr-alert__title">
-                      Rappel sur le statut de votre proposition
-                    </h3>
+                  <Alerte type="info">
+                    <h3>Rappel sur le statut de votre proposition</h3>
                     <p>
                       Nous vous rappelons que la valeur d'avancement que vous
                       proposez ne sera pas prise en compte dans le calcul du
@@ -428,7 +427,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       l'indicateur à la prochaine mise à jour. Elle sera
                       cependant conservée dans la base de données de PILOTE.
                     </p>
-                  </div>
+                  </Alerte>
                   <div className="w-full flex justify-end fr-mt-2w">
                     <button
                       className="fr-btn fr-btn--secondary fr-mr-2w"
@@ -457,10 +456,10 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
           </FormProvider>
         </>
       ) : (
-        <div className="fr-alert fr-alert--success fr-mt-2w">
+        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
           {!estUneModificationDeProposition ? (
             <>
-              <h3 className="fr-alert__title">
+              <h3>
                 La proposition de valeur d'avancement a correctement été prise
                 en compte
               </h3>
@@ -472,7 +471,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
             </>
           ) : (
             <>
-              <h3 className="fr-alert__title">
+              <h3>
                 La nouvelle proposition de valeur d'avancement a correctement
                 été prise en compte
               </h3>
@@ -483,7 +482,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
               </span>
             </>
           )}
-        </div>
+        </Alerte>
       )}
     </Modale>
   );

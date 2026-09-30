@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -342,8 +343,8 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       </span>
                     </p>
                   </div>
-                  <div className="fr-alert fr-alert--info">
-                    <h3 className="fr-alert__title">
+                  <Alerte type="info">
+                    <h3>
                       {decision === "refuser"
                         ? "Refus de la proposition : ce que cela implique"
                         : decision === "accepter-avec-modification"
@@ -363,7 +364,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       informé de votre décision et pourra, le cas échéant, faire
                       de nouvelles propositions pour cet indicateur.
                     </p>
-                  </div>
+                  </Alerte>
                   <div className="w-full flex justify-end fr-mt-2w">
                     <button
                       className="fr-btn fr-btn--secondary fr-mr-2w"
@@ -396,8 +397,8 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
           </FormProvider>
         </>
       ) : (
-        <div className="fr-alert fr-alert--success fr-mt-2w">
-          <h3 className="fr-alert__title">
+        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+          <h3>
             {decision === "refuser"
               ? "La proposition de valeur d'avancement a bien été refusée"
               : decision === "accepter"
@@ -409,7 +410,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
               ? "La valeur d'avancement de cet indicateur est inchangée."
               : "La nouvelle valeur d'avancement sera importée et s'affichera dans le tableau des indicateurs dans un délai maximal de deux heures."}
           </span>
-        </div>
+        </Alerte>
       )}
     </Modale>
   );

@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Modale } from "@/components/shared/Modale";
 import Titre from "@/components/_commons/Titre/Titre";
 import Input from "@/components/_commons/Input/Input";
@@ -90,8 +91,8 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
           </form>
         </div>
       ) : (
-        <div className="fr-alert fr-alert--success fr-mt-2w">
-          <h3 className="fr-alert__title">Inscription enregistrée.</h3>
+        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+          <h3>Inscription enregistrée.</h3>
           <span>
             <p>Merci pour votre inscription à l'infolettre Minute PILOTE.</p>
             <p>
@@ -105,7 +106,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
               ne trouvez pas l'email dans votre boîte de réception.
             </p>
           </span>
-        </div>
+        </Alerte>
       )}
     </Modale>
   );

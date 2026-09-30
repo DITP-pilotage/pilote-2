@@ -1,4 +1,5 @@
 import { Fragment, PropsWithChildren, useState } from "react";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import clsx from "clsx";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
@@ -218,9 +219,9 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       {isLoading ? (
         <Loader />
       ) : datesTriees.length === 0 ? (
-        <div className="fr-alert fr-alert--info">
+        <Alerte type="info">
           <p>Aucun événement trouvé pour cet indicateur sur ce territoire.</p>
-        </div>
+        </Alerte>
       ) : (
         <div className="historique-container fr-mt-2w">
           {datesTriees.map((dateIso, index) => {
