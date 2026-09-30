@@ -21,7 +21,7 @@ import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecas
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
-import { chargerDonneesCommunesPage } from "@/server/app/pages/chargerDonneesCommunesPage";
+import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { loadChantierDetailSearchParams } from "@/client/searchParams/chantierDetailSearchParams";
 
@@ -102,7 +102,7 @@ export const getServerSideProps = async (
       détailsIndicateurs,
       avancementsAgrégés,
       valeurFFPpgArchive,
-      donneesCommunesPage,
+      bootstrap,
     ] = await Promise.all([
       getContainer("chantiers")
         .resolve("recupererChantierUseCase")
@@ -150,7 +150,7 @@ export const getServerSideProps = async (
       new RecupererVariableContenuUseCase().run({
         nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
       }),
-      chargerDonneesCommunesPage(session),
+      loadBootstrap(session),
     ]);
 
     assert(
@@ -245,7 +245,7 @@ export const getServerSideProps = async (
 
     return {
       props: {
-        ...donneesCommunesPage,
+        ...bootstrap,
         indicateurs,
         chantierInformations: {
           id: chantier.id,

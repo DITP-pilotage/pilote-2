@@ -33,12 +33,12 @@ import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chant
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
-import { chargerDonneesCommunesPage } from "@/server/app/pages/chargerDonneesCommunesPage";
-import type { DonneesCommunesPage } from "@/components/_commons/DonneesCommunesPage/DonneesCommunesPageContext";
+import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
+import type { Bootstrap } from "@/components/_commons/Bootstrap/BootstrapContext";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { loadRapportDetailleSearchParams } from "@/client/searchParams/accueilSearchParams";
 
-interface NextPageRapportDétailléProps extends DonneesCommunesPage {
+interface NextPageRapportDétailléProps extends Bootstrap {
   chantiers: ChantierRapportDetailleContrat[];
   ministères: Ministère[];
   axes: Axe[];
@@ -135,7 +135,7 @@ export const getServerSideProps: GetServerSideProps<
       searchParams.estEnAlertePossedePropositionsValeurAvancement,
   };
 
-  const [[ministères, axes], territoireSélectionné, donneesCommunesPage] =
+  const [[ministères, axes], territoireSélectionné, bootstrap] =
     await Promise.all([
       session.habilitations.lecture.chantiers.length === 0
         ? Promise.resolve<[Ministère[], Axe[]]>([[], []])
@@ -150,7 +150,7 @@ export const getServerSideProps: GetServerSideProps<
       getContainer("legacy")
         .resolve("territoireRepository")
         .récupérer(territoireCode),
-      chargerDonneesCommunesPage(session),
+      loadBootstrap(session),
     ]);
 
   const habilitation = new Habilitation(session.habilitations);
@@ -451,7 +451,7 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      ...donneesCommunesPage,
+      ...bootstrap,
       chantiers: chantiersAvecAlertes.map((chantier) => {
         // @ts-expect-error
         delete chantier.mailles;

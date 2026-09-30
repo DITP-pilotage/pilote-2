@@ -15,7 +15,7 @@ import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Tooltip } from "@/components/shared/Tooltip";
-import { DonneesCommunesPageProvider } from "@/components/_commons/DonneesCommunesPage/DonneesCommunesPageContext";
+import { BootstrapProvider } from "@/components/_commons/Bootstrap/BootstrapContext";
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
@@ -99,7 +99,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
       <ReactQueryDevtools initialIsOpen={false} />
       <Tooltip.Provider>
         <SessionProvider session={pageProps.session}>
-          <DonneesCommunesPageProvider
+          <BootstrapProvider
             value={{
               session: pageProps.session,
               variablesContenu: pageProps.variablesContenu,
@@ -110,7 +110,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
               <Component {...pageProps} />
               <Toaster />
             </MiseEnPage>
-          </DonneesCommunesPageProvider>
+          </BootstrapProvider>
         </SessionProvider>
       </Tooltip.Provider>
     </NuqsAdapter>

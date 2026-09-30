@@ -1,7 +1,7 @@
 import type { Session } from "next-auth";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { chargerDonneesCommunesPage } from "@/server/app/pages/chargerDonneesCommunesPage";
+import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import type { HabilitationChantiers } from "@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface";
 
 const habilitationVide: HabilitationChantiers = {
@@ -15,7 +15,7 @@ const habilitationVide: HabilitationChantiers = {
   périmètres: [],
 };
 
-describe("chargerDonneesCommunesPage", () => {
+describe("loadBootstrap", () => {
   it(
     "fournit la session sans clé undefined, que Next refuse dans les props",
     createIntegrationTest(async () => {
@@ -46,7 +46,7 @@ describe("chargerDonneesCommunesPage", () => {
         profilAAccèsAuxChantiersBrouillons: false,
       };
 
-      const donnees = await chargerDonneesCommunesPage(session);
+      const donnees = await loadBootstrap(session);
 
       expect(donnees.session).toStrictEqual({
         ...session,
@@ -79,7 +79,7 @@ describe("chargerDonneesCommunesPage", () => {
         profilAAccèsAuxChantiersBrouillons: false,
       };
 
-      const donnees = await chargerDonneesCommunesPage(session);
+      const donnees = await loadBootstrap(session);
 
       expect(donnees.utilisateurConnecte).toEqual(
         expect.objectContaining({

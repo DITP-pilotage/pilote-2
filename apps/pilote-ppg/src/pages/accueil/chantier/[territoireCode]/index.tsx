@@ -15,7 +15,7 @@ import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chant
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
-import { chargerDonneesCommunesPage } from "@/server/app/pages/chargerDonneesCommunesPage";
+import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchParams";
 import { PageAccueil } from "@/components/PageAccueil/PageAccueil";
 import { PageAccueilLegacy } from "@/components/PageAccueil/PageAccueilLegacy";
@@ -115,7 +115,7 @@ export const getServerSideProps = async (
     [ministères, axes],
     doitAfficherModaleVideoAccueil,
     doitAfficherLaModaleInfolettre,
-    donneesCommunesPage,
+    bootstrap,
   ] = await Promise.all([
     session.habilitations.lecture.chantiers.length === 0
       ? Promise.resolve<[Ministère[], Axe[]]>([[], []])
@@ -133,7 +133,7 @@ export const getServerSideProps = async (
     getContainer("gestionUtilisateur")
       .resolve("recupererEtatModaleInscriptionUseCase")
       .execute(session.user.id),
-    chargerDonneesCommunesPage(session),
+    loadBootstrap(session),
   ]);
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
@@ -249,7 +249,7 @@ export const getServerSideProps = async (
 
   return {
     props: {
-      ...donneesCommunesPage,
+      ...bootstrap,
       chantiers: chantiersPaginesAvecAlertes.map((chantier) => {
         // @ts-expect-error
         delete chantier.mailles;

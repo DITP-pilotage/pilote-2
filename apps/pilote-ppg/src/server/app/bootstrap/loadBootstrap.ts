@@ -1,23 +1,23 @@
 import type { Session } from "next-auth";
 import { getContainer } from "@/server/dependances";
-import type { DonneesCommunesPage } from "@/client/components/_commons/DonneesCommunesPage/DonneesCommunesPageContext";
+import type { Bootstrap } from "@/client/components/_commons/Bootstrap/BootstrapContext";
 
-const retirerLesClesUndefined = (objet: object) => {
-  for (const [cle, valeur] of Object.entries(objet)) {
-    if (valeur === undefined) {
-      Reflect.deleteProperty(objet, cle);
-    } else if (valeur !== null && typeof valeur === "object") {
-      retirerLesClesUndefined(valeur);
+const removeUndefinedKeys = (target: object) => {
+  for (const [key, value] of Object.entries(target)) {
+    if (value === undefined) {
+      Reflect.deleteProperty(target, key);
+    } else if (value !== null && typeof value === "object") {
+      removeUndefinedKeys(value);
     }
   }
 };
 
 // Next refuse `undefined` dans les props : ces clés sont retirées, comme elles
 // disparaîtraient de la réponse JSON d'une requête tRPC.
-const versPropsSerialisables = <T extends object>(valeur: T): T => {
-  const copie = structuredClone(valeur);
-  retirerLesClesUndefined(copie);
-  return copie;
+const toSerializableProps = <T extends object>(value: T): T => {
+  const copy = structuredClone(value);
+  removeUndefinedKeys(copy);
+  return copy;
 };
 
 /**
@@ -25,9 +25,7 @@ const versPropsSerialisables = <T extends object>(valeur: T): T => {
  * évite au navigateur trois allers-retours en cascade : `/api/auth/session`, puis
  * les variables de contenu (qui suspendent la page), puis le profil connecté.
  */
-export const chargerDonneesCommunesPage = async (
-  session: Session,
-): Promise<DonneesCommunesPage> => {
+export const loadBootstrap = async (session: Session): Promise<Bootstrap> => {
   const [variablesContenu, utilisateurConnecte] = await Promise.all([
     getContainer("legacy")
       .resolve("recupererToutesLesVariablesContenuUseCase")
@@ -38,8 +36,8 @@ export const chargerDonneesCommunesPage = async (
   ]);
 
   return {
-    session: versPropsSerialisables(session),
-    variablesContenu: versPropsSerialisables(variablesContenu),
+    session: toSerializableProps(session),
+    variablesContenu: toSerializableProps(variablesContenu),
     utilisateurConnecte,
   };
 };
