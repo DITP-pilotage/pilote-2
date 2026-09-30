@@ -6,7 +6,7 @@ import {
   useQueryState,
   useQueryStates,
 } from "nuqs";
-import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 import { horodatage } from "@/client/utils/date/date";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { useEnv } from "@/client/hooks/useEnv";
@@ -283,7 +283,7 @@ export const EtapeRecapitulatif = ({
         }}
       >
         <div className="w-full flex justify-end fr-mt-2w gap-4">
-          <Dialog.Close asChild>
+          <Modale.Close asChild>
             <button
               className="!text-primary font-medium !px-4"
               title="Fermer la fenêtre modale"
@@ -291,7 +291,7 @@ export const EtapeRecapitulatif = ({
             >
               Annuler
             </button>
-          </Dialog.Close>
+          </Modale.Close>
           <button
             className="!text-primary font-medium !border !border-primary !py-2 !px-4"
             onClick={() => setEtapeCourante(3)}

@@ -92,17 +92,22 @@ Utilise cet outil quand l'utilisateur demande :
 
         const chantierIds = publishedChantiers.map((c) => c.id);
 
-        const legacyContainer = getContainer("legacy");
-        const agregerAvancementsChantiersUseCase = legacyContainer.resolve(
-          "agregerAvancementsChantiersUseCase",
-        );
-        const récupérerStatistiquesUseCase = getContainer("chantiers").resolve(
+        const chantiersContainer = getContainer("chantiers");
+        const récupérerStatistiquesUseCase = chantiersContainer.resolve(
           "récupérerStatistiquesAvancementChantiersUseCase",
         );
-
-        const { agregat } = await agregerAvancementsChantiersUseCase.run(
-          chantierIds,
-          input.jalon,
+        const tauxParTerritoire = new Map(
+          (
+            await chantiersContainer
+              .resolve("recupererTauxAvancementTerritoireQuery")
+              .executePourTerritoires({
+                territoireCodes: codes,
+                jalon: input.jalon,
+              })
+          ).map((resultat) => [
+            resultat.territoire_code,
+            resultat.taux_avancement,
+          ]),
         );
 
         const mailles = new Set(codes.map(determineMaille));
@@ -130,10 +135,7 @@ Utilise cet outil quand l'utilisateur demande :
 
         const resultats = codes.map((code) => {
           const maille = determineMaille(code);
-          const territoireData = agregat[maille]?.territoires[code];
-
-          const taux_avancement_global =
-            territoireData?.repartition.avancements.annuel.moyenne ?? null;
+          const taux_avancement_global = tauxParTerritoire.get(code) ?? null;
 
           const mediane_repartition = statsByMaille.get(maille) ?? null;
 

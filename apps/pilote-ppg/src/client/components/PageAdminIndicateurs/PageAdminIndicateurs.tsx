@@ -26,9 +26,7 @@ const PageAdminIndicateurs: FunctionComponent = () => {
             </div>
             <div className="fr-col-12 fr-col-md-3 flex items-end justify-end max-[576px]:justify-center">
               <button
-                aria-controls="créer-nouvel-indicateur"
                 className="fr-btn fr-text no-wrap"
-                data-fr-opened={false}
                 onClick={naviguerVersCreationIndicateur}
                 type="button"
               >

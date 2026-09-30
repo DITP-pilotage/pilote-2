@@ -8,7 +8,6 @@ export default function IndicateursRapportDetaille({
   territoireCode,
   indicateurs,
   détailsIndicateurs,
-  typeDeRéforme,
   categoriesIndicateurRepartition,
   jalon,
 }: IndicateursProps) {
@@ -58,7 +57,6 @@ export default function IndicateursRapportDetaille({
                         jalon={jalon}
                         key={indicateur.id}
                         territoireCode={territoireCode}
-                        typeDeRéforme={typeDeRéforme}
                       />
                     );
                   })}

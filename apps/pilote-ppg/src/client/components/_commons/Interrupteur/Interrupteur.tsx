@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/toggle/toggle.min.css";
 import { FunctionComponent, useId } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { Switch } from "@/components/shared/Switch";
@@ -21,6 +20,7 @@ const Interrupteur: FunctionComponent<InterrupteurProps> = ({
   className,
 }) => {
   const id = useId();
+  const idMessageSecondaire = `${id}-message-secondaire`;
   return (
     <div className="flex flex-col">
       <div
@@ -32,7 +32,12 @@ const Interrupteur: FunctionComponent<InterrupteurProps> = ({
           className,
         )}
       >
-        <Switch.Root checked={checked} id={id} onCheckedChange={onChange}>
+        <Switch.Root
+          aria-describedby={messageSecondaire ? idMessageSecondaire : undefined}
+          checked={checked}
+          id={id}
+          onCheckedChange={onChange}
+        >
           <Switch.Thumb />
         </Switch.Root>
 
@@ -46,7 +51,7 @@ const Interrupteur: FunctionComponent<InterrupteurProps> = ({
         </label>
       </div>
       {messageSecondaire ? (
-        <p className="fr-hint-text" id="toggle-698-hint-text">
+        <p className="fr-hint-text" id={idMessageSecondaire}>
           {messageSecondaire}
         </p>
       ) : null}

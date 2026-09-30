@@ -123,7 +123,6 @@ export const IndicateurPropositionValeur = ({
         action={
           <BoutonSousLigné
             className="!text-current fr-link--xs"
-            dataFrOpened={false}
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -172,7 +171,6 @@ export const IndicateurPropositionValeur = ({
         action={
           <BoutonSousLigné
             className="!text-current fr-link--xs"
-            dataFrOpened={false}
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -237,7 +235,6 @@ export const IndicateurPropositionValeur = ({
         action={
           <BoutonSousLigné
             className="!text-current fr-link--xs"
-            dataFrOpened={false}
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -275,7 +272,6 @@ export const IndicateurPropositionValeur = ({
       action={
         <BoutonSousLigné
           className="!text-current fr-link--xs"
-          dataFrOpened={false}
           iconLeft={
             <Icone
               className="text-current h-3 w-3"

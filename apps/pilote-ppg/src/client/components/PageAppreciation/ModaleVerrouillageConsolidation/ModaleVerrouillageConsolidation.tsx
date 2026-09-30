@@ -1,5 +1,4 @@
 import "@gouvfr/dsfr/dist/component/stepper/stepper.min.css";
-import { Dialog } from "radix-ui";
 import { FormProvider } from "react-hook-form";
 import { PropsWithChildren } from "react";
 import { Modale } from "@/components/shared/Modale";
@@ -183,11 +182,11 @@ export const ModaleTransmissionDITP = ({
                   )}
 
                   <div className="w-full flex justify-end !mt-8 gap-2">
-                    <Dialog.Close asChild>
+                    <Modale.Close asChild>
                       <button className="fr-link !px-4" type="button">
                         Annuler
                       </button>
-                    </Dialog.Close>
+                    </Modale.Close>
                     <button
                       className="fr-btn"
                       disabled={fichesSelectionnees.length === 0}
@@ -260,11 +259,11 @@ export const ModaleTransmissionDITP = ({
                   )}
 
                   <div className="w-full flex justify-end !mt-8 gap-2">
-                    <Dialog.Close asChild>
+                    <Modale.Close asChild>
                       <button className="fr-link !px-4" type="button">
                         Annuler
                       </button>
-                    </Dialog.Close>
+                    </Modale.Close>
                     <button
                       className="fr-btn fr-btn--secondary gap-3"
                       onClick={() =>

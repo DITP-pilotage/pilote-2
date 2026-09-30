@@ -11,9 +11,9 @@ import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitat
 import { Table } from "@/components/shared/Table";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import { formaterDate } from "@/client/utils/date/date";
-import IndicateurBlocIndicateurTuile from "./indicateurBlocIndicateurTuile";
+import { TableauValeursIndicateur } from "@/components/_commons/IndicateursChantier/Bloc/TableauValeursIndicateur";
 import { IndicateurDétailsParTerritoire } from "./IndicateurBloc.interface";
-import ValeurEtDate from "./ValeurEtDate/ValeurEtDate";
+import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 
 const CELLULE = "py-0 md:py-2 px-1 md:px-1 min-[992px]:px-4";
 
@@ -21,7 +21,6 @@ interface IndicateurBlocProps {
   indicateur: Indicateur;
   détailsIndicateurs: DétailsIndicateurs;
   territoireCode: string;
-  typeDeRéforme: "chantier";
   jalon: number;
 }
 
@@ -29,7 +28,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
   territoireCode,
-  typeDeRéforme,
   jalon,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
@@ -86,10 +84,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
             </div>
           </div>
           {estVueTuile ? (
-            <IndicateurBlocIndicateurTuile
-              indicateurDétailsParTerritoire={ligne}
-              typeDeRéforme={typeDeRéforme}
-              unité={ligne.données.unite}
+            <TableauValeursIndicateur
+              données={ligne.données}
+              modeImpression
+              territoireNom={ligne.territoireNom}
             />
           ) : (
             <Table.Root
@@ -122,6 +120,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </Table.RowHeaderCell>
                   <Table.Cell className={CELLULE}>
                     <ValeurEtDate
+                      modeImpression
                       date={ligne.données.dateValeurInitiale}
                       unité={ligne.données.unite}
                       valeur={ligne.données.valeurInitiale}
@@ -129,6 +128,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </Table.Cell>
                   <Table.Cell className={CELLULE}>
                     <ValeurEtDate
+                      modeImpression
                       date={ligne.données.dateValeurAvancement}
                       unité={ligne.données.unite}
                       valeur={ligne.données.valeurAvancement}
@@ -136,6 +136,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </Table.Cell>
                   <Table.Cell className={CELLULE}>
                     <ValeurEtDate
+                      modeImpression
                       date={ligne.données.dateValeurCibleAnnuelle}
                       unité={ligne.données.unite}
                       valeur={ligne.données.valeurCibleAnnuelle}

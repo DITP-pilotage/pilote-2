@@ -246,7 +246,6 @@ const RapportDétailléChantier: FunctionComponent<
                       listeRubriquesIndicateursChantier
                     }
                     territoireCode={territoireCode}
-                    typeDeRéforme="chantier"
                   />
                 ) : (
                   <Alerte

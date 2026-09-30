@@ -4,7 +4,7 @@ import {
   parseAsStringLiteral,
   useQueryState,
 } from "nuqs";
-import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 import { MiseEnAvant } from "@/components/_commons/MiseEnAvant/MiseEnAvant";
 
 export const EtapeContenuAExporter = () => {
@@ -123,7 +123,7 @@ export const EtapeContenuAExporter = () => {
         </div>
       </div>
       <div className="w-full flex justify-end fr-mt-2w">
-        <Dialog.Close asChild>
+        <Modale.Close asChild>
           <button
             className="fr-link fr-mr-2w"
             title="Fermer la fenêtre modale"
@@ -131,7 +131,7 @@ export const EtapeContenuAExporter = () => {
           >
             Annuler
           </button>
-        </Dialog.Close>
+        </Modale.Close>
         <button
           className="fr-btn fr-mr-2w"
           onClick={() => setEtapeCourante(2)}

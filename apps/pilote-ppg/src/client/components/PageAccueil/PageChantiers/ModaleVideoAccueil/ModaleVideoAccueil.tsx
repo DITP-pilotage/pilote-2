@@ -1,6 +1,5 @@
 import { FunctionComponent, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Dialog } from "radix-ui";
 import { Modale } from "@/components/shared/Modale";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
@@ -47,11 +46,11 @@ export const ModaleVideoAccueil: FunctionComponent<{
             Retrouvez cette vidéo et d'autres ressources dans le centre d'aide
             de PILOTE
           </p>
-          <Dialog.Close asChild>
+          <Modale.Close asChild>
             <button className="fr-btn" title="Passer la vidéo" type="button">
               Passer
             </button>
-          </Dialog.Close>
+          </Modale.Close>
         </div>
       </div>
     </Modale>

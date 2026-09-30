@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import { Dialog } from "radix-ui";
 import { Modale } from "@/components/shared/Modale";
 
 interface ConfirmerValidationSaisieProps {
@@ -38,7 +37,7 @@ export const ConfirmerValidationSaisie: FunctionComponent<
         <strong>Souhaitez-vous confirmer cette validation ?</strong>
       </p>
       <div className="w-full flex justify-end gap-2">
-        <Dialog.Close asChild>
+        <Modale.Close asChild>
           <button
             className="fr-btn fr-btn--secondary"
             disabled={isPending}
@@ -46,7 +45,7 @@ export const ConfirmerValidationSaisie: FunctionComponent<
           >
             Annuler
           </button>
-        </Dialog.Close>
+        </Modale.Close>
         <button
           className="fr-btn"
           disabled={isPending}

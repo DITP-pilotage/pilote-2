@@ -3,6 +3,7 @@ import logger from "@/server/infrastructure/Logger";
 import { handleListerIndicateurs } from "@/server/chantiers/infrastructure/handlers/ListerIndicateursHandler";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
+import { recupererUtilisateurAuthentifieOpenApi } from "@/server/app/open-api/endpointOpenApi";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
@@ -13,12 +14,8 @@ export const config = {
 };
 
 const handle = async (request: NextApiRequest, response: NextApiResponse) => {
-  const bearerToken = request.headers["authorization"];
-
-  const token = (bearerToken || "").split(" ")[1];
-  const utilisateurAuthentifie = await getContainer("legacy")
-    .resolve("utilisateurAuthentifieJWTService")
-    .recupererUtilisateurAuthentifie(token);
+  const utilisateurAuthentifie =
+    await recupererUtilisateurAuthentifieOpenApi(request);
 
   switch (request.method) {
     case "GET": {
