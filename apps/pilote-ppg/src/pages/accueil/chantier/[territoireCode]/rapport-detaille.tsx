@@ -33,10 +33,12 @@ import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chant
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
+import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
+import type { Bootstrap } from "@/components/_commons/Bootstrap/BootstrapContext";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { loadRapportDetailleSearchParams } from "@/client/searchParams/accueilSearchParams";
 
-interface NextPageRapportDétailléProps {
+interface NextPageRapportDétailléProps extends Bootstrap {
   chantiers: ChantierRapportDetailleContrat[];
   ministères: Ministère[];
   axes: Axe[];
@@ -133,25 +135,25 @@ export const getServerSideProps: GetServerSideProps<
       searchParams.estEnAlertePossedePropositionsValeurAvancement,
   };
 
-  const [ministères, axes] =
-    session.habilitations.lecture.chantiers.length === 0
-      ? [[], []]
-      : await Promise.all([
-          getContainer("legacy")
-            .resolve("ministèreRepository")
-            .getListePourChantiers(session.habilitations.lecture.chantiers),
-          getContainer("legacy")
-            .resolve("axeRepository")
-            .getListePourChantiers(session.habilitations.lecture.chantiers),
-        ]);
+  const [[ministères, axes], territoireSélectionné, bootstrap] =
+    await Promise.all([
+      session.habilitations.lecture.chantiers.length === 0
+        ? Promise.resolve<[Ministère[], Axe[]]>([[], []])
+        : Promise.all([
+            getContainer("legacy")
+              .resolve("ministèreRepository")
+              .getListePourChantiers(session.habilitations.lecture.chantiers),
+            getContainer("legacy")
+              .resolve("axeRepository")
+              .getListePourChantiers(session.habilitations.lecture.chantiers),
+          ]),
+      getContainer("legacy")
+        .resolve("territoireRepository")
+        .récupérer(territoireCode),
+      loadBootstrap(session),
+    ]);
 
   const habilitation = new Habilitation(session.habilitations);
-
-  const territoireRepository = getContainer("legacy").resolve(
-    "territoireRepository",
-  );
-  const territoireSélectionné =
-    await territoireRepository.récupérer(territoireCode);
 
   const [sorting = TRI_CHANTIERS_PAR_DEFAUT] = searchParams.sort;
 
@@ -449,6 +451,7 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
+      ...bootstrap,
       chantiers: chantiersAvecAlertes.map((chantier) => {
         // @ts-expect-error
         delete chantier.mailles;

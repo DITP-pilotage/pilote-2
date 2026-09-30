@@ -15,6 +15,7 @@ import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Tooltip } from "@/components/shared/Tooltip";
+import { BootstrapProvider } from "@/components/_commons/Bootstrap/BootstrapContext";
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
@@ -98,10 +99,18 @@ function MonApplication({ Component, pageProps }: AppProps) {
       <ReactQueryDevtools initialIsOpen={false} />
       <Tooltip.Provider>
         <SessionProvider session={pageProps.session}>
-          <MiseEnPage afficherLeLoader={afficherLeLoader}>
-            <Component {...pageProps} />
-            <Toaster />
-          </MiseEnPage>
+          <BootstrapProvider
+            value={{
+              session: pageProps.session,
+              variablesContenu: pageProps.variablesContenu,
+              utilisateurConnecte: pageProps.utilisateurConnecte,
+            }}
+          >
+            <MiseEnPage afficherLeLoader={afficherLeLoader}>
+              <Component {...pageProps} />
+              <Toaster />
+            </MiseEnPage>
+          </BootstrapProvider>
         </SessionProvider>
       </Tooltip.Provider>
     </NuqsAdapter>

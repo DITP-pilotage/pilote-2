@@ -4,22 +4,25 @@ import { createTRPCNext } from "@trpc/next";
 import superjson from "superjson";
 import { AppRouter } from "./trpc.interface";
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: (failureCount, error) => {
-        if (
-          error instanceof TRPCClientError &&
-          error?.data?.code === "UNAUTHORIZED"
-        ) {
-          return false;
-        }
-        return failureCount < 3;
+const creerQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: (failureCount, error) => {
+          if (
+            error instanceof TRPCClientError &&
+            error?.data?.code === "UNAUTHORIZED"
+          ) {
+            return false;
+          }
+          return failureCount < 3;
+        },
       },
     },
-  },
-});
+  });
+
+const queryClientNavigateur = creerQueryClient();
 
 const récupérerBaseUrl = () => {
   if (typeof window !== "undefined") return "";
@@ -33,7 +36,12 @@ const api = createTRPCNext<AppRouter>({
   transformer: superjson,
   config({ ctx }) {
     return {
-      queryClient,
+      // Côté serveur, un cache partagé entre requêtes servirait les données d'un
+      // utilisateur (profil connecté, par exemple) dans le rendu d'un autre.
+      queryClient:
+        typeof window === "undefined"
+          ? creerQueryClient()
+          : queryClientNavigateur,
       links: [
         loggerLink({
           enabled: (opts) =>
