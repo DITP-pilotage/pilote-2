@@ -337,6 +337,10 @@ masqué.
 7. Les seeds du niveau 2 écrivent les valeurs d'indicateur dans
    `indicateur_territoire`, que `get_indicateurs` ne lit pas. Sans impact sur la
    sélection d'outils ; le helper du niveau 3 sème `indicateur_territoire_jalon`.
+8. Le scénario coordinateur « Synthétise les commentaires … notamment les
+   principales actions identifiées » vise des types de commentaires
+   (« actions à venir », « actions à valoriser ») qui sont nationaux, donc
+   invisibles sur une région. La grille exige qu'Albert le dise.
 
 ## Hors périmètre
 
