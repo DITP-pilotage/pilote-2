@@ -245,6 +245,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
     },
+    accesPilote: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ACCES_PILOTE",
+    },
     comparaisonTerritoires: {
       format: Boolean,
       default: false,

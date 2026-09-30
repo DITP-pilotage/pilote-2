@@ -19,6 +19,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_RAPPORT_RESPONSABLES_DONNEES: boolean;
   NEXT_PUBLIC_FF_CREATION_COMPTE_ARS: boolean;
   NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES: boolean;
+  NEXT_PUBLIC_FF_ACCES_PILOTE: boolean;
   NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES: boolean;
   NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE: boolean;
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
@@ -110,6 +111,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
     configKey: "masquerIndicateursNonApplicables",
     label: "Masquer indicateurs non applicables",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_ACCES_PILOTE",
+    configKey: "accesPilote",
+    label: "Accès Pilote",
   },
   {
     envKey: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
