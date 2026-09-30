@@ -5,6 +5,9 @@ import {
 import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
 import { prisma } from "@/server/db/prisma";
 
+const FORMAT_UUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererUtilisateursParProfilEtChantierIds(
     profilCodes: string[],
@@ -98,9 +101,11 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererParIds(
     ids: string[],
   ): Promise<Map<string, UtilisateurEnrichi>> {
-    if (ids.length === 0) return new Map();
+    // `utilisateur.id` est un UUID : un seul identifiant malformé ferait échouer toute la requête.
+    const idsValides = [...new Set(ids)].filter((id) => FORMAT_UUID.test(id));
+    if (idsValides.length === 0) return new Map();
     const utilisateurs = await prisma.utilisateur.findMany({
-      where: { id: { in: ids } },
+      where: { id: { in: idsValides } },
       select: {
         id: true,
         nom: true,

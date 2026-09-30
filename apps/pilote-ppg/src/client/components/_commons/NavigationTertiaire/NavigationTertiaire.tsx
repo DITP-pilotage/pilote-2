@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Tabs } from "radix-ui";
 
 type NavigationTertiaireItem = {
@@ -9,12 +10,14 @@ type NavigationTertiaireProps = {
   items: NavigationTertiaireItem[];
   value: string;
   onValueChange: (value: string) => void;
+  children?: ReactNode;
 };
 
 export const NavigationTertiaire = ({
   items,
   value,
   onValueChange,
+  children,
 }: NavigationTertiaireProps) => {
   return (
     <Tabs.Root onValueChange={onValueChange} value={value}>
@@ -29,6 +32,9 @@ export const NavigationTertiaire = ({
           </Tabs.Trigger>
         ))}
       </Tabs.List>
+      {children !== undefined && (
+        <Tabs.Content value={value}>{children}</Tabs.Content>
+      )}
     </Tabs.Root>
   );
 };

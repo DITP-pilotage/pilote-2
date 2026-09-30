@@ -1,5 +1,6 @@
 import type {
   ColumnFiltersState,
+  GroupingState,
   OnChangeFn,
   PaginationState,
   SortingState,
@@ -29,6 +30,7 @@ export type UrlStateConfig = {
     columnId: string;
     default?: string[];
   }>;
+  grouping?: { param: string; default: string; values: string[] };
   shallow?: boolean;
   history?: "push" | "replace";
   throttleMs?: number;
@@ -53,12 +55,14 @@ export type UrlTableState = {
     pagination?: PaginationState;
     globalFilter?: string;
     columnFilters?: ColumnFiltersState;
+    grouping?: GroupingState;
   };
   handlers: {
     onSortingChange?: OnChangeFn<SortingState>;
     onPaginationChange?: OnChangeFn<PaginationState>;
     onGlobalFilterChange?: OnChangeFn<string>;
     onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+    onGroupingChange?: OnChangeFn<GroupingState>;
   };
   hasActiveFilters: boolean;
   resetFilters: () => void;
@@ -112,6 +116,18 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
     filterParsers,
     options,
   );
+  const groupingParsers = useMemo(
+    () => ({
+      grouping: parseAsString.withDefault(
+        stableConfig?.grouping?.default ?? "",
+      ),
+    }),
+    [stableConfig],
+  );
+  const [groupingQuery, setGroupingQuery] = useQueryStates(groupingParsers, {
+    ...options,
+    urlKeys: { grouping: stableConfig?.grouping?.param ?? "groupement" },
+  });
 
   const toColumnFilters = (
     source: Record<string, string[]>,
@@ -136,6 +152,12 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
     };
   }
 
+  const groupingConfig = stableConfig.grouping;
+  const groupingValue =
+    groupingConfig && groupingConfig.values.includes(groupingQuery.grouping)
+      ? groupingQuery.grouping
+      : groupingConfig?.default;
+
   const state = {
     ...(stableConfig.sorting ? { sorting: query.sort } : {}),
     ...(stableConfig.pagination
@@ -145,6 +167,7 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
     ...(filters.length > 0
       ? { columnFilters: toColumnFilters(filterValues) }
       : {}),
+    ...(groupingConfig && groupingValue ? { grouping: [groupingValue] } : {}),
   };
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) =>
@@ -186,6 +209,15 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
     backToFirstPage();
   };
 
+  const onGroupingChange: OnChangeFn<GroupingState> = (updater) => {
+    const next = resolve(updater, groupingValue ? [groupingValue] : []);
+    void setGroupingQuery({ grouping: next[0] ?? null });
+    void setQuery({
+      ...(stableConfig.sorting ? { sort: null } : {}),
+      ...(stableConfig.pagination ? { page: null } : {}),
+    });
+  };
+
   const hasActiveFilters =
     filters.some(
       (filter) =>
@@ -206,6 +238,7 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
       ...(stableConfig.pagination ? { onPaginationChange } : {}),
       ...(stableConfig.globalFilter ? { onGlobalFilterChange } : {}),
       ...(filters.length > 0 ? { onColumnFiltersChange } : {}),
+      ...(groupingConfig ? { onGroupingChange } : {}),
     },
     hasActiveFilters,
     resetFilters,

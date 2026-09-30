@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
-import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import { useEnv } from "@/client/hooks/useEnv";
 import { ModeExportContext } from "./ModeExportContext";
 import { useExportImage } from "./useExportImage";
@@ -34,13 +34,10 @@ export const ExportableWidget = ({
         >
           <Icone className="w-4 h-4" icone={Download1Icon} />
         </button>
-        <button
+        <BoutonCopier
+          libelle="Copier dans le presse-papiers"
           onClick={copierDansLePressePapiers}
-          type="button"
-          aria-label="Copier dans le presse-papiers"
-        >
-          <Icone className="w-4 h-4" icone={ClipboardIcon} />
-        </button>
+        />
         {ffExportWidgets && boutonExportCsv}
       </div>
     </div>

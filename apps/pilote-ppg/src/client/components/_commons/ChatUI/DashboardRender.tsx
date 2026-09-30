@@ -7,8 +7,7 @@ import type {
 } from "@/server/albert/tools/composeDashboard";
 import { DEFAULT_WIDTHS } from "@/server/albert/tools/composeDashboardLayout";
 import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
-import { ActionReponse } from "@/components/_commons/ChatUI/ActionReponse";
-import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import { clsxm } from "@/utils/clsxm";
 import { DashboardWidgetRegistry } from "./DashboardWidgets/DashboardWidgetRegistry";
 import { DashboardWidgetErrorBoundary } from "./DashboardWidgets/DashboardWidgetErrorBoundary";
@@ -56,10 +55,11 @@ export const DashboardRender = ({
           {output.titre}
         </h3>
         <span className="flex-1" />
-        <ActionReponse
-          icone={ClipboardIcon}
-          label="Copier l'image"
+        <BoutonCopier
+          className="h-7 px-2 text-xs font-medium"
+          libelle="Copier l'image"
           onClick={copierImage}
+          texte="Copier l'image"
         />
       </div>
       <div className="bg-white p-3" ref={contenuRef}>

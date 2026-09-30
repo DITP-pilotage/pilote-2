@@ -29,6 +29,7 @@ import { metadataZonegroupRouter } from "./metadataZonegroup";
 import { metadataAxeRouter } from "./metadataAxe";
 import { metadataPpgRouter } from "./metadataPpg";
 import { metadataEngagementRouter } from "./metadataEngagement";
+import { annuaireRouter } from "./annuaire";
 
 export const appRouter = créerRouteurTRPC({
   chantier: chantierRouter,
@@ -61,4 +62,5 @@ export const appRouter = créerRouteurTRPC({
   metadataAxe: metadataAxeRouter,
   metadataPpg: metadataPpgRouter,
   metadataEngagement: metadataEngagementRouter,
+  annuaire: annuaireRouter,
 });

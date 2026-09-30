@@ -1,8 +1,7 @@
 import { useRef } from "react";
 import { toBlob } from "html-to-image";
 import { toast } from "sonner";
-import { Icone } from "@/components/_commons/Icone";
-import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 
 export const BaseDisplayTool = ({
   children,
@@ -35,14 +34,11 @@ export const BaseDisplayTool = ({
   return (
     <div className="isolate animate-fade-in bg-white p-2 shadow-lg rounded-lg border border-gray-300/30 mt-4 mb-8 relative">
       <div ref={contentRef}>{children}</div>
-      <button
-        className="absolute top-1 right-1 p-1 rounded bg-white/80 text-gray-500 hover:text-gray-800 hover:bg-gray-100 border border-gray-200"
+      <BoutonCopier
+        className="absolute top-1 right-1 p-1 rounded bg-white/80 hover:bg-gray-100 border border-gray-200"
+        libelle="Copier dans le presse-papiers"
         onClick={copierDansLePressePapiers}
-        title="Copier dans le presse-papiers"
-        type="button"
-      >
-        <Icone className="w-4 h-4" icone={ClipboardIcon} />
-      </button>
+      />
     </div>
   );
 };

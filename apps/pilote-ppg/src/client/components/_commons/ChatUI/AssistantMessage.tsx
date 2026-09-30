@@ -1,7 +1,6 @@
 import { memo, type ReactNode } from "react";
 import { toast } from "sonner";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
-import { ActionReponse } from "@/components/_commons/ChatUI/ActionReponse";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { ChoicesInline } from "@/components/_commons/ChatUI/ChoicesInline";
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
@@ -15,7 +14,7 @@ import {
 } from "@/components/_commons/ChatUI/SourcesConsultees";
 import { SqueletteTexte } from "@/components/_commons/ChatUI/Squelette";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
-import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 
 const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
 
@@ -124,11 +123,11 @@ export const AssistantMessage = memo(function AssistantMessage({
       {!isStreaming && (hasText || evaluation) && (
         <div className="flex flex-wrap items-center gap-1">
           {hasText && (
-            <ActionReponse
-              icone={ClipboardIcon}
-              label="Copier"
+            <BoutonCopier
+              className="h-7 px-2 text-xs font-medium"
+              libelle="Copier dans le presse-papiers"
               onClick={copier}
-              title="Copier dans le presse-papiers"
+              texte="Copier"
             />
           )}
           {evaluation}

@@ -31,6 +31,7 @@ export const moduleNames = [
   "metadataAxe",
   "metadataPpg",
   "metadataEngagement",
+  "annuaire",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

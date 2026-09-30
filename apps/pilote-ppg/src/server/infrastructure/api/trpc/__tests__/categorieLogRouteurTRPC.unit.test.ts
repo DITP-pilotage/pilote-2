@@ -9,6 +9,7 @@ describe("categorieDepuisRouteurTRPC", () => {
     { path: "albert.envoyerMessage", attendu: "albert" },
     { path: "applicationLog.lister", attendu: "maintenance" },
     { path: "gestionTokenAPI.creerToken", attendu: "auth" },
+    { path: "annuaire.coordinateurs", attendu: "utilisateur" },
   ])("associe le path $path a la categorie $attendu", ({ path, attendu }) => {
     expect(categorieDepuisRouteurTRPC(path)).toBe(attendu);
   });
