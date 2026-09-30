@@ -18,48 +18,38 @@ export type LigneResponsable = LigneCoordinateur & {
   chantier: ChantierAnnuaire;
 };
 
-const indexerParId = (personnes: PersonneAnnuaire[]) =>
-  new Map(personnes.map((personne) => [personne.id, personne]));
-
-export function lignesCoordinateurs({
+function joindrePersonnes<Affectation extends { personneId: string }>({
   personnes,
   affectations,
-}: AnnuaireCoordinateurs): LigneCoordinateur[] {
-  const personneParId = indexerParId(personnes);
-  return affectations.flatMap((affectation) => {
-    const personne = personneParId.get(affectation.personneId);
-    return personne ? [{ personne, territoire: affectation.territoire }] : [];
+}: {
+  personnes: PersonneAnnuaire[];
+  affectations: Affectation[];
+}) {
+  const personneParId = new Map(
+    personnes.map((personne) => [personne.id, personne]),
+  );
+  return affectations.flatMap(({ personneId, ...affectation }) => {
+    const personne = personneParId.get(personneId);
+    return personne ? [{ personne, ...affectation }] : [];
   });
 }
 
-export function lignesResponsables({
-  personnes,
-  affectations,
-}: AnnuaireResponsables): LigneResponsable[] {
-  const personneParId = indexerParId(personnes);
-  return affectations.flatMap((affectation) => {
-    const personne = personneParId.get(affectation.personneId);
-    return personne
-      ? [
-          {
-            personne,
-            chantier: affectation.chantier,
-            territoire: affectation.territoire,
-          },
-        ]
-      : [];
-  });
-}
+export const lignesCoordinateurs = (
+  annuaire: AnnuaireCoordinateurs,
+): LigneCoordinateur[] => joindrePersonnes(annuaire);
 
-// Clés de regroupement ET de tri : une valeur unique par groupe, dans l'ordre d'affichage voulu.
+export const lignesResponsables = (
+  annuaire: AnnuaireResponsables,
+): LigneResponsable[] => joindrePersonnes(annuaire);
+
+// Identifiants de regroupement : le tri est porté par les `comparer*` (sortFn des colonnes).
 export const cleTerritoire = (territoire: TerritoireAnnuaire) =>
-  `${territoire.maille === "REG" ? 0 : 1}|${territoire.nom}|${territoire.code}`;
+  territoire.code;
 
-export const clePersonne = (personne: PersonneAnnuaire) =>
-  `${personne.nom} ${personne.prenom}|${personne.id}`;
+export const clePersonne = (personne: PersonneAnnuaire) => personne.id;
 
 export const cleCouple = (ligne: LigneResponsable) =>
-  `${ligne.chantier.nom}|${ligne.chantier.id}|${cleTerritoire(ligne.territoire)}`;
+  `${ligne.chantier.id}|${ligne.territoire.code}`;
 
 const collator = new Intl.Collator("fr", {
   sensitivity: "base",
