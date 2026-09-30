@@ -1,7 +1,8 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { seedEvalWorld } from "../world";
 import { seedMondeTerritorial } from "./mondeTerritorial";
-import { chantiersAttendus, readGroundTruth } from "./groundTruth";
+import { readGroundTruth } from "./groundTruth";
+import { chantiersAttendus } from "./truth";
 
 describe("readGroundTruth", () => {
   it(

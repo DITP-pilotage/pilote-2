@@ -1,6 +1,6 @@
 import type { Evidence } from "./evidence";
 import { BASE_IDS, grid, judged, mechanical } from "./grid";
-import { chantiersAttendus } from "./groundTruth";
+import { chantiersAttendus } from "./truth";
 import {
   checkChantiersCited,
   checkContains,
@@ -36,7 +36,7 @@ const RESUMES_CONDENSES = judged({
   id: "Résumés condensés",
   rule: "Commentaires : condense en 1-2 phrases factuelles, jamais in extenso ; « Pas de commentaire disponible » sinon",
   instruction:
-    "Sous chaque chantier listé, un résumé de 1 à 2 phrases du commentaire de synthèse de la fiche, reformulé et non recopié mot pour mot. Un chantier dont la synthèse n'a pas de commentaire (commentaire null dans la fiche) porte exactement « Pas de commentaire disponible ».",
+    "Sous chaque chantier listé, un résumé de 1 à 2 phrases du commentaire de synthèse de la fiche, reformulé et non recopié mot pour mot. Un chantier dont la synthèse n'a pas de commentaire (commentaire null dans la fiche) porte « Pas de commentaire disponible », SAUF sur un territoire MASQUÉ, où l'indication que le commentaire n'est pas accessible en tient lieu.",
 });
 
 const TABLEAU_COMPARATIF = mechanical({

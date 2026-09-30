@@ -9,11 +9,8 @@ import type { AgentTurn, ObservedToolCall } from "../types";
 import { askJudge } from "./askJudge";
 import { extractMatter, maskedTerritories, type Evidence } from "./evidence";
 import type { Criterion, Grid, JudgedCriterion } from "./grid";
-import {
-  readGroundTruth,
-  type GroundTruth,
-  type TruthScope,
-} from "./groundTruth";
+import { readGroundTruth } from "./groundTruth";
+import type { GroundTruth, TruthScope } from "./truth";
 import type { Verdict } from "./judge";
 import { seedMondeTerritorial } from "./mondeTerritorial";
 import { JALON_COURANT } from "./territoires";

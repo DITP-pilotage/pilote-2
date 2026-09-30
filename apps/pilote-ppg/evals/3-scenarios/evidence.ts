@@ -3,7 +3,7 @@ import { buildRapportMarkdown } from "@/server/albert/markdown/buildRapportMarkd
 import type { ObservedToolCall } from "../types";
 import type { EvalProfile } from "../world";
 import type { MatterKind } from "./grid";
-import type { GroundTruth } from "./groundTruth";
+import type { GroundTruth } from "./truth";
 
 /**
  * Tout ce qu'un critère peut regarder, qu'il soit mécanique ou jugé. Les
