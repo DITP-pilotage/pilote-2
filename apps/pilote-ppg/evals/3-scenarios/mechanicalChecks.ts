@@ -10,8 +10,21 @@
 
 export type CheckResult = { ok: boolean; detail: string };
 
-export function normalize(text: string): string {
+/**
+ * Ramène la typographie d'Albert à l'ASCII usuel : traits d'union
+ * insécables (U+2010, U+2011), apostrophes courbes (U+2018, U+2019, U+02BC)
+ * et espaces insécables (U+00A0, U+202F). Le tiret demi-cadratin et le
+ * cadratin, qui séparent `CH-XXX — Nom`, sont conservés.
+ */
+export function typographie(text: string): string {
   return text
+    .replace(/[‐‑]/g, "-")
+    .replace(/[‘’ʼ]/g, "'")
+    .replace(/[  ]/g, " ");
+}
+
+export function normalize(text: string): string {
+  return typographie(text)
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
@@ -51,7 +64,7 @@ const MALFORMED_CODE =
   /\bCH-\d{1,2}\b|\bCH\s?\d{2,4}\b|\bREG\s?\d{2}\b|\bDEPT\s?\d{2}\b/g;
 
 export function checkOfficialCodes({ text }: { text: string }): CheckResult {
-  const malformes = unique(text.match(MALFORMED_CODE) ?? []);
+  const malformes = unique(typographie(text).match(MALFORMED_CODE) ?? []);
   return malformes.length === 0
     ? { ok: true, detail: "codes officiels" }
     : { ok: false, detail: `codes mal formés : ${malformes.join(", ")}` };
@@ -198,7 +211,8 @@ export function checkAbsenceSignalee({
   text: string;
   chantierIds: string[];
 }): CheckResult {
-  const citations = [...text.matchAll(/CH-\d{3}/g)].map((match) => ({
+  const texte = typographie(text);
+  const citations = [...texte.matchAll(/CH-\d{3}/g)].map((match) => ({
     id: match[0],
     index: match.index ?? 0,
   }));
@@ -211,7 +225,7 @@ export function checkAbsenceSignalee({
         const suivante = citations
           .slice(position + 1)
           .find((autre) => autre.id !== chantierId);
-        return text.slice(citation.index, suivante?.index ?? text.length);
+        return texte.slice(citation.index, suivante?.index ?? texte.length);
       });
     return !sections.some((section) =>
       normalize(section).includes(MENTION_ABSENCE),
@@ -227,7 +241,9 @@ export function checkAbsenceSignalee({
 }
 
 function tableRows(text: string) {
-  return text.split("\n").filter((line) => /^\s*\|.*\|\s*$/.test(line));
+  return typographie(text)
+    .split("\n")
+    .filter((line) => /^\s*\|.*\|\s*$/.test(line));
 }
 
 export function checkHasTable({ text }: { text: string }): CheckResult {
@@ -294,4 +310,65 @@ export function checkExactAnswer({
   return normalize(text) === normalize(expected)
     ? { ok: true, detail: "réponse attendue" }
     : { ok: false, detail: `réponse : « ${text.trim().slice(0, 120)} »` };
+}
+
+type DashboardContainer = { widgets: { type: string }[] };
+
+/**
+ * Une section de tableau de bord commence à un `widget_titre_section` et
+ * court jusqu'au suivant : un conteneur n'est qu'une ligne de la grille.
+ * Run du 30/09 : Albert place le titre, les indicateurs clés et la
+ * cartographie dans trois conteneurs d'une même section. Sans titre de
+ * section, chaque conteneur en est une.
+ */
+function sectionsDuDashboard(containers: DashboardContainer[]) {
+  const aDesTitres = containers.some(
+    (container) => container.widgets[0]?.type === "widget_titre_section",
+  );
+  if (!aDesTitres) return containers.map((container) => container.widgets);
+
+  return containers.reduce<{ type: string }[][]>((sections, container) => {
+    if (
+      sections.length === 0 ||
+      container.widgets[0]?.type === "widget_titre_section"
+    ) {
+      return [...sections, [...container.widgets]];
+    }
+    sections[sections.length - 1].push(...container.widgets);
+    return sections;
+  }, []);
+}
+
+export function checkSectionsDashboard({
+  containers,
+  chantierIds,
+}: {
+  containers: DashboardContainer[];
+  chantierIds: string[];
+}): CheckResult {
+  const chantiersParSection = sectionsDuDashboard(containers).map((widgets) => [
+    ...new Set(
+      widgets
+        .filter((widget) => "chantier_id" in widget)
+        .map((widget) => (widget as { chantier_id: string }).chantier_id),
+    ),
+  ]);
+
+  const [premiere = [], ...suivantes] = chantiersParSection;
+  if (premiere.length > 0) {
+    return { ok: false, detail: "la première section porte sur un chantier" };
+  }
+
+  const attendus = [...chantierIds].sort();
+  const obtenus = suivantes
+    .filter((ids) => ids.length > 0)
+    .map((ids) => ids.join("+"))
+    .sort();
+
+  return JSON.stringify(obtenus) === JSON.stringify(attendus)
+    ? { ok: true, detail: `une section par chantier : ${attendus.join(", ")}` }
+    : {
+        ok: false,
+        detail: `sections chantier : ${obtenus.join(", ") || "aucune"}, attendu ${attendus.join(", ")}`,
+      };
 }

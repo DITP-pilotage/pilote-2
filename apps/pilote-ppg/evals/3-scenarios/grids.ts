@@ -13,6 +13,7 @@ import {
   checkNoLink,
   checkNoVerbatim,
   checkResumesCourts,
+  checkSectionsDashboard,
   checkTableTerritories,
 } from "./mechanicalChecks";
 
@@ -378,43 +379,16 @@ export const GRIDS = {
       mechanical({
         id: "Sections dans l'ordre",
         rule: "Demande : une première section territoire, puis une section par chantier en retard ou en difficulté",
-        check: (evidence) => {
-          if (!evidence.dashboard) {
-            return { ok: false, detail: "aucun dashboard" };
-          }
-          const chantiersParSection = evidence.dashboard.containers.map(
-            (container) => [
-              ...new Set(
-                container.widgets
-                  .filter((widget) => "chantier_id" in widget)
-                  .map(
-                    (widget) => (widget as { chantier_id: string }).chantier_id,
-                  ),
-              ),
-            ],
-          );
-          const [premiere = [], ...suivantes] = chantiersParSection;
-          if (premiere.length > 0) {
-            return {
-              ok: false,
-              detail: "la première section porte sur un chantier",
-            };
-          }
-          const attendus = chantiersAttendus({
-            truth: evidence.truth,
-            view: "tous",
-          }).map((chantier) => chantier.id);
-          const obtenus = suivantes.map((ids) => ids.join("+")).sort();
-          return JSON.stringify(obtenus) === JSON.stringify(attendus)
-            ? {
-                ok: true,
-                detail: `une section par chantier : ${attendus.join(", ")}`,
-              }
-            : {
-                ok: false,
-                detail: `sections chantier : ${obtenus.join(", ") || "aucune"}, attendu ${attendus.join(", ")}`,
-              };
-        },
+        check: (evidence) =>
+          evidence.dashboard
+            ? checkSectionsDashboard({
+                containers: evidence.dashboard.containers,
+                chantierIds: chantiersAttendus({
+                  truth: evidence.truth,
+                  view: "tous",
+                }).map((chantier) => chantier.id),
+              })
+            : { ok: false, detail: "aucun dashboard" },
       }),
       mechanical({
         id: "Pas de chiffre dans le texte",
