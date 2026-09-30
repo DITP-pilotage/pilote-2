@@ -1,9 +1,19 @@
+import { toast } from "sonner";
+import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import type { PersonneAnnuaire } from "@/server/annuaire/queries/personnesAnnuaire";
-import { BoutonCopierEmail } from "./BoutonCopierEmail";
 
 export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
   const nomComplet = `${personne.prenom} ${personne.nom}`;
+
+  const copierEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(personne.email);
+      toast.success("Adresse e-mail copiée");
+    } catch {
+      toast.error("L'adresse e-mail n'a pas pu être copiée");
+    }
+  };
 
   return (
     <div className="flex flex-col gap-0.5">
@@ -22,10 +32,10 @@ export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
         >
           {personne.email}
         </a>
-        <BoutonCopierEmail
-          className="-my-2 ml-1 align-middle"
-          email={personne.email}
-          nomComplet={nomComplet}
+        <BoutonCopier
+          className="ml-1.5 align-middle"
+          libelle={`Copier l'adresse e-mail de ${nomComplet}`}
+          onClick={() => void copierEmail()}
         />
       </p>
     </div>

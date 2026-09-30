@@ -6,7 +6,7 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
-import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import { Icone } from "@/components/_commons/Icone";
 import useIndicateurEvolution from "./useIndicateurEvolution";
 import { BaseIndicateurEvolution } from "./BaseIndicateurEvolution";
@@ -135,14 +135,12 @@ export const IndicateurEvolution: FunctionComponent<{
         <Icone className="w-4 h-4" icone={Download1Icon} />
         Enregistrer comme image
       </button>
-      <button
-        className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm whitespace-nowrap"
+      <BoutonCopier
+        className="gap-2 font-medium whitespace-nowrap"
+        libelle="Copier dans le presse-papiers"
         onClick={copierDansLePressePapiers}
-        type="button"
-      >
-        <Icone className="w-4 h-4" icone={ClipboardIcon} />
-        Copier dans le presse-papiers
-      </button>
+        texte="Copier dans le presse-papiers"
+      />
     </div>
   );
 
