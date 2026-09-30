@@ -10,10 +10,21 @@ set -a
 source "$PROJECT_ROOT/${ENV_FILE:-.env.e2e}"
 set +a
 
-pnpm exec prisma migrate reset --force
-# Prisma 7 n'enchaine plus le seed apres un reset : il faut l'appeler explicitement,
-# sinon les referentiels (profil, scope, territoire) restent vides et les inserts
-# de utilisateurs-test.sql cassent sur la FK utilisateur_profil_code_fkey.
+# Ce script vide la base : il ne tourne que sur la base e2e locale.
+if [ "$E2E_SEED_AUTORISE" != "true" ]; then
+  echo "seed.sh : E2E_SEED_AUTORISE=true absent de ${ENV_FILE:-.env.e2e}, abandon." >&2
+  exit 1
+fi
+if ! [[ "$DATABASE_URL" =~ @(localhost|127\.0\.0\.1)(:[0-9]+)?/ ]]; then
+  echo "seed.sh : DATABASE_URL ne pointe pas sur une base locale, abandon." >&2
+  exit 1
+fi
+
+# Pas de `prisma migrate reset` : Prisma le refuse aux agents IA et le supprime en v8.
+psql -q -d "$DATABASE_URL" -c "DROP SCHEMA IF EXISTS raw_data CASCADE; DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;"
+pnpm exec prisma migrate deploy
+# Sans ce seed, les referentiels (profil, scope, territoire) restent vides et les
+# inserts de utilisateurs-test.sql cassent sur la FK utilisateur_profil_code_fkey.
 pnpm exec prisma db seed
 
 psql -q -d "$DATABASE_URL" -f "$SCRIPT_DIR/schema.sql"
