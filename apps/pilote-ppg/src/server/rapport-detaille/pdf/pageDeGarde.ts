@@ -2,8 +2,8 @@ import { Content } from "pdfmake/interfaces";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import { px, rem } from "@/server/pdf/units";
-import { TEXT_COLOR } from "@/server/pdf/primitives";
+import { px, rem, cssLineHeight } from "@/server/pdf/units";
+import { TEXT_COLOR, TITLE_COLOR } from "@/server/pdf/primitives";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import {
   DEVISE_SVG,
@@ -94,12 +94,12 @@ function filterGroupPdf(group: FilterGroup): Content {
         text: group.titre,
         bold: true,
         fontSize: rem(1.3),
-        lineHeight: 28 / 20.8,
-        color: TEXT_COLOR,
+        lineHeight: cssLineHeight(28, 20.8),
+        color: TITLE_COLOR,
       },
       {
-        stack: group.items,
-        margin: [rem(1), rem(0.25), 0, rem(1)],
+        ul: group.items,
+        margin: [rem(0.5), rem(0.25), 0, rem(1)],
         color: TEXT_COLOR,
       },
     ],
@@ -196,7 +196,12 @@ export function pageDeGardePdf(params: {
             width: "*",
             margin: [rem(2.5), rem(0.5), 0, 0],
             stack: [
-              { text: "PILOTE", bold: true, fontSize: px(20), lineHeight: 1.6 },
+              {
+                text: "PILOTE",
+                bold: true,
+                fontSize: px(20),
+                lineHeight: cssLineHeight(32, 20),
+              },
               {
                 text: "Piloter l'action publique par les résultats",
                 fontSize: px(16),
@@ -223,9 +228,9 @@ export function pageDeGardePdf(params: {
                     ],
                     bold: true,
                     fontSize: rem(4),
-                    lineHeight: 4.5 / 4,
+                    lineHeight: cssLineHeight(4.5, 4),
                     alignment: "center",
-                    color: TEXT_COLOR,
+                    color: TITLE_COLOR,
                     margin: [0, 0, 0, rem(3)],
                   },
                   {

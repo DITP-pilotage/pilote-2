@@ -21,9 +21,10 @@ import {
   PRIMARY_COLOR,
   tablePdf,
   TEXT_COLOR,
+  TITLE_COLOR,
 } from "@/server/pdf/primitives";
 import { iconSvg } from "@/server/pdf/svgFromComponent";
-import { px, rem } from "@/server/pdf/units";
+import { px, rem, cssLineHeight } from "@/server/pdf/units";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import { section } from "@/server/rapport-detaille/pdf/section";
 import { findTerritoire } from "@/server/rapport-detaille/pdf/avancement";
@@ -133,8 +134,8 @@ function indicateurBloc(
     text: indicateurTitle(indicateur),
     bold: true,
     fontSize: px(20),
-    lineHeight: 32 / 20,
-    color: TEXT_COLOR,
+    lineHeight: cssLineHeight(32, 20),
+    color: TITLE_COLOR,
   };
   return {
     stack: [
@@ -275,8 +276,8 @@ export function indicateursPdf(params: {
           {
             text: `${rubrique.nom} (${indicateursRubrique.length})`,
             fontSize: px(18),
-            lineHeight: 28 / 18,
-            color: TEXT_COLOR,
+            lineHeight: cssLineHeight(28, 18),
+            color: TITLE_COLOR,
             margin: [0, 0, 0, px(8)],
           },
           ...indicateursRubrique.map((indicateur) =>

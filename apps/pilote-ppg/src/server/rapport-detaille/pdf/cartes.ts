@@ -4,9 +4,9 @@ import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légen
 import { getAvancementLegend } from "@/components/_commons/Cartographie/CartographieAvancement/avancementFill";
 import { getMeteoLegend } from "@/components/_commons/Cartographie/CartographieMétéo/meteoFill";
 import { Meteo, meteos } from "@/server/domain/météo/Météo.interface";
-import { blocPdf, TEXT_COLOR } from "@/server/pdf/primitives";
+import { blocRowPdf, TITLE_COLOR } from "@/server/pdf/primitives";
 import { meteoPictoSvg } from "@/server/pdf/svgFromComponent";
-import { px, rem } from "@/server/pdf/units";
+import { rem } from "@/server/pdf/units";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import {
   ChantierDetail,
@@ -21,22 +21,20 @@ import { titleWithInfoPdf } from "@/server/rapport-detaille/pdf/vueDEnsemble";
 import { section } from "@/server/rapport-detaille/pdf/section";
 import { CONTENT_WIDTH, GRID_GAP } from "@/server/rapport-detaille/pdf/layout";
 
-const HALF_WIDTH = (CONTENT_WIDTH - GRID_GAP) / 2;
-
 function isMeteo(value: string): value is Meteo {
   return meteos.some((meteo) => meteo === value);
 }
 
-function carteBloc(titre: string, svg: string, legend: Content): Content {
-  return blocPdf({
+function carteBloc(titre: string, svg: string, legend: Content) {
+  return {
     content: {
       stack: [
-        titleWithInfoPdf(titre, { color: TEXT_COLOR }),
-        { svg, width: rem(25), alignment: "center" },
+        titleWithInfoPdf(titre, { color: TITLE_COLOR }),
+        { svg, width: rem(25), alignment: "center" as const },
         legend,
       ],
     },
-  });
+  };
 }
 
 export function cartesPdf(params: {
@@ -54,7 +52,7 @@ export function cartesPdf(params: {
     chantier.estTerritorialisé;
   if (!showAvancement && !showMeteo) return null;
 
-  const cartes: Content[] = [];
+  const cartes: ReturnType<typeof carteBloc>[] = [];
   if (showAvancement) {
     cartes.push(
       carteBloc(
@@ -100,9 +98,8 @@ export function cartesPdf(params: {
       ),
     );
   }
-  return section("Répartition géographique", {
-    columns: cartes.map((carte) => ({ width: HALF_WIDTH, stack: [carte] })),
-    columnGap: GRID_GAP,
-    margin: [0, 0, 0, px(8)],
-  });
+  return section(
+    "Répartition géographique",
+    blocRowPdf(cartes, { columns: 2, width: CONTENT_WIDTH, gap: GRID_GAP }),
+  );
 }

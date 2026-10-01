@@ -6,14 +6,15 @@ import { getAvancementLegend } from "@/components/_commons/Cartographie/Cartogra
 import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import {
-  blocPdf,
+  blocRowPdf,
   encartPdf,
   PRIMARY_COLOR,
   separatorPdf,
   TEXT_COLOR,
+  TITLE_COLOR,
 } from "@/server/pdf/primitives";
 import { iconSvg, meteoPictoSvg } from "@/server/pdf/svgFromComponent";
-import { px, rem } from "@/server/pdf/units";
+import { px, rem, cssLineHeight } from "@/server/pdf/units";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import { VueDEnsembleRapportDetaille } from "@/server/rapport-detaille/rapportDetaille.interface";
 import {
@@ -30,7 +31,6 @@ const WARNING_BACKGROUND = "#FFE9E6";
 const CARD_BORDER = "#E5E5E5";
 const ALERTE_BORDER = "#DDDDDD";
 const METEOS = ["ORAGE", "NUAGE", "COUVERT", "SOLEIL"] as const;
-const HALF_WIDTH = (CONTENT_WIDTH - GRID_GAP) / 2;
 
 export function titleWithInfoPdf(
   text: string,
@@ -42,8 +42,8 @@ export function titleWithInfoPdf(
         width: "auto",
         text,
         fontSize: px(18),
-        lineHeight: 28 / 18,
-        bold: options.bold ?? false,
+        lineHeight: cssLineHeight(28, 18),
+        bold: options.bold ?? true,
         color: options.color ?? PRIMARY_COLOR,
       },
       {
@@ -56,17 +56,29 @@ export function titleWithInfoPdf(
   };
 }
 
+function centeredRow(contents: Content[], gap: number): Content {
+  return {
+    columns: [
+      { width: "*", text: "" },
+      ...contents.map((content) => ({
+        width: "auto" as const,
+        stack: [content],
+      })),
+      { width: "*", text: "" },
+    ],
+    columnGap: gap,
+  };
+}
+
 function avancementsPdf(
   vue: VueDEnsembleRapportDetaille,
   jalon: number,
 ): Content {
   const archived = vue.chantiersSontArchives;
   return {
-    columns: [
-      { width: "*", text: "" },
-      {
-        width: rem(10.5),
-        stack: [
+    stack: [
+      centeredRow(
+        [
           jaugePdf({
             pourcentage: vue.moyenneTauxAvancementTerritoire,
             couleur: archived ? "gris" : "bleu",
@@ -74,27 +86,28 @@ function avancementsPdf(
             libellé: `Taux d'avancement à échéance ${jalon}`,
           }),
         ],
-      },
-      ...(
-        [
-          ["Minimum", vue.avancementsAgrégés.minimum, "orange"],
-          ["Médiane", vue.avancementsAgrégés.médiane, "violet"],
-          ["Maximum", vue.avancementsAgrégés.maximum, "vert"],
-        ] as const
-      ).map(([libellé, pourcentage, couleur]) => ({
-        width: "auto" as const,
-        stack: [
+        0,
+      ),
+      { text: "", margin: [0, rem(1), 0, 0] },
+      centeredRow(
+        (
+          [
+            ["Minimum", vue.avancementsAgrégés.minimum, "orange"],
+            ["Médiane", vue.avancementsAgrégés.médiane, "violet"],
+            ["Maximum", vue.avancementsAgrégés.maximum, "vert"],
+          ] as const
+        ).map(([libellé, pourcentage, couleur]) =>
           jaugePdf({
             pourcentage,
             couleur: archived ? "gris" : couleur,
             taille: "sm",
             libellé,
           }),
-        ],
-      })),
-      { width: "*", text: "" },
+        ),
+        rem(1.5),
+      ),
     ],
-    columnGap: rem(0.5),
+    margin: [0, 0, 0, px(8)],
   };
 }
 
@@ -120,13 +133,13 @@ function meteoCardsPdf(
                   text: String(vue.repartitionMeteosChantiers[meteo]),
                   bold: true,
                   fontSize: rem(2.5),
-                  lineHeight: 1.2,
+                  lineHeight: cssLineHeight(1.2, 1),
                   color: PRIMARY_COLOR,
                   alignment: "center",
                 },
                 {
                   text: libellesMeteos[meteo],
-                  fontSize: px(14),
+                  fontSize: px(12),
                   color: TEXT_COLOR,
                   alignment: "center",
                 },
@@ -247,17 +260,17 @@ function chantiersSignalésPdf(
                           vue.filtresComptesCalculés[alerte.critère] ?? "-",
                         ),
                         bold: true,
-                        fontSize: rem(2.5),
-                        lineHeight: 1.2,
+                        fontSize: rem(2),
+                        lineHeight: cssLineHeight(1.2, 1),
                         color: WARNING_COLOR,
                       },
                       {
                         text: alerte.libellé,
-                        fontSize: px(16),
+                        fontSize: px(13),
                         color: TEXT_COLOR,
                       },
                     ],
-                    margin: [rem(1.5), rem(1.5), rem(1.5), rem(1.5)],
+                    margin: [rem(1), rem(0.75), rem(1), rem(1)],
                   },
                 ],
               ],
@@ -291,11 +304,10 @@ export function vueDEnsemblePdf(
     stack: [
       encartPdf("Vue d'ensemble"),
       {
-        columns: [
-          {
-            width: HALF_WIDTH,
-            stack: [
-              blocPdf({
+        stack: [
+          blocRowPdf(
+            [
+              {
                 content: {
                   stack: [
                     titleWithInfoPdf("Taux d'avancement moyen"),
@@ -305,20 +317,16 @@ export function vueDEnsemblePdf(
                     meteoCardsPdf(vue, context.filters.meteos),
                   ],
                 },
-              }),
-            ],
-          },
-          {
-            width: HALF_WIDTH,
-            stack: [
-              blocPdf({
+              },
+              {
                 content: {
                   stack: [
                     {
                       text: "Taux d'avancement des chantiers par territoire",
+                      bold: true,
                       fontSize: px(18),
-                      lineHeight: 28 / 18,
-                      color: TEXT_COLOR,
+                      lineHeight: cssLineHeight(28, 18),
+                      color: TITLE_COLOR,
                       margin: [0, 0, 0, px(8)],
                     },
                     { svg: carte, width: rem(25), alignment: "center" },
@@ -330,37 +338,23 @@ export function vueDEnsemblePdf(
                     ),
                   ],
                 },
-              }),
+              },
             ],
-          },
+            { columns: 2, width: CONTENT_WIDTH, gap: GRID_GAP },
+          ),
         ],
-        columnGap: GRID_GAP,
         margin: [0, rem(1.5), 0, 0],
-        unbreakable: true,
       },
       ...(vue.chantiersSontArchives
         ? []
         : [chantiersSignalésPdf(vue, context)]),
       {
         stack: [
-          blocPdf({
-            breakable: true,
-            content: {
-              stack: [
-                {
-                  text: "Liste des chantiers",
-                  fontSize: px(18),
-                  lineHeight: 28 / 18,
-                  color: PRIMARY_COLOR,
-                  margin: [0, 0, 0, px(8)],
-                },
-                chantiersTablePdf(
-                  vue.chantiers.map(withoutMailles),
-                  vue.chantiersSontArchives,
-                ),
-              ],
-            },
-          }),
+          chantiersTablePdf(
+            vue.chantiers.map(withoutMailles),
+            vue.chantiersSontArchives,
+            { titre: "Liste des chantiers" },
+          ),
         ],
         margin: [0, rem(1.75), 0, 0],
       },

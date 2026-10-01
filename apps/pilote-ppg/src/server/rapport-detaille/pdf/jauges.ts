@@ -1,7 +1,7 @@
 import { Content } from "pdfmake/interfaces";
 import { JaugeDeProgressionCouleur } from "@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
 import { jaugeSmallSvg, jaugeSvg } from "@/server/pdf/svgFromComponent";
-import { px, rem } from "@/server/pdf/units";
+import { px, rem, cssLineHeight } from "@/server/pdf/units";
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
 
 export const JAUGE_COLORS: Record<JaugeDeProgressionCouleur, string> = {
@@ -15,9 +15,21 @@ export const JAUGE_COLORS: Record<JaugeDeProgressionCouleur, string> = {
 };
 
 const JAUGE_SIZES = {
-  sm: { width: rem(3.75), fontSize: rem(1.25), lineHeight: 1.75 / 1.25 },
-  md: { width: rem(5.5), fontSize: rem(1.5), lineHeight: 2 / 1.5 },
-  lg: { width: rem(10.5), fontSize: rem(2.5), lineHeight: 3 / 2.5 },
+  sm: {
+    width: rem(3.75),
+    fontSize: rem(1.25),
+    lineHeight: cssLineHeight(1.75, 1.25),
+  },
+  md: {
+    width: rem(5.5),
+    fontSize: rem(1.5),
+    lineHeight: cssLineHeight(2, 1.5),
+  },
+  lg: {
+    width: rem(10.5),
+    fontSize: rem(2.5),
+    lineHeight: cssLineHeight(3, 2.5),
+  },
 };
 
 export function formatPourcentage(pourcentage: number | null | undefined) {
@@ -30,7 +42,7 @@ function caption(text: string): Content {
   return {
     text,
     fontSize: px(16),
-    lineHeight: 1.5,
+    lineHeight: cssLineHeight(1.5, 1),
     alignment: "center",
     color: "#161616",
   };
@@ -57,7 +69,7 @@ export function jaugePdf(params: {
     width: size.width,
     alignment: "center",
   };
-  const valueHeight = size.fontSize * size.lineHeight;
+  const valueHeight = size.fontSize * 1.5 * size.lineHeight;
   const gauge: Content[] =
     params.taille === "sm"
       ? [ring, value]

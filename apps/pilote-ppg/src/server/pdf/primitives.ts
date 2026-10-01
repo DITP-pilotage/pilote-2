@@ -10,9 +10,10 @@ import { CheckboxCircleFillIcon } from "@/components/_commons/Icones/CheckboxCir
 import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { htmlToPdfmake } from "@/server/pdf/htmlToPdfmake";
 import { iconSvg } from "@/server/pdf/svgFromComponent";
-import { px, rem } from "@/server/pdf/units";
+import { px, rem, cssLineHeight } from "@/server/pdf/units";
 
-export const TEXT_COLOR = "#161616";
+export const TEXT_COLOR = "#3A3A3A";
+export const TITLE_COLOR = "#161616";
 export const MENTION_COLOR = "#666666";
 export const PRIMARY_COLOR = "#000091";
 const BLOC_BORDER_COLOR = "#7B7B7B";
@@ -36,8 +37,18 @@ const BADGE_COLORS: Record<BadgeVariant, { background: string; text: string }> =
   };
 
 const BADGE_SIZES = {
-  sm: { fontSize: px(12), lineHeight: 20 / 12, paddingX: px(6), icon: px(12) },
-  md: { fontSize: px(14), lineHeight: 24 / 14, paddingX: px(8), icon: px(16) },
+  sm: {
+    fontSize: px(12),
+    lineHeight: cssLineHeight(20, 12),
+    paddingX: px(6),
+    icon: px(12),
+  },
+  md: {
+    fontSize: px(14),
+    lineHeight: cssLineHeight(24, 14),
+    paddingX: px(8),
+    icon: px(16),
+  },
 };
 
 export function badgePdf(
@@ -140,64 +151,116 @@ export function barreDeProgressionPdf(params: {
   };
 }
 
-export function blocPdf(params: {
+export type BlocParams = {
   titre?: string;
   titreBackground?: string;
   content: Content;
   padding?: number;
-  breakable?: boolean;
   withInfo?: boolean;
-}): Content {
+};
+
+function blocTitleCell(params: BlocParams): TableCell {
+  const title: ContentText = {
+    text: params.titre ?? "",
+    bold: true,
+    fontSize: px(16),
+    color: TITLE_COLOR,
+  };
+  return {
+    ...(params.withInfo
+      ? {
+          columns: [
+            { ...title, width: "auto" },
+            {
+              svg: iconSvg(InformationPleineIcon, PRIMARY_COLOR),
+              width: px(24),
+              margin: [px(16), -px(2), 0, 0],
+            },
+          ],
+        }
+      : title),
+    fillColor: params.titreBackground ?? BLOC_TITLE_BACKGROUND,
+    margin: [px(16), px(20), px(16), px(20)],
+  };
+}
+
+function blocContentCell(params: BlocParams): TableCell {
   const padding = params.padding ?? px(16);
+  return {
+    stack: [params.content],
+    margin: [padding, padding, padding, padding],
+  };
+}
+
+function blocLayout(titled: boolean) {
+  return {
+    hLineWidth: (index: number, node: { table: { body: unknown[] } }) =>
+      index === 0 || index === node.table.body.length
+        ? px(1)
+        : titled && index === 1
+          ? px(2)
+          : 0,
+    vLineWidth: () => px(1),
+    hLineColor: (index: number) =>
+      titled && index === 1 ? BLOC_TITLE_BORDER_COLOR : BLOC_BORDER_COLOR,
+    vLineColor: () => BLOC_BORDER_COLOR,
+    paddingLeft: () => 0,
+    paddingRight: () => 0,
+    paddingTop: () => 0,
+    paddingBottom: () => 0,
+  };
+}
+
+export function blocPdf(params: BlocParams & { breakable?: boolean }): Content {
   const body: TableCell[][] = [];
-  if (params.titre) {
-    const title: ContentText = {
-      text: params.titre,
-      bold: true,
-      fontSize: px(16),
-      color: TEXT_COLOR,
-    };
-    body.push([
-      {
-        ...(params.withInfo
-          ? {
-              columns: [
-                { ...title, width: "auto" },
-                {
-                  svg: iconSvg(InformationPleineIcon, PRIMARY_COLOR),
-                  width: px(24),
-                  margin: [px(16), -px(2), 0, 0],
-                },
-              ],
-            }
-          : title),
-        fillColor: params.titreBackground ?? BLOC_TITLE_BACKGROUND,
-        margin: [px(16), px(20), px(16), px(20)],
-      },
-    ]);
-  }
-  body.push([
-    { stack: [params.content], margin: [padding, padding, padding, padding] },
-  ]);
-  const titled = Boolean(params.titre);
+  if (params.titre) body.push([blocTitleCell(params)]);
+  body.push([blocContentCell(params)]);
   return {
     table: { widths: ["*"], body, dontBreakRows: !params.breakable },
-    layout: {
-      hLineWidth: (index: number, node) =>
-        index === 0 || index === node.table.body.length
-          ? px(1)
-          : titled && index === 1
-            ? px(2)
-            : 0,
-      vLineWidth: () => px(1),
-      hLineColor: (index: number) =>
-        titled && index === 1 ? BLOC_TITLE_BORDER_COLOR : BLOC_BORDER_COLOR,
-      vLineColor: () => BLOC_BORDER_COLOR,
-      paddingLeft: () => 0,
-      paddingRight: () => 0,
-      paddingTop: () => 0,
-      paddingBottom: () => 0,
+    layout: blocLayout(Boolean(params.titre)),
+  };
+}
+
+const NO_BORDER: [boolean, boolean, boolean, boolean] = [
+  false,
+  false,
+  false,
+  false,
+];
+
+export function blocRowPdf(
+  blocs: BlocParams[],
+  options: { columns: number; width: number; gap: number },
+): Content {
+  const blocWidth =
+    (options.width - options.gap * (options.columns - 1)) / options.columns;
+  const titled = blocs.some((bloc) => bloc.titre);
+  const widths: number[] = [];
+  const titleRow: TableCell[] = [];
+  const contentRow: TableCell[] = [];
+  for (let index = 0; index < options.columns; index += 1) {
+    if (index > 0) {
+      widths.push(options.gap);
+      titleRow.push({ text: "", border: NO_BORDER });
+      contentRow.push({ text: "", border: NO_BORDER });
+    }
+    widths.push(blocWidth);
+    const bloc = blocs.at(index);
+    if (bloc) {
+      titleRow.push(blocTitleCell(bloc));
+      contentRow.push(blocContentCell(bloc));
+    } else {
+      titleRow.push({ text: "", border: NO_BORDER });
+      contentRow.push({ text: "", border: NO_BORDER });
+    }
+  }
+  return {
+    table: {
+      widths: widths.map((width) => width - px(1)),
+      body: titled ? [titleRow, contentRow] : [contentRow],
+      dontBreakRows: true,
     },
+    layout: blocLayout(titled),
   };
 }
 
@@ -211,8 +274,8 @@ export function encartPdf(titre: string, level: "h1" | "h2" = "h2"): Content {
             text: titre,
             bold: true,
             fontSize: rem(2),
-            lineHeight: 2.5 / 2,
-            color: level === "h2" ? PRIMARY_COLOR : TEXT_COLOR,
+            lineHeight: cssLineHeight(2.5, 2),
+            color: level === "h2" ? PRIMARY_COLOR : TITLE_COLOR,
             fillColor: BLOC_TITLE_BACKGROUND,
             margin: [px(32), px(16), px(32), px(16)],
           },
@@ -236,7 +299,7 @@ export function sectionTitlePdf(
     text,
     bold: size === "h4",
     fontSize: size === "h4" ? rem(1.5) : px(18),
-    lineHeight: size === "h4" ? 2 / 1.5 : 28 / 18,
+    lineHeight: size === "h4" ? cssLineHeight(2, 1.5) : cssLineHeight(28, 18),
     color: options.color ?? PRIMARY_COLOR,
     margin: options.margin ?? [0, 0, 0, px(16)],
   };
@@ -277,8 +340,8 @@ export function alertePdf(params: {
       text: params.titre,
       bold: true,
       fontSize: px(20),
-      lineHeight: 28 / 20,
-      color: TEXT_COLOR,
+      lineHeight: cssLineHeight(28, 20),
+      color: TITLE_COLOR,
       margin: [0, 0, 0, px(4)],
     });
   }
@@ -323,8 +386,8 @@ export function publicationRubriquePdf(params: {
       text: params.titre,
       bold: true,
       fontSize: px(20),
-      lineHeight: 28 / 20,
-      color: TEXT_COLOR,
+      lineHeight: cssLineHeight(28, 20),
+      color: TITLE_COLOR,
       margin: [0, 0, 0, px(4)],
     },
   ];
@@ -344,46 +407,85 @@ export function publicationRubriquePdf(params: {
   return { stack: content, margin: [px(24), px(16), px(24), px(16)] };
 }
 
+function middleAligned(cell: Content): TableCell {
+  if (typeof cell === "object" && "table" in cell) return cell;
+  return { stack: [cell], verticalAlignment: "middle" };
+}
+
 export function tablePdf(params: {
   headers: string[];
   widths: (number | "*" | "auto")[];
-  rows: TableCell[][];
+  rows: Content[][];
   cellPadding?: [number, number];
+  framedTitle?: string;
 }): Content {
   const [paddingY, paddingX] = params.cellPadding ?? [px(16), px(16)];
+  const framed = params.framedTitle !== undefined;
+  const titleRows: TableCell[][] = framed
+    ? [
+        [
+          {
+            text: params.framedTitle ?? "",
+            colSpan: params.headers.length,
+            bold: true,
+            fontSize: px(18),
+            lineHeight: cssLineHeight(28, 18),
+            color: PRIMARY_COLOR,
+          },
+          ...params.headers.slice(1).map(() => ""),
+        ],
+      ]
+    : [];
+  const headerIndex = titleRows.length;
   return {
     table: {
-      headerRows: 1,
+      headerRows: headerIndex + 1,
       keepWithHeaderRows: 1,
       dontBreakRows: true,
       widths: params.widths.map((width) =>
         typeof width === "number" ? width - 2 * paddingX : width,
       ),
       body: [
+        ...titleRows,
         params.headers.map((header) => ({
+          verticalAlignment: "middle" as const,
           fillColor: BLOC_TITLE_BACKGROUND,
           text: header,
           bold: true,
           fontSize: px(14),
-          lineHeight: 24 / 14,
-          color: TEXT_COLOR,
+          lineHeight: cssLineHeight(24, 14),
+          color: TITLE_COLOR,
         })),
-        ...params.rows,
+        ...params.rows.map((row) => row.map(middleAligned)),
       ],
     },
     layout: {
-      hLineWidth: (index: number) => (index === 1 ? px(1) : 0),
-      vLineWidth: () => 0,
-      hLineColor: () => TABLE_HEADER_BORDER_COLOR,
-      fillColor: (rowIndex: number, _node, columnIndex: number) =>
-        rowIndex > 0 && columnIndex === 0 && rowIndex % 2 === 0
+      hLineWidth: (index: number, node) =>
+        index === headerIndex + 1
+          ? px(1)
+          : framed && (index === 0 || index === node.table.body.length)
+            ? px(1)
+            : 0,
+      vLineWidth: (index: number, node) =>
+        framed && (index === 0 || index === node.table.widths?.length)
+          ? px(1)
+          : 0,
+      hLineColor: (index: number) =>
+        index === headerIndex + 1
+          ? TABLE_HEADER_BORDER_COLOR
+          : BLOC_BORDER_COLOR,
+      vLineColor: () => BLOC_BORDER_COLOR,
+      fillColor: (rowIndex: number, _node, columnIndex: number) => {
+        const dataIndex = rowIndex - headerIndex;
+        return dataIndex > 0 && columnIndex === 0 && dataIndex % 2 === 0
           ? ZEBRA_BACKGROUND
-          : null,
+          : null;
+      },
       paddingLeft: () => paddingX,
       paddingRight: () => paddingX,
       paddingTop: () => paddingY,
       paddingBottom: (index: number) =>
-        index === 0 ? paddingY + px(2) : paddingY,
+        index === headerIndex ? paddingY + px(2) : paddingY,
     },
   };
 }

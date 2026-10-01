@@ -2,7 +2,8 @@ import { Content } from "pdfmake/interfaces";
 import { territoires as allTerritoires } from "@/client/constants/territoires.json";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import {
-  blocPdf,
+  BlocParams,
+  blocRowPdf,
   PRIMARY_COLOR,
   separatorPdf,
   TEXT_COLOR,
@@ -84,8 +85,8 @@ function territoireJaugeBloc(params: {
   date: string | null;
   couleur: "bleu" | "bleu-clair";
   libellé: string;
-}): Content {
-  return blocPdf({
+}): BlocParams {
+  return {
     titre: params.titre,
     content: {
       stack: [
@@ -100,15 +101,15 @@ function territoireJaugeBloc(params: {
       ],
       margin: [0, px(8), 0, px(8)],
     },
-  });
+  };
 }
 
 function répartitionBloc(
   detail: ChantierDetail,
   context: RapportDetailleContext,
-): Content {
+): BlocParams {
   const { global } = detail.avancement.nationale;
-  return blocPdf({
+  return {
     titre: `Répartition territoriale du taux d'avancement ${context.jalon}`,
     withInfo: true,
     content: {
@@ -141,7 +142,7 @@ function répartitionBloc(
         },
       ],
     },
-  });
+  };
 }
 
 function comparaisonBloc(
@@ -149,7 +150,7 @@ function comparaisonBloc(
   detail: ChantierDetail,
   context: RapportDetailleContext,
   territoireMaille: Maille,
-): Content {
+): BlocParams {
   const content: Content[] = [];
   const ecartTerritoires = ECART_TERRITOIRES[territoireMaille] ?? "";
   if (context.territoireCode !== "NAT-FR") {
@@ -208,22 +209,24 @@ function comparaisonBloc(
         ])
       : centered("(Non défini)", { bold: true, color: PRIMARY_COLOR }),
   );
-  return blocPdf({
+  return {
     titre: `Données de comparaison de l'avancement ${COMPARAISON_YEAR}`,
     withInfo: true,
     content: { stack: content },
-  });
+  };
 }
 
-function grid(blocs: Content[], columns: number): Content {
-  const width = (CONTENT_WIDTH - BLOC_GAP * (columns - 1)) / columns;
+function grid(blocs: BlocParams[], columns: number): Content {
   const rows: Content[] = [];
   for (let index = 0; index < blocs.length; index += columns) {
     rows.push({
-      columns: blocs
-        .slice(index, index + columns)
-        .map((bloc) => ({ width, stack: [bloc] })),
-      columnGap: BLOC_GAP,
+      stack: [
+        blocRowPdf(blocs.slice(index, index + columns), {
+          columns,
+          width: CONTENT_WIDTH,
+          gap: BLOC_GAP,
+        }),
+      ],
       margin: [0, 0, 0, BLOC_GAP],
     });
   }
@@ -244,7 +247,7 @@ export function avancementPdf(params: {
       ? territoire.maille
       : "nationale";
   const isNational = context.territoireCode === "NAT-FR";
-  const blocs: Content[] = [];
+  const blocs: BlocParams[] = [];
 
   if (
     !isNational &&

@@ -1,3 +1,4 @@
+import { cssLineHeight } from "@/server/pdf/units";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { withMarianne } from "@/server/pdf/pdfmake";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
@@ -53,7 +54,7 @@ export function buildRapportDetailleDocument(
     defaultStyle: {
       font: "Marianne",
       fontSize: BODY_FONT_SIZE,
-      lineHeight: 1.25,
+      lineHeight: cssLineHeight(24, 16),
       color: TEXT_COLOR,
     },
     content: [

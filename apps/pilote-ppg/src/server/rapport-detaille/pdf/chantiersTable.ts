@@ -1,4 +1,4 @@
-import { Content, ContentText, TableCell } from "pdfmake/interfaces";
+import { Content, ContentText } from "pdfmake/interfaces";
 import { Dashboard31Icon } from "@/components/_commons/Icones/Dashboard31Icon";
 import { MapPin21Icon } from "@/components/_commons/Icones/MapPin21Icon";
 import { Error1Icon } from "@/components/_commons/Icones/Error1Icon";
@@ -8,6 +8,7 @@ import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { iconSvg, meteoPictoSvg } from "@/server/pdf/svgFromComponent";
 import {
   barreDeProgressionPdf,
+  blocPdf,
   MENTION_COLOR,
   PRIMARY_COLOR,
   tablePdf,
@@ -32,7 +33,7 @@ function dateCell(date: string | null): ContentText[] {
     : [];
 }
 
-function nomCell(chantier: ChantierRapportDetailleWithoutMailles): TableCell {
+function nomCell(chantier: ChantierRapportDetailleWithoutMailles): Content {
   return {
     columns: [
       {
@@ -50,7 +51,7 @@ function nomCell(chantier: ChantierRapportDetailleWithoutMailles): TableCell {
 
 function typologieCell(
   chantier: ChantierRapportDetailleWithoutMailles,
-): TableCell {
+): Content {
   const icons = [
     chantier.estBaromètre ? Dashboard31Icon : null,
     chantier.estTerritorialisé ? MapPin21Icon : null,
@@ -64,7 +65,7 @@ function typologieCell(
   };
 }
 
-function meteoCell(chantier: ChantierRapportDetailleWithoutMailles): TableCell {
+function meteoCell(chantier: ChantierRapportDetailleWithoutMailles): Content {
   const picto = meteoPictoSvg(chantier.météo);
   return {
     stack: [
@@ -87,7 +88,7 @@ function meteoCell(chantier: ChantierRapportDetailleWithoutMailles): TableCell {
 function avancementCell(
   chantier: ChantierRapportDetailleWithoutMailles,
   chantiersSontArchives: boolean,
-): TableCell {
+): Content {
   return {
     stack: [
       chantier.avancement === null
@@ -108,9 +109,10 @@ function avancementCell(
 export function chantiersTablePdf(
   chantiers: ChantierRapportDetailleWithoutMailles[],
   chantiersSontArchives: boolean,
+  options: { titre?: string } = {},
 ): Content {
   if (chantiers.length === 0) {
-    return {
+    const empty: Content = {
       table: {
         widths: ["*"],
         body: [
@@ -137,8 +139,25 @@ export function chantiersTablePdf(
       },
       layout: "noBorders",
     };
+    return options.titre
+      ? blocPdf({
+          content: {
+            stack: [
+              {
+                text: options.titre,
+                bold: true,
+                fontSize: px(18),
+                color: PRIMARY_COLOR,
+                margin: [0, 0, 0, px(8)],
+              },
+              empty,
+            ],
+          },
+        })
+      : empty;
   }
   return tablePdf({
+    framedTitle: options.titre,
     headers: [
       "Chantiers",
       "Typologie",

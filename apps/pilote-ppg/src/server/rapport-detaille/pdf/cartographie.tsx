@@ -171,31 +171,44 @@ export function cartographieLegendPdf(
     pictoSvg?: string | null;
   }[],
 ): Content {
-  const perRow = entries.every((entry) => entry.libellé.length <= 12) ? 5 : 2;
-  const rows: Content[] = [];
-  for (let index = 0; index < entries.length; index += perRow) {
-    rows.push({
-      columns: entries.slice(index, index + perRow).map((entry) => ({
-        width: "auto",
-        columns: [
-          {
-            svg: swatchSvg(entry.remplissage),
-            width: rem(0.6),
-            margin: [0, px(3), 0, 0],
-          },
-          {
-            width: "auto",
-            text: entry.libellé,
-            fontSize: px(12),
-            lineHeight: 16 / 12,
-            color: "#666666",
-          },
-          ...(entry.pictoSvg ? [{ svg: entry.pictoSvg, width: px(40) }] : []),
-        ],
-        columnGap: px(6),
-        margin: [0, 0, px(12), px(4)],
-      })),
-    });
+  const SHORT_LABEL_LENGTH = 12;
+  const SHORT_PER_ROW = 5;
+  const groups: (typeof entries)[] = [];
+  for (const entry of entries) {
+    const current = groups.at(-1);
+    const isShort =
+      entry.libellé.length <= SHORT_LABEL_LENGTH && !entry.pictoSvg;
+    if (
+      isShort &&
+      current &&
+      current.length < SHORT_PER_ROW &&
+      current.every((other) => other.libellé.length <= SHORT_LABEL_LENGTH)
+    ) {
+      current.push(entry);
+    } else {
+      groups.push([entry]);
+    }
   }
+  const rows: Content[] = groups.map((group) => ({
+    columns: group.map((entry) => ({
+      width: "auto",
+      columns: [
+        {
+          svg: swatchSvg(entry.remplissage),
+          width: rem(0.6),
+          margin: [0, px(3), 0, 0],
+        },
+        {
+          width: "auto",
+          text: entry.libellé,
+          fontSize: px(12),
+          color: "#666666",
+        },
+        ...(entry.pictoSvg ? [{ svg: entry.pictoSvg, width: px(24) }] : []),
+      ],
+      columnGap: px(6),
+      margin: [0, 0, px(12), px(4)],
+    })),
+  }));
   return { stack: rows, margin: [0, px(8), 0, 0] };
 }
