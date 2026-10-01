@@ -81,8 +81,8 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
                 </Titre>
               </div>
               <div className="fr-col-12 fr-col-md-6 flex justify-center min-[576px]:justify-start min-[1050px]:justify-end">
-                <button
-                  className="fr-btn fr-text"
+                <Button
+                  variant="primary"
                   disabled={table.getFilteredRowModel().rows.length === 0}
                   onClick={exporterLesIndicateurs}
                   title="Export les indicateurs"
@@ -90,7 +90,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
                 >
                   Exporter{" "}
                   {`${table.getFilteredRowModel().rows.length === 1 ? "l'indicateur" : `les ${table.getFilteredRowModel().rows.length} indicateurs`}`}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

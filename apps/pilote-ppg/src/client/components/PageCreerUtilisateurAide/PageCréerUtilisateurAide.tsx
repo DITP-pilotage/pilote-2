@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { DescriptionEtapes } from "./DescriptionEtapes/DescriptionEtapes";
 
@@ -84,13 +85,11 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
           </div>
         </div>
         <div className="flex justify-center align-center sticky bottom-px z-10 w-full py-5 bg-white/90">
-          <Link
-            className="fr-btn"
-            href="/admin/utilisateur/creer"
-            title="Créer un compte"
-          >
-            Créer un compte
-          </Link>
+          <Button asChild variant="primary">
+            <Link href="/admin/utilisateur/creer" title="Créer un compte">
+              Créer un compte
+            </Link>
+          </Button>
         </div>
       </main>
     </div>

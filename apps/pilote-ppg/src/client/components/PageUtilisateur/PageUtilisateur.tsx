@@ -79,19 +79,21 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                   utilisateur.profil,
                 ) && (
                   <div className="fr-grid-row fr-mt-4w">
-                    <Link
-                      className="fr-btn fr-mr-2w"
-                      href={`/admin/utilisateur/${utilisateur.id}/modifier`}
-                    >
-                      Modifier
-                    </Link>
+                    <Button asChild variant="primary" className="mr-4">
+                      <Link
+                        href={`/admin/utilisateur/${utilisateur.id}/modifier`}
+                      >
+                        Modifier
+                      </Link>
+                    </Button>
                     {habilitationsAGenererUnTokenDAuthentification(
                       // @ts-expect-error session est forcément not null içi
                       session,
                       utilisateur.profil,
                     ) ? (
-                      <button
-                        className="fr-btn fr-btn--secondary fr-mr-2w"
+                      <Button
+                        variant="secondary"
+                        className="mr-4"
                         onClick={() =>
                           creerTokenAPI({ email: utilisateur.email })
                         }
@@ -99,7 +101,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         type="submit"
                       >
                         Générer un token d'authentification
-                      </button>
+                      </Button>
                     ) : null}
                     <Modale
                       title="Désactivation de compte"
@@ -158,9 +160,9 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     <Modale
                       title="Réactivation de compte"
                       trigger={
-                        <button className="fr-btn" type="button">
+                        <Button variant="primary" type="button">
                           Réactiver le compte
-                        </button>
+                        </Button>
                       }
                     >
                       <div>

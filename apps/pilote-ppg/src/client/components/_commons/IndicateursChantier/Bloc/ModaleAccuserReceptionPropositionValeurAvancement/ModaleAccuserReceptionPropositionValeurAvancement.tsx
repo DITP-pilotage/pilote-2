@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
 import { FormProvider } from "react-hook-form";
@@ -162,8 +163,8 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                   </div>
 
                   <div className="w-full flex justify-end fr-mt-2w">
-                    <button
-                      className="fr-btn"
+                    <Button
+                      variant="primary"
                       disabled={etapeSuivanteEstDesactive}
                       onClick={() =>
                         setEtapeAccuserReception(
@@ -173,7 +174,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       type="button"
                     >
                       Étape suivante
-                    </button>
+                    </Button>
                   </div>
                 </>
               ) : (
@@ -242,8 +243,9 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     </p>
                   </Alerte>
                   <div className="w-full flex justify-end fr-mt-2w">
-                    <button
-                      className="fr-btn fr-btn--secondary fr-mr-2w"
+                    <Button
+                      variant="secondary"
+                      className="mr-4"
                       onClick={() =>
                         setEtapeAccuserReception(
                           EtapeAccuserReception.EXAMEN_PROPOSITION,
@@ -252,16 +254,16 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       type="button"
                     >
                       Étape précédente
-                    </button>
-                    <button
-                      className="fr-btn"
+                    </Button>
+                    <Button
+                      variant="primary"
                       disabled={isPending}
                       type="submit"
                     >
                       {isPending
                         ? "Envoi en cours..."
                         : "Confirmer l'envoi de l'accusé de réception"}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}

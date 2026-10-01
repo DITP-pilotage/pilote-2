@@ -1,4 +1,5 @@
 import { useEnregistrerMetadataIndicateur } from "./useEnregistrerMetadataIndicateur";
+import { Button } from "@/components/shared/Button";
 import { useFormParametrageSource } from "./form";
 
 export const BoutonEnregistrerMetadataIndicateur = () => {
@@ -6,12 +7,12 @@ export const BoutonEnregistrerMetadataIndicateur = () => {
   const form = useFormParametrageSource();
 
   return (
-    <button
-      className="fr-btn fr-btn--primary"
+    <Button
+      variant="primary"
       onClick={form.handleSubmit(enregistrerMetadataIndicateur)}
       type="button"
     >
       Sauvegarder
-    </button>
+    </Button>
   );
 };

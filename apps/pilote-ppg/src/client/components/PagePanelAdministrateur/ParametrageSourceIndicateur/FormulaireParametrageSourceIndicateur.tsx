@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
@@ -65,13 +66,9 @@ export const FormulaireParametrageSourceIndicateur = () => {
         <div className="flex justify-between align-center !mb-2">
           <h2 className="fr-h2 fr-mb-0">Configuration des métadonnées</h2>
           <div className="flex gap-2">
-            <button
-              className="fr-btn fr-btn--secondary"
-              onClick={ajouterChamp}
-              type="button"
-            >
+            <Button variant="secondary" onClick={ajouterChamp} type="button">
               Ajouter un champ
-            </button>
+            </Button>
             <BoutonEnregistrerMetadataIndicateur />
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { signIn } from "next-auth/react";
+import { Button } from "@/components/shared/Button";
 import { useRouter } from "next/router";
 import { z } from "zod";
 import { useEnv } from "@/client/hooks/useEnv";
@@ -71,8 +72,9 @@ export const PageConnexion = () => {
               <span className="bg-dsfr-contrast-grey h-px flex-1" />
             </div>
 
-            <button
-              className="fr-btn fr-btn--secondary w-full justify-center"
+            <Button
+              variant="secondary"
+              className="w-full justify-center"
               onClick={() => signIn("keycloak", { callbackUrl })}
               type="button"
             >
@@ -80,7 +82,7 @@ export const PageConnexion = () => {
                 <span>Se connecter avec mes identifiants PILOTE</span>
                 <span>(adresse électronique et mot de passe)</span>
               </span>
-            </button>
+            </Button>
 
             <p className="text-dsfr-mention-grey fr-mt-4w fr-mb-0 fr-text--xs">
               Un problème pour vous connecter ?{" "}
