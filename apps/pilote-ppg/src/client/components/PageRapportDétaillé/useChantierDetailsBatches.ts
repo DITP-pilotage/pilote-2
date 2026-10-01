@@ -58,6 +58,9 @@ export function useChantierDetailsBatches(territoireCode: string) {
           const detailsById = new Map(
             details.map((detail) => [detail.chantierId, detail]),
           );
+          batch
+            .filter((chantierId) => !detailsById.has(chantierId))
+            .forEach((chantierId) => requested.current.delete(chantierId));
           setStates((previous) => {
             const next = new Map(previous);
             batch.forEach((chantierId) => {

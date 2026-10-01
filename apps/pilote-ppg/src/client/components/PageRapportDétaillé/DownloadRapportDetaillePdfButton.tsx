@@ -28,13 +28,20 @@ export const DownloadRapportDetaillePdfButton = ({
       });
       params.set("detail", String(showDetail));
       const response = await fetch(`/api/rapport-detaille/pdf?${params}`);
+      if (response.status === 503) {
+        toast.info(
+          "Un PDF est déjà en cours de génération, réessayez dans quelques secondes.",
+          { position: "top-right", richColors: true },
+        );
+        return;
+      }
       if (!response.ok) throw new Error(String(response.status));
       const url = URL.createObjectURL(await response.blob());
       const link = document.createElement("a");
       link.href = url;
       link.download = filenameFrom(response);
       link.click();
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 0);
     } catch {
       toast.error("Erreur lors de la génération du PDF", {
         position: "top-right",
