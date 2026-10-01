@@ -2,6 +2,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import {
   convertToModelMessages,
   generateText,
+  type ModelMessage,
   Output,
   stepCountIs,
   streamText as aiStreamText,
@@ -136,10 +137,14 @@ export class Albert {
    * `generateText` de `ai` n'expose pas de `onFinish`, la persistance se fait
    * donc après l'attente. `finalStep.usage` porte la même sémantique que dans
    * l'évènement de `streamText`.
+   *
+   * `history` : les messages des tours précédents, pour rejouer une
+   * conversation (les evals en plusieurs tours).
    */
   static async generateText({
     chatId,
     prompt,
+    history = [],
     systemPrompt,
     userId,
     tools,
@@ -147,6 +152,7 @@ export class Albert {
   }: {
     chatId: string;
     prompt: string;
+    history?: ModelMessage[];
     systemPrompt: string;
     userId: string;
     tools?: ToolSet;
@@ -155,7 +161,7 @@ export class Albert {
     const result = await generateText({
       model: createModel(model),
       system: systemPrompt,
-      prompt,
+      messages: [...history, { role: "user", content: prompt }],
       tools,
       stopWhen: stepCountIs(50),
       temperature: TEMPERATURE_STREAM_TEXT,
