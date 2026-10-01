@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { ReactNode, useState, useRef, useEffect } from "react";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
@@ -11,13 +11,33 @@ import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduConten
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import { clsxm } from "@/utils/clsxm";
 
-export const AffichagePublication = ({
-  commentaire,
-  onModifier,
-}: {
+interface AffichagePublicationProps {
   commentaire: Publication | null;
   onModifier?: () => void;
-}) => {
+  annexe?: ReactNode;
+  messageAbsence?: string;
+}
+
+export const AffichagePublication = ({
+  annexe,
+  ...props
+}: AffichagePublicationProps) =>
+  annexe ? (
+    <div className="flex gap-4">
+      <div className="flex-none flex flex-col items-center gap-4">{annexe}</div>
+      <div className="min-w-0">
+        <ContenuPublication {...props} />
+      </div>
+    </div>
+  ) : (
+    <ContenuPublication {...props} />
+  );
+
+const ContenuPublication = ({
+  commentaire,
+  onModifier,
+  messageAbsence,
+}: Omit<AffichagePublicationProps, "annexe">) => {
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
   const [contenuTronque, setContenuTronque] = useState(false);
   const contenuRef = useRef<HTMLDivElement>(null);
@@ -32,7 +52,11 @@ export const AffichagePublication = ({
   }, [commentaire?.contenu]);
 
   if (!commentaire) {
-    return <Badge size="sm">Non renseigné</Badge>;
+    return messageAbsence ? (
+      <p className="fr-text--sm text-dsfr-mention-grey">{messageAbsence}</p>
+    ) : (
+      <Badge size="sm">Non renseigné</Badge>
+    );
   }
 
   return (
