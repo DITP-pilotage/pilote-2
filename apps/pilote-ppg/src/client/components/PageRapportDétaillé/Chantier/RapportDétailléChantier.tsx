@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { FunctionComponent } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { TitleBand } from "@/components/shared/TitleBand";
@@ -112,14 +113,19 @@ const RapportDétailléChantier: FunctionComponent<
           {avancements !== null && (
             <>
               <section className="break-inside-avoid [grid-area:avancement] print:break-inside-avoid print:break-before-page">
-                <Link
-                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
-                  href={`#${htmlId.listeDesChantiers()}`}
-                  title="Revenir à la liste des chantiers"
+                <Button
+                  asChild
+                  variant="tertiary-no-outline"
+                  className="gap-2 text-sm"
                 >
-                  <Icone className="w-4 h-4" icone={ArrowLineIcon} />
-                  Haut de page
-                </Link>
+                  <Link
+                    href={`#${htmlId.listeDesChantiers()}`}
+                    title="Revenir à la liste des chantiers"
+                  >
+                    <Icone className="w-4 h-4" icone={ArrowLineIcon} />
+                    Haut de page
+                  </Link>
+                </Button>
                 <TitleBand>
                   <Titre baliseHtml="h1" className="fr-h2 fr-mb-1w">
                     {chantier.nom}

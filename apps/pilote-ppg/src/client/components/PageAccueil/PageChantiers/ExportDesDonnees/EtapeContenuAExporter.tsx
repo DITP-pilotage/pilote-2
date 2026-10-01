@@ -1,4 +1,5 @@
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
 import { Callout } from "@/components/shared/Callout";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
@@ -115,13 +116,14 @@ export const EtapeContenuAExporter = () => {
             Annuler
           </button>
         </Modale.Close>
-        <button
-          className="fr-btn fr-mr-2w"
+        <Button
+          variant="primary"
+          className="mr-4"
           onClick={() => goToStep(2)}
           type="button"
         >
           Étape suivante
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
+import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
@@ -153,8 +154,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
         <Titre baliseHtml="h2" className="fr-h4">
           Filtres actifs
         </Titre>
-        <button
-          className="fr-btn fr-btn--secondary"
+        <Button
+          variant="secondary"
           onClick={() => {
             setFiltres({
               territoires: "",
@@ -166,7 +167,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
           type="button"
         >
           Réinitialiser les filtres
-        </button>
+        </Button>
         <button
           aria-controls="fr-sidemenu-item-territoires"
           aria-expanded="true"

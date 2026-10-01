@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
 import { Controller, FormProvider } from "react-hook-form";
@@ -245,8 +246,8 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                   </div>
 
                   <div className="w-full flex justify-end fr-mt-2w">
-                    <button
-                      className="fr-btn"
+                    <Button
+                      variant="primary"
                       disabled={EtapeSuivanteEstDesactive}
                       onClick={() =>
                         setEtapePropositionValeurAvancement(
@@ -256,7 +257,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       type="button"
                     >
                       Étape suivante
-                    </button>
+                    </Button>
                   </div>
                 </>
               ) : (
@@ -354,8 +355,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     </p>
                   </Alerte>
                   <div className="w-full flex justify-end fr-mt-2w">
-                    <button
-                      className="fr-btn fr-btn--secondary fr-mr-2w"
+                    <Button
+                      variant="secondary"
+                      className="mr-4"
                       onClick={() =>
                         setEtapePropositionValeurAvancement(
                           EtapePropositionValeurAvancement.DECISION_CONCERNANT_LA_PROPOSITION,
@@ -364,9 +366,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       type="button"
                     >
                       Étape précédente
-                    </button>
-                    <button
-                      className="fr-btn"
+                    </Button>
+                    <Button
+                      variant="primary"
                       disabled={isPending}
                       type="submit"
                     >
@@ -377,7 +379,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                           : decision === "accepter-avec-modification"
                             ? "Accepter avec modification"
                             : "Accepter la proposition"}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}

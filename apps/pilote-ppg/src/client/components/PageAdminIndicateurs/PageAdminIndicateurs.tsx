@@ -1,4 +1,5 @@
 import { FunctionComponent, useState } from "react";
+import { Button } from "@/components/shared/Button";
 import AdminIndicateurBarreLatérale from "@/components/PageAdminIndicateurs/AdminIndicateurBarreLatérale";
 import Titre from "@/components/_commons/Titre/Titre";
 import "@gouvfr/dsfr/dist/component/select/select.min.css";
@@ -25,13 +26,14 @@ const PageAdminIndicateurs: FunctionComponent = () => {
               </Titre>
             </div>
             <div className="fr-col-12 fr-col-md-3 flex items-end justify-end max-[576px]:justify-center">
-              <button
-                className="fr-btn fr-text no-wrap"
+              <Button
+                variant="primary"
+                className="no-wrap"
                 onClick={naviguerVersCreationIndicateur}
                 type="button"
               >
                 Créer un indicateur
-              </button>
+              </Button>
             </div>
           </div>
           <div className="fr-p-2w bg-white">

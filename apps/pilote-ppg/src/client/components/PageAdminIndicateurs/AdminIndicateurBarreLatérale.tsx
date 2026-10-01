@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
+import { Button } from "@/components/shared/Button";
 
 import { FunctionComponent } from "react";
 import {
@@ -90,13 +91,9 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
         <Titre baliseHtml="h2" className="fr-h4">
           Filtres actifs
         </Titre>
-        <button
-          className="fr-btn fr-btn--secondary"
-          onClick={réinitialiser}
-          type="button"
-        >
+        <Button variant="secondary" onClick={réinitialiser} type="button">
           Réinitialiser les filtres
-        </button>
+        </Button>
         <button
           aria-controls="fr-sidemenu-item-perimetres"
           aria-expanded="true"
