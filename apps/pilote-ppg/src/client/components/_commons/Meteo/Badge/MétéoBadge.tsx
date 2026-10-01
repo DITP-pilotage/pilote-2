@@ -1,23 +1,23 @@
 import { FunctionComponent } from "react";
 import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
-import { Badge, VarianteBadge } from "@/components/shared/Badge";
+import { Badge, BadgeVariant } from "@/components/shared/Badge";
 
 interface MétéoBadgeProps {
   météo: Meteo;
 }
 
-const badgeÀPartirDeLaMétéo: Record<Meteo, VarianteBadge> = {
-  ORAGE: "erreur",
-  NUAGE: "vert-tilleul",
+const badgeÀPartirDeLaMétéo: Record<Meteo, BadgeVariant> = {
+  ORAGE: "error",
+  NUAGE: "green-tilleul",
   COUVERT: "info",
-  SOLEIL: "succes",
-  NON_NECESSAIRE: "defaut",
-  NON_RENSEIGNEE: "defaut",
+  SOLEIL: "success",
+  NON_NECESSAIRE: "default",
+  NON_RENSEIGNEE: "default",
 };
 
 const MétéoBadge: FunctionComponent<MétéoBadgeProps> = ({ météo }) => {
   return (
-    <Badge taille="sm" variante={badgeÀPartirDeLaMétéo[météo]}>
+    <Badge size="sm" variant={badgeÀPartirDeLaMétéo[météo]}>
       {libellesMeteos[météo]}
     </Badge>
   );

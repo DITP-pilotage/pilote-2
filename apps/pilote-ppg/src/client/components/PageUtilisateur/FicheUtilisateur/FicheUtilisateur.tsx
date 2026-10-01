@@ -19,7 +19,7 @@ const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
         Utilisateur
       </Titre>
       {!!utilisateur.dateDesactivation && (
-        <Badge variante="erreur">
+        <Badge variant="error">
           {`Désactivé depuis le ${formaterDate(utilisateur.dateDesactivation, "DD/MM/YYYY")}`}
         </Badge>
       )}
