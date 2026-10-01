@@ -3,8 +3,8 @@ import Link from "next/link";
 import { FunctionComponent, useState } from "react";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import Titre from "@/components/_commons/Titre/Titre";
-import RapportDétailléVueDEnsemble from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
-import RapportDétailléChantier from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier";
+import { RapportDétailléVueDEnsemble } from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
+import { RapportDétailléChantier } from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier";
 import PremièrePageImpressionRapportDétaillé from "@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
@@ -33,13 +33,9 @@ export const htmlId = {
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
-  vueDEnsemble,
-  details,
-  mailleSelectionnee,
-  territoireCode,
-  jalon,
-}) => {
+export const PageRapportDétaillé: FunctionComponent<
+  PageRapportDétailléProps
+> = ({ vueDEnsemble, details, mailleSelectionnee, territoireCode, jalon }) => {
   const {
     chantiers: chantiersFiltrés,
     ministères,
@@ -152,5 +148,3 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
     </>
   );
 };
-
-export default PageRapportDétaillé;

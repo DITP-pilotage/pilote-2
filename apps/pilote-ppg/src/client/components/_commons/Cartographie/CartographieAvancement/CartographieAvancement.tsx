@@ -5,7 +5,7 @@ import { CartographieOptions } from "@/components/_commons/Cartographie/useCarto
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import useCartographieAvancement from "./useCartographieAvancement";
+import { useCartographieAvancement } from "./useCartographieAvancement";
 import { CartographieDonnéesAvancement } from "./CartographieAvancement.interface";
 
 interface CartographieAvancementProps {

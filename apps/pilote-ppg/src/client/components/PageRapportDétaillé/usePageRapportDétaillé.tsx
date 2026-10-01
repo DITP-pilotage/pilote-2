@@ -3,7 +3,7 @@ import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteCh
 import { ChantierRapportDetailleWithoutMailles } from "@/server/rapport-detaille/rapportDetaille.interface";
 import useVueDEnsemble from "@/client/hooks/useVueDEnsemble";
 
-export default function usePageRapportDétaillé(
+export function usePageRapportDétaillé(
   chantiers: ChantierRapportDetailleWithoutMailles[],
   territoireCode: string,
   filtresComptesCalculés: Record<TypeAlerteChantier, number>,

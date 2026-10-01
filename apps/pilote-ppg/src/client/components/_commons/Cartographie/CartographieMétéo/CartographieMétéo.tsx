@@ -5,7 +5,7 @@ import { CartographieOptions } from "@/components/_commons/Cartographie/useCarto
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import useCartographieMétéo from "./useCartographieMétéo";
+import { useCartographieMétéo } from "./useCartographieMétéo";
 import { CartographieDonnéesMétéo } from "./CartographieMétéo.interface";
 
 interface CartographieMétéoProps {

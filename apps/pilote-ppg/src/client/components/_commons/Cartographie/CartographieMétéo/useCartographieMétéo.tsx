@@ -6,7 +6,7 @@ import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitat
 import { CartographieDonnéesMétéo } from "./CartographieMétéo.interface";
 import { getMeteoFill, getMeteoLegend } from "./meteoFill";
 
-export default function useCartographieMétéo(
+export function useCartographieMétéo(
   données: CartographieDonnéesMétéo,
   élémentsDeLégende: CartographieÉlémentsDeLégende,
 ) {

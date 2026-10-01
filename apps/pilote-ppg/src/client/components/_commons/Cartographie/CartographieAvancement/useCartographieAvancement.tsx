@@ -21,7 +21,7 @@ function déterminerValeurAffichée(
   return <>{`TA ${jalon} : ${valeurAnnuelle.toFixed(0)}%`}</>;
 }
 
-export default function useCartographieAvancement(
+export function useCartographieAvancement(
   données: CartographieDonnéesAvancement,
   élémentsDeLégende: CartographieÉlémentsDeLégende,
   jalon: number,

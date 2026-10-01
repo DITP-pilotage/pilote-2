@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import PageRapportDétaillé from "@/components/PageRapportDétaillé/PageRapportDétaillé";
+import { PageRapportDétaillé } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import type { Bootstrap } from "@/components/_commons/Bootstrap/BootstrapContext";

@@ -3,7 +3,7 @@ import { FunctionComponent } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import Encart from "@/components/_commons/Encart/Encart";
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
-import RapportDétailléChantierProps from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface";
+import { RapportDétailléChantierProps } from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface";
 import Responsables from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import SynthèseDesRésultats from "@/components/PageRapportDétaillé/SynthèseDesRésultats/SynthèseDesRésultats";
 import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille";
@@ -27,7 +27,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { useEnv } from "@/client/hooks/useEnv";
 
-const RapportDétailléChantier: FunctionComponent<
+export const RapportDétailléChantier: FunctionComponent<
   RapportDétailléChantierProps
 > = ({
   mailleSelectionnee,
@@ -303,5 +303,3 @@ const RapportDétailléChantier: FunctionComponent<
     </section>
   );
 };
-
-export default RapportDétailléChantier;

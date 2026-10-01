@@ -5,7 +5,7 @@ import {
   ChantierDetail,
 } from "@/server/rapport-detaille/rapportDetaille.interface";
 
-export default interface RapportDétailléChantierProps {
+export interface RapportDétailléChantierProps {
   territoireSélectionné: DétailTerritoire;
   mailleSelectionnee: MailleInterne;
   territoireCode: string;
