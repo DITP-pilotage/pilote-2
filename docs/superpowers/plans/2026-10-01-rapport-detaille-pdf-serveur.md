@@ -14,7 +14,7 @@
 ## Global Constraints
 
 - Tout le code est dans `apps/pilote-ppg`. Commandes depuis ce dossier. pnpm uniquement.
-- Nommage : technique en anglais toléré mais le code existant de ppg est en français ; on suit le français du module (`chargerVueDEnsemble`, `genererRapportDetaillePDF`), entités en français.
+- Nommage : identifiants techniques en anglais, termes métier en français (`loadVueDEnsemble`, `loadChantierDetails`, `generateRapportDetaillePdf`, `htmlToPdfmake`). Les noms français techniques cités plus bas dans ce plan sont à traduire selon cette règle (voir le ledger).
 - Jamais de `as never` ni `as unknown`. Pas de commentaires explicatifs superflus.
 - pdfmake : uniquement via l'instance de `src/server/pdf/pdfmake.ts` ; `setUrlAccessPolicy(() => false)` conservé.
 - Unités : 1 px CSS = 0,75 pt ; 1 rem = 12 pt. Page 280 × 396 mm = 793,7 × 1122,5 pt ; marges 12 mm = 34 pt.
