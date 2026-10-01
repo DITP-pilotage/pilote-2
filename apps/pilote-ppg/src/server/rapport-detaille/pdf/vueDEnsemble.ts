@@ -281,6 +281,7 @@ function chantiersSignalésPdf(
 export function vueDEnsemblePdf(
   vue: VueDEnsembleRapportDetaille,
   context: RapportDetailleContext,
+  options: { pageBreakAfter?: boolean } = {},
 ): Content {
   const carte = avancementCarteSvg({
     territoireCode: context.territoireCode,
@@ -365,6 +366,6 @@ export function vueDEnsemblePdf(
         margin: [0, rem(1.75), 0, 0],
       },
     ],
-    pageBreak: "after",
+    pageBreak: options.pageBreakAfter === false ? undefined : "after",
   };
 }
