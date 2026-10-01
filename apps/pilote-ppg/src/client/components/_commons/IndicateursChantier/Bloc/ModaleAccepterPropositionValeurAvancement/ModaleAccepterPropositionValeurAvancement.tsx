@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { TextField, TextareaField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
@@ -15,8 +16,6 @@ import {
   useModaleAccepterPropositionValeurAvancement,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
 import { formaterDate } from "@/client/utils/date/date";
-import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
-import Input from "@/components/_commons/Input/Input";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
@@ -187,22 +186,20 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                             <p className="fr-text texte-warning fr-text--xs text-italic">
                               *ce champ est obligatoire
                             </p>
-                            <Input
-                              className="fr-input--sm !w-auto"
-                              classNameGroupe="fr-mb-1v"
+                            <TextField
+                              className="mb-1"
                               disabled={
                                 reactHookForm.watch("decision") !==
                                 "accepter-avec-modification"
                               }
-                              erreurMessage={
+                              errorMessage={
                                 reactHookForm.formState.errors
                                   .valeurModification?.message
                               }
-                              htmlName="valeurModification"
-                              register={reactHookForm.register(
-                                "valeurModification",
-                              )}
+                              id="valeurModification"
                               type="number"
+                              inputClassName="py-1 text-sm w-auto"
+                              {...reactHookForm.register("valeurModification")}
                             />
                             <span className="flex texte-gris fr-text--xs">
                               (
@@ -225,23 +222,24 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                   />
 
                   <div className="fr-mt-2w">
-                    <TextAreaAvecLabel
-                      compteur={{
-                        taille: reactHookForm.watch("motif").length,
-                        limite: LIMIT_CARACTERES_MOTIF,
+                    <TextareaField
+                      counter={{
+                        length: reactHookForm.watch("motif").length,
+                        max: LIMIT_CARACTERES_MOTIF,
                       }}
-                      erreurMessage={
+                      errorMessage={
                         reactHookForm.formState.errors.motif?.message
                       }
-                      htmlName="motif"
-                      isRequired={decision !== "accepter"}
-                      libellé={
+                      id="motif"
+                      required={decision !== "accepter"}
+                      label={
                         decision === "accepter"
                           ? "Motif de la décision (Facultatif)"
                           : "Motif de la décision"
                       }
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
-                      register={reactHookForm.register("motif")}
+                      textareaClassName="resize-none"
+                      {...reactHookForm.register("motif")}
                     />
                   </div>
 

@@ -1,6 +1,6 @@
 import { useRef } from "react";
+import { FormTextareaField } from "@/components/shared/FormTextField";
 import { Control, FieldValues, Path } from "react-hook-form";
-import { Textarea, TextareaRef } from "@/components/_commons/Textarea";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
 
 export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
@@ -17,10 +17,10 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
   onFocus?: () => void;
 }) {
   const autosave = useAutosave({ onAutosave });
-  const textareaRef = useRef<TextareaRef | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   return (
-    <Textarea
+    <FormTextareaField
       charLimit={600}
       control={control}
       name={name}
@@ -31,7 +31,8 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
       }}
       onFocus={onFocus}
       readOnly={readOnly}
-      textareaRef={textareaRef}
+      label="Commentaire"
+      ref={textareaRef}
     />
   );
 }

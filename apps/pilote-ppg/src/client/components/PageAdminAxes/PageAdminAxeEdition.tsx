@@ -1,4 +1,8 @@
 import { FormProvider } from "react-hook-form";
+import {
+  FormTextField,
+  FormTextareaField,
+} from "@/components/shared/FormTextField";
 import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -11,8 +15,6 @@ import {
   defaultAxeVide,
   useAxeForm,
 } from "@/components/PageAdminAxes/useAxeForm";
-import { Input } from "@/components/_commons/Input";
-import { Textarea } from "@/components/_commons/Textarea";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -143,7 +145,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
                   {estUneCréation ? (
-                    <Input<AxeForm>
+                    <FormTextField<AxeForm>
                       control={reactHookForm.control}
                       label="ID"
                       name="axeId"
@@ -159,7 +161,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
                       </p>
                     </div>
                   )}
-                  <Input<AxeForm>
+                  <FormTextField<AxeForm>
                     control={reactHookForm.control}
                     label="Nom"
                     name="axeName"
@@ -170,7 +172,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
 
               <section className="px-6 py-8">
                 <SectionTitle>Description</SectionTitle>
-                <Textarea<AxeForm>
+                <FormTextareaField<AxeForm>
                   control={reactHookForm.control}
                   label="Description"
                   name="axeDesc"

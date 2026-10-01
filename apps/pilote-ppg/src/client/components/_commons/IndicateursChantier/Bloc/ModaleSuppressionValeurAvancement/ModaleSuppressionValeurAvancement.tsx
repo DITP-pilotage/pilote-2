@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { TextareaField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
@@ -7,7 +8,6 @@ import { Modale } from "@/components/shared/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
-import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
@@ -156,20 +156,21 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                     </div>
                   </div>
                   <div className="fr-mt-2w">
-                    <TextAreaAvecLabel
-                      compteur={{
-                        taille: reactHookForm.watch("motifSuppression").length,
-                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                    <TextareaField
+                      counter={{
+                        length: reactHookForm.watch("motifSuppression").length,
+                        max: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
                       }}
-                      erreurMessage={
+                      errorMessage={
                         reactHookForm.formState.errors.motifSuppression?.message
                       }
-                      htmlName="motifSuppression"
-                      isRequired
-                      libelleRequired="*ce champ est obligatoire"
-                      libellé="Motif de la suppression"
+                      id="motifSuppression"
+                      required
+                      hint="*ce champ est obligatoire"
+                      label="Motif de la suppression"
                       placeholder="Indiquez ici les raisons pour lesquelles vous souhaitez supprimer la proposition de valeur d'avancement."
-                      register={reactHookForm.register("motifSuppression", {
+                      textareaClassName="resize-none"
+                      {...reactHookForm.register("motifSuppression", {
                         required: true,
                       })}
                     />

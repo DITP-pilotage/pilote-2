@@ -1,10 +1,10 @@
 import { FunctionComponent } from "react";
+import { TextareaField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { Controller } from "react-hook-form";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { useMessageInformationForm } from "@/components/PageAdminGestionContenus/MessageInformationForm/useMessageInformationForm";
-import TextArea from "@/components/_commons/TextArea/TextArea";
 
 const MessageInformationForm: FunctionComponent = () => {
   const form = useMessageInformationForm();
@@ -41,12 +41,12 @@ const MessageInformationForm: FunctionComponent = () => {
           name="bandeauTexte"
           render={({ field }) => {
             return (
-              <TextArea
-                className="h-40"
-                erreurMessage={form.formState.errors.bandeauTexte?.message}
-                htmlName="bandeauTexte"
+              <TextareaField
+                errorMessage={form.formState.errors.bandeauTexte?.message}
+                id="bandeauTexte"
                 onChange={field.onChange}
                 value={field.value}
+                textareaClassName="h-40"
               />
             );
           }}

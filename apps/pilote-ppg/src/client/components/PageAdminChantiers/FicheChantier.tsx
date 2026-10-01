@@ -1,11 +1,13 @@
 import { Controller, useFormContext } from "react-hook-form";
 import {
+  FormTextField,
+  FormTextareaField,
+} from "@/components/shared/FormTextField";
+import {
   SelectField,
   type SelectFieldOption,
 } from "@/components/shared/SelectField";
 import { $Enums } from "@prisma/client";
-import { Input } from "@/components/_commons/Input";
-import { Textarea } from "@/components/_commons/Textarea";
 import Champ from "@/components/_commons/Champ";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import SélecteurPpg from "@/components/PageAdminChantiers/champs/SélecteurPpg";
@@ -58,7 +60,7 @@ const FicheChantier = () => {
         <SectionTitle>Identification</SectionTitle>
         <div className="flex flex-col gap-4">
           <Champ label="ID chantier" valeur={chantierId} />
-          <Textarea<ChantierForm>
+          <FormTextareaField<ChantierForm>
             control={form.control}
             name="chNom"
             label="Nom"
@@ -66,7 +68,7 @@ const FicheChantier = () => {
             charLimit={500}
             rows={2}
           />
-          <Textarea<ChantierForm>
+          <FormTextareaField<ChantierForm>
             control={form.control}
             name="chDescr"
             label="Description"
@@ -166,7 +168,7 @@ const FicheChantier = () => {
           />
         </div>
         <div className="mt-4">
-          <Input<ChantierForm>
+          <FormTextField<ChantierForm>
             control={form.control}
             name="conseillerMail"
             label="Mail conseiller"
