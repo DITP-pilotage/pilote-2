@@ -16,7 +16,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "bg-transparent text-primary ring-1 ring-inset ring-dsfr-grey-900 hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625",
   "tertiary-no-outline":
     "bg-transparent text-primary hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625",
-  link: "bg-transparent text-primary border-0 border-b border-solid border-current hover:enabled:border-b-2 disabled:opacity-80",
+  link: "text-primary bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-bottom bg-no-repeat hover:bg-[length:100%_2px] disabled:bg-[length:100%_1px] disabled:opacity-80",
 };
 
 const SIZES = {

@@ -7,7 +7,7 @@ export const BoutonContacterEquipePilote = ({
 }: {
   variant?: ButtonVariant;
 }) => (
-  <Button asChild className="text-sm font-normal border-b-0" variant={variant}>
+  <Button asChild className="text-sm font-normal bg-none" variant={variant}>
     <a href="mailto:pilote.ditp@modernisation.gouv.fr">
       <Icone className="text-current" icone={EnveloppeContourIcon} />
       Contacter l'équipe PILOTE
