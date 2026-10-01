@@ -184,11 +184,6 @@ export const BasePageAccueilLayout: FunctionComponent<
               setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
               territoireCode={territoireCode}
             />
-            <FiltresActifs
-              axes={axes}
-              mailleSelectionnee={mailleSelectionnee}
-              ministères={ministères}
-            />
             {peutUtiliserAskAI ? (
               <div className="h-full flex items-center pt-1 pr-2 ml-auto">
                 <BoutonSyntheseTerritoire
@@ -206,6 +201,11 @@ export const BasePageAccueilLayout: FunctionComponent<
                 />
               </div>
             ) : null}
+            <FiltresActifs
+              axes={axes}
+              mailleSelectionnee={mailleSelectionnee}
+              ministères={ministères}
+            />
           </div>
           <div className="fr-container--fluid fr-py-2w fr-px-md-2w">
             {children}
