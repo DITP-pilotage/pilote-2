@@ -306,7 +306,7 @@ Relevées au fil des lots 1 à 4 (2026-09-29 / 30), hors périmètre des PR qui 
 
 ## 13. État d'avancement (2026-10-01)
 
-Chantier mis en pause le 2026-09-30 pour merger la stack du lot 4, faire la recette et la mise en production ; repris le 2026-10-01 avec une nouvelle stack (#2479 → #2482).
+Chantier mis en pause le 2026-09-30 pour merger la stack du lot 4, faire la recette et la mise en production ; repris le 2026-10-01 avec une nouvelle stack (#2479 → #2483), qui termine le lot 4.
 
 ### 13.1 Fait
 
@@ -327,6 +327,7 @@ Chantier mis en pause le 2026-09-30 pour merger la stack du lot 4, faire la rece
 | 4 — `shared/Tag` et `TagToggleGroup` (radix) à la place des tags DSFR | #2480 | **stack ouverte** (sur #2479) |
 | 4 — synthèse des résultats sur `PublicationSection` (Publication générique) | #2481 | **stack ouverte** (sur #2480) |
 | 4 — mise en avant DSFR sur `shared/Callout` (`highlight`, `Callout.Title`) | #2482 | **stack ouverte** (sur #2481) |
+| 4 — bandeaux DSFR sur `shared/Notice`, `Encart` → `shared/TitleBand` | #2483 | **stack ouverte** (sur #2482) |
 
 La stack #2471 → #2476 se fusionnait avec `dev` sans conflit (vérifié après #2466) ; lint, tests et E2E (59/59) verts en haut de pile.
 
@@ -345,8 +346,7 @@ Les lots 1 à 3 changent peu le rendu ; le lot 4 change l'apparence de composant
 
 ### 13.3 Reste à faire
 
-- **Recette de la stack #2479 → #2482** : formulaire utilisateur (territoires, périmètres, chantiers) et filtres des admins utilisateurs / indicateurs ; tags (filtres actifs de l'accueil, statut, maille, zoom du graphique, type de compte) ; synthèse des résultats et commentaires (publier, brouillon, éditer le brouillon, publier le brouillon, modifier, historique) ; encarts des modales de proposition de valeur et étape 1 de l'export.
-- **Lot 4, convergences restantes** : `_commons/Encart` (4) et `BandeauInformation` / `fr-notice` (6) vers `shared/Callout` ou une variante bandeau.
+- **Recette de la stack #2479 → #2483** : formulaire utilisateur (territoires, périmètres, chantiers) et filtres des admins utilisateurs / indicateurs ; tags (filtres actifs de l'accueil, statut, maille, zoom du graphique, type de compte) ; synthèse des résultats et commentaires (publier, brouillon, éditer le brouillon, publier le brouillon, modifier, historique) ; encarts des modales de proposition de valeur et étape 1 de l'export ; liens de la barre latérale de l'accueil ; bandeaux (message d'information du site, brouillon d'une publication, mise à jour des indicateurs requise, chantier archivé, données régionales reportées, fiche utilisateur) et bandeaux de titre (fiche territoriale, fiche conducteur, rapport détaillé).
 - **Lot 5** : `shared/Button`, champs de formulaire unifiés, sélecteurs sur `shared/Select` / `Picker` (dont `Sélecteur` → `SelecteurNew`, 14 appelants), barres latérales sans JS DSFR, `CartographieV2` partout, fin du conteneur `legacy`.
 - **Flags restants** : `PPG_ARCHIVE`, `COMPARAISON_TERRITOIRES` (acquis en prod, retrait à faire).
 - **Serveur** : fusion des use cases de liste de chantiers accueil / rapport (§ 7.2) — à coordonner avec les optimisations de performance en cours sur ces use cases.

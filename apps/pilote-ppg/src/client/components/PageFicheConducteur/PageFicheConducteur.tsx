@@ -38,7 +38,7 @@ const PageFicheConducteur: FunctionComponent<
     <div>
       <main className="fr-pb-2w">
         <div className="fr-container fr-pb-1w ">
-          <EnteteFicheConducteur classNameEncart="p-2">
+          <EnteteFicheConducteur titleBandClassName="p-2">
             {`${chantier.nom} - Principaux résultats`}
           </EnteteFicheConducteur>
         </div>
@@ -198,7 +198,7 @@ const PageFicheConducteur: FunctionComponent<
         {doitAfficherDonnéesCartographie ? (
           <>
             <div className="fr-container fr-pb-1w hidden print:block">
-              <EnteteFicheConducteur classNameEncart="p-2">
+              <EnteteFicheConducteur titleBandClassName="p-2">
                 {`${chantier.nom} - Principaux résultats`}
               </EnteteFicheConducteur>
             </div>
@@ -251,7 +251,7 @@ const PageFicheConducteur: FunctionComponent<
           </>
         ) : null}
         <div className="fr-container fr-pb-1w hidden print:block">
-          <EnteteFicheConducteur classNameEncart="p-2">
+          <EnteteFicheConducteur titleBandClassName="p-2">
             {`${chantier.nom} - Point d'avancement`}
           </EnteteFicheConducteur>
         </div>

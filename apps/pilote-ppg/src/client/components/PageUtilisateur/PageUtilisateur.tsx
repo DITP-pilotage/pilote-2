@@ -8,7 +8,7 @@ import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/Fich
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Modale } from "@/components/shared/Modale";
 import { Bouton } from "@/client/components/_commons/Bouton/Bouton";
-import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
+import { Notice } from "@/components/shared/Notice";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
@@ -62,13 +62,13 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                 utilisateur.profil,
               ) && (
                 <div className="fr-pb-4w">
-                  <BandeauInformation bandeauType="INFO" fermable={false}>
-                    {donnneContenuBandeau(
+                  <Notice
+                    title={donnneContenuBandeau(
                       session,
                       utilisateur.habilitations,
                       utilisateur.profil,
                     )}
-                  </BandeauInformation>
+                  />
                 </div>
               )}
               <FicheUtilisateur utilisateur={utilisateur} />
