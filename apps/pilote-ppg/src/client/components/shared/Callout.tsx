@@ -23,7 +23,7 @@ export type CalloutColor =
   | "blue"
   | "moutarde"
   | "neutral"
-  | "mise-en-avant";
+  | "highlight";
 
 type IconeCallout = FunctionComponent<{ className?: string; fill?: string }>;
 
@@ -87,7 +87,7 @@ const colorVariants: Record<
     iconColor: "!text-dsfr-grey-200",
   },
   // Reproduit la « mise en avant » du DSFR (fr-callout).
-  "mise-en-avant": {
+  highlight: {
     bg: "bg-dsfr-grey-950",
     border: "!border-l-dsfr-blue-france-525",
     iconColor: "!text-primary",
@@ -173,14 +173,14 @@ const CalloutText = ({
 );
 
 const CalloutTitle = ({
-  balise: Balise = "h3",
+  as: Tag = "h3",
   children,
   className,
   ...props
 }: HTMLAttributes<HTMLHeadingElement> & {
-  balise?: "h2" | "h3" | "h4" | "p";
+  as?: "h2" | "h3" | "h4" | "p";
 }) => (
-  <Balise
+  <Tag
     {...props}
     className={clsxm(
       "text-[1.375rem] leading-7 font-bold text-dsfr-grey-50 mb-0",
@@ -188,7 +188,7 @@ const CalloutTitle = ({
     )}
   >
     {children}
-  </Balise>
+  </Tag>
 );
 
 export const Callout = {

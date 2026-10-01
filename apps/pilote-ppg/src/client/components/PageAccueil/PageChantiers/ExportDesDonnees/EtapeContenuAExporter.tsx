@@ -50,10 +50,10 @@ export const EtapeContenuAExporter = () => {
       <p className="fr-mt-2w fr-mb-2w">
         Sélectionnez et exportez les données de votre choix, selon vos besoins
       </p>
-      <Callout.Root color="mise-en-avant">
+      <Callout.Root color="highlight">
         <Callout.Icon icone={QuestionIcon} />
         <Callout.Text>
-          <Callout.Title balise="h3" className="text-base text-primary mb-1">
+          <Callout.Title className="text-base text-primary mb-1">
             Pour mener à bien votre export de données, vous allez être amené à :
           </Callout.Title>
           <ul>

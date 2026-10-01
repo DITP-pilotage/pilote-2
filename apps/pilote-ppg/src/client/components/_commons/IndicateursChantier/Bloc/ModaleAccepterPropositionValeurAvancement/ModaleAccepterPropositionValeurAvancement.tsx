@@ -265,10 +265,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     Veuillez vérifier si la synthèse ci-dessous est conforme à
                     votre décision et prête pour publication immédiate.
                   </span>
-                  <Callout.Root
-                    className="mt-4 px-6 py-4"
-                    color="mise-en-avant"
-                  >
+                  <Callout.Root className="mt-4 px-6 py-4" color="highlight">
                     <Callout.Text>
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}

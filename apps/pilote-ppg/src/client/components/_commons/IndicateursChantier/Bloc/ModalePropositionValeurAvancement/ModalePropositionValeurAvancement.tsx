@@ -368,10 +368,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     vous sera toujours possible de modifier ou de supprimer
                     votre proposition.
                   </span>
-                  <Callout.Root
-                    className="mt-4 px-6 py-4"
-                    color="mise-en-avant"
-                  >
+                  <Callout.Root className="mt-4 px-6 py-4" color="highlight">
                     <Callout.Text>
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}

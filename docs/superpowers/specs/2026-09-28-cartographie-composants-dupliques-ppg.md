@@ -325,7 +325,7 @@ Chantier mis en pause le 2026-09-30 pour merger la stack du lot 4, faire la rece
 | 4 — un seul `MultiSelect` (ex `MultiSelectNew`), exports nommés | #2479 | **stack ouverte** |
 | 4 — `shared/Tag` et `TagToggleGroup` (radix) à la place des tags DSFR | #2480 | **stack ouverte** (sur #2479) |
 | 4 — synthèse des résultats sur `PublicationSection` (Publication générique) | #2481 | **stack ouverte** (sur #2480) |
-| 4 — mise en avant DSFR sur `shared/Callout` (`mise-en-avant`, `Callout.Title`) | #2482 | **stack ouverte** (sur #2481) |
+| 4 — mise en avant DSFR sur `shared/Callout` (`highlight`, `Callout.Title`) | #2482 | **stack ouverte** (sur #2481) |
 
 La stack #2471 → #2476 se fusionnait avec `dev` sans conflit (vérifié après #2466) ; lint, tests et E2E (59/59) verts en haut de pile.
 
