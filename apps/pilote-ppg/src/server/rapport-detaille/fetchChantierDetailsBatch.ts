@@ -16,8 +16,6 @@ import {
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 
-export const CHANTIER_DETAILS_BATCH_SIZE = 5;
-
 export type ChantierDetailsBatchDependencies = {
   loadChantiersByIds: (
     chantierIds: string[],

@@ -10,15 +10,10 @@ import type { Bootstrap } from "@/components/_commons/Bootstrap/BootstrapContext
 import { buildRapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import { loadVueDEnsemble } from "@/server/rapport-detaille/loadVueDEnsemble";
 import { withoutMailles } from "@/server/rapport-detaille/withoutMailles";
-import { loadChantierDetails } from "@/server/rapport-detaille/loadChantierDetails";
-import {
-  ChantierDetail,
-  SerializedVueDEnsemble,
-} from "@/server/rapport-detaille/rapportDetaille.interface";
+import { SerializedVueDEnsemble } from "@/server/rapport-detaille/rapportDetaille.interface";
 
 interface NextPageRapportDétailléProps extends Bootstrap {
   vueDEnsemble: SerializedVueDEnsemble;
-  details: ChantierDetail[];
   mailleSelectionnee: MailleInterne;
   territoireCode: string;
   jalon: number;
@@ -45,11 +40,6 @@ export const getServerSideProps: GetServerSideProps<
     loadVueDEnsemble(rapportContext),
     loadBootstrap(session),
   ]);
-  const details = await loadChantierDetails(
-    vueDEnsemble.chantiers,
-    rapportContext,
-    vueDEnsemble.selectedTerritoire,
-  );
 
   return {
     props: {
@@ -58,7 +48,6 @@ export const getServerSideProps: GetServerSideProps<
         ...vueDEnsemble,
         chantiers: vueDEnsemble.chantiers.map(withoutMailles),
       },
-      details,
       mailleSelectionnee: rapportContext.selectedMaille,
       territoireCode,
       jalon: rapportContext.jalon,
@@ -68,14 +57,13 @@ export const getServerSideProps: GetServerSideProps<
 
 const NextPageRapportDétaillé: FunctionComponent<
   NextPageRapportDétailléProps
-> = ({ vueDEnsemble, details, mailleSelectionnee, territoireCode, jalon }) => {
+> = ({ vueDEnsemble, mailleSelectionnee, territoireCode, jalon }) => {
   return (
     <>
       <Head>
         <title>Rapport détaillé - PILOTE</title>
       </Head>
       <PageRapportDétaillé
-        details={details}
         jalon={jalon}
         mailleSelectionnee={mailleSelectionnee}
         territoireCode={territoireCode}

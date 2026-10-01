@@ -3,10 +3,8 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import {
-  CHANTIER_DETAILS_BATCH_SIZE,
-  fetchChantierDetailsBatch,
-} from "@/server/rapport-detaille/fetchChantierDetailsBatch";
+import { fetchChantierDetailsBatch } from "@/server/rapport-detaille/fetchChantierDetailsBatch";
+import { CHANTIER_DETAILS_BATCH_SIZE } from "@/server/rapport-detaille/batchSize";
 
 export const rapportDetailleRouter = créerRouteurTRPC({
   chantierDetails: procédureProtégée
