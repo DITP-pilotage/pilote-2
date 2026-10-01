@@ -6,6 +6,7 @@ import {
   checkHasTable,
   checkNoLink,
   checkNoMeteoCode,
+  checkNoVerbatim,
   checkNoToolName,
   checkSectionsDashboard,
   checkTableTerritories,
@@ -116,6 +117,47 @@ describe("typographie d'Albert", () => {
       checkAbsenceSignalee({
         text: "**CH‑005 — Urgences**\n> Deux postes.\n**CH‑006 — Prévention**\n> Pas de commentaire disponible",
         chantierIds: ["CH-006"],
+      }).ok,
+    ).toBe(true);
+  });
+});
+
+describe("checkNoVerbatim", () => {
+  const commentaire =
+    "<p>Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre.</p>";
+
+  test("signale un commentaire repris en entier, malgré la casse, les accents et le HTML", () => {
+    expect(
+      checkNoVerbatim({
+        text: "**CH-005 — Urgences**\n> DEUX POSTES D'URGENTISTES restent vacants a Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre.",
+        sources: [commentaire],
+      }).ok,
+    ).toBe(false);
+  });
+
+  test("signale un commentaire repris pour l'essentiel, à quelques mots près", () => {
+    expect(
+      checkNoVerbatim({
+        text: "> Deux postes d'urgentistes restent vacants à Brest et Quimper, et le délai médian de passage remonte à 4 h 10 au premier semestre.",
+        sources: [commentaire],
+      }).ok,
+    ).toBe(false);
+  });
+
+  test("laisse passer un résumé qui reprend des expressions courtes", () => {
+    expect(
+      checkNoVerbatim({
+        text: "> Deux postes restent vacants et le délai médian de passage s'allonge.",
+        sources: [commentaire],
+      }),
+    ).toEqual({ ok: true, detail: "aucun commentaire recopié" });
+  });
+
+  test("ne recompose pas un commentaire à partir de paragraphes distincts", () => {
+    expect(
+      checkNoVerbatim({
+        text: "Deux postes d'urgentistes restent vacants à Brest et Quimper.\n\nAilleurs, le délai médian de passage remonte à 4 h 10 au premier semestre.",
+        sources: [commentaire],
       }).ok,
     ).toBe(true);
   });

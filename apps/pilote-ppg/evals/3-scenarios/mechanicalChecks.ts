@@ -104,6 +104,68 @@ export function checkChantiersCited({
       };
 }
 
+/**
+ * Un résumé recopie un commentaire quand il en reprend l'essentiel : 80 % de
+ * ses mots, dans l'ordre, au sein d'un même paragraphe. Les calibrations du
+ * 30/09 et du 01/10 l'ont montré : le juge ne sait pas comparer deux textes
+ * mot à mot. Le seuil laisse passer les expressions courtes reprises
+ * (« le délai médian de passage »), que la fenêtre de neuf mots du 30/09
+ * signalait.
+ */
+const SEUIL_RECOPIE = 0.8;
+
+function mots(text: string) {
+  return normalize(text.replace(/<[^>]+>/g, " "))
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+/** Longueur de la plus longue sous-suite de mots commune, dans l'ordre. */
+function motsCommunsDansLOrdre(source: string[], texte: string[]) {
+  let precedente = Array.from({ length: texte.length + 1 }, () => 0);
+  for (const mot of source) {
+    const courante = [0];
+    texte.forEach((motDuTexte, index) => {
+      courante.push(
+        mot === motDuTexte
+          ? precedente[index] + 1
+          : Math.max(precedente[index + 1], courante[index]),
+      );
+    });
+    precedente = courante;
+  }
+  return precedente[texte.length];
+}
+
+export function checkNoVerbatim({
+  text,
+  sources,
+}: {
+  text: string;
+  sources: string[];
+}): CheckResult {
+  const paragraphes = text.split(/\n\s*\n/).map(mots);
+
+  for (const source of sources) {
+    const motsSource = mots(source);
+    if (motsSource.length === 0) continue;
+    const repris = Math.max(
+      0,
+      ...paragraphes.map((paragraphe) =>
+        motsCommunsDansLOrdre(motsSource, paragraphe),
+      ),
+    );
+    if (repris / motsSource.length >= SEUIL_RECOPIE) {
+      return {
+        ok: false,
+        detail: `commentaire recopié à ${Math.round((100 * repris) / motsSource.length)} % : « ${source.replace(/<[^>]+>/g, "").slice(0, 80)}… »`,
+      };
+    }
+  }
+
+  return { ok: true, detail: "aucun commentaire recopié" };
+}
+
 const MENTION_ABSENCE = "pas de commentaire disponible";
 
 /**
