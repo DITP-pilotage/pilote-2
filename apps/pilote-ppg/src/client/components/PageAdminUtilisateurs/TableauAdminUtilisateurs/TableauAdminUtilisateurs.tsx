@@ -4,7 +4,7 @@ import { useTableauPageAdminUtilisateurs } from "@/components/PageAdminUtilisate
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Titre from "@/components/_commons/Titre/Titre";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
-import Tag from "@/components/_commons/Tag/Tag";
+import { TagToggleGroup } from "@/components/shared/Tag";
 
 const TableauAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
@@ -22,16 +22,6 @@ const TableauAdminUtilisateurs: FunctionComponent<{
     }),
   );
 
-  const modifierFiltre = (
-    typeCompteAAfficher: ["actif", "desactive"] | ["actif"] | ["desactive"],
-  ) => {
-    table.setPageIndex(0);
-    return setTypeCompte(typeCompteAAfficher.join(","));
-  };
-
-  const verifierTypeEstPresent = (regex: RegExp, typeExport: string) =>
-    regex.test(typeExport);
-
   return (
     <section className="fr-px-1w">
       <div className="w-full max-w-[20.5rem] fr-mt-2w">
@@ -43,38 +33,21 @@ const TableauAdminUtilisateurs: FunctionComponent<{
       <Titre baliseHtml="h2" className="fr-h4 fr-mt-3w fr-mb-0 text-primary">
         {`${nombreUtilisateur} ${nombreUtilisateur > 1 ? "comptes" : "compte"}`}
       </Titre>
-      <div className="flex gap-2 !mt-4">
-        <Tag
-          isActive={
-            verifierTypeEstPresent(/desactive/, typeCompte) &&
-            verifierTypeEstPresent(/actif/, typeCompte)
-          }
-          libelle="Tous"
-          onClick={() => {
-            modifierFiltre(["actif", "desactive"]);
-          }}
-        />
-        <Tag
-          isActive={
-            verifierTypeEstPresent(/actif/, typeCompte) &&
-            !verifierTypeEstPresent(/desactive/, typeCompte)
-          }
-          libelle="Comptes actifs"
-          onClick={() => {
-            modifierFiltre(["actif"]);
-          }}
-        />
-        <Tag
-          isActive={
-            verifierTypeEstPresent(/desactive/, typeCompte) &&
-            !verifierTypeEstPresent(/actif/, typeCompte)
-          }
-          libelle="Comptes désactivés"
-          onClick={() => {
-            modifierFiltre(["desactive"]);
-          }}
-        />
-      </div>
+      <TagToggleGroup.Root
+        aria-label="Type de compte"
+        className="mt-4"
+        onValueChange={(valeur) => {
+          table.setPageIndex(0);
+          return setTypeCompte(valeur);
+        }}
+        value={typeCompte}
+      >
+        <TagToggleGroup.Item value="actif,desactive">Tous</TagToggleGroup.Item>
+        <TagToggleGroup.Item value="actif">Comptes actifs</TagToggleGroup.Item>
+        <TagToggleGroup.Item value="desactive">
+          Comptes désactivés
+        </TagToggleGroup.Item>
+      </TagToggleGroup.Root>
       <table.Root
         caption="Tableau des utilisateurs"
         captionHidden

@@ -31,15 +31,15 @@ export class PageAdminUtilisateurs extends BasePage {
   }
 
   private get tagTous() {
-    return this.page.getByRole("button", { name: "Tous" });
+    return this.page.getByRole("radio", { name: "Tous" });
   }
 
   private get tagActifs() {
-    return this.page.getByRole("button", { name: "Comptes actifs" });
+    return this.page.getByRole("radio", { name: "Comptes actifs" });
   }
 
   private get tagDesactives() {
-    return this.page.getByRole("button", { name: /Comptes désactivés/ });
+    return this.page.getByRole("radio", { name: /Comptes désactivés/ });
   }
 
   private get boutonCreerCompte() {

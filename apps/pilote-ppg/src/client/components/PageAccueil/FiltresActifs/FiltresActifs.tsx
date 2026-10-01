@@ -3,7 +3,7 @@ import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { Icone } from "@/components/_commons/Icone";
 import { Collapsible } from "@/components/shared/Collapsible";
 import { FunctionComponent, useState } from "react";
-import { Tag } from "@/components/_commons/Tag/Tag";
+import { Tag } from "@/components/shared/Tag";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ppg from "@/server/domain/ppg/Ppg.interface";
@@ -140,11 +140,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="col-span-7 sm:col-span-9 lg:col-span-10 flex gap-1">
               {filtres.estEnAlerteTauxAvancementNonCalculé ? (
                 <Tag
-                  ariaLabel="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
-                  color="warning"
-                  doitAvoirUneTailleFixe
-                  iconRight={CloseLineIcon}
-                  libelle="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
+                  aria-label="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
+                  variante="attention"
+                  tronque
+                  iconeDroite={CloseLineIcon}
                   onClick={() => {
                     filtres.estEnAlerteTauxAvancementNonCalculé = false;
                     sauvegarderFiltres({
@@ -152,48 +151,52 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     });
                     return setFiltres(filtres);
                   }}
-                  size="sm"
-                />
+                  taille="sm"
+                >
+                  Taux d'avancement non calculé en raison d'indicateurs non
+                  renseignés
+                </Tag>
               ) : null}
               {filtres.estEnAlerteÉcart ? (
                 <Tag
-                  ariaLabel={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
-                  color="warning"
-                  doitAvoirUneTailleFixe
-                  iconRight={CloseLineIcon}
-                  libelle={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
+                  aria-label={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
+                  variante="attention"
+                  tronque
+                  iconeDroite={CloseLineIcon}
                   onClick={() => {
                     filtres.estEnAlerteÉcart = false;
 
                     sauvegarderFiltres({ estEnAlerteÉcart: false });
                     return setFiltres(filtres);
                   }}
-                  size="sm"
-                />
+                  taille="sm"
+                >
+                  {`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
+                </Tag>
               ) : null}
               {filtres.estEnAlerteBaisse ? (
                 <Tag
-                  ariaLabel="Chantier(s) avec tendance en baisse"
-                  color="warning"
-                  doitAvoirUneTailleFixe
-                  iconRight={CloseLineIcon}
-                  libelle="Chantier(s) avec tendance en baisse"
+                  aria-label="Chantier(s) avec tendance en baisse"
+                  variante="attention"
+                  tronque
+                  iconeDroite={CloseLineIcon}
                   onClick={() => {
                     filtres.estEnAlerteBaisse = false;
 
                     sauvegarderFiltres({ estEnAlerteBaisse: false });
                     return setFiltres(filtres);
                   }}
-                  size="sm"
-                />
+                  taille="sm"
+                >
+                  Chantier(s) avec tendance en baisse
+                </Tag>
               ) : null}
               {filtres.estEnAlerteMétéoNonRenseignée ? (
                 <Tag
-                  ariaLabel="Chantier(s) avec météo et synthèse des résultats non renseignés"
-                  color="warning"
-                  doitAvoirUneTailleFixe
-                  iconRight={CloseLineIcon}
-                  libelle="Chantier(s) avec météo et synthèse des résultats non renseignés"
+                  aria-label="Chantier(s) avec météo et synthèse des résultats non renseignés"
+                  variante="attention"
+                  tronque
+                  iconeDroite={CloseLineIcon}
                   onClick={() => {
                     filtres.estEnAlerteMétéoNonRenseignée = false;
 
@@ -202,16 +205,18 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     });
                     return setFiltres(filtres);
                   }}
-                  size="sm"
-                />
+                  taille="sm"
+                >
+                  Chantier(s) avec météo et synthèse des résultats non
+                  renseignés
+                </Tag>
               ) : null}
               {filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
                 <Tag
-                  ariaLabel="Chantier(s) sans taux d'avancement au niveau départemental"
-                  color="warning"
-                  doitAvoirUneTailleFixe
-                  iconRight={CloseLineIcon}
-                  libelle="Chantier(s) sans taux d'avancement au niveau départemental"
+                  aria-label="Chantier(s) sans taux d'avancement au niveau départemental"
+                  variante="attention"
+                  tronque
+                  iconeDroite={CloseLineIcon}
                   onClick={() => {
                     filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 
@@ -220,16 +225,17 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     });
                     return setFiltres(filtres);
                   }}
-                  size="sm"
-                />
+                  taille="sm"
+                >
+                  Chantier(s) sans taux d'avancement au niveau départemental
+                </Tag>
               ) : null}
               {filtres.estEnAlertePossedePropositionsValeurAvancement ? (
                 <Tag
-                  ariaLabel="Retirer le tag Chantier(s) avec proposition(s) de valeur d'avancement"
-                  color="warning"
-                  doitAvoirUneTailleFixe
-                  iconRight={CloseLineIcon}
-                  libelle="Chantier(s) avec proposition(s) de valeur d'avancement"
+                  aria-label="Retirer le tag Chantier(s) avec proposition(s) de valeur d'avancement"
+                  variante="attention"
+                  tronque
+                  iconeDroite={CloseLineIcon}
                   onClick={() => {
                     filtres.estEnAlertePossedePropositionsValeurAvancement = false;
 
@@ -238,8 +244,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     });
                     return setFiltres(filtres);
                   }}
-                  size="sm"
-                />
+                  taille="sm"
+                >
+                  Chantier(s) avec proposition(s) de valeur d'avancement
+                </Tag>
               ) : null}
             </div>
           </div>
@@ -260,11 +268,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   .map((meteo) => (
                     <li className="inline" key={`tag-axe-${meteo}`}>
                       <Tag
-                        ariaLabel={`Retirer le tag ${libellesMeteos[meteo]}`}
-                        color="yellow-moutarde"
-                        doitAvoirUneTailleFixe
-                        iconRight={CloseLineIcon}
-                        libelle={libellesMeteos[meteo]}
+                        aria-label={`Retirer le tag ${libellesMeteos[meteo]}`}
+                        variante="moutarde"
+                        tronque
+                        iconeDroite={CloseLineIcon}
                         onClick={() => {
                           let arrFiltreMeteos = filtres.meteos
                             .split(",")
@@ -279,8 +286,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                             meteos: arrFiltreMeteos.join(","),
                           });
                         }}
-                        size="sm"
-                      />
+                        taille="sm"
+                      >
+                        {libellesMeteos[meteo]}
+                      </Tag>
                     </li>
                   ))}
               </ul>
@@ -298,7 +307,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 .filter(Boolean)
                 .map((perimetreId) => (
                   <Tag
-                    ariaLabel={`Retirer le tag ${
+                    aria-label={`Retirer le tag ${
                       ministèresAvecUnSeulPérimètre.has(perimetreId)
                         ? retrouverNomFiltre(
                             ministèresAvecUnSeulPérimètre.get(perimetreId)!,
@@ -306,18 +315,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                           )
                         : retrouverNomFiltre(perimetreId, listePerimetres)
                     }`}
-                    doitAvoirUneTailleFixe
-                    iconRight={CloseLineIcon}
-                    isActive
+                    tronque
+                    iconeDroite={CloseLineIcon}
+                    variante="actif"
                     key={`tag-axe-${perimetreId}`}
-                    libelle={
-                      ministèresAvecUnSeulPérimètre.has(perimetreId)
-                        ? retrouverNomFiltre(
-                            ministèresAvecUnSeulPérimètre.get(perimetreId)!,
-                            ministères,
-                          )
-                        : retrouverNomFiltre(perimetreId, listePerimetres)
-                    }
                     onClick={() => {
                       let arrFiltrePerimetres = filtres.perimetres
                         .split(",")
@@ -334,8 +335,15 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                         perimetres: arrFiltrePerimetres.join(","),
                       });
                     }}
-                    size="sm"
-                  />
+                    taille="sm"
+                  >
+                    {ministèresAvecUnSeulPérimètre.has(perimetreId)
+                      ? retrouverNomFiltre(
+                          ministèresAvecUnSeulPérimètre.get(perimetreId)!,
+                          ministères,
+                        )
+                      : retrouverNomFiltre(perimetreId, listePerimetres)}
+                  </Tag>
                 ))}
             </div>
           </div>
@@ -351,12 +359,11 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 .filter(Boolean)
                 .map((axeId) => (
                   <Tag
-                    ariaLabel={`Retirer le tag ${retrouverNomFiltre(axeId, axes)}`}
-                    doitAvoirUneTailleFixe
-                    iconRight={CloseLineIcon}
-                    isActive
+                    aria-label={`Retirer le tag ${retrouverNomFiltre(axeId, axes)}`}
+                    tronque
+                    iconeDroite={CloseLineIcon}
+                    variante="actif"
                     key={`tag-axe-${axeId}`}
-                    libelle={retrouverNomFiltre(axeId, axes)}
                     onClick={() => {
                       let arrFiltreAxes = filtres.axes
                         .split(",")
@@ -366,8 +373,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                       sauvegarderFiltres({ axes: arrFiltreAxes });
                       return setFiltres({ axes: arrFiltreAxes.join(",") });
                     }}
-                    size="sm"
-                  />
+                    taille="sm"
+                  >
+                    {retrouverNomFiltre(axeId, axes)}
+                  </Tag>
                 ))}
             </div>
           </div>
@@ -379,18 +388,19 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             </div>
             <div className="col-span-7 sm:col-span-9 lg:col-span-10 flex gap-1">
               <Tag
-                ariaLabel={`Retirer le tag ${retrouverNomFiltre(filtres.statut, listeStatuts)}`}
-                doitAvoirUneTailleFixe
-                iconRight={CloseLineIcon}
-                isActive
+                aria-label={`Retirer le tag ${retrouverNomFiltre(filtres.statut, listeStatuts)}`}
+                tronque
+                iconeDroite={CloseLineIcon}
+                variante="actif"
                 key={`tag-statut-${filtres.statut}`}
-                libelle={retrouverNomFiltre(filtres.statut, listeStatuts)}
                 onClick={() => {
                   sauvegarderFiltres({ statut: "PUBLIE" });
                   return setFiltres({ statut: "PUBLIE" });
                 }}
-                size="sm"
-              />
+                taille="sm"
+              >
+                {retrouverNomFiltre(filtres.statut, listeStatuts)}
+              </Tag>
             </div>
           </div>
         ) : null}
@@ -407,12 +417,11 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 .filter(Boolean)
                 .map((territorialisation) => (
                   <Tag
-                    ariaLabel={`Retirer le tag ${NOMS_CODES_MAILLES[territorialisation as Maille]}`}
-                    doitAvoirUneTailleFixe
-                    iconRight={CloseLineIcon}
-                    isActive
+                    aria-label={`Retirer le tag ${NOMS_CODES_MAILLES[territorialisation as Maille]}`}
+                    tronque
+                    iconeDroite={CloseLineIcon}
+                    variante="actif"
                     key={`tag-territorialisation-${territorialisation}`}
-                    libelle={NOMS_CODES_MAILLES[territorialisation as Maille]}
                     onClick={() => {
                       let arrFiltreTerritorialisation =
                         filtres.territorialisation.split(",").filter(Boolean);
@@ -429,8 +438,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                           arrFiltreTerritorialisation.join(","),
                       });
                     }}
-                    size="sm"
-                  />
+                    taille="sm"
+                  >
+                    {NOMS_CODES_MAILLES[territorialisation as Maille]}
+                  </Tag>
                 ))}
             </div>
           </div>
@@ -443,19 +454,20 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="col-span-7 sm:col-span-9 lg:col-span-10 flex gap-1">
               {filtres.estBarometre ? (
                 <Tag
-                  ariaLabel="Retirer le tag Chantiers du baromètre"
-                  doitAvoirUneTailleFixe
-                  iconRight={CloseLineIcon}
-                  isActive
-                  libelle="Chantiers du baromètre"
+                  aria-label="Retirer le tag Chantiers du baromètre"
+                  tronque
+                  iconeDroite={CloseLineIcon}
+                  variante="actif"
                   onClick={() => {
                     filtres.estBarometre = false;
 
                     sauvegarderFiltres({ estBarometre: false });
                     return setFiltres(filtres);
                   }}
-                  size="sm"
-                />
+                  taille="sm"
+                >
+                  Chantiers du baromètre
+                </Tag>
               ) : null}
             </div>
           </div>
@@ -467,17 +479,18 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             </div>
             <div className="col-span-7 sm:col-span-9 lg:col-span-10 flex gap-1">
               <Tag
-                ariaLabel={`Retirer le tag ${filtres.q}`}
-                color="blue-info-main"
-                doitAvoirUneTailleFixe
-                iconRight={CloseLineIcon}
-                libelle={filtres.q}
+                aria-label={`Retirer le tag ${filtres.q}`}
+                variante="info"
+                tronque
+                iconeDroite={CloseLineIcon}
                 onClick={() => {
                   sauvegarderFiltres({ q: "" });
                   return setFiltres({ q: "" });
                 }}
-                size="sm"
-              />
+                taille="sm"
+              >
+                {filtres.q}
+              </Tag>
             </div>
           </div>
         ) : null}

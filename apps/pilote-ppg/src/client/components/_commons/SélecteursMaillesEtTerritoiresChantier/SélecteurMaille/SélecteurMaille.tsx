@@ -4,9 +4,9 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
-import { clsxm } from "@/utils/clsxm";
+import { TagToggleGroup } from "@/components/shared/Tag";
 
-const SélecteurMaille: FunctionComponent<{
+export const SélecteurMaille: FunctionComponent<{
   pathname: string;
   mailleQuery: MailleInterne;
 }> = ({ pathname, mailleQuery }) => {
@@ -47,33 +47,30 @@ const SélecteurMaille: FunctionComponent<{
   };
 
   return (
-    <div className="w-full flex align-center">
-      <label className="fr-label fr-mr-1w no-wrap" htmlFor="maille">
+    <div className="w-full flex items-center">
+      <span className="fr-label fr-mr-1w no-wrap" id="libelle-selecteur-maille">
         Affichage :
-      </label>
-      <div className="flex tag-liste">
+      </span>
+      <TagToggleGroup.Root
+        aria-labelledby="libelle-selecteur-maille"
+        onValueChange={(valeur) => {
+          const maille = maillesInternesAccessiblesEnLecture.find(
+            (mailleAccessible) => mailleAccessible === valeur,
+          );
+          if (maille) changerMaille(maille);
+        }}
+        value={mailleQuery}
+      >
         {objectEntries(mailles)
           .filter(([maille]) =>
             maillesInternesAccessiblesEnLecture.includes(maille),
           )
           .map(([maille, libellé]) => (
-            <button
-              className={clsxm(
-                "fr-tag fr-mr-1w",
-                mailleQuery === maille && "text-white bg-primary",
-              )}
-              key={maille}
-              onClick={() => changerMaille(maille)}
-              type="button"
-            >
-              <p className="overflow-hidden text-ellipsis whitespace-nowrap fr-text--sm">
-                {libellé}
-              </p>
-            </button>
+            <TagToggleGroup.Item key={maille} value={maille}>
+              {libellé}
+            </TagToggleGroup.Item>
           ))}
-      </div>
+      </TagToggleGroup.Root>
     </div>
   );
 };
-
-export default SélecteurMaille;
