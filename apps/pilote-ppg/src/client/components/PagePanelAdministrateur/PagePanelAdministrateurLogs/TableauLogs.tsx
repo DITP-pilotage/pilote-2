@@ -1,4 +1,5 @@
 import { Fragment, FunctionComponent, useState } from "react";
+import { SelectField } from "@/components/shared/SelectField";
 import { $Enums } from "@prisma/client";
 import { flexRender } from "@tanstack/react-table";
 import { clsxm } from "@/utils/clsxm";
@@ -49,54 +50,32 @@ export const TableauLogs: FunctionComponent = () => {
     <div>
       {/* Filtres */}
       <div className="grid grid-cols-4 gap-4 mb-4">
-        <div>
-          <label
-            className="block text-sm font-medium text-gray-700 mb-1"
-            htmlFor="filtre-level"
-          >
-            Niveau
-          </label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-white"
-            id="filtre-level"
-            onChange={(event) =>
-              setFiltreLevel(
-                (event.target.value as $Enums.log_level) || undefined,
-              )
-            }
-            value={filtreLevel ?? ""}
-          >
-            <option value="">Tous</option>
-            {Object.values($Enums.log_level).map((level) => (
-              <option key={level} value={level}>
-                {level}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label
-            className="block text-sm font-medium text-gray-700 mb-1"
-            htmlFor="filtre-categorie"
-          >
-            Catégorie
-          </label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-white"
-            id="filtre-categorie"
-            onChange={(event) =>
-              setFiltreCategorie(event.target.value || undefined)
-            }
-            value={filtreCategorie ?? ""}
-          >
-            <option value="">Toutes</option>
-            {Object.entries(CATEGORIES_LOG).map(([categorie, libelle]) => (
-              <option key={categorie} value={categorie}>
-                {libelle}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField<$Enums.log_level | "">
+          label="Niveau"
+          name="filtre-level"
+          onChange={(valeur) => setFiltreLevel(valeur || undefined)}
+          options={[
+            { valeur: "", libelle: "Tous" },
+            ...Object.values($Enums.log_level).map((level) => ({
+              valeur: level,
+              libelle: level,
+            })),
+          ]}
+          value={filtreLevel ?? ""}
+        />
+        <SelectField
+          label="Catégorie"
+          name="filtre-categorie"
+          onChange={(valeur) => setFiltreCategorie(valeur || undefined)}
+          options={[
+            { valeur: "", libelle: "Toutes" },
+            ...Object.entries(CATEGORIES_LOG).map(([categorie, libelle]) => ({
+              valeur: categorie,
+              libelle,
+            })),
+          ]}
+          value={filtreCategorie ?? ""}
+        />
         <div>
           <label
             className="block text-sm font-medium text-gray-700 mb-1"
