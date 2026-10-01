@@ -52,7 +52,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) {
     const classes = clsxm(
       "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dsfr-focus",
-      variant === "link" ? "p-0 min-h-0 h-6 text-base leading-6" : SIZES[size],
+      variant === "link"
+        ? "p-0 min-h-0 h-6 text-base leading-6"
+        : clsxm("bg-none", SIZES[size]),
       VARIANTS[variant],
       className,
     );
