@@ -30,9 +30,11 @@ export default function useMultiSelect(
     (valeur: string) => {
       let nouvellesValeursSélectionnées = new Set(valeursSélectionnées);
 
-      if (valeursSélectionnées.has(valeur))
+      if (valeursSélectionnées.has(valeur)) {
         nouvellesValeursSélectionnées.delete(valeur);
-      else nouvellesValeursSélectionnées.add(valeur);
+      } else {
+        nouvellesValeursSélectionnées.add(valeur);
+      }
 
       setValeursSélectionnées(nouvellesValeursSélectionnées);
     },
@@ -117,8 +119,9 @@ export default function useMultiSelect(
         [...valeursSélectionnées],
         valeursSélectionnéesParDéfaut,
       )
-    )
+    ) {
       setValeursSélectionnées(new Set(valeursSélectionnéesParDéfaut));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valeursSélectionnéesParDéfaut]);
 
@@ -146,8 +149,11 @@ export default function useMultiSelect(
   }, [isOpen]);
 
   useEffect(() => {
-    if (recherche !== "") filtrerLesOptions();
-    else trierLesOptions();
+    if (recherche !== "") {
+      filtrerLesOptions();
+    } else {
+      trierLesOptions();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recherche]);
 

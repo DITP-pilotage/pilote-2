@@ -6,8 +6,8 @@ import {
   MultiSelectOptionsGroupées,
 } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
-import api from "@/server/infrastructure/api/trpc/api";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
 
 interface MultiSelectTerritoireProps {
   changementValeursSélectionnéesCallback: (
@@ -19,9 +19,9 @@ interface MultiSelectTerritoireProps {
     regionale: boolean;
     departementale: boolean;
   };
-  territoiresSélectionnables?: string[];
   afficherBoutonsSélection?: boolean;
   activerLaRestrictionDesTerritoires?: boolean;
+  listeTerritoiresSelectionnable: TerritoireAvecNombreUtilisateurs[];
 }
 
 export const MAXIMUM_COMPTES_AUTORISE_PAR_REGION = 200;
@@ -48,26 +48,24 @@ const générerLesOptions = (
     : false,
 });
 
-const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
+export const MultiSelectTerritoire: FunctionComponent<
+  MultiSelectTerritoireProps
+> = ({
   territoiresCodesSélectionnésParDéfaut,
   changementValeursSélectionnéesCallback,
   groupesÀAfficher,
-  territoiresSélectionnables,
   afficherBoutonsSélection,
   activerLaRestrictionDesTerritoires,
+  listeTerritoiresSelectionnable,
 }) => {
-  const { data: territoires } = api.territoire.récupérerListe.useQuery(
-    { territoireCodes: territoiresSélectionnables || null },
-    { staleTime: Number.POSITIVE_INFINITY },
-  );
-
   const départements =
-    territoires?.filter(
+    listeTerritoiresSelectionnable.filter(
       (territoire) => territoire.maille === "departementale",
     ) ?? [];
   const régions =
-    territoires?.filter((territoire) => territoire.maille === "regionale") ??
-    [];
+    listeTerritoiresSelectionnable.filter(
+      (territoire) => territoire.maille === "regionale",
+    ) ?? [];
 
   const optionFR = {
     label: "National",
@@ -130,5 +128,3 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
     />
   );
 };
-
-export default MultiSelectTerritoire;

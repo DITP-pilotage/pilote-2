@@ -9,41 +9,37 @@ interface MultiSelectPérimètreMinistérielProps {
     périmètresMinistérielsIdsSélectionnés: string[],
   ) => void;
   périmètresMinistérielsIdsSélectionnésParDéfaut?: string[];
-  périmètresId?: string[];
+  listePerimetresMinisteriel: PerimetreMinisteriel[];
   afficherBoutonsSélection?: boolean;
-  perimetresSelectionnables: PerimetreMinisteriel[];
   desactive?: boolean;
 }
 
-const MultiSelectPérimètreMinistériel: FunctionComponent<
+export const MultiSelectPérimètreMinistériel: FunctionComponent<
   MultiSelectPérimètreMinistérielProps
 > = ({
   périmètresMinistérielsIdsSélectionnésParDéfaut,
   changementValeursSélectionnéesCallback,
-  périmètresId,
   afficherBoutonsSélection,
-  perimetresSelectionnables,
+  listePerimetresMinisteriel,
   desactive,
 }) => {
   const [optionsGroupées, setOptionsGroupées] =
     useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {
-    if (perimetresSelectionnables) {
-      setOptionsGroupées([
-        {
-          label: "Périmètres Ministériels",
-          options: trierParOrdreAlphabétique(
-            perimetresSelectionnables.map((perimetreMinisteriel) => ({
-              label: perimetreMinisteriel.nom,
-              value: perimetreMinisteriel.id,
-            })),
-            "label",
-          ),
-        },
-      ]);
-    }
-  }, [perimetresSelectionnables, périmètresId]);
+    setOptionsGroupées([
+      {
+        label: "Périmètres Ministériels",
+        options: trierParOrdreAlphabétique(
+          listePerimetresMinisteriel.map((périmètreMinistériel) => ({
+            label: périmètreMinistériel.nom,
+            value: périmètreMinistériel.id,
+          })),
+          "label",
+        ),
+      },
+    ]);
+  }, [listePerimetresMinisteriel]);
 
   return (
     <MultiSelect
@@ -61,5 +57,3 @@ const MultiSelectPérimètreMinistériel: FunctionComponent<
     />
   );
 };
-
-export default MultiSelectPérimètreMinistériel;

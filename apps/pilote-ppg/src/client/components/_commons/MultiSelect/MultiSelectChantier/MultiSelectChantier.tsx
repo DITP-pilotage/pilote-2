@@ -15,7 +15,9 @@ interface MultiSelectChantierProps {
   desactive?: boolean;
 }
 
-const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
+export const MultiSelectChantier: FunctionComponent<
+  MultiSelectChantierProps
+> = ({
   chantiersIdsSélectionnésParDéfaut,
   changementValeursSélectionnéesCallback,
   valeursDésactivées,
@@ -59,9 +61,9 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}
-      changementValeursSélectionnéesCallback={
-        changementValeursSélectionnéesCallback
-      }
+      changementValeursSélectionnéesCallback={(
+        valeursSélectionnées: string[],
+      ) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       desactive={desactive}
       label="Chantier(s)"
       optionsGroupées={optionsGroupées}
