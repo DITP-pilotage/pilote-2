@@ -14,17 +14,17 @@ import { clsxm } from "@/utils/clsxm";
 interface AffichagePublicationProps {
   commentaire: Publication | null;
   onModifier?: () => void;
-  annexe?: ReactNode;
-  messageAbsence?: string;
+  aside?: ReactNode;
+  emptyMessage?: string;
 }
 
 export const AffichagePublication = ({
-  annexe,
+  aside,
   ...props
 }: AffichagePublicationProps) =>
-  annexe ? (
+  aside ? (
     <div className="flex gap-4">
-      <div className="flex-none flex flex-col items-center gap-4">{annexe}</div>
+      <div className="flex-none flex flex-col items-center gap-4">{aside}</div>
       <div className="min-w-0">
         <ContenuPublication {...props} />
       </div>
@@ -36,8 +36,8 @@ export const AffichagePublication = ({
 const ContenuPublication = ({
   commentaire,
   onModifier,
-  messageAbsence,
-}: Omit<AffichagePublicationProps, "annexe">) => {
+  emptyMessage,
+}: Omit<AffichagePublicationProps, "aside">) => {
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
   const [contenuTronque, setContenuTronque] = useState(false);
   const contenuRef = useRef<HTMLDivElement>(null);
@@ -52,8 +52,8 @@ const ContenuPublication = ({
   }, [commentaire?.contenu]);
 
   if (!commentaire) {
-    return messageAbsence ? (
-      <p className="fr-text--sm text-dsfr-mention-grey">{messageAbsence}</p>
+    return emptyMessage ? (
+      <p className="fr-text--sm text-dsfr-mention-grey">{emptyMessage}</p>
     ) : (
       <Badge size="sm">Non renseigné</Badge>
     );

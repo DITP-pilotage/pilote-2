@@ -19,12 +19,12 @@ export interface PublicationBrouillon {
   dateModification: string;
 }
 
-export interface ValeursPublication {
+export interface PublicationValues {
   contenu: string;
 }
 
 export interface PublicationActions<
-  T extends ValeursPublication = ValeursPublication,
+  T extends PublicationValues = PublicationValues,
 > {
   publier: SubmitHandler<T>;
   enregistrerEnBrouillon: SubmitHandler<T>;
@@ -33,12 +33,10 @@ export interface PublicationActions<
   modifier: SubmitHandler<T>;
 }
 
-export interface FormulairePublicationConfiguration<
-  T extends ValeursPublication,
-> {
+export interface PublicationFormConfig<T extends PublicationValues> {
   resolver: Resolver<T>;
-  limiteCaracteres: number;
-  valeursModification: DefaultValues<T>;
-  valeursNouvellePublication: DefaultValues<T>;
-  champsAnnexes?: ReactNode;
+  maxLength: number;
+  editValues: DefaultValues<T>;
+  newValues: DefaultValues<T>;
+  extraFields?: ReactNode;
 }

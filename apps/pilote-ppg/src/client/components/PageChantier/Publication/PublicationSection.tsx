@@ -3,45 +3,45 @@ import BandeauInformation from "@/components/_commons/BandeauInformation/Bandeau
 import AlertePublication from "@/components/PageChantier/Publication/AlertePublication";
 import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
 import { FormulairePublication } from "@/components/PageChantier/Publication/FormulairePublication";
-import { BoutonModalePublication } from "@/components/PageChantier/Publication/BoutonModalePublication";
+import { PublicationModalButton } from "@/components/PageChantier/Publication/PublicationModalButton";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import {
-  FormulairePublicationConfiguration,
+  PublicationFormConfig,
   Publication,
   PublicationActions,
   PublicationBrouillon,
-  ValeursPublication,
+  PublicationValues,
 } from "./Publication.interface";
 import { usePublicationSectionEtat } from "./usePublicationSectionEtat";
 
-interface PublicationSectionProps<T extends ValeursPublication> {
+interface PublicationSectionProps<T extends PublicationValues> {
   libelle: string;
-  afficherLibelle?: boolean;
+  showLabel?: boolean;
   consigne: string;
   complementConsigneGenerique: string;
   publication: Publication | null;
   brouillon: PublicationBrouillon | null;
   modeEcriture?: boolean;
   actions: PublicationActions<T>;
-  formulaire: FormulairePublicationConfiguration<T>;
-  annexe?: ReactNode;
-  messageAbsence?: string;
+  formConfig: PublicationFormConfig<T>;
+  aside?: ReactNode;
+  emptyMessage?: string;
   historiqueNode?: ReactNode;
   type?: string;
 }
 
-export const PublicationSection = <T extends ValeursPublication>({
+export const PublicationSection = <T extends PublicationValues>({
   libelle,
-  afficherLibelle = true,
+  showLabel = true,
   consigne,
   complementConsigneGenerique,
   publication,
   brouillon,
   modeEcriture = false,
   actions,
-  formulaire,
-  annexe,
-  messageAbsence,
+  formConfig,
+  aside,
+  emptyMessage,
   historiqueNode,
   type,
 }: PublicationSectionProps<T>) => {
@@ -57,11 +57,11 @@ export const PublicationSection = <T extends ValeursPublication>({
     handleModifierBrouillon,
   } = usePublicationSectionEtat(actions);
 
-  const avecBrouillon = !!brouillon?.dateModification;
+  const hasDraft = !!brouillon?.dateModification;
 
   return (
     <div className="px-2 py-4">
-      {!modeÉdition && afficherLibelle ? (
+      {!modeÉdition && showLabel ? (
         <h5 className="font-bold text-xl mb-1">{libelle}</h5>
       ) : null}
       {brouillon?.dateModification ? (
@@ -75,7 +75,7 @@ export const PublicationSection = <T extends ValeursPublication>({
         <FormulairePublication
           annulationCallback={quitterModeÉdition}
           consigne={consigne}
-          formulaire={formulaire}
+          formConfig={formConfig}
           libelle={libelle}
           onModifier={handleModifier}
           publication={publication}
@@ -84,33 +84,31 @@ export const PublicationSection = <T extends ValeursPublication>({
         <>
           <AlertePublication action={alerteAction} />
           <AffichagePublication
-            annexe={annexe}
+            aside={aside}
             commentaire={publication}
-            messageAbsence={messageAbsence}
+            emptyMessage={emptyMessage}
             onModifier={modeEcriture ? entrerEnModeÉdition : undefined}
           />
           <div className="flex justify-end items-center gap-4 mt-2">
             {publication ? historiqueNode : null}
             {modeEcriture ? (
-              <BoutonModalePublication
-                annexe={annexe}
+              <PublicationModalButton
+                aside={aside}
                 ariaLabel={
                   type ? `bouton-nouveau-commentaire-${type}` : undefined
                 }
-                avecBrouillon={avecBrouillon}
+                hasDraft={hasDraft}
                 commentaire={publication}
                 complementConsigneGenerique={complementConsigneGenerique}
                 consigne={consigne}
-                formulaire={formulaire}
-                key={avecBrouillon ? "brouillon" : "nouveau"}
+                formConfig={formConfig}
+                key={hasDraft ? "brouillon" : "nouveau"}
                 libelle={libelle}
-                messageAbsence={messageAbsence}
+                emptyMessage={emptyMessage}
                 onEnregistrerBrouillon={
-                  avecBrouillon ? handleModifierBrouillon : handleBrouillon
+                  hasDraft ? handleModifierBrouillon : handleBrouillon
                 }
-                onPublier={
-                  avecBrouillon ? handlePublierBrouillon : handlePublier
-                }
+                onPublier={hasDraft ? handlePublierBrouillon : handlePublier}
               />
             ) : null}
           </div>

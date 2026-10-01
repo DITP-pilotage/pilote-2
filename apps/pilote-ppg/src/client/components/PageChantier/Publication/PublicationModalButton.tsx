@@ -5,33 +5,33 @@ import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/shared/Infobulle";
 import {
-  FormulairePublicationConfiguration,
+  PublicationFormConfig,
   Publication,
-  ValeursPublication,
+  PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { ModaleFormulairePublication } from "@/components/PageChantier/Publication/ModaleFormulairePublication";
 
-export const BoutonModalePublication = <T extends ValeursPublication>({
-  avecBrouillon,
+export const PublicationModalButton = <T extends PublicationValues>({
+  hasDraft,
   commentaire,
-  annexe,
-  messageAbsence,
+  aside,
+  emptyMessage,
   libelle,
   consigne,
   complementConsigneGenerique,
-  formulaire,
+  formConfig,
   onPublier,
   onEnregistrerBrouillon,
   ariaLabel,
 }: {
-  avecBrouillon: boolean;
+  hasDraft: boolean;
   commentaire: Publication | null;
-  annexe?: ReactNode;
-  messageAbsence?: string;
+  aside?: ReactNode;
+  emptyMessage?: string;
   libelle: string;
   consigne: string;
   complementConsigneGenerique: string;
-  formulaire: FormulairePublicationConfiguration<T>;
+  formConfig: PublicationFormConfig<T>;
   onPublier: SubmitHandler<T>;
   onEnregistrerBrouillon: SubmitHandler<T>;
   ariaLabel?: string;
@@ -50,12 +50,12 @@ export const BoutonModalePublication = <T extends ValeursPublication>({
 
   return (
     <ModaleFormulairePublication
-      annexe={annexe}
+      aside={aside}
       commentaire={commentaire}
       complementConsigneGenerique={complementConsigneGenerique}
       consigne={consigne}
-      formulaire={formulaire}
-      messageAbsence={messageAbsence}
+      formConfig={formConfig}
+      emptyMessage={emptyMessage}
       onEnregistrerBrouillon={handleBrouillon}
       onOpenChange={setOpen}
       onPublier={handlePublier}
@@ -63,13 +63,13 @@ export const BoutonModalePublication = <T extends ValeursPublication>({
       title={`Nouveau commentaire "${libelle}"`}
       trigger={
         <Bouton
-          aria-label={avecBrouillon ? undefined : ariaLabel}
+          aria-label={hasDraft ? undefined : ariaLabel}
           iconLeft={
             <Icone className="text-current h-4 w-4" icone={Icone1Icon} />
           }
           iconRight={
             <Infobulle classNameIcone="w-5 h-5">
-              {avecBrouillon
+              {hasDraft
                 ? "Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez pas publié. Vous pouvez éditer ce nouveau commentaire pour le publier ou le conserver en tant que brouillon."
                 : "Vous pouvez ici saisir un nouveau commentaire et le publier ou l'enregistrer en tant que brouillon."}{" "}
               Si vous choisissez de publier votre nouveau commentaire, le
@@ -77,7 +77,7 @@ export const BoutonModalePublication = <T extends ValeursPublication>({
               l'historique des commentaires.
             </Infobulle>
           }
-          label={avecBrouillon ? "Editer un brouillon" : "Nouveau commentaire"}
+          label={hasDraft ? "Editer un brouillon" : "Nouveau commentaire"}
           variant="secondary"
         />
       }

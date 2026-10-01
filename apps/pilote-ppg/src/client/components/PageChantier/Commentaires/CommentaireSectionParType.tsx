@@ -10,7 +10,7 @@ import {
 } from "@/client/constants/libellesCommentaire";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
-import { formulaireCommentaire } from "@/components/PageChantier/Publication/formulaireCommentaire";
+import { commentaireForm } from "@/components/PageChantier/Publication/commentaireForm";
 import { HistoriqueCommentaire } from "@/components/PageChantier/Commentaires/Historique/HistoriqueCommentaire";
 import { useCommentaireActions } from "./useCommentaireActions";
 
@@ -45,7 +45,7 @@ export const CommentaireSectionParType = ({
         complementsConsigneGeneriqueCommentaire[type]
       }
       consigne={consignesEcritureCommentaire[type]}
-      formulaire={formulaireCommentaire({
+      formConfig={commentaireForm({
         publication: commentaire,
         brouillon: commentaireBrouillon,
       })}
