@@ -1,23 +1,10 @@
 import { useMemo } from "react";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { CartographieDonnéesMétéo } from "./CartographieMétéo.interface";
-
-function déterminerRemplissage(
-  valeur: Meteo | null,
-  élémentsDeLégende: CartographieÉlémentsDeLégende,
-  estApplicable: boolean | null,
-) {
-  if (estApplicable === false)
-    return élémentsDeLégende.NON_APPLICABLE.remplissage;
-  else if (valeur === "ORAGE") return élémentsDeLégende.ORAGE.remplissage;
-  else if (valeur === "COUVERT") return élémentsDeLégende.COUVERT.remplissage;
-  else if (valeur === "NUAGE") return élémentsDeLégende.NUAGE.remplissage;
-  else if (valeur === "SOLEIL") return élémentsDeLégende.SOLEIL.remplissage;
-  else return élémentsDeLégende.DÉFAUT.remplissage;
-}
+import { getMeteoFill, getMeteoLegend } from "./meteoFill";
 
 export default function useCartographieMétéo(
   données: CartographieDonnéesMétéo,
@@ -25,35 +12,10 @@ export default function useCartographieMétéo(
 ) {
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
-  const légende = useMemo(() => {
-    const tousApplicables: Boolean = données.every((d) => d.estApplicable);
-    const tousNonNull: Boolean = données.every(
-      (d) => d.valeur !== "NON_RENSEIGNEE",
-    );
-
-    let légendeAffichée = Object.values(élémentsDeLégende);
-    if (tousApplicables) {
-      légendeAffichée = légendeAffichée.filter(
-        (el) =>
-          el.libellé !==
-          "Territoire où le chantier prioritaire ne s'applique pas",
-      );
-    }
-
-    if (tousNonNull) {
-      légendeAffichée = légendeAffichée.filter(
-        (el) =>
-          el.libellé !== "Territoire pour lequel la météo n'est pas renseignée",
-      );
-    }
-
-    légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
-      libellé,
-      remplissage,
-    }));
-
-    return légendeAffichée;
-  }, [élémentsDeLégende, données]);
+  const légende = useMemo(
+    () => getMeteoLegend(données, élémentsDeLégende),
+    [élémentsDeLégende, données],
+  );
 
   const donnéesCartographie = données.reduce((acc, val) => {
     const territoireGéographique = récupérerDétailsSurUnTerritoire(
@@ -70,7 +32,7 @@ export default function useCartographieMétéo(
               : libellesMeteos[val.valeur]}
           </div>
         ),
-        remplissage: déterminerRemplissage(
+        remplissage: getMeteoFill(
           val.valeur,
           élémentsDeLégende,
           val.estApplicable,
