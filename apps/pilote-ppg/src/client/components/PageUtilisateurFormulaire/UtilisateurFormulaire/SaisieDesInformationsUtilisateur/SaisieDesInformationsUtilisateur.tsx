@@ -4,14 +4,15 @@ import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel"
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Titre from "@/components/_commons/Titre/Titre";
-import MultiSelectTerritoire, {
+import {
+  MultiSelectTerritoire,
   MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
   MAXIMUM_COMPTES_AUTORISE_PAR_REGION,
 } from "@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire";
-import MultiSelectPérimètreMinistériel from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
+import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import { UtilisateurFormulaireProps } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
 import CaseACocher from "@/components/_commons/CaseACocher/CaseACocher";
-import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier";
+import { MultiSelectChantier } from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { SelecteurApplication } from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SelecteurApplication";
@@ -155,7 +156,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
                   territoiresCodesSélectionnésParDéfaut={getValues(
                     "habilitations.lecture.territoires",
                   )}
-                  territoiresSélectionnables={territoiresSélectionnables}
+                  listeTerritoiresSelectionnable={territoiresSélectionnables}
                 />
               )}
               rules={{ required: true }}
@@ -174,7 +175,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
                     changementPerimetresSelectionnes
                   }
                   desactive={perimetresSelectionnables.length === 0}
-                  perimetresSelectionnables={perimetresSelectionnables}
+                  listePerimetresMinisteriel={perimetresSelectionnables}
                   périmètresMinistérielsIdsSélectionnésParDéfaut={getValues(
                     "habilitations.lecture.périmètres",
                   )}
