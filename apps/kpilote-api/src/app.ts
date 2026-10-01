@@ -2,6 +2,7 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 
+import { acmeRoutes } from '@/acme/routes'
 import { apiKeyRoutes } from '@/apiKey/routes'
 import { centreAideRoutes } from '@/centreAide/routes'
 import { commentaireRoutes } from '@/commentaire/routes'
@@ -26,6 +27,10 @@ import { valeurImportRoutes } from '@/valeurImport/routes'
 import { whoamiRoutes } from '@/whoami/routes'
 
 export const app = new OpenAPIHono()
+
+// Monté avant les middlewares globaux : la CA lit le challenge sans token, et le
+// Bearer ACME ne doit être ni interprété comme un JWT ni ouvrir de connexion base.
+app.route('/', acmeRoutes)
 
 app.use('*', cors({ origin: env.CORS_ORIGINS, credentials: false }))
 app.use('*', databaseContext)

@@ -44,13 +44,15 @@ export const FILTRES_CAMPAGNE = [
   '--filter',
   '@pilote/kpilote-shared',
   '--filter',
+  '@pilote/kpilote-acme',
+  '--filter',
   '@pilote/ppg',
   '--filter',
   'pilote-ppg-auth',
 ]
 
 /**
- * Workspaces qui portent réellement un tsc — les 7, depuis que kpilote-shared et kpilote-ui
+ * Workspaces qui portent réellement un tsc — tous, depuis que kpilote-shared et kpilote-ui
  * ont reçu le leur (ils n'avaient que prettier, donc aucun filet de typage : leurs erreurs
  * étaient invisibles, y compris celles qu'une campagne introduisait).
  * Certaines exigent une étape de codegen AVANT tsc, sinon les types n'existent pas encore :
@@ -75,10 +77,11 @@ const APPS_TYPEES = [
   { pkg: 'pilote-ppg-auth' },
   { pkg: '@pilote/kpilote-ui' },
   { pkg: '@pilote/kpilote-shared' },
+  { pkg: '@pilote/kpilote-acme' },
 ]
 
 /**
- * Workspaces qui portent un script `lint` — les 7 désormais. pilote-ppg-auth, kpilote-ui et
+ * Workspaces qui portent un script `lint` — tous désormais. pilote-ppg-auth, kpilote-ui et
  * kpilote-shared n'en avaient pas (ou seulement `prettier --check`) : leur lint est passé à
  * `oxlint --type-aware && tsc --noEmit && prettier --check`, comme les quatre autres.
  * Ne remettre un workspace hors de cette liste que s'il perd vraiment son script : l'oracle
@@ -92,6 +95,7 @@ const APPS_LINTEES = [
   'pilote-ppg-auth',
   '@pilote/kpilote-ui',
   '@pilote/kpilote-shared',
+  '@pilote/kpilote-acme',
 ]
 
 /**
@@ -114,6 +118,7 @@ const APPS_TESTEES = [
   '@pilote/kpilote-admin',
   '@pilote/kpilote-ui',
   '@pilote/kpilote-shared',
+  '@pilote/kpilote-acme',
   '@pilote/ppg',
   'pilote-ppg-auth',
 ]

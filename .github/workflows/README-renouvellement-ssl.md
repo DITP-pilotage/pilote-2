@@ -3,7 +3,8 @@
 Workflow : `.github/workflows/renouvellement-ssl.yml`.
 
 Émet/renouvelle les certificats Sectigo pour les domaines des apps `pilote-ppg`
-(webapp) et `pilote-ppg-auth` (keycloak), puis les pousse sur Scalingo.
+(webapp), `pilote-ppg-auth` (keycloak), `kpilote-api` et `kpilote-webapp`, puis
+les pousse sur Scalingo.
 
 ## Déclenchement
 
@@ -24,9 +25,15 @@ Variables :
 - `WEBAPP_DOMAIN`, `WEBAPP_SCALINGO_APP` (requis)
 - `AUTH_DOMAIN`, `AUTH_SCALINGO_APP` (optionnels — si absents, le job `auth` de
   l'env est ignoré proprement)
+- `KPILOTE_API_DOMAIN`, `KPILOTE_API_SCALINGO_APP` et `KPILOTE_WEBAPP_DOMAIN`,
+  `KPILOTE_WEBAPP_SCALINGO_APP` (optionnels, même règle : un env sans kpilote est
+  ignoré)
 
 Secret :
-- `ACME_UPLOAD_API_KEY` — clé Bearer de la route de challenge de cet env.
+- `ACME_UPLOAD_API_KEY` — clé Bearer de la route de challenge de cet env. Elle est
+  partagée par toutes les apps de l'env : la même valeur doit être posée dans la
+  variable d'env `ACME_UPLOAD_API_KEY` de chaque app Scalingo concernée. Côté
+  kpilote, une variable absente ou vide désactive le dépôt (`503`).
 
 > Ne pas mettre de *required reviewers* sur ces environments, sinon le cron se
 > bloque en attente d'approbation.
@@ -46,6 +53,10 @@ workflow via `ACME_PUSH_PATH` / `ACME_DELETE_STYLE`) :
 |---|---|---|
 | webapp (`pilote-ppg`) | `/api/admin/acme-challenge` | `/api/admin/acme-challenge?token=…` |
 | auth (`pilote-ppg-auth`) | `/api/acme/challenge` | `/api/acme/challenge/<token>` |
+| `kpilote-api`, `kpilote-webapp` | `/api/acme/challenge` | `/api/acme/challenge/<token>` |
+
+Côté kpilote, les routes viennent du package partagé
+[`@pilote/kpilote-acme`](../../packages/kpilote-acme).
 
 ## Limitation connue
 

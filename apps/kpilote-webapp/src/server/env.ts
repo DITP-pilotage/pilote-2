@@ -24,6 +24,8 @@ const envSchema = z.object({
     ),
   PUBLIC_BASE_URL: z.url(),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  // Clé Bearer du dépôt des challenges ACME (renouvellement SSL). Vide = dépôt désactivé.
+  ACME_UPLOAD_API_KEY: z.string().optional(),
 })
 
 export const serverEnv = envSchema.parse(process.env)

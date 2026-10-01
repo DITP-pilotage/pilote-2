@@ -25,7 +25,8 @@ pilote/
 │   └── kpilote-admin/               Back-office kpilote multi-environnement (clé API)
 ├── packages/
 │   ├── kpilote-shared/              Schémas Zod et logique pure partagés
-│   └── kpilote-ui/                  Composants React et thème Tailwind partagés
+│   ├── kpilote-ui/                  Composants React et thème Tailwind partagés
+│   └── kpilote-acme/                Routes Hono du challenge ACME (renouvellement SSL)
 ├── scripts/                         Outillage du monorepo (campagne de dépendances)
 ├── package.json                     Scripts d'alias vers le workspace actif
 ├── pnpm-workspace.yaml              Configuration workspaces
@@ -42,6 +43,7 @@ pilote/
 | kpilote-admin | `@pilote/kpilote-admin` | [apps/kpilote-admin](apps/kpilote-admin/README.md) |
 | kpilote-shared | `@pilote/kpilote-shared` | [packages/kpilote-shared](packages/kpilote-shared/README.md) |
 | kpilote-ui | `@pilote/kpilote-ui` | [packages/kpilote-ui](packages/kpilote-ui/README.md) |
+| kpilote-acme | `@pilote/kpilote-acme` | [packages/kpilote-acme](packages/kpilote-acme/README.md) |
 
 ### kpilote en un coup d'œil
 

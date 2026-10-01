@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         environnement: [prod, preprod, dev]
-        application: [webapp, auth]
+        application: [webapp, auth, kpilote-api, kpilote-webapp]
     env:
       ACME_DIRECTORY_URL: https://acme.sectigo.com/v2/OV
       SCALINGO_API_BASE: https://api.osc-secnum-fr1.scalingo.com
@@ -41,6 +41,10 @@ jobs:
           WEBAPP_SCALINGO_APP: ${{ vars.WEBAPP_SCALINGO_APP }}
           AUTH_DOMAIN: ${{ vars.AUTH_DOMAIN }}
           AUTH_SCALINGO_APP: ${{ vars.AUTH_SCALINGO_APP }}
+          KPILOTE_API_DOMAIN: ${{ vars.KPILOTE_API_DOMAIN }}
+          KPILOTE_API_SCALINGO_APP: ${{ vars.KPILOTE_API_SCALINGO_APP }}
+          KPILOTE_WEBAPP_DOMAIN: ${{ vars.KPILOTE_WEBAPP_DOMAIN }}
+          KPILOTE_WEBAPP_SCALINGO_APP: ${{ vars.KPILOTE_WEBAPP_SCALINGO_APP }}
         run: |
           # Le contexte `matrix` n'est pas accessible dans un `if:` de job, donc
           # on filtre ici : sur workflow_dispatch avec une cible précise, on ignore
@@ -52,17 +56,30 @@ jobs:
             exit 0
           fi
 
-          if [ "${{ matrix.application }}" = "webapp" ]; then
-            DOMAINE="$WEBAPP_DOMAIN"
-            SCALINGO_APP="$WEBAPP_SCALINGO_APP"
-            PUSH_PATH="/api/admin/acme-challenge"
-            DELETE_STYLE="query"
-          else
-            DOMAINE="$AUTH_DOMAIN"
-            SCALINGO_APP="$AUTH_SCALINGO_APP"
-            PUSH_PATH="/api/acme/challenge"
-            DELETE_STYLE="path"
-          fi
+          # Toutes les apps exposent POST /api/acme/challenge + DELETE .../<token>,
+          # sauf la webapp PPG (routes Next historiques).
+          PUSH_PATH="/api/acme/challenge"
+          DELETE_STYLE="path"
+          case "${{ matrix.application }}" in
+            webapp)
+              DOMAINE="$WEBAPP_DOMAIN"
+              SCALINGO_APP="$WEBAPP_SCALINGO_APP"
+              PUSH_PATH="/api/admin/acme-challenge"
+              DELETE_STYLE="query"
+              ;;
+            auth)
+              DOMAINE="$AUTH_DOMAIN"
+              SCALINGO_APP="$AUTH_SCALINGO_APP"
+              ;;
+            kpilote-api)
+              DOMAINE="$KPILOTE_API_DOMAIN"
+              SCALINGO_APP="$KPILOTE_API_SCALINGO_APP"
+              ;;
+            kpilote-webapp)
+              DOMAINE="$KPILOTE_WEBAPP_DOMAIN"
+              SCALINGO_APP="$KPILOTE_WEBAPP_SCALINGO_APP"
+              ;;
+          esac
 
           if [ -z "$DOMAINE" ] || [ -z "$SCALINGO_APP" ]; then
             echo "Aucune config pour ${{ matrix.environnement }}/${{ matrix.application }} — job ignoré."

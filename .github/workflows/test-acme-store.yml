@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         environnement: [prod, preprod, dev]
-        application: [webapp, auth]
+        application: [webapp, auth, kpilote-api, kpilote-webapp]
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -40,6 +40,8 @@ jobs:
         env:
           WEBAPP_DOMAIN: ${{ vars.WEBAPP_DOMAIN }}
           AUTH_DOMAIN: ${{ vars.AUTH_DOMAIN }}
+          KPILOTE_API_DOMAIN: ${{ vars.KPILOTE_API_DOMAIN }}
+          KPILOTE_WEBAPP_DOMAIN: ${{ vars.KPILOTE_WEBAPP_DOMAIN }}
         run: |
           CIBLE="${{ github.event.inputs.cible }}"
           if [ -n "$CIBLE" ] && [ "$CIBLE" != "tous" ] && [ "$CIBLE" != "${{ matrix.environnement }}" ]; then
@@ -48,15 +50,18 @@ jobs:
             exit 0
           fi
 
-          if [ "${{ matrix.application }}" = "webapp" ]; then
-            DOMAINE="$WEBAPP_DOMAIN"
-            PUSH_PATH="/api/admin/acme-challenge"
-            DELETE_STYLE="query"
-          else
-            DOMAINE="$AUTH_DOMAIN"
-            PUSH_PATH="/api/acme/challenge"
-            DELETE_STYLE="path"
-          fi
+          PUSH_PATH="/api/acme/challenge"
+          DELETE_STYLE="path"
+          case "${{ matrix.application }}" in
+            webapp)
+              DOMAINE="$WEBAPP_DOMAIN"
+              PUSH_PATH="/api/admin/acme-challenge"
+              DELETE_STYLE="query"
+              ;;
+            auth) DOMAINE="$AUTH_DOMAIN" ;;
+            kpilote-api) DOMAINE="$KPILOTE_API_DOMAIN" ;;
+            kpilote-webapp) DOMAINE="$KPILOTE_WEBAPP_DOMAIN" ;;
+          esac
 
           if [ -z "$DOMAINE" ]; then
             echo "Aucun domaine pour ${{ matrix.environnement }}/${{ matrix.application }} — job ignoré."

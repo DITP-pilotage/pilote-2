@@ -1,3 +1,4 @@
+import { createAcmeChallengeRoutes } from '@pilote/kpilote-acme/acmeChallengeRoutes'
 import { Hono } from 'hono'
 import { secureHeaders } from 'hono/secure-headers'
 
@@ -34,4 +35,6 @@ app.use(
 )
 
 app.get('/healthz', (context) => context.text('ok\n'))
+// Monté ici, avant le fallback SPA de index.ts qui renverrait index.html.
+app.route('/', createAcmeChallengeRoutes({ uploadApiKey: serverEnv.ACME_UPLOAD_API_KEY }))
 app.route('/auth', authRouter)

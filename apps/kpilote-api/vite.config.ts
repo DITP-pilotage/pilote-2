@@ -9,7 +9,7 @@ export default defineConfig({
     cors: false,
   },
   ssr: {
-    noExternal: ['@pilote/kpilote-shared'],
+    noExternal: ['@pilote/kpilote-shared', '@pilote/kpilote-acme'],
   },
   build: {
     target: 'node24',

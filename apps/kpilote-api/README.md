@@ -36,6 +36,7 @@ Le dev passe par [portless](https://www.npmjs.com/package/portless), qui sert l'
 | `ALBERT_API_KEY` | Optionnel — active la normalisation d'imports par le LLM Albert |
 | `LOG_LEVEL`, `LOG_TO_DATABASE` | Niveau de log, persistance des logs en base |
 | `MAX_ASYNC_CONCURRENCY` | Parallélisme des traitements asynchrones |
+| `ACME_UPLOAD_API_KEY` | Optionnel — clé Bearer du dépôt des challenges ACME ([renouvellement SSL](../../.github/workflows/README-renouvellement-ssl.md)) |
 
 Le schéma est validé au démarrage dans `src/env.ts`. Les tests lisent `.env.test`.
 

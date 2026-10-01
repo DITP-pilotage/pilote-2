@@ -27,6 +27,8 @@ const envSchema = z.object({
   LOG_TO_DATABASE: z.stringbool().default(false),
   MAX_ASYNC_CONCURRENCY: z.coerce.number().int().positive().default(5),
   ALBERT_API_KEY: z.string().min(1).optional(),
+  // Clé Bearer du dépôt des challenges ACME (renouvellement SSL). Vide = dépôt désactivé.
+  ACME_UPLOAD_API_KEY: z.string().optional(),
 })
 
 export type Env = z.infer<typeof envSchema>
