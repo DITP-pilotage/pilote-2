@@ -81,10 +81,12 @@ jobs:
         run: |
           python3 -m venv "$HOME/.certbot-venv"
           "$HOME/.certbot-venv/bin/pip" install --quiet --upgrade pip
-          # pyopenssl<25 : pyOpenSSL 25.x supprime crypto.X509Req, encore référencé
-          # par la josepy embarquée avec certbot 3.1.0 (AttributeError au démarrage).
-          # 24.x est la version testée pour cette certbot.
-          "$HOME/.certbot-venv/bin/pip" install --quiet 'certbot==3.1.0' 'pyopenssl<25'
+          # certbot 5.x (josepy 2.x) : requis par le Python 3.14 d'ubuntu-26.04.
+          # certbot 3.x impose josepy<2, incompatible avec l'évaluation différée
+          # des annotations de Python 3.14 (ValueError « Field `alg` in JSONObject
+          # `Header` has no type annotation »). josepy 2.x ne dépend plus de
+          # crypto.X509Req, d'où la levée de l'ancien pin pyopenssl<25.
+          "$HOME/.certbot-venv/bin/pip" install --quiet 'certbot==5.8.0'
           "$HOME/.certbot-venv/bin/certbot" --version
 
       - name: Émettre le certificat (HTTP-01 via hooks)
