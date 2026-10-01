@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { SelectField } from "@/components/shared/SelectField";
 import * as echarts from "echarts";
 import type {
   Granularite,
@@ -47,43 +48,29 @@ export const GraphesLogs: FunctionComponent = () => {
     <Fragment>
       <div className="flex gap-4 mb-6">
         <div>
-          <label
-            className="block text-sm font-medium text-gray-700 mb-1"
-            htmlFor="periode-graphes"
-          >
-            Période
-          </label>
-          <select
-            className="px-3 py-2 border border-gray-300 rounded text-sm bg-white"
-            id="periode-graphes"
-            onChange={(event) =>
-              handleSetPeriode(event.target.value as Periode)
-            }
+          <SelectField<Periode>
+            label="Période"
+            name="periode-graphes"
+            onChange={handleSetPeriode}
+            options={[
+              { valeur: "7j", libelle: "7 jours" },
+              { valeur: "30j", libelle: "30 jours" },
+            ]}
             value={periode}
-          >
-            <option value="7j">7 jours</option>
-            <option value="30j">30 jours</option>
-          </select>
+          />
         </div>
         <div>
-          <label
-            className="block text-sm font-medium text-gray-700 mb-1"
-            htmlFor="granularite-graphes"
-          >
-            Granularité
-          </label>
-          <select
-            className="px-3 py-2 border border-gray-300 rounded text-sm bg-white"
-            id="granularite-graphes"
-            onChange={(event) =>
-              setGranularite(event.target.value as Granularite)
-            }
+          <SelectField<Granularite>
+            label="Granularité"
+            name="granularite-graphes"
+            onChange={setGranularite}
+            options={[
+              { valeur: "heure", libelle: "Heure" },
+              { valeur: "jour", libelle: "Jour" },
+              { valeur: "semaine", libelle: "Semaine" },
+            ]}
             value={granularite}
-          >
-            <option value="heure">Heure</option>
-            <option value="jour">Jour</option>
-            <option value="semaine">Semaine</option>
-          </select>
+          />
         </div>
       </div>
 

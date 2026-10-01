@@ -1,4 +1,5 @@
 import type { PaginationState } from "@tanstack/react-table";
+import { SelectField } from "@/components/shared/SelectField";
 import { type ComponentType, useId } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLeftSFirstIcon } from "@/components/_commons/Icones/ArrowLeftSFirstIcon";
@@ -175,21 +176,18 @@ export function PaginationView({
         </nav>
       )}
       {hasPageSize && (
-        <div className="flex items-center gap-2 text-sm/6">
-          <label htmlFor={pageSizeId}>Lignes par page</label>
-          <select
-            className="rounded-t border-b-2 border-dsfr-grey-200 bg-dsfr-contrast-grey px-3 py-1"
-            id={pageSizeId}
-            onChange={(event) => onPageSizeChange(Number(event.target.value))}
-            value={pageSize}
-          >
-            {pageSizeOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          className="flex-row items-center gap-2 text-sm/6"
+          label="Lignes par page"
+          name={pageSizeId}
+          onChange={(valeur) => onPageSizeChange(Number(valeur))}
+          options={pageSizeOptions.map((option) => ({
+            valeur: String(option),
+            libelle: String(option),
+          }))}
+          triggerClassName="w-20 py-1"
+          value={String(pageSize)}
+        />
       )}
     </div>
   );

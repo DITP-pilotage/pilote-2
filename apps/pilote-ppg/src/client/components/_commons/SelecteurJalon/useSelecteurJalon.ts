@@ -14,9 +14,9 @@ export const useSelecteurJalon = () => {
     dateBasculeValeurAnneePrecedente,
   ).toString();
   const listeOptionsJalon: {
-    libellé: JalonsAAfficherType;
+    libelle: JalonsAAfficherType;
     valeur: JalonsAAfficherType;
-  }[] = listeJalonAAfficher.map((jalon) => ({ libellé: jalon, valeur: jalon }));
+  }[] = listeJalonAAfficher.map((jalon) => ({ libelle: jalon, valeur: jalon }));
 
   return {
     listeJalonAAfficher,

@@ -1,9 +1,9 @@
-import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import { FunctionComponent } from "react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { SelectField } from "@/components/shared/SelectField";
 import { useSelecteurJalon } from "./useSelecteurJalon";
 
-const SelecteurJalon: FunctionComponent = () => {
+export const SelecteurJalon: FunctionComponent = () => {
   const { listeOptionsJalon, listeJalonAAfficher, jalonAAfficherParDefaut } =
     useSelecteurJalon();
 
@@ -19,19 +19,13 @@ const SelecteurJalon: FunctionComponent = () => {
   );
 
   return (
-    <select
-      className="fr-select fr-mt-0 fr-mr-1w"
-      id="jalon"
-      onChange={(e) => setJalon(e.target.value)}
+    <SelectField
+      className="mr-2"
+      name="jalon"
+      onChange={(valeur) => setJalon(valeur)}
+      options={listeOptionsJalon}
+      triggerClassName="w-28"
       value={jalon}
-    >
-      {listeOptionsJalon.map((option) => (
-        <option key={option.valeur} value={option.valeur}>
-          {option.libellé}
-        </option>
-      ))}
-    </select>
+    />
   );
 };
-
-export default SelecteurJalon;
