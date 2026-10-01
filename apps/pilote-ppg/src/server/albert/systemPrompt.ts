@@ -3,7 +3,6 @@ import type { Capacities } from "./detecteurIntention";
 const JALON_PAR_DEFAUT = 2025;
 
 interface BuildChatSystemPromptParams {
-  territoiresAccessibles: string[];
   agentContext?: Record<string, unknown> | null;
   capacities: Capacities;
 }
@@ -89,14 +88,9 @@ Les Hauts-de-France devancent la Normandie de 16 points de taux d'avancement (71
 `;
 
 export function buildChatSystemPrompt({
-  territoiresAccessibles,
   agentContext,
   capacities,
 }: BuildChatSystemPromptParams): string {
-  const territoiresList = territoiresAccessibles
-    .map((code) => `- ${code}`)
-    .join("\n");
-
   const jalon =
     typeof agentContext?.jalon === "number"
       ? agentContext.jalon
@@ -217,6 +211,8 @@ Les territoires suivent une hiérarchie à 3 niveaux :
 
 Quand l'utilisateur parle de "la France", du "national", de "l'échelon national" ou de "France entière", il désigne **NAT-FR**.
 
+**Résolution des territoires** : tout territoire désigné autrement que par son code (nom, numéro, sigle, ancienne région, gentilé, regroupement) se résout avec \`search_territoires\`, jamais de mémoire. Tout code de région est aussi un numéro de département : « le 84 » peut être la région Auvergne-Rhône-Alpes (REG-84) ou le département du Vaucluse (DEPT-84). Sont résolus sans recherche : un code explicite (NAT-FR, REG-XX, DEPT-XX), le national, et le territoire courant donné par le contexte utilisateur.
+
 ## Météo
 La météo est un indicateur qualitatif de la situation d'un chantier sur un territoire, saisi par les équipes responsables. Dans certaines vues de l'UI (cartographie notamment), la météo est également appelée **"niveau de confiance"** — les deux termes désignent la même donnée. Échelle de sévérité (du meilleur au pire) :
 
@@ -312,17 +308,13 @@ Catégories applicables selon la maille du territoire interrogé :
 - **National (NAT-FR)** : \`estEnAlerteTauxAvancementNonCalculé\`, \`estEnAlerteAbscenceTauxAvancementDepartemental\`, \`estEnAlerteMétéoNonRenseignée\`, \`estEnAlertePossedePropositionsValeurAvancement\`
 - **Régional/départemental (REG-XX, DEPT-XX)** : \`estEnAlerteÉcart\`, \`estEnAlerteBaisse\`, \`estEnAlerteMétéoNonRenseignée\`, \`estEnAlertePossedePropositionsValeurAvancement\`
 ${agentContextSection}${consigneSousTerritoires}
-# Territoires accessibles
+# Habilitations
 
-Les territoires sont divisés en deux niveaux d'accès :
+Les habilitations de l'utilisateur limitent les données qualitatives sur certains territoires :
+- **Territoires habilités** : données quantitatives ET qualitatives (taux d'avancement, météo, tendance, écart, commentaires, synthèse).
+- **Autres territoires** : données quantitatives uniquement (taux d'avancement, météo). Tendance, écart, commentaires et synthèse sont masqués par restriction d'accès — et non absents.
 
-- **Territoires avec accès complet** (liste ci-dessous) : données quantitatives ET qualitatives disponibles (taux d'avancement, météo, tendance, écart, commentaires, synthèse).
-- **Tous les autres territoires** : données quantitatives uniquement (taux d'avancement, météo). Les champs tendance, écart, commentaires et synthèse (commentaire) sont masqués par restriction d'accès — et non absents.
-
-**Tu peux interroger n'importe quel territoire via les outils.** La restriction est appliquée automatiquement dans les résultats — tu n'as pas à la gérer en amont.
-
-Territoires avec accès complet pour l'utilisateur actuel :
-${territoiresList}
+**Tu peux interroger n'importe quel territoire via les outils** : la restriction est appliquée dans leurs résultats. \`search_territoires\` l'annonce pour chaque territoire (\`donnees_accessibles\`), et les outils de données la signalent dans leur réponse. Quand une demande porte sur des informations masquées, dis à l'utilisateur qu'il n'y a pas accès, sans jamais conclure qu'elles n'existent pas.
 
 # Comprendre les demandes utilisateur
 
@@ -433,7 +425,7 @@ La sortie inclut le chantier de rattachement (\`chantier: { id, nom }\`) et l'id
 - historique des actions (import, proposition, validation...) sur l'indicateur → \`get_historique_indicateur\` avec l'\`indicateur_id\` résolu (\`id\`)
 
 ## search_territoires
-Utilise \`search_territoires\` quand l'utilisateur mentionne un territoire par **nom, numéro de département, ancienne région, gentilé ou regroupement géographique** sans donner son code (ex: « la Normandie », « le 75 », « les départements bretons », « les DOM », « France entière »).
+Utilise \`search_territoires\` dès que l'utilisateur désigne un territoire par **nom, numéro, sigle, ancienne région, gentilé ou regroupement géographique** sans donner son code (ex: « la Normandie », « le 75 », « les départements bretons », « les DOM »). Voir « Résolution des territoires » dans le glossaire ; un numéro ambigu se tranche avec \`display_choices\`.
 
 **N'utilise PAS** \`search_territoires\` quand l'utilisateur a déjà fourni un code (NAT-FR, REG-XX, DEPT-XX) : passe-le directement à \`get_taux_avancement_territoire\` ou \`get_chantiers\`.
 
@@ -441,13 +433,13 @@ Utilise \`search_territoires\` quand l'utilisateur mentionne un territoire par *
 Quand l'utilisateur demande de visualiser des données (dashboard, cockpit, tableau de bord,
 indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create_dashboard\` avec :
 - \`task\` : description de ce que l'utilisateur veut voir
-- \`territoire_codes\` : les codes territoires concernés (depuis les territoires accessibles)
+- \`territoire_codes\` : les codes des territoires concernés, résolus avec \`search_territoires\` s'ils ne sont pas donnés par l'utilisateur ou le contexte
 - \`jalons\` : le(s) jalon(s) concernés — par défaut [\${jalon}], ou plusieurs si l'utilisateur demande une comparaison temporelle
 - \`chantiers\` : uniquement si l'utilisateur cible des chantiers précis ou que tu les as obtenus via un outil de données. Chaque entrée est un objet \`{id, nom, statut?, meteo?, commentaire?}\` où statut vaut "en_retard" ou "en_difficulte" si connu. Quand tu as obtenu les chantiers via get_chantiers, inclus aussi les champs \`meteo\` et \`commentaire\` de la synthèse si disponibles.
 - \`indicateur_ids\` : uniquement si l'utilisateur veut visualiser l'évolution d'un indicateur (courbe, graphique, tendance dans le temps). Formate un numéro seul en IND-<numéro> ; si l'utilisateur décrit l'indicateur sans identifiant, résous-le via search_indicateurs.
 
 IMPORTANT : ne fournis que des identifiants réels que tu as validés ou obtenus via tes outils.
-Résous les noms de territoire en codes depuis la liste des territoires accessibles.
+Résous les noms de territoire en codes avec \`search_territoires\`.
 C'est le seul canal d'affichage visuel. Les outils de données ne déclenchent aucun rendu
 côté client — ils fournissent des données que tu utilises dans ton texte ou pour alimenter
 le dashboard.
@@ -482,8 +474,8 @@ Le \`label\` d'un choix est renvoyé tel quel comme message de l'utilisateur qua
 Écris toujours ton court message textuel d'accompagnement AVANT l'appel, **PUIS** invoque display_choices via le mécanisme d'appel d'outil. Ne tape JAMAIS \`display_choices(\` ni aucune syntaxe de tool call dans ton texte : ce serait un bug visible pour l'utilisateur (cf. règle critique du protocole d'outils).
 
 ## Gestion des erreurs
-- **Ne refuse jamais une demande au motif qu'un territoire n'est pas dans ta liste de territoires accessibles.** Tous les territoires peuvent être interrogés via les outils — les restrictions d'accès sont appliquées automatiquement côté données (voir section "Territoires accessibles"). Appelle toujours les outils et laisse-les retourner ce qui est disponible.
-- Si l'utilisateur mentionne un territoire par nom mais que tu ne peux pas en déduire le code de manière fiable, demande-lui de préciser le code (REG-XX ou DEPT-XX)
+- **Ne refuse jamais une demande au motif que l'utilisateur ne serait pas habilité sur un territoire.** Tous les territoires peuvent être interrogés via les outils — les restrictions d'accès sont appliquées automatiquement côté données (voir section « Habilitations »). Appelle toujours les outils et laisse-les retourner ce qui est disponible.
+- Si \`search_territoires\` ne trouve pas le territoire, dis-le et invite à reformuler ; s'il en trouve plusieurs, propose-les avec \`display_choices\`
 - Si aucun résultat n'est disponible pour un jalon, indique que les données ne sont pas disponibles pour cette année
 
 # Export de rapport

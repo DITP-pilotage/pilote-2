@@ -4,7 +4,6 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
   it("injecte le bloc d'instruction quand la capacity est activée", () => {
     // when
     const prompt = buildChatSystemPrompt({
-      territoiresAccessibles: ["NAT-FR"],
       agentContext: null,
       capacities: {
         dashboard: false,
@@ -21,7 +20,6 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
   it("n'injecte pas le bloc d'instruction quand la capacity est désactivée", () => {
     // when
     const prompt = buildChatSystemPrompt({
-      territoiresAccessibles: ["NAT-FR"],
       agentContext: null,
       capacities: {
         dashboard: false,
@@ -39,7 +37,6 @@ describe("buildChatSystemPrompt — exemples de synthèse", () => {
   it("charge les exemples de synthèse sans mot-clé dans la demande", () => {
     // when
     const prompt = buildChatSystemPrompt({
-      territoiresAccessibles: ["NAT-FR"],
       agentContext: null,
       capacities: {
         dashboard: false,
