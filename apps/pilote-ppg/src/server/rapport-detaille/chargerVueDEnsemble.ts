@@ -20,7 +20,10 @@ import {
   aUnFiltreAlerte,
   ContexteRapportDetaille,
 } from "@/server/rapport-detaille/contexteRapportDetaille";
-import { VueDEnsembleRapportDetaille } from "@/server/rapport-detaille/rapportDetaille.interface";
+import {
+  ChantierRapportDetailleSansMailles,
+  VueDEnsembleRapportDetaille,
+} from "@/server/rapport-detaille/rapportDetaille.interface";
 
 const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set<string>([
   ProfilEnum.DITP_ADMIN,
@@ -273,7 +276,7 @@ export async function chargerVueDEnsemble(
 
 export function sansMailles(
   chantier: ChantierRapportDetailleContrat,
-): Omit<ChantierRapportDetailleContrat, "mailles"> {
+): ChantierRapportDetailleSansMailles {
   const { mailles: _mailles, ...reste } = chantier;
   return reste;
 }

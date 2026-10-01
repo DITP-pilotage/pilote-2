@@ -1,10 +1,10 @@
 import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
+import { ChantierRapportDetailleSansMailles } from "@/server/rapport-detaille/rapportDetaille.interface";
 import useVueDEnsemble from "@/client/hooks/useVueDEnsemble";
 
 export default function usePageRapportDétaillé(
-  chantiers: ChantierRapportDetailleContrat[],
+  chantiers: ChantierRapportDetailleSansMailles[],
   territoireCode: string,
   filtresComptesCalculés: Record<TypeAlerteChantier, number>,
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat,

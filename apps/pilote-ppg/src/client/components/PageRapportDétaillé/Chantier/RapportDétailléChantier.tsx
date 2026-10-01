@@ -34,18 +34,21 @@ const RapportDétailléChantier: FunctionComponent<
   territoireSélectionné,
   territoireCode,
   chantier,
-  indicateurs,
-  détailsIndicateurs,
-  synthèseDesRésultats,
-  commentaires,
-  objectifs,
-  décisionStratégique,
-  mapChantierStatistiques,
-  donnéesCartographieAvancement,
-  donnéesCartographieMétéo,
+  detail,
   jalon,
-  listeIndicateursPrisEnCompteAvancement,
 }) => {
+  const {
+    indicateurs,
+    détailsIndicateurs,
+    synthèseDesRésultats,
+    commentaires,
+    objectifs,
+    décisionStratégique,
+    avancement: avancements,
+    donnéesCartographieAvancement,
+    donnéesCartographieMétéo,
+    listeIndicateursPrisEnCompteAvancement,
+  } = detail;
   const ffMasquerIndicateursNonApplicables = useEnv(
     "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
   );
@@ -53,8 +56,6 @@ const RapportDétailléChantier: FunctionComponent<
     chantier?.responsableLocalTerritoireSélectionné ?? [];
   const listeCoordinateursTerritorials =
     chantier?.coordinateurTerritorialTerritoireSélectionné ?? [];
-
-  const avancements = mapChantierStatistiques.get(chantier.id)!;
 
   const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType =
     {

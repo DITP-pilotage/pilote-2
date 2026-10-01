@@ -44,3 +44,15 @@ export type DetailChantierRapportDetaille = {
   donnéesCartographieMétéo: CartographieDonnéesMétéo;
   listeIndicateursPrisEnCompteAvancement: string[];
 };
+
+export type ChantierRapportDetailleSansMailles = Omit<
+  ChantierRapportDetailleContrat,
+  "mailles"
+>;
+
+export type VueDEnsembleRapportDetailleSerialisee = Omit<
+  VueDEnsembleRapportDetaille,
+  "chantiers"
+> & {
+  chantiers: ChantierRapportDetailleSansMailles[];
+};

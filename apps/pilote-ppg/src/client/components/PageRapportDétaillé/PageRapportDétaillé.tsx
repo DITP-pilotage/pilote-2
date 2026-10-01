@@ -3,61 +3,29 @@ import Link from "next/link";
 import { FunctionComponent, useState } from "react";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import Titre from "@/components/_commons/Titre/Titre";
-import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
 import RapportDétailléVueDEnsemble from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
 import RapportDétailléChantier from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier";
 import PremièrePageImpressionRapportDétaillé from "@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
 import {
-  AvancementsGlobauxTerritoriauxMoyensContrat,
-  AvancementsStatistiquesAccueilContrat,
-} from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import Axe from "@/server/domain/axe/Axe.interface";
-import { AvancementChantierRapportDetaille } from "@/components/PageRapportDétaillé/AvancementChantierRapportDetaille";
-import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface";
-import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
+  DetailChantierRapportDetaille,
+  VueDEnsembleRapportDetailleSerialisee,
+} from "@/server/rapport-detaille/rapportDetaille.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { getFiltresActifs } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
 
 interface PageRapportDétailléProps {
-  chantiers: ChantierRapportDetailleContrat[];
-  ministères: Ministère[];
-  axes: Axe[];
-  indicateursGroupésParChantier: Record<string, Indicateur[]>;
-  détailsIndicateursGroupésParChantier: Record<
-    Chantier["id"],
-    DétailsIndicateurs
-  >;
-  publicationsGroupéesParChantier: PublicationsGroupéesParChantier;
+  vueDEnsemble: VueDEnsembleRapportDetailleSerialisee;
+  details: DetailChantierRapportDetaille[];
   mailleSelectionnee: MailleInterne;
-  mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>;
   territoireCode: string;
   jalon: number;
-  filtresComptesCalculés: Record<TypeAlerteChantier, number>;
-  avancementsAgrégés: AvancementsStatistiquesAccueilContrat;
-  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
-  repartitionMeteosChantiers: RepartitionMeteoContrat;
-  estAutoriseAVoirLesBrouillons: boolean;
-  mapDonnéesCartographieAvancement: Map<
-    string,
-    AvancementsGlobauxTerritoriauxMoyensContrat
-  >;
-  mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>;
-  listeIndicateursPrisEnCompteAvancement: string[];
-  chantiersSontArchives: boolean;
-  moyenneTauxAvancementTerritoire: number | null;
 }
 
 export const htmlId = {
@@ -66,27 +34,27 @@ export const htmlId = {
 };
 
 const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
-  chantiers: chantiersFiltrés,
-  ministères,
-  axes,
-  indicateursGroupésParChantier,
-  détailsIndicateursGroupésParChantier,
-  publicationsGroupéesParChantier,
+  vueDEnsemble,
+  details,
   mailleSelectionnee,
-  mapChantierStatistiques,
-  filtresComptesCalculés,
-  avancementsAgrégés,
-  avancementsGlobauxTerritoriauxMoyens,
-  repartitionMeteosChantiers,
-  estAutoriseAVoirLesBrouillons,
   territoireCode,
   jalon,
-  mapDonnéesCartographieAvancement,
-  mapDonnéesCartographieMétéo,
-  listeIndicateursPrisEnCompteAvancement,
-  chantiersSontArchives,
-  moyenneTauxAvancementTerritoire,
 }) => {
+  const {
+    chantiers: chantiersFiltrés,
+    ministères,
+    axes,
+    filtresComptesCalculés,
+    avancementsAgrégés,
+    avancementsGlobauxTerritoriauxMoyens,
+    repartitionMeteosChantiers,
+    estAutoriseAVoirLesBrouillons,
+    chantiersSontArchives,
+    moyenneTauxAvancementTerritoire,
+  } = vueDEnsemble;
+  const detailParChantier = new Map(
+    details.map((detail) => [detail.chantierId, detail]),
+  );
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -162,51 +130,20 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
             />
             {afficherLesChantiers ? (
               <div className="chantiers">
-                {chantiersFiltrés.map((chantier) => (
-                  <RapportDétailléChantier
-                    chantier={chantier}
-                    commentaires={
-                      publicationsGroupéesParChantier.commentaires[
-                        chantier.id
-                      ] ?? []
-                    }
-                    donnéesCartographieAvancement={mapDonnéesCartographieAvancement.get(
-                      chantier.id,
-                    )!}
-                    donnéesCartographieMétéo={mapDonnéesCartographieMétéo.get(
-                      chantier.id,
-                    )!}
-                    décisionStratégique={
-                      publicationsGroupéesParChantier.décisionStratégique[
-                        chantier.id
-                      ] ?? null
-                    }
-                    détailsIndicateurs={
-                      détailsIndicateursGroupésParChantier[chantier.id] ?? []
-                    }
-                    indicateurs={
-                      indicateursGroupésParChantier[chantier.id] ?? []
-                    }
-                    jalon={jalon}
-                    key={chantier.id}
-                    listeIndicateursPrisEnCompteAvancement={
-                      listeIndicateursPrisEnCompteAvancement
-                    }
-                    mailleSelectionnee={mailleSelectionnee}
-                    mapChantierStatistiques={mapChantierStatistiques}
-                    objectifs={
-                      publicationsGroupéesParChantier.objectifs[chantier.id] ??
-                      []
-                    }
-                    synthèseDesRésultats={
-                      publicationsGroupéesParChantier.synthèsesDesRésultats[
-                        chantier.id
-                      ] ?? null
-                    }
-                    territoireCode={territoireCode}
-                    territoireSélectionné={territoireSélectionné}
-                  />
-                ))}
+                {chantiersFiltrés.map((chantier) => {
+                  const detail = detailParChantier.get(chantier.id);
+                  return detail ? (
+                    <RapportDétailléChantier
+                      chantier={chantier}
+                      detail={detail}
+                      jalon={jalon}
+                      key={chantier.id}
+                      mailleSelectionnee={mailleSelectionnee}
+                      territoireCode={territoireCode}
+                      territoireSélectionné={territoireSélectionné}
+                    />
+                  ) : null;
+                })}
               </div>
             ) : null}
           </div>
