@@ -61,7 +61,7 @@ export const Picker = <T extends string>({
   const stripedItemClassName = (index: number) =>
     striped
       ? clsxm(
-          "px-4 py-3 !text-base data-[highlighted]:bg-dsfr-grey-925",
+          "px-4 py-3 !text-base data-[highlighted]:bg-dsfr-grey-925 data-[state=checked]:text-dsfr-mention-grey data-[state=checked]:pointer-events-none data-[state=checked]:cursor-default",
           index % 2 === 0 ? "bg-dsfr-grey-1000" : "bg-dsfr-grey-950",
         )
       : undefined;
