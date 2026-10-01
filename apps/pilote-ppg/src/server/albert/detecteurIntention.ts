@@ -1,20 +1,5 @@
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
-const MOTS_CLES_SYNTHESE = [
-  "synthèse",
-  "synthese",
-  "état des lieux",
-  "etat des lieux",
-  "résume",
-  "resume",
-  "résumé",
-  "resumé",
-  "résumée",
-  "point complet",
-  "vue d'ensemble",
-  "panorama",
-];
-
 const MOTS_CLES_DASHBOARD = [
   "dashboard",
   "cockpit",
@@ -56,7 +41,6 @@ const MOTS_CLES_SOUS_TERRITOIRES = [
 ];
 
 export interface Capacities {
-  synthese: boolean;
   dashboard: boolean;
   exportRapport: boolean;
   inclureSousTerritoires: boolean;
@@ -71,7 +55,6 @@ export function detecterCapacities(message: string): Capacities {
   const contient = (motCle: string) =>
     normalise.includes(retirerDiacritiques(motCle));
   return {
-    synthese: MOTS_CLES_SYNTHESE.some(contient),
     dashboard: MOTS_CLES_DASHBOARD.some(contient),
     exportRapport: MOTS_CLES_EXPORT.some(contient),
     inclureSousTerritoires: MOTS_CLES_SOUS_TERRITOIRES.some(contient),

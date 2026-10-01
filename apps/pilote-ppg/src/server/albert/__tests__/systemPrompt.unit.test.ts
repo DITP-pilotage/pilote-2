@@ -7,7 +7,6 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
       territoiresAccessibles: ["NAT-FR"],
       agentContext: null,
       capacities: {
-        synthese: false,
         dashboard: false,
         exportRapport: false,
         inclureSousTerritoires: true,
@@ -25,7 +24,6 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
       territoiresAccessibles: ["NAT-FR"],
       agentContext: null,
       capacities: {
-        synthese: false,
         dashboard: false,
         exportRapport: false,
         inclureSousTerritoires: false,
@@ -34,5 +32,23 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
 
     // then
     expect(prompt).not.toContain("Sous-territoires détectés dans la demande");
+  });
+});
+
+describe("buildChatSystemPrompt — exemples de synthèse", () => {
+  it("charge les exemples de synthèse sans mot-clé dans la demande", () => {
+    // when
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: ["NAT-FR"],
+      agentContext: null,
+      capacities: {
+        dashboard: false,
+        exportRapport: false,
+        inclureSousTerritoires: false,
+      },
+    });
+
+    // then
+    expect(prompt).toContain("# Exemples de synthèse et de comparaison");
   });
 });

@@ -8,158 +8,85 @@ interface BuildChatSystemPromptParams {
   capacities: Capacities;
 }
 
-const GABARIT_SYNTHESE_TERRITORIALE = `# Gabarit de synthèse territoriale
+const EXEMPLES_DE_SYNTHESE = `# Exemples de synthèse et de comparaison
 
-Ce gabarit s'applique UNIQUEMENT quand tu appelles les 3 outils ensemble (get_taux_avancement_territoire + get_chantiers(view='en_retard') + get_chantiers(view='en_difficulte')).
+Ces exemples montrent la FORME attendue. Les territoires, chantiers, chiffres et commentaires y sont fictifs : n'en reprends jamais rien, écris uniquement à partir des résultats de tes outils.
 
-<selection>
-IMPORTANT : Choisis le bon template en fonction du nombre de territoires dans les résultats des outils.
-- Si les résultats contiennent UN SEUL territoire → utilise le template "mono_territoire"
-- Si les résultats contiennent PLUSIEURS territoires → utilise le template "comparaison"
-</selection>
+Ce qui vaut pour tous les cas :
+- Chaque chantier au format **CH-XXX — Nom**, avec son écart en points (s'il est en retard) et le libellé de sa météo.
+- Sous chaque chantier, une ou deux phrases qui condensent son commentaire de synthèse avec tes mots, ou « Pas de commentaire disponible ».
+- Pas de tableau pour une liste de chantiers ; un tableau dès que plusieurs territoires sont comparés.
+- Le territoire est nommé selon sa maille : « la région », « le département », « la France ».
+- Une catégorie vide se dit en une phrase (« Aucun chantier n'est en retard sur ce territoire. »).
 
-<mono_territoire>
-<instructions>
-Ce template s'applique quand les résultats des outils contiennent UN SEUL territoire.
-Remplace les variables entre {{ }} par les données réelles issues des résultats des outils.
-Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
-</instructions>
+## Exemple 1 — synthèse d'un territoire
 
-<template>
-# Synthèse pour {{territoire_nom}}
+Demande : « Fais-moi la synthèse du Calvados »
 
-Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_global}}%, pour une médiane des <if territoire is DEPT>départements</if><else>régions</else> à {{mediane_repartition}}%.
+\`\`\`markdown
+# Synthèse pour le Calvados
 
----
+Le taux d'avancement 2025 du département s'établit à 48 %, pour une médiane des départements à 61 % : le Calvados se situe en retard par rapport à la médiane.
 
 ## Chantiers en retard
 
-{{X}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale :
+**CH-101 — Nom du chantier A**\\
+**Écart** : -18 points\\
+**Météo** : Appuis nécessaires
 
-(pour chaque chantier_en_retard, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Écart** : {{ecart}} points\\
-**Météo** : {{synthese.meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-NOTE FORMAT :
-- la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
-- entre deux chantiers, insère un paragraphe contenant uniquement \`&nbsp;\` pour créer une séparation visuelle.
-
-**Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
-
----
+Les recrutements prévus au premier semestre ont pris trois mois de retard ; une nouvelle campagne démarre en septembre.
 
 ## Chantiers en difficulté
 
-{{Y}} chantiers sont compromis ou nécessitent un appui :
+**CH-102 — Nom du chantier B**\\
+**Météo** : Objectifs compromis
 
-(pour chaque chantier_en_difficulte, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Écart** : {{ecart}} points\\
-**Météo** : {{synthese.meteo}}
+Pas de commentaire disponible.
 
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
+**En résumé** : un chantier en retard de 18 points et un chantier aux objectifs compromis.
+\`\`\`
 
-&nbsp;
+## Exemple 2 — synthèse d'une région et de ses départements
 
-**Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
+Demande : « Fais-moi la synthèse de la Normandie et ses départements »
 
----
+\`\`\`markdown
+# Synthèse pour la Normandie et ses départements
 
-Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
-</template>
-</mono_territoire>
-
-<comparaison>
-<instructions>
-Ce template s'applique quand les résultats des outils contiennent PLUSIEURS territoires.
-Remplace les variables entre {{ }} par les données réelles issues des résultats des outils.
-Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
-</instructions>
-
-<template>
-# Comparaison : {{territoire_1_nom}} vs {{territoire_2_nom}} [vs ...]
-
-| Territoire | TA {{JALON}} | Médiane | Position |
+| Territoire | TA 2025 | Médiane de la maille | Position |
 |---|---|---|---|
-(pour chaque territoire)
-| {{territoire.nom}} | {{taux_avancement_global}} | {{mediane_repartition}} | {{position_mediane}} |
+| Normandie | 55 % | 60 % (régions) | Dans la médiane |
+| Calvados | 48 % | 61 % (départements) | En retard |
+| Manche | 66 % | 61 % (départements) | Dans la médiane |
 
-## Analyse des écarts
-
-Décris factuellement les écarts de taux d'avancement entre les territoires comparés : qui est en avance, qui est en retard, de combien de points.
-
----
+La Manche est en tête avec 66 %, 18 points devant le Calvados (48 %), seul territoire en retard sur la médiane de sa maille.
 
 ## Chantiers en retard
 
-{{X_total}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale.
+**CH-101 — Nom du chantier A** (Calvados, Manche)\\
+**Écart** : -18 points dans le Calvados, -12 points dans la Manche\\
+**Météo** : Appuis nécessaires
 
-### Communs à plusieurs territoires
-
-(pour chaque chantier en retard présent dans au moins 2 territoires, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Territoires concernés** : {{liste_territoires}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-### Spécifiques à {{territoire.nom}}
-
-(pour chaque territoire, lister les chantiers en retard qui lui sont propres, séparés par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Écart** : {{ecart}} points\\
-**Météo** : {{synthese.meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-NOTE FORMAT :
-- la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
-- entre deux chantiers, insère un paragraphe contenant uniquement \`&nbsp;\` pour créer une séparation visuelle.
-
-**Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
-
----
+Les deux départements signalent des recrutements en retard.
 
 ## Chantiers en difficulté
 
-{{Y_total}} chantiers sont compromis ou nécessitent un appui.
+Aucun chantier n'est en difficulté sur ces territoires.
+\`\`\`
 
-### Communs à plusieurs territoires
+## Exemple 3 — comparaison de territoires
 
-(pour chaque chantier en difficulté présent dans au moins 2 territoires, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Territoires concernés** : {{liste_territoires}}\\
-**Météo** : {{meteo}}
+Demande : « Compare la Normandie avec les Hauts-de-France »
 
-> {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
+\`\`\`markdown
+| Territoire | TA 2025 | Médiane des régions | Position |
+|---|---|---|---|
+| Normandie | 55 % | 60 % | Dans la médiane |
+| Hauts-de-France | 71 % | 60 % | En avance |
 
-&nbsp;
-
-### Spécifiques à {{territoire.nom}}
-
-(pour chaque territoire, lister les chantiers en difficulté qui lui sont propres, séparés par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Météo** : {{meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-**Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
-
----
-
-Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
-</template>
-</comparaison>`;
+Les Hauts-de-France devancent la Normandie de 16 points de taux d'avancement (71 % contre 55 %) et sont en avance sur la médiane des régions, quand la Normandie s'y situe.
+\`\`\`
+`;
 
 export function buildChatSystemPrompt({
   territoiresAccessibles,
@@ -188,14 +115,6 @@ Les règles fondamentales ci-dessus s'appliquent toujours, quel que soit le cont
 Si le contexte définit un territoire par défaut, utilise-le quand l'utilisateur ne précise pas de territoire.
 `
       : "";
-
-  const consigneSyntheseWorkflow = capacities.synthese
-    ? "Utilise le gabarit de synthèse territoriale (section en fin de prompt) à la place des `_output_instructions` individuelles."
-    : "Produis une synthèse factuelle structurée à partir des résultats des 3 outils, sans interpréter ni recommander.";
-
-  const gabaritSection = capacities.synthese
-    ? `\n${GABARIT_SYNTHESE_TERRITORIALE}\n`
-    : "";
 
   const consigneSousTerritoires = capacities.inclureSousTerritoires
     ? `
@@ -443,9 +362,8 @@ Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la 
 
 **Protocole** :
 1. Appelle les 3 outils en parallèle : get_taux_avancement_territoire, get_chantiers(view='en_retard'), get_chantiers(view='en_difficulte')
-2. **Ignore** les _output_instructions individuelles de chaque outil
-3. ${consigneSyntheseWorkflow}
-4. Si l'utilisateur demande la synthèse avec les sous-territoires (ex: "et ses départements"), passe include_sous_territoires=true aux 3 outils
+2. Présente le résultat comme dans les exemples de synthèse (fin de prompt), plutôt que selon les \`_output_instructions\` de chaque outil
+3. Si l'utilisateur demande la synthèse avec les sous-territoires (ex: "et ses départements"), passe include_sous_territoires=true aux 3 outils
 
 ### b. Comparaison temporelle entre jalons
 **Déclencheur** : l'utilisateur demande de comparer entre deux jalons/années.
@@ -570,5 +488,6 @@ Quand l'utilisateur demande d'exporter ou télécharger un rapport :
 2. **Indicateurs** : pour chaque chantier mentionné dans le rapport, appelle get_indicateurs si ce n'est pas déjà fait. Tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport.
 3. Dans les contenus de type "paragraphe", utilise toujours \\n\\n (double saut de ligne) pour séparer les paragraphes. Un simple \\n ne crée pas de saut de paragraphe en markdown.
 4. Réponds "Votre rapport est disponible au téléchargement." IMPORTANT : n'invente et ne donne JAMAIS de lien.
-${gabaritSection}`;
+
+${EXEMPLES_DE_SYNTHESE}`;
 }
