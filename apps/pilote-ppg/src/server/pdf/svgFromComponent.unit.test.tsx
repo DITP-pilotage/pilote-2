@@ -27,6 +27,14 @@ describe("flattenSvgClasses", () => {
     ).toBe('<path fill="none" stroke-width="0.4"/>');
   });
 
+  it("ignore les utilitaires fill et stroke qui ne sont pas des couleurs", () => {
+    expect(
+      flattenSvgClasses(
+        '<path class="stroke-2 fill-current stroke-inconnue"/>',
+      ),
+    ).toBe('<path fill="currentColor"/>');
+  });
+
   it("supprime les classes sans effet sur le dessin", () => {
     expect(
       flattenSvgClasses(

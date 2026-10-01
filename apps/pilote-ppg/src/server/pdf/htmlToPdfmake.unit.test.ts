@@ -103,7 +103,7 @@ describe("htmlToPdfmake", () => {
 
     expect(plainText(content[0])).toBe("a\nb");
     expect(content[1]).toMatchObject({ italics: true });
-    expect(content[2]).toHaveProperty("canvas");
+    expect(content[2]).toHaveProperty("table");
   });
 
   it("rend un encadré callout sur fond bleu clair", () => {
@@ -115,5 +115,41 @@ describe("htmlToPdfmake", () => {
 
   it("renvoie un contenu vide pour une chaîne vide", () => {
     expect(htmlToPdfmake("")).toEqual([]);
+  });
+
+  it("survit à une imbrication en ligne très profonde", () => {
+    const html = `<p>${"<b>".repeat(5000)}profond${"</b>".repeat(5000)}</p>`;
+
+    expect(plainText(htmlToPdfmake(html))).toBe("profond");
+  });
+
+  it("n'affiche pas le contenu des balises techniques", () => {
+    expect(
+      plainText(
+        htmlToPdfmake(
+          "<template>a</template><noscript>b</noscript><title>c</title><textarea>d</textarea><p>ok</p>",
+        ),
+      ),
+    ).toBe("ok");
+  });
+
+  it("sépare les cellules d'un tableau", () => {
+    expect(
+      plainText(htmlToPdfmake("<table><tr><td>a</td><td>b</td></tr></table>")),
+    ).toBe("a b");
+  });
+
+  it("garde les puces d'une liste placée dans un paragraphe non fermé", () => {
+    const content = htmlToPdfmake("<p>intro<ul><li>x</li></ul>");
+
+    expect(
+      content.some((block) => typeof block === "object" && "ul" in block),
+    ).toBe(true);
+  });
+
+  it("trace un séparateur à la largeur du conteneur", () => {
+    const [separator] = htmlToPdfmake("<hr>");
+
+    expect(separator).toHaveProperty("table");
   });
 });

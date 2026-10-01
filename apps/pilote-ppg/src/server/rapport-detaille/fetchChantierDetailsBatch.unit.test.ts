@@ -36,7 +36,7 @@ function buildDependencies(): ChantierDetailsBatchDependencies {
 }
 
 describe("fetchChantierDetailsBatch", () => {
-  it("renvoie les chantiers sans leurs mailles et leurs détails", async () => {
+  it("renvoie seulement les détails des chantiers du lot", async () => {
     const dependencies = buildDependencies();
 
     const result = await fetchChantierDetailsBatch(
@@ -56,8 +56,7 @@ describe("fetchChantierDetailsBatch", () => {
         selectedMaille: "regionale",
       }),
     );
-    expect(result.chantiers.map((chantier) => chantier.id)).toEqual(["A"]);
-    expect(result.chantiers[0]).not.toHaveProperty("mailles");
+    expect(Object.keys(result)).toEqual(["details"]);
     expect(result.details.map((detail) => detail.chantierId)).toEqual(["A"]);
   });
 

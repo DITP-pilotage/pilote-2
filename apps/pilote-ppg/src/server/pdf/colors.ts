@@ -12,3 +12,8 @@ export function color(nom: string): string {
   if (!valeur) throw new Error(`Couleur Tailwind inconnue : ${nom}`);
   return valeur;
 }
+
+export function findColor(nom: string): string | null {
+  if (nom.startsWith("#")) return nom;
+  return COLORS.get(nom) ?? null;
+}

@@ -32,7 +32,14 @@ const IGNORED_TAGS = new Set([
   "iframe",
   "object",
   "embed",
+  "template",
+  "noscript",
+  "title",
+  "textarea",
+  "head",
 ]);
+
+const MAX_INLINE_DEPTH = 50;
 
 type Options = { fontSize: number; color: string };
 
@@ -40,7 +47,22 @@ function normalizeSpaces(text: string): string {
   return text.replace(/[  ]/g, " ");
 }
 
-function toInlineSegments(nodes: DomNode[]): Segment[] {
+function flattenText(nodes: DomNode[]): string {
+  const texts: string[] = [];
+  const stack = [...nodes].reverse();
+  while (stack.length > 0) {
+    const node = stack.pop();
+    if (!node) continue;
+    if (isText(node)) texts.push(normalizeSpaces(node.data));
+    else if (isElement(node) && !IGNORED_TAGS.has(node.name)) {
+      stack.push(...[...node.children].reverse());
+    }
+  }
+  return texts.join("");
+}
+
+function toInlineSegments(nodes: DomNode[], depth = 0): Segment[] {
+  if (depth > MAX_INLINE_DEPTH) return [flattenText(nodes)];
   const segments: Segment[] = [];
   for (const node of nodes) {
     if (isText(node)) {
@@ -48,7 +70,7 @@ function toInlineSegments(nodes: DomNode[]): Segment[] {
       continue;
     }
     if (!isElement(node) || IGNORED_TAGS.has(node.name)) continue;
-    const children = toInlineSegments(node.children);
+    const children = toInlineSegments(node.children, depth + 1);
     switch (node.name) {
       case "br":
         segments.push("\n");
@@ -113,19 +135,34 @@ function paragraph(segments: Segment[], options: Options): Content[] {
 
 function separator(): Content {
   return {
-    canvas: [
-      {
-        type: "line",
-        x1: 0,
-        y1: 0,
-        x2: 515,
-        y2: 0,
-        lineWidth: px(1),
-        lineColor: SEPARATOR_COLOR,
-      },
-    ],
+    table: { widths: ["*"], body: [[""]] },
+    layout: {
+      hLineWidth: (index: number) => (index === 0 ? px(1) : 0),
+      vLineWidth: () => 0,
+      hLineColor: () => SEPARATOR_COLOR,
+      paddingTop: () => 0,
+      paddingBottom: () => 0,
+    },
     margin: [0, px(8), 0, px(8)],
   };
+}
+
+function tableRows(node: DomNode, options: Options): Content[] {
+  if (!isElement(node)) return [];
+  if (node.name === "tr") {
+    const cells = node.children.filter(
+      (child) =>
+        isElement(child) && (child.name === "td" || child.name === "th"),
+    );
+    return paragraph(
+      cells.flatMap((cell, index) => {
+        const segments = isElement(cell) ? toInlineSegments(cell.children) : [];
+        return index === 0 ? segments : [" ", ...segments];
+      }),
+      options,
+    );
+  }
+  return node.children.flatMap((child) => tableRows(child, options));
 }
 
 function listItem(node: DomNode, options: Options): Content {
@@ -190,6 +227,9 @@ function convertBlocks(nodes: DomNode[], options: Options): Content[] {
         italics: true,
         margin: [px(16), 0, 0, px(4)],
       });
+    } else if (name === "table") {
+      flushInline();
+      content.push(...tableRows(node, options));
     } else if (name === "hr") {
       flushInline();
       content.push(separator());

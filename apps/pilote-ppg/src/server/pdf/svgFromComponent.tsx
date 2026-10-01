@@ -8,7 +8,7 @@ import {
 } from "@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
 import { MeteoComponentMap } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
-import { color } from "@/server/pdf/colors";
+import { findColor } from "@/server/pdf/colors";
 
 type FlattenOptions = { currentColor?: string };
 
@@ -17,8 +17,17 @@ function classToAttributes(token: string): [string, string] | null {
   if (strokeWidth) return ["stroke-width", strokeWidth[1]];
   if (token === "fill-none") return ["fill", "none"];
   if (token === "stroke-none") return ["stroke", "none"];
-  if (token.startsWith("fill-")) return ["fill", color(token.slice(5))];
-  if (token.startsWith("stroke-")) return ["stroke", color(token.slice(7))];
+  if (token === "fill-current") return ["fill", "currentColor"];
+  if (token === "stroke-current") return ["stroke", "currentColor"];
+  for (const [prefix, attribute] of [
+    ["fill-", "fill"],
+    ["stroke-", "stroke"],
+  ] as const) {
+    if (token.startsWith(prefix)) {
+      const value = findColor(token.slice(prefix.length));
+      return value ? [attribute, value] : null;
+    }
+  }
   return null;
 }
 

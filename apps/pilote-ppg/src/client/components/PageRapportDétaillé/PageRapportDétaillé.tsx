@@ -1,6 +1,6 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import Link from "next/link";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, memo, useState } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { RapportDétailléVueDEnsemble } from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
 import { DeferredRapportDétailléChantier } from "@/components/PageRapportDétaillé/Chantier/DeferredRapportDétailléChantier";
@@ -15,6 +15,9 @@ import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
+
+const MemoizedVueDEnsemble = memo(RapportDétailléVueDEnsemble);
+const MemoizedDeferredChantier = memo(DeferredRapportDétailléChantier);
 
 interface PageRapportDétailléProps {
   vueDEnsemble: SerializedVueDEnsemble;
@@ -91,7 +94,7 @@ export const PageRapportDétaillé: FunctionComponent<
               onChange={setAfficherLesChantiers}
             />
           </div>
-          <RapportDétailléVueDEnsemble
+          <MemoizedVueDEnsemble
             avancementsAgrégés={avancementsAgrégés}
             avancementsGlobauxTerritoriauxMoyens={
               avancementsGlobauxTerritoriauxMoyens
@@ -108,7 +111,7 @@ export const PageRapportDétaillé: FunctionComponent<
           {afficherLesChantiers ? (
             <div className="chantiers">
               {chantiersFiltrés.map((chantier) => (
-                <DeferredRapportDétailléChantier
+                <MemoizedDeferredChantier
                   chantier={chantier}
                   jalon={jalon}
                   key={chantier.id}

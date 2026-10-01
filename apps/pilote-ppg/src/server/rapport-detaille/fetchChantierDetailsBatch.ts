@@ -8,11 +8,7 @@ import {
 } from "@/server/rapport-detaille/rapportDetailleContext";
 import { loadChantiersByIds } from "@/server/rapport-detaille/loadVueDEnsemble";
 import { loadChantierDetails } from "@/server/rapport-detaille/loadChantierDetails";
-import { withoutMailles } from "@/server/rapport-detaille/withoutMailles";
-import {
-  ChantierDetail,
-  ChantierRapportDetailleWithoutMailles,
-} from "@/server/rapport-detaille/rapportDetaille.interface";
+import { ChantierDetail } from "@/server/rapport-detaille/rapportDetaille.interface";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 
@@ -46,10 +42,7 @@ export async function fetchChantierDetailsBatch(
   },
   session: Session,
   dependencies: ChantierDetailsBatchDependencies = defaultDependencies(),
-): Promise<{
-  chantiers: ChantierRapportDetailleWithoutMailles[];
-  details: ChantierDetail[];
-}> {
+): Promise<{ details: ChantierDetail[] }> {
   if (
     !new Habilitation(session.habilitations).peutAccéderAuTerritoire(
       input.territoireCode,
@@ -69,5 +62,5 @@ export async function fetchChantierDetailsBatch(
     context,
     selectedTerritoire,
   );
-  return { chantiers: chantiers.map(withoutMailles), details };
+  return { details };
 }
