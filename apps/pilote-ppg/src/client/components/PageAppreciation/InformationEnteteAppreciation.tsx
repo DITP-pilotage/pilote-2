@@ -1,6 +1,6 @@
 import { Lien } from "@/components/_commons/Lien/Lien";
+import { Button } from "@/components/shared/Button";
 import { ModaleTransmissionDITP } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/ModaleVerrouillageConsolidation";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 
 export const InformationEnteteAppreciation = ({
@@ -68,11 +68,9 @@ export const InformationEnteteAppreciation = ({
 
           <div className="mt-auto">
             <ModaleTransmissionDITP fichesAppreciation={fiches}>
-              <Bouton
-                className="!w-full !justify-center"
-                label="Transmettre les appréciations"
-                variant="primary"
-              />
+              <Button className="!w-full !justify-center" variant="primary">
+                Transmettre les appréciations
+              </Button>
             </ModaleTransmissionDITP>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { ComponentType, FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import { EditeurCentreAide } from "@/components/_commons/CentreAide/editeur/EditeurCentreAide";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Book2ContourIcon } from "@/components/_commons/Icones/Book2ContourIcon";
 import { FileTextIcon } from "@/components/_commons/Icones/FileTextIcon";
@@ -110,28 +110,26 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
 
             <div className="flex items-center gap-4">
               {aDesModificationsNonEnregistrees ? (
-                <Bouton
-                  label="Enregistrer"
-                  onClick={sauvegarder}
-                  size="sm"
-                  variant="link"
-                />
+                <Button onClick={sauvegarder} size="sm" variant="link">
+                  Enregistrer
+                </Button>
               ) : (
                 <span className="text-[13px] text-dsfr-mention-grey">
                   Enregistré
                 </span>
               )}
 
-              <Bouton
+              <Button
                 disabled={
                   !aDesModificationsNonPubliees &&
                   itemSelectionne?.estPublie === true
                 }
-                label="Publier"
                 onClick={publier}
                 size="sm"
                 variant="primary"
-              />
+              >
+                Publier
+              </Button>
 
               <Dropdown.Root>
                 <Dropdown.Trigger asChild>

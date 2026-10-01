@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
+import { Button } from "@/components/shared/Button";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
@@ -91,22 +91,24 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
             maxLength={formConfig.maxLength}
           />
           <div className="flex justify-end items-center gap-3 mt-6">
-            <Bouton
+            <Button
               disabled={!form.formState.isValid}
               iconLeft={
                 <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
               }
-              label="Publier"
               type="submit"
               variant="primary"
-            />
-            <Bouton
+            >
+              Publier
+            </Button>
+            <Button
               iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
-              label="Annuler"
               onClick={() => onOpenChange(false)}
               type="button"
               variant="secondary"
-            />
+            >
+              Annuler
+            </Button>
             <BoutonSousLigné
               disabled={!form.formState.isValid}
               iconLeft={

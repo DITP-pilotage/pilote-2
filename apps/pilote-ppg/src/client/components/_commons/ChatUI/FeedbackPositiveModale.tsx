@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { Dialog } from "radix-ui";
 import { $Enums } from "@prisma/client";
 import { Modale } from "@/components/shared/Modale";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import api from "@/server/infrastructure/api/trpc/api";
 
 export const FeedbackPositiveModale = ({
@@ -63,14 +63,15 @@ export const FeedbackPositiveModale = ({
 
       <div className="flex justify-end gap-2 mt-4">
         <Dialog.Close asChild>
-          <Bouton label="Annuler" variant="secondary" />
+          <Button variant="secondary">Annuler</Button>
         </Dialog.Close>
-        <Bouton
+        <Button
           disabled={evaluerMutation.isPending}
-          label="Envoyer"
           onClick={handleEnvoyer}
           variant="primary"
-        />
+        >
+          Envoyer
+        </Button>
       </div>
     </Modale>
   );

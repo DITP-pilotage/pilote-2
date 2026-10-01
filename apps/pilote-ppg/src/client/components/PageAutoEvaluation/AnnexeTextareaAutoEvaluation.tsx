@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { flushSync } from "react-dom";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { EditeurRicheRef } from "@/components/_commons/EditeurRiche/EditeurRiche";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChatForwardIcon } from "@/components/_commons/Icones/ChatForwardIcon";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
 
@@ -79,14 +79,15 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
             />
             <div className="flex justify-end">
               {!readOnly && (
-                <Bouton
-                  label="Fermer l'annexe"
+                <Button
                   onClick={() => {
                     setDisplayAnnexe(false);
                   }}
                   type="button"
                   variant="link"
-                />
+                >
+                  Fermer l'annexe
+                </Button>
               )}
             </div>
           </div>

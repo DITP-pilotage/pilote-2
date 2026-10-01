@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
+import { Button } from "@/components/shared/Button";
 import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
 import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
 import { Icone } from "@/components/_commons/Icone";
 import { useImprimerFiche } from "@/components/Evaluation/ListeAutoEvaluation/useImprimerFiche";
@@ -88,7 +88,7 @@ export const ListeAutoEvaluations = ({
                   {formatterTitreEvaluation(ficheEvaluation.rattachement)}
                 </h2>
 
-                <Bouton
+                <Button
                   className="items-center"
                   disabled={genererPDF.isPending}
                   iconLeft={
@@ -97,12 +97,13 @@ export const ListeAutoEvaluations = ({
                       icone={Printer1Icon}
                     />
                   }
-                  label="Imprimer les auto-évaluations"
                   onClick={() => handleExportClick(ficheEvaluation.id)}
                   size="sm"
                   type="button"
                   variant="link"
-                />
+                >
+                  Imprimer les auto-évaluations
+                </Button>
               </div>
               <ul>
                 <LigneEnteteAvancementCompletionEvaluation

@@ -1,4 +1,5 @@
 import { FormProvider } from "react-hook-form";
+import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -11,7 +12,6 @@ import {
   useEngagementForm,
 } from "@/components/PageAdminEngagements/useEngagementForm";
 import { Input } from "@/components/_commons/Input";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -118,14 +118,13 @@ const PageAdminEngagementEdition = ({
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
                   <div className="flex items-center gap-2">
-                    <Bouton
+                    <Button
                       className={
                         estSupprime
                           ? "bg-pilote-vert text-white hover:bg-success"
                           : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925 disabled:opacity-50 disabled:cursor-not-allowed"
                       }
                       disabled={!estSupprime && estUtilisé}
-                      label={estSupprime ? "Restaurer" : "Supprimer"}
                       onClick={() =>
                         estSupprime
                           ? restorerMutation.mutate({
@@ -139,15 +138,14 @@ const PageAdminEngagementEdition = ({
                       }
                       variant="primary"
                       type="button"
-                    />
+                    >
+                      {estSupprime ? "Restaurer" : "Supprimer"}
+                    </Button>
                   </div>
                 )}
-                <Bouton
-                  disabled={isPending}
-                  label={estUneCréation ? "Créer" : "Sauvegarder"}
-                  type="submit"
-                  variant="primary"
-                />
+                <Button disabled={isPending} type="submit" variant="primary">
+                  {estUneCréation ? "Créer" : "Sauvegarder"}
+                </Button>
               </div>
             </div>
 
@@ -185,12 +183,9 @@ const PageAdminEngagementEdition = ({
             </div>
 
             <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
-              <Bouton
-                disabled={isPending}
-                label={estUneCréation ? "Créer" : "Sauvegarder"}
-                type="submit"
-                variant="primary"
-              />
+              <Button disabled={isPending} type="submit" variant="primary">
+                {estUneCréation ? "Créer" : "Sauvegarder"}
+              </Button>
             </div>
           </form>
         </FormProvider>

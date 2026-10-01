@@ -1,5 +1,5 @@
 import { FunctionComponent, MouseEventHandler } from "react";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Button } from "@/components/shared/Button";
 
 interface BoutonToutSélectionnerProps {
   onClickToutSélectionner: MouseEventHandler<HTMLButtonElement>;
@@ -19,18 +19,14 @@ const BoutonToutSélectionner: FunctionComponent<
       className={`fr-btns-group fr-btns-group--inline fr-btns-group--sm${className ? " " + className : ""}`}
     >
       <li>
-        <Bouton
-          label="Tout sélectionner"
-          onClick={onClickToutSélectionner}
-          variant="secondary"
-        />
+        <Button onClick={onClickToutSélectionner} variant="secondary">
+          Tout sélectionner
+        </Button>
       </li>
       <li>
-        <Bouton
-          label="Tout déselectionner"
-          onClick={onClickToutDésélectionner}
-          variant="secondary"
-        />
+        <Button onClick={onClickToutDésélectionner} variant="secondary">
+          Tout déselectionner
+        </Button>
       </li>
     </ul>
   );
