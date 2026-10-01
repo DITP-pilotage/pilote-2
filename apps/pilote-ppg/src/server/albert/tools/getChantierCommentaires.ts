@@ -42,7 +42,7 @@ export type GetChantierCommentairesOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date, son contenu verbatim et la mention "Rédigé pour <territoire_nom>", sans reformulation ni interprétation. Les contenus sont en HTML : extrais uniquement le texte (sans les balises) tout en conservant la formulation d'origine. Regroupe par type ou trie par date selon la demande de l'utilisateur. N'affiche pas territoire_code : ce code est technique et ne doit pas apparaître dans la réponse finale. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.
+const OUTPUT_INSTRUCTIONS = `Présente chaque commentaire avec sa date et la mention "Rédigé pour <territoire_nom>", en condensant son contenu en une ou deux phrases factuelles avec tes mots, sans interprétation (règle « Commentaires »). Ne cite le texte exact que si l'utilisateur le demande explicitement. Les contenus sont en HTML : ignore les balises. Regroupe par type ou trie par date selon la demande de l'utilisateur. N'affiche pas territoire_code : ce code est technique et ne doit pas apparaître dans la réponse finale.
 Si types_non_accessibles n'est pas vide, ces types sont hors du périmètre d'accès de l'utilisateur : ne dis JAMAIS qu'il n'existe pas de contenu pour ces types — indique que l'utilisateur n'a pas accès à ces informations (elles relèvent de la vue nationale).`;
 
 export function createGetChantierCommentairesTool({
