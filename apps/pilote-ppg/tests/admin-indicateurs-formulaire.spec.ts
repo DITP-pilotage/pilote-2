@@ -354,11 +354,11 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
       "Synchronisation decumul_from — vaca et vacg ont la même valeur",
       async () => {
         const valeurVaca = await page
-          .locator('select[name="paramVacaDecumulFrom"]')
-          .inputValue();
+          .locator('[id="paramVacaDecumulFrom"]')
+          .getAttribute("data-value");
         await pageForm.expectSelecteurValeur(
           "paramVacgDecumulFrom",
-          valeurVaca,
+          valeurVaca ?? "",
         );
       },
     );

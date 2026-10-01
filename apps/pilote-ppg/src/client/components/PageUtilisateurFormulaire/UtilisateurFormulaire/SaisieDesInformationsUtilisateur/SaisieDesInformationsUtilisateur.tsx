@@ -1,8 +1,8 @@
 import { Controller } from "react-hook-form";
+import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { FunctionComponent } from "react";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
   MultiSelectTerritoire,
@@ -115,15 +115,15 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         libellé="Fonction"
         register={register("fonction")}
       />
-      <Sélecteur
-        erreur={errors.profil}
-        htmlName="profil"
-        libellé="Profil"
+      <SelectField
+        errorMessage={errors.profil?.message?.toString()}
+        name="profil"
+        label="Profil"
         onChange={changementProfilSelectionne}
         options={optionsProfil}
-        texteAide="Les droits attribués dépendent du profil sélectionné."
-        texteFantôme="Sélectionner un profil"
-        valeurSélectionnée={profilCodeSelectionne}
+        hint="Les droits attribués dépendent du profil sélectionné."
+        placeholder="Sélectionner un profil"
+        value={profilCodeSelectionne}
       />
       <div
         className={`${afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers ? "" : "fr-hidden"}`}

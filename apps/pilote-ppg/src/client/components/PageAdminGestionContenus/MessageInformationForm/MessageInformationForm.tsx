@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
+import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { Controller } from "react-hook-form";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { useMessageInformationForm } from "@/components/PageAdminGestionContenus/MessageInformationForm/useMessageInformationForm";
 import TextArea from "@/components/_commons/TextArea/TextArea";
 
@@ -20,17 +20,14 @@ const MessageInformationForm: FunctionComponent = () => {
             name="bandeauType"
             render={({ field }) => {
               return (
-                <Sélecteur
-                  htmlName="bandeauType"
+                <SelectField
+                  name="bandeauType"
                   onChange={field.onChange}
                   options={[
-                    { valeur: "WARNING", libellé: "Alerte (fond rouge)" },
-                    { valeur: "INFO", libellé: "Information (fond bleu)" },
-                  ].map((acceptedValue) => ({
-                    valeur: acceptedValue.valeur,
-                    libellé: acceptedValue.libellé,
-                  }))}
-                  valeurSélectionnée={field.value}
+                    { valeur: "WARNING", libelle: "Alerte (fond rouge)" },
+                    { valeur: "INFO", libelle: "Information (fond bleu)" },
+                  ]}
+                  value={field.value}
                 />
               );
             }}

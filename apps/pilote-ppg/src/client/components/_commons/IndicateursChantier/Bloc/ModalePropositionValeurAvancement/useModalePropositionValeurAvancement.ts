@@ -11,7 +11,7 @@ import {
   estPropositionModifiee,
   estUnePropositionTerminée,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
-import { SelecteurNewOption } from "@/components/_commons/SelecteurNew/SelecteurNew";
+import { type SelectFieldOption } from "@/components/shared/SelectField";
 
 export enum EtapePropositionValeurAvancement {
   SAISIE_VALEUR_ACTUELLE = "SAISIE_VALEUR_ACTUELLE",
@@ -102,8 +102,8 @@ const formatterMois = (date: string) => {
 const genererOptionsMois = (
   dateDebut: string,
   periodicite: string | null,
-): SelecteurNewOption<string>[] => {
-  const options: SelecteurNewOption<string>[] = [];
+): SelectFieldOption<string>[] => {
+  const options: SelectFieldOption<string>[] = [];
   const maintenant = new Date();
 
   const incrementMois =

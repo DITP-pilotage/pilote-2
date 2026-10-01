@@ -1,4 +1,8 @@
 import { Controller, FormProvider } from "react-hook-form";
+import {
+  SelectField,
+  type SelectFieldOption,
+} from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -12,10 +16,8 @@ import {
   usePerimetreForm,
 } from "@/components/PageAdminPerimetres/usePerimetreForm";
 import { Input } from "@/components/_commons/Input";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
 interface Props {
   perimetreId: string;
@@ -79,10 +81,10 @@ const PageAdminPerimetreEdition = ({
 
   const { data: porteurs = [] } = api.metadataPorteur.lister.useQuery();
   const porteursActifs = porteurs.filter((p) => p.deletedAt === null);
-  const optionsPorteurs: SélecteurOption<string>[] = [
-    { libellé: "- Aucun -", valeur: "" },
+  const optionsPorteurs: SelectFieldOption<string>[] = [
+    { libelle: "- Aucun -", valeur: "" },
     ...porteursActifs.map((porteur) => ({
-      libellé: `${porteur.porteurShort} - ${porteur.porteurName}`,
+      libelle: `${porteur.porteurShort} - ${porteur.porteurName}`,
       valeur: porteur.porteurId,
     })),
   ];
@@ -188,12 +190,12 @@ const PageAdminPerimetreEdition = ({
                     control={reactHookForm.control}
                     name="perimetrePorteurId"
                     render={({ field }) => (
-                      <Sélecteur
-                        htmlName="perimetrePorteurId"
-                        libellé="Porteur"
+                      <SelectField
+                        name="perimetrePorteurId"
+                        label="Porteur"
                         onChange={(val) => field.onChange(val || null)}
                         options={optionsPorteurs}
-                        valeurSélectionnée={field.value ?? ""}
+                        value={field.value ?? ""}
                       />
                     )}
                   />
