@@ -2,9 +2,9 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 
-export const POLICE_MARIANNE = "Marianne";
+export const MARIANNE_FONT = "Marianne";
 
-const FICHIERS = [
+const FONT_FILES = [
   "Marianne-Light",
   "Marianne-Light_Italic",
   "Marianne-Regular",
@@ -15,24 +15,24 @@ const FICHIERS = [
   "Marianne-Bold_Italic",
 ];
 
-export function vfsMarianne(): Record<string, string> {
-  const dossierPolices = path.join(
+export function marianneVfs(): Record<string, string> {
+  const fontsDirectory = path.join(
     path.dirname(
       createRequire(import.meta.url).resolve("@gouvfr/dsfr/package.json"),
     ),
     "dist/fonts",
   );
   return Object.fromEntries(
-    FICHIERS.map((fichier) => [
-      `${fichier}.woff2`,
-      readFileSync(path.join(dossierPolices, `${fichier}.woff2`)).toString(
+    FONT_FILES.map((file) => [
+      `${file}.woff2`,
+      readFileSync(path.join(fontsDirectory, `${file}.woff2`)).toString(
         "base64",
       ),
     ]),
   );
 }
 
-export const POLICES_MARIANNE = {
+export const MARIANNE_FONTS = {
   Marianne: {
     normal: "Marianne-Regular.woff2",
     bold: "Marianne-Bold.woff2",

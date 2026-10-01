@@ -16,51 +16,51 @@ import { AvancementChantierRapportDetaille } from "@/components/PageRapportDéta
 import { Commentaire } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
 import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { ContexteRapportDetaille } from "@/server/rapport-detaille/contexteRapportDetaille";
-import { DetailChantierRapportDetaille } from "@/server/rapport-detaille/rapportDetaille.interface";
+import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
+import { ChantierDetail } from "@/server/rapport-detaille/rapportDetaille.interface";
 
-export type DependancesDetailsChantiers = {
-  statistiquesParChantier: (
+export type ChantierDetailsDependencies = {
+  getStatistiquesByChantier: (
     chantierIds: string[],
     maille: MailleInterne,
     habilitations: Habilitations,
     jalon: number,
   ) => Promise<Record<string, AvancementsStatistiques>>;
-  indicateursGroupés: IndicateurRepository["récupérerGroupésParChantier"];
-  détailsIndicateursGroupés: (
+  getIndicateursByChantier: IndicateurRepository["récupérerGroupésParChantier"];
+  getDétailsIndicateursByChantier: (
     chantierIds: string[],
-    mailleChantier: MailleChantierContrat,
+    chantierMaille: MailleChantierContrat,
     codeInsee: string,
     jalon: number,
   ) => Promise<Record<string, DétailsIndicateurs>>;
-  indicateursPrisEnCompte: IndicateurRepository["recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire"];
-  synthèsesGroupées: SynthèseDesRésultatsRepository["récupérerLesPlusRécentesGroupéesParChantier"];
-  décisionsGroupées: DécisionStratégiqueRepository["récupérerLesPlusRécentesGroupéesParChantier"];
-  commentairesGroupés: (
+  getIndicateursPrisEnCompte: IndicateurRepository["recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire"];
+  getSynthèsesByChantier: SynthèseDesRésultatsRepository["récupérerLesPlusRécentesGroupéesParChantier"];
+  getDécisionsByChantier: DécisionStratégiqueRepository["récupérerLesPlusRécentesGroupéesParChantier"];
+  getCommentairesByChantier: (
     chantierIds: string[],
     territoireCode: string,
     habilitations: Habilitations,
   ) => Promise<Record<string, Commentaire[]>>;
-  objectifsGroupés: (
+  getObjectifsByChantier: (
     chantierIds: string[],
     habilitations: Habilitations,
   ) => Promise<Record<string, Objectif[]>>;
 };
 
-export function dependancesDetailsChantiers(): DependancesDetailsChantiers {
+export function defaultChantierDetailsDependencies(): ChantierDetailsDependencies {
   const indicateurRepository = getContainer("legacy").resolve(
     "indicateurRepository",
   );
   return {
-    statistiquesParChantier: (chantierIds, maille, habilitations, jalon) =>
+    getStatistiquesByChantier: (chantierIds, maille, habilitations, jalon) =>
       getContainer("chantiers")
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
-        .runParChantier(chantierIds, maille, habilitations, jalon),
-    indicateursGroupés: (chantierIds) =>
+        .runByChantier(chantierIds, maille, habilitations, jalon),
+    getIndicateursByChantier: (chantierIds) =>
       indicateurRepository.récupérerGroupésParChantier(chantierIds),
-    détailsIndicateursGroupés: async (
+    getDétailsIndicateursByChantier: async (
       chantierIds,
-      mailleChantier,
+      chantierMaille,
       codeInsee,
       jalon,
     ) => {
@@ -69,17 +69,17 @@ export function dependancesDetailsChantiers(): DependancesDetailsChantiers {
         .recupererEtatCourant();
       return indicateurRepository.récupérerDétailsGroupésParChantierEtParIndicateur(
         chantierIds,
-        mailleChantier,
+        chantierMaille,
         codeInsee,
         jalon,
         new Date(datajobsExecution.derniereDateExecution),
       );
     },
-    indicateursPrisEnCompte: (chantierIds) =>
+    getIndicateursPrisEnCompte: (chantierIds) =>
       indicateurRepository.recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(
         chantierIds,
       ),
-    synthèsesGroupées: (chantierIds, maille, codeInsee) =>
+    getSynthèsesByChantier: (chantierIds, maille, codeInsee) =>
       getContainer("legacy")
         .resolve("synthèseDesRésultatsRepository")
         .récupérerLesPlusRécentesGroupéesParChantier(
@@ -87,17 +87,17 @@ export function dependancesDetailsChantiers(): DependancesDetailsChantiers {
           maille,
           codeInsee,
         ),
-    décisionsGroupées: (chantierIds) =>
+    getDécisionsByChantier: (chantierIds) =>
       getContainer("legacy")
         .resolve("décisionStratégiqueRepository")
         .récupérerLesPlusRécentesGroupéesParChantier(chantierIds),
-    commentairesGroupés: (chantierIds, territoireCode, habilitations) =>
+    getCommentairesByChantier: (chantierIds, territoireCode, habilitations) =>
       getContainer("legacy")
         .resolve(
           "récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase",
         )
         .run(chantierIds, territoireCode, habilitations),
-    objectifsGroupés: (chantierIds, habilitations) =>
+    getObjectifsByChantier: (chantierIds, habilitations) =>
       getContainer("legacy")
         .resolve(
           "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
@@ -106,39 +106,39 @@ export function dependancesDetailsChantiers(): DependancesDetailsChantiers {
   };
 }
 
-function calculerAvancement(
+function computeAvancement(
   chantier: ChantierRapportDetailleContrat,
   statistiques: AvancementsStatistiques | undefined,
-  contexte: ContexteRapportDetaille,
-  territoireSélectionné: Territoire,
+  context: RapportDetailleContext,
+  selectedTerritoire: Territoire,
 ): AvancementChantierRapportDetaille {
   const agrégat = new AgrégateurChantierRapportDetailleParTerritoire(
     chantier,
   ).agréger();
-  const { territoireCode, mailleSelectionnee } = contexte;
+  const { territoireCode, selectedMaille } = context;
 
-  const avancementRégional = (typeTauxAvancement: "global" | "annuel") => {
-    const codeRégion =
-      territoireSélectionné.maille === "regionale"
+  const regionalAvancement = (tauxAvancementType: "global" | "annuel") => {
+    const régionCode =
+      selectedTerritoire.maille === "regionale"
         ? territoireCode
-        : territoireSélectionné.maille === "departementale"
-          ? territoireSélectionné.codeParent
+        : selectedTerritoire.maille === "departementale"
+          ? selectedTerritoire.codeParent
           : null;
-    if (!codeRégion) return { moyenne: null, date: null };
+    if (!régionCode) return { moyenne: null, date: null };
     const avancement =
-      agrégat.regionale.territoires[codeRégion].répartition.avancements[
-        typeTauxAvancement
+      agrégat.regionale.territoires[régionCode].répartition.avancements[
+        tauxAvancementType
       ];
     return { moyenne: avancement.avancement, date: avancement.date };
   };
 
-  const avancementDépartemental = (typeTauxAvancement: "global" | "annuel") => {
-    if (territoireSélectionné.maille !== "departementale") {
+  const departementalAvancement = (tauxAvancementType: "global" | "annuel") => {
+    if (selectedTerritoire.maille !== "departementale") {
       return { moyenne: null, date: null };
     }
     const avancement =
-      agrégat[mailleSelectionnee].territoires[territoireCode].répartition
-        .avancements[typeTauxAvancement];
+      agrégat[selectedMaille].territoires[territoireCode].répartition
+        .avancements[tauxAvancementType];
     return { moyenne: avancement.avancement, date: avancement.date };
   };
 
@@ -159,86 +159,84 @@ function calculerAvancement(
       },
     },
     departementale: {
-      global: avancementDépartemental("global"),
-      annuel: avancementDépartemental("annuel"),
+      global: departementalAvancement("global"),
+      annuel: departementalAvancement("annuel"),
     },
     regionale: {
-      global: avancementRégional("global"),
-      annuel: avancementRégional("annuel"),
+      global: regionalAvancement("global"),
+      annuel: regionalAvancement("annuel"),
     },
   };
 }
 
-export async function chargerDetailsChantiers(
+export async function loadChantierDetails(
   chantiers: ChantierRapportDetailleContrat[],
-  contexte: ContexteRapportDetaille,
-  territoireSélectionné: Territoire,
-  dependances: DependancesDetailsChantiers = dependancesDetailsChantiers(),
-): Promise<DetailChantierRapportDetaille[]> {
+  context: RapportDetailleContext,
+  selectedTerritoire: Territoire,
+  dependencies: ChantierDetailsDependencies = defaultChantierDetailsDependencies(),
+): Promise<ChantierDetail[]> {
   const chantierIds = chantiers.map((chantier) => chantier.id);
-  const { habilitations } = contexte.session;
-  const accèsNational = new Habilitation(habilitations).peutAccéderAuTerritoire(
-    "NAT-FR",
-  );
+  const { habilitations } = context.session;
+  const hasNationalAccess = new Habilitation(
+    habilitations,
+  ).peutAccéderAuTerritoire("NAT-FR");
 
   const [
-    statistiques,
-    indicateurs,
-    détailsIndicateurs,
+    statistiquesByChantier,
+    indicateursByChantier,
+    détailsIndicateursByChantier,
     indicateursPrisEnCompte,
-    synthèses,
-    décisions,
-    commentaires,
-    objectifs,
+    synthèsesByChantier,
+    décisionsByChantier,
+    commentairesByChantier,
+    objectifsByChantier,
   ] = await Promise.all([
-    dependances.statistiquesParChantier(
+    dependencies.getStatistiquesByChantier(
       chantierIds,
-      contexte.mailleSelectionnee,
+      context.selectedMaille,
       habilitations,
-      contexte.jalon,
+      context.jalon,
     ),
-    dependances.indicateursGroupés(chantierIds),
-    dependances.détailsIndicateursGroupés(
+    dependencies.getIndicateursByChantier(chantierIds),
+    dependencies.getDétailsIndicateursByChantier(
       chantierIds,
-      contexte.mailleChantier,
-      contexte.codeInseeSelectionne,
-      contexte.jalon,
+      context.chantierMaille,
+      context.selectedCodeInsee,
+      context.jalon,
     ),
-    dependances.indicateursPrisEnCompte(chantierIds),
-    dependances.synthèsesGroupées(
+    dependencies.getIndicateursPrisEnCompte(chantierIds),
+    dependencies.getSynthèsesByChantier(
       chantierIds,
-      contexte.mailleChantier,
-      contexte.codeInseeSelectionne,
+      context.chantierMaille,
+      context.selectedCodeInsee,
     ),
-    accèsNational
-      ? dependances.décisionsGroupées(chantierIds)
+    hasNationalAccess
+      ? dependencies.getDécisionsByChantier(chantierIds)
       : Promise.resolve<Record<string, DécisionStratégique>>({}),
-    dependances.commentairesGroupés(
+    dependencies.getCommentairesByChantier(
       chantierIds,
-      contexte.territoireCode,
+      context.territoireCode,
       habilitations,
     ),
-    dependances.objectifsGroupés(chantierIds, habilitations),
+    dependencies.getObjectifsByChantier(chantierIds, habilitations),
   ]);
 
   return chantiers.map((chantier) => {
-    const territoires = objectEntries(
-      chantier.mailles[contexte.mailleSelectionnee],
-    );
+    const territoires = objectEntries(chantier.mailles[context.selectedMaille]);
     return {
       chantierId: chantier.id,
-      avancement: calculerAvancement(
+      avancement: computeAvancement(
         chantier,
-        statistiques[chantier.id],
-        contexte,
-        territoireSélectionné,
+        statistiquesByChantier[chantier.id],
+        context,
+        selectedTerritoire,
       ),
-      indicateurs: indicateurs[chantier.id] ?? [],
-      détailsIndicateurs: détailsIndicateurs[chantier.id] ?? {},
-      synthèseDesRésultats: synthèses[chantier.id] ?? null,
-      objectifs: objectifs[chantier.id] ?? [],
-      commentaires: commentaires[chantier.id] ?? [],
-      décisionStratégique: décisions[chantier.id] ?? null,
+      indicateurs: indicateursByChantier[chantier.id] ?? [],
+      détailsIndicateurs: détailsIndicateursByChantier[chantier.id] ?? {},
+      synthèseDesRésultats: synthèsesByChantier[chantier.id] ?? null,
+      objectifs: objectifsByChantier[chantier.id] ?? [],
+      commentaires: commentairesByChantier[chantier.id] ?? [],
+      décisionStratégique: décisionsByChantier[chantier.id] ?? null,
       donnéesCartographieAvancement: territoires.map(
         ([territoireCode, territoire]) => ({
           valeur: territoire.avancement.global,

@@ -39,7 +39,7 @@ export class RécupérerStatistiquesAvancementChantiersUseCase {
     });
   }
 
-  async runParChantier(
+  async runByChantier(
     chantiers: Chantier["id"][],
     maille: Maille,
     habilitations: Habilitations,
@@ -53,7 +53,7 @@ export class RécupérerStatistiquesAvancementChantiersUseCase {
       throw new MailleNonAutoriséeErreur();
     }
 
-    return this.getStatistiquesAvancementChantiersQuery.executeParChantier({
+    return this.getStatistiquesAvancementChantiersQuery.executeByChantier({
       habilitations,
       listeChantier: chantiers,
       maille,

@@ -21,7 +21,7 @@ export type VueDEnsembleRapportDetaille = {
   chantiers: ChantierRapportDetailleContrat[];
   ministères: Ministère[];
   axes: Axe[];
-  territoireSélectionné: Territoire;
+  selectedTerritoire: Territoire;
   filtresComptesCalculés: Record<TypeAlerteChantier, number>;
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat;
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
@@ -31,7 +31,7 @@ export type VueDEnsembleRapportDetaille = {
   chantiersSontArchives: boolean;
 };
 
-export type DetailChantierRapportDetaille = {
+export type ChantierDetail = {
   chantierId: string;
   avancement: AvancementChantierRapportDetaille;
   indicateurs: Indicateur[];
@@ -45,14 +45,14 @@ export type DetailChantierRapportDetaille = {
   listeIndicateursPrisEnCompteAvancement: string[];
 };
 
-export type ChantierRapportDetailleSansMailles = Omit<
+export type ChantierRapportDetailleWithoutMailles = Omit<
   ChantierRapportDetailleContrat,
   "mailles"
 >;
 
-export type VueDEnsembleRapportDetailleSerialisee = Omit<
+export type SerializedVueDEnsemble = Omit<
   VueDEnsembleRapportDetaille,
   "chantiers"
 > & {
-  chantiers: ChantierRapportDetailleSansMailles[];
+  chantiers: ChantierRapportDetailleWithoutMailles[];
 };

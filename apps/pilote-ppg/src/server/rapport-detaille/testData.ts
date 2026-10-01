@@ -1,12 +1,12 @@
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 
-type DonnéeTerritoire =
+type TerritoireData =
   ChantierRapportDetailleContrat["mailles"]["nationale"][string];
 
-export function donnéeTerritoireDeTest(
-  surcharges: Partial<DonnéeTerritoire> = {},
-): DonnéeTerritoire {
+export function buildTestTerritoireData(
+  surcharges: Partial<TerritoireData> = {},
+): TerritoireData {
   return {
     estApplicable: true,
     ecart: { annuel: null, jalonParDefaut: null },
@@ -25,7 +25,7 @@ export function donnéeTerritoireDeTest(
   };
 }
 
-export function chantierDeTest(
+export function buildTestChantier(
   surcharges: Partial<ChantierRapportDetailleContrat> = {},
 ): ChantierRapportDetailleContrat {
   return {
@@ -34,7 +34,7 @@ export function chantierDeTest(
     statut: "PUBLIE",
     cibleAttendu: false,
     mailles: {
-      nationale: { "NAT-FR": donnéeTerritoireDeTest() },
+      nationale: { "NAT-FR": buildTestTerritoireData() },
       regionale: {},
       departementale: {},
     },

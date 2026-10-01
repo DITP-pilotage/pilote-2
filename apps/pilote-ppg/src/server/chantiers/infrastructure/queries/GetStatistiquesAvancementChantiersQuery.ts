@@ -8,38 +8,38 @@ import { calculerMediane } from "@/client/utils/statistiques/statistiques";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import type { Inject } from "@/server/chantiers/module";
 
-type MoyenneParTerritoire = {
+type TerritoireAverage = {
   territoire_code: string;
   _avg: { taux_avancement: number | null };
 };
 
-export function calculerStatistiquesAvancement(
-  listeMoyenneParTerritoire: MoyenneParTerritoire[],
+export function computeAvancementStatistiques(
+  territoireAverages: TerritoireAverage[],
 ): AvancementsStatistiques {
-  const valeursCroissantes = listeMoyenneParTerritoire
-    .map((moyenneParTerritoire) => moyenneParTerritoire._avg.taux_avancement)
+  const sortedValues = territoireAverages
+    .map((territoireAverage) => territoireAverage._avg.taux_avancement)
     .toSorted((a, b) => (a ?? 0) - (b ?? 0));
   return {
-    médiane: calculerMediane(valeursCroissantes),
-    minimum: verifyValeurIsNotNullOrUndefined(valeursCroissantes.at(0)),
-    maximum: verifyValeurIsNotNullOrUndefined(valeursCroissantes.at(-1)),
+    médiane: calculerMediane(sortedValues),
+    minimum: verifyValeurIsNotNullOrUndefined(sortedValues.at(0)),
+    maximum: verifyValeurIsNotNullOrUndefined(sortedValues.at(-1)),
   };
 }
 
-export function calculerStatistiquesAvancementParChantier(
-  lignes: (MoyenneParTerritoire & { id: string })[],
+export function computeAvancementStatistiquesByChantier(
+  rows: (TerritoireAverage & { id: string })[],
   chantierIds: Chantier["id"][],
 ): Record<Chantier["id"], AvancementsStatistiques> {
-  const lignesParChantier = new Map<Chantier["id"], MoyenneParTerritoire[]>();
-  for (const ligne of lignes) {
-    const lignesDuChantier = lignesParChantier.get(ligne.id) ?? [];
-    lignesDuChantier.push(ligne);
-    lignesParChantier.set(ligne.id, lignesDuChantier);
+  const rowsByChantier = new Map<Chantier["id"], TerritoireAverage[]>();
+  for (const row of rows) {
+    const chantierRows = rowsByChantier.get(row.id) ?? [];
+    chantierRows.push(row);
+    rowsByChantier.set(row.id, chantierRows);
   }
   return Object.fromEntries(
     chantierIds.map((chantierId) => [
       chantierId,
-      calculerStatistiquesAvancement(lignesParChantier.get(chantierId) ?? []),
+      computeAvancementStatistiques(rowsByChantier.get(chantierId) ?? []),
     ]),
   );
 }
@@ -86,10 +86,10 @@ export class GetStatistiquesAvancementChantiersQuery {
         },
       });
 
-    return calculerStatistiquesAvancement(listeMoyenneParTerritoire);
+    return computeAvancementStatistiques(listeMoyenneParTerritoire);
   }
 
-  async executeParChantier(params: {
+  async executeByChantier(params: {
     habilitations: Habilitations;
     listeChantier: Chantier["id"][];
     maille: Maille;
@@ -103,7 +103,7 @@ export class GetStatistiquesAvancementChantiersQuery {
       chantiersAutorisés.includes(chantier),
     );
 
-    const lignes = await prisma.chantier_territoire_jalon.groupBy({
+    const rows = await prisma.chantier_territoire_jalon.groupBy({
       by: ["id", "territoire_code"],
       _avg: {
         taux_avancement: true,
@@ -122,6 +122,6 @@ export class GetStatistiquesAvancementChantiersQuery {
       },
     });
 
-    return calculerStatistiquesAvancementParChantier(lignes, chantiersLecture);
+    return computeAvancementStatistiquesByChantier(rows, chantiersLecture);
   }
 }

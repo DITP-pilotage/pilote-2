@@ -9,8 +9,8 @@ import PremièrePageImpressionRapportDétaillé from "@/components/PageRapportD�
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import {
-  DetailChantierRapportDetaille,
-  VueDEnsembleRapportDetailleSerialisee,
+  ChantierDetail,
+  SerializedVueDEnsemble,
 } from "@/server/rapport-detaille/rapportDetaille.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { getFiltresActifs } from "@/client/stores/useFiltresStore/useFiltresStore";
@@ -21,8 +21,8 @@ import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitat
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
 
 interface PageRapportDétailléProps {
-  vueDEnsemble: VueDEnsembleRapportDetailleSerialisee;
-  details: DetailChantierRapportDetaille[];
+  vueDEnsemble: SerializedVueDEnsemble;
+  details: ChantierDetail[];
   mailleSelectionnee: MailleInterne;
   territoireCode: string;
   jalon: number;
@@ -52,7 +52,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
     chantiersSontArchives,
     moyenneTauxAvancementTerritoire,
   } = vueDEnsemble;
-  const detailParChantier = new Map(
+  const detailsByChantier = new Map(
     details.map((detail) => [detail.chantierId, detail]),
   );
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -131,7 +131,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
             {afficherLesChantiers ? (
               <div className="chantiers">
                 {chantiersFiltrés.map((chantier) => {
-                  const detail = detailParChantier.get(chantier.id);
+                  const detail = detailsByChantier.get(chantier.id);
                   return detail ? (
                     <RapportDétailléChantier
                       chantier={chantier}

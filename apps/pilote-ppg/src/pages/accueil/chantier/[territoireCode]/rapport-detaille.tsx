@@ -7,20 +7,20 @@ import PageRapportDétaillé from "@/components/PageRapportDétaillé/PageRappor
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import type { Bootstrap } from "@/components/_commons/Bootstrap/BootstrapContext";
-import { construireContexteRapportDetaille } from "@/server/rapport-detaille/contexteRapportDetaille";
+import { buildRapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import {
-  chargerVueDEnsemble,
-  sansMailles,
-} from "@/server/rapport-detaille/chargerVueDEnsemble";
-import { chargerDetailsChantiers } from "@/server/rapport-detaille/chargerDetailsChantiers";
+  loadVueDEnsemble,
+  withoutMailles,
+} from "@/server/rapport-detaille/loadVueDEnsemble";
+import { loadChantierDetails } from "@/server/rapport-detaille/loadChantierDetails";
 import {
-  DetailChantierRapportDetaille,
-  VueDEnsembleRapportDetailleSerialisee,
+  ChantierDetail,
+  SerializedVueDEnsemble,
 } from "@/server/rapport-detaille/rapportDetaille.interface";
 
 interface NextPageRapportDétailléProps extends Bootstrap {
-  vueDEnsemble: VueDEnsembleRapportDetailleSerialisee;
-  details: DetailChantierRapportDetaille[];
+  vueDEnsemble: SerializedVueDEnsemble;
+  details: ChantierDetail[];
   mailleSelectionnee: MailleInterne;
   territoireCode: string;
   jalon: number;
@@ -37,20 +37,20 @@ export const getServerSideProps: GetServerSideProps<
   assert(session.habilitations, "La session ne dispose d'aucune habilitation");
   const territoireCode = query.territoireCode as string;
 
-  const contexte = construireContexteRapportDetaille(
+  const rapportContext = buildRapportDetailleContext(
     query,
     territoireCode,
     session,
   );
 
   const [vueDEnsemble, bootstrap] = await Promise.all([
-    chargerVueDEnsemble(contexte),
+    loadVueDEnsemble(rapportContext),
     loadBootstrap(session),
   ]);
-  const details = await chargerDetailsChantiers(
+  const details = await loadChantierDetails(
     vueDEnsemble.chantiers,
-    contexte,
-    vueDEnsemble.territoireSélectionné,
+    rapportContext,
+    vueDEnsemble.selectedTerritoire,
   );
 
   return {
@@ -58,12 +58,12 @@ export const getServerSideProps: GetServerSideProps<
       ...bootstrap,
       vueDEnsemble: {
         ...vueDEnsemble,
-        chantiers: vueDEnsemble.chantiers.map(sansMailles),
+        chantiers: vueDEnsemble.chantiers.map(withoutMailles),
       },
       details,
-      mailleSelectionnee: contexte.mailleSelectionnee,
+      mailleSelectionnee: rapportContext.selectedMaille,
       territoireCode,
-      jalon: contexte.jalon,
+      jalon: rapportContext.jalon,
     },
   };
 };

@@ -12,7 +12,7 @@ const habilitationVide: HabilitationChantiers = {
   périmètres: [],
 };
 
-export function sessionDeTest(surcharges: Partial<Session> = {}): Session {
+export function buildTestSession(surcharges: Partial<Session> = {}): Session {
   return {
     expires: "2026-12-31T00:00:00.000Z",
     user: { id: "utilisateur-1", email: "test@example.com" },

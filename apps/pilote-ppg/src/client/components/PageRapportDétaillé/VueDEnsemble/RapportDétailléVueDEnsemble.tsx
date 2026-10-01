@@ -21,11 +21,11 @@ import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteCh
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import RepartitionsMeteosRapportDetaille from "@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille";
-import { ChantierRapportDetailleSansMailles } from "@/server/rapport-detaille/rapportDetaille.interface";
+import { ChantierRapportDetailleWithoutMailles } from "@/server/rapport-detaille/rapportDetaille.interface";
 import RapportDétailléTableauChantiers from "./RapportDétailléTableauChantiers/RapportDétailléTableauChantiers";
 
 interface RapportDétailléVueDEnsembleProps {
-  chantiers: ChantierRapportDetailleSansMailles[];
+  chantiers: ChantierRapportDetailleWithoutMailles[];
   filtresComptesCalculés: Record<TypeAlerteChantier, number>;
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat;
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;

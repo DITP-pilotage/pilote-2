@@ -11,7 +11,7 @@ import { MailleChantierContrat } from "@/server/chantiers/app/contrats/ChantierA
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
-export type FiltresAlertesRapportDetaille = {
+export type AlerteFilters = {
   estEnAlerteTauxAvancementNonCalculé: boolean;
   estEnAlerteÉcart: boolean;
   estEnAlerteBaisse: boolean;
@@ -20,47 +20,45 @@ export type FiltresAlertesRapportDetaille = {
   estEnAlertePossedePropositionsValeurAvancement: boolean;
 };
 
-export type ContexteRapportDetaille = {
+export type RapportDetailleContext = {
   session: Session;
   territoireCode: string;
-  codeInseeSelectionne: string;
-  mailleSelectionnee: MailleInterne;
-  mailleChantier: MailleChantierContrat;
+  selectedCodeInsee: string;
+  selectedMaille: MailleInterne;
+  chantierMaille: MailleChantierContrat;
   jalon: number;
-  jalonParDefaut: number;
+  defaultJalon: number;
   filtres: FiltreQueryParams;
-  filtresAlertes: FiltresAlertesRapportDetaille;
+  alerteFilters: AlerteFilters;
   sorting: SortingParams;
-  afficherDetail: boolean;
+  showDetail: boolean;
 };
 
-export type QueryRapportDetaille = Record<
+export type RapportDetailleQuery = Record<
   string,
   string | string[] | undefined
 >;
 
-export function aUnFiltreAlerte(
-  filtresAlertes: FiltresAlertesRapportDetaille,
-): boolean {
-  return Object.values(filtresAlertes).some(Boolean);
+export function hasAlerteFilter(alerteFilters: AlerteFilters): boolean {
+  return Object.values(alerteFilters).some(Boolean);
 }
 
-export function construireContexteRapportDetaille(
-  query: QueryRapportDetaille,
+export function buildRapportDetailleContext(
+  query: RapportDetailleQuery,
   territoireCode: string,
   session: Session,
-  maintenant: Date = new Date(),
-): ContexteRapportDetaille {
+  now: Date = new Date(),
+): RapportDetailleContext {
   const searchParams = loadRapportDetailleSearchParams(query);
   const { maille, codeInsee } =
     territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const jalonParDefaut = getAnneeDateDeBascule(
-    maintenant,
+  const defaultJalon = getAnneeDateDeBascule(
+    now,
     configuration().dateBasculeAffichageValeursAnneePrecedente,
   );
 
-  const mailleSelectionnee: MailleInterne =
+  const selectedMaille: MailleInterne =
     maille === "NAT"
       ? searchParams.maille
       : maille === "DEPT"
@@ -72,11 +70,11 @@ export function construireContexteRapportDetaille(
   return {
     session,
     territoireCode,
-    codeInseeSelectionne: codeInsee,
-    mailleSelectionnee,
-    mailleChantier: maille === "NAT" ? "nationale" : mailleSelectionnee,
-    jalon: searchParams.jalon ?? jalonParDefaut,
-    jalonParDefaut,
+    selectedCodeInsee: codeInsee,
+    selectedMaille,
+    chantierMaille: maille === "NAT" ? "nationale" : selectedMaille,
+    jalon: searchParams.jalon ?? defaultJalon,
+    defaultJalon,
     filtres: {
       perimetres: searchParams.perimetres,
       axes: searchParams.axes,
@@ -91,7 +89,7 @@ export function construireContexteRapportDetaille(
       estBarometre: searchParams.estBarometre,
       valeurDeLaRecherche: searchParams.q,
     },
-    filtresAlertes: {
+    alerteFilters: {
       estEnAlerteTauxAvancementNonCalculé:
         searchParams.estEnAlerteTauxAvancementNonCalculé,
       estEnAlerteÉcart: searchParams.estEnAlerteÉcart,
@@ -103,6 +101,6 @@ export function construireContexteRapportDetaille(
         searchParams.estEnAlertePossedePropositionsValeurAvancement,
     },
     sorting,
-    afficherDetail: query.detail === "true",
+    showDetail: query.detail === "true",
   };
 }

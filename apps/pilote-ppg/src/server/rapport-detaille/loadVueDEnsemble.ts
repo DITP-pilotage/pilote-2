@@ -17,51 +17,51 @@ import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrat
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import {
-  aUnFiltreAlerte,
-  ContexteRapportDetaille,
-} from "@/server/rapport-detaille/contexteRapportDetaille";
+  hasAlerteFilter,
+  RapportDetailleContext,
+} from "@/server/rapport-detaille/rapportDetailleContext";
 import {
-  ChantierRapportDetailleSansMailles,
+  ChantierRapportDetailleWithoutMailles,
   VueDEnsembleRapportDetaille,
 } from "@/server/rapport-detaille/rapportDetaille.interface";
 
-const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set<string>([
+const PROFILS_ALLOWED_TO_SEE_BROUILLONS = new Set<string>([
   ProfilEnum.DITP_ADMIN,
   ProfilEnum.DITP_PILOTAGE,
   ProfilEnum.DIR_PROJET,
   ProfilEnum.EQUIPE_DIR_PROJET,
 ]);
 
-export type DependancesVueDEnsemble = {
-  ministèresEtAxes: (
+export type VueDEnsembleDependencies = {
+  getMinistèresAndAxes: (
     chantierIds: string[],
   ) => Promise<{ ministères: Ministère[]; axes: Axe[] }>;
   territoire: (territoireCode: string) => Promise<Territoire>;
   chantiers: (
-    contexte: ContexteRapportDetaille,
+    context: RapportDetailleContext,
     ministères: Ministère[],
     axes: Axe[],
   ) => Promise<ChantierRapportDetailleContrat[]>;
-  répartitionMétéos: (
+  getRépartitionMétéos: (
     territoireCode: string,
     filtres: FiltreQueryParams,
     axes: Axe[],
     chantierIds: string[],
   ) => Promise<RepartitionMeteoContrat>;
-  statistiquesAgrégées: (
+  getAvancementsStatistiques: (
     chantierIds: string[],
-    contexte: ContexteRapportDetaille,
+    context: RapportDetailleContext,
   ) => Promise<AvancementsStatistiques>;
-  avancementsTerritoires: (
+  getTerritoiresAvancements: (
     chantierIds: string[],
-    contexte: ContexteRapportDetaille,
+    context: RapportDetailleContext,
   ) => Promise<{
     moyenneTauxAvancementTerritoire: number | null;
     avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
   }>;
 };
 
-export function restreindreHabilitationsAuxChantiers(
+export function restrictHabilitationsToChantiers(
   habilitations: Habilitations,
   chantierIds: string[],
 ): Habilitations {
@@ -76,9 +76,9 @@ export function restreindreHabilitationsAuxChantiers(
   };
 }
 
-export function dependancesVueDEnsemble(): DependancesVueDEnsemble {
+export function defaultVueDEnsembleDependencies(): VueDEnsembleDependencies {
   return {
-    ministèresEtAxes: async (chantierIds) => {
+    getMinistèresAndAxes: async (chantierIds) => {
       if (chantierIds.length === 0) return { ministères: [], axes: [] };
       const [ministères, axes] = await Promise.all([
         getContainer("legacy")
@@ -94,47 +94,47 @@ export function dependancesVueDEnsemble(): DependancesVueDEnsemble {
       getContainer("legacy")
         .resolve("territoireRepository")
         .récupérer(territoireCode),
-    chantiers: (contexte, ministères, axes) =>
+    chantiers: (context, ministères, axes) =>
       getContainer("chantiers")
         .resolve(
           "recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2",
         )
         .run(
-          contexte.session.habilitations,
-          contexte.session.profil,
-          contexte.territoireCode,
-          contexte.mailleChantier,
+          context.session.habilitations,
+          context.session.profil,
+          context.territoireCode,
+          context.chantierMaille,
           ministères,
           new Map(axes.map((axe) => [axe.id, axe])),
-          contexte.filtres,
-          contexte.sorting,
-          contexte.jalon,
-          contexte.jalonParDefaut,
+          context.filtres,
+          context.sorting,
+          context.jalon,
+          context.defaultJalon,
         ),
-    répartitionMétéos: (territoireCode, filtres, axes, chantierIds) =>
+    getRépartitionMétéos: (territoireCode, filtres, axes, chantierIds) =>
       getContainer("legacy")
         .resolve("recupererRepartitionsMeteoChantiersUseCase")
         .run(territoireCode, filtres, axes, chantierIds)
         .then(presenterEnRépartitionsMétéosChantiersContrat),
-    statistiquesAgrégées: (chantierIds, contexte) =>
+    getAvancementsStatistiques: (chantierIds, context) =>
       getContainer("chantiers")
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run(
           chantierIds,
-          contexte.mailleSelectionnee,
-          contexte.session.habilitations,
-          contexte.jalon,
+          context.selectedMaille,
+          context.session.habilitations,
+          context.jalon,
         ),
-    avancementsTerritoires: async (chantierIds, contexte) => {
+    getTerritoiresAvancements: async (chantierIds, context) => {
       const { agregat } = await getContainer("legacy")
         .resolve("agregerAvancementsChantiersUseCase")
-        .run(chantierIds, contexte.jalon);
+        .run(chantierIds, context.jalon);
       return {
         moyenneTauxAvancementTerritoire:
-          agregat[contexte.mailleChantier].territoires[contexte.territoireCode]
+          agregat[context.chantierMaille].territoires[context.territoireCode]
             .repartition.avancements.annuel.moyenne,
         avancementsGlobauxTerritoriauxMoyens: objectEntries(
-          agregat[contexte.mailleSelectionnee].territoires,
+          agregat[context.selectedMaille].territoires,
         ).map(([territoireCode, territoire]) => ({
           valeur: territoire.repartition.avancements.global.moyenne,
           valeurAnnuelle: territoire.repartition.avancements.annuel.moyenne,
@@ -146,137 +146,128 @@ export function dependancesVueDEnsemble(): DependancesVueDEnsemble {
   };
 }
 
-function filtrerParAlertes(
+function filterByAlertes(
   chantiers: ChantierRapportDetailleContrat[],
-  contexte: ContexteRapportDetaille,
+  context: RapportDetailleContext,
 ): ChantierRapportDetailleContrat[] {
-  const { filtresAlertes, mailleChantier, territoireCode } = contexte;
-  if (!aUnFiltreAlerte(filtresAlertes)) return chantiers;
+  const { alerteFilters, chantierMaille, territoireCode } = context;
+  if (!hasAlerteFilter(alerteFilters)) return chantiers;
 
   return chantiers.filter((chantier) => {
-    const donnéesTerritoire = chantier.mailles[mailleChantier][territoireCode];
+    const territoireData = chantier.mailles[chantierMaille][territoireCode];
     return (
-      (filtresAlertes.estEnAlerteÉcart &&
-        Alerte.estEnAlerteÉcart(donnéesTerritoire.ecart.jalonParDefaut)) ||
-      (filtresAlertes.estEnAlerteBaisse &&
-        Alerte.estEnAlerteBaisse(donnéesTerritoire.tendance)) ||
-      (filtresAlertes.estEnAlerteTauxAvancementNonCalculé &&
+      (alerteFilters.estEnAlerteÉcart &&
+        Alerte.estEnAlerteÉcart(territoireData.ecart.jalonParDefaut)) ||
+      (alerteFilters.estEnAlerteBaisse &&
+        Alerte.estEnAlerteBaisse(territoireData.tendance)) ||
+      (alerteFilters.estEnAlerteTauxAvancementNonCalculé &&
         Alerte.estEnAlerteTauxAvancementNonCalculé(
-          donnéesTerritoire.avancement.global,
+          territoireData.avancement.global,
           chantier.cibleAttendu,
         )) ||
-      (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental &&
+      (alerteFilters.estEnAlerteAbscenceTauxAvancementDepartemental &&
         Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(
           chantier.aUnTauxAvancementDepartemental,
           chantier.cibleAttendu,
         )) ||
-      (filtresAlertes.estEnAlerteMétéoNonRenseignée &&
-        Alerte.estEnAlerteMétéoNonRenseignée(donnéesTerritoire.météo)) ||
-      (filtresAlertes.estEnAlertePossedePropositionsValeurAvancement &&
+      (alerteFilters.estEnAlerteMétéoNonRenseignée &&
+        Alerte.estEnAlerteMétéoNonRenseignée(territoireData.météo)) ||
+      (alerteFilters.estEnAlertePossedePropositionsValeurAvancement &&
         Alerte.estEnAlertePossedePropositionsValeurAvancement(
-          donnéesTerritoire.aUnePropositionsValeurAvancement,
+          territoireData.aUnePropositionsValeurAvancement,
         ))
     );
   });
 }
 
-export async function chargerChantiersFiltres(
-  contexte: ContexteRapportDetaille,
-  dependances: DependancesVueDEnsemble = dependancesVueDEnsemble(),
+export async function loadFilteredChantiers(
+  context: RapportDetailleContext,
+  dependencies: VueDEnsembleDependencies = defaultVueDEnsembleDependencies(),
 ) {
-  const [{ ministères, axes }, territoireSélectionné] = await Promise.all([
-    dependances.ministèresEtAxes(
-      contexte.session.habilitations.lecture.chantiers,
+  const [{ ministères, axes }, selectedTerritoire] = await Promise.all([
+    dependencies.getMinistèresAndAxes(
+      context.session.habilitations.lecture.chantiers,
     ),
-    dependances.territoire(contexte.territoireCode),
+    dependencies.territoire(context.territoireCode),
   ]);
-  const tousLesChantiers = await dependances.chantiers(
-    contexte,
-    ministères,
-    axes,
-  );
+  const allChantiers = await dependencies.chantiers(context, ministères, axes);
   return {
     ministères,
     axes,
-    territoireSélectionné,
-    tousLesChantiers,
-    chantiers: filtrerParAlertes(tousLesChantiers, contexte),
+    selectedTerritoire,
+    allChantiers,
+    chantiers: filterByAlertes(allChantiers, context),
   };
 }
 
-export async function chargerChantiersParIds(
+export async function loadChantiersByIds(
   chantierIds: string[],
-  contexte: ContexteRapportDetaille,
-  dependances: DependancesVueDEnsemble = dependancesVueDEnsemble(),
+  context: RapportDetailleContext,
+  dependencies: VueDEnsembleDependencies = defaultVueDEnsembleDependencies(),
 ) {
-  const contexteRestreint: ContexteRapportDetaille = {
-    ...contexte,
+  const restrictedContext: RapportDetailleContext = {
+    ...context,
     session: {
-      ...contexte.session,
-      habilitations: restreindreHabilitationsAuxChantiers(
-        contexte.session.habilitations,
+      ...context.session,
+      habilitations: restrictHabilitationsToChantiers(
+        context.session.habilitations,
         chantierIds,
       ),
     },
   };
-  const { chantiers, territoireSélectionné } = await chargerChantiersFiltres(
-    contexteRestreint,
-    dependances,
+  const { chantiers, selectedTerritoire } = await loadFilteredChantiers(
+    restrictedContext,
+    dependencies,
   );
-  return { chantiers, territoireSélectionné };
+  return { chantiers, selectedTerritoire };
 }
 
-export async function chargerVueDEnsemble(
-  contexte: ContexteRapportDetaille,
-  dependances: DependancesVueDEnsemble = dependancesVueDEnsemble(),
+export async function loadVueDEnsemble(
+  context: RapportDetailleContext,
+  dependencies: VueDEnsembleDependencies = defaultVueDEnsembleDependencies(),
 ): Promise<VueDEnsembleRapportDetaille> {
-  const {
-    ministères,
-    axes,
-    territoireSélectionné,
-    tousLesChantiers,
-    chantiers,
-  } = await chargerChantiersFiltres(contexte, dependances);
+  const { ministères, axes, selectedTerritoire, allChantiers, chantiers } =
+    await loadFilteredChantiers(context, dependencies);
   const chantierIds = chantiers.map((chantier) => chantier.id);
 
-  const [repartitionMeteosChantiers, statistiques, avancementsTerritoires] =
+  const [repartitionMeteosChantiers, statistiques, getTerritoiresAvancements] =
     await Promise.all([
-      dependances.répartitionMétéos(
-        contexte.territoireCode,
-        contexte.filtres,
+      dependencies.getRépartitionMétéos(
+        context.territoireCode,
+        context.filtres,
         axes,
         chantierIds,
       ),
-      dependances.statistiquesAgrégées(chantierIds, contexte),
-      dependances.avancementsTerritoires(chantierIds, contexte),
+      dependencies.getAvancementsStatistiques(chantierIds, context),
+      dependencies.getTerritoiresAvancements(chantierIds, context),
     ]);
 
   const { filtresComptesCalculés } = Chantier.recupererStatistiqueListeChantier(
-    tousLesChantiers,
-    contexte.mailleChantier,
-    contexte.territoireCode,
+    allChantiers,
+    context.chantierMaille,
+    context.territoireCode,
   );
 
   return {
     chantiers,
     ministères,
     axes,
-    territoireSélectionné,
+    selectedTerritoire,
     filtresComptesCalculés,
     avancementsAgrégés:
       presenterEnAvancementsStatistiquesAccueilContrat(statistiques),
     repartitionMeteosChantiers,
-    ...avancementsTerritoires,
-    estAutoriseAVoirLesBrouillons: PROFILS_AUTORISE_VOIR_BROUILLONS.has(
-      contexte.session.profil,
+    ...getTerritoiresAvancements,
+    estAutoriseAVoirLesBrouillons: PROFILS_ALLOWED_TO_SEE_BROUILLONS.has(
+      context.session.profil,
     ),
-    chantiersSontArchives: contexte.filtres.statut.includes("ARCHIVE"),
+    chantiersSontArchives: context.filtres.statut.includes("ARCHIVE"),
   };
 }
 
-export function sansMailles(
+export function withoutMailles(
   chantier: ChantierRapportDetailleContrat,
-): ChantierRapportDetailleSansMailles {
+): ChantierRapportDetailleWithoutMailles {
   const { mailles: _mailles, ...reste } = chantier;
   return reste;
 }
