@@ -22,6 +22,9 @@ import { generateRapportDetaillePdf } from "@/server/rapport-detaille/pdf/genera
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
 
 const DETAILS_BATCH_SIZE = 10;
+const RETRY_AFTER_SECONDS = 10;
+
+let generationInProgress = false;
 
 export type RapportDetaillePdfDependencies = {
   loadVueDEnsemble: (
@@ -105,13 +108,35 @@ export async function handleRapportDetaillePdf(
     return;
   }
 
-  let pdf: PDFKit.PDFDocument;
+  if (generationInProgress) {
+    response.setHeader("Retry-After", String(RETRY_AFTER_SECONDS));
+    sendError(response, 503, "Un PDF est déjà en cours de génération");
+    return;
+  }
+  generationInProgress = true;
   try {
-    const context = buildRapportDetailleContext(
+    await generateAndSend(
       request.query,
       territoireCode,
+      response,
       session,
+      dependencies,
     );
+  } finally {
+    generationInProgress = false;
+  }
+}
+
+async function generateAndSend(
+  query: RapportDetailleQuery,
+  territoireCode: string,
+  response: ServerResponse,
+  session: Session,
+  dependencies: RapportDetaillePdfDependencies,
+): Promise<void> {
+  let pdf: PDFKit.PDFDocument;
+  try {
+    const context = buildRapportDetailleContext(query, territoireCode, session);
     const vue = await dependencies.loadVueDEnsemble(context);
     const [details, hideNonApplicable] = await Promise.all([
       context.showDetail

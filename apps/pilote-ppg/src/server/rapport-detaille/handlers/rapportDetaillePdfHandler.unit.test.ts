@@ -149,4 +149,31 @@ describe("handleRapportDetaillePdf", () => {
 
     expect(response.status).toBe(500);
   });
+
+  it("refuse une génération concurrente le temps que la première se termine", async () => {
+    let releaseFirst: () => void = () => {};
+    const firstStarted = new Promise<void>((resolve) => {
+      const dependencies = buildDependencies({
+        loadVueDEnsemble: vi.fn(async () => {
+          resolve();
+          await new Promise<void>((release) => {
+            releaseFirst = release;
+          });
+          return buildTestVueDEnsemble();
+        }),
+      });
+      void request("/?territoireCode=NAT-FR", nationalSession, dependencies);
+    });
+    await firstStarted;
+    const address = server.address();
+    const port = typeof address === "object" && address ? address.port : 0;
+
+    const second = await fetch(
+      `http://localhost:${port}/?territoireCode=NAT-FR`,
+    );
+
+    expect(second.status).toBe(503);
+    expect(second.headers.get("retry-after")).toBe("10");
+    releaseFirst();
+  });
 });
