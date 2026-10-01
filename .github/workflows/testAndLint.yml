@@ -19,6 +19,7 @@ jobs:
       kpilote-api: ${{ steps.filter.outputs.kpilote-api }}
       kpilote-webapp: ${{ steps.filter.outputs.kpilote-webapp }}
       kpilote-shared: ${{ steps.filter.outputs.kpilote-shared }}
+      kpilote-acme: ${{ steps.filter.outputs.kpilote-acme }}
       kpilote-ui: ${{ steps.filter.outputs.kpilote-ui }}
       kpilote-admin: ${{ steps.filter.outputs.kpilote-admin }}
     steps:
@@ -43,6 +44,8 @@ jobs:
               - 'pnpm-lock.yaml'
             kpilote-shared:
               - 'packages/kpilote-shared/**'
+            kpilote-acme:
+              - 'packages/kpilote-acme/**'
             kpilote-ui:
               - 'packages/kpilote-ui/**'
             kpilote-admin:
@@ -137,7 +140,7 @@ jobs:
   kpilote-api-test:
     name: "kpilote-api: tests"
     needs: changes
-    if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
+    if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true' || needs.changes.outputs['kpilote-acme'] == 'true'
     runs-on: ubuntu-26.04
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres?connection_limit=50
@@ -186,7 +189,7 @@ jobs:
   kpilote-api-lint:
     name: "kpilote-api: lint"
     needs: changes
-    if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
+    if: needs.changes.outputs['kpilote-api'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true' || needs.changes.outputs['kpilote-acme'] == 'true'
     runs-on: ubuntu-26.04
     env:
       # `prisma generate --sql` introspects tables to type TypedSQL queries — a real DB is required
@@ -227,7 +230,7 @@ jobs:
   kpilote-webapp-test:
     name: "kpilote-webapp: tests"
     needs: changes
-    if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
+    if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true' || needs.changes.outputs['kpilote-acme'] == 'true'
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
@@ -248,7 +251,7 @@ jobs:
   kpilote-webapp-lint:
     name: "kpilote-webapp: lint"
     needs: changes
-    if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
+    if: needs.changes.outputs['kpilote-webapp'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true' || needs.changes.outputs['kpilote-acme'] == 'true'
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
@@ -298,6 +301,42 @@ jobs:
         run: pnpm lint
         env:
           APP_PACKAGE: '@pilote/kpilote-shared'
+
+  kpilote-acme-test:
+    name: "kpilote-acme: tests"
+    needs: changes
+    if: needs.changes.outputs['kpilote-acme'] == 'true'
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run test command
+        run: pnpm test
+        env:
+          APP_PACKAGE: '@pilote/kpilote-acme'
+
+  kpilote-acme-lint:
+    name: "kpilote-acme: lint"
+    needs: changes
+    if: needs.changes.outputs['kpilote-acme'] == 'true'
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run lint command
+        run: pnpm lint
+        env:
+          APP_PACKAGE: '@pilote/kpilote-acme'
 
   kpilote-ui-lint:
     name: "kpilote-ui: lint"

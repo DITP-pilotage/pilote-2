@@ -1,0 +1,35 @@
+{
+  "name": "@pilote/kpilote-acme",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./acmeChallengeRoutes": {
+      "types": "./src/acmeChallengeRoutes.ts",
+      "default": "./src/acmeChallengeRoutes.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "lint": "oxlint --type-aware src && tsc --noEmit && prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "peerDependencies": {
+    "hono": "^4.13.7",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "hono": "^4.13.7",
+    "oxlint": "^1.82.0",
+    "oxlint-tsgolint": "~7.0.2001",
+    "prettier": "^3.9.6",
+    "typescript": "7.0.2",
+    "vitest": "^5.0.0",
+    "zod": "^4.5.4"
+  }
+}

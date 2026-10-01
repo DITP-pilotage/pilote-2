@@ -10,7 +10,7 @@ Le monorepo contient **6 apps** (le doc en annonçait 3 jusqu'au 2026-07-17 ; l'
 - `pilote-ppg-auth` (`apps/pilote-ppg-auth`) : proxy auth/ACME — **dans le périmètre de `pnpm deps:campagne` depuis le 2026-09-10**
 - `apps/pilote-ppg-data-management` : modèles dbt (SQL, pas de deps npm)
 
-Plus les packages partagés `packages/kpilote-shared` et `packages/kpilote-ui`.
+Plus les packages partagés `packages/kpilote-shared`, `packages/kpilote-ui` et `packages/kpilote-acme` (routes du challenge ACME, `hono` et `zod` en `peerDependencies`).
 
 > **~~`pilote-ppg-auth` n'est bumpé par personne.~~ Corrigé le 2026-09-10.** Il était hors du filtre kpilote de l'outil de campagne, et personne ne le mettait à jour à la main. C'est ainsi qu'il s'est retrouvé sur `hono@4.12.18` (9 advisories, dont une HIGH) pendant que les apps kpilote flottaient jusqu'à 4.12.27. Le périmètre de l'outil couvre désormais **les 7 workspaces npm**.
 

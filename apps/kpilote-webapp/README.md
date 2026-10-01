@@ -40,16 +40,17 @@ En dev, Vite sert la SPA et délègue à Hono les chemins `/auth`, `/healthz` et
 
 ## Variables d'environnement
 
-| Variable                                                                                                        | Côté    | Rôle                                                                   |
-| --------------------------------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------- |
-| `VITE_API_URL`                                                                                                  | client  | URL de kpilote-api appelée par le navigateur                           |
-| `VITE_ANALYTICS_ENABLED`, `VITE_MATOMO_URL`, `VITE_MATOMO_SITE_ID`                                              | client  | Analytics Matomo (actif seulement en build de prod, sans Do Not Track) |
-| `API_BASE_URL`                                                                                                  | serveur | URL de kpilote-api vue du serveur (peut être un réseau interne)        |
-| `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_REDIRECT_URI`, `OIDC_POST_LOGOUT_REDIRECT_URI` | serveur | Client ProConnect                                                      |
-| `KEYCLOAK_ISSUER_URL`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET`                                           | serveur | Client Keycloak                                                        |
-| `SESSION_SECRET`                                                                                                | serveur | Chiffrement du cookie de session (≥ 32 caractères, pas de placeholder) |
-| `PUBLIC_BASE_URL`                                                                                               | serveur | URL publique de l'app                                                  |
-| `LOG_LEVEL`                                                                                                     | serveur | Niveau de log                                                          |
+| Variable                                                                                                        | Côté    | Rôle                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_API_URL`                                                                                                  | client  | URL de kpilote-api appelée par le navigateur                                                                                     |
+| `VITE_ANALYTICS_ENABLED`, `VITE_MATOMO_URL`, `VITE_MATOMO_SITE_ID`                                              | client  | Analytics Matomo (actif seulement en build de prod, sans Do Not Track)                                                           |
+| `API_BASE_URL`                                                                                                  | serveur | URL de kpilote-api vue du serveur (peut être un réseau interne)                                                                  |
+| `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_REDIRECT_URI`, `OIDC_POST_LOGOUT_REDIRECT_URI` | serveur | Client ProConnect                                                                                                                |
+| `KEYCLOAK_ISSUER_URL`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET`                                           | serveur | Client Keycloak                                                                                                                  |
+| `SESSION_SECRET`                                                                                                | serveur | Chiffrement du cookie de session (≥ 32 caractères, pas de placeholder)                                                           |
+| `PUBLIC_BASE_URL`                                                                                               | serveur | URL publique de l'app                                                                                                            |
+| `LOG_LEVEL`                                                                                                     | serveur | Niveau de log                                                                                                                    |
+| `ACME_UPLOAD_API_KEY`                                                                                           | serveur | Optionnel — clé Bearer du dépôt des challenges ACME ([renouvellement SSL](../../.github/workflows/README-renouvellement-ssl.md)) |
 
 Les variables `VITE_*` sont figées au build.
 

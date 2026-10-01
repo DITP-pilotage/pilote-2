@@ -38,6 +38,7 @@
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.6.3",
     "@js-temporal/polyfill": "^0.5.1",
+    "@pilote/kpilote-acme": "workspace:*",
     "@pilote/kpilote-shared": "workspace:*",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "7.10.0",
