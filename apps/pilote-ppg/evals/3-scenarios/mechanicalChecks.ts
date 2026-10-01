@@ -3,9 +3,8 @@
  * moins fiable qu'une regex, et ses oscillations brouilleraient la lecture
  * des critères de fond.
  *
- * Chaque vérification tolère ce qui ne change rien pour l'utilisateur : un
- * titre de gabarit à un autre niveau, une casse ou un accent différent, un
- * tiret court à la place du tiret cadratin.
+ * Chaque vérification tolère ce qui ne change rien pour l'utilisateur : une
+ * casse ou un accent différent, un tiret court à la place du tiret cadratin.
  */
 
 export type CheckResult = { ok: boolean; detail: string };
@@ -62,49 +61,23 @@ export function checkNoMeteoCode({ text }: { text: string }): CheckResult {
     : { ok: false, detail: `codes météo cités : ${cites.join(", ")}` };
 }
 
-// CH-XXX exige trois chiffres et le tiret ; REG-XX et DEPT-XX le tiret.
-const MALFORMED_CODE =
-  /\bCH-\d{1,2}\b|\bCH\s?\d{2,4}\b|\bREG\s?\d{2}\b|\bDEPT\s?\d{2}\b/g;
-
-export function checkOfficialCodes({ text }: { text: string }): CheckResult {
-  const malformes = unique(typographie(text).match(MALFORMED_CODE) ?? []);
-  return malformes.length === 0
-    ? { ok: true, detail: "codes officiels" }
-    : { ok: false, detail: `codes mal formés : ${malformes.join(", ")}` };
-}
-
-export function checkHeadings({
-  text,
-  titles,
-}: {
-  text: string;
-  titles: string[];
-}): CheckResult {
-  const headings = [...text.matchAll(/^\s{0,3}#{1,6}\s+(.+)$/gm)].map((match) =>
-    normalize(match[1].replace(/[*_]/g, "")),
+/**
+ * Le format CH-XXX — Nom, pour tout chantier cité : il suffit qu'une
+ * mention porte le nom, les suivantes peuvent s'en tenir au code. Le nom
+ * exact des chantiers attendus relève de `checkChantiersCited`.
+ */
+export function checkChantierFormat({ text }: { text: string }): CheckResult {
+  const plain = typographie(text.replace(/[*_]/g, ""));
+  const codes = unique(plain.match(/\bCH-\d{3}\b/g) ?? []);
+  const sansNom = codes.filter(
+    (code) => !new RegExp(`\\b${code}\\s*-\\s*\\p{L}`, "u").test(plain),
   );
-  const manquants = titles.filter(
-    (title) => !headings.some((heading) => heading.includes(normalize(title))),
-  );
-  return manquants.length === 0
-    ? { ok: true, detail: "titres du gabarit présents" }
-    : { ok: false, detail: `titres manquants : ${manquants.join(", ")}` };
-}
-
-export function checkContains({
-  text,
-  fragments,
-}: {
-  text: string;
-  fragments: string[];
-}): CheckResult {
-  const normalized = normalize(text);
-  const manquants = fragments.filter(
-    (fragment) => !normalized.includes(normalize(fragment)),
-  );
-  return manquants.length === 0
-    ? { ok: true, detail: "mentions présentes" }
-    : { ok: false, detail: `mentions absentes : ${manquants.join(", ")}` };
+  return sansNom.length === 0
+    ? { ok: true, detail: "chantiers au format CH-XXX — Nom" }
+    : {
+        ok: false,
+        detail: `chantiers cités sans leur nom : ${sansNom.join(", ")}`,
+      };
 }
 
 export function checkChantiersCited({
@@ -128,75 +101,6 @@ export function checkChantiersCited({
     : {
         ok: false,
         detail: `chantiers absents du format CH-XXX — Nom : ${absents.join(", ")}`,
-      };
-}
-
-/**
- * Neuf mots d'affilée repris d'un commentaire : au-delà d'une expression
- * figée (« le délai médian de passage »), c'est une phrase recopiée.
- * Calibration du 30/09 : le juge ne voyait pas la recopie (0/3), d'où cette
- * vérification mécanique.
- */
-const FENETRE_RECOPIE = 9;
-
-function mots(text: string) {
-  return normalize(text.replace(/<[^>]+>/g, " "))
-    .split(/[^a-z0-9]+/)
-    .filter(Boolean);
-}
-
-export function checkNoVerbatim({
-  text,
-  sources,
-}: {
-  text: string;
-  sources: string[];
-}): CheckResult {
-  const texte = ` ${mots(text).join(" ")} `;
-
-  for (const source of sources) {
-    const motsSource = mots(source);
-    for (
-      let debut = 0;
-      debut + FENETRE_RECOPIE <= motsSource.length;
-      debut += 1
-    ) {
-      const passage = motsSource
-        .slice(debut, debut + FENETRE_RECOPIE)
-        .join(" ");
-      if (texte.includes(` ${passage} `)) {
-        return { ok: false, detail: `passage recopié : « ${passage} »` };
-      }
-    }
-  }
-
-  return { ok: true, detail: "aucun passage recopié" };
-}
-
-const PHRASES_MAX = 2;
-
-function compterPhrases(text: string) {
-  return text.split(/[.!?…](?:\s+|$)/).filter((phrase) => phrase.trim()).length;
-}
-
-/**
- * Les gabarits placent le résumé d'un commentaire dans une citation
- * markdown (`> …`) sous chaque chantier. Compter ses phrases est mécanique :
- * la calibration du 30/09 a montré que le juge comptait mal (0/3 sur un
- * résumé de cinq phrases).
- */
-export function checkResumesCourts({ text }: { text: string }): CheckResult {
-  const tropLongs = text
-    .split("\n")
-    .filter((line) => /^\s*>/.test(line))
-    .map((line) => line.replace(/^\s*>\s?/, "").trim())
-    .filter((resume) => compterPhrases(resume) > PHRASES_MAX);
-
-  return tropLongs.length === 0
-    ? { ok: true, detail: "résumés d'une ou deux phrases" }
-    : {
-        ok: false,
-        detail: `résumé de ${compterPhrases(tropLongs[0])} phrases : « ${tropLongs[0]} »`,
       };
 }
 
@@ -255,18 +159,6 @@ export function checkHasTable({ text }: { text: string }): CheckResult {
     : { ok: false, detail: "aucun tableau markdown" };
 }
 
-export function checkNoChantierTable({ text }: { text: string }): CheckResult {
-  const lignesChantier = tableRows(text).filter((row) =>
-    /\bCH-\d{3}\b/.test(row),
-  );
-  return lignesChantier.length === 0
-    ? { ok: true, detail: "pas de tableau de chantiers" }
-    : {
-        ok: false,
-        detail: `${lignesChantier.length} ligne(s) de chantier en tableau`,
-      };
-}
-
 export function checkTableTerritories({
   text,
   noms,
@@ -285,17 +177,6 @@ export function checkTableTerritories({
         detail: `territoires absents du tableau : ${absents.join(", ")}`,
       };
 }
-
-// Même motif que la validation des titres de widget de `composeDashboard.ts`.
-const FIGURE = /\d{1,10}\s{0,5}(?:%|points?\b|pts\b)/i;
-
-export function checkNoFigure({ text }: { text: string }): CheckResult {
-  const match = FIGURE.exec(text);
-  return match
-    ? { ok: false, detail: `valeur chiffrée : « ${match[0]} »` }
-    : { ok: true, detail: "aucune valeur chiffrée" };
-}
-
 export function checkNoLink({ text }: { text: string }): CheckResult {
   const match = /https?:\/\/\S+/.exec(text);
   return match

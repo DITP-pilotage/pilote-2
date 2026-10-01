@@ -1,4 +1,4 @@
-import type { ToolSet, UIMessage } from "ai";
+import type { ModelMessage, ToolSet, UIMessage } from "ai";
 import { Albert } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import {
@@ -191,13 +191,15 @@ export class AssistantIA {
   }
 
   /**
-   * Un tour d'agent sur une question isolée, `steps` inclus. Pas d'historique,
-   * donc pas de `dashboardDejaCompose` : les capacities viennent de la seule
-   * question.
+   * Un tour d'agent, `steps` inclus, après un éventuel `history` de messages.
+   * Les capacities viennent de la seule question, comme en production où
+   * elles viennent du dernier message ; `dashboardDejaCompose` n'est pas
+   * rejoué.
    */
   static async generateText({
     chatId,
     question,
+    history,
     habilitations,
     agentContext,
     userId,
@@ -205,6 +207,7 @@ export class AssistantIA {
   }: {
     chatId: string;
     question: string;
+    history?: ModelMessage[];
     habilitations: Habilitations;
     agentContext: AgentContext;
     userId: string;
@@ -221,6 +224,7 @@ export class AssistantIA {
     return Albert.generateText({
       chatId,
       prompt: question,
+      history,
       systemPrompt,
       userId,
       model,

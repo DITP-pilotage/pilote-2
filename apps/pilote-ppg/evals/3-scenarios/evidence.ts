@@ -28,6 +28,11 @@ export type Evidence = {
   truth: GroundTruth;
   /** Codes des territoires que le tableau doit contenir, pour les comparaisons. */
   tableTerritories: string[];
+  /**
+   * Les tours qui précèdent la demande, dans l'ordre : un rapport se juge
+   * contre la conversation qu'il reprend. Vide pour un tour isolé.
+   */
+  conversation: { question: string; answer: string }[];
 };
 
 type ToolResult = { toolName: string; input: unknown; output: unknown };

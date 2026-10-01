@@ -118,4 +118,31 @@ describe("seedMondeTerritorial", () => {
       );
     }),
   );
+
+  it(
+    "rend deux commentaires redondants pour CH-006 en Bretagne",
+    createIntegrationTest(async () => {
+      // Given
+      const world = await seedEvalWorld();
+      await seedMondeTerritorial({ authorId: world.userId });
+      const tools = createDataTools({ user: world.users.ditp });
+
+      // When
+      const commentaires = await executeTool<GetChantierCommentairesOutput>({
+        tool: tools.getChantierCommentaires,
+        input: { chantier_id: "CH-006", territoire_code: "REG-53" },
+      });
+
+      // Then
+      expect(
+        commentaires.resultats
+          .flatMap((resultat) => resultat.commentaires)
+          .filter((commentaire) =>
+            commentaire.contenu.includes("antigrippale"),
+          )
+          .map((commentaire) => commentaire.type)
+          .sort(),
+      ).toEqual(["autres_resultats_obtenus", "commentaires_sur_les_donnees"]);
+    }),
+  );
 });

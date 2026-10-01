@@ -1,17 +1,18 @@
 import { randomUUID } from "node:crypto";
+import type { ModelMessage } from "ai";
 import { createScorer, evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
 import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { EVAL_TIMEOUT_MS, seedEvalWorld, type EvalProfile } from "../world";
 import { scoreExpectedTools } from "../scoreExpectedTools";
-import type { AgentTurn, ObservedToolCall } from "../types";
+import type { ObservedToolCall } from "../types";
 import { askJudge } from "./askJudge";
 import { scenarioColumns } from "./columns";
-import { extractMatter, maskedTerritories, type Evidence } from "./evidence";
 import type { Criterion, Grid, JudgedCriterion } from "./grid";
 import { readGroundTruth } from "./groundTruth";
-import type { GroundTruth, TruthScope } from "./truth";
+import type { TruthScope } from "./truth";
+import { buildEvidence, type PreviousTurn, type ScenarioTurn } from "./turn";
 import type { Verdict } from "./judge";
 import { seedMondeTerritorial } from "./mondeTerritorial";
 import { JALON_COURANT } from "./territoires";
@@ -39,57 +40,12 @@ export type ScenarioCase = {
   forbidden?: string[];
   /** Codes des territoires que le tableau comparatif doit contenir. */
   tableTerritories?: string[];
+  /**
+   * Messages envoyés avant `question`, dans l'ordre, chacun suivi de la
+   * réponse de l'agent. Seul le dernier tour est noté.
+   */
+  history?: string[];
 };
-
-/**
- * Les scorers tournent APRÈS la `task`, donc après le rollback : tout ce
- * qu'ils lisent voyage dans le tour.
- */
-export type ScenarioTurn = AgentTurn & {
-  turnId: string;
-  question: string;
-  profile: EvalProfile;
-  currentTerritory: string;
-  toolResults: { toolName: string; input: unknown; output: unknown }[];
-  userTerritories: string[];
-  truth: GroundTruth;
-  tableTerritories: string[];
-};
-
-export function buildEvidence({
-  turn,
-  grid,
-}: {
-  turn: ScenarioTurn;
-  grid: Grid;
-}): Evidence {
-  const { matter, dashboard } = extractMatter({
-    kind: grid.matter,
-    text: turn.text,
-    toolCalls: turn.toolCalls,
-    toolResults: turn.toolResults,
-  });
-
-  return {
-    question: turn.question,
-    profile: turn.profile,
-    currentTerritory: turn.currentTerritory,
-    answer: turn.text,
-    matter,
-    dashboard,
-    toolCalls: turn.toolCalls,
-    toolResults: turn.toolResults.map(({ toolName, output }) => ({
-      toolName,
-      output,
-    })),
-    maskedTerritories: maskedTerritories({
-      toolResults: turn.toolResults,
-      userTerritories: turn.userTerritories,
-    }),
-    truth: turn.truth,
-    tableTerritories: turn.tableTerritories,
-  };
-}
 
 /**
  * Un appel de juge par tour, partagé par tous les scorers jugés. La clé est
@@ -191,14 +147,46 @@ export function scenarioEval({
               user,
             });
 
+            const chatId = randomUUID();
+            const agentContext = construireAgentContextTerritoire({
+              territoireCode: caseTerritory,
+              jalon: JALON_COURANT,
+            });
+            const messages: ModelMessage[] = [];
+            const history: PreviousTurn[] = [];
+
+            for (const question of input.history ?? []) {
+              const previous = await AssistantIA.generateText({
+                chatId,
+                question,
+                history: messages,
+                habilitations: user.habilitations,
+                agentContext,
+                userId: user.userId,
+              });
+              messages.push(
+                { role: "user", content: question },
+                ...previous.response.messages,
+              );
+              history.push({
+                question,
+                text: previous.text,
+                toolResults: previous.steps.flatMap((step) =>
+                  step.toolResults.map((toolResult) => ({
+                    toolName: toolResult.toolName,
+                    input: toolResult.input,
+                    output: toolResult.output,
+                  })),
+                ),
+              });
+            }
+
             const result = await AssistantIA.generateText({
-              chatId: randomUUID(),
+              chatId,
               question: input.question,
+              history: messages,
               habilitations: user.habilitations,
-              agentContext: construireAgentContextTerritoire({
-                territoireCode: caseTerritory,
-                jalon: JALON_COURANT,
-              }),
+              agentContext,
               userId: user.userId,
             });
 
@@ -225,6 +213,7 @@ export function scenarioEval({
               userTerritories: user.habilitations.lecture.territoires,
               truth,
               tableTerritories: input.tableTerritories ?? [],
+              history,
             };
           },
           { timeout: EVAL_TIMEOUT_MS },
@@ -258,7 +247,12 @@ export function scenarioEval({
         scenarioColumns({
           reason: input.reason,
           profile: input.profile ?? profile,
-          question: input.question,
+          question: [
+            ...(input.history ?? []).map(
+              (previous) => `(tour précédent) ${previous}`,
+            ),
+            input.question,
+          ].join("\n"),
           toolCalls: output.toolCalls,
           toolResults: output.toolResults,
           text: output.text,

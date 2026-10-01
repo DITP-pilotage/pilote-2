@@ -67,7 +67,35 @@ export function buildJudgePrompt({
   evidence: Evidence;
   criteria: JudgedCriterion[];
 }): string {
+  const conversation =
+    evidence.conversation.length > 0
+      ? [
+          `CONVERSATION PRÉCÉDENTE :`,
+          ...evidence.conversation.flatMap((tour) => [
+            `Utilisateur : ${tour.question}`,
+            `Assistant : ${tour.answer}`,
+          ]),
+          ``,
+        ]
+      : [];
+
+  const tableau =
+    evidence.tableTerritories.length > 0
+      ? [
+          `TERRITOIRES ATTENDUS DANS LE TABLEAU : ${evidence.tableTerritories
+            .map((code) => {
+              const nom = evidence.truth.territoires.find(
+                (territoire) => territoire.code === code,
+              )?.nom;
+              return nom ? `${nom} (${code})` : code;
+            })
+            .join(", ")}`,
+          ``,
+        ]
+      : [];
+
   return [
+    ...conversation,
     `DEMANDE DE L'UTILISATEUR (profil ${evidence.profile}, Territoire courant : ${evidence.currentTerritory}) :`,
     evidence.question,
     ``,
@@ -86,6 +114,7 @@ export function buildJudgePrompt({
     ``,
     `TERRITOIRES MASQUÉS (hors périmètre de l'utilisateur) : ${evidence.maskedTerritories.join(", ") || "aucun"}`,
     ``,
+    ...tableau,
     `FICHE DE VÉRITÉ (ce que la réponse doit couvrir) :`,
     JSON.stringify(sansInstructions(evidence.truth), null, 2),
     ``,

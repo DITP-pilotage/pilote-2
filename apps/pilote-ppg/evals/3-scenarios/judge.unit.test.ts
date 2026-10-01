@@ -44,6 +44,7 @@ const EVIDENCE: Evidence = {
     commentaires: [],
   },
   tableTerritories: [],
+  conversation: [],
 };
 
 describe("toVerdict", () => {
@@ -105,5 +106,58 @@ describe("buildJudgePrompt", () => {
     expect(prompt).toContain("# Synthèse pour Bretagne");
     expect(prompt).toContain('"toolName": "get_chantiers"');
     expect(prompt).toContain("Territoire courant : REG-53");
+  });
+
+  test("donne la conversation précédente quand le tour en suit d'autres", () => {
+    // When
+    const prompt = buildJudgePrompt({
+      evidence: {
+        ...EVIDENCE,
+        question: "Exporte cette synthèse en rapport",
+        conversation: [
+          {
+            question: "Fais moi la synthèse du territoire Bretagne",
+            answer: "Le TA de la Bretagne est de 51%.",
+          },
+        ],
+      },
+      criteria: CRITERES,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "CONVERSATION PRÉCÉDENTE :\nUtilisateur : Fais moi la synthèse du territoire Bretagne\nAssistant : Le TA de la Bretagne est de 51%.",
+    );
+  });
+
+  test("ne parle pas de conversation sur un tour isolé", () => {
+    // When
+    const prompt = buildJudgePrompt({ evidence: EVIDENCE, criteria: CRITERES });
+
+    // Then
+    expect(prompt).not.toContain("CONVERSATION PRÉCÉDENTE");
+  });
+
+  test("nomme les territoires attendus dans le tableau d'une comparaison", () => {
+    // When
+    const prompt = buildJudgePrompt({
+      evidence: {
+        ...EVIDENCE,
+        truth: {
+          ...EVIDENCE.truth,
+          territoires: [
+            { code: "REG-53", nom: "Bretagne", maille: "REG" },
+            { code: "DEPT-35", nom: "Ille-et-Vilaine", maille: "DEPT" },
+          ],
+        },
+        tableTerritories: ["REG-53", "DEPT-35"],
+      },
+      criteria: CRITERES,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "TERRITOIRES ATTENDUS DANS LE TABLEAU : Bretagne (REG-53), Ille-et-Vilaine (DEPT-35)",
+    );
   });
 });
