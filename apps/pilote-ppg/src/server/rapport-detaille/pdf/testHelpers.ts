@@ -5,7 +5,10 @@ import {
   RapportDetailleQuery,
 } from "@/server/rapport-detaille/rapportDetailleContext";
 import { buildTestSession } from "@/server/rapport-detaille/testSession";
-import { VueDEnsembleRapportDetaille } from "@/server/rapport-detaille/rapportDetaille.interface";
+import {
+  ChantierDetail,
+  VueDEnsembleRapportDetaille,
+} from "@/server/rapport-detaille/rapportDetaille.interface";
 import { TERRITOIRE_NATIONAL } from "@/server/rapport-detaille/testData";
 
 export function collectTexts(value: unknown): string[] {
@@ -80,6 +83,44 @@ export function buildTestVueDEnsemble(
     moyenneTauxAvancementTerritoire: 42,
     estAutoriseAVoirLesBrouillons: false,
     chantiersSontArchives: false,
+    ...overrides,
+  };
+}
+
+export function buildTestChantierDetail(
+  overrides: Partial<ChantierDetail> = {},
+): ChantierDetail {
+  return {
+    chantierId: "CH-001",
+    avancement: {
+      nationale: {
+        global: {
+          moyenne: 40,
+          médiane: 45,
+          minimum: 10,
+          maximum: 90,
+          date: null,
+        },
+        annuel: { moyenne: 55, date: "2026-06-30T00:00:00Z" },
+      },
+      departementale: {
+        global: { moyenne: 30, date: null },
+        annuel: { moyenne: 35, date: "2026-06-30T00:00:00Z" },
+      },
+      regionale: {
+        global: { moyenne: 20, date: null },
+        annuel: { moyenne: 25, date: "2026-06-30T00:00:00Z" },
+      },
+    },
+    indicateurs: [],
+    détailsIndicateurs: {},
+    synthèseDesRésultats: null,
+    objectifs: [],
+    commentaires: [],
+    décisionStratégique: null,
+    donnéesCartographieAvancement: [],
+    donnéesCartographieMétéo: [],
+    listeIndicateursPrisEnCompteAvancement: [],
     ...overrides,
   };
 }

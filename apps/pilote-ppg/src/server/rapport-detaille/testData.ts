@@ -86,7 +86,7 @@ export const TERRITOIRE_NATIONAL: Territoire = {
 export const TERRITOIRE_PARIS: Territoire = {
   code: "DEPT-75",
   nom: "Paris",
-  nomAffiché: "Paris (75)",
+  nomAffiché: "75 - Paris",
   codeInsee: "75",
   codeParent: "REG-11",
   maille: "departementale",

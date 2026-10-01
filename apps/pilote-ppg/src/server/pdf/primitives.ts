@@ -146,16 +146,31 @@ export function blocPdf(params: {
   content: Content;
   padding?: number;
   breakable?: boolean;
+  withInfo?: boolean;
 }): Content {
   const padding = params.padding ?? px(16);
   const body: TableCell[][] = [];
   if (params.titre) {
+    const title: ContentText = {
+      text: params.titre,
+      bold: true,
+      fontSize: px(16),
+      color: TEXT_COLOR,
+    };
     body.push([
       {
-        text: params.titre,
-        bold: true,
-        fontSize: px(16),
-        color: TEXT_COLOR,
+        ...(params.withInfo
+          ? {
+              columns: [
+                { ...title, width: "auto" },
+                {
+                  svg: iconSvg(InformationPleineIcon, PRIMARY_COLOR),
+                  width: px(24),
+                  margin: [px(16), -px(2), 0, 0],
+                },
+              ],
+            }
+          : title),
         fillColor: params.titreBackground ?? BLOC_TITLE_BACKGROUND,
         margin: [px(16), px(20), px(16), px(20)],
       },
