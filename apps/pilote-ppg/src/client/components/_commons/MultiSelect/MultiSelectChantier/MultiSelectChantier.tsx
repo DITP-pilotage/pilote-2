@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
+import { MultiSelect } from "@/client/components/_commons/MultiSelect/MultiSelect";
 import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
@@ -72,5 +72,3 @@ export const MultiSelectChantier: FunctionComponent<
     />
   );
 };
-
-export default MultiSelectChantier;

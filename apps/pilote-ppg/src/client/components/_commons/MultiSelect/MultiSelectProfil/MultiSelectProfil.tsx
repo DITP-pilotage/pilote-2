@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
+import { MultiSelect } from "@/client/components/_commons/MultiSelect/MultiSelect";
 import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import {
   deuxTableauxSontIdentiques,

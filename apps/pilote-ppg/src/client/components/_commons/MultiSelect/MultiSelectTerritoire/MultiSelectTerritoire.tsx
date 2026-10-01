@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
+import { MultiSelect } from "@/client/components/_commons/MultiSelect/MultiSelect";
 import {
   MultiSelectOption,
   MultiSelectOptionGroupée,
