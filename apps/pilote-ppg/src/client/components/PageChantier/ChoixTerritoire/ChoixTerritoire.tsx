@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/shared/Button";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
-import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
+import { SélecteursMaillesEtTerritoires } from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import PageChantierEnTête from "@/components/PageChantier/EnTête/EnTête";
 import Cartographie from "@/components/_commons/Cartographie/Cartographie";
 import useCartographie from "@/components/_commons/Cartographie/useCartographie";

@@ -3,14 +3,15 @@ import { useRouter } from "next/router";
 import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
+import { useSession } from "next-auth/react";
 import {
-  InputGroupeOptionGroupée,
-  InputGroupeOptionsGroupées,
-} from "@/components/_commons/InputGroupe/InputGroupe.interface";
-import { MultiSelectOption } from "@/components/_commons/MultiSelect/MultiSelect.interface";
-import { InputGroupeTerritoire } from "@/components/_commons/InputGroupe/InputGroupeTerritoire/InputGroupeTerritoire";
+  SelectField,
+  type SelectFieldOption,
+  type SelectFieldOptionGroup,
+} from "@/components/shared/SelectField";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
+import { clsxm } from "@/utils/clsxm";
 
 interface SélecteursMaillesEtTerritoiresProps {
   territoireCode: string;
@@ -22,17 +23,18 @@ interface SélecteursMaillesEtTerritoiresProps {
 const générerLesOptions = (
   nom: string,
   code: string,
-  disabled: boolean,
-): MultiSelectOption => ({
-  label: nom,
-  value: code,
-  disabled,
+  desactivee: boolean,
+): SelectFieldOption<string> => ({
+  libelle: nom,
+  valeur: code,
+  desactivee,
 });
 
 const construireLaListeDOptions = (
   territoiresAccessiblesEnLecture: DétailTerritoire[],
+  avecFrance: boolean,
   territoiresApplicables?: string[],
-) => {
+): SelectFieldOptionGroup<string>[] => {
   const territoiresDisponiblesDept = territoiresAccessiblesEnLecture.filter(
     (territoire) => territoire.maille === "departementale",
   );
@@ -41,7 +43,8 @@ const construireLaListeDOptions = (
   );
 
   const optionsRégions = {
-    label: "Régions",
+    libelle: "Régions",
+    valeur: "regions",
     options: trierParOrdreAlphabétique(
       territoiresDisponiblesReg.map((region) =>
         générerLesOptions(
@@ -52,12 +55,13 @@ const construireLaListeDOptions = (
             : false,
         ),
       ),
-      "label",
+      "libelle",
     ),
   };
 
   const optionsDépartements = {
-    label: "Départements",
+    libelle: "Départements",
+    valeur: "departements",
     options: trierParOrdreAlphabétique(
       territoiresDisponiblesDept.map((departement) =>
         générerLesOptions(
@@ -68,16 +72,24 @@ const construireLaListeDOptions = (
             : false,
         ),
       ),
-      "label",
+      "libelle",
     ),
   };
 
-  return [optionsRégions, optionsDépartements].filter(
-    (option): option is InputGroupeOptionGroupée => option !== null,
-  ) satisfies InputGroupeOptionsGroupées;
+  const optionsFrance = {
+    libelle: "National",
+    valeur: "national",
+    options: [générerLesOptions("France", "NAT-FR", false)],
+  };
+
+  return [
+    ...(avecFrance ? [optionsFrance] : []),
+    optionsRégions,
+    optionsDépartements,
+  ].filter((groupe) => groupe.options.length > 0);
 };
 
-const SélecteursMaillesEtTerritoires: FunctionComponent<
+export const SélecteursMaillesEtTerritoires: FunctionComponent<
   SélecteursMaillesEtTerritoiresProps
 > = ({
   territoireCode,
@@ -87,6 +99,9 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<
 }) => {
   const router = useRouter();
   const { territoiresAccessiblesEnLecture } = useTerritoireHabilitation();
+  const { data: session } = useSession();
+  const avecFrance =
+    !!session?.habilitations.lecture.territoires.includes("NAT-FR");
 
   const changerTerritoire = async (territoireCodeSelectionne: string) => {
     if (
@@ -125,18 +140,20 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<
   };
 
   return (
-    <InputGroupeTerritoire
-      changementValeurSelectionneeCallback={(valeurSélectionne: string) =>
-        changerTerritoire(valeurSélectionne)
-      }
-      direction={direction}
+    <SelectField
+      className={clsxm(
+        direction === "horizontal" && "flex-row items-center gap-2",
+      )}
+      label={direction === "horizontal" ? "Territoire :" : "Territoire"}
+      name="territoire"
+      onChange={changerTerritoire}
       options={construireLaListeDOptions(
         territoiresAccessiblesEnLecture,
+        avecFrance,
         territoiresApplicables,
       )}
-      territoireCodeSelectionneParDefaut={territoireCode}
+      triggerClassName={clsxm(direction === "horizontal" && "w-60")}
+      value={territoireCode}
     />
   );
 };
-
-export default SélecteursMaillesEtTerritoires;
