@@ -20,10 +20,7 @@ import {
   hasAlerteFilter,
   RapportDetailleContext,
 } from "@/server/rapport-detaille/rapportDetailleContext";
-import {
-  ChantierRapportDetailleWithoutMailles,
-  VueDEnsembleRapportDetaille,
-} from "@/server/rapport-detaille/rapportDetaille.interface";
+import { VueDEnsembleRapportDetaille } from "@/server/rapport-detaille/rapportDetaille.interface";
 
 const PROFILS_ALLOWED_TO_SEE_BROUILLONS = new Set<string>([
   ProfilEnum.DITP_ADMIN,
@@ -44,7 +41,7 @@ export type VueDEnsembleDependencies = {
   ) => Promise<ChantierRapportDetailleContrat[]>;
   getRépartitionMétéos: (
     territoireCode: string,
-    filtres: FiltreQueryParams,
+    filters: FiltreQueryParams,
     axes: Axe[],
     chantierIds: string[],
   ) => Promise<RepartitionMeteoContrat>;
@@ -106,15 +103,15 @@ export function defaultVueDEnsembleDependencies(): VueDEnsembleDependencies {
           context.chantierMaille,
           ministères,
           new Map(axes.map((axe) => [axe.id, axe])),
-          context.filtres,
+          context.filters,
           context.sorting,
           context.jalon,
           context.defaultJalon,
         ),
-    getRépartitionMétéos: (territoireCode, filtres, axes, chantierIds) =>
+    getRépartitionMétéos: (territoireCode, filters, axes, chantierIds) =>
       getContainer("legacy")
         .resolve("recupererRepartitionsMeteoChantiersUseCase")
-        .run(territoireCode, filtres, axes, chantierIds)
+        .run(territoireCode, filters, axes, chantierIds)
         .then(presenterEnRépartitionsMétéosChantiersContrat),
     getAvancementsStatistiques: (chantierIds, context) =>
       getContainer("chantiers")
@@ -234,7 +231,7 @@ export async function loadVueDEnsemble(
     await Promise.all([
       dependencies.getRépartitionMétéos(
         context.territoireCode,
-        context.filtres,
+        context.filters,
         axes,
         chantierIds,
       ),
@@ -261,13 +258,6 @@ export async function loadVueDEnsemble(
     estAutoriseAVoirLesBrouillons: PROFILS_ALLOWED_TO_SEE_BROUILLONS.has(
       context.session.profil,
     ),
-    chantiersSontArchives: context.filtres.statut.includes("ARCHIVE"),
+    chantiersSontArchives: context.filters.statut.includes("ARCHIVE"),
   };
-}
-
-export function withoutMailles(
-  chantier: ChantierRapportDetailleContrat,
-): ChantierRapportDetailleWithoutMailles {
-  const { mailles: _mailles, ...reste } = chantier;
-  return reste;
 }

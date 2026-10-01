@@ -36,6 +36,16 @@ const mapIconeMinistereVersIcone = {
   "remix::government::fill": GovernmentIcon,
 };
 
+export function getMinistèreIcon(
+  icone: string | null = "remix::government::fill",
+) {
+  return (
+    Object.entries(mapIconeMinistereVersIcone).find(
+      ([nom]) => nom === icone,
+    )?.[1] ?? EarthPleineIcon
+  );
+}
+
 export const IconeMinistere = ({
   icone = "remix::government::fill",
   className,
@@ -43,10 +53,7 @@ export const IconeMinistere = ({
   icone?: string | null;
   className?: string;
 }) => {
-  const IconeComponent =
-    mapIconeMinistereVersIcone[
-      icone as keyof typeof mapIconeMinistereVersIcone
-    ] || EarthPleineIcon;
+  const IconeComponent = getMinistèreIcon(icone);
 
   return (
     <Icone

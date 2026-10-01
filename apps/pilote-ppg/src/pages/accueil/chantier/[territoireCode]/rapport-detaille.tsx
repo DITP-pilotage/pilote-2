@@ -8,10 +8,8 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import type { Bootstrap } from "@/components/_commons/Bootstrap/BootstrapContext";
 import { buildRapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
-import {
-  loadVueDEnsemble,
-  withoutMailles,
-} from "@/server/rapport-detaille/loadVueDEnsemble";
+import { loadVueDEnsemble } from "@/server/rapport-detaille/loadVueDEnsemble";
+import { withoutMailles } from "@/server/rapport-detaille/withoutMailles";
 import { loadChantierDetails } from "@/server/rapport-detaille/loadChantierDetails";
 import {
   ChantierDetail,

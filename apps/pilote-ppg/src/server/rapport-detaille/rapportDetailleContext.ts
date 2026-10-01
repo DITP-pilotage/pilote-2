@@ -28,10 +28,11 @@ export type RapportDetailleContext = {
   chantierMaille: MailleChantierContrat;
   jalon: number;
   defaultJalon: number;
-  filtres: FiltreQueryParams;
+  filters: FiltreQueryParams;
   alerteFilters: AlerteFilters;
   sorting: SortingParams;
   showDetail: boolean;
+  territorialiseFilter: boolean;
 };
 
 export type RapportDetailleQuery = Record<
@@ -75,7 +76,7 @@ export function buildRapportDetailleContext(
     chantierMaille: maille === "NAT" ? "nationale" : selectedMaille,
     jalon: searchParams.jalon ?? defaultJalon,
     defaultJalon,
-    filtres: {
+    filters: {
       perimetres: searchParams.perimetres,
       axes: searchParams.axes,
       statut:
@@ -102,5 +103,6 @@ export function buildRapportDetailleContext(
     },
     sorting,
     showDetail: query.detail === "true",
+    territorialiseFilter: query.estTerritorialise === "true",
   };
 }

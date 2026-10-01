@@ -77,7 +77,7 @@ describe("loadVueDEnsemble", () => {
     expect(vue.filtresComptesCalculés.estEnAlerteBaisse).toBe(1);
     expect(dependencies.getRépartitionMétéos).toHaveBeenCalledWith(
       "NAT-FR",
-      context.filtres,
+      context.filters,
       [],
       ["A"],
     );

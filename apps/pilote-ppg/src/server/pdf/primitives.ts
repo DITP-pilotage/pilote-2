@@ -49,6 +49,7 @@ export function badgePdf(
   const colors = BADGE_COLORS[variant];
   const label: ContentText = {
     text: text.toLocaleUpperCase("fr-FR"),
+    noWrap: true,
     bold: true,
     fontSize: size.fontSize,
     lineHeight: size.lineHeight,
@@ -97,6 +98,7 @@ export function barreDeProgressionPdf(params: {
   const radius = px(6);
   const labelText: ContentText = {
     text: params.valeur === null ? "- %" : `${params.valeur.toFixed(0)} %`,
+    noWrap: true,
     bold: true,
     fontSize: px(16),
     color: TEXT_COLOR,
@@ -133,7 +135,7 @@ export function barreDeProgressionPdf(params: {
   return {
     columns: [
       { stack: [canvas], width: params.width, margin: [0, px(6), 0, 0] },
-      { ...labelText, width: rem(2.5), margin: [px(8), 0, 0, 0] },
+      { ...labelText, width: "auto", margin: [px(8), 0, 0, 0] },
     ],
   };
 }
@@ -143,6 +145,7 @@ export function blocPdf(params: {
   titreBackground?: string;
   content: Content;
   padding?: number;
+  breakable?: boolean;
 }): Content {
   const padding = params.padding ?? px(16);
   const body: TableCell[][] = [];
@@ -163,7 +166,7 @@ export function blocPdf(params: {
   ]);
   const titled = Boolean(params.titre);
   return {
-    table: { widths: ["*"], body, dontBreakRows: true },
+    table: { widths: ["*"], body, dontBreakRows: !params.breakable },
     layout: {
       hLineWidth: (index: number, node) =>
         index === 0 || index === node.table.body.length
@@ -336,7 +339,10 @@ export function tablePdf(params: {
   return {
     table: {
       headerRows: 1,
-      widths: params.widths,
+      dontBreakRows: true,
+      widths: params.widths.map((width) =>
+        typeof width === "number" ? width - 2 * paddingX : width,
+      ),
       body: [
         params.headers.map((header) => ({
           fillColor: BLOC_TITLE_BACKGROUND,

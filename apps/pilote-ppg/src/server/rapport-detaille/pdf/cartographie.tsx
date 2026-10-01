@@ -1,4 +1,6 @@
+import { Content } from "pdfmake/interfaces";
 import { renderToStaticMarkup } from "react-dom/server";
+import { px, rem } from "@/server/pdf/units";
 import { territoires as allTerritoires } from "@/client/constants/territoires.json";
 import { CartographieSVG } from "@/components/_commons/Cartographie/SVG/CartographieSVG";
 import { getTraceSvg } from "@/components/_commons/Cartographie/SVG/CartographieSVGContrat";
@@ -145,4 +147,55 @@ export function meteoCarteSvg(params: {
       ]),
     ),
   });
+}
+
+const LEGEND_SWATCH_BORDER = "#161616";
+const HATCH_COLOR = "#666666";
+
+function swatchSvg(remplissage: Remplissage): string {
+  if (remplissage === "hachures") {
+    const lines = Array.from(
+      { length: 12 },
+      (_, index) =>
+        `<path d='M${index - 6} 2.75L${index - 3.25} 0' stroke='${HATCH_COLOR}' stroke-width='0.375' fill='none'/>`,
+    ).join("");
+    return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2.75 2.75'><defs><clipPath id='swatch'><rect width='2.75' height='2.75'/></clipPath></defs><rect width='2.75' height='2.75' fill='#FFFFFF' stroke='${LEGEND_SWATCH_BORDER}' stroke-width='0.2'/><g clip-path='url(#swatch)'>${lines}</g></svg>`;
+  }
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect x='0.5' y='0.5' width='9' height='9' fill='${remplissage}' stroke='${LEGEND_SWATCH_BORDER}' stroke-width='1'/></svg>`;
+}
+
+export function cartographieLegendPdf(
+  entries: {
+    libellé: string;
+    remplissage: Remplissage;
+    pictoSvg?: string | null;
+  }[],
+): Content {
+  const perRow = entries.every((entry) => entry.libellé.length <= 12) ? 5 : 2;
+  const rows: Content[] = [];
+  for (let index = 0; index < entries.length; index += perRow) {
+    rows.push({
+      columns: entries.slice(index, index + perRow).map((entry) => ({
+        width: "auto",
+        columns: [
+          {
+            svg: swatchSvg(entry.remplissage),
+            width: rem(0.6),
+            margin: [0, px(3), 0, 0],
+          },
+          {
+            width: "auto",
+            text: entry.libellé,
+            fontSize: px(12),
+            lineHeight: 16 / 12,
+            color: "#666666",
+          },
+          ...(entry.pictoSvg ? [{ svg: entry.pictoSvg, width: px(40) }] : []),
+        ],
+        columnGap: px(6),
+        margin: [0, 0, px(12), px(4)],
+      })),
+    });
+  }
+  return { stack: rows, margin: [0, px(8), 0, 0] };
 }

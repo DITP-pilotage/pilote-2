@@ -34,7 +34,7 @@ describe("buildRapportDetailleContext", () => {
 
   it("sans statut, seuls les chantiers publiés sont demandés", () => {
     expect(
-      buildRapportDetailleContext({}, "NAT-FR", session).filtres.statut,
+      buildRapportDetailleContext({}, "NAT-FR", session).filters.statut,
     ).toEqual(["PUBLIE"]);
   });
 
@@ -44,7 +44,7 @@ describe("buildRapportDetailleContext", () => {
         { statut: "BROUILLON_ET_PUBLIE" },
         "NAT-FR",
         session,
-      ).filtres.statut,
+      ).filters.statut,
     ).toEqual(["BROUILLON", "PUBLIE"]);
   });
 
