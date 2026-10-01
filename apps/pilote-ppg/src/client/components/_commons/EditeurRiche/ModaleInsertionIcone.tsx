@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SearchInput } from "@/components/shared/SearchInput";
 import { Modale } from "@/client/components/shared/Modale";
 import { listeIcones } from "./registreIcones";
 
@@ -38,11 +39,9 @@ export const ModaleInsertionIcone = ({
       title="Insérer une icône"
     >
       <div className="flex flex-col gap-4">
-        <input
-          className="border rounded px-3 py-2 text-sm w-full"
+        <SearchInput
           onChange={(event) => setRecherche(event.target.value)}
           placeholder="Rechercher une icône..."
-          type="text"
           value={recherche}
         />
 
