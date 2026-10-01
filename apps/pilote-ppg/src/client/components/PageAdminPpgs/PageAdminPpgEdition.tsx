@@ -1,4 +1,8 @@
 import { Controller, FormProvider } from "react-hook-form";
+import {
+  FormTextField,
+  FormTextareaField,
+} from "@/components/shared/FormTextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
@@ -12,8 +16,6 @@ import {
   PpgForm,
   usePpgForm,
 } from "@/components/PageAdminPpgs/usePpgForm";
-import { Input } from "@/components/_commons/Input";
-import { Textarea } from "@/components/_commons/Textarea";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -148,7 +150,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
                   {estUneCréation ? (
-                    <Input<PpgForm>
+                    <FormTextField<PpgForm>
                       control={reactHookForm.control}
                       label="ID"
                       name="ppgId"
@@ -164,7 +166,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
                       </p>
                     </div>
                   )}
-                  <Input<PpgForm>
+                  <FormTextField<PpgForm>
                     control={reactHookForm.control}
                     label="Nom"
                     name="ppgNom"
@@ -198,7 +200,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
 
               <section className="px-6 py-8">
                 <SectionTitle>Description</SectionTitle>
-                <Textarea<PpgForm>
+                <FormTextareaField<PpgForm>
                   control={reactHookForm.control}
                   label="Description"
                   name="ppgDesc"

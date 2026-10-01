@@ -1,5 +1,9 @@
 import { $Enums } from "@prisma/client";
 import {
+  FormTextField,
+  FormTextareaField,
+} from "@/components/shared/FormTextField";
+import {
   SelectField,
   type SelectFieldOption,
 } from "@/components/shared/SelectField";
@@ -16,8 +20,6 @@ import {
   PorteurForm,
   usePorteurForm,
 } from "@/components/PageAdminPorteurs/usePorteurForm";
-import { Input } from "@/components/_commons/Input";
-import { Textarea } from "@/components/_commons/Textarea";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -177,7 +179,7 @@ const PageAdminPorteurEdition = ({
                       {porteurIdEffectif}
                     </p>
                   </div>
-                  <Input<PorteurForm>
+                  <FormTextField<PorteurForm>
                     control={reactHookForm.control}
                     label="Sigle"
                     name="porteurShort"
@@ -202,13 +204,13 @@ const PageAdminPorteurEdition = ({
               <section className="px-6 py-8">
                 <SectionTitle>Dénomination</SectionTitle>
                 <div className="flex flex-col gap-4">
-                  <Input<PorteurForm>
+                  <FormTextField<PorteurForm>
                     control={reactHookForm.control}
                     label="Nom complet"
                     name="porteurName"
                     required
                   />
-                  <Textarea<PorteurForm>
+                  <FormTextareaField<PorteurForm>
                     control={reactHookForm.control}
                     label="Description"
                     name="porteurDesc"
@@ -220,12 +222,12 @@ const PageAdminPorteurEdition = ({
               <section className="px-6 py-8">
                 <SectionTitle>Informations complémentaires</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
-                  <Input<PorteurForm>
+                  <FormTextField<PorteurForm>
                     control={reactHookForm.control}
                     label="Directeur"
                     name="porteurDirecteur"
                   />
-                  <Input<PorteurForm>
+                  <FormTextField<PorteurForm>
                     control={reactHookForm.control}
                     label="Picto (code)"
                     name="porteurPicto"

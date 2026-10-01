@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
+import { FormTextareaField } from "@/components/shared/FormTextField";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
-import { Textarea } from "@/components/_commons/Textarea";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
 
 type FormCommentaireName =
@@ -24,7 +24,7 @@ export const CommentaireTextareaEvaluation = ({
   const autosave = useAutosave({ onAutosave });
 
   return (
-    <Textarea
+    <FormTextareaField
       charLimit={600}
       className="!bg-dsfr-contrast-grey !text-sm font-normal min-h-[38px]"
       control={form.control}

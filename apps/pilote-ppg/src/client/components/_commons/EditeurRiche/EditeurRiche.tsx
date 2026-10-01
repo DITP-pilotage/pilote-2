@@ -2,7 +2,6 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import { type Extensions } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { FunctionComponent, RefObject, useImperativeHandle } from "react";
-import { TextareaRef } from "@/components/_commons/Textarea";
 import { MenuBar } from "./MenuBar";
 
 export type EditeurRicheRef = {
@@ -17,7 +16,7 @@ export interface EditeurRicheProps {
   onFocus?: () => void;
   placeholder?: string;
   estEnLectureSeule?: boolean;
-  editeurRef?: RefObject<TextareaRef | null>;
+  editeurRef?: RefObject<{ focus: () => void } | null>;
   avecFichiersNumeriques?: boolean;
 }
 

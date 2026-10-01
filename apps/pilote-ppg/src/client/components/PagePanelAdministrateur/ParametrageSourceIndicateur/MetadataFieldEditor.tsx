@@ -1,6 +1,8 @@
-import { Input } from "@/components/_commons/Input";
 import { Button } from "@/components/shared/Button";
-import { Textarea } from "@/components/_commons/Textarea";
+import {
+  FormTextField,
+  FormTextareaField,
+} from "@/components/shared/FormTextField";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useFormParametrageSource } from "./form";
 import { SelectMetadata } from "./SelectMetadata";
@@ -37,7 +39,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
             Informations de base
           </h3>
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <Input
+            <FormTextField
               className="text-sm font-normal min-h-[38px]"
               control={form.control}
               label="Nom du champ ⚠️"
@@ -46,7 +48,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
               required
             />
 
-            <Input
+            <FormTextField
               className="text-sm font-normal min-h-[38px]"
               control={form.control}
               label="Alias (affichage)"
@@ -55,7 +57,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
               required
             />
           </div>
-          <Textarea
+          <FormTextareaField
             className="text-sm font-normal min-h-[38px]"
             control={form.control}
             label="Description"
@@ -131,7 +133,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
             )}
 
             {editBoxType !== "multi-select" && editBoxType !== "boolean" && (
-              <Input
+              <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
                 label="Valeur par défaut"
@@ -154,7 +156,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Input
+            <FormTextField
               className="text-sm font-normal min-h-[38px]"
               control={form.control}
               label="RegEx de validation"
@@ -162,7 +164,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
               placeholder="Ex: ^IND-\d{3,4}$"
             />
 
-            <Input
+            <FormTextField
               className="text-sm font-normal min-h-[38px]"
               control={form.control}
               label="Message d'erreur regex"

@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { TextareaField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
@@ -13,7 +14,6 @@ import {
   useModaleAccuserReceptionPropositionValeurAvancement,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/useModaleAccuserReceptionPropositionValeurAvancement";
 import { formaterDate } from "@/client/utils/date/date";
-import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
@@ -147,18 +147,19 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                   </p>
 
                   <div className="fr-mt-2w">
-                    <TextAreaAvecLabel
-                      compteur={{
-                        taille: reactHookForm.watch("motif").length,
-                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                    <TextareaField
+                      counter={{
+                        length: reactHookForm.watch("motif").length,
+                        max: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
                       }}
-                      erreurMessage={
+                      errorMessage={
                         reactHookForm.formState.errors.motif?.message
                       }
-                      htmlName="motif"
-                      libellé="Indiquez ici les raisons qui motivent votre choix."
+                      id="motif"
+                      label="Indiquez ici les raisons qui motivent votre choix."
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
-                      register={reactHookForm.register("motif")}
+                      textareaClassName="resize-none"
+                      {...reactHookForm.register("motif")}
                     />
                   </div>
 

@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { TextField, TextareaField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -10,9 +11,7 @@ import useModalePropositionValeurAvancement, {
   EtapePropositionValeurAvancement,
   Stepper,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/useModalePropositionValeurAvancement";
-import Input from "@/components/_commons/Input/Input";
 import { formaterDate } from "@/client/utils/date/date";
-import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { Infobulle } from "@/components/shared/Infobulle";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
@@ -220,17 +219,15 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                           </span>
                         ) : (
                           <div className="w-half-full flex fr-mb-1w">
-                            <Input
-                              className="text-center"
-                              erreurMessage={
+                            <TextField
+                              errorMessage={
                                 reactHookForm.formState.errors.valeurAvancement
                                   ?.message
                               }
-                              htmlName="valeurAvancement"
-                              register={reactHookForm.register(
-                                "valeurAvancement",
-                              )}
+                              id="valeurAvancement"
                               type="text"
+                              inputClassName="text-center"
+                              {...reactHookForm.register("valeurAvancement")}
                             />
                           </div>
                         )}
@@ -283,16 +280,16 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         Valeur modifiée
                         <ChampObligatoire />
                       </label>
-                      <Input
-                        className="fr-mt-1v input--sm"
-                        classNameGroupe="fr-mb-1v"
-                        erreurMessage={
+                      <TextField
+                        className="mb-1"
+                        errorMessage={
                           reactHookForm.formState.errors.valeurAvancement
                             ?.message
                         }
-                        htmlName="valeurAvancement"
-                        register={reactHookForm.register("valeurAvancement")}
+                        id="valeurAvancement"
                         type="text"
+                        inputClassName="mt-1 py-1 text-sm"
+                        {...reactHookForm.register("valeurAvancement")}
                       />
                       <span className="flex texte-gris fr-text--xs">
                         (
@@ -305,41 +302,42 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     </div>
                   ) : null}
                   <div className="fr-mt-2w">
-                    <TextAreaAvecLabel
-                      compteur={{
-                        taille: reactHookForm.watch("motifProposition").length,
-                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                    <TextareaField
+                      counter={{
+                        length: reactHookForm.watch("motifProposition").length,
+                        max: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
                       }}
-                      erreurMessage={
+                      errorMessage={
                         reactHookForm.formState.errors.motifProposition?.message
                       }
-                      htmlName="motifProposition"
-                      isRequired
-                      libellé="Motif de la proposition"
+                      id="motifProposition"
+                      required
+                      label="Motif de la proposition"
                       placeholder="Indiquez ici d'où provient la différence entre la valeur actuelle que vous proposez et celle qui a été importée initialement par la direction de projet."
-                      register={reactHookForm.register("motifProposition", {
+                      textareaClassName="resize-none"
+                      {...reactHookForm.register("motifProposition", {
                         required: true,
                       })}
                     />
                   </div>
                   <div className="fr-mt-2w">
-                    <TextAreaAvecLabel
-                      compteur={{
-                        taille: reactHookForm.watch(
+                    <TextareaField
+                      counter={{
+                        length: reactHookForm.watch(
                           "sourceDonneeEtMethodeCalcul",
                         ).length,
-                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                        max: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
                       }}
-                      erreurMessage={
+                      errorMessage={
                         reactHookForm.formState.errors
                           .sourceDonneeEtMethodeCalcul?.message
                       }
-                      hauteur="90px"
-                      htmlName="sourceDonneeEtMethodeCalcul"
-                      isRequired
-                      libellé="Sources des données et méthode de calcul"
+                      id="sourceDonneeEtMethodeCalcul"
+                      required
+                      label="Sources des données et méthode de calcul"
                       placeholder="Afin de documenter votre proposition, indiquez ici la source de vos données ainsi que la méthode de calcul qui vous a permis d'aboutir à la valeur proposée. Le cas échéant, précisez en quoi cette méthode est différente de celle mise en œuvre par la direction de projet"
-                      register={reactHookForm.register(
+                      textareaClassName="resize-none h-[90px]"
+                      {...reactHookForm.register(
                         "sourceDonneeEtMethodeCalcul",
                         { required: true },
                       )}
