@@ -1,5 +1,5 @@
 import { TDocumentDefinitions } from "pdfmake/interfaces";
-import { pdfmake } from "@/server/pdf/pdfmake";
+import { withMarianne } from "@/server/pdf/pdfmake";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import {
   ChantierDetail,
@@ -65,12 +65,12 @@ export function buildRapportDetailleDocument(
         estAutoriseAVoirLesBrouillons: vue.estAutoriseAVoirLesBrouillons,
         now: params.now,
       }),
-      vueDEnsemblePdf(vue, context, { pageBreakAfter: fiches.length > 0 }),
+      vueDEnsemblePdf(vue, context),
       ...fiches,
     ],
   };
 }
 
 export function generateRapportDetaillePdf(params: GenerateParams) {
-  return pdfmake.createPdf(buildRapportDetailleDocument(params));
+  return withMarianne().createPdf(buildRapportDetailleDocument(params));
 }

@@ -129,3 +129,17 @@ Mesure : script jetable qui chronomètre la génération et relève `process.mem
 2. **Mémoire** : pdfmake construit tout le document avant l'envoi ; le streaming réduit le pic sans le supprimer. Si le national dépasse ce que le conteneur Scalingo supporte, repli : génération par chantier et fusion avec `pdf-lib`.
 3. **Moteur SVG de pdfmake** : ignore les classes CSS (pas de feuille de style) ; d'où la mise à plat des classes Tailwind en attributs dans `svgDepuisComposant`.
 4. **Sécurité** : `setUrlAccessPolicy(() => false)` conservé ; aucun contenu distant, les liens du HTML riche ne sont que du texte.
+
+## Mesures (2026-10-01, base locale)
+
+National, statut publié, détail des chantiers activé : 44 chantiers, PDF de 270 pages et 2,8 Mo.
+
+| Étape | Durée |
+|---|---|
+| Vue d'ensemble | 170 ms |
+| Détails (5 lots de 10) | 170 à 230 ms |
+| Génération pdfmake | 2,2 à 3,7 s |
+
+Mémoire : le RSS du process monte d'environ 500 Mo sans contrainte, mais la génération réussit avec `--max-old-space-size=256` (RSS final 578 Mo, process de départ compris) : l'essentiel est du ramasse-miettes différé. La production tourne avec 768 Mo de tas.
+
+Les polices Marianne sont chargées à la première génération du rapport (et non à l'import de pdfmake), depuis `node_modules/@gouvfr/dsfr/dist/fonts` relatif au répertoire de l'app ; le build standalone les embarque (`outputFileTracingIncludes`) et `server.js` se place dans ce répertoire au démarrage.

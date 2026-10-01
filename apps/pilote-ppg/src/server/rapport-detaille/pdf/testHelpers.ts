@@ -1,5 +1,5 @@
 import { Content } from "pdfmake/interfaces";
-import { pdfmake } from "@/server/pdf/pdfmake";
+import { withMarianne } from "@/server/pdf/pdfmake";
 import {
   buildRapportDetailleContext,
   RapportDetailleQuery,
@@ -34,7 +34,7 @@ export function textOf(content: Content): string {
 }
 
 export async function renderPdf(content: Content): Promise<string> {
-  const buffer = await pdfmake
+  const buffer = await withMarianne()
     .createPdf({ content, defaultStyle: { font: "Marianne" } })
     .getBuffer();
   return buffer.subarray(0, 4).toString();

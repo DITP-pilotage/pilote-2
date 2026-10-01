@@ -1,4 +1,4 @@
-import { pdfmake } from "@/server/pdf/pdfmake";
+import { withMarianne } from "@/server/pdf/pdfmake";
 import {
   avancementCarteSvg,
   meteoCarteSvg,
@@ -98,7 +98,7 @@ describe("cartes SVG", () => {
     expect(svg).toContain('fill="#000091"');
     expect(svg).toContain('stroke-width="0.4"');
     expect(svg).not.toContain("class=");
-    const buffer = await pdfmake
+    const buffer = await withMarianne()
       .createPdf({ content: [{ svg, width: 300 }] })
       .getBuffer();
     expect(buffer.subarray(0, 4).toString()).toBe("%PDF");

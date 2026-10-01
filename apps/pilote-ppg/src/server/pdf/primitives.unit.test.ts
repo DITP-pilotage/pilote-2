@@ -1,4 +1,5 @@
-import { pdfmake } from "@/server/pdf/pdfmake";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { withMarianne } from "@/server/pdf/pdfmake";
 import {
   alertePdf,
   badgePdf,
@@ -15,10 +16,8 @@ function json(value: unknown) {
   return JSON.stringify(value);
 }
 
-async function renders(
-  content: Parameters<typeof pdfmake.createPdf>[0]["content"],
-) {
-  const buffer = await pdfmake
+async function renders(content: TDocumentDefinitions["content"]) {
+  const buffer = await withMarianne()
     .createPdf({ content, defaultStyle: { font: "Marianne" } })
     .getBuffer();
   return buffer.subarray(0, 4).toString();

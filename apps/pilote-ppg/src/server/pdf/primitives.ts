@@ -354,6 +354,7 @@ export function tablePdf(params: {
   return {
     table: {
       headerRows: 1,
+      keepWithHeaderRows: 1,
       dontBreakRows: true,
       widths: params.widths.map((width) =>
         typeof width === "number" ? width - 2 * paddingX : width,

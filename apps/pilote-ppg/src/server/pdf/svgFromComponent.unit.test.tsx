@@ -1,4 +1,4 @@
-import { pdfmake } from "@/server/pdf/pdfmake";
+import { withMarianne } from "@/server/pdf/pdfmake";
 import {
   flattenSvgClasses,
   iconSvg,
@@ -9,7 +9,9 @@ import {
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 
 async function renderInPdf(svg: string) {
-  return pdfmake.createPdf({ content: [{ svg, width: 100 }] }).getBuffer();
+  return withMarianne()
+    .createPdf({ content: [{ svg, width: 100 }] })
+    .getBuffer();
 }
 
 describe("flattenSvgClasses", () => {

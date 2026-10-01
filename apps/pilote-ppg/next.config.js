@@ -14,7 +14,7 @@ const nextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, '../..'),
   outputFileTracingIncludes: {
-    "/**/*": ["./node_modules/@gouvfr/dsfr/package.json", "./node_modules/@gouvfr/dsfr/dist/fonts/Marianne-*.woff2"],
+    "/**/*": ["./node_modules/@gouvfr/dsfr/dist/fonts/Marianne-*.woff2"],
   },
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx"],

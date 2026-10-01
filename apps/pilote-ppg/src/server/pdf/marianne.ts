@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import path from "node:path";
 
 export const MARIANNE_FONT = "Marianne";
@@ -15,12 +14,12 @@ const FONT_FILES = [
   "Marianne-Bold_Italic",
 ];
 
+let marianneLoaded = false;
+
 export function marianneVfs(): Record<string, string> {
   const fontsDirectory = path.join(
-    path.dirname(
-      createRequire(import.meta.url).resolve("@gouvfr/dsfr/package.json"),
-    ),
-    "dist/fonts",
+    process.cwd(),
+    "node_modules/@gouvfr/dsfr/dist/fonts",
   );
   return Object.fromEntries(
     FONT_FILES.map((file) => [
@@ -30,6 +29,14 @@ export function marianneVfs(): Record<string, string> {
       ),
     ]),
   );
+}
+
+export function ensureMarianneLoaded(
+  register: (vfs: Record<string, string>) => void,
+) {
+  if (marianneLoaded) return;
+  register(marianneVfs());
+  marianneLoaded = true;
 }
 
 export const MARIANNE_FONTS = {
