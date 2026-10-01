@@ -123,7 +123,7 @@ export const IndicateurPropositionValeur = ({
         action={
           <Button
             variant="link"
-            className="!text-current fr-link--xs"
+            className="text-current text-xs leading-5"
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -172,7 +172,7 @@ export const IndicateurPropositionValeur = ({
         action={
           <Button
             variant="link"
-            className="!text-current fr-link--xs"
+            className="text-current text-xs leading-5"
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -237,7 +237,7 @@ export const IndicateurPropositionValeur = ({
         action={
           <Button
             variant="link"
-            className="!text-current fr-link--xs"
+            className="text-current text-xs leading-5"
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -275,7 +275,7 @@ export const IndicateurPropositionValeur = ({
       action={
         <Button
           variant="link"
-          className="!text-current fr-link--xs"
+          className="text-current text-xs leading-5"
           iconLeft={
             <Icone
               className="text-current h-3 w-3"
