@@ -38,7 +38,7 @@ export const PanelMenuNavigation = ({
         />
       </div>
       <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
-        <div className="flex align-center">
+        <div className="flex items-center">
           <label className="fr-label fr-mr-1w no-wrap" htmlFor="jalon">
             Jalon :
           </label>

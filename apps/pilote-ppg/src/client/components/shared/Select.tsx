@@ -129,8 +129,8 @@ export const Select = Object.assign({}, SelectPrimitive, {
   ),
   Separator: (props: ComponentProps<typeof SelectPrimitive.Separator>) => (
     <SelectPrimitive.Separator
-      className={clsxm("h-px bg-dsfr-contrast-grey my-1", props.className)}
       {...props}
+      className={clsxm("h-px bg-dsfr-contrast-grey my-1", props.className)}
     />
   ),
 });

@@ -77,7 +77,7 @@ const construireLaListeDOptions = (
   };
 
   const optionsFrance = {
-    libelle: "National",
+    libelle: "",
     valeur: "national",
     options: [générerLesOptions("France", "NAT-FR", false)],
   };
@@ -141,9 +141,12 @@ export const SélecteursMaillesEtTerritoires: FunctionComponent<
 
   return (
     <SelectField
+      appearance="striped"
       className={clsxm(
+        "w-full",
         direction === "horizontal" && "flex-row items-center gap-2",
       )}
+      contentClassName="w-[var(--radix-select-trigger-width)] md:!min-w-0 !max-w-none max-h-96 overflow-hidden rounded-none border-dsfr-grey-200 p-0 [&_[data-radix-select-viewport]]:p-0"
       label={direction === "horizontal" ? "Territoire :" : "Territoire"}
       name="territoire"
       onChange={changerTerritoire}
@@ -152,7 +155,7 @@ export const SélecteursMaillesEtTerritoires: FunctionComponent<
         avecFrance,
         territoiresApplicables,
       )}
-      triggerClassName={clsxm(direction === "horizontal" && "w-60")}
+      triggerClassName="flex-1 w-full"
       value={territoireCode}
     />
   );

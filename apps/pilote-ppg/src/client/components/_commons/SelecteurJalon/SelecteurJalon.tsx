@@ -20,11 +20,10 @@ export const SelecteurJalon: FunctionComponent = () => {
 
   return (
     <SelectField
-      className="mr-2"
+      className="mr-2 flex-1"
       name="jalon"
       onChange={(valeur) => setJalon(valeur)}
       options={listeOptionsJalon}
-      triggerClassName="w-28"
       value={jalon}
     />
   );
