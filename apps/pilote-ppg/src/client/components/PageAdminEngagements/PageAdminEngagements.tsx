@@ -1,5 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { Lien } from "@/components/_commons/Lien/Lien";
+import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { useTableauAdminEngagements } from "./useTableauAdminEngagements";
 
@@ -30,11 +31,11 @@ const PageAdminEngagements = () => {
               </p>
             )}
           </div>
-          <Lien
-            href="/panel-administrateur/referentiels-deprecies/engagements/nouveau?_action=creer-engagement"
-            label="+ Créer un engagement"
-            variant="button"
-          />
+          <Button asChild variant="primary">
+            <Link href="/panel-administrateur/referentiels-deprecies/engagements/nouveau?_action=creer-engagement">
+              + Créer un engagement
+            </Link>
+          </Button>
         </div>
 
         <TableauAdmin
