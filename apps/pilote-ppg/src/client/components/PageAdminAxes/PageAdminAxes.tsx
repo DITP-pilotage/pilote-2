@@ -1,5 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { Lien } from "@/components/_commons/Lien/Lien";
+import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { useTableauAdminAxes } from "./useTableauAdminAxes";
 
@@ -28,11 +29,11 @@ const PageAdminAxes = () => {
               </p>
             )}
           </div>
-          <Lien
-            href="/panel-administrateur/referentiels-deprecies/axes/nouveau?_action=creer-axe"
-            label="+ Créer un axe"
-            variant="button"
-          />
+          <Button asChild variant="primary">
+            <Link href="/panel-administrateur/referentiels-deprecies/axes/nouveau?_action=creer-axe">
+              + Créer un axe
+            </Link>
+          </Button>
         </div>
 
         <TableauAdmin

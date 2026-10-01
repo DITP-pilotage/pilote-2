@@ -1,19 +1,20 @@
-import { ComponentProps } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
-import { clsxm } from "@/utils/clsxm";
-import { Lien } from "@/components/_commons/Lien/Lien";
+import { Button, ButtonVariant } from "@/components/shared/Button";
 
 export const BoutonContacterEquipePilote = ({
-  variant = "primary",
+  variant = "link",
 }: {
-  variant?: NonNullable<ComponentProps<typeof Lien>["variant"]>;
+  variant?: ButtonVariant;
 }) => (
-  <Lien
-    className={clsxm("!bg-none shadow-none !text-sm !font-normal")}
-    href="mailto:pilote.ditp@modernisation.gouv.fr"
-    iconLeft={<Icone className="text-current" icone={EnveloppeContourIcon} />}
-    label={"Contacter l'équipe PILOTE"}
+  <Button
+    asChild
+    className="text-sm font-normal no-underline"
     variant={variant}
-  />
+  >
+    <a href="mailto:pilote.ditp@modernisation.gouv.fr">
+      <Icone className="text-current" icone={EnveloppeContourIcon} />
+      Contacter l'équipe PILOTE
+    </a>
+  </Button>
 );

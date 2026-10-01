@@ -1,5 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { Lien } from "@/components/_commons/Lien/Lien";
+import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { useTableauAdminPpgs } from "./useTableauAdminPpgs";
 
@@ -28,11 +29,11 @@ const PageAdminPpgs = () => {
               </p>
             )}
           </div>
-          <Lien
-            href="/panel-administrateur/referentiels-deprecies/ppgs/nouveau?_action=creer-ppg"
-            label="+ Créer un PPG"
-            variant="button"
-          />
+          <Button asChild variant="primary">
+            <Link href="/panel-administrateur/referentiels-deprecies/ppgs/nouveau?_action=creer-ppg">
+              + Créer un PPG
+            </Link>
+          </Button>
         </div>
 
         <TableauAdmin

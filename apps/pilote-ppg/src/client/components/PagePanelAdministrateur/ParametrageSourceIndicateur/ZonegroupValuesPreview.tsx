@@ -1,5 +1,6 @@
-import { Lien } from "@/components/_commons/Lien/Lien";
 import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
+import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 
 export const ZonegroupValuesPreview = ({
   zonegroupsActifs,
@@ -29,11 +30,11 @@ export const ZonegroupValuesPreview = ({
           ))}
         </ul>
       )}
-      <Lien
-        href="/panel-administrateur/referentiels/zonegroups"
-        label="Gérer les zone-groupes →"
-        variant="button-secondary"
-      />
+      <Button asChild variant="secondary">
+        <Link href="/panel-administrateur/referentiels/zonegroups">
+          Gérer les zone-groupes →
+        </Link>
+      </Button>
     </div>
   );
 };

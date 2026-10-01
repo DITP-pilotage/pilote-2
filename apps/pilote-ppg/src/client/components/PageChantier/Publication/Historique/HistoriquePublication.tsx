@@ -1,6 +1,6 @@
 import { Fragment, ReactNode } from "react";
+import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
-import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
 import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
@@ -31,14 +31,15 @@ export const HistoriquePublication = <P extends Publication>({
     sousTitre={sousTitre}
     title={title}
     trigger={
-      <BoutonSousLigné
+      <Button
+        variant="link"
         aria-label={ariaLabel}
         className="fr-mt-1w fr-ml-3w"
         iconLeft={<Icone className="w-4 h-4 !text-current" icone={Eye1Icon} />}
         type="button"
       >
         Voir l'historique
-      </BoutonSousLigné>
+      </Button>
     }
   >
     {historique ? (

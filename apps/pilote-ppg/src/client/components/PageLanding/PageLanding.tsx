@@ -219,7 +219,7 @@ const PageLanding = () => {
               <Titre baliseHtml="h2" className="fr-h3 fr-m-0">
                 Vous avez des questions ?
               </Titre>
-              <BoutonContacterEquipePilote variant="button" />
+              <BoutonContacterEquipePilote variant="primary" />
             </div>
           </div>
         </section>

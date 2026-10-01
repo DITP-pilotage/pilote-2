@@ -5,7 +5,6 @@ import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Modale } from "@/components/shared/Modale";
-import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
 import {
@@ -109,7 +108,8 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
             >
               Annuler
             </Button>
-            <BoutonSousLigné
+            <Button
+              variant="link"
               disabled={!form.formState.isValid}
               iconLeft={
                 <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
@@ -118,7 +118,7 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
               type="button"
             >
               Enregistrer en tant que brouillon
-            </BoutonSousLigné>
+            </Button>
           </div>
         </form>
       </FormProvider>

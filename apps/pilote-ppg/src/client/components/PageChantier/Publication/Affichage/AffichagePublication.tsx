@@ -1,5 +1,5 @@
 import { ReactNode, useState, useRef, useEffect } from "react";
-import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/shared/Infobulle";
@@ -90,7 +90,8 @@ const ContenuPublication = ({
       </p>
       {!!onModifier ? (
         <div className="flex items-center gap-1 mb-3">
-          <BoutonSousLigné
+          <Button
+            variant="link"
             className="text-dsfr-mention-grey text-xs"
             iconLeft={
               <Icone className="w-3 h-3 text-current" icone={Icone1Icon} />
@@ -98,7 +99,7 @@ const ContenuPublication = ({
             onClick={onModifier}
           >
             Modifier le commentaire
-          </BoutonSousLigné>
+          </Button>
           <Infobulle
             classNameBouton="text-dsfr-mention-grey"
             classNameIcone="w-5 h-5"
