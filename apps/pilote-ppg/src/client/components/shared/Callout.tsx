@@ -16,7 +16,14 @@ import { InformationPleineIcon } from "@/components/_commons/Icones/InformationP
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 
 export type CalloutColor =
-  "info" | "success" | "warning" | "error" | "blue" | "moutarde" | "neutral";
+  | "info"
+  | "success"
+  | "warning"
+  | "error"
+  | "blue"
+  | "moutarde"
+  | "neutral"
+  | "mise-en-avant";
 
 type IconeCallout = FunctionComponent<{ className?: string; fill?: string }>;
 
@@ -78,6 +85,12 @@ const colorVariants: Record<
     bg: "bg-dsfr-grey-1000",
     border: "!border-l-dsfr-grey-625",
     iconColor: "!text-dsfr-grey-200",
+  },
+  // Reproduit la « mise en avant » du DSFR (fr-callout).
+  "mise-en-avant": {
+    bg: "bg-dsfr-grey-950",
+    border: "!border-l-dsfr-blue-france-525",
+    iconColor: "!text-primary",
   },
 };
 
@@ -159,8 +172,28 @@ const CalloutText = ({
   </div>
 );
 
+const CalloutTitle = ({
+  balise: Balise = "h3",
+  children,
+  className,
+  ...props
+}: HTMLAttributes<HTMLHeadingElement> & {
+  balise?: "h2" | "h3" | "h4" | "p";
+}) => (
+  <Balise
+    {...props}
+    className={clsxm(
+      "text-[1.375rem] leading-7 font-bold text-dsfr-grey-50 mb-0",
+      className,
+    )}
+  >
+    {children}
+  </Balise>
+);
+
 export const Callout = {
   Root: CalloutRoot,
   Icon: CalloutIcon,
+  Title: CalloutTitle,
   Text: CalloutText,
 };
