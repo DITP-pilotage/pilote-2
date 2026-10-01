@@ -38,4 +38,26 @@ export class RécupérerStatistiquesAvancementChantiersUseCase {
       jalon,
     });
   }
+
+  async runParChantier(
+    chantiers: Chantier["id"][],
+    maille: Maille,
+    habilitations: Habilitations,
+    jalon: number,
+  ): Promise<Record<Chantier["id"], AvancementsStatistiques>> {
+    const maillesAccessibles = new Habilitation(
+      habilitations,
+    ).recupererListeMailleEnLectureDisponible();
+
+    if (!maillesAccessibles.includes(maille)) {
+      throw new MailleNonAutoriséeErreur();
+    }
+
+    return this.getStatistiquesAvancementChantiersQuery.executeParChantier({
+      habilitations,
+      listeChantier: chantiers,
+      maille,
+      jalon,
+    });
+  }
 }
