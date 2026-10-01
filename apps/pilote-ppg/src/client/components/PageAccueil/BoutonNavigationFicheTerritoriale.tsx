@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icone } from "@/components/_commons/Icone";
 import { ArticleContourIcon } from "@/components/_commons/Icones/ArticleContourIcon";
+import { ACCUEIL_NAV_LINK_CLASSES } from "./accueilNavLinkClasses";
 
 export const BoutonNavigationFicheTerritoriale = ({
   territoireCode,
@@ -11,7 +12,7 @@ export const BoutonNavigationFicheTerritoriale = ({
 }) => {
   if (territoireCode === "NAT-FR") {
     return (
-      <div className="flex align-center !text-dsfr-grey-625 !text-sm gap-1 pb-0.5 border-b-1 !border-b-transparent">
+      <div className="inline-flex items-center gap-1 w-fit pb-0.5 text-sm text-dsfr-grey-625">
         <Icone className="w-4 h-4 !text-current" icone={ArticleContourIcon} />
         Fiche territoriale
       </div>
@@ -20,7 +21,7 @@ export const BoutonNavigationFicheTerritoriale = ({
 
   return (
     <Link
-      className="flex align-center gap-1 !text-sm gap-1 pb-1 !text-primary"
+      className={ACCUEIL_NAV_LINK_CLASSES}
       href={`/fiche-territoriale?territoireCode=${territoireCode}&jalon=${jalon}`}
       title="Voir la fiche territoriale"
     >
