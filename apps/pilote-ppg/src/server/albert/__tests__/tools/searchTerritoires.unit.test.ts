@@ -7,11 +7,18 @@ import type {
   TerritoireIdentiteResult,
 } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 
-const buildTool = (territoires: TerritoireIdentiteResult[]) => {
+const buildTool = (
+  territoires: TerritoireIdentiteResult[],
+  territoiresAccessibles: string[] = territoires.map(
+    (territoire) => territoire.code,
+  ),
+) => {
   const query = {
     execute: vi.fn().mockResolvedValue(territoires),
   } as unknown as GetTerritoiresIdentiteQuery;
-  return createSearchTerritoiresTool({ getTerritoiresIdentiteQuery: query })();
+  return createSearchTerritoiresTool({ getTerritoiresIdentiteQuery: query })({
+    territoiresAccessibles,
+  });
 };
 
 const executeTool = (
@@ -62,7 +69,14 @@ describe("createSearchTerritoiresTool execute", () => {
 
     // Then
     expect(result).toEqual({
-      territoires: [{ code: "REG-53", nom: "Bretagne", maille: "regionale" }],
+      territoires: [
+        {
+          code: "REG-53",
+          nom: "Bretagne",
+          maille: "regionale",
+          donnees_accessibles: "QUANTITATIVES_ET_QUALITATIVES",
+        },
+      ],
       reasoning: "test",
       _output_instructions: expect.any(String),
     });
@@ -85,6 +99,51 @@ describe("createSearchTerritoiresTool execute", () => {
     expect(result).toEqual({
       territoires: [],
       reasoning: "Aucune correspondance",
+      _output_instructions: expect.any(String),
+    });
+  });
+
+  test("indique les données accessibles selon les habilitations de l'utilisateur", async () => {
+    // Given
+    vi.spyOn(Albert, "generateStructuredOutput").mockResolvedValue({
+      territoires: [
+        { code: "REG-53", nom: "Bretagne", maille: "regionale" },
+        { code: "REG-52", nom: "Pays de la Loire", maille: "regionale" },
+      ],
+      reasoning: "test",
+    });
+    const tool = buildTool(
+      [
+        territoire("REG-53", "Bretagne", "regionale" as Maille),
+        territoire("REG-52", "Pays de la Loire", "regionale" as Maille),
+      ],
+      // l'utilisateur n'est habilité que sur la Bretagne
+      ["REG-53"],
+    );
+
+    // When
+    const result = await executeTool(
+      tool,
+      "la Bretagne et les Pays de la Loire",
+    );
+
+    // Then
+    expect(result).toEqual({
+      territoires: [
+        {
+          code: "REG-53",
+          nom: "Bretagne",
+          maille: "regionale",
+          donnees_accessibles: "QUANTITATIVES_ET_QUALITATIVES",
+        },
+        {
+          code: "REG-52",
+          nom: "Pays de la Loire",
+          maille: "regionale",
+          donnees_accessibles: "QUANTITATIVES",
+        },
+      ],
+      reasoning: "test",
       _output_instructions: expect.any(String),
     });
   });

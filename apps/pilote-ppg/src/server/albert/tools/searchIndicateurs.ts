@@ -51,7 +51,7 @@ export type SearchIndicateursOutput = {
 
 const OUTPUT_INSTRUCTIONS = `Présente à l'utilisateur la liste des indicateurs identifiés avec leur id, leur nom, et leur chantier de rattachement au format **CH-XXX — Nom du chantier**.
 Si un seul indicateur correspond clairement, tu peux directement enchaîner sans demander confirmation, avec l'outil adapté à la demande de l'utilisateur : get_indicateurs (valeurs VI/VA/VC/TA), get_evolution_indicateur (tendance/courbe dans le temps) ou get_historique_indicateur (détail des actions), en passant l'\`id\` résolu comme indicateur_id.
-Si plusieurs indicateurs correspondent, demande à l'utilisateur de préciser celui qui l'intéresse avant d'enchaîner.
+Si plusieurs résultats correspondent : si la demande porte sur l'ensemble, utilise-les tous ; si elle en vise un seul, propose-les avec display_choices au lieu de choisir à la place de l'utilisateur ou de poser la question en texte.
 Si la liste est vide, indique-le et invite l'utilisateur à reformuler. Ne reproduis pas le champ \`reasoning\` mot pour mot.`;
 
 const OUTPUT_INSTRUCTIONS_VIDE = `Aucun indicateur ne correspond à la requête. Indique-le clairement à l'utilisateur et propose-lui de reformuler ou de cibler d'abord un chantier via search_chantiers. Ne reproduis pas \`reasoning\` mot pour mot.`;

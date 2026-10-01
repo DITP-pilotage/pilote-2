@@ -81,7 +81,9 @@ export class AssistantIA {
       search_indicateurs: container.resolve("createSearchIndicateursTool")({
         chantiersAccessibles,
       }),
-      search_territoires: container.resolve("createSearchTerritoiresTool")(),
+      search_territoires: container.resolve("createSearchTerritoiresTool")({
+        territoiresAccessibles,
+      }),
       display_choices: displayChoicesTool,
       ...(capacities.dashboard
         ? {
@@ -109,7 +111,6 @@ export class AssistantIA {
     return {
       tools: this.construireTools({ habilitations, capacities, userId }),
       systemPrompt: buildChatSystemPrompt({
-        territoiresAccessibles: habilitations.lecture.territoires,
         agentContext,
         capacities,
       }),

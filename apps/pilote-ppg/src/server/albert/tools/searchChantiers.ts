@@ -36,7 +36,7 @@ export type SearchChantiersOutput = {
 };
 
 const OUTPUT_INSTRUCTIONS = `Présente à l'utilisateur la liste des chantiers identifiés au format **CH-XXX — Nom du chantier**.
-Si plusieurs chantiers correspondent, demande à l'utilisateur de préciser celui qui l'intéresse avant d'appeler get_chantiers ou get_indicateurs.
+Si plusieurs résultats correspondent : si la demande porte sur l'ensemble, utilise-les tous ; si elle en vise un seul, propose-les avec display_choices au lieu de choisir à la place de l'utilisateur ou de poser la question en texte.
 Si un seul chantier correspond clairement, tu peux directement enchaîner avec l'outil de données approprié sans demander confirmation.
 Si la liste est vide, indique-le et invite l'utilisateur à reformuler ou préciser sa demande. Ne reproduis pas le champ \`reasoning\` mot pour mot.`;
 
