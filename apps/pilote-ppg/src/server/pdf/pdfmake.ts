@@ -1,6 +1,7 @@
 import pdfmake from "pdfmake/build/pdfmake";
 import policeCourier from "pdfmake/build/standard-fonts/Courier";
 import tablePolices from "pdfmake/build/vfs_fonts";
+import { POLICES_MARIANNE, vfsMarianne } from "@/server/pdf/marianne";
 
 /**
  * En pdfmake 0.3, le module n'expose plus `createPdf` en export nommé mais une instance
@@ -10,6 +11,7 @@ import tablePolices from "pdfmake/build/vfs_fonts";
  * par un import à effet de bord, qu'un bundler peut réordonner ou éliminer.
  */
 pdfmake.addVirtualFileSystem(tablePolices);
+pdfmake.addVirtualFileSystem(vfsMarianne());
 pdfmake.setFonts({
   Roboto: {
     normal: "Roboto-Regular.ttf",
@@ -17,6 +19,7 @@ pdfmake.setFonts({
     italics: "Roboto-Italic.ttf",
     bolditalics: "Roboto-MediumItalic.ttf",
   },
+  ...POLICES_MARIANNE,
 });
 
 // Courier apporte ses propres métriques AFM, que pdfmake 0.3 ne charge plus d'office.
