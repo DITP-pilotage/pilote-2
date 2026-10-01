@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, ReactNode } from "react";
 import { Modale } from "@/components/shared/Modale";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
@@ -6,24 +6,29 @@ import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
 import { Publication } from "@/components/PageChantier/Publication/Publication.interface";
 
-type HistoriquePublicationProps = {
+type HistoriquePublicationProps<P extends Publication> = {
   title: string;
-  ariaLabel: string;
-  historique: Publication[] | undefined;
+  sousTitre?: string;
+  ariaLabel?: string;
+  historique: P[] | undefined;
+  annexe?: (publication: P) => ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export const HistoriquePublication = ({
+export const HistoriquePublication = <P extends Publication>({
   title,
+  sousTitre,
   ariaLabel,
   historique,
+  annexe,
   open,
   onOpenChange,
-}: HistoriquePublicationProps) => (
+}: HistoriquePublicationProps<P>) => (
   <Modale
     onOpenChange={onOpenChange}
     open={open}
+    sousTitre={sousTitre}
     title={title}
     trigger={
       <BoutonSousLigné
@@ -40,7 +45,7 @@ export const HistoriquePublication = ({
       historique.map((item, index) => (
         <Fragment key={item.dateModification}>
           {index !== 0 && <hr className="fr-mt-4w" />}
-          <AffichagePublication commentaire={item} />
+          <AffichagePublication annexe={annexe?.(item)} commentaire={item} />
         </Fragment>
       ))
     ) : (
