@@ -11,7 +11,7 @@ interface MultiSelectGroupeProps {
   valeursSélectionnées: Set<string>;
 }
 
-const MultiSelectGroupe: FunctionComponent<MultiSelectGroupeProps> = ({
+export const MultiSelectGroupe: FunctionComponent<MultiSelectGroupeProps> = ({
   groupeOptions,
   changementÉtatCallback,
   valeursSélectionnées,
@@ -60,5 +60,3 @@ const MultiSelectGroupe: FunctionComponent<MultiSelectGroupeProps> = ({
     </>
   );
 };
-
-export default MultiSelectGroupe;

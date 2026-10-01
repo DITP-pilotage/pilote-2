@@ -8,9 +8,9 @@ import {
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
 import { deuxTableauxSontIdentiques } from "@/client/utils/arrays";
-import MultiSelectProps from "./MultiSelect.interface";
+import { MultiSelectProps } from "./MultiSelect.interface";
 
-export default function useMultiSelect(
+export function useMultiSelect(
   optionsGroupées: MultiSelectProps["optionsGroupées"],
   suffixeLibellé: string,
   changementValeursSélectionnéesCallback: MultiSelectProps["changementValeursSélectionnéesCallback"],

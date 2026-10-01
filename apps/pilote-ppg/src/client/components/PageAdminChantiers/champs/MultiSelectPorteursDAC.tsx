@@ -1,9 +1,9 @@
 import { Controller, useFormContext } from "react-hook-form";
-import MultiSelect from "@/components/_commons/MultiSelect/MultiSelect";
+import { MultiSelect } from "@/components/_commons/MultiSelect/MultiSelect";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
-const MultiSelectPorteursDAC = () => {
+export const MultiSelectPorteursDAC = () => {
   const { data: porteurs = [] } =
     api.metadataChantier.listerPorteursDAC.useQuery();
   const { control } = useFormContext<ChantierForm>();
@@ -29,5 +29,3 @@ const MultiSelectPorteursDAC = () => {
     />
   );
 };
-
-export default MultiSelectPorteursDAC;
