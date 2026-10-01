@@ -75,7 +75,7 @@ Filet de sécurité du découpage : pour un même jeu de filtres, l'union de `ch
 
 ### Briques partagées (`src/server/pdf/`)
 
-1. **Police Marianne** : les fichiers `.woff` de `@gouvfr/dsfr/dist/fonts` (Regular, Medium, Bold et leurs italiques) sont enregistrés sur l'instance `pdfmake` sous la famille `Marianne`. Roboto et Courier restent pour les PDF existants.
+1. **Police Marianne** : aujourd'hui, les PDF n'utilisent que les TTF Roboto embarqués par `pdfmake/build/vfs_fonts` ; aucune police DSFR n'est chargée côté serveur. Les fichiers `.woff2` de `@gouvfr/dsfr/dist/fonts` (Regular, Medium, Bold et leurs italiques) sont lus au démarrage (chemin résolu par `require.resolve("@gouvfr/dsfr/package.json")`), ajoutés au système de fichiers virtuel et enregistrés sur l'instance `pdfmake` sous la famille `Marianne`. Vérifié le 2026-10-01 : pdfmake 0.3 (fontkit 2.0.4) lit le `.woff2`, embarque `Marianne-Bold` et restitue accents, guillemets français et tirets. Roboto et Courier restent pour les PDF existants.
 2. **`tokens.ts`** : couleurs résolues depuis `tailwind.config.js` (`resolveConfig`), exposées par leur nom de classe (`primary`, `dsfr-grey-625`, `pilote-vert`…). Aucune valeur recopiée à la main.
 3. **`svgDepuisComposant.ts`** : rend en HTML statique (`renderToStaticMarkup`) les composants SVG existants (`JaugeDeProgressionSVG`, icônes météo, `CartographieSVG` en `estInteractif: false`), puis remplace les classes Tailwind `fill-*` et `stroke-*` par des attributs `fill`/`stroke` hexadécimaux issus de `tokens.ts`, et retire les classes restantes. Le résultat est passé au nœud `svg` de pdfmake. Aucun tracé n'est dupliqué. Si le moteur SVG de pdfmake ne rend pas les hachures (`<pattern>`), elles sont remplacées par des lignes dessinées.
 4. **`htmlVersPdfmake.ts`** : convertisseur HTML vers pdfmake basé sur `htmlparser2`, sur le modèle de `markdownToPdfContent` : paragraphes, `h1`-`h6`, `ul`/`ol`/`li` imbriquées, `strong`/`b`, `em`/`i`, `u`, `s`, liens (texte souligné, sans ressource distante), `blockquote`, `hr`, `br`, entités. Tailles et marges reprises de `RenduContenuHtml`.
@@ -124,7 +124,7 @@ Mesure : script jetable qui chronomètre la génération et relève `process.mem
 
 ## Points de vigilance
 
-1. **Bundle** : pdfmake, les polices et `svgDepuisComposant` ne sont importés que côté serveur.
+1. **Bundle** : pdfmake, les polices et `svgDepuisComposant` ne sont importés que côté serveur. ppg est construit en `output: "standalone"` : les `.woff2` lus par `fs` ne sont pas forcément tracés, donc `outputFileTracingIncludes` les déclare pour la route PDF, et on vérifie après `next build` qu'ils sont présents dans `.next/standalone`.
 2. **Mémoire** : pdfmake construit tout le document avant l'envoi ; le streaming réduit le pic sans le supprimer. Si le national dépasse ce que le conteneur Scalingo supporte, repli : génération par chantier et fusion avec `pdf-lib`.
 3. **Moteur SVG de pdfmake** : ignore les feuilles de style et une partie de `clipPath`/`pattern` ; d'où la mise à plat dans `svgDepuisComposant`.
 4. **Sécurité** : `setUrlAccessPolicy(() => false)` conservé ; aucun contenu distant, les liens du HTML riche ne sont que du texte.
