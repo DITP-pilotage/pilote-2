@@ -1,8 +1,8 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { Button } from "@/components/shared/Button";
 import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
-import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import { InformationIndicateurContrat } from "@/server/app/contrats/InformationIndicateurContrat";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
@@ -72,7 +72,7 @@ const EtapeSelectionIndicateur: FunctionComponent<{
             )}
           </p>
           <div className="fr-mt-4w flex justify-end">
-            <SubmitBouton
+            <Button
               className="ml-8"
               iconRight={
                 <Icone
@@ -80,11 +80,17 @@ const EtapeSelectionIndicateur: FunctionComponent<{
                   icone={ArrowLine1Icon}
                 />
               }
-              label={
+              title={
                 wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                   .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_PROCHAINE_ETAPE
               }
-            />
+              type="submit"
+            >
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                  .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_PROCHAINE_ETAPE
+              }
+            </Button>
           </div>
         </form>
       ) : (

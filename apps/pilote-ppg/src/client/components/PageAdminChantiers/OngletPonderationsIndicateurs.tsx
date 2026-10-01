@@ -1,5 +1,5 @@
 import { Control, Controller } from "react-hook-form";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Button } from "@/components/shared/Button";
 import { Infobulle } from "@/components/shared/Infobulle";
 import {
   MAILLES,
@@ -150,12 +150,13 @@ const OngletPonderationsIndicateurs = ({
   return (
     <form onSubmit={enregistrer}>
       <div className="flex items-center justify-end mb-4">
-        <Bouton
+        <Button
           disabled={estEnCoursDEnregistrement}
-          label="Enregistrer"
           type="submit"
           variant="primary"
-        />
+        >
+          Enregistrer
+        </Button>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925">
@@ -205,12 +206,13 @@ const OngletPonderationsIndicateurs = ({
       </div>
 
       <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
-        <Bouton
+        <Button
           disabled={estEnCoursDEnregistrement}
-          label="Enregistrer"
           type="submit"
           variant="primary"
-        />
+        >
+          Enregistrer
+        </Button>
       </div>
     </form>
   );

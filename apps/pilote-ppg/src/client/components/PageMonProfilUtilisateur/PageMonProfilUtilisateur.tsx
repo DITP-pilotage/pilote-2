@@ -1,10 +1,10 @@
 import { FormProvider } from "react-hook-form";
+import { Button } from "@/components/shared/Button";
 import { useState } from "react";
 import { z } from "zod";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
-import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
@@ -144,16 +144,19 @@ export const PageMonProfilUtilisateur = () => {
                 <PageMonProfilUtilisateurContent />
 
                 <div className="flex flex-col items-end gap-2">
-                  <SubmitBouton
+                  <Button
                     disabled={mutationModifierMonProfil.isPending}
-                    label="Enregistrer"
                     iconRight={
                       <Icone
                         className="text-current h-4 w-4"
                         icone={ArrowLine1Icon}
                       />
                     }
-                  />
+                    title="Enregistrer"
+                    type="submit"
+                  >
+                    Enregistrer
+                  </Button>
                   <p className="!text-sm !text-dsfr-mention-grey !mb-0">
                     {`Modifié le ${PiloteDateFormatter.isoDateTimeFranceMetropolitaine(profilUtilisateur.dateModification)}`}
                   </p>

@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { Dropdown } from "@/components/shared/Dropdown";
 import { Checkbox } from "@/components/shared/Checkbox";
@@ -97,11 +97,8 @@ export const MultiSelectFiltre = ({
         >
           <div className="divide-y divide-dsfr-mention-grey -m-4 max-h-96 overflow-y-auto">
             <div className="sticky top-0 bg-white z-10">
-              <Bouton
+              <Button
                 className="w-full"
-                label={
-                  toutSelectionne ? "Tout désélectionner" : "Tout sélectionner"
-                }
                 onClick={() => {
                   if (toutSelectionne) {
                     onChange([]);
@@ -111,7 +108,9 @@ export const MultiSelectFiltre = ({
                 }}
                 size="sm"
                 variant="link"
-              />
+              >
+                {toutSelectionne ? "Tout désélectionner" : "Tout sélectionner"}
+              </Button>
               {showSearch ? (
                 <div className="px-4 pb-2 pt-1">
                   <input

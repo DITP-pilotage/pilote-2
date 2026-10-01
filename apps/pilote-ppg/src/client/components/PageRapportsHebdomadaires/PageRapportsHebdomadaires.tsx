@@ -1,10 +1,10 @@
 import { Suspense, useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { parseAsString, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { RapportDetail } from "./RapportDetail";
 
 const PageRapportsHebdomadaires = () => {
@@ -65,12 +65,13 @@ const PageRapportsHebdomadaires = () => {
         </div>
 
         <div className="fr-container max-2xl:col-span-2">
-          <Bouton
-            label="Voir les autres rapports"
+          <Button
             variant="link"
             className="md:hidden mt-4"
             onClick={() => setIsOpen(true)}
-          />
+          >
+            Voir les autres rapports
+          </Button>
 
           {rapports.length === 0 ? (
             <div className="p-12 flex items-center justify-center fr-text--sm text-dsfr-grey-625">

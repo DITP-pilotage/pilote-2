@@ -1,5 +1,5 @@
 import { FunctionComponent, SubmitEventHandler } from "react";
-import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { Button } from "@/components/shared/Button";
 import { wording } from "@/client/utils/i18n/i18n";
 
 interface FormulairePublierImportIndicateurProps {
@@ -12,16 +12,22 @@ const FormulairePublierImportIndicateur: FunctionComponent<
 > = ({ isPending, publierLeFichier }) => {
   return (
     <form className="flex justify-end" onSubmit={publierLeFichier}>
-      <SubmitBouton
+      <Button
         className="ml-8"
         disabled={isPending}
-        label={
+        title={
           isPending
             ? "Publication en cours..."
             : wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                 .ETAPE_PUBLIER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE
         }
-      />
+        type="submit"
+      >
+        {isPending
+          ? "Publication en cours..."
+          : wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+              .ETAPE_PUBLIER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE}
+      </Button>
     </form>
   );
 };

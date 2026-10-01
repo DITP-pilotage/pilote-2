@@ -1,5 +1,5 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
+import { Button } from "@/components/shared/Button";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import type { AnyTable, EmptyConfig, EmptyMessage } from "./types";
 
@@ -37,12 +37,9 @@ export function DataTableEmpty({
         {message.description}
         {message.action}
         {showNoResults && (
-          <Bouton
-            label="Réinitialiser les filtres"
-            onClick={onResetFilters}
-            size="sm"
-            variant="secondary"
-          />
+          <Button onClick={onResetFilters} size="sm" variant="secondary">
+            Réinitialiser les filtres
+          </Button>
         )}
       </div>
     </div>

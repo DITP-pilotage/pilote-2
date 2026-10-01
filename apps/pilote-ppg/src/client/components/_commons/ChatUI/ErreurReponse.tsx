@@ -1,5 +1,5 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
+import { Button } from "@/components/shared/Button";
 import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
 
 export const ErreurReponse = ({
@@ -26,12 +26,9 @@ export const ErreurReponse = ({
       </div>
     </div>
     <div>
-      <Bouton
-        label="Réessayer"
-        onClick={onReessayer}
-        size="sm"
-        variant="secondary"
-      />
+      <Button onClick={onReessayer} size="sm" variant="secondary">
+        Réessayer
+      </Button>
     </div>
   </div>
 );
