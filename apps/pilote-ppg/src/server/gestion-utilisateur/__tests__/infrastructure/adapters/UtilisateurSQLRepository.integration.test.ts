@@ -315,4 +315,75 @@ describe("PrismaUtilisateurRepository", () => {
       }),
     );
   });
+
+  describe("recupererComptesActifsParProfil", () => {
+    it(
+      "retourne les comptes actifs du profil, sans les désactivés ni les autres profils",
+      createIntegrationTest(async () => {
+        // Given
+        const adminActif = await fixtures.utilisateur({
+          profilCode: ProfilEnum.DITP_ADMIN,
+        });
+        const adminDesactive = await fixtures.utilisateur({
+          profilCode: ProfilEnum.DITP_ADMIN,
+          date_desactivation: new Date("2026-01-01"),
+        });
+        const pilotage = await fixtures.utilisateur({
+          profilCode: ProfilEnum.DITP_PILOTAGE,
+        });
+        // La base de test est seedée avec d'autres DITP_ADMIN : on ne regarde que les comptes créés ici
+        const emailsCrees = [
+          adminActif.email,
+          adminDesactive.email,
+          pilotage.email,
+        ];
+
+        // When
+        const result = await repository.recupererComptesActifsParProfil(
+          ProfilEnum.DITP_ADMIN,
+        );
+
+        // Then
+        expect(
+          result.filter((compte) => emailsCrees.includes(compte.email)),
+        ).toEqual([{ id: adminActif.id, email: adminActif.email }]);
+      }),
+    );
+  });
+
+  describe("estActif", () => {
+    it(
+      "retourne true pour un compte actif",
+      createIntegrationTest(async () => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+
+        // When
+        const result = await repository.estActif(utilisateur.id);
+
+        // Then
+        expect(result).toBe(true);
+      }),
+    );
+
+    it(
+      "retourne false pour un compte désactivé ou inconnu",
+      createIntegrationTest(async () => {
+        // Given
+        const utilisateur = await fixtures.utilisateur({
+          date_desactivation: new Date("2026-01-01"),
+        });
+
+        // When
+        const resultDesactive = await repository.estActif(utilisateur.id);
+        const resultInconnu = await repository.estActif(
+          "00000000-0000-0000-0000-000000000000",
+        );
+
+        // Then
+        expect(resultDesactive).toBe(false);
+        expect(resultInconnu).toBe(false);
+      }),
+    );
+  });
 });

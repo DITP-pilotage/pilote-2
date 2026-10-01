@@ -5,4 +5,6 @@ export interface UtilisateurIAMRepository {
   supprime(email: string): Promise<void>;
   desactive(email: string): Promise<void>;
   reactive(email: string): Promise<void>;
+  recupererDateDernierChangementPassword(email: string): Promise<Date | null>;
+  forcerChangementPassword(email: string): Promise<void>;
 }
