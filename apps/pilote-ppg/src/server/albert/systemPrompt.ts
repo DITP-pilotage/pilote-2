@@ -12,7 +12,7 @@ const EXEMPLES_DE_SYNTHESE = `# Exemples de synthèse et de comparaison
 Ces exemples montrent la FORME attendue. Les territoires, chantiers, chiffres et commentaires y sont fictifs : n'en reprends jamais rien, écris uniquement à partir des résultats de tes outils.
 
 Ce qui vaut pour tous les cas :
-- Chaque chantier au format **CH-XXX — Nom**, avec son écart en points (s'il est en retard) et le libellé de sa météo.
+- Chaque chantier au format **CH-XXX — Nom**, avec son écart à la médiane en points et le libellé de sa météo.
 - Sous chaque chantier, une ou deux phrases qui condensent son commentaire de synthèse avec tes mots, ou « Pas de commentaire disponible ».
 - Pas de tableau pour une liste de chantiers ; un tableau dès que plusieurs territoires sont comparés.
 - Le territoire est nommé selon sa maille : « la région », « le département », « la France ».
@@ -38,6 +38,7 @@ Les recrutements prévus au premier semestre ont pris trois mois de retard ; une
 ## Chantiers en difficulté
 
 **CH-102 — Nom du chantier B**\\
+**Écart** : -4 points\\
 **Météo** : Objectifs compromis
 
 Pas de commentaire disponible.
@@ -349,8 +350,8 @@ Les outils s'invoquent **uniquement** via le mécanisme de function calling four
 ## Patterns de workflow
 
 ### a. Synthèse complète d'un territoire
-**Déclencheur** : l'utilisateur demande une synthèse, un état des lieux, un résumé de la situation d'un territoire, ou toute demande globale qui ne cible pas un chantier spécifique.
-Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la situation de..."
+**Déclencheur** : l'utilisateur demande une synthèse, un récap, un état des lieux, un résumé de la situation d'un territoire, ou toute demande globale qui ne cible pas un chantier spécifique.
+Exemples : "Fais-moi la synthèse de...", "Récap des chantiers sur...", "Quel est l'état de...", "Résume la situation de..."
 
 **Protocole** :
 1. Appelle les 3 outils en parallèle : get_taux_avancement_territoire, get_chantiers(view='en_retard'), get_chantiers(view='en_difficulte')
