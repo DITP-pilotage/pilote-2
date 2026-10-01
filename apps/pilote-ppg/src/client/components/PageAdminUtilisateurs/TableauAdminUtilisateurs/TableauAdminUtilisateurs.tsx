@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTableauPageAdminUtilisateurs } from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import { SearchInput } from "@/components/shared/SearchInput";
 import Titre from "@/components/_commons/Titre/Titre";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import { TagToggleGroup } from "@/components/shared/Tag";
@@ -25,9 +25,9 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   return (
     <section className="fr-px-1w">
       <div className="w-full max-w-[20.5rem] fr-mt-2w">
-        <BarreDeRecherche
-          changementDeLaRechercheCallback={changementDeLaRechercheCallback}
-          valeur={valeurDeLaRecherche}
+        <SearchInput
+          onChange={changementDeLaRechercheCallback}
+          value={valeurDeLaRecherche}
         />
       </div>
       <Titre baliseHtml="h2" className="fr-h4 fr-mt-3w fr-mb-0 text-primary">

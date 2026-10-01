@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import type { ZoneDisponible } from "@/server/metadataZonegroup/queries/ListerZonesDisponiblesQuery";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import { SearchInput } from "@/components/shared/SearchInput";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { ActionsSelection } from "./ActionsSelection";
 
@@ -48,11 +48,9 @@ export const SélecteurZones = ({
           {value.length !== 1 ? "s" : ""}
         </p>
         <div className="w-64">
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={(event) =>
-              setFiltreZone(event.target.value)
-            }
-            valeur={filtreZone}
+          <SearchInput
+            onChange={(event) => setFiltreZone(event.target.value)}
+            value={filtreZone}
           />
         </div>
       </div>

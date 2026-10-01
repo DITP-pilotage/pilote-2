@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { Button } from "@/components/shared/Button";
 import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import { SearchInput } from "@/components/shared/SearchInput";
 import Loader from "@/components/_commons/Loader/Loader";
 import Titre from "@/components/_commons/Titre/Titre";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
@@ -35,11 +35,9 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
         <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
           <div className="fr-col-12 fr-col-md-6">
             <div className="w-full max-w-[20.5rem]">
-              <BarreDeRecherche
-                changementDeLaRechercheCallback={
-                  changementDeLaRechercheCallback
-                }
-                valeur={valeurDeLaRecherche}
+              <SearchInput
+                onChange={changementDeLaRechercheCallback}
+                value={valeurDeLaRecherche}
               />
             </div>
           </div>

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/shared/Button";
-import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import { SearchInput } from "@/components/shared/SearchInput";
 import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
@@ -88,11 +88,9 @@ export function DataTableFilters({
     : [];
 
   const recherche = hasFeature(table, "globalFilteringFeature") ? (
-    <BarreDeRecherche
-      changementDeLaRechercheCallback={(event) =>
-        table.setGlobalFilter(event.target.value)
-      }
-      valeur={table.store.state.globalFilter ?? ""}
+    <SearchInput
+      onChange={(event) => table.setGlobalFilter(event.target.value)}
+      value={table.store.state.globalFilter ?? ""}
     />
   ) : null;
 
