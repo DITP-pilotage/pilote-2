@@ -11,7 +11,7 @@ import type {
   ChartDisplayMode,
   TerritoireEvolutionDonnees,
 } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
-import LineChartLegende from "./LineChartLegende/LineChartLegende";
+import { LineChartLegende } from "./LineChartLegende/LineChartLegende";
 
 export interface LineChartProps {
   getOptions: (args: {
