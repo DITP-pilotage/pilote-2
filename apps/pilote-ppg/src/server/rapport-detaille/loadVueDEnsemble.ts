@@ -180,11 +180,11 @@ function filterByAlertes(
 export async function loadFilteredChantiers(
   context: RapportDetailleContext,
   dependencies: VueDEnsembleDependencies = defaultVueDEnsembleDependencies(),
+  referenceChantierIds: string[] = context.session.habilitations.lecture
+    .chantiers,
 ) {
   const [{ ministères, axes }, selectedTerritoire] = await Promise.all([
-    dependencies.getMinistèresAndAxes(
-      context.session.habilitations.lecture.chantiers,
-    ),
+    dependencies.getMinistèresAndAxes(referenceChantierIds),
     dependencies.territoire(context.territoireCode),
   ]);
   const allChantiers = await dependencies.chantiers(context, ministères, axes);
@@ -215,6 +215,7 @@ export async function loadChantiersByIds(
   const { chantiers, selectedTerritoire } = await loadFilteredChantiers(
     restrictedContext,
     dependencies,
+    context.session.habilitations.lecture.chantiers,
   );
   return { chantiers, selectedTerritoire };
 }

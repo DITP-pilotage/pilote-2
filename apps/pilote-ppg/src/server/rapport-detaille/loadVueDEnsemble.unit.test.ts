@@ -1,6 +1,7 @@
 vi.mock("@/server/dependances", () => ({ getContainer: vi.fn() }));
 
 import {
+  loadChantiersByIds,
   loadVueDEnsemble,
   VueDEnsembleDependencies,
   restrictHabilitationsToChantiers,
@@ -132,5 +133,34 @@ describe("restrictHabilitationsToChantiers", () => {
 
     expect(restricted.lecture.chantiers).toEqual(["A"]);
     expect(restricted.lecture.territoires).toEqual(["NAT-FR"]);
+  });
+});
+
+describe("loadChantiersByIds", () => {
+  it("garde les ministères et axes de toutes les habilitations pour ne restreindre que les chantiers", async () => {
+    const dependencies = buildTestDependencies({
+      getMinistèresAndAxes: vi.fn(async () => ({
+        ministères: [],
+        axes: [
+          { id: "AXE-A", nom: "Axe A" },
+          { id: "AXE-B", nom: "Axe B" },
+        ],
+      })),
+    });
+    const context = buildRapportDetailleContext(
+      { axes: "AXE-A,AXE-B" },
+      "NAT-FR",
+      session,
+    );
+
+    await loadChantiersByIds(["A"], context, dependencies);
+
+    expect(dependencies.getMinistèresAndAxes).toHaveBeenCalledWith(["A", "B"]);
+    const [restrictedContext, , axes] = vi.mocked(dependencies.chantiers).mock
+      .calls[0];
+    expect(restrictedContext.session.habilitations.lecture.chantiers).toEqual([
+      "A",
+    ]);
+    expect(axes.map((axe) => axe.id)).toEqual(["AXE-A", "AXE-B"]);
   });
 });
