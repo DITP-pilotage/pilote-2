@@ -14,7 +14,6 @@ Lenteurs serveur relevées :
 
 - boucle séquentielle d'une requête de statistiques par chantier (`rapport-detaille.tsx:235-324`) ;
 - une dizaine d'appels de repository indépendants enchaînés en séquence (l.326-405) ;
-- `chantier_territoire` chargé pour tous les territoires habilités au lieu du territoire demandé (`PrismaChantierRepository.ts:1386-1396`) ;
 - `indicateurs.filter` dans une boucle `chantierIds.map` (`IndicateurSQLRepository.ts:258-262`).
 
 Le rapport n'utilise aucune librairie de graphiques : jauges (`JaugeDeProgressionSVG`), pictos météo (`_commons/IconeMeteo`), cartes (`_commons/Cartographie/SVG/CartographieSVG`) sont des SVG maison ; les barres de progression sont en HTML.
@@ -37,13 +36,15 @@ Hors périmètre : Chromium headless, choix des sections par l'utilisateur, gén
 `ConstruireRapportDetailleUseCase` (dans `src/server/rapport-detaille/`) reprend la logique de `getServerSideProps` découpée en deux fonctions :
 
 - `chargerVueDEnsemble(filtres, session)` : chantiers filtrés et triés (avec alertes et filtres d'alertes), ministères, axes, territoire, compteurs d'alertes, avancements agrégés, avancements globaux territoriaux moyens, répartition des météos, moyenne du taux d'avancement, jalon, maille sélectionnée, droit de voir les brouillons.
-- `chargerDetailsChantiers(chantierIds, contexte)` : pour un lot de chantiers, les statistiques d'avancement (`AvancementChantierRapportDetaille`), indicateurs groupés, détails des indicateurs, liste des indicateurs pris en compte dans l'avancement, publications groupées, données de cartographie avancement et météo. `contexte` porte ce que la vue d'ensemble a déjà calculé (territoire, maille, jalon, habilitations, statuts) pour ne pas le recalculer.
+- `chargerDetailsChantiers(chantiers, contexte)` : pour un lot de chantiers (contrats `ChantierRapportDetailleContrat` avec leurs `mailles`), les statistiques d'avancement (`AvancementChantierRapportDetaille`), indicateurs groupés, détails des indicateurs, liste des indicateurs pris en compte dans l'avancement, publications groupées, données de cartographie avancement et météo. `contexte` porte ce que la vue d'ensemble a déjà calculé (territoire, maille, jalon, habilitations, statuts) pour ne pas le recalculer.
 
 Corrections de performance incluses :
 
 - un seul `groupBy` de statistiques pour le lot au lieu de la boucle par chantier ;
 - `Promise.all` sur les appels indépendants ;
-- `chantier_territoire` restreint au territoire demandé (et NAT-FR) quand c'est suffisant pour le rapport ;
+- pour les appels tRPC, `RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2` accepte une liste de `chantierIds` qui restreint les chantiers chargés au lot demandé.
+
+`chantier_territoire` reste chargé pour tous les territoires de la maille : les cartes et l'avancement régional (territoire parent) en ont besoin.
 - index `Map` à la place du `filter` imbriqué dans `IndicateurSQLRepository.récupérerDétailsGroupésParChantierEtParIndicateur`.
 
 Filet de sécurité du découpage : pour un même jeu de filtres, l'union de `chargerVueDEnsemble` et de `chargerDetailsChantiers(tous les ids)` produit les mêmes données que l'ancien `getServerSideProps`.
@@ -51,8 +52,8 @@ Filet de sécurité du découpage : pour un même jeu de filtres, l'union de `ch
 ### Trois consommateurs
 
 1. **Page (SSR)** : `getServerSideProps` n'appelle plus que `chargerVueDEnsemble`.
-2. **Page (client)** : procédure tRPC `rapportDetaille.detailsChantiers({ filtres, territoireCode, chantierIds })`, protégée comme la page, qui appelle `chargerDetailsChantiers`. Le nombre d'ids par appel est borné (5).
-3. **PDF** : route API Pages `GET /api/rapport-detaille/pdf` avec les mêmes query params que la page, plus `territoireCode` et `detail=true|false`. Elle refait l'authentification et les contrôles d'habilitation de la page, appelle `chargerVueDEnsemble`, puis `chargerDetailsChantiers` par lots si `detail=true`, construit le document et l'envoie en streaming (`Content-Type: application/pdf`, `Content-Disposition: attachment; filename="rapport-detaille-<territoire>-<date>.pdf"`).
+2. **Page (client)** : procédure tRPC `rapportDetaille.detailsChantiers({ filtres, territoireCode, chantierIds })`, protégée comme la page, qui recharge les contrats de ces seuls chantiers puis appelle `chargerDetailsChantiers`. Le nombre d'ids par appel est borné (5).
+3. **PDF** : route API Pages `GET /api/rapport-detaille/pdf` avec les mêmes query params que la page, plus `territoireCode` et `detail=true|false`. Elle refait l'authentification et les contrôles d'habilitation de la page, appelle `chargerVueDEnsemble`, puis `chargerDetailsChantiers` par lots sur les chantiers déjà chargés si `detail=true`, construit le document et l'envoie en streaming (`Content-Type: application/pdf`, `Content-Disposition: attachment; filename="rapport-detaille-<territoire>-<date>.pdf"`).
 
 ### Côté client
 
@@ -77,7 +78,7 @@ Filet de sécurité du découpage : pour un même jeu de filtres, l'union de `ch
 
 1. **Police Marianne** : aujourd'hui, les PDF n'utilisent que les TTF Roboto embarqués par `pdfmake/build/vfs_fonts` ; aucune police DSFR n'est chargée côté serveur. Les fichiers `.woff2` de `@gouvfr/dsfr/dist/fonts` (Regular, Medium, Bold et leurs italiques) sont lus au démarrage (chemin résolu par `require.resolve("@gouvfr/dsfr/package.json")`), ajoutés au système de fichiers virtuel et enregistrés sur l'instance `pdfmake` sous la famille `Marianne`. Vérifié le 2026-10-01 : pdfmake 0.3 (fontkit 2.0.4) lit le `.woff2`, embarque `Marianne-Bold` et restitue accents, guillemets français et tirets. Roboto et Courier restent pour les PDF existants.
 2. **`tokens.ts`** : couleurs résolues depuis `tailwind.config.js` (`resolveConfig`), exposées par leur nom de classe (`primary`, `dsfr-grey-625`, `pilote-vert`…). Aucune valeur recopiée à la main.
-3. **`svgDepuisComposant.ts`** : rend en HTML statique (`renderToStaticMarkup`) les composants SVG existants (`JaugeDeProgressionSVG`, icônes météo, `CartographieSVG` en `estInteractif: false`), puis remplace les classes Tailwind `fill-*` et `stroke-*` par des attributs `fill`/`stroke` hexadécimaux issus de `tokens.ts`, et retire les classes restantes. Le résultat est passé au nœud `svg` de pdfmake. Aucun tracé n'est dupliqué. Si le moteur SVG de pdfmake ne rend pas les hachures (`<pattern>`), elles sont remplacées par des lignes dessinées.
+3. **`svgDepuisComposant.ts`** : rend en HTML statique (`renderToStaticMarkup`) les composants SVG existants (`JaugeDeProgressionSVG`, icônes météo, `CartographieSVG` en `estInteractif: false`), puis remplace les classes Tailwind `fill-*` et `stroke-*` par des attributs `fill`/`stroke` hexadécimaux issus de `tokens.ts`, et retire les classes restantes. Le résultat est passé au nœud `svg` de pdfmake. Aucun tracé n'est dupliqué. Vérifié le 2026-10-01 : le moteur SVG de pdfmake 0.3 rend `<pattern>` (hachures) et `clipPath`.
 4. **`htmlVersPdfmake.ts`** : convertisseur HTML vers pdfmake basé sur `htmlparser2`, sur le modèle de `markdownToPdfContent` : paragraphes, `h1`-`h6`, `ul`/`ol`/`li` imbriquées, `strong`/`b`, `em`/`i`, `u`, `s`, liens (texte souligné, sans ressource distante), `blockquote`, `hr`, `br`, entités. Tailles et marges reprises de `RenduContenuHtml`.
 5. **`primitives.ts`** : équivalents des éléments DSFR utilisés par le rapport : encart (fond, bordure, coins arrondis via `canvas` en arrière-plan), badges (météo, tendance, baromètre), barre de progression (`canvas rect`), titre de section, tableau.
 
@@ -126,5 +127,5 @@ Mesure : script jetable qui chronomètre la génération et relève `process.mem
 
 1. **Bundle** : pdfmake, les polices et `svgDepuisComposant` ne sont importés que côté serveur. ppg est construit en `output: "standalone"` : les `.woff2` lus par `fs` ne sont pas forcément tracés, donc `outputFileTracingIncludes` les déclare pour la route PDF, et on vérifie après `next build` qu'ils sont présents dans `.next/standalone`.
 2. **Mémoire** : pdfmake construit tout le document avant l'envoi ; le streaming réduit le pic sans le supprimer. Si le national dépasse ce que le conteneur Scalingo supporte, repli : génération par chantier et fusion avec `pdf-lib`.
-3. **Moteur SVG de pdfmake** : ignore les feuilles de style et une partie de `clipPath`/`pattern` ; d'où la mise à plat dans `svgDepuisComposant`.
+3. **Moteur SVG de pdfmake** : ignore les classes CSS (pas de feuille de style) ; d'où la mise à plat des classes Tailwind en attributs dans `svgDepuisComposant`.
 4. **Sécurité** : `setUrlAccessPolicy(() => false)` conservé ; aucun contenu distant, les liens du HTML riche ne sont que du texte.
