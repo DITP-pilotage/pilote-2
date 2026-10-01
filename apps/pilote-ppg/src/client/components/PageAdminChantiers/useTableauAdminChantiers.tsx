@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
-import { Badge, type VarianteBadge } from "@/components/shared/Badge";
+import { Badge, type BadgeVariant } from "@/components/shared/Badge";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {
   CLASSE_COLONNE_DATE,
@@ -22,12 +22,12 @@ export type ChantierAdminRow = inferRouterOutputs<
 
 export const STATUT_BADGE: Record<
   $Enums.type_statut,
-  { label: string; type: VarianteBadge }
+  { label: string; type: BadgeVariant }
 > = {
-  BROUILLON: { label: "Brouillon", type: "vert-tilleul" },
-  PUBLIE: { label: "Publié", type: "succes" },
-  ARCHIVE: { label: "Archivé", type: "defaut" },
-  SUPPRIME: { label: "Supprimé", type: "erreur" },
+  BROUILLON: { label: "Brouillon", type: "green-tilleul" },
+  PUBLIE: { label: "Publié", type: "success" },
+  ARCHIVE: { label: "Archivé", type: "default" },
+  SUPPRIME: { label: "Supprimé", type: "error" },
 };
 
 const OPTIONS_STATUT = Object.values($Enums.type_statut).map((statut) => ({
@@ -78,7 +78,7 @@ const useTableColumns = (perimetres: Perimetre[] | undefined) =>
           cell: (info) => {
             const badge = STATUT_BADGE[info.getValue()];
             return (
-              <Badge taille="sm" variante={badge.type}>
+              <Badge size="sm" variant={badge.type}>
                 {badge.label}
               </Badge>
             );

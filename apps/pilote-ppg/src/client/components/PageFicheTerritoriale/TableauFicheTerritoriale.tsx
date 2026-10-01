@@ -10,12 +10,12 @@ const classBadge = (
   tauxAvancementNational: number | null,
 ) => {
   return tauxAvancementNational === null
-    ? "defaut"
+    ? "default"
     : tauxAvancement >= tauxAvancementNational
-      ? "succes"
+      ? "success"
       : tauxAvancement >= tauxAvancementNational - 10
-        ? "attention"
-        : "erreur";
+        ? "warning"
+        : "error";
 };
 
 export const TableauFicheTerritoriale: FunctionComponent<{
@@ -142,8 +142,8 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                     <div className="fr-col-2 flex flex-column justify-center">
                       {indicateur.tauxAvancement !== null ? (
                         <Badge
-                          taille="sm"
-                          variante={classBadge(
+                          size="sm"
+                          variant={classBadge(
                             indicateur.tauxAvancement,
                             indicateur.tauxAvancementNational,
                           )}

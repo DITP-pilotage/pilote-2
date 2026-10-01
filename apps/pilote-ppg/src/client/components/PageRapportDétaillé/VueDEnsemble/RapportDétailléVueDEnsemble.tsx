@@ -127,8 +127,8 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               <Badge
                 aria-hidden="true"
                 className="px-1"
-                icone={WarningIcon}
-                variante="attention"
+                icon={WarningIcon}
+                variant="warning"
               />
               <Titre
                 baliseHtml="h2"

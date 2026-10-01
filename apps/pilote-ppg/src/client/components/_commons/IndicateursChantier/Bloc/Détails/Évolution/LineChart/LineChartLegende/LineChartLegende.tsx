@@ -89,7 +89,7 @@ export const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
               value={periodeSelectionnee}
             >
               {periodesSelectionnablesZoom.map((periode) => (
-                <TagToggleGroup.Item key={periode} taille="sm" value={periode}>
+                <TagToggleGroup.Item key={periode} size="sm" value={periode}>
                   {periode}
                 </TagToggleGroup.Item>
               ))}

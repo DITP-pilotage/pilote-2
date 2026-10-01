@@ -32,7 +32,7 @@ export const AffichagePublication = ({
   }, [commentaire?.contenu]);
 
   if (!commentaire) {
-    return <Badge taille="sm">Non renseigné</Badge>;
+    return <Badge size="sm">Non renseigné</Badge>;
   }
 
   return (
