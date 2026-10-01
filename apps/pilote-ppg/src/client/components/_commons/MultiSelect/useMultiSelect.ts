@@ -1,11 +1,4 @@
-import {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useId,
-  useState,
-} from "react";
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import { useCallback, useEffect, useId, useState } from "react";
 import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
 import { deuxTableauxSontIdentiques } from "@/client/utils/arrays";
 import { MultiSelectProps } from "./MultiSelect.interface";
@@ -14,11 +7,10 @@ export function useMultiSelect(
   optionsGroupées: MultiSelectProps["optionsGroupées"],
   suffixeLibellé: string,
   changementValeursSélectionnéesCallback: MultiSelectProps["changementValeursSélectionnéesCallback"],
-  ref: MutableRefObject<HTMLDivElement | null>,
+  isOpen: boolean,
   valeursSélectionnéesParDéfaut?: string[],
 ) {
   const uniqueId = useId();
-  const { buttonProps, isOpen, setIsOpen } = useDropdownMenu(3);
   const [valeursSélectionnées, setValeursSélectionnées] = useState<Set<string>>(
     new Set(valeursSélectionnéesParDéfaut),
   );
@@ -105,13 +97,6 @@ export function useMultiSelect(
     valeursSélectionnées,
   ]);
 
-  const fermerLeMenu = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
-    },
-    [setIsOpen],
-  );
-
   useEffect(() => {
     if (
       !valeursSélectionnéesParDéfaut ||
@@ -142,13 +127,6 @@ export function useMultiSelect(
   }, [isOpen, optionsGroupées]);
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.scrollTop = 0;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
-
-  useEffect(() => {
     if (recherche !== "") {
       filtrerLesOptions();
     } else {
@@ -157,18 +135,11 @@ export function useMultiSelect(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recherche]);
 
-  useEffect(() => {
-    window.addEventListener("keydown", fermerLeMenu);
-    return () => window.removeEventListener("keydown", fermerLeMenu);
-  }, [fermerLeMenu]);
-
   return {
     mettreÀJourLesValeursSélectionnées,
     recherche,
     setRecherche,
     optionsGroupéesFiltrées,
-    estOuvert: isOpen,
-    multiSelectBoutonProps: buttonProps,
     valeursSélectionnées,
     uniqueId,
     libellé: determinerLibellé(),
