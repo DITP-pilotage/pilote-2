@@ -63,6 +63,13 @@ import { PrismaActiviteComptesQuery } from "./infrastructure/queries/PrismaActiv
 import { PrismaUtilisateursQuery } from "./infrastructure/queries/PrismaUtilisateursQuery";
 import { PrismaStatutCompteQuery } from "./infrastructure/queries/PrismaStatutCompteQuery";
 import { MettreAJourLaDerniereConnexionUseCase } from "./usecases/MettreAJourLaDerniereConnexionUseCase";
+import { SuiviPasswordAdminRepository } from "./domain/ports/SuiviPasswordAdminRepository";
+import { PrismaSuiviPasswordAdminRepository } from "./infrastructure/adapters/PrismaSuiviPasswordAdminRepository";
+import { ActionPasswordRepository } from "./domain/ports/ActionPasswordRepository";
+import { PrismaActionPasswordRepository } from "./infrastructure/adapters/PrismaActionPasswordRepository";
+import { SynchroniserLesSuivisPasswordAdminUseCase } from "./usecases/SynchroniserLesSuivisPasswordAdminUseCase";
+import { CreerLesActionsPasswordUseCase } from "./usecases/CreerLesActionsPasswordUseCase";
+import { ExecuterLesActionsPasswordUseCase } from "./usecases/ExecuterLesActionsPasswordUseCase";
 
 type GestionUtilisateurExports = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
@@ -111,6 +118,11 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
   statutCompteQuery: PrismaStatutCompteQuery;
   mettreAJourLaDerniereConnexionUseCase: MettreAJourLaDerniereConnexionUseCase;
+  suiviPasswordAdminRepository: SuiviPasswordAdminRepository;
+  actionPasswordRepository: ActionPasswordRepository;
+  synchroniserLesSuivisPasswordAdminUseCase: SynchroniserLesSuivisPasswordAdminUseCase;
+  creerLesActionsPasswordUseCase: CreerLesActionsPasswordUseCase;
+  executerLesActionsPasswordUseCase: ExecuterLesActionsPasswordUseCase;
 };
 
 export const gestionUtilisateurModule = defineModule<
@@ -220,6 +232,19 @@ export const gestionUtilisateurModule = defineModule<
       statutCompteQuery: asModuleClass(PrismaStatutCompteQuery),
       mettreAJourLaDerniereConnexionUseCase: asModuleClass(
         MettreAJourLaDerniereConnexionUseCase,
+      ),
+      suiviPasswordAdminRepository: asModuleClass(
+        PrismaSuiviPasswordAdminRepository,
+      ),
+      actionPasswordRepository: asModuleClass(PrismaActionPasswordRepository),
+      synchroniserLesSuivisPasswordAdminUseCase: asModuleClass(
+        SynchroniserLesSuivisPasswordAdminUseCase,
+      ),
+      creerLesActionsPasswordUseCase: asModuleClass(
+        CreerLesActionsPasswordUseCase,
+      ),
+      executerLesActionsPasswordUseCase: asModuleClass(
+        ExecuterLesActionsPasswordUseCase,
       ),
     } satisfies VerifyCradle<GestionUtilisateurCradle>);
   },
