@@ -7,6 +7,7 @@ import {
   checkExactAnswer,
   checkHasTable,
   checkNoLink,
+  checkNoVerbatim,
   checkSectionsDashboard,
   checkTableTerritories,
 } from "./mechanicalChecks";
@@ -26,14 +27,11 @@ const nomsDuTableau = (evidence: Evidence) =>
   );
 
 /**
- * La règle « Commentaires » du prompt, en trois critères. La mention
- * d'absence est mécanique : la calibration du 30/09 a montré que le juge ne
- * la voyait pas. La fidélité et la recopie demandent de lire.
- *
- * La recopie est revenue au juge le 01/10 : la fenêtre mécanique de neuf mots
- * signalait aussi un commentaire d'une phrase repris en entier, qu'on ne
- * peut condenser sans le reformuler. Le gabarit va changer ; la longueur des
- * résumés n'est plus vérifiée.
+ * La règle « Commentaires » du prompt, en trois critères. La fidélité
+ * demande de lire : elle est jugée. La recopie et la mention d'absence sont
+ * mécaniques : les calibrations du 30/09 et du 01/10 ont montré que le juge
+ * ne les voyait pas. Le gabarit va changer ; la longueur des résumés n'est
+ * plus vérifiée.
  */
 const RESUMES_FIDELES = judged({
   id: "Résumés fidèles",
@@ -42,11 +40,69 @@ const RESUMES_FIDELES = judged({
     "Sous chaque chantier listé dont la fiche porte un commentaire de synthèse, le résumé ne contient que des idées présentes dans ce commentaire. Une cause, un chiffre, une action ou une conséquence qui n'y figure pas est non conforme. La longueur du résumé n'est pas jugée ici.",
 });
 
-const PAS_DE_RECOPIE = judged({
+type CommentaireRecu = { contenu: string } | null | undefined;
+
+type ResultatChantiers = {
+  chantiers?: {
+    synthese?: { commentaire: string | null } | null;
+    commentaires?: {
+      donnees: CommentaireRecu;
+      autresResultats: CommentaireRecu;
+    };
+  }[];
+};
+
+/**
+ * Tous les commentaires que l'agent a reçus, quel que soit l'outil : ceux de
+ * `get_chantier_commentaires`, mais aussi le commentaire de synthèse et les
+ * commentaires territoriaux que porte `get_chantiers`. Revue du 30/09 : Albert
+ * lit les commentaires par `get_chantiers`, et une recopie depuis cette
+ * source passait inaperçue.
+ */
+function contenusDesCommentairesRecus(evidence: Evidence): string[] {
+  return evidence.toolResults.flatMap((result) => {
+    const resultats =
+      (result.output as { resultats?: unknown[] }).resultats ?? [];
+
+    if (result.toolName === "get_chantier_commentaires") {
+      return (resultats as { commentaires: { contenu: string }[] }[]).flatMap(
+        (resultat) =>
+          resultat.commentaires.map((commentaire) => commentaire.contenu),
+      );
+    }
+
+    if (result.toolName === "get_chantiers") {
+      return (resultats as ResultatChantiers[]).flatMap((resultat) =>
+        (resultat.chantiers ?? []).flatMap((chantier) =>
+          [
+            chantier.synthese?.commentaire,
+            chantier.commentaires?.donnees?.contenu,
+            chantier.commentaires?.autresResultats?.contenu,
+          ].filter((contenu): contenu is string => Boolean(contenu)),
+        ),
+      );
+    }
+
+    return [];
+  });
+}
+
+/** Les commentaires de synthèse de la fiche, et tous ceux que l'agent a reçus. */
+const commentairesSources = (evidence: Evidence) => [
+  ...synthesesDesChantiers(evidence.truth).flatMap((synthese) =>
+    synthese.commentaire ? [synthese.commentaire] : [],
+  ),
+  ...contenusDesCommentairesRecus(evidence),
+];
+
+const PAS_DE_RECOPIE = mechanical({
   id: "Pas de recopie",
   rule: "Commentaires : condense et reformule, ne reproduis jamais un commentaire mot pour mot in extenso",
-  instruction:
-    "Compare chaque résumé aux commentaires reçus (commentaires de synthèse de la fiche, commentaires des DONNÉES REÇUES). Un résumé qui reprend une phrase entière d'un commentaire, à l'identique ou à un mot près, est non conforme : cite la phrase reprise dans la preuve. Reprendre une expression courte (« le délai médian de passage ») est conforme.",
+  check: (evidence) =>
+    checkNoVerbatim({
+      text: evidence.matter,
+      sources: commentairesSources(evidence),
+    }),
 });
 
 /**
@@ -254,7 +310,7 @@ export const GRIDS = {
         id: "Fidèle à la conversation",
         rule: "Workflow c : le rapport reprend la synthèse de la conversation en cours",
         instruction:
-          "Compare le rapport exporté à la CONVERSATION PRÉCÉDENTE. Chaque chiffre, chantier ou constat du rapport y a été donné, ou figure dans les DONNÉES REÇUES ; et les éléments principaux de la dernière réponse de l'assistant (taux, chantiers cités, constats) se retrouvent dans le rapport. Un élément qui contredit la conversation, ou un élément principal omis, est non conforme. Sans rapport exporté, non conforme.",
+          "Compare le rapport exporté à la CONVERSATION PRÉCÉDENTE. Chaque chiffre, chantier ou constat du rapport y a été donné, ou figure dans les DONNÉES REÇUES ; et les éléments principaux de la synthèse rendue par l'assistant dans la CONVERSATION PRÉCÉDENTE (taux, CHAQUE chantier cité, constats) se retrouvent dans le rapport. La phrase du chat qui annonce le rapport n'est pas cette synthèse. Un élément qui contredit la conversation, ou un chantier de la synthèse absent du rapport, est non conforme. Sans rapport exporté, non conforme.",
         applicable: (evidence) => evidence.conversation.length > 0,
       }),
     ],

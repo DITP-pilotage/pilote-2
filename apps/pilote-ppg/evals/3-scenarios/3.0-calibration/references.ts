@@ -273,15 +273,6 @@ const SYNTHESE: CalibrationCase[] = [
   },
   {
     family: "syntheseTerritoire",
-    label: "Commentaire de synthèse recopié",
-    broken: "Pas de recopie",
-    evidence: synthese({
-      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
-    }),
-  },
-  {
-    family: "syntheseTerritoire",
     label: "Écart omis",
     broken: "Écart et météo",
     // L'écart disparaît aussi de la synthèse de tendance : sinon le juge le
@@ -483,7 +474,7 @@ const COMMENTAIRES_QUESTION =
   "Synthétise les commentaires des chantiers suivants CH-005, CH-012, notamment les principales actions identifiées";
 
 const COMMENTAIRES_REFERENCE = `**CH-005 — Réduire les délais de passage aux urgences**
-Un numéro de régulation départemental unique fonctionne depuis mars. Action engagée : le recrutement de deux urgentistes par contrat de territoire, dont la signature est attendue en novembre.
+Depuis mars, les appels passent par un numéro unique dans le département. Deux urgentistes doivent être recrutés par contrat de territoire, avec une signature visée en novembre.
 
 **CH-012 — Développer l'apprentissage**
 Aucun commentaire n'est publié pour ce chantier en Bretagne.
@@ -520,25 +511,13 @@ const COMMENTAIRES: CalibrationCase[] = [
   },
   {
     family: "commentaires",
-    label: "Commentaire reçu recopié",
-    broken: "Pas de recopie",
-    evidence: commentaires(
-      muter({
-        reference: COMMENTAIRES_REFERENCE,
-        from: "Un numéro de régulation départemental unique fonctionne depuis mars. Action engagée : le recrutement de deux urgentistes par contrat de territoire, dont la signature est attendue en novembre.",
-        to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
-      }),
-    ),
-  },
-  {
-    family: "commentaires",
     label: "Même constat répété",
     broken: "Doublons compactés",
     evidence: commentaires(
       muter({
         reference: COMMENTAIRES_REFERENCE,
-        from: "dont la signature est attendue en novembre.",
-        to: "dont la signature est attendue en novembre. Par ailleurs, la régulation des appels se fait désormais par un numéro départemental unique.",
+        from: "avec une signature visée en novembre.",
+        to: "avec une signature visée en novembre. Par ailleurs, la régulation des appels se fait désormais par un numéro départemental unique.",
       }),
     ),
   },
@@ -1154,18 +1133,6 @@ const SOUS_TERRITOIRES: CalibrationCase[] = [
       }),
     ),
   },
-  {
-    family: "syntheseSousTerritoires",
-    label: "Commentaire de synthèse recopié",
-    broken: "Pas de recopie",
-    evidence: sousTerritoires(
-      muter({
-        reference: SOUS_TERRITOIRES_REFERENCE,
-        from: "> Des postes d'urgentistes restent vacants et le délai de passage dépasse la cible.",
-        to: "> Le délai de passage aux urgences reste au-dessus de la cible faute de médecins régulateurs.",
-      }),
-    ),
-  },
 ];
 
 // --- Comparer les taux entre deux jalons --------------------------------
@@ -1282,6 +1249,85 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
  * juge : un test unitaire vérifie que chacun échoue son critère, et lui seul.
  */
 export const MECHANICAL_MUTANTS: CalibrationCase[] = [
+  {
+    // Revue du 30/09 : Albert peut lire les commentaires par `get_chantiers`
+    // plutôt que par `get_chantier_commentaires`. La recopie doit se voir
+    // quel que soit l'outil qui a fourni le commentaire.
+    family: "commentaires",
+    label: "Commentaire lu par get_chantiers et recopié",
+    broken: "Pas de recopie",
+    evidence: evidence({
+      question: COMMENTAIRES_QUESTION,
+      matter: `**CH-005 — Réduire les délais de passage aux urgences**
+Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.`,
+      profile: "coordinateur",
+      toolResults: [
+        {
+          toolName: "get_chantiers",
+          output: {
+            resultats: [
+              {
+                territoire_code: "REG-53",
+                territoire_nom: "Bretagne",
+                jalon: 2025,
+                chantiers: [
+                  {
+                    ...chantier({
+                      ...CH_005,
+                      ecart: -15,
+                      meteo: "NUAGE",
+                      commentaire: null,
+                    }),
+                    commentaires: {
+                      donnees: null,
+                      autresResultats: {
+                        contenu:
+                          "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
+                        date: "2026-09-15",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    }),
+  },
+  {
+    family: "syntheseTerritoire",
+    label: "Commentaire de synthèse recopié",
+    broken: "Pas de recopie",
+    evidence: synthese({
+      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
+      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
+    }),
+  },
+  {
+    family: "commentaires",
+    label: "Commentaire reçu recopié",
+    broken: "Pas de recopie",
+    evidence: commentaires(
+      muter({
+        reference: COMMENTAIRES_REFERENCE,
+        from: "Depuis mars, les appels passent par un numéro unique dans le département. Deux urgentistes doivent être recrutés par contrat de territoire, avec une signature visée en novembre.",
+        to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
+      }),
+    ),
+  },
+  {
+    family: "syntheseSousTerritoires",
+    label: "Commentaire de synthèse recopié",
+    broken: "Pas de recopie",
+    evidence: sousTerritoires(
+      muter({
+        reference: SOUS_TERRITOIRES_REFERENCE,
+        from: "> Des postes d'urgentistes restent vacants et le délai de passage dépasse la cible.",
+        to: "> Le délai de passage aux urgences reste au-dessus de la cible faute de médecins régulateurs.",
+      }),
+    ),
+  },
   {
     family: "syntheseTerritoire",
     label: "Commentaire manquant non signalé",
