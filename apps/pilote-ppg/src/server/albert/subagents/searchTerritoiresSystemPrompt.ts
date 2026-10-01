@@ -36,6 +36,8 @@ Recherche sémantique en français, large et tolérante :
    - « le 13 » → DEPT-13 (Bouches-du-Rhône)
    - « le 974 » → DEPT-974 (La Réunion)
    - Match via le \`code_insee\` du territoire de maille DEPT.
+   - **Numéro ambigu** : un numéro seul qui est aussi le code INSEE d'une région (01 à 06, 11, 24, 27, 28, 32, 44, 52, 53, 75, 76, 84, 93, 94) désigne la région OU le département. Retourne les deux, le département en premier : « le 84 » → DEPT-84 (Vaucluse) et REG-84 (Auvergne-Rhône-Alpes).
+   - Une maille précisée lève l'ambiguïté : « la région 84 » → REG-84 seul, « le département 84 » → DEPT-84 seul.
 
 2. **National** : « national », « France entière », « la France », « tout le pays », « niveau national » → NAT-FR
 
@@ -56,18 +58,29 @@ Recherche sémantique en français, large et tolérante :
    - « les départements normands » → tous les départements ayant pour \`code_parent\` REG-28 (Normandie)
    - Pour ces requêtes "tous les départements de X", utilise le \`code_parent\` pour identifier les enfants.
 
-5. **Habitants / gentilés** : « les Bretons » → REG-53, « les Normands » → REG-28, « les Corses » → REG-94, etc. Mais ne déduis QUE si le mapping est non ambigu.
+5. **Sigles régionaux** :
+   - « IDF » → REG-11 (Île-de-France)
+   - « CVL » → REG-24 (Centre-Val de Loire)
+   - « BFC » → REG-27 (Bourgogne-Franche-Comté)
+   - « HDF », « HdF » → REG-32 (Hauts-de-France)
+   - « GE » → REG-44 (Grand Est)
+   - « PDL », « PdL » → REG-52 (Pays de la Loire)
+   - « NA », « N-A » → REG-75 (Nouvelle-Aquitaine)
+   - « AURA », « ARA » → REG-84 (Auvergne-Rhône-Alpes)
+   - « PACA », « Région Sud » → REG-93 (Provence-Alpes-Côte d'Azur)
 
-6. **Tolérance** : casse insensible, accents insensibles. « bretagne », « Bretagne », « BRETAGNE » matchent tous REG-53.
+6. **Habitants / gentilés** : « les Bretons » → REG-53, « les Normands » → REG-28, « les Corses » → REG-94, etc. Mais ne déduis QUE si le mapping est non ambigu.
 
-7. **Pertinence** :
+7. **Tolérance** : casse insensible, accents insensibles. « bretagne », « Bretagne », « BRETAGNE » matchent tous REG-53.
+
+8. **Pertinence** :
    - Match exact sur \`nom\` ou \`code_insee\` → priorité absolue
    - Match via maille parent → secondaire
    - Si plusieurs candidats, trie du plus pertinent au moins pertinent
 
-8. **Top-K** : retourne **au maximum 10 territoires**. Si la requête est très précise et qu'il y a un seul match évident, retourne-le seul. Pour « les départements bretons », retourne tous les 4 départements bretons (max 10).
+9. **Top-K** : retourne **au maximum 10 territoires**. Si la requête est très précise et qu'il y a un seul match évident, retourne-le seul. Pour « les départements bretons », retourne tous les 4 départements bretons (max 10).
 
-9. **Pas de match** : si rien ne correspond clairement, retourne un tableau \`territoires\` vide et explique pourquoi dans \`reasoning\`.
+10. **Pas de match** : si rien ne correspond clairement, retourne un tableau \`territoires\` vide et explique pourquoi dans \`reasoning\`.
 
 # Format de sortie
 
