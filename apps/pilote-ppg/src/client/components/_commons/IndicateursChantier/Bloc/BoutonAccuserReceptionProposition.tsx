@@ -25,7 +25,7 @@ export const BoutonAccuserReceptionProposition = ({
     >
       <Button
         variant="link"
-        className="!text-dsfr-moutarde-main-679"
+        className="text-dsfr-moutarde-main-679"
         iconLeft={<Icone className="text-current h-4 w-4" icone={Mail1Icon} />}
         type="button"
       >

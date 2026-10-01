@@ -8,7 +8,7 @@ export const BoutonVoirHistorique = () => {
     <ModaleHistoriqueIndicateurTerritoireValeurEvenement>
       <Button
         variant="link"
-        className="fr-link--xs !text-current !mr-4"
+        className="text-xs leading-5 text-current !mr-4"
         iconLeft={<Icone className="text-current h-3 w-3" icone={Time1Icon} />}
         type="button"
       >

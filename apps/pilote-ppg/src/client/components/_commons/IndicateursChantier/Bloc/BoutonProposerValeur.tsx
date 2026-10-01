@@ -8,7 +8,7 @@ export const BoutonProposerValeur = () => {
     <ModalePropositionValeurAvancement>
       <Button
         variant="link"
-        className="fr-link--xs !text-dsfr-mention-grey"
+        className="text-xs leading-5 text-dsfr-mention-grey"
         iconLeft={<Icone className="text-current h-3 w-3" icone={Icone1Icon} />}
         type="button"
       >
