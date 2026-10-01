@@ -4,21 +4,21 @@ import {
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
 import {
-  FormulairePublicationConfiguration,
+  PublicationFormConfig,
   Publication,
   PublicationBrouillon,
-  ValeursPublication,
+  PublicationValues,
 } from "./Publication.interface";
 
-export const formulaireCommentaire = ({
+export const commentaireForm = ({
   publication,
   brouillon,
 }: {
   publication: Publication | null;
   brouillon: PublicationBrouillon | null;
-}): FormulairePublicationConfiguration<ValeursPublication> => ({
+}): PublicationFormConfig<PublicationValues> => ({
   resolver: zodResolver(validationCommentaireFormulaire),
-  limiteCaracteres: LIMITE_CARACTÈRES_COMMENTAIRE,
-  valeursModification: { contenu: publication?.contenu ?? "" },
-  valeursNouvellePublication: { contenu: brouillon?.contenu ?? "" },
+  maxLength: LIMITE_CARACTÈRES_COMMENTAIRE,
+  editValues: { contenu: publication?.contenu ?? "" },
+  newValues: { contenu: brouillon?.contenu ?? "" },
 });

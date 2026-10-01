@@ -4,21 +4,21 @@ import CompteurCaractères from "@/components/_commons/CompteurCaractères/Compt
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { extractVisibleText } from "@/utils/extractVisibleText";
 import { clsxm } from "@/utils/clsxm";
-import { ValeursPublication } from "./Publication.interface";
+import { PublicationValues } from "./Publication.interface";
 
-const ChampContenu = ({
-  limiteCaracteres,
+const ContentField = ({
+  maxLength,
   className,
-  classNameEditeur,
+  editorClassName,
 }: {
-  limiteCaracteres: number;
+  maxLength: number;
   className?: string;
-  classNameEditeur?: string;
+  editorClassName?: string;
 }) => {
-  const { field, fieldState } = useController<ValeursPublication, "contenu">({
+  const { field, fieldState } = useController<PublicationValues, "contenu">({
     name: "contenu",
   });
-  const contenu = useWatch<ValeursPublication>({ name: "contenu" });
+  const contenu = useWatch<PublicationValues>({ name: "contenu" });
 
   return (
     <div
@@ -28,7 +28,7 @@ const ChampContenu = ({
         className,
       )}
     >
-      <div className={classNameEditeur}>
+      <div className={editorClassName}>
         <EditeurSimple
           contenu={field.value}
           onBlur={field.onBlur}
@@ -45,34 +45,31 @@ const ChampContenu = ({
         </div>
         <CompteurCaractères
           compte={extractVisibleText(contenu ?? "").length}
-          limiteDeCaractères={limiteCaracteres}
+          limiteDeCaractères={maxLength}
         />
       </div>
     </div>
   );
 };
 
-export const ChampsFormulairePublication = ({
-  limiteCaracteres,
-  champsAnnexes,
-  classNameEditeur,
+export const PublicationFormFields = ({
+  maxLength,
+  extraFields,
+  editorClassName,
 }: {
-  limiteCaracteres: number;
-  champsAnnexes?: ReactNode;
-  classNameEditeur?: string;
+  maxLength: number;
+  extraFields?: ReactNode;
+  editorClassName?: string;
 }) =>
-  champsAnnexes ? (
+  extraFields ? (
     <div className="flex gap-4 items-stretch">
-      <div className="flex-none w-60">{champsAnnexes}</div>
-      <ChampContenu
+      <div className="flex-none w-60">{extraFields}</div>
+      <ContentField
         className="flex-1"
-        classNameEditeur={classNameEditeur}
-        limiteCaracteres={limiteCaracteres}
+        editorClassName={editorClassName}
+        maxLength={maxLength}
       />
     </div>
   ) : (
-    <ChampContenu
-      classNameEditeur={classNameEditeur}
-      limiteCaracteres={limiteCaracteres}
-    />
+    <ContentField editorClassName={editorClassName} maxLength={maxLength} />
   );

@@ -11,11 +11,11 @@ import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
   validationSynthèseDesRésultatsFormulaire,
 } from "@/validation/synthèseDesRésultats";
-import { ChampMeteo } from "./ChampMeteo";
+import { MeteoField } from "./MeteoField";
 import { HistoriqueSyntheseDesResultats } from "./HistoriqueSyntheseDesResultats";
 import { MeteoSyntheseDesResultats } from "./MeteoSyntheseDesResultats";
 import { useSyntheseDesResultatsActions } from "./useSyntheseDesResultatsActions";
-import { meteoSaisissableOuRien } from "./ValeursSyntheseDesResultats";
+import { toMeteoSaisissable } from "./SyntheseDesResultatsValues";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
@@ -52,29 +52,29 @@ export const SyntheseDesResultats: FunctionComponent<
     >
       <PublicationSection
         actions={actions}
-        afficherLibelle={false}
-        annexe={
+        showLabel={false}
+        aside={
           <MeteoSyntheseDesResultats meteo={syntheseDesResultats?.meteo} />
         }
         brouillon={syntheseDesResultatsBrouillon}
         complementConsigneGenerique="à la météo et à la synthèse des résultats"
         consigne={CONSIGNE_SYNTHÈSE_DES_RÉSULTATS}
-        formulaire={{
+        formConfig={{
           resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
-          limiteCaracteres: LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
-          valeursModification: {
+          maxLength: LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
+          editValues: {
             contenu: syntheseDesResultats?.contenu ?? "",
-            meteo: meteoSaisissableOuRien(syntheseDesResultats?.meteo),
+            meteo: toMeteoSaisissable(syntheseDesResultats?.meteo),
           },
-          valeursNouvellePublication: {
+          newValues: {
             contenu: syntheseDesResultatsBrouillon?.contenu ?? "",
-            meteo: meteoSaisissableOuRien(syntheseDesResultatsBrouillon?.meteo),
+            meteo: toMeteoSaisissable(syntheseDesResultatsBrouillon?.meteo),
           },
-          champsAnnexes: <ChampMeteo />,
+          extraFields: <MeteoField />,
         }}
         historiqueNode={<HistoriqueSyntheseDesResultats />}
         libelle={LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}
-        messageAbsence="Aucune synthèse des résultats."
+        emptyMessage="Aucune synthèse des résultats."
         modeEcriture={modeEcriture}
         publication={syntheseDesResultats}
       />

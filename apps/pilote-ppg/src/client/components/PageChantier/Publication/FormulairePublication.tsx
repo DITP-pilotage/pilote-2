@@ -7,33 +7,33 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Infobulle } from "@/components/shared/Infobulle";
 import {
-  FormulairePublicationConfiguration,
+  PublicationFormConfig,
   Publication,
-  ValeursPublication,
+  PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
-import { ChampsFormulairePublication } from "@/components/PageChantier/Publication/ChampsFormulairePublication";
+import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
 
-interface FormulairePublicationProps<T extends ValeursPublication> {
+interface FormulairePublicationProps<T extends PublicationValues> {
   publication: Publication | null;
   libelle: string;
   consigne: string;
-  formulaire: FormulairePublicationConfiguration<T>;
+  formConfig: PublicationFormConfig<T>;
   annulationCallback?: () => void;
   onModifier: SubmitHandler<T>;
 }
 
-export const FormulairePublication = <T extends ValeursPublication>({
+export const FormulairePublication = <T extends PublicationValues>({
   publication,
   libelle,
   consigne,
-  formulaire,
+  formConfig,
   annulationCallback,
   onModifier,
 }: FormulairePublicationProps<T>) => {
   const form = useForm<T>({
     mode: "all",
-    resolver: formulaire.resolver,
-    defaultValues: formulaire.valeursModification,
+    resolver: formConfig.resolver,
+    defaultValues: formConfig.editValues,
   });
 
   return (
@@ -50,9 +50,9 @@ export const FormulairePublication = <T extends ValeursPublication>({
             {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(publication.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
           </p>
         ) : null}
-        <ChampsFormulairePublication
-          champsAnnexes={formulaire.champsAnnexes}
-          limiteCaracteres={formulaire.limiteCaracteres}
+        <PublicationFormFields
+          extraFields={formConfig.extraFields}
+          maxLength={formConfig.maxLength}
         />
         <div className="flex justify-end fr-mt-2w">
           <Bouton

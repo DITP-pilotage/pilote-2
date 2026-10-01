@@ -20,9 +20,7 @@ export const HistoriqueSyntheseDesResultats = () => {
 
   return (
     <HistoriquePublication
-      annexe={(synthese) => (
-        <MeteoSyntheseDesResultats meteo={synthese.meteo} />
-      )}
+      aside={(synthese) => <MeteoSyntheseDesResultats meteo={synthese.meteo} />}
       historique={historique}
       onOpenChange={setOpen}
       open={open}

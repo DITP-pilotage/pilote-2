@@ -1,9 +1,9 @@
 import { useController } from "react-hook-form";
-import { ValeursSyntheseDesResultats } from "./ValeursSyntheseDesResultats";
+import { SyntheseDesResultatsValues } from "./SyntheseDesResultatsValues";
 import { SelecteurMeteo } from "./SelecteurMeteo";
 
-export const ChampMeteo = () => {
-  const { field } = useController<ValeursSyntheseDesResultats, "meteo">({
+export const MeteoField = () => {
+  const { field } = useController<SyntheseDesResultatsValues, "meteo">({
     name: "meteo",
   });
 

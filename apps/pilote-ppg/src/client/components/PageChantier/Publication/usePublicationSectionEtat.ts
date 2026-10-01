@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { CommentaireAction } from "./AlertePublication";
-import {
-  PublicationActions,
-  ValeursPublication,
-} from "./Publication.interface";
+import { PublicationActions, PublicationValues } from "./Publication.interface";
 
-export const usePublicationSectionEtat = <T extends ValeursPublication>(
+export const usePublicationSectionEtat = <T extends PublicationValues>(
   actions: PublicationActions<T>,
 ) => {
   const [modeÉdition, setModeÉdition] = useState(false);

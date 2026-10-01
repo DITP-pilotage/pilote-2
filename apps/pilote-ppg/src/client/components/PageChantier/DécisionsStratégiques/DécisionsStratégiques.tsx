@@ -1,6 +1,6 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
-import { formulaireCommentaire } from "@/components/PageChantier/Publication/formulaireCommentaire";
+import { commentaireForm } from "@/components/PageChantier/Publication/commentaireForm";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
   consignesEcritureDecisionStrategique,
@@ -43,7 +43,7 @@ export const DécisionsStratégiques = ({
           complementsConsigneGeneriqueDecisionStrategique[TYPE]
         }
         consigne={consignesEcritureDecisionStrategique[TYPE]}
-        formulaire={formulaireCommentaire({
+        formConfig={commentaireForm({
           publication: décisionStratégique,
           brouillon: brouillonDecisionStrategique,
         })}

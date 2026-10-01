@@ -5,7 +5,7 @@ import {
   TypeObjectif,
 } from "@/client/constants/libellésObjectif";
 import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
-import { formulaireCommentaire } from "@/components/PageChantier/Publication/formulaireCommentaire";
+import { commentaireForm } from "@/components/PageChantier/Publication/commentaireForm";
 import { Accordion } from "@/components/shared/Accordion";
 import {
   ObjectifV2,
@@ -44,7 +44,7 @@ export const ObjectifSection = ({
             complementsConsigneGeneriqueObjectif[type]
           }
           consigne={consignesDÉcritureObjectif[type]}
-          formulaire={formulaireCommentaire({
+          formConfig={commentaireForm({
             publication: objectif,
             brouillon: brouillon,
           })}

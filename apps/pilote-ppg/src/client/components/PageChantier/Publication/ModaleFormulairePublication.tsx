@@ -13,13 +13,13 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
-  FormulairePublicationConfiguration,
+  PublicationFormConfig,
   Publication,
-  ValeursPublication,
+  PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
-import { ChampsFormulairePublication } from "@/components/PageChantier/Publication/ChampsFormulairePublication";
+import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
 
-interface ModaleFormulairePublicationProps<T extends ValeursPublication> {
+interface ModaleFormulairePublicationProps<T extends PublicationValues> {
   title: string;
   consigne: string;
   complementConsigneGenerique: string;
@@ -27,14 +27,14 @@ interface ModaleFormulairePublicationProps<T extends ValeursPublication> {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
   commentaire: Publication | null;
-  annexe?: ReactNode;
-  messageAbsence?: string;
-  formulaire: FormulairePublicationConfiguration<T>;
+  aside?: ReactNode;
+  emptyMessage?: string;
+  formConfig: PublicationFormConfig<T>;
   onPublier: SubmitHandler<T>;
   onEnregistrerBrouillon: SubmitHandler<T>;
 }
 
-export const ModaleFormulairePublication = <T extends ValeursPublication>({
+export const ModaleFormulairePublication = <T extends PublicationValues>({
   title,
   consigne,
   complementConsigneGenerique,
@@ -42,9 +42,9 @@ export const ModaleFormulairePublication = <T extends ValeursPublication>({
   open,
   onOpenChange,
   commentaire,
-  annexe,
-  messageAbsence,
-  formulaire,
+  aside,
+  emptyMessage,
+  formConfig,
   onPublier,
   onEnregistrerBrouillon,
 }: ModaleFormulairePublicationProps<T>) => {
@@ -53,8 +53,8 @@ export const ModaleFormulairePublication = <T extends ValeursPublication>({
 
   const form = useForm<T>({
     mode: "all",
-    resolver: formulaire.resolver,
-    defaultValues: formulaire.valeursNouvellePublication,
+    resolver: formConfig.resolver,
+    defaultValues: formConfig.newValues,
   });
 
   return (
@@ -75,9 +75,9 @@ export const ModaleFormulairePublication = <T extends ValeursPublication>({
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">
         <AffichagePublication
-          annexe={annexe}
+          aside={aside}
           commentaire={commentaire}
-          messageAbsence={messageAbsence}
+          emptyMessage={emptyMessage}
         />
       </div>
 
@@ -85,10 +85,10 @@ export const ModaleFormulairePublication = <T extends ValeursPublication>({
       <p className="text-sm mb-6">{consigne}</p>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onPublier)}>
-          <ChampsFormulairePublication
-            champsAnnexes={formulaire.champsAnnexes}
-            classNameEditeur="h-60"
-            limiteCaracteres={formulaire.limiteCaracteres}
+          <PublicationFormFields
+            extraFields={formConfig.extraFields}
+            editorClassName="h-60"
+            maxLength={formConfig.maxLength}
           />
           <div className="flex justify-end items-center gap-3 mt-6">
             <Bouton

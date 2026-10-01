@@ -11,7 +11,7 @@ type HistoriquePublicationProps<P extends Publication> = {
   sousTitre?: string;
   ariaLabel?: string;
   historique: P[] | undefined;
-  annexe?: (publication: P) => ReactNode;
+  aside?: (publication: P) => ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -21,7 +21,7 @@ export const HistoriquePublication = <P extends Publication>({
   sousTitre,
   ariaLabel,
   historique,
-  annexe,
+  aside,
   open,
   onOpenChange,
 }: HistoriquePublicationProps<P>) => (
@@ -45,7 +45,7 @@ export const HistoriquePublication = <P extends Publication>({
       historique.map((item, index) => (
         <Fragment key={item.dateModification}>
           {index !== 0 && <hr className="fr-mt-4w" />}
-          <AffichagePublication annexe={annexe?.(item)} commentaire={item} />
+          <AffichagePublication aside={aside?.(item)} commentaire={item} />
         </Fragment>
       ))
     ) : (
