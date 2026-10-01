@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
+import { SelectField } from "@/components/shared/SelectField";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
@@ -12,17 +12,17 @@ const SélecteurPpg = () => {
       control={control}
       name="chPpg"
       render={({ field }) => (
-        <Sélecteur
-          htmlName="chPpg"
-          libellé="PPG *"
-          texteFantôme="Sélectionnez un PPG"
+        <SelectField
+          name="chPpg"
+          label="PPG *"
+          placeholder="Sélectionnez un PPG"
           options={ppgs.map((p) => ({
-            libellé: `${p.id} — ${p.nom}`,
+            libelle: `${p.id} — ${p.nom}`,
             valeur: p.id,
           }))}
           onChange={field.onChange}
-          valeurSélectionnée={field.value}
-          erreur={formState.errors.chPpg}
+          value={field.value}
+          errorMessage={formState.errors.chPpg?.message?.toString()}
         />
       )}
     />

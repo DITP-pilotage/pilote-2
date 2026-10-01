@@ -1,4 +1,5 @@
 import { Controller, FormProvider } from "react-hook-form";
+import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -13,7 +14,6 @@ import {
 } from "@/components/PageAdminPpgs/usePpgForm";
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -179,18 +179,18 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
                   control={reactHookForm.control}
                   name="ppgAxe"
                   render={({ field }) => (
-                    <Sélecteur
-                      htmlName="ppgAxe"
-                      libellé="Axe"
+                    <SelectField
+                      name="ppgAxe"
+                      label="Axe"
                       onChange={(valeur) => field.onChange(valeur || null)}
                       options={[
-                        { libellé: "Aucun axe", valeur: "" },
+                        { libelle: "Aucun axe", valeur: "" },
                         ...axesActifs.map((axe) => ({
-                          libellé: `${axe.axeId} — ${axe.axeName}`,
+                          libelle: `${axe.axeId} — ${axe.axeName}`,
                           valeur: axe.axeId,
                         })),
                       ]}
-                      valeurSélectionnée={field.value ?? ""}
+                      value={field.value ?? ""}
                     />
                   )}
                 />

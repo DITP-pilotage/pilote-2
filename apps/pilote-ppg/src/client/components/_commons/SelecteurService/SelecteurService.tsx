@@ -1,15 +1,15 @@
 import {
-  SelecteurNew,
-  SelecteurNewOptionGroup,
-} from "@/components/_commons/SelecteurNew/SelecteurNew";
+  SelectField,
+  type SelectFieldOptionGroup,
+} from "@/components/shared/SelectField";
 import { referentielServices } from "@/utils/referentiel-services";
 import {
   buildCompositeValue,
   parseCompositeValue,
   buildCompositeSelectedValue,
-} from "@/components/_commons/SelecteurNew/composite-value";
+} from "@/components/_commons/SelecteurService/composite-value";
 
-const groupedOptions: SelecteurNewOptionGroup<string>[] =
+const groupedOptions: SelectFieldOptionGroup<string>[] =
   referentielServices.perimetresMinisteriels.map((perimetre) => ({
     libelle: perimetre.libelle,
     valeur: perimetre.slug,
@@ -35,19 +35,16 @@ export const SelecteurService = ({
     perimetreMinisteriel: string;
   }) => void;
 }) => (
-  <SelecteurNew
-    htmlName="service"
-    libelle="Service"
+  <SelectField
+    name="service"
+    label="Service"
     className="fr-input-group"
     triggerClassName="w-full"
-    placeholderRecherche="Rechercher un service ou un périmètre ministériel"
+    searchPlaceholder="Rechercher un service ou un périmètre ministériel"
     options={groupedOptions}
-    isRequired={isRequired}
-    valeurSelectionnee={buildCompositeSelectedValue(
-      perimetreMinisteriel,
-      service,
-    )}
-    erreurMessage={erreurMessage}
+    required={isRequired}
+    value={buildCompositeSelectedValue(perimetreMinisteriel, service)}
+    errorMessage={erreurMessage}
     placeholder="Sélectionner..."
     onChange={(compositeSlug, group) =>
       onChange({

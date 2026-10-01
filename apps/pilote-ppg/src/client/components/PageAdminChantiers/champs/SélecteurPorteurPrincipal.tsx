@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
+import { SelectField } from "@/components/shared/SelectField";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
@@ -13,17 +13,17 @@ const SélecteurPorteurPrincipal = () => {
       control={form.control}
       name="porteurIdPrincipal"
       render={({ field }) => (
-        <Sélecteur
-          htmlName="porteurIdPrincipal"
-          libellé="Porteur principal (ministère) *"
-          texteFantôme="Sélectionnez un porteur"
-          options={porteurs.map((p) => ({ libellé: p.label, valeur: p.id }))}
+        <SelectField
+          name="porteurIdPrincipal"
+          label="Porteur principal (ministère) *"
+          placeholder="Sélectionnez un porteur"
+          options={porteurs.map((p) => ({ libelle: p.label, valeur: p.id }))}
           onChange={(valeur) => {
             field.onChange(valeur);
             form.setValue("chPer", "");
           }}
-          valeurSélectionnée={field.value}
-          erreur={form.formState.errors.porteurIdPrincipal}
+          value={field.value}
+          errorMessage={form.formState.errors.porteurIdPrincipal?.message?.toString()}
         />
       )}
     />

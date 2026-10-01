@@ -106,7 +106,7 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
       );
   const optionsProfil = listeProfils
     ? listeProfils.map((profil) => ({
-        libellé: profil.nom,
+        libelle: profil.nom,
         valeur: profil.code,
       }))
     : [];

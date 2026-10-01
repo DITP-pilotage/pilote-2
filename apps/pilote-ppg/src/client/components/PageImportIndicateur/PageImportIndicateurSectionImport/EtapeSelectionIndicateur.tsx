@@ -1,8 +1,8 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { InformationIndicateurContrat } from "@/server/app/contrats/InformationIndicateurContrat";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
@@ -34,7 +34,7 @@ const presenterEnFonctionDuSchema = (
 };
 
 const EtapeSelectionIndicateur: FunctionComponent<{
-  options: { valeur: string; libellé: string }[];
+  options: { valeur: string; libelle: string }[];
   valeurModifiéeCallback: Dispatch<SetStateAction<string>>;
   valeurSélectionnée: string;
   informationsIndicateur: InformationIndicateurContrat[];
@@ -55,12 +55,12 @@ const EtapeSelectionIndicateur: FunctionComponent<{
             }
           </Titre>
           <input name="etapeCourante" type="hidden" value={2} />
-          <Sélecteur
-            htmlName="indicateurId"
-            libellé="Choix de l'indicateur"
+          <SelectField
+            name="indicateurId"
+            label="Choix de l'indicateur"
             onChange={valeurModifiéeCallback}
             options={options}
-            valeurSélectionnée={valeurSélectionnée}
+            value={valeurSélectionnée}
           />
           <p className="fr-mt-3w">
             <b>

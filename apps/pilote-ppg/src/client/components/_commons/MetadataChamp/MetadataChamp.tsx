@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { SelectField } from "@/components/shared/SelectField";
 import {
   Controller,
   ControllerRenderProps,
@@ -10,8 +11,6 @@ import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampOb
 import { Infobulle } from "@/components/shared/Infobulle";
 import Input from "@/components/_commons/Input/Input";
 import TextArea from "@/components/_commons/TextArea/TextArea";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
-import SélecteurAvecRecherche from "@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 
 type MetadataChampInfo = {
@@ -117,33 +116,23 @@ function MetadataChampInterne<TForm extends FieldValues>(
       );
     }
 
-    if (props.variante === "recherche") {
-      return (
-        <SélecteurAvecRecherche
-          erreurMessage={erreurMessage}
-          estVisibleEnMobile
-          estVueMobile={false}
-          htmlName={name}
-          options={props.listeValeur}
-          valeurModifiéeCallback={field.onChange}
-          valeurSélectionnée={String(field.value ?? "_")}
-        />
-      );
-    }
-
     return (
-      <Sélecteur
+      <SelectField
+        disabled={props.estDesactive}
         errorMessage={erreurMessage}
-        estDesactive={props.estDesactive}
-        htmlName={name}
+        name={name}
         onChange={(value) => {
           field.onChange(value);
           if (props.onChangeSideEffect) {
             props.onChangeSideEffect(value);
           }
         }}
-        options={props.listeValeur}
-        valeurSélectionnée={String(field.value ?? "_")}
+        options={props.listeValeur.map(({ valeur, libellé }) => ({
+          valeur,
+          libelle: libellé,
+        }))}
+        searchable={props.variante === "recherche"}
+        value={String(field.value ?? "_")}
       />
     );
   };

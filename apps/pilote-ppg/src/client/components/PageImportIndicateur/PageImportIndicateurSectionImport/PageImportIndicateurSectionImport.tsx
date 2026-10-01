@@ -36,7 +36,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
   );
   const [estFichierPublie, setEstFichierPublie] = useState<boolean>(false);
   const optionsSélecteur = indicateurs.map((elem) => ({
-    libellé: `${elem.id + " : " + elem.nom}`,
+    libelle: `${elem.id + " : " + elem.nom}`,
     valeur: elem.id,
   }));
 

@@ -4,7 +4,6 @@ import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/I
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
-import { SélecteurOption } from "@/components/_commons/Sélecteur/Sélecteur.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import {
   computeValeurAffichee,
@@ -38,7 +37,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       },
     });
 
-  let optionsIndicateurParent: SélecteurOption<string>[];
+  let optionsIndicateurParent: { valeur: string; libellé: string }[];
   if (
     !form.getValues("indicParentCh") ||
     form.getValues("indicParentCh") === "_"
