@@ -182,10 +182,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     Vous vous apprêtez à accuser réception de la proposition
                     suivante :
                   </span>
-                  <Callout.Root
-                    className="mt-4 px-6 py-4"
-                    color="mise-en-avant"
-                  >
+                  <Callout.Root className="mt-4 px-6 py-4" color="highlight">
                     <Callout.Text>
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
