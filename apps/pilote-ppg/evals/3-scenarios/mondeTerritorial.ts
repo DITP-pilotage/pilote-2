@@ -20,7 +20,8 @@ import { JALON_COURANT, TERRITOIRES } from "./territoires";
  * qui force la règle « Pas de commentaire disponible ».
  *
  * Les commentaires typés sont territoriaux : « actions à venir » et « actions
- * à valoriser » sont des types nationaux, invisibles sur une région.
+ * à valoriser » sont des types nationaux, invisibles sur une région. En
+ * Bretagne, CH-006 porte deux commentaires qui disent la même chose.
  */
 
 const aLHeure = ({
@@ -104,6 +105,13 @@ const BRETAGNE_2025: SeededChantier[] = [
         type: "autres_resultats_obtenus",
         contenu:
           "<p>La campagne de vaccination antigrippale a démarré avec trois semaines de retard faute de doses. Action identifiée : ouverture de centres éphémères dans les pharmacies rurales.</p>",
+      },
+      // Le même constat, ressaisi par un autre contributeur : la synthèse des
+      // commentaires doit le dire une fois (« Doublons compactés »).
+      {
+        type: "commentaires_sur_les_donnees",
+        contenu:
+          "<p>Faute de doses livrées, la vaccination antigrippale a commencé trois semaines plus tard que prévu. Des centres éphémères vont ouvrir dans les pharmacies rurales.</p>",
       },
     ],
   },

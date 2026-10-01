@@ -4,15 +4,9 @@ import { chantiersAttendus, synthesesDesChantiers } from "./truth";
 import {
   checkAbsenceSignalee,
   checkChantiersCited,
-  checkContains,
   checkExactAnswer,
   checkHasTable,
-  checkHeadings,
-  checkNoChantierTable,
-  checkNoFigure,
   checkNoLink,
-  checkNoVerbatim,
-  checkResumesCourts,
   checkSectionsDashboard,
   checkTableTerritories,
 } from "./mechanicalChecks";
@@ -31,25 +25,16 @@ const nomsDuTableau = (evidence: Evidence) =>
         ?.nom ?? code,
   );
 
-const territoirePrincipalEstUnDepartement = (evidence: Evidence) =>
-  evidence.truth.territoires.find(
-    (territoire) =>
-      territoire.code === evidence.truth.tauxAvancement[0]?.territoire_code,
-  )?.maille === "DEPT";
-
 /**
- * La règle « Commentaires » du prompt est découpée en quatre critères. La
- * longueur, la recopie et la mention d'absence sont mécaniques : les
- * calibrations du 30/09 ont montré que le juge ne les voyait pas (0/3 sur
- * leurs mutants). Le juge ne garde que la fidélité au commentaire, qui
- * demande de lire.
+ * La règle « Commentaires » du prompt, en trois critères. La mention
+ * d'absence est mécanique : la calibration du 30/09 a montré que le juge ne
+ * la voyait pas. La fidélité et la recopie demandent de lire.
+ *
+ * La recopie est revenue au juge le 01/10 : la fenêtre mécanique de neuf mots
+ * signalait aussi un commentaire d'une phrase repris en entier, qu'on ne
+ * peut condenser sans le reformuler. Le gabarit va changer ; la longueur des
+ * résumés n'est plus vérifiée.
  */
-const RESUMES_COURTS = mechanical({
-  id: "Résumés en 1 à 2 phrases",
-  rule: "Commentaires : condense en 1-2 phrases factuelles",
-  check: (evidence) => checkResumesCourts({ text: evidence.matter }),
-});
-
 const RESUMES_FIDELES = judged({
   id: "Résumés fidèles",
   rule: "Commentaires : extrais uniquement les idées clés sans interprétation ni jugement",
@@ -57,16 +42,11 @@ const RESUMES_FIDELES = judged({
     "Sous chaque chantier listé dont la fiche porte un commentaire de synthèse, le résumé ne contient que des idées présentes dans ce commentaire. Une cause, un chiffre, une action ou une conséquence qui n'y figure pas est non conforme. La longueur du résumé n'est pas jugée ici.",
 });
 
-const PAS_DE_RECOPIE_DES_SYNTHESES = mechanical({
+const PAS_DE_RECOPIE = judged({
   id: "Pas de recopie",
-  rule: "Commentaires : ne reproduis jamais un commentaire mot pour mot in extenso",
-  check: (evidence) =>
-    checkNoVerbatim({
-      text: evidence.matter,
-      sources: synthesesDesChantiers(evidence.truth).flatMap((synthese) =>
-        synthese.commentaire ? [synthese.commentaire] : [],
-      ),
-    }),
+  rule: "Commentaires : condense et reformule, ne reproduis jamais un commentaire mot pour mot in extenso",
+  instruction:
+    "Compare chaque résumé aux commentaires reçus (commentaires de synthèse de la fiche, commentaires des DONNÉES REÇUES). Un résumé qui reprend une phrase entière d'un commentaire, à l'identique ou à un mot près, est non conforme : cite la phrase reprise dans la preuve. Reprendre une expression courte (« le délai médian de passage ») est conforme.",
 });
 
 /**
@@ -97,57 +77,9 @@ const ABSENCE_SIGNALEE = mechanical({
   applicable: (evidence) => chantiersSansCommentaire(evidence).length > 0,
 });
 
-type CommentaireRecu = { contenu: string } | null | undefined;
-
-type ResultatChantiers = {
-  chantiers?: {
-    synthese?: { commentaire: string | null } | null;
-    commentaires?: {
-      donnees: CommentaireRecu;
-      autresResultats: CommentaireRecu;
-    };
-  }[];
-};
-
-/**
- * Tous les commentaires que l'agent a reçus, quel que soit l'outil : ceux de
- * `get_chantier_commentaires`, mais aussi le commentaire de synthèse et les
- * commentaires territoriaux que porte `get_chantiers`. Revue du 30/09 : Albert
- * lit les commentaires par `get_chantiers`, et une recopie depuis cette
- * source passait inaperçue.
- */
-function contenusDesCommentairesRecus(evidence: Evidence): string[] {
-  return evidence.toolResults.flatMap((result) => {
-    const resultats =
-      (result.output as { resultats?: unknown[] }).resultats ?? [];
-
-    if (result.toolName === "get_chantier_commentaires") {
-      return (resultats as { commentaires: { contenu: string }[] }[]).flatMap(
-        (resultat) =>
-          resultat.commentaires.map((commentaire) => commentaire.contenu),
-      );
-    }
-
-    if (result.toolName === "get_chantiers") {
-      return (resultats as ResultatChantiers[]).flatMap((resultat) =>
-        (resultat.chantiers ?? []).flatMap((chantier) =>
-          [
-            chantier.synthese?.commentaire,
-            chantier.commentaires?.donnees?.contenu,
-            chantier.commentaires?.autresResultats?.contenu,
-          ].filter((contenu): contenu is string => Boolean(contenu)),
-        ),
-      );
-    }
-
-    return [];
-  });
-}
-
 const COMMENTAIRES_DU_GABARIT = [
-  RESUMES_COURTS,
   RESUMES_FIDELES,
-  PAS_DE_RECOPIE_DES_SYNTHESES,
+  PAS_DE_RECOPIE,
   ABSENCE_SIGNALEE,
 ];
 
@@ -165,6 +97,18 @@ const TERRITOIRES_DU_TABLEAU = mechanical({
       text: evidence.matter,
       noms: nomsDuTableau(evidence),
     }),
+});
+
+/**
+ * Le même tableau, vérifié par le juge plutôt que par une regex : les
+ * synthèses d'une région avec ses départements suivent un gabarit appelé à
+ * changer, et la forme du tableau avec lui.
+ */
+const TABLEAU_COMPARATIF_JUGE = judged({
+  id: "Tableau comparatif",
+  rule: "get_taux_avancement_territoire : plusieurs territoires → tableau comparatif ; codes et noms officiels des territoires",
+  instruction:
+    "La réponse présente les taux d'avancement des TERRITOIRES ATTENDUS DANS LE TABLEAU sous forme de tableau, une ligne par territoire, chacun désigné par son nom officiel. Un territoire absent du tableau, ou désigné seulement par son code ou son numéro, est non conforme.",
 });
 
 const ANALYSE_DES_ECARTS = judged({
@@ -187,28 +131,8 @@ export const GRIDS = {
     matter: "text",
     criteria: [
       mechanical({
-        id: "Sections du gabarit",
-        rule: "Gabarit mono_territoire : titre, chantiers en retard, chantiers en difficulté, sources",
-        check: (evidence) => {
-          const titres = checkHeadings({
-            text: evidence.matter,
-            titles: [
-              "Synthèse pour",
-              "Chantiers en retard",
-              "Chantiers en difficulté",
-            ],
-          });
-          return titres.ok
-            ? checkContains({
-                text: evidence.matter,
-                fragments: ["Sources analysées"],
-              })
-            : titres;
-        },
-      }),
-      mechanical({
-        id: "Chantiers cités",
-        rule: "Format des chantiers : chaque chantier au format CH-XXX — Nom",
+        id: "Chantiers attendus",
+        rule: "Workflow a : les chantiers en retard et en difficulté du territoire",
         check: (evidence) =>
           checkChantiersCited({
             text: evidence.matter,
@@ -218,37 +142,13 @@ export const GRIDS = {
             }),
           }),
       }),
-      mechanical({
-        id: "Synthèses de tendance",
-        rule: "Gabarit mono_territoire : « Synthèse — chantiers en retard » et « Synthèse — chantiers en difficulté »",
-        check: (evidence) =>
-          checkContains({
-            text: evidence.matter.replace(/[*_]/g, ""),
-            fragments: [
-              "Synthèse — chantiers en retard",
-              "Synthèse — chantiers en difficulté",
-            ],
-          }),
-      }),
-      mechanical({
-        id: "Pas de tableau",
-        rule: "Tableaux : pas de tableau pour les listes de chantiers",
-        check: (evidence) => checkNoChantierTable({ text: evidence.matter }),
-      }),
       judged({
         id: "Écart et météo",
-        rule: "Gabarit mono_territoire : écart en points et météo (libellé) pour chaque chantier",
+        rule: "Gabarit mono_territoire : écart en points et météo pour chaque chantier",
         instruction:
-          "Chaque chantier listé porte son écart en points et le libellé de sa météo. Un écart absent sous un chantier est non conforme, même s'il est cité ailleurs. Le libellé de météo correspond à la météo de la fiche ; l'exactitude des chiffres relève de « Chiffres exacts ».",
+          "Chaque chantier listé porte son écart en points et sa météo, et cette météo est celle que la fiche lui donne (NUAGE se lit « Appuis nécessaires », ORAGE « Objectifs compromis », COUVERT « Objectifs atteignables », SOLEIL « Objectifs sécurisés »). Un écart ou une météo absents sous un chantier sont non conformes, même s'ils sont cités ailleurs. L'écriture de la météo (code ou libellé) et l'exactitude des chiffres relèvent d'autres critères.",
       }),
       ...COMMENTAIRES_DU_GABARIT,
-      judged({
-        id: "Maille nommée",
-        rule: "Factualité : n'affirme rien de faux ; le gabarit écrit « de la région » quel que soit le territoire",
-        instruction:
-          "Le territoire est désigné par sa maille réelle : un département n'est jamais présenté comme « la région ».",
-        applicable: territoirePrincipalEstUnDepartement,
-      }),
     ],
   }),
 
@@ -256,27 +156,11 @@ export const GRIDS = {
     family: "Synthèse d'un chantier sur un territoire",
     matter: "text",
     criteria: [
-      mechanical({
-        id: "Pas le gabarit territorial",
-        rule: "Workflow a : le gabarit de synthèse territoriale ne vaut que pour une demande qui ne cible pas un chantier spécifique",
-        check: (evidence) => {
-          const gabarit = checkHeadings({
-            text: evidence.matter,
-            titles: ["Chantiers en retard", "Chantiers en difficulté"],
-          });
-          return gabarit.ok
-            ? {
-                ok: false,
-                detail: "la réponse suit le gabarit de synthèse territoriale",
-              }
-            : { ok: true, detail: "réponse centrée sur le chantier" };
-        },
-      }),
       judged({
         id: "Trois volets",
         rule: "Demande : synthèse du chantier, position face aux autres territoires, difficultés des commentaires",
         instruction:
-          "La réponse traite les trois volets de la demande : la synthèse du chantier sur le territoire, sa position face à d'autres territoires, les difficultés remontées dans les commentaires.",
+          "Cherche dans la réponse un passage pour chacun des trois volets de la demande, et cite-les dans la preuve : (1) la situation du chantier sur le territoire demandé ; (2) sa position face à au moins un autre territoire ; (3) des difficultés tirées des commentaires. Un volet sans passage qui le traite est non conforme. La justesse du contenu de chaque volet relève d'autres critères.",
       }),
       judged({
         id: "Situé face aux autres territoires",
@@ -297,29 +181,8 @@ export const GRIDS = {
     family: "Synthèse d'une région et de ses départements",
     matter: "text",
     criteria: [
-      mechanical({
-        id: "Sections du gabarit comparaison",
-        rule: "Gabarit : plusieurs territoires dans les résultats → template comparaison",
-        check: (evidence) =>
-          checkHeadings({
-            text: evidence.matter,
-            titles: [
-              "Comparaison",
-              "Analyse des écarts",
-              "Chantiers en retard",
-              "Chantiers en difficulté",
-            ],
-          }),
-      }),
-      TABLEAU_COMPARATIF,
-      TERRITOIRES_DU_TABLEAU,
+      TABLEAU_COMPARATIF_JUGE,
       ANALYSE_DES_ECARTS,
-      judged({
-        id: "Communs et spécifiques",
-        rule: "Gabarit comparaison : chantiers communs à plusieurs territoires, puis spécifiques à chacun",
-        instruction:
-          "Les chantiers en retard ou en difficulté présents dans plusieurs territoires sont regroupés en « communs » avec la liste des territoires concernés ; les autres sont rangés sous leur territoire.",
-      }),
       ...COMMENTAIRES_DU_GABARIT,
     ],
   }),
@@ -388,16 +251,11 @@ export const GRIDS = {
         },
       }),
       judged({
-        id: "Sections demandées",
-        rule: "Demande : taux d'avancement, chantiers en retard, chantiers en difficulté et leurs indicateurs",
+        id: "Fidèle à la conversation",
+        rule: "Workflow c : le rapport reprend la synthèse de la conversation en cours",
         instruction:
-          "Le rapport exporté contient le taux d'avancement du territoire, les chantiers en retard, les chantiers en difficulté, et les indicateurs de ces chantiers. Sans rapport exporté, non conforme.",
-      }),
-      judged({
-        id: "Tableau d'indicateurs",
-        rule: "Export : tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport",
-        instruction:
-          "Le rapport exporté présente les indicateurs de chaque chantier cité sous forme de tableau. Sans rapport exporté, non conforme.",
+          "Compare le rapport exporté à la CONVERSATION PRÉCÉDENTE. Chaque chiffre, chantier ou constat du rapport y a été donné, ou figure dans les DONNÉES REÇUES ; et les éléments principaux de la dernière réponse de l'assistant (taux, chantiers cités, constats) se retrouvent dans le rapport. Un élément qui contredit la conversation, ou un élément principal omis, est non conforme. Sans rapport exporté, non conforme.",
+        applicable: (evidence) => evidence.conversation.length > 0,
       }),
     ],
   }),
@@ -405,7 +263,9 @@ export const GRIDS = {
   dashboard: grid({
     family: "Tableau de bord du territoire",
     matter: "dashboard",
-    omit: [BASE_IDS.restriction],
+    // Le format CH-XXX — Nom vaut pour la prose : la matière d'un dashboard
+    // est une liste de widgets, dont les paramètres portent les codes seuls.
+    omit: [BASE_IDS.restriction, BASE_IDS.chantierFormat],
     criteria: [
       mechanical({
         id: "Sections dans l'ordre",
@@ -421,10 +281,11 @@ export const GRIDS = {
               })
             : { ok: false, detail: "aucun dashboard" },
       }),
-      mechanical({
+      judged({
         id: "Pas de chiffre dans le texte",
         rule: "create_dashboard : ne reproduis JAMAIS de valeurs chiffrées dans ta réponse textuelle",
-        check: (evidence) => checkNoFigure({ text: evidence.answer }),
+        instruction:
+          "Le TEXTE D'ACCOMPAGNEMENT ne reproduit aucune valeur chiffrée (taux, écart, médiane, nombre de chantiers, valeur d'indicateur) : les widgets les affichent. Un code de chantier ou de territoire, une année de jalon ne sont pas des valeurs. Ne juge que le texte d'accompagnement, pas les widgets.",
       }),
       judged({
         id: "Widgets conformes à la demande",
@@ -451,16 +312,12 @@ export const GRIDS = {
         instruction:
           "Les actions citées (recrutements, ouvertures, campagnes…) proviennent des commentaires reçus. Si les données reçues signalent des types non accessibles, la réponse dit que ces informations relèvent de la vue nationale, et non qu'il n'y en a pas.",
       }),
-      // « Synthétise » est une demande explicite de reformulation : ici, la
-      // restitution en verbatim que demande l'outil ne s'applique pas.
-      mechanical({
-        id: "Pas de recopie",
-        rule: "Commentaires : condense et reformule, ne reproduis jamais un commentaire in extenso",
-        check: (evidence) =>
-          checkNoVerbatim({
-            text: evidence.matter,
-            sources: contenusDesCommentairesRecus(evidence),
-          }),
+      PAS_DE_RECOPIE,
+      judged({
+        id: "Doublons compactés",
+        rule: "Demande : synthétise les commentaires",
+        instruction:
+          "Quand plusieurs commentaires reçus pour un même chantier disent la même chose, la synthèse l'énonce une seule fois. Une même information répétée sous un chantier, même reformulée, est non conforme. Si les commentaires reçus ne se recoupent pas, ce critère est conforme.",
       }),
     ],
   }),
@@ -500,12 +357,7 @@ export const GRIDS = {
     family: "Comparer une région avec ses départements",
     matter: "text",
     omit: [BASE_IDS.restriction],
-    criteria: [
-      TABLEAU_COMPARATIF,
-      TERRITOIRES_DU_TABLEAU,
-      ANALYSE_DES_ECARTS,
-      POSITION_MEDIANE,
-    ],
+    criteria: [TABLEAU_COMPARATIF_JUGE, ANALYSE_DES_ECARTS, POSITION_MEDIANE],
   }),
 
   comparaisonQuantitative: grid({

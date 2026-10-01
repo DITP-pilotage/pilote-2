@@ -1,8 +1,8 @@
 import type { Evidence } from "./evidence";
 import {
+  checkChantierFormat,
   checkNoMeteoCode,
   checkNoToolName,
-  checkOfficialCodes,
   type CheckResult,
 } from "./mechanicalChecks";
 
@@ -49,7 +49,7 @@ export function judged(
 export const BASE_IDS = {
   noToolName: "Pas de nom d'outil",
   noMeteoCode: "Libellés météo",
-  officialCodes: "Codes officiels",
+  chantierFormat: "Format des chantiers",
   noOpinion: "Pas d'opinion",
   exactFigures: "Chiffres exacts",
   restriction: "Restriction signalée",
@@ -72,9 +72,9 @@ const BASE: Criterion[] = [
     check: (evidence) => checkNoMeteoCode({ text: evidence.matter }),
   }),
   mechanical({
-    id: BASE_IDS.officialCodes,
-    rule: "Format des chantiers : codes officiels CH-XXX, REG-XX, DEPT-XX",
-    check: (evidence) => checkOfficialCodes({ text: evidence.matter }),
+    id: BASE_IDS.chantierFormat,
+    rule: "Format des chantiers : chaque chantier au format CH-XXX — Nom",
+    check: (evidence) => checkChantierFormat({ text: evidence.matter }),
   }),
   judged({
     id: BASE_IDS.noOpinion,
@@ -86,7 +86,7 @@ const BASE: Criterion[] = [
     id: BASE_IDS.exactFigures,
     rule: "Factualité : n'invente jamais de données ni de chiffres absents des résultats des outils",
     instruction:
-      "Ne vérifie que les nombres ÉCRITS EN CHIFFRES dans la matière (taux, médiane, écart, valeur d'indicateur, date). Chacun figure dans les DONNÉES REÇUES PAR L'ASSISTANT, ou s'en déduit par un calcul simple et juste (une différence de taux par exemple). Un nombre introuvable ou faux est non conforme ; cite-le dans la preuve. Un arrondi à l'unité est conforme. Ne relèvent PAS de ce critère : un sens de variation (hausse, baisse), une position (en retard, dans la médiane), un libellé, un nombre écrit en lettres dans un commentaire, ni l'absence d'un chiffre. Exemple : « une baisse de 8 points » quand le taux passe de 43 % à 51 % cite un nombre juste (8) ; le sens erroné relève d'un autre critère, et ce critère-ci est conforme.",
+      "Chaque nombre écrit en chiffres dans la matière (taux, médiane, écart, valeur d'indicateur) figure dans les DONNÉES REÇUES PAR L'ASSISTANT, ou est l'écart entre deux de ces valeurs. Un nombre introuvable ou faux est non conforme : cite-le dans la preuve. Ne sont pas des données : les seuils des règles (« 10 points »), les années de jalon, les codes de chantier ou de territoire. Le sens d'une variation et la position face à la médiane relèvent d'autres critères.",
   }),
   judged({
     id: BASE_IDS.restriction,

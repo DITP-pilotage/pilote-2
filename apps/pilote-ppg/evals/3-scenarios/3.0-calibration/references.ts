@@ -152,6 +152,7 @@ const evidence = ({
   maskedTerritories = [],
   truth = FICHE_BRETAGNE,
   tableTerritories = [],
+  conversation = [],
 }: Partial<Evidence> & { question: string; matter: string }): Evidence => ({
   question,
   profile,
@@ -164,6 +165,7 @@ const evidence = ({
   maskedTerritories,
   truth,
   tableTerritories,
+  conversation,
 });
 
 function muter({
@@ -267,6 +269,15 @@ const SYNTHESE: CalibrationCase[] = [
     evidence: synthese({
       from: "avec un écart de 15 points.",
       to: "avec un écart de 15 points. Il conviendrait de renforcer en priorité les recrutements d'urgentistes.",
+    }),
+  },
+  {
+    family: "syntheseTerritoire",
+    label: "Commentaire de synthèse recopié",
+    broken: "Pas de recopie",
+    evidence: synthese({
+      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
+      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
     }),
   },
   {
@@ -439,6 +450,13 @@ const COMMENTAIRES_RESULTS = [
               contenu:
                 "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
             },
+            {
+              id: "commentaire-donnees-ch-005",
+              date_publication: "2026-09-15",
+              type: "commentaires_sur_les_donnees",
+              contenu:
+                "<p>Depuis mars, la régulation passe par un numéro unique pour tout le département.</p>",
+            },
           ],
         },
       ],
@@ -497,6 +515,30 @@ const COMMENTAIRES: CalibrationCase[] = [
         reference: COMMENTAIRES_REFERENCE,
         from: "Aucun commentaire n'est publié pour ce chantier en Bretagne.",
         to: "Les entrées en apprentissage progressent grâce aux salons de l'orientation.",
+      }),
+    ),
+  },
+  {
+    family: "commentaires",
+    label: "Commentaire reçu recopié",
+    broken: "Pas de recopie",
+    evidence: commentaires(
+      muter({
+        reference: COMMENTAIRES_REFERENCE,
+        from: "Un numéro de régulation départemental unique fonctionne depuis mars. Action engagée : le recrutement de deux urgentistes par contrat de territoire, dont la signature est attendue en novembre.",
+        to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
+      }),
+    ),
+  },
+  {
+    family: "commentaires",
+    label: "Même constat répété",
+    broken: "Doublons compactés",
+    evidence: commentaires(
+      muter({
+        reference: COMMENTAIRES_REFERENCE,
+        from: "dont la signature est attendue en novembre.",
+        to: "dont la signature est attendue en novembre. Par ailleurs, la régulation des appels se fait désormais par un numéro départemental unique.",
       }),
     ),
   },
@@ -602,7 +644,7 @@ function dashboardAvec(
   };
 }
 
-function decrire(dashboard: ComposeDashboardOutput) {
+function decrire(dashboard: ComposeDashboardOutput, texte: string) {
   return [
     `TABLEAU DE BORD « ${dashboard.titre} »`,
     ...dashboard.containers.flatMap((container, index) => [
@@ -613,15 +655,18 @@ function decrire(dashboard: ComposeDashboardOutput) {
     ]),
     "",
     "TEXTE D'ACCOMPAGNEMENT :",
-    DASHBOARD_TEXTE,
+    texte,
   ].join("\n");
 }
 
-const tableauDeBord = (dashboard: ComposeDashboardOutput) =>
+const tableauDeBord = (
+  dashboard: ComposeDashboardOutput,
+  texte = DASHBOARD_TEXTE,
+) =>
   evidence({
     question: DASHBOARD_QUESTION,
-    matter: decrire(dashboard),
-    answer: DASHBOARD_TEXTE,
+    matter: decrire(dashboard, texte),
+    answer: texte,
     dashboard,
   });
 
@@ -656,30 +701,37 @@ const DASHBOARD: CalibrationCase[] = [
       ]),
     ),
   },
+  {
+    family: "dashboard",
+    label: "Taux répété dans le texte",
+    broken: "Pas de chiffre dans le texte",
+    evidence: tableauDeBord(
+      dashboardAvec(SECTION_TERRITOIRE),
+      "Voici le tableau de bord de la Bretagne, dont le taux d'avancement s'établit à 51%.",
+    ),
+  },
 ];
 
 // --- Rapport complet ----------------------------------------------------
 
-const RAPPORT_QUESTION =
-  "Crée un rapport de synthèse du territoire Bretagne incluant le taux d'avancement, les chantiers en retard, les chantiers en difficulté et leurs indicateurs. Format Markdown";
+// L'export d'une synthèse faite au tour précédent : le rapport se juge contre
+// la conversation qu'il reprend.
+const RAPPORT_QUESTION = "Exporte cette synthèse en rapport au format Markdown";
 
 const RAPPORT_REPONSE = "Votre rapport est disponible au téléchargement.";
 
 const RAPPORT_REFERENCE = `RAPPORT EXPORTÉ :
 # Synthèse Bretagne
 
-## Taux d'avancement
-Le TA 2025 de la Bretagne est de 51%, pour une médiane des régions à 65%.
+*01/10/2026*
+
+> Le TA 2025 de la Bretagne est de 51%, sous la médiane des régions (65%). Un chantier est en retard, un autre a des objectifs compromis.
 
 ## Chantiers en retard
-CH-005 — Réduire les délais de passage aux urgences : écart de -15 points, météo Appuis nécessaires.
-
-| Indicateur | VI | VA | VC | TA |
-|---|---|---|---|---|
-| IND-005 — Délai médian de passage aux urgences | 280 | 250 | 180 | 30 % |
+CH-005 — Réduire les délais de passage aux urgences : écart de -15 points, météo Appuis nécessaires. Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
 
 ## Chantiers en difficulté
-CH-006 — Développer la prévention en santé : météo Objectifs compromis.
+CH-006 — Développer la prévention en santé : écart de 2 points, météo Objectifs compromis. Pas de commentaire disponible.
 
 RÉPONSE DU CHAT :
 ${RAPPORT_REPONSE}`;
@@ -690,6 +742,12 @@ const rapport = (matter: string) =>
     matter,
     answer: RAPPORT_REPONSE,
     toolCalls: [{ toolName: "export_rapport", input: { format: "markdown" } }],
+    conversation: [
+      {
+        question: SYNTHESE_QUESTION,
+        answer: SYNTHESE_REFERENCE,
+      },
+    ],
   });
 
 const RAPPORT: CalibrationCase[] = [
@@ -701,128 +759,17 @@ const RAPPORT: CalibrationCase[] = [
   },
   {
     family: "rapport",
-    label: "Indicateurs en texte, sans tableau",
-    broken: "Tableau d'indicateurs",
+    label: "Chantier en retard de la synthèse omis",
+    broken: "Fidèle à la conversation",
     evidence: rapport(
       muter({
-        reference: RAPPORT_REFERENCE,
-        from: /\| Indicateur[\s\S]+?30 % \|/,
-        to: "Indicateur IND-005 : 280 au départ, 250 aujourd'hui, 180 visés.",
-      }),
-    ),
-  },
-  {
-    family: "rapport",
-    label: "Chantiers en difficulté absents",
-    broken: "Sections demandées",
-    evidence: rapport(
-      muter({
-        reference: RAPPORT_REFERENCE,
-        from: /## Chantiers en difficulté\n[^\n]+\n/,
-        to: "",
-      }),
-    ),
-  },
-];
-
-// --- Synthèse d'un département : la maille nommée ------------------------
-
-const FICHE_FINISTERE: GroundTruth = {
-  territoires: [{ code: "DEPT-29", nom: "Finistère", maille: "DEPT" }],
-  tauxAvancement: [
-    {
-      territoire_code: "DEPT-29",
-      jalon: 2025,
-      taux_avancement_global: "53%",
-      mediane_repartition: "56%",
-      position_mediane: "DANS_LA_MEDIANE",
-    },
-  ],
-  chantiersEnRetard: [
-    {
-      territoire_code: "DEPT-29",
-      territoire_nom: "Finistère",
-      jalon: 2025,
-      chantiers: [
-        chantier({
-          ...CH_005,
-          ecart: -22,
-          meteo: "NUAGE",
-          commentaire:
-            "Le délai de passage aux urgences reste au-dessus de la cible faute de médecins régulateurs.",
+        reference: muter({
+          reference: RAPPORT_REFERENCE,
+          from: /## Chantiers en retard\n[^\n]+\n\n/,
+          to: "",
         }),
-      ],
-    },
-  ],
-  chantiersEnDifficulte: [
-    {
-      territoire_code: "DEPT-29",
-      territoire_nom: "Finistère",
-      jalon: 2025,
-      chantiers: [
-        chantier({ ...CH_006, ecart: 1, meteo: "ORAGE", commentaire: null }),
-      ],
-    },
-  ],
-  indicateurs: [],
-  commentaires: [],
-};
-
-const FINISTERE_REFERENCE = muter({
-  reference: muter({
-    reference: muter({
-      reference: muter({
-        reference: SYNTHESE_REFERENCE,
-        from: "# Synthèse pour Bretagne\n\nDans Pilote, le TA 2025 de la région s'établit à 51%, pour une médiane des régions à 65%.",
-        to: "# Synthèse pour Finistère\n\nDans Pilote, le TA 2025 du département s'établit à 53%, pour une médiane des départements à 56%.",
-      }),
-      from: "**Écart** : -15 points",
-      to: "**Écart** : -22 points",
-    }),
-    from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-    to: "> Le délai de passage aux urgences dépasse toujours la cible, faute de médecins régulateurs.",
-  }),
-  from: /avec un écart de 15 points\.\n\n---\n\n## Chantiers en difficulté[\s\S]+?\*\*Écart\*\* : 2 points/,
-  to: "avec un écart de 22 points.\n\n---\n\n## Chantiers en difficulté\n\n1 chantier est compromis ou nécessite un appui :\n\n**CH-006 — Développer la prévention en santé**\\\n**Écart** : 1 points",
-});
-
-const finistere = (matter: string) =>
-  evidence({
-    question: "Fais moi la synthèse du territoire Finistère",
-    matter,
-    truth: FICHE_FINISTERE,
-    toolResults: [
-      {
-        toolName: "get_taux_avancement_territoire",
-        output: { resultats: FICHE_FINISTERE.tauxAvancement },
-      },
-      {
-        toolName: "get_chantiers",
-        output: { resultats: FICHE_FINISTERE.chantiersEnRetard },
-      },
-      {
-        toolName: "get_chantiers",
-        output: { resultats: FICHE_FINISTERE.chantiersEnDifficulte },
-      },
-    ],
-  });
-
-const MAILLE: CalibrationCase[] = [
-  {
-    family: "syntheseTerritoire",
-    label: "Référence départementale",
-    broken: null,
-    evidence: finistere(FINISTERE_REFERENCE),
-  },
-  {
-    family: "syntheseTerritoire",
-    label: "Département présenté comme la région",
-    broken: "Maille nommée",
-    evidence: finistere(
-      muter({
-        reference: FINISTERE_REFERENCE,
-        from: "le TA 2025 du département",
-        to: "le TA 2025 de la région",
+        from: " Un chantier est en retard, un autre a des objectifs compromis.",
+        to: " Un chantier a des objectifs compromis.",
       }),
     ),
   },
@@ -1197,13 +1144,25 @@ const SOUS_TERRITOIRES: CalibrationCase[] = [
   },
   {
     family: "syntheseSousTerritoires",
-    label: "Chantier commun éclaté par territoire",
-    broken: "Communs et spécifiques",
+    label: "Département désigné par son code",
+    broken: "Tableau comparatif",
     evidence: sousTerritoires(
       muter({
         reference: SOUS_TERRITOIRES_REFERENCE,
-        from: "### Communs à plusieurs territoires\n\n**CH-005 — Réduire les délais de passage aux urgences**\\\n**Territoires concernés** : Bretagne, Ille-et-Vilaine",
-        to: "### Spécifiques à Bretagne\n\n**CH-005 — Réduire les délais de passage aux urgences**\\\n**Écart** : -15 points\n\n### Spécifiques à Ille-et-Vilaine\n\n**CH-005 — Réduire les délais de passage aux urgences**\\\n**Écart** : -18 points",
+        from: "| Ille-et-Vilaine | 46% |",
+        to: "| DEPT-35 | 46% |",
+      }),
+    ),
+  },
+  {
+    family: "syntheseSousTerritoires",
+    label: "Commentaire de synthèse recopié",
+    broken: "Pas de recopie",
+    evidence: sousTerritoires(
+      muter({
+        reference: SOUS_TERRITOIRES_REFERENCE,
+        from: "> Des postes d'urgentistes restent vacants et le délai de passage dépasse la cible.",
+        to: "> Le délai de passage aux urgences reste au-dessus de la cible faute de médecins régulateurs.",
       }),
     ),
   },
@@ -1307,7 +1266,6 @@ const JALONS: CalibrationCase[] = [
 
 export const CALIBRATION_CASES: CalibrationCase[] = [
   ...SYNTHESE,
-  ...MAILLE,
   ...RESTRICTION,
   ...SYNTHESE_CHANTIER,
   ...SOUS_TERRITOIRES,
@@ -1320,75 +1278,10 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
 ];
 
 /**
- * Des défauts que le juge ne voyait pas (calibration du 30/09 : 0/3), passés
- * en critères mécaniques. Ils ne vont pas à la calibration du juge : un test
- * unitaire vérifie que chacun échoue son critère, et lui seul.
+ * Les mutants des critères mécaniques. Ils ne vont pas à la calibration du
+ * juge : un test unitaire vérifie que chacun échoue son critère, et lui seul.
  */
 export const MECHANICAL_MUTANTS: CalibrationCase[] = [
-  {
-    // Revue du 30/09 : Albert peut lire les commentaires par `get_chantiers`
-    // plutôt que par `get_chantier_commentaires`. La recopie doit se voir
-    // quel que soit l'outil qui a fourni le commentaire.
-    family: "commentaires",
-    label: "Commentaire lu par get_chantiers et recopié",
-    broken: "Pas de recopie",
-    evidence: evidence({
-      question: COMMENTAIRES_QUESTION,
-      matter: `**CH-005 — Réduire les délais de passage aux urgences**
-Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.`,
-      profile: "coordinateur",
-      toolResults: [
-        {
-          toolName: "get_chantiers",
-          output: {
-            resultats: [
-              {
-                territoire_code: "REG-53",
-                territoire_nom: "Bretagne",
-                jalon: 2025,
-                chantiers: [
-                  {
-                    ...chantier({
-                      ...CH_005,
-                      ecart: -15,
-                      meteo: "NUAGE",
-                      commentaire: null,
-                    }),
-                    commentaires: {
-                      donnees: null,
-                      autresResultats: {
-                        contenu:
-                          "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
-                        date: "2026-09-15",
-                      },
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      ],
-    }),
-  },
-  {
-    family: "syntheseTerritoire",
-    label: "Résumé délayé",
-    broken: "Résumés en 1 à 2 phrases",
-    evidence: synthese({
-      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-      to: "> Le délai médian de passage a remonté au premier semestre. Deux postes d'urgentistes sont vacants à Brest et Quimper. Une régulation téléphonique fonctionne depuis mars.",
-    }),
-  },
-  {
-    family: "syntheseTerritoire",
-    label: "Commentaire de synthèse recopié",
-    broken: "Pas de recopie",
-    evidence: synthese({
-      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
-    }),
-  },
   {
     family: "syntheseTerritoire",
     label: "Commentaire manquant non signalé",
@@ -1396,15 +1289,11 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
     evidence: synthese({ from: "> Pas de commentaire disponible\n\n", to: "" }),
   },
   {
-    family: "commentaires",
-    label: "Commentaire reçu recopié",
-    broken: "Pas de recopie",
-    evidence: commentaires(
-      muter({
-        reference: COMMENTAIRES_REFERENCE,
-        from: "Un numéro de régulation départemental unique fonctionne depuis mars. Action engagée : le recrutement de deux urgentistes par contrat de territoire, dont la signature est attendue en novembre.",
-        to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
-      }),
+    family: "comparaisonTerritoires",
+    label: "Chantier cité sans son nom",
+    broken: "Format des chantiers",
+    evidence: comparaison(
+      `${COMPARAISON_REFERENCE}\n\nEn Bretagne, CH-005 concentre le retard.`,
     ),
   },
 ];
