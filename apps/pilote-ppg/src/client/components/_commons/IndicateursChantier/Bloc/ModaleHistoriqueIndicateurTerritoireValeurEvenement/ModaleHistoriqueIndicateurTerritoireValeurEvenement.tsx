@@ -284,7 +284,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                                 classNameInfoBulle="tooltip-accordeon"
                                 styleIconInfoBulle="documentation"
                               >
-                                <p className="fr-callout__text fr-text--sm">
+                                <p className="fr-text--sm mb-0">
                                   <span className="fr-text--bold">
                                     Motif de la proposition :
                                   </span>{" "}
@@ -298,7 +298,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                                     | "PROPOSITION_VALEUR_MODIFIEE"
                                   >
                                 )?.sourceDonneeEtMethodeCalcul ? (
-                                  <p className="fr-callout__text fr-text--sm">
+                                  <p className="fr-text--sm mb-0">
                                     <span className="fr-text--bold">
                                       Source des données et méthode de calcul :
                                     </span>{" "}

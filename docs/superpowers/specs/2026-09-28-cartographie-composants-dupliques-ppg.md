@@ -303,9 +303,9 @@ Relevées au fil des lots 1 à 4 (2026-09-29 / 30), hors périmètre des PR qui 
 
 ---
 
-## 13. État d'avancement (2026-09-30)
+## 13. État d'avancement (2026-10-01)
 
-Chantier mis en pause pour merger la stack du lot 4, faire la recette et la mise en production avant de reprendre.
+Chantier mis en pause le 2026-09-30 pour merger la stack du lot 4, faire la recette et la mise en production ; repris le 2026-10-01 avec une nouvelle stack (#2479 → #2482).
 
 ### 13.1 Fait
 
@@ -318,12 +318,16 @@ Chantier mis en pause pour merger la stack du lot 4, faire la recette et la mise
 | Infobulle sur `Popover` (radix) dans `shared/`, chevrons sur les icônes locales, centrage et zone de survol | #2464 | mergée |
 | 3a — pages Legacy chantier et accueil supprimées, flags de bascule retirés | #2465 | mergée |
 | 3b — props SSR du Legacy élaguées (une requête SQL de moins par chargement de l'accueil et de la page chantier) | #2469 | mergée |
-| 4 — alertes reproduisant l'alerte DSFR en Tailwind | #2471 | **stack ouverte** |
-| 4 — spec § 12 + `shared/Badge` reproduisant le badge DSFR | #2472 | **stack ouverte** (sur #2471) |
-| 4 — accordéons DSFR sur `shared/Accordion` (radix), `shared/Collapsible` | #2473 | **stack ouverte** (sur #2472) |
-| 4 — `shared/RadioGroup` (radix) + modale d'export qui ne se referme plus | #2476 | **stack ouverte** (sur #2473) |
+| 4 — alertes reproduisant l'alerte DSFR en Tailwind | #2471 | mergée |
+| 4 — spec § 12 + `shared/Badge` reproduisant le badge DSFR | #2472 | mergée |
+| 4 — accordéons DSFR sur `shared/Accordion` (radix), `shared/Collapsible` | #2473 | mergée |
+| 4 — `shared/RadioGroup` (radix) + modale d'export qui ne se referme plus | #2476 | mergée |
+| 4 — un seul `MultiSelect` (ex `MultiSelectNew`), exports nommés | #2479 | **stack ouverte** |
+| 4 — `shared/Tag` et `TagToggleGroup` (radix) à la place des tags DSFR | #2480 | **stack ouverte** (sur #2479) |
+| 4 — synthèse des résultats sur `PublicationSection` (Publication générique) | #2481 | **stack ouverte** (sur #2480) |
+| 4 — mise en avant DSFR sur `shared/Callout` (`mise-en-avant`, `Callout.Title`) | #2482 | **stack ouverte** (sur #2481) |
 
-La stack #2471 → #2476 se fusionne avec `dev` sans conflit (vérifié après #2466) ; lint, tests et E2E (59/59) verts en haut de pile.
+La stack #2471 → #2476 se fusionnait avec `dev` sans conflit (vérifié après #2466) ; lint, tests et E2E (59/59) verts en haut de pile.
 
 ### 13.2 Recette avant MEP
 
@@ -340,7 +344,8 @@ Les lots 1 à 3 changent peu le rendu ; le lot 4 change l'apparence de composant
 
 ### 13.3 Reste à faire
 
-- **Lot 4, convergences restantes** : `MultiSelect` → `MultiSelectNew` (§ 5.2) ; tags et toggles vers `SegmentedControl` / `PillToggleGroup` et un `shared/Tag` (§ 6) ; `SynthèseDesRésultats` portée sur `Publication` (§ 8) ; « Mise en avant » (`fr-callout`) et `shared/Callout` rapprochés du DSFR.
+- **Recette de la stack #2479 → #2482** : formulaire utilisateur (territoires, périmètres, chantiers) et filtres des admins utilisateurs / indicateurs ; tags (filtres actifs de l'accueil, statut, maille, zoom du graphique, type de compte) ; synthèse des résultats et commentaires (publier, brouillon, éditer le brouillon, publier le brouillon, modifier, historique) ; encarts des modales de proposition de valeur et étape 1 de l'export.
+- **Lot 4, convergences restantes** : `_commons/Encart` (4) et `BandeauInformation` / `fr-notice` (6) vers `shared/Callout` ou une variante bandeau.
 - **Lot 5** : `shared/Button`, champs de formulaire unifiés, sélecteurs sur `shared/Select` / `Picker` (dont `Sélecteur` → `SelecteurNew`, 14 appelants), barres latérales sans JS DSFR, `CartographieV2` partout, fin du conteneur `legacy`.
 - **Flags restants** : `PPG_ARCHIVE`, `COMPARAISON_TERRITOIRES` (acquis en prod, retrait à faire).
 - **Serveur** : fusion des use cases de liste de chantiers accueil / rapport (§ 7.2) — à coordonner avec les optimisations de performance en cours sur ces use cases.

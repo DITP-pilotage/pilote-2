@@ -1,5 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Callout } from "@/components/shared/Callout";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -181,52 +182,59 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     Vous vous apprêtez à accuser réception de la proposition
                     suivante :
                   </span>
-                  <div className="fr-callout fr-py-2w fr-mt-2w">
-                    <h3 className="fr-callout__title fr-mb-0">
-                      {`${indicateur.id} ${indicateur.nom}`}
-                    </h3>
-                    <p className="fr-text fr-text--sm fr-mb-1w">
-                      {`${territoireCodeInsee} - ${territoireNom}`}
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span>
-                        Valeur d'avancement proposée le{" "}
-                        {formaterDate(
-                          detailIndicateur.proposition?.dateProposition,
-                          "DD/MM/YYYY",
-                        )}{" "}
-                        par{" "}
-                        <NomUtilisateurAvecTooltip
-                          nom={detailIndicateur.proposition!.auteur!}
-                          service={
-                            detailIndicateur.proposition?.auteurService ?? null
-                          }
-                          fonction={
-                            detailIndicateur.proposition?.auteurFonction ?? null
-                          }
-                        />{" "}
-                        :{" "}
-                      </span>
-                      <span className="fr-text--bold">
-                        {detailIndicateur.proposition?.valeurAvancement} (
-                        {formaterDate(
-                          detailIndicateur.proposition?.dateValeurAvancement,
-                          "MM/YYYY",
-                        )}
-                        )
-                      </span>
-                    </p>
-                    {reactHookForm.getValues("motif") && (
-                      <p className="fr-callout__text fr-text--sm">
+                  <Callout.Root
+                    className="mt-4 px-6 py-4"
+                    color="mise-en-avant"
+                  >
+                    <Callout.Text>
+                      <Callout.Title>
+                        {`${indicateur.id} ${indicateur.nom}`}
+                      </Callout.Title>
+                      <p className="fr-text fr-text--sm fr-mb-1w">
+                        {`${territoireCodeInsee} - ${territoireNom}`}
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span>
+                          Valeur d'avancement proposée le{" "}
+                          {formaterDate(
+                            detailIndicateur.proposition?.dateProposition,
+                            "DD/MM/YYYY",
+                          )}{" "}
+                          par{" "}
+                          <NomUtilisateurAvecTooltip
+                            nom={detailIndicateur.proposition!.auteur!}
+                            service={
+                              detailIndicateur.proposition?.auteurService ??
+                              null
+                            }
+                            fonction={
+                              detailIndicateur.proposition?.auteurFonction ??
+                              null
+                            }
+                          />{" "}
+                          :{" "}
+                        </span>
                         <span className="fr-text--bold">
-                          Informations complémentaires :
-                        </span>{" "}
-                        <span className="text-italic">
-                          {reactHookForm.getValues("motif")}
+                          {detailIndicateur.proposition?.valeurAvancement} (
+                          {formaterDate(
+                            detailIndicateur.proposition?.dateValeurAvancement,
+                            "MM/YYYY",
+                          )}
+                          )
                         </span>
                       </p>
-                    )}
-                  </div>
+                      {reactHookForm.getValues("motif") && (
+                        <p className="fr-text--sm mb-0">
+                          <span className="fr-text--bold">
+                            Informations complémentaires :
+                          </span>{" "}
+                          <span className="text-italic">
+                            {reactHookForm.getValues("motif")}
+                          </span>
+                        </p>
+                      )}
+                    </Callout.Text>
+                  </Callout.Root>
                   <Alerte type="info">
                     <h3>Accusé de réception : ce que cela implique</h3>
                     <p>

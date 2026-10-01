@@ -1,6 +1,7 @@
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
-import { MiseEnAvant } from "@/components/_commons/MiseEnAvant/MiseEnAvant";
+import { Callout } from "@/components/shared/Callout";
+import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
 import { RadioGroup } from "@/components/shared/RadioGroup";
 import { useExportStep } from "./useExportStep";
 
@@ -49,27 +50,33 @@ export const EtapeContenuAExporter = () => {
       <p className="fr-mt-2w fr-mb-2w">
         Sélectionnez et exportez les données de votre choix, selon vos besoins
       </p>
-      <MiseEnAvant titre="Pour mener à bien votre export de données, vous allez être amené à :">
-        <ul>
-          <li>
-            indiquer les <span className="fr-text--bold">éléments</span> dont
-            vous souhaitez récupérer les données : les chantiers, les
-            indicateurs ou l'historique des indicateurs (étape 1) ;
-          </li>
-          <li>
-            préciser le <span className="fr-text--bold">périmètre</span> de
-            votre export : le cas échéant, filtrage des chantiers ou indicateurs
-            et sélection des territoires (étape 2) ;
-          </li>
-          <li>
-            enfin – s'il ne s'agit pas d'un export d'historique – choisir les{" "}
-            <span className="fr-text--bold">données</span> que vous souhaitez
-            collecter pour ces chantiers ou indicateurs, territoire par
-            territoire : gouvernance, commentaires, données quantitatives, etc.
-            (étape 3)
-          </li>
-        </ul>
-      </MiseEnAvant>
+      <Callout.Root color="mise-en-avant">
+        <Callout.Icon icone={QuestionIcon} />
+        <Callout.Text>
+          <Callout.Title balise="h3" className="text-base text-primary mb-1">
+            Pour mener à bien votre export de données, vous allez être amené à :
+          </Callout.Title>
+          <ul>
+            <li>
+              indiquer les <span className="fr-text--bold">éléments</span> dont
+              vous souhaitez récupérer les données : les chantiers, les
+              indicateurs ou l'historique des indicateurs (étape 1) ;
+            </li>
+            <li>
+              préciser le <span className="fr-text--bold">périmètre</span> de
+              votre export : le cas échéant, filtrage des chantiers ou
+              indicateurs et sélection des territoires (étape 2) ;
+            </li>
+            <li>
+              enfin – s'il ne s'agit pas d'un export d'historique – choisir les{" "}
+              <span className="fr-text--bold">données</span> que vous souhaitez
+              collecter pour ces chantiers ou indicateurs, territoire par
+              territoire : gouvernance, commentaires, données quantitatives,
+              etc. (étape 3)
+            </li>
+          </ul>
+        </Callout.Text>
+      </Callout.Root>
       <p className="fr-my-1w">
         Dans un premier temps, indiquez les éléments dont vous souhaitez
         exporter les données :
