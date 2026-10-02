@@ -1,5 +1,8 @@
 import { FunctionComponent, ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
+import { Button } from "@/components/shared/Button";
+import { Icone } from "@/components/_commons/Icone";
+import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 
 interface BarreLatéraleProps {
   estOuvert: boolean;
@@ -7,7 +10,7 @@ interface BarreLatéraleProps {
   children?: ReactNode;
 }
 
-const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({
+export const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({
   estOuvert,
   setEstOuvert,
   children,
@@ -23,15 +26,19 @@ const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({
             : "max-[992px]:-translate-x-[200rem]",
         )}
       >
-        <div className="fr-grid-row fr-grid-row--right bg-dsfr-alt-blue-france">
-          <button
+        <div className="flex justify-end bg-dsfr-alt-blue-france">
+          <Button
             aria-label="Fermer les filtres"
-            className="fr-btn--close fr-btn fr-hidden-lg fr-text--md fr-py-2w fr-px-2w fr-pr-md-0 fr-mr-1w fr-col-md-2 fr-text-title--blue-france"
+            className="my-2 mr-2 min-[62em]:hidden"
+            iconRight={
+              <Icone className="w-4 h-4 text-current" icone={CloseLineIcon} />
+            }
             onClick={() => setEstOuvert(false)}
-            type="button"
+            size="sm"
+            variant="tertiary-no-outline"
           >
             Fermer
-          </button>
+          </Button>
         </div>
         {children}
       </div>
@@ -45,4 +52,3 @@ const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({
     </div>
   );
 };
-export default BarreLatérale;

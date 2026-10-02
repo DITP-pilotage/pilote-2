@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
+import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { parseAsString, useQueryState } from "nuqs";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent, useCallback } from "react";
@@ -11,8 +12,6 @@ import { clsxm } from "@/utils/clsxm";
 interface FiltresMinistèresProps {
   ministères: Ministère[];
 }
-
-const catégorieDeFiltre = "périmètresMinistériels" as const;
 
 const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
   ministères,
@@ -81,15 +80,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
 
   return (
     <div className="fr-form-group">
-      <button
-        aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
-        aria-expanded="false"
-        className="fr-sidemenu__btn fr-m-0 fr-text--sm w-full text-left focus:-outline-offset-2"
-        type="button"
-      >
-        Filtrer par ministères
-      </button>
-      <div className="fr-collapse" id={`fr-sidemenu-item-${catégorieDeFiltre}`}>
+      <CollapsibleSection title="Filtrer par ministères">
         <ul
           aria-label="Liste des filtres ministères"
           className="fr-p-0 fr-m-0 list-none overflow-y-auto"
@@ -146,7 +137,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
             </li>
           ))}
         </ul>
-      </div>
+      </CollapsibleSection>
     </div>
   );
 };
