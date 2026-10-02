@@ -3,7 +3,7 @@ import { Badge } from "@/components/shared/Badge";
 
 import { FunctionComponent } from "react";
 import HeaderFicheTerritoriale from "@/components/PageFicheTerritoriale/HeaderFicheTerritoriale";
-import Encart from "@/components/_commons/Encart/Encart";
+import { TitleBand } from "@/components/shared/TitleBand";
 import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonImpression } from "@/components/_commons/BoutonImpression/BoutonImpression";
 import { AvancementsFicheTerritoriale } from "@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale";
@@ -35,7 +35,7 @@ export const PageFicheTerritoriale: FunctionComponent<
       <HeaderFicheTerritoriale />
       <main>
         <div className="fr-container fr-pb-2w pt-4 print:pt-0">
-          <Encart>
+          <TitleBand>
             <div className="flex justify-between">
               <Titre
                 baliseHtml="h2"
@@ -47,7 +47,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                 <BoutonImpression />
               </div>
             </div>
-          </Encart>
+          </TitleBand>
           <p className="fr-px-2w fr-m-0">
             <i className="fr-text--sm fr-ital">
               {`Fiche de synthèse généré le ${now.toLocaleString()}`}

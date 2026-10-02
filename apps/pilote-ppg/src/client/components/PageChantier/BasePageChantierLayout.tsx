@@ -10,7 +10,7 @@ import {
   listeRubriquesChantier,
 } from "@/client/utils/rubriques";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
+import { Notice } from "@/components/shared/Notice";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
 import {
   pageChantier,
@@ -167,10 +167,7 @@ export const BasePageChantierLayout = ({
           </Titre>
         </div>
         {mailleSourceDonnees === "regionale" ? (
-          <BandeauInformation bandeauType="INFO" fermable={false}>
-            En l'absence de données départementales, les valeurs des indicateurs
-            régionaux sont reportées pour le département.
-          </BandeauInformation>
+          <Notice title="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département." />
         ) : null}
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w">
           {children}
