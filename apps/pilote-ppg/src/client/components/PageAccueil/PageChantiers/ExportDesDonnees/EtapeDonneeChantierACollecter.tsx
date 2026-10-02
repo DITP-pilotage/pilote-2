@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/shared/Button";
-import { parseAsString, useQueryState } from "nuqs";
 import { useSession } from "next-auth/react";
 import { Modale } from "@/components/shared/Modale";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
@@ -10,14 +9,11 @@ import { useExportStep } from "./useExportStep";
 export const EtapeDonneeChantierACollecter = () => {
   const { data: session } = useSession();
 
-  const [optionsExport, setOptionsExport] = useQueryState(
-    "optionsExport",
-    parseAsString.withDefault("identifiant").withOptions({
-      shallow: true,
-    }),
-  );
-
-  const { goToStep } = useExportStep();
+  const {
+    exportState: { optionsExport },
+    updateExport,
+    goToStep,
+  } = useExportStep();
 
   const [afficherDetail, setAfficherDetail] = useState<boolean>(false);
 
@@ -29,7 +25,7 @@ export const EtapeDonneeChantierACollecter = () => {
       arrOptionsExport.push(optionExport);
     }
 
-    setOptionsExport(arrOptionsExport.join(","));
+    updateExport({ optionsExport: arrOptionsExport.join(",") });
   };
 
   const estAutoriseASelectionnerLesDecisionsStrategiques =
