@@ -1,12 +1,14 @@
-import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import { FunctionComponent, useId, useRef } from "react";
-import MultiSelectProps from "@/components/_commons/MultiSelect/MultiSelect.interface";
-import MultiSelectGroupe from "@/components/_commons/MultiSelect/MultiSelectGroupe";
+import { MultiSelectProps } from "@/components/_commons/MultiSelect/MultiSelect.interface";
+import { MultiSelectGroupe } from "@/components/_commons/MultiSelect/MultiSelectGroupe";
 import BoutonToutSélectionner from "@/components/_commons/BoutonsToutSélectionner/BoutonsToutSélectionner";
 import { clsxm } from "@/utils/clsxm";
-import useMultiSelect from "./useMultiSelect";
+import { useMultiSelect } from "./useMultiSelect";
+import "@gouvfr/dsfr/dist/component/select/select.min.css";
+import "@gouvfr/dsfr/dist/component/input/input.min.css";
+import "@gouvfr/dsfr/dist/component/form/form.min.css";
 
-const MultiSelect: FunctionComponent<MultiSelectProps> = ({
+export const MultiSelect: FunctionComponent<MultiSelectProps> = ({
   suffixeLibellé,
   optionsGroupées,
   valeursSélectionnéesParDéfaut,
@@ -40,7 +42,7 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
       <label className="fr-label" htmlFor={id}>
         {label}
       </label>
-      {!!afficherBoutonsSélection && (
+      {afficherBoutonsSélection ? (
         <BoutonToutSélectionner
           className="fr-mt-2w"
           onClickToutDésélectionner={() =>
@@ -54,7 +56,7 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
             )
           }
         />
-      )}
+      ) : null}
       <button
         className="fr-select fr-ellipsis text-left"
         disabled={desactive}
@@ -95,5 +97,3 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
     </div>
   );
 };
-
-export default MultiSelect;

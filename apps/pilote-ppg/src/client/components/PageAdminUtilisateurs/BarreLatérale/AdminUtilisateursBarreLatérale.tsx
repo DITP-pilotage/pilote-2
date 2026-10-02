@@ -6,11 +6,11 @@ import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale"
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Titre from "@/components/_commons/Titre/Titre";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
-import { MultiSelectTerritoire } from "@/components/_commons/MultiSelectNew/MultiSelectTerritoire/MultiSelectTerritoire";
-import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelectNew/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
-import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier";
+import { MultiSelectTerritoire } from "@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire";
+import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
+import { MultiSelectChantier } from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
 import { Tag } from "@/components/_commons/Tag/Tag";
-import { MultiSelectProfil } from "@/components/_commons/MultiSelectNew/MultiSelectProfil/MultiSelectProfil";
+import { MultiSelectProfil } from "@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil";
 import {
   AAccesATousLesUtilisateurs,
   PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE,

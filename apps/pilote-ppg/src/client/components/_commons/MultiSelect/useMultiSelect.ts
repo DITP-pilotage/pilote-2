@@ -8,9 +8,9 @@ import {
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
 import { deuxTableauxSontIdentiques } from "@/client/utils/arrays";
-import MultiSelectProps from "./MultiSelect.interface";
+import { MultiSelectProps } from "./MultiSelect.interface";
 
-export default function useMultiSelect(
+export function useMultiSelect(
   optionsGroupées: MultiSelectProps["optionsGroupées"],
   suffixeLibellé: string,
   changementValeursSélectionnéesCallback: MultiSelectProps["changementValeursSélectionnéesCallback"],
@@ -30,9 +30,11 @@ export default function useMultiSelect(
     (valeur: string) => {
       let nouvellesValeursSélectionnées = new Set(valeursSélectionnées);
 
-      if (valeursSélectionnées.has(valeur))
+      if (valeursSélectionnées.has(valeur)) {
         nouvellesValeursSélectionnées.delete(valeur);
-      else nouvellesValeursSélectionnées.add(valeur);
+      } else {
+        nouvellesValeursSélectionnées.add(valeur);
+      }
 
       setValeursSélectionnées(nouvellesValeursSélectionnées);
     },
@@ -117,8 +119,9 @@ export default function useMultiSelect(
         [...valeursSélectionnées],
         valeursSélectionnéesParDéfaut,
       )
-    )
+    ) {
       setValeursSélectionnées(new Set(valeursSélectionnéesParDéfaut));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valeursSélectionnéesParDéfaut]);
 
@@ -146,8 +149,11 @@ export default function useMultiSelect(
   }, [isOpen]);
 
   useEffect(() => {
-    if (recherche !== "") filtrerLesOptions();
-    else trierLesOptions();
+    if (recherche !== "") {
+      filtrerLesOptions();
+    } else {
+      trierLesOptions();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recherche]);
 
