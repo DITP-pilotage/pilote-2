@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { TextField, TextareaField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import {
   Controller,
@@ -9,8 +10,6 @@ import {
 } from "react-hook-form";
 import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { Infobulle } from "@/components/shared/Infobulle";
-import Input from "@/components/_commons/Input/Input";
-import TextArea from "@/components/_commons/TextArea/TextArea";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 
 type MetadataChampInfo = {
@@ -79,10 +78,10 @@ function MetadataChampInterne<TForm extends FieldValues>(
   ) => {
     if (props.editBoxType === "text") {
       return (
-        <Input
+        <TextField
           disabled={props.disabled}
-          erreurMessage={erreurMessage}
-          htmlName={name}
+          errorMessage={erreurMessage}
+          id={name}
           onChange={field.onChange}
           type="text"
           value={String(field.value ?? "")}
@@ -92,9 +91,9 @@ function MetadataChampInterne<TForm extends FieldValues>(
 
     if (props.editBoxType === "textarea") {
       return (
-        <TextArea
-          erreurMessage={erreurMessage}
-          htmlName={name}
+        <TextareaField
+          errorMessage={erreurMessage}
+          id={name}
           onChange={field.onChange}
           value={String(field.value ?? "")}
         />

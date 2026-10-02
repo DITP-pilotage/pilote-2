@@ -36,10 +36,8 @@ export class PageUtilisateurFormulaire extends BasePage {
     return this.page.getByRole("button", { name: "Suivant" });
   }
 
-  private get blocFonction() {
-    return this.page.locator(".fr-input-group", {
-      has: this.page.locator("label", { hasText: "Fonction" }),
-    });
+  private get champFonction() {
+    return this.page.getByLabel("Fonction", { exact: true });
   }
 
   private get blocService() {
@@ -79,7 +77,7 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async expectErreurFonction(): Promise<void> {
-    await expect(this.blocFonction.locator(".fr-error-text")).toBeVisible();
+    await expect(this.champFonction).toHaveAttribute("aria-invalid", "true");
   }
 
   async expectErreurService(): Promise<void> {
@@ -87,7 +85,9 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async expectPasErreurFonction(): Promise<void> {
-    await expect(this.blocFonction.locator(".fr-error-text")).not.toBeVisible();
+    await expect(
+      this.champFonction.and(this.page.locator('[aria-invalid="true"]')),
+    ).toHaveCount(0);
   }
 
   async expectPasErreurService(): Promise<void> {

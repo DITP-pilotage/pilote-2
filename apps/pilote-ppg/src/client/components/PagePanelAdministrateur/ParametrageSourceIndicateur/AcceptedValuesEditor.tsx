@@ -1,6 +1,6 @@
 import { useFieldArray } from "react-hook-form";
+import { FormTextField } from "@/components/shared/FormTextField";
 import { Button } from "@/components/shared/Button";
-import { Input } from "@/components/_commons/Input";
 import { useFormParametrageSource } from "./form";
 import { ValeurAccepte } from "./types";
 
@@ -46,7 +46,7 @@ export const AcceptedValuesEditor = ({
           </div>
           <div className="fr-grid-row fr-grid-row--gutters p-3">
             <div className="fr-col-3">
-              <Input
+              <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
                 id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
@@ -57,7 +57,7 @@ export const AcceptedValuesEditor = ({
               />
             </div>
             <div className="fr-col-3">
-              <Input
+              <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
                 id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
@@ -68,7 +68,7 @@ export const AcceptedValuesEditor = ({
               />
             </div>
             <div className="fr-col-3">
-              <Input
+              <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
                 id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
@@ -79,7 +79,7 @@ export const AcceptedValuesEditor = ({
               />
             </div>
             <div className="fr-col-3">
-              <Input
+              <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
                 id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}

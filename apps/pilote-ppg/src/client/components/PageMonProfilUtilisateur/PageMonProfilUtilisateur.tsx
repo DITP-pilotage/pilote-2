@@ -1,10 +1,10 @@
 import { FormProvider } from "react-hook-form";
+import { TextField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import { useState } from "react";
 import { z } from "zod";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
-import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
@@ -47,46 +47,45 @@ const PageMonProfilUtilisateurContent = () => {
 
   return (
     <>
-      <InputAvecLabel
+      <TextField
         disabled
-        erreur={undefined}
-        htmlName="email"
-        isRequired
-        libellé="Adresse électronique"
-        register={register("email")}
+        id="email"
+        required
+        label="Adresse électronique"
         type="email"
+        {...register("email")}
       />
 
-      <InputAvecLabel
-        erreur={formState.errors.prenom}
-        htmlName="prénom"
-        isRequired
-        libellé="Prénom"
-        register={register("prenom")}
+      <TextField
+        errorMessage={formState.errors.prenom?.message?.toString()}
+        id="prénom"
+        required
+        label="Prénom"
         type="text"
+        {...register("prenom")}
       />
 
-      <InputAvecLabel
-        erreur={formState.errors.nom}
-        htmlName="nom"
-        isRequired
-        libellé="Nom"
-        register={register("nom")}
+      <TextField
+        errorMessage={formState.errors.nom?.message?.toString()}
+        id="nom"
+        required
+        label="Nom"
         type="text"
+        {...register("nom")}
       />
 
       <SelectService />
 
       {serviceSelectionne === "autre" && (
         <div>
-          <InputAvecLabel
-            className="fr-mb-1w"
-            htmlName="serviceAutre"
-            isRequired
-            libellé="Précisez votre service"
-            register={register("serviceAutre")}
-            erreur={formState.errors.serviceAutre}
+          <TextField
+            className="mb-2"
+            id="serviceAutre"
+            required
+            label="Précisez votre service"
+            errorMessage={formState.errors.serviceAutre?.message?.toString()}
             type="text"
+            {...register("serviceAutre")}
           />
           <p className="!text-sm">
             Afin de nous aider à compléter cette liste, merci de nous indiquer
@@ -96,13 +95,13 @@ const PageMonProfilUtilisateurContent = () => {
         </div>
       )}
 
-      <InputAvecLabel
-        erreur={formState.errors.fonction}
-        htmlName="fonction"
-        isRequired
-        libellé="Fonction"
-        register={register("fonction")}
+      <TextField
+        errorMessage={formState.errors.fonction?.message?.toString()}
+        id="fonction"
+        required
+        label="Fonction"
         type="text"
+        {...register("fonction")}
       />
     </>
   );

@@ -1,8 +1,8 @@
 import { Controller } from "react-hook-form";
+import { TextField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { FunctionComponent } from "react";
-import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
   MultiSelectTerritoire,
@@ -75,45 +75,45 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           <SelecteurApplication />
         ) : null}
       </div>
-      <InputAvecLabel
+      <TextField
         disabled={Boolean(utilisateur?.email)}
-        erreur={errors.email}
-        htmlName="email"
-        libellé="Adresse électronique"
-        register={register("email")}
-        texteAide="Format attendu : nom@domaine.fr"
+        errorMessage={errors.email?.message?.toString()}
+        id="email"
+        label="Adresse électronique"
+        hint="Format attendu : nom@domaine.fr"
         type="email"
+        {...register("email")}
       />
-      <InputAvecLabel
-        erreur={errors.nom}
-        htmlName="nom"
-        libellé="Nom"
-        register={register("nom")}
+      <TextField
+        errorMessage={errors.nom?.message?.toString()}
+        id="nom"
+        label="Nom"
+        {...register("nom")}
       />
-      <InputAvecLabel
-        erreur={errors.prénom}
-        htmlName="prénom"
-        libellé="Prénom"
-        register={register("prénom")}
+      <TextField
+        errorMessage={errors.prénom?.message?.toString()}
+        id="prénom"
+        label="Prénom"
+        {...register("prénom")}
       />
       <SelectServiceAdmin />
       {service === "autre" && (
         <div className="fr-mb-4w">
-          <InputAvecLabel
-            className="fr-mb-1w"
-            htmlName="serviceAutre"
-            libellé="Précisez votre service"
-            register={register("serviceAutre")}
-            erreur={errors.serviceAutre}
+          <TextField
+            className="mb-2"
+            id="serviceAutre"
+            label="Précisez votre service"
+            errorMessage={errors.serviceAutre?.message?.toString()}
             type="text"
+            {...register("serviceAutre")}
           />
         </div>
       )}
-      <InputAvecLabel
-        erreur={errors.fonction}
-        htmlName="fonction"
-        libellé="Fonction"
-        register={register("fonction")}
+      <TextField
+        errorMessage={errors.fonction?.message?.toString()}
+        id="fonction"
+        label="Fonction"
+        {...register("fonction")}
       />
       <SelectField
         errorMessage={errors.profil?.message?.toString()}

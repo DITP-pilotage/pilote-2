@@ -1,6 +1,8 @@
 import { FunctionComponent } from "react";
-import { Textarea } from "@/components/_commons/Textarea";
-import { Input } from "@/components/_commons/Input";
+import {
+  FormTextField,
+  FormTextareaField,
+} from "@/components/shared/FormTextField";
 import { useFormParametrageSource } from "./form";
 
 interface InputMetadataProps {
@@ -31,7 +33,7 @@ export const InputMetadata: FunctionComponent<InputMetadataProps> = ({
   return (
     <div className={className}>
       {type === "textarea" ? (
-        <Textarea
+        <FormTextareaField
           className="text-sm font-normal min-h-[38px]"
           control={form.control}
           label={label}
@@ -40,7 +42,7 @@ export const InputMetadata: FunctionComponent<InputMetadataProps> = ({
           required={required}
         />
       ) : (
-        <Input
+        <FormTextField
           className="text-sm font-normal min-h-[38px]"
           control={form.control}
           label={label}
