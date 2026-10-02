@@ -1,109 +1,78 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { FunctionComponent } from "react";
-import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import Titre from "@/components/_commons/Titre/Titre";
-import {
-  LIMITE_CARACTÈRES_COMMENTAIRE,
-  validationCommentaireFormulaire,
-} from "@/validation/commentaire";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Infobulle } from "@/components/shared/Infobulle";
-import { Publication } from "@/components/PageChantier/Publication/Publication.interface";
-import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
-import { extractVisibleText } from "@/utils/extractVisibleText";
+import {
+  PublicationFormConfig,
+  Publication,
+  PublicationValues,
+} from "@/components/PageChantier/Publication/Publication.interface";
+import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
 
-interface FormulairePublicationProps {
+interface FormulairePublicationProps<T extends PublicationValues> {
   publication: Publication | null;
   libelle: string;
   consigne: string;
+  formConfig: PublicationFormConfig<T>;
   annulationCallback?: () => void;
-  onModifier: SubmitHandler<{ contenu: string }>;
+  onModifier: SubmitHandler<T>;
 }
 
-const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
+export const FormulairePublication = <T extends PublicationValues>({
   publication,
   libelle,
   consigne,
+  formConfig,
   annulationCallback,
   onModifier,
-}) => {
-  const {
-    handleSubmit,
-    control,
-    formState: { errors, isValid },
-    watch,
-  } = useForm<{ contenu: string }>({
+}: FormulairePublicationProps<T>) => {
+  const form = useForm<T>({
     mode: "all",
-    resolver: zodResolver(validationCommentaireFormulaire),
-    defaultValues: {
-      contenu: publication?.contenu ?? "",
-    },
+    resolver: formConfig.resolver,
+    defaultValues: formConfig.editValues,
   });
 
   return (
-    <form onSubmit={handleSubmit(onModifier)}>
-      <div className="flex items-center gap-2 fr-mb-1v">
-        <Titre baliseHtml="h3" className="text-xl mb-0">
-          {`Modifier le commentaire "${libelle}"`}
-        </Titre>
-        <Infobulle classNameIcone="w-5 h-5">{consigne}</Infobulle>
-      </div>
-      <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
-        {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(publication!.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
-      </p>
-      <div
-        className={`flex flex-col fr-mb-0 fr-input-group ${errors.contenu ? "fr-input-group--error" : ""}`}
-      >
-        <Controller
-          control={control}
-          name="contenu"
-          render={({ field }) => (
-            <EditeurSimple
-              contenu={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-            />
-          )}
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onModifier)}>
+        <div className="flex items-center gap-2 fr-mb-1v">
+          <Titre baliseHtml="h3" className="text-xl mb-0">
+            {`Modifier le commentaire "${libelle}"`}
+          </Titre>
+          <Infobulle classNameIcone="w-5 h-5">{consigne}</Infobulle>
+        </div>
+        {publication ? (
+          <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
+            {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(publication.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
+          </p>
+        ) : null}
+        <PublicationFormFields
+          extraFields={formConfig.extraFields}
+          maxLength={formConfig.maxLength}
         />
-        <div className="flex justify-between">
-          <div>
-            {!!errors.contenu && (
-              <p className="fr-error-text fr-mt-0 fr-mr-2w">
-                {errors.contenu.message}
-              </p>
-            )}
-          </div>
-          <CompteurCaractères
-            compte={extractVisibleText(watch("contenu") ?? "").length}
-            limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
+        <div className="flex justify-end fr-mt-2w">
+          <Bouton
+            className="mr-3"
+            disabled={!form.formState.isValid}
+            iconLeft={
+              <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
+            }
+            label="Valider"
+            type="submit"
+            variant="primary"
+          />
+          <Bouton
+            iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
+            label="Annuler"
+            onClick={annulationCallback}
+            variant="secondary"
           />
         </div>
-      </div>
-      <div className="flex justify-end fr-mt-2w">
-        <Bouton
-          className="mr-3"
-          disabled={!isValid}
-          iconLeft={
-            <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
-          }
-          label="Valider"
-          type="submit"
-          variant="primary"
-        />
-        <Bouton
-          iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
-          label="Annuler"
-          onClick={annulationCallback}
-          variant="secondary"
-        />
-      </div>
-    </form>
+      </form>
+    </FormProvider>
   );
 };
-
-export default FormulairePublication;
