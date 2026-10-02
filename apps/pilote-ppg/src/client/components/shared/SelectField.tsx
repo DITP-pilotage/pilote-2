@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Select } from "@/components/shared/Select";
 import {
   Picker,
+  type PickerAppearance,
   type PickerOption,
   type PickerOptionGroup,
 } from "@/components/shared/Picker";
@@ -44,6 +45,7 @@ export const SelectField = <T extends string>({
   className,
   triggerClassName,
   contentClassName,
+  appearance,
 }: {
   name: string;
   options: SelectFieldOption<T>[] | SelectFieldOptionGroup<T>[];
@@ -60,6 +62,7 @@ export const SelectField = <T extends string>({
   className?: string;
   triggerClassName?: string;
   contentClassName?: string;
+  appearance?: PickerAppearance;
 }) => {
   const grouped = isGrouped(options);
   const hasEmptyOption =
@@ -90,6 +93,7 @@ export const SelectField = <T extends string>({
       ) : null}
 
       <Picker
+        appearance={appearance}
         contentClassName={contentClassName}
         disabled={disabled}
         name={name}
