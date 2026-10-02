@@ -57,7 +57,7 @@ const CommentairesRapportDetaille: FunctionComponent<
                   </div>
                 </>
               ) : (
-                <Badge taille="sm">Non renseigné</Badge>
+                <Badge size="sm">Non renseigné</Badge>
               )}
             </div>
           </Fragment>

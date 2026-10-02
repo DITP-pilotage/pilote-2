@@ -33,7 +33,7 @@ export const DecisionsStrategiquesRapportDetaille = ({
             </div>
           </>
         ) : (
-          <Badge taille="sm">Non renseigné</Badge>
+          <Badge size="sm">Non renseigné</Badge>
         )}
       </div>
     </Bloc>

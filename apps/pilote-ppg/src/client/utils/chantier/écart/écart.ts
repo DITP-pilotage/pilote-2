@@ -1,12 +1,12 @@
-import type { VarianteBadge } from "@/components/shared/Badge";
+import type { BadgeVariant } from "@/components/shared/Badge";
 
 type CouleurEcart = "rouge" | "bleu" | "vert" | "gris";
 
-export const VARIANTE_BADGE_ECART: Record<CouleurEcart, VarianteBadge> = {
-  rouge: "erreur",
+export const VARIANTE_BADGE_ECART: Record<CouleurEcart, BadgeVariant> = {
+  rouge: "error",
   bleu: "info",
-  vert: "succes",
-  gris: "defaut",
+  vert: "success",
+  gris: "default",
 };
 type Avancement = "EN AVANCE" | "DANS LA MEDIANE" | "EN RETARD" | "ARCHIVE";
 

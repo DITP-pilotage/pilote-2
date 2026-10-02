@@ -2,11 +2,11 @@ import { Badge } from "@/components/shared/Badge";
 
 export const BadgeStatutReferentiel = ({ supprimé }: { supprimé: boolean }) =>
   supprimé ? (
-    <Badge taille="sm" variante="erreur">
+    <Badge size="sm" variant="error">
       Supprimé
     </Badge>
   ) : (
-    <Badge taille="sm" variante="succes">
+    <Badge size="sm" variant="success">
       Actif
     </Badge>
   );

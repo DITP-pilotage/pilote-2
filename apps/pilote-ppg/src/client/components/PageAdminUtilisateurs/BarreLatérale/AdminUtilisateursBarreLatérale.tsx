@@ -9,7 +9,7 @@ import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { MultiSelectTerritoire } from "@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire";
 import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
-import { Tag } from "@/components/_commons/Tag/Tag";
+import { Tag } from "@/components/shared/Tag";
 import { MultiSelectProfil } from "@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil";
 import {
   AAccesATousLesUtilisateurs,
@@ -183,13 +183,14 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
             return libellé === null ? null : (
               <Tag
                 key={territoireCode}
-                libelle={libellé}
                 onClick={() => {
                   const arrFiltre = filtres.territoires.split(",");
                   arrFiltre.splice(arrFiltre.indexOf(territoireCode), 1);
                   modifierFiltre(arrFiltre, "territoires");
                 }}
-              />
+              >
+                {libellé}
+              </Tag>
             );
           })}
         </div>
@@ -216,7 +217,6 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               return libellé === null ? null : (
                 <Tag
                   key={perimetreMinisterielId}
-                  libelle={libellé}
                   onClick={() => {
                     const arrFiltre = filtres.perimetresMinisteriels.split(",");
                     arrFiltre.splice(
@@ -225,7 +225,9 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
                     );
                     modifierFiltre(arrFiltre, "perimetresMinisteriels");
                   }}
-                />
+                >
+                  {libellé}
+                </Tag>
               );
             })}
         </div>
@@ -246,13 +248,14 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
             return libellé === null ? null : (
               <Tag
                 key={chantierId}
-                libelle={libellé}
                 onClick={() => {
                   const arrFiltre = filtres.chantiers.split(",");
                   arrFiltre.splice(arrFiltre.indexOf(chantierId), 1);
                   modifierFiltre(arrFiltre, "chantiers");
                 }}
-              />
+              >
+                {libellé}
+              </Tag>
             );
           })}
         </div>
@@ -271,13 +274,14 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
             return libellé === null ? null : (
               <Tag
                 key={profilCode}
-                libelle={libellé}
                 onClick={() => {
                   const arrFiltre = filtres.profils.split(",");
                   arrFiltre.splice(arrFiltre.indexOf(profilCode), 1);
                   modifierFiltre(arrFiltre, "profils");
                 }}
-              />
+              >
+                {libellé}
+              </Tag>
             );
           })}
         </div>
