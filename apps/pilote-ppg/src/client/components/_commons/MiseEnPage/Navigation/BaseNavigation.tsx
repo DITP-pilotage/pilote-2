@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Dialog } from "radix-ui";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Session } from "next-auth";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -9,14 +10,10 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-
-const fermerLaModaleDuMenu = () => {
-  if (typeof window.dsfr === "function") {
-    window
-      .dsfr(document.querySelector<HTMLElement>("#modale-menu-principal"))
-      ?.modal?.conceal();
-  }
-};
+import { Button } from "@/components/shared/Button";
+import { Icone } from "@/components/_commons/Icone";
+import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
+import { useMenuMobile } from "@/components/_commons/MiseEnPage/EnTete/MenuMobileContext";
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) =>
   session?.profil === ProfilEnum.DITP_ADMIN;
@@ -46,6 +43,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
   const urlActuelle = router.pathname;
 
   const { vérifierValeurApplicationEstIndisponible } = useNavigation();
+  const { open: menuOuvert, setOpen: setMenuOuvert } = useMenuMobile();
 
   if (
     vérifierValeurApplicationEstIndisponible &&
@@ -68,67 +66,86 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
         listerNouveautes[0].version
       : true;
 
+  const navigationAccessible =
+    !vérifierValeurApplicationEstIndisponible ||
+    estAutoriséAParcourirSiIndisponible(session);
+
+  const listeDesLiens = (onNavigate?: () => void) =>
+    navigationAccessible ? (
+      <ul className="fr-nav__list">
+        {pages.map(
+          (page) =>
+            page.accessible && (
+              <li className="fr-nav__item" key={page.lien}>
+                <Link
+                  aria-current={
+                    page.matcher === urlActuelle ? "true" : undefined
+                  }
+                  className="fr-nav__link relative"
+                  href={page.lien}
+                  onClick={onNavigate}
+                  target={page.target}
+                >
+                  {page.nom}
+                  {page.matcher === "/nouveautes" &&
+                  !aConsulteLaDerniereNouveaute ? (
+                    <span className="!text-error fr-pl-1v absolute fr-top-1v">
+                      ●
+                    </span>
+                  ) : null}
+                </Link>
+              </li>
+            ),
+        )}
+      </ul>
+    ) : null;
+
   return (
-    <div
-      aria-labelledby="bouton-menu-principal"
-      className="fr-header__menu fr-modal"
-      id="modale-menu-principal"
-    >
-      <div className="fr-container">
-        <button
-          aria-controls="modale-menu-principal"
-          className="fr-btn--close fr-btn"
-          title="Fermer"
-          type="button"
-        >
-          Fermer
-        </button>
-        <div className="fr-header__menu-links gap-2 divide-y divide-gray-200 border-b border-b-gray-200 pb-2">
-          <div className="pb-2">
-            <BoutonContacterEquipePilote />
-          </div>
-          <div className="flex">
-            <Utilisateur />
-          </div>
+    <>
+      <div className="fr-header__menu max-[61.99em]:hidden">
+        <div className="fr-container">
+          <nav aria-label="Menu principal" className="fr-nav">
+            {listeDesLiens()}
+          </nav>
         </div>
-        <nav
-          aria-label="Menu principal"
-          className="fr-nav"
-          id="navigation-menu-principal"
-          role="navigation"
-        >
-          {!vérifierValeurApplicationEstIndisponible ||
-          (vérifierValeurApplicationEstIndisponible &&
-            estAutoriséAParcourirSiIndisponible(session)) ? (
-            <ul className="fr-nav__list">
-              {pages.map(
-                (page) =>
-                  page.accessible && (
-                    <li className="fr-nav__item" key={page.lien}>
-                      <Link
-                        aria-current={
-                          page.matcher === urlActuelle ? "true" : undefined
-                        }
-                        className="fr-nav__link relative"
-                        href={page.lien}
-                        onClick={fermerLaModaleDuMenu}
-                        target={page.target}
-                      >
-                        {page.nom}
-                        {page.matcher === "/nouveautes" &&
-                        !aConsulteLaDerniereNouveaute ? (
-                          <span className="!text-error fr-pl-1v absolute fr-top-1v">
-                            ●
-                          </span>
-                        ) : null}
-                      </Link>
-                    </li>
-                  ),
-              )}
-            </ul>
-          ) : null}
-        </nav>
       </div>
-    </div>
+      <Dialog.Root onOpenChange={setMenuOuvert} open={menuOuvert}>
+        <Dialog.Portal>
+          <Dialog.Content
+            aria-describedby={undefined}
+            className="fixed inset-0 z-[1000] overflow-y-auto bg-white px-4 pb-8 min-[62em]:hidden"
+          >
+            <Dialog.Title className="sr-only">Menu principal</Dialog.Title>
+            <div className="flex justify-end py-4">
+              <Dialog.Close asChild>
+                <Button
+                  iconRight={
+                    <Icone
+                      className="w-4 h-4 text-current"
+                      icone={CloseLineIcon}
+                    />
+                  }
+                  size="sm"
+                  variant="tertiary-no-outline"
+                >
+                  Fermer
+                </Button>
+              </Dialog.Close>
+            </div>
+            <div className="flex flex-col gap-2 divide-y divide-gray-200 border-b border-b-gray-200 pb-2">
+              <div className="pb-2">
+                <BoutonContacterEquipePilote />
+              </div>
+              <div className="flex pt-2">
+                <Utilisateur />
+              </div>
+            </div>
+            <nav aria-label="Menu principal" className="fr-nav">
+              {listeDesLiens(() => setMenuOuvert(false))}
+            </nav>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
   );
 };
