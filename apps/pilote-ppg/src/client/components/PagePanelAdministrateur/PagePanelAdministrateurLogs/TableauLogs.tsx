@@ -1,4 +1,5 @@
 import { Fragment, FunctionComponent, useState } from "react";
+import { SearchInput } from "@/components/shared/SearchInput";
 import { SelectField } from "@/components/shared/SelectField";
 import { $Enums } from "@prisma/client";
 import { flexRender } from "@tanstack/react-table";
@@ -104,14 +105,12 @@ export const TableauLogs: FunctionComponent = () => {
           >
             Recherche
           </label>
-          <input
-            className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+          <SearchInput
             id="filtre-recherche"
             onChange={(event) =>
               setFiltreRecherche(event.target.value || undefined)
             }
             placeholder="Rechercher dans les messages..."
-            type="text"
             value={filtreRecherche ?? ""}
           />
         </div>

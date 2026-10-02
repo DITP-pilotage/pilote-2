@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SearchInput } from "@/components/shared/SearchInput";
 import { Button } from "@/components/shared/Button";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,11 +76,10 @@ export const FormulaireParametrageSourceIndicateur = () => {
 
         <div className="flex gap-2">
           <div className="bg-white p-3 border rounded">
-            <input
-              className="fr-input fr-mb-2w"
-              onChange={(e) => setSearchTerm(e.target.value)}
+            <SearchInput
+              className="mb-4"
+              onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Rechercher un champ..."
-              type="text"
               value={searchTerm}
             />
 
