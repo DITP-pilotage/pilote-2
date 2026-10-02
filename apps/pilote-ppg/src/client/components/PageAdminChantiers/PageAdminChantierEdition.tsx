@@ -1,6 +1,6 @@
 import { FormProvider } from "react-hook-form";
+import { Button } from "@/components/shared/Button";
 import { useState } from "react";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
@@ -103,7 +103,9 @@ const PageAdminChantierEdition = ({
                 )}
               >
                 <div className="flex justify-end mb-6">
-                  <Bouton label={labelBouton} variant="primary" type="submit" />
+                  <Button variant="primary" type="submit">
+                    {labelBouton}
+                  </Button>
                 </div>
 
                 <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925 overflow-hidden">
@@ -113,7 +115,9 @@ const PageAdminChantierEdition = ({
                 </div>
 
                 <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
-                  <Bouton label={labelBouton} variant="primary" type="submit" />
+                  <Button variant="primary" type="submit">
+                    {labelBouton}
+                  </Button>
                 </div>
               </form>
             </FormProvider>

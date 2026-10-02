@@ -1,5 +1,5 @@
-import { Lien } from "@/components/_commons/Lien/Lien";
 import { Input } from "@/components/_commons/Input";
+import { Button } from "@/components/shared/Button";
 import { Textarea } from "@/components/_commons/Textarea";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useFormParametrageSource } from "./form";
@@ -146,11 +146,9 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
             Validation
           </h3>
           <div className="flex mb-4">
-            <Lien
-              className="text-xs"
-              href="https://regex101.com/"
-              label="Tester sa RegEx"
-            />
+            <Button asChild className="text-xs" variant="link">
+              <a href="https://regex101.com/">Tester sa RegEx</a>
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

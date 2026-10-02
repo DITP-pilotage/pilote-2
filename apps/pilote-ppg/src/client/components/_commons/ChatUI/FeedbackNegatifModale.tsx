@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { Dialog } from "radix-ui";
 import { $Enums } from "@prisma/client";
 import { Modale } from "@/components/shared/Modale";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ActionReponse } from "@/components/_commons/ChatUI/ActionReponse";
 import { FeedbackCategorieCard } from "@/components/_commons/ChatUI/FeedbackCategorieCard";
 import { ThumbDownIcon } from "@/components/_commons/Icones/ThumbDownIcon";
@@ -120,14 +120,15 @@ export const FeedbackNegatifModale = ({
 
       <div className="flex justify-end gap-2 mt-3">
         <Dialog.Close asChild>
-          <Bouton label="Annuler" variant="secondary" />
+          <Button variant="secondary">Annuler</Button>
         </Dialog.Close>
-        <Bouton
+        <Button
           disabled={envoiImpossible}
-          label="Envoyer"
           onClick={handleEnvoyer}
           variant="primary"
-        />
+        >
+          Envoyer
+        </Button>
       </div>
     </Modale>
   );

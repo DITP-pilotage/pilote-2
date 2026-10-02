@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { Accordion } from "@/components/shared/Accordion";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 import { LigneCardEvaluationAutoEvaluation } from "@/components/PageAppreciation/LigneCardEvaluationAutoEvaluation";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { EyeOffIcon } from "@/components/_commons/Icones/EyeOffIcon";
 import { EyeIcon } from "@/components/_commons/Icones/EyeIcon";
 import { Icone } from "@/components/_commons/Icone";
@@ -62,7 +62,7 @@ export const ListePhaseEvaluation = () => {
                   {CONSOLIDATION.length > 0 ? (
                     <div className="flex flex-col gap-4">
                       <div>
-                        <Bouton
+                        <Button
                           className="!text-xs"
                           iconLeft={
                             <Icone
@@ -74,18 +74,17 @@ export const ListePhaseEvaluation = () => {
                               }
                             />
                           }
-                          label={
-                            afficherObjectifsCollectifs
-                              ? "Masquer les objectifs collectifs"
-                              : "Afficher les objectifs collectifs"
-                          }
                           onClick={() =>
                             setAfficherObjectifsCollectifs(
                               !afficherObjectifsCollectifs,
                             )
                           }
                           variant="link"
-                        />
+                        >
+                          {afficherObjectifsCollectifs
+                            ? "Masquer les objectifs collectifs"
+                            : "Afficher les objectifs collectifs"}
+                        </Button>
                       </div>
                       {CONSOLIDATION.map((ficheEvaluation) => (
                         <LigneCardEvaluationAppreciation
@@ -113,7 +112,7 @@ export const ListePhaseEvaluation = () => {
                   <Accordion.Content>
                     <div className="flex flex-col gap-4">
                       <div>
-                        <Bouton
+                        <Button
                           className="!text-xs"
                           iconLeft={
                             <Icone
@@ -125,18 +124,17 @@ export const ListePhaseEvaluation = () => {
                               }
                             />
                           }
-                          label={
-                            afficherObjectifsCollectifs
-                              ? "Masquer les objectifs collectifs"
-                              : "Afficher les objectifs collectifs"
-                          }
                           onClick={() =>
                             setAfficherObjectifsCollectifs(
                               !afficherObjectifsCollectifs,
                             )
                           }
                           variant="link"
-                        />
+                        >
+                          {afficherObjectifsCollectifs
+                            ? "Masquer les objectifs collectifs"
+                            : "Afficher les objectifs collectifs"}
+                        </Button>
                       </div>
                       {AUTO_EVALUATION.map((ficheEvaluation) => (
                         <LigneCardEvaluationAutoEvaluation
@@ -162,7 +160,7 @@ export const ListePhaseEvaluation = () => {
                   {INSTRUCTION.length > 0 ? (
                     <div className="flex flex-col gap-4">
                       <div>
-                        <Bouton
+                        <Button
                           className="!text-xs"
                           iconLeft={
                             <Icone
@@ -174,18 +172,17 @@ export const ListePhaseEvaluation = () => {
                               }
                             />
                           }
-                          label={
-                            afficherObjectifsCollectifs
-                              ? "Masquer les objectifs collectifs"
-                              : "Afficher les objectifs collectifs"
-                          }
                           onClick={() =>
                             setAfficherObjectifsCollectifs(
                               !afficherObjectifsCollectifs,
                             )
                           }
                           variant="link"
-                        />
+                        >
+                          {afficherObjectifsCollectifs
+                            ? "Masquer les objectifs collectifs"
+                            : "Afficher les objectifs collectifs"}
+                        </Button>
                       </div>
                       {INSTRUCTION.map((ficheEvaluation) => (
                         <LigneCardEvaluationInstruction

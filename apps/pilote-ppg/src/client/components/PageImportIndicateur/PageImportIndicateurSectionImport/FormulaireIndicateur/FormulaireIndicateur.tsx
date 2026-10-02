@@ -1,7 +1,7 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { Button } from "@/components/shared/Button";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { useFormulaireIndicateur } from "@/hooks/useFomulaireIndicateur";
-import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import { Icone } from "@/components/_commons/Icone";
 import { LoaderIcon } from "@/components/_commons/Icones/LoaderIcon";
 import { wording } from "@/client/utils/i18n/i18n";
@@ -44,14 +44,20 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
           }
         >
           <InputFichier onChange={définirLeFichier} />
-          <SubmitBouton
+          <Button
             className="ml-8"
             disabled={!file}
-            label={
+            title={
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                 .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_VERIFIER_FICHIER
             }
-          />
+            type="submit"
+          >
+            {
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_VERIFIER_FICHIER
+            }
+          </Button>
         </form>
       )}
       <p>

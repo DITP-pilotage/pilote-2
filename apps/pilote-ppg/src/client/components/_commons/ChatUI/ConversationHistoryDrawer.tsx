@@ -1,6 +1,6 @@
 import { useMemo } from "react";
+import { Button } from "@/components/shared/Button";
 import api from "@/server/infrastructure/api/trpc/api";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
@@ -43,16 +43,17 @@ export const ConversationHistoryDrawer = ({
 
   return (
     <aside className="flex h-full w-[280px] shrink-0 flex-col border-r border-dsfr-grey-900 bg-white">
-      <Bouton
+      <Button
         className="mx-3 mb-1 mt-3 justify-start"
         iconLeft={
           <Icone className="h-4 w-4 !text-current" icone={AddLineIcon} />
         }
-        label="Nouvelle conversation"
         onClick={onNouvelleConversation}
         size="sm"
         variant="secondary"
-      />
+      >
+        Nouvelle conversation
+      </Button>
 
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 && (

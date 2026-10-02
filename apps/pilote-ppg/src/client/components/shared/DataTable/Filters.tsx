@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import { Button } from "@/components/shared/Button";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
@@ -97,7 +97,7 @@ export function DataTableFilters({
   ) : null;
 
   const reinitialiser = (
-    <Bouton
+    <Button
       disabled={!hasActiveFilters}
       iconLeft={
         <Icone
@@ -105,11 +105,12 @@ export function DataTableFilters({
           icone={ArrowGoBackIcon}
         />
       }
-      label="Réinitialiser les filtres"
       onClick={onResetFilters}
       size="sm"
       variant="secondary"
-    />
+    >
+      Réinitialiser les filtres
+    </Button>
   );
 
   return (

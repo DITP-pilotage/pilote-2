@@ -1,11 +1,11 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import FormulaireIndicateur from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur";
 import ResultatValidationFichier from "@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier";
-import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 
@@ -55,7 +55,7 @@ const EtapeChargerFichier: FunctionComponent<{
             <input name="indicateurId" type="hidden" value={indicateur?.id} />
             <input name="rapportId" type="hidden" value={rapport?.id} />
             <div className="fr-mt-4w flex justify-end">
-              <SubmitBouton
+              <Button
                 className="ml-8"
                 iconRight={
                   <Icone
@@ -63,11 +63,17 @@ const EtapeChargerFichier: FunctionComponent<{
                     icone={ArrowLine1Icon}
                   />
                 }
-                label={
+                title={
                   wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                     .ETAPE_CHARGER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE
                 }
-              />
+                type="submit"
+              >
+                {
+                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                    .ETAPE_CHARGER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE
+                }
+              </Button>
             </div>
           </form>
         </div>

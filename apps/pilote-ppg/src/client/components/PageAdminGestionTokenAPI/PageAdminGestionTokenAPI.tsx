@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import { FormProvider } from "react-hook-form";
 import Titre from "@/components/_commons/Titre/Titre";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Table } from "@/components/shared/Table";
 import Bloc from "@/client/components/_commons/Bloc/Bloc";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
@@ -77,16 +77,17 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                           {tokenAPIInformation.dateExpiration}
                         </Table.Cell>
                         <Table.Cell>
-                          <Bouton
+                          <Button
                             aria-controls="supprimer-token"
-                            label="Supprimer le token API"
                             onClick={() =>
                               supprimerTokenAPI({
                                 email: tokenAPIInformation.email,
                               })
                             }
                             variant="primary"
-                          />
+                          >
+                            Supprimer le token API
+                          </Button>
                         </Table.Cell>
                       </Table.Row>
                     ))}

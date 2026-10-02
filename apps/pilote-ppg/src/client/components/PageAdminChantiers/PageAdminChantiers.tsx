@@ -1,5 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { Lien } from "@/components/_commons/Lien/Lien";
+import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { useTableauAdminChantiers } from "./useTableauAdminChantiers";
 
@@ -35,11 +36,11 @@ const PageAdminChantiers = () => {
               </p>
             )}
           </div>
-          <Lien
-            href="/panel-administrateur/chantiers/nouveau?_action=creer-chantier"
-            label="+ Créer un chantier"
-            variant="button"
-          />
+          <Button asChild variant="primary">
+            <Link href="/panel-administrateur/chantiers/nouveau?_action=creer-chantier">
+              + Créer un chantier
+            </Link>
+          </Button>
         </div>
 
         <TableauAdmin
