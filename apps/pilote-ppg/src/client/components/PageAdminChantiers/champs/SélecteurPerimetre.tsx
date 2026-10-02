@@ -1,5 +1,5 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
+import { SelectField } from "@/components/shared/SelectField";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
@@ -19,22 +19,22 @@ const SélecteurPerimetre = () => {
       control={form.control}
       name="chPer"
       render={({ field }) => (
-        <Sélecteur
-          htmlName="chPer"
-          libellé="Périmètre *"
-          estDesactive={!porteurIdPrincipal}
-          texteFantôme={
+        <SelectField
+          name="chPer"
+          label="Périmètre *"
+          disabled={!porteurIdPrincipal}
+          placeholder={
             porteurIdPrincipal
               ? "Sélectionnez un périmètre"
               : "Sélectionnez d'abord un porteur principal"
           }
           options={(perimetres ?? []).map((p) => ({
-            libellé: `${p.id} — ${p.nom}`,
+            libelle: `${p.id} — ${p.nom}`,
             valeur: p.id,
           }))}
           onChange={field.onChange}
-          valeurSélectionnée={field.value}
-          erreur={form.formState.errors.chPer}
+          value={field.value}
+          errorMessage={form.formState.errors.chPer?.message?.toString()}
         />
       )}
     />

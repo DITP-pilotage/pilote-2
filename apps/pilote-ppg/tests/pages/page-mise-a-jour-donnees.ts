@@ -23,9 +23,10 @@ export class PageMiseAJourDonnees extends BasePage {
     await expect(
       this.page.getByRole("heading", { name: /Sélectionnez l'indicateur/ }),
     ).toBeVisible();
-    await this.page.getByLabel("Choix de l'indicateur").selectOption({
-      label: `${indicateurId} : ${indicateurNom}`,
-    });
+    await this.page.getByLabel("Choix de l'indicateur").click();
+    await this.page
+      .getByRole("option", { name: `${indicateurId} : ${indicateurNom}` })
+      .click();
   }
 
   async nextStep(): Promise<void> {

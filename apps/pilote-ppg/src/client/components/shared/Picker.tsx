@@ -22,6 +22,7 @@ function isGroupedOptions<T extends string>(
 }
 
 export const Picker = <T extends string>({
+  name,
   options,
   value,
   onValueChange,
@@ -32,6 +33,7 @@ export const Picker = <T extends string>({
   contentClassName = "max-h-96 overflow-hidden",
   trigger,
 }: {
+  name?: string;
   options: PickerOption<T>[] | PickerOptionGroup<T>[];
   value?: T;
   onValueChange?: (value: T, group?: PickerOptionGroup<T> | null) => void;
@@ -76,6 +78,7 @@ export const Picker = <T extends string>({
 
   return (
     <Select.Root
+      name={name}
       open={open}
       onValueChange={(val) => {
         if (isGrouped) {
@@ -192,6 +195,7 @@ export const Picker = <T extends string>({
                               visible={!shouldHideOption}
                             >
                               <Select.Item
+                                data-value={option.valeur}
                                 disabled={option.desactivee}
                                 value={option.valeur}
                               >
@@ -214,6 +218,7 @@ export const Picker = <T extends string>({
                     visible={!shouldHideOption}
                   >
                     <Select.Item
+                      data-value={option.valeur}
                       disabled={option.desactivee}
                       value={option.valeur}
                     >

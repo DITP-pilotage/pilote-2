@@ -68,9 +68,10 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async selectProfil(profilName: string): Promise<void> {
+    await this.page.getByLabel("Profil", { exact: true }).click();
     await this.page
-      .locator("select[name='profil']")
-      .selectOption({ label: profilName });
+      .getByRole("option", { name: profilName, exact: true })
+      .click();
   }
 
   async clickSuivant(): Promise<void> {

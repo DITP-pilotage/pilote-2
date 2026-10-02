@@ -1,9 +1,12 @@
 import { Controller, useFormContext } from "react-hook-form";
+import {
+  SelectField,
+  type SelectFieldOption,
+} from "@/components/shared/SelectField";
 import { $Enums } from "@prisma/client";
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import Champ from "@/components/_commons/Champ";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import SélecteurPpg from "@/components/PageAdminChantiers/champs/SélecteurPpg";
 import SélecteurPerimetre from "@/components/PageAdminChantiers/champs/SélecteurPerimetre";
@@ -13,21 +16,20 @@ import { MultiSelectPorteursSecondaires } from "@/components/PageAdminChantiers/
 import { MultiSelectPorteursDAC } from "@/components/PageAdminChantiers/champs/MultiSelectPorteursDAC";
 import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
-import { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 import { Maille } from "@/server/metadataChantier/domain/maille";
 
-const OPTIONS_STATUT: SélecteurOption<$Enums.type_statut>[] = [
-  { libellé: "Brouillon", valeur: "BROUILLON" },
-  { libellé: "Publié", valeur: "PUBLIE" },
-  { libellé: "Archivé", valeur: "ARCHIVE" },
-  { libellé: "Supprimé", valeur: "SUPPRIME" },
+const OPTIONS_STATUT: SelectFieldOption<$Enums.type_statut>[] = [
+  { libelle: "Brouillon", valeur: "BROUILLON" },
+  { libelle: "Publié", valeur: "PUBLIE" },
+  { libelle: "Archivé", valeur: "ARCHIVE" },
+  { libelle: "Supprimé", valeur: "SUPPRIME" },
 ];
 
-const OPTIONS_ATE: SélecteurOption<$Enums.type_ate | "">[] = [
-  { libellé: "— Aucun —", valeur: "" },
-  { libellé: "ATE", valeur: "ate" },
-  { libellé: "Hors ATE déconcentré", valeur: "hors_ate_deconcentre" },
-  { libellé: "Hors ATE centralisé", valeur: "hors_ate_centralise" },
+const OPTIONS_ATE: SelectFieldOption<$Enums.type_ate | "">[] = [
+  { libelle: "— Aucun —", valeur: "" },
+  { libelle: "ATE", valeur: "ate" },
+  { libelle: "Hors ATE déconcentré", valeur: "hors_ate_deconcentre" },
+  { libelle: "Hors ATE centralisé", valeur: "hors_ate_centralise" },
 ];
 
 function maillesAttendues(
@@ -128,12 +130,12 @@ const FicheChantier = () => {
             control={form.control}
             name="chSaisieAte"
             render={({ field }) => (
-              <Sélecteur
-                htmlName="chSaisieAte"
-                libellé="Type ATE"
+              <SelectField
+                name="chSaisieAte"
+                label="Type ATE"
                 options={OPTIONS_ATE}
                 onChange={(val) => field.onChange(val || null)}
-                valeurSélectionnée={field.value ?? ""}
+                value={field.value ?? ""}
               />
             )}
           />
@@ -141,13 +143,13 @@ const FicheChantier = () => {
             control={form.control}
             name="chState"
             render={({ field }) => (
-              <Sélecteur
-                htmlName="chState"
-                libellé="Statut *"
+              <SelectField
+                name="chState"
+                label="Statut *"
                 options={OPTIONS_STATUT}
                 onChange={field.onChange}
-                valeurSélectionnée={field.value}
-                erreur={form.formState.errors.chState}
+                value={field.value}
+                errorMessage={form.formState.errors.chState?.message?.toString()}
               />
             )}
           />

@@ -54,7 +54,7 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   private get selecteurZoneGroupe() {
-    return this.page.locator('select[name="zgApplicable"]');
+    return this.page.locator('[id="zgApplicable"]');
   }
 
   async goto(indicateurId: string): Promise<void> {
@@ -130,9 +130,9 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   async expectOptionZoneGroupeVisible(nom: string): Promise<void> {
-    await expect(
-      this.selecteurZoneGroupe.locator("option", { hasText: nom }),
-    ).toHaveCount(1);
+    await this.selecteurZoneGroupe.click();
+    await expect(this.page.getByRole("option", { name: nom })).toHaveCount(1);
+    await this.page.keyboard.press("Escape");
   }
 
   async expectModeCreation(): Promise<void> {
@@ -206,11 +206,15 @@ export class PageAdminIndicateurForm extends BasePage {
   // --- Interactions avec les sélecteurs de paramétrage ---
 
   private selectByName(name: string) {
-    return this.page.locator(`select[name="${name}"]`);
+    return this.page.locator(`[id="${name}"]`);
   }
 
   async changerSelecteur(name: string, valeur: string): Promise<void> {
-    await this.selectByName(name).selectOption(valeur);
+    await this.selectByName(name).click();
+    await this.page
+      .getByRole("option")
+      .and(this.page.locator(`[data-value="${valeur}"]`))
+      .click();
   }
 
   async expectSelecteurDesactive(name: string): Promise<void> {
@@ -222,7 +226,7 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   async expectSelecteurValeur(name: string, valeur: string): Promise<void> {
-    await expect(this.selectByName(name)).toHaveValue(valeur);
+    await expect(this.selectByName(name)).toHaveAttribute("data-value", valeur);
   }
 
   // --- Interactions avec les champs input de paramétrage ---
