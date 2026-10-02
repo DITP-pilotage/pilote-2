@@ -8,7 +8,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
-import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
+import { UtilisateurMenuMobile } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
@@ -137,7 +137,9 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
                 <BoutonContacterEquipePilote />
               </div>
               <div className="flex pt-2">
-                <Utilisateur />
+                <UtilisateurMenuMobile
+                  onNavigate={() => setMenuOuvert(false)}
+                />
               </div>
             </div>
             <nav aria-label="Menu principal" className="fr-nav">
