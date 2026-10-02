@@ -4,6 +4,7 @@ import {
   useQueryState,
   useQueryStates,
 } from "nuqs";
+import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
@@ -112,15 +113,7 @@ export const FiltresSelectionUnique: FunctionComponent<
 
   return (
     <div>
-      <button
-        aria-controls={`fr-sidemenu-item-${categorieDeFiltre}`}
-        aria-expanded="false"
-        className="fr-sidemenu__btn fr-m-0 fr-text--sm fr-py-1w w-full text-left"
-        type="button"
-      >
-        {libelle}
-      </button>
-      <div className="fr-collapse" id={`fr-sidemenu-item-${categorieDeFiltre}`}>
+      <CollapsibleSection title={libelle}>
         <TagToggleGroup.Root
           aria-label={libelle}
           className="flex-col items-start gap-0 fr-mb-1w fr-pl-1w"
@@ -142,7 +135,7 @@ export const FiltresSelectionUnique: FunctionComponent<
             </div>
           ))}
         </TagToggleGroup.Root>
-      </div>
+      </CollapsibleSection>
     </div>
   );
 };

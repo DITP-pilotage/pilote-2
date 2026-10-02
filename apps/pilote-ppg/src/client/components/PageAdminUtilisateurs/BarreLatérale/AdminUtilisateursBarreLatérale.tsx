@@ -1,9 +1,10 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
+import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
-import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
+import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Titre from "@/components/_commons/Titre/Titre";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
@@ -168,15 +169,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
         >
           Réinitialiser les filtres
         </Button>
-        <button
-          aria-controls="fr-sidemenu-item-territoires"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
-          type="button"
-        >
-          Territoires(s)
-        </button>
-        <div className="fr-collapse" id="fr-sidemenu-item-territoires">
+        <CollapsibleSection defaultOpen title="Territoires(s)">
           {filtres.territoires.split(",").map((territoireCode) => {
             const libellé =
               territoires.find((t) => t.code === territoireCode)?.nomAffiché ??
@@ -194,19 +187,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               </Tag>
             );
           })}
-        </div>
-        <button
-          aria-controls="fr-sidemenu-item-périmètresMinistériels"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
-          type="button"
-        >
-          Périmètre(s) ministériel(s)
-        </button>
-        <div
-          className="fr-collapse"
-          id="fr-sidemenu-item-périmètresMinistériels"
-        >
+        </CollapsibleSection>
+        <CollapsibleSection defaultOpen title="Périmètre(s) ministériel(s)">
           {filtres.perimetresMinisteriels
             .split(",")
             .map((perimetreMinisterielId) => {
@@ -231,16 +213,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
                 </Tag>
               );
             })}
-        </div>
-        <button
-          aria-controls="fr-sidemenu-item-chantiers"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
-          type="button"
-        >
-          Chantier(s)
-        </button>
-        <div className="fr-collapse" id="fr-sidemenu-item-chantiers">
+        </CollapsibleSection>
+        <CollapsibleSection defaultOpen title="Chantier(s)">
           {filtres.chantiers.split(",").map((chantierId) => {
             let libellé =
               listeChantiers?.find(
@@ -259,16 +233,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               </Tag>
             );
           })}
-        </div>
-        <button
-          aria-controls="fr-sidemenu-item-profils"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
-          type="button"
-        >
-          Profil(s)
-        </button>
-        <div className="fr-collapse" id="fr-sidemenu-item-profils">
+        </CollapsibleSection>
+        <CollapsibleSection defaultOpen title="Profil(s)">
           {filtres.profils.split(",").map((profilCode) => {
             let libellé =
               listeProfils?.find((c) => c.code === profilCode)?.nom ?? null;
@@ -285,7 +251,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               </Tag>
             );
           })}
-        </div>
+        </CollapsibleSection>
       </div>
     </BarreLatérale>
   );
