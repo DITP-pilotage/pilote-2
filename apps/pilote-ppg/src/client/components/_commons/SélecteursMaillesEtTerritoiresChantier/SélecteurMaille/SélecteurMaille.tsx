@@ -48,10 +48,14 @@ export const SélecteurMaille: FunctionComponent<{
 
   return (
     <div className="w-full flex items-center">
-      <span className="fr-label fr-mr-1w no-wrap" id="libelle-selecteur-maille">
+      <span
+        className="fr-label fr-mr-1w whitespace-nowrap"
+        id="libelle-selecteur-maille"
+      >
         Affichage :
       </span>
       <TagToggleGroup.Root
+        className="flex-nowrap"
         aria-labelledby="libelle-selecteur-maille"
         onValueChange={(valeur) => {
           const maille = maillesInternesAccessiblesEnLecture.find(
