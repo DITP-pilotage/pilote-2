@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
+import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { Button } from "@/components/shared/Button";
 
 import { FunctionComponent } from "react";
@@ -6,7 +7,7 @@ import {
   actions as actionsFiltresModifierIndicateursStore,
   filtresModifierIndicateursActifsStore,
 } from "@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore";
-import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
+import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
 import api from "@/server/infrastructure/api/trpc/api";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
@@ -94,15 +95,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
         <Button variant="secondary" onClick={réinitialiser} type="button">
           Réinitialiser les filtres
         </Button>
-        <button
-          aria-controls="fr-sidemenu-item-perimetres"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
-          type="button"
-        >
-          Périmètre(s) ministériel(s)
-        </button>
-        <div className="fr-collapse" id="fr-sidemenu-item-perimetres">
+        <CollapsibleSection defaultOpen title="Périmètre(s) ministériel(s)">
           {filtresActifs.perimetresMinisteriels.map((perimetreId) => {
             const label =
               périmètresMinistériels?.find(
@@ -126,16 +119,8 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
               </Tag>
             );
           })}
-        </div>
-        <button
-          aria-controls="fr-sidemenu-item-chantiers"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
-          type="button"
-        >
-          Chantier(s)
-        </button>
-        <div className="fr-collapse" id="fr-sidemenu-item-chantiers">
+        </CollapsibleSection>
+        <CollapsibleSection defaultOpen title="Chantier(s)">
           {filtresActifs.chantiers.map((chantierId) => {
             const label =
               chantiers?.find((chantier) => chantier.id === chantierId)?.nom ??
@@ -156,16 +141,8 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
               </Tag>
             );
           })}
-        </div>
-        <button
-          aria-controls="fr-sidemenu-item-autres-filtres"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
-          type="button"
-        >
-          Autre(s) filtre(s)
-        </button>
-        <div className="fr-collapse" id="fr-sidemenu-item-autres-filtres">
+        </CollapsibleSection>
+        <CollapsibleSection defaultOpen title="Autre(s) filtre(s)">
           {filtresActifs.estTerritorialise ? (
             <Tag
               key="estTerritorialise"
@@ -186,7 +163,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
               Indicateurs du baromètre
             </Tag>
           ) : null}
-        </div>
+        </CollapsibleSection>
       </div>
     </BarreLatérale>
   );

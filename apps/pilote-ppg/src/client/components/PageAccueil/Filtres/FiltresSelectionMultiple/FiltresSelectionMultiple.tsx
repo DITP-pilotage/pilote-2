@@ -1,4 +1,5 @@
 import { parseAsString, useQueryState } from "nuqs";
+import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { FunctionComponent } from "react";
 
 interface Filtre {
@@ -27,15 +28,7 @@ export const FiltresSelectionMultiple: FunctionComponent<
 
   return (
     <div>
-      <button
-        aria-controls={`fr-sidemenu-item-${categorieDeFiltre}`}
-        aria-expanded="false"
-        className="fr-sidemenu__btn fr-m-0 fr-text--sm w-full text-left"
-        type="button"
-      >
-        {libelle}
-      </button>
-      <div className="fr-collapse" id={`fr-sidemenu-item-${categorieDeFiltre}`}>
+      <CollapsibleSection title={libelle}>
         <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w list-none">
           {filtres.map((filtre) => (
             <li className="fr-p-0 fr-my-1w fr-mr-0" key={filtre.id}>
@@ -62,7 +55,7 @@ export const FiltresSelectionMultiple: FunctionComponent<
             </li>
           ))}
         </ul>
-      </div>
+      </CollapsibleSection>
     </div>
   );
 };

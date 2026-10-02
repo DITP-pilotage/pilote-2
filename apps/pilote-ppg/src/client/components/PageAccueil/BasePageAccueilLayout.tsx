@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { useAskAIAccess } from "@/components/PageAccueil/useAskAIAccess";
-import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
+import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
 import Titre from "@/components/_commons/Titre/Titre";
