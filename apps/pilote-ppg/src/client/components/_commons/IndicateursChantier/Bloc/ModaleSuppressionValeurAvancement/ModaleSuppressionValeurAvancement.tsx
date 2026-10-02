@@ -1,5 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Callout } from "@/components/shared/Callout";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -193,51 +194,55 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                     Veuillez vérifier si le motif de suppression indiqué
                     ci-dessous est correct avant de confirmer l'opération.
                   </span>
-                  <div className="fr-callout fr-py-2w fr-mt-2w">
-                    <h3 className="fr-callout__title fr-mb-0">
-                      {`${indicateur.id} ${indicateur.nom}`}
-                    </h3>
-                    <p className="fr-text fr-text--sm fr-mb-1w">
-                      {`${territoireCodeInsee} - ${territoireNom}`}
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Valeur d'avancement proposée le{" "}
-                        {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
-                        par{" "}
-                        <NomUtilisateurAvecTooltip
-                          nom={detailIndicateur.proposition!.auteur!}
-                          service={
-                            detailIndicateur.proposition?.auteurService ?? null
-                          }
-                          fonction={
-                            detailIndicateur.proposition?.auteurFonction ?? null
-                          }
-                        />{" "}
-                        : {detailIndicateur.proposition?.valeurAvancement} (
-                        {formaterDate(
-                          detailIndicateur.dateValeurAvancementMandat,
-                          "MM/YYYY",
-                        )}
-                        )
-                      </span>
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        La proposition est supprimée le{" "}
-                        {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
-                        par {auteurModification}
-                      </span>
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Motif de la suppression :
-                      </span>{" "}
-                      <span className="text-italic">
-                        {reactHookForm.getValues("motifSuppression")}
-                      </span>
-                    </p>
-                  </div>
+                  <Callout.Root className="mt-4 px-6 py-4" color="highlight">
+                    <Callout.Text>
+                      <Callout.Title>
+                        {`${indicateur.id} ${indicateur.nom}`}
+                      </Callout.Title>
+                      <p className="fr-text fr-text--sm fr-mb-1w">
+                        {`${territoireCodeInsee} - ${territoireNom}`}
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span className="fr-text--bold">
+                          Valeur d'avancement proposée le{" "}
+                          {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
+                          par{" "}
+                          <NomUtilisateurAvecTooltip
+                            nom={detailIndicateur.proposition!.auteur!}
+                            service={
+                              detailIndicateur.proposition?.auteurService ??
+                              null
+                            }
+                            fonction={
+                              detailIndicateur.proposition?.auteurFonction ??
+                              null
+                            }
+                          />{" "}
+                          : {detailIndicateur.proposition?.valeurAvancement} (
+                          {formaterDate(
+                            detailIndicateur.dateValeurAvancementMandat,
+                            "MM/YYYY",
+                          )}
+                          )
+                        </span>
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span className="fr-text--bold">
+                          La proposition est supprimée le{" "}
+                          {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
+                          par {auteurModification}
+                        </span>
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span className="fr-text--bold">
+                          Motif de la suppression :
+                        </span>{" "}
+                        <span className="text-italic">
+                          {reactHookForm.getValues("motifSuppression")}
+                        </span>
+                      </p>
+                    </Callout.Text>
+                  </Callout.Root>
                   <Alerte type="info">
                     <h3>Rappel sur la documentation des propositions</h3>
                     <p>

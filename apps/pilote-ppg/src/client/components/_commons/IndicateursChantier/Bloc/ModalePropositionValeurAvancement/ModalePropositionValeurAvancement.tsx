@@ -1,5 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Callout } from "@/components/shared/Callout";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 
@@ -367,51 +368,55 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     vous sera toujours possible de modifier ou de supprimer
                     votre proposition.
                   </span>
-                  <div className="fr-callout fr-py-2w fr-mt-2w">
-                    <h3 className="fr-callout__title fr-mb-0">
-                      {`${indicateur.id} ${indicateur.nom}`}
-                    </h3>
-                    <p className="fr-text fr-text--sm fr-mb-1w">
-                      {`${territoireCodeInsee} - ${territoireNom}`}
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Valeur d'avancement proposée le{" "}
-                        {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
-                        par {auteurModification} :{" "}
-                        {reactHookForm.getValues("valeurAvancement")} (
-                        {formaterDate(
-                          detailIndicateurDuTerritoire.dateValeurAvancement,
-                          "MM/YYYY",
-                        )}
-                        )
-                      </span>
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Date de la proposition de valeur d'avancement : 
-                      </span>
-                      <span className="text-italic">
-                        {reactHookForm.getValues("moisValeurAvancement")}
-                      </span>
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Motif de la proposition :
-                      </span>{" "}
-                      <span className="text-italic">
-                        {reactHookForm.getValues("motifProposition")}
-                      </span>
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Source des données et méthode de calcul :
-                      </span>{" "}
-                      <span className="text-italic">
-                        {reactHookForm.getValues("sourceDonneeEtMethodeCalcul")}
-                      </span>
-                    </p>
-                  </div>
+                  <Callout.Root className="mt-4 px-6 py-4" color="highlight">
+                    <Callout.Text>
+                      <Callout.Title>
+                        {`${indicateur.id} ${indicateur.nom}`}
+                      </Callout.Title>
+                      <p className="fr-text fr-text--sm fr-mb-1w">
+                        {`${territoireCodeInsee} - ${territoireNom}`}
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span className="fr-text--bold">
+                          Valeur d'avancement proposée le{" "}
+                          {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
+                          par {auteurModification} :{" "}
+                          {reactHookForm.getValues("valeurAvancement")} (
+                          {formaterDate(
+                            detailIndicateurDuTerritoire.dateValeurAvancement,
+                            "MM/YYYY",
+                          )}
+                          )
+                        </span>
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span className="fr-text--bold">
+                          Date de la proposition de valeur d'avancement : 
+                        </span>
+                        <span className="text-italic">
+                          {reactHookForm.getValues("moisValeurAvancement")}
+                        </span>
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span className="fr-text--bold">
+                          Motif de la proposition :
+                        </span>{" "}
+                        <span className="text-italic">
+                          {reactHookForm.getValues("motifProposition")}
+                        </span>
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span className="fr-text--bold">
+                          Source des données et méthode de calcul :
+                        </span>{" "}
+                        <span className="text-italic">
+                          {reactHookForm.getValues(
+                            "sourceDonneeEtMethodeCalcul",
+                          )}
+                        </span>
+                      </p>
+                    </Callout.Text>
+                  </Callout.Root>
                   <Alerte type="info">
                     <h3>Rappel sur le statut de votre proposition</h3>
                     <p>

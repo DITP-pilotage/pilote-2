@@ -5,6 +5,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { ExportDesDonnees } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/ExportDesDonnees";
+import { ACCUEIL_NAV_LINK_CLASSES } from "./accueilNavLinkClasses";
 import { Icone } from "@/components/_commons/Icone";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 
@@ -57,10 +58,7 @@ export const BoutonExportDesDonnees = ({
       open={optionsExport.isModaleExportCsvOuverte}
       territoireCodeSelectionne={territoireCode}
     >
-      <button
-        className="flex gap-1 !p-0 pb-0.5 !text-sm !text-primary border-b border-blue-france"
-        type="button"
-      >
+      <button className={ACCUEIL_NAV_LINK_CLASSES} type="button">
         <Icone className="w-4 h-4" icone={Download1Icon} />
         Exporter les données
       </button>

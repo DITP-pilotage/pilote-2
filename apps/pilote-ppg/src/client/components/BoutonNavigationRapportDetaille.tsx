@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useGetFullQueryParamString } from "@/client/utils/getQueryParamString";
 import { Icone } from "@/components/_commons/Icone";
 import { ArticleContourIcon } from "@/components/_commons/Icones/ArticleContourIcon";
+import { ACCUEIL_NAV_LINK_CLASSES } from "@/components/PageAccueil/accueilNavLinkClasses";
 
 export const BoutonNavigationRapportDetaille = ({
   territoireCode,
@@ -12,7 +13,7 @@ export const BoutonNavigationRapportDetaille = ({
 
   return (
     <Link
-      className="flex gap-1 !text-sm gap-1 pb-1 !text-primary"
+      className={ACCUEIL_NAV_LINK_CLASSES}
       href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ""}`}
       title="Voir le rapport détaillé"
     >
