@@ -1,25 +1,23 @@
-import { parseAsBoolean, useQueryState } from "nuqs";
 import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
 import { RadioGroup } from "@/components/shared/RadioGroup";
 import { useExportStep } from "./useExportStep";
 
 export const EtapePerimetreExport = () => {
-  const [isAvecFiltre, setIsAvecFiltre] = useQueryState(
-    "isAvecFiltre",
-    parseAsBoolean.withDefault(false).withOptions({
-      shallow: true,
-    }),
-  );
-
-  const { goToStep } = useExportStep();
+  const {
+    exportState: { isAvecFiltre },
+    updateExport,
+    goToStep,
+  } = useExportStep();
 
   return (
     <div>
       <p className="fr-mb-1w">Précisez le périmètre de votre export :</p>
       <RadioGroup.Root
         name="ressource-à-exporter"
-        onValueChange={(valeur) => setIsAvecFiltre(valeur === "indicateurs")}
+        onValueChange={(valeur) =>
+          updateExport({ isAvecFiltre: valeur === "indicateurs" })
+        }
         value={isAvecFiltre ? "indicateurs" : "chantiers"}
       >
         <RadioGroup.Item
