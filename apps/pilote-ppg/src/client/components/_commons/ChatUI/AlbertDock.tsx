@@ -1,4 +1,5 @@
 import { useChat } from "@ai-sdk/react";
+import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
@@ -41,14 +42,15 @@ export const AlbertDock = ({
           )}
         </p>
       </div>
-      <button
+      <Button
         aria-label="Reprendre la conversation"
-        className="fr-btn fr-btn--sm"
+        variant="primary"
+        size="sm"
         onClick={restore}
         type="button"
       >
         {enCours ? "Voir" : "Reprendre"}
-      </button>
+      </Button>
       <button
         aria-label="Fermer la conversation"
         className="flex h-8 w-8 items-center justify-center text-dsfr-mention-grey transition-colors hover:bg-dsfr-grey-1000 hover:text-dsfr-grey-50"

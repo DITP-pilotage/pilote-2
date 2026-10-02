@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import { Controller } from "react-hook-form";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
@@ -70,13 +71,14 @@ const MessageInformationForm: FunctionComponent = () => {
         }}
       />
       <div className="w-full flex justify-end">
-        <button
-          className="fr-btn fr-mr-2w"
+        <Button
+          variant="primary"
+          className="mr-4"
           key="submit-bandeau-indispobilite"
           type="submit"
         >
           Valider les modifications
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/card/card.min.css";
+import { Button } from "@/components/shared/Button";
 import Image from "next/image";
 import carteFranceSvg from "@gouvfr/dsfr/dist/artwork/pictograms/map/location-france.svg";
 import visualisationDonnéesSvg from "@gouvfr/dsfr/dist/artwork/pictograms/digital/data-visualization.svg";
@@ -36,9 +37,9 @@ const PageLanding = () => {
                   nécessaires pour garantir l'atteinte des objectifs de la
                   feuille de route du Gouvernement.
                 </p>
-                <Link className="fr-btn fr-mr-2w rounded" href="/connexion">
-                  Se connecter
-                </Link>
+                <Button asChild variant="primary" className="mr-4 rounded">
+                  <Link href="/connexion">Se connecter</Link>
+                </Button>
               </div>
               <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg flex justify-center">
                 <Image alt="" priority src={captureÉcranPilote} />
@@ -172,13 +173,14 @@ const PageLanding = () => {
                   Gouvernement et la supervision interministérielle de leur mise
                   en œuvre.
                 </p>
-                <Link
-                  className="fr-btn fr-btn--secondary fr-mt-3w rounded"
-                  href="https://www.modernisation.gouv.fr/transformer-laction-publique/assurer-la-mise-en-oeuvre-des-politiques-prioritaires-du-gouvernement"
-                  target="_blank"
-                >
-                  En savoir plus
-                </Link>
+                <Button asChild variant="secondary" className="mt-6 rounded">
+                  <Link
+                    href="https://www.modernisation.gouv.fr/transformer-laction-publique/assurer-la-mise-en-oeuvre-des-politiques-prioritaires-du-gouvernement"
+                    target="_blank"
+                  >
+                    En savoir plus
+                  </Link>
+                </Button>
               </div>
               <div className="fr-col-12 fr-col-lg-4">
                 <div className="fr-card fr-enlarge-link hover:bg-white">

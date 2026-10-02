@@ -1,4 +1,5 @@
 import { parseAsBoolean, useQueryState } from "nuqs";
+import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
 import { RadioGroup } from "@/components/shared/RadioGroup";
 import { useExportStep } from "./useExportStep";
@@ -43,20 +44,22 @@ export const EtapePerimetreExport = () => {
             Annuler
           </button>
         </Modale.Close>
-        <button
-          className="fr-btn fr-btn--secondary fr-mr-2w"
+        <Button
+          variant="secondary"
+          className="mr-4"
           onClick={() => goToStep(1)}
           type="button"
         >
           Étape précédente
-        </button>
-        <button
-          className="fr-btn fr-mr-2w"
+        </Button>
+        <Button
+          variant="primary"
+          className="mr-4"
           onClick={() => goToStep(3)}
           type="button"
         >
           Étape suivante
-        </button>
+        </Button>
       </div>
     </div>
   );

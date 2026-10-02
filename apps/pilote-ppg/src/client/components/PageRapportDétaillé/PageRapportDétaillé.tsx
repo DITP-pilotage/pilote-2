@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
@@ -115,22 +116,25 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                 {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? "chantiers" : "chantier"}`}
               </Titre>
               <div>
-                <Link
-                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
-                  href={hrefBoutonRetour}
-                  title="Revenir à l'accueil"
+                <Button
+                  asChild
+                  variant="tertiary-no-outline"
+                  className="gap-2 text-sm"
                 >
-                  <Icone className="w-4 h-4" icone={ArrowGoBackIcon} />
-                  Revenir à l'accueil
-                </Link>
-                <button
-                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
+                  <Link href={hrefBoutonRetour} title="Revenir à l'accueil">
+                    <Icone className="w-4 h-4" icone={ArrowGoBackIcon} />
+                    Revenir à l'accueil
+                  </Link>
+                </Button>
+                <Button
+                  variant="tertiary-no-outline"
+                  className="gap-2 text-sm"
                   onClick={() => window.print()}
                   type="button"
                 >
                   <Icone className="w-4 h-4" icone={Printer1Icon} />
                   Imprimer
-                </button>
+                </Button>
               </div>
             </div>
             <FiltresSélectionnés

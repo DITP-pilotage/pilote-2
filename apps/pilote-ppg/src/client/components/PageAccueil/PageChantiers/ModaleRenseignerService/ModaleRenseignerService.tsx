@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { Modale } from "@/components/shared/Modale";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -38,21 +39,19 @@ export const ModaleRenseignerService: FunctionComponent<
         </p>
         <div className="fr-mt-4w flex justify-end gap-3">
           <Modale.Close asChild>
-            <button
-              className="fr-btn fr-btn--secondary"
+            <Button
+              variant="secondary"
               title="Fermer la fenêtre modale"
               type="button"
             >
               Plus tard
-            </button>
+            </Button>
           </Modale.Close>
-          <Link
-            className="fr-btn"
-            href="/mon-profil-utilisateur"
-            title="Accéder à mon profil"
-          >
-            Compléter mon profil
-          </Link>
+          <Button asChild variant="primary">
+            <Link href="/mon-profil-utilisateur" title="Accéder à mon profil">
+              Compléter mon profil
+            </Link>
+          </Button>
         </div>
       </div>
     </Modale>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@/components/shared/Button";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
@@ -48,8 +49,9 @@ const ChoixTerritoire = () => {
       <main className="fr-pb-5w">
         <div>
           <div className="sticky top-0 z-[999] w-full bg-dsfr-alt-blue-france fr-hidden-lg fr-py-1w fr-px-1v">
-            <button
-              className="fr-btn fr-btn--tertiary-no-outline !text-primary gap-2"
+            <Button
+              variant="tertiary-no-outline"
+              className="text-primary gap-2"
               onClick={() => {
                 setEstOuverteBarreLatérale(true);
                 setEstVisibleEnMobile(true);
@@ -59,7 +61,7 @@ const ChoixTerritoire = () => {
             >
               <Icone className="w-4 h-4" icone={Equalizer1Icon} />
               Filtrer
-            </button>
+            </Button>
           </div>
           <PageChantierEnTête />
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w">

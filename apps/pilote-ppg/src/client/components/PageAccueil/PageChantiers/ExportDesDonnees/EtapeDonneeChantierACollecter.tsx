@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { parseAsString, useQueryState } from "nuqs";
 import { useSession } from "next-auth/react";
 import { Modale } from "@/components/shared/Modale";
@@ -348,20 +349,22 @@ export const EtapeDonneeChantierACollecter = () => {
             Annuler
           </button>
         </Modale.Close>
-        <button
-          className="fr-btn fr-btn--secondary fr-mr-2w"
+        <Button
+          variant="secondary"
+          className="mr-4"
           onClick={() => goToStep(2)}
           type="button"
         >
           Étape précédente
-        </button>
-        <button
-          className="fr-btn fr-mr-2w"
+        </Button>
+        <Button
+          variant="primary"
+          className="mr-4"
           onClick={() => goToStep(4)}
           type="button"
         >
           Étape suivante
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
 import { ExportableWidget } from "@/components/_commons/Widget/ExportableWidget";
@@ -36,22 +37,24 @@ export const PanneauCarte = <T extends string>({
           onChange={onChangerType}
         />
         {estEnComparaison ? (
-          <button
-            className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm"
+          <Button
+            variant="tertiary-no-outline"
+            size="sm"
             onClick={onSupprimer}
             type="button"
           >
             <Icone className="w-4 h-4 mr-1" icone={DeleteIcon} />
             supprimer la carte
-          </button>
+          </Button>
         ) : (
-          <button
-            className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm"
+          <Button
+            variant="tertiary-no-outline"
+            size="sm"
             onClick={onComparer}
             type="button"
           >
             + comparer avec une autre carte
-          </button>
+          </Button>
         )}
       </div>
 

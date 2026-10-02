@@ -1,4 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { RapportContrat } from "@/server/app/contrats/RapportContrat";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -43,18 +44,19 @@ const EtapePublierFichier: FunctionComponent<{
             type="succès"
           />
           <div className="fr-mt-3w flex justify-end">
-            <Link
-              className="fr-btn ml-8"
-              href={`/chantier/${chantierId}/indicateurs`}
-              title="Importer de nouvelles données"
-            >
-              <span>
-                {
-                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                    .ETAPE_PUBLIER_FICHIER.MESSAGE_BOUTON_RETOUR
-                }
-              </span>
-            </Link>
+            <Button asChild variant="primary" className="ml-8">
+              <Link
+                href={`/chantier/${chantierId}/indicateurs`}
+                title="Importer de nouvelles données"
+              >
+                <span>
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                      .ETAPE_PUBLIER_FICHIER.MESSAGE_BOUTON_RETOUR
+                  }
+                </span>
+              </Link>
+            </Button>
           </div>
         </div>
       ) : (

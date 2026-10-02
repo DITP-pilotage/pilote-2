@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
 import { FormProvider } from "react-hook-form";
@@ -346,8 +347,8 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     />
                   </div>
                   <div className="w-full flex justify-end fr-mt-2w">
-                    <button
-                      className="fr-btn"
+                    <Button
+                      variant="primary"
                       disabled={EtapeSuivanteEstDesactive}
                       onClick={() =>
                         setEtapePropositionValeurAvancement(
@@ -357,7 +358,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       type="button"
                     >
                       Étape suivante
-                    </button>
+                    </Button>
                   </div>
                 </>
               ) : (
@@ -434,8 +435,9 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     </p>
                   </Alerte>
                   <div className="w-full flex justify-end fr-mt-2w">
-                    <button
-                      className="fr-btn fr-btn--secondary fr-mr-2w"
+                    <Button
+                      variant="secondary"
+                      className="mr-4"
                       onClick={() =>
                         setEtapePropositionValeurAvancement(
                           EtapePropositionValeurAvancement.SAISIE_VALEUR_ACTUELLE,
@@ -444,16 +446,16 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       type="button"
                     >
                       Étape précédente
-                    </button>
-                    <button
-                      className="fr-btn"
+                    </Button>
+                    <Button
+                      variant="primary"
                       disabled={isPending}
                       type="submit"
                     >
                       {isPending
                         ? "Publication en cours..."
                         : "Publier la proposition"}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}

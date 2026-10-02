@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { FormProvider } from "react-hook-form";
 import { FunctionComponent } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -111,34 +112,38 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                 Fiche de l'indicateur {indicateur.indicId}
                 <div className="fr-grid-row fr-mt-4w">
                   {estUneCréation ? (
-                    <button
-                      className="fr-btn fr-mr-2w"
+                    <Button
+                      variant="primary"
+                      className="mr-4"
                       key="submit-creer-indicateur-top"
                       type="submit"
                     >
                       Créer l'indicateur
-                    </button>
+                    </Button>
                   ) : estEnCoursDeModification ? (
                     <>
-                      <button
-                        className="fr-btn fr-mr-2w"
+                      <Button
+                        variant="primary"
+                        className="mr-4"
                         key="submit-modifier-indicateur-top"
                         type="submit"
                       >
                         Confirmer les changements
-                      </button>
-                      <button
-                        className="fr-btn fr-btn--secondary fr-mr-2w"
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        className="mr-4"
                         key="submit-reinitialiser-indicateur-top"
                         onClick={reinitialiserIndicateur}
                         type="button"
                       >
                         Annuler
-                      </button>
+                      </Button>
                     </>
                   ) : (
-                    <button
-                      className="fr-btn fr-mr-2w"
+                    <Button
+                      variant="primary"
+                      className="mr-4"
                       key="passer-en-modification"
                       onClick={() =>
                         setEstEnCoursDeModification(!estEnCoursDeModification)
@@ -146,7 +151,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                       type="button"
                     >
                       Modifier
-                    </button>
+                    </Button>
                   )}
                 </div>
               </Titre>
@@ -166,34 +171,38 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                     }
                   />
                   {estUneCréation ? (
-                    <button
-                      className="fr-btn fr-mr-2w"
+                    <Button
+                      variant="primary"
+                      className="mr-4"
                       key="submit-creer-indicateur-top"
                       type="submit"
                     >
                       Créer l'indicateur
-                    </button>
+                    </Button>
                   ) : estEnCoursDeModification ? (
                     <>
-                      <button
-                        className="fr-btn fr-mr-2w"
+                      <Button
+                        variant="primary"
+                        className="mr-4"
                         key="submit-modifier-indicateur-top"
                         type="submit"
                       >
                         Confirmer les changements
-                      </button>
-                      <button
-                        className="fr-btn fr-btn--secondary fr-mr-2w"
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        className="mr-4"
                         key="submit-reinitialiser-indicateur-top"
                         onClick={reinitialiserIndicateur}
                         type="button"
                       >
                         Annuler
-                      </button>
+                      </Button>
                     </>
                   ) : (
-                    <button
-                      className="fr-btn fr-mr-2w"
+                    <Button
+                      variant="primary"
+                      className="mr-4"
                       key="passer-en-modification"
                       onClick={() =>
                         setEstEnCoursDeModification(!estEnCoursDeModification)
@@ -201,7 +210,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                       type="button"
                     >
                       Modifier
-                    </button>
+                    </Button>
                   )}
                 </div>
               </Bloc>
