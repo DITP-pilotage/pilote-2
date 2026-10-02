@@ -1,15 +1,18 @@
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
+import { configuration } from "@/config";
 import { PageActualites } from "@/components/PageActualites/PageActualites";
 
-export default function NextPageActualites() {
+export default function NextPageActualites({
+  brevoDesactive,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
       <Head>
         <title>Actualités - PILOTE</title>
       </Head>
-      <PageActualites />
+      <PageActualites brevoDesactive={brevoDesactive} />
     </>
   );
 }
@@ -23,5 +26,5 @@ export const getServerSideProps = async (
     return { redirect: { destination: "/", permanent: false } };
   }
 
-  return { props: {} };
+  return { props: { brevoDesactive: configuration().brevo.disableEmails } };
 };
