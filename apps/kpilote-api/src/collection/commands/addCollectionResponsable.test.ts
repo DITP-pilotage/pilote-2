@@ -3,14 +3,14 @@ import { describe, expect, it } from 'vitest'
 import { addCollectionResponsable } from '@/collection/commands/addCollectionResponsable'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testCollectionNumericId, testEmail } from '@/test/randomIds'
+import { testCollectionId, testEmail } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 describe.concurrent('addCollectionResponsable', () => {
   it(
     'ajoute l’utilisateur aux responsables',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       await fixtures.collection({ publicId })
       const utilisateur = await fixtures.utilisateur({ email: testEmail() })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
@@ -28,7 +28,7 @@ describe.concurrent('addCollectionResponsable', () => {
   it(
     'refuse un utilisateur déjà responsable',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const utilisateur = await fixtures.utilisateur({ email: testEmail() })
       await fixtures.collectionResponsable({
         collection: { publicId },
@@ -47,7 +47,7 @@ describe.concurrent('addCollectionResponsable', () => {
   it(
     'refuse un utilisateur inconnu',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       await fixtures.collection({ publicId })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
@@ -64,7 +64,7 @@ describe.concurrent('addCollectionResponsable', () => {
   it(
     'refuse une clé API non ADMIN',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       await fixtures.collection({ publicId })
       const utilisateur = await fixtures.utilisateur({ email: testEmail() })
       const apiKey = await fixtures.apiKey()

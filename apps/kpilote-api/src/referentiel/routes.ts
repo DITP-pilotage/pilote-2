@@ -61,7 +61,7 @@ const getReferentielByIdRoute = createRoute({
   tags: ['Referentiel'],
   summary: 'Récupérer un référentiel par identifiant public',
   description:
-    'Retourne un référentiel identifié par son identifiant public (format `REF-<SLUG>`).',
+    'Retourne un référentiel identifié par son identifiant public (slug, ex. `REF-DEPT`).',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {

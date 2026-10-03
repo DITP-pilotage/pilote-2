@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
+import { individuPublicIdSchema, referentielPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
@@ -45,9 +46,10 @@ export function ReferentielForm({
 
   const canSubmit =
     values.nom.trim().length > 0 &&
-    (mode === 'edit' || /^REF-[A-Z0-9-]{1,16}$/.test(values.id)) &&
+    (mode === 'edit' || referentielPublicIdSchema.safeParse(values.id).success) &&
     values.individus.every(
-      (item) => /^[A-Z][A-Z0-9-]{0,19}$/.test(item.publicId) && item.nom.trim().length > 0,
+      (item) =>
+        individuPublicIdSchema.safeParse(item.publicId).success && item.nom.trim().length > 0,
     )
 
   return (

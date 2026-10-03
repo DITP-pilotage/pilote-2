@@ -4,6 +4,7 @@ import { dateSchema } from './dates'
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 import { indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 import { responsableApiModelSchema } from './responsable'
+import { slugSchema } from './slug'
 
 export const indicateurVisibiliteSchema = z
   .enum(['PUBLIC', 'PRIVE'])
@@ -263,7 +264,7 @@ export const listIndicateursQuerySchema = listQuerySchema.extend({
   rechercheIdentifiant: z
     .string()
     .optional()
-    .describe("Filtre case-insensitive sur l'identifiant public (`publicId`, ex. `IND-01`)."),
+    .describe("Filtre case-insensitive sur l'identifiant public (`publicId`, ex. `bilan-de`)."),
   ids: z
     .preprocess((val) => {
       if (typeof val !== 'string') return val
@@ -274,7 +275,7 @@ export const listIndicateursQuerySchema = listQuerySchema.extend({
       return parts.length === 0 ? undefined : parts
     }, z.array(indicateurPublicIdSchema).optional())
     .describe(
-      'Filtre par identifiants publics (CSV, ex. `IND-001,IND-002`). Vide ou absent = aucun filtre.',
+      'Filtre par identifiants publics (CSV, ex. `bilan-de-prevention,IND-002`). Vide ou absent = aucun filtre.',
     ),
 })
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
@@ -291,7 +292,7 @@ export const upsertIndicateurBodySchema = z.object({
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
     .describe(
-      'Liste complète des référentiels configurés pour cet indicateur (replace-all à chaque PUT). ' +
+      'Liste complète des référentiels configurés pour cet indicateur (replace-all à chaque écriture). ' +
         'Tableau vide pour aucun référentiel. Doublons silencieusement dédupliqués sur `id` ; ' +
         "en cas de fonctions différentes, la dernière occurrence l'emporte.",
     ),
@@ -304,3 +305,14 @@ export const upsertIndicateurBodySchema = z.object({
     ),
 })
 export type UpsertIndicateurBody = z.infer<typeof upsertIndicateurBodySchema>
+
+// À la création, l'identifiant public est dérivé du nom, sauf si le client en
+// impose un — c'est le seul moment où il se décide, il est ensuite immuable.
+export const createIndicateurBodySchema = upsertIndicateurBodySchema.extend({
+  slug: slugSchema
+    .optional()
+    .describe(
+      'Identifiant public à attribuer. Absent, il est dérivé du `nom`. Déjà pris, il est suffixé (`-2`, `-3`, …).',
+    ),
+})
+export type CreateIndicateurBody = z.infer<typeof createIndicateurBodySchema>

@@ -2,41 +2,27 @@ import {
   type CollectionApiModel,
   type CreateCollectionBody,
 } from '@pilote/kpilote-shared/collection'
+import { slugify } from '@pilote/kpilote-shared/slug'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+import { resolveSlug } from '@/framework/persistence/resolveSlug'
 import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { MESSAGE_ADMIN } from '@/collection/utils'
-
-// TODO PIL-1688 : remplacer ce calcul de MAX + verrou consultatif par une vraie
-// séquence Postgres. https://data-ditp.atlassian.net/browse/PIL-1688
-
-// Verrou consultatif porté par la transaction : deux créations concurrentes
-// calculeraient sinon le même identifiant. Un retry sur violation d'unicité ne
-// suffirait pas : sous Postgres, l'erreur avorte la transaction courante.
-const lockPublicIdSequence = async (): Promise<void> => {
-  await db().$executeRaw`SELECT pg_advisory_xact_lock(hashtext('collection_public_id'))`
-}
-
-// Cast en BIGINT et motif borné à 15 chiffres : les identifiants de test
-// dépassent la capacité d'un INTEGER.
-const nextPublicId = async (): Promise<string> => {
-  const rows = await db().$queryRaw<Array<{ next: bigint }>>`
-    SELECT COALESCE(MAX(CAST(SUBSTRING(public_id FROM 5) AS BIGINT)), 0) + 1 AS next
-    FROM collection
-    WHERE public_id ~ '^COL-[0-9]{1,15}$'
-  `
-  const next = rows[0]?.next ?? 1n
-  return `COL-${String(next).padStart(3, '0')}`
-}
 
 const performCreate = async (body: CreateCollectionBody): Promise<string> => {
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
 
-  await lockPublicIdSequence()
-  const publicId = await nextPublicId()
+  const base = slugify(body.nom)
+  if (base === '') {
+    throw new ValidationError('Impossible de dériver un identifiant public depuis le nom', {
+      nom: body.nom,
+    })
+  }
+  const publicId = await resolveSlug({ entite: 'collection', base })
   await db().collection.create({
     data: {
       id: uuidv7(),

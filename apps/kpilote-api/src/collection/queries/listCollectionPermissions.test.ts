@@ -4,14 +4,14 @@ import { describe, expect, it } from 'vitest'
 import { listCollectionPermissions } from '@/collection/queries/listCollectionPermissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testCollectionNumericId, testEmail } from '@/test/randomIds'
+import { testCollectionId, testEmail } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 describe.concurrent('listCollectionPermissions', () => {
   it(
     'retourne une liste vide quand personne n’a de permission directe',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       await fixtures.collection({ publicId })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
@@ -24,7 +24,7 @@ describe.concurrent('listCollectionPermissions', () => {
   it(
     'regroupe les actions d’un utilisateur en une seule entrée, READ avant WRITE',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const email = testEmail()
       const utilisateur = await fixtures.utilisateur({
         email,
@@ -51,7 +51,7 @@ describe.concurrent('listCollectionPermissions', () => {
   it(
     'trie par type puis libellé, clés API et utilisateurs confondus',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const email = testEmail()
       const cle = await fixtures.apiKey({
         label: 'sync-ppg',
@@ -89,7 +89,7 @@ describe.concurrent('listCollectionPermissions', () => {
   it(
     'refuse la lecture à une clé non ADMIN',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       await fixtures.collection({ publicId })
       await fixtures.utilisateur({
         email: testEmail(),

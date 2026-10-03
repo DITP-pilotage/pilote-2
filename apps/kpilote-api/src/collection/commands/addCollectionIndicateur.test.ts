@@ -3,14 +3,14 @@ import { describe, expect, it } from 'vitest'
 import { addCollectionIndicateur } from '@/collection/commands/addCollectionIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testCollectionNumericId, testIndicateurId } from '@/test/randomIds'
+import { testCollectionId, testIndicateurId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 describe.concurrent('addCollectionIndicateur', () => {
   it(
     'ajoute l’indicateur avec la pondération 1 par défaut',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId })
       await fixtures.indicateur({ publicId: indicateurId })
@@ -27,7 +27,7 @@ describe.concurrent('addCollectionIndicateur', () => {
   it(
     'retient la pondération fournie',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId })
       await fixtures.indicateur({ publicId: indicateurId })
@@ -44,7 +44,7 @@ describe.concurrent('addCollectionIndicateur', () => {
   it(
     'refuse un indicateur déjà affecté',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId, indicateurs: [{ publicId: indicateurId }] })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
@@ -58,7 +58,7 @@ describe.concurrent('addCollectionIndicateur', () => {
   it(
     'refuse un indicateur inconnu',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       await fixtures.collection({ publicId })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
@@ -73,7 +73,7 @@ describe.concurrent('addCollectionIndicateur', () => {
   it(
     'refuse une clé API non ADMIN',
     integrationTest(async () => {
-      const publicId = testCollectionNumericId()
+      const publicId = testCollectionId()
       const indicateurId = testIndicateurId()
       await fixtures.collection({ publicId })
       await fixtures.indicateur({ publicId: indicateurId })
