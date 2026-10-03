@@ -268,15 +268,16 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       ]),
     );
 
-    const chantierIds = [
-      ...new Set(indicateurs.map((ind) => ind.indicateur_identite.chantier_id)),
-    ];
+    const indicateursByChantier = new Map<string, typeof indicateurs>();
+    for (const indicateur of indicateurs) {
+      const chantierId = indicateur.indicateur_identite.chantier_id;
+      const indicateursChantier = indicateursByChantier.get(chantierId) ?? [];
+      indicateursChantier.push(indicateur);
+      indicateursByChantier.set(chantierId, indicateursChantier);
+    }
 
     return Object.fromEntries(
-      chantierIds.map((chantierId) => {
-        const indicateursChantier = indicateurs.filter(
-          (ind) => ind.indicateur_identite.chantier_id === chantierId,
-        );
+      [...indicateursByChantier].map(([chantierId, indicateursChantier]) => {
         const details = this._mapDétailsToDomain(
           indicateursChantier,
           jalon,

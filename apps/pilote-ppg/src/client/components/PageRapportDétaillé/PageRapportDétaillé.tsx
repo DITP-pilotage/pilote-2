@@ -1,63 +1,29 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import Link from "next/link";
-import { FunctionComponent, useState } from "react";
-import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
+import { FunctionComponent, memo, useState } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
-import RapportDétailléVueDEnsemble from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
-import RapportDétailléChantier from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier";
-import PremièrePageImpressionRapportDétaillé from "@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé";
+import { RapportDétailléVueDEnsemble } from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
+import { DeferredRapportDétailléChantier } from "@/components/PageRapportDétaillé/Chantier/DeferredRapportDétailléChantier";
+import { DownloadRapportDetaillePdfButton } from "@/components/PageRapportDétaillé/DownloadRapportDetaillePdfButton";
+import { useChantierDetailsBatches } from "@/components/PageRapportDétaillé/useChantierDetailsBatches";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import {
-  AvancementsGlobauxTerritoriauxMoyensContrat,
-  AvancementsStatistiquesAccueilContrat,
-} from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import Axe from "@/server/domain/axe/Axe.interface";
-import { AvancementChantierRapportDetaille } from "@/components/PageRapportDétaillé/AvancementChantierRapportDetaille";
-import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface";
-import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
+import { SerializedVueDEnsemble } from "@/server/rapport-detaille/rapportDetaille.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { getFiltresActifs } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { Icone } from "@/components/_commons/Icone";
-import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
 
+const MemoizedVueDEnsemble = memo(RapportDétailléVueDEnsemble);
+const MemoizedDeferredChantier = memo(DeferredRapportDétailléChantier);
+
 interface PageRapportDétailléProps {
-  chantiers: ChantierRapportDetailleContrat[];
-  ministères: Ministère[];
-  axes: Axe[];
-  indicateursGroupésParChantier: Record<string, Indicateur[]>;
-  détailsIndicateursGroupésParChantier: Record<
-    Chantier["id"],
-    DétailsIndicateurs
-  >;
-  publicationsGroupéesParChantier: PublicationsGroupéesParChantier;
+  vueDEnsemble: SerializedVueDEnsemble;
   mailleSelectionnee: MailleInterne;
-  mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>;
   territoireCode: string;
   jalon: number;
-  filtresComptesCalculés: Record<TypeAlerteChantier, number>;
-  avancementsAgrégés: AvancementsStatistiquesAccueilContrat;
-  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
-  repartitionMeteosChantiers: RepartitionMeteoContrat;
-  estAutoriseAVoirLesBrouillons: boolean;
-  mapDonnéesCartographieAvancement: Map<
-    string,
-    AvancementsGlobauxTerritoriauxMoyensContrat
-  >;
-  mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>;
-  listeIndicateursPrisEnCompteAvancement: string[];
-  chantiersSontArchives: boolean;
-  moyenneTauxAvancementTerritoire: number | null;
 }
 
 export const htmlId = {
@@ -65,32 +31,26 @@ export const htmlId = {
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
-  chantiers: chantiersFiltrés,
-  ministères,
-  axes,
-  indicateursGroupésParChantier,
-  détailsIndicateursGroupésParChantier,
-  publicationsGroupéesParChantier,
-  mailleSelectionnee,
-  mapChantierStatistiques,
-  filtresComptesCalculés,
-  avancementsAgrégés,
-  avancementsGlobauxTerritoriauxMoyens,
-  repartitionMeteosChantiers,
-  estAutoriseAVoirLesBrouillons,
-  territoireCode,
-  jalon,
-  mapDonnéesCartographieAvancement,
-  mapDonnéesCartographieMétéo,
-  listeIndicateursPrisEnCompteAvancement,
-  chantiersSontArchives,
-  moyenneTauxAvancementTerritoire,
-}) => {
-  usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
+export const PageRapportDétaillé: FunctionComponent<
+  PageRapportDétailléProps
+> = ({ vueDEnsemble, mailleSelectionnee, territoireCode, jalon }) => {
+  const {
+    chantiers: chantiersFiltrés,
+    ministères,
+    axes,
+    filtresComptesCalculés,
+    avancementsAgrégés,
+    avancementsGlobauxTerritoriauxMoyens,
+    repartitionMeteosChantiers,
+    estAutoriseAVoirLesBrouillons,
+    chantiersSontArchives,
+    moyenneTauxAvancementTerritoire,
+  } = vueDEnsemble;
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
+  const { states: chantierDetailStates, request: requestChantierDetail } =
+    useChantierDetailsBatches(territoireCode);
 
   const queryParamString = getQueryParamString({
     ...getFiltresActifs(),
@@ -100,120 +60,72 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`;
 
   return (
-    <>
-      <PremièrePageImpressionRapportDétaillé
-        axes={axes}
-        estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
-        ministères={ministères}
-        territoireSélectionné={territoireSélectionné}
-      />
-      <div className="[&_h2]:text-primary print:m-[12mm] print:[&_table]:overflow-hidden print:[&_table_td]:bg-white">
-        <main className="py-8 overflow-x-hidden print:p-0">
-          <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-            <div className="fr-px-2w fr-px-md-0 flex justify-between print:hidden">
-              <Titre baliseHtml="h1" className="fr-h2">
-                {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? "chantiers" : "chantier"}`}
-              </Titre>
-              <div>
-                <Link
-                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
-                  href={hrefBoutonRetour}
-                  title="Revenir à l'accueil"
-                >
-                  <Icone className="w-4 h-4" icone={ArrowGoBackIcon} />
-                  Revenir à l'accueil
-                </Link>
-                <button
-                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
-                  onClick={() => window.print()}
-                  type="button"
-                >
-                  <Icone className="w-4 h-4" icone={Printer1Icon} />
-                  Imprimer
-                </button>
-              </div>
-            </div>
-            <FiltresSélectionnés
-              axes={axes}
-              estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
-              ministères={ministères}
-              territoireSélectionné={territoireSélectionné}
-            />
-            <div className="fr-mb-3w print:hidden">
-              <Interrupteur
-                checked={afficherLesChantiers}
-                libellé="Afficher le détail des chantiers"
-                onChange={setAfficherLesChantiers}
+    <div className="[&_h2]:text-primary">
+      <main className="py-8 overflow-x-hidden">
+        <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
+          <div className="fr-px-2w fr-px-md-0 flex justify-between">
+            <Titre baliseHtml="h1" className="fr-h2">
+              {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? "chantiers" : "chantier"}`}
+            </Titre>
+            <div>
+              <Link
+                className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
+                href={hrefBoutonRetour}
+                title="Revenir à l'accueil"
+              >
+                <Icone className="w-4 h-4" icone={ArrowGoBackIcon} />
+                Revenir à l'accueil
+              </Link>
+              <DownloadRapportDetaillePdfButton
+                showDetail={afficherLesChantiers}
               />
             </div>
-            <RapportDétailléVueDEnsemble
-              avancementsAgrégés={avancementsAgrégés}
-              avancementsGlobauxTerritoriauxMoyens={
-                avancementsGlobauxTerritoriauxMoyens
-              }
-              chantiers={chantiersFiltrés}
-              chantiersSontArchives={chantiersSontArchives}
-              filtresComptesCalculés={filtresComptesCalculés}
-              jalon={jalon}
-              mailleSelectionnee={mailleSelectionnee}
-              repartitionMeteosChantiers={repartitionMeteosChantiers}
-              territoireCode={territoireCode}
-              moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
-            />
-            {afficherLesChantiers ? (
-              <div className="chantiers">
-                {chantiersFiltrés.map((chantier) => (
-                  <RapportDétailléChantier
-                    chantier={chantier}
-                    commentaires={
-                      publicationsGroupéesParChantier.commentaires[
-                        chantier.id
-                      ] ?? []
-                    }
-                    donnéesCartographieAvancement={mapDonnéesCartographieAvancement.get(
-                      chantier.id,
-                    )!}
-                    donnéesCartographieMétéo={mapDonnéesCartographieMétéo.get(
-                      chantier.id,
-                    )!}
-                    décisionStratégique={
-                      publicationsGroupéesParChantier.décisionStratégique[
-                        chantier.id
-                      ] ?? null
-                    }
-                    détailsIndicateurs={
-                      détailsIndicateursGroupésParChantier[chantier.id] ?? []
-                    }
-                    indicateurs={
-                      indicateursGroupésParChantier[chantier.id] ?? []
-                    }
-                    jalon={jalon}
-                    key={chantier.id}
-                    listeIndicateursPrisEnCompteAvancement={
-                      listeIndicateursPrisEnCompteAvancement
-                    }
-                    mailleSelectionnee={mailleSelectionnee}
-                    mapChantierStatistiques={mapChantierStatistiques}
-                    objectifs={
-                      publicationsGroupéesParChantier.objectifs[chantier.id] ??
-                      []
-                    }
-                    synthèseDesRésultats={
-                      publicationsGroupéesParChantier.synthèsesDesRésultats[
-                        chantier.id
-                      ] ?? null
-                    }
-                    territoireCode={territoireCode}
-                    territoireSélectionné={territoireSélectionné}
-                  />
-                ))}
-              </div>
-            ) : null}
           </div>
-        </main>
-      </div>
-    </>
+          <FiltresSélectionnés
+            axes={axes}
+            estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
+            ministères={ministères}
+            territoireSélectionné={territoireSélectionné}
+          />
+          <div className="fr-mb-3w">
+            <Interrupteur
+              checked={afficherLesChantiers}
+              libellé="Afficher le détail des chantiers"
+              onChange={setAfficherLesChantiers}
+            />
+          </div>
+          <MemoizedVueDEnsemble
+            avancementsAgrégés={avancementsAgrégés}
+            avancementsGlobauxTerritoriauxMoyens={
+              avancementsGlobauxTerritoriauxMoyens
+            }
+            chantiers={chantiersFiltrés}
+            chantiersSontArchives={chantiersSontArchives}
+            filtresComptesCalculés={filtresComptesCalculés}
+            jalon={jalon}
+            mailleSelectionnee={mailleSelectionnee}
+            repartitionMeteosChantiers={repartitionMeteosChantiers}
+            territoireCode={territoireCode}
+            moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
+          />
+          {afficherLesChantiers ? (
+            <div className="chantiers">
+              {chantiersFiltrés.map((chantier) => (
+                <MemoizedDeferredChantier
+                  chantier={chantier}
+                  jalon={jalon}
+                  key={chantier.id}
+                  mailleSelectionnee={mailleSelectionnee}
+                  onVisible={requestChantierDetail}
+                  state={chantierDetailStates.get(chantier.id)}
+                  territoireCode={territoireCode}
+                  territoireSélectionné={territoireSélectionné}
+                />
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </main>
+    </div>
   );
 };
-
-export default PageRapportDétaillé;

@@ -3,7 +3,7 @@ import type { AddressInfo } from "node:net";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { pdfmake } from "@/server/pdf/pdfmake";
+import { withMarianne } from "@/server/pdf/pdfmake";
 
 describe("pdfmake", () => {
   let serveur: Server;
@@ -32,9 +32,9 @@ describe("pdfmake", () => {
       images: { logo: `http://127.0.0.1:${port}/logo.png` },
     };
 
-    await expect(pdfmake.createPdf(document).getBuffer()).rejects.toThrow(
-      "Access to URL denied by resource access policy",
-    );
+    await expect(
+      withMarianne().createPdf(document).getBuffer(),
+    ).rejects.toThrow("Access to URL denied by resource access policy");
     expect(requetesRecues).toBe(0);
   });
 });
