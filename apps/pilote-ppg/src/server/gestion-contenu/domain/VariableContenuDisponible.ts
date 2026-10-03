@@ -26,6 +26,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
   NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS: boolean;
   NEXT_PUBLIC_FF_PROCONNECT: boolean;
+  NEXT_PUBLIC_FF_EXPIRATION_PASSWORD_ADMIN: boolean;
 }
 
 type FeatureFlipConfig = ReturnType<typeof configuration>["featureFlip"];
@@ -143,6 +144,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS",
     configKey: "exportCsvWidgets",
     label: "Export csv des widgets",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_EXPIRATION_PASSWORD_ADMIN",
+    configKey: "expirationPasswordAdmin",
+    label: "Expiration des mots de passe DITP_ADMIN",
   },
 ];
 

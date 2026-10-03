@@ -101,6 +101,68 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
     }
   }
 
+  async recupererDateDernierChangementPassword(
+    email: string,
+  ): Promise<Date | null> {
+    const kcAdminClient = await this.loginKcAdminClient();
+    const [utilisateur] = await kcAdminClient.users.find({
+      realm: KEYCLOAK_REALM,
+      email,
+      exact: true,
+    });
+
+    if (!utilisateur?.id) {
+      return null;
+    }
+
+    const credentials = await kcAdminClient.users.getCredentials({
+      realm: KEYCLOAK_REALM,
+      id: utilisateur.id,
+    });
+    const credentialPassword = credentials.find(
+      (credential) => credential.type === "password",
+    );
+
+    return credentialPassword?.createdDate
+      ? new Date(credentialPassword.createdDate)
+      : null;
+  }
+
+  async forcerChangementPassword(email: string): Promise<void> {
+    const kcAdminClient = await this.loginKcAdminClient();
+    const [utilisateur] = await kcAdminClient.users.find({
+      realm: KEYCLOAK_REALM,
+      email,
+      exact: true,
+    });
+
+    if (!utilisateur?.id) {
+      throw new Error(`Utilisateur ${email} introuvable dans Keycloak`);
+    }
+
+    // Idempotent : l'action requise n'est ajoutée qu'une fois, le rejeu d'une
+    // action EXPIRATION en échec ne doit pas écraser les autres actions requises.
+    const requiredActions = Array.from(
+      new Set([...(utilisateur.requiredActions ?? []), "UPDATE_PASSWORD"]),
+    );
+    await kcAdminClient.users.update(
+      { realm: KEYCLOAK_REALM, id: utilisateur.id },
+      { requiredActions },
+    );
+    await kcAdminClient.users.logout({
+      realm: KEYCLOAK_REALM,
+      id: utilisateur.id,
+    });
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "UtilisateurIAMKeycloakRepository",
+        email,
+      },
+      "Changement de mot de passe forcé dans Keycloak, sessions révoquées",
+    );
+  }
+
   async ajouteUtilisateurs(utilisateurs: UtilisateurPourIAM[]): Promise<void> {
     await this.loginKcAdminClient();
     for (const record of utilisateurs) {

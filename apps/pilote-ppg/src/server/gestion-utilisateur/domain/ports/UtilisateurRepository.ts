@@ -5,6 +5,7 @@ import { UtilisateurExportCSV } from "@/server/gestion-utilisateur/domain/Utilis
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 
 export interface UtilisateurRepository {
   récupérer(
@@ -105,4 +106,8 @@ export interface UtilisateurRepository {
     email: string,
     date: Date,
   ): Promise<void>;
+  recupererComptesActifsParProfil(
+    profilCode: ProfilCode,
+  ): Promise<{ id: string; email: string }[]>;
+  estActif(utilisateurId: string): Promise<boolean>;
 }

@@ -833,6 +833,7 @@ model utilisateur {
   rapports_hebdomadaires                 rapport_hebdomadaire_coordinateur[]
   rapports_propositions_avancement       rapport_propositions_avancement[]
   llm_calls                              llm_calls[]
+  suivi_password_admin                   suivi_password_admin?
 
   @@schema("public")
 }
@@ -1323,6 +1324,49 @@ model action_compte_inactif {
   nombre_tentatives       Int                          @default(0)
   erreur                  String?
 
+  @@schema("public")
+}
+
+enum type_action_password {
+  PREMIERE_RELANCE
+  DEUXIEME_RELANCE
+  EXPIRATION
+
+  @@schema("public")
+}
+
+enum statut_action_password {
+  CREEE
+  SUCCES
+  ECHEC
+
+  @@schema("public")
+}
+
+model suivi_password_admin {
+  utilisateur_id          String      @id @db.Uuid
+  utilisateur             utilisateur @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+  date_dernier_changement DateTime
+  date_expiration         DateTime
+  date_premiere_relance   DateTime?
+  date_deuxieme_relance   DateTime?
+  date_expiration_forcee  DateTime?
+
+  @@schema("public")
+}
+
+model action_password {
+  id                      String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  utilisateur_id          String                 @db.Uuid
+  type_action             type_action_password
+  date_creation           DateTime               @default(now())
+  statut                  statut_action_password @default(CREEE)
+  date_succes             DateTime?
+  date_derniere_tentative DateTime?
+  nombre_tentatives       Int                    @default(0)
+  erreur                  String?
+
+  @@index([utilisateur_id, statut])
   @@schema("public")
 }
 

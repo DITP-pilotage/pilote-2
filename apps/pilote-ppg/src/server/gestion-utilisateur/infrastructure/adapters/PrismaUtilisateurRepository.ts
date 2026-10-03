@@ -934,6 +934,25 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return utilisateur?.id ?? null;
   }
 
+  async recupererComptesActifsParProfil(
+    profilCode: ProfilCode,
+  ): Promise<{ id: string; email: string }[]> {
+    return this.prisma.utilisateur.findMany({
+      where: { profilCode, date_desactivation: null },
+      select: { id: true, email: true },
+      orderBy: { email: "asc" },
+    });
+  }
+
+  async estActif(utilisateurId: string): Promise<boolean> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: { date_desactivation: true },
+    });
+
+    return utilisateur !== null && utilisateur.date_desactivation === null;
+  }
+
   async créerOuMettreÀJour(
     utilisateur: UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
       habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;

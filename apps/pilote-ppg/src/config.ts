@@ -260,6 +260,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
     },
+    expirationPasswordAdmin: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_EXPIRATION_PASSWORD_ADMIN",
+    },
     featureFlipAdmin: {
       format: Boolean,
       default: false,
@@ -464,6 +469,12 @@ const config = convict({
       default: "",
       doc: "Si défini, tous les emails sont envoyés à cette adresse au lieu des destinataires réels. Utile pour le debug.",
       env: "BREVO_OVERRIDE_EMAIL_RECIPIENT",
+    },
+    templateExpirationPasswordId: {
+      format: "nat",
+      default: 0,
+      doc: "Identifiant du template Brevo des emails d'expiration du mot de passe des comptes DITP_ADMIN (relances J-30, J-7 et J0). 0 = non configuré : le cron d'expiration refuse de s'exécuter.",
+      env: "BREVO_TEMPLATE_EXPIRATION_PASSWORD_ID",
     },
   },
   albert: {
