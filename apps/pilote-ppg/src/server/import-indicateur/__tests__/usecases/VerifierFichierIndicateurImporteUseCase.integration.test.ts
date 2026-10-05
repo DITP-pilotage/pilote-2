@@ -196,9 +196,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
           new ErreurValidationFichierBuilder()
             .avecRapportId("a0c086eb-21e2-4f00-9ca8-4b0fcce133ad")
             .avecCellule("None")
-            .avecMessage(
-              "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2",
-            )
+            .avecMessage("L'identifiant d'indicateur doit être renseigné")
             .avecNom("Cellule vide")
             .avecNomDuChamp("indic_id")
             .avecNumeroDeLigne(1)
@@ -248,7 +246,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       expect(reportFichierData[0].nom).toEqual("Cellule vide");
       expect(reportFichierData[0].cellule).toEqual("None");
       expect(reportFichierData[0].message).toEqual(
-        "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2",
+        "L'identifiant d'indicateur doit être renseigné",
       );
       expect(reportFichierData[0].nomDuChamp).toEqual("indic_id");
       expect(reportFichierData[0].numeroDeLigne).toEqual(1);
@@ -323,9 +321,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
           .avecListeErreursValidation(
             new ErreurValidationFichierBuilder()
               .avecCellule("None")
-              .avecMessage(
-                "L'identifiant d'indicateur doit être renseigné : il est vide à la ligne 2.",
-              )
+              .avecMessage("L'identifiant d'indicateur doit être renseigné.")
               .avecNom("Cellule vide")
               .avecNomDuChamp("indic_id")
               .avecNumeroDeLigne(1)
@@ -453,9 +449,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         .build();
       const erreurDeForme = new ErreurValidationFichierBuilder()
         .avecCellule("IND-97")
-        .avecMessage(
-          "'IND-97' n'est pas un identifiant d'indicateur valide (ligne 2)",
-        )
+        .avecMessage("'IND-97' n'est pas un identifiant d'indicateur valide")
         .avecNom("Format incorrect")
         .avecNomDuChamp("identifiant_indic")
         .avecNumeroDeLigne(2)
@@ -481,9 +475,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       // Then
       expect(
         report.listeErreursValidation.map((erreur) => erreur.message),
-      ).toEqual([
-        "'IND-97' n'est pas un identifiant d'indicateur valide (ligne 2)",
-      ]);
+      ).toEqual(["'IND-97' n'est pas un identifiant d'indicateur valide"]);
     }),
   );
 
@@ -538,7 +530,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       expect(report.listeErreursValidation).toHaveLength(1);
       expect(report.listeErreursValidation[0].cellule).toEqual("IND-003");
       expect(report.listeErreursValidation[0].message).toEqual(
-        "L'indicateur IND-003 ne correspond pas à l'indicateur choisi (IND-001), ligne 3.",
+        "L'indicateur IND-003 ne correspond pas à l'indicateur choisi (IND-001).",
       );
       expect(report.listeErreursValidation[0].nomDuChamp).toEqual(
         "identifiant_indic",
@@ -546,7 +538,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       expect(report.listeErreursValidation[0].nom).toEqual(
         "Indicateur invalide",
       );
-      expect(report.listeErreursValidation[0].positionDeLigne).toEqual(1);
+      expect(report.listeErreursValidation[0].positionDeLigne).toEqual(3);
       expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(3);
       expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
     }),
@@ -610,37 +602,37 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
       expect(report.listeErreursValidation[0].cellule).toEqual("2023-06-31");
       expect(report.listeErreursValidation[0].message).toEqual(
-        "La date '2023-06-31' n'est pas une date valide (ligne 2).",
+        "La date '2023-06-31' n'est pas une date valide.",
       );
       expect(report.listeErreursValidation[0].nomDuChamp).toEqual(
         "date_valeur",
       );
       expect(report.listeErreursValidation[0].nom).toEqual("Date invalide");
-      expect(report.listeErreursValidation[0].positionDeLigne).toEqual(0);
+      expect(report.listeErreursValidation[0].positionDeLigne).toEqual(2);
       expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(2);
       expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
 
       expect(report.listeErreursValidation[1].cellule).toEqual("2023-02-30");
       expect(report.listeErreursValidation[1].message).toEqual(
-        "La date '2023-02-30' n'est pas une date valide (ligne 3).",
+        "La date '2023-02-30' n'est pas une date valide.",
       );
       expect(report.listeErreursValidation[1].nomDuChamp).toEqual(
         "date_valeur",
       );
       expect(report.listeErreursValidation[1].nom).toEqual("Date invalide");
-      expect(report.listeErreursValidation[1].positionDeLigne).toEqual(1);
+      expect(report.listeErreursValidation[1].positionDeLigne).toEqual(3);
       expect(report.listeErreursValidation[1].numeroDeLigne).toEqual(3);
       expect(report.listeErreursValidation[1].positionDuChamp).toEqual(-1);
 
       expect(report.listeErreursValidation[2].cellule).toEqual("2023-02-29");
       expect(report.listeErreursValidation[2].message).toEqual(
-        "La date '2023-02-29' n'est pas une date valide (ligne 4).",
+        "La date '2023-02-29' n'est pas une date valide.",
       );
       expect(report.listeErreursValidation[2].nomDuChamp).toEqual(
         "date_valeur",
       );
       expect(report.listeErreursValidation[2].nom).toEqual("Date invalide");
-      expect(report.listeErreursValidation[2].positionDeLigne).toEqual(2);
+      expect(report.listeErreursValidation[2].positionDeLigne).toEqual(4);
       expect(report.listeErreursValidation[2].numeroDeLigne).toEqual(4);
       expect(report.listeErreursValidation[2].positionDuChamp).toEqual(-1);
     }),
@@ -704,37 +696,37 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
       expect(report.listeErreursValidation[0].cellule).toEqual("2023-06-31");
       expect(report.listeErreursValidation[0].message).toEqual(
-        "La date '2023-06-31' n'est pas une date valide (ligne 2).",
+        "La date '2023-06-31' n'est pas une date valide.",
       );
       expect(report.listeErreursValidation[0].nomDuChamp).toEqual(
         "date_valeur",
       );
       expect(report.listeErreursValidation[0].nom).toEqual("Date invalide");
-      expect(report.listeErreursValidation[0].positionDeLigne).toEqual(0);
+      expect(report.listeErreursValidation[0].positionDeLigne).toEqual(2);
       expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(2);
       expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
 
       expect(report.listeErreursValidation[1].cellule).toEqual("2023-02-30");
       expect(report.listeErreursValidation[1].message).toEqual(
-        "La date '2023-02-30' n'est pas une date valide (ligne 3).",
+        "La date '2023-02-30' n'est pas une date valide.",
       );
       expect(report.listeErreursValidation[1].nomDuChamp).toEqual(
         "date_valeur",
       );
       expect(report.listeErreursValidation[1].nom).toEqual("Date invalide");
-      expect(report.listeErreursValidation[1].positionDeLigne).toEqual(1);
+      expect(report.listeErreursValidation[1].positionDeLigne).toEqual(3);
       expect(report.listeErreursValidation[1].numeroDeLigne).toEqual(3);
       expect(report.listeErreursValidation[1].positionDuChamp).toEqual(-1);
 
       expect(report.listeErreursValidation[2].cellule).toEqual("2023-02-29");
       expect(report.listeErreursValidation[2].message).toEqual(
-        "La date '2023-02-29' n'est pas une date valide (ligne 4).",
+        "La date '2023-02-29' n'est pas une date valide.",
       );
       expect(report.listeErreursValidation[2].nomDuChamp).toEqual(
         "date_valeur",
       );
       expect(report.listeErreursValidation[2].nom).toEqual("Date invalide");
-      expect(report.listeErreursValidation[2].positionDeLigne).toEqual(2);
+      expect(report.listeErreursValidation[2].positionDeLigne).toEqual(4);
       expect(report.listeErreursValidation[2].numeroDeLigne).toEqual(4);
       expect(report.listeErreursValidation[2].positionDuChamp).toEqual(-1);
     }),
