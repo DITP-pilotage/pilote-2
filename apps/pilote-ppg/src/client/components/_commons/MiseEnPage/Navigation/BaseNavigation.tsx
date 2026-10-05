@@ -8,7 +8,10 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
-import { UtilisateurMenuMobile } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
+import {
+  IdentiteMenuMobile,
+  MonEspaceMenuMobile,
+} from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
@@ -116,9 +119,11 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
             className="fixed inset-0 z-[1000] overflow-y-auto bg-white px-4 pb-8 min-[62em]:hidden"
           >
             <Dialog.Title className="sr-only">Menu principal</Dialog.Title>
-            <div className="flex justify-end py-4">
+            <div className="flex items-start justify-between gap-4 py-4">
+              <IdentiteMenuMobile />
               <Dialog.Close asChild>
                 <Button
+                  className="shrink-0"
                   iconRight={
                     <Icone
                       className="w-4 h-4 text-current"
@@ -132,16 +137,10 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
                 </Button>
               </Dialog.Close>
             </div>
-            <div className="flex flex-col gap-2 divide-y divide-gray-200 border-b border-b-gray-200 pb-2">
-              <div className="pb-2">
-                <BoutonContacterEquipePilote />
-              </div>
-              <div className="flex pt-2">
-                <UtilisateurMenuMobile
-                  onNavigate={() => setMenuOuvert(false)}
-                />
-              </div>
+            <div className="border-b border-b-gray-200 pb-3">
+              <BoutonContacterEquipePilote />
             </div>
+            <MonEspaceMenuMobile onNavigate={() => setMenuOuvert(false)} />
             <nav aria-label="Menu principal" className="fr-nav">
               {listeDesLiens(() => setMenuOuvert(false))}
             </nav>

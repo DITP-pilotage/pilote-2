@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
@@ -77,55 +77,72 @@ export const Utilisateur = () => {
 
 // Version du menu mobile : sous-menu dépliable dans le flux plutôt qu'un menu
 // flottant, qui recouvrirait les liens du menu plein écran.
-export const UtilisateurMenuMobile = ({
+// Version du menu mobile : les liens de l'espace utilisateur prennent le style
+// des liens de navigation, sans menu flottant qui recouvrirait le menu plein écran.
+export const IdentiteMenuMobile = () => {
+  const { email, prenom, nom } = useProfilUtilisateurConnecte();
+  return (
+    <div className="min-w-0">
+      <p className="mb-0 truncate text-base font-bold text-dsfr-grey-50">
+        {prenom} {nom}
+      </p>
+      <p className="mb-0 truncate text-sm text-dsfr-mention-grey">{email}</p>
+    </div>
+  );
+};
+
+export const MonEspaceMenuMobile = ({
   onNavigate,
 }: {
   onNavigate: () => void;
 }) => {
   const session = useSession();
-  const { email, prenom, nom } = useProfilUtilisateurConnecte();
   const showPanelAdministrateur = peutAccederPanelAdministrateur(session);
 
   return (
-    <Collapsible.Root className="w-full">
-      <Collapsible.Trigger
-        className="group flex items-center !text-sm !p-0 !text-primary"
-        type="button"
-      >
-        <Icone icone={Account1Icon} />
-        <span className="pl-2 pr-1">Mon espace</span>
-        <Icone
-          className="transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-90"
-          icone={ArrowSLine1Icon}
-        />
-      </Collapsible.Trigger>
-      <Collapsible.Content className="flex flex-col gap-3 pt-3 pl-7">
-        <div className="flex flex-col">
-          <span className="font-bold text-base">
-            {prenom} {nom}
-          </span>
-          <span className="text-sm">{email}</span>
-        </div>
-        <Link
-          className="flex items-center gap-2 text-sm font-medium"
-          href="/mon-profil-utilisateur"
-          onClick={onNavigate}
-        >
-          <Icone className="text-current h-5 w-5" icone={Account1Icon} />
-          Mon profil utilisateur
-        </Link>
-        {showPanelAdministrateur ? (
-          <Link
-            className="flex items-center gap-2 text-sm font-medium"
-            href="/panel-administrateur/parametrage-metadata-indicateur"
-            onClick={onNavigate}
-          >
-            <Icone className="text-current h-5 w-5" icone={Settings1Icon} />
-            Panel administrateur
-          </Link>
-        ) : null}
-        <BoutonSeDeconnecter />
-      </Collapsible.Content>
-    </Collapsible.Root>
+    <nav aria-label="Mon espace" className="fr-nav">
+      <ul className="fr-nav__list">
+        <li className="fr-nav__item">
+          <Collapsible.Root>
+            <Collapsible.Trigger className="fr-nav__btn" type="button">
+              Mon espace
+            </Collapsible.Trigger>
+            <Collapsible.Content>
+              <ul className="list-none p-0 pl-4">
+                <li>
+                  <Link
+                    className="fr-nav__link"
+                    href="/mon-profil-utilisateur"
+                    onClick={onNavigate}
+                  >
+                    Mon profil utilisateur
+                  </Link>
+                </li>
+                {showPanelAdministrateur ? (
+                  <li>
+                    <Link
+                      className="fr-nav__link"
+                      href="/panel-administrateur/parametrage-metadata-indicateur"
+                      onClick={onNavigate}
+                    >
+                      Panel administrateur
+                    </Link>
+                  </li>
+                ) : null}
+                <li>
+                  <button
+                    className="fr-nav__link w-full text-left"
+                    onClick={() => signOut()}
+                    type="button"
+                  >
+                    Se déconnecter
+                  </button>
+                </li>
+              </ul>
+            </Collapsible.Content>
+          </Collapsible.Root>
+        </li>
+      </ul>
+    </nav>
   );
 };
