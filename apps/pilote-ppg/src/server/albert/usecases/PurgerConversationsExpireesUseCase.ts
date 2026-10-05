@@ -1,6 +1,6 @@
 import type { ChatConversationRepository } from "@/server/albert/domain/ChatConversationRepository";
 
-const RETENTION_JOURS = 14;
+const RETENTION_JOURS = 365;
 const MILLISECONDES_PAR_JOUR = 24 * 60 * 60 * 1000;
 
 export class PurgerConversationsExpireesUseCase {
