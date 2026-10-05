@@ -64,7 +64,6 @@ function enumerer(elements: string[]): string {
 export function genererMessageErreur(
   violation: ViolationContrainte,
   schema: SchemaCompile,
-  numeroDeLigne: number,
 ): string {
   const { type, nomDuChamp, cellule } = violation;
 
@@ -78,23 +77,23 @@ export function genererMessageErreur(
     : "";
 
   if (type === "blank-row") {
-    return `Toutes les cellules de la ligne ${numeroDeLigne} sont vides.`;
+    return "Toutes les cellules de la ligne sont vides.";
   }
 
   if (type === "primary-key") {
-    return `La ligne ${numeroDeLigne} est vide, ou reprend les mêmes zone, date, identifiant d'indicateur et type de valeur qu'une ligne précédente. Veuillez la modifier ou la supprimer.`;
+    return "La ligne est vide, ou reprend les mêmes zone, date, identifiant d'indicateur et type de valeur qu'une ligne précédente. Veuillez la modifier ou la supprimer.";
   }
 
   if (type === "missing-cell") {
-    return `La colonne '${nomDuChamp}' est absente à la ligne ${numeroDeLigne}. Toutes les colonnes doivent être présentes, même vides.`;
+    return `La colonne '${nomDuChamp}' est absente de la ligne. Toutes les colonnes doivent être présentes, même vides.`;
   }
 
   if (nomDuChamp === "identifiant_indic") {
     if (type === "required") {
-      return `L'identifiant d'indicateur doit être renseigné : il est vide à la ligne ${numeroDeLigne}.`;
+      return "L'identifiant d'indicateur doit être renseigné.";
     }
     if (type === "pattern") {
-      return `'${cellule}' n'est pas un identifiant d'indicateur valide (ligne ${numeroDeLigne}) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres.${commeParExemple} Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.`;
+      return `'${cellule}' n'est pas un identifiant d'indicateur valide : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres.${commeParExemple} Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.`;
     }
   }
 
@@ -110,40 +109,40 @@ export function genererMessageErreur(
       acceptees.length > 0 &&
       !acceptees.includes(mailleFournie)
     ) {
-      return `La zone '${cellule}' est une zone ${mailleFournie}, or cet indicateur ne peut être renseigné qu'à la maille ${enumerer(acceptees)} (ligne ${numeroDeLigne}).${commeParExemple}`;
+      return `La zone '${cellule}' est une zone ${mailleFournie}, or cet indicateur ne peut être renseigné qu'à la maille ${enumerer(acceptees)}.${commeParExemple}`;
     }
 
-    return `La zone '${cellule}' n'est pas dans le référentiel des territoires (ligne ${numeroDeLigne}).${commeParExemple}`;
+    return `La zone '${cellule}' n'est pas dans le référentiel des territoires.${commeParExemple}`;
   }
 
   if (nomDuChamp === "date_valeur" && type === "pattern") {
-    return `La date '${cellule}' n'est pas dans un format valide (AAAA-MM-JJ ou JJ/MM/AAAA), ligne ${numeroDeLigne}.${commeParExemple}`;
+    return `La date '${cellule}' n'est pas dans un format valide (AAAA-MM-JJ ou JJ/MM/AAAA).${commeParExemple}`;
   }
 
   if (nomDuChamp === "type_valeur" && type === "enum") {
-    return `Le type de valeur '${cellule}' n'est pas reconnu (ligne ${numeroDeLigne}) : utilisez vi (valeur initiale), va (valeur d'avancement) ou vc (valeur cible).`;
+    return `Le type de valeur '${cellule}' n'est pas reconnu : utilisez vi (valeur initiale), va (valeur d'avancement) ou vc (valeur cible).`;
   }
 
   if (nomDuChamp === "valeur") {
     if (type === "type") {
-      return `La valeur '${cellule}' n'est pas un nombre valide (ligne ${numeroDeLigne}). Utilisez le point comme séparateur décimal.${commeParExemple}`;
+      return `La valeur '${cellule}' n'est pas un nombre valide. Utilisez le point comme séparateur décimal.${commeParExemple}`;
     }
     if (type === "minimum") {
-      return `La valeur '${cellule}' doit être supérieure ou égale à ${champDuSchema?.minimum} (ligne ${numeroDeLigne}).`;
+      return `La valeur '${cellule}' doit être supérieure ou égale à ${champDuSchema?.minimum}.`;
     }
     if (type === "maximum") {
-      return `La valeur '${cellule}' doit être inférieure ou égale à ${champDuSchema?.maximum} (ligne ${numeroDeLigne}).`;
+      return `La valeur '${cellule}' doit être inférieure ou égale à ${champDuSchema?.maximum}.`;
     }
   }
 
   if (type === "required") {
-    return `La colonne '${nomDuChamp}' doit être renseignée : elle est vide à la ligne ${numeroDeLigne}.`;
+    return `La colonne '${nomDuChamp}' doit être renseignée.`;
   }
 
   if (type === "enum") {
     const autorisees = [...(champDuSchema?.valeursAutorisees ?? [])].join(", ");
-    return `La valeur '${cellule}' de la colonne '${nomDuChamp}' doit être l'une des valeurs suivantes : ${autorisees} (ligne ${numeroDeLigne}).`;
+    return `La valeur '${cellule}' de la colonne '${nomDuChamp}' doit être l'une des valeurs suivantes : ${autorisees}.`;
   }
 
-  return `La valeur '${cellule}' de la colonne '${nomDuChamp}' n'est pas dans le format attendu (ligne ${numeroDeLigne}).`;
+  return `La valeur '${cellule}' de la colonne '${nomDuChamp}' n'est pas dans le format attendu.`;
 }

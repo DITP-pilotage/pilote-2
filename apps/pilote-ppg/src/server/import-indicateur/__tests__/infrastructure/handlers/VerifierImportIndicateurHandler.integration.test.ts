@@ -129,7 +129,7 @@ describe("VerifierImportIndicateurHandler", () => {
 
       expect(rapport.estValide).toBe(false);
       expect(messagesDe(rapport)).toContain(
-        "'IND-XXX' n'est pas un identifiant d'indicateur valide (ligne 2) : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.",
+        "'IND-XXX' n'est pas un identifiant d'indicateur valide : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. Exemple attendu : IND-001. Vous pouvez vous référer au guide des indicateurs pour trouver celui de votre indicateur.",
       );
     }),
   );
@@ -251,7 +251,7 @@ describe("VerifierImportIndicateurHandler", () => {
 
       expect(rapport.estValide).toBe(false);
       expect(messagesDe(rapport)).toContain(
-        "La date '2023-02-30' n'est pas une date valide (ligne 2).",
+        "La date '2023-02-30' n'est pas une date valide.",
       );
     }),
   );

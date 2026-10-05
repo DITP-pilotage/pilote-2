@@ -142,7 +142,7 @@ describe("LocalFichierIndicateurValidationService", () => {
     ).toEqual([{ cellule: "valeur", nomDuChamp: "valeur" }]);
   });
 
-  it("numérote les erreurs avec le numéro de ligne du tableur", async () => {
+  it("positionne les erreurs au numéro de ligne du tableur", async () => {
     const rapport = await validerCsv([
       ENTETE,
       LIGNE,
@@ -151,8 +151,14 @@ describe("LocalFichierIndicateurValidationService", () => {
     ]);
 
     expect(
-      rapport.listeErreursValidation.map((erreur) => erreur.numeroDeLigne),
-    ).toEqual([3, 3]);
+      rapport.listeErreursValidation.map((erreur) => ({
+        numeroDeLigne: erreur.numeroDeLigne,
+        positionDeLigne: erreur.positionDeLigne,
+      })),
+    ).toEqual([
+      { numeroDeLigne: 3, positionDeLigne: 3 },
+      { numeroDeLigne: 3, positionDeLigne: 3 },
+    ]);
   });
 
   it("signale un doublon de clé primaire sur la seconde occurrence", async () => {

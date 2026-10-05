@@ -19,8 +19,8 @@ const schema = compileSchema(
   COLONNES,
 );
 
-const message = (violation: ViolationContrainte, numeroDeLigne = 2) =>
-  genererMessageErreur(violation, schema, numeroDeLigne);
+const message = (violation: ViolationContrainte) =>
+  genererMessageErreur(violation, schema);
 
 describe("genererMessageErreur", () => {
   it("cite la valeur fautive et un exemple concret, jamais un gabarit", () => {
@@ -60,22 +60,7 @@ describe("genererMessageErreur", () => {
     ).toContain("Exemple attendu : 2023-01-31.");
   });
 
-  it("situe l'erreur à la ligne du tableur", () => {
-    expect(
-      message(
-        {
-          type: "primary-key",
-          nomDuChamp: null,
-          indexDeColonne: -1,
-          cellule: null,
-          indexDeLigne: 5,
-        },
-        7,
-      ),
-    ).toContain("La ligne 7");
-  });
-
-  it("n'affiche jamais de markdown ni d'expression régulière", () => {
+  it("n'affiche ni markdown, ni expression régulière, ni numéro de ligne", () => {
     const types = [
       "required",
       "pattern",
@@ -97,6 +82,8 @@ describe("genererMessageErreur", () => {
         indexDeLigne: 0,
       });
       expect(texte).not.toMatch(/\*\*|\^|\\d|\[0-9\]/);
+      // La ligne est portée par la colonne « Position de ligne » du rapport.
+      expect(texte).not.toMatch(/ligne \d/);
     }
   });
 });
@@ -112,18 +99,17 @@ describe("message sur la zone", () => {
         indexDeLigne: 0,
       },
       compileSchema(chargerSchemaBrut(nomDuSchema), COLONNES),
-      2,
     );
 
   it("dit qu'une région est refusée par un indicateur départemental", () => {
     expect(zoneRefusee("restrict-dept.json", "R84")).toEqual(
-      "La zone 'R84' est une zone régionale, or cet indicateur ne peut être renseigné qu'à la maille départementale (ligne 2). Exemple attendu : D46.",
+      "La zone 'R84' est une zone régionale, or cet indicateur ne peut être renseigné qu'à la maille départementale. Exemple attendu : D46.",
     );
   });
 
   it("dit qu'un département est refusé par un indicateur régional", () => {
     expect(zoneRefusee("restrict-reg.json", "D46")).toEqual(
-      "La zone 'D46' est une zone départementale, or cet indicateur ne peut être renseigné qu'à la maille régionale (ligne 2). Exemple attendu : R84.",
+      "La zone 'D46' est une zone départementale, or cet indicateur ne peut être renseigné qu'à la maille régionale. Exemple attendu : R84.",
     );
   });
 
@@ -136,7 +122,7 @@ describe("message sur la zone", () => {
   it("parle de référentiel, pas de maille, quand le code est inconnu", () => {
     // 'ZZZ' ne porte aucune maille : ce n'est pas un problème d'échelle.
     expect(zoneRefusee("restrict-dept.json", "ZZZ")).toEqual(
-      "La zone 'ZZZ' n'est pas dans le référentiel des territoires (ligne 2). Exemple attendu : D46.",
+      "La zone 'ZZZ' n'est pas dans le référentiel des territoires. Exemple attendu : D46.",
     );
   });
 
