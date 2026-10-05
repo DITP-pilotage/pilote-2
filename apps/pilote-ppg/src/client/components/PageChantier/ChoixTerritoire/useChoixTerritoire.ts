@@ -1,29 +1,34 @@
 import { useMemo } from "react";
-import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { listeTerritoires } from "@/client/constants/territoires";
+import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
-export default function useChoixTerritoire(mailleSélectionnée: MailleInterne) {
+export function useChoixTerritoire(mailleSélectionnée: MailleInterne) {
   const { territoires } = listeTerritoires;
+  const { listeTerritoires: territoiresHabilites } =
+    useTerritoireHabilitation();
 
-  const donnéesCartographie = useMemo(() => {
-    const donnéesFormatées: CartographieDonnées = {};
+  const donnéesCartographie = useMemo(
+    () =>
+      Object.fromEntries(
+        territoires
+          .filter((territoire) => territoire.maille === mailleSélectionnée)
+          .map((territoire): [string, CartographieV2Donnee] => [
+            territoire.code,
+            { remplissage: "#bababa", libelle: territoire.nomAffiché },
+          ]),
+      ),
+    [mailleSélectionnée, territoires],
+  );
 
-    territoires
-      .filter((territoire) => territoire.maille === mailleSélectionnée)
-      .forEach((territoire) => {
-        donnéesFormatées[territoire.code] = {
-          contenu: undefined,
-          remplissage: "#bababa",
-          libellé: territoire.nomAffiché,
-          estApplicable: true,
-        };
-      });
+  const territoiresSelectionnables = useMemo(
+    () =>
+      territoiresHabilites
+        .filter((territoire) => territoire.accèsLecture)
+        .map((territoire) => territoire.code),
+    [territoiresHabilites],
+  );
 
-    return donnéesFormatées;
-  }, [mailleSélectionnée, territoires]);
-
-  return {
-    donnéesCartographie,
-  };
+  return { donnéesCartographie, territoiresSelectionnables };
 }

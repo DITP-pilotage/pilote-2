@@ -6,8 +6,11 @@ import {
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import useCartographie from "@/components/_commons/Cartographie/useCartographie";
-import Cartographie from "@/components/_commons/Cartographie/Cartographie";
-import CartographieLégendeListe from "@/client/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe";
+import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
+import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
+import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
+import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import { CartographieÉlémentDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
@@ -20,7 +23,7 @@ import { useCartographieAvancementIndicateur } from "./useCartographieAvancement
 import { useCartographiePropositionValeurIndicateur } from "./useCartographiePropositionValeurIndicateur";
 import { useCartographieValeurAvancementIndicateur } from "./useCartographieValeurAvancementIndicateur";
 
-const CartographieAvecSelecteurIndicateur: FunctionComponent<{
+export const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   detailsIndicateurTerritoire: DétailsIndicateurTerritoire;
   territoireCode: string;
   mailleQuery: MailleInterne;
@@ -95,6 +98,31 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
       cartographieSelectionnee
     ].useRecupererDonnees();
 
+  const { listeTerritoires } = useTerritoireHabilitation();
+  const [territoiresCompares] = useTerritoiresCompares();
+
+  const donneesV2: Record<string, CartographieV2Donnee> = Object.fromEntries(
+    Object.entries(donneesCartographie).map(([code, donnee]) => [
+      code,
+      {
+        remplissage: donnee.remplissage,
+        libelle: donnee.libellé,
+        contenuInfoBulle: donnee.contenu,
+      },
+    ]),
+  );
+  const territoiresSelectionnables = listeTerritoires
+    .filter(
+      (territoire) =>
+        territoire.accèsLecture &&
+        donneesCartographie[territoire.code]?.estApplicable,
+    )
+    .map((territoire) => territoire.code);
+  const territoiresSelectionnes = [
+    territoireCode,
+    ...territoiresCompares.split(",").filter(Boolean),
+  ].filter((code) => code !== "NAT-FR");
+
   return (
     <>
       <SelectField
@@ -103,21 +131,20 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
         options={optionsCartographie}
         value={cartographieSelectionnee}
       />
-      <Cartographie
-        auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-        données={donneesCartographie}
-        mailleSelectionnee={mailleQuery}
-        options={{ multiséléction: true }}
-        pathname={pathname}
-        territoireCode={territoireCode}
+      <CartographieV2
+        donnees={donneesV2}
+        maille={mailleQuery}
+        onTerritoireSelect={(code) =>
+          auClicTerritoireMultiSélectionCallback(code, true)
+        }
+        territoiresSelectionnables={territoiresSelectionnables}
+        territoiresSelectionnes={territoiresSelectionnes}
       >
-        {!!legendeDegrade ? (
+        {legendeDegrade ? (
           <CartographieLégendeDégradé contenu={legendeDegrade} />
         ) : null}
-        <CartographieLégendeListe contenu={legende} />
-      </Cartographie>
+        <LegendeCartographie items={legende} />
+      </CartographieV2>
     </>
   );
 };
-
-export default CartographieAvecSelecteurIndicateur;
