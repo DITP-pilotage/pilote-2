@@ -14,7 +14,7 @@ démarrer une nouvelle, et d'en supprimer.
 
 Contraintes :
 
-- Volumétrie attendue : ~20 conversations par jour, rétention 14 jours.
+- Volumétrie attendue : ~20 conversations par jour, rétention 1 an (durée annoncée dans la page « Données personnelles et cookies »).
 - Pas de besoin identifié pour de la recherche full-text sur le contenu des messages.
 - Le format `PiloteUIMessage` est défini par la lib `ai` (Vercel AI SDK) et inclut
   des `parts` polymorphes (text, tool calls, tool results, dashboards). Le SDK
