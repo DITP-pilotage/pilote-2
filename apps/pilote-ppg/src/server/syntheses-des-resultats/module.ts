@@ -48,7 +48,7 @@ export const importSyntheseDesResultatsModule = defineModule<
   ImportSyntheseDesResultatsCradle
 >()({
   name: "importSyntheseDesResultats",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: ["importerSynthesesDesResultatsUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({

@@ -50,7 +50,7 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
   IndicateurTerritoireValeurEvenementCradle
 >()({
   name: "indicateurTerritoireValeurEvenement",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [
     "indicateurTerritoireValeurEvenementRepository",
     "evenementsVAQuery",

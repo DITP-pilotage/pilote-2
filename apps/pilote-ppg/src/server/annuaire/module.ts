@@ -17,7 +17,7 @@ type AnnuaireCradle = {
 
 export const annuaireModule = defineModule<NoExports, AnnuaireCradle>()({
   name: "annuaire",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

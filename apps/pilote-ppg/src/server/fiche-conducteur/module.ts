@@ -43,7 +43,7 @@ export const ficheConducteurModule = defineModule<
   FicheConducteurCradle
 >()({
   name: "ficheConducteur",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

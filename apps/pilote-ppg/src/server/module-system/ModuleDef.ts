@@ -4,7 +4,7 @@ import {
   type BuildResolverOptions,
   type DisposableResolver,
 } from "awilix";
-import type { SharedDependencies } from "@/server/shared/module";
+import type { FrameworkDependencies } from "@/server/framework/module";
 import type { ModuleName } from "./moduleNames";
 
 // Typage fort pour `asFunction` d'awilix, infère le cradle du module
@@ -19,7 +19,7 @@ export type TypedAsClass<TScope> = <T>(
 ) => BuildResolver<T> & DisposableResolver<T>;
 
 // Union des dépendances partagées et du cradle propre au module
-export type ModuleScope<TCradle> = SharedDependencies & TCradle;
+export type ModuleScope<TCradle> = FrameworkDependencies & TCradle;
 
 // Objet passé à `register` pour enregistrer des services typés
 export type ModuleHelpers<TCradle> = {

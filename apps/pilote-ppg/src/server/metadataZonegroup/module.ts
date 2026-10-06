@@ -29,7 +29,7 @@ export const metadataZonegroupModule = defineModule<
   MetadataZonegroupCradle
 >()({
   name: "metadataZonegroup",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

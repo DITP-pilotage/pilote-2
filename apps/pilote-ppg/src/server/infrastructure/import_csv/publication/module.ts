@@ -28,7 +28,7 @@ export const importPublicationCSVModule = defineModule<
 >()({
   name: "importPublicationCSV",
   imports: [
-    "shared",
+    "framework",
     "commentaires",
     "importSyntheseDesResultats",
     "decisionStrategique",

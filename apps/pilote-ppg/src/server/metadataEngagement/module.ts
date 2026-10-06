@@ -27,7 +27,7 @@ export const metadataEngagementModule = defineModule<
   MetadataEngagementCradle
 >()({
   name: "metadataEngagement",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

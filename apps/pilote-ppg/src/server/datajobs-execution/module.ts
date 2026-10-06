@@ -16,7 +16,7 @@ export const datajobsExecutionModule = defineModule<
   DatajobsExecutionCradle
 >()({
   name: "datajobsExecution",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: ["datajobsExecutionQueries"],
   register: (container, { asModuleClass }) => {
     container.register({
