@@ -89,13 +89,18 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
                   onClick={onNavigate}
                   target={page.target}
                 >
-                  {page.nom}
-                  {page.matcher === "/nouveautes" &&
-                  !aConsulteLaDerniereNouveaute ? (
-                    <span className="!text-error fr-pl-1v absolute fr-top-1v">
-                      ●
-                    </span>
-                  ) : null}
+                  <span className="relative">
+                    {page.nom}
+                    {page.matcher === "/nouveautes" &&
+                    !aConsulteLaDerniereNouveaute ? (
+                      <span
+                        aria-hidden
+                        className="absolute -right-2.5 -top-1 text-[0.625rem] leading-none !text-error"
+                      >
+                        ●
+                      </span>
+                    ) : null}
+                  </span>
                 </Link>
               </li>
             ),
