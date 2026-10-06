@@ -29,7 +29,7 @@ export async function getServerSideProps(
   if (!parsed.success) return redirigerVersAccueil;
   const porteurId = parsed.data;
   const estUneCréation = query._action === "creer-porteur";
-  const container = getContainer("metadataPorteur");
+  const container = getContainer("referentiels");
 
   const porteurData = estUneCréation
     ? null

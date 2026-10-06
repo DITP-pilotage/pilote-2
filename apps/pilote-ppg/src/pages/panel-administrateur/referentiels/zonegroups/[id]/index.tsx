@@ -29,7 +29,7 @@ export async function getServerSideProps(
   if (!parsed.success) return redirigerVersAccueil;
   const zoneGroupId = parsed.data;
   const estUneCréation = query._action === "creer-zonegroup";
-  const container = getContainer("metadataZonegroup");
+  const container = getContainer("referentiels");
 
   const zonegroupData = estUneCréation
     ? null

@@ -25,13 +25,8 @@ export const moduleNames = [
   "applicationLog",
   "actualites",
   "mbSync",
-  "metadataChantier",
-  "metadataPorteur",
-  "metadataPerimetre",
-  "metadataZonegroup",
-  "metadataAxe",
-  "metadataPpg",
-  "metadataEngagement",
+  "parametrageChantier",
+  "referentiels",
   "annuaire",
 ] as const;
 

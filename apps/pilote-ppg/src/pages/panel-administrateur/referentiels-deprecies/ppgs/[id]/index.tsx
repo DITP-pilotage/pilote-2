@@ -32,7 +32,7 @@ export async function getServerSideProps(
 
   const ppgData = estUneCréation
     ? null
-    : await getContainer("metadataPpg")
+    : await getContainer("referentiels")
         .resolve("recupererPpgQuery")
         .run({ ppgId });
 

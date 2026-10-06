@@ -1,0 +1,63 @@
+import {
+  defineModule,
+  type ExtractScope,
+  type NoExports,
+  type VerifyCradle,
+} from "@/server/module-system";
+import type { ParametrageIndicateurExports } from "@/server/parametrage-indicateur/module";
+import { ListerChantiersQuery } from "./queries/ListerChantiersQuery";
+import { RecupererChantierQuery } from "./queries/RecupererChantierQuery";
+import { RecupererIdSuivantQuery } from "./queries/RecupererIdSuivantQuery";
+import { ListerPpgsQuery } from "./queries/ListerPpgsQuery";
+import { ListerPorteursQuery } from "./queries/ListerPorteursQuery";
+import { ListerPerimetresQuery } from "./queries/ListerPerimetresQuery";
+import { ListerZonegroupsQuery } from "./queries/ListerZonegroupsQuery";
+import { EnregistrerChantierHandler } from "./handlers/EnregistrerChantierHandler";
+import { RecupererIndicateursPonderationsChantierQuery } from "./queries/RecupererIndicateursPonderationsChantierQuery";
+import { EnregistrerPonderationsIndicateursHandler } from "./handlers/EnregistrerPonderationsIndicateursHandler";
+
+type MetadataChantierOwnCradle = {
+  listerChantiersQuery: ListerChantiersQuery;
+  recupererChantierQuery: RecupererChantierQuery;
+  recupererIdSuivantQuery: RecupererIdSuivantQuery;
+  listerPpgsQuery: ListerPpgsQuery;
+  listerPorteursQuery: ListerPorteursQuery;
+  listerPerimetresQuery: ListerPerimetresQuery;
+  listerZonegroupsQuery: ListerZonegroupsQuery;
+  enregistrerChantierHandler: EnregistrerChantierHandler;
+  recupererIndicateursPonderationsChantierQuery: RecupererIndicateursPonderationsChantierQuery;
+  enregistrerPonderationsIndicateursHandler: EnregistrerPonderationsIndicateursHandler;
+};
+
+type MetadataChantierCradle = MetadataChantierOwnCradle &
+  ParametrageIndicateurExports;
+
+export const parametrageChantierModule = defineModule<
+  NoExports,
+  MetadataChantierCradle
+>()({
+  name: "parametrageChantier",
+  imports: ["framework", "parametrageIndicateur"],
+  exports: [],
+  register: (container, { asModuleClass }) => {
+    container.register({
+      listerChantiersQuery: asModuleClass(ListerChantiersQuery),
+      recupererChantierQuery: asModuleClass(RecupererChantierQuery),
+      recupererIdSuivantQuery: asModuleClass(RecupererIdSuivantQuery),
+      listerPpgsQuery: asModuleClass(ListerPpgsQuery),
+      listerPorteursQuery: asModuleClass(ListerPorteursQuery),
+      listerPerimetresQuery: asModuleClass(ListerPerimetresQuery),
+      listerZonegroupsQuery: asModuleClass(ListerZonegroupsQuery),
+      enregistrerChantierHandler: asModuleClass(EnregistrerChantierHandler),
+      recupererIndicateursPonderationsChantierQuery: asModuleClass(
+        RecupererIndicateursPonderationsChantierQuery,
+      ),
+      enregistrerPonderationsIndicateursHandler: asModuleClass(
+        EnregistrerPonderationsIndicateursHandler,
+      ),
+    } satisfies VerifyCradle<MetadataChantierOwnCradle>);
+  },
+});
+
+type Scope = ExtractScope<typeof parametrageChantierModule>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

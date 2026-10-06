@@ -32,7 +32,7 @@ export async function getServerSideProps(
 
   const axeData = estUneCréation
     ? null
-    : await getContainer("metadataAxe")
+    : await getContainer("referentiels")
         .resolve("recupererAxeQuery")
         .run({ axeId });
 

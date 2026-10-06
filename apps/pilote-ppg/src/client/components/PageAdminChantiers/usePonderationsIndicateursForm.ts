@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MAILLES, Maille } from "@/server/metadata-chantier/domain/maille";
-import { IndicateurPonderation } from "@/server/metadata-chantier/queries/RecupererIndicateursPonderationsChantierQuery";
+import { MAILLES, Maille } from "@/server/parametrage-chantier/domain/maille";
+import { IndicateurPonderation } from "@/server/parametrage-chantier/queries/RecupererIndicateursPonderationsChantierQuery";
 
 export interface LignePonderationForm {
   poidsPourcentDept: number | null;

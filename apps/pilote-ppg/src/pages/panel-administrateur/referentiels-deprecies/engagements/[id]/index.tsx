@@ -29,7 +29,7 @@ export async function getServerSideProps(
   if (!parsed.success) return redirigerVersAccueil;
   const engagementId = parsed.data;
   const estUneCréation = query._action === "creer-engagement";
-  const container = getContainer("metadataEngagement");
+  const container = getContainer("referentiels");
 
   const engagementData = estUneCréation
     ? null

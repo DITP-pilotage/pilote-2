@@ -6,7 +6,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataEngagement } from "@/server/metadata-engagement/queries/RecupererEngagementQuery";
+import { MetadataEngagement } from "@/server/referentiels/engagement/queries/RecupererEngagementQuery";
 import {
   defaultEngagementVide,
   EngagementForm,

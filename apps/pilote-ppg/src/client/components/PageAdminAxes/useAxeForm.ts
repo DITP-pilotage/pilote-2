@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { axeCommandSchema } from "@/server/metadata-axe/handlers/EnregistrerAxeHandler";
+import { axeCommandSchema } from "@/server/referentiels/axe/handlers/EnregistrerAxeHandler";
 
 export type AxeForm = z.infer<typeof axeCommandSchema>;
 

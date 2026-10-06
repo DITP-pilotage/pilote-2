@@ -28,7 +28,7 @@ export async function getServerSideProps(
   const chantierId = z.string().parse(params?.id);
   const estUneCréation = query._action === "creer-chantier";
 
-  const container = getContainer("metadataChantier");
+  const container = getContainer("parametrageChantier");
 
   const chantierData = estUneCréation
     ? null

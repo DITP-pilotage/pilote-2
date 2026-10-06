@@ -15,7 +15,7 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { ZonegroupAdminListItem } from "@/server/metadata-zonegroup/queries/ListerZonegroupsAdminQuery";
+import type { ZonegroupAdminListItem } from "@/server/referentiels/zonegroup/queries/ListerZonegroupsAdminQuery";
 
 const champsRecherche = (zonegroup: ZonegroupAdminListItem) => [
   zonegroup.zoneGroupId,

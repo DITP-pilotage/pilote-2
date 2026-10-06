@@ -22,13 +22,13 @@ import { albertRouter } from "@/server/albert/infrastructure/trpc/albert";
 import { parametrageCentreAideRouter } from "@/server/parametrage-centre-aide/infrastructure/trpc/parametrageCentreAide";
 import { applicationLogRouter } from "@/server/application-log/infrastructure/trpc/applicationLog";
 import { actualitesRouter } from "@/server/actualites/infrastructure/trpc/actualites";
-import { metadataChantierRouter } from "@/server/metadata-chantier/infrastructure/trpc/metadataChantier";
-import { metadataPorteurRouter } from "@/server/metadata-porteur/infrastructure/trpc/metadataPorteur";
-import { metadataPerimetreRouter } from "@/server/metadata-perimetre/infrastructure/trpc/metadataPerimetre";
-import { metadataZonegroupRouter } from "@/server/metadata-zonegroup/infrastructure/trpc/metadataZonegroup";
-import { metadataAxeRouter } from "@/server/metadata-axe/infrastructure/trpc/metadataAxe";
-import { metadataPpgRouter } from "@/server/metadata-ppg/infrastructure/trpc/metadataPpg";
-import { metadataEngagementRouter } from "@/server/metadata-engagement/infrastructure/trpc/metadataEngagement";
+import { metadataChantierRouter } from "@/server/parametrage-chantier/infrastructure/trpc/metadataChantier";
+import { metadataPorteurRouter } from "@/server/referentiels/porteur/infrastructure/trpc/metadataPorteur";
+import { metadataPerimetreRouter } from "@/server/referentiels/perimetre/infrastructure/trpc/metadataPerimetre";
+import { metadataZonegroupRouter } from "@/server/referentiels/zonegroup/infrastructure/trpc/metadataZonegroup";
+import { metadataAxeRouter } from "@/server/referentiels/axe/infrastructure/trpc/metadataAxe";
+import { metadataPpgRouter } from "@/server/referentiels/ppg/infrastructure/trpc/metadataPpg";
+import { metadataEngagementRouter } from "@/server/referentiels/engagement/infrastructure/trpc/metadataEngagement";
 import { annuaireRouter } from "@/server/annuaire/infrastructure/trpc/annuaire";
 
 export const appRouter = createTRPCRouter({
