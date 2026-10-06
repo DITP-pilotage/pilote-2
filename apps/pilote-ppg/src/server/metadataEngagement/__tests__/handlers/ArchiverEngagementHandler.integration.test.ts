@@ -1,9 +1,9 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ArchiverEngagementHandler } from "@/server/metadataEngagement/handlers/ArchiverEngagementHandler";
 import { VerifierUtilisationEngagementQuery } from "@/server/metadataEngagement/queries/VerifierUtilisationEngagementQuery";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { ConflictError } from "@/server/app/error-boundary/conflict-error";
 
 describe("ArchiverEngagementHandler", () => {

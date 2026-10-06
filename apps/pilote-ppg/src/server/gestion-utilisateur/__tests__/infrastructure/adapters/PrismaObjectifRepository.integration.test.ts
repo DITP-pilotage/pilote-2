@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaObjectifRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaObjectifRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaObjectifRepository", () => {
   let prismaObjectifRepository: PrismaObjectifRepository;

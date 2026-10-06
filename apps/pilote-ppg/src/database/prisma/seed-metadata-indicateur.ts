@@ -2,7 +2,7 @@ import {
   metadata_indicateur,
   metadata_indicateur_valeur_acceptee,
 } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 const metadataIndicateurs: Omit<metadata_indicateur, "valeurs_acceptees">[] = [
   // METADATA_INDICATEURS - Table metadata_indicateurs_hidden

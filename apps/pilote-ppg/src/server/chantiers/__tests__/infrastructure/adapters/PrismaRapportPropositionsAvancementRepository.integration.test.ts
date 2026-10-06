@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { RapportPropositionsAvancement } from "@/server/chantiers/domain/RapportPropositionsAvancement";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { PrismaRapportPropositionsAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaRapportPropositionsAvancementRepository";
 
 describe("PrismaRapportPropositionsAvancementRepository", () => {

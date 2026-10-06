@@ -1,5 +1,5 @@
 import { ArticleCentreAideRepository } from "@/server/parametrage-centre-aide/domain/ports/ArticleCentreAideRepository";
-import { Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
 import type { Inject } from "@/server/parametrage-centre-aide/module";
 
 export class DeplacerArticleCentreAideUseCase {

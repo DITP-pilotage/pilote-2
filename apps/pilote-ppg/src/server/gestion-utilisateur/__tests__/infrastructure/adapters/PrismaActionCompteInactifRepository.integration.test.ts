@@ -3,7 +3,7 @@ import { PrismaActionCompteInactifRepository } from "@/server/gestion-utilisateu
 import { ActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaActionCompteInactifRepository", () => {
   let repository: PrismaActionCompteInactifRepository;

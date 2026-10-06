@@ -1,5 +1,5 @@
 import type { metadata_ppgs as MetadataPpgsPrisma } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadataPpg/module";
 
 export interface MetadataPpg {

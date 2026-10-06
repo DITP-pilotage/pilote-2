@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 
-import { prisma } from "@/server/db/prisma";
-import { txStore } from "@/server/db/txStore";
+import { prisma } from "@/server/framework/persistence/prisma";
+import { txStore } from "@/server/framework/persistence/txStore";
 
 /**
  * Joue une suite de requetes de facon atomique.

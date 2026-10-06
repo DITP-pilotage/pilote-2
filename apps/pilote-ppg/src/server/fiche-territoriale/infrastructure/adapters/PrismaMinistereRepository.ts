@@ -1,6 +1,6 @@
 import { MinistereRepository } from "@/server/fiche-territoriale/domain/ports/MinistereRepository";
 import { Ministere } from "@/server/fiche-territoriale/domain/Ministere";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 export class PrismaMinistereRepository implements MinistereRepository {
   async recupererMapMinistereParListeCodeMinistere({

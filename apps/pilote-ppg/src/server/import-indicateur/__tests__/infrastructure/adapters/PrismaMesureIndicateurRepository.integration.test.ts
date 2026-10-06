@@ -6,7 +6,7 @@ import { DetailValidationFichierBuilder } from "@/server/import-indicateur/app/b
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("PrismaMesureIndicateurRepository", () => {

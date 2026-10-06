@@ -7,8 +7,8 @@ import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèse
 import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
-import { Transaction } from "@/server/db/Transaction";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
+import { PrismaTransaction } from "@/server/framework/persistence/PrismaTransaction";
 import {
   defineModule,
   type ExtractScope,

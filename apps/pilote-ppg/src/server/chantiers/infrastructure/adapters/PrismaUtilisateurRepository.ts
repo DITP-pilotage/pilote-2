@@ -3,7 +3,7 @@ import {
   UtilisateurEnrichi,
 } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 const FORMAT_UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

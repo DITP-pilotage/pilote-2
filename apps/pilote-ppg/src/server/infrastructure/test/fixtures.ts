@@ -1,6 +1,6 @@
 import { $Enums, Prisma } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { ContenuRapport } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 
 /**

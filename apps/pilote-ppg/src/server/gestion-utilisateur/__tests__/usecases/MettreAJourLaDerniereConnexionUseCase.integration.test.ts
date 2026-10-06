@@ -1,7 +1,7 @@
 import { MettreAJourLaDerniereConnexionUseCase } from "@/server/gestion-utilisateur/usecases/MettreAJourLaDerniereConnexionUseCase";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("MettreAJourLaDerniereConnexionUseCase", () => {
   let useCase: MettreAJourLaDerniereConnexionUseCase;

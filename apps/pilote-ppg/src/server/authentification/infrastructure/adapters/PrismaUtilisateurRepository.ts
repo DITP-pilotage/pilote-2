@@ -1,5 +1,5 @@
 import { UtilisateurRepository } from "@/server/authentification/domain/ports/UtilisateurRepository";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async estPresent({ email }: { email: string }): Promise<boolean> {

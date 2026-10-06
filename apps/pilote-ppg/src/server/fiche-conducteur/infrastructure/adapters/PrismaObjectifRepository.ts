@@ -1,7 +1,7 @@
 import { $Enums, objectif as ObjectifModel } from "@prisma/client";
 import { Objectif } from "@/server/fiche-conducteur/domain/Objectif";
 import { ObjectifRepository } from "@/server/fiche-conducteur/domain/ports/ObjectifRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif =>
   Objectif.creerObjectif({

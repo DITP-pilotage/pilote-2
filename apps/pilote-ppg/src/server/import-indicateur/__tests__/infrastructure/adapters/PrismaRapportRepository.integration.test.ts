@@ -5,7 +5,7 @@ import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateu
 import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder";
 import { PrismaMesureIndicateurTemporaireRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { getContainer } from "@/server/dependances";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 

@@ -8,7 +8,7 @@ import { Chantier } from "@/server/fiche-conducteur/domain/Chantier";
 import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 type NomParId = Map<string, string>;
 

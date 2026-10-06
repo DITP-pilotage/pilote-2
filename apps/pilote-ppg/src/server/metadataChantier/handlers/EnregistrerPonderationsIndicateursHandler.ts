@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
 import type { Inject } from "@/server/metadataChantier/module";
 

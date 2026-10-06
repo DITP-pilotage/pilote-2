@@ -8,7 +8,7 @@ import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/po
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 

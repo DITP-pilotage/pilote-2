@@ -1,9 +1,9 @@
 import { nouveaute as NouveauteModel } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
 import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
 
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 
 const convertirNouveauteEnNouveauteModel = (
   nouveaute: Nouveaute,

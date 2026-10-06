@@ -5,7 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaIndicateurRepository", () => {
   const dateDerniereExecutionDatajobs = new Date("2026-02-12T00:00:00.000Z");

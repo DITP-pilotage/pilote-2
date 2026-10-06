@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-import { creerAdapter } from "@/server/db/adapter";
-import { txStore } from "@/server/db/txStore";
+import { creerAdapter } from "@/server/framework/persistence/adapter";
+import { txStore } from "@/server/framework/persistence/txStore";
 
 declare global {
   var __db: PrismaClient | undefined;

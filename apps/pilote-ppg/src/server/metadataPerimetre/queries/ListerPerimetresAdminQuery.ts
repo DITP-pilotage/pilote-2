@@ -2,7 +2,7 @@ import type {
   metadata_perimetres as MetadataPerimetresPrisma,
   metadata_porteurs as MetadataPorteursPrisma,
 } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadataPerimetre/module";
 
 export interface PerimetreAdminListItem {

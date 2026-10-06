@@ -4,9 +4,9 @@ import {
   StubEmailManager,
 } from "@/server/infrastructure/email-manager";
 import { configuration } from "@/config";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { type Transaction } from "@/server/db/Transaction";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { type Transaction } from "@/server/framework/persistence/Transaction";
+import { PrismaTransaction } from "@/server/framework/persistence/PrismaTransaction";
 import {
   defineModule,
   type NoExports,

@@ -1,8 +1,8 @@
 import { article_centre_aide as ArticleCentreAideModel } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ArticleCentreAideRepository } from "@/server/parametrage-centre-aide/domain/ports/ArticleCentreAideRepository";
 import { ArticleCentreAide } from "@/server/parametrage-centre-aide/domain/ArticleCentreAide";
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 
 const convertirEnModel = (
   article: ArticleCentreAide,

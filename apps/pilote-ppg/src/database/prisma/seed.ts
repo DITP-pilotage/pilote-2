@@ -1,5 +1,5 @@
 import { Maille, territoire as TerritoireModel } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import seedProfil from "@/server/seeds/profil.json";
 import seedScope from "@/server/seeds/scope.json";
 import seedTerritoireArray from "@/server/seeds/territoire.json";

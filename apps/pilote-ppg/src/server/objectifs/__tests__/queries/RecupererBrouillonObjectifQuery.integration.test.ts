@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { RecupererBrouillonObjectifQuery } from "@/server/objectifs/queries/RecupererBrouillonObjectifQuery";
 
 const TYPE = "notreAmbition" as const;

@@ -1,4 +1,4 @@
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 
 /**
  * Point d'acces au client Prisma pour les repositories.

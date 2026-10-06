@@ -1,6 +1,9 @@
-import { prisma } from "@/server/db/prisma";
-import { Transaction } from "@/server/db/Transaction";
-import { txStore, type PilotePrismaClient } from "@/server/db/txStore";
+import { prisma } from "@/server/framework/persistence/prisma";
+import { Transaction } from "@/server/framework/persistence/Transaction";
+import {
+  txStore,
+  type PilotePrismaClient,
+} from "@/server/framework/persistence/txStore";
 
 export { txStore };
 export type { PilotePrismaClient };

@@ -6,7 +6,7 @@ import { ChantierPourAgregation } from "@/server/chantiers/domain/agrégateurLis
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export default class ChantierSQLRepository implements ChantierRepository {
   private readonly prismaPilote: PrismaPilote;

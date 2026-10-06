@@ -1,4 +1,4 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { mapTerritoiresToDTO } from "@/server/gestion-utilisateur/infrastructure/utils/territoires";
 
 export type TerritoireDTO = {

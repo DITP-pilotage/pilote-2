@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaUtilisateurRepository } from "@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";

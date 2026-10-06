@@ -1,7 +1,7 @@
 import { ministere, perimetre } from "@prisma/client";
 import MinistèreRepository from "@/server/domain/ministère/MinistèreRepository.interface";
 import MinistèreSQLRepository from "@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("MinistèreSQLRepository", () => {

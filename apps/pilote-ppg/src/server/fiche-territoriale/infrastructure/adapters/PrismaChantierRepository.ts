@@ -5,7 +5,7 @@ import {
 import { ChantierRepository } from "@/server/fiche-territoriale/domain/ports/ChantierRepository";
 import { Chantier } from "@/server/fiche-territoriale/domain/Chantier";
 import { MeteoDisponible } from "@/server/fiche-territoriale/domain/MeteoDisponible";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 export class PrismaChantierRepository implements ChantierRepository {
   async listerParTerritoireCodePourUnDepartement({

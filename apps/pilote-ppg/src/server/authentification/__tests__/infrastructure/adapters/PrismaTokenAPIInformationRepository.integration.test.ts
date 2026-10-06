@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaTokenAPIInformationRepository } from "@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 

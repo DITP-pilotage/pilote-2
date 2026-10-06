@@ -1,7 +1,7 @@
 import { Maille } from "@prisma/client";
 import { IndicateurRepository } from "@/server/fiche-territoriale/domain/ports/IndicateurRepository";
 import { Indicateur } from "@/server/fiche-territoriale/domain/Indicateur";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 
 export class PrismaIndicateurRepository implements IndicateurRepository {

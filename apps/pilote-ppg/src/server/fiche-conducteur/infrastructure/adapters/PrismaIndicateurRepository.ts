@@ -6,7 +6,7 @@ import {
 import { IndicateurRepository } from "@/server/fiche-conducteur/domain/ports/IndicateurRepository";
 import { Indicateur } from "@/server/fiche-conducteur/domain/Indicateur";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 const convertirEnIndicateur = (
   prismaIndicateurTerritoire: PrismaIndicateurTerritoire & {

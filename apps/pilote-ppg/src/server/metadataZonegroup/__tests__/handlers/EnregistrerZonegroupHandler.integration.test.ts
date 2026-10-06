@@ -1,8 +1,8 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { EnregistrerZonegroupHandler } from "@/server/metadataZonegroup/handlers/EnregistrerZonegroupHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 
 describe("EnregistrerZonegroupHandler", () => {
   let handler: EnregistrerZonegroupHandler;

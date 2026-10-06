@@ -1,4 +1,4 @@
-import type { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
 export class PrismaTerritoireResolver implements TerritoireResolver {

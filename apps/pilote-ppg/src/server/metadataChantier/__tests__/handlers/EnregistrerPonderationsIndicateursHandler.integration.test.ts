@@ -1,9 +1,9 @@
 import { EnregistrerPonderationsIndicateursHandler } from "@/server/metadataChantier/handlers/EnregistrerPonderationsIndicateursHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { getPrisma } from "@/server/db/PrismaTransaction";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
 

@@ -1,7 +1,7 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ListerZonegroupsQuery } from "@/server/metadataChantier/queries/ListerZonegroupsQuery";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("ListerZonegroupsQuery", () => {

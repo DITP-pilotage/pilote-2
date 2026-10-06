@@ -1,6 +1,6 @@
 import { encode } from "next-auth/jwt";
 import { APIRequest } from "@playwright/test";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { OpenApiClient } from "./open-api.client";
 
 export type UserProfile = "DITP_ADMIN" | "EQUIPE_DIR_PROJET";
