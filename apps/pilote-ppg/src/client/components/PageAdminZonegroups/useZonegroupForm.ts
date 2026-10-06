@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { zonegroupCommandSchema } from "@/server/metadata-zonegroup/handlers/EnregistrerZonegroupHandler";
+import { zonegroupCommandSchema } from "@/server/referentiels/zonegroup/handlers/EnregistrerZonegroupHandler";
 
 export type ZonegroupForm = z.infer<typeof zonegroupCommandSchema>;
 

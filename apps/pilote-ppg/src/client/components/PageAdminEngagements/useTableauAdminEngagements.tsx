@@ -15,7 +15,7 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { EngagementAdminListItem } from "@/server/metadata-engagement/queries/ListerEngagementsAdminQuery";
+import type { EngagementAdminListItem } from "@/server/referentiels/engagement/queries/ListerEngagementsAdminQuery";
 
 const champsRecherche = (engagement: EngagementAdminListItem) => [
   engagement.engagementId,

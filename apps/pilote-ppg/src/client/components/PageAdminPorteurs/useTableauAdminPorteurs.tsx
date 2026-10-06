@@ -15,7 +15,7 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { PorteurAdminListItem } from "@/server/metadata-porteur/queries/ListerPorteursAdminQuery";
+import type { PorteurAdminListItem } from "@/server/referentiels/porteur/queries/ListerPorteursAdminQuery";
 
 export const TYPE_BADGE: Record<
   $Enums.porteur_type,

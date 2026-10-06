@@ -14,7 +14,7 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { Perimetre } from "@/server/metadata-chantier/queries/ListerPerimetresQuery";
+import type { Perimetre } from "@/server/parametrage-chantier/queries/ListerPerimetresQuery";
 
 export type ChantierAdminRow = inferRouterOutputs<
   typeof appRouter

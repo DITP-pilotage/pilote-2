@@ -15,7 +15,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataPorteur } from "@/server/metadata-porteur/queries/RecupererPorteurQuery";
+import { MetadataPorteur } from "@/server/referentiels/porteur/queries/RecupererPorteurQuery";
 import {
   defaultPorteurVide,
   PorteurForm,

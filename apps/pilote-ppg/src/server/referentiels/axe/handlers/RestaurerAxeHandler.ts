@@ -1,0 +1,17 @@
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import type { Inject } from "@/server/referentiels/module";
+
+export class RestaurerAxeHandler {
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
+
+  async execute({ axeId }: { axeId: string }): Promise<void> {
+    await this.prisma.getInstance().metadata_axes.update({
+      where: { axe_id: axeId },
+      data: { deleted_at: null },
+    });
+  }
+}

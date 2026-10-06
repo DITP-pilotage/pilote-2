@@ -1,0 +1,67 @@
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { ListerPpgsQuery } from "@/server/parametrage-chantier/queries/ListerPpgsQuery";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
+
+describe("ListerPpgsQuery", () => {
+  let query: ListerPpgsQuery;
+  const prismaPilote = new PrismaPilote();
+
+  beforeEach(() => {
+    query = new ListerPpgsQuery({ prisma: prismaPilote });
+  });
+
+  describe("run", () => {
+    it(
+      "retourne un tableau vide si aucun ppg",
+      createIntegrationTest(async () => {
+        // Given
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        expect(resultat).toEqual([]);
+      }),
+    );
+
+    it(
+      "retourne les ppgs triés par ppg_id",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataPpg({ ppg_id: "PPG-003", ppg_nom: "C" });
+        await fixtures.metadataPpg({ ppg_id: "PPG-001", ppg_nom: "A" });
+        await fixtures.metadataPpg({ ppg_id: "PPG-002", ppg_nom: "B" });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        expect(resultat).toEqual([
+          { id: "PPG-001", nom: "A" },
+          { id: "PPG-002", nom: "B" },
+          { id: "PPG-003", nom: "C" },
+        ]);
+      }),
+    );
+
+    it(
+      "exclut les ppgs archivés",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataPpg({ ppg_id: "PPG-004", ppg_nom: "Actif" });
+        await fixtures.metadataPpg({
+          ppg_id: "PPG-005",
+          ppg_nom: "Archivé",
+          deleted_at: new Date("2026-01-01"),
+        });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        expect(resultat).toEqual([{ id: "PPG-004", nom: "Actif" }]);
+      }),
+    );
+  });
+});

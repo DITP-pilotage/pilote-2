@@ -15,7 +15,7 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { PpgAdminListItem } from "@/server/metadata-ppg/queries/ListerPpgsAdminQuery";
+import type { PpgAdminListItem } from "@/server/referentiels/ppg/queries/ListerPpgsAdminQuery";
 
 const champsRecherche = (ppg: PpgAdminListItem) => [ppg.ppgId, ppg.ppgNom];
 

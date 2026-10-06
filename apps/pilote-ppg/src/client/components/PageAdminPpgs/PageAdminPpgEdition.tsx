@@ -11,7 +11,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataPpg } from "@/server/metadata-ppg/queries/RecupererPpgQuery";
+import { MetadataPpg } from "@/server/referentiels/ppg/queries/RecupererPpgQuery";
 import {
   defaultPpgVide,
   PpgForm,

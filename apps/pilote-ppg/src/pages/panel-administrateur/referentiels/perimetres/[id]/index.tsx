@@ -29,7 +29,7 @@ export async function getServerSideProps(
   if (!parsed.success) return redirigerVersAccueil;
   const perimetreId = parsed.data;
   const estUneCréation = query._action === "creer-perimetre";
-  const container = getContainer("metadataPerimetre");
+  const container = getContainer("referentiels");
 
   const perimetreData = estUneCréation
     ? null
