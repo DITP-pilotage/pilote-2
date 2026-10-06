@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import assert from "node:assert";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { recupererUtilisateurAuthentifieOpenApi } from "@/server/app/open-api/endpointOpenApi";

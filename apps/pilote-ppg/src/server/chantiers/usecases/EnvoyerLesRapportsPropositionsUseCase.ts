@@ -1,4 +1,4 @@
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import {
   marquerRapportCommeEnvoye,
   marquerRapportCommeEchec,

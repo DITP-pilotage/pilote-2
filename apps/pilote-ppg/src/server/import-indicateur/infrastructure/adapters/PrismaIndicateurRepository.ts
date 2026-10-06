@@ -5,7 +5,7 @@ On ne peut donc pas utiliser la creation de table par migration prisma
 
 import { IndicateurRepository } from "@/server/import-indicateur/domain/ports/IndicateurRepository";
 import { InformationIndicateur } from "@/server/import-indicateur/domain/InformationIndicateur";
-import Logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { prisma } from "@/server/framework/persistence/prisma";
 
 interface RawInformationIndicateurModel {
@@ -41,7 +41,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
       return convertirEnInformationIndicateur(rawInformationIndicateur[0]);
     } catch (error: unknown) {
-      Logger.error(
+      logger.error(
         {
           categorie: "indicateur",
           source: "PrismaIndicateurRepository",

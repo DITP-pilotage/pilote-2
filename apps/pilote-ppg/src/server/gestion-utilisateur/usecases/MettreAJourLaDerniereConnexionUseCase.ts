@@ -1,5 +1,5 @@
 import type { Inject } from "@/server/gestion-utilisateur/module";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 
 export class MettreAJourLaDerniereConnexionUseCase {
   constructor(private readonly dependencies: Inject<"prisma">) {}

@@ -166,6 +166,4 @@ class AppLogger implements StructuredLogger {
   }
 }
 
-const logger = new AppLogger();
-
-export default logger;
+export const logger = new AppLogger();

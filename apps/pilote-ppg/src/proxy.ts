@@ -5,7 +5,7 @@ import { z } from "zod";
 import { cheminDeRetourSur } from "@/server/authentification/domain/cheminDeRetour";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 import { getContainer } from "@/server/dependances";
-import logger from "./server/framework/logger";
+import { logger } from "./server/framework/logger";
 
 /**
  * Le contenu du JWT vient du réseau : on le valide au lieu de l'affirmer par

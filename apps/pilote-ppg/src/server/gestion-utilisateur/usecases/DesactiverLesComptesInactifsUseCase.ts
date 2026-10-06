@@ -3,7 +3,7 @@ import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/doma
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { TokenAPIInformationRepository } from "@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { configuration } from "@/config";
 import {
   marquerCommeEchec,

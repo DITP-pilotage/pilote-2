@@ -8,7 +8,7 @@ import {
   ImportDecisionStrategiqueErrorResponse,
 } from "@/server/decisions-strategiques/app/contrats/ImportDecisionStrategiqueAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import type { Inject } from "@/server/decisions-strategiques/module";
 
 export class ImportDecisionStrategiqueAPIHandler {

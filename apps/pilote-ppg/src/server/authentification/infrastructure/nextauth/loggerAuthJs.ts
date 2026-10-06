@@ -1,5 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import type { CategorieLog } from "@/utils/categoriesLog";
 
 const CATEGORIE: CategorieLog = "auth";

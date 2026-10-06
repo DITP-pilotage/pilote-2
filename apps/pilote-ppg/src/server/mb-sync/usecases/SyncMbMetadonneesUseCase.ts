@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import {
   type MbApiClient,
   type UpsertIndicateurPayload,

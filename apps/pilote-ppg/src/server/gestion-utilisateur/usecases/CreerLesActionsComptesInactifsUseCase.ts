@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { creerActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 

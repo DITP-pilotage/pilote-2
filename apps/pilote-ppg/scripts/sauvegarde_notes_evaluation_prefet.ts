@@ -1,4 +1,4 @@
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { prisma } from "@/server/framework/persistence/prisma";
 
 async function sauvegardeNotes() {
