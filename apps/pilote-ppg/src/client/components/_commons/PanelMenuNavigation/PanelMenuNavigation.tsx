@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import SélecteurMaille from "@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille";
@@ -15,6 +16,7 @@ type PanelMenuNavigationProps = {
   setEstOuverteBarreLatérale: (estOuverte: boolean) => void;
   libelleMenuNavigation?: string;
   territoiresApplicables?: string[];
+  action?: ReactNode;
 };
 
 export const PanelMenuNavigation = ({
@@ -25,6 +27,7 @@ export const PanelMenuNavigation = ({
   setEstOuverteBarreLatérale,
   libelleMenuNavigation = "Filtrer",
   territoiresApplicables,
+  action,
 }: PanelMenuNavigationProps) => {
   return (
     <>
@@ -45,9 +48,12 @@ export const PanelMenuNavigation = ({
           <Infobulle>{INFOBULLE_CONTENUS.chantiers.jalon}</Infobulle>
         </div>
       </div>
-      {estAutoriseAVoirLeSelecteurDeMaille ? (
-        <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w flex align-center">
-          <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
+      {estAutoriseAVoirLeSelecteurDeMaille || action ? (
+        <div className="fr-col-12 fr-col-md fr-pb-2w fr-px-2w flex items-center gap-2">
+          {estAutoriseAVoirLeSelecteurDeMaille ? (
+            <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
+          ) : null}
+          {action ? <div className="ml-auto shrink-0">{action}</div> : null}
         </div>
       ) : null}
       <div className="fr-hidden-lg fr-py-1w fr-background-blue-france-975 w-full">

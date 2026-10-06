@@ -183,24 +183,24 @@ export const BasePageAccueilLayout: FunctionComponent<
               pathname={pathname}
               setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
               territoireCode={territoireCode}
+              action={
+                peutUtiliserAskAI ? (
+                  <BoutonSyntheseTerritoire
+                    jalon={jalon}
+                    territoireCode={territoireCode}
+                    scenarios={
+                      estEligibleTerritoire
+                        ? scenariosTerritoireCoordinateur({ territoireCode })
+                        : scenariosTerritoireDITP({
+                            territoireCode,
+                            jalon,
+                            estDITPAdmin,
+                          })
+                    }
+                  />
+                ) : null
+              }
             />
-            {peutUtiliserAskAI ? (
-              <div className="h-full flex items-center pt-1 pr-2 ml-auto">
-                <BoutonSyntheseTerritoire
-                  jalon={jalon}
-                  territoireCode={territoireCode}
-                  scenarios={
-                    estEligibleTerritoire
-                      ? scenariosTerritoireCoordinateur({ territoireCode })
-                      : scenariosTerritoireDITP({
-                          territoireCode,
-                          jalon,
-                          estDITPAdmin,
-                        })
-                  }
-                />
-              </div>
-            ) : null}
             <FiltresActifs
               axes={axes}
               mailleSelectionnee={mailleSelectionnee}
