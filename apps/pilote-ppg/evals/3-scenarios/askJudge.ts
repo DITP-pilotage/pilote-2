@@ -1,7 +1,7 @@
 import { generateText, Output } from "ai";
 import { createEvalModel } from "../evalModel";
 import type { Evidence } from "./evidence";
-import type { JudgedCriterion } from "./grid";
+import type { JudgedCriterion } from "./criterion";
 import {
   buildJudgePrompt,
   JUDGE_MODEL,
@@ -12,7 +12,7 @@ import {
 } from "./judge";
 
 /**
- * Un seul appel par tour, pour tous les critères jugés de la grille.
+ * Un seul appel par tour, pour tous les critères jugés du scénario.
  *
  * Séparé de `judge.ts` : `evalModel` importe `Albert`, qui lit la
  * configuration au chargement, ce que les tests unitaires n'ont pas à fournir.

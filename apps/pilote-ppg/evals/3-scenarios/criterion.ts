@@ -6,8 +6,6 @@ import {
   type CheckResult,
 } from "./mechanicalChecks";
 
-export type MatterKind = "text" | "dashboard" | "rapport";
-
 export type MechanicalCriterion = {
   kind: "mechanical";
   id: string;
@@ -27,12 +25,6 @@ export type JudgedCriterion = {
 };
 
 export type Criterion = MechanicalCriterion | JudgedCriterion;
-
-export type Grid = {
-  family: string;
-  matter: MatterKind;
-  criteria: Criterion[];
-};
 
 export function mechanical(
   criterion: Omit<MechanicalCriterion, "kind">,
@@ -98,21 +90,21 @@ const BASE: Criterion[] = [
 ];
 
 /**
- * Une grille : le socle, puis les critères de la famille. `omit` retire un
- * critère du socle qui n'a pas de sens pour la suite (la restriction sur une
- * comparaison qui ne demande que des taux, jamais masqués).
+ * Les critères d'un scénario : le socle, puis les siens. `omit` retire un
+ * critère du socle qui n'a pas de sens pour le scénario (la restriction sur
+ * une comparaison qui ne demande que des taux, jamais masqués).
+ *
+ * La liste vit dans un `.criteria.ts` à côté du scénario, et non dans son
+ * `.eval.ts` : la calibration la juge à l'identique, et importer un
+ * `.eval.ts` enregistrerait sa suite.
  */
-export function grid({
-  family,
-  matter,
+export function withBase({
   criteria,
   omit = [],
 }: {
-  family: string;
-  matter: MatterKind;
   criteria: Criterion[];
   omit?: string[];
-}): Grid {
+}): Criterion[] {
   const all = [
     ...BASE.filter((criterion) => !omit.includes(criterion.id)),
     ...criteria,
@@ -120,9 +112,7 @@ export function grid({
   const ids = all.map((criterion) => criterion.id);
   const doublons = ids.filter((id, index) => ids.indexOf(id) !== index);
   if (doublons.length > 0) {
-    throw new Error(
-      `Critères en double dans la grille ${family} : ${doublons.join(", ")}`,
-    );
+    throw new Error(`Critères en double : ${doublons.join(", ")}`);
   }
-  return { family, matter, criteria: all };
+  return all;
 }

@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
 
 /**
  * Scénario « Synthèse d'un chantier sur un territoire » (DITP et
@@ -47,7 +47,7 @@ const SCOPE = { territoires: ["REG-53"], chantiersCommentes: ["CH-005"] };
 scenarioEval({
   suite: "Synthèse d'un chantier sur un territoire",
   group: "synthese",
-  grid: GRIDS.syntheseChantier,
+  criteria: SYNTHESE_CHANTIER_CRITERIA,
   cases: [
     {
       question: MESSAGE("le territoire Bretagne"),

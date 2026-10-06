@@ -2,7 +2,6 @@ import type { ComposeDashboardOutput } from "@/server/albert/tools/composeDashbo
 import { buildRapportMarkdown } from "@/server/albert/markdown/buildRapportMarkdown";
 import type { ObservedToolCall } from "../types";
 import type { EvalProfile } from "../world";
-import type { MatterKind } from "./grid";
 import type { GroundTruth } from "./truth";
 
 /**
@@ -34,6 +33,12 @@ export type Evidence = {
    */
   conversation: { question: string; answer: string }[];
 };
+
+/**
+ * Ce que le scénario livre : une réponse dans le chat, un rapport exporté, ou
+ * un tableau de bord composé.
+ */
+export type MatterKind = "text" | "dashboard" | "rapport";
 
 type ToolResult = { toolName: string; input: unknown; output: unknown };
 

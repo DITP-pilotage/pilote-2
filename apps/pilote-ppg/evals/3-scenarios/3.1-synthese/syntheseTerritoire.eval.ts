@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { SYNTHESE_TERRITOIRE_CRITERIA } from "./syntheseTerritoire.criteria";
 
 /**
  * Scénario « Synthèse d'un territoire » (DITP, à compléter) :
@@ -30,7 +30,7 @@ const workflowSynthese = (territoire_code: string) => [
 scenarioEval({
   suite: "Synthèse d'un territoire",
   group: "synthese",
-  grid: GRIDS.syntheseTerritoire,
+  criteria: SYNTHESE_TERRITOIRE_CRITERIA,
   cases: [
     {
       question: "Fais moi la synthèse du territoire Bretagne",

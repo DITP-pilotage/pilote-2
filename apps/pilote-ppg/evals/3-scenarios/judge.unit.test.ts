@@ -9,7 +9,7 @@ describe("rawVerdictSchema", () => {
     expect(champs).toEqual(["critere", "preuve", "conforme"]);
   });
 });
-import { judged } from "./grid";
+import { judged } from "./criterion";
 import type { Evidence } from "./evidence";
 
 const CRITERES = [

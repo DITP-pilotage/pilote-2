@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Evidence } from "./evidence";
-import type { JudgedCriterion } from "./grid";
+import type { JudgedCriterion } from "./criterion";
 
 /**
  * Le juge tourne sur un modèle DIFFÉRENT de celui de production. Mesure du

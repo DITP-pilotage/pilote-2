@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { SYNTHESE_TERRITOIRE_CRITERIA } from "./syntheseTerritoire.criteria";
 
 /**
  * Scénario « Synthèse des difficultés d'un territoire » (coordinateur, à
@@ -33,7 +33,7 @@ const workflowSynthese = (territoire_code: string) => [
 scenarioEval({
   suite: "Synthèse des difficultés d'un territoire",
   group: "synthese",
-  grid: GRIDS.syntheseTerritoire,
+  criteria: SYNTHESE_TERRITOIRE_CRITERIA,
   profile: "coordinateur",
   cases: [
     {

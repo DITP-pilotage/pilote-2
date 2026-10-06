@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria";
 
 /**
  * Scénario « Comparer Bretagne avec ses départements » (DITP, envoyé,
@@ -22,7 +22,7 @@ import { scenarioEval } from "../scenarioEval";
 scenarioEval({
   suite: "Comparer Bretagne avec ses départements",
   group: "comparaison",
-  grid: GRIDS.comparaisonSousTerritoires,
+  criteria: COMPARER_DEPARTEMENTS_CRITERIA,
   cases: [
     {
       question: "Compare Bretagne avec ses départements",

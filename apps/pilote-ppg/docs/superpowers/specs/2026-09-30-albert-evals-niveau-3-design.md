@@ -103,11 +103,16 @@ evals/3-scenarios/
   scenarioEval.ts        la factory
   groundTruth.ts         lecture de la fiche de vérité via les outils
   judge.ts               l'appel au juge et son prompt
-  grids/                 briques mechanical() / judged(), socle transverse, une grille par famille
+  criterion.ts           briques mechanical() / judged(), socle transverse, withBase()
+  criteria/              critères partagés entre scénarios (commentaires, comparaison)
   3.0-calibration/       la méta-eval du juge
-  3.1-synthese/          une suite par scénario du groupe « Synthèse »
-  3.2-comparaison/       une suite par scénario du groupe « Comparaison »
+  3.1-synthese/          par scénario : <scénario>.eval.ts et <scénario>.criteria.ts
+  3.2-comparaison/       idem, groupe « Comparaison »
 ```
+
+Les critères d'un scénario vivent dans un `.criteria.ts` à côté de son
+`.eval.ts`, et non dedans : la calibration les importe pour juger la même
+liste, et importer un `.eval.ts` enregistrerait sa suite.
 
 Noms de suites : `3.0 · Calibration du juge`, `3.1 · Synthèse · <libellé de
 l'interface>`, `3.2 · Comparaison · <libellé>`. Evalite trie par nom ; le

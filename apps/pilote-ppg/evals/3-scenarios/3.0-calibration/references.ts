@@ -3,21 +3,80 @@ import type {
   WidgetDefinition,
 } from "@/server/albert/tools/composeDashboard";
 import type { Evidence } from "../evidence";
-import type { GRIDS } from "../grids";
+import type { Criterion } from "../criterion";
+import { SYNTHESE_TERRITOIRE_CRITERIA } from "../3.1-synthese/syntheseTerritoire.criteria";
+import { SYNTHESE_CHANTIER_CRITERIA } from "../3.1-synthese/syntheseChantier.criteria";
+import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "../3.1-synthese/syntheseDepartements.criteria";
+import { CHANTIERS_EN_RETARD_CRITERIA } from "../3.1-synthese/chantiersEnRetard.criteria";
+import { RAPPORT_COMPLET_CRITERIA } from "../3.1-synthese/rapportComplet.criteria";
+import { TABLEAU_DE_BORD_CRITERIA } from "../3.1-synthese/tableauDeBord.criteria";
+import { SYNTHESE_COMMENTAIRES_CRITERIA } from "../3.1-synthese/syntheseCommentaires.criteria";
+import { COMPARER_TERRITOIRES_CRITERIA } from "../3.2-comparaison/comparerTerritoires.criteria";
+import { COMPARER_JALONS_CRITERIA } from "../3.2-comparaison/comparerJalons.criteria";
 import type { GroundTruth } from "../truth";
 
 /**
- * Les cas de la calibration du juge : pour chaque famille jugée, une réponse
- * de référence conforme à tous les critères jugés, et un mutant par critère,
- * qui casse ce critère et lui seul (nommé dans `broken`).
+ * Les cas de la calibration du juge : pour chaque scénario calibré, une
+ * réponse de référence conforme à tous les critères jugés, et un mutant par
+ * critère, qui casse ce critère et lui seul (nommé dans `broken`).
  *
- * Les références passent aussi tous les critères mécaniques de leur grille :
+ * Les références passent aussi tous les critères mécaniques de leur suite :
  * `references.unit.test.ts` le vérifie. Sans ça, un mutant ne casserait pas
  * « un seul critère ».
  */
 
+/**
+ * Les critères d'un scénario, importés de son `.criteria.ts` : le juge rend
+ * un seul verdict pour tous les critères jugés, la calibration doit donc les
+ * lui soumettre à l'identique.
+ */
+export type CalibrationSuite = {
+  /** Nom de la suite de calibration. */
+  name: string;
+  criteria: Criterion[];
+};
+
+const SUITES = {
+  syntheseTerritoire: {
+    name: "Synthèse d'un territoire",
+    criteria: SYNTHESE_TERRITOIRE_CRITERIA,
+  },
+  syntheseChantier: {
+    name: "Synthèse d'un chantier sur un territoire",
+    criteria: SYNTHESE_CHANTIER_CRITERIA,
+  },
+  syntheseDepartements: {
+    name: "Synthèse d'une région et de ses départements",
+    criteria: SYNTHESE_DEPARTEMENTS_CRITERIA,
+  },
+  chantiersEnRetard: {
+    name: "Chantiers en retard et leurs indicateurs",
+    criteria: CHANTIERS_EN_RETARD_CRITERIA,
+  },
+  rapportComplet: {
+    name: "Rapport complet",
+    criteria: RAPPORT_COMPLET_CRITERIA,
+  },
+  tableauDeBord: {
+    name: "Tableau de bord du territoire",
+    criteria: TABLEAU_DE_BORD_CRITERIA,
+  },
+  syntheseCommentaires: {
+    name: "Synthèse des commentaires",
+    criteria: SYNTHESE_COMMENTAIRES_CRITERIA,
+  },
+  comparerTerritoires: {
+    name: "Comparer avec un autre territoire",
+    criteria: COMPARER_TERRITOIRES_CRITERIA,
+  },
+  comparerJalons: {
+    name: "Comparer les taux entre deux jalons",
+    criteria: COMPARER_JALONS_CRITERIA,
+  },
+} satisfies Record<string, CalibrationSuite>;
+
 export type CalibrationCase = {
-  family: keyof typeof GRIDS;
+  suite: CalibrationSuite;
   label: string;
   /** Identifiant du critère cassé ; `null` pour la référence. */
   broken: string | null;
@@ -236,7 +295,7 @@ const synthese = ({ from, to }: { from: string | RegExp; to: string }) =>
 
 const SYNTHESE: CalibrationCase[] = [
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Référence",
     broken: null,
     evidence: evidence({
@@ -245,7 +304,7 @@ const SYNTHESE: CalibrationCase[] = [
     }),
   },
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Médiane inventée",
     broken: "Chiffres exacts",
     evidence: synthese({
@@ -254,7 +313,7 @@ const SYNTHESE: CalibrationCase[] = [
     }),
   },
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Cause inventée dans un résumé",
     broken: "Résumés fidèles",
     evidence: synthese({
@@ -263,7 +322,7 @@ const SYNTHESE: CalibrationCase[] = [
     }),
   },
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Recommandation",
     broken: "Pas d'opinion",
     evidence: synthese({
@@ -272,7 +331,7 @@ const SYNTHESE: CalibrationCase[] = [
     }),
   },
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Écart omis",
     broken: "Écart et météo",
     // L'écart disparaît aussi de la synthèse de tendance : sinon le juge le
@@ -311,13 +370,13 @@ const retard = ({ from, to }: { from: string | RegExp; to: string }) =>
 
 const RETARD: CalibrationCase[] = [
   {
-    family: "chantiersEnRetard",
+    suite: SUITES.chantiersEnRetard,
     label: "Référence",
     broken: null,
     evidence: evidence({ question: RETARD_QUESTION, matter: RETARD_REFERENCE }),
   },
   {
-    family: "chantiersEnRetard",
+    suite: SUITES.chantiersEnRetard,
     label: "Renvoi vers un tableau de bord",
     broken: "Valeurs des indicateurs",
     evidence: retard({
@@ -326,7 +385,7 @@ const RETARD: CalibrationCase[] = [
     }),
   },
   {
-    family: "chantiersEnRetard",
+    suite: SUITES.chantiersEnRetard,
     label: "Valeur actuelle fausse",
     broken: "Chiffres exacts",
     evidence: retard({
@@ -335,7 +394,7 @@ const RETARD: CalibrationCase[] = [
     }),
   },
   {
-    family: "chantiersEnRetard",
+    suite: SUITES.chantiersEnRetard,
     label: "Écart omis",
     broken: "Écart par chantier",
     evidence: retard({ from: "- Écart à la médiane : -15 points\n", to: "" }),
@@ -387,13 +446,13 @@ const comparaison = (matter: string) =>
 
 const COMPARAISON: CalibrationCase[] = [
   {
-    family: "comparaisonTerritoires",
+    suite: SUITES.comparerTerritoires,
     label: "Référence",
     broken: null,
     evidence: comparaison(COMPARAISON_REFERENCE),
   },
   {
-    family: "comparaisonTerritoires",
+    suite: SUITES.comparerTerritoires,
     label: "Sens de l'écart inversé",
     broken: "Analyse des écarts",
     evidence: comparaison(
@@ -405,7 +464,7 @@ const COMPARAISON: CalibrationCase[] = [
     ),
   },
   {
-    family: "comparaisonTerritoires",
+    suite: SUITES.comparerTerritoires,
     label: "Position face à la médiane fausse",
     broken: "Position face à la médiane",
     evidence: comparaison(
@@ -492,13 +551,13 @@ const commentaires = (matter: string) =>
 
 const COMMENTAIRES: CalibrationCase[] = [
   {
-    family: "commentaires",
+    suite: SUITES.syntheseCommentaires,
     label: "Référence",
     broken: null,
     evidence: commentaires(COMMENTAIRES_REFERENCE),
   },
   {
-    family: "commentaires",
+    suite: SUITES.syntheseCommentaires,
     label: "Commentaire inventé pour CH-012",
     broken: "Une synthèse par chantier",
     evidence: commentaires(
@@ -510,7 +569,7 @@ const COMMENTAIRES: CalibrationCase[] = [
     ),
   },
   {
-    family: "commentaires",
+    suite: SUITES.syntheseCommentaires,
     label: "Même constat répété",
     broken: "Doublons compactés",
     evidence: commentaires(
@@ -522,7 +581,7 @@ const COMMENTAIRES: CalibrationCase[] = [
     ),
   },
   {
-    family: "commentaires",
+    suite: SUITES.syntheseCommentaires,
     label: "Types nationaux présentés comme absents",
     broken: "Actions identifiées",
     evidence: commentaires(
@@ -651,19 +710,19 @@ const tableauDeBord = (
 
 const DASHBOARD: CalibrationCase[] = [
   {
-    family: "dashboard",
+    suite: SUITES.tableauDeBord,
     label: "Référence",
     broken: null,
     evidence: tableauDeBord(dashboardAvec(SECTION_TERRITOIRE)),
   },
   {
-    family: "dashboard",
+    suite: SUITES.tableauDeBord,
     label: "Cartographie du taux absente",
     broken: "Widgets conformes à la demande",
     evidence: tableauDeBord(dashboardAvec(SECTION_TERRITOIRE.slice(0, 3))),
   },
   {
-    family: "dashboard",
+    suite: SUITES.tableauDeBord,
     label: "Widget étranger à la demande",
     broken: "Widgets conformes à la demande",
     evidence: tableauDeBord(
@@ -681,7 +740,7 @@ const DASHBOARD: CalibrationCase[] = [
     ),
   },
   {
-    family: "dashboard",
+    suite: SUITES.tableauDeBord,
     label: "Taux répété dans le texte",
     broken: "Pas de chiffre dans le texte",
     evidence: tableauDeBord(
@@ -731,13 +790,13 @@ const rapport = (matter: string) =>
 
 const RAPPORT: CalibrationCase[] = [
   {
-    family: "rapport",
+    suite: SUITES.rapportComplet,
     label: "Référence",
     broken: null,
     evidence: rapport(RAPPORT_REFERENCE),
   },
   {
-    family: "rapport",
+    suite: SUITES.rapportComplet,
     label: "Chantier en retard de la synthèse omis",
     broken: "Fidèle à la conversation",
     evidence: rapport(
@@ -852,13 +911,13 @@ const horsPerimetre = (matter: string) =>
 
 const RESTRICTION: CalibrationCase[] = [
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Référence hors périmètre",
     broken: null,
     evidence: horsPerimetre(RESTRICTION_REFERENCE),
   },
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Commentaire masqué présenté comme absent",
     broken: "Restriction signalée",
     evidence: horsPerimetre(
@@ -950,13 +1009,13 @@ const syntheseChantier = (matter: string) =>
 
 const SYNTHESE_CHANTIER: CalibrationCase[] = [
   {
-    family: "syntheseChantier",
+    suite: SUITES.syntheseChantier,
     label: "Référence",
     broken: null,
     evidence: syntheseChantier(CHANTIER_REFERENCE),
   },
   {
-    family: "syntheseChantier",
+    suite: SUITES.syntheseChantier,
     label: "Volet des commentaires absent",
     broken: "Trois volets",
     evidence: syntheseChantier(
@@ -968,7 +1027,7 @@ const SYNTHESE_CHANTIER: CalibrationCase[] = [
     ),
   },
   {
-    family: "syntheseChantier",
+    suite: SUITES.syntheseChantier,
     label: "Position sans chiffre",
     broken: "Situé face aux autres territoires",
     evidence: syntheseChantier(
@@ -980,7 +1039,7 @@ const SYNTHESE_CHANTIER: CalibrationCase[] = [
     ),
   },
   {
-    family: "syntheseChantier",
+    suite: SUITES.syntheseChantier,
     label: "Difficulté inventée",
     broken: "Difficultés tirées des commentaires",
     evidence: syntheseChantier(
@@ -1116,13 +1175,13 @@ const sousTerritoires = (matter: string) =>
 
 const SOUS_TERRITOIRES: CalibrationCase[] = [
   {
-    family: "syntheseSousTerritoires",
+    suite: SUITES.syntheseDepartements,
     label: "Référence",
     broken: null,
     evidence: sousTerritoires(SOUS_TERRITOIRES_REFERENCE),
   },
   {
-    family: "syntheseSousTerritoires",
+    suite: SUITES.syntheseDepartements,
     label: "Département désigné par son code",
     broken: "Tableau comparatif",
     evidence: sousTerritoires(
@@ -1182,7 +1241,7 @@ const JALONS_2023_REFERENCE =
 
 const JALONS: CalibrationCase[] = [
   {
-    family: "comparaisonJalons",
+    suite: SUITES.comparerJalons,
     label: "Référence 2024",
     broken: null,
     evidence: jalons({
@@ -1193,7 +1252,7 @@ const JALONS: CalibrationCase[] = [
     }),
   },
   {
-    family: "comparaisonJalons",
+    suite: SUITES.comparerJalons,
     label: "Sens de l'évolution inversé",
     broken: "Évolution entre jalons",
     evidence: jalons({
@@ -1208,7 +1267,7 @@ const JALONS: CalibrationCase[] = [
     }),
   },
   {
-    family: "comparaisonJalons",
+    suite: SUITES.comparerJalons,
     label: "Référence 2023, sans données",
     broken: null,
     evidence: jalons({
@@ -1219,7 +1278,7 @@ const JALONS: CalibrationCase[] = [
     }),
   },
   {
-    family: "comparaisonJalons",
+    suite: SUITES.comparerJalons,
     label: "Jalon sans données passé sous silence",
     broken: "Données indisponibles dites",
     evidence: jalons({
@@ -1253,7 +1312,7 @@ export const MECHANICAL_MUTANTS: CalibrationCase[] = [
     // Revue du 30/09 : Albert peut lire les commentaires par `get_chantiers`
     // plutôt que par `get_chantier_commentaires`. La recopie doit se voir
     // quel que soit l'outil qui a fourni le commentaire.
-    family: "commentaires",
+    suite: SUITES.syntheseCommentaires,
     label: "Commentaire lu par get_chantiers et recopié",
     broken: "Pas de recopie",
     evidence: evidence({
@@ -1296,7 +1355,7 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
     }),
   },
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Commentaire de synthèse recopié",
     broken: "Pas de recopie",
     evidence: synthese({
@@ -1305,7 +1364,7 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
     }),
   },
   {
-    family: "commentaires",
+    suite: SUITES.syntheseCommentaires,
     label: "Commentaire reçu recopié",
     broken: "Pas de recopie",
     evidence: commentaires(
@@ -1317,7 +1376,7 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
     ),
   },
   {
-    family: "syntheseSousTerritoires",
+    suite: SUITES.syntheseDepartements,
     label: "Commentaire de synthèse recopié",
     broken: "Pas de recopie",
     evidence: sousTerritoires(
@@ -1329,13 +1388,13 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
     ),
   },
   {
-    family: "syntheseTerritoire",
+    suite: SUITES.syntheseTerritoire,
     label: "Commentaire manquant non signalé",
     broken: "Absence de commentaire signalée",
     evidence: synthese({ from: "> Pas de commentaire disponible\n\n", to: "" }),
   },
   {
-    family: "comparaisonTerritoires",
+    suite: SUITES.comparerTerritoires,
     label: "Chantier cité sans son nom",
     broken: "Format des chantiers",
     evidence: comparaison(

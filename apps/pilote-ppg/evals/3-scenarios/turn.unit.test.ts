@@ -1,7 +1,4 @@
-import { grid } from "./grid";
 import { buildEvidence, type ScenarioTurn } from "./turn";
-
-const TEXTE = grid({ family: "Texte", matter: "text", criteria: [] });
 
 const TOUR: ScenarioTurn = {
   turnId: "tour",
@@ -34,7 +31,7 @@ const TOUR: ScenarioTurn = {
 describe("buildEvidence", () => {
   test("un tour isolé n'a pas de conversation précédente", () => {
     // When
-    const evidence = buildEvidence({ turn: TOUR, grid: TEXTE });
+    const evidence = buildEvidence({ turn: TOUR, matter: "text" });
 
     // Then
     expect(evidence.conversation).toEqual([]);
@@ -60,7 +57,7 @@ describe("buildEvidence", () => {
     };
 
     // When
-    const evidence = buildEvidence({ turn, grid: TEXTE });
+    const evidence = buildEvidence({ turn, matter: "text" });
 
     // Then
     expect(evidence.conversation).toEqual([

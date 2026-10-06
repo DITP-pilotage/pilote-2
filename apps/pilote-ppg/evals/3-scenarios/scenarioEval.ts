@@ -9,7 +9,8 @@ import { scoreExpectedTools } from "../scoreExpectedTools";
 import type { ObservedToolCall } from "../types";
 import { askJudge } from "./askJudge";
 import { scenarioColumns } from "./columns";
-import type { Criterion, Grid, JudgedCriterion } from "./grid";
+import type { Criterion, JudgedCriterion } from "./criterion";
+import type { MatterKind } from "./evidence";
 import { readGroundTruth } from "./groundTruth";
 import type { TruthScope } from "./truth";
 import { buildEvidence, type PreviousTurn, type ScenarioTurn } from "./turn";
@@ -54,12 +55,20 @@ export type ScenarioCase = {
  */
 const verdicts = new Map<string, Promise<Verdict>>();
 
-function verdictFor({ turn, grid }: { turn: ScenarioTurn; grid: Grid }) {
+type Notation = { criteria: Criterion[]; matter: MatterKind };
+
+function verdictFor({
+  turn,
+  notation,
+}: {
+  turn: ScenarioTurn;
+  notation: Notation;
+}) {
   const cached = verdicts.get(turn.turnId);
   if (cached) return cached;
 
-  const evidence = buildEvidence({ turn, grid });
-  const criteria = grid.criteria.filter(
+  const evidence = buildEvidence({ turn, matter: notation.matter });
+  const criteria = notation.criteria.filter(
     (criterion): criterion is JudgedCriterion =>
       criterion.kind === "judged" && (criterion.applicable?.(evidence) ?? true),
   );
@@ -70,16 +79,19 @@ function verdictFor({ turn, grid }: { turn: ScenarioTurn; grid: Grid }) {
 
 function criterionScorer({
   criterion,
-  grid,
+  notation,
 }: {
   criterion: Criterion;
-  grid: Grid;
+  notation: Notation;
 }) {
   return createScorer<ScenarioCase, ScenarioTurn, unknown>({
     name: criterion.id,
     description: `${criterion.kind === "judged" ? "Jugé" : "Mécanique"} — ${criterion.rule}`,
     scorer: async ({ output }) => {
-      const evidence = buildEvidence({ turn: output, grid });
+      const evidence = buildEvidence({
+        turn: output,
+        matter: notation.matter,
+      });
 
       // Evalite compte un score `null` comme 0 : un critère sans objet note 1,
       // et le dit sous le score pour que le rapport l'affiche « — ».
@@ -92,7 +104,9 @@ function criterionScorer({
         return { score: result.ok ? 1 : 0, metadata: result.detail };
       }
 
-      const verdict = (await verdictFor({ turn: output, grid }))[criterion.id];
+      const verdict = (await verdictFor({ turn: output, notation }))[
+        criterion.id
+      ];
       return {
         score: verdict?.conforme ? 1 : 0,
         metadata: verdict?.preuve ?? "absent du verdict",
@@ -104,20 +118,24 @@ function criterionScorer({
 /**
  * Tout ce qu'une suite de niveau 3 partage : le monde territorial, le tour
  * d'agent avec le profil et le contexte de l'accueil, la fiche de vérité, et
- * un scorer par critère de la grille. Une suite ne déclare que son scénario,
- * sa grille et ses cas.
+ * un scorer par critère. Une suite ne déclare que son scénario, ses critères
+ * et ses cas.
  */
 export function scenarioEval({
   suite,
   group,
-  grid,
+  criteria,
+  matter = "text",
   cases,
   profile = "ditp",
   currentTerritory = "REG-53",
 }: {
   suite: string;
   group: keyof typeof GROUPS;
-  grid: Grid;
+  /** Le socle et les critères du scénario, depuis son `.criteria.ts`. */
+  criteria: Criterion[];
+  /** Ce que le juge lit : la réponse, le rapport exporté ou le dashboard. */
+  matter?: MatterKind;
   cases: ScenarioCase[];
   profile?: EvalProfile;
   currentTerritory?: string;
@@ -238,8 +256,8 @@ export function scenarioEval({
               forbidden: input.forbidden,
             }),
         },
-        ...grid.criteria.map((criterion) =>
-          criterionScorer({ criterion, grid }),
+        ...criteria.map((criterion) =>
+          criterionScorer({ criterion, notation: { criteria, matter } }),
         ),
       ],
 
@@ -256,7 +274,7 @@ export function scenarioEval({
           toolCalls: output.toolCalls,
           toolResults: output.toolResults,
           text: output.text,
-          withWidgets: grid.matter === "dashboard",
+          withWidgets: matter === "dashboard",
         }),
     },
   );
