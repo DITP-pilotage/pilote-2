@@ -7,7 +7,7 @@ import {
   typesCommentaireAPIRegionauxDepartementaux,
 } from "@/validation/import-commentaire";
 import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import {
   ImportCommentaireAPIResponse,
   ImportCommentaireErreur,

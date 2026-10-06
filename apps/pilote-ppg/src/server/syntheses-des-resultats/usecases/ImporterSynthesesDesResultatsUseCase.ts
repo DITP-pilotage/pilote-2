@@ -1,9 +1,9 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
+import { SynthèseDesRésultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
 import { ImportSyntheseDesResultatsInput } from "@/validation/import-synthese-des-resultats";
-import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
+import { SyntheseDesResultatsV2 } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
+import { MeteoSaisissable } from "@/shared/meteo/Meteo.interface";
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class ImporterSynthesesDesResultatsUseCase {

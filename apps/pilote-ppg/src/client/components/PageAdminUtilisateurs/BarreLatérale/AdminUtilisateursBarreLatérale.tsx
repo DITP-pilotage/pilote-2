@@ -16,8 +16,8 @@ import { MultiSelectProfil } from "@/components/_commons/MultiSelect/MultiSelect
 import {
   AAccesATousLesUtilisateurs,
   PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE,
-} from "@/server/domain/utilisateur/profils-gestion-utilisateur";
-import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+} from "@/shared/utilisateur/profils-gestion-utilisateur";
+import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";

@@ -3,7 +3,7 @@ import { TokenAPIJWTService } from "@/server/authentification/infrastructure/ada
 import { TokenAPIInformationBuilder } from "@/server/authentification/app/builder/TokenAPIInformationBuilder";
 import { UtilisateurBuilder } from "@/server/authentification/app/builder/UtilisateurBuilder";
 import { HabilitationAuthentitificationAPIBuilder } from "@/server/authentification/app/builder/HabilitationAuthentitificationAPIBuilder";
-import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
 import { ProfilRepository } from "@/server/authentification/domain/ports/ProfilRepository";
 import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";

@@ -1,4 +1,4 @@
-import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
 import { ProfilRepository } from "@/server/authentification/domain/ports/ProfilRepository";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";

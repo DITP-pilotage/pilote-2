@@ -1,4 +1,4 @@
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 export const estPropositionSupprimee = (detailIndicateur: DétailsIndicateur) =>

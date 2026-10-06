@@ -1,11 +1,11 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
+import { CommentaireRepository } from "@/server/commentaires/infrastructure/sql/CommentaireRepository.interface";
 import {
   ImportCommentaireInput,
   mapTypeCommentaireAPIVersDomaine,
 } from "@/validation/import-commentaire";
-import { CommentaireV2 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
+import { CommentaireV2 } from "@/shared/chantier/commentaire/Commentaire.interface";
 import type { Inject } from "@/server/commentaires/module";
 
 export class ImporterCommentairesUseCase {

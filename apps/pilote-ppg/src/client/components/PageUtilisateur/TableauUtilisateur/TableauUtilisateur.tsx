@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import {
   getPerimetreLibelle,
   getServiceLibelle,

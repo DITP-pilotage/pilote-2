@@ -5,11 +5,11 @@ import {
   TypeCommentaireChantier,
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import {
   CODES_TYPES_COMMENTAIRES,
   NOMS_TYPES_COMMENTAIRES,
-} from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+} from "@/server/commentaires/infrastructure/sql/CommentaireSQLRepository";
 
 const TOUS_LES_TYPES: TypeCommentaireChantier[] = [
   ...typesCommentaireMailleNationale,

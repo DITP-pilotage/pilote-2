@@ -1,5 +1,5 @@
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { presenterEnDetailsIndicateursContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursContrat";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";

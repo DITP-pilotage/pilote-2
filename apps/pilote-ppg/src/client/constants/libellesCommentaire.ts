@@ -1,7 +1,7 @@
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 
 export const typesCommentaire = [
   ...typesCommentaireMailleNationale,

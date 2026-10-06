@@ -11,7 +11,7 @@ import {
   ImportSyntheseDesResultatsErrorResponse,
 } from "@/server/syntheses-des-resultats/app/contrats/ImportSyntheseDesResultatsAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { logger } from "@/server/framework/logger";
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Titre from "@/components/_commons/Titre/Titre";
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import IndicateursChantier from "@/components/_commons/IndicateursChantier/IndicateursChantier";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { CategoriesIndicateur } from "@/client/utils/rubriques";
 import {
   pageChantier,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
+import { TypeCommentaireChantier } from "@/shared/chantier/commentaire/Commentaire.interface";
 
 export const typesCommentaireAPIVersDomaineNational = {
   autres_resultats_obtenus_non_correles_aux_indicateurs:

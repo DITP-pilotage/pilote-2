@@ -1,8 +1,8 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Utilisateur } from "@/shared/utilisateur/Utilisateur.interface";
 import PageModifierUtilisateur from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateur";
 import { commenceParUneVoyelle } from "@/client/utils/strings";
 import { getContainer } from "@/server/dependances";

@@ -3,7 +3,7 @@ import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { Modale } from "@/components/shared/Modale";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
-import { profilsTerritoriaux } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { profilsTerritoriaux } from "@/shared/utilisateur/Utilisateur.interface";
 import { useExportStep } from "./useExportStep";
 
 export const EtapeDonneeChantierACollecter = () => {

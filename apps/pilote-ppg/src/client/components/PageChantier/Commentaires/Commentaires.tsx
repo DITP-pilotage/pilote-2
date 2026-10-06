@@ -3,7 +3,7 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import { CommentaireSectionParType } from "@/components/PageChantier/Commentaires/CommentaireSectionParType";
 import {
   pageChantier,

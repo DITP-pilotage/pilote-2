@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/shared/meteo/Meteo.interface";
 import { Badge, BadgeVariant } from "@/components/shared/Badge";
 
 interface MétéoBadgeProps {

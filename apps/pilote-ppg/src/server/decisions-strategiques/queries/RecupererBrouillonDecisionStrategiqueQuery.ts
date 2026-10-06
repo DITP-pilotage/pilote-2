@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { DecisionStrategiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DecisionStrategiqueV2 } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 
 export class RecupererBrouillonDecisionStrategiqueQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}

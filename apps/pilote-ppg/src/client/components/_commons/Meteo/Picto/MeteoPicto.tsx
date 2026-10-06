@@ -1,5 +1,5 @@
 import { ComponentType } from "react";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { MeteoCouvertIcon } from "@/components/_commons/IconeMeteo/MeteoCouvertIcon";
 import { MeteoOrageIcon } from "@/components/_commons/IconeMeteo/MeteoOrageIcon";
 import { MeteoNuageIcon } from "@/components/_commons/IconeMeteo/MeteoNuageIcon";

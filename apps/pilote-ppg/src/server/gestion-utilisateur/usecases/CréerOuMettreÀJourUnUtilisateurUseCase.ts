@@ -1,20 +1,21 @@
-import Utilisateur, {
+import {
+  Utilisateur,
   profilsDépartementaux,
   profilsInfolettreCoordinateur,
   profilsRégionaux,
   UtilisateurÀCréerOuMettreÀJour,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
-} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+} from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { codesTerritoiresDROM } from "@/validation/utilisateur";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
-import { Profil } from "@/server/domain/profil/Profil.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
+import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
+import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
+import { HistorisationModification } from "@/server/historisation-modification/domain/HistorisationModification";
+import { Profil } from "@/shared/profil/Profil.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";

@@ -1,4 +1,4 @@
-import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { CodeInsee } from "@/shared/territoire/Territoire.interface";
 import {
   DetailsIndicateur,
   DetailsIndicateurTerritoire,

@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import PageImportIndicateurSectionRessource from "@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource";
 import { RapportContrat } from "@/server/app/contrats/RapportContrat";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { InformationIndicateurContrat } from "@/server/app/contrats/InformationIndicateurContrat";
 import PageImportIndicateurEnTête from "./PageImportIndicateurEnTête/PageImportIndicateurEnTête";
 import PageImportIndicateurExplicationEtapeImport from "./PageImportIndicateurExplicationEtapeImport/PageImportIndicateurExplicationEtapeImport";

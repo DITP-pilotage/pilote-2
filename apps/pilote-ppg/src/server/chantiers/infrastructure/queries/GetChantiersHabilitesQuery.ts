@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import type { Inject } from "@/server/chantiers/module";
 
 export class GetChantiersHabilitesQuery {

@@ -2,7 +2,7 @@ import { GetServerSidePropsContext } from "next/types";
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Utilisateur } from "@/shared/utilisateur/Utilisateur.interface";
 import {
   MetadataParametrageIndicateurContrat,
   presenterEnMetadataParametrageIndicateurContrat,
@@ -12,7 +12,7 @@ import {
   MapInformationMetadataIndicateurContrat,
   presenterEnMapInformationMetadataIndicateurContrat,
 } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
 import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";

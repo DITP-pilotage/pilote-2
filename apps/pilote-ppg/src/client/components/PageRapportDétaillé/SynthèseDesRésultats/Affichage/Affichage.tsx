@@ -1,5 +1,5 @@
 import { formaterDate } from "@/client/utils/date/date";
-import SynthèseDesRésultatsInterface from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SynthèseDesRésultats as SynthèseDesRésultatsInterface } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 
 interface SynthèseDesRésultatsAffichageProps {

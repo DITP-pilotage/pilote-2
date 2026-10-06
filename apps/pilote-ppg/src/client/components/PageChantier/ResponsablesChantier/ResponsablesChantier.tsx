@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import ResponsablesLigneChantier from "@/components/_commons/ResponsablesLigneChantier/ResponsablesLigneChantier";
-import { Maille } from "@/server/domain/maille/Maille.interface";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
 import {
   CoordinateurTerritorialRapportDetailleContrat,
   DirecteurProjetRapportDetailleContrat,

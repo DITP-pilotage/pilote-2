@@ -1,8 +1,8 @@
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { TypeDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
-import { creerDecisionStrategiqueBrouillon } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { TypeDecisionStrategique } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
+import { DécisionStratégiqueRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueRepository.interface";
+import { creerDecisionStrategiqueBrouillon } from "@/server/decisions-strategiques/domain/DecisionStrategique";
 
 export class EnregistrerBrouillonDecisionStrategiqueUseCase {
   constructor(

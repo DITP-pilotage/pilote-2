@@ -1,5 +1,5 @@
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
-import IndicateurBuilder from "@/server/domain/indicateur/Indicateur.builder";
+import { IndicateurBuilder } from "@/test/builders/Indicateur.builder";
 
 describe("comparerIndicateur", () => {
   it("renvoie 0 si les pondérations et le nom sont strictement identiques", () => {

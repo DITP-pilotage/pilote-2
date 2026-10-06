@@ -10,7 +10,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Modale } from "@/components/shared/Modale";
 import { Notice } from "@/components/shared/Notice";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
-import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Utilisateur } from "@/shared/utilisateur/Utilisateur.interface";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";

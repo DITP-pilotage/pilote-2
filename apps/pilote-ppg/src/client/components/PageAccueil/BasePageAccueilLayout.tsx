@@ -21,9 +21,9 @@ import {
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
 import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre";
 import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/ModaleRenseignerService/ModaleRenseignerService";
-import Axe from "@/server/domain/axe/Axe.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { Axe } from "@/shared/axe/Axe.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { profilsRégionaux } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-territoriale/fiche-territoriale";

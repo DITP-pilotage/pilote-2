@@ -1,4 +1,4 @@
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 
 export type CartographieDonnéesMétéo = {
   valeur: Meteo;

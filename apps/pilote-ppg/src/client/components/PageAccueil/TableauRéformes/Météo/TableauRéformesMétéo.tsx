@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/shared/meteo/Meteo.interface";
 import { TableauChantiersMétéoTaille } from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import { clsxm } from "@/utils/clsxm";

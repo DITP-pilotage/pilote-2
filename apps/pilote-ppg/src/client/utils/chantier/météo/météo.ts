@@ -1,5 +1,5 @@
 import { SortingState } from "@tanstack/react-table";
-import { Meteo, meteos } from "@/server/domain/météo/Météo.interface";
+import { Meteo, meteos } from "@/shared/meteo/Meteo.interface";
 
 const ORDRE_DES_MÉTÉOS: typeof meteos = [
   "NON_RENSEIGNEE",

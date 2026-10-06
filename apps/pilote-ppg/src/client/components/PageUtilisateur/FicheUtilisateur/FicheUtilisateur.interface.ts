@@ -1,7 +1,7 @@
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
+import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 export default interface FicheUtilisateurProps {
   utilisateur: {

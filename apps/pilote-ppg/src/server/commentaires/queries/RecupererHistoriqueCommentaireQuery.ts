@@ -1,11 +1,11 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getServiceLibelle } from "@/utils/referentiel-services";
-import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
+import { TypeCommentaireChantier } from "@/shared/chantier/commentaire/Commentaire.interface";
 import {
   CODES_TYPES_COMMENTAIRES,
   NOMS_TYPES_COMMENTAIRES,
-} from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+} from "@/server/commentaires/infrastructure/sql/CommentaireSQLRepository";
 
 export type CommentaireHistoriqueItem = {
   chantierId: string;

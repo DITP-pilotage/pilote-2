@@ -1,6 +1,6 @@
-import { PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE } from "@/server/domain/utilisateur/profils-gestion-utilisateur";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE } from "@/shared/utilisateur/profils-gestion-utilisateur";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
 import { FiltreQueryParams } from "@/server/gestion-utilisateur/app/contrats/FiltreQueryParams";
 import { UtilisateurExportCSV } from "@/server/gestion-utilisateur/domain/UtilisateurExportCSV";

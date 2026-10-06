@@ -1,10 +1,10 @@
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
-import UtilisateurSQLRepositoryInterface from "@/server/domain/utilisateur/UtilisateurRepository.interface";
-import ProfilSQLRepositoryInterface from "@/server/domain/profil/ProfilRepository";
-import TerritoireSQLRepositoryInterface from "@/server/domain/territoire/TerritoireRepository.interface";
-import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
-import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/ProfilSQLRepository";
-import { TerritoireSQLRepository } from "@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository";
+import { UtilisateurRepository as UtilisateurSQLRepositoryInterface } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
+import { ProfilRepository as ProfilSQLRepositoryInterface } from "@/server/gestion-utilisateur/infrastructure/sql/ProfilRepository";
+import { TerritoireRepository as TerritoireSQLRepositoryInterface } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireRepository.interface";
+import { UtilisateurSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurSQLRepository";
+import { ProfilSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/ProfilSQLRepository";
+import { TerritoireSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireSQLRepository";
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import { RécupérerUnProfilUseCase } from "@/server/gestion-utilisateur/usecases/RécupérerUnProfilUseCase";
 import { RecupererTerritoiresAvecNombreUtilisateursSQLUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTerritoiresAvecNombreUtilisateursSQLUseCase";
@@ -22,8 +22,8 @@ import { RecupererTerritoiresAvecNombreUtilisateursUseCase } from "@/server/gest
 import { FiltrerListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/FiltrerListeUtilisateursUseCase";
 import { RecupererTousLesTerritoiresUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTousLesTerritoiresUseCase";
 import { RecupererListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase";
-import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { PrismaHistorisationModificationRepository } from "@/server/historisation-modification/infrastructure/PrismaHistorisationModificationRepository";
+import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
 import {
   defineModule,
   type ExtractScope,

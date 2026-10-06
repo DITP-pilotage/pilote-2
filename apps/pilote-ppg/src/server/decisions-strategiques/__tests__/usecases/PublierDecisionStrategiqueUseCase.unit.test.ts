@@ -1,8 +1,8 @@
 import { MockProxy, mock } from "vitest-mock-extended";
 import { $Enums } from "@prisma/client";
-import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
+import { DécisionStratégiqueRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueRepository.interface";
 import { PublierDecisionStrategiqueUseCase } from "@/server/decisions-strategiques/usecases/PublierDecisionStrategiqueUseCase";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 const habilitationsAvecAcces = {
   saisieCommentaire: {

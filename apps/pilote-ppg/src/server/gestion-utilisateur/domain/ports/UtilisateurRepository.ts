@@ -1,10 +1,10 @@
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
 import { UtilisateurExportCSV } from "@/server/gestion-utilisateur/domain/UtilisateurExportCSV";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/shared/utilisateur/Utilisateur.interface";
 
 export interface UtilisateurRepository {
   récupérer(

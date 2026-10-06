@@ -1,4 +1,4 @@
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+import { MailleTerritoireSelectionne } from "@/shared/maille/Maille.interface";
 
 export type Maille = MailleTerritoireSelectionne;
 export const MAILLES: readonly Maille[] = ["NAT", "REG", "DEPT"];

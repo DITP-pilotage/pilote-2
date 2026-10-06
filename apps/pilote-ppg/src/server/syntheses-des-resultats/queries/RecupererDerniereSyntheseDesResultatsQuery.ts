@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getServiceLibelle } from "@/utils/referentiel-services";
-import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { SyntheseDesResultatsAvecNomsAuteurs } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class RecupererDerniereSyntheseDesResultatsQuery {

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { getTraceSvg } from "@/components/_commons/Cartographie/SVG/CartographieSVGContrat";
 import { territoireFrance } from "@/client/constants/territoires";
 

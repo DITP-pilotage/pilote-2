@@ -1,5 +1,5 @@
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
-import type { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import type { MailleInterne } from "@/shared/maille/Maille.interface";
 import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetCartographiePropositionsValeurAvancement = ({

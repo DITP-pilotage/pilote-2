@@ -1,8 +1,8 @@
 import { MockProxy, mock } from "vitest-mock-extended";
 import { $Enums } from "@prisma/client";
-import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
+import { CommentaireRepository } from "@/server/commentaires/infrastructure/sql/CommentaireRepository.interface";
 import { PublierCommentaireUseCase } from "@/server/commentaires/usecases/PublierCommentaireUseCase";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 const habilitationsAvecAcces = {
   saisieCommentaire: {

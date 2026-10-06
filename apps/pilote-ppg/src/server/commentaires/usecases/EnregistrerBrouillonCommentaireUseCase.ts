@@ -1,8 +1,8 @@
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
-import { creerCommentaireBrouillon } from "@/server/domain/chantier/commentaire/Commentaire";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { TypeCommentaireChantier } from "@/shared/chantier/commentaire/Commentaire.interface";
+import { CommentaireRepository } from "@/server/commentaires/infrastructure/sql/CommentaireRepository.interface";
+import { creerCommentaireBrouillon } from "@/server/commentaires/domain/Commentaire";
 
 export class EnregistrerBrouillonCommentaireUseCase {
   constructor(

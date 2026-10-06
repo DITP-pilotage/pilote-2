@@ -1,4 +1,4 @@
-import { TypeIndicateur } from "@/server/domain/indicateur/Indicateur.interface";
+import { TypeIndicateur } from "@/shared/indicateur/Indicateur.interface";
 
 export type IndicateurPondération = {
   pondération: string;

@@ -7,7 +7,7 @@ import { ObjectifRepository } from "@/server/gestion-utilisateur/domain/ports/Ob
 import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/RapportRepository";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
 import { Transaction } from "@/server/framework/persistence/Transaction";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 

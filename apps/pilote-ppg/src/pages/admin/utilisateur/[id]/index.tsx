@@ -2,7 +2,7 @@ import { GetServerSidePropsContext } from "next/types";
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Utilisateur } from "@/shared/utilisateur/Utilisateur.interface";
 import PageUtilisateur from "@/components/PageUtilisateur/PageUtilisateur";
 import {
   presenterEnTokenAPIInformationContrat,

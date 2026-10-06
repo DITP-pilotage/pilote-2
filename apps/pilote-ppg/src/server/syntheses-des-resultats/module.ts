@@ -3,8 +3,8 @@ import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-res
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
 import { RecupererHistoriqueSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import { RecupererBrouillonSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererBrouillonSyntheseDesResultatsQuery";
-import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
-import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
+import { SynthèseDesRésultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
+import { SynthèseDesRésultatsSQLRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsSQLRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { Transaction } from "@/server/framework/persistence/Transaction";

@@ -1,0 +1,111 @@
+import {
+  $Enums,
+  decision_strategique as DécisionStratégiquePrisma,
+} from "@prisma/client";
+import {
+  DecisionStrategiqueV2,
+  DécisionStratégique,
+  TypeDecisionStrategique,
+} from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
+import { DécisionStratégiqueRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueRepository.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+
+export const NOMS_TYPES_DECISION_STRATEGIQUE: Record<
+  string,
+  TypeDecisionStrategique
+> = {
+  suivi_des_decisions: "suiviDesDecisionsStrategiques",
+};
+
+export class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
+  async getById(id: string): Promise<DecisionStrategiqueV2 | null> {
+    const decision = await this.prisma.decision_strategique.findUnique({
+      where: { id },
+    });
+
+    if (!decision) return null;
+
+    return {
+      id: decision.id,
+      chantierId: decision.chantier_id,
+      contenu: decision.contenu,
+      statut: decision.statut,
+      auteurCreationId: decision.auteur_creation_id,
+      auteurModificationId: decision.auteur_modification_id,
+      dateCreation: decision.date_creation.toISOString(),
+      dateModification: decision.date_modification.toISOString(),
+    };
+  }
+
+  async save(decision: DecisionStrategiqueV2): Promise<void> {
+    await this.prisma.decision_strategique.upsert({
+      where: { id: decision.id },
+      create: {
+        id: decision.id,
+        chantier_id: decision.chantierId,
+        type: $Enums.type_decision_strategique.suivi_des_decisions,
+        contenu: decision.contenu,
+        statut: decision.statut,
+        auteur_creation_id: decision.auteurCreationId,
+        auteur_modification_id: decision.auteurModificationId,
+        date_creation: new Date(decision.dateCreation),
+        date_modification: new Date(decision.dateModification),
+      },
+      update: {
+        contenu: decision.contenu,
+        statut: decision.statut,
+        auteur_modification_id: decision.auteurModificationId,
+        date_modification: new Date(decision.dateModification),
+      },
+    });
+  }
+
+  async récupérerLesPlusRécentesGroupéesParChantier(
+    chantiersIds: Chantier["id"][],
+  ): Promise<Record<string, DécisionStratégique>> {
+    const décisionsStratégiques = await this.prisma.$queryRaw<
+      (DécisionStratégiquePrisma & {
+        prenom_auteur: string;
+        nom_auteur: string;
+      })[]
+    >`
+        SELECT d.*, u.prenom as prenom_auteur, u.nom as nom_auteur
+        FROM decision_strategique d
+          LEFT JOIN utilisateur u ON u.id = d.auteur_modification_id
+          INNER JOIN (
+            SELECT chantier_id, MAX(date_modification) as maxdate
+            FROM decision_strategique
+            WHERE chantier_id = ANY (${chantiersIds})
+              AND statut = ${$Enums.statut_publication.PUBLIE}::"statut_publication"
+            GROUP BY chantier_id
+          ) d_recents
+          ON d.date_modification = d_recents.maxdate
+          AND d.chantier_id = d_recents.chantier_id
+        WHERE d.statut = ${$Enums.statut_publication.PUBLIE}::"statut_publication"
+    `;
+
+    return Object.fromEntries(
+      décisionsStratégiques.map((décisionStratégique) => [
+        décisionStratégique.chantier_id,
+        {
+          id: décisionStratégique.id,
+          type: NOMS_TYPES_DECISION_STRATEGIQUE[décisionStratégique.type],
+          contenu: décisionStratégique.contenu,
+          date: décisionStratégique.date_modification.toISOString(),
+          auteur: `${décisionStratégique.prenom_auteur} ${décisionStratégique.nom_auteur}`,
+        },
+      ]),
+    );
+  }
+}

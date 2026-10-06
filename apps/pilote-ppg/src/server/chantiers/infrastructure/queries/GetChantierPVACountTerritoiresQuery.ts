@@ -1,5 +1,5 @@
 import { Inject } from "@/server/chantiers/module";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+import { MailleTerritoireSelectionne } from "@/shared/maille/Maille.interface";
 
 export type PVATerritoireViewModel = {
   territoireCode: string;

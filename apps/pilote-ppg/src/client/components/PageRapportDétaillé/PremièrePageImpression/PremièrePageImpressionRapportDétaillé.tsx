@@ -6,11 +6,11 @@ import {
 } from "nuqs";
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import Axe from "@/server/domain/axe/Axe.interface";
-import Ppg from "@/server/domain/ppg/Ppg.interface";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
+import { Axe } from "@/shared/axe/Axe.interface";
+import { Ppg } from "@/shared/ppg/Ppg.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 
 interface PremièrePageImpressionRapportDétailléProps {
   territoireSélectionné: DétailTerritoire | null;

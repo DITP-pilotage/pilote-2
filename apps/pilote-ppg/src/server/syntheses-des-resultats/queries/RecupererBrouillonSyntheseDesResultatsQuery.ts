@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
-import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { SyntheseDesResultatsV2 } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
 
 export class RecupererBrouillonSyntheseDesResultatsQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}

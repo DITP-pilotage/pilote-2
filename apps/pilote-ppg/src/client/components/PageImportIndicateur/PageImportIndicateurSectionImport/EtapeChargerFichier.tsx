@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { Button } from "@/components/shared/Button";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";

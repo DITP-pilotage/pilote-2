@@ -1,0 +1,48 @@
+import { territoire as TerritoirePrisma } from "@prisma/client";
+import { TerritoireRepository } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireRepository.interface";
+import { NOMS_MAILLES } from "@/shared/maille/mailleSQLParser";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
+import { prisma } from "@/server/framework/persistence/prisma";
+
+class ErreurTerritoireNonTrouvé extends Error {
+  constructor() {
+    super("Erreur: territoire non trouvé.");
+  }
+}
+export class TerritoireSQLRepository implements TerritoireRepository {
+  _mapperVersLeDomaine(territoire: TerritoirePrisma): Territoire {
+    return {
+      code: territoire.code,
+      nom: territoire.nom,
+      nomAffiché: territoire.nom_affiche,
+      codeInsee: territoire.code_insee,
+      codeParent: territoire.code_parent,
+      maille: NOMS_MAILLES[territoire.maille],
+    };
+  }
+
+  async récupérerTous() {
+    const territoires = await prisma.territoire.findMany();
+    return territoires.map((t) => this._mapperVersLeDomaine(t));
+  }
+
+  async récupérerListe(codes: Territoire["code"][]) {
+    const territoires = await prisma.territoire.findMany({
+      where: { code: { in: codes } },
+    });
+
+    return territoires.map((territoire) =>
+      this._mapperVersLeDomaine(territoire),
+    );
+  }
+
+  async récupérer(code: Territoire["code"]) {
+    const territoire = await prisma.territoire.findUnique({
+      where: { code: code },
+    });
+
+    if (!territoire) throw new ErreurTerritoireNonTrouvé();
+
+    return this._mapperVersLeDomaine(territoire);
+  }
+}

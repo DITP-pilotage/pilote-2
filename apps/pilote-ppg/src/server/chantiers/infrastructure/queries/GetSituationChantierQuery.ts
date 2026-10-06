@@ -1,6 +1,6 @@
 import { Inject } from "@/server/chantiers/module";
 import { calculerMediane } from "@/client/utils/statistiques/statistiques";
-import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierTendance } from "@/shared/chantier/Chantier.interface";
 
 export type SituationChantierViewModel = {
   ecart: number | null;

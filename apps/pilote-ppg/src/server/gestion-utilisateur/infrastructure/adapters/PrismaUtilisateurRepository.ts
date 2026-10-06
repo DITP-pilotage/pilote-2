@@ -9,9 +9,9 @@ import {
   HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
   ScopeUtilisateurs,
-} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+} from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
@@ -26,7 +26,7 @@ import {
   profilsRégionaux,
   Utilisateur,
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/shared/utilisateur/Utilisateur.interface";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
 const récupérerChantiersParDéfaut = (

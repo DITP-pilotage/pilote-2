@@ -7,7 +7,7 @@ import {
   CategoriesIndicateur,
   listeRubriquesIndicateursChantier,
 } from "@/client/utils/rubriques";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { clsxm } from "@/utils/clsxm";
 import { TitreRubrique } from "./Bloc/Détails/TitreRubrique/TitreRubrique";

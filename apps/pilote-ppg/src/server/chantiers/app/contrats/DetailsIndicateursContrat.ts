@@ -3,7 +3,7 @@ import {
   DetailsIndicateursTerritoireContrat,
   presenterEnDetailsIndicateursTerritoireContrat,
 } from "@/server/chantiers/app/contrats/DetailsIndicateursTerritoireContrat";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 
 export type DetailsIndicateursContrat = Record<
   Indicateur["id"],

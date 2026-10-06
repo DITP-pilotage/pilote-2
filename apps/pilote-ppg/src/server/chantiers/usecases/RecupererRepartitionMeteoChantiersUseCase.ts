@@ -1,7 +1,7 @@
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
+import { ChantierRepository } from "@/server/chantiers/infrastructure/sql/ChantierRepository.interface";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
-import Axe from "@/server/domain/axe/Axe.interface";
+import { Axe } from "@/shared/axe/Axe.interface";
 
 interface Dependencies {
   chantierRepository: ChantierRepository;

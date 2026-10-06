@@ -1,8 +1,8 @@
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 import {
   profilsDépartementaux,
   profilsTerritoriaux,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 import { Habilitations } from "@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface";
 

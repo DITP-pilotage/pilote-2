@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import {

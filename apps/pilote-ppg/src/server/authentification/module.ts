@@ -1,11 +1,11 @@
-import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
-import ProfilRepository from "@/server/domain/profil/ProfilRepository";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
+import { ProfilRepository } from "@/server/gestion-utilisateur/infrastructure/sql/ProfilRepository";
 import { UtilisateurRepository as UtilisateurAPIRepository } from "@/server/authentification/domain/ports/UtilisateurRepository";
 import { ProfilRepository as ProfilAPIRepository } from "@/server/authentification/domain/ports/ProfilRepository";
 import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
-import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
-import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/ProfilSQLRepository";
+import { UtilisateurSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurSQLRepository";
+import { ProfilSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/ProfilSQLRepository";
 import { PrismaUtilisateurRepository } from "@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository";
 import { PrismaProfilRepository } from "@/server/authentification/infrastructure/adapters/PrismaProfilRepository";
 import { PrismaTokenAPIInformationRepository } from "@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository";

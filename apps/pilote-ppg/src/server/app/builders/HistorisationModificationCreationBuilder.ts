@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
-import { HistorisationModificationDisponible } from "@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible";
+import { HistorisationModification } from "@/server/historisation-modification/domain/HistorisationModification";
+import { HistorisationModificationDisponible } from "@/server/historisation-modification/infrastructure/HistorisationModificationDisponible";
 
 export class HistorisationModificationCreationBuilder {
   private id: string = randomUUID();

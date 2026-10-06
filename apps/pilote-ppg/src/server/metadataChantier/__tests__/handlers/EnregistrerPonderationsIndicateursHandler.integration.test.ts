@@ -5,7 +5,7 @@ import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
-import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
+import { PrismaHistorisationModificationRepository } from "@/server/historisation-modification/infrastructure/PrismaHistorisationModificationRepository";
 
 describe("EnregistrerPonderationsIndicateursHandler", () => {
   let handler: EnregistrerPonderationsIndicateursHandler;

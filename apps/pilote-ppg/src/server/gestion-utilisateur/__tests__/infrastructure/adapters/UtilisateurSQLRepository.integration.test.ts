@@ -3,7 +3,7 @@ import { PrismaUtilisateurRepository } from "@/server/gestion-utilisateur/infras
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
-import TerritoireBuilder from "@/server/domain/territoire/Territoire.builder";
+import { TerritoireBuilder } from "@/test/builders/Territoire.builder";
 
 describe("PrismaUtilisateurRepository", () => {
   const prisma = new PrismaPilote();

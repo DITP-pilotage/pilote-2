@@ -1,14 +1,14 @@
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { Commentaire } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import { SynthèseDesRésultats } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
+import { DécisionStratégique } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
+import { Commentaire } from "@/shared/chantier/commentaire/Commentaire.interface";
+import { Objectif } from "@/shared/chantier/objectif/Objectif.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 import { AvancementChantierRapportDetaille } from "@/components/PageRapportDétaillé/AvancementChantierRapportDetaille";
 import { AvancementsGlobauxTerritoriauxMoyensContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 
 export default interface RapportDétailléChantierProps {

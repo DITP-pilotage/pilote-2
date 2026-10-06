@@ -6,7 +6,7 @@ import {
 import { interpolerCouleurs } from "@/client/utils/couleur/couleur";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
-import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateurTerritoire } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 

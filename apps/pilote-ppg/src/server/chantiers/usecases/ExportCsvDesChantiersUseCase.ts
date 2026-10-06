@@ -12,7 +12,7 @@ import { libellésTypesDécisionStratégique } from "@/client/constants/libellé
 import {
   ProfilCode,
   profilsTerritoriaux,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import type { Inject } from "@/server/chantiers/module";

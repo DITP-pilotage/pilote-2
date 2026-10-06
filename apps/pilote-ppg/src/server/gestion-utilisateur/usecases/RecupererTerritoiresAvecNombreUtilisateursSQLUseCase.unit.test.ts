@@ -1,8 +1,8 @@
 import { mock, MockProxy } from "vitest-mock-extended";
-import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
-import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
-import TerritoireBuilder from "@/server/domain/territoire/Territoire.builder";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { TerritoireRepository } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireRepository.interface";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
+import { TerritoireBuilder } from "@/test/builders/Territoire.builder";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { RecupererTerritoiresAvecNombreUtilisateursSQLUseCase } from "./RecupererTerritoiresAvecNombreUtilisateursSQLUseCase";
 
 describe("RecupererTerritoiresAvecNombreUtilisateursSQLUseCase", () => {

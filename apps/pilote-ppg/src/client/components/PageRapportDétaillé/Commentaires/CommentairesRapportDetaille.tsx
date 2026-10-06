@@ -5,7 +5,7 @@ import {
   TypeCommentaireChantier,
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import { isDefined } from "@/client/utils/predicates";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";

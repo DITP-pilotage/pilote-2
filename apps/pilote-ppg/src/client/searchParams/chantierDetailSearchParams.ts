@@ -4,7 +4,7 @@ import {
   parseAsString,
   parseAsStringLiteral,
 } from "nuqs/server";
-import { maillesInternes } from "@/server/domain/maille/Maille.interface";
+import { maillesInternes } from "@/shared/maille/Maille.interface";
 
 const cartographieIndicateurTypes = [
   "avancementJalon",

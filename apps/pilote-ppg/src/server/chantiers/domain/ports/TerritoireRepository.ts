@@ -1,4 +1,4 @@
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 
 export interface TerritoireRepository {
   recupererTerritoireCodesEtTerritoiresCodesEnfantsParTerritoireCode({
