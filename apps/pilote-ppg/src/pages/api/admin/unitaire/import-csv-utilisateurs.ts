@@ -2,11 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "csv-parse/sync";
 import { File } from "formidable";
 import fs from "node:fs";
-import { CsvRecord } from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface";
+import { CsvRecord } from "@/server/gestion-utilisateur/infrastructure/import-csv/UtilisateurCSVParseur.interface";
 import { onlyCron } from "@/server/framework/guards/onlyCron";
 import { getContainer } from "@/server/dependances";
 import { logger } from "@/server/framework/logger";
-import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
+import { UtilisateurCSVParseur } from "@/server/gestion-utilisateur/infrastructure/import-csv/UtilisateurCSVParseur";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
 
 /**

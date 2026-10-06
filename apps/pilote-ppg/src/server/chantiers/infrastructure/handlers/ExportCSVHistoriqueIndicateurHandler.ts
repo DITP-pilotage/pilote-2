@@ -9,7 +9,7 @@ import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/V
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ExportCsvDesHistoriquesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase";
-import { ecrireCsvEnStreaming } from "@/server/infrastructure/export_csv/ecrireCsvEnStreaming";
+import { ecrireCsvEnStreaming } from "@/server/framework/csv/ecrireCsvEnStreaming";
 
 export const handleExportDesHistoriquesIndicateurs = async (
   request: NextApiRequest,

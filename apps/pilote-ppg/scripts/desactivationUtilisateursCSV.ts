@@ -2,7 +2,7 @@ import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import assert from "node:assert/strict";
 import { logger } from "@/server/framework/logger";
-import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
+import { UtilisateurCSVParseur } from "@/server/gestion-utilisateur/infrastructure/import-csv/UtilisateurCSVParseur";
 import { getContainer } from "@/server/dependances";
 
 const projectDir = process.cwd();

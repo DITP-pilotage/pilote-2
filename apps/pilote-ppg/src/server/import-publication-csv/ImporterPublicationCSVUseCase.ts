@@ -1,4 +1,4 @@
-import type { Inject } from "@/server/infrastructure/import_csv/publication/module";
+import type { Inject } from "@/server/import-publication-csv/module";
 import {
   DomaineCible,
   ErreurLigneCSVPublication,

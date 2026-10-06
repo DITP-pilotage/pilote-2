@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { acmeChallengeStore } from "@/server/infrastructure/acme/acmeChallengeStore";
+import { acmeChallengeStore } from "@/server/framework/acme/acmeChallengeStore";
 import { onlyAcmeApiKey } from "@/server/framework/guards/onlyAcmeApiKey";
 import { logger } from "@/server/framework/logger";
 

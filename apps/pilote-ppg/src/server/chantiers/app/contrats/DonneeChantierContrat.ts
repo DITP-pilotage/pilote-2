@@ -2,7 +2,7 @@ import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
 import {
   formaterNumériqueOuValeurNonApplicable,
   NON_APPLICABLE,
-} from "@/server/infrastructure/export_csv/valeurs";
+} from "@/server/framework/csv/valeurs";
 import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import {
   resolveMails,

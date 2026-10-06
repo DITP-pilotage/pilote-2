@@ -12,7 +12,7 @@ import {
 } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { CsvRecord } from "./UtilisateurCSVParseur.interface";
 
-export default class UtilisateurCSVParseur {
+export class UtilisateurCSVParseur {
   private _CSV_PARSE_OPTIONS: OptionsWithColumns<CsvRecord> = {
     columns: true,
     skipEmptyLines: true,

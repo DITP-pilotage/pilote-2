@@ -30,8 +30,8 @@ import CommentaireSQLRepository from "@/server/infrastructure/accès_données/ch
 import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 import { TerritoireSQLRepository } from "@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository";
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
+import { RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase } from "@/server/chantiers/usecases/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
+import { RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase } from "@/server/chantiers/usecases/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";

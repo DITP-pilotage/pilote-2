@@ -3,7 +3,7 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
-import { ImporterPublicationCSVUseCase } from "@/server/infrastructure/import_csv/publication/ImporterPublicationCSVUseCase";
+import { ImporterPublicationCSVUseCase } from "@/server/import-publication-csv/ImporterPublicationCSVUseCase";
 import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
 import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
