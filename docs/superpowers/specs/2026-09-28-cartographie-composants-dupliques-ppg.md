@@ -223,6 +223,12 @@ Décisions (2026-10-06) :
   - nextauth (config, ProConnect / Keycloak, expiration de session) → `authentification`, avec la PR B.
   - Pas de PR dédiée : chaque routeur suit son domaine dans la PR qui le range ; le README de `infrastructure/api` disparaît avec le dossier.
 
+Décisions complémentaires (2026-10-06), sur le modèle de kpilote-api (`framework/`, `test/`, routes par domaine) :
+
+- **`server/framework`** remplace `server/shared` (racine DI) et reçoit le logger et la persistance (`server/db` → `framework/persistence`) : fait (#2513). Y vont ensuite la plomberie tRPC (init, procédures, `vérifierPermissionAdmin`, client `api.ts`) et les garde-fous `onlyCron` / `onlyAcmeApiKey` (remplace la piste `server/app` pour la plomberie ; `server/app` garde bootstrap, contrats, error boundaries, open-api).
+- **Builders de test → `src/test`** (utilisés aussi par des tests client).
+- **Exports nommés** au passage de chaque déplacement (le logger : fait).
+
 Ordre : après la PR E (`accès_données` et `usecase` sont surtout consommés par `legacy`), puis un domaine par PR, déplacements purs sans changement de code.
 
 ## 8. Publication
