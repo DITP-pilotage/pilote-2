@@ -1,33 +1,33 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { RestorerPorteurHandler } from "@/server/metadata-porteur/handlers/RestorerPorteurHandler";
+import { RestaurerEngagementHandler } from "@/server/metadata-engagement/handlers/RestaurerEngagementHandler";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 
-describe("RestorerPorteurHandler", () => {
-  let handler: RestorerPorteurHandler;
+describe("RestaurerEngagementHandler", () => {
+  let handler: RestaurerEngagementHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new RestorerPorteurHandler({ prisma: prismaPilote });
+    handler = new RestaurerEngagementHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {
     it(
-      "restaure un porteur supprimé",
+      "restaure un engagement supprimé",
       createIntegrationTest(async () => {
         // Given
-        const porteur = await fixtures.metadataPorteur({
-          porteur_id: "99011",
+        const engagement = await fixtures.metadataEngagement({
+          engagement_id: "100",
           deleted_at: new Date("2026-01-01"),
         });
 
         // When
-        await handler.execute({ porteurId: porteur.porteur_id });
+        await handler.execute({ engagementId: engagement.engagement_id });
 
         // Then
-        const result = await getPrisma().metadata_porteurs.findUniqueOrThrow({
-          where: { porteur_id: "99011" },
+        const result = await getPrisma().metadata_engagement.findUniqueOrThrow({
+          where: { engagement_id: "100" },
         });
         expect(result.deleted_at).toBeNull();
       }),

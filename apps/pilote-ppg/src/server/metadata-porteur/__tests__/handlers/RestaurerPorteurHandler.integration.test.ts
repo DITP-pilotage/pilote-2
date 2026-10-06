@@ -1,33 +1,33 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { RestorerPpgHandler } from "@/server/metadata-ppg/handlers/RestorerPpgHandler";
+import { RestaurerPorteurHandler } from "@/server/metadata-porteur/handlers/RestaurerPorteurHandler";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 
-describe("RestorerPpgHandler", () => {
-  let handler: RestorerPpgHandler;
+describe("RestaurerPorteurHandler", () => {
+  let handler: RestaurerPorteurHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new RestorerPpgHandler({ prisma: prismaPilote });
+    handler = new RestaurerPorteurHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {
     it(
-      "restaure un PPG supprimé",
+      "restaure un porteur supprimé",
       createIntegrationTest(async () => {
         // Given
-        const ppg = await fixtures.metadataPpg({
-          ppg_id: "PPG-99011",
+        const porteur = await fixtures.metadataPorteur({
+          porteur_id: "99011",
           deleted_at: new Date("2026-01-01"),
         });
 
         // When
-        await handler.execute({ ppgId: ppg.ppg_id });
+        await handler.execute({ porteurId: porteur.porteur_id });
 
         // Then
-        const result = await getPrisma().metadata_ppgs.findUniqueOrThrow({
-          where: { ppg_id: "PPG-99011" },
+        const result = await getPrisma().metadata_porteurs.findUniqueOrThrow({
+          where: { porteur_id: "99011" },
         });
         expect(result.deleted_at).toBeNull();
       }),

@@ -62,13 +62,13 @@ export const metadataPorteurRouter = createTRPCRouter({
         .execute({ porteurId: input.porteurId });
     }),
 
-  restorer: protectedProcedure
+  restaurer: protectedProcedure
     .input(z.object({ porteurId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("metadataPorteur")
-        .resolve("restorerPorteurHandler")
+        .resolve("restaurerPorteurHandler")
         .execute({ porteurId: input.porteurId });
     }),
 });

@@ -53,13 +53,13 @@ export const metadataPpgRouter = createTRPCRouter({
         .execute({ ppgId: input.ppgId });
     }),
 
-  restorer: protectedProcedure
+  restaurer: protectedProcedure
     .input(z.object({ ppgId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("metadataPpg")
-        .resolve("restorerPpgHandler")
+        .resolve("restaurerPpgHandler")
         .execute({ ppgId: input.ppgId });
     }),
 });

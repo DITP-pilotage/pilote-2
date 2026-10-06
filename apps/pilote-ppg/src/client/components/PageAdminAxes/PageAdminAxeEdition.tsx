@@ -51,7 +51,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
     },
   });
 
-  const restorerMutation = api.metadataAxe.restorer.useMutation({
+  const restaurerMutation = api.metadataAxe.restaurer.useMutation({
     onSuccess: () => {
       toast.success("Axe restauré avec succès.", {
         position: "bottom-right",
@@ -118,7 +118,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               axeId,
                             })

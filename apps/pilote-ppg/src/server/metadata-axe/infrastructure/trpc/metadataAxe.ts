@@ -53,13 +53,13 @@ export const metadataAxeRouter = createTRPCRouter({
         .execute({ axeId: input.axeId });
     }),
 
-  restorer: protectedProcedure
+  restaurer: protectedProcedure
     .input(z.object({ axeId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("metadataAxe")
-        .resolve("restorerAxeHandler")
+        .resolve("restaurerAxeHandler")
         .execute({ axeId: input.axeId });
     }),
 });

@@ -10,7 +10,7 @@ import { RecupererIdSuivantEngagementQuery } from "./queries/RecupererIdSuivantE
 import { VerifierUtilisationEngagementQuery } from "./queries/VerifierUtilisationEngagementQuery";
 import { EnregistrerEngagementHandler } from "./handlers/EnregistrerEngagementHandler";
 import { ArchiverEngagementHandler } from "./handlers/ArchiverEngagementHandler";
-import { RestorerEngagementHandler } from "./handlers/RestorerEngagementHandler";
+import { RestaurerEngagementHandler } from "./handlers/RestaurerEngagementHandler";
 
 type MetadataEngagementCradle = {
   listerEngagementsAdminQuery: ListerEngagementsAdminQuery;
@@ -19,7 +19,7 @@ type MetadataEngagementCradle = {
   verifierUtilisationEngagementQuery: VerifierUtilisationEngagementQuery;
   enregistrerEngagementHandler: EnregistrerEngagementHandler;
   archiverEngagementHandler: ArchiverEngagementHandler;
-  restorerEngagementHandler: RestorerEngagementHandler;
+  restaurerEngagementHandler: RestaurerEngagementHandler;
 };
 
 export const metadataEngagementModule = defineModule<
@@ -41,7 +41,7 @@ export const metadataEngagementModule = defineModule<
       ),
       enregistrerEngagementHandler: asModuleClass(EnregistrerEngagementHandler),
       archiverEngagementHandler: asModuleClass(ArchiverEngagementHandler),
-      restorerEngagementHandler: asModuleClass(RestorerEngagementHandler),
+      restaurerEngagementHandler: asModuleClass(RestaurerEngagementHandler),
     } satisfies VerifyCradle<MetadataEngagementCradle>);
   },
 });

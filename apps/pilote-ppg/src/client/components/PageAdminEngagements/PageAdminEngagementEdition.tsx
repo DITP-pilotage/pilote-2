@@ -57,7 +57,7 @@ const PageAdminEngagementEdition = ({
     },
   });
 
-  const restorerMutation = api.metadataEngagement.restorer.useMutation({
+  const restaurerMutation = api.metadataEngagement.restaurer.useMutation({
     onSuccess: () => {
       toast.success("Engagement restauré avec succès.", {
         position: "bottom-right",
@@ -127,7 +127,7 @@ const PageAdminEngagementEdition = ({
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               engagementId: engagementIdEffectif,
                             })

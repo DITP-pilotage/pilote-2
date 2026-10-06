@@ -61,7 +61,7 @@ const PageAdminPerimetreEdition = ({
     },
   });
 
-  const restorerMutation = api.metadataPerimetre.restorer.useMutation({
+  const restaurerMutation = api.metadataPerimetre.restaurer.useMutation({
     onSuccess: () => {
       toast.success("Périmètre restauré avec succès.", {
         position: "bottom-right",
@@ -141,7 +141,7 @@ const PageAdminPerimetreEdition = ({
                       disabled={!estSupprimé && estUtilisé}
                       onClick={() =>
                         estSupprimé
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               perimetreId: perimetreIdEffectif,
                             })
