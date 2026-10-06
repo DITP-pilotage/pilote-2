@@ -169,7 +169,19 @@ Services legacy ayant déjà un équivalent :
 | `recupererRepartitionsMeteoChantiersUseCase` | `GetRepartitionMeteoChantiersQuery` (tRPC, flag `FF_REPARTITION_METEOS_V2`) ; le legacy **mute `filtres.axes`** en place |
 | `agregerAvancementsChantiersUseCase` | logique recopiée dans l'outil Albert `server/albert/tools/getTauxAvancementTerritoire.ts:85-105` → appeler `RecupererTauxAvancementTerritoireQuery` (S) |
 
-**Cible**, par étapes : (1) créer les modules `gestionContenu`, `ficheTerritoriale` et compléter `authentification` — mécanique, ~60 % des appels (M) ; (2) supprimer les alias vers d'autres modules (S) ; (3) migrer les lectures SSR du rapport détaillé (L) ; (4) supprimer `server/domain` + `accès_données` devenus inutilisés.
+**Cible**, par étapes : (1) créer les modules `gestionContenu`, `ficheTerritoriale` et compléter `authentification` — mécanique, ~60 % des appels (M) ; (2) supprimer les alias vers d'autres modules (S) ; (3) migrer les lectures SSR du rapport détaillé (L) ; (4) supprimer `server/domain` + `accès_données` devenus inutilisés (voir § 7.6).
+
+**Découpage retenu (2026-10-06)**, PR empilées :
+
+| PR | Contenu | Filet |
+|---|---|---|
+| A — module `gestionContenu` | message d'information, feature flips, variables de contenu (~25 appels, dont 12 pages Pilote Eval) ; `recupererToutesLesVariablesContenuUseCase` exporté et importé par `legacy` tant que #2488 l'y résout | unitaires ; le bootstrap passe par toutes les pages E2E ; à la main : panneau feature flipping, message d'information |
+| B — `authentification` complété | tokens API (lister, récupérer, créer, supprimer), service JWT de l'open-api, dépôts de nextauth ; deux dépôts utilisateur distincts à nommer sans ambiguïté | E2E `open-api/authentification`, connexion, gestion des tokens API |
+| C — module `ficheTerritoriale` | 4 use cases et 5 dépôts (`FicheTerritorialeHandler`) | unitaires ; à la main : fiche territoriale |
+| D — alias vers d'autres modules | `listerDonneesIndicateurParIndicIdUseCase` → `chantiers`, `récupérerUnUtilisateurUseCase` → `gestionUtilisateur`, dépôts rapport / indicateur d'import → `importIndicateur`, `récupérerUnProfilUseCase` ; `récupérerTerritoiresAvecNombreUtilisateursUseCase` déplacé **tel quel** (sémantique de `[]`, § 12) | E2E open-api export, fiche utilisateur admin, import de données |
+| E — **après le merge de #2488** | 12 services lus par le rapport détaillé (SSR et `server/rapport-detaille/*` de #2488) et l'accueil, puis suppression du module `legacy` (`moduleNames`, `dependances.ts`) | E2E accueil et chantier ; à la main : rapport détaillé et PDF |
+
+Contrainte #2488 : la PR du PDF serveur ajoute des `getContainer("legacy")` (`loadChantierDetails`, `loadVueDEnsemble`, `rapportDetaillePdfHandler`) sur `décisionStratégiqueRepository`, `indicateurRepository`, `récupérerCommentaires…`, `récupérerObjectifs…`, `synthèseDesRésultatsRepository`, `agregerAvancementsChantiersUseCase`, `axeRepository`, `ministèreRepository`, `recupererRepartitionsMeteoChantiersUseCase`, `territoireRepository`, `recupererToutesLesVariablesContenuUseCase` : ces clés restent résolubles depuis `legacy` jusqu'à son merge.
 
 ### 7.4 Autres doublons serveur
 
@@ -187,6 +199,22 @@ Services legacy ayant déjà un équivalent :
 - ⚠️ `validationSuppressionPropositionValeurAvancement` est **encore utilisé** (résolveur du formulaire de suppression).
 
 ---
+
+### 7.6 Dossiers transverses `server/domain`, `server/infrastructure`, `server/usecase` (à cadrer)
+
+Demandé le 2026-10-06 : supprimer ces dossiers et ranger leur contenu par domaine (`<domaine>/domain`, `infrastructure`, `usecases`), comme les modules récents.
+
+Mesure (2026-10-06) :
+
+| Dossier | Fichiers | Importeurs hors du dossier |
+|---|---|---|
+| `server/domain` (alerte, axe, chantier, indicateur, maille, météo, ministère, périmètre, ppg, profil, territoire, utilisateur…) | 56 | 347, dont **151 côté client** (types) |
+| `server/infrastructure/accès_données` | (dans les 100 ci-dessous) | 30 — surtout `legacy` |
+| `server/infrastructure/api` (tRPC, nextauth, export, cron, acme) | 100 au total pour `infrastructure` | 218 |
+| `server/infrastructure/{import_csv,export_csv,email-manager,acme,test}` | | 203 (les builders de test pèsent lourd) |
+| `server/usecase` | 9 | 11 — disparaît avec `legacy` |
+
+Pistes à trancher avant de commencer : où vivent les types partagés client / serveur aujourd'hui dans `server/domain` (151 importeurs client) ; la couche API (tRPC, nextauth, crons) reste-t-elle transverse (`server/app`) ou se répartit-elle par domaine ; ordre : après la PR E (`accès_données` et `usecase` sont surtout consommés par `legacy`), puis un domaine par PR, déplacements purs sans changement de code.
 
 ## 8. Publication
 
