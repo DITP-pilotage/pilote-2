@@ -7,7 +7,7 @@ import {
   useTable,
 } from "@tanstack/react-table";
 import type { ApplicationLogEntree } from "@/server/application-log/queries/ListerLogsQuery";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 const features = tableFeatures({ rowPaginationFeature });
 

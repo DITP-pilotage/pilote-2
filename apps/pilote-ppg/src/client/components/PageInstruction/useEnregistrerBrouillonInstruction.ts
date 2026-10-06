@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useCallback } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import {
   enregistrerTousLesChamps,
   enregistrerUnChamp,

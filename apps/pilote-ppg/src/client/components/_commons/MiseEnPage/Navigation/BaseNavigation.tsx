@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Dialog } from "radix-ui";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Session } from "next-auth";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";

@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { useBootstrap } from "@/components/_commons/Bootstrap/BootstrapContext";
 
 const PROFIL_STALE_TIME_MS = 60_000;

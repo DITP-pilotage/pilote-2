@@ -3,7 +3,7 @@ import {
   FormTextField,
   FormTextareaField,
 } from "@/components/shared/FormTextField";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { useFormParametrageSource } from "./form";
 import { SelectMetadata } from "./SelectMetadata";
 import { CheckboxMetadata } from "./CheckboxMetadata";

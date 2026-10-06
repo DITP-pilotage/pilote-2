@@ -32,7 +32,7 @@ const récupérerBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`;
 };
 
-const api = createTRPCNext<AppRouter>({
+export const api = createTRPCNext<AppRouter>({
   transformer: superjson,
   config({ ctx }) {
     return {
@@ -66,5 +66,3 @@ const api = createTRPCNext<AppRouter>({
     };
   },
 });
-
-export default api;

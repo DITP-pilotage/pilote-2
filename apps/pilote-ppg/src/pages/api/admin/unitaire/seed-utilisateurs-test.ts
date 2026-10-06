@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
+import { onlyCron } from "@/server/framework/guards/onlyCron";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { logger } from "@/server/framework/logger";
 import seedsUtilisateursTest from "@/server/seeds/utilisateursTest.json";

@@ -1,5 +1,5 @@
 import { keepPreviousData } from "@tanstack/react-query";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 export const useNouveautés = () => {
   const { data: listeNouveautes, isLoading: estChargementListeNouveautes } =

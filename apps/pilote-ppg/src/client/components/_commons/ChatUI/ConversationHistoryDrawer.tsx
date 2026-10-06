@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Button } from "@/components/shared/Button";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";

@@ -3,12 +3,12 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { chantierCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
 import { enregistrerPonderationsIndicateursCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerPonderationsIndicateursHandler";
-import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/vérifierPermissionAdmin";
+import { vérifierPermissionAdmin } from "@/server/framework/trpc/vérifierPermissionAdmin";
 
 export const metadataChantierRouter = créerRouteurTRPC({
   lister: procédureProtégée.query(async ({ ctx }) => {

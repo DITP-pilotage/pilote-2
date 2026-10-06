@@ -2,7 +2,7 @@ import { FunctionComponent, useRef } from "react";
 import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { Modale } from "@/components/shared/Modale";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 
 export const ModaleVideoAccueil: FunctionComponent<{

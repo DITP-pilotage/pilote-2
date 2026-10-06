@@ -1,4 +1,4 @@
-import { onlyAcmeApiKey } from "@/server/infrastructure/api/acme/onlyAcmeApiKey";
+import { onlyAcmeApiKey } from "@/server/framework/guards/onlyAcmeApiKey";
 import {
   setupRequest,
   setupResponse,

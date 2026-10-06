@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { SelectField } from "@/components/shared/SelectField";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const SélecteurPpg = () => {

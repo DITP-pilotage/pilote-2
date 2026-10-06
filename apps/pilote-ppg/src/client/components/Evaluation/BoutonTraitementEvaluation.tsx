@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useId, useState } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { clsxm } from "@/utils/clsxm";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { Switch } from "@/components/shared/Switch";

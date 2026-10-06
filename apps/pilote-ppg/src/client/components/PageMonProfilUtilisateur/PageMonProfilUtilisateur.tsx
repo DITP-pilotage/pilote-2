@@ -9,7 +9,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";

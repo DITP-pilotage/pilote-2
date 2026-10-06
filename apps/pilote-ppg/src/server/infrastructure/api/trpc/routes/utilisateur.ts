@@ -2,7 +2,7 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import {
   validationDesactiverVideoAccueil,
   validationEnvoyerMailInscriptionInfolettre,

@@ -10,7 +10,7 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
 import { donneValidationInfosBaseUtilisateur } from "@/validation/utilisateur";
 import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { useEnv } from "@/client/hooks/useEnv";

@@ -16,7 +16,7 @@ import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/pages";
 import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { Tooltip } from "@/components/shared/Tooltip";
 import { BootstrapProvider } from "@/components/_commons/Bootstrap/BootstrapContext";
 

@@ -8,7 +8,7 @@ import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteCh
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
 import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { clsxm } from "@/utils/clsxm";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import { Infobulle } from "@/components/shared/Infobulle";

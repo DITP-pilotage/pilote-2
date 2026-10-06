@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 const openPDFInNewTab = (base64Data: string) => {
   const binaryString = atob(base64Data);

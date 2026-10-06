@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   créerRouteurTRPC,
   procédureProtégée,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { validationHistoriqueIndicateurTerritoire } from "@/validation/indicateur";
 import { getContainer } from "@/server/dependances";
 

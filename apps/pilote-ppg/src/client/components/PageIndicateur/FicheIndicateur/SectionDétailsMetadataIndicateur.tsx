@@ -4,7 +4,7 @@ import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/I
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import {
   computeValeurAffichee,
   computeListeValeur,

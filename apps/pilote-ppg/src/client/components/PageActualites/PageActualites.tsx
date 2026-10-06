@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { CarteNewsletter } from "./CarteNewsletter";
 import { ListeNewslettersSkeleton } from "./CarteNewsletterSkeleton";
 

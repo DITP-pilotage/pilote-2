@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 
 interface InscriptionInfoLettreForm {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { HistoriquePublication } from "@/components/PageChantier/Publication/Historique/HistoriquePublication";
 

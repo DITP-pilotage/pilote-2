@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import {
   créerRouteurTRPC,
   procédureProtégée,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { enregistrerEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
