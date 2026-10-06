@@ -6,69 +6,69 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import { engagementCommandSchema } from "@/server/referentiels/engagement/handlers/SaveEngagementHandler";
+import { perimetreCommandSchema } from "@/server/referentiels/perimetre/handlers/SavePerimetreHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataEngagementRouter = createTRPCRouter({
+export const referentielPerimetreRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("referentiels")
-      .resolve("listEngagementsAdminQuery")
+      .resolve("listPerimetresAdminQuery")
       .run();
   }),
 
   get: protectedProcedure
-    .input(z.object({ engagementId: z.string() }))
+    .input(z.object({ perimetreId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("getEngagementQuery")
-        .run({ engagementId: input.engagementId });
+        .resolve("getPerimetreQuery")
+        .run({ perimetreId: input.perimetreId });
     }),
 
   getNextId: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("referentiels")
-      .resolve("getNextEngagementIdQuery")
+      .resolve("getNextPerimetreIdQuery")
       .run();
   }),
 
   checkUsage: protectedProcedure
-    .input(z.object({ engagementShort: z.string() }))
+    .input(z.object({ perimetreId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("checkEngagementUsageQuery")
-        .run({ engagementShort: input.engagementShort });
+        .resolve("checkPerimetreUsageQuery")
+        .run({ perimetreId: input.perimetreId });
     }),
 
   save: protectedProcedure
-    .input(engagementCommandSchema.and(zodValidateurCSRF))
+    .input(perimetreCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("saveEngagementHandler")
+        .resolve("savePerimetreHandler")
         .execute(input);
     }),
 
   archive: protectedProcedure
-    .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ perimetreId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("archiveEngagementHandler")
-        .execute({ engagementId: input.engagementId });
+        .resolve("archivePerimetreHandler")
+        .execute({ perimetreId: input.perimetreId });
     }),
 
   restore: protectedProcedure
-    .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ perimetreId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("restoreEngagementHandler")
-        .execute({ engagementId: input.engagementId });
+        .resolve("restorePerimetreHandler")
+        .execute({ perimetreId: input.perimetreId });
     }),
 });

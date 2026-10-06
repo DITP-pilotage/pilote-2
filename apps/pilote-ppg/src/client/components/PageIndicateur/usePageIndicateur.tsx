@@ -60,7 +60,7 @@ export const usePageIndicateur = (
   });
 
   const mutationModifierMetadataIndicateur =
-    api.metadataIndicateur.modifier.useMutation({
+    api.parametrageIndicateur.modifier.useMutation({
       onSuccess: () => {
         setEstEnCoursDeModification(false);
         router.push(
@@ -75,7 +75,7 @@ export const usePageIndicateur = (
       },
     });
   const mutationCreerMetadataIndicateur =
-    api.metadataIndicateur.creer.useMutation({
+    api.parametrageIndicateur.creer.useMutation({
       onSuccess: () => {
         setEstEnCoursDeModification(false);
         router.push(

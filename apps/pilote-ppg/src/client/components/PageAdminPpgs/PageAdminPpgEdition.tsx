@@ -44,10 +44,10 @@ const PageAdminPpgEdition = ({ ppgId, isCreation, ppgData }: Props) => {
     isCreation,
   });
 
-  const { data: axes = [] } = api.metadataAxe.list.useQuery();
+  const { data: axes = [] } = api.referentielAxe.list.useQuery();
   const axesActifs = axes.filter((axe) => axe.deletedAt === null);
 
-  const archiverMutation = api.metadataPpg.archive.useMutation({
+  const archiverMutation = api.referentielPpg.archive.useMutation({
     onSuccess: () => {
       toast.success("PPG archivé avec succès.", {
         position: "bottom-right",
@@ -57,7 +57,7 @@ const PageAdminPpgEdition = ({ ppgId, isCreation, ppgData }: Props) => {
     },
   });
 
-  const restaurerMutation = api.metadataPpg.restore.useMutation({
+  const restaurerMutation = api.referentielPpg.restore.useMutation({
     onSuccess: () => {
       toast.success("PPG restauré avec succès.", {
         position: "bottom-right",
@@ -69,7 +69,7 @@ const PageAdminPpgEdition = ({ ppgId, isCreation, ppgData }: Props) => {
 
   const estSupprime = ppgData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataPpg.checkUsage.useQuery(
+  const { data: utilisation } = api.referentielPpg.checkUsage.useQuery(
     { ppgId },
     { enabled: !isCreation && !estSupprime },
   );

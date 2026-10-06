@@ -6,60 +6,69 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import { ppgCommandSchema } from "@/server/referentiels/ppg/handlers/SavePpgHandler";
+import { engagementCommandSchema } from "@/server/referentiels/engagement/handlers/SaveEngagementHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataPpgRouter = createTRPCRouter({
+export const referentielEngagementRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
-    return getContainer("referentiels").resolve("listPpgsAdminQuery").run();
+    return getContainer("referentiels")
+      .resolve("listEngagementsAdminQuery")
+      .run();
   }),
 
   get: protectedProcedure
-    .input(z.object({ ppgId: z.string() }))
+    .input(z.object({ engagementId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("getPpgQuery")
-        .run({ ppgId: input.ppgId });
+        .resolve("getEngagementQuery")
+        .run({ engagementId: input.engagementId });
     }),
 
+  getNextId: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
+    return getContainer("referentiels")
+      .resolve("getNextEngagementIdQuery")
+      .run();
+  }),
+
   checkUsage: protectedProcedure
-    .input(z.object({ ppgId: z.string() }))
+    .input(z.object({ engagementShort: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("checkPpgUsageQuery")
-        .run({ ppgId: input.ppgId });
+        .resolve("checkEngagementUsageQuery")
+        .run({ engagementShort: input.engagementShort });
     }),
 
   save: protectedProcedure
-    .input(ppgCommandSchema.and(zodValidateurCSRF))
+    .input(engagementCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("savePpgHandler")
+        .resolve("saveEngagementHandler")
         .execute(input);
     }),
 
   archive: protectedProcedure
-    .input(z.object({ ppgId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("archivePpgHandler")
-        .execute({ ppgId: input.ppgId });
+        .resolve("archiveEngagementHandler")
+        .execute({ engagementId: input.engagementId });
     }),
 
   restore: protectedProcedure
-    .input(z.object({ ppgId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("restorePpgHandler")
-        .execute({ ppgId: input.ppgId });
+        .resolve("restoreEngagementHandler")
+        .execute({ engagementId: input.engagementId });
     }),
 });

@@ -30,7 +30,7 @@ export const useAxeForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataAxe.save.useMutation({
+  const mutation = api.referentielAxe.save.useMutation({
     onSuccess: () => {
       toast.success(
         isCreation ? "Axe créé avec succès." : "Axe modifié avec succès.",

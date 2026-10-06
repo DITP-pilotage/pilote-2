@@ -10,7 +10,7 @@ import { chantierCommandSchema } from "@/server/parametrage-chantier/handlers/Sa
 import { enregistrerPonderationsIndicateursCommandSchema } from "@/server/parametrage-chantier/handlers/SavePonderationsIndicateursHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataChantierRouter = createTRPCRouter({
+export const parametrageChantierRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("parametrageChantier")

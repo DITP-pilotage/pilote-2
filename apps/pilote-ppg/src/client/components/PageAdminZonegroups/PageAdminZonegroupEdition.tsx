@@ -51,7 +51,7 @@ const PageAdminZonegroupEdition = ({
     isCreation,
   });
 
-  const archiverMutation = api.metadataZonegroup.archive.useMutation({
+  const archiverMutation = api.referentielZonegroup.archive.useMutation({
     onSuccess: () => {
       toast.success("Zone groupe archivée avec succès.", {
         position: "bottom-right",
@@ -61,7 +61,7 @@ const PageAdminZonegroupEdition = ({
     },
   });
 
-  const restaurerMutation = api.metadataZonegroup.restore.useMutation({
+  const restaurerMutation = api.referentielZonegroup.restore.useMutation({
     onSuccess: () => {
       toast.success("Zone groupe restaurée avec succès.", {
         position: "bottom-right",
@@ -73,14 +73,14 @@ const PageAdminZonegroupEdition = ({
 
   const estSupprime = zonegroupData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataZonegroup.checkUsage.useQuery(
+  const { data: utilisation } = api.referentielZonegroup.checkUsage.useQuery(
     { zoneGroupId: zoneGroupIdEffectif },
     { enabled: !isCreation && !estSupprime },
   );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
   const { data: zonesDisponibles = [] } =
-    api.metadataZonegroup.listZonesDisponibles.useQuery();
+    api.referentielZonegroup.listZonesDisponibles.useQuery();
 
   const titre = isCreation
     ? `Nouveau groupe - ${zoneGroupIdEffectif}`

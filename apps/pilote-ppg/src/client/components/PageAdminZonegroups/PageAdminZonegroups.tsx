@@ -10,7 +10,8 @@ const LIBELLES = {
 };
 
 const PageAdminZonegroups = () => {
-  const { data: zonegroups, isLoading } = api.metadataZonegroup.list.useQuery();
+  const { data: zonegroups, isLoading } =
+    api.referentielZonegroup.list.useQuery();
   const table = useTableauAdminZonegroups(zonegroups ?? []);
   const nombreZonegroupsFiltres = table.getFilteredRowModel().rows.length;
 

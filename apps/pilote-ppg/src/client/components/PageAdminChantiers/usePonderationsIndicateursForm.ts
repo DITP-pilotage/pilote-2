@@ -90,8 +90,8 @@ export const usePonderationsIndicateursForm = ({
     [sommesParMaille],
   );
 
-  const mutation = api.metadataChantier.savePonderationsIndicateurs.useMutation(
-    {
+  const mutation =
+    api.parametrageChantier.savePonderationsIndicateurs.useMutation({
       onSuccess: () => {
         toast.success("Les pondérations ont bien été enregistrées.", {
           position: "bottom-right",
@@ -104,8 +104,7 @@ export const usePonderationsIndicateursForm = ({
           position: "bottom-right",
           richColors: true,
         }),
-    },
-  );
+    });
 
   const enregistrer = reactHookForm.handleSubmit((data) => {
     mutation.mutate({

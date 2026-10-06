@@ -29,7 +29,7 @@ export const usePerimetreForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataPerimetre.save.useMutation({
+  const mutation = api.referentielPerimetre.save.useMutation({
     onSuccess: () => {
       toast.success(
         isCreation
