@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { COMPARER_TERRITOIRES_CRITERIA } from "./comparerTerritoires.criteria";
 
 /**
  * Scénario « Comparer avec un autre territoire » (DITP, à compléter) :
@@ -30,7 +30,7 @@ const tauxDe = (territoire_code: string) => ({
 scenarioEval({
   suite: "Comparer avec un autre territoire",
   group: "comparaison",
-  grid: GRIDS.comparaisonTerritoires,
+  criteria: COMPARER_TERRITOIRES_CRITERIA,
   cases: [
     {
       question: "Compare Bretagne avec Pays de la Loire",

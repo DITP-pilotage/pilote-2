@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { TABLEAU_DE_BORD_CRITERIA } from "./tableauDeBord.criteria";
 
 /**
  * Scénario « Tableau de bord du territoire » (DITP administrateur, envoyé),
@@ -19,7 +19,8 @@ import { scenarioEval } from "../scenarioEval";
 scenarioEval({
   suite: "Tableau de bord du territoire",
   group: "synthese",
-  grid: GRIDS.dashboard,
+  criteria: TABLEAU_DE_BORD_CRITERIA,
+  matter: "dashboard",
   cases: [
     {
       question:

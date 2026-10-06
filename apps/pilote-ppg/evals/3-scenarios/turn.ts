@@ -1,7 +1,11 @@
 import type { AgentTurn } from "../types";
 import type { EvalProfile } from "../world";
-import { extractMatter, maskedTerritories, type Evidence } from "./evidence";
-import type { Grid } from "./grid";
+import {
+  extractMatter,
+  maskedTerritories,
+  type Evidence,
+  type MatterKind,
+} from "./evidence";
 import type { GroundTruth } from "./truth";
 
 type ToolResult = { toolName: string; input: unknown; output: unknown };
@@ -37,13 +41,13 @@ export type ScenarioTurn = AgentTurn & {
  */
 export function buildEvidence({
   turn,
-  grid,
+  matter: kind,
 }: {
   turn: ScenarioTurn;
-  grid: Grid;
+  matter: MatterKind;
 }): Evidence {
   const { matter, dashboard } = extractMatter({
-    kind: grid.matter,
+    kind,
     text: turn.text,
     toolCalls: turn.toolCalls,
     toolResults: turn.toolResults,

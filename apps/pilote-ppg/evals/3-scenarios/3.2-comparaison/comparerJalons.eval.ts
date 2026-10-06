@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { COMPARER_JALONS_CRITERIA } from "./comparerJalons.criteria";
 
 /**
  * Scénario « Comparer les taux d'avancement entre le jalon 2025 et un autre
@@ -27,7 +27,7 @@ const MESSAGE = (autre: string) =>
 scenarioEval({
   suite: "Comparer les taux d'avancement entre le jalon 2025 et un autre jalon",
   group: "comparaison",
-  grid: GRIDS.comparaisonJalons,
+  criteria: COMPARER_JALONS_CRITERIA,
   cases: [
     {
       question: MESSAGE("2024"),

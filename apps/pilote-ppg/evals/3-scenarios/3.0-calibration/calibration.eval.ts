@@ -1,17 +1,16 @@
 import { evalite } from "evalite";
 import { askJudge } from "../askJudge";
 import { calibrationColumns } from "../columns";
-import type { JudgedCriterion } from "../grid";
-import { GRIDS } from "../grids";
+import type { JudgedCriterion } from "../criterion";
 import { JUDGE_MODEL, type Verdict } from "../judge";
 import { CALIBRATION_CASES, type CalibrationCase } from "./references";
 
 /**
  * Calibration du juge — le méta-eval du niveau 3.
  *
- * Chaque famille a une réponse de référence, conforme, et un mutant par
- * critère jugé, qui casse ce critère et lui seul. On mesure l'accord du juge
- * avec nous : il doit détecter le défaut du mutant, et ne rien signaler
+ * Chaque scénario calibré a une réponse de référence, conforme, et un mutant
+ * par critère jugé, qui casse ce critère et lui seul. On mesure l'accord du
+ * juge avec nous : il doit détecter le défaut du mutant, et ne rien signaler
  * d'autre. Pas d'agent, pas de base : un appel de juge par cas et par essai.
  *
  * Un critère jugé est FIABLE s'il détecte son mutant et laisse passer la
@@ -30,22 +29,22 @@ import { CALIBRATION_CASES, type CalibrationCase } from "./references";
  */
 
 const judgedCriteria = (testCase: CalibrationCase) =>
-  GRIDS[testCase.family].criteria.filter(
+  testCase.suite.criteria.filter(
     (criterion): criterion is JudgedCriterion =>
       criterion.kind === "judged" &&
       (criterion.applicable?.(testCase.evidence) ?? true),
   );
 
-const familles = [
-  ...new Set(CALIBRATION_CASES.map((testCase) => testCase.family)),
+const suites = [
+  ...new Set(CALIBRATION_CASES.map((testCase) => testCase.suite)),
 ];
 
-for (const family of familles) {
+for (const suite of suites) {
   evalite<CalibrationCase, Verdict>(
-    `3.0 · Calibration du juge · ${GRIDS[family].family}`,
+    `3.0 · Calibration du juge · ${suite.name}`,
     {
       data: () =>
-        CALIBRATION_CASES.filter((testCase) => testCase.family === family).map(
+        CALIBRATION_CASES.filter((testCase) => testCase.suite === suite).map(
           (testCase) => ({ input: testCase }),
         ),
 

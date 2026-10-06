@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { COMPARAISON_QUANTITATIVE_CRITERIA } from "./comparaisonQuantitative.criteria";
 
 /**
  * Scénario « Comparaison quantitative des territoires » (coordinateur, à
@@ -29,7 +29,7 @@ const MESSAGE = (autre: string) =>
 scenarioEval({
   suite: "Comparaison quantitative des territoires",
   group: "comparaison",
-  grid: GRIDS.comparaisonQuantitative,
+  criteria: COMPARAISON_QUANTITATIVE_CRITERIA,
   profile: "coordinateur",
   cases: [
     {

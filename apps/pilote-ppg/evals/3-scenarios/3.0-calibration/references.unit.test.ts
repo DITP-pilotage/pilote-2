@@ -1,5 +1,4 @@
-import type { Criterion, MechanicalCriterion } from "../grid";
-import { GRIDS } from "../grids";
+import type { Criterion, MechanicalCriterion } from "../criterion";
 import { CALIBRATION_CASES, MECHANICAL_MUTANTS } from "./references";
 
 describe("mutants mécaniques", () => {
@@ -7,7 +6,7 @@ describe("mutants mécaniques", () => {
     MECHANICAL_MUTANTS.map((mutant) => [mutant.label, mutant] as const),
   )("« %s » échoue son critère, et lui seul", (_label, mutant) => {
     // When
-    const echecs = GRIDS[mutant.family].criteria
+    const echecs = mutant.suite.criteria
       .filter(estMecanique)
       .filter((criterion) => criterion.applicable?.(mutant.evidence) ?? true)
       .filter((criterion) => !criterion.check(mutant.evidence).ok)
@@ -27,12 +26,12 @@ describe("références de calibration", () => {
   );
 
   test.each(
-    references.map((reference) => [reference.family, reference] as const),
+    references.map((reference) => [reference.suite.name, reference] as const),
   )(
     "la référence %s passe tous ses critères mécaniques",
-    (_family, reference) => {
+    (_suite, reference) => {
       // When
-      const echecs = GRIDS[reference.family].criteria
+      const echecs = reference.suite.criteria
         .filter(estMecanique)
         .filter(
           (criterion) => criterion.applicable?.(reference.evidence) ?? true,
@@ -48,19 +47,19 @@ describe("références de calibration", () => {
     },
   );
 
-  test("chaque mutant casse un critère jugé de sa grille", () => {
+  test("chaque mutant casse un critère jugé de sa suite", () => {
     // When
     const orphelins = CALIBRATION_CASES.filter(
       (testCase) => testCase.broken !== null,
     )
       .filter(
         (testCase) =>
-          !GRIDS[testCase.family].criteria.some(
+          !testCase.suite.criteria.some(
             (criterion) =>
               criterion.kind === "judged" && criterion.id === testCase.broken,
           ),
       )
-      .map((testCase) => `${testCase.family} · ${testCase.label}`);
+      .map((testCase) => `${testCase.suite.name} · ${testCase.label}`);
 
     // Then
     expect(orphelins).toEqual([]);

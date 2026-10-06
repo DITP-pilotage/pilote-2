@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { RAPPORT_COMPLET_CRITERIA } from "./rapportComplet.criteria";
 
 /**
  * Scénario « Rapport complet (Markdown) » (DITP administrateur, envoyé).
@@ -25,7 +25,8 @@ const territoire = { territoire_code: "REG-53" };
 scenarioEval({
   suite: "Rapport complet (Markdown)",
   group: "synthese",
-  grid: GRIDS.rapport,
+  criteria: RAPPORT_COMPLET_CRITERIA,
+  matter: "rapport",
   cases: [
     {
       question:

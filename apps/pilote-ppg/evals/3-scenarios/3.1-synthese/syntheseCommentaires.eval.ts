@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { SYNTHESE_COMMENTAIRES_CRITERIA } from "./syntheseCommentaires.criteria";
 
 /**
  * Scénario « Synthèse des commentaires d'un/de plusieurs chantiers »
@@ -35,7 +35,7 @@ const MESSAGE = (chantiers: string) =>
 scenarioEval({
   suite: "Synthèse des commentaires d'un/de plusieurs chantiers",
   group: "synthese",
-  grid: GRIDS.commentaires,
+  criteria: SYNTHESE_COMMENTAIRES_CRITERIA,
   profile: "coordinateur",
   cases: [
     {

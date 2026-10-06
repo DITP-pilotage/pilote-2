@@ -5,7 +5,7 @@ import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetC
 
 /**
  * La forme de la fiche de vérité, et ce qu'on en déduit, sans rien charger du
- * serveur : les grilles et la calibration l'importent dans des tests
+ * serveur : les critères et la calibration l'importent dans des tests
  * unitaires. La lecture elle-même vit dans `groundTruth.ts`.
  */
 

@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "./syntheseDepartements.criteria";
 
 /**
  * Scénario « Synthèse de Bretagne et ses départements » (DITP, envoyé,
@@ -24,7 +24,7 @@ const avecSousTerritoires = {
 scenarioEval({
   suite: "Synthèse de Bretagne et ses départements",
   group: "synthese",
-  grid: GRIDS.syntheseSousTerritoires,
+  criteria: SYNTHESE_DEPARTEMENTS_CRITERIA,
   cases: [
     {
       question: "Fais moi la synthèse de Bretagne et ses départements",

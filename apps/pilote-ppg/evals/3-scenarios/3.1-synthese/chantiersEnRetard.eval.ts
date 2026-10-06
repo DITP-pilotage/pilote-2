@@ -1,5 +1,5 @@
-import { GRIDS } from "../grids";
 import { scenarioEval } from "../scenarioEval";
+import { CHANTIERS_EN_RETARD_CRITERIA } from "./chantiersEnRetard.criteria";
 
 /**
  * Scénario « Chantiers en retard et leurs indicateurs » (DITP et
@@ -36,7 +36,7 @@ const SCOPE = { territoires: ["REG-53"], indicateurs: true };
 scenarioEval({
   suite: "Chantiers en retard et leurs indicateurs",
   group: "synthese",
-  grid: GRIDS.chantiersEnRetard,
+  criteria: CHANTIERS_EN_RETARD_CRITERIA,
   cases: [
     {
       question: MESSAGE,
