@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const listeTokenAPIInformation = await getContainer("legacy")
+  const listeTokenAPIInformation = await getContainer("authentification")
     .resolve("listerTokenAPIInformationUseCase")
     .run();
 

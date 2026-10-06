@@ -40,7 +40,7 @@ export async function getServerSideProps(
     return redirigerVersPageAccueil;
   }
 
-  const tokenAPIInformation = await getContainer("legacy")
+  const tokenAPIInformation = await getContainer("authentification")
     .resolve("recupererTokenAPIInformationUseCase")
     .run({ email: utilisateurDemandé.email })
     .then((tokenAPI) => {

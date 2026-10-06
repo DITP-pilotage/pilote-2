@@ -1,6 +1,6 @@
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { TokenAPIInformation } from "@/server/authentification/domain/TokenAPIInformation";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/authentification/module";
 
 export class RecupererTokenAPIInformationUseCase {
   private readonly tokenAPIInformationRepository: TokenAPIInformationRepository;

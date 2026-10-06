@@ -272,7 +272,7 @@ const credentialsProvider = CredentialsProvider({
       return null;
     }
     const { getContainer } = await import("@/server/dependances");
-    const utilisateurRepository = getContainer("legacy").resolve(
+    const utilisateurRepository = getContainer("authentification").resolve(
       "utilisateurRepository",
     );
     const utilisateur = await utilisateurRepository.récupérer(username);
@@ -436,7 +436,7 @@ export const authConfig: NextAuthConfig = {
     async session({ session, token }) {
       const piloteToken = toPiloteJWTPayload(token);
       const { getContainer } = await import("@/server/dependances");
-      const utilisateurRepository = getContainer("legacy").resolve(
+      const utilisateurRepository = getContainer("authentification").resolve(
         "utilisateurRepository",
       );
       const utilisateur = await utilisateurRepository.récupérer(
@@ -444,7 +444,7 @@ export const authConfig: NextAuthConfig = {
       );
 
       const profilRepository =
-        getContainer("legacy").resolve("profilRepository");
+        getContainer("authentification").resolve("profilRepository");
       const profil = await profilRepository.récupérer(utilisateur!.profil);
 
       logger.debug(
