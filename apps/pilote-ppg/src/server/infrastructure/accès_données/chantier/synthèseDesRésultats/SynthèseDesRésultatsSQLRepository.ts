@@ -9,10 +9,10 @@ import SynthèseDesRésultats, {
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import type { SharedDependencies } from "@/server/shared/module";
+import type { FrameworkDependencies } from "@/server/framework/module";
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
-  constructor(private readonly deps: Pick<SharedDependencies, "prisma">) {}
+  constructor(private readonly deps: Pick<FrameworkDependencies, "prisma">) {}
 
   get prisma() {
     return this.deps.prisma.getInstance();

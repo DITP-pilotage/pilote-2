@@ -12,7 +12,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const isProd = configuration().scalingoEnvironment === "PROD";
 
   try {
-    const prisma = getContainer("shared").resolve("prisma");
+    const prisma = getContainer("framework").resolve("prisma");
 
     logger.info(
       { categorie: "rapport", source: "cron/rapport-service-autre" },

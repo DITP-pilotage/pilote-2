@@ -175,7 +175,7 @@ type ChantierCradle = ChantierOwnCradle & ChantierImports;
 export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   name: "chantiers",
   imports: [
-    "shared",
+    "framework",
     "indicateurTerritoireValeurEvenement",
     "datajobsExecution",
   ],

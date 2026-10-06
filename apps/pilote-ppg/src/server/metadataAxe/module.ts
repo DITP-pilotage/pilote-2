@@ -22,7 +22,7 @@ type MetadataAxeCradle = {
 
 export const metadataAxeModule = defineModule<NoExports, MetadataAxeCradle>()({
   name: "metadataAxe",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

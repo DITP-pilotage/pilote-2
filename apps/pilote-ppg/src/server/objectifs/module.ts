@@ -34,7 +34,7 @@ export type ObjectifExports = Pick<ObjectifCradle, "importerObjectifsUseCase">;
 
 export const objectifModule = defineModule<ObjectifExports, ObjectifCradle>()({
   name: "objectif",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: ["importerObjectifsUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({

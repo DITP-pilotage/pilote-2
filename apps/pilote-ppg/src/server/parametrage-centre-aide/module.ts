@@ -35,7 +35,7 @@ export const parametrageCentreAideModule = defineModule<
   ParametrageCentreAideCradle
 >()({
   name: "parametrageCentreAide",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

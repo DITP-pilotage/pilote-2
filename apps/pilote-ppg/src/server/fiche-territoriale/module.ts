@@ -36,7 +36,7 @@ export const ficheTerritorialeModule = defineModule<
   FicheTerritorialeCradle
 >()({
   name: "ficheTerritoriale",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

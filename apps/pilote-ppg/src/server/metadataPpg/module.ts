@@ -22,7 +22,7 @@ type MetadataPpgCradle = {
 
 export const metadataPpgModule = defineModule<NoExports, MetadataPpgCradle>()({
   name: "metadataPpg",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

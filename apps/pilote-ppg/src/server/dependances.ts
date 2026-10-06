@@ -5,7 +5,7 @@ import {
   type ExtractCradle,
   type ModuleName,
 } from "@/server/module-system";
-import { sharedModule } from "@/server/shared/module";
+import { frameworkModule } from "@/server/framework/module";
 import { authentificationModule } from "@/server/authentification/module";
 import { chantiersModule } from "@/server/chantiers/module";
 import { parametrageIndicateurModule } from "@/server/parametrage-indicateur/module";
@@ -41,7 +41,7 @@ import { metadataEngagementModule } from "./metadataEngagement/module";
 import { annuaireModule } from "./annuaire/module";
 
 const allModules = [
-  sharedModule,
+  frameworkModule,
   authentificationModule,
   chantiersModule,
   parametrageIndicateurModule,
@@ -93,7 +93,7 @@ function registerContainer(): ContainerDependencies {
   const { getContainer } = bootModules(allModules);
 
   return {
-    shared: getContainer("shared"),
+    framework: getContainer("framework"),
     authentification: getContainer("authentification"),
     chantiers: getContainer("chantiers"),
     parametrageIndicateur: getContainer("parametrageIndicateur"),

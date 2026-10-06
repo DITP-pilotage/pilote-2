@@ -133,7 +133,7 @@ export const gestionUtilisateurModule = defineModule<
   GestionUtilisateurCradle
 >()({
   name: "gestionUtilisateur",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: ["activiteComptesQuery", "utilisateursQuery"],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({
