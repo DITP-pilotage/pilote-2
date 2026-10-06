@@ -46,7 +46,7 @@ export const authentificationModule = defineModule<
   exports: [],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({
-      utilisateurRepository: asModuleClass(UtilisateurSQLRepository),
+      utilisateurRepository: asModuleClass(UtilisateurSQLRepository).scoped(),
       profilRepository: asModuleClass(ProfilSQLRepository).scoped(),
       utilisateurAPIRepository: asModuleClass(
         PrismaUtilisateurRepository,
