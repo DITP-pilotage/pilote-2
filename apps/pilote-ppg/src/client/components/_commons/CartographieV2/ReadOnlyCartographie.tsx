@@ -24,14 +24,16 @@ export const ReadOnlyCartographie: FunctionComponent<{
   );
 
   return (
-    <CartographieV2
-      donnees={donneesV2}
-      maille={maille}
-      territoiresSelectionnes={
-        territoireCode && territoireCode !== "NAT-FR" ? [territoireCode] : []
-      }
-    >
-      <LegendeCartographie items={legende} />
-    </CartographieV2>
+    <div className="mx-auto max-w-[25rem]">
+      <CartographieV2
+        donnees={donneesV2}
+        maille={maille}
+        territoiresSelectionnes={
+          territoireCode && territoireCode !== "NAT-FR" ? [territoireCode] : []
+        }
+      >
+        <LegendeCartographie items={legende} />
+      </CartographieV2>
+    </div>
   );
 };
