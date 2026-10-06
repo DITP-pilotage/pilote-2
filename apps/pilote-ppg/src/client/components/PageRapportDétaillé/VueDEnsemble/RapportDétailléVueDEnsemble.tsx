@@ -108,12 +108,9 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               Taux d'avancement des chantiers par territoire
             </Titre>
             <CartographieAvancement
-              auClicTerritoireCallback={() => {}}
               données={donnéesCartographie}
               jalon={jalon}
               mailleSelectionnee={mailleSelectionnee}
-              options={{ estInteractif: false }}
-              pathname={null}
               territoireCode={territoireCode}
               élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
             />
