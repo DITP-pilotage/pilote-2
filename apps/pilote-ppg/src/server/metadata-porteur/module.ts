@@ -10,7 +10,7 @@ import { RecupererIdSuivantPorteurQuery } from "./queries/RecupererIdSuivantPort
 import { VerifierUtilisationPorteurQuery } from "./queries/VerifierUtilisationPorteurQuery";
 import { EnregistrerPorteurHandler } from "./handlers/EnregistrerPorteurHandler";
 import { ArchiverPorteurHandler } from "./handlers/ArchiverPorteurHandler";
-import { RestorerPorteurHandler } from "./handlers/RestorerPorteurHandler";
+import { RestaurerPorteurHandler } from "./handlers/RestaurerPorteurHandler";
 
 type MetadataPorteurCradle = {
   listerPorteursAdminQuery: ListerPorteursAdminQuery;
@@ -19,7 +19,7 @@ type MetadataPorteurCradle = {
   verifierUtilisationPorteurQuery: VerifierUtilisationPorteurQuery;
   enregistrerPorteurHandler: EnregistrerPorteurHandler;
   archiverPorteurHandler: ArchiverPorteurHandler;
-  restorerPorteurHandler: RestorerPorteurHandler;
+  restaurerPorteurHandler: RestaurerPorteurHandler;
 };
 
 export const metadataPorteurModule = defineModule<
@@ -41,7 +41,7 @@ export const metadataPorteurModule = defineModule<
       ),
       enregistrerPorteurHandler: asModuleClass(EnregistrerPorteurHandler),
       archiverPorteurHandler: asModuleClass(ArchiverPorteurHandler),
-      restorerPorteurHandler: asModuleClass(RestorerPorteurHandler),
+      restaurerPorteurHandler: asModuleClass(RestaurerPorteurHandler),
     } satisfies VerifyCradle<MetadataPorteurCradle>);
   },
 });

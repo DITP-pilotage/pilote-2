@@ -11,7 +11,7 @@ import { ListerZonesDisponiblesQuery } from "./queries/ListerZonesDisponiblesQue
 import { VerifierUtilisationZonegroupQuery } from "./queries/VerifierUtilisationZonegroupQuery";
 import { EnregistrerZonegroupHandler } from "./handlers/EnregistrerZonegroupHandler";
 import { ArchiverZonegroupHandler } from "./handlers/ArchiverZonegroupHandler";
-import { RestorerZonegroupHandler } from "./handlers/RestorerZonegroupHandler";
+import { RestaurerZonegroupHandler } from "./handlers/RestaurerZonegroupHandler";
 
 type MetadataZonegroupCradle = {
   listerZonegroupsAdminQuery: ListerZonegroupsAdminQuery;
@@ -21,7 +21,7 @@ type MetadataZonegroupCradle = {
   verifierUtilisationZonegroupQuery: VerifierUtilisationZonegroupQuery;
   enregistrerZonegroupHandler: EnregistrerZonegroupHandler;
   archiverZonegroupHandler: ArchiverZonegroupHandler;
-  restorerZonegroupHandler: RestorerZonegroupHandler;
+  restaurerZonegroupHandler: RestaurerZonegroupHandler;
 };
 
 export const metadataZonegroupModule = defineModule<
@@ -44,7 +44,7 @@ export const metadataZonegroupModule = defineModule<
       ),
       enregistrerZonegroupHandler: asModuleClass(EnregistrerZonegroupHandler),
       archiverZonegroupHandler: asModuleClass(ArchiverZonegroupHandler),
-      restorerZonegroupHandler: asModuleClass(RestorerZonegroupHandler),
+      restaurerZonegroupHandler: asModuleClass(RestaurerZonegroupHandler),
     } satisfies VerifyCradle<MetadataZonegroupCradle>);
   },
 });

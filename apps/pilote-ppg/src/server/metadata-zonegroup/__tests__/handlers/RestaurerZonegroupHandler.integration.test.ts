@@ -1,33 +1,33 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { RestorerPerimetreHandler } from "@/server/metadata-perimetre/handlers/RestorerPerimetreHandler";
+import { RestaurerZonegroupHandler } from "@/server/metadata-zonegroup/handlers/RestaurerZonegroupHandler";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 
-describe("RestorerPerimetreHandler", () => {
-  let handler: RestorerPerimetreHandler;
+describe("RestaurerZonegroupHandler", () => {
+  let handler: RestaurerZonegroupHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new RestorerPerimetreHandler({ prisma: prismaPilote });
+    handler = new RestaurerZonegroupHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {
     it(
-      "restaure un périmètre supprimé",
+      "restaure un zone group supprimé",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataPerimetre({
-          perimetre_id: "PER-091",
+        await fixtures.metadataZonegroup({
+          zone_group_id: "ZG-091",
           deleted_at: new Date("2026-01-01"),
         });
 
         // When
-        await handler.execute({ perimetreId: "PER-091" });
+        await handler.execute({ zoneGroupId: "ZG-091" });
 
         // Then
-        const result = await getPrisma().metadata_perimetres.findUniqueOrThrow({
-          where: { perimetre_id: "PER-091" },
+        const result = await getPrisma().metadata_zonegroup.findUniqueOrThrow({
+          where: { zone_group_id: "ZG-091" },
         });
         expect(result.deleted_at).toBeNull();
       }),

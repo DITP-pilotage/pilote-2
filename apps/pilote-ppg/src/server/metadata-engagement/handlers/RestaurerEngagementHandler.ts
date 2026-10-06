@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadata-engagement/module";
 
-export class RestorerEngagementHandler {
+export class RestaurerEngagementHandler {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: Inject<"prisma">) {

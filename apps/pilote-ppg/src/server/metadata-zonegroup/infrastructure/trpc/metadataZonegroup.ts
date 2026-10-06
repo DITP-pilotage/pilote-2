@@ -71,13 +71,13 @@ export const metadataZonegroupRouter = createTRPCRouter({
         .execute({ zoneGroupId: input.zoneGroupId });
     }),
 
-  restorer: protectedProcedure
+  restaurer: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("metadataZonegroup")
-        .resolve("restorerZonegroupHandler")
+        .resolve("restaurerZonegroupHandler")
         .execute({ zoneGroupId: input.zoneGroupId });
     }),
 });

@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadata-perimetre/module";
 
-export class RestorerPerimetreHandler {
+export class RestaurerPerimetreHandler {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: Inject<"prisma">) {

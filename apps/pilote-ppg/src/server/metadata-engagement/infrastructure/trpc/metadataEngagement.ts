@@ -62,13 +62,13 @@ export const metadataEngagementRouter = createTRPCRouter({
         .execute({ engagementId: input.engagementId });
     }),
 
-  restorer: protectedProcedure
+  restaurer: protectedProcedure
     .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("metadataEngagement")
-        .resolve("restorerEngagementHandler")
+        .resolve("restaurerEngagementHandler")
         .execute({ engagementId: input.engagementId });
     }),
 });

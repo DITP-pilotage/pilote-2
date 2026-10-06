@@ -1,33 +1,33 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { RestorerEngagementHandler } from "@/server/metadata-engagement/handlers/RestorerEngagementHandler";
+import { RestaurerPerimetreHandler } from "@/server/metadata-perimetre/handlers/RestaurerPerimetreHandler";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 
-describe("RestorerEngagementHandler", () => {
-  let handler: RestorerEngagementHandler;
+describe("RestaurerPerimetreHandler", () => {
+  let handler: RestaurerPerimetreHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new RestorerEngagementHandler({ prisma: prismaPilote });
+    handler = new RestaurerPerimetreHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {
     it(
-      "restaure un engagement supprimé",
+      "restaure un périmètre supprimé",
       createIntegrationTest(async () => {
         // Given
-        const engagement = await fixtures.metadataEngagement({
-          engagement_id: "100",
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-091",
           deleted_at: new Date("2026-01-01"),
         });
 
         // When
-        await handler.execute({ engagementId: engagement.engagement_id });
+        await handler.execute({ perimetreId: "PER-091" });
 
         // Then
-        const result = await getPrisma().metadata_engagement.findUniqueOrThrow({
-          where: { engagement_id: "100" },
+        const result = await getPrisma().metadata_perimetres.findUniqueOrThrow({
+          where: { perimetre_id: "PER-091" },
         });
         expect(result.deleted_at).toBeNull();
       }),

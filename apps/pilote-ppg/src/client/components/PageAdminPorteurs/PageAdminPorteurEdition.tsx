@@ -76,7 +76,7 @@ const PageAdminPorteurEdition = ({
     },
   });
 
-  const restorerMutation = api.metadataPorteur.restorer.useMutation({
+  const restaurerMutation = api.metadataPorteur.restaurer.useMutation({
     onSuccess: () => {
       toast.success("Porteur restauré avec succès.", {
         position: "bottom-right",
@@ -146,7 +146,7 @@ const PageAdminPorteurEdition = ({
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               porteurId: porteurIdEffectif,
                             })

@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadata-ppg/module";
 
-export class RestorerPpgHandler {
+export class RestaurerPpgHandler {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: Inject<"prisma">) {

@@ -9,7 +9,7 @@ import { RecupererPpgQuery } from "./queries/RecupererPpgQuery";
 import { VerifierUtilisationPpgQuery } from "./queries/VerifierUtilisationPpgQuery";
 import { EnregistrerPpgHandler } from "./handlers/EnregistrerPpgHandler";
 import { ArchiverPpgHandler } from "./handlers/ArchiverPpgHandler";
-import { RestorerPpgHandler } from "./handlers/RestorerPpgHandler";
+import { RestaurerPpgHandler } from "./handlers/RestaurerPpgHandler";
 
 type MetadataPpgCradle = {
   listerPpgsAdminQuery: ListerPpgsAdminQuery;
@@ -17,7 +17,7 @@ type MetadataPpgCradle = {
   verifierUtilisationPpgQuery: VerifierUtilisationPpgQuery;
   enregistrerPpgHandler: EnregistrerPpgHandler;
   archiverPpgHandler: ArchiverPpgHandler;
-  restorerPpgHandler: RestorerPpgHandler;
+  restaurerPpgHandler: RestaurerPpgHandler;
 };
 
 export const metadataPpgModule = defineModule<NoExports, MetadataPpgCradle>()({
@@ -31,7 +31,7 @@ export const metadataPpgModule = defineModule<NoExports, MetadataPpgCradle>()({
       verifierUtilisationPpgQuery: asModuleClass(VerifierUtilisationPpgQuery),
       enregistrerPpgHandler: asModuleClass(EnregistrerPpgHandler),
       archiverPpgHandler: asModuleClass(ArchiverPpgHandler),
-      restorerPpgHandler: asModuleClass(RestorerPpgHandler),
+      restaurerPpgHandler: asModuleClass(RestaurerPpgHandler),
     } satisfies VerifyCradle<MetadataPpgCradle>);
   },
 });

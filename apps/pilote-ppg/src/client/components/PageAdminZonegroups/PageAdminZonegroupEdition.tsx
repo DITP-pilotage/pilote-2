@@ -61,7 +61,7 @@ const PageAdminZonegroupEdition = ({
     },
   });
 
-  const restorerMutation = api.metadataZonegroup.restorer.useMutation({
+  const restaurerMutation = api.metadataZonegroup.restaurer.useMutation({
     onSuccess: () => {
       toast.success("Zone groupe restaurée avec succès.", {
         position: "bottom-right",
@@ -134,7 +134,7 @@ const PageAdminZonegroupEdition = ({
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               zoneGroupId: zoneGroupIdEffectif,
                             })

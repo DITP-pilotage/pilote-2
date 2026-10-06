@@ -57,7 +57,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
     },
   });
 
-  const restorerMutation = api.metadataPpg.restorer.useMutation({
+  const restaurerMutation = api.metadataPpg.restaurer.useMutation({
     onSuccess: () => {
       toast.success("PPG restauré avec succès.", {
         position: "bottom-right",
@@ -124,7 +124,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               ppgId,
                             })

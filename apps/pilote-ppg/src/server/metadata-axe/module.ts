@@ -9,7 +9,7 @@ import { RecupererAxeQuery } from "./queries/RecupererAxeQuery";
 import { VerifierUtilisationAxeQuery } from "./queries/VerifierUtilisationAxeQuery";
 import { EnregistrerAxeHandler } from "./handlers/EnregistrerAxeHandler";
 import { ArchiverAxeHandler } from "./handlers/ArchiverAxeHandler";
-import { RestorerAxeHandler } from "./handlers/RestorerAxeHandler";
+import { RestaurerAxeHandler } from "./handlers/RestaurerAxeHandler";
 
 type MetadataAxeCradle = {
   listerAxesAdminQuery: ListerAxesAdminQuery;
@@ -17,7 +17,7 @@ type MetadataAxeCradle = {
   verifierUtilisationAxeQuery: VerifierUtilisationAxeQuery;
   enregistrerAxeHandler: EnregistrerAxeHandler;
   archiverAxeHandler: ArchiverAxeHandler;
-  restorerAxeHandler: RestorerAxeHandler;
+  restaurerAxeHandler: RestaurerAxeHandler;
 };
 
 export const metadataAxeModule = defineModule<NoExports, MetadataAxeCradle>()({
@@ -31,7 +31,7 @@ export const metadataAxeModule = defineModule<NoExports, MetadataAxeCradle>()({
       verifierUtilisationAxeQuery: asModuleClass(VerifierUtilisationAxeQuery),
       enregistrerAxeHandler: asModuleClass(EnregistrerAxeHandler),
       archiverAxeHandler: asModuleClass(ArchiverAxeHandler),
-      restorerAxeHandler: asModuleClass(RestorerAxeHandler),
+      restaurerAxeHandler: asModuleClass(RestaurerAxeHandler),
     } satisfies VerifyCradle<MetadataAxeCradle>);
   },
 });
