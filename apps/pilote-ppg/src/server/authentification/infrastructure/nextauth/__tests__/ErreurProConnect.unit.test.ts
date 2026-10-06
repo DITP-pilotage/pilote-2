@@ -1,4 +1,4 @@
-import { ErreurProConnect } from "@/server/infrastructure/api/auth/ErreurProConnect";
+import { ErreurProConnect } from "@/server/authentification/infrastructure/nextauth/ErreurProConnect";
 
 describe("ErreurProConnect", () => {
   it("s'identifie par son nom, seule information qu'Auth.js remonte au logger", () => {

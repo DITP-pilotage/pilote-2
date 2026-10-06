@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { GetServerSideProps } from "next";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { PageConnexion } from "@/client/components/PageConnexion/PageConnexion";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

@@ -5,7 +5,7 @@ import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { pageAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/PageAutoEvaluationObjectifsServerSideContext";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { FormulaireAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/FormulaireAutoEvaluationObjectifs";
 
 export const getServerSideProps = async (

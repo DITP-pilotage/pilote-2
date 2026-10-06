@@ -10,11 +10,11 @@ import { configuration } from "@/config";
 import {
   acrFromIdToken,
   proconnect,
-} from "@/server/infrastructure/api/auth/proconnect";
-import { PROVIDER_PROCONNECT } from "@/server/infrastructure/api/auth/ErreurProConnect";
+} from "@/server/authentification/infrastructure/nextauth/proconnect";
+import { PROVIDER_PROCONNECT } from "@/server/authentification/infrastructure/nextauth/ErreurProConnect";
 import { autoriserConnexionProConnect } from "@/server/authentification/domain/autoriserConnexionProConnect";
-import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
-import { loggerAuthJs } from "@/server/infrastructure/api/auth/loggerAuthJs";
+import { sessionExpiree } from "@/server/authentification/infrastructure/nextauth/expirationSession";
+import { loggerAuthJs } from "@/server/authentification/infrastructure/nextauth/loggerAuthJs";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 
 export const keycloak = KeycloakProvider({

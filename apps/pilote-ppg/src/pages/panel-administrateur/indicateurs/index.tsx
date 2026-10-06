@@ -2,7 +2,7 @@ import Head from "next/head";
 import { GetServerSidePropsContext } from "next";
 import { FunctionComponent } from "react";
 import PageAdminIndicateurs from "@/components/PageAdminIndicateurs/PageAdminIndicateurs";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { estAutoriséAModifierDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 

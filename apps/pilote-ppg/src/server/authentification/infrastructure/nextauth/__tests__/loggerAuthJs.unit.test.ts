@@ -1,4 +1,4 @@
-import { buildAuthJsErrorEvent } from "@/server/infrastructure/api/auth/loggerAuthJs";
+import { buildAuthJsErrorEvent } from "@/server/authentification/infrastructure/nextauth/loggerAuthJs";
 
 class ErreurAuthJs extends Error {
   readonly type: string;

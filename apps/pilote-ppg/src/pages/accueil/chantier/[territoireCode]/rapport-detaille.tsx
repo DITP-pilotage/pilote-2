@@ -3,7 +3,7 @@ import { TRI_CHANTIERS_PAR_DEFAUT } from "@/server/chantiers/app/contrats/TriCha
 import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import PageRapportDétaillé from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";

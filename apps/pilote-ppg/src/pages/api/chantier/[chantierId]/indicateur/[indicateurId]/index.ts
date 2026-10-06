@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
 export default async function handle(
   req: NextApiRequest,

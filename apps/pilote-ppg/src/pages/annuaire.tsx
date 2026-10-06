@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from "next";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { getContainer } from "@/server/dependances";
 import PageAnnuaire from "@/client/components/PageAnnuaire/PageAnnuaire";
 

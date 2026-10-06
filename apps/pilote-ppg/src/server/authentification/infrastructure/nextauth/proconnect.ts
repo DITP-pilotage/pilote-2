@@ -5,7 +5,7 @@ import { ACR_DOUBLE_AUTHENTIFICATION } from "@/server/authentification/domain/au
 import {
   ErreurProConnect,
   PROVIDER_PROCONNECT,
-} from "@/server/infrastructure/api/auth/ErreurProConnect";
+} from "@/server/authentification/infrastructure/nextauth/ErreurProConnect";
 
 /**
  * ProConnect ne suit pas la nomenclature OIDC courante : le nom de famille est

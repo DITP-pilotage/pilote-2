@@ -1,7 +1,7 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
 import { AssistantIA } from "@/server/albert/AssistantIA";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
 import {

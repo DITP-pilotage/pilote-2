@@ -1,4 +1,4 @@
-import { PROVIDER_PROCONNECT } from "@/server/infrastructure/api/auth/ErreurProConnect";
+import { PROVIDER_PROCONNECT } from "@/server/authentification/infrastructure/nextauth/ErreurProConnect";
 
 /**
  * Providers dont l'access token ne conditionne pas la durée de la session

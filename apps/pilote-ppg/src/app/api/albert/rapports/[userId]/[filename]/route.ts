@@ -1,4 +1,4 @@
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { getContainer } from "@/server/dependances";
 
 const SAFE_FILENAME_REGEX = /^[a-z0-9-]+-[a-f0-9]{8}\.(md|pdf)$/;

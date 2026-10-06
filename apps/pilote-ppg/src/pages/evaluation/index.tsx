@@ -2,7 +2,7 @@ import { GetServerSidePropsContext } from "next";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,

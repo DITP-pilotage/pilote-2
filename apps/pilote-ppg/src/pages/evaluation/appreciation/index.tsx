@@ -3,7 +3,7 @@ import { $Enums } from "@prisma/client";
 import Head from "next/head";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 import { InformationEnteteAppreciation } from "@/components/PageAppreciation/InformationEnteteAppreciation";
 import { ListePhaseEvaluation } from "@/components/PageAppreciation/ListePhaseEvaluation";

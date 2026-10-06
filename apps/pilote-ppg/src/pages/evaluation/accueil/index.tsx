@@ -7,7 +7,7 @@ import visualisationDonnéesSvg from "@gouvfr/dsfr/dist/artwork/pictograms/digit
 import cityHallSvg from "@gouvfr/dsfr/dist/artwork/pictograms/buildings/city-hall.svg";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
