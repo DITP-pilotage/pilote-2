@@ -22,6 +22,7 @@ export const moduleNames = [
   "datajobsExecution",
   "legacy",
   "gestionContenu",
+  "ficheTerritoriale",
   "applicationLog",
   "actualites",
   "mbSync",

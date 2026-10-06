@@ -8,11 +8,6 @@ import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifReposi
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
 import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
-import { TerritoireRepository as FicheTerritorialeTerritoireRepository } from "@/server/fiche-territoriale/domain/ports/TerritoireRepository";
-import { ChantierRepository as FicheTerritorialeChantierRepository } from "@/server/fiche-territoriale/domain/ports/ChantierRepository";
-import { IndicateurRepository as FicheTerritorialeIndicateurRepository } from "@/server/fiche-territoriale/domain/ports/IndicateurRepository";
-import { SyntheseDesResultatsRepository as FicheTerritorialeSyntheseDesResultatsRepository } from "@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository";
-import { MinistereRepository as FicheTerritorialeMinistereRepository } from "@/server/fiche-territoriale/domain/ports/MinistereRepository";
 import { IndicateurRepository as ChantierIndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import ProfilRepository from "@/server/domain/profil/ProfilRepository";
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
@@ -27,11 +22,6 @@ import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chant
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
 import { TerritoireSQLRepository } from "@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository";
-import { PrismaTerritoireRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository";
-import { PrismaChantierRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository";
-import { PrismaIndicateurRepository as PrismaFicheTerritorialeIndicateurRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaIndicateurRepository";
-import { PrismaSyntheseDesResultatsRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
-import { PrismaMinistereRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository";
 import { PrismaIndicateurRepository as PrismaChantierIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/ProfilSQLRepository";
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
@@ -44,10 +34,6 @@ import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecas
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { RécupérerTerritoiresAvecNombreUtilisateursUseCase } from "@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase";
 import { ListerDonneesIndicateurParIndicIdUseCase } from "@/server/chantiers/usecases/ListerDonneesIndicateurParIndicIdUseCase";
-import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTerritoireParCodeUseCase";
-import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
-import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoriale/usecases/RécupérerRépartitionMétéoUseCase";
-import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
 import type { GestionContenuExports } from "@/server/gestion-contenu/module";
 import {
   defineModule,
@@ -70,11 +56,6 @@ type LegacyOwnCradle = LegacyExport & {
   décisionStratégiqueRepository: DécisionStratégiqueRepository;
   utilisateurRepository: UtilisateurRepository;
   territoireRepository: TerritoireRepository;
-  ficheTerritorialeTerritoireRepository: FicheTerritorialeTerritoireRepository;
-  ficheTerritorialeChantierRepository: FicheTerritorialeChantierRepository;
-  ficheTerritorialeIndicateurRepository: FicheTerritorialeIndicateurRepository;
-  ficheTerritorialeSyntheseDesResultatsRepository: FicheTerritorialeSyntheseDesResultatsRepository;
-  ficheTerritorialeMinistereRepository: FicheTerritorialeMinistereRepository;
   chantierIndicateurRepository: ChantierIndicateurRepository;
   profilRepository: ProfilRepository;
   rapportRepository: RapportRepository;
@@ -86,10 +67,6 @@ type LegacyOwnCradle = LegacyExport & {
   récupérerUnProfilUseCase: RécupérerUnProfilUseCase;
   récupérerTerritoiresAvecNombreUtilisateursUseCase: RécupérerTerritoiresAvecNombreUtilisateursUseCase;
   listerDonneesIndicateurParIndicIdUseCase: ListerDonneesIndicateurParIndicIdUseCase;
-  récupérerTerritoireParCodeUseCase: RécupérerTerritoireParCodeUseCase;
-  récupérerTauxAvancementTerritoireUseCase: RécupérerTauxAvancementTerritoireUseCase;
-  récupérerRépartitionMétéoUseCase: RécupérerRépartitionMétéoUseCase;
-  récupérerListeChantierFicheTerritorialeUseCase: RécupérerListeChantierFicheTerritorialeUseCase;
 };
 
 type LegacyCradle = LegacyOwnCradle & GestionContenuExports;
@@ -114,21 +91,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
       ).scoped(),
       utilisateurRepository: asModuleClass(UtilisateurSQLRepository).scoped(),
       territoireRepository: asModuleClass(TerritoireSQLRepository).scoped(),
-      ficheTerritorialeTerritoireRepository: asModuleClass(
-        PrismaTerritoireRepository,
-      ).scoped(),
-      ficheTerritorialeChantierRepository: asModuleClass(
-        PrismaChantierRepository,
-      ).scoped(),
-      ficheTerritorialeIndicateurRepository: asModuleClass(
-        PrismaFicheTerritorialeIndicateurRepository,
-      ).scoped(),
-      ficheTerritorialeSyntheseDesResultatsRepository: asModuleClass(
-        PrismaSyntheseDesResultatsRepository,
-      ).scoped(),
-      ficheTerritorialeMinistereRepository: asModuleClass(
-        PrismaMinistereRepository,
-      ).scoped(),
       chantierIndicateurRepository: asModuleClass(
         PrismaChantierIndicateurRepository,
       ).scoped(),
@@ -164,49 +126,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
         ({ chantierIndicateurRepository }) =>
           new ListerDonneesIndicateurParIndicIdUseCase({
             indicateurRepository: chantierIndicateurRepository,
-          }),
-      ).scoped(),
-      récupérerTerritoireParCodeUseCase: asModuleFunction(
-        ({ ficheTerritorialeTerritoireRepository }) =>
-          new RécupérerTerritoireParCodeUseCase({
-            territoireRepository: ficheTerritorialeTerritoireRepository,
-          }),
-      ).scoped(),
-      récupérerTauxAvancementTerritoireUseCase: asModuleFunction(
-        ({
-          ficheTerritorialeChantierRepository,
-          ficheTerritorialeTerritoireRepository,
-        }) =>
-          new RécupérerTauxAvancementTerritoireUseCase({
-            chantierRepository: ficheTerritorialeChantierRepository,
-            territoireRepository: ficheTerritorialeTerritoireRepository,
-          }),
-      ).scoped(),
-      récupérerRépartitionMétéoUseCase: asModuleFunction(
-        ({
-          ficheTerritorialeChantierRepository,
-          ficheTerritorialeTerritoireRepository,
-        }) =>
-          new RécupérerRépartitionMétéoUseCase({
-            chantierRepository: ficheTerritorialeChantierRepository,
-            territoireRepository: ficheTerritorialeTerritoireRepository,
-          }),
-      ).scoped(),
-      récupérerListeChantierFicheTerritorialeUseCase: asModuleFunction(
-        ({
-          ficheTerritorialeChantierRepository,
-          ficheTerritorialeTerritoireRepository,
-          ficheTerritorialeSyntheseDesResultatsRepository,
-          ficheTerritorialeIndicateurRepository,
-          ficheTerritorialeMinistereRepository,
-        }) =>
-          new RécupérerListeChantierFicheTerritorialeUseCase({
-            chantierRepository: ficheTerritorialeChantierRepository,
-            territoireRepository: ficheTerritorialeTerritoireRepository,
-            syntheseDesResultatsRepository:
-              ficheTerritorialeSyntheseDesResultatsRepository,
-            indicateurRepository: ficheTerritorialeIndicateurRepository,
-            ministereRepository: ficheTerritorialeMinistereRepository,
           }),
       ).scoped(),
     } satisfies VerifyCradle<LegacyOwnCradle>);
