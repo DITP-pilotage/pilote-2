@@ -1,4 +1,4 @@
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
 import CreerUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/CreerUneMetadataIndicateurUseCase";
 import ModifierUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ModifierUneMetadataIndicateurUseCase";
 import InitialiserNouvelIndicateurUseCase from "@/server/parametrage-indicateur/usecases/InitialiserNouvelIndicateurUseCase";
@@ -9,7 +9,7 @@ import RécupérerUnIndicateurUseCase from "@/server/parametrage-indicateur/usec
 import { ImportMasseMetadataIndicateurHandler } from "@/server/parametrage-indicateur/infrastructure/handlers/ImportMasseMetadataIndicateurHandler";
 import ImportMasseMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
-import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
+import { PrismaHistorisationModificationRepository } from "@/server/historisation-modification/infrastructure/PrismaHistorisationModificationRepository";
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
 import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";

@@ -1,4 +1,4 @@
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { clsxm } from "@/utils/clsxm";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 

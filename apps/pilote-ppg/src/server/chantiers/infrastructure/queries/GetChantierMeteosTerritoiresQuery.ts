@@ -1,6 +1,6 @@
 import { Inject } from "@/server/chantiers/module";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { MailleTerritoireSelectionne } from "@/shared/maille/Maille.interface";
 
 export type MeteoTerritoireViewModel = {
   territoireCode: string;

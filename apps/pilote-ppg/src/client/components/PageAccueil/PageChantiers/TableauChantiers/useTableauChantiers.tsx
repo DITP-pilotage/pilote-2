@@ -26,7 +26,7 @@ import { calculerMoyenne } from "@/client/utils/statistiques/statistiques";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { Infobulle } from "@/components/shared/Infobulle";
 import infobulles from "@/client/constants/infobulles";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";

@@ -4,7 +4,7 @@ import { LegendeCartographie } from "@/components/_commons/CartographieV2/Legend
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { CartographieÉlémentDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 
 export const ReadOnlyCartographie: FunctionComponent<{
   donnees: CartographieDonnées;

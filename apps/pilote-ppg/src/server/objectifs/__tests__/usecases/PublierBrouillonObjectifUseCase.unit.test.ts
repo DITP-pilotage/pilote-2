@@ -1,9 +1,9 @@
 import { MockProxy, mock } from "vitest-mock-extended";
 import { $Enums } from "@prisma/client";
-import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import { ObjectifV2 } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { ObjectifRepository } from "@/server/objectifs/infrastructure/sql/ObjectifRepository.interface";
+import { ObjectifV2 } from "@/shared/chantier/objectif/Objectif.interface";
 import { PublierBrouillonObjectifUseCase } from "@/server/objectifs/usecases/PublierBrouillonObjectifUseCase";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 const habilitationsAvecAcces = {
   saisieCommentaire: {

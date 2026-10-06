@@ -1,17 +1,17 @@
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import {
   Territoire,
   TerritoiresDonnées,
-} from "@/server/domain/territoire/Territoire.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
+} from "@/shared/territoire/Territoire.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
 import {
   EntreePrismaChantier,
   PrismaChantier,
 } from "@/server/chantiers/domain/PrismaChantier";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
-import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { NOMS_MAILLES } from "@/shared/maille/mailleSQLParser";
 import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 
 export type ChantierContrat = Chantier;

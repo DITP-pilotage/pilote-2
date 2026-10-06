@@ -4,7 +4,7 @@ import {
   definirCouleurEcartArrondi,
   VARIANTE_BADGE_ECART,
 } from "@/client/utils/chantier/écart/écart";
-import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
+import { DonneesComparaisonDuTauxDAvancementType } from "@/shared/territoire/Territoire.interface";
 
 interface EcartTauxAvancementPPGProps {
   ecart: DonneesComparaisonDuTauxDAvancementType["ppgEcartMedian"];

@@ -4,7 +4,7 @@ import { Inject } from "@/server/chantiers/module";
 import {
   Maille,
   MailleTerritoireSelectionne,
-} from "@/server/domain/maille/Maille.interface";
+} from "@/shared/maille/Maille.interface";
 
 export class RecupererTauxAvancementsChantierTerritoiresQuery {
   constructor(

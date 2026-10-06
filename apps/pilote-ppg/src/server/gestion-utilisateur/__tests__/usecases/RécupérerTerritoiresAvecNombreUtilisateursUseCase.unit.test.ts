@@ -1,6 +1,6 @@
 import { mock, MockProxy } from "vitest-mock-extended";
-import TerritoireBuilder from "@/server/domain/territoire/Territoire.builder";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { TerritoireBuilder } from "@/test/builders/Territoire.builder";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { RecupererTerritoiresAvecNombreUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTerritoiresAvecNombreUtilisateursUseCase";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";

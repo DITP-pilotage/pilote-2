@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/shared/meteo/Meteo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { CartographieDonnéesMétéo } from "./CartographieMétéo.interface";

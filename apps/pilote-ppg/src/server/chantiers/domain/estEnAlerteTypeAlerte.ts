@@ -1,5 +1,5 @@
-import Alerte from "@/server/domain/alerte/Alerte";
-import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
+import { Alerte } from "@/shared/alerte/Alerte";
+import { ChantierVueDEnsemble } from "@/shared/chantier/Chantier.interface";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import type { ChantierTerritoireSignale } from "@/server/chantiers/infrastructure/queries/ChantiersSignalesDataFetcher";
 

@@ -1,4 +1,4 @@
-import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
+import { ChantierRepository } from "@/server/chantiers/infrastructure/sql/ChantierRepository.interface";
 import {
   AgregateurListeChantiersParTerritoire,
   ChantierPourAgregation,

@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
-import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
+import { SynthèseDesRésultatsSQLRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsSQLRepository";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import {
   creerSyntheseDesResultatsBrouillon,

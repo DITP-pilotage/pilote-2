@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsV2 } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
 import {
   creerSyntheseDesResultatsPublie,
   creerSyntheseDesResultatsBrouillon,

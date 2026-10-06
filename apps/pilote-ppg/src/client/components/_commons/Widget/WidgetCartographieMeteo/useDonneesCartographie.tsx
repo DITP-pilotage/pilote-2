@@ -1,5 +1,5 @@
 import { ReactNode, useMemo } from "react";
-import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/shared/meteo/Meteo.interface";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { determinerRemplissageMeteo } from "@/client/utils/meteo/determinerRemplissageMeteo";

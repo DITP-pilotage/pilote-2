@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
+import { HistorisationModification } from "@/server/historisation-modification/domain/HistorisationModification";
 import type { Inject } from "@/server/metadataChantier/module";
 
 export const ligneEnregistrementPonderationSchema = z.object({

@@ -3,12 +3,12 @@ import { stringify } from "csv-stringify";
 import { Options } from "csv-stringify/sync";
 import assert from "node:assert/strict";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { configuration } from "@/config";
 import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { getContainer } from "@/server/dependances";
-import { Maille } from "@/server/domain/maille/Maille.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
 import { ExportCsvDesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCase";
 import { ecrireCsvEnStreaming } from "@/server/framework/csv/ecrireCsvEnStreaming";
 

@@ -1,5 +1,5 @@
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
 import { recupererLesNomsDesTerritoires } from "@/server/app/RecupererLesNomsDesTerritoiresPourUnUtilisateur";
 

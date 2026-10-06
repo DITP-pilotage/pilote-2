@@ -10,19 +10,19 @@ import RapportDétailléChantier from "@/components/PageRapportDétaillé/Chanti
 import PremièrePageImpressionRapportDétaillé from "@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
+import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
 } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import Axe from "@/server/domain/axe/Axe.interface";
+import { Axe } from "@/shared/axe/Axe.interface";
 import { AvancementChantierRapportDetaille } from "@/components/PageRapportDétaillé/AvancementChantierRapportDetaille";
 import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { getFiltresActifs } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";

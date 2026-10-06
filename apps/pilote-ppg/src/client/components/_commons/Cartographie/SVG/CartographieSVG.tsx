@@ -1,5 +1,5 @@
 import { FunctionComponent, useId, useRef, useState } from "react";
-import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { CodeInsee } from "@/shared/territoire/Territoire.interface";
 import { HachuresDiagonales } from "@/client/constants/légendes/hachure/hachures";
 import { estHachure } from "@/client/constants/légendes/hachure/hachure";
 import {
@@ -8,7 +8,7 @@ import {
   CartographieTerritoire,
 } from "@/components/_commons/Cartographie/useCartographie.interface";
 import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import CartographieZoomEtDéplacement from "./ZoomEtDéplacement/CartographieZoomEtDéplacement";
 import { CartographieTerritoireSélectionné } from "./CartographieTerritoireSélectionné";
 import { getTraceSvg } from "./CartographieSVGContrat";

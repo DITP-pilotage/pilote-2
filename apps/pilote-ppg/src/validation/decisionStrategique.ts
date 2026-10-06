@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { typesDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { typesDecisionStrategique } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTERES_DECISION_STRATEGIQUE = 5000;

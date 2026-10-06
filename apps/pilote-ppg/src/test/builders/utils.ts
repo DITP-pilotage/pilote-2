@@ -3,7 +3,7 @@ import {
   codeInseeFrance,
   codesInseeDépartements,
   codesInseeRégions,
-} from "@/server/domain/territoire/Territoire.interface";
+} from "@/shared/territoire/Territoire.interface";
 
 // `faker.helpers.unique` a été retiré en faker 9. Il rejouait la fonction jusqu'à
 // obtenir une valeur jamais rendue dans le processus courant. On réimplémente

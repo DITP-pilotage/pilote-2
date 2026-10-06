@@ -1,13 +1,13 @@
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { Profil } from "@/server/domain/profil/Profil.interface";
+import { Profil } from "@/shared/profil/Profil.interface";
 import { TokenAPIInformationRepository } from "@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";

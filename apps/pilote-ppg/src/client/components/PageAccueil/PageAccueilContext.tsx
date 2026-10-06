@@ -1,7 +1,7 @@
 import { createContext, FunctionComponent, ReactNode, useContext } from "react";
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 

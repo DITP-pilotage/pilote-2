@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { TypeObjectif } from "@/client/constants/libellésObjectif";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { typesObjectif } from "@/shared/chantier/objectif/Objectif.interface";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { Accordion } from "@/components/shared/Accordion";
 import { ObjectifSection } from "@/components/PageChantier/ObjectifsChantier/ObjectifSection";

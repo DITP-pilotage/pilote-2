@@ -1,11 +1,11 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
+import { ObjectifRepository } from "@/server/objectifs/infrastructure/sql/ObjectifRepository.interface";
 import {
   ImportObjectifInput,
   mapTypeObjectifAPIVersDomaine,
 } from "@/validation/import-objectif";
-import { ObjectifV2 } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { ObjectifV2 } from "@/shared/chantier/objectif/Objectif.interface";
 import type { Inject } from "@/server/objectifs/module";
 
 export class ImporterObjectifsUseCase {

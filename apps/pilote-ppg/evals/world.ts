@@ -1,6 +1,6 @@
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { fixtures } from "@/test/fixtures";
-import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 /**
  * Le monde sur lequel les evals raisonnent.

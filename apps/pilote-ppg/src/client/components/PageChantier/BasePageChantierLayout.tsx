@@ -8,7 +8,7 @@ import {
   CategoriesIndicateur,
   listeRubriquesChantier,
 } from "@/client/utils/rubriques";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { Notice } from "@/components/shared/Notice";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
 import {

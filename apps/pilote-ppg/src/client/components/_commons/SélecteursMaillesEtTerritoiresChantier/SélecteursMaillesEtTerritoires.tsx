@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import { useSession } from "next-auth/react";
 import {

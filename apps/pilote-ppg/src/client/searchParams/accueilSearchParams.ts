@@ -6,10 +6,7 @@ import {
   parseAsString,
   parseAsStringLiteral,
 } from "nuqs/server";
-import {
-  mailles,
-  maillesInternes,
-} from "@/server/domain/maille/Maille.interface";
+import { mailles, maillesInternes } from "@/shared/maille/Maille.interface";
 import {
   parseAsSortingAmong,
   parseAsTablePage,

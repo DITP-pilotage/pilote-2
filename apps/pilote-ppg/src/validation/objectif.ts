@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { typesObjectif } from "@/shared/chantier/objectif/Objectif.interface";
 import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTERES_OBJECTIF = 5000;

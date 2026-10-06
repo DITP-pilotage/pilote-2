@@ -8,8 +8,8 @@ import { ModifierBrouillonCommentaireUseCase } from "@/server/commentaires/useca
 import { RecupererDernierCommentaireQuery } from "@/server/commentaires/queries/RecupererDernierCommentaireQuery";
 import { RecupererBrouillonCommentaireQuery } from "@/server/commentaires/queries/RecupererBrouillonCommentaireQuery";
 import { RecupererHistoriqueCommentaireQuery } from "@/server/commentaires/queries/RecupererHistoriqueCommentaireQuery";
-import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
-import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+import { CommentaireRepository } from "@/server/commentaires/infrastructure/sql/CommentaireRepository.interface";
+import { CommentaireSQLRepository } from "@/server/commentaires/infrastructure/sql/CommentaireSQLRepository";
 import {
   defineModule,
   type ExtractScope,

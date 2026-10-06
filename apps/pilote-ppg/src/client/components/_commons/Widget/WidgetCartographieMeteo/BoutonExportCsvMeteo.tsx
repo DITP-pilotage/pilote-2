@@ -2,7 +2,7 @@ import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { useExportCsv } from "@/client/hooks/useExportCsv";
 import { filtrerLesTerritoires } from "@/client/utils/csv";
-import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/shared/meteo/Meteo.interface";
 import { api } from "@/server/framework/trpc/api";
 
 export const BoutonExportCsvMeteo = ({

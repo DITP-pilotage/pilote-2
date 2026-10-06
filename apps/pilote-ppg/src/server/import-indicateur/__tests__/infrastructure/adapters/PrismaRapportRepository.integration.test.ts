@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { DetailValidationFichierBuilder } from "@/server/import-indicateur/app/builder/DetailValidationFichier.builder";
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
-import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
+import { UtilisateurÀCréerOuMettreÀJourBuilder } from "@/test/builders/UtilisateurACreerOuMettreAJour.builder";
 import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder";
 import { PrismaMesureIndicateurTemporaireRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";

@@ -1,4 +1,4 @@
-import { typesObjectif as typesObjectifChantier } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { typesObjectif as typesObjectifChantier } from "@/shared/chantier/objectif/Objectif.interface";
 
 export const typesObjectif = [...typesObjectifChantier] as const;
 export type TypeObjectif = (typeof typesObjectif)[number];

@@ -1,4 +1,4 @@
-import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierVueDEnsemble } from "@/shared/chantier/Chantier.interface";
 import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";

@@ -4,7 +4,7 @@ import {
   NON_APPLICABLE,
   NON_RENSEIGNEE,
 } from "@/server/framework/csv/valeurs";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
 import {

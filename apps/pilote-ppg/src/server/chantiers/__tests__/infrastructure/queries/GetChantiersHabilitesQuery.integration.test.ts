@@ -3,7 +3,7 @@ import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { GetChantiersHabilitesQuery } from "@/server/chantiers/infrastructure/queries/GetChantiersHabilitesQuery";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 function habilitationsAvecLecture(chantierIds: string[]): Habilitations {
   const vide = { chantiers: [] as string[], territoires: [], périmètres: [] };

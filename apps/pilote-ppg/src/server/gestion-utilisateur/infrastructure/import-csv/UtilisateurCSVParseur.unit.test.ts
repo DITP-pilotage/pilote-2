@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import fs from "node:fs";
-import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
+import { UtilisateurÀCréerOuMettreÀJourBuilder } from "@/test/builders/UtilisateurACreerOuMettreAJour.builder";
 import { UtilisateurCSVParseur } from "./UtilisateurCSVParseur";
 
 describe("UtilisateurCSVParseur", () => {

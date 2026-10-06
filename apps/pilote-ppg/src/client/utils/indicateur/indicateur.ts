@@ -1,6 +1,7 @@
-import Indicateur, {
+import {
+  Indicateur,
   libellesTypeIndicateur,
-} from "@/server/domain/indicateur/Indicateur.interface";
+} from "@/shared/indicateur/Indicateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const libellesTypologieIndicateur = libellesTypeIndicateur;

@@ -1,7 +1,7 @@
-import { Meteo } from "@/server/domain/météo/Météo.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { SynthèseDesRésultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { modifierSyntheseDesResultatsPubliee } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
 

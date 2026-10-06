@@ -1,7 +1,7 @@
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Button } from "@/components/shared/Button";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 import { ModaleAccepterPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
 import { Icone } from "@/components/_commons/Icone";
 import { Scales3Icon } from "@/components/_commons/Icones/Scales3Icon";

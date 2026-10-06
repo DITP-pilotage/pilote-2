@@ -1,12 +1,12 @@
 import { createContext, PropsWithChildren, useContext } from "react";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import {
   DétailsIndicateur,
   DétailsIndicateurs,
-} from "@/server/domain/indicateur/DétailsIndicateur.interface";
+} from "@/shared/indicateur/DetailsIndicateur.interface";
 type UseBlocIndicateurContext = {
   chantier: Chantier;
   indicateur: Indicateur;

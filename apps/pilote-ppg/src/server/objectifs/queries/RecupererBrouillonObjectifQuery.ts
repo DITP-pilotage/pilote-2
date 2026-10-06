@@ -4,11 +4,11 @@ import {
   ObjectifV2,
   TypeObjectif,
   typesObjectif,
-} from "@/server/domain/chantier/objectif/Objectif.interface";
+} from "@/shared/chantier/objectif/Objectif.interface";
 import {
   CODES_TYPES_OBJECTIFS,
   NOMS_TYPES_OBJECTIFS,
-} from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
+} from "@/server/objectifs/infrastructure/sql/ObjectifSQLRepository";
 
 export class RecupererBrouillonObjectifQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}

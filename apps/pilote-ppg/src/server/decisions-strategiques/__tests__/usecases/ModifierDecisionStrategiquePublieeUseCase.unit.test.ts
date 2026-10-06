@@ -1,9 +1,9 @@
 import { MockProxy, mock } from "vitest-mock-extended";
 import { $Enums } from "@prisma/client";
-import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
-import { DecisionStrategiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DécisionStratégiqueRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueRepository.interface";
+import { DecisionStrategiqueV2 } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 import { ModifierDecisionStrategiquePublieeUseCase } from "@/server/decisions-strategiques/usecases/ModifierDecisionStrategiquePublieeUseCase";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 const habilitationsAvecAcces = {
   saisieCommentaire: {

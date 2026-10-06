@@ -3,10 +3,10 @@ import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/
 import {
   profilsInfolettreCoordinateur,
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";

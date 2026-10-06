@@ -1,7 +1,7 @@
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import type { Inject } from "@/server/chantiers/module";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 export class RecupererTauxAvancementIndicateurTerritoiresQuery {

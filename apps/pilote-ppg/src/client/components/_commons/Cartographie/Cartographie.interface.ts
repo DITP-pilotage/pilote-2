@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { CodeInsee } from "@/shared/territoire/Territoire.interface";
 
 export type CartographieDonnées = {
   [key in CodeInsee]: {

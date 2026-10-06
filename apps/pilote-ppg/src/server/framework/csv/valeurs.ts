@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/shared/meteo/Meteo.interface";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

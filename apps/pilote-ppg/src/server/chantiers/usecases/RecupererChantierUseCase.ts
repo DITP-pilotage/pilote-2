@@ -1,7 +1,7 @@
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { MinistereRepository } from "@/server/chantiers/domain/ports/MinistereRepository";

@@ -5,20 +5,20 @@ import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import PageRapportDétaillé from "@/components/PageRapportDétaillé/PageRapportDétaillé";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import Alerte from "@/server/domain/alerte/Alerte";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { DécisionStratégique } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import { Alerte } from "@/shared/alerte/Alerte";
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
   presenterEnAvancementsStatistiquesAccueilContrat,
 } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { objectEntries } from "@/client/utils/objects/objects";
-import Axe from "@/server/domain/axe/Axe.interface";
+import { Axe } from "@/shared/axe/Axe.interface";
 import { AgrégateurChantierRapportDetailleParTerritoire } from "@/client/utils/chantier/agrégateurRapportDetaille/agrégateur";
 import { AvancementChantierRapportDetaille } from "@/components/PageRapportDétaillé/AvancementChantierRapportDetaille";
 import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface";
@@ -27,7 +27,7 @@ import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";

@@ -5,7 +5,7 @@ import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "@/serve
 import { ListerDetailsIndicateurTerritoireUseCase } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCase";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 

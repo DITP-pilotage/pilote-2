@@ -11,7 +11,7 @@ import {
 } from "@/server/gestion-utilisateur/usecases/SupprimerLesComptesDesactivesUseCase";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
 import { Transaction } from "@/server/framework/persistence/Transaction";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 

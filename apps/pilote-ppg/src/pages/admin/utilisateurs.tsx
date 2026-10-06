@@ -6,9 +6,9 @@ import {
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import PageAdminUtilisateurs from "@/components/PageAdminUtilisateurs/PageAdminUtilisateurs";
-import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
 import { FiltreQueryParams } from "@/server/gestion-utilisateur/app/contrats/FiltreQueryParams";
 import { Profil } from "@/server/gestion-utilisateur/domain/Profil";

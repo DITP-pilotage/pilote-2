@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { getServiceLibelle } from "@/utils/referentiel-services";
 
 export type SyntheseDesResultatsHistoriqueItem = {

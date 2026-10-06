@@ -1,7 +1,7 @@
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import { publierBrouillonObjectif } from "@/server/domain/chantier/objectif/Objectif";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { ObjectifRepository } from "@/server/objectifs/infrastructure/sql/ObjectifRepository.interface";
+import { publierBrouillonObjectif } from "@/server/objectifs/domain/Objectif";
 
 export class PublierBrouillonObjectifUseCase {
   constructor(

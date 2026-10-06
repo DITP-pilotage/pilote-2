@@ -5,7 +5,7 @@ import {
   ObjectifV2,
   ObjectifV2AvecNomAuteur,
   TypeObjectif,
-} from "@/server/domain/chantier/objectif/Objectif.interface";
+} from "@/shared/chantier/objectif/Objectif.interface";
 import { PublicationActions } from "@/components/PageChantier/Publication/Publication.interface";
 
 export const useObjectifActions = ({

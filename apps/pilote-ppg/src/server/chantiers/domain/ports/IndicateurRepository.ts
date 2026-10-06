@@ -5,8 +5,8 @@ import {
   DetailsIndicateurs,
   DetailsIndicateurTerritoire,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 export interface IndicateurRepository {
   listerParIndicId({

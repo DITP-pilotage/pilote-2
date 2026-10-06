@@ -9,14 +9,14 @@ import {
   profilsDépartementaux,
   profilsRégionaux,
   profilsTerritoriaux,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from "@/client/utils/arrays";
-import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import {
   AAccesATousLesUtilisateurs,
   PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION,
   PROFILS_POSSIBLES_RESPONSABLES,
-} from "@/server/domain/utilisateur/profils-gestion-utilisateur";
+} from "@/shared/utilisateur/profils-gestion-utilisateur";
 
 function utilisateurAAccesATousLesProfils(profilCode: ProfilCode) {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profilCode);

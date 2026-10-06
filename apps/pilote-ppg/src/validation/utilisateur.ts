@@ -3,7 +3,7 @@ import { $Enums } from "@prisma/client";
 import {
   ProfilCode,
   profilsCodes,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 const customErrorMail =

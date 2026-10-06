@@ -15,7 +15,7 @@ import {
   importObjectifSchema,
 } from "@/validation/import-objectif";
 import { importSyntheseDesResultatsSchema } from "@/validation/import-synthese-des-resultats";
-import { meteosSaisissables } from "@/server/domain/météo/Météo.interface";
+import { meteosSaisissables } from "@/shared/meteo/Meteo.interface";
 
 export const domainesCibles = [
   "commentaire",

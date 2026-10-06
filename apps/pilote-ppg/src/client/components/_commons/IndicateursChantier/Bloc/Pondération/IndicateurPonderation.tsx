@@ -1,5 +1,5 @@
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+import { MailleTerritoireSelectionne } from "@/shared/maille/Maille.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = {

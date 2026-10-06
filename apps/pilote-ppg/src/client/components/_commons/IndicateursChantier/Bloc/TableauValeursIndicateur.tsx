@@ -1,6 +1,6 @@
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { formaterDate } from "@/client/utils/date/date";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Table } from "@/components/shared/Table";
 import { clsxm } from "@/utils/clsxm";
 

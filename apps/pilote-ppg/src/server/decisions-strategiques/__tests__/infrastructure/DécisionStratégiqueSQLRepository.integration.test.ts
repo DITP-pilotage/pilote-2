@@ -1,12 +1,12 @@
 import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
-import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
+import { DécisionStratégiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
   creerDecisionStrategiquePubliee,
   creerDecisionStrategiqueBrouillon,
-} from "@/server/domain/chantier/décisionStratégique/DécisionStratégique";
+} from "@/server/decisions-strategiques/domain/DecisionStrategique";
 
 describe("DécisionStratégiqueSQLRepository", () => {
   let repository: DécisionStratégiqueSQLRepository;

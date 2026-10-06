@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TerritoireAvecNombreUtilisateurs } from "@/server/domain/territoire/Territoire.interface";
+import { TerritoireAvecNombreUtilisateurs } from "@/shared/territoire/Territoire.interface";
 import { getContainer } from "@/server/dependances";
 import {
   créerRouteurTRPC,

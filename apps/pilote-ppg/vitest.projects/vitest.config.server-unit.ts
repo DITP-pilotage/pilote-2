@@ -13,6 +13,7 @@ export default defineProject({
       // schemas etaient structurellement intestables.
       "src/validation/**/*.unit.test.{ts,tsx}",
       "src/utils/**/*.unit.test.{ts,tsx}",
+      "src/shared/**/*.unit.test.{ts,tsx}",
       // Les helpers d'eval sont testes a cote du code qu'ils testent, plutot
       // que sous src/ avec un chemin relatif a quatre niveaux.
       "evals/**/*.unit.test.ts",

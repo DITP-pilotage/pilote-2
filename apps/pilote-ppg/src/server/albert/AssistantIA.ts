@@ -8,7 +8,7 @@ import {
   extraireTexteDernierMessageUtilisateur,
 } from "@/server/albert/detecteurIntention";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
-import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { getContainer } from "@/server/dependances";
 import { displayChoicesTool } from "@/server/albert/tools/displayChoices";
 

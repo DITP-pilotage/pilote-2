@@ -3,7 +3,7 @@ import { fixtures } from "@/test/fixtures";
 import { RecupererTauxAvancementsChantierTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererTauxAvancementsChantierTerritoiresQuery";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
+import { ChantierSQLRepository } from "@/server/chantiers/infrastructure/sql/ChantierSQLRepository";
 
 const prismaPilote = new PrismaPilote();
 let query: RecupererTauxAvancementsChantierTerritoiresQuery;

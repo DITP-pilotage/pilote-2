@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { PageCréerUtilisateurAide } from "@/components/PageCreerUtilisateurAide/PageCréerUtilisateurAide";
 
 const NextPageCréerUtilisateurAide: FunctionComponent = () => {

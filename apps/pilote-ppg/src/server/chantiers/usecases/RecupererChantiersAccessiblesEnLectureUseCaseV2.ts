@@ -1,12 +1,12 @@
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import {
   FiltreQueryParams,
   SortingParams,
 } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import Axe from "@/server/domain/axe/Axe.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import { Axe } from "@/shared/axe/Axe.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import {

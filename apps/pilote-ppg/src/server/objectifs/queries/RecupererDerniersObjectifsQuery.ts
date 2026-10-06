@@ -5,11 +5,11 @@ import {
   ObjectifV2AvecNomAuteur,
   TypeObjectif,
   typesObjectif,
-} from "@/server/domain/chantier/objectif/Objectif.interface";
+} from "@/shared/chantier/objectif/Objectif.interface";
 import {
   CODES_TYPES_OBJECTIFS,
   NOMS_TYPES_OBJECTIFS,
-} from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
+} from "@/server/objectifs/infrastructure/sql/ObjectifSQLRepository";
 
 export class RecupererDerniersObjectifsQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}

@@ -1,7 +1,7 @@
 import { $Enums, Prisma, type_objectif, type_statut } from "@prisma/client";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
@@ -10,15 +10,15 @@ import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import {
   ProfilCode,
   profilsTerritoriaux,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import {
   PrismaChantier,
   PrismaChantierPourTerritoire,
 } from "@/server/chantiers/domain/PrismaChantier";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 class ErreurChantierNonTrouvé extends Error {

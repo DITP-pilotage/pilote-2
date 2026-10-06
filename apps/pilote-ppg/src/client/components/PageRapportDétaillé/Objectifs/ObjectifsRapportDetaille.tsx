@@ -4,8 +4,8 @@ import {
   libellésTypesObjectif,
   TypeObjectif,
 } from "@/client/constants/libellésObjectif";
-import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
-import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
+import { typesObjectif } from "@/shared/chantier/objectif/Objectif.interface";
+import { Objectif } from "@/shared/chantier/objectif/Objectif.interface";
 import { isDefined } from "@/client/utils/predicates";
 import { Badge } from "@/components/shared/Badge";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";

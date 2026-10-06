@@ -7,7 +7,7 @@ import {
 } from "@/client/utils/statistiques/statistiques";
 import départements from "@/client/constants/départements.json";
 import régions from "@/client/constants/régions.json";
-import { Maille } from "@/server/domain/maille/Maille.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { AgrégatParTerritoire } from "./agrégateur.interface";
 

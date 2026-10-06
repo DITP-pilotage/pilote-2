@@ -7,8 +7,8 @@ import { Callout } from "@/components/shared/Callout";
 import { Controller, FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 import { RadioGroup } from "@/components/shared/RadioGroup";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 
 import {
   EtapePropositionValeurAvancement,

@@ -1,9 +1,9 @@
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import Alerte from "@/server/domain/alerte/Alerte";
-import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
+import { Alerte } from "@/shared/alerte/Alerte";
+import { ChantierTendance } from "@/shared/chantier/Chantier.interface";
 
 export type ChantierPourExport = {
   nom: string | null;

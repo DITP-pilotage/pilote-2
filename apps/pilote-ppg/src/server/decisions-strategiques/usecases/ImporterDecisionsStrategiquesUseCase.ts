@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
+import { DécisionStratégiqueRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueRepository.interface";
 import { ImportDecisionStrategiqueInput } from "@/validation/import-decision-strategique";
-import { DecisionStrategiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DecisionStrategiqueV2 } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 import type { Inject } from "@/server/decisions-strategiques/module";
 
 export class ImporterDecisionsStrategiquesUseCase {

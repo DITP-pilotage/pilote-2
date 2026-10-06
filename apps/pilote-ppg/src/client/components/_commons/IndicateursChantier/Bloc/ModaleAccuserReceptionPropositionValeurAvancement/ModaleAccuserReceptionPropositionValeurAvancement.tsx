@@ -6,8 +6,8 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
 import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 
 import {
   EtapeAccuserReception,

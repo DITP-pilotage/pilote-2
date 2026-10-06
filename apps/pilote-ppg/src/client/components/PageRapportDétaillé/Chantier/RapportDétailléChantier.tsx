@@ -15,15 +15,15 @@ import Titre from "@/components/_commons/Titre/Titre";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import {
   CategoriesIndicateur,
   listeRubriquesIndicateursChantier,
 } from "@/client/utils/rubriques";
 import Cartes from "@/client/components/PageRapportDétaillé/Cartes/Cartes";
 import AvancementChantier from "@/components/PageChantier/AvancementChantier/AvancementChantier";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import { DonneesComparaisonDuTauxDAvancementType } from "@/shared/territoire/Territoire.interface";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { useEnv } from "@/client/hooks/useEnv";

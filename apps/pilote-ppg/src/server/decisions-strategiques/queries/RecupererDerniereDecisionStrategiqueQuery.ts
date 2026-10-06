@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getServiceLibelle } from "@/utils/referentiel-services";
-import { DecisionStrategiqueV2AvecNomsAuteurs } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DecisionStrategiqueV2AvecNomsAuteurs } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 
 export class RecupererDerniereDecisionStrategiqueQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}

@@ -1,6 +1,6 @@
-import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { CommentaireRepository } from "@/server/commentaires/infrastructure/sql/CommentaireRepository.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 export class RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase {
   private readonly commentaireRepository: CommentaireRepository;

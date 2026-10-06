@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
-import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
+import { SyntheseDesResultatsV2 } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
+import { SynthèseDesRésultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { Transaction } from "@/server/framework/persistence/Transaction";
 

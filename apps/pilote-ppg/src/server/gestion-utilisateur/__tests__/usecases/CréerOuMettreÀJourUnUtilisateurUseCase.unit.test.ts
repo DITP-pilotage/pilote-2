@@ -1,22 +1,22 @@
 import { Mock } from "vitest";
 import { mock } from "vitest-mock-extended";
 import { randomUUID } from "node:crypto";
-import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
-import { fakeTerritoires } from "@/server/domain/territoire/Territoire.builder";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { UtilisateurÀCréerOuMettreÀJourBuilder } from "@/test/builders/UtilisateurACreerOuMettreAJour.builder";
+import { fakeTerritoires } from "@/test/builders/Territoire.builder";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
-} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { Profil } from "@/server/domain/profil/Profil.interface";
-import { ProfilBuilder } from "@/server/domain/profil/Profil.builder";
+} from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
+import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
+import { Profil } from "@/shared/profil/Profil.interface";
+import { ProfilBuilder } from "@/test/builders/Profil.builder";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import CréerOuMettreÀJourUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/CréerOuMettreÀJourUnUtilisateurUseCase";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
-import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
+import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";

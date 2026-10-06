@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
 import { AvancementsStatistiques } from "@/client/components/_commons/Avancements/Avancements.interface";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
-import { determineMaille } from "@/server/domain/maille/determineMaille";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
+import { determineMaille } from "@/shared/maille/determineMaille";
 import { Inject } from "@/server/chantiers/module";
 
 export type RecupererStatistiquesAvancementTousChantiersPubliesResult = {

@@ -5,11 +5,11 @@ import assert from "node:assert/strict";
 import {
   ProfilCode,
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import {
   HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
-} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+} from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { CsvRecord } from "./UtilisateurCSVParseur.interface";
 
 export class UtilisateurCSVParseur {

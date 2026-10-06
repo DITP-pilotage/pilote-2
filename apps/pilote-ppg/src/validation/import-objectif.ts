@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { TypeObjectif } from "@/shared/chantier/objectif/Objectif.interface";
 
 export const typesObjectifAPIVersDomaine = {
   notre_ambition: "notreAmbition",

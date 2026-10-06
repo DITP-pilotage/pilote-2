@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import {
   libellesMeteos,
   MeteoSaisissable,
-} from "@/server/domain/météo/Météo.interface";
+} from "@/shared/meteo/Meteo.interface";
 import RépartitionMétéoÉlément from "./RépartitionMétéoÉlément/RépartitionMétéoÉlément";
 
 export type RépartitionMétéos = Record<MeteoSaisissable, number>;
