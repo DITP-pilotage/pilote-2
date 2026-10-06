@@ -819,6 +819,30 @@ tous les quinze jours.**
 - `evalite` 1.0.0-beta.16 date du 2026-02-20 et `latest` est toujours `0.19.0` : la condition de
   sortie peut attendre longtemps. À re-tester à chaque campagne comme les autres.
 
+### Correctif sécu du 2026-10-06 — audit 20 → 4
+
+Hors campagne, uniquement pour fermer les advisories ouvertes (dont une **critique** : RCE dans
+`next/og`, `next >=16.2.0 <16.3.6`).
+
+| Changement | Advisories fermées | Condition de sortie |
+|---|---|---|
+| `next` et `@next/env` → 16.3.8 (ppg) | RCE `next/og` (critical) | — (bump direct) |
+| `dompurify` → `^3.4.16` (kpilote-admin, kpilote-webapp, kpilote-ui) | 2 low `IN_PLACE` | — (bump direct) |
+| `mysql2: >=3.23.1 <4` (nouveau) | auth plugin downgrade (high), zlib inflate (moderate) | `prisma` épingle `mysql2 >=3.23.1` |
+| `source-map-js: >=1.2.2 <2` (nouveau) | DoS event-loop (high) | tous les parents résolvent `>=1.2.2` sans lui |
+| `fast-uri@>=4 <5: >=4.1.5 <5` (nouveau) | host case + mailto injection (moderate), via `evalite>fastify` | `@fastify/ajv-compiler` résout `>=4.1.5` |
+| `evalite>fastify: >=5.12.5 <6` (nouveau) | DoS (moderate) | `evalite` déclare `fastify >=5.12.5` |
+| planchers relevés : `brace-expansion` 2.x → `>=2.1.7`, 5.x → `>=5.0.12`, `fast-uri` 3.x → `>=3.1.8` | 4 high + 2 moderate | inchangée |
+
+- **`mysql2`** : l'override décrit plus haut comme « non passé au banc d'essai » est posé.
+  Le driver MySQL n'est jamais chargé (projet en PostgreSQL) ; `prisma validate` et
+  `prisma generate` passent avec 3.24.4.
+- **Quarantaine** : `dompurify@3.4.16` (publié le 2026-09-23) et `source-map-js@1.2.2`
+  (publié le 2026-09-30) sont exclus par version exacte, avec échéance.
+- **Résiduel (4)**, sans version corrigée publiée : `xlsx` ×2 (kpilote-webapp, voir plus haut),
+  `braces <=3.0.3` (`awilix>fast-glob>micromatch`, ppg) et `sprintf-js <=1.1.3`
+  (`js-yaml-loader>js-yaml@3>argparse`, ppg).
+
 ### Règles pour ajouter un override
 
 1. **Documenter la raison ici** (CVE, bug upstream, conflit de résolution), avec un lien vers l'issue/CVE.
