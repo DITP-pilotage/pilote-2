@@ -1,4 +1,4 @@
-import { categorieDepuisRouteurTRPC } from "@/server/infrastructure/api/trpc/categorieLogRouteurTRPC";
+import { categorieDepuisRouteurTRPC } from "@/server/framework/trpc/categorieLogRouteurTRPC";
 
 describe("categorieDepuisRouteurTRPC", () => {
   it.each([

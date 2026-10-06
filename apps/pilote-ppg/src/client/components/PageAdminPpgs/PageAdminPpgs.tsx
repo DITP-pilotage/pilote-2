@@ -1,4 +1,4 @@
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import Link from "next/link";
 import { Button } from "@/components/shared/Button";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";

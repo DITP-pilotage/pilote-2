@@ -2,7 +2,7 @@ import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { useExportCsv } from "@/client/hooks/useExportCsv";
 import { filtrerLesTerritoires } from "@/client/utils/csv";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 export const BoutonExportCsvPVAIndicateur = ({
   indicateurId,

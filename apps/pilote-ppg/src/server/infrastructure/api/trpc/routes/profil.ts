@@ -1,7 +1,7 @@
 import {
   créerRouteurTRPC,
   procédureProtégée,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { validationProfilContexte } from "@/validation/profil";
 import { getContainer } from "@/server/dependances";
 

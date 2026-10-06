@@ -1,4 +1,4 @@
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { SelecteurGroupement } from "./SelecteurGroupement";
 import { TableauAnnuaire } from "./TableauAnnuaire";
 import { pluriel } from "./lignesAnnuaire";

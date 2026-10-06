@@ -5,7 +5,7 @@ import {
   BaseCartographieWidgetLayout,
   TitreWidget,
 } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
 import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";

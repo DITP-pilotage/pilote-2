@@ -1,7 +1,7 @@
 import {
   créerRouteurTRPC,
   procédureProtégée,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { configuration } from "@/config";
-import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
+import { onlyCron } from "@/server/framework/guards/onlyCron";
 import { logger } from "@/server/framework/logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";

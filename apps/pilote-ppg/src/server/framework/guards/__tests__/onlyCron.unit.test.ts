@@ -1,4 +1,4 @@
-import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
+import { onlyCron } from "@/server/framework/guards/onlyCron";
 import {
   setupRequest,
   setupResponse,

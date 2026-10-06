@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { $Enums } from "@prisma/client";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { BaseNavigation } from "./BaseNavigation";
 
 const estAutoriseAAccederAPiloteEval = (session: Session) => {

@@ -4,7 +4,7 @@ import { getContainer } from "@/server/dependances";
 import {
   créerRouteurTRPC,
   procédureProtégée,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 
 const validation = z.object({
   territoireCodes: z.array(z.string()).nullable(),

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { buildJalons } from "@/client/utils/jalons";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 

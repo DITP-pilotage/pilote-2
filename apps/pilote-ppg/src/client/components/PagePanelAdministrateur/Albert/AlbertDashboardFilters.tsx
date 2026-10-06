@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import { SearchInput } from "@/components/shared/SearchInput";
 import { $Enums } from "@prisma/client";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { FEEDBACK_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
 import { clsxm } from "@/utils/clsxm";
 

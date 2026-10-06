@@ -1,4 +1,4 @@
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import type { VariableContenuDisponibleEnv } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
 import { useBootstrap } from "@/components/_commons/Bootstrap/BootstrapContext";
 

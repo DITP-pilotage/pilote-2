@@ -3,7 +3,7 @@ import { parse } from "csv-parse/sync";
 import { File } from "formidable";
 import fs from "node:fs";
 import { CsvRecord } from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface";
-import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
+import { onlyCron } from "@/server/framework/guards/onlyCron";
 import { getContainer } from "@/server/dependances";
 import { logger } from "@/server/framework/logger";
 import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";

@@ -4,7 +4,7 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import Utilisateur, {
   ProfilCode,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";

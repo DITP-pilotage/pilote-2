@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { Navigation } from "@/components/_commons/MiseEnPage/Navigation/Navigation";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import { Notice } from "@/components/shared/Notice";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 import { BoutonApplicationsPilote } from "@/components/_commons/MiseEnPage/EnTete/BoutonApplicationsPilote";

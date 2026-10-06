@@ -20,7 +20,7 @@ import {
   writeMinimizedConversation,
 } from "@/components/_commons/ChatUI/minimizedConversationStorage";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 export type AlbertDisplay = "fullscreen" | "minimized";
 

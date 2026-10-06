@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { DateTime } from "luxon";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { ConversationTranscript } from "@/components/PagePanelAdministrateur/Albert/ConversationTranscript";
 import { Modale } from "@/components/shared/Modale";
 

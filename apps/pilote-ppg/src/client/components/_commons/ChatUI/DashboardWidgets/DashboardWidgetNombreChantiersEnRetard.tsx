@@ -1,4 +1,4 @@
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { DashboardKpiCard } from "./DashboardKpiCard";
 

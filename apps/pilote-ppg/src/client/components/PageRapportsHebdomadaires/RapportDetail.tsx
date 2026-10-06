@@ -1,4 +1,4 @@
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { TitreSection } from "./TitreSection";

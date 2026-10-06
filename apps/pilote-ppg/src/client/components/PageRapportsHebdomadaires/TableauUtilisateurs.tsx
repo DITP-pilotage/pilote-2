@@ -1,5 +1,5 @@
 import { Table } from "@/components/shared/Table";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { type CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
 export const TableauUtilisateurs = ({

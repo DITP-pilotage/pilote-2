@@ -2,7 +2,7 @@ import {
   créerRouteurTRPC,
   procédureNonConnecte,
   procédureProtégée,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { validationContenu } from "@/validation/gestion-contenu";
 import { validationFeatureFlip } from "@/validation/feature-flip";
 import { presenterEnMessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";

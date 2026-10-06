@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { UtilisateurFormInputs } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import {
   ProfilCode,
   profilsDépartementaux,

@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import { clsxm } from "@/utils/clsxm";
 import { getLabelTerritoire } from "@/client/constants/territoires";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";

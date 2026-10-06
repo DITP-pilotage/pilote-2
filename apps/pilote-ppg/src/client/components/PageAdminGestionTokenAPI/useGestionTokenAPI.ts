@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { validationCreationTokenAPI } from "@/validation/gestion-token-api";

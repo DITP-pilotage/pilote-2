@@ -11,7 +11,7 @@ import {
   parseAsSortingAmong,
   parseAsTablePage,
 } from "@/components/shared/DataTable/urlParsers";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import {
   AlbertDashboardFilters,
   type FiltresDashboard,

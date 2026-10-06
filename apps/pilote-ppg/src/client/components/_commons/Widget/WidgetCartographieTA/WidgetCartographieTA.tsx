@@ -12,7 +12,7 @@ import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCart
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { useDonneesCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/useDonneesCartographieTA";
 import { useLegendeTA } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/useLegendeTA";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 type WidgetCartographieTAProps = {
   chantierIds: string[];

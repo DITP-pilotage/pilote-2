@@ -9,7 +9,7 @@ import {
 } from "@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { MultiSelectPérimètreMinistériel } from "@/client/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import Interrupteur from "@/client/components/_commons/Interrupteur/Interrupteur";

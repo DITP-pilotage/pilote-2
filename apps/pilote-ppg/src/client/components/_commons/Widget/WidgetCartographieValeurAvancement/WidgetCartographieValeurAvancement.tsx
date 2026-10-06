@@ -3,7 +3,7 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from "@/client/constants/légendes/élémentsDeLégendesCartographieValeurAvancement";

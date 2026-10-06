@@ -1,4 +1,4 @@
-import { créerRouteurTRPC } from "@/server/infrastructure/api/trpc/trpc";
+import { créerRouteurTRPC } from "@/server/framework/trpc/trpc";
 import { utilisateurRouter } from "@/server/infrastructure/api/trpc/routes/utilisateur";
 import { metadataIndicateurRouter } from "@/server/infrastructure/api/trpc/routes/metadataIndicateur";
 import { gestionContenuRouter } from "@/server/infrastructure/api/trpc/routes/gestionContenu";

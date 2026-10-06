@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { ItemListe } from "@/components/_commons/EditeurContenu3Colonnes/EditeurContenu3Colonnes";
 
 const templateInitial = `

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { z } from "zod";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { validationAccuserReceptionPropostionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 

@@ -1,6 +1,6 @@
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { type Session } from "next-auth";
-import { appRouter } from "./routes/routes";
+import { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
 
 export type AppRouter = typeof appRouter;
 export type RouterInputs = inferRouterInputs<AppRouter>;

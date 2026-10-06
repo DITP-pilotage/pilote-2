@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import EcartTauxAvancementPPG from "@/components/PageChantier/AvancementChantier/EcartTauxAvancementPPG/EcartTauxAvancementPPG";
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
