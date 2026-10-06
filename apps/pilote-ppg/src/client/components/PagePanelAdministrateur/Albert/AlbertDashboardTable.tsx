@@ -8,7 +8,7 @@ import {
 import { useMemo } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
-import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
+import type { appRouter } from "@/server/app/trpc/appRouter";
 
 type ListerOutput = inferRouterOutputs<
   typeof appRouter

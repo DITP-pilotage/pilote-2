@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
-import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
+import type { appRouter } from "@/server/app/trpc/appRouter";
 import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
 import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
