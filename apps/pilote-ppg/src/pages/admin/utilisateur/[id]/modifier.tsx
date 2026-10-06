@@ -31,7 +31,7 @@ export const getServerSideProps = async (
     return redirigerVersPageAccueil;
   }
 
-  const utilisateurDemandé = await getContainer("legacy")
+  const utilisateurDemandé = await getContainer("gestionUtilisateur")
     .resolve("récupérerUnUtilisateurUseCase")
     .run(params.id);
   if (!utilisateurDemandé) {

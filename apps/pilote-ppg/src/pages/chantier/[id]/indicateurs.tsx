@@ -80,7 +80,7 @@ export async function getServerSideProps(
 
   if (searchParams.rapportId) {
     rapport = presenterEnRapportContrat(
-      await getContainer("legacy")
+      await getContainer("importIndicateur")
         .resolve("rapportRepository")
         .récupérerRapportParId(searchParams.rapportId),
     );
@@ -89,8 +89,8 @@ export async function getServerSideProps(
   const informationsIndicateur =
     await Promise.all<InformationIndicateurContrat>(
       indicateurs.map((indicateur) =>
-        getContainer("legacy")
-          .resolve("importIndicateurRepository")
+        getContainer("importIndicateur")
+          .resolve("indicateurRepository")
           .recupererInformationIndicateurParId(indicateur.id)
           .then((result) => presenterEnInformationIndicateurContrat(result)),
       ),
