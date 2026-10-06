@@ -1,0 +1,38 @@
+import { $Enums } from "@prisma/client";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import type { Inject } from "@/server/metadata-chantier/module";
+
+export interface PorteurOption {
+  id: string;
+  label: string;
+}
+
+export class ListerPorteursQuery {
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
+
+  async run({ type }: { type?: $Enums.porteur_type } = {}): Promise<
+    PorteurOption[]
+  > {
+    const porteurs = await this.prisma
+      .getInstance()
+      .metadata_porteurs.findMany({
+        where: {
+          deleted_at: null,
+          ...(type ? { porteur_type: type } : {}),
+        },
+        orderBy: { porteur_id: "asc" },
+      });
+    return porteurs.map(toApiModel);
+  }
+}
+
+function toApiModel(p: {
+  porteur_id: string;
+  porteur_name: string;
+}): PorteurOption {
+  return { id: p.porteur_id, label: p.porteur_name };
+}

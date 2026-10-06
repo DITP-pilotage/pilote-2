@@ -1,4 +1,4 @@
-import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
+import type { ZonegroupAdminListItem } from "@/server/metadata-zonegroup/queries/ListerZonegroupsAdminQuery";
 import Link from "next/link";
 import { Button } from "@/components/shared/Button";
 

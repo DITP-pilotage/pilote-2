@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { porteurCommandSchema } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
+import { porteurCommandSchema } from "@/server/metadata-porteur/handlers/EnregistrerPorteurHandler";
 
 export type PorteurForm = z.infer<typeof porteurCommandSchema>;
 

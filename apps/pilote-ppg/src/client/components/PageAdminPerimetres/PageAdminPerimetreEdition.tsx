@@ -11,7 +11,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataPerimetre } from "@/server/metadataPerimetre/queries/RecupererPerimetreQuery";
+import { MetadataPerimetre } from "@/server/metadata-perimetre/queries/RecupererPerimetreQuery";
 import {
   defaultPerimetreVide,
   PerimetreForm,

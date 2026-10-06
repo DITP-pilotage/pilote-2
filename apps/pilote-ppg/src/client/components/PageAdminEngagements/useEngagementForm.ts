@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { engagementCommandSchema } from "@/server/metadataEngagement/handlers/EnregistrerEngagementHandler";
+import { engagementCommandSchema } from "@/server/metadata-engagement/handlers/EnregistrerEngagementHandler";
 
 export type EngagementForm = z.infer<typeof engagementCommandSchema>;
 
