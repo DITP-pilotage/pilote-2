@@ -12,7 +12,6 @@ import { convertitEnPondération } from "@/client/utils/ponderation/ponderation"
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
@@ -93,7 +92,6 @@ export const getServerSideProps = async (
       décisionStratégique,
       brouillonDecisionStrategique,
       détailsIndicateurs,
-      valeurFFPpgArchive,
       bootstrap,
     ] = await Promise.all([
       getContainer("chantiers")
@@ -135,16 +133,8 @@ export const getServerSideProps = async (
           session.habilitations,
           jalon,
         ),
-      new RecupererVariableContenuUseCase().run({
-        nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
-      }),
       loadBootstrap(session),
     ]);
-
-    assert(
-      valeurFFPpgArchive || chantier.statut !== "ARCHIVE",
-      "La page n'est pas disponible",
-    );
 
     const chantierTerritoireSélectionné =
       chantier.mailles[territoireSélectionné.maille ?? "nationale"][

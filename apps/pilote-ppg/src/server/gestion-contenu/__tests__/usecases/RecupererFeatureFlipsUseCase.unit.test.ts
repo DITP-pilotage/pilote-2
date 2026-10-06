@@ -25,7 +25,6 @@ describe("RecupererFeatureFlipsUseCase", () => {
       featureFlip: {
         featureFlipAdmin: false,
         applicationIndisponible: false,
-        ppgArchive: false,
         poserUneQuestionIndicateur: false,
         askAI: false,
         piloteEval: false,
@@ -34,7 +33,6 @@ describe("RecupererFeatureFlipsUseCase", () => {
         creationCompteArs: false,
         masquerIndicateursNonApplicables: false,
         accesPilote: false,
-        comparaisonTerritoires: false,
         pvaValeurDifferente: false,
         lienContactBrevo: false,
       },
@@ -58,7 +56,6 @@ describe("RecupererFeatureFlipsUseCase", () => {
       featureFlip: {
         featureFlipAdmin: true,
         applicationIndisponible: false,
-        ppgArchive: false,
         poserUneQuestionIndicateur: false,
         askAI: false,
         piloteEval: false,
@@ -67,7 +64,6 @@ describe("RecupererFeatureFlipsUseCase", () => {
         creationCompteArs: false,
         masquerIndicateursNonApplicables: false,
         accesPilote: false,
-        comparaisonTerritoires: false,
         pvaValeurDifferente: false,
         lienContactBrevo: false,
       },

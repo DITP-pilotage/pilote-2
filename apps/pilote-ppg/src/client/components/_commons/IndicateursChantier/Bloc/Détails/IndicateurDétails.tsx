@@ -17,7 +17,6 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieAvecSelecteurIndicateur } from "@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useIndicateurDetailsMode } from "@/components/PageChantier/IndicateurDetailsContext";
-import { useEnv } from "@/client/hooks/useEnv";
 import { ComparaisonTerritoiresIndicateur } from "@/components/_commons/IndicateursChantier/Bloc/Détails/ComparaisonTerritoires/ComparaisonTerritoiresIndicateur";
 import { useIndicateurDétails } from "./useIndicateurDétails";
 
@@ -57,10 +56,6 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   } = useBlocIndicateurContext();
 
   const indicateurDetailsMode = useIndicateurDetailsMode();
-
-  const featureComparaisonTerritoires = useEnv(
-    "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
-  );
 
   const [futOuvert, setFutOuvert] = useState(false);
 
@@ -217,20 +212,18 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       />
                     </section>
 
-                    {featureComparaisonTerritoires && (
-                      <div className="fr-mt-2w fr-container">
-                        <Suspense>
-                          <ComparaisonTerritoiresIndicateur
-                            indicateurId={indicateur.id}
-                            chantierId={chantierId}
-                            jalon={jalon}
-                            maille={mailleQuery}
-                            territoireCode={territoireCode}
-                            unite={indicateur.unité}
-                          />
-                        </Suspense>
-                      </div>
-                    )}
+                    <div className="fr-mt-2w fr-container">
+                      <Suspense>
+                        <ComparaisonTerritoiresIndicateur
+                          indicateurId={indicateur.id}
+                          chantierId={chantierId}
+                          jalon={jalon}
+                          maille={mailleQuery}
+                          territoireCode={territoireCode}
+                          unite={indicateur.unité}
+                        />
+                      </Suspense>
+                    </div>
                   </>
                 ) : null}
                 {futOuvert && detailIndicateurDuTerritoire ? (

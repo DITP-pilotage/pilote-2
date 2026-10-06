@@ -5,7 +5,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TEXTE: string;
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE: string;
   NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: boolean;
-  NEXT_PUBLIC_FF_PPG_ARCHIVE: boolean;
   NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR: boolean;
   NEXT_PUBLIC_FF_ASK_AI: boolean;
   NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: boolean;
@@ -20,7 +19,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_CREATION_COMPTE_ARS: boolean;
   NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES: boolean;
   NEXT_PUBLIC_FF_ACCES_PILOTE: boolean;
-  NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES: boolean;
   NEXT_PUBLIC_FF_ANNUAIRE: boolean;
   NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE: boolean;
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
@@ -42,11 +40,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
     configKey: "applicationIndisponible",
     label: "Application indisponible",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
-    configKey: "ppgArchive",
-    label: "PPG archive",
   },
   {
     envKey: "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
@@ -113,11 +106,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_ACCES_PILOTE",
     configKey: "accesPilote",
     label: "Accès Pilote",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
-    configKey: "comparaisonTerritoires",
-    label: "Comparaison territoires",
   },
   {
     envKey: "NEXT_PUBLIC_FF_ANNUAIRE",
