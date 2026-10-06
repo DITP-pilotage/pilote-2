@@ -1,4 +1,4 @@
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { CommentaireRepository } from "@/server/gestion-utilisateur/domain/ports/CommentaireRepository";
 import { SyntheseDesResultatsRepository } from "@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository";

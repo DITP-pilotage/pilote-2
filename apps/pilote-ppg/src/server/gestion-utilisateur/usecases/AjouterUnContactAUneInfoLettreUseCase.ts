@@ -1,6 +1,6 @@
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class AjouterUnContactAUneInfoLettreUseCase {

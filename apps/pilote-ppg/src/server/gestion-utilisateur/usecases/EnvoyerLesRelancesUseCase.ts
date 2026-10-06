@@ -1,7 +1,7 @@
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import {
   ActionCompteInactif,
   marquerCommeEchec,

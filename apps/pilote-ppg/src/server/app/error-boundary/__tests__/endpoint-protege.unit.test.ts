@@ -5,7 +5,7 @@ import {
 } from "@/server/infrastructure/test/apiTestHelpers";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
-import Logger from "@/server/infrastructure/Logger";
+import Logger from "@/server/framework/logger";
 
 const { MockTokenAPIJWTService } = vi.hoisted(() => ({
   MockTokenAPIJWTService: vi.fn(),
@@ -19,7 +19,7 @@ vi.mock("@/config", () => ({
   })),
 }));
 
-vi.mock("@/server/infrastructure/Logger", () => ({
+vi.mock("@/server/framework/logger", () => ({
   __esModule: true,
   default: {
     error: vi.fn(),

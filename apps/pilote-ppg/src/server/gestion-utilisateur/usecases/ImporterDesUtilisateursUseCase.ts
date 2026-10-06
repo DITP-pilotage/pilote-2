@@ -12,7 +12,7 @@ import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/Ch
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import type { Inject } from "@/server/gestion-utilisateur/module";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 
 export default class ImporterDesUtilisateursUseCase {
   private readonly utilisateurRepository: UtilisateurRepository;

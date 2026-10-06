@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { acmeChallengeStore } from "@/server/infrastructure/acme/acmeChallengeStore";
 import { onlyAcmeApiKey } from "@/server/infrastructure/api/acme/onlyAcmeApiKey";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 
 const tokenSchema = z.string().regex(/^[A-Za-z0-9_-]+$/);
 
