@@ -108,6 +108,8 @@ export const SelectField = <T extends string>({
             className={clsxm("w-full text-left", triggerClassName, {
               "!border-b-red-500": errorMessage,
             })}
+            aria-describedby={errorMessage ? `${name}-error` : undefined}
+            aria-invalid={errorMessage ? true : undefined}
             data-value={value ?? ""}
             id={name}
           >
@@ -120,7 +122,9 @@ export const SelectField = <T extends string>({
       />
 
       {errorMessage ? (
-        <p className="fr-error-text fr-mt-1v">{errorMessage}</p>
+        <p className="fr-error-text fr-mt-1v" id={`${name}-error`}>
+          {errorMessage}
+        </p>
       ) : null}
     </div>
   );
