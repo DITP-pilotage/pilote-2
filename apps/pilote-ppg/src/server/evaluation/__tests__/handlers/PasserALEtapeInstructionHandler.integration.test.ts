@@ -2,8 +2,8 @@ import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/Pa
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("PasserALEtapeInstructionHandler", () => {
   let handler: PasserALEtapeInstructionHandler;

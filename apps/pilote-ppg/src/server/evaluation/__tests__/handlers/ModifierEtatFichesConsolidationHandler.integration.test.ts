@@ -5,8 +5,8 @@ import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTran
 import { ModifierEtatFichesConsolidationHandler } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { NotificationEmailService } from "@/server/evaluation/services/NotificationEmailService";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("ModifierEtatFichesConsolidationHandler", () => {
   let handler: ModifierEtatFichesConsolidationHandler;

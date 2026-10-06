@@ -1,6 +1,6 @@
 import type { Session } from "next-auth";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import type { HabilitationChantiers } from "@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface";
 

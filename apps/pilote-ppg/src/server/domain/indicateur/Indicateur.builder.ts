@@ -5,7 +5,7 @@ import Indicateur, {
 import {
   générerPeutÊtreNull,
   générerUnIdentifiantUnique,
-} from "@/server/infrastructure/test/builders/utils";
+} from "@/test/builders/utils";
 
 export default class IndicateurBuilder {
   private _id: Indicateur["id"];

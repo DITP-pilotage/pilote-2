@@ -1,8 +1,5 @@
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
-import {
-  setupRequest,
-  setupResponse,
-} from "@/server/infrastructure/test/apiTestHelpers";
+import { setupRequest, setupResponse } from "@/test/apiTestHelpers";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { logger } from "@/server/framework/logger";

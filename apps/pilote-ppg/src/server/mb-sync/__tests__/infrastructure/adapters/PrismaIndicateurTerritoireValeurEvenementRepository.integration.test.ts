@@ -1,6 +1,6 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/mb-sync/infrastructure/adapters/PrismaIndicateurTerritoireValeurEvenementRepository";
 
 const TERRITOIRE_CODE = "NAT-FR";

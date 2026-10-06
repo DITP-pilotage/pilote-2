@@ -1,7 +1,7 @@
 import { getContainer } from "@/server/dependances";
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 /**
  * Auteurs attendus par les requetes d'historisation.

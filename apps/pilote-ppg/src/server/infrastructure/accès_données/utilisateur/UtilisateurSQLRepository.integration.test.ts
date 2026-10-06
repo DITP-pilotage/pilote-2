@@ -2,7 +2,7 @@ import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurReposi
 import TerritoireBuilder from "@/server/domain/territoire/Territoire.builder";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { UtilisateurSQLRepository } from "./UtilisateurSQLRepository";
 
 describe("UtilisateurSQLRepository", () => {

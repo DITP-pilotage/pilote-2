@@ -2,8 +2,8 @@ import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
 } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "./RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 

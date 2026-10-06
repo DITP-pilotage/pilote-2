@@ -4,8 +4,8 @@ import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateu
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/server/infrastructure/test/NextAuthHelper";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/test/NextAuthHelper";
 import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import { requeteMultipart } from "@/server/import-indicateur/__tests__/infrastructure/handlers/requeteImport.builder";
 

@@ -1,7 +1,7 @@
 import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import ChantierSQLRepository from "./ChantierSQLRepository";
 
 const prismaPilote = new PrismaPilote();

@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("AccesFicheEvaluationService", () => {
   let service: AccesFicheEvaluationService;

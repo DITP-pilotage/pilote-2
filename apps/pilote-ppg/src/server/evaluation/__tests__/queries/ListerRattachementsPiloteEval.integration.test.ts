@@ -1,8 +1,8 @@
 import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ListerRattachementsPiloteEval } from "@/server/evaluation/queries/ListerRattachementsPiloteEval";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("ListerRattachementsPiloteEval", () => {
   let query: ListerRattachementsPiloteEval;

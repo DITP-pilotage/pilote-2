@@ -1,6 +1,6 @@
 import { PrismaUtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaUtilisateurRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaUtilisateurRepository", () => {
   let prismaUtilisateurRepository: PrismaUtilisateurRepository;

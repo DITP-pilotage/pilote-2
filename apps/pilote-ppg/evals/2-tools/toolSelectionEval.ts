@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { BRETAGNE, EVAL_TIMEOUT_MS, seedEvalWorld } from "../world";
 import { seedChantierEnDifficulte, seedChantierEnRetard } from "../seeds";
 import { scoreExpectedTools } from "../scoreExpectedTools";

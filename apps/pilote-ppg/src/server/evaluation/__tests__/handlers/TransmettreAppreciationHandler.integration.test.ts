@@ -4,8 +4,8 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { TransmettreAppreciationHandler } from "@/server/evaluation/handlers/TransmettreAppreciationHandler";
 import { NotificationEmailService } from "@/server/evaluation/services/NotificationEmailService";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("TransmettreAppreciationHandler", () => {
   let handler: TransmettreAppreciationHandler;

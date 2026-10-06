@@ -15,7 +15,7 @@ import { ErreurValidationFichier } from "@/server/import-indicateur/domain/Erreu
 import { ErreurValidationFichierRepository } from "@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository";
 import { InformationIndicateurBuilder } from "@/server/import-indicateur/app/builder/InformationIndicateurBuilder";
 import { IndicateurRepository } from "@/server/import-indicateur/domain/ports/IndicateurRepository";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("VerifierFichierIndicateurImporteUseCase", () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;

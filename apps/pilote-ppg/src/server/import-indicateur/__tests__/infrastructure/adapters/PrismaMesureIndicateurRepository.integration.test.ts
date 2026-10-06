@@ -7,7 +7,7 @@ import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructu
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaMesureIndicateurRepository", () => {
   let prismaRapportRepository: PrismaRapportRepository;

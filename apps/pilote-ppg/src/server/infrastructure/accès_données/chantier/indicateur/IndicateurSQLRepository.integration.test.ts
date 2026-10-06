@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 import IndicateurSQLRepository from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("IndicateurSQLRepository", () => {

@@ -1,8 +1,8 @@
 import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilotageQuery";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures as f } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures as f } from "@/test/fixtures";
 
 describe("#AfficherPilotageQuery", () => {
   let query: AfficherPilotageQuery;

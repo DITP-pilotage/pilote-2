@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { RecupererIdSuivantEngagementQuery } from "@/server/metadataEngagement/queries/RecupererIdSuivantEngagementQuery";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("RecupererIdSuivantEngagementQuery", () => {
   let query: RecupererIdSuivantEngagementQuery;
