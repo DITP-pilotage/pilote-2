@@ -1,4 +1,4 @@
-import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
+import type { appRouter } from "@/server/app/trpc/appRouter";
 import {
   CATEGORIE_LOG_PAR_DEFAUT,
   type CategorieLog,
