@@ -8,7 +8,7 @@ import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/Me
 import { ACCEPTED_DATE_FORMAT } from "@/server/import-indicateur/domain/enum/ACCEPTED_DATE_FORMAT";
 import { ErreurValidationFichierRepository } from "@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository";
 import { IndicateurRepository } from "@/server/import-indicateur/domain/ports/IndicateurRepository";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import type { Inject } from "@/server/import-indicateur/module";
 
 /**

@@ -1,6 +1,6 @@
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { SanitizerHTML } from "@/server/app/domain/SanitizerHTML";
 

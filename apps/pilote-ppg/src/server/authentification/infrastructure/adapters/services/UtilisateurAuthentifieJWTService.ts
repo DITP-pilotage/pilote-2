@@ -5,7 +5,7 @@ import { TokenAPIJWTService } from "@/server/authentification/infrastructure/ada
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { configuration } from "@/config";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 
 export class UtilisateurAuthentifieJWTService {
   private readonly utilisateurRepository: UtilisateurRepository;

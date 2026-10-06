@@ -1,6 +1,6 @@
 import { marked } from "marked";
 import axios from "axios";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 
 export function envoieMessageTchap(
   messageErreur: string,

@@ -14,7 +14,7 @@ import {
   ImportCommentaireErrorResponse,
 } from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import type { Inject } from "@/server/commentaires/module";
 
 export class ImportCommentaireAPIHandler {

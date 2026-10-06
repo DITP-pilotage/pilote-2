@@ -1,4 +1,4 @@
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { creerRapportResponsableDonnees } from "@/server/chantiers/domain/RapportResponsableDonnees";
 import { genererParametresRapportResponsableDonnees } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportResponsableDonnees";
 import type { Inject } from "@/server/chantiers/module";

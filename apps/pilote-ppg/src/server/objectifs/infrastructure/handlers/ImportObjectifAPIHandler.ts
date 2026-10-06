@@ -8,7 +8,7 @@ import {
   ImportObjectifErrorResponse,
 } from "@/server/objectifs/app/contrats/ImportObjectifAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import type { Inject } from "@/server/objectifs/module";
 
 export class ImportObjectifAPIHandler {

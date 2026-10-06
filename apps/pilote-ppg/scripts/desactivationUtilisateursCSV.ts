@@ -1,7 +1,7 @@
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import assert from "node:assert/strict";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
 import { getContainer } from "@/server/dependances";
 
@@ -50,7 +50,14 @@ async function main() {
     filename,
   ).parseComptesADesactiver();
   for (const email of emailsADesactiver) {
-    logger.info({ categorie: "utilisateur", source: "desactivationUtilisateursCSV", email }, "Désactivation du compte");
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "desactivationUtilisateursCSV",
+        email,
+      },
+      "Désactivation du compte",
+    );
     await utilisateurRepository.desactiver(email, auteurGenerique.id);
 
     if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
@@ -71,10 +78,16 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then(() => {
-      logger.info({ categorie: "utilisateur", source: "desactivationUtilisateursCSV" }, "Désactivation OK.");
+      logger.info(
+        { categorie: "utilisateur", source: "desactivationUtilisateursCSV" },
+        "Désactivation OK.",
+      );
     })
     .catch((error) => {
-      logger.error({ categorie: "utilisateur", source: "desactivationUtilisateursCSV" }, (error as Error).message);
+      logger.error(
+        { categorie: "utilisateur", source: "desactivationUtilisateursCSV" },
+        (error as Error).message,
+      );
       throw new Error("Désactivation échouée.", { cause: error });
     });
 }

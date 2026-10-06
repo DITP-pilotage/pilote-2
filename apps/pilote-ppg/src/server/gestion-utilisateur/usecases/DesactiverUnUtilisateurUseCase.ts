@@ -11,7 +11,7 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 
 export default class DesactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { handleListerIndicateurs } from "@/server/chantiers/infrastructure/handlers/ListerIndicateursHandler";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";

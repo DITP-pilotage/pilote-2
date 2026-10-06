@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
-import logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration } from "@/config";
 

@@ -5,7 +5,7 @@ import {
 } from "@/server/infrastructure/test/apiTestHelpers";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
-import Logger from "@/server/framework/logger";
+import { logger } from "@/server/framework/logger";
 
 const { MockTokenAPIJWTService } = vi.hoisted(() => ({
   MockTokenAPIJWTService: vi.fn(),
@@ -20,8 +20,7 @@ vi.mock("@/config", () => ({
 }));
 
 vi.mock("@/server/framework/logger", () => ({
-  __esModule: true,
-  default: {
+  logger: {
     error: vi.fn(),
   },
 }));
@@ -31,7 +30,7 @@ vi.mock(
   () => ({ TokenAPIJWTService: MockTokenAPIJWTService }),
 );
 
-const mockLoggerError = Logger.error as ReturnType<typeof vi.fn>;
+const mockLoggerError = logger.error as ReturnType<typeof vi.fn>;
 
 describe("endpointProtege", () => {
   let mockDecoderTokenAPI: ReturnType<typeof vi.fn>;
