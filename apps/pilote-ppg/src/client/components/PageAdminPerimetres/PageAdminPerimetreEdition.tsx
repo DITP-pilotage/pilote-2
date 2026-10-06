@@ -1,4 +1,5 @@
 import { Controller, FormProvider } from "react-hook-form";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { FormTextField } from "@/components/shared/FormTextField";
 import {
   SelectField,
@@ -191,6 +192,7 @@ const PageAdminPerimetreEdition = ({
                     name="perimetrePorteurId"
                     render={({ field }) => (
                       <SelectField
+                        className={FIELD_GROUP_SPACING}
                         name="perimetrePorteurId"
                         label="Porteur"
                         onChange={(val) => field.onChange(val || null)}

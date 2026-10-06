@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField, TextareaField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
@@ -220,6 +221,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         ) : (
                           <div className="w-half-full flex fr-mb-1w">
                             <TextField
+                              className={FIELD_GROUP_SPACING}
                               errorMessage={
                                 reactHookForm.formState.errors.valeurAvancement
                                   ?.message
@@ -303,6 +305,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   ) : null}
                   <div className="fr-mt-2w">
                     <TextareaField
+                      className={FIELD_GROUP_SPACING}
                       counter={{
                         length: reactHookForm.watch("motifProposition").length,
                         max: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
@@ -322,6 +325,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   </div>
                   <div className="fr-mt-2w">
                     <TextareaField
+                      className={FIELD_GROUP_SPACING}
                       counter={{
                         length: reactHookForm.watch(
                           "sourceDonneeEtMethodeCalcul",

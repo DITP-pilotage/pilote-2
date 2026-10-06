@@ -49,7 +49,7 @@ const PageHabilitationsCoordinateur: FunctionComponent = () => {
         />
       </div>
 
-      <div className="fr-btns-group fr-btns-group--inline fr-mt-3w">
+      <div className="flex flex-wrap gap-4 fr-mt-3w">
         <Button
           variant="primary"
           disabled={chantierIdsSelectionnes.length === 0 || isLoading}

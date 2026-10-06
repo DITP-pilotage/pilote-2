@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { SelectField } from "@/components/shared/SelectField";
 import { useRouter } from "next/router";
 import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
@@ -69,6 +70,7 @@ export const ContenuPageNoteCollective = () => {
               <div className="flex items-center gap-2 w-fit">
                 <span className="pt-2">Territoire : </span>
                 <SelectField
+                  className={FIELD_GROUP_SPACING}
                   name="select-territoire"
                   onChange={handleRattachementChange}
                   options={rattachements.map((rattachement) => {

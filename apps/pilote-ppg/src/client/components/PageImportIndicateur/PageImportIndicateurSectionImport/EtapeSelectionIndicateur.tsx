@@ -1,4 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import Titre from "@/components/_commons/Titre/Titre";
@@ -56,6 +57,7 @@ const EtapeSelectionIndicateur: FunctionComponent<{
           </Titre>
           <input name="etapeCourante" type="hidden" value={2} />
           <SelectField
+            className={FIELD_GROUP_SPACING}
             name="indicateurId"
             label="Choix de l'indicateur"
             onChange={valeurModifiéeCallback}

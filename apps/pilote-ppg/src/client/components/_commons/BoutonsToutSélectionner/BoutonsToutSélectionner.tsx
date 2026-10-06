@@ -1,5 +1,6 @@
 import { FunctionComponent, MouseEventHandler } from "react";
 import { Button } from "@/components/shared/Button";
+import { clsxm } from "@/utils/clsxm";
 
 interface BoutonToutSélectionnerProps {
   onClickToutSélectionner: MouseEventHandler<HTMLButtonElement>;
@@ -16,15 +17,19 @@ const BoutonToutSélectionner: FunctionComponent<
 }) => {
   return (
     <ul
-      className={`fr-btns-group fr-btns-group--inline fr-btns-group--sm${className ? " " + className : ""}`}
+      className={clsxm("flex flex-wrap gap-4 list-none pl-0 mb-4", className)}
     >
-      <li>
-        <Button onClick={onClickToutSélectionner} variant="secondary">
+      <li className="pb-0">
+        <Button onClick={onClickToutSélectionner} size="sm" variant="secondary">
           Tout sélectionner
         </Button>
       </li>
-      <li>
-        <Button onClick={onClickToutDésélectionner} variant="secondary">
+      <li className="pb-0">
+        <Button
+          onClick={onClickToutDésélectionner}
+          size="sm"
+          variant="secondary"
+        >
           Tout déselectionner
         </Button>
       </li>

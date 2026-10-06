@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -61,6 +62,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
                 <span className="!text-error">*</span>
               </label>
               <TextField
+                className={FIELD_GROUP_SPACING}
                 disabled
                 id="email"
                 type="email"

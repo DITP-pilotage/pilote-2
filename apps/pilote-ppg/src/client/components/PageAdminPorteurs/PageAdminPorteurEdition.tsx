@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import {
   FormTextField,
   FormTextareaField,
@@ -190,6 +191,7 @@ const PageAdminPorteurEdition = ({
                     name="porteurType"
                     render={({ field }) => (
                       <SelectField
+                        className={FIELD_GROUP_SPACING}
                         name="porteurType"
                         label="Type"
                         onChange={field.onChange}

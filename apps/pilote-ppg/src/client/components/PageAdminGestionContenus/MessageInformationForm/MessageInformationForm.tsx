@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextareaField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
@@ -21,6 +22,7 @@ const MessageInformationForm: FunctionComponent = () => {
             render={({ field }) => {
               return (
                 <SelectField
+                  className={FIELD_GROUP_SPACING}
                   name="bandeauType"
                   onChange={field.onChange}
                   options={[
@@ -42,6 +44,7 @@ const MessageInformationForm: FunctionComponent = () => {
           render={({ field }) => {
             return (
               <TextareaField
+                className={FIELD_GROUP_SPACING}
                 errorMessage={form.formState.errors.bandeauTexte?.message}
                 id="bandeauTexte"
                 onChange={field.onChange}

@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextareaField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -157,6 +158,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                   </div>
                   <div className="fr-mt-2w">
                     <TextareaField
+                      className={FIELD_GROUP_SPACING}
                       counter={{
                         length: reactHookForm.watch("motifSuppression").length,
                         max: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
