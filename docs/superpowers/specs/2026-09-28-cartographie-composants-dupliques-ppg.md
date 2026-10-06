@@ -200,7 +200,11 @@ Contrainte #2488 (à traiter à sa rebase sur la pile) : la PR du PDF serveur aj
 
 ---
 
-### 7.6 Dossiers transverses `server/domain`, `server/infrastructure`, `server/usecase` (à cadrer)
+### 7.6 Dossiers transverses `server/domain`, `server/infrastructure`, `server/usecase` (fait)
+
+**Fait le 2026-10-06** (stack #2513 → #2519) : `server/framework` (racine DI, logger, persistance, plomberie tRPC, garde-fous, csv, email, acme), `src/test` (support et builders), `src/shared/<domaine>` (types et logique pure partagés), dépôts SQL dans `infrastructure/sql` de leur module, routeurs tRPC dans `<module>/infrastructure/trpc`, assemblage `appRouter` dans `server/app/trpc`. `server/domain`, `server/infrastructure` et `server/usecase` n'existent plus. Chemins désaccentués et exports nommés au passage ; identifiants accentués inchangés.
+
+Historique du cadrage :
 
 Demandé le 2026-10-06 : supprimer ces dossiers et ranger leur contenu par domaine (`<domaine>/domain`, `infrastructure`, `usecases`), comme les modules récents.
 
