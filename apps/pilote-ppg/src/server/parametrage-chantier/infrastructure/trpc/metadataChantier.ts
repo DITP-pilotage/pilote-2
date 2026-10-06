@@ -6,89 +6,87 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import { chantierCommandSchema } from "@/server/parametrage-chantier/handlers/EnregistrerChantierHandler";
-import { enregistrerPonderationsIndicateursCommandSchema } from "@/server/parametrage-chantier/handlers/EnregistrerPonderationsIndicateursHandler";
+import { chantierCommandSchema } from "@/server/parametrage-chantier/handlers/SaveChantierHandler";
+import { enregistrerPonderationsIndicateursCommandSchema } from "@/server/parametrage-chantier/handlers/SavePonderationsIndicateursHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
 export const metadataChantierRouter = createTRPCRouter({
-  lister: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("parametrageChantier")
-      .resolve("listerChantiersQuery")
+      .resolve("listChantiersQuery")
       .run();
   }),
 
-  récupérer: protectedProcedure
+  get: protectedProcedure
     .input(z.object({ chantierId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("parametrageChantier")
-        .resolve("recupererChantierQuery")
+        .resolve("getChantierQuery")
         .run({ chantierId: input.chantierId });
     }),
 
-  récupérerIdSuivant: protectedProcedure.query(async ({ ctx }) => {
+  getNextId: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
-    return getContainer("parametrageChantier")
-      .resolve("recupererIdSuivantQuery")
-      .run();
+    return getContainer("parametrageChantier").resolve("getNextIdQuery").run();
   }),
 
-  listerPpgs: protectedProcedure.query(async ({ ctx }) => {
+  listPpgs: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
-    return getContainer("parametrageChantier").resolve("listerPpgsQuery").run();
+    return getContainer("parametrageChantier").resolve("listPpgsQuery").run();
   }),
 
-  listerPorteursMinistere: protectedProcedure.query(async ({ ctx }) => {
+  listPorteursMinistere: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("parametrageChantier")
-      .resolve("listerPorteursQuery")
+      .resolve("listPorteursQuery")
       .run({ type: "MIN" });
   }),
 
-  listerPorteursDAC: protectedProcedure.query(async ({ ctx }) => {
+  listPorteursDAC: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("parametrageChantier")
-      .resolve("listerPorteursQuery")
+      .resolve("listPorteursQuery")
       .run({ type: "DAC" });
   }),
 
-  listerPerimetres: protectedProcedure
+  listPerimetres: protectedProcedure
     .input(z.object({ porteurId: z.string().optional() }).optional())
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("parametrageChantier")
-        .resolve("listerPerimetresQuery")
+        .resolve("listPerimetresQuery")
         .run({ porteurId: input?.porteurId });
     }),
 
-  listerZonegroups: protectedProcedure.query(async ({ ctx }) => {
+  listZonegroups: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("parametrageChantier")
-      .resolve("listerZonegroupsQuery")
+      .resolve("listZonegroupsQuery")
       .run();
   }),
 
-  enregistrer: protectedProcedure
+  save: protectedProcedure
     .input(chantierCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("parametrageChantier")
-        .resolve("enregistrerChantierHandler")
+        .resolve("saveChantierHandler")
         .execute(input);
     }),
 
-  récupérerIndicateursPonderations: protectedProcedure
+  getIndicateursPonderations: protectedProcedure
     .input(z.object({ chantierId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("parametrageChantier")
-        .resolve("recupererIndicateursPonderationsChantierQuery")
+        .resolve("getIndicateursPonderationsChantierQuery")
         .run({ chantierId: input.chantierId });
     }),
 
-  enregistrerPonderationsIndicateurs: protectedProcedure
+  savePonderationsIndicateurs: protectedProcedure
     .input(
       enregistrerPonderationsIndicateursCommandSchema.and(zodValidateurCSRF),
     )
@@ -96,7 +94,7 @@ export const metadataChantierRouter = createTRPCRouter({
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("parametrageChantier")
-        .resolve("enregistrerPonderationsIndicateursHandler")
+        .resolve("savePonderationsIndicateursHandler")
         .execute(input, ctx.session.user.id);
     }),
 });

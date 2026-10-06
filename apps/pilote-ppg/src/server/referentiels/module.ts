@@ -4,90 +4,90 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
-import { ListerAxesAdminQuery } from "./axe/queries/ListerAxesAdminQuery";
-import { RecupererAxeQuery } from "./axe/queries/RecupererAxeQuery";
-import { VerifierUtilisationAxeQuery } from "./axe/queries/VerifierUtilisationAxeQuery";
-import { EnregistrerAxeHandler } from "./axe/handlers/EnregistrerAxeHandler";
-import { ArchiverAxeHandler } from "./axe/handlers/ArchiverAxeHandler";
-import { RestaurerAxeHandler } from "./axe/handlers/RestaurerAxeHandler";
-import { ListerEngagementsAdminQuery } from "./engagement/queries/ListerEngagementsAdminQuery";
-import { RecupererEngagementQuery } from "./engagement/queries/RecupererEngagementQuery";
-import { RecupererIdSuivantEngagementQuery } from "./engagement/queries/RecupererIdSuivantEngagementQuery";
-import { VerifierUtilisationEngagementQuery } from "./engagement/queries/VerifierUtilisationEngagementQuery";
-import { EnregistrerEngagementHandler } from "./engagement/handlers/EnregistrerEngagementHandler";
-import { ArchiverEngagementHandler } from "./engagement/handlers/ArchiverEngagementHandler";
-import { RestaurerEngagementHandler } from "./engagement/handlers/RestaurerEngagementHandler";
-import { ListerPerimetresAdminQuery } from "./perimetre/queries/ListerPerimetresAdminQuery";
-import { RecupererPerimetreQuery } from "./perimetre/queries/RecupererPerimetreQuery";
-import { RecupererIdSuivantPerimetreQuery } from "./perimetre/queries/RecupererIdSuivantPerimetreQuery";
-import { VerifierUtilisationPerimetreQuery } from "./perimetre/queries/VerifierUtilisationPerimetreQuery";
-import { EnregistrerPerimetreHandler } from "./perimetre/handlers/EnregistrerPerimetreHandler";
-import { ArchiverPerimetreHandler } from "./perimetre/handlers/ArchiverPerimetreHandler";
-import { RestaurerPerimetreHandler } from "./perimetre/handlers/RestaurerPerimetreHandler";
-import { ListerPorteursAdminQuery } from "./porteur/queries/ListerPorteursAdminQuery";
-import { RecupererPorteurQuery } from "./porteur/queries/RecupererPorteurQuery";
-import { RecupererIdSuivantPorteurQuery } from "./porteur/queries/RecupererIdSuivantPorteurQuery";
-import { VerifierUtilisationPorteurQuery } from "./porteur/queries/VerifierUtilisationPorteurQuery";
-import { EnregistrerPorteurHandler } from "./porteur/handlers/EnregistrerPorteurHandler";
-import { ArchiverPorteurHandler } from "./porteur/handlers/ArchiverPorteurHandler";
-import { RestaurerPorteurHandler } from "./porteur/handlers/RestaurerPorteurHandler";
-import { ListerPpgsAdminQuery } from "./ppg/queries/ListerPpgsAdminQuery";
-import { RecupererPpgQuery } from "./ppg/queries/RecupererPpgQuery";
-import { VerifierUtilisationPpgQuery } from "./ppg/queries/VerifierUtilisationPpgQuery";
-import { EnregistrerPpgHandler } from "./ppg/handlers/EnregistrerPpgHandler";
-import { ArchiverPpgHandler } from "./ppg/handlers/ArchiverPpgHandler";
-import { RestaurerPpgHandler } from "./ppg/handlers/RestaurerPpgHandler";
-import { ListerZonegroupsAdminQuery } from "./zonegroup/queries/ListerZonegroupsAdminQuery";
-import { RecupererZonegroupQuery } from "./zonegroup/queries/RecupererZonegroupQuery";
-import { RecupererIdSuivantZonegroupQuery } from "./zonegroup/queries/RecupererIdSuivantZonegroupQuery";
-import { ListerZonesDisponiblesQuery } from "./zonegroup/queries/ListerZonesDisponiblesQuery";
-import { VerifierUtilisationZonegroupQuery } from "./zonegroup/queries/VerifierUtilisationZonegroupQuery";
-import { EnregistrerZonegroupHandler } from "./zonegroup/handlers/EnregistrerZonegroupHandler";
-import { ArchiverZonegroupHandler } from "./zonegroup/handlers/ArchiverZonegroupHandler";
-import { RestaurerZonegroupHandler } from "./zonegroup/handlers/RestaurerZonegroupHandler";
+import { ListAxesAdminQuery } from "./axe/queries/ListAxesAdminQuery";
+import { GetAxeQuery } from "./axe/queries/GetAxeQuery";
+import { CheckAxeUsageQuery } from "./axe/queries/CheckAxeUsageQuery";
+import { SaveAxeHandler } from "./axe/handlers/SaveAxeHandler";
+import { ArchiveAxeHandler } from "./axe/handlers/ArchiveAxeHandler";
+import { RestoreAxeHandler } from "./axe/handlers/RestoreAxeHandler";
+import { ListEngagementsAdminQuery } from "./engagement/queries/ListEngagementsAdminQuery";
+import { GetEngagementQuery } from "./engagement/queries/GetEngagementQuery";
+import { GetNextEngagementIdQuery } from "./engagement/queries/GetNextEngagementIdQuery";
+import { CheckEngagementUsageQuery } from "./engagement/queries/CheckEngagementUsageQuery";
+import { SaveEngagementHandler } from "./engagement/handlers/SaveEngagementHandler";
+import { ArchiveEngagementHandler } from "./engagement/handlers/ArchiveEngagementHandler";
+import { RestoreEngagementHandler } from "./engagement/handlers/RestoreEngagementHandler";
+import { ListPerimetresAdminQuery } from "./perimetre/queries/ListPerimetresAdminQuery";
+import { GetPerimetreQuery } from "./perimetre/queries/GetPerimetreQuery";
+import { GetNextPerimetreIdQuery } from "./perimetre/queries/GetNextPerimetreIdQuery";
+import { CheckPerimetreUsageQuery } from "./perimetre/queries/CheckPerimetreUsageQuery";
+import { SavePerimetreHandler } from "./perimetre/handlers/SavePerimetreHandler";
+import { ArchivePerimetreHandler } from "./perimetre/handlers/ArchivePerimetreHandler";
+import { RestorePerimetreHandler } from "./perimetre/handlers/RestorePerimetreHandler";
+import { ListPorteursAdminQuery } from "./porteur/queries/ListPorteursAdminQuery";
+import { GetPorteurQuery } from "./porteur/queries/GetPorteurQuery";
+import { GetNextPorteurIdQuery } from "./porteur/queries/GetNextPorteurIdQuery";
+import { CheckPorteurUsageQuery } from "./porteur/queries/CheckPorteurUsageQuery";
+import { SavePorteurHandler } from "./porteur/handlers/SavePorteurHandler";
+import { ArchivePorteurHandler } from "./porteur/handlers/ArchivePorteurHandler";
+import { RestorePorteurHandler } from "./porteur/handlers/RestorePorteurHandler";
+import { ListPpgsAdminQuery } from "./ppg/queries/ListPpgsAdminQuery";
+import { GetPpgQuery } from "./ppg/queries/GetPpgQuery";
+import { CheckPpgUsageQuery } from "./ppg/queries/CheckPpgUsageQuery";
+import { SavePpgHandler } from "./ppg/handlers/SavePpgHandler";
+import { ArchivePpgHandler } from "./ppg/handlers/ArchivePpgHandler";
+import { RestorePpgHandler } from "./ppg/handlers/RestorePpgHandler";
+import { ListZonegroupsAdminQuery } from "./zonegroup/queries/ListZonegroupsAdminQuery";
+import { GetZonegroupQuery } from "./zonegroup/queries/GetZonegroupQuery";
+import { GetNextZonegroupIdQuery } from "./zonegroup/queries/GetNextZonegroupIdQuery";
+import { ListZonesDisponiblesQuery } from "./zonegroup/queries/ListZonesDisponiblesQuery";
+import { CheckZonegroupUsageQuery } from "./zonegroup/queries/CheckZonegroupUsageQuery";
+import { SaveZonegroupHandler } from "./zonegroup/handlers/SaveZonegroupHandler";
+import { ArchiveZonegroupHandler } from "./zonegroup/handlers/ArchiveZonegroupHandler";
+import { RestoreZonegroupHandler } from "./zonegroup/handlers/RestoreZonegroupHandler";
 
 type ReferentielsCradle = {
-  listerAxesAdminQuery: ListerAxesAdminQuery;
-  recupererAxeQuery: RecupererAxeQuery;
-  verifierUtilisationAxeQuery: VerifierUtilisationAxeQuery;
-  enregistrerAxeHandler: EnregistrerAxeHandler;
-  archiverAxeHandler: ArchiverAxeHandler;
-  restaurerAxeHandler: RestaurerAxeHandler;
-  listerEngagementsAdminQuery: ListerEngagementsAdminQuery;
-  recupererEngagementQuery: RecupererEngagementQuery;
-  recupererIdSuivantEngagementQuery: RecupererIdSuivantEngagementQuery;
-  verifierUtilisationEngagementQuery: VerifierUtilisationEngagementQuery;
-  enregistrerEngagementHandler: EnregistrerEngagementHandler;
-  archiverEngagementHandler: ArchiverEngagementHandler;
-  restaurerEngagementHandler: RestaurerEngagementHandler;
-  listerPerimetresAdminQuery: ListerPerimetresAdminQuery;
-  recupererPerimetreQuery: RecupererPerimetreQuery;
-  recupererIdSuivantPerimetreQuery: RecupererIdSuivantPerimetreQuery;
-  verifierUtilisationPerimetreQuery: VerifierUtilisationPerimetreQuery;
-  enregistrerPerimetreHandler: EnregistrerPerimetreHandler;
-  archiverPerimetreHandler: ArchiverPerimetreHandler;
-  restaurerPerimetreHandler: RestaurerPerimetreHandler;
-  listerPorteursAdminQuery: ListerPorteursAdminQuery;
-  recupererPorteurQuery: RecupererPorteurQuery;
-  recupererIdSuivantPorteurQuery: RecupererIdSuivantPorteurQuery;
-  verifierUtilisationPorteurQuery: VerifierUtilisationPorteurQuery;
-  enregistrerPorteurHandler: EnregistrerPorteurHandler;
-  archiverPorteurHandler: ArchiverPorteurHandler;
-  restaurerPorteurHandler: RestaurerPorteurHandler;
-  listerPpgsAdminQuery: ListerPpgsAdminQuery;
-  recupererPpgQuery: RecupererPpgQuery;
-  verifierUtilisationPpgQuery: VerifierUtilisationPpgQuery;
-  enregistrerPpgHandler: EnregistrerPpgHandler;
-  archiverPpgHandler: ArchiverPpgHandler;
-  restaurerPpgHandler: RestaurerPpgHandler;
-  listerZonegroupsAdminQuery: ListerZonegroupsAdminQuery;
-  recupererZonegroupQuery: RecupererZonegroupQuery;
-  recupererIdSuivantZonegroupQuery: RecupererIdSuivantZonegroupQuery;
-  listerZonesDisponiblesQuery: ListerZonesDisponiblesQuery;
-  verifierUtilisationZonegroupQuery: VerifierUtilisationZonegroupQuery;
-  enregistrerZonegroupHandler: EnregistrerZonegroupHandler;
-  archiverZonegroupHandler: ArchiverZonegroupHandler;
-  restaurerZonegroupHandler: RestaurerZonegroupHandler;
+  listAxesAdminQuery: ListAxesAdminQuery;
+  getAxeQuery: GetAxeQuery;
+  checkAxeUsageQuery: CheckAxeUsageQuery;
+  saveAxeHandler: SaveAxeHandler;
+  archiveAxeHandler: ArchiveAxeHandler;
+  restoreAxeHandler: RestoreAxeHandler;
+  listEngagementsAdminQuery: ListEngagementsAdminQuery;
+  getEngagementQuery: GetEngagementQuery;
+  getNextEngagementIdQuery: GetNextEngagementIdQuery;
+  checkEngagementUsageQuery: CheckEngagementUsageQuery;
+  saveEngagementHandler: SaveEngagementHandler;
+  archiveEngagementHandler: ArchiveEngagementHandler;
+  restoreEngagementHandler: RestoreEngagementHandler;
+  listPerimetresAdminQuery: ListPerimetresAdminQuery;
+  getPerimetreQuery: GetPerimetreQuery;
+  getNextPerimetreIdQuery: GetNextPerimetreIdQuery;
+  checkPerimetreUsageQuery: CheckPerimetreUsageQuery;
+  savePerimetreHandler: SavePerimetreHandler;
+  archivePerimetreHandler: ArchivePerimetreHandler;
+  restorePerimetreHandler: RestorePerimetreHandler;
+  listPorteursAdminQuery: ListPorteursAdminQuery;
+  getPorteurQuery: GetPorteurQuery;
+  getNextPorteurIdQuery: GetNextPorteurIdQuery;
+  checkPorteurUsageQuery: CheckPorteurUsageQuery;
+  savePorteurHandler: SavePorteurHandler;
+  archivePorteurHandler: ArchivePorteurHandler;
+  restorePorteurHandler: RestorePorteurHandler;
+  listPpgsAdminQuery: ListPpgsAdminQuery;
+  getPpgQuery: GetPpgQuery;
+  checkPpgUsageQuery: CheckPpgUsageQuery;
+  savePpgHandler: SavePpgHandler;
+  archivePpgHandler: ArchivePpgHandler;
+  restorePpgHandler: RestorePpgHandler;
+  listZonegroupsAdminQuery: ListZonegroupsAdminQuery;
+  getZonegroupQuery: GetZonegroupQuery;
+  getNextZonegroupIdQuery: GetNextZonegroupIdQuery;
+  listZonesDisponiblesQuery: ListZonesDisponiblesQuery;
+  checkZonegroupUsageQuery: CheckZonegroupUsageQuery;
+  saveZonegroupHandler: SaveZonegroupHandler;
+  archiveZonegroupHandler: ArchiveZonegroupHandler;
+  restoreZonegroupHandler: RestoreZonegroupHandler;
 };
 
 export const referentielsModule = defineModule<NoExports, ReferentielsCradle>()(
@@ -97,65 +97,47 @@ export const referentielsModule = defineModule<NoExports, ReferentielsCradle>()(
     exports: [],
     register: (container, { asModuleClass }) => {
       container.register({
-        listerAxesAdminQuery: asModuleClass(ListerAxesAdminQuery),
-        recupererAxeQuery: asModuleClass(RecupererAxeQuery),
-        verifierUtilisationAxeQuery: asModuleClass(VerifierUtilisationAxeQuery),
-        enregistrerAxeHandler: asModuleClass(EnregistrerAxeHandler),
-        archiverAxeHandler: asModuleClass(ArchiverAxeHandler),
-        restaurerAxeHandler: asModuleClass(RestaurerAxeHandler),
-        listerEngagementsAdminQuery: asModuleClass(ListerEngagementsAdminQuery),
-        recupererEngagementQuery: asModuleClass(RecupererEngagementQuery),
-        recupererIdSuivantEngagementQuery: asModuleClass(
-          RecupererIdSuivantEngagementQuery,
-        ),
-        verifierUtilisationEngagementQuery: asModuleClass(
-          VerifierUtilisationEngagementQuery,
-        ),
-        enregistrerEngagementHandler: asModuleClass(
-          EnregistrerEngagementHandler,
-        ),
-        archiverEngagementHandler: asModuleClass(ArchiverEngagementHandler),
-        restaurerEngagementHandler: asModuleClass(RestaurerEngagementHandler),
-        listerPerimetresAdminQuery: asModuleClass(ListerPerimetresAdminQuery),
-        recupererPerimetreQuery: asModuleClass(RecupererPerimetreQuery),
-        recupererIdSuivantPerimetreQuery: asModuleClass(
-          RecupererIdSuivantPerimetreQuery,
-        ),
-        verifierUtilisationPerimetreQuery: asModuleClass(
-          VerifierUtilisationPerimetreQuery,
-        ),
-        enregistrerPerimetreHandler: asModuleClass(EnregistrerPerimetreHandler),
-        archiverPerimetreHandler: asModuleClass(ArchiverPerimetreHandler),
-        restaurerPerimetreHandler: asModuleClass(RestaurerPerimetreHandler),
-        listerPorteursAdminQuery: asModuleClass(ListerPorteursAdminQuery),
-        recupererPorteurQuery: asModuleClass(RecupererPorteurQuery),
-        recupererIdSuivantPorteurQuery: asModuleClass(
-          RecupererIdSuivantPorteurQuery,
-        ),
-        verifierUtilisationPorteurQuery: asModuleClass(
-          VerifierUtilisationPorteurQuery,
-        ),
-        enregistrerPorteurHandler: asModuleClass(EnregistrerPorteurHandler),
-        archiverPorteurHandler: asModuleClass(ArchiverPorteurHandler),
-        restaurerPorteurHandler: asModuleClass(RestaurerPorteurHandler),
-        listerPpgsAdminQuery: asModuleClass(ListerPpgsAdminQuery),
-        recupererPpgQuery: asModuleClass(RecupererPpgQuery),
-        verifierUtilisationPpgQuery: asModuleClass(VerifierUtilisationPpgQuery),
-        enregistrerPpgHandler: asModuleClass(EnregistrerPpgHandler),
-        archiverPpgHandler: asModuleClass(ArchiverPpgHandler),
-        restaurerPpgHandler: asModuleClass(RestaurerPpgHandler),
-        listerZonegroupsAdminQuery: asModuleClass(ListerZonegroupsAdminQuery),
-        recupererZonegroupQuery: asModuleClass(RecupererZonegroupQuery),
-        recupererIdSuivantZonegroupQuery: asModuleClass(
-          RecupererIdSuivantZonegroupQuery,
-        ),
-        listerZonesDisponiblesQuery: asModuleClass(ListerZonesDisponiblesQuery),
-        verifierUtilisationZonegroupQuery: asModuleClass(
-          VerifierUtilisationZonegroupQuery,
-        ),
-        enregistrerZonegroupHandler: asModuleClass(EnregistrerZonegroupHandler),
-        archiverZonegroupHandler: asModuleClass(ArchiverZonegroupHandler),
-        restaurerZonegroupHandler: asModuleClass(RestaurerZonegroupHandler),
+        listAxesAdminQuery: asModuleClass(ListAxesAdminQuery),
+        getAxeQuery: asModuleClass(GetAxeQuery),
+        checkAxeUsageQuery: asModuleClass(CheckAxeUsageQuery),
+        saveAxeHandler: asModuleClass(SaveAxeHandler),
+        archiveAxeHandler: asModuleClass(ArchiveAxeHandler),
+        restoreAxeHandler: asModuleClass(RestoreAxeHandler),
+        listEngagementsAdminQuery: asModuleClass(ListEngagementsAdminQuery),
+        getEngagementQuery: asModuleClass(GetEngagementQuery),
+        getNextEngagementIdQuery: asModuleClass(GetNextEngagementIdQuery),
+        checkEngagementUsageQuery: asModuleClass(CheckEngagementUsageQuery),
+        saveEngagementHandler: asModuleClass(SaveEngagementHandler),
+        archiveEngagementHandler: asModuleClass(ArchiveEngagementHandler),
+        restoreEngagementHandler: asModuleClass(RestoreEngagementHandler),
+        listPerimetresAdminQuery: asModuleClass(ListPerimetresAdminQuery),
+        getPerimetreQuery: asModuleClass(GetPerimetreQuery),
+        getNextPerimetreIdQuery: asModuleClass(GetNextPerimetreIdQuery),
+        checkPerimetreUsageQuery: asModuleClass(CheckPerimetreUsageQuery),
+        savePerimetreHandler: asModuleClass(SavePerimetreHandler),
+        archivePerimetreHandler: asModuleClass(ArchivePerimetreHandler),
+        restorePerimetreHandler: asModuleClass(RestorePerimetreHandler),
+        listPorteursAdminQuery: asModuleClass(ListPorteursAdminQuery),
+        getPorteurQuery: asModuleClass(GetPorteurQuery),
+        getNextPorteurIdQuery: asModuleClass(GetNextPorteurIdQuery),
+        checkPorteurUsageQuery: asModuleClass(CheckPorteurUsageQuery),
+        savePorteurHandler: asModuleClass(SavePorteurHandler),
+        archivePorteurHandler: asModuleClass(ArchivePorteurHandler),
+        restorePorteurHandler: asModuleClass(RestorePorteurHandler),
+        listPpgsAdminQuery: asModuleClass(ListPpgsAdminQuery),
+        getPpgQuery: asModuleClass(GetPpgQuery),
+        checkPpgUsageQuery: asModuleClass(CheckPpgUsageQuery),
+        savePpgHandler: asModuleClass(SavePpgHandler),
+        archivePpgHandler: asModuleClass(ArchivePpgHandler),
+        restorePpgHandler: asModuleClass(RestorePpgHandler),
+        listZonegroupsAdminQuery: asModuleClass(ListZonegroupsAdminQuery),
+        getZonegroupQuery: asModuleClass(GetZonegroupQuery),
+        getNextZonegroupIdQuery: asModuleClass(GetNextZonegroupIdQuery),
+        listZonesDisponiblesQuery: asModuleClass(ListZonesDisponiblesQuery),
+        checkZonegroupUsageQuery: asModuleClass(CheckZonegroupUsageQuery),
+        saveZonegroupHandler: asModuleClass(SaveZonegroupHandler),
+        archiveZonegroupHandler: asModuleClass(ArchiveZonegroupHandler),
+        restoreZonegroupHandler: asModuleClass(RestoreZonegroupHandler),
       } satisfies VerifyCradle<ReferentielsCradle>);
     },
   },

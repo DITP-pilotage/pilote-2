@@ -11,7 +11,7 @@ const LIBELLES = {
 
 const PageAdminEngagements = () => {
   const { data: engagements, isLoading } =
-    api.metadataEngagement.lister.useQuery();
+    api.metadataEngagement.list.useQuery();
   const table = useTableauAdminEngagements(engagements ?? []);
   const nombreEngagementsFiltres = table.getFilteredRowModel().rows.length;
 

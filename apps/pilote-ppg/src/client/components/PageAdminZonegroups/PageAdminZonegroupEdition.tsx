@@ -9,7 +9,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataZonegroup } from "@/server/referentiels/zonegroup/queries/RecupererZonegroupQuery";
+import { MetadataZonegroup } from "@/server/referentiels/zonegroup/queries/GetZonegroupQuery";
 import {
   defaultZonegroupVide,
   ZonegroupForm,
@@ -21,19 +21,19 @@ import { SélecteurZones } from "@/components/PageAdminZonegroups/SélecteurZone
 
 interface Props {
   zoneGroupId: string;
-  estUneCréation: boolean;
+  isCreation: boolean;
   zonegroupData: MetadataZonegroup | null;
   idSuivant: string | null;
 }
 
 const PageAdminZonegroupEdition = ({
   zoneGroupId,
-  estUneCréation,
+  isCreation,
   zonegroupData,
   idSuivant,
 }: Props) => {
   const refreshRouter = useRefreshRouter();
-  const zoneGroupIdEffectif = estUneCréation
+  const zoneGroupIdEffectif = isCreation
     ? (idSuivant ?? zoneGroupId)
     : zoneGroupId;
 
@@ -48,10 +48,10 @@ const PageAdminZonegroupEdition = ({
 
   const { reactHookForm, enregistrer, isPending } = useZonegroupForm({
     defaultValues,
-    estUneCréation,
+    isCreation,
   });
 
-  const archiverMutation = api.metadataZonegroup.archiver.useMutation({
+  const archiverMutation = api.metadataZonegroup.archive.useMutation({
     onSuccess: () => {
       toast.success("Zone groupe archivée avec succès.", {
         position: "bottom-right",
@@ -61,7 +61,7 @@ const PageAdminZonegroupEdition = ({
     },
   });
 
-  const restaurerMutation = api.metadataZonegroup.restaurer.useMutation({
+  const restaurerMutation = api.metadataZonegroup.restore.useMutation({
     onSuccess: () => {
       toast.success("Zone groupe restaurée avec succès.", {
         position: "bottom-right",
@@ -73,17 +73,16 @@ const PageAdminZonegroupEdition = ({
 
   const estSupprime = zonegroupData?.deletedAt != null;
 
-  const { data: utilisation } =
-    api.metadataZonegroup.verifierUtilisation.useQuery(
-      { zoneGroupId: zoneGroupIdEffectif },
-      { enabled: !estUneCréation && !estSupprime },
-    );
+  const { data: utilisation } = api.metadataZonegroup.checkUsage.useQuery(
+    { zoneGroupId: zoneGroupIdEffectif },
+    { enabled: !isCreation && !estSupprime },
+  );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
   const { data: zonesDisponibles = [] } =
-    api.metadataZonegroup.listerZonesDisponibles.useQuery();
+    api.metadataZonegroup.listZonesDisponibles.useQuery();
 
-  const titre = estUneCréation
+  const titre = isCreation
     ? `Nouveau groupe - ${zoneGroupIdEffectif}`
     : `Groupe ${zoneGroupId}`;
 
@@ -100,7 +99,7 @@ const PageAdminZonegroupEdition = ({
           libelléPageCourante={titre}
         />
 
-        {!estUneCréation && !estSupprime && estUtilisé && (
+        {!isCreation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
             titre={`Cette zone-groupe est associée à ${utilisation?.nombreChantiers} chantier(s) et ${utilisation?.nombreIndicateurs} indicateur(s) et ne peut pas être supprimée.`}
@@ -116,14 +115,14 @@ const PageAdminZonegroupEdition = ({
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                  {estUneCréation ? "Nouveau groupe de zones" : "Édition"}
+                  {isCreation ? "Nouveau groupe de zones" : "Édition"}
                 </p>
                 <h1 className="text-3xl font-bold text-dsfr-grey-200">
                   {titre}
                 </h1>
               </div>
               <div className="flex items-center gap-3">
-                {!estUneCréation && (
+                {!isCreation && (
                   <div className="flex items-center gap-2">
                     <Button
                       className={
@@ -151,7 +150,7 @@ const PageAdminZonegroupEdition = ({
                   </div>
                 )}
                 <Button disabled={isPending} type="submit" variant="primary">
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
+                  {isCreation ? "Créer" : "Sauvegarder"}
                 </Button>
               </div>
             </div>
@@ -210,7 +209,7 @@ const PageAdminZonegroupEdition = ({
 
             <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
               <Button disabled={isPending} type="submit" variant="primary">
-                {estUneCréation ? "Créer" : "Sauvegarder"}
+                {isCreation ? "Créer" : "Sauvegarder"}
               </Button>
             </div>
           </form>

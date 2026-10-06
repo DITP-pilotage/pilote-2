@@ -62,7 +62,7 @@ export const useChantierForm = ({
     defaultValues,
   });
 
-  const mutationModifier = api.metadataChantier.enregistrer.useMutation({
+  const mutationModifier = api.metadataChantier.save.useMutation({
     onSuccess: () => {
       toast.success("Chantier modifié avec succès.", {
         position: "bottom-right",
@@ -76,7 +76,7 @@ export const useChantierForm = ({
       }),
   });
 
-  const mutationCreer = api.metadataChantier.enregistrer.useMutation({
+  const mutationCreer = api.metadataChantier.save.useMutation({
     onSuccess: () => {
       toast.success("Chantier créé avec succès.", {
         position: "bottom-right",

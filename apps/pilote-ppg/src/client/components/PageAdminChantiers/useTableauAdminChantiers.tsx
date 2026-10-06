@@ -14,11 +14,11 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { Perimetre } from "@/server/parametrage-chantier/queries/ListerPerimetresQuery";
+import type { Perimetre } from "@/server/parametrage-chantier/queries/ListPerimetresQuery";
 
 export type ChantierAdminRow = inferRouterOutputs<
   typeof appRouter
->["metadataChantier"]["lister"][number];
+>["metadataChantier"]["list"][number];
 
 export const STATUT_BADGE: Record<
   $Enums.type_statut,

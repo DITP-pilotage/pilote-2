@@ -6,78 +6,78 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import { zonegroupCommandSchema } from "@/server/referentiels/zonegroup/handlers/EnregistrerZonegroupHandler";
+import { zonegroupCommandSchema } from "@/server/referentiels/zonegroup/handlers/SaveZonegroupHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
 export const metadataZonegroupRouter = createTRPCRouter({
-  lister: protectedProcedure
+  list: protectedProcedure
     .input(z.object({ actifsSeulement: z.boolean().optional() }).optional())
     .query(async ({ ctx, input }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("listerZonegroupsAdminQuery")
+        .resolve("listZonegroupsAdminQuery")
         .run({ actifsSeulement: input?.actifsSeulement });
     }),
 
-  récupérer: protectedProcedure
+  get: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("recupererZonegroupQuery")
+        .resolve("getZonegroupQuery")
         .run({ zoneGroupId: input.zoneGroupId });
     }),
 
-  récupérerIdSuivant: protectedProcedure.query(async ({ ctx }) => {
+  getNextId: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("referentiels")
-      .resolve("recupererIdSuivantZonegroupQuery")
+      .resolve("getNextZonegroupIdQuery")
       .run();
   }),
 
-  listerZonesDisponibles: protectedProcedure.query(async ({ ctx }) => {
+  listZonesDisponibles: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("referentiels")
-      .resolve("listerZonesDisponiblesQuery")
+      .resolve("listZonesDisponiblesQuery")
       .run();
   }),
 
-  verifierUtilisation: protectedProcedure
+  checkUsage: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("verifierUtilisationZonegroupQuery")
+        .resolve("checkZonegroupUsageQuery")
         .run({ zoneGroupId: input.zoneGroupId });
     }),
 
-  enregistrer: protectedProcedure
+  save: protectedProcedure
     .input(zonegroupCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("enregistrerZonegroupHandler")
+        .resolve("saveZonegroupHandler")
         .execute(input);
     }),
 
-  archiver: protectedProcedure
+  archive: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("archiverZonegroupHandler")
+        .resolve("archiveZonegroupHandler")
         .execute({ zoneGroupId: input.zoneGroupId });
     }),
 
-  restaurer: protectedProcedure
+  restore: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("restaurerZonegroupHandler")
+        .resolve("restoreZonegroupHandler")
         .execute({ zoneGroupId: input.zoneGroupId });
     }),
 });

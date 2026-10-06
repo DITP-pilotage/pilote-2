@@ -6,7 +6,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataEngagement } from "@/server/referentiels/engagement/queries/RecupererEngagementQuery";
+import { MetadataEngagement } from "@/server/referentiels/engagement/queries/GetEngagementQuery";
 import {
   defaultEngagementVide,
   EngagementForm,
@@ -17,19 +17,19 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {
   engagementId: string;
-  estUneCréation: boolean;
+  isCreation: boolean;
   engagementData: MetadataEngagement | null;
   idSuivant: string | null;
 }
 
 const PageAdminEngagementEdition = ({
   engagementId,
-  estUneCréation,
+  isCreation,
   engagementData,
   idSuivant,
 }: Props) => {
   const refreshRouter = useRefreshRouter();
-  const engagementIdEffectif = estUneCréation
+  const engagementIdEffectif = isCreation
     ? (idSuivant ?? engagementId)
     : engagementId;
 
@@ -38,16 +38,16 @@ const PageAdminEngagementEdition = ({
         engagementId: engagementData.engagementId,
         engagementShort: engagementData.engagementShort,
         engagementName: engagementData.engagementName,
-        estUneCréation: false,
+        isCreation: false,
       }
     : defaultEngagementVide(engagementIdEffectif);
 
   const { reactHookForm, enregistrer, isPending } = useEngagementForm({
     defaultValues,
-    estUneCréation,
+    isCreation,
   });
 
-  const archiverMutation = api.metadataEngagement.archiver.useMutation({
+  const archiverMutation = api.metadataEngagement.archive.useMutation({
     onSuccess: () => {
       toast.success("Engagement archivé avec succès.", {
         position: "bottom-right",
@@ -57,7 +57,7 @@ const PageAdminEngagementEdition = ({
     },
   });
 
-  const restaurerMutation = api.metadataEngagement.restaurer.useMutation({
+  const restaurerMutation = api.metadataEngagement.restore.useMutation({
     onSuccess: () => {
       toast.success("Engagement restauré avec succès.", {
         position: "bottom-right",
@@ -69,14 +69,13 @@ const PageAdminEngagementEdition = ({
 
   const estSupprime = engagementData?.deletedAt != null;
 
-  const { data: utilisation } =
-    api.metadataEngagement.verifierUtilisation.useQuery(
-      { engagementShort: defaultValues.engagementShort },
-      { enabled: !estUneCréation && !estSupprime },
-    );
+  const { data: utilisation } = api.metadataEngagement.checkUsage.useQuery(
+    { engagementShort: defaultValues.engagementShort },
+    { enabled: !isCreation && !estSupprime },
+  );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const titre = estUneCréation
+  const titre = isCreation
     ? `Nouvel engagement - ${engagementIdEffectif}`
     : `Engagement ${engagementId}`;
 
@@ -93,7 +92,7 @@ const PageAdminEngagementEdition = ({
           libelléPageCourante={titre}
         />
 
-        {!estUneCréation && !estSupprime && estUtilisé && (
+        {!isCreation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
             titre={`Cet engagement est associé à ${utilisation?.nombreChantiers} chantier(s) et ne peut pas être supprimé.`}
@@ -109,14 +108,14 @@ const PageAdminEngagementEdition = ({
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                  {estUneCréation ? "Nouvel engagement" : "Édition"}
+                  {isCreation ? "Nouvel engagement" : "Édition"}
                 </p>
                 <h1 className="text-3xl font-bold text-dsfr-grey-200">
                   {titre}
                 </h1>
               </div>
               <div className="flex items-center gap-3">
-                {!estUneCréation && (
+                {!isCreation && (
                   <div className="flex items-center gap-2">
                     <Button
                       className={
@@ -144,7 +143,7 @@ const PageAdminEngagementEdition = ({
                   </div>
                 )}
                 <Button disabled={isPending} type="submit" variant="primary">
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
+                  {isCreation ? "Créer" : "Sauvegarder"}
                 </Button>
               </div>
             </div>
@@ -165,7 +164,7 @@ const PageAdminEngagementEdition = ({
                     control={reactHookForm.control}
                     label="Code (engagement_short)"
                     name="engagementShort"
-                    readOnly={!estUneCréation}
+                    readOnly={!isCreation}
                     required
                   />
                 </div>
@@ -184,7 +183,7 @@ const PageAdminEngagementEdition = ({
 
             <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
               <Button disabled={isPending} type="submit" variant="primary">
-                {estUneCréation ? "Créer" : "Sauvegarder"}
+                {isCreation ? "Créer" : "Sauvegarder"}
               </Button>
             </div>
           </form>

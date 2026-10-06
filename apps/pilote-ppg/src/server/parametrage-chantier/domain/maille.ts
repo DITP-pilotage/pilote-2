@@ -3,7 +3,7 @@ import { MailleTerritoireSelectionne } from "@/shared/maille/Maille.interface";
 export type Maille = MailleTerritoireSelectionne;
 export const MAILLES: readonly Maille[] = ["NAT", "REG", "DEPT"];
 
-export const LIBELLÉ_MAILLE: Record<Maille, string> = {
+export const LIBELLE_MAILLE: Record<Maille, string> = {
   NAT: "National",
   REG: "Régional",
   DEPT: "Départemental",

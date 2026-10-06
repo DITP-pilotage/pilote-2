@@ -6,69 +6,65 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import { porteurCommandSchema } from "@/server/referentiels/porteur/handlers/EnregistrerPorteurHandler";
+import { porteurCommandSchema } from "@/server/referentiels/porteur/handlers/SavePorteurHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
 export const metadataPorteurRouter = createTRPCRouter({
-  lister: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
-    return getContainer("referentiels")
-      .resolve("listerPorteursAdminQuery")
-      .run();
+    return getContainer("referentiels").resolve("listPorteursAdminQuery").run();
   }),
 
-  récupérer: protectedProcedure
+  get: protectedProcedure
     .input(z.object({ porteurId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("recupererPorteurQuery")
+        .resolve("getPorteurQuery")
         .run({ porteurId: input.porteurId });
     }),
 
-  récupérerIdSuivant: protectedProcedure.query(async ({ ctx }) => {
+  getNextId: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
-    return getContainer("referentiels")
-      .resolve("recupererIdSuivantPorteurQuery")
-      .run();
+    return getContainer("referentiels").resolve("getNextPorteurIdQuery").run();
   }),
 
-  verifierUtilisation: protectedProcedure
+  checkUsage: protectedProcedure
     .input(z.object({ porteurId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("verifierUtilisationPorteurQuery")
+        .resolve("checkPorteurUsageQuery")
         .run({ porteurId: input.porteurId });
     }),
 
-  enregistrer: protectedProcedure
+  save: protectedProcedure
     .input(porteurCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("enregistrerPorteurHandler")
+        .resolve("savePorteurHandler")
         .execute(input);
     }),
 
-  archiver: protectedProcedure
+  archive: protectedProcedure
     .input(z.object({ porteurId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("archiverPorteurHandler")
+        .resolve("archivePorteurHandler")
         .execute({ porteurId: input.porteurId });
     }),
 
-  restaurer: protectedProcedure
+  restore: protectedProcedure
     .input(z.object({ porteurId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("restaurerPorteurHandler")
+        .resolve("restorePorteurHandler")
         .execute({ porteurId: input.porteurId });
     }),
 });

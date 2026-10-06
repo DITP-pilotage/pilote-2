@@ -22,7 +22,7 @@ interface PageIndicateurProps {
   indicateur: MetadataParametrageIndicateurContrat;
   informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat;
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat;
-  estUneCréation: boolean;
+  isCreation: boolean;
   modificationReussie: boolean;
   creationReussie: boolean;
   chantiers: ChantierSynthétisé[];
@@ -32,7 +32,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   indicateur,
   informationHistorisationIndicateur,
   mapInformationMetadataIndicateur,
-  estUneCréation,
+  isCreation,
   modificationReussie,
   creationReussie,
   chantiers,
@@ -69,7 +69,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
               method="post"
               onSubmit={reactHookForm.handleSubmit(
                 (data: MetadataIndicateurForm) => {
-                  if (estUneCréation) {
+                  if (isCreation) {
                     creerIndicateur({ ...data, indicId: indicateur.indicId });
                   } else {
                     modifierIndicateur({
@@ -111,7 +111,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
               <Titre baliseHtml="h1" className="fr-h1 fr-mt-4w">
                 Fiche de l'indicateur {indicateur.indicId}
                 <div className="fr-grid-row fr-mt-4w">
-                  {estUneCréation ? (
+                  {isCreation ? (
                     <Button
                       variant="primary"
                       className="mr-4"
@@ -160,7 +160,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                   <FicheIndicateur
                     chantiers={chantiers}
                     estEnCoursDeModification={
-                      estUneCréation || estEnCoursDeModification
+                      isCreation || estEnCoursDeModification
                     }
                     indicateur={indicateur}
                     informationHistorisationIndicateur={
@@ -170,7 +170,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                       mapInformationMetadataIndicateur
                     }
                   />
-                  {estUneCréation ? (
+                  {isCreation ? (
                     <Button
                       variant="primary"
                       className="mr-4"

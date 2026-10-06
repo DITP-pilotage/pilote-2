@@ -28,20 +28,18 @@ export async function getServerSideProps(
   const parsed = z.string().min(1).safeParse(params?.id);
   if (!parsed.success) return redirigerVersAccueil;
   const ppgId = parsed.data;
-  const estUneCréation = query._action === "creer-ppg";
+  const isCreation = query._action === "creer-ppg";
 
-  const ppgData = estUneCréation
+  const ppgData = isCreation
     ? null
-    : await getContainer("referentiels")
-        .resolve("recupererPpgQuery")
-        .run({ ppgId });
+    : await getContainer("referentiels").resolve("getPpgQuery").run({ ppgId });
 
-  return { props: { ppgId, estUneCréation, ppgData } };
+  return { props: { ppgId, isCreation, ppgData } };
 }
 
 const NextPageAdminPpgEdition = ({
   ppgId,
-  estUneCréation,
+  isCreation,
   ppgData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
   <>
@@ -50,7 +48,7 @@ const NextPageAdminPpgEdition = ({
     </Head>
     <NextPanelAdministrateurLayout pageActive="referentiels-deprecies-ppgs">
       <PageAdminPpgEdition
-        estUneCréation={estUneCréation}
+        isCreation={isCreation}
         ppgData={ppgData}
         ppgId={ppgId}
       />

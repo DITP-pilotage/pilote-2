@@ -1,4 +1,4 @@
-import type { ZoneDisponible } from "@/server/referentiels/zonegroup/queries/ListerZonesDisponiblesQuery";
+import type { ZoneDisponible } from "@/server/referentiels/zonegroup/queries/ListZonesDisponiblesQuery";
 import { Button } from "@/components/shared/Button";
 
 const BoutonAction = ({
