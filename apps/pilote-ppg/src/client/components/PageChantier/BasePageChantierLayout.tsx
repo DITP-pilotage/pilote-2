@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import { ReactNode, useState } from "react";
 import clsx from "clsx";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
