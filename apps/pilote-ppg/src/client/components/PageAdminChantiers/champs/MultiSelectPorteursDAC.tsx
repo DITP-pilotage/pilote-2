@@ -5,7 +5,7 @@ import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 export const MultiSelectPorteursDAC = () => {
   const { data: porteurs = [] } =
-    api.metadataChantier.listPorteursDAC.useQuery();
+    api.parametrageChantier.listPorteursDAC.useQuery();
   const { control } = useFormContext<ChantierForm>();
 
   return (

@@ -9,7 +9,7 @@ import { getContainer } from "@/server/dependances";
 import { zonegroupCommandSchema } from "@/server/referentiels/zonegroup/handlers/SaveZonegroupHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataZonegroupRouter = createTRPCRouter({
+export const referentielZonegroupRouter = createTRPCRouter({
   list: protectedProcedure
     .input(z.object({ actifsSeulement: z.boolean().optional() }).optional())
     .query(async ({ ctx, input }) => {

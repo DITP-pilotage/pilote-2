@@ -12,8 +12,10 @@ const LIBELLES = {
 };
 
 const PageAdminChantiers = () => {
-  const { data: chantiers, isLoading } = api.metadataChantier.list.useQuery();
-  const { data: perimetres } = api.metadataChantier.listPerimetres.useQuery();
+  const { data: chantiers, isLoading } =
+    api.parametrageChantier.list.useQuery();
+  const { data: perimetres } =
+    api.parametrageChantier.listPerimetres.useQuery();
 
   const table = useTableauAdminChantiers(chantiers ?? [], perimetres);
   const nombreChantiersFiltres = table.getFilteredRowModel().rows.length;

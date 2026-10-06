@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "@/server/framework/trpc/trpc";
 import { utilisateurRouter } from "@/server/gestion-utilisateur/infrastructure/trpc/utilisateur";
-import { metadataIndicateurRouter } from "@/server/parametrage-indicateur/infrastructure/trpc/metadataIndicateur";
+import { parametrageIndicateurRouter } from "@/server/parametrage-indicateur/infrastructure/trpc/parametrageIndicateur";
 import { gestionContenuRouter } from "@/server/gestion-contenu/infrastructure/trpc/gestionContenu";
 import { gestionTokenAPIRouter } from "@/server/authentification/infrastructure/trpc/gestionTokenAPI";
 import { evaluationRouter } from "@/server/evaluation/infrastructure/trpc/evaluation";
@@ -22,13 +22,13 @@ import { albertRouter } from "@/server/albert/infrastructure/trpc/albert";
 import { parametrageCentreAideRouter } from "@/server/parametrage-centre-aide/infrastructure/trpc/parametrageCentreAide";
 import { applicationLogRouter } from "@/server/application-log/infrastructure/trpc/applicationLog";
 import { actualitesRouter } from "@/server/actualites/infrastructure/trpc/actualites";
-import { metadataChantierRouter } from "@/server/parametrage-chantier/infrastructure/trpc/metadataChantier";
-import { metadataPorteurRouter } from "@/server/referentiels/porteur/infrastructure/trpc/metadataPorteur";
-import { metadataPerimetreRouter } from "@/server/referentiels/perimetre/infrastructure/trpc/metadataPerimetre";
-import { metadataZonegroupRouter } from "@/server/referentiels/zonegroup/infrastructure/trpc/metadataZonegroup";
-import { metadataAxeRouter } from "@/server/referentiels/axe/infrastructure/trpc/metadataAxe";
-import { metadataPpgRouter } from "@/server/referentiels/ppg/infrastructure/trpc/metadataPpg";
-import { metadataEngagementRouter } from "@/server/referentiels/engagement/infrastructure/trpc/metadataEngagement";
+import { parametrageChantierRouter } from "@/server/parametrage-chantier/infrastructure/trpc/parametrageChantier";
+import { referentielPorteurRouter } from "@/server/referentiels/porteur/infrastructure/trpc/referentielPorteur";
+import { referentielPerimetreRouter } from "@/server/referentiels/perimetre/infrastructure/trpc/referentielPerimetre";
+import { referentielZonegroupRouter } from "@/server/referentiels/zonegroup/infrastructure/trpc/referentielZonegroup";
+import { referentielAxeRouter } from "@/server/referentiels/axe/infrastructure/trpc/referentielAxe";
+import { referentielPpgRouter } from "@/server/referentiels/ppg/infrastructure/trpc/referentielPpg";
+import { referentielEngagementRouter } from "@/server/referentiels/engagement/infrastructure/trpc/referentielEngagement";
 import { annuaireRouter } from "@/server/annuaire/infrastructure/trpc/annuaire";
 
 export const appRouter = createTRPCRouter({
@@ -40,7 +40,7 @@ export const appRouter = createTRPCRouter({
   indicateur: indicateurRouter,
   territoire: territoireRouter,
   utilisateur: utilisateurRouter,
-  metadataIndicateur: metadataIndicateurRouter,
+  parametrageIndicateur: parametrageIndicateurRouter,
   propositionValeurAvancement: propositionValeurAvancementRouter,
   gestionContenu: gestionContenuRouter,
   gestionTokenAPI: gestionTokenAPIRouter,
@@ -55,12 +55,12 @@ export const appRouter = createTRPCRouter({
   parametrageCentreAide: parametrageCentreAideRouter,
   applicationLog: applicationLogRouter,
   actualites: actualitesRouter,
-  metadataChantier: metadataChantierRouter,
-  metadataPorteur: metadataPorteurRouter,
-  metadataPerimetre: metadataPerimetreRouter,
-  metadataZonegroup: metadataZonegroupRouter,
-  metadataAxe: metadataAxeRouter,
-  metadataPpg: metadataPpgRouter,
-  metadataEngagement: metadataEngagementRouter,
+  parametrageChantier: parametrageChantierRouter,
+  referentielPorteur: referentielPorteurRouter,
+  referentielPerimetre: referentielPerimetreRouter,
+  referentielZonegroup: referentielZonegroupRouter,
+  referentielAxe: referentielAxeRouter,
+  referentielPpg: referentielPpgRouter,
+  referentielEngagement: referentielEngagementRouter,
   annuaire: annuaireRouter,
 });

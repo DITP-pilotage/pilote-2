@@ -64,7 +64,7 @@ const PageAdminPorteurEdition = ({
     isCreation,
   });
 
-  const archiverMutation = api.metadataPorteur.archive.useMutation({
+  const archiverMutation = api.referentielPorteur.archive.useMutation({
     onSuccess: () => {
       toast.success("Porteur archivé avec succès.", {
         position: "bottom-right",
@@ -74,7 +74,7 @@ const PageAdminPorteurEdition = ({
     },
   });
 
-  const restaurerMutation = api.metadataPorteur.restore.useMutation({
+  const restaurerMutation = api.referentielPorteur.restore.useMutation({
     onSuccess: () => {
       toast.success("Porteur restauré avec succès.", {
         position: "bottom-right",
@@ -86,7 +86,7 @@ const PageAdminPorteurEdition = ({
 
   const estSupprime = porteurData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataPorteur.checkUsage.useQuery(
+  const { data: utilisation } = api.referentielPorteur.checkUsage.useQuery(
     { porteurId: porteurIdEffectif },
     { enabled: !isCreation && !estSupprime },
   );

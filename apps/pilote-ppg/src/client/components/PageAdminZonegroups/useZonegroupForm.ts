@@ -30,7 +30,7 @@ export const useZonegroupForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataZonegroup.save.useMutation({
+  const mutation = api.referentielZonegroup.save.useMutation({
     onSuccess: () => {
       toast.success(
         isCreation

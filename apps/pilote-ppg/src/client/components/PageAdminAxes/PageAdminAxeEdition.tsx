@@ -41,7 +41,7 @@ const PageAdminAxeEdition = ({ axeId, isCreation, axeData }: Props) => {
     isCreation,
   });
 
-  const archiverMutation = api.metadataAxe.archive.useMutation({
+  const archiverMutation = api.referentielAxe.archive.useMutation({
     onSuccess: () => {
       toast.success("Axe archivé avec succès.", {
         position: "bottom-right",
@@ -51,7 +51,7 @@ const PageAdminAxeEdition = ({ axeId, isCreation, axeData }: Props) => {
     },
   });
 
-  const restaurerMutation = api.metadataAxe.restore.useMutation({
+  const restaurerMutation = api.referentielAxe.restore.useMutation({
     onSuccess: () => {
       toast.success("Axe restauré avec succès.", {
         position: "bottom-right",
@@ -63,7 +63,7 @@ const PageAdminAxeEdition = ({ axeId, isCreation, axeData }: Props) => {
 
   const estSupprime = axeData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataAxe.checkUsage.useQuery(
+  const { data: utilisation } = api.referentielAxe.checkUsage.useQuery(
     { axeId },
     { enabled: !isCreation && !estSupprime },
   );

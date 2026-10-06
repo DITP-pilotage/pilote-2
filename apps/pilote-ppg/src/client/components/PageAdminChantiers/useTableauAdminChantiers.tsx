@@ -18,7 +18,7 @@ import type { Perimetre } from "@/server/parametrage-chantier/queries/ListPerime
 
 export type ChantierAdminRow = inferRouterOutputs<
   typeof appRouter
->["metadataChantier"]["list"][number];
+>["parametrageChantier"]["list"][number];
 
 export const STATUT_BADGE: Record<
   $Enums.type_statut,

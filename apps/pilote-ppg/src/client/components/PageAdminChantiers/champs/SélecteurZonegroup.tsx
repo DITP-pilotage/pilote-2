@@ -6,7 +6,7 @@ import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const SélecteurZonegroup = () => {
   const { data: zonegroups = [] } =
-    api.metadataChantier.listZonegroups.useQuery();
+    api.parametrageChantier.listZonegroups.useQuery();
   const { control } = useFormContext<ChantierForm>();
 
   return (

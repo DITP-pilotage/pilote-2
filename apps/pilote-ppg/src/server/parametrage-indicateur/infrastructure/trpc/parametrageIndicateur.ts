@@ -189,7 +189,7 @@ const convertirEnMetadataParametrageIndicateurForm = (
   };
 };
 
-export const metadataIndicateurRouter = createTRPCRouter({
+export const parametrageIndicateurRouter = createTRPCRouter({
   recupererMetadataIndicateurFiltres: protectedProcedure
     .input(validationFiltresPourListeMetadataIndicateur)
     .query(

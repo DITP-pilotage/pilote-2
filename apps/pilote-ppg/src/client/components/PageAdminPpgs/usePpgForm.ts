@@ -31,7 +31,7 @@ export const usePpgForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataPpg.save.useMutation({
+  const mutation = api.referentielPpg.save.useMutation({
     onSuccess: () => {
       toast.success(
         isCreation ? "PPG créé avec succès." : "PPG modifié avec succès.",

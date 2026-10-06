@@ -10,7 +10,7 @@ const LIBELLES = {
 };
 
 const PageAdminPorteurs = () => {
-  const { data: porteurs, isLoading } = api.metadataPorteur.list.useQuery();
+  const { data: porteurs, isLoading } = api.referentielPorteur.list.useQuery();
   const table = useTableauAdminPorteurs(porteurs ?? []);
   const nombrePorteursFiltres = table.getFilteredRowModel().rows.length;
 

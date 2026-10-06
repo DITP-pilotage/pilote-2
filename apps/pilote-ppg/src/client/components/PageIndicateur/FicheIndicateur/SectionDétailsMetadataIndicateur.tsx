@@ -24,7 +24,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
   const form = useMetadataIndicateurForm();
 
   const { data: metadataIndicateurs = [] } =
-    api.metadataIndicateur.recupererMetadataIndicateurFiltres.useQuery({
+    api.parametrageIndicateur.recupererMetadataIndicateurFiltres.useQuery({
       filtres: {
         chantiers:
           !form.getValues("indicParentCh") ||

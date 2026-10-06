@@ -10,7 +10,7 @@ const LIBELLES = {
 };
 
 const PageAdminPpgs = () => {
-  const { data: ppgs, isLoading } = api.metadataPpg.list.useQuery();
+  const { data: ppgs, isLoading } = api.referentielPpg.list.useQuery();
   const table = useTableauAdminPpgs(ppgs ?? []);
   const nombrePpgsFiltres = table.getFilteredRowModel().rows.length;
 

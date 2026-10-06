@@ -51,7 +51,7 @@ const PageAdminPerimetreEdition = ({
     isCreation,
   });
 
-  const archiverMutation = api.metadataPerimetre.archive.useMutation({
+  const archiverMutation = api.referentielPerimetre.archive.useMutation({
     onSuccess: () => {
       toast.success("Périmètre archivé avec succès.", {
         position: "bottom-right",
@@ -61,7 +61,7 @@ const PageAdminPerimetreEdition = ({
     },
   });
 
-  const restaurerMutation = api.metadataPerimetre.restore.useMutation({
+  const restaurerMutation = api.referentielPerimetre.restore.useMutation({
     onSuccess: () => {
       toast.success("Périmètre restauré avec succès.", {
         position: "bottom-right",
@@ -73,13 +73,13 @@ const PageAdminPerimetreEdition = ({
 
   const estSupprimé = perimetreData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataPerimetre.checkUsage.useQuery(
+  const { data: utilisation } = api.referentielPerimetre.checkUsage.useQuery(
     { perimetreId: perimetreIdEffectif },
     { enabled: !isCreation && !estSupprimé },
   );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const { data: porteurs = [] } = api.metadataPorteur.list.useQuery();
+  const { data: porteurs = [] } = api.referentielPorteur.list.useQuery();
   const porteursActifs = porteurs.filter((p) => p.deletedAt === null);
   const optionsPorteurs: SelectFieldOption<string>[] = [
     { libelle: "- Aucun -", valeur: "" },

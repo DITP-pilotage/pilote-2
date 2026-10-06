@@ -47,7 +47,7 @@ const PageAdminEngagementEdition = ({
     isCreation,
   });
 
-  const archiverMutation = api.metadataEngagement.archive.useMutation({
+  const archiverMutation = api.referentielEngagement.archive.useMutation({
     onSuccess: () => {
       toast.success("Engagement archivé avec succès.", {
         position: "bottom-right",
@@ -57,7 +57,7 @@ const PageAdminEngagementEdition = ({
     },
   });
 
-  const restaurerMutation = api.metadataEngagement.restore.useMutation({
+  const restaurerMutation = api.referentielEngagement.restore.useMutation({
     onSuccess: () => {
       toast.success("Engagement restauré avec succès.", {
         position: "bottom-right",
@@ -69,7 +69,7 @@ const PageAdminEngagementEdition = ({
 
   const estSupprime = engagementData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataEngagement.checkUsage.useQuery(
+  const { data: utilisation } = api.referentielEngagement.checkUsage.useQuery(
     { engagementShort: defaultValues.engagementShort },
     { enabled: !isCreation && !estSupprime },
   );
