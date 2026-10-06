@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
@@ -17,15 +17,15 @@ const zodValidateurCSRF = z.object({
   csrf: z.string(),
 });
 
-export const objectifRouter = créerRouteurTRPC({
-  publier: procédureProtégée
+export const objectifRouter = createTRPCRouter({
+  publier: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationObjectifFormulaire)
         .merge(validationObjectifContexte),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("objectif")
         .resolve("publierObjectifUseCase")
@@ -39,14 +39,14 @@ export const objectifRouter = créerRouteurTRPC({
         });
     }),
 
-  enregistrerEnBrouillon: procédureProtégée
+  enregistrerEnBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationObjectifFormulaire)
         .merge(validationObjectifContexte),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("objectif")
         .resolve("enregistrerBrouillonObjectifUseCase")
@@ -60,14 +60,14 @@ export const objectifRouter = créerRouteurTRPC({
         });
     }),
 
-  publierUnBrouillon: procédureProtégée
+  publierUnBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationObjectifFormulaire)
         .merge(validationBrouillonObjectifAPublier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("objectif")
         .resolve("publierBrouillonObjectifUseCase")
@@ -80,14 +80,14 @@ export const objectifRouter = créerRouteurTRPC({
         });
     }),
 
-  modifierLeBrouillon: procédureProtégée
+  modifierLeBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationObjectifFormulaire)
         .merge(validationBrouillonObjectifAPublier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("objectif")
         .resolve("modifierBrouillonObjectifUseCase")
@@ -100,14 +100,14 @@ export const objectifRouter = créerRouteurTRPC({
         });
     }),
 
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationObjectifFormulaire)
         .merge(validationObjectifAModifier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("objectif")
         .resolve("modifierObjectifPublieUseCase")
@@ -120,7 +120,7 @@ export const objectifRouter = créerRouteurTRPC({
         });
     }),
 
-  recupererHistorique: procédureProtégée
+  recupererHistorique: protectedProcedure
     .input(validationObjectifContexte)
     .query(({ input, ctx }) => {
       new Habilitation(

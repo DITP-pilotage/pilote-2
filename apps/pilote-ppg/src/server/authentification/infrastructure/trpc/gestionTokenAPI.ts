@@ -1,6 +1,6 @@
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import {
   validationCreationTokenAPI,
@@ -8,8 +8,8 @@ import {
 } from "@/validation/gestion-token-api";
 import { getContainer } from "@/server/dependances";
 
-export const gestionTokenAPIRouter = créerRouteurTRPC({
-  creerTokenAPI: procédureProtégée
+export const gestionTokenAPIRouter = createTRPCRouter({
+  creerTokenAPI: protectedProcedure
     .input(validationCreationTokenAPI)
     .mutation(async ({ input, ctx }) => {
       const habilitations = await getContainer("gestionUtilisateur")
@@ -23,7 +23,7 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
         .run({ email: input.email });
     }),
 
-  supprimerTokenAPI: procédureProtégée
+  supprimerTokenAPI: protectedProcedure
     .input(validationSuppressionTokenAPI)
     .mutation(async ({ input, ctx }) => {
       const habilitations = await getContainer("gestionUtilisateur")

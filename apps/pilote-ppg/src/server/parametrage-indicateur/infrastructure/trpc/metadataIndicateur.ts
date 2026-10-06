@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import {
   createValidationMetadataIndicateurFormulaire,
@@ -189,8 +189,8 @@ const convertirEnMetadataParametrageIndicateurForm = (
   };
 };
 
-export const metadataIndicateurRouter = créerRouteurTRPC({
-  récupérerMetadataIndicateurFiltrés: procédureProtégée
+export const metadataIndicateurRouter = createTRPCRouter({
+  recupererMetadataIndicateurFiltres: protectedProcedure
     .input(validationFiltresPourListeMetadataIndicateur)
     .query(
       async ({
@@ -218,7 +218,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         );
       },
     ),
-  listerMetadataIndicateurFiltrés: procédureProtégée
+  listerMetadataIndicateurFiltres: protectedProcedure
     .input(validationFiltresPourListeMetadataIndicateur)
     .query(
       async ({
@@ -259,7 +259,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         );
       },
     ),
-  récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée.query(
+  recupererMetadataIndicateurIdentifiantGenere: protectedProcedure.query(
     async ({ ctx }): Promise<string> => {
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
@@ -271,10 +271,10 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         .run();
     },
   ),
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(validationMetadataIndicateurInput.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
@@ -297,10 +297,10 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
           convertirEnMetadataParametrageIndicateurForm(validatedInput),
         );
     }),
-  creer: procédureProtégée
+  creer: protectedProcedure
     .input(validationMetadataIndicateurInput.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
@@ -323,7 +323,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
           convertirEnMetadataParametrageIndicateurForm(validatedInput),
         );
     }),
-  enregistrerMetadataIndicateur: procédureProtégée
+  enregistrerMetadataIndicateur: protectedProcedure
     .input(enregistrerMetadataIndicateurCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const habilitations = await getContainer("gestionUtilisateur")

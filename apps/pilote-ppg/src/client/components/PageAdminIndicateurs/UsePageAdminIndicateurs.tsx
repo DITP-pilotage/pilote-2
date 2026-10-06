@@ -3,7 +3,7 @@ import { api } from "@/server/framework/trpc/api";
 
 export default function usePageAdminIndicateurs() {
   const { data: identifiantGénéré } =
-    api.metadataIndicateur.récupérerMetadataIndicateurIdentifiantGénéré.useQuery(
+    api.metadataIndicateur.recupererMetadataIndicateurIdentifiantGenere.useQuery(
       undefined,
       { refetchIntervalInBackground: true },
     );

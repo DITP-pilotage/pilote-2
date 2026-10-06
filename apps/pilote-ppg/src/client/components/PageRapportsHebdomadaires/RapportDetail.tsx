@@ -7,7 +7,7 @@ import { TableauUtilisateurs } from "./TableauUtilisateurs";
 import { BlocChantier } from "./BlocChantier";
 
 const RapportDetail = ({ rapportId }: { rapportId: string }) => {
-  const [rapportDetail] = api.rapportHebdomadaire.récupérer.useSuspenseQuery({
+  const [rapportDetail] = api.rapportHebdomadaire.get.useSuspenseQuery({
     rapportId,
   });
 

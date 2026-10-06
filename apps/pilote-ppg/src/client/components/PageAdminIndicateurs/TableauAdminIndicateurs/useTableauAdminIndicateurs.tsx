@@ -119,7 +119,7 @@ export default function useTableauPageAdminIndicateurs() {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const { data: metadataIndicateurs = [], isLoading: estEnChargement } =
-    api.metadataIndicateur.listerMetadataIndicateurFiltrés.useQuery({
+    api.metadataIndicateur.listerMetadataIndicateurFiltres.useQuery({
       filtres: filtresActifs,
     });
 

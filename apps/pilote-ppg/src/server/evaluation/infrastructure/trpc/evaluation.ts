@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
@@ -24,8 +24,8 @@ import { AutoEvaluationPDFAdapter } from "@/server/evaluation/infrastructure/Aut
 import { EvaluationsAdapter } from "@/server/evaluation/infrastructure/EvaluationsAdapter";
 import { transmettreAppreciationInputSchema } from "@/server/evaluation/handlers/TransmettreAppreciationHandler";
 
-export const evaluationRouter = créerRouteurTRPC({
-  getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
+export const evaluationRouter = createTRPCRouter({
+  getDroitsPiloteEval: protectedProcedure.query(async ({ ctx }) => {
     const accesFicheEvaluationService = getContainer("piloteEval").resolve(
       "accesFicheEvaluationService",
     );
@@ -58,7 +58,7 @@ export const evaluationRouter = créerRouteurTRPC({
     };
   }),
 
-  enregistrerBrouillonAutoEvaluationObjectifs: procédureProtégée
+  enregistrerBrouillonAutoEvaluationObjectifs: protectedProcedure
     .input(enregistrerEvaluationObjectifsCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -76,7 +76,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  enregistrerBrouillonAutoEvaluationCriteres: procédureProtégée
+  enregistrerBrouillonAutoEvaluationCriteres: protectedProcedure
     .input(enregistrerEvaluationCriteresCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -94,7 +94,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  validerSaisieObjectifs: procédureProtégée
+  validerSaisieObjectifs: protectedProcedure
     .input(validerSaisieObjectifsCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -112,7 +112,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  validerSaisieCriteres: procédureProtégée
+  validerSaisieCriteres: protectedProcedure
     .input(validerSaisieCriteresCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -130,7 +130,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  enregistrerBrouillonConsolidation: procédureProtégée
+  enregistrerBrouillonConsolidation: protectedProcedure
     .input(enregistrerEvaluationCommandSchema.array())
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -147,7 +147,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  enregistrerBrouillonInstruction: procédureProtégée
+  enregistrerBrouillonInstruction: protectedProcedure
     .input(enregistrerEvaluationCommandSchema.array())
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheInstruction = await getContainer("piloteEval")
@@ -164,7 +164,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  modifierEtatFichesConsolidation: procédureProtégée
+  modifierEtatFichesConsolidation: protectedProcedure
     .input(modifierEtatFichesConsolidationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
@@ -181,7 +181,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  transmettreAppreciation: procédureProtégée
+  transmettreAppreciation: protectedProcedure
     .input(transmettreAppreciationInputSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAppreciation = await getContainer("piloteEval")
@@ -201,7 +201,7 @@ export const evaluationRouter = créerRouteurTRPC({
         });
     }),
 
-  modifierEtatFichesInstruction: procédureProtégée
+  modifierEtatFichesInstruction: protectedProcedure
     .input(modifierEtatFichesInstructionCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
@@ -218,7 +218,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  passerALaConsolidation: procédureProtégée
+  passerALaConsolidation: protectedProcedure
     .input(passerALaConsolidationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
@@ -235,7 +235,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  passerALEtapeInstruction: procédureProtégée
+  passerALEtapeInstruction: protectedProcedure
     .input(passerALEtapeInstructionCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
@@ -252,7 +252,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  setTraitementEvaluation: procédureProtégée
+  setTraitementEvaluation: protectedProcedure
     .input(setTraitementEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederConsolidation = await getContainer("piloteEval")
@@ -269,7 +269,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  retournerAutoEvaluation: procédureProtégée
+  retournerAutoEvaluation: protectedProcedure
     .input(retournerAutoEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
@@ -286,7 +286,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  retournerAppreciation: procédureProtégée
+  retournerAppreciation: protectedProcedure
     .input(retournerAppreciationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
@@ -303,7 +303,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  modifierObjectif: procédureProtégée
+  modifierObjectif: protectedProcedure
     .input(modifierObjectifCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -321,7 +321,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  genererPDFAutoEvaluation: procédureProtégée
+  genererPDFAutoEvaluation: protectedProcedure
     .input(genererPDFAutoEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -343,7 +343,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(new AutoEvaluationPDFAdapter(autoEvaluation));
     }),
 
-  modifierDroitsUtilisateur: procédureProtégée
+  modifierDroitsUtilisateur: protectedProcedure
     .input(modifierDroitsUtilisateurCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
@@ -360,7 +360,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  genererPDFAppreciation: procédureProtégée.mutation(async ({ ctx }) => {
+  genererPDFAppreciation: protectedProcedure.mutation(async ({ ctx }) => {
     const peutAccederFicheAppreciation = await getContainer("piloteEval")
       .resolve("accesFicheEvaluationService")
       .peutAccederEtapeAppreciation({
@@ -384,7 +384,7 @@ export const evaluationRouter = créerRouteurTRPC({
       );
   }),
 
-  genererPDFInstruction: procédureProtégée.mutation(async ({ ctx }) => {
+  genererPDFInstruction: protectedProcedure.mutation(async ({ ctx }) => {
     const peutAccederFicheInstruction = await getContainer("piloteEval")
       .resolve("accesFicheEvaluationService")
       .peutAccederEtapeInstruction({

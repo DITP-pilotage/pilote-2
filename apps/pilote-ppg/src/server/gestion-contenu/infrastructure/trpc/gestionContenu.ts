@@ -1,15 +1,15 @@
 import {
-  créerRouteurTRPC,
-  procédureNonConnecte,
-  procédureProtégée,
+  createTRPCRouter,
+  publicProcedure,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { validationContenu } from "@/validation/gestion-contenu";
 import { validationFeatureFlip } from "@/validation/feature-flip";
 import { presenterEnMessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
 import { getContainer } from "@/server/dependances";
 
-export const gestionContenuRouter = créerRouteurTRPC({
-  modifierBandeauIndisponibilite: procédureProtégée
+export const gestionContenuRouter = createTRPCRouter({
+  modifierBandeauIndisponibilite: protectedProcedure
     .input(validationContenu)
     .mutation(async ({ input, ctx }) => {
       const habilitations = await getContainer("gestionUtilisateur")
@@ -25,18 +25,18 @@ export const gestionContenuRouter = créerRouteurTRPC({
           bandeauTexte: input.bandeauTexte,
         });
     }),
-  recupererMessageInformation: procédureNonConnecte.query(async () => {
+  recupererMessageInformation: publicProcedure.query(async () => {
     const messageInformation = await getContainer("gestionContenu")
       .resolve("récupérerMessageInformationUseCase")
       .run();
     return presenterEnMessageInformationContrat(messageInformation);
   }),
-  recupererToutesLesVariablesContenu: procédureNonConnecte.query(async () => {
+  recupererToutesLesVariablesContenu: publicProcedure.query(async () => {
     return getContainer("gestionContenu")
       .resolve("recupererToutesLesVariablesContenuUseCase")
       .run();
   }),
-  recupererFeatureFlips: procédureProtégée.query(async ({ ctx }) => {
+  recupererFeatureFlips: protectedProcedure.query(async ({ ctx }) => {
     const habilitations = await getContainer("gestionUtilisateur")
       .resolve("habilitationService")
       .recupererHabilitations(ctx.session);
@@ -46,7 +46,7 @@ export const gestionContenuRouter = créerRouteurTRPC({
       .resolve("recupererFeatureFlipsUseCase")
       .run();
   }),
-  modifierFeatureFlips: procédureProtégée
+  modifierFeatureFlips: protectedProcedure
     .input(validationFeatureFlip)
     .mutation(async ({ input, ctx }) => {
       const habilitations = await getContainer("gestionUtilisateur")

@@ -33,7 +33,7 @@ export const AlbertDashboardFilters = ({
   onChange,
 }: AlbertDashboardFiltersProps) => {
   const [rechercheLocale, setRechercheLocale] = useState(filtres.recherche);
-  const { data: profils } = api.profil.récupérerTous.useQuery(undefined);
+  const { data: profils } = api.profil.list.useQuery(undefined);
 
   const validerRecherche = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

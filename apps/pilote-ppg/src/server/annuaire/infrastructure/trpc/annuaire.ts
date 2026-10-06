@@ -1,14 +1,14 @@
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 
-export const annuaireRouter = créerRouteurTRPC({
-  coordinateurs: procédureProtégée.query(() =>
+export const annuaireRouter = createTRPCRouter({
+  coordinateurs: protectedProcedure.query(() =>
     getContainer("annuaire").resolve("listerCoordinateursAnnuaireQuery").run(),
   ),
-  responsables: procédureProtégée.query(() =>
+  responsables: protectedProcedure.query(() =>
     getContainer("annuaire").resolve("listerResponsablesAnnuaireQuery").run(),
   ),
 });

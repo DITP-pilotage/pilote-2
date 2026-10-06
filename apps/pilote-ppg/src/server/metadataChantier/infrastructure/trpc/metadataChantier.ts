@@ -1,100 +1,100 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { chantierCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
 import { enregistrerPonderationsIndicateursCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerPonderationsIndicateursHandler";
-import { vérifierPermissionAdmin } from "@/server/framework/trpc/vérifierPermissionAdmin";
+import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataChantierRouter = créerRouteurTRPC({
-  lister: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+export const metadataChantierRouter = createTRPCRouter({
+  lister: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataChantier")
       .resolve("listerChantiersQuery")
       .run();
   }),
 
-  récupérer: procédureProtégée
+  récupérer: protectedProcedure
     .input(z.object({ chantierId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataChantier")
         .resolve("recupererChantierQuery")
         .run({ chantierId: input.chantierId });
     }),
 
-  récupérerIdSuivant: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  récupérerIdSuivant: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataChantier")
       .resolve("recupererIdSuivantQuery")
       .run();
   }),
 
-  listerPpgs: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  listerPpgs: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataChantier").resolve("listerPpgsQuery").run();
   }),
 
-  listerPorteursMinistere: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  listerPorteursMinistere: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataChantier")
       .resolve("listerPorteursQuery")
       .run({ type: "MIN" });
   }),
 
-  listerPorteursDAC: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  listerPorteursDAC: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataChantier")
       .resolve("listerPorteursQuery")
       .run({ type: "DAC" });
   }),
 
-  listerPerimetres: procédureProtégée
+  listerPerimetres: protectedProcedure
     .input(z.object({ porteurId: z.string().optional() }).optional())
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataChantier")
         .resolve("listerPerimetresQuery")
         .run({ porteurId: input?.porteurId });
     }),
 
-  listerZonegroups: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  listerZonegroups: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataChantier")
       .resolve("listerZonegroupsQuery")
       .run();
   }),
 
-  enregistrer: procédureProtégée
+  enregistrer: protectedProcedure
     .input(chantierCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataChantier")
         .resolve("enregistrerChantierHandler")
         .execute(input);
     }),
 
-  récupérerIndicateursPonderations: procédureProtégée
+  récupérerIndicateursPonderations: protectedProcedure
     .input(z.object({ chantierId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataChantier")
         .resolve("recupererIndicateursPonderationsChantierQuery")
         .run({ chantierId: input.chantierId });
     }),
 
-  enregistrerPonderationsIndicateurs: procédureProtégée
+  enregistrerPonderationsIndicateurs: protectedProcedure
     .input(
       enregistrerPonderationsIndicateursCommandSchema.and(zodValidateurCSRF),
     )
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataChantier")
         .resolve("enregistrerPonderationsIndicateursHandler")
         .execute(input, ctx.session.user.id);

@@ -24,7 +24,7 @@ const creerQueryClient = () =>
 
 const queryClientNavigateur = creerQueryClient();
 
-const récupérerBaseUrl = () => {
+const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
 
   if (process.env.NEXTAUTH_URL) return `https://${process.env.NEXTAUTH_URL}`;
@@ -49,7 +49,7 @@ export const api = createTRPCNext<AppRouter>({
             (opts.direction === "down" && opts.result instanceof Error),
         }),
         httpBatchLink({
-          url: `${récupérerBaseUrl()}/api/trpc`,
+          url: `${getBaseUrl()}/api/trpc`,
           maxURLLength: 6000,
           transformer: superjson,
           headers() {

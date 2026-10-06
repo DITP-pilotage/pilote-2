@@ -9,7 +9,7 @@ import { RapportDetail } from "./RapportDetail";
 
 const PageRapportsHebdomadaires = () => {
   const [rapportId, setRapportId] = useQueryState("rapportId", parseAsString);
-  const [rapports] = api.rapportHebdomadaire.lister.useSuspenseQuery();
+  const [rapports] = api.rapportHebdomadaire.list.useSuspenseQuery();
   const effectiveRapportId = rapportId ?? rapports[0]?.id ?? null;
   const [isOpen, setIsOpen] = useState(false);
 

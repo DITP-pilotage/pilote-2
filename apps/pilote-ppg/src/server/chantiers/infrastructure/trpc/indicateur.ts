@@ -1,13 +1,13 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { validationHistoriqueIndicateurTerritoire } from "@/validation/indicateur";
 import { getContainer } from "@/server/dependances";
 
-export const indicateurRouter = créerRouteurTRPC({
-  recupererHistoriqueIndicateurTerritoire: procédureProtégée
+export const indicateurRouter = createTRPCRouter({
+  recupererHistoriqueIndicateurTerritoire: protectedProcedure
     .input(validationHistoriqueIndicateurTerritoire)
     .query(async ({ input }) => {
       return getContainer("indicateurTerritoireValeurEvenement")
@@ -19,7 +19,7 @@ export const indicateurRouter = créerRouteurTRPC({
           territoireCode: input.territoireCode,
         });
     }),
-  recupererValeursAvancementTerritoires: procédureProtégée
+  recupererValeursAvancementTerritoires: protectedProcedure
     .input(
       z.object({
         indicateurId: z.string(),
@@ -38,7 +38,7 @@ export const indicateurRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
-  recupererEvolutionValeursAvancementTerritoires: procédureProtégée
+  recupererEvolutionValeursAvancementTerritoires: protectedProcedure
     .input(
       z.object({
         indicateurId: z.string(),
@@ -57,7 +57,7 @@ export const indicateurRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
-  recupererEvolutionTauxAvancementTerritoires: procédureProtégée
+  recupererEvolutionTauxAvancementTerritoires: protectedProcedure
     .input(
       z.object({
         indicateurId: z.string(),
@@ -76,7 +76,7 @@ export const indicateurRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
-  recupererStatistiquesValeurAvancement: procédureProtégée
+  recupererStatistiquesValeurAvancement: protectedProcedure
     .input(
       z.object({
         indicateurId: z.string(),
@@ -99,7 +99,7 @@ export const indicateurRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
-  recupererTauxAvancementTerritoires: procédureProtégée
+  recupererTauxAvancementTerritoires: protectedProcedure
     .input(
       z.object({
         indicateurId: z.string(),
@@ -118,7 +118,7 @@ export const indicateurRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
-  recupererPVATerritoires: procédureProtégée
+  recupererPVATerritoires: protectedProcedure
     .input(
       z.object({
         indicateurId: z.string(),
@@ -137,7 +137,7 @@ export const indicateurRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
-  recupererStatistiquesTauxAvancement: procédureProtégée
+  recupererStatistiquesTauxAvancement: protectedProcedure
     .input(
       z.object({
         indicateurId: z.string(),

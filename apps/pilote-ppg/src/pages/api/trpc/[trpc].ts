@@ -2,12 +2,12 @@ import { createNextApiHandler } from "@trpc/server/adapters/next";
 
 import { appRouter } from "@/server/app/trpc/appRouter";
 import { logger } from "@/server/framework/logger";
-import { créerContextTRPC } from "@/server/framework/trpc/trpc";
+import { createTRPCContext } from "@/server/framework/trpc/trpc";
 import { categorieDepuisRouteurTRPC } from "@/server/framework/trpc/categorieLogRouteurTRPC";
 
 export default createNextApiHandler({
   router: appRouter,
-  createContext: créerContextTRPC,
+  createContext: createTRPCContext,
   onError: ({ error, ctx, path, input }) =>
     logger.error(
       {

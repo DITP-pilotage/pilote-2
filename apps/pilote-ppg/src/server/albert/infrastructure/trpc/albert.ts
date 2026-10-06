@@ -1,22 +1,22 @@
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 
-const conversationsRouter = créerRouteurTRPC({
-  lister: procédureProtégée.query(async ({ ctx }) => {
+const conversationsRouter = createTRPCRouter({
+  lister: protectedProcedure.query(async ({ ctx }) => {
     const useCase = getContainer("albert").resolve(
       "listerConversationsUseCase",
     );
     return useCase.execute({ utilisateurId: ctx.session.user.id });
   }),
 
-  recuperer: procédureProtégée
+  recuperer: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       const useCase = getContainer("albert").resolve(
@@ -28,7 +28,7 @@ const conversationsRouter = créerRouteurTRPC({
       });
     }),
 
-  supprimer: procédureProtégée
+  supprimer: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const useCase = getContainer("albert").resolve(
@@ -40,7 +40,7 @@ const conversationsRouter = créerRouteurTRPC({
       });
     }),
 
-  listerToutes: procédureProtégée
+  listerToutes: protectedProcedure
     .input(
       z.object({
         page: z.number().int().min(1).default(1),
@@ -77,7 +77,7 @@ const conversationsRouter = créerRouteurTRPC({
       });
     }),
 
-  recupererPourAdmin: procédureProtégée
+  recupererPourAdmin: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
@@ -90,8 +90,8 @@ const conversationsRouter = créerRouteurTRPC({
     }),
 });
 
-export const albertRouter = créerRouteurTRPC({
-  evaluer: procédureProtégée
+export const albertRouter = createTRPCRouter({
+  evaluer: protectedProcedure
     .input(
       z
         .discriminatedUnion("evaluation", [

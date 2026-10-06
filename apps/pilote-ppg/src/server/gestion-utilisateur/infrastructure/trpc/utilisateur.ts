@@ -1,7 +1,7 @@
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import {
   validationDesactiverVideoAccueil,
@@ -18,11 +18,11 @@ const creerUtilisateurSchemaBase = validationInfosBaseUtilisateur.and(
   validationInfosHabilitationsUtilisateur,
 );
 
-export const utilisateurRouter = créerRouteurTRPC({
-  créer: procédureProtégée
+export const utilisateurRouter = createTRPCRouter({
+  creer: protectedProcedure
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -36,10 +36,10 @@ export const utilisateurRouter = créerRouteurTRPC({
           profilAuteur,
         );
     }),
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -53,10 +53,10 @@ export const utilisateurRouter = créerRouteurTRPC({
           profilAuteur,
         );
     }),
-  desactiver: procédureProtégée
+  desactiver: protectedProcedure
     .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -69,10 +69,10 @@ export const utilisateurRouter = créerRouteurTRPC({
           ctx.session.user.id,
         );
     }),
-  reactiver: procédureProtégée
+  reactiver: protectedProcedure
     .input(validationReactiverUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -85,26 +85,26 @@ export const utilisateurRouter = créerRouteurTRPC({
           ctx.session.user.id,
         );
     }),
-  desactiverVideoAccueil: procédureProtégée
+  desactiverVideoAccueil: protectedProcedure
     .input(validationDesactiverVideoAccueil.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       await getContainer("gestionUtilisateur")
         .resolve("desactiverVideoAccueilUseCase")
         .execute(input.utilisateurId);
     }),
-  envoyerMailInscriptionInfolettre: procédureProtégée
+  envoyerMailInscriptionInfolettre: protectedProcedure
     .input(validationEnvoyerMailInscriptionInfolettre.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       await getContainer("gestionUtilisateur")
         .resolve("envoyerMailInscriptionInfolettreUseCase")
         .execute(input.utilisateurEmail, input.lienConfirmationInscription);
     }),
-  desactiverPopupInfolettre: procédureProtégée
+  desactiverPopupInfolettre: protectedProcedure
     .input(validationDesactiverVideoAccueil.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       await getContainer("gestionUtilisateur")
         .resolve("desactiverPopupInfolettreUseCase")
         .execute(input.utilisateurId);

@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -12,8 +12,8 @@ import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-erro
 const zodLogLevel = z.nativeEnum($Enums.log_level);
 const zodGranularite = z.enum(["heure", "jour", "semaine"]);
 
-export const applicationLogRouter = créerRouteurTRPC({
-  lister: procédureProtégée
+export const applicationLogRouter = createTRPCRouter({
+  lister: protectedProcedure
     .input(
       z.object({
         page: z.number().int().min(1).default(1),
@@ -43,7 +43,7 @@ export const applicationLogRouter = créerRouteurTRPC({
         });
     }),
 
-  statistiques: procédureProtégée
+  statistiques: protectedProcedure
     .input(
       z.object({
         dateDebut: z.string().datetime(),
@@ -65,7 +65,7 @@ export const applicationLogRouter = créerRouteurTRPC({
         });
     }),
 
-  purger: procédureProtégée
+  purger: protectedProcedure
     .input(
       z.object({
         csrf: z.string(),
@@ -73,7 +73,7 @@ export const applicationLogRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
         throw new UnauthorizedError("Accès réservé aux administrateurs");

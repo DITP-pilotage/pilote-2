@@ -2,7 +2,7 @@ import { Session } from "next-auth";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 
-export function vérifierPermissionAdmin(
+export function checkAdminPermission(
   session: Session & { user: Session["user"] },
 ) {
   const habilitation = new Habilitation({

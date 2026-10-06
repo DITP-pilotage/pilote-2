@@ -1,4 +1,4 @@
-import { créerRouteurTRPC } from "@/server/framework/trpc/trpc";
+import { createTRPCRouter } from "@/server/framework/trpc/trpc";
 import { utilisateurRouter } from "@/server/gestion-utilisateur/infrastructure/trpc/utilisateur";
 import { metadataIndicateurRouter } from "@/server/parametrage-indicateur/infrastructure/trpc/metadataIndicateur";
 import { gestionContenuRouter } from "@/server/gestion-contenu/infrastructure/trpc/gestionContenu";
@@ -8,14 +8,14 @@ import { habilitationsCoordinateurRouter } from "@/server/habilitations-coordina
 import { profilUtilisateurRouter } from "@/server/profil-utilisateur/infrastructure/trpc/profilUtilisateur";
 import { rapportHebdomadaireRouter } from "@/server/rapports-hebdomadaires/infrastructure/trpc/rapportHebdomadaire";
 import { chantierRouter } from "@/server/chantiers/infrastructure/trpc/chantier";
-import { synthèseDesRésultatsRouter } from "@/server/syntheses-des-resultats/infrastructure/trpc/syntheseDesResultats";
+import { syntheseDesResultatsRouter } from "@/server/syntheses-des-resultats/infrastructure/trpc/syntheseDesResultats";
 import { commentaireRouter } from "@/server/commentaires/infrastructure/trpc/commentaire";
 import { decisionStrategiqueRouter } from "@/server/decisions-strategiques/infrastructure/trpc/decisionStrategique";
 import { objectifRouter } from "@/server/objectifs/infrastructure/trpc/objectif";
 import { indicateurRouter } from "@/server/chantiers/infrastructure/trpc/indicateur";
 import { propositionValeurAvancementRouter } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/trpc/propositionValeurAvancement";
 import { territoireRouter } from "@/server/gestion-utilisateur/infrastructure/trpc/territoire";
-import { périmètreMinistérielRouter } from "@/server/gestion-utilisateur/infrastructure/trpc/perimetreMinisteriel";
+import { perimetreMinisterielRouter } from "@/server/gestion-utilisateur/infrastructure/trpc/perimetreMinisteriel";
 import { profilRouter } from "@/server/gestion-utilisateur/infrastructure/trpc/profil";
 import { parametrageNouveautesRouter } from "@/server/parametrage-nouveautes/infrastructure/trpc/parametrageNouveautes";
 import { albertRouter } from "@/server/albert/infrastructure/trpc/albert";
@@ -31,9 +31,9 @@ import { metadataPpgRouter } from "@/server/metadataPpg/infrastructure/trpc/meta
 import { metadataEngagementRouter } from "@/server/metadataEngagement/infrastructure/trpc/metadataEngagement";
 import { annuaireRouter } from "@/server/annuaire/infrastructure/trpc/annuaire";
 
-export const appRouter = créerRouteurTRPC({
+export const appRouter = createTRPCRouter({
   chantier: chantierRouter,
-  synthèseDesRésultats: synthèseDesRésultatsRouter,
+  syntheseDesResultats: syntheseDesResultatsRouter,
   commentaire: commentaireRouter,
   decisionStrategique: decisionStrategiqueRouter,
   objectif: objectifRouter,
@@ -44,7 +44,7 @@ export const appRouter = créerRouteurTRPC({
   propositionValeurAvancement: propositionValeurAvancementRouter,
   gestionContenu: gestionContenuRouter,
   gestionTokenAPI: gestionTokenAPIRouter,
-  périmètreMinistériel: périmètreMinistérielRouter,
+  perimetreMinisteriel: perimetreMinisterielRouter,
   profil: profilRouter,
   parametrageNouveautes: parametrageNouveautesRouter,
   evaluation: evaluationRouter,

@@ -13,7 +13,7 @@ export default function useRécapitulatifUtilisateur() {
   const router = useRouter();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
-  const mutationCréerUtilisateur = api.utilisateur.créer.useMutation({
+  const mutationCréerUtilisateur = api.utilisateur.creer.useMutation({
     onSuccess: () => {
       router.push("/admin/utilisateurs?compteCréé=true");
     },

@@ -1,6 +1,6 @@
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import {
   validationPropositionValeurAvancement,
@@ -12,8 +12,8 @@ import {
 } from "@/validation/proposition-valeur-avancement";
 import { getContainer } from "@/server/dependances";
 
-export const propositionValeurAvancementRouter = créerRouteurTRPC({
-  creer: procédureProtégée
+export const propositionValeurAvancementRouter = createTRPCRouter({
+  creer: protectedProcedure
     .input(validationPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const idAuteur = ctx.session.user.id ?? "";
@@ -47,7 +47,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(validationPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const idAuteur = ctx.session.user.id ?? "";
@@ -81,7 +81,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
-  supprimer: procédureProtégée
+  supprimer: protectedProcedure
     .input(validationSuppressionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.id ?? "";
@@ -97,7 +97,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
-  accepter: procédureProtégée
+  accepter: protectedProcedure
     .input(validationAccepterPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.id ?? "";
@@ -129,7 +129,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
-  accepterAvecModification: procédureProtégée
+  accepterAvecModification: protectedProcedure
     .input(validationAccepterAvecModificationPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.id ?? "";
@@ -162,7 +162,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
-  refuser: procédureProtégée
+  refuser: protectedProcedure
     .input(validationRefuserPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.id ?? "";
@@ -194,7 +194,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
-  accuserReception: procédureProtégée
+  accuserReception: protectedProcedure
     .input(validationAccuserReceptionPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.id ?? "";

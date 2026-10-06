@@ -1,72 +1,72 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { porteurCommandSchema } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
-import { vérifierPermissionAdmin } from "@/server/framework/trpc/vérifierPermissionAdmin";
+import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataPorteurRouter = créerRouteurTRPC({
-  lister: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+export const metadataPorteurRouter = createTRPCRouter({
+  lister: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataPorteur")
       .resolve("listerPorteursAdminQuery")
       .run();
   }),
 
-  récupérer: procédureProtégée
+  récupérer: protectedProcedure
     .input(z.object({ porteurId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataPorteur")
         .resolve("recupererPorteurQuery")
         .run({ porteurId: input.porteurId });
     }),
 
-  récupérerIdSuivant: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  récupérerIdSuivant: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataPorteur")
       .resolve("recupererIdSuivantPorteurQuery")
       .run();
   }),
 
-  verifierUtilisation: procédureProtégée
+  verifierUtilisation: protectedProcedure
     .input(z.object({ porteurId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataPorteur")
         .resolve("verifierUtilisationPorteurQuery")
         .run({ porteurId: input.porteurId });
     }),
 
-  enregistrer: procédureProtégée
+  enregistrer: protectedProcedure
     .input(porteurCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataPorteur")
         .resolve("enregistrerPorteurHandler")
         .execute(input);
     }),
 
-  archiver: procédureProtégée
+  archiver: protectedProcedure
     .input(z.object({ porteurId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataPorteur")
         .resolve("archiverPorteurHandler")
         .execute({ porteurId: input.porteurId });
     }),
 
-  restorer: procédureProtégée
+  restorer: protectedProcedure
     .input(z.object({ porteurId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataPorteur")
         .resolve("restorerPorteurHandler")
         .execute({ porteurId: input.porteurId });

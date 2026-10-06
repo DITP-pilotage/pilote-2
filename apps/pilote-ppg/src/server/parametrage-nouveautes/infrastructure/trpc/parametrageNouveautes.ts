@@ -1,14 +1,14 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { presenterEnListeNouveauteContrat } from "@/server/parametrage-nouveautes/app/contrats/NouveauteContrat";
-export const parametrageNouveautesRouter = créerRouteurTRPC({
-  creer: procédureProtégée
+export const parametrageNouveautesRouter = createTRPCRouter({
+  creer: protectedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
@@ -18,10 +18,10 @@ export const parametrageNouveautesRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const estAutoriseAModifierLesNouveautés =
+      const estAutoriseAModifierLesNouveautes =
         ctx.session.profil === ProfilEnum.DITP_ADMIN;
 
-      if (!estAutoriseAModifierLesNouveautés) {
+      if (!estAutoriseAModifierLesNouveautes) {
         throw new UnauthorizedError(
           "Vous n'êtes pas autorisé à effectuer cette action",
         );
@@ -37,7 +37,7 @@ export const parametrageNouveautesRouter = créerRouteurTRPC({
         });
     }),
 
-  lister: procédureProtégée.query(async () => {
+  lister: protectedProcedure.query(async () => {
     return presenterEnListeNouveauteContrat(
       await getContainer("parametrageNouveautes")
         .resolve("listerNouveautesUseCase")
@@ -45,7 +45,7 @@ export const parametrageNouveautesRouter = créerRouteurTRPC({
     );
   }),
 
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -55,10 +55,10 @@ export const parametrageNouveautesRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const estAutoriseAModifierLesNouveautés =
+      const estAutoriseAModifierLesNouveautes =
         ctx.session.profil === ProfilEnum.DITP_ADMIN;
 
-      if (!estAutoriseAModifierLesNouveautés) {
+      if (!estAutoriseAModifierLesNouveautes) {
         throw new UnauthorizedError(
           "Vous n'êtes pas autorisé à effectuer cette action",
         );
