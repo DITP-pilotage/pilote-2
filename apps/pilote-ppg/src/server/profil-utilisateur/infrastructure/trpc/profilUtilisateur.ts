@@ -1,15 +1,15 @@
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { getContainer } from "@/server/dependances";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
 import { zodValidateurCSRF } from "@/validation/publication";
 
-export const profilUtilisateurRouter = créerRouteurTRPC({
-  getUtilisateurConnecte: procédureProtégée.query(async ({ ctx }) => {
+export const profilUtilisateurRouter = createTRPCRouter({
+  getUtilisateurConnecte: protectedProcedure.query(async ({ ctx }) => {
     const session = ctx.session;
     if (session == null) {
       throw new UnauthorizedError("Utilisateur non authentifié");
@@ -20,10 +20,10 @@ export const profilUtilisateurRouter = créerRouteurTRPC({
     );
     return query.run(session.user.id);
   }),
-  modifierMonProfil: procédureProtégée
+  modifierMonProfil: protectedProcedure
     .input(validationModifierMonProfil.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
       await getContainer("profilUtilisateur")
         .resolve("modifierMonProfilUseCase")
         .run(ctx.session.user.id, input);

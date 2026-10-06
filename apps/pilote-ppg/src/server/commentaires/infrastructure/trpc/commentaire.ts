@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import {
   validationCommentaireContexte,
@@ -17,15 +17,15 @@ const zodValidateurCSRF = z.object({
   csrf: z.string(),
 });
 
-export const commentaireRouter = créerRouteurTRPC({
-  publier: procédureProtégée
+export const commentaireRouter = createTRPCRouter({
+  publier: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationCommentaireFormulaire)
         .merge(validationCommentaireContexte),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("commentaires")
         .resolve("publierCommentaireUseCase")
@@ -40,14 +40,14 @@ export const commentaireRouter = créerRouteurTRPC({
         });
     }),
 
-  enregistrerEnBrouillon: procédureProtégée
+  enregistrerEnBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationCommentaireFormulaire)
         .merge(validationCommentaireContexte),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("commentaires")
         .resolve("enregistrerBrouillonCommentaireUseCase")
@@ -62,14 +62,14 @@ export const commentaireRouter = créerRouteurTRPC({
         });
     }),
 
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationCommentaireFormulaire)
         .merge(validationCommentaireAModifier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("commentaires")
         .resolve("modifierCommentairePublieUseCase")
@@ -82,14 +82,14 @@ export const commentaireRouter = créerRouteurTRPC({
         });
     }),
 
-  publierUnBrouillon: procédureProtégée
+  publierUnBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationCommentaireFormulaire)
         .merge(validationBrouillonCommentaireAPublier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("commentaires")
         .resolve("publierBrouillonCommentaireUseCase")
@@ -102,14 +102,14 @@ export const commentaireRouter = créerRouteurTRPC({
         });
     }),
 
-  modifierLeBrouillon: procédureProtégée
+  modifierLeBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationCommentaireFormulaire)
         .merge(validationBrouillonCommentaireAPublier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("commentaires")
         .resolve("modifierBrouillonCommentaireUseCase")
@@ -122,7 +122,7 @@ export const commentaireRouter = créerRouteurTRPC({
         });
     }),
 
-  recupererHistorique: procédureProtégée
+  recupererHistorique: protectedProcedure
     .input(validationCommentaireContexte)
     .query(({ input, ctx }) => {
       new Habilitation(

@@ -1,81 +1,81 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { zonegroupCommandSchema } from "@/server/metadataZonegroup/handlers/EnregistrerZonegroupHandler";
-import { vérifierPermissionAdmin } from "@/server/framework/trpc/vérifierPermissionAdmin";
+import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataZonegroupRouter = créerRouteurTRPC({
-  lister: procédureProtégée
+export const metadataZonegroupRouter = createTRPCRouter({
+  lister: protectedProcedure
     .input(z.object({ actifsSeulement: z.boolean().optional() }).optional())
     .query(async ({ ctx, input }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataZonegroup")
         .resolve("listerZonegroupsAdminQuery")
         .run({ actifsSeulement: input?.actifsSeulement });
     }),
 
-  récupérer: procédureProtégée
+  récupérer: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataZonegroup")
         .resolve("recupererZonegroupQuery")
         .run({ zoneGroupId: input.zoneGroupId });
     }),
 
-  récupérerIdSuivant: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  récupérerIdSuivant: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataZonegroup")
       .resolve("recupererIdSuivantZonegroupQuery")
       .run();
   }),
 
-  listerZonesDisponibles: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+  listerZonesDisponibles: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataZonegroup")
       .resolve("listerZonesDisponiblesQuery")
       .run();
   }),
 
-  verifierUtilisation: procédureProtégée
+  verifierUtilisation: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataZonegroup")
         .resolve("verifierUtilisationZonegroupQuery")
         .run({ zoneGroupId: input.zoneGroupId });
     }),
 
-  enregistrer: procédureProtégée
+  enregistrer: protectedProcedure
     .input(zonegroupCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataZonegroup")
         .resolve("enregistrerZonegroupHandler")
         .execute(input);
     }),
 
-  archiver: procédureProtégée
+  archiver: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataZonegroup")
         .resolve("archiverZonegroupHandler")
         .execute({ zoneGroupId: input.zoneGroupId });
     }),
 
-  restorer: procédureProtégée
+  restorer: protectedProcedure
     .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataZonegroup")
         .resolve("restorerZonegroupHandler")
         .execute({ zoneGroupId: input.zoneGroupId });

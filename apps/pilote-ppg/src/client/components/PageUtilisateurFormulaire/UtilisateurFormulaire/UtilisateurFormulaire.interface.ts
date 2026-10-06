@@ -13,6 +13,6 @@ export type UtilisateurFormulaireContainerProps = Pick<
 >;
 
 export type UtilisateurFormInputs = Omit<
-  RouterInputs["utilisateur"]["créer"],
+  RouterInputs["utilisateur"]["creer"],
   "csrf"
 >;

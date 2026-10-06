@@ -13,7 +13,7 @@ export const HistoriqueSyntheseDesResultats = () => {
   const territoireSélectionné = useTerritoireSelectionne();
 
   const { data: historique } =
-    api.synthèseDesRésultats.récupérerHistorique.useQuery(
+    api.syntheseDesResultats.recupererHistorique.useQuery(
       { chantierId: chantier.id, territoireCode },
       { enabled: open },
     );

@@ -3,9 +3,9 @@ import { categorieDepuisRouteurTRPC } from "@/server/framework/trpc/categorieLog
 describe("categorieDepuisRouteurTRPC", () => {
   it.each([
     { path: "chantier.recupererChantier", attendu: "chantier" },
-    { path: "synthèseDesRésultats.creer", attendu: "chantier" },
+    { path: "syntheseDesResultats.creer", attendu: "chantier" },
     { path: "metadataPorteur.lister", attendu: "referentiel" },
-    { path: "périmètreMinistériel.recupererTous", attendu: "referentiel" },
+    { path: "perimetreMinisteriel.recupererTous", attendu: "referentiel" },
     { path: "albert.envoyerMessage", attendu: "albert" },
     { path: "applicationLog.lister", attendu: "maintenance" },
     { path: "gestionTokenAPI.creerToken", attendu: "auth" },

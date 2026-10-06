@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
@@ -17,15 +17,15 @@ const zodValidateurCSRF = z.object({
   csrf: z.string(),
 });
 
-export const decisionStrategiqueRouter = créerRouteurTRPC({
-  publier: procédureProtégée
+export const decisionStrategiqueRouter = createTRPCRouter({
+  publier: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationDecisionStrategiqueFormulaire)
         .merge(validationDecisionStrategiqueContexte),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("decisionStrategique")
         .resolve("publierDecisionStrategiqueUseCase")
@@ -39,14 +39,14 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
         });
     }),
 
-  enregistrerEnBrouillon: procédureProtégée
+  enregistrerEnBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationDecisionStrategiqueFormulaire)
         .merge(validationDecisionStrategiqueContexte),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("decisionStrategique")
         .resolve("enregistrerBrouillonDecisionStrategiqueUseCase")
@@ -60,14 +60,14 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
         });
     }),
 
-  publierUnBrouillon: procédureProtégée
+  publierUnBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationDecisionStrategiqueFormulaire)
         .merge(validationBrouillonDecisionStrategiqueAPublier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("decisionStrategique")
         .resolve("publierBrouillonDecisionStrategiqueUseCase")
@@ -80,14 +80,14 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
         });
     }),
 
-  modifierLeBrouillon: procédureProtégée
+  modifierLeBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationDecisionStrategiqueFormulaire)
         .merge(validationBrouillonDecisionStrategiqueAPublier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("decisionStrategique")
         .resolve("modifierBrouillonDecisionStrategiqueUseCase")
@@ -100,14 +100,14 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
         });
     }),
 
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(
       zodValidateurCSRF
         .merge(validationDecisionStrategiqueFormulaire)
         .merge(validationDecisionStrategiqueAModifier),
     )
     .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("decisionStrategique")
         .resolve("modifierDecisionStrategiquePublieeUseCase")
@@ -120,7 +120,7 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
         });
     }),
 
-  recupererHistorique: procédureProtégée
+  recupererHistorique: protectedProcedure
     .input(validationDecisionStrategiqueContexte)
     .query(({ input, ctx }) => {
       new Habilitation(

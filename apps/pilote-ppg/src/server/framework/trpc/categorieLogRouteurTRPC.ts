@@ -33,9 +33,9 @@ const CATEGORIE_PAR_ROUTEUR_TRPC: Record<RouteurTRPC, CategorieLog> = {
   profil: "utilisateur",
   profilUtilisateur: "utilisateur",
   propositionValeurAvancement: "pva",
-  périmètreMinistériel: "referentiel",
+  perimetreMinisteriel: "referentiel",
   rapportHebdomadaire: "rapport",
-  synthèseDesRésultats: "chantier",
+  syntheseDesResultats: "chantier",
   territoire: "referentiel",
   utilisateur: "utilisateur",
 };

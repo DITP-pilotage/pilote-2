@@ -1,63 +1,63 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
+  createTRPCRouter,
+  protectedProcedure,
+  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { axeCommandSchema } from "@/server/metadataAxe/handlers/EnregistrerAxeHandler";
-import { vérifierPermissionAdmin } from "@/server/framework/trpc/vérifierPermissionAdmin";
+import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
-export const metadataAxeRouter = créerRouteurTRPC({
-  lister: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
+export const metadataAxeRouter = createTRPCRouter({
+  lister: protectedProcedure.query(async ({ ctx }) => {
+    checkAdminPermission(ctx.session);
     return getContainer("metadataAxe").resolve("listerAxesAdminQuery").run();
   }),
 
-  récupérer: procédureProtégée
+  récupérer: protectedProcedure
     .input(z.object({ axeId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataAxe")
         .resolve("recupererAxeQuery")
         .run({ axeId: input.axeId });
     }),
 
-  verifierUtilisation: procédureProtégée
+  verifierUtilisation: protectedProcedure
     .input(z.object({ axeId: z.string() }))
     .query(async ({ input, ctx }) => {
-      vérifierPermissionAdmin(ctx.session);
+      checkAdminPermission(ctx.session);
       return getContainer("metadataAxe")
         .resolve("verifierUtilisationAxeQuery")
         .run({ axeId: input.axeId });
     }),
 
-  enregistrer: procédureProtégée
+  enregistrer: protectedProcedure
     .input(axeCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataAxe")
         .resolve("enregistrerAxeHandler")
         .execute(input);
     }),
 
-  archiver: procédureProtégée
+  archiver: protectedProcedure
     .input(z.object({ axeId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataAxe")
         .resolve("archiverAxeHandler")
         .execute({ axeId: input.axeId });
     }),
 
-  restorer: procédureProtégée
+  restorer: protectedProcedure
     .input(z.object({ axeId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      checkAdminPermission(ctx.session);
       await getContainer("metadataAxe")
         .resolve("restorerAxeHandler")
         .execute({ axeId: input.axeId });

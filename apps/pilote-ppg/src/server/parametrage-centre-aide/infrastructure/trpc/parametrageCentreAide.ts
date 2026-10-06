@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -10,7 +10,7 @@ import { presenterEnListeArticleCentreAideContrat } from "@/server/parametrage-c
 
 const TypeArticleCentreAideSchema = z.enum(["GROUPE", "PAGE"]);
 
-const vérifierAdmin = (profil: string) => {
+const checkAdmin = (profil: string) => {
   if (profil !== ProfilEnum.DITP_ADMIN) {
     throw new UnauthorizedError(
       "Vous n'êtes pas autorisé à effectuer cette action",
@@ -18,8 +18,8 @@ const vérifierAdmin = (profil: string) => {
   }
 };
 
-export const parametrageCentreAideRouter = créerRouteurTRPC({
-  creer: procédureProtégée
+export const parametrageCentreAideRouter = createTRPCRouter({
+  creer: protectedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
@@ -31,7 +31,7 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      vérifierAdmin(ctx.session.profil);
+      checkAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("creerArticleCentreAideUseCase")
@@ -45,7 +45,7 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
         });
     }),
 
-  lister: procédureProtégée.query(async () => {
+  lister: protectedProcedure.query(async () => {
     return presenterEnListeArticleCentreAideContrat(
       await getContainer("parametrageCentreAide")
         .resolve("listerArticlesCentreAideUseCase")
@@ -53,7 +53,7 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
     );
   }),
 
-  modifier: procédureProtégée
+  modifier: protectedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
@@ -71,7 +71,7 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      vérifierAdmin(ctx.session.profil);
+      checkAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("modifierArticleCentreAideUseCase")
@@ -91,51 +91,51 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
         });
     }),
 
-  supprimer: procédureProtégée
+  supprimer: protectedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      vérifierAdmin(ctx.session.profil);
+      checkAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("supprimerArticleCentreAideUseCase")
         .execute({ id: input.id });
     }),
 
-  publier: procédureProtégée
+  publier: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      vérifierAdmin(ctx.session.profil);
+      checkAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("publierArticleCentreAideUseCase")
         .execute({ id: input.id });
     }),
 
-  depublier: procédureProtégée
+  depublier: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      vérifierAdmin(ctx.session.profil);
+      checkAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("depublierArticleCentreAideUseCase")
         .execute({ id: input.id });
     }),
 
-  basculerVisibilite: procédureProtégée
+  basculerVisibilite: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      vérifierAdmin(ctx.session.profil);
+      checkAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("basculerVisibiliteArticleCentreAideUseCase")
         .execute({ id: input.id });
     }),
 
-  deplacer: procédureProtégée
+  deplacer: protectedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
@@ -144,7 +144,7 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      vérifierAdmin(ctx.session.profil);
+      checkAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("deplacerArticleCentreAideUseCase")

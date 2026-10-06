@@ -29,12 +29,12 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
   const filtresActifs = filtresModifierIndicateursActifsStore();
 
   const { data: chantiers } =
-    api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(
+    api.chantier.recupererTousSynthetisesAccessiblesEnLecture.useQuery(
       undefined,
       { staleTime: Number.POSITIVE_INFINITY },
     );
   const { data: périmètresMinistériels } =
-    api.périmètreMinistériel.récupérerTous.useQuery(undefined, {
+    api.perimetreMinisteriel.list.useQuery(undefined, {
       staleTime: Number.POSITIVE_INFINITY,
     });
 

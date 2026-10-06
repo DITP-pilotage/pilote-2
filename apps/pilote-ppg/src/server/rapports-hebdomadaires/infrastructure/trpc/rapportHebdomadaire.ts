@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 
-export const rapportHebdomadaireRouter = créerRouteurTRPC({
-  lister: procédureProtégée.query(async ({ ctx }) => {
+export const rapportHebdomadaireRouter = createTRPCRouter({
+  list: protectedProcedure.query(async ({ ctx }) => {
     const { session } = ctx;
 
     const habilitations = await getContainer("gestionUtilisateur")
@@ -20,7 +20,7 @@ export const rapportHebdomadaireRouter = créerRouteurTRPC({
       .run(session.user.id);
   }),
 
-  récupérer: procédureProtégée
+  get: protectedProcedure
     .input(
       z.object({
         rapportId: z.string().uuid(),

@@ -1,30 +1,30 @@
 import { z } from "zod";
 import {
-  créerRouteurTRPC,
-  procédureProtégée,
+  createTRPCRouter,
+  protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { TerritoireNonAutoriséErreur } from "@/server/utils/errors";
 
-export const chantierRouter = créerRouteurTRPC({
-  récupérerTousSynthétisésAccessiblesEnLecture: procédureProtégée.query(
+export const chantierRouter = createTRPCRouter({
+  recupererTousSynthetisesAccessiblesEnLecture: protectedProcedure.query(
     ({ ctx }) => {
-      const récupérerChantiersSynthétisésUseCase = getContainer(
+      const recupererChantiersSynthetisesUseCase = getContainer(
         "gestionUtilisateur",
       ).resolve("recupererChantiersSynthetisesUseCase");
-      return récupérerChantiersSynthétisésUseCase.run({
+      return recupererChantiersSynthetisesUseCase.run({
         listeChantierIdLecture: ctx.session.habilitations.lecture.chantiers,
       });
     },
   ),
-  recupererTousLesInformationsChantiers: procédureProtégée.query(() => {
+  recupererTousLesInformationsChantiers: protectedProcedure.query(() => {
     const recupererLaListeDesInfomrationsChantiersUse = getContainer(
       "gestionUtilisateur",
     ).resolve("recupererLaListeDesInfomrationsChantiersUse");
     return recupererLaListeDesInfomrationsChantiersUse.run();
   }),
-  recupererMeteosTerritoires: procédureProtégée
+  recupererMeteosTerritoires: protectedProcedure
     .input(
       z.object({
         chantierId: z.string(),
@@ -36,7 +36,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("getChantierMeteosTerritoiresQuery")
         .execute(input);
     }),
-  recupererPVAChantierTerritoires: procédureProtégée
+  recupererPVAChantierTerritoires: protectedProcedure
     .input(
       z.object({
         chantierId: z.string(),
@@ -51,7 +51,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("getChantierPVACountTerritoiresQuery")
         .execute(input);
     }),
-  recupererTauxAvancementTerritoires: procédureProtégée
+  recupererTauxAvancementTerritoires: protectedProcedure
     .input(
       z.object({
         chantierIds: z.array(z.string()),
@@ -74,7 +74,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("recupererTauxAvancementsChantierTerritoiresQuery")
         .run({ chantierIds, jalon: input.jalon });
     }),
-  recupererRepartitionMeteos: procédureProtégée
+  recupererRepartitionMeteos: protectedProcedure
     .input(
       z.object({
         chantierIds: z.array(z.string()),
@@ -82,17 +82,17 @@ export const chantierRouter = créerRouteurTRPC({
       }),
     )
     .query(({ input, ctx }) => {
-      const chantierIdsAutorisés = input.chantierIds.filter((id) =>
+      const chantierIdsAutorises = input.chantierIds.filter((id) =>
         ctx.session.habilitations.lecture.chantiers.includes(id),
       );
       return getContainer("chantiers")
         .resolve("getRepartitionMeteoChantiersQuery")
         .execute({
-          chantierIds: chantierIdsAutorisés,
+          chantierIds: chantierIdsAutorises,
           territoireCode: input.territoireCode,
         });
     }),
-  recupererChantiersSignales: procédureProtégée
+  recupererChantiersSignales: protectedProcedure
     .input(
       z.object({
         chantierIds: z.array(z.string()),
@@ -101,18 +101,18 @@ export const chantierRouter = créerRouteurTRPC({
       }),
     )
     .query(({ input, ctx }) => {
-      const chantierIdsAutorisés = input.chantierIds.filter((id) =>
+      const chantierIdsAutorises = input.chantierIds.filter((id) =>
         ctx.session.habilitations.lecture.chantiers.includes(id),
       );
       return getContainer("chantiers")
         .resolve("getChantiersSignalesQuery")
         .execute({
-          chantierIds: chantierIdsAutorisés,
+          chantierIds: chantierIdsAutorises,
           territoireCode: input.territoireCode,
           jalonParDefaut: input.jalonParDefaut,
         });
     }),
-  recupererAvancementChantier: procédureProtégée
+  recupererAvancementChantier: protectedProcedure
     .input(
       z.object({
         chantierId: z.string(),
@@ -131,7 +131,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("getAvancementChantierQuery")
         .execute(input);
     }),
-  recupererSituationChantier: procédureProtégée
+  recupererSituationChantier: protectedProcedure
     .input(
       z.object({
         chantierId: z.string(),
@@ -150,7 +150,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("getSituationChantierQuery")
         .execute(input);
     }),
-  recupererStatistiquesAvancement: procédureProtégée
+  recupererStatistiquesAvancement: protectedProcedure
     .input(
       z.object({
         chantierIds: z.array(z.string()),
@@ -172,7 +172,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run(chantierIds, input.maille, ctx.session.habilitations, input.jalon);
     }),
-  recupererTauxAvancementTerritoire: procédureProtégée
+  recupererTauxAvancementTerritoire: protectedProcedure
     .input(
       z.object({
         territoireCode: z.string(),
@@ -191,7 +191,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("recupererTauxAvancementTerritoireQuery")
         .execute(input);
     }),
-  recupererStatistiquesAvancementTousChantiersPublies: procédureProtégée
+  recupererStatistiquesAvancementTousChantiersPublies: protectedProcedure
     .input(
       z.object({
         territoireCode: z.string(),
@@ -214,7 +214,7 @@ export const chantierRouter = créerRouteurTRPC({
           habilitations: ctx.session.habilitations,
         });
     }),
-  recupererChantiersEnRetard: procédureProtégée
+  recupererChantiersEnRetard: protectedProcedure
     .input(
       z.object({
         territoireCode: z.string(),
@@ -235,7 +235,7 @@ export const chantierRouter = créerRouteurTRPC({
         view: "en_retard",
       });
     }),
-  recupererChantiersEnDifficulte: procédureProtégée
+  recupererChantiersEnDifficulte: protectedProcedure
     .input(
       z.object({
         territoireCode: z.string(),
@@ -256,7 +256,7 @@ export const chantierRouter = créerRouteurTRPC({
         view: "en_difficulte",
       });
     }),
-  recupererIndicateursChantier: procédureProtégée
+  recupererIndicateursChantier: protectedProcedure
     .input(
       z.object({
         chantierId: z.string(),
