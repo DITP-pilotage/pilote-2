@@ -214,7 +214,16 @@ Mesure (2026-10-06) :
 | `server/infrastructure/{import_csv,export_csv,email-manager,acme,test}` | | 203 (les builders de test pèsent lourd) |
 | `server/usecase` | 9 | 11 — disparaît avec `legacy` |
 
-Pistes à trancher avant de commencer : où vivent les types partagés client / serveur aujourd'hui dans `server/domain` (151 importeurs client) ; la couche API (tRPC, nextauth, crons) reste-t-elle transverse (`server/app`) ou se répartit-elle par domaine ; ordre : après la PR E (`accès_données` et `usecase` sont surtout consommés par `legacy`), puis un domaine par PR, déplacements purs sans changement de code.
+Décisions (2026-10-06) :
+
+- **Types et logique pure partagés client / serveur → `src/shared/<domaine>/`** (même principe que `kpilote-shared`, en dossier de l'app : ppg n'utilise aucun package `kpilote-*`). Y vont les interfaces aujourd'hui dans `server/domain` (`Maille`, `Territoire`, `Indicateur`, `Météo`, `Chantier`…), `Habilitation` et `profils-gestion-utilisateur` (exécutés côté client), et les schémas zod de `src/validation/`. `server/<domaine>/domain` importe depuis `src/shared/`. Les builders de test (`Indicateur.builder`…) vont dans un dossier de support de tests, pas dans `shared`. `src/server/shared` (module racine DI) est renommé (ex. `server/core`) pour lever l'ambiguïté.
+- **Couche API : la plomberie reste transverse, les routeurs vont dans leur domaine.**
+  - `server/app` : init tRPC (contexte, procédures, `vérifierPermissionAdmin`, `categorieLogRouteurTRPC`), assemblage de l'`appRouter`, client `api.ts`, garde-fous `onlyCron` / `onlyAcmeApiKey` / wrapper open-api, bootstrap, error boundaries.
+  - `server/<domaine>/infrastructure/trpc/` : le routeur du domaine (comme ses handlers REST, déjà rangés par domaine) ; un routeur multi-domaines va dans le domaine de la ressource exposée et passe par les exports de modules. Logique des crons dans leur domaine, seul le garde-fou reste transverse.
+  - nextauth (config, ProConnect / Keycloak, expiration de session) → `authentification`, avec la PR B.
+  - Pas de PR dédiée : chaque routeur suit son domaine dans la PR qui le range ; le README de `infrastructure/api` disparaît avec le dossier.
+
+Ordre : après la PR E (`accès_données` et `usecase` sont surtout consommés par `legacy`), puis un domaine par PR, déplacements purs sans changement de code.
 
 ## 8. Publication
 
