@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { ppgCommandSchema } from "@/server/metadataPpg/handlers/EnregistrerPpgHandler";
+import { ppgCommandSchema } from "@/server/metadata-ppg/handlers/EnregistrerPpgHandler";
 
 export type PpgForm = z.infer<typeof ppgCommandSchema>;
 

@@ -31,13 +31,13 @@ import { gestionContenuModule } from "./gestion-contenu/module";
 import { ficheTerritorialeModule } from "./fiche-territoriale/module";
 import { actualitesModule } from "./actualites/module";
 import { mbSyncModule } from "./mb-sync/module";
-import { metadataChantierModule } from "./metadataChantier/module";
-import { metadataPorteurModule } from "./metadataPorteur/module";
-import { metadataPerimetreModule } from "./metadataPerimetre/module";
-import { metadataZonegroupModule } from "./metadataZonegroup/module";
-import { metadataAxeModule } from "./metadataAxe/module";
-import { metadataPpgModule } from "./metadataPpg/module";
-import { metadataEngagementModule } from "./metadataEngagement/module";
+import { metadataChantierModule } from "./metadata-chantier/module";
+import { metadataPorteurModule } from "./metadata-porteur/module";
+import { metadataPerimetreModule } from "./metadata-perimetre/module";
+import { metadataZonegroupModule } from "./metadata-zonegroup/module";
+import { metadataAxeModule } from "./metadata-axe/module";
+import { metadataPpgModule } from "./metadata-ppg/module";
+import { metadataEngagementModule } from "./metadata-engagement/module";
 import { annuaireModule } from "./annuaire/module";
 
 const allModules = [

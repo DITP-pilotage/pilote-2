@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MailleTerritoireSelectionne } from "@/shared/maille/Maille.interface";
-import type { ZoneDisponible } from "@/server/metadataZonegroup/queries/ListerZonesDisponiblesQuery";
+import type { ZoneDisponible } from "@/server/metadata-zonegroup/queries/ListerZonesDisponiblesQuery";
 import { SearchInput } from "@/components/shared/SearchInput";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { ActionsSelection } from "./ActionsSelection";

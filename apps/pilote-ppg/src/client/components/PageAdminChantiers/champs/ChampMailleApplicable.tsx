@@ -1,6 +1,6 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
-import { MAILLES } from "@/server/metadataChantier/domain/maille";
+import { MAILLES } from "@/server/metadata-chantier/domain/maille";
 
 const ChampMailleApplicable = () => {
   const form = useFormContext<ChantierForm>();

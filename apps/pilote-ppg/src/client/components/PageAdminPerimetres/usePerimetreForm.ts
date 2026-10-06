@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { perimetreCommandSchema } from "@/server/metadataPerimetre/handlers/EnregistrerPerimetreHandler";
+import { perimetreCommandSchema } from "@/server/metadata-perimetre/handlers/EnregistrerPerimetreHandler";
 
 export type PerimetreForm = z.infer<typeof perimetreCommandSchema>;
 

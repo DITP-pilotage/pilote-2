@@ -9,7 +9,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataAxe } from "@/server/metadataAxe/queries/RecupererAxeQuery";
+import { MetadataAxe } from "@/server/metadata-axe/queries/RecupererAxeQuery";
 import {
   AxeForm,
   defaultAxeVide,

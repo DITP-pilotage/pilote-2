@@ -5,8 +5,8 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import OngletPonderationsIndicateurs from "@/components/PageAdminChantiers/OngletPonderationsIndicateurs";
-import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
-import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
+import { MetadataChantier } from "@/server/metadata-chantier/queries/RecupererChantierQuery";
+import { IndicateurPonderation } from "@/server/metadata-chantier/queries/RecupererIndicateursPonderationsChantierQuery";
 import {
   useChantierForm,
   defaultChantierVide,

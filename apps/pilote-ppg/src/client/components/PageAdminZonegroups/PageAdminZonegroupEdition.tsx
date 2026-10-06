@@ -9,7 +9,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataZonegroup } from "@/server/metadataZonegroup/queries/RecupererZonegroupQuery";
+import { MetadataZonegroup } from "@/server/metadata-zonegroup/queries/RecupererZonegroupQuery";
 import {
   defaultZonegroupVide,
   ZonegroupForm,

@@ -5,12 +5,12 @@ import {
   MAILLES,
   Maille,
   LIBELLÉ_MAILLE,
-} from "@/server/metadataChantier/domain/maille";
+} from "@/server/metadata-chantier/domain/maille";
 import {
   CHAMP_POIDS_PAR_MAILLE,
   usePonderationsIndicateursForm,
 } from "@/components/PageAdminChantiers/usePonderationsIndicateursForm";
-import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
+import { IndicateurPonderation } from "@/server/metadata-chantier/queries/RecupererIndicateursPonderationsChantierQuery";
 import { Table } from "@/components/shared/Table";
 import { clsxm } from "@/utils/clsxm";
 
