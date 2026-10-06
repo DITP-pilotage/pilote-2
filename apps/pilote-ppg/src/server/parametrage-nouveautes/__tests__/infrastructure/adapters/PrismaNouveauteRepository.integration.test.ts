@@ -1,8 +1,8 @@
 import { PrismaNouveauteRepository } from "@/server/parametrage-nouveautes/infrastructure/adapters/PrismaNouveauteRepository";
 import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("PrismaNouveauteRepository", () => {

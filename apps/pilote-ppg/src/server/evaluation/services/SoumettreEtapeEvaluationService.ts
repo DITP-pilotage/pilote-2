@@ -5,8 +5,8 @@ import {
   evaluation_critere,
 } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import { Transaction } from "@/server/db/Transaction";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { Transaction } from "@/server/framework/persistence/Transaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/evaluation/module";
 
 export class SoumettreEtapeEvaluationService {

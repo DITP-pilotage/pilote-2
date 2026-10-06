@@ -1,6 +1,6 @@
 import { getContainer } from "@/server/dependances";
 import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 

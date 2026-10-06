@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/habilitations-coordinateur/module";
 
 export const ajouterLesChantierAuxHabilitationsCommandSchema = z.object({

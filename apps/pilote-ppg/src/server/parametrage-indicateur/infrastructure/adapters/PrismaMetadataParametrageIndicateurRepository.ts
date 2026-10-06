@@ -3,8 +3,8 @@
  */
 
 import { Prisma } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
-import { executerEnLot } from "@/server/db/executerEnLot";
+import { prisma } from "@/server/framework/persistence/prisma";
+import { executerEnLot } from "@/server/framework/persistence/executerEnLot";
 import Logger from "@/server/framework/logger";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";

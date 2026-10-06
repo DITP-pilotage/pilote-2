@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { ListerFichesEvaluationParPhaseQuery } from "@/server/evaluation/queries/ListerFichesEvaluationParPhaseQuery";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures as f } from "@/server/infrastructure/test/fixtures";
 

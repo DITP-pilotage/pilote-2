@@ -4,7 +4,7 @@ import { RecupererTauxAvancementIndicateurTerritoiresQuery } from "@/server/chan
 import { ListerDetailsIndicateurTerritoireUseCase } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCase";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 

@@ -1,5 +1,5 @@
 import type { Maille } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export type TerritoireIdentiteResult = {
   code: string;

@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaIndicateurTerritoireValeurEvenementRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
   let repository: PrismaIndicateurTerritoireValeurEvenementRepository;

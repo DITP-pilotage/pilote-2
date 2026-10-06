@@ -6,7 +6,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenements";
 import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
-import { Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
 import type { Inject } from "@/server/import-indicateur/module";
 import logger from "@/server/framework/logger";
 

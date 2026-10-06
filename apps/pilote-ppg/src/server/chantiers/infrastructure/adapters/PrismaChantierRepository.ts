@@ -19,7 +19,7 @@ import {
 } from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {

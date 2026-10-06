@@ -1,7 +1,7 @@
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import logger from "@/server/framework/logger";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { SanitizerHTML } from "@/server/app/domain/SanitizerHTML";
 
 const projectDir = process.cwd();
@@ -24,14 +24,12 @@ function convertirPlainTextVersHtml(plainText: string): string {
 
 const BATCH_SIZE = 500;
 
-async function migrerTable<T extends { id: string }>(
-  params: {
-    nomTable: string,
-    findMany: (skip: number, take: number) => Promise<T[]>,
-    update: (id: string, html: string) => Promise<void>,
-    getContenu: (ligne: T) => string | null,
-  }
-): Promise<void> {
+async function migrerTable<T extends { id: string }>(params: {
+  nomTable: string;
+  findMany: (skip: number, take: number) => Promise<T[]>;
+  update: (id: string, html: string) => Promise<void>;
+  getContenu: (ligne: T) => string | null;
+}): Promise<void> {
   let skip = 0;
   let traites = 0;
   let erreurs = 0;
@@ -45,89 +43,125 @@ async function migrerTable<T extends { id: string }>(
       if (contenuOriginal === null) continue;
 
       try {
-        await params.update(ligne.id, convertirPlainTextVersHtml(contenuOriginal));
+        await params.update(
+          ligne.id,
+          convertirPlainTextVersHtml(contenuOriginal),
+        );
         traites++;
       } catch (error) {
-        logger.error({ categorie: "systeme", source: "migration-commentaires-vers-html", table: params.nomTable, id: ligne.id }, (error as Error).message);
+        logger.error(
+          {
+            categorie: "systeme",
+            source: "migration-commentaires-vers-html",
+            table: params.nomTable,
+            id: ligne.id,
+          },
+          (error as Error).message,
+        );
         erreurs++;
       }
     }
 
     skip += lignes.length;
-    logger.info({ categorie: "systeme", source: "migration-commentaires-vers-html", table: params.nomTable, skip, traites, erreurs }, "Batch traité");
+    logger.info(
+      {
+        categorie: "systeme",
+        source: "migration-commentaires-vers-html",
+        table: params.nomTable,
+        skip,
+        traites,
+        erreurs,
+      },
+      "Batch traité",
+    );
 
     if (lignes.length < BATCH_SIZE) break;
   }
 
-  logger.info({ categorie: "systeme", source: "migration-commentaires-vers-html", table: params.nomTable, traites, erreurs }, "Migration terminée");
+  logger.info(
+    {
+      categorie: "systeme",
+      source: "migration-commentaires-vers-html",
+      table: params.nomTable,
+      traites,
+      erreurs,
+    },
+    "Migration terminée",
+  );
 }
 
 async function main() {
-  await migrerTable(
-    {
-      nomTable: "commentaire",
-      findMany: (skip, take) =>
-        prisma.commentaire.findMany({
-          select: { id: true, contenu: true },
-          skip,
-          take,
-        }),
-      update: (id, html) => prisma.commentaire.update({ where: { id }, data: { contenu: html } }).then(),
-      getContenu: (ligne) => ligne.contenu
-    },
-  );
+  await migrerTable({
+    nomTable: "commentaire",
+    findMany: (skip, take) =>
+      prisma.commentaire.findMany({
+        select: { id: true, contenu: true },
+        skip,
+        take,
+      }),
+    update: (id, html) =>
+      prisma.commentaire
+        .update({ where: { id }, data: { contenu: html } })
+        .then(),
+    getContenu: (ligne) => ligne.contenu,
+  });
 
-  await migrerTable(
-    {
-      nomTable: "decision_strategique",
-      findMany: (skip, take) =>
-        prisma.decision_strategique.findMany({
-          select: { id: true, contenu: true },
-          skip,
-          take,
-        }),
-      update: (id, html) =>
-        prisma.decision_strategique.update({ where: { id }, data: { contenu: html } }).then(),
-      getContenu: (ligne) => ligne.contenu
-    },
-  );
+  await migrerTable({
+    nomTable: "decision_strategique",
+    findMany: (skip, take) =>
+      prisma.decision_strategique.findMany({
+        select: { id: true, contenu: true },
+        skip,
+        take,
+      }),
+    update: (id, html) =>
+      prisma.decision_strategique
+        .update({ where: { id }, data: { contenu: html } })
+        .then(),
+    getContenu: (ligne) => ligne.contenu,
+  });
 
-  await migrerTable(
-    {
-      nomTable: "objectif",
-      findMany: (skip, take) =>
-        prisma.objectif.findMany({
-          select: { id: true, contenu: true },
-          skip,
-          take,
-        }),
-      update: (id, html) => prisma.objectif.update({ where: { id }, data: { contenu: html } }).then(),
-      getContenu: (ligne) => ligne.contenu,
-    }
-  );
+  await migrerTable({
+    nomTable: "objectif",
+    findMany: (skip, take) =>
+      prisma.objectif.findMany({
+        select: { id: true, contenu: true },
+        skip,
+        take,
+      }),
+    update: (id, html) =>
+      prisma.objectif.update({ where: { id }, data: { contenu: html } }).then(),
+    getContenu: (ligne) => ligne.contenu,
+  });
 
-  await migrerTable(
-    {
-      nomTable: "synthese_des_resultats",
-      findMany: (skip, take) =>
-        prisma.synthese_des_resultats.findMany({
-          where: { commentaire: { not: null } },
-          select: { id: true, commentaire: true },
-          skip,
-          take,
-        }),
-      update: (id, html) =>
-        prisma.synthese_des_resultats.update({ where: { id }, data: { commentaire: html } }).then(),
-      getContenu: (ligne) => ligne.commentaire,
-    }
-  );
+  await migrerTable({
+    nomTable: "synthese_des_resultats",
+    findMany: (skip, take) =>
+      prisma.synthese_des_resultats.findMany({
+        where: { commentaire: { not: null } },
+        select: { id: true, commentaire: true },
+        skip,
+        take,
+      }),
+    update: (id, html) =>
+      prisma.synthese_des_resultats
+        .update({ where: { id }, data: { commentaire: html } })
+        .then(),
+    getContenu: (ligne) => ligne.commentaire,
+  });
 }
 
 main()
   .then(() => {
-    logger.info({ categorie: "systeme", source: "migration-commentaires-vers-html" }, "Script de migration commentaires vers HTML exécuté avec succès");
+    logger.info(
+      { categorie: "systeme", source: "migration-commentaires-vers-html" },
+      "Script de migration commentaires vers HTML exécuté avec succès",
+    );
   })
   .catch((error) => {
-    logger.error({ categorie: "systeme", source: "migration-commentaires-vers-html" }, (error as Error).message);
+    logger.error(
+      { categorie: "systeme", source: "migration-commentaires-vers-html" },
+      (error as Error).message,
+    );
     throw error;
   });

@@ -1,5 +1,5 @@
 import { $Enums, metadata_chantiers } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadataChantier/module";
 import { Maille } from "@/server/metadataChantier/domain/maille";
 

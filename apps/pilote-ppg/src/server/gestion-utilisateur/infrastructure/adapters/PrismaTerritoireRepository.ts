@@ -2,7 +2,7 @@ import { territoire as TerritoirePrisma } from "@prisma/client";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
 const convertirEnTerritoire = (territoire: TerritoirePrisma): Territoire => {

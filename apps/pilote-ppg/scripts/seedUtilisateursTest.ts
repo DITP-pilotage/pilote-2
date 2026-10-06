@@ -1,5 +1,5 @@
 import logger from "@/server/framework/logger";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import seedsUtilisateursTest from "@/server/seeds/utilisateursTest.json";
 
 async function seedUsers() {
@@ -40,7 +40,11 @@ async function seedUsers() {
         }
 
         logger.info(
-          { categorie: "utilisateur", source: "seedUtilisateursTest", email: utilisateur.email },
+          {
+            categorie: "utilisateur",
+            source: "seedUtilisateursTest",
+            email: utilisateur.email,
+          },
           "Utilisateur et ses habilitations créés avec succès",
         );
       });
@@ -61,9 +65,15 @@ async function seedUsers() {
 
 seedUsers()
   .then(() => {
-    logger.info({ categorie: "utilisateur", source: "seedUtilisateursTest" }, "Script exécuté avec succès");
+    logger.info(
+      { categorie: "utilisateur", source: "seedUtilisateursTest" },
+      "Script exécuté avec succès",
+    );
   })
   .catch((error) => {
-    logger.error({ categorie: "utilisateur", source: "seedUtilisateursTest" }, (error as Error).message);
+    logger.error(
+      { categorie: "utilisateur", source: "seedUtilisateursTest" },
+      (error as Error).message,
+    );
     throw error;
   });

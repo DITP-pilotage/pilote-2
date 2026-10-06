@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
-import { type PrismaPilote } from "@/server/db/PrismaPilote";
+import { type PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
   type EvenementValeurDelta,
   type IndicateurTerritoireValeurEvenementRepository,

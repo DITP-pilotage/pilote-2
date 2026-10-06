@@ -8,8 +8,8 @@ import {
   creerSyntheseDesResultatsBrouillon,
   creerSyntheseDesResultatsPublie,
 } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 const TERRITOIRE_CODE = "DEPT-75";
 const MAILLE = "DEPT";

@@ -2,7 +2,7 @@ import { MockProxy, mock } from "vitest-mock-extended";
 import { ArticleCentreAideRepository } from "@/server/parametrage-centre-aide/domain/ports/ArticleCentreAideRepository";
 import { DeplacerArticleCentreAideUseCase } from "@/server/parametrage-centre-aide/usecases/DeplacerArticleCentreAideUseCase";
 import { ArticleCentreAide } from "@/server/parametrage-centre-aide/domain/ArticleCentreAide";
-import { Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
 
 const creerArticle = (
   id: string,

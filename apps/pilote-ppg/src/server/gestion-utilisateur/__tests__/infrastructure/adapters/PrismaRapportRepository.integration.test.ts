@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaRapportRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaRapportRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaRapportRepository", () => {
   let repository: PrismaRapportRepository;

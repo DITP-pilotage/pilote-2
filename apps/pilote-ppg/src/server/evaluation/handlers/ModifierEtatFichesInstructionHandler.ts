@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
-import { Transaction } from "@/server/db/Transaction";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import type { Inject } from "@/server/evaluation/module";
 
 export const modifierEtatFichesInstructionCommandSchema = z.object({

@@ -7,7 +7,7 @@ import { DetailValidationFichier } from "@/server/import-indicateur/domain/Detai
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
 import { RapportNotFoundError } from "@/server/import-indicateur/domain/errors/RapportNotFoundError";
 import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 function convertirEnModel(rapport: DetailValidationFichier): RapportModel {
   return {

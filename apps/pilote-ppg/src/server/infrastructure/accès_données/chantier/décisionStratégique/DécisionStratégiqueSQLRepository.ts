@@ -9,7 +9,7 @@ import {
 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export const NOMS_TYPES_DECISION_STRATEGIQUE: Record<
   string,

@@ -1,4 +1,4 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { DecisionStrategiqueRepository } from "@/server/gestion-utilisateur/domain/ports/DecisionStrategiqueRepository";
 
 export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {

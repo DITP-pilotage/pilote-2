@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
 import { getContainer } from "@/server/dependances";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";

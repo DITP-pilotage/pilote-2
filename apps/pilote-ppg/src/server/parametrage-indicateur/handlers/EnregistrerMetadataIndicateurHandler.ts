@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import type { Inject } from "@/server/parametrage-indicateur/module";
 
 const valeurAccepteeSchema = z.object({

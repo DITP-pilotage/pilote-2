@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaMinistereRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 

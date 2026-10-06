@@ -1,6 +1,6 @@
 import { $Enums, PrismaClient } from "@prisma/client";
 
-import { creerAdapter } from "@/server/db/adapter";
+import { creerAdapter } from "@/server/framework/persistence/adapter";
 
 const prisma = new PrismaClient({ adapter: creerAdapter() });
 

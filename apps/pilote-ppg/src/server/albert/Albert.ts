@@ -14,7 +14,7 @@ import { Prisma } from "@prisma/client";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { z } from "zod";
 import { configuration } from "@/config";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 
 export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   if (!configuration().albert.devTools) {

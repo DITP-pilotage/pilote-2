@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
-import { Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
 
 export class EnregistrerSyntheseDesResultatsService {
   constructor(

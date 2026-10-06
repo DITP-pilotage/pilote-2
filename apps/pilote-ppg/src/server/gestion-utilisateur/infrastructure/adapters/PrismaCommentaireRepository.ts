@@ -1,4 +1,4 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { CommentaireRepository } from "@/server/gestion-utilisateur/domain/ports/CommentaireRepository";
 
 export class PrismaCommentaireRepository implements CommentaireRepository {

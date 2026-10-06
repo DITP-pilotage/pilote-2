@@ -1,5 +1,8 @@
-import { prisma } from "@/server/db/prisma";
-import { PilotePrismaClient, txStore } from "@/server/db/PrismaTransaction";
+import { prisma } from "@/server/framework/persistence/prisma";
+import {
+  PilotePrismaClient,
+  txStore,
+} from "@/server/framework/persistence/PrismaTransaction";
 
 const ROLLBACK = Symbol("rollback");
 

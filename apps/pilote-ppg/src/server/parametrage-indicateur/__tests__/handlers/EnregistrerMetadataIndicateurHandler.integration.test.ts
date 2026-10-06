@@ -1,7 +1,7 @@
 import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { prisma } from "@/server/db/prisma";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { prisma } from "@/server/framework/persistence/prisma";
+import { PrismaTransaction } from "@/server/framework/persistence/PrismaTransaction";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("EnregistrerMetadataIndicateurHandler", () => {

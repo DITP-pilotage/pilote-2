@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { comparerDates } from "@/client/utils/date/date";
 import type { Inject } from "@/server/evaluation/module";
 

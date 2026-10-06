@@ -7,7 +7,7 @@ import {
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { groupByAndTransform } from "@/client/utils/arrays";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaireChantier> =
   {

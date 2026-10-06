@@ -1,6 +1,6 @@
 import { $Enums, Prisma } from "@prisma/client";
 import { z } from "zod";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
 import {
   RapportPropositionsAvancement,

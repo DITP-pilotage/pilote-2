@@ -1,6 +1,6 @@
 import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";

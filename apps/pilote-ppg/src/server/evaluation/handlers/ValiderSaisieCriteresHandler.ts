@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { Transaction } from "@/server/db/Transaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { Transaction } from "@/server/framework/persistence/Transaction";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 import type { Inject } from "@/server/evaluation/module";
 

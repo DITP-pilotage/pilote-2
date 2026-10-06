@@ -2,7 +2,7 @@ import { $Enums, commentaire as CommentaireModel } from "@prisma/client";
 import { Commentaire } from "@/server/fiche-conducteur/domain/Commentaire";
 import { CommentaireRepository } from "@/server/fiche-conducteur/domain/ports/CommentaireRepository";
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 const convertifEnCommentaire = (
   commentaireModel: CommentaireModel,

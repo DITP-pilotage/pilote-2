@@ -40,7 +40,7 @@ import {
   profilsTerritoriaux,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {

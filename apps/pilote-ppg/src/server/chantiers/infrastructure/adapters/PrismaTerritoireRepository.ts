@@ -1,9 +1,9 @@
 import { territoire as TerritoirePrisma } from "@prisma/client";
 import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 export class PrismaTerritoireRepository implements TerritoireRepository {

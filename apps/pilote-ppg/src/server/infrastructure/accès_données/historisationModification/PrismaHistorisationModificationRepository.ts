@@ -2,7 +2,7 @@ import {
   historisation_modification as HistorisationModificationModel,
   Prisma,
 } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import { HistorisationModificationDisponible } from "@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible";

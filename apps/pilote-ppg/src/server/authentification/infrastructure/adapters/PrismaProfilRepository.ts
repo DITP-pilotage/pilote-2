@@ -1,6 +1,6 @@
 import { ProfilRepository } from "@/server/authentification/domain/ports/ProfilRepository";
 import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 export class PrismaProfilRepository implements ProfilRepository {
   async estAutoriseAAccederAuxChantiersBrouillons({

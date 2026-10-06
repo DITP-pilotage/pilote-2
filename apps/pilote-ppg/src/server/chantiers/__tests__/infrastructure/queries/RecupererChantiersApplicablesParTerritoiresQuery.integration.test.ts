@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {

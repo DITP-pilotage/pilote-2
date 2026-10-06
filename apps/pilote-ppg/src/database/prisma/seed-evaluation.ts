@@ -13,7 +13,7 @@ import {
   instruction_objectif,
   instruction_critere,
 } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 const criteres: referentiel_critere[] = [
   {

@@ -1,5 +1,5 @@
 import { profil as PrismaProfil } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { ProfilRepository } from "@/server/gestion-utilisateur/domain/ports/ProfilRepository";
 import { Profil, ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
   MesureIndicateur,
   MesureIndicateurRepository,

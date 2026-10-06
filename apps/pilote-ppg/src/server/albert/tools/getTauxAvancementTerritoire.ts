@@ -2,7 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";

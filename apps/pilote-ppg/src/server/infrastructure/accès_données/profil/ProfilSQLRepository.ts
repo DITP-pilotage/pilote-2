@@ -2,7 +2,7 @@ import { profil as PrismaProfil } from "@prisma/client";
 import ProfilRepository from "@/server/domain/profil/ProfilRepository";
 import { Profil } from "@/server/domain/profil/Profil.interface";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 export default class ProfilSQLRepository implements ProfilRepository {
   async récupérerTous(): Promise<Profil[]> {
