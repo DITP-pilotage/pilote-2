@@ -10,7 +10,6 @@ import {
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { useNouveautés } from "./useNouveautés";
-import "@gouvfr/dsfr/dist/component/input/input.min.css";
 
 const Nouveautés: FunctionComponent = () => {
   const { listeNouveautes, estChargementListeNouveautes } = useNouveautés();
