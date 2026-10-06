@@ -55,7 +55,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "codemirror": "^6.0.2",
-    "dompurify": "^3.4.15",
+    "dompurify": "^3.4.16",
     "dotenv": "17.4.2",
     "hono": "^4.13.7",
     "hono-rate-limiter": "^0.5.4",
