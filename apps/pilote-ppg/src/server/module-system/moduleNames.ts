@@ -20,7 +20,6 @@ export const moduleNames = [
   "albert",
   "parametrageCentreAide",
   "datajobsExecution",
-  "legacy",
   "gestionContenu",
   "ficheTerritoriale",
   "applicationLog",
