@@ -4,7 +4,7 @@ describe("categorieDepuisRouteurTRPC", () => {
   it.each([
     { path: "chantier.recupererChantier", attendu: "chantier" },
     { path: "syntheseDesResultats.creer", attendu: "chantier" },
-    { path: "metadataPorteur.lister", attendu: "referentiel" },
+    { path: "metadataPorteur.list", attendu: "referentiel" },
     { path: "perimetreMinisteriel.recupererTous", attendu: "referentiel" },
     { path: "albert.envoyerMessage", attendu: "albert" },
     { path: "applicationLog.lister", attendu: "maintenance" },

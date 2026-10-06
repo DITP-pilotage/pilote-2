@@ -6,69 +6,69 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import { engagementCommandSchema } from "@/server/referentiels/engagement/handlers/EnregistrerEngagementHandler";
+import { engagementCommandSchema } from "@/server/referentiels/engagement/handlers/SaveEngagementHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
 export const metadataEngagementRouter = createTRPCRouter({
-  lister: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("referentiels")
-      .resolve("listerEngagementsAdminQuery")
+      .resolve("listEngagementsAdminQuery")
       .run();
   }),
 
-  récupérer: protectedProcedure
+  get: protectedProcedure
     .input(z.object({ engagementId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("recupererEngagementQuery")
+        .resolve("getEngagementQuery")
         .run({ engagementId: input.engagementId });
     }),
 
-  récupérerIdSuivant: protectedProcedure.query(async ({ ctx }) => {
+  getNextId: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
     return getContainer("referentiels")
-      .resolve("recupererIdSuivantEngagementQuery")
+      .resolve("getNextEngagementIdQuery")
       .run();
   }),
 
-  verifierUtilisation: protectedProcedure
+  checkUsage: protectedProcedure
     .input(z.object({ engagementShort: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("verifierUtilisationEngagementQuery")
+        .resolve("checkEngagementUsageQuery")
         .run({ engagementShort: input.engagementShort });
     }),
 
-  enregistrer: protectedProcedure
+  save: protectedProcedure
     .input(engagementCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("enregistrerEngagementHandler")
+        .resolve("saveEngagementHandler")
         .execute(input);
     }),
 
-  archiver: protectedProcedure
+  archive: protectedProcedure
     .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("archiverEngagementHandler")
+        .resolve("archiveEngagementHandler")
         .execute({ engagementId: input.engagementId });
     }),
 
-  restaurer: protectedProcedure
+  restore: protectedProcedure
     .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("restaurerEngagementHandler")
+        .resolve("restoreEngagementHandler")
         .execute({ engagementId: input.engagementId });
     }),
 });

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { perimetreCommandSchema } from "@/server/referentiels/perimetre/handlers/EnregistrerPerimetreHandler";
+import { perimetreCommandSchema } from "@/server/referentiels/perimetre/handlers/SavePerimetreHandler";
 
 export type PerimetreForm = z.infer<typeof perimetreCommandSchema>;
 
@@ -17,10 +17,10 @@ export const defaultPerimetreVide = (perimetreId: string): PerimetreForm => ({
 
 export const usePerimetreForm = ({
   defaultValues,
-  estUneCréation,
+  isCreation,
 }: {
   defaultValues: PerimetreForm;
-  estUneCréation: boolean;
+  isCreation: boolean;
 }) => {
   const router = useRouter();
 
@@ -29,15 +29,15 @@ export const usePerimetreForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataPerimetre.enregistrer.useMutation({
+  const mutation = api.metadataPerimetre.save.useMutation({
     onSuccess: () => {
       toast.success(
-        estUneCréation
+        isCreation
           ? "Périmètre créé avec succès."
           : "Périmètre modifié avec succès.",
         { position: "bottom-right", richColors: true },
       );
-      if (estUneCréation) {
+      if (isCreation) {
         void router.push("/panel-administrateur/referentiels/perimetres");
       }
     },

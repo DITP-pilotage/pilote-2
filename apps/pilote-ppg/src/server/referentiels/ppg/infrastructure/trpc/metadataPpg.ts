@@ -6,60 +6,60 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import { ppgCommandSchema } from "@/server/referentiels/ppg/handlers/EnregistrerPpgHandler";
+import { ppgCommandSchema } from "@/server/referentiels/ppg/handlers/SavePpgHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 
 export const metadataPpgRouter = createTRPCRouter({
-  lister: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.query(async ({ ctx }) => {
     checkAdminPermission(ctx.session);
-    return getContainer("referentiels").resolve("listerPpgsAdminQuery").run();
+    return getContainer("referentiels").resolve("listPpgsAdminQuery").run();
   }),
 
-  récupérer: protectedProcedure
+  get: protectedProcedure
     .input(z.object({ ppgId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("recupererPpgQuery")
+        .resolve("getPpgQuery")
         .run({ ppgId: input.ppgId });
     }),
 
-  verifierUtilisation: protectedProcedure
+  checkUsage: protectedProcedure
     .input(z.object({ ppgId: z.string() }))
     .query(async ({ input, ctx }) => {
       checkAdminPermission(ctx.session);
       return getContainer("referentiels")
-        .resolve("verifierUtilisationPpgQuery")
+        .resolve("checkPpgUsageQuery")
         .run({ ppgId: input.ppgId });
     }),
 
-  enregistrer: protectedProcedure
+  save: protectedProcedure
     .input(ppgCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("enregistrerPpgHandler")
+        .resolve("savePpgHandler")
         .execute(input);
     }),
 
-  archiver: protectedProcedure
+  archive: protectedProcedure
     .input(z.object({ ppgId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("archiverPpgHandler")
+        .resolve("archivePpgHandler")
         .execute({ ppgId: input.ppgId });
     }),
 
-  restaurer: protectedProcedure
+  restore: protectedProcedure
     .input(z.object({ ppgId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
-        .resolve("restaurerPpgHandler")
+        .resolve("restorePpgHandler")
         .execute({ ppgId: input.ppgId });
     }),
 });

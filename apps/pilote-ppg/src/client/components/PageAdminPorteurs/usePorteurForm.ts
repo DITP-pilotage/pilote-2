@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { porteurCommandSchema } from "@/server/referentiels/porteur/handlers/EnregistrerPorteurHandler";
+import { porteurCommandSchema } from "@/server/referentiels/porteur/handlers/SavePorteurHandler";
 
 export type PorteurForm = z.infer<typeof porteurCommandSchema>;
 
@@ -21,10 +21,10 @@ export const defaultPorteurVide = (porteurId: string): PorteurForm => ({
 
 export const usePorteurForm = ({
   defaultValues,
-  estUneCréation,
+  isCreation,
 }: {
   defaultValues: PorteurForm;
-  estUneCréation: boolean;
+  isCreation: boolean;
 }) => {
   const router = useRouter();
 
@@ -33,15 +33,15 @@ export const usePorteurForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataPorteur.enregistrer.useMutation({
+  const mutation = api.metadataPorteur.save.useMutation({
     onSuccess: () => {
       toast.success(
-        estUneCréation
+        isCreation
           ? "Porteur créé avec succès."
           : "Porteur modifié avec succès.",
         { position: "bottom-right", richColors: true },
       );
-      if (estUneCréation) {
+      if (isCreation) {
         void router.push("/panel-administrateur/referentiels/porteurs");
       }
     },

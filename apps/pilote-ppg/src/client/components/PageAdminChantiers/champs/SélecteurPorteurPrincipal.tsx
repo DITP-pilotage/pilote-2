@@ -6,7 +6,7 @@ import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const SélecteurPorteurPrincipal = () => {
   const { data: porteurs = [] } =
-    api.metadataChantier.listerPorteursMinistere.useQuery();
+    api.metadataChantier.listPorteursMinistere.useQuery();
   const form = useFormContext<ChantierForm>();
 
   return (

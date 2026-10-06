@@ -20,7 +20,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
     `metadataList.${fieldIndex}.listeValeursAcceptes`,
   );
   const estChampZoneGroupe = name === NOM_CHAMP_ZONE_GROUPE;
-  const { data: zonegroupsActifs = [] } = api.metadataZonegroup.lister.useQuery(
+  const { data: zonegroupsActifs = [] } = api.metadataZonegroup.list.useQuery(
     { actifsSeulement: true },
     { enabled: estChampZoneGroupe },
   );

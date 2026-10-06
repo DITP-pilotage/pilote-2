@@ -5,7 +5,7 @@ import { api } from "@/server/framework/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const SélecteurPpg = () => {
-  const { data: ppgs = [] } = api.metadataChantier.listerPpgs.useQuery();
+  const { data: ppgs = [] } = api.metadataChantier.listPpgs.useQuery();
   const { control, formState } = useFormContext<ChantierForm>();
 
   return (

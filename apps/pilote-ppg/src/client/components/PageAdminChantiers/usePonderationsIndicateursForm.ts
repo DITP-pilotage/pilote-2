@@ -5,7 +5,7 @@ import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MAILLES, Maille } from "@/server/parametrage-chantier/domain/maille";
-import { IndicateurPonderation } from "@/server/parametrage-chantier/queries/RecupererIndicateursPonderationsChantierQuery";
+import { IndicateurPonderation } from "@/server/parametrage-chantier/queries/GetIndicateursPonderationsChantierQuery";
 
 export interface LignePonderationForm {
   poidsPourcentDept: number | null;
@@ -90,8 +90,8 @@ export const usePonderationsIndicateursForm = ({
     [sommesParMaille],
   );
 
-  const mutation =
-    api.metadataChantier.enregistrerPonderationsIndicateurs.useMutation({
+  const mutation = api.metadataChantier.savePonderationsIndicateurs.useMutation(
+    {
       onSuccess: () => {
         toast.success("Les pondérations ont bien été enregistrées.", {
           position: "bottom-right",
@@ -104,7 +104,8 @@ export const usePonderationsIndicateursForm = ({
           position: "bottom-right",
           richColors: true,
         }),
-    });
+    },
+  );
 
   const enregistrer = reactHookForm.handleSubmit((data) => {
     mutation.mutate({

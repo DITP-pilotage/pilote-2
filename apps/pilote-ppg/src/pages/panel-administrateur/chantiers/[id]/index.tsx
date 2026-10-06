@@ -26,28 +26,28 @@ export async function getServerSideProps(
 
   const { params, query } = context;
   const chantierId = z.string().parse(params?.id);
-  const estUneCréation = query._action === "creer-chantier";
+  const isCreation = query._action === "creer-chantier";
 
   const container = getContainer("parametrageChantier");
 
-  const chantierData = estUneCréation
+  const chantierData = isCreation
     ? null
-    : await container.resolve("recupererChantierQuery").run({ chantierId });
+    : await container.resolve("getChantierQuery").run({ chantierId });
 
-  const ponderations = estUneCréation
+  const ponderations = isCreation
     ? null
     : await container
-        .resolve("recupererIndicateursPonderationsChantierQuery")
+        .resolve("getIndicateursPonderationsChantierQuery")
         .run({ chantierId });
 
-  const idSuivant = estUneCréation
-    ? await container.resolve("recupererIdSuivantQuery").run()
+  const idSuivant = isCreation
+    ? await container.resolve("getNextIdQuery").run()
     : null;
 
   return {
     props: {
       chantierId,
-      estUneCréation,
+      isCreation,
       chantierData,
       ponderations,
       idSuivant,
@@ -57,7 +57,7 @@ export async function getServerSideProps(
 
 const NextPageAdminChantierEdition = ({
   chantierId,
-  estUneCréation,
+  isCreation,
   chantierData,
   ponderations,
   idSuivant,
@@ -70,7 +70,7 @@ const NextPageAdminChantierEdition = ({
       <PageAdminChantierEdition
         chantierId={chantierId}
         chantierData={chantierData}
-        estUneCréation={estUneCréation}
+        isCreation={isCreation}
         idSuivant={idSuivant}
         ponderations={ponderations}
       />

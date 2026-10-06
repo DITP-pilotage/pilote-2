@@ -10,9 +10,8 @@ const LIBELLES = {
 };
 
 const PageAdminPerimetres = () => {
-  const { data: perimetres, isLoading } =
-    api.metadataPerimetre.lister.useQuery();
-  const { data: porteurs } = api.metadataPorteur.lister.useQuery();
+  const { data: perimetres, isLoading } = api.metadataPerimetre.list.useQuery();
+  const { data: porteurs } = api.metadataPorteur.list.useQuery();
   const table = useTableauAdminPerimetres(perimetres ?? [], porteurs);
   const nombrePerimetresFiltres = table.getFilteredRowModel().rows.length;
 

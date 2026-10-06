@@ -3,41 +3,41 @@ import { calculerMaillesApplicablesIndicateur } from "@/server/parametrage-chant
 describe("calculerMaillesApplicablesIndicateur", () => {
   it("retourne uniquement NAT si l'indicateur n'est pas territorialisé", () => {
     // Given / When
-    const résultat = calculerMaillesApplicablesIndicateur(false, "DEPT");
+    const result = calculerMaillesApplicablesIndicateur(false, "DEPT");
 
     // Then
-    expect(résultat).toEqual(["NAT"]);
+    expect(result).toEqual(["NAT"]);
   });
 
   it("retourne NAT, REG et DEPT si la maille la plus fine est DEPT", () => {
     // Given / When
-    const résultat = calculerMaillesApplicablesIndicateur(true, "DEPT");
+    const result = calculerMaillesApplicablesIndicateur(true, "DEPT");
 
     // Then
-    expect(résultat).toEqual(["NAT", "REG", "DEPT"]);
+    expect(result).toEqual(["NAT", "REG", "DEPT"]);
   });
 
   it("retourne NAT et REG si la maille la plus fine est REG", () => {
     // Given / When
-    const résultat = calculerMaillesApplicablesIndicateur(true, "REG");
+    const result = calculerMaillesApplicablesIndicateur(true, "REG");
 
     // Then
-    expect(résultat).toEqual(["NAT", "REG"]);
+    expect(result).toEqual(["NAT", "REG"]);
   });
 
   it("retourne uniquement NAT si la maille la plus fine est NAT", () => {
     // Given / When
-    const résultat = calculerMaillesApplicablesIndicateur(true, "NAT");
+    const result = calculerMaillesApplicablesIndicateur(true, "NAT");
 
     // Then
-    expect(résultat).toEqual(["NAT"]);
+    expect(result).toEqual(["NAT"]);
   });
 
   it("retourne uniquement NAT si territorialisé mais sans maille renseignée", () => {
     // Given / When
-    const résultat = calculerMaillesApplicablesIndicateur(true, null);
+    const result = calculerMaillesApplicablesIndicateur(true, null);
 
     // Then
-    expect(résultat).toEqual(["NAT"]);
+    expect(result).toEqual(["NAT"]);
   });
 });

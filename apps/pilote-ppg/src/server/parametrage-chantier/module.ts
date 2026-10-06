@@ -5,28 +5,28 @@ import {
   type VerifyCradle,
 } from "@/server/module-system";
 import type { ParametrageIndicateurExports } from "@/server/parametrage-indicateur/module";
-import { ListerChantiersQuery } from "./queries/ListerChantiersQuery";
-import { RecupererChantierQuery } from "./queries/RecupererChantierQuery";
-import { RecupererIdSuivantQuery } from "./queries/RecupererIdSuivantQuery";
-import { ListerPpgsQuery } from "./queries/ListerPpgsQuery";
-import { ListerPorteursQuery } from "./queries/ListerPorteursQuery";
-import { ListerPerimetresQuery } from "./queries/ListerPerimetresQuery";
-import { ListerZonegroupsQuery } from "./queries/ListerZonegroupsQuery";
-import { EnregistrerChantierHandler } from "./handlers/EnregistrerChantierHandler";
-import { RecupererIndicateursPonderationsChantierQuery } from "./queries/RecupererIndicateursPonderationsChantierQuery";
-import { EnregistrerPonderationsIndicateursHandler } from "./handlers/EnregistrerPonderationsIndicateursHandler";
+import { ListChantiersQuery } from "./queries/ListChantiersQuery";
+import { GetChantierQuery } from "./queries/GetChantierQuery";
+import { GetNextIdQuery } from "./queries/GetNextIdQuery";
+import { ListPpgsQuery } from "./queries/ListPpgsQuery";
+import { ListPorteursQuery } from "./queries/ListPorteursQuery";
+import { ListPerimetresQuery } from "./queries/ListPerimetresQuery";
+import { ListZonegroupsQuery } from "./queries/ListZonegroupsQuery";
+import { SaveChantierHandler } from "./handlers/SaveChantierHandler";
+import { GetIndicateursPonderationsChantierQuery } from "./queries/GetIndicateursPonderationsChantierQuery";
+import { SavePonderationsIndicateursHandler } from "./handlers/SavePonderationsIndicateursHandler";
 
 type MetadataChantierOwnCradle = {
-  listerChantiersQuery: ListerChantiersQuery;
-  recupererChantierQuery: RecupererChantierQuery;
-  recupererIdSuivantQuery: RecupererIdSuivantQuery;
-  listerPpgsQuery: ListerPpgsQuery;
-  listerPorteursQuery: ListerPorteursQuery;
-  listerPerimetresQuery: ListerPerimetresQuery;
-  listerZonegroupsQuery: ListerZonegroupsQuery;
-  enregistrerChantierHandler: EnregistrerChantierHandler;
-  recupererIndicateursPonderationsChantierQuery: RecupererIndicateursPonderationsChantierQuery;
-  enregistrerPonderationsIndicateursHandler: EnregistrerPonderationsIndicateursHandler;
+  listChantiersQuery: ListChantiersQuery;
+  getChantierQuery: GetChantierQuery;
+  getNextIdQuery: GetNextIdQuery;
+  listPpgsQuery: ListPpgsQuery;
+  listPorteursQuery: ListPorteursQuery;
+  listPerimetresQuery: ListPerimetresQuery;
+  listZonegroupsQuery: ListZonegroupsQuery;
+  saveChantierHandler: SaveChantierHandler;
+  getIndicateursPonderationsChantierQuery: GetIndicateursPonderationsChantierQuery;
+  savePonderationsIndicateursHandler: SavePonderationsIndicateursHandler;
 };
 
 type MetadataChantierCradle = MetadataChantierOwnCradle &
@@ -41,19 +41,19 @@ export const parametrageChantierModule = defineModule<
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({
-      listerChantiersQuery: asModuleClass(ListerChantiersQuery),
-      recupererChantierQuery: asModuleClass(RecupererChantierQuery),
-      recupererIdSuivantQuery: asModuleClass(RecupererIdSuivantQuery),
-      listerPpgsQuery: asModuleClass(ListerPpgsQuery),
-      listerPorteursQuery: asModuleClass(ListerPorteursQuery),
-      listerPerimetresQuery: asModuleClass(ListerPerimetresQuery),
-      listerZonegroupsQuery: asModuleClass(ListerZonegroupsQuery),
-      enregistrerChantierHandler: asModuleClass(EnregistrerChantierHandler),
-      recupererIndicateursPonderationsChantierQuery: asModuleClass(
-        RecupererIndicateursPonderationsChantierQuery,
+      listChantiersQuery: asModuleClass(ListChantiersQuery),
+      getChantierQuery: asModuleClass(GetChantierQuery),
+      getNextIdQuery: asModuleClass(GetNextIdQuery),
+      listPpgsQuery: asModuleClass(ListPpgsQuery),
+      listPorteursQuery: asModuleClass(ListPorteursQuery),
+      listPerimetresQuery: asModuleClass(ListPerimetresQuery),
+      listZonegroupsQuery: asModuleClass(ListZonegroupsQuery),
+      saveChantierHandler: asModuleClass(SaveChantierHandler),
+      getIndicateursPonderationsChantierQuery: asModuleClass(
+        GetIndicateursPonderationsChantierQuery,
       ),
-      enregistrerPonderationsIndicateursHandler: asModuleClass(
-        EnregistrerPonderationsIndicateursHandler,
+      savePonderationsIndicateursHandler: asModuleClass(
+        SavePonderationsIndicateursHandler,
       ),
     } satisfies VerifyCradle<MetadataChantierOwnCradle>);
   },

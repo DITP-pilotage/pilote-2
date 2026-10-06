@@ -14,7 +14,7 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { AxeAdminListItem } from "@/server/referentiels/axe/queries/ListerAxesAdminQuery";
+import type { AxeAdminListItem } from "@/server/referentiels/axe/queries/ListAxesAdminQuery";
 
 const columnHelper = tableauAdmin.createColumnHelper<AxeAdminListItem>();
 
