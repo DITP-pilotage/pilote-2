@@ -46,7 +46,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const messageInformation = presenterEnMessageInformationContrat(
-    await getContainer("legacy")
+    await getContainer("gestionContenu")
       .resolve("récupérerMessageInformationUseCase")
       .run(),
   );

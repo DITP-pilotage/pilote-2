@@ -20,7 +20,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const { force } = querySchema.parse(req.query);
 
-  const featureFlips = await getContainer("legacy")
+  const featureFlips = await getContainer("gestionContenu")
     .resolve("recupererFeatureFlipsUseCase")
     .run();
 

@@ -6,7 +6,7 @@ import {
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
 import { configuration } from "@/config";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/gestion-contenu/module";
 
 export class RecupererToutesLesVariablesContenuUseCase {
   private gestionContenuRepository: GestionContenuRepository;

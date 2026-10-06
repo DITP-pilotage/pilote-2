@@ -28,6 +28,7 @@ import { albertModule } from "./albert/module";
 import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
 import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { legacyModule } from "./legacy/module";
+import { gestionContenuModule } from "./gestion-contenu/module";
 import { actualitesModule } from "./actualites/module";
 import { mbSyncModule } from "./mb-sync/module";
 import { metadataChantierModule } from "./metadataChantier/module";
@@ -62,6 +63,7 @@ const allModules = [
   parametrageCentreAideModule,
   datajobsExecutionModule,
   legacyModule,
+  gestionContenuModule,
   applicationLogModule,
   actualitesModule,
   mbSyncModule,
@@ -115,6 +117,7 @@ function registerContainer(): ContainerDependencies {
     importPublicationCSV: getContainer("importPublicationCSV"),
     datajobsExecution: getContainer("datajobsExecution"),
     legacy: getContainer("legacy"),
+    gestionContenu: getContainer("gestionContenu"),
     applicationLog: getContainer("applicationLog"),
     actualites: getContainer("actualites"),
     mbSync: getContainer("mbSync"),

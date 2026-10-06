@@ -17,7 +17,7 @@ export const gestionContenuRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationGestionContenu();
 
-      return getContainer("legacy")
+      return getContainer("gestionContenu")
         .resolve("modifierMessageInformationUseCase")
         .run({
           bandeauType: input.bandeauType,
@@ -26,13 +26,13 @@ export const gestionContenuRouter = créerRouteurTRPC({
         });
     }),
   recupererMessageInformation: procédureNonConnecte.query(async () => {
-    const messageInformation = await getContainer("legacy")
+    const messageInformation = await getContainer("gestionContenu")
       .resolve("récupérerMessageInformationUseCase")
       .run();
     return presenterEnMessageInformationContrat(messageInformation);
   }),
   recupererToutesLesVariablesContenu: procédureNonConnecte.query(async () => {
-    return getContainer("legacy")
+    return getContainer("gestionContenu")
       .resolve("recupererToutesLesVariablesContenuUseCase")
       .run();
   }),
@@ -42,7 +42,9 @@ export const gestionContenuRouter = créerRouteurTRPC({
       .recupererHabilitations(ctx.session);
     habilitations.verifierAutorisationModificationGestionContenu();
 
-    return getContainer("legacy").resolve("recupererFeatureFlipsUseCase").run();
+    return getContainer("gestionContenu")
+      .resolve("recupererFeatureFlipsUseCase")
+      .run();
   }),
   modifierFeatureFlips: procédureProtégée
     .input(validationFeatureFlip)
@@ -52,7 +54,7 @@ export const gestionContenuRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationGestionContenu();
 
-      return getContainer("legacy")
+      return getContainer("gestionContenu")
         .resolve("modifierFeatureFlipUseCase")
         .run({ featureFlips: input.featureFlips });
     }),

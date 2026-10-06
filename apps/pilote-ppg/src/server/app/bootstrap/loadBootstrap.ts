@@ -27,7 +27,7 @@ const toSerializableProps = <T extends object>(value: T): T => {
  */
 export const loadBootstrap = async (session: Session): Promise<Bootstrap> => {
   const [variablesContenu, utilisateurConnecte] = await Promise.all([
-    getContainer("legacy")
+    getContainer("gestionContenu")
       .resolve("recupererToutesLesVariablesContenuUseCase")
       .run(),
     getContainer("profilUtilisateur")

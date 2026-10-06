@@ -4,7 +4,7 @@ import { getContainer } from "@/server/dependances";
 import PageAnnuaire from "@/client/components/PageAnnuaire/PageAnnuaire";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const featureFlips = await getContainer("legacy")
+  const featureFlips = await getContainer("gestionContenu")
     .resolve("recupererFeatureFlipsUseCase")
     .run();
 

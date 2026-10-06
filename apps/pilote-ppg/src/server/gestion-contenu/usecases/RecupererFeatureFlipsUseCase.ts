@@ -5,7 +5,7 @@ import {
   FeatureFlipMap,
 } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
 import { configuration } from "@/config";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/gestion-contenu/module";
 
 export class RecupererFeatureFlipsUseCase {
   private gestionContenuRepository: GestionContenuRepository;

@@ -1,6 +1,6 @@
 import { MessageInformation } from "@/server/gestion-contenu/domain/MessageInformation";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/gestion-contenu/module";
 
 export class RécupérerMessageInformationUseCase {
   private _gestionContenuRepository: GestionContenuRepository;
