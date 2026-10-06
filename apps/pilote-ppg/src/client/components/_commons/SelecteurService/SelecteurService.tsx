@@ -3,6 +3,7 @@ import {
   type SelectFieldOptionGroup,
 } from "@/components/shared/SelectField";
 import { referentielServices } from "@/utils/referentiel-services";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import {
   buildCompositeValue,
   parseCompositeValue,
@@ -38,7 +39,7 @@ export const SelecteurService = ({
   <SelectField
     name="service"
     label="Service"
-    className="fr-input-group"
+    className={FIELD_GROUP_SPACING}
     triggerClassName="w-full"
     searchPlaceholder="Rechercher un service ou un périmètre ministériel"
     options={groupedOptions}
