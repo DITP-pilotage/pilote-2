@@ -4,7 +4,7 @@ import { File } from "formidable";
 import fs from "node:fs";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
 
 /**

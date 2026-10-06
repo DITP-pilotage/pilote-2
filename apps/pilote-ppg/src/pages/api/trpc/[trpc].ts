@@ -1,7 +1,7 @@
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
 import { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { créerContextTRPC } from "@/server/infrastructure/api/trpc/trpc";
 import { categorieDepuisRouteurTRPC } from "@/server/infrastructure/api/trpc/categorieLogRouteurTRPC";
 

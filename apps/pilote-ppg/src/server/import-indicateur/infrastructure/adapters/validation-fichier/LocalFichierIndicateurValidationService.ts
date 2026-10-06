@@ -13,7 +13,7 @@ import {
 import { chargerSchemaBrut } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/SchemaRepository";
 import { readTabularFile } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readTabularFile";
 import { FichierTabulaireIllisibleError } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/tabular-file/readZip";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { compileSchema } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/compileSchema";
 import { validateRows } from "@/server/import-indicateur/infrastructure/adapters/validation-fichier/table-schema/validateRows";
 

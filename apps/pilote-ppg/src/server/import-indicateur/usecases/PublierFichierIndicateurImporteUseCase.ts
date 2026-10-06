@@ -8,7 +8,7 @@ import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur
 import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
 import { Transaction } from "@/server/db/Transaction";
 import type { Inject } from "@/server/import-indicateur/module";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 
 export class PublierFichierIndicateurImporteUseCase {
   private mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;

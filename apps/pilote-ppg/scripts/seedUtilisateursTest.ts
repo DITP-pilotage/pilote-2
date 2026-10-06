@@ -1,4 +1,4 @@
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { prisma } from "@/server/db/prisma";
 import seedsUtilisateursTest from "@/server/seeds/utilisateursTest.json";
 

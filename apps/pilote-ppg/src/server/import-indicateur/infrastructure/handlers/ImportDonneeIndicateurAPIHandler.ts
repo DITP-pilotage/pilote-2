@@ -13,7 +13,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 import { isENOENTError } from "@/server/utils/errors";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 
 function convertirEnTableauPourCSV(
   donnees: ImportDonneeIndicateurAPIContrat[],

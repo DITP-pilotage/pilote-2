@@ -2,7 +2,7 @@ import KcAdminClient from "@keycloak/keycloak-admin-client";
 import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/ports/ProfilModifieSideEffects";
 import { ProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
 import { EmailManager } from "@/server/infrastructure/email-manager/EmailManager";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 
 const KEYCLOAK_REALM = "DITP";
 

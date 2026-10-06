@@ -5,7 +5,7 @@ import fs from "node:fs";
 import { CsvRecord } from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
 

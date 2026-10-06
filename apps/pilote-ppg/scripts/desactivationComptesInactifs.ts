@@ -1,6 +1,6 @@
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
 

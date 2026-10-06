@@ -2,7 +2,7 @@ import { OptionsWithColumns, parse } from "csv-parse/sync";
 import fs from "node:fs";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain/ImportMetadataIndicateur";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { supprimerLeFichier } from "@/server/import-indicateur/infrastructure/adapters/FichierService";
 import { createValidationImportMetadataIndicateurFormulaire } from "@/validation/metadata-indicateur";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";

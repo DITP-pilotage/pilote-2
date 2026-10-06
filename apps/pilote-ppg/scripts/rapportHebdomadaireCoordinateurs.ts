@@ -1,7 +1,7 @@
 import "./load-env";
 import process from "node:process";
 import assert from "node:assert/strict";
-import logger from "@/server/infrastructure/Logger";
+import logger from "@/server/framework/logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
 

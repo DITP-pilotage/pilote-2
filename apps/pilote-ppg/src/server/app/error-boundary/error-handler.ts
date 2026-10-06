@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
-import Logger from "@/server/infrastructure/Logger";
+import Logger from "@/server/framework/logger";
 
 export const errorHandler =
   (handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>) =>
