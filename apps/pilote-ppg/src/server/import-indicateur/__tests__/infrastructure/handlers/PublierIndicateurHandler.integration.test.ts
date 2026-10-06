@@ -6,7 +6,7 @@ import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/ap
 import { prisma } from "@/server/framework/persistence/prisma";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PublierFichierImportIndicateurHandler", () => {
   it(

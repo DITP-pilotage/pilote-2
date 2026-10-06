@@ -3,8 +3,8 @@ import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/ad
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaIndicateurRepository", () => {

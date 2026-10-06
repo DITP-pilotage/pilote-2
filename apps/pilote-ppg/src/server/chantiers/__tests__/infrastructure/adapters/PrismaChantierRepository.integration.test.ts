@@ -4,8 +4,8 @@ import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryPa
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 

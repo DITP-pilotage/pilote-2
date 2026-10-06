@@ -1,6 +1,6 @@
 import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaChantierRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaChantierRepository", () => {
   let prismaChantierRepository: PrismaChantierRepository;

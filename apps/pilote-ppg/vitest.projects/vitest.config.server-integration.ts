@@ -9,7 +9,7 @@ export default defineProject({
     include: ["src/server/**/*.integration.test.{ts,tsx}"],
     setupFiles: [
       "./vitest.setup.server.ts",
-      "./src/server/infrastructure/test/integrationTestSetup.ts",
+      "./src/test/integrationTestSetup.ts",
     ],
     pool: "forks",
     // Les tests ne se voient plus entre eux : chacun tourne dans une transaction

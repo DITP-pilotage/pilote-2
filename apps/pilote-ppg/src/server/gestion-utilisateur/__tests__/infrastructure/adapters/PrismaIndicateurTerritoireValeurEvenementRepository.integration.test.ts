@@ -1,5 +1,5 @@
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaIndicateurTerritoireValeurEvenementRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 

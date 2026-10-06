@@ -2,7 +2,7 @@ import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indic
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaTransaction } from "@/server/framework/persistence/PrismaTransaction";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("EnregistrerMetadataIndicateurHandler", () => {
   let handler: EnregistrerMetadataIndicateurHandler;

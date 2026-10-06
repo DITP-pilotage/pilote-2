@@ -10,7 +10,7 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PublierFichierIndicateurImporteUseCase", () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;

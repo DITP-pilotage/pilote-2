@@ -1,7 +1,7 @@
 import { PrismaUtilisateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaUtilisateurRepository";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("PrismaUtilisateurRepository", () => {
   let prismaUtilisateurRepository: PrismaUtilisateurRepository;

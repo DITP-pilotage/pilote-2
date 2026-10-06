@@ -2,7 +2,7 @@
 // `integrationTestSetup`, qui importe le client Prisma — lequel lit
 // `DATABASE_URL` des son import.
 import "./env";
-import "@/server/infrastructure/test/integrationTestSetup";
+import "@/test/integrationTestSetup";
 import { Albert } from "@/server/albert/Albert";
 import { traceModel } from "./traceModel";
 import { rateLimitModel } from "./rateLimitModel";

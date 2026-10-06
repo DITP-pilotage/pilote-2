@@ -3,7 +3,7 @@ import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaNouveauteRepository", () => {
   let prismaNouveauteRepository: PrismaNouveauteRepository;

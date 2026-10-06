@@ -1,8 +1,5 @@
 import { onlyAcmeApiKey } from "@/server/framework/guards/onlyAcmeApiKey";
-import {
-  setupRequest,
-  setupResponse,
-} from "@/server/infrastructure/test/apiTestHelpers";
+import { setupRequest, setupResponse } from "@/test/apiTestHelpers";
 
 vi.mock("@/config", () => ({
   configuration: vi.fn(() => ({

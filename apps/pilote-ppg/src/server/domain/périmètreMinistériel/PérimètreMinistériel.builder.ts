@@ -2,7 +2,7 @@ import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/Pé
 import {
   générerUnIdentifiantUnique,
   générerUnLibellé,
-} from "@/server/infrastructure/test/builders/utils";
+} from "@/test/builders/utils";
 
 export default class PérimètreMinistérielBuilder {
   private _id: PérimètreMinistériel["id"];

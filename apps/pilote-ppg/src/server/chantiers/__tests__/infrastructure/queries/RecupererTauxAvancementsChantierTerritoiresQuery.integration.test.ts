@@ -1,5 +1,5 @@
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { RecupererTauxAvancementsChantierTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererTauxAvancementsChantierTerritoiresQuery";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";

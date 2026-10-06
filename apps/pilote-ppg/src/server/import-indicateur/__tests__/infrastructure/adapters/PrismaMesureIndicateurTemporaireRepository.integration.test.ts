@@ -7,7 +7,7 @@ import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateu
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { getContainer } from "@/server/dependances";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 async function creeUnUtilisateurEnBase() {
   const auteurId = randomUUID();

@@ -1,8 +1,8 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ArchiverAxeHandler } from "@/server/metadataAxe/handlers/ArchiverAxeHandler";
 import { VerifierUtilisationAxeQuery } from "@/server/metadataAxe/queries/VerifierUtilisationAxeQuery";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { ConflictError } from "@/server/app/error-boundary/conflict-error";
 

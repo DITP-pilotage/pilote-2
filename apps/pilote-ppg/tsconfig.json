@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,33 +15,16 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/components/*": [
-        "./src/client/components/*"
-      ],
-      "@/client/*": [
-        "./src/client/*"
-      ],
-      "@/pages/*": [
-        "./src/pages/*"
-      ],
-      "@/utils/*": [
-        "./src/utils/*"
-      ],
-      "@/hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@/server/*": [
-        "./src/server/*"
-      ],
-      "@/stores/*": [
-        "./src/client/stores/*"
-      ],
-      "@/validation/*": [
-        "./src/validation/*"
-      ],
-      "@/config": [
-        "./src/config.ts"
-      ]
+      "@/components/*": ["./src/client/components/*"],
+      "@/client/*": ["./src/client/*"],
+      "@/pages/*": ["./src/pages/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/server/*": ["./src/server/*"],
+      "@/stores/*": ["./src/client/stores/*"],
+      "@/validation/*": ["./src/validation/*"],
+      "@/test/*": ["./src/test/*"],
+      "@/config": ["./src/config.ts"]
     },
     "plugins": [
       {
@@ -60,11 +39,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ],
-  "files": [
-    "vitest.d.ts",
-    "jest-extended.d.ts"
-  ]
+  "exclude": ["node_modules"],
+  "files": ["vitest.d.ts", "jest-extended.d.ts"]
 }

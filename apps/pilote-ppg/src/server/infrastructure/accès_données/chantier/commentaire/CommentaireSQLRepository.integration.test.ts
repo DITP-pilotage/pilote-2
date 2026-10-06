@@ -2,8 +2,8 @@ import { $Enums } from "@prisma/client";
 import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
 } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import {
   creerCommentairePublie,

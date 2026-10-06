@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { VerifierUtilisationEngagementQuery } from "@/server/metadataEngagement/queries/VerifierUtilisationEngagementQuery";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("VerifierUtilisationEngagementQuery", () => {
   let query: VerifierUtilisationEngagementQuery;

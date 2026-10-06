@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ListerEngagementsAdminQuery } from "@/server/metadataEngagement/queries/ListerEngagementsAdminQuery";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("ListerEngagementsAdminQuery", () => {
   let query: ListerEngagementsAdminQuery;

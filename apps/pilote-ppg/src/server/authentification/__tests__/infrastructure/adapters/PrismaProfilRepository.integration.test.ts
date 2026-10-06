@@ -1,7 +1,7 @@
 import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
 import { PrismaProfilRepository } from "@/server/authentification/infrastructure/adapters/PrismaProfilRepository";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaProfilRepository", () => {
   let prismaProfilRepository: PrismaProfilRepository;
