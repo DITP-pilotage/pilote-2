@@ -1,4 +1,4 @@
-import { EmailManager } from "@/server/infrastructure/email-manager";
+import { EmailManager } from "@/server/framework/email";
 import type { Inject } from "@/server/evaluation/module";
 
 export class NotificationEmailService {

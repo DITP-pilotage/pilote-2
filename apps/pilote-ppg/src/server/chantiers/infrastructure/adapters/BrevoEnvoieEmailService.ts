@@ -1,5 +1,5 @@
 import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
-import { EmailManager } from "@/server/infrastructure/email-manager";
+import { EmailManager } from "@/server/framework/email";
 
 export class BrevoEnvoieEmailService implements EnvoieEmailService {
   constructor(private readonly deps: { emailManager: EmailManager }) {}

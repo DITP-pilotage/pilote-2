@@ -3,9 +3,9 @@ import {
   formaterNumériqueOuValeurNonRenseignee,
   NON_APPLICABLE,
   NON_RENSEIGNEE,
-} from "@/server/infrastructure/export_csv/valeurs";
+} from "@/server/framework/csv/valeurs";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
+import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
 import {
   masquerPourProfilDROMEtMailleNat,

@@ -1,4 +1,4 @@
-import { acmeChallengeStore } from "@/server/infrastructure/acme/acmeChallengeStore";
+import { acmeChallengeStore } from "@/server/framework/acme/acmeChallengeStore";
 
 describe("acmeChallengeStore", () => {
   beforeEach(() => {

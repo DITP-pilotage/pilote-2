@@ -2,7 +2,7 @@ import CommentaireRepository from "@/server/domain/chantier/commentaire/Commenta
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
-export default class RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase {
+export class RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase {
   private readonly commentaireRepository: CommentaireRepository;
 
   constructor({

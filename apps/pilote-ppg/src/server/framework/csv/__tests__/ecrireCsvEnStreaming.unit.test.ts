@@ -1,7 +1,7 @@
 import { stringify } from "csv-stringify";
 import { ServerResponse } from "node:http";
 import { Writable } from "node:stream";
-import { ecrireCsvEnStreaming } from "@/server/infrastructure/export_csv/ecrireCsvEnStreaming";
+import { ecrireCsvEnStreaming } from "@/server/framework/csv/ecrireCsvEnStreaming";
 
 const creerStringifier = () =>
   stringify({ header: false, delimiter: ";", quoted_string: true });

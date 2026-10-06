@@ -1,6 +1,6 @@
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
-import { EmailManager } from "@/server/infrastructure/email-manager";
+import { EmailManager } from "@/server/framework/email";
 
 export class BrevoContactInfoLettresService implements ContactInfoLettresService {
   constructor(private readonly deps: { emailManager: EmailManager }) {}

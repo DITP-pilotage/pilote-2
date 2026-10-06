@@ -14,7 +14,7 @@ import { commentaireModule } from "@/server/commentaires/module";
 import { importDecisionStrategiqueModule } from "@/server/decisions-strategiques/module";
 import { objectifModule } from "@/server/objectifs/module";
 import { importSyntheseDesResultatsModule } from "@/server/syntheses-des-resultats/module";
-import { importPublicationCSVModule } from "@/server/infrastructure/import_csv/publication/module";
+import { importPublicationCSVModule } from "@/server/import-publication-csv/module";
 import { ficheConducteurModule } from "@/server/fiche-conducteur/module";
 import { piloteEvalModule } from "@/server/evaluation/module";
 import { applicationLogModule } from "@/server/application-log/module";

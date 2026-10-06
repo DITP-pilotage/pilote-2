@@ -2,7 +2,7 @@ import { $Enums, Prisma, type_objectif, type_statut } from "@prisma/client";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
-import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
+import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
