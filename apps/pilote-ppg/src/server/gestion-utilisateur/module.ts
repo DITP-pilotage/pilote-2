@@ -7,7 +7,7 @@ import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/
 import { TerritoireSQLRepository } from "@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository";
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import { RécupérerUnProfilUseCase } from "@/server/gestion-utilisateur/usecases/RécupérerUnProfilUseCase";
-import { RécupérerTerritoiresAvecNombreUtilisateursUseCase as RécupérerTerritoiresAvecNombreUtilisateursSQLUseCase } from "@/server/gestion-utilisateur/usecases/RécupérerTerritoiresAvecNombreUtilisateursUseCase";
+import { RecupererTerritoiresAvecNombreUtilisateursSQLUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTerritoiresAvecNombreUtilisateursSQLUseCase";
 import { PrismaChantierRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaChantierRepository";
 import { RecupererChantiersSynthetisesUseCase } from "@/server/gestion-utilisateur/usecases/RecupererChantiersSynthetisesUseCase";
 import { PrismaPerimetreMinisterielRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaPerimetreMinisteriel";
@@ -84,7 +84,7 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   territoireSQLRepository: TerritoireSQLRepositoryInterface;
   récupérerUnUtilisateurUseCase: RécupérerUnUtilisateurUseCase;
   récupérerUnProfilUseCase: RécupérerUnProfilUseCase;
-  récupérerTerritoiresAvecNombreUtilisateursSQLUseCase: RécupérerTerritoiresAvecNombreUtilisateursSQLUseCase;
+  recupererTerritoiresAvecNombreUtilisateursSQLUseCase: RecupererTerritoiresAvecNombreUtilisateursSQLUseCase;
   utilisateurRepository: UtilisateurRepository;
   territoireRepository: TerritoireRepository;
   utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -154,9 +154,9 @@ export const gestionUtilisateurModule = defineModule<
             profilRepository: profilSQLRepository,
           }),
       ).scoped(),
-      récupérerTerritoiresAvecNombreUtilisateursSQLUseCase: asModuleFunction(
+      recupererTerritoiresAvecNombreUtilisateursSQLUseCase: asModuleFunction(
         ({ territoireSQLRepository, utilisateurSQLRepository }) =>
-          new RécupérerTerritoiresAvecNombreUtilisateursSQLUseCase({
+          new RecupererTerritoiresAvecNombreUtilisateursSQLUseCase({
             territoireRepository: territoireSQLRepository,
             utilisateurRepository: utilisateurSQLRepository,
           }),

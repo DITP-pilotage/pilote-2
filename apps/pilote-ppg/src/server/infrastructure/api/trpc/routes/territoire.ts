@@ -15,7 +15,7 @@ export const territoireRouter = créerRouteurTRPC({
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {
       return getContainer("gestionUtilisateur")
-        .resolve("récupérerTerritoiresAvecNombreUtilisateursSQLUseCase")
+        .resolve("recupererTerritoiresAvecNombreUtilisateursSQLUseCase")
         .run({ territoireCodes: input.territoireCodes });
     }),
 });
