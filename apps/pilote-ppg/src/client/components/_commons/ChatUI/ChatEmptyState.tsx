@@ -29,7 +29,7 @@ export const ChatEmptyState = ({
   scenarios,
   contexte,
 }: {
-  scenarios: ChatScenarios;
+  scenarios?: ChatScenarios;
   contexte?: ContexteAccueil;
 }) => {
   const { sendMessage, fillInput } = useChatContext();
@@ -43,7 +43,7 @@ export const ChatEmptyState = ({
   };
 
   const renderScenarioGrid = (scenarioList: ChatScenario[]) => (
-    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-2.5 @lg:grid-cols-2">
       {scenarioList.map((scenario) => (
         <button
           className="flex min-h-[76px] flex-col items-start gap-2 border border-dsfr-grey-900 bg-white p-3.5 text-left text-sm font-medium leading-5 text-dsfr-grey-50 transition-colors hover:border-primary hover:bg-dsfr-alt-blue-france hover:text-primary"
@@ -64,7 +64,7 @@ export const ChatEmptyState = ({
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-7 py-8">
       <div className="flex flex-col gap-3">
         <AlbertMonogramme taille="lg" />
-        <h2 className="text-[26px] font-bold leading-8 text-dsfr-grey-50 fr-mb-0">
+        <h2 className="text-xl font-bold leading-7 text-dsfr-grey-50 fr-mb-0 @lg:text-[26px] @lg:leading-8">
           Bonjour, je suis l&apos;{NOM_ASSISTANT}.
         </h2>
         <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
@@ -82,10 +82,12 @@ export const ChatEmptyState = ({
               commentaires.
             </>
           )}{" "}
-          Choisissez un point de départ ou posez votre question.
+          {scenarios
+            ? "Choisissez un point de départ ou posez votre question."
+            : "Posez votre question."}
         </p>
       </div>
-      {scenarios.kind === "flat" ? (
+      {!scenarios ? null : scenarios.kind === "flat" ? (
         renderScenarioGrid(scenarios.scenarios)
       ) : (
         <div className="flex flex-col gap-6">

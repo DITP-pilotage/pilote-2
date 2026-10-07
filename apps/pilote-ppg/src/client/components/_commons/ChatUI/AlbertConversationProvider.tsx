@@ -22,20 +22,30 @@ import {
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import api from "@/server/infrastructure/api/trpc/api";
 
-export type AlbertDisplay = "fullscreen" | "minimized";
+export type AlbertDisplay = "floating" | "fullscreen" | "minimized";
+
+type AlbertDisplayOuvert = Exclude<AlbertDisplay, "minimized">;
 
 export type CurrentConversation = AlbertConversation & {
-  agentContext: AlbertAgentContext;
+  agentContext?: AlbertAgentContext;
   scenarios?: ChatScenarios;
+};
+
+// Ce que la page affichée donne à l'assistant. Une page qui n'en déclare pas
+// ouvre une conversation sans contexte.
+export type AlbertPageContext = {
+  agentContext: AlbertAgentContext;
+  scenarios: ChatScenarios;
 };
 
 type AlbertConversationContextValue = {
   conversation: CurrentConversation | null;
   display: AlbertDisplay;
-  open: (params: {
-    agentContext: AlbertAgentContext;
-    scenarios: ChatScenarios;
-  }) => void;
+  pageContext: AlbertPageContext | null;
+  setPageContext: (pageContext: AlbertPageContext | null) => void;
+  open: () => void;
+  expand: () => void;
+  contract: () => void;
   minimize: () => void;
   restore: () => void;
   close: () => void;
@@ -55,11 +65,26 @@ export const useAlbertConversation = (): AlbertConversationContextValue => {
   return value;
 };
 
+export const useAlbertPageContext = (pageContext: AlbertPageContext) => {
+  const { setPageContext } = useAlbertConversation();
+
+  useEffect(() => {
+    setPageContext(pageContext);
+    return () => setPageContext(null);
+  }, [pageContext, setPageContext]);
+};
+
 export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   const [conversation, setConversation] = useState<CurrentConversation | null>(
     null,
   );
-  const [display, setDisplay] = useState<AlbertDisplay>("fullscreen");
+  const [display, setDisplay] = useState<AlbertDisplay>("floating");
+  // Ce que « Reprendre » rouvre depuis le dock : la fenêtre ou le plein écran.
+  const [displayAvantReduction, setDisplayAvantReduction] =
+    useState<AlbertDisplayOuvert>("floating");
+  const [pageContext, setPageContext] = useState<AlbertPageContext | null>(
+    null,
+  );
   const trpcUtils = api.useUtils();
 
   const build = useCallback(
@@ -70,7 +95,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       messages,
     }: {
       id: string;
-      agentContext: AlbertAgentContext;
+      agentContext?: AlbertAgentContext;
       scenarios?: ChatScenarios;
       messages?: PiloteUIMessage[];
     }): CurrentConversation => ({
@@ -93,7 +118,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       targetDisplay,
     }: {
       id: string;
-      agentContext: AlbertAgentContext;
+      agentContext?: AlbertAgentContext;
       targetDisplay: AlbertDisplay;
     }) => {
       try {
@@ -132,17 +157,22 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     });
   }, [load]);
 
-  const open = useCallback<AlbertConversationContextValue["open"]>(
-    ({ agentContext, scenarios }) => {
-      setConversation(
-        (current) =>
-          current ??
-          build({ id: crypto.randomUUID(), agentContext, scenarios }),
-      );
-      setDisplay("fullscreen");
-    },
-    [build],
-  );
+  const open = useCallback(() => {
+    setConversation(
+      (current) =>
+        current ??
+        build({
+          id: crypto.randomUUID(),
+          agentContext: pageContext?.agentContext,
+          scenarios: pageContext?.scenarios,
+        }),
+    );
+    setDisplay("floating");
+  }, [build, pageContext]);
+
+  const expand = useCallback(() => setDisplay("fullscreen"), []);
+
+  const contract = useCallback(() => setDisplay("floating"), []);
 
   const minimize = useCallback(() => {
     if (conversation) {
@@ -151,16 +181,21 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         agentContext: conversation.agentContext,
       });
     }
+    if (display !== "minimized") setDisplayAvantReduction(display);
     setDisplay("minimized");
-  }, [conversation]);
+  }, [conversation, display]);
 
-  const restore = useCallback(() => setDisplay("fullscreen"), []);
+  const restore = useCallback(
+    () => setDisplay(displayAvantReduction),
+    [displayAvantReduction],
+  );
 
   const close = useCallback(() => {
     conversation?.chat.stop();
     clearMinimizedConversation();
     setConversation(null);
-    setDisplay("fullscreen");
+    setDisplay("floating");
+    setDisplayAvantReduction("floating");
   }, [conversation]);
 
   const startNewConversation = useCallback(() => {
@@ -174,7 +209,6 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         scenarios: conversation.scenarios,
       }),
     );
-    setDisplay("fullscreen");
   }, [conversation, build]);
 
   const selectConversation = useCallback(
@@ -195,7 +229,11 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     () => ({
       conversation,
       display,
+      pageContext,
+      setPageContext,
       open,
+      expand,
+      contract,
       minimize,
       restore,
       close,
@@ -205,7 +243,10 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     [
       conversation,
       display,
+      pageContext,
       open,
+      expand,
+      contract,
       minimize,
       restore,
       close,

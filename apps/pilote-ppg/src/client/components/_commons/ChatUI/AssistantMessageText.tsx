@@ -102,7 +102,7 @@ const MarkdownLink = ({
   children?: ReactNode;
 }) => {
   const router = useRouter();
-  const { minimize } = useAlbertConversation();
+  const { display, contract } = useAlbertConversation();
 
   if (!href?.startsWith("/")) {
     return (
@@ -119,7 +119,8 @@ const MarkdownLink = ({
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
         if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
         event.preventDefault();
-        minimize();
+        // La fenêtre flottante laisse voir la page vers laquelle on navigue.
+        if (display === "fullscreen") contract();
         router.push(href);
       }}
     >

@@ -7,6 +7,11 @@ import {
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
+import {
+  calculerAccesAskAI,
+  construireFeatureFlipsAskAI,
+} from "@/server/albert/accesAskAI";
+import { estEmailAutoriseAskAITerritoire } from "@/server/albert/emailsAutorisesAskAITerritoire";
 
 const conversationsRouter = créerRouteurTRPC({
   lister: procédureProtégée.query(async ({ ctx }) => {
@@ -91,6 +96,19 @@ const conversationsRouter = créerRouteurTRPC({
 });
 
 export const albertRouter = créerRouteurTRPC({
+  acces: procédureProtégée.query(async ({ ctx }) => {
+    const variables = await getContainer("legacy")
+      .resolve("recupererToutesLesVariablesContenuUseCase")
+      .run();
+
+    return calculerAccesAskAI({
+      profil: ctx.session.profil ?? null,
+      emailAutoriseAskAITerritoire: estEmailAutoriseAskAITerritoire(
+        ctx.session.user.email,
+      ),
+      featureFlips: construireFeatureFlipsAskAI(variables),
+    });
+  }),
   evaluer: procédureProtégée
     .input(
       z

@@ -127,7 +127,7 @@ export const ChatUI = ({
       stop={stop}
     >
       <ChantierLinksProvider options={chantierLinkOptions}>
-        <div className={clsxm("flex flex-col bg-white", className)}>
+        <div className={clsxm("@container flex flex-col bg-white", className)}>
           <style>{chatMarkdownStyles}</style>
 
           <div className="relative min-h-0 flex-1">
@@ -137,7 +137,7 @@ export const ChatUI = ({
               ref={scrollContainerRef}
             >
               <div className="mx-auto flex min-h-full max-w-6xl flex-col px-4 pb-4 pt-7">
-                {messages.length === 0 && scenarios && (
+                {messages.length === 0 && (
                   <ChatEmptyState
                     contexte={contexteAccueil}
                     scenarios={scenarios}
