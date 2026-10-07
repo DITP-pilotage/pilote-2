@@ -14,9 +14,9 @@ import { DashboardWidgetErrorBoundary } from "./DashboardWidgets/DashboardWidget
 import { DashboardLoader } from "./DashboardWidgets/DashboardLoader";
 
 const WIDTH_TO_CLASS: Record<number, string> = {
-  1: "col-span-4 md:col-span-1",
-  2: "col-span-4 md:col-span-2",
-  3: "col-span-4 md:col-span-3",
+  1: "col-span-4 @3xl:col-span-1",
+  2: "col-span-4 @3xl:col-span-2",
+  3: "col-span-4 @3xl:col-span-3",
   4: "col-span-4",
 };
 
