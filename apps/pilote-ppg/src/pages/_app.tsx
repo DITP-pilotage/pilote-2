@@ -1,5 +1,4 @@
 import "@/client/styles/app.css";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import { useEffect, useState } from "react";
@@ -73,7 +72,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
           rel="manifest"
         />
       </Head>
-      <ReactQueryDevtools initialIsOpen={false} />
       <Tooltip.Provider>
         <SessionProvider session={pageProps.session}>
           <PageViewsTracker />
