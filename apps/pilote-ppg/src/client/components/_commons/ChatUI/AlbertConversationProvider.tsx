@@ -28,20 +28,30 @@ import {
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { api } from "@/server/framework/trpc/api";
 
-export type AlbertDisplay = "fullscreen" | "minimized";
+export type AlbertDisplay = "floating" | "fullscreen" | "minimized";
+
+type AlbertDisplayOuvert = Exclude<AlbertDisplay, "minimized">;
 
 export type CurrentConversation = AlbertConversation & {
-  agentContext: AlbertAgentContext;
+  agentContext?: AlbertAgentContext;
   scenarios?: ChatScenarios;
+};
+
+// Ce que la page affichée donne à l'assistant. Une page qui n'en déclare pas
+// ouvre une conversation sans contexte.
+export type AlbertPageContext = {
+  agentContext: AlbertAgentContext;
+  scenarios: ChatScenarios;
 };
 
 type AlbertConversationContextValue = {
   conversation: CurrentConversation | null;
   display: AlbertDisplay;
-  open: (params: {
-    agentContext: AlbertAgentContext;
-    scenarios: ChatScenarios;
-  }) => void;
+  pageContext: AlbertPageContext | null;
+  setPageContext: (pageContext: AlbertPageContext | null) => void;
+  open: () => void;
+  expand: () => void;
+  contract: () => void;
   minimize: () => void;
   restore: () => void;
   close: () => void;
@@ -61,11 +71,26 @@ export const useAlbertConversation = (): AlbertConversationContextValue => {
   return value;
 };
 
+export const useAlbertPageContext = (pageContext: AlbertPageContext) => {
+  const { setPageContext } = useAlbertConversation();
+
+  useEffect(() => {
+    setPageContext(pageContext);
+    return () => setPageContext(null);
+  }, [pageContext, setPageContext]);
+};
+
 export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   const [conversation, setConversation] = useState<CurrentConversation | null>(
     null,
   );
-  const [display, setDisplay] = useState<AlbertDisplay>("fullscreen");
+  const [display, setDisplay] = useState<AlbertDisplay>("floating");
+  // Ce que « Reprendre » rouvre depuis le dock : la fenêtre ou le plein écran.
+  const [displayAvantReduction, setDisplayAvantReduction] =
+    useState<AlbertDisplayOuvert>("floating");
+  const [pageContext, setPageContext] = useState<AlbertPageContext | null>(
+    null,
+  );
   const trpcUtils = api.useUtils();
   const track = useAssistantTracking();
   const trackRef = useRef(track);
@@ -82,7 +107,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       messages,
     }: {
       id: string;
-      agentContext: AlbertAgentContext;
+      agentContext?: AlbertAgentContext;
       scenarios?: ChatScenarios;
       messages?: PiloteUIMessage[];
     }): CurrentConversation => ({
@@ -123,7 +148,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       targetDisplay,
     }: {
       id: string;
-      agentContext: AlbertAgentContext;
+      agentContext?: AlbertAgentContext;
       targetDisplay: AlbertDisplay;
     }) => {
       try {
@@ -162,31 +187,32 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     });
   }, [load]);
 
-  const open = useCallback<AlbertConversationContextValue["open"]>(
-    ({ agentContext, scenarios }) => {
-      if (conversation) {
-        track({
-          action: "resume",
-          name: "assistant.resume",
-          dimensions: { conversation_id: conversation.chat.id },
-        });
-      } else {
-        const created = build({
-          id: crypto.randomUUID(),
-          agentContext,
-          scenarios,
-        });
-        setConversation(created);
-        track({
-          action: "open",
-          name: "assistant.open",
-          dimensions: { conversation_id: created.chat.id },
-        });
-      }
-      setDisplay("fullscreen");
-    },
-    [build, conversation, track],
-  );
+  const open = useCallback(() => {
+    if (conversation) {
+      track({
+        action: "resume",
+        name: "assistant.resume",
+        dimensions: { conversation_id: conversation.chat.id },
+      });
+    } else {
+      const created = build({
+        id: crypto.randomUUID(),
+        agentContext: pageContext?.agentContext,
+        scenarios: pageContext?.scenarios,
+      });
+      setConversation(created);
+      track({
+        action: "open",
+        name: "assistant.open",
+        dimensions: { conversation_id: created.chat.id },
+      });
+    }
+    setDisplay("floating");
+  }, [build, conversation, pageContext, track]);
+
+  const expand = useCallback(() => setDisplay("fullscreen"), []);
+
+  const contract = useCallback(() => setDisplay("floating"), []);
 
   const minimize = useCallback(() => {
     if (conversation) {
@@ -200,8 +226,9 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         agentContext: conversation.agentContext,
       });
     }
+    if (display !== "minimized") setDisplayAvantReduction(display);
     setDisplay("minimized");
-  }, [conversation, track]);
+  }, [conversation, display, track]);
 
   const restore = useCallback(() => {
     track({
@@ -209,8 +236,8 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       name: "assistant.resume",
       dimensions: { conversation_id: conversation?.chat.id },
     });
-    setDisplay("fullscreen");
-  }, [conversation, track]);
+    setDisplay(displayAvantReduction);
+  }, [conversation, displayAvantReduction, track]);
 
   const close = useCallback(() => {
     track({
@@ -221,7 +248,8 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     conversation?.chat.stop();
     clearMinimizedConversation();
     setConversation(null);
-    setDisplay("fullscreen");
+    setDisplay("floating");
+    setDisplayAvantReduction("floating");
   }, [conversation, track]);
 
   const startNewConversation = useCallback(() => {
@@ -235,7 +263,6 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         scenarios: conversation.scenarios,
       }),
     );
-    setDisplay("fullscreen");
   }, [conversation, build]);
 
   const selectConversation = useCallback(
@@ -261,7 +288,11 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     () => ({
       conversation,
       display,
+      pageContext,
+      setPageContext,
       open,
+      expand,
+      contract,
       minimize,
       restore,
       close,
@@ -271,7 +302,10 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     [
       conversation,
       display,
+      pageContext,
       open,
+      expand,
+      contract,
       minimize,
       restore,
       close,

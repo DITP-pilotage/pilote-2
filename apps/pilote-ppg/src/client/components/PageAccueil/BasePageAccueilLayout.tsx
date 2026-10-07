@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useState } from "react";
+import { FunctionComponent, ReactNode, useMemo, useState } from "react";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
@@ -11,7 +11,8 @@ import { FiltresActifs } from "@/components/PageAccueil/FiltresActifs/FiltresAct
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
-import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
+import { useAlbertPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import {
   scenariosTerritoireCoordinateur,
   scenariosTerritoireDITP,
@@ -87,6 +88,23 @@ export const BasePageAccueilLayout: FunctionComponent<
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
   const estDITPAdmin = session?.profil === ProfilEnum.DITP_ADMIN;
+
+  // Mémorisé : un nouvel objet à chaque rendu redéclarerait le contexte en boucle.
+  const contexteAssistant = useMemo(
+    () => ({
+      agentContext: {
+        jalon,
+        territoireCode,
+        instructions: `Le territoire courant de l'utilisateur est ${récupérerDétailsSurUnTerritoire(territoireCode).nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
+      },
+      scenarios:
+        accesAlbert.scenarios === "coordinateur"
+          ? scenariosTerritoireCoordinateur({ territoireCode })
+          : scenariosTerritoireDITP({ territoireCode, jalon, estDITPAdmin }),
+    }),
+    [territoireCode, jalon, accesAlbert.scenarios, estDITPAdmin],
+  );
+  useAlbertPageContext(contexteAssistant);
 
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");
@@ -181,23 +199,6 @@ export const BasePageAccueilLayout: FunctionComponent<
               setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
               territoireCode={territoireCode}
             />
-            {accesAlbert.peutUtiliser ? (
-              <div className="h-full flex items-center pt-1 pr-2 ml-auto">
-                <BoutonSyntheseTerritoire
-                  jalon={jalon}
-                  territoireCode={territoireCode}
-                  scenarios={
-                    accesAlbert.scenarios === "coordinateur"
-                      ? scenariosTerritoireCoordinateur({ territoireCode })
-                      : scenariosTerritoireDITP({
-                          territoireCode,
-                          jalon,
-                          estDITPAdmin,
-                        })
-                  }
-                />
-              </div>
-            ) : null}
             <FiltresActifs
               axes={axes}
               mailleSelectionnee={mailleSelectionnee}

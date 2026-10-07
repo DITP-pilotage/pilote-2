@@ -135,7 +135,7 @@ export const LienInterneAssistant = ({
   children?: ReactNode;
 }) => {
   const router = useRouter();
-  const { minimize } = useAlbertConversation();
+  const { display, contract } = useAlbertConversation();
   const { trackLink, trackMiddleClick } = useLinkTracking(
     event ?? linkEvent(href),
   );
@@ -151,7 +151,8 @@ export const LienInterneAssistant = ({
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
         if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
         event.preventDefault();
-        minimize();
+        // La fenêtre flottante laisse voir la page vers laquelle on navigue.
+        if (display === "fullscreen") contract();
         router.push(href);
       }}
     >
