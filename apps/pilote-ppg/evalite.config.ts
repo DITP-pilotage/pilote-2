@@ -26,11 +26,9 @@ export default defineConfig({
     ssr: { noExternal: ["next-auth"] },
 
     // `globals` : integrationTestSetup utilise `beforeAll` / `afterAll` sans
-    // les importer. `fileParallelism` : `maxConcurrency` ne plafonne que les
-    // cas concurrents A L'INTERIEUR d'un fichier ; deux fichiers en parallele
-    // doubleraient le debit vers l'API Albert, qui sature des 2 requetes. Et
-    // tous les fichiers sement le meme monde, aux memes identifiants : leurs
-    // transactions se bloqueraient sur les memes lignes.
+    // les importer. `fileParallelism` : chaque fichier vide puis seme le meme
+    // monde, aux memes identifiants (`seedWorldPerFile`) ; deux fichiers en
+    // parallele videraient le monde l'un de l'autre.
     test: { globals: true, fileParallelism: false },
   },
 
@@ -42,13 +40,13 @@ export default defineConfig({
   // qui passent par search_chantiers (lui-meme un sous-agent LLM) depassent 180 s.
   testTimeout: 420_000,
 
-  // L'API Albert est mutualisee entre les agents de l'Etat et repond
-  // « Too Many Requests » bien avant le defaut d'Evalite (5 en parallele).
-  // Mesure du spike : a maxConcurrency 2 avec trialCount 3, un tiers des cas
-  // echouent en AI_RetryError apres 3 tentatives. A 1, le run passe.
-  // C'est la contrainte dimensionnante de tout eval d'agent sur Albert : le
-  // debit de l'API, pas le temps CPU.
-  maxConcurrency: 1,
+  // Le quota de production (200 requetes par minute sur gpt-oss-120b) leve
+  // la contrainte du spike, ou l'API mutualisee saturait des 2 cas en
+  // parallele. Les cas d'un fichier ne se bloquent pas en base : le monde est
+  // seme une fois par fichier, hors de leurs transactions.
+  // Mesure du 07/10 sur le niveau 2 : 20 min a 1, 10 min 36 a 3, 8 min 35 a
+  // 6, avec un pic de 76 requetes par minute.
+  maxConcurrency: 6,
 
   // Evalite met en cache les sorties du modele, et sa cle de cache inclut
   // `trialCount` sans inclure l'INDEX de l'essai : les 3 essais d'un meme cas

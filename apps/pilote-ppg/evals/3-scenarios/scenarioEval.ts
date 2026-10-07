@@ -4,7 +4,12 @@ import { createScorer, evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
 import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { EVAL_TIMEOUT_MS, seedEvalWorld, type EvalProfile } from "../world";
+import {
+  EVAL_TIMEOUT_MS,
+  seedEvalWorld,
+  seedWorldPerFile,
+  type EvalProfile,
+} from "../world";
 import { scoreExpectedTools } from "../scoreExpectedTools";
 import type { ObservedToolCall } from "../types";
 import { askJudge } from "./askJudge";
@@ -140,6 +145,12 @@ export function scenarioEval({
   profile?: EvalProfile;
   currentTerritory?: string;
 }) {
+  const world = seedWorldPerFile(async () => {
+    const seeded = await seedEvalWorld();
+    await seedMondeTerritorial({ authorId: seeded.userId });
+    return seeded;
+  });
+
   evalite<ScenarioCase, ScenarioTurn, ObservedToolCall[] | undefined>(
     `${GROUPS[group]} · ${suite}`,
     {
@@ -156,9 +167,7 @@ export function scenarioEval({
 
         await createIntegrationTest(
           async () => {
-            const world = await seedEvalWorld();
-            await seedMondeTerritorial({ authorId: world.userId });
-            const user = world.users[caseProfile];
+            const user = world().users[caseProfile];
 
             const truth = await readGroundTruth({
               scope: input.truthScope,
