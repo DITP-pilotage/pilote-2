@@ -2,7 +2,7 @@ import { extraireTauxAvancementTerritoire } from "@/server/chantiers/query/Recup
 import {
   Agregat,
   AgregatParTerritoire,
-} from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur.interface";
+} from "@/server/chantiers/domain/agregateurListeChantiers/agregateur.interface";
 
 const repartition = (moyenneAnnuelle: number | null) => ({
   avancements: {

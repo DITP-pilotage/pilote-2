@@ -5,8 +5,8 @@ import { TerritoireRepository as TerritoireSQLRepositoryInterface } from "@/serv
 import { UtilisateurSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurSQLRepository";
 import { ProfilSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/ProfilSQLRepository";
 import { TerritoireSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireSQLRepository";
-import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
-import { RécupérerUnProfilUseCase } from "@/server/gestion-utilisateur/usecases/RécupérerUnProfilUseCase";
+import RecupererUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RecupererUnUtilisateurUseCase";
+import { RecupererUnProfilUseCase } from "@/server/gestion-utilisateur/usecases/RecupererUnProfilUseCase";
 import { RecupererTerritoiresAvecNombreUtilisateursSQLUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTerritoiresAvecNombreUtilisateursSQLUseCase";
 import { PrismaChantierRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaChantierRepository";
 import { RecupererChantiersSynthetisesUseCase } from "@/server/gestion-utilisateur/usecases/RecupererChantiersSynthetisesUseCase";
@@ -55,7 +55,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/In
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "./infrastructure/adapters/PrismaIndicateurTerritoireValeurEvenementRepository";
 import { ContactInfoLettresService } from "./domain/ports/ContactInfoLettresService";
 import { BrevoContactInfoLettresService } from "./infrastructure/adapters/BrevoContactInfoLettresService";
-import CréerOuMettreÀJourUnUtilisateurUseCase from "./usecases/CréerOuMettreÀJourUnUtilisateurUseCase";
+import CreerOuMettreAJourUnUtilisateurUseCase from "./usecases/CreerOuMettreAJourUnUtilisateurUseCase";
 import { EnvoyerMailInscriptionInfolettreUseCase } from "./usecases/EnvoyerMailInscriptionInfolettreUseCase";
 import { RecupererEtatModaleInscriptionUseCase } from "./usecases/RecupererEtatModaleInscriptionUseCase";
 import { DesactiverPopupInfolettreUseCase } from "./usecases/DesactiverPopupInfolettreUseCase";
@@ -82,8 +82,8 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   utilisateurSQLRepository: UtilisateurSQLRepositoryInterface;
   profilSQLRepository: ProfilSQLRepositoryInterface;
   territoireSQLRepository: TerritoireSQLRepositoryInterface;
-  récupérerUnUtilisateurUseCase: RécupérerUnUtilisateurUseCase;
-  récupérerUnProfilUseCase: RécupérerUnProfilUseCase;
+  récupérerUnUtilisateurUseCase: RecupererUnUtilisateurUseCase;
+  récupérerUnProfilUseCase: RecupererUnProfilUseCase;
   recupererTerritoiresAvecNombreUtilisateursSQLUseCase: RecupererTerritoiresAvecNombreUtilisateursSQLUseCase;
   utilisateurRepository: UtilisateurRepository;
   territoireRepository: TerritoireRepository;
@@ -113,7 +113,7 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase;
   recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse;
   contactInfoLettresService: ContactInfoLettresService;
-  créerOuMettreÀJourUnUtilisateurUseCase: CréerOuMettreÀJourUnUtilisateurUseCase;
+  créerOuMettreÀJourUnUtilisateurUseCase: CreerOuMettreAJourUnUtilisateurUseCase;
   envoyerMailInscriptionInfolettreUseCase: EnvoyerMailInscriptionInfolettreUseCase;
   recupererEtatModaleInscriptionUseCase: RecupererEtatModaleInscriptionUseCase;
   desactiverPopupInfolettreUseCase: DesactiverPopupInfolettreUseCase;
@@ -144,13 +144,13 @@ export const gestionUtilisateurModule = defineModule<
       territoireSQLRepository: asModuleClass(TerritoireSQLRepository).scoped(),
       récupérerUnUtilisateurUseCase: asModuleFunction(
         ({ utilisateurSQLRepository }) =>
-          new RécupérerUnUtilisateurUseCase({
+          new RecupererUnUtilisateurUseCase({
             utilisateurRepository: utilisateurSQLRepository,
           }),
       ).scoped(),
       récupérerUnProfilUseCase: asModuleFunction(
         ({ profilSQLRepository }) =>
-          new RécupérerUnProfilUseCase({
+          new RecupererUnProfilUseCase({
             profilRepository: profilSQLRepository,
           }),
       ).scoped(),
@@ -228,7 +228,7 @@ export const gestionUtilisateurModule = defineModule<
       ),
       contactInfoLettresService: asModuleClass(BrevoContactInfoLettresService),
       créerOuMettreÀJourUnUtilisateurUseCase: asModuleClass(
-        CréerOuMettreÀJourUnUtilisateurUseCase,
+        CreerOuMettreAJourUnUtilisateurUseCase,
       ),
       envoyerMailInscriptionInfolettreUseCase: asModuleClass(
         EnvoyerMailInscriptionInfolettreUseCase,

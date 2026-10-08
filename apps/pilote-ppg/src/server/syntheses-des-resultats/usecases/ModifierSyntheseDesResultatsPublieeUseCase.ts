@@ -1,7 +1,7 @@
 import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
-import { SynthèseDesRésultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
+import { SyntheseDesResultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { modifierSyntheseDesResultatsPubliee } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
 
@@ -9,7 +9,7 @@ export class ModifierSyntheseDesResultatsPublieeUseCase {
   constructor(
     private readonly dependencies: {
       enregistrerSyntheseDesResultatsService: EnregistrerSyntheseDesResultatsService;
-      synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
+      synthèseDesRésultatsRepository: SyntheseDesResultatsRepository;
     },
   ) {}
 

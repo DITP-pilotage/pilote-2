@@ -6,16 +6,16 @@ import {
   PublicationContrat,
   SyntheseDesResultatsContrat,
 } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
-import { RécupererChantierFicheConducteurUseCase } from "@/server/fiche-conducteur/usecases/RécupererChantierFicheConducteurUseCase";
+import { RecupererChantierFicheConducteurUseCase } from "@/server/fiche-conducteur/usecases/RecupererChantierFicheConducteurUseCase";
 import { ChantierFicheConducteur } from "@/server/fiche-conducteur/domain/ChantierFicheConducteur";
-import { RécupérerAvancementUseCase } from "@/server/fiche-conducteur/usecases/RécupérerAvancementUseCase";
+import { RecupererAvancementUseCase } from "@/server/fiche-conducteur/usecases/RecupererAvancementUseCase";
 import { AvancementFicheConducteur } from "@/server/fiche-conducteur/domain/AvancementFicheConducteur";
-import { RécupérerDernièreSynthèseDesRésultatsUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDernièreSynthèseDesRésultatsUseCase";
+import { RecupererDerniereSyntheseDesResultatsUseCase } from "@/server/fiche-conducteur/usecases/RecupererDerniereSyntheseDesResultatsUseCase";
 import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
 import { formaterDate } from "@/client/utils/date/date";
-import { RécupérerDonnéesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase";
-import { DonnéeCartographie } from "@/server/fiche-conducteur/domain/DonnéeCartographie";
-import { RécupérerPublicationsUseCase } from "@/server/fiche-conducteur/usecases/RécupérerPublicationsUseCase";
+import { RecupererDonneesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RecupererDonneesCartographieUseCase";
+import { DonneeCartographie } from "@/server/fiche-conducteur/domain/DonneeCartographie";
+import { RecupererPublicationsUseCase } from "@/server/fiche-conducteur/usecases/RecupererPublicationsUseCase";
 import { ObjectifType } from "@/server/fiche-conducteur/domain/ObjectifType";
 import { DecisionStrategiqueType } from "@/server/fiche-conducteur/domain/DecisionStrategiqueType";
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
@@ -130,7 +130,7 @@ const presenterEnObjectifsContrat = (
 };
 
 const presenterEnDonnéesCartographieContrat = (
-  donnéesCartographie: DonnéeCartographie[],
+  donnéesCartographie: DonneeCartographie[],
 ): DonnéesCartographieContrat => {
   return donnéesCartographie.reduce(
     (acc, val) => {
@@ -155,15 +155,15 @@ const presenterEnDonnéesCartographieContrat = (
 };
 
 export class FicheConducteurHandler {
-  private recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
+  private recupererChantierFicheConducteurUseCase: RecupererChantierFicheConducteurUseCase;
 
-  private recupererAvancementUseCase: RécupérerAvancementUseCase;
+  private recupererAvancementUseCase: RecupererAvancementUseCase;
 
-  private recupererDerniereSyntheseDesResultatsUseCase: RécupérerDernièreSynthèseDesRésultatsUseCase;
+  private recupererDerniereSyntheseDesResultatsUseCase: RecupererDerniereSyntheseDesResultatsUseCase;
 
-  private recupererDonneesCartographieUseCase: RécupérerDonnéesCartographieUseCase;
+  private recupererDonneesCartographieUseCase: RecupererDonneesCartographieUseCase;
 
-  private recupererPublicationsUseCase: RécupérerPublicationsUseCase;
+  private recupererPublicationsUseCase: RecupererPublicationsUseCase;
 
   constructor({
     recupererChantierFicheConducteurUseCase,

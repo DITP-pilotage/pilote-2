@@ -18,7 +18,7 @@ export const NOMS_TYPES_DECISION_STRATEGIQUE: Record<
   suivi_des_decisions: "suiviDesDecisionsStrategiques",
 };
 
-export class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
+export class DecisionStrategiqueSQLRepository implements DécisionStratégiqueRepository {
   private prismaClient: PrismaPilote;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {

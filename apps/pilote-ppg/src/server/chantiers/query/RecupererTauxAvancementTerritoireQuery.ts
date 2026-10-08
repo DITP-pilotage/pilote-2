@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { Inject } from "@/server/chantiers/module";
 import { determineMaille } from "@/shared/maille/determineMaille";
-import { AgregatParTerritoire } from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur.interface";
+import { AgregatParTerritoire } from "@/server/chantiers/domain/agregateurListeChantiers/agregateur.interface";
 
 export type RecupererTauxAvancementTerritoireResult = {
   territoire_code: string;

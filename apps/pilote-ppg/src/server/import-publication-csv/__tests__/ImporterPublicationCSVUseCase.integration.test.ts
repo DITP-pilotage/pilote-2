@@ -9,7 +9,7 @@ import { CommentaireSQLRepository } from "@/server/commentaires/infrastructure/s
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
 import { SynthèseDesRésultatsSQLRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsSQLRepository";
 import { ImporterDecisionsStrategiquesUseCase } from "@/server/decisions-strategiques/usecases/ImporterDecisionsStrategiquesUseCase";
-import { DécisionStratégiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
+import { DecisionStrategiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
 import { ImporterObjectifsUseCase } from "@/server/objectifs/usecases/ImporterObjectifsUseCase";
 import { ObjectifSQLRepository } from "@/server/objectifs/infrastructure/sql/ObjectifSQLRepository";
 
@@ -47,7 +47,7 @@ describe("ImporterPublicationCSVUseCase", () => {
         }),
       importerDecisionsStrategiquesUseCase:
         new ImporterDecisionsStrategiquesUseCase({
-          décisionStratégiqueRepository: new DécisionStratégiqueSQLRepository({
+          décisionStratégiqueRepository: new DecisionStrategiqueSQLRepository({
             prisma: prismaPilote,
           }),
         }),
