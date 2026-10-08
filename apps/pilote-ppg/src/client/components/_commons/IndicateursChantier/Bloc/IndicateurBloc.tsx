@@ -1,6 +1,5 @@
 import { Fragment, FunctionComponent, useMemo, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Titre from "@/components/_commons/Titre/Titre";
 import { IndicateurDétails } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
@@ -144,14 +143,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           <section>
             <div className="flex justify-between">
               <div>
-                <Titre
-                  baliseHtml="h4"
-                  className="fr-text--xl !mb-2 flex align-center"
-                >
+                <h4 className="text-lead !mb-2 flex align-center">
                   <BadgeIndicateurEnAlerte />
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}
-                </Titre>
+                </h4>
                 <div className="fr-ml-2w fr-mb-3w">
                   <p className="fr-mb-0 fr-text--xs texte-gris">
                     Identifiant de l'indicateur :{" "}

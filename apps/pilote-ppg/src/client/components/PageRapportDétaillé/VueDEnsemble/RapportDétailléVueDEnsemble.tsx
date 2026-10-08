@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import { Badge } from "@/components/shared/Badge";
 import { TitleBand } from "@/components/shared/TitleBand";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import Avancements from "@/components/_commons/Avancements/Avancements";
@@ -61,21 +60,15 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
   return (
     <section className="break-after-page">
       <TitleBand>
-        <Titre baliseHtml="h2" className="fr-h2 fr-mb-0">
-          Vue d'ensemble
-        </Titre>
+        <h2 className="text-h2 md:text-h2-md mb-0">Vue d'ensemble</h2>
       </TitleBand>
       <div className="fr-mt-3w grid grid-cols-1 gap-6 min-[62rem]:grid-cols-2 print:grid-cols-2 print:break-inside-avoid">
         <Bloc>
           <section>
             <TitreInfobulleConteneur className="fr-mb-2w">
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v"
-                estInline
-              >
+              <h2 className="text-lg mb-0 py-1 inline">
                 Taux d'avancement moyen
-              </Titre>
+              </h2>
               <Infobulle>{INFOBULLE_CONTENUS.chantiers.jauges}</Infobulle>
             </TitreInfobulleConteneur>
             <Avancements
@@ -88,13 +81,9 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
           <hr className="fr-hr fr-my-3w fr-pb-1v" />
           <section>
             <TitreInfobulleConteneur>
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v"
-                estInline
-              >
+              <h2 className="text-lg mb-0 py-1 inline">
                 Répartition des météos renseignées
-              </Titre>
+              </h2>
               <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
             </TitreInfobulleConteneur>
             <RepartitionsMeteosRapportDetaille
@@ -104,9 +93,9 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         </Bloc>
         <Bloc>
           <section>
-            <Titre baliseHtml="h3" className="fr-text--lg fr-mb-0 fr-py-1v">
+            <h3 className="text-lg mb-0 py-1">
               Taux d'avancement des chantiers par territoire
-            </Titre>
+            </h3>
             <CartographieAvancement
               données={donnéesCartographie}
               jalon={jalon}
@@ -127,13 +116,9 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
                 icon={WarningIcon}
                 variant="warning"
               />
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w text-warning"
-                estInline
-              >
+              <h2 className="text-lg mb-0 py-1 ml-2 text-warning inline">
                 Chantiers signalés
-              </Titre>
+              </h2>
               <Infobulle classNameBouton="!text-dsfr-warning-425">
                 {INFOBULLE_CONTENUS.chantiers.alertes}
               </Infobulle>
@@ -159,13 +144,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         <div className="fr-col">
           <Bloc>
             <TitreInfobulleConteneur className="fr-mb-1w">
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v"
-                estInline
-              >
-                Liste des chantiers
-              </Titre>
+              <h2 className="text-lg mb-0 py-1 inline">Liste des chantiers</h2>
             </TitreInfobulleConteneur>
             <RapportDétailléTableauChantiers
               chantiersSontArchives={chantiersSontArchives}

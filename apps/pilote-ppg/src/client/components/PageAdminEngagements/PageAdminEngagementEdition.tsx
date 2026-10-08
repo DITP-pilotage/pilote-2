@@ -12,7 +12,7 @@ import {
   EngagementForm,
   useEngagementForm,
 } from "@/components/PageAdminEngagements/useEngagementForm";
-import { SectionTitle } from "@/components/_commons/SectionTitle";
+import { SectionTitle } from "@/components/shared/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {

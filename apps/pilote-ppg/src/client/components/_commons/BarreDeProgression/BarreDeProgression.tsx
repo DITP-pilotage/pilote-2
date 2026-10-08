@@ -70,14 +70,13 @@ interface BarreDeProgressionProps {
   texteCentre?: boolean;
 }
 
-const dimensions: Record<BarreDeProgressionTaille, { classNameDsfr: string }> =
-  {
-    xxs: { classNameDsfr: "fr-text--xs" },
-    xs: { classNameDsfr: "fr-text--xs" },
-    sm: { classNameDsfr: "fr-text--xs" },
-    md: { classNameDsfr: "fr-text--sm" },
-    lg: { classNameDsfr: "fr-h1" },
-  };
+const dimensions: Record<BarreDeProgressionTaille, { className: string }> = {
+  xxs: { className: "fr-text--xs" },
+  xs: { className: "fr-text--xs" },
+  sm: { className: "fr-text--xs" },
+  md: { className: "fr-text--sm" },
+  lg: { className: "text-h1 md:text-h1-md font-bold text-dsfr-grey-50" },
+};
 
 const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
   taille,
@@ -122,8 +121,8 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
         >
           <p
             className={clsxm(
-              "fr-mb-0 bold fr-mr-1w whitespace-nowrap align-middle",
-              dimensions[taille].classNameDsfr,
+              "mb-0 bold mr-2 whitespace-nowrap align-middle",
+              dimensions[taille].className,
               positionTexte === "côté" && "pl-2 text-right",
             )}
           >

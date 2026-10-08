@@ -3,7 +3,6 @@ import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -51,9 +50,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
               Retour
             </Link>
           </div>
-          <Titre baliseHtml="h1" className="fr-h1 fr-mt-2w">
-            Fiche du compte
-          </Titre>
+          <h1 className="text-h1 md:text-h1-md mt-4">Fiche du compte</h1>
           <Bloc>
             <div className="fr-py-2w fr-px-4w">
               {modificationEstImpossible(

@@ -4,7 +4,6 @@ import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FiltresSelectionMultiple } from "@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { Axe } from "@/shared/axe/Axe.interface";
-import Titre from "@/components/_commons/Titre/Titre";
 import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { calculerNouvelleMaille } from "@/components/PageAccueil/Filtres/utils";
 import { Maille } from "@/shared/maille/Maille.interface";
@@ -73,9 +72,9 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
   return (
     <>
       <div className="flex justify-between align-center fr-mb-1w fr-px-3w fr-mt-3w">
-        <Titre baliseHtml="h1" className="fr-h4 fr-mb-0 flex align-center">
+        <h1 className="text-h4 md:text-h4-md mb-0 flex align-center">
           Filtres
-        </Titre>
+        </h1>
         <BoutonReintialiserLesFiltres />
       </div>
       <section className="fr-px-3w">

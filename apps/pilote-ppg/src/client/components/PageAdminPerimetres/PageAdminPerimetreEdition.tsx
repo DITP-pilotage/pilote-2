@@ -17,7 +17,7 @@ import {
   PerimetreForm,
   usePerimetreForm,
 } from "@/components/PageAdminPerimetres/usePerimetreForm";
-import { SectionTitle } from "@/components/_commons/SectionTitle";
+import { SectionTitle } from "@/components/shared/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {

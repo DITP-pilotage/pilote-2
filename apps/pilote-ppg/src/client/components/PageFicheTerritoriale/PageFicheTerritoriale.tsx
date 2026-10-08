@@ -4,7 +4,6 @@ import { Badge } from "@/components/shared/Badge";
 import { FunctionComponent } from "react";
 import HeaderFicheTerritoriale from "@/components/PageFicheTerritoriale/HeaderFicheTerritoriale";
 import { TitleBand } from "@/components/shared/TitleBand";
-import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonImpression } from "@/components/_commons/BoutonImpression/BoutonImpression";
 import { AvancementsFicheTerritoriale } from "@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale";
 import Bloc from "@/components/_commons/Bloc/Bloc";
@@ -37,12 +36,9 @@ export const PageFicheTerritoriale: FunctionComponent<
         <div className="fr-container fr-pb-2w pt-4 print:pt-0">
           <TitleBand>
             <div className="flex justify-between">
-              <Titre
-                baliseHtml="h2"
-                className="fr-h4 fr-mb-0 fr-text-title--blue-france"
-              >
+              <h2 className="text-h4 md:text-h4-md mb-0 text-dsfr-blue-france-sun-113">
                 {`Fiche territoriale de synthèse ${territoire.nomAffiché}`}
-              </Titre>
+              </h2>
               <div className="flex justify-end">
                 <BoutonImpression />
               </div>
@@ -53,22 +49,16 @@ export const PageFicheTerritoriale: FunctionComponent<
               {`Fiche de synthèse généré le ${now.toLocaleString()}`}
             </i>
           </p>
-          <Titre baliseHtml="h1" className="fr-h3 fr-mt-0 fr-mb-1w fr-px-2w">
-            Vue générale
-          </Titre>
+          <h1 className="text-h3 md:text-h3-md mt-0 mb-2 px-4">Vue générale</h1>
           <div className="fr-grid-row fr-px-2w">
             <div className="fr-col-4 fr-pr-1v h-full">
               <div className="fiche-territoriale__avancement--moyen fr-mb-1w">
                 <Bloc>
                   <div className="flex flex-column align-center">
                     <TitreInfobulleConteneur className="fr-mb-2w">
-                      <Titre
-                        baliseHtml="h2"
-                        className="fr-text--md fr-mb-0 fr-py-1v"
-                        estInline
-                      >
+                      <h2 className="fr-text--md mb-0 py-1 inline">
                         Taux d'avancement moyen
-                      </Titre>
+                      </h2>
                       <Infobulle>
                         {INFOBULLE_CONTENUS.chantiers.jauges}
                       </Infobulle>
@@ -81,17 +71,13 @@ export const PageFicheTerritoriale: FunctionComponent<
                 </Bloc>
               </div>
             </div>
-            <div className="fr-col-8 fr-pl-1v">
+            <div className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3 fr-pl-1v">
               <Bloc className="print:h-full">
                 <div className="fr-grid-row">
                   <TitreInfobulleConteneur>
-                    <Titre
-                      baliseHtml="h2"
-                      className="fr-text--md fr-mb-0 fr-py-1v"
-                      estInline
-                    >
+                    <h2 className="fr-text--md mb-0 py-1 inline">
                       Répartition des météos renseignées
-                    </Titre>
+                    </h2>
                     <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
                   </TitreInfobulleConteneur>
                   <ul className="fr-raw-list">
@@ -158,13 +144,9 @@ export const PageFicheTerritoriale: FunctionComponent<
           <div className="fr-px-2w fr-mt-2w">
             <Bloc>
               <div className="flex w-full justify-between">
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
-                  estInline
-                >
+                <h2 className="fr-text--lg mb-0 py-1 inline">
                   {`Liste des chantiers (${chantiersFicheTerritoriale.length})`}
-                </Titre>
+                </h2>
                 <div className="flex align-center">
                   <div />
                   <Badge className="ml-4" size="sm" variant="success">

@@ -1,6 +1,5 @@
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import { Infobulle } from "@/components/shared/Infobulle";
-import Titre from "@/components/_commons/Titre/Titre";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import { DécisionsStratégiques } from "@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques";
 import {
@@ -26,9 +25,9 @@ export const SectionDecisionsStrategiques = () => {
       id="décisions-stratégiques"
     >
       <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex align-center">
-        <Titre baliseHtml="h2" className="fr-h4 !m-0" estInline>
+        <h2 className="text-h4 md:text-h4-md !m-0 inline">
           Décisions stratégiques
-        </Titre>
+        </h2>
         <Infobulle>
           {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
         </Infobulle>

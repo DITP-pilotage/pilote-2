@@ -1,6 +1,5 @@
 import { parseAsStringLiteral, useQueryStates } from "nuqs";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Titre from "@/components/_commons/Titre/Titre";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { usePageAccueilContext } from "@/components/PageAccueil/PageAccueilContext";
@@ -42,13 +41,9 @@ export const SectionTableauChantiers = () => {
     <section className="mt-4" id="tableau-chantiers">
       <Bloc>
         <TitreInfobulleConteneur>
-          <Titre
-            baliseHtml="h2"
-            className="fr-text--lg fr-mb-0 fr-py-1v leading-6"
-            estInline
-          >
+          <h2 className="text-lg mb-0 py-1 leading-6 inline">
             {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}
-          </Titre>
+          </h2>
         </TitreInfobulleConteneur>
         <TableauChantiers
           chantiersSontArchives={chantiersSontArchives}

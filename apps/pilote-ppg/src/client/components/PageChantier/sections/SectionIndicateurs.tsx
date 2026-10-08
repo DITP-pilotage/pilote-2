@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import Titre from "@/components/_commons/Titre/Titre";
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import IndicateursChantier from "@/components/_commons/IndicateursChantier/IndicateursChantier";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
@@ -93,10 +92,9 @@ export const SectionIndicateurs = () => {
 
   return (
     <section className="grid grid-rows-[auto_1fr] print:block" id="indicateurs">
-      <Titre
-        baliseHtml="h2"
+      <h2
         className={clsx(
-          "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
+          "text-h4 md:text-h4-md mb-4 mt-3 md:mt-6 mx-4 md:mx-0",
           {
             "text-primary": !estChantierArchive,
             "!text-dsfr-grey-50": estChantierArchive,
@@ -104,7 +102,7 @@ export const SectionIndicateurs = () => {
         )}
       >
         {`Indicateurs (${indicateursApplicablesIds.length})`}
-      </Titre>
+      </h2>
       {mailleSourceDonnees === "regionale" && (
         <Alerte
           classesSupplementaires="fr-mb-2w"

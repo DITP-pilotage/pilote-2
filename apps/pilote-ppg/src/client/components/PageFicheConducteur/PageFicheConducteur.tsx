@@ -3,7 +3,6 @@ import "@gouvfr/dsfr/dist/utility/colors/colors.css";
 import { FunctionComponent } from "react";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
@@ -45,25 +44,24 @@ const PageFicheConducteur: FunctionComponent<
         <div className="fr-container">
           <div className="fr-grid-row fr-grid-row--gutters">
             <div className="fr-col-4 flex flex-column fr-pr-1v">
-              <Titre
-                baliseHtml="h2"
-                className="fr-h5 fr-mb-1w fr-text-title--blue-france h-full"
-              >
+              <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113 h-full">
                 Responsables & État d'avancement
-              </Titre>
+              </h2>
               <Bloc
                 className="h-full print:p-0 print:border-dsfr-grey-925"
                 contenuClassesSupplémentaires="fr-px-1w fr-py-1v"
               >
                 <div className="fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0 print:!text-[10px] print:!leading-4">
                   <span className="fr-col-2 fr-text--bold">DAC</span>
-                  <span className="fr-col-8">
+                  <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
                     {chantier.directeursAdministrationCentrale}
                   </span>
                 </div>
                 <div className="fr-grid-row border-b fr-py-1v fr-text--xs fr-m-0 print:!text-[10px] print:!leading-4">
                   <span className="fr-col-2 fr-text--bold">DP</span>
-                  <span className="fr-col-8">{chantier.directeursProjet}</span>
+                  <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
+                    {chantier.directeursProjet}
+                  </span>
                 </div>
                 <div className="fr-grid-row fr-py-1w">
                   <div className="fr-col-5 flex justify-center align-end">
@@ -103,13 +101,10 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
               </Bloc>
             </div>
-            <div className="fr-col-8 flex flex-column fr-pl-1v">
-              <Titre
-                baliseHtml="h2"
-                className="fr-h5 fr-mb-1w fr-text-title--blue-france h-full"
-              >
+            <div className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3 flex flex-column fr-pl-1v">
+              <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113 h-full">
                 Météo et synthèse des résultats
-              </Titre>
+              </h2>
               <Bloc
                 className="p-4 h-full print:p-0 print:border-dsfr-grey-925"
                 contenuClassesSupplémentaires="flex gap-2"
@@ -205,12 +200,9 @@ const PageFicheConducteur: FunctionComponent<
             <div className="fr-container">
               <div className="fr-grid-row fr-grid-row--gutters">
                 <div className="fr-col-6">
-                  <Titre
-                    baliseHtml="h2"
-                    className="fr-h5 fr-mb-1w fr-text-title--blue-france"
-                  >
+                  <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113">
                     {`Taux d'avancement ${jalon}`}
-                  </Titre>
+                  </h2>
                   <div>
                     <Bloc className="print:border-none">
                       <CartographieAvancement
@@ -225,12 +217,9 @@ const PageFicheConducteur: FunctionComponent<
                   </div>
                 </div>
                 <div className="fr-col-6">
-                  <Titre
-                    baliseHtml="h2"
-                    className="fr-h5 fr-mb-1w fr-text-title--blue-france"
-                  >
+                  <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113">
                     Niveau de confiance
-                  </Titre>
+                  </h2>
                   <div>
                     <Bloc className="print:border-none">
                       <CartographieMétéo

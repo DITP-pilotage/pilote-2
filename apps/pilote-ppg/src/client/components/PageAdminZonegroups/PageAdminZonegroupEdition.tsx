@@ -15,7 +15,7 @@ import {
   ZonegroupForm,
   useZonegroupForm,
 } from "@/components/PageAdminZonegroups/useZonegroupForm";
-import { SectionTitle } from "@/components/_commons/SectionTitle";
+import { SectionTitle } from "@/components/shared/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { SélecteurZones } from "@/components/PageAdminZonegroups/SélecteurZones";
 

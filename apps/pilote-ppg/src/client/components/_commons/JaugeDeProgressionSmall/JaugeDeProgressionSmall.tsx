@@ -32,11 +32,11 @@ export const JaugeDeProgressionSmall: FunctionComponent<
         </div>
         <div className="flex flex-column justify-center">
           <p
-            className={`mb-0 break-normal ${COULEUR_TEXTE[couleur]} text-center fr-h5 fr-mb-0`}
+            className={`mb-0 break-normal ${COULEUR_TEXTE[couleur]} text-center text-h5 md:text-h5-md font-bold`}
           >
             {`${pourcentage?.toFixed(0) ?? "- "}%`}
           </p>
-          <p className="fr-text--xs fr-mb-0 text-center">{libellé}</p>
+          <p className="fr-text--xs mb-0 text-center">{libellé}</p>
         </div>
       </div>
     </div>

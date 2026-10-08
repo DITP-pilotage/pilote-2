@@ -5,7 +5,6 @@ import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { CheckboxField } from "@/components/shared/Checkbox";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import {
   MultiSelectTerritoire,
   MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
@@ -135,9 +134,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         className={`${afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers ? "" : "fr-hidden"}`}
       >
         <hr className="fr-hr" />
-        <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
-          Droits de lecture
-        </Titre>
+        <h2 className="text-base mb-4">Droits de lecture</h2>
         <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
           {`Afin de paramétrer l'espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`}
@@ -219,9 +216,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           className={`${afficherChampResponsabiliteChantiers ? "" : "fr-hidden"}`}
         >
           <hr className="fr-hr" />
-          <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
-            Responsabilités
-          </Titre>
+          <h2 className="text-base mb-4">Responsabilités</h2>
           <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
             Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour
             lesquels l'utilisateur a des responsabilités spécifiques (directeur
@@ -258,9 +253,9 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       </div>
       <div className={`${afficherChampSaisieIndicateur ? "" : "fr-hidden"}`}>
         <hr className="fr-hr" />
-        <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
+        <h2 className="text-base mb-4">
           Droits de saisie des données quantitatives
-        </Titre>
+        </h2>
         <Controller
           control={control}
           name="saisieIndicateur"
@@ -278,9 +273,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       </div>
       <div className={`${afficherChampSaisieCommentaire ? "" : "fr-hidden"}`}>
         <hr className="fr-hr" />
-        <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
-          Droits de saisie des commentaires
-        </Titre>
+        <h2 className="text-base mb-4">Droits de saisie des commentaires</h2>
         <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
           Parmi les chantiers autorisés en lecture, merci d'indiquer, le cas
           échéant, ceux pour lesquels l'utilisateur est autorisé à saisir des
@@ -310,9 +303,9 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       </div>
       <div className={`${afficherChampGestionCompte ? "" : "fr-hidden"}`}>
         <hr className="fr-hr" />
-        <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
+        <h2 className="text-base mb-4">
           Droits de gestion des comptes utilisateurs
-        </Titre>
+        </h2>
         <Controller
           control={control}
           name="gestionUtilisateur"

@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
@@ -20,9 +19,9 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
 
   return (
     <div>
-      <Titre baliseHtml="h2" className="fr-h5">
+      <h2 className="text-h5 md:text-h5-md">
         Pondération de l'indicateur dans le calcul du taux d'avancement global
-      </Titre>
+      </h2>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataChamp

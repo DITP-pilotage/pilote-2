@@ -6,7 +6,6 @@ import { SélecteursMaillesEtTerritoires } from "@/components/_commons/Sélecteu
 import PageChantierEnTête from "@/components/PageChantier/EnTête/EnTête";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import useCartographie from "@/components/_commons/Cartographie/useCartographie";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -37,9 +36,9 @@ const ChoixTerritoire = () => {
       >
         <BarreLatéraleEncart>
           {estVueMobile && estVisibleEnMobile ? (
-            <Titre baliseHtml="h3" className="fr-h6 fr-my-2w fr-col-8">
+            <h3 className="text-h6 md:text-h6-md my-4 w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
               Maille géographique
-            </Titre>
+            </h3>
           ) : null}
           <SélecteursMaillesEtTerritoires
             pathname="/chantier/[id]/[territoireCode]"
@@ -69,9 +68,7 @@ const ChoixTerritoire = () => {
             <div className="fr-col-12 fr-col-xl-6">
               <Bloc>
                 <section>
-                  <Titre baliseHtml="h3" className="fr-text--lg">
-                    Veuillez sélectionner un DROM
-                  </Titre>
+                  <h3 className="text-lg">Veuillez sélectionner un DROM</h3>
                   <CartographieV2
                     donnees={donnéesCartographie}
                     maille={mailleQuery}

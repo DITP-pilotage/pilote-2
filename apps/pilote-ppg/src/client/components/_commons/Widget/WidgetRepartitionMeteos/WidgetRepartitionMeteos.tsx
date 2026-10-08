@@ -11,7 +11,6 @@ import { RepartitionMeteoChantiersContrat } from "@/server/chantiers/app/contrat
 import { clsxm } from "@/utils/clsxm";
 import { api } from "@/server/framework/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Titre from "@/components/_commons/Titre/Titre";
 import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
@@ -37,13 +36,9 @@ export const WidgetRepartitionMeteos = ({
         contenuClassesSupplémentaires="fr-py-2w fr-px-3w"
       >
         <TitreInfobulleConteneur className="justify-between fr-mb-2w">
-          <Titre
-            baliseHtml="h2"
-            className="fr-text--lg fr-mb-0 fr-py-1v"
-            estInline
-          >
+          <h2 className="text-lg mb-0 py-1 inline">
             Répartition des météos renseignées
-          </Titre>
+          </h2>
           <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
         </TitreInfobulleConteneur>
         <Suspense>

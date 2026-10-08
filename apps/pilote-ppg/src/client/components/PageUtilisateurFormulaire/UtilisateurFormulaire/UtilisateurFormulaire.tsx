@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 import { $Enums } from "@prisma/client";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { StepIndicator } from "@/components/shared/StepIndicator";
 import { donneValidationInfosBaseUtilisateur } from "@/validation/utilisateur";
@@ -115,9 +114,9 @@ const UtilisateurFormulaire: FunctionComponent<
           </button>
         )}
       </div>
-      <Titre baliseHtml="h1" className="fr-h1 fr-mt-4w">
+      <h1 className="text-h1 md:text-h1-md mt-8">
         {utilisateur ? "Modifier un compte" : "Créer un compte"}
-      </Titre>
+      </h1>
       <Bloc>
         <div className="fr-px-10w fr-py-6w">
           <StepIndicator

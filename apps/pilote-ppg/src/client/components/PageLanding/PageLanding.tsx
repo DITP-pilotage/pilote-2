@@ -6,7 +6,6 @@ import visualisationDonnéesSvg from "@gouvfr/dsfr/dist/artwork/pictograms/digit
 import téléchargementFichierSvg from "@gouvfr/dsfr/dist/artwork/pictograms/document/document-download.svg";
 import Link from "next/link";
 import Head from "next/head";
-import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import captureÉcranPilote from "../../../../public/img/landing/capture-écran-pilote.png";
 import baromètreCarteSvg from "../../../../public/img/landing/baromètre-carte-france.svg";
@@ -22,10 +21,10 @@ const PageLanding = () => {
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
-                <Titre baliseHtml="h1" className="!text-black">
+                <h1 className="!text-black">
                   Piloter l'action publique par les résultats
-                </Titre>
-                <p className="fr-text--xl">
+                </h1>
+                <p className="text-lead">
                   PILOTE est l'outil de pilotage territorialisé des politiques
                   prioritaires du Gouvernement. Il permet de partager les
                   objectifs assignés à chaque chantier et les résultats obtenus
@@ -52,9 +51,9 @@ const PageLanding = () => {
           <div className="fr-container fr-py-8w isolate">
             <div className="fr-grid-row fr-grid-row--center">
               <div className="fr-col-12 flex flex-col justify-center">
-                <Titre baliseHtml="h2" className="fr-h3">
+                <h2 className="text-h3 md:text-h3-md">
                   Découvrez PILOTE en vidéo
-                </Titre>
+                </h2>
                 {}
                 <iframe
                   allowFullScreen
@@ -72,9 +71,9 @@ const PageLanding = () => {
           <div className="fr-container fr-py-8w">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12">
-                <Titre baliseHtml="h2" className="fr-h3">
+                <h2 className="text-h3 md:text-h3-md">
                   À qui s'adresse PILOTE ?
-                </Titre>
+                </h2>
                 <p className="fr-text--lg">
                   PILOTE mobilise l'ensemble des responsables de la mise en
                   œuvre des politiques prioritaires du Gouvernement à tous les
@@ -89,9 +88,9 @@ const PageLanding = () => {
                     <Image alt="" fill src={carteFranceSvg} />
                   </div>
                   <div className="fr-p-4w">
-                    <Titre baliseHtml="h3" className="fr-h5">
+                    <h3 className="text-h5 md:text-h5-md">
                       Pour les administrations centrales
-                    </Titre>
+                    </h3>
                     <p className="fr-text--lg fr-mb-0">
                       PILOTE permet de fixer les objectifs aux services
                       déconcentrés, de suivre l'avancement des chantiers et d'en
@@ -109,9 +108,7 @@ const PageLanding = () => {
                     <Image alt="" fill src={visualisationDonnéesSvg} />
                   </div>
                   <div className="fr-p-4w">
-                    <Titre baliseHtml="h3" className="fr-h5">
-                      Pour les préfets
-                    </Titre>
+                    <h3 className="text-h5 md:text-h5-md">Pour les préfets</h3>
                     <p className="fr-text--lg fr-mb-0">
                       PILOTE offre aux préfets une vision transversale des
                       objectifs et résultats de la feuille de route du
@@ -130,9 +127,9 @@ const PageLanding = () => {
                     <Image alt="" fill src={téléchargementFichierSvg} />
                   </div>
                   <div className="fr-p-4w">
-                    <Titre baliseHtml="h3" className="fr-h5">
+                    <h3 className="text-h5 md:text-h5-md">
                       Pour les services déconcentrés
-                    </Titre>
+                    </h3>
                     <p className="fr-text--lg fr-mb-0">
                       PILOTE permet de s'entendre avec l'administration centrale
                       sur les objectifs de chaque chantier prioritaire et de
@@ -151,9 +148,9 @@ const PageLanding = () => {
           <div className="fr-container fr-py-8w">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-lg-8 fr-pr-md-4w">
-                <Titre baliseHtml="h2" className="fr-h3">
+                <h2 className="text-h3 md:text-h3-md">
                   Le pilotage des politiques prioritaires
-                </Titre>
+                </h2>
                 <p className="fr-text--lg">
                   Les politiques prioritaires du Gouvernement font l'objet d'un
                   suivi régulier à haut niveau dans chaque ministère mais aussi
@@ -186,14 +183,14 @@ const PageLanding = () => {
                 <div className="fr-card fr-enlarge-link hover:bg-white">
                   <div className="fr-card__body">
                     <div className="fr-card__content">
-                      <Titre baliseHtml="h2" className="fr-h3">
+                      <h2 className="text-h3 md:text-h3-md">
                         <Link
                           href="https://www.gouvernement.fr/les-actions-du-gouvernement"
                           target="_blank"
                         >
                           Le baromètre des résultats de l'action publique
                         </Link>
-                      </Titre>
+                      </h2>
                       <p className="fr-card__desc">
                         Le baromètre des résultats de l'action publique reprend
                         les données de PILOTE pour rendre compte de l'avancement
@@ -218,9 +215,9 @@ const PageLanding = () => {
         <section className="bg-white">
           <div className="fr-container">
             <div className="fr-grid-row fr-py-8w gap-4 flex items-center">
-              <Titre baliseHtml="h2" className="fr-h3 fr-m-0">
+              <h2 className="text-h3 md:text-h3-md m-0">
                 Vous avez des questions ?
-              </Titre>
+              </h2>
               <BoutonContacterEquipePilote variant="primary" />
             </div>
           </div>

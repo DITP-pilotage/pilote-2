@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import CartographieMétéo from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo";
-import Titre from "@/components/_commons/Titre/Titre";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { Infobulle } from "@/components/shared/Infobulle";
@@ -38,13 +37,9 @@ const Cartes: FunctionComponent<CartesProps> = ({
           <Bloc>
             <section>
               <TitreInfobulleConteneur>
-                <Titre
-                  baliseHtml="h3"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
-                  estInline
-                >
+                <h3 className="text-lg mb-0 py-1 inline">
                   {`Taux d'avancement ${jalon}`}
-                </Titre>
+                </h3>
                 <Infobulle>
                   {
                     INFOBULLE_CONTENUS.chantier
@@ -68,13 +63,9 @@ const Cartes: FunctionComponent<CartesProps> = ({
           <Bloc>
             <section>
               <TitreInfobulleConteneur>
-                <Titre
-                  baliseHtml="h3"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
-                  estInline
-                >
+                <h3 className="text-lg mb-0 py-1 inline">
                   Niveau de confiance
-                </Titre>
+                </h3>
                 <Infobulle>
                   {
                     INFOBULLE_CONTENUS.chantier

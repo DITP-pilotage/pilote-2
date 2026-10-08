@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTableauPageAdminUtilisateurs } from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs";
 import { SearchInput } from "@/components/shared/SearchInput";
-import Titre from "@/components/_commons/Titre/Titre";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import { TagToggleGroup } from "@/components/shared/Tag";
 
@@ -30,9 +29,9 @@ const TableauAdminUtilisateurs: FunctionComponent<{
           value={valeurDeLaRecherche}
         />
       </div>
-      <Titre baliseHtml="h2" className="fr-h4 fr-mt-3w fr-mb-0 text-primary">
+      <h2 className="text-h4 md:text-h4-md mt-6 mb-0 text-primary">
         {`${nombreUtilisateur} ${nombreUtilisateur > 1 ? "comptes" : "compte"}`}
-      </Titre>
+      </h2>
       <TagToggleGroup.Root
         aria-label="Type de compte"
         className="mt-4"

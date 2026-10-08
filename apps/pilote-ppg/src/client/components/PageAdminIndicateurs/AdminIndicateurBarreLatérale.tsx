@@ -14,7 +14,6 @@ import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLat�
 import { MultiSelectPérimètreMinistériel } from "@/client/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import Interrupteur from "@/client/components/_commons/Interrupteur/Interrupteur";
 import { Tag } from "@/components/shared/Tag";
-import Titre from "@/client/components/_commons/Titre/Titre";
 
 interface AdminIndicateursBarreLatéraleProps {
   estOuverteBarreLatérale: boolean;
@@ -89,9 +88,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
         </div>
       </BarreLatéraleEncart>
       <div className="fr-px-3w fr-py-2w">
-        <Titre baliseHtml="h2" className="fr-h4">
-          Filtres actifs
-        </Titre>
+        <h2 className="text-h4 md:text-h4-md">Filtres actifs</h2>
         <Button variant="secondary" onClick={réinitialiser} type="button">
           Réinitialiser les filtres
         </Button>

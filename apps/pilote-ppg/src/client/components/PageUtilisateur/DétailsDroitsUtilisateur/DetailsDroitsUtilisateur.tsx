@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { ListeDeDroit } from "@/components/PageUtilisateur/DétailsDroitsUtilisateur/ListeDeDroit";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import useDetailsDroitsUtilisateur from "./UseDetailsDroitsUtilisateur";
@@ -31,9 +30,7 @@ export const DetailsDroitsUtilisateur: FunctionComponent<
     });
   return (
     <div>
-      <Titre baliseHtml="h2" className="fr-h5 text-primary">
-        {titre}
-      </Titre>
+      <h2 className="text-h5 md:text-h5-md text-primary">{titre}</h2>
       <div className="fr-grid-row">
         <ListeDeDroit
           label={labelTerritoires}

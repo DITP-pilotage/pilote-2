@@ -2,7 +2,6 @@ import { Dispatch, FunctionComponent, SetStateAction } from "react";
 import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
-import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import { InformationIndicateurContrat } from "@/server/app/contrats/InformationIndicateurContrat";
 import { Icone } from "@/components/_commons/Icone";
@@ -49,12 +48,12 @@ const EtapeSelectionIndicateur: FunctionComponent<{
     <div>
       {options.length > 0 ? (
         <form method="GET">
-          <Titre baliseHtml="h4">
+          <h4>
             {
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                 .ETAPE_SELECTION_INDICATEUR.TITRE
             }
-          </Titre>
+          </h4>
           <input name="etapeCourante" type="hidden" value={2} />
           <SelectField
             className={FIELD_GROUP_SPACING}

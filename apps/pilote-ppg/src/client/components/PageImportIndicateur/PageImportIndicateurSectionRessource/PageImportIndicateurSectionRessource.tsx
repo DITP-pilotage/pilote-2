@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import "@gouvfr/dsfr/dist/component/download/download.min.css";
 import { Table } from "@/components/shared/Table";
@@ -10,16 +9,16 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
   return (
     <section className="bg-dsfr-alt-blue-france">
       <div className="fr-container fr-py-3w">
-        <Titre baliseHtml="h2" className="text-primary">
+        <h2 className="text-primary">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.TITRE}
-        </Titre>
+        </h2>
         <Bloc>
-          <Titre baliseHtml="h3">
+          <h3>
             {
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                 .SECTION_EXPLICATION_IMPORT.TITRE
             }
-          </Titre>
+          </h3>
           <p>
             {
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
@@ -285,12 +284,12 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
               </Table.Row>
             </Table.Body>
           </Table.Root>
-          <Titre baliseHtml="h3">
+          <h3>
             {
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                 .SECTION_REFERENTIEL.TITRE
             }
-          </Titre>
+          </h3>
           <p>
             {
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
@@ -343,12 +342,12 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
               </p>
             </div>
           </div>
-          <Titre baliseHtml="h3">
+          <h3>
             {
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                 .SECTION_EXPLICATION_FICHIER.TITRE
             }
-          </Titre>
+          </h3>
           <ul>
             <li>
               {
