@@ -353,6 +353,8 @@ Relevées au fil des lots 1 à 4 (2026-09-29 / 30), hors périmètre des PR qui 
 
 ## 13. État d'avancement (2026-10-01)
 
+> **Clos le 2026-10-08.** Toute la pile (#2479 → #2529) est mergée dans `dev` ; les PR #2512 → #2520, fermées par erreur, ont été recréées en #2522 → #2529. Ce qui reste est repris dans `docs/superpowers/plans/2026-10-08-ppg-suite-dedoublonnage.md` : ne plus compléter cette section.
+
 Chantier mis en pause le 2026-09-30 pour merger la stack du lot 4, faire la recette et la mise en production ; repris le 2026-10-01 avec une nouvelle stack (#2479 → #2483), qui termine le lot 4.
 
 ### 13.1 Fait
