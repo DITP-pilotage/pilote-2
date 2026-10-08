@@ -14,8 +14,8 @@ export const ResponsableChantierEnTete: FunctionComponent<{
         <Icone className="!text-current" icone={icone} />
       </div>
       <div>
-        <p className="!mb-0 fr-text--xs font-bold">{libellé}</p>
-        <p className="!mb-0 fr-text--xs">{nomResponsable}</p>
+        <p className="mb-0 fr-text--xs font-bold">{libellé}</p>
+        <p className="mb-0 fr-text--xs">{nomResponsable}</p>
       </div>
     </div>
   );

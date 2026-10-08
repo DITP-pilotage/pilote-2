@@ -22,10 +22,10 @@ const RépartitionMétéoÉlément: FunctionComponent<
       )}
     >
       <MeteoPicto meteo={météo} />
-      <span className="!text-primary !text-5xl font-bold">
+      <span className="text-primary text-5xl font-bold">
         {nombreDeChantiers}
       </span>
-      <span className="!text-xs font-bold text-center">
+      <span className="text-xs font-bold text-center">
         {libellesMeteos[météo]}
       </span>
     </div>

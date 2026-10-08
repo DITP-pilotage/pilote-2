@@ -97,7 +97,7 @@ const UtilisateurFormulaire: FunctionComponent<
         {etapeCourante === 1 ? (
           <Link
             aria-label="Retour à l'accueil"
-            className="flex items-center gap-2 !text-primary"
+            className="flex items-center gap-2 text-primary"
             href="/admin/utilisateurs"
           >
             <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
@@ -105,7 +105,7 @@ const UtilisateurFormulaire: FunctionComponent<
           </Link>
         ) : (
           <button
-            className="flex items-center gap-2 !text-primary border-b !border-b-primary"
+            className="flex items-center gap-2 text-primary border-b border-b-primary"
             onClick={() => setEtapeCourante(1)}
             type="button"
           >

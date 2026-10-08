@@ -29,7 +29,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
   usePrefetchUtilisateurConnecte();
 
   return (
-    <div className="flex min-h-screen flex-col break-words [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_.fr-btn]:hidden print:[&_.fr-link]:hidden print:[&_*]:scrollbar-none print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:!bg-white">
+    <div className="flex min-h-screen flex-col break-words [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_.fr-btn]:hidden print:[&_.fr-link]:hidden print:[&_*]:scrollbar-none print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:bg-white">
       <EnTete />
       {status === "loading" ? (
         <Loader />

@@ -30,7 +30,7 @@ export const ResponsabiliteChantierEnTete = () => {
           <Icone className="!text-current" icone={DraftContourIcon} />
         </div>
         <div>
-          <span className="!mb-0 fr-text--xs">
+          <span className="mb-0 fr-text--xs">
             Chantier piloté à la{" "}
             <span className="font-bold">maille nationale uniquement</span>
           </span>
@@ -45,7 +45,7 @@ export const ResponsabiliteChantierEnTete = () => {
         <Icone className="!text-current" icone={DraftContourIcon} />
       </div>
       <div>
-        <span className="!mb-0 fr-text--xs">
+        <span className="mb-0 fr-text--xs">
           Chantier piloté jusqu'à la{" "}
           <span className="font-bold">
             maille{" "}
@@ -57,8 +57,8 @@ export const ResponsabiliteChantierEnTete = () => {
           </span>
         </span>
         <div>
-          <p className="!mb-0 fr-text--xs font-bold">Commentaires locaux :</p>
-          <ul className="!mb-0 fr-text--xs">
+          <p className="mb-0 fr-text--xs font-bold">Commentaires locaux :</p>
+          <ul className="mb-0 fr-text--xs">
             {listeResponsabiliteTerritoriale.map((responsabilite, index) => (
               <li className="pb-0" key={`responsabilite-${index}`}>
                 {responsabilite}

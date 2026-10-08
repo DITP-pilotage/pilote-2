@@ -54,10 +54,10 @@ const PageAnnuaire = () => {
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-6 flex flex-col gap-2">
-          <h1 className="!mb-0 text-3xl font-bold tracking-tight text-dsfr-grey-50">
+          <h1 className="mb-0 text-3xl font-bold tracking-tight text-dsfr-grey-50">
             Annuaire
           </h1>
-          <p className="!mb-0 max-w-3xl text-base text-dsfr-grey-200">
+          <p className="mb-0 max-w-3xl text-base text-dsfr-grey-200">
             Retrouvez les coordinateurs PILOTE de chaque territoire et les
             responsables locaux de chaque chantier.
           </p>
@@ -74,7 +74,7 @@ const PageAnnuaire = () => {
           }}
           value={onglet}
         >
-          <p className="!mb-0 mt-4 text-sm text-dsfr-mention-grey">
+          <p className="mb-0 mt-4 text-sm text-dsfr-mention-grey">
             {DESCRIPTIONS[onglet]}
           </p>
           <div className="mt-4">

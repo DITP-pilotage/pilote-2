@@ -14,18 +14,18 @@ const FiltresSélectionnésCatégorie: FunctionComponent<
   if (filtres.length === 0) {
     return (
       <h3
-        className={`!text-base !mb-1 ${className ?? ""}`}
+        className={`text-base mb-1 ${className ?? ""}`}
       >{`${titre} (Tous)`}</h3>
     );
   }
 
   return (
     <div className={className}>
-      <h3 className="!text-base !mb-1">{`${titre} (${filtres.length})`}</h3>
-      <ul className="!p-0 !m-0">
+      <h3 className="text-base mb-1">{`${titre} (${filtres.length})`}</h3>
+      <ul className="p-0 m-0">
         {filtres.map((filtre) => (
           <li
-            className="flex items-start !text-sm !text-dsfr-mention-grey !mb-1 list-none gap-2"
+            className="flex items-start text-sm text-dsfr-mention-grey mb-1 list-none gap-2"
             key={filtre}
           >
             <div>

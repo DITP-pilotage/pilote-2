@@ -81,11 +81,11 @@ export const WidgetChantiersSignales = ({
               icon={WarningIcon}
               variant="warning"
             />
-            <h2 className="text-lg mb-0 py-1 !text-dsfr-warning-425 inline">
+            <h2 className="text-lg mb-0 py-1 text-dsfr-warning-425 inline">
               Chantiers signalés
             </h2>
           </div>
-          <Infobulle classNameBouton="!text-dsfr-warning-425">
+          <Infobulle classNameBouton="text-dsfr-warning-425">
             {INFOBULLE_CONTENUS.chantiers.alertes}
           </Infobulle>
         </TitreInfobulleConteneur>

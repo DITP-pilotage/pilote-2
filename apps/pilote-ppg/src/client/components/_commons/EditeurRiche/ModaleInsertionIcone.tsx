@@ -50,8 +50,8 @@ export const ModaleInsertionIcone = ({
             <button
               className={`flex flex-col items-center gap-1 p-2 rounded border text-xs transition-colors ${
                 iconeSelectionnee === nom
-                  ? "!bg-blue-100 !border-blue-600 !text-blue-800"
-                  : "!bg-white !border-gray-200 hover:!bg-gray-50"
+                  ? "bg-blue-100 border-blue-600 text-blue-800"
+                  : "bg-white border-gray-200 hover:bg-gray-50"
               }`}
               key={nom}
               onClick={() => setIconeSelectionnee(nom)}
@@ -74,7 +74,7 @@ export const ModaleInsertionIcone = ({
 
         <div className="flex justify-end">
           <button
-            className="px-4 py-2 rounded text-sm !bg-primary !text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded text-sm bg-primary text-white disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!iconeSelectionnee}
             onClick={() => {
               if (iconeSelectionnee) {

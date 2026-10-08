@@ -51,14 +51,14 @@ const CartographieZoomEtDéplacement = ({
   return (
     <div className="absolute right-0 w-8">
       <button
-        className="flex justify-center !p-0.5 text-primary bg-white border-2 border-gray-300 rounded-t-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
+        className="flex justify-center p-0.5 text-primary bg-white border-2 border-gray-300 rounded-t-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
         onClick={() => zoomer(MULTIPLICATEUR_AU_ZOOM)}
         type="button"
       >
         <Icone icone={AddLineIcon} />
       </button>
       <button
-        className="flex justify-center !p-0.5 text-primary bg-white border-2 border-gray-300 rounded-b-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
+        className="flex justify-center p-0.5 text-primary bg-white border-2 border-gray-300 rounded-b-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
         onClick={() => zoomer(1 / MULTIPLICATEUR_AU_ZOOM)}
         type="button"
       >

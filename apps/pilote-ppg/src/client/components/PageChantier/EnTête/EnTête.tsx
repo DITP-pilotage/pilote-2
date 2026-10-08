@@ -56,13 +56,13 @@ const PageChantierEnTête: FunctionComponent<{
   return (
     <div
       className={clsxm("fr-text-title--blue-france print:mt-4", {
-        "!text-dsfr-grey-200": chantierEstArchive,
+        "text-dsfr-grey-200": chantierEstArchive,
       })}
     >
       <div className="flex">
         <Link
           aria-label="Retour à l'accueil"
-          className="flex items-center gap-2 !text-primary"
+          className="flex items-center gap-2 text-primary"
           href={hrefBoutonRetour}
         >
           <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
@@ -80,7 +80,7 @@ const PageChantierEnTête: FunctionComponent<{
       >
         {chantier.nom}
       </h1>
-      <div className="!pb-6 !mb-6 border-b border-blue-france flex">
+      <div className="pb-6 mb-6 border-b border-blue-france flex">
         <div className="icone-entete fr-mb-1w fr-pr-1w">
           <IconeMinistere icone={responsables?.porteur?.icône} />
         </div>
@@ -88,7 +88,7 @@ const PageChantierEnTête: FunctionComponent<{
           {listeNomsResponsablesMinistèrePorteur.join(", ") || "Non renseigné"}
         </p>
       </div>
-      <div className="!mb-2 flex flex-col gap-y-2">
+      <div className="mb-2 flex flex-col gap-y-2">
         <ResponsableChantierEnTete
           icone={GovernmentIcon}
           libellé="Autres ministères co-porteurs"

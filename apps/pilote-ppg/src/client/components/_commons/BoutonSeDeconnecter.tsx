@@ -6,10 +6,10 @@ import { ExternalLink1Icon } from "@/components/_commons/Icones/ExternalLink1Ico
 export const BoutonSeDeconnecter = () => (
   <button
     className={clsxm(
-      "min-w-[250px] !py-1.5 !mx-0",
+      "min-w-[250px] py-1.5 mx-0",
       "border border-gray-100",
-      "!flex items-center justify-center gap-3",
-      "!text-primary text-center font-semibold !text-sm",
+      "flex items-center justify-center gap-3",
+      "text-primary text-center font-semibold text-sm",
     )}
     onClick={() => signOut()}
     title="Déconnexion"

@@ -73,7 +73,12 @@ La bibliothèque DSFR doit disparaître (lot F) : aucun lot ne doit écrire du c
 ## Lot D — nettoyages Tailwind (M, 2 PR séparées)
 
 - [x] **D1. `align-center` → `items-center`** (fait, élargi : `align-center` n'était pas inexistante — `app.css` la définissait — mais 14 utilitaires maison d'`app.css` doublonnaient Tailwind sous d'autres noms, invisibles pour `clsxm` : `align-*`, `flex-column`, `flex-direction-*`, `bold`, `no-wrap`, `text-italic`, `list-style-none`, `w-half-full`, `texte-gauche` / `-droite`, `overflow-ellipsis` → équivalents Tailwind ; 17 règles retirées d'`app.css`.)
-- [ ] **D2. Préfixe `!` des classes** (489 occurrences, 176 fichiers). `tailwind.config.js` a `important: true`, le `!` est redondant et empêche `clsxm`/`twMerge` de résoudre les conflits. D'abord là où il surcharge une classe par défaut d'un composant (`Icone`, boutons, liens), puis le reste ; vérifier au cas par cas les `!` qui combattent une règle DSFR non utilitaire.
+- [x] **D2a. Préfixe `!` retiré là où c'est sans effet** (fait : 966 → ~120 classes à `!` ; avec `important: true` le CSS est identique, seul `clsxm` change — d'où l'exclusion de tout cas où `twMerge` ferait gagner une autre classe qu'avant).
+- [ ] **D2b. Surcharges `!` qui ne s'appliquaient pas** (M, recette visuelle). Cas laissés à `!` en D2a, où la surcharge **ne gagnait pas** (ordre du CSS) et gagnerait sans le `!` — corrections attendues, rendu modifié :
+  - `<Icone className="!text-current|!text-error|!text-primary|…">` (≈ 25 usages : boutons de navigation de la page chantier, assistant IA, centre d'aide, modale, export, tableau admin indicateurs, historique des publications) : l'icône restait bleu DSFR au lieu de prendre la couleur voulue ; `BoutonApplicationsPilote` (`!h-4 !w-4` ignorés) ;
+  - `BaseLignesPropositionValeurAvancement` (`!text-current` sur `Table`), `MultiSelectFiltre` (`!w-[var(--radix-dropdown-menu-trigger-width)]` sur `Dropdown`), centre d'aide (`Dropdown` : marges) ;
+  - 31 appels `clsxm` avec base + surcharge `!` en conflit (dont `Infobulle` / `SecureTooltip` : tailles et padding, `Modale` : largeurs, `Picker`, `Select`, `PillToggleGroup`, `OngletPonderationsIndicateurs`, `WidgetChantiersSignales`, `MenuLateralPanelAdministrateur`, `EnTête`…) — à trier : branches exclusives (sans effet) / vraies surcharges ;
+  - composants dont les classes par défaut portent `!` (`Accordion`, `BoutonImpression`, `Switch`, `MultiSelectFiltre`, `Callout`, `Select`, `Dropdown`, `InputNote`, `Tooltip`) ; Pilote Eval / PagePilotage non traités.
 
 ## Lot E — serveur (stack, du plus mécanique au plus risqué)
 

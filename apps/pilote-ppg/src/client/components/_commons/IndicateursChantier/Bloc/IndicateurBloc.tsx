@@ -97,7 +97,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
       tauxAvancement === null
     ) {
       return (
-        <span className="!text-sm">
+        <span className="text-sm">
           Le taux d'avancement n'est pas calculé car des données sont manquantes
           ou non applicables.
         </span>
@@ -143,7 +143,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           <section>
             <div className="flex justify-between">
               <div>
-                <h4 className="text-lead !mb-2 flex items-center">
+                <h4 className="text-lead mb-2 flex items-center">
                   <BadgeIndicateurEnAlerte />
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}
@@ -193,9 +193,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 <Table.Header className="bg-transparent text-center">
                   <Table.Row>
                     <Table.Cell className="mb-0 p-2 pl-4 md:p-2 md:py-2 md:pl-4" />
-                    <Table.Cell className="mb-0 !text-sm p-0 md:p-0 md:py-2" />
+                    <Table.Cell className="mb-0 text-sm p-0 md:p-0 md:py-2" />
                     <Table.ColumnHeaderCell
-                      className="bg-dsfr-contrast-grey border-b border-b-high-grey text-center mb-0 !text-sm font-bold p-0 md:p-0 md:py-2"
+                      className="bg-dsfr-contrast-grey border-b border-b-high-grey text-center mb-0 text-sm font-bold p-0 md:p-0 md:py-2"
                       colSpan={3}
                     >
                       <div className="flex items-center justify-center">
@@ -204,29 +204,29 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     </Table.ColumnHeaderCell>
                   </Table.Row>
                   <Table.Row className="border-b border-b-high-grey">
-                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm font-bold whitespace-nowrap px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 text-sm font-bold whitespace-nowrap px-2 md:py-2 md:px-2 border-b-0">
                       Territoire(s)
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur initiale
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur d'avancement
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur cible
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       taux d'avancement
                     </Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
                   <Table.Row key={détailTerritoireSélectionné.nomAffiché}>
-                    <Table.RowHeaderCell className="mb-0 !text-sm font-bold text-primary min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
+                    <Table.RowHeaderCell className="mb-0 text-sm font-bold text-primary min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
                       {détailTerritoireSélectionné.nomAffiché}
                     </Table.RowHeaderCell>
-                    <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
+                    <Table.Cell className="mb-0 text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurInitiale}
                         unité={detailIndicateurDuTerritoire.unite}
@@ -234,14 +234,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       />
                     </Table.Cell>
                     {/* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
-                    <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
+                    <Table.Cell className="mb-0 text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurAvancement}
                         unité={detailIndicateurDuTerritoire.unite}
                         valeur={detailIndicateurDuTerritoire.valeurAvancement}
                       />
                     </Table.Cell>
-                    <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
+                    <Table.Cell className="mb-0 text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                       <ValeurEtDate
                         date={
                           detailIndicateurDuTerritoire.dateValeurCibleAnnuelle
@@ -252,7 +252,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         }
                       />
                     </Table.Cell>
-                    <Table.Cell className="mb-0 !text-sm flex min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
+                    <Table.Cell className="mb-0 text-sm flex min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
                       <BarreDeProgression
                         afficherTexte
                         fond="gris-clair"
@@ -298,10 +298,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                             className="border-t border-t-dsfr-grey-625 bg-transparent"
                             key={informationIndicateurComparé.territoireNom}
                           >
-                            <Table.RowHeaderCell className="mb-0 !text-sm text-dsfr-flat-info min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
+                            <Table.RowHeaderCell className="mb-0 text-sm text-dsfr-flat-info min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
                               {informationIndicateurComparé.territoireNom}
                             </Table.RowHeaderCell>
-                            <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
+                            <Table.Cell className="mb-0 text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -316,7 +316,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </Table.Cell>
-                            <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
+                            <Table.Cell className="mb-0 text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -331,7 +331,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </Table.Cell>
-                            <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
+                            <Table.Cell className="mb-0 text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -346,7 +346,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </Table.Cell>
-                            <Table.Cell className="mb-0 !text-sm min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
+                            <Table.Cell className="mb-0 text-sm min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
                               <BarreDeProgression
                                 afficherTexte
                                 fond="gris-clair"

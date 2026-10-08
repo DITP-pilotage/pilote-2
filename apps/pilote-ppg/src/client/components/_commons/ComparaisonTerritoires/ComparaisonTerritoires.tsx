@@ -46,7 +46,7 @@ export const ComparaisonTerritoires = <T extends string>({
         </span>
       )}
       <div
-        className="grid max-sm:!grid-cols-1 gap-14"
+        className="grid max-sm:grid-cols-1 gap-14"
         style={{
           gridTemplateColumns: estEnComparaison ? "repeat(2, 1fr)" : "1fr",
         }}

@@ -39,7 +39,7 @@ export const BasePageChantierSection = ({
               "inline " +
               clsx("text-h4 md:text-h4-md mb-0 py-1", {
                 "text-primary": !estChantierArchive,
-                "!text-dsfr-grey-50": estChantierArchive,
+                "text-dsfr-grey-50": estChantierArchive,
               })
             }
           >
@@ -53,7 +53,7 @@ export const BasePageChantierSection = ({
             "text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0",
             {
               "text-primary": !estChantierArchive,
-              "!text-dsfr-grey-50": estChantierArchive,
+              "text-dsfr-grey-50": estChantierArchive,
             },
           )}
         >

@@ -119,7 +119,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               <h2 className="text-lg mb-0 py-1 ml-2 text-warning inline">
                 Chantiers signalés
               </h2>
-              <Infobulle classNameBouton="!text-dsfr-warning-425">
+              <Infobulle classNameBouton="text-dsfr-warning-425">
                 {INFOBULLE_CONTENUS.chantiers.alertes}
               </Infobulle>
             </TitreInfobulleConteneur>

@@ -13,8 +13,8 @@ export const BoutonNavigationFicheConducteur = ({
   jalon: number;
 }) => (
   <Link
-    className={clsxm("!text-sm flex items-center gap-1 pb-1 border-current", {
-      "!text-dsfr-grey-200": chantierEstArchive,
+    className={clsxm("text-sm flex items-center gap-1 pb-1 border-current", {
+      "text-dsfr-grey-200": chantierEstArchive,
     })}
     href={`/chantier/${chantierId}/fiche-conducteur?jalon=${jalon}`}
     title="Fiche conducteur"

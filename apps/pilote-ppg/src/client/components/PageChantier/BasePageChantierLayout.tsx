@@ -118,7 +118,7 @@ export const BasePageChantierLayout = ({
           className={
             chantier.statut !== "ARCHIVE"
               ? "bg-dsfr-blue-france-925"
-              : "bg-dsfr-grey-925 !text-dsfr-grey-200"
+              : "bg-dsfr-grey-925 text-dsfr-grey-200"
           }
         >
           <PageChantierEnTête
@@ -137,7 +137,7 @@ export const BasePageChantierLayout = ({
       </BarreLatérale>
       <main
         className={clsx("fr-pb-5w w-full print:mx-[12mm]", {
-          "!bg-dsfr-grey-1000": estChantierArchive,
+          "bg-dsfr-grey-1000": estChantierArchive,
         })}
       >
         <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_theme(colors.dsfr-shadow)] bg-dsfr-blue-france-850 fr-grid-row fr-pt-2w print:hidden">
@@ -157,7 +157,7 @@ export const BasePageChantierLayout = ({
           />
         </div>
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w hidden print:block print:mb-4 print:[page-break-after:avoid]">
-          <h1 className="text-h2 md:text-h2-md mb-0 !text-[1.875rem] !leading-9">
+          <h1 className="text-h2 md:text-h2-md mb-0 text-[1.875rem] leading-9">
             {chantier.nom}
           </h1>
         </div>

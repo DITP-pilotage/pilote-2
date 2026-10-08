@@ -30,8 +30,8 @@ export const Modale = ({
     <Dialog.Root {...props}>
       {trigger ? <Dialog.Trigger asChild>{trigger}</Dialog.Trigger> : null}
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 !bg-black/50 z-10" />
-        <Dialog.Content className="fixed inset-0 md:inset-8 z-10 flex items-end md:items-center md:justify-center !pointer-events-none">
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-10" />
+        <Dialog.Content className="fixed inset-0 md:inset-8 z-10 flex items-end md:items-center md:justify-center pointer-events-none">
           <div
             className={clsxm(
               "relative w-full bg-white p-8 rounded-t-md md:rounded-md shadow-md !pointer-events-auto [word-break:break-word]",
@@ -45,7 +45,7 @@ export const Modale = ({
           >
             <Dialog.Close asChild>
               <button
-                className="!text-primary flex items-center gap-1 px-4 py-2 absolute top-2 right-4 !text-sm"
+                className="text-primary flex items-center gap-1 px-4 py-2 absolute top-2 right-4 text-sm"
                 title="Fermer la fenêtre modale"
                 type="button"
               >
@@ -57,13 +57,9 @@ export const Modale = ({
               </button>
             </Dialog.Close>
             <Dialog.Title
-              className={clsxm(
-                "!text-primary !text-2xl !mb-4",
-                titleClassName,
-                {
-                  "sr-only": titleHidden,
-                },
-              )}
+              className={clsxm("text-primary text-2xl mb-4", titleClassName, {
+                "sr-only": titleHidden,
+              })}
             >
               {title}
             </Dialog.Title>

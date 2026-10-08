@@ -57,8 +57,8 @@ export const ModaleInsertionComposant = ({
                 <button
                   className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                     calloutColor === valeur
-                      ? "!bg-blue-600 !text-white !border-blue-600"
-                      : "!bg-white !text-gray-600 !border-gray-300 hover:!bg-gray-50"
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
                   }`}
                   key={valeur}
                   onClick={() => setCalloutColor(valeur)}
@@ -73,7 +73,7 @@ export const ModaleInsertionComposant = ({
               <Callout.Text>Aperçu du callout</Callout.Text>
             </Callout.Root>
             <button
-              className="self-end px-4 py-2 rounded text-sm !bg-primary !text-white"
+              className="self-end px-4 py-2 rounded text-sm bg-primary text-white"
               onClick={() => {
                 onInsererCallout(calloutColor);
                 onOpenChange(false);
@@ -103,7 +103,7 @@ export const ModaleInsertionComposant = ({
               </Accordion.Root>
             </div>
             <button
-              className="self-end px-4 py-2 rounded text-sm !bg-primary !text-white"
+              className="self-end px-4 py-2 rounded text-sm bg-primary text-white"
               onClick={() => {
                 onInsererAccordion();
                 onOpenChange(false);
