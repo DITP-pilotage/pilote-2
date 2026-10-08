@@ -1,3 +1,4 @@
+import { PublicationRepository } from "@/server/gestion-utilisateur/domain/ports/PublicationRepository";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { UtilisateurRepository as UtilisateurSQLRepositoryInterface } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
 import { ProfilRepository as ProfilSQLRepositoryInterface } from "@/server/gestion-utilisateur/infrastructure/sql/ProfilRepository";
@@ -30,22 +31,15 @@ import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "./domain/ports/UtilisateurIAMRepository";
 import { TokenAPIInformationRepository } from "./domain/ports/TokenAPIInformationRepository";
 import DesactiverUnUtilisateurUseCase from "./usecases/DesactiverUnUtilisateurUseCase";
+import { PrismaPublicationRepository } from "./infrastructure/adapters/PrismaPublicationRepository";
 import { PrismaUtilisateurRepository } from "./infrastructure/adapters/PrismaUtilisateurRepository";
 import { UtilisateurIAMKeycloakRepository } from "./infrastructure/adapters/UtilisateurIAMKeycloakRepository";
 import { PrismaTokenAPIInformationRepository } from "./infrastructure/adapters/PrismaTokenAPIInformationRepository";
 import ReactiverUnUtilisateurUseCase from "./usecases/ReactiverUnUtilisateurUseCase";
 import { RecupererEtatVisualisationVideoAccueilUseCase } from "./usecases/RecupererEtatVisualisationVideoAccueilUseCase";
 import { DesactiverVideoAccueilUseCase } from "./usecases/DesactiverVideoAccueilUseCase";
-import { CommentaireRepository } from "./domain/ports/CommentaireRepository";
-import { DecisionStrategiqueRepository } from "./domain/ports/DecisionStrategiqueRepository";
-import { ObjectifRepository } from "./domain/ports/ObjectifRepository";
 import { RapportRepository } from "./domain/ports/RapportRepository";
-import { SyntheseDesResultatsRepository } from "./domain/ports/SyntheseDesResultatsRepository";
-import { PrismaCommentaireRepository } from "./infrastructure/adapters/PrismaCommentaireRepository";
-import { PrismaDecisionStrategiqueRepository } from "./infrastructure/adapters/PrismaDecisionStrategiqueRepository";
-import { PrismaObjectifRepository } from "./infrastructure/adapters/PrismaObjectifRepository";
 import { PrismaRapportRepository } from "./infrastructure/adapters/PrismaRapportRepository";
-import { PrismaSyntheseDesResultatsRepository } from "./infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
 import { SupprimerLesComptesDesactivesUseCase } from "./usecases/SupprimerLesComptesDesactivesUseCase";
 import { RecupererLaListeDesInfomrationsChantiersUse } from "./usecases/RecupererLaListeDesInfomrationsChantiersUse";
 import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
@@ -89,11 +83,8 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   tokenAPIInformationRepository: TokenAPIInformationRepository;
   desactiverUnUtilisateurUseCase: DesactiverUnUtilisateurUseCase;
   reactiverUnUtilisateurUseCase: ReactiverUnUtilisateurUseCase;
-  commentaireRepository: CommentaireRepository;
-  decisionStrategiqueRepository: DecisionStrategiqueRepository;
-  objectifRepository: ObjectifRepository;
+  publicationRepository: PublicationRepository;
   rapportRepository: RapportRepository;
-  syntheseDesResultatsRepository: SyntheseDesResultatsRepository;
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
   historisationModification: HistorisationModificationRepository;
   supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase;
@@ -195,15 +186,8 @@ export const gestionUtilisateurModule = defineModule<
       desactiverVideoAccueilUseCase: asModuleClass(
         DesactiverVideoAccueilUseCase,
       ),
-      commentaireRepository: asModuleClass(PrismaCommentaireRepository),
-      decisionStrategiqueRepository: asModuleClass(
-        PrismaDecisionStrategiqueRepository,
-      ),
-      objectifRepository: asModuleClass(PrismaObjectifRepository),
+      publicationRepository: asModuleClass(PrismaPublicationRepository),
       rapportRepository: asModuleClass(PrismaRapportRepository),
-      syntheseDesResultatsRepository: asModuleClass(
-        PrismaSyntheseDesResultatsRepository,
-      ),
       indicateurTerritoireValeurEvenementRepository: asModuleClass(
         PrismaIndicateurTerritoireValeurEvenementRepository,
       ),

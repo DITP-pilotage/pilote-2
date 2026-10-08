@@ -1,9 +1,6 @@
 import { mock, MockProxy } from "vitest-mock-extended";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
-import { CommentaireRepository } from "@/server/gestion-utilisateur/domain/ports/CommentaireRepository";
-import { SyntheseDesResultatsRepository } from "@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository";
-import { DecisionStrategiqueRepository } from "@/server/gestion-utilisateur/domain/ports/DecisionStrategiqueRepository";
-import { ObjectifRepository } from "@/server/gestion-utilisateur/domain/ports/ObjectifRepository";
+import { PublicationRepository } from "@/server/gestion-utilisateur/domain/ports/PublicationRepository";
 import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/RapportRepository";
 import {
   EMAIL_AUTEUR_REMPLACEMENT,
@@ -18,10 +15,7 @@ import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTran
 describe("SupprimerLesComptesDesactivesUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
   let utilisateurIAMRepository: MockProxy<UtilisateurIAMRepository>;
-  let commentaireRepository: MockProxy<CommentaireRepository>;
-  let syntheseDesResultatsRepository: MockProxy<SyntheseDesResultatsRepository>;
-  let decisionStrategiqueRepository: MockProxy<DecisionStrategiqueRepository>;
-  let objectifRepository: MockProxy<ObjectifRepository>;
+  let publicationRepository: MockProxy<PublicationRepository>;
   let rapportRepository: MockProxy<RapportRepository>;
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
   let historisationModification: MockProxy<HistorisationModificationRepository>;
@@ -32,10 +26,7 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
   beforeEach(() => {
     utilisateurRepository = mock<UtilisateurRepository>();
     utilisateurIAMRepository = mock<UtilisateurIAMRepository>();
-    syntheseDesResultatsRepository = mock<SyntheseDesResultatsRepository>();
-    commentaireRepository = mock<CommentaireRepository>();
-    decisionStrategiqueRepository = mock<DecisionStrategiqueRepository>();
-    objectifRepository = mock<ObjectifRepository>();
+    publicationRepository = mock<PublicationRepository>();
     rapportRepository = mock<RapportRepository>();
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
@@ -45,10 +36,7 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
       new SupprimerLesComptesDesactivesUseCase({
         utilisateurRepository,
         utilisateurIAMRepository,
-        syntheseDesResultatsRepository,
-        commentaireRepository,
-        decisionStrategiqueRepository,
-        objectifRepository,
+        publicationRepository,
         rapportRepository,
         indicateurTerritoireValeurEvenementRepository,
         historisationModification,
@@ -75,22 +63,12 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
     const resultat = await supprimerLesComptesDesactivesUseCase.run();
 
     // Then
-    expect(commentaireRepository.anonymiserAuteurs).toHaveBeenCalledWith(
+    expect(publicationRepository.anonymiserAuteurs).toHaveBeenCalledWith(
       [utilisateur1.id],
       EMAIL_AUTEUR_REMPLACEMENT,
     );
-    expect(commentaireRepository.anonymiserAuteurs).toHaveBeenCalledWith(
+    expect(publicationRepository.anonymiserAuteurs).toHaveBeenCalledWith(
       [utilisateur2.id],
-      EMAIL_AUTEUR_REMPLACEMENT,
-    );
-    expect(
-      syntheseDesResultatsRepository.anonymiserAuteurs,
-    ).toHaveBeenCalledWith([utilisateur1.id], EMAIL_AUTEUR_REMPLACEMENT);
-    expect(
-      decisionStrategiqueRepository.anonymiserAuteurs,
-    ).toHaveBeenCalledWith([utilisateur1.id], EMAIL_AUTEUR_REMPLACEMENT);
-    expect(objectifRepository.anonymiserAuteurs).toHaveBeenCalledWith(
-      [utilisateur1.id],
       EMAIL_AUTEUR_REMPLACEMENT,
     );
     expect(
@@ -137,7 +115,7 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
       utilisateurOk,
     ]);
     // L'anonymisation échoue pour le premier utilisateur (premier appel)
-    commentaireRepository.anonymiserAuteurs.mockRejectedValueOnce(
+    publicationRepository.anonymiserAuteurs.mockRejectedValueOnce(
       new Error("Erreur base de données"),
     );
 

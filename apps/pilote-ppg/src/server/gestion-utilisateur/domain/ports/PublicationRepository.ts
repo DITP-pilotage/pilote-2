@@ -1,6 +1,6 @@
-export interface DecisionStrategiqueRepository {
+export interface PublicationRepository {
   anonymiserAuteurs(
-    listeIds: string[],
+    auteursAAnonymiserIds: string[],
     emailAuteurRemplacement: string,
   ): Promise<void>;
 }
