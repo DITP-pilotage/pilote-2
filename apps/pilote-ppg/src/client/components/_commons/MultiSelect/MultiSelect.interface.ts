@@ -1,4 +1,4 @@
-export default interface MultiSelectProps {
+export interface MultiSelectProps {
   suffixeLibellé: string;
   optionsGroupées: MultiSelectOptionsGroupées;
   valeursSélectionnéesParDéfaut?: string[];

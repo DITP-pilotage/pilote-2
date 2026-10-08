@@ -73,6 +73,14 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     });
 
   const { data: session } = useSession();
+  const { data: territoiresSélectionnables } =
+    api.territoire.récupérerListe.useQuery(
+      {
+        territoireCodes:
+          session?.habilitations.gestionUtilisateur.territoires ?? null,
+      },
+      { staleTime: Number.POSITIVE_INFINITY },
+    );
   const {
     register,
     control,
@@ -144,8 +152,6 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
       afficherChampLectureTerritoires &&
       profilsDépartementaux.includes(profilCodeSelectionne),
   };
-  const territoiresSélectionnables =
-    session?.habilitations.gestionUtilisateur.territoires;
   const changementTerritoiresSelectionnes = (
     listeTerritoiresSelectionnes: string[],
   ) => {
@@ -344,7 +350,7 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     afficherChampLectureTerritoires,
     activerLaRestrictionDesTerritoires,
     groupesTerritoiresÀAfficher,
-    territoiresSélectionnables,
+    territoiresSélectionnables: territoiresSélectionnables ?? [],
     changementTerritoiresSelectionnes,
     afficherChampLecturePérimètres,
     changementPerimetresSelectionnes,

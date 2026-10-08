@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
+import { MultiSelect } from "@/client/components/_commons/MultiSelect/MultiSelect";
 import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
@@ -15,7 +15,9 @@ interface MultiSelectChantierProps {
   desactive?: boolean;
 }
 
-const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
+export const MultiSelectChantier: FunctionComponent<
+  MultiSelectChantierProps
+> = ({
   chantiersIdsSélectionnésParDéfaut,
   changementValeursSélectionnéesCallback,
   valeursDésactivées,
@@ -59,9 +61,9 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}
-      changementValeursSélectionnéesCallback={
-        changementValeursSélectionnéesCallback
-      }
+      changementValeursSélectionnéesCallback={(
+        valeursSélectionnées: string[],
+      ) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       desactive={desactive}
       label="Chantier(s)"
       optionsGroupées={optionsGroupées}
@@ -70,5 +72,3 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
     />
   );
 };
-
-export default MultiSelectChantier;
