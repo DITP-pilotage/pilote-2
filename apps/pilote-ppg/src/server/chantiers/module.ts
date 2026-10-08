@@ -32,7 +32,6 @@ import { DecisionStrategiqueSQLRepository } from "@/server/decisions-strategique
 import { TerritoireSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireSQLRepository";
 import { RecupererCommentairesLesPlusRecentsParTypeGroupesParChantiersUseCase } from "@/server/chantiers/usecases/RecupererCommentairesLesPlusRecentsParTypeGroupesParChantiersUseCase";
 import { RecupererObjectifsLesPlusRecentsParTypeGroupesParChantiersUseCase } from "@/server/chantiers/usecases/RecupererObjectifsLesPlusRecentsParTypeGroupesParChantiersUseCase";
-import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
@@ -122,7 +121,6 @@ type ChantierOwnCradle = ChantierExports & {
   décisionStratégiqueSQLRepository: DécisionStratégiqueSQLRepositoryInterface;
   territoireSQLRepository: TerritoireSQLRepositoryInterface;
   agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
-  recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
   récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RecupererCommentairesLesPlusRecentsParTypeGroupesParChantiersUseCase;
   récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RecupererObjectifsLesPlusRecentsParTypeGroupesParChantiersUseCase;
   listerDonneesIndicateurParIndicIdUseCase: ListerDonneesIndicateurParIndicIdUseCase;
@@ -214,12 +212,6 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       agregerAvancementsChantiersUseCase: asModuleFunction(
         ({ chantierSQLRepository }) =>
           new AgregerAvancementsChantiersUseCase({
-            chantierRepository: chantierSQLRepository,
-          }),
-      ).scoped(),
-      recupererRepartitionsMeteoChantiersUseCase: asModuleFunction(
-        ({ chantierSQLRepository }) =>
-          new RecupererRepartitionsMeteoChantiersUseCase({
             chantierRepository: chantierSQLRepository,
           }),
       ).scoped(),

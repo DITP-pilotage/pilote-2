@@ -29,7 +29,6 @@ import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
-import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
@@ -214,14 +213,13 @@ export const getServerSideProps: GetServerSideProps<
       : chantiers;
 
   const repartitionMeteosChantiers = await getContainer("chantiers")
-    .resolve("recupererRepartitionsMeteoChantiersUseCase")
-    .run(
+    .resolve("getRepartitionMeteoChantiersQuery")
+    .execute({
+      chantierIds: chantiersAvecAlertes.map(
+        (chantierAvecAlerte) => chantierAvecAlerte.id,
+      ),
       territoireCode,
-      filtres,
-      axes,
-      chantiersAvecAlertes.map((chantierAvecAlerte) => chantierAvecAlerte.id),
-    )
-    .then(presenterEnRépartitionsMétéosChantiersContrat);
+    });
 
   const récupérerStatistiquesChantiersUseCase = getContainer(
     "chantiers",
