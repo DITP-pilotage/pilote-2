@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Callout } from "@/components/shared/Callout";
@@ -18,7 +19,6 @@ import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/propos
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useEnv } from "@/client/hooks/useEnv";
-import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 
@@ -243,13 +243,13 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   </div>
                   {ffPvaValeurDifferente && !estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
-                      <SelecteurNew
-                        erreurMessage={
+                      <SelectField
+                        errorMessage={
                           reactHookForm.formState.errors.moisValeurAvancement
                             ?.message
                         }
-                        htmlName="moisValeurAvancement"
-                        libelle={
+                        name="moisValeurAvancement"
+                        label={
                           <>
                             Date de la valeur d'avancement proposée
                             <ChampObligatoire />
@@ -265,9 +265,8 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                           );
                         }}
                         options={optionsMois}
-                        valeurSelectionnee={reactHookForm.watch(
-                          "moisValeurAvancement",
-                        )}
+                        value={reactHookForm.watch("moisValeurAvancement")}
+                        triggerClassName="w-50"
                       />
                       <span className="flex texte-gris fr-text--xs !mt-1">
                         Dernière date de la valeur d'avancement :

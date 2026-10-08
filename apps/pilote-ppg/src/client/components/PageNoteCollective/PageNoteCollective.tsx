@@ -1,9 +1,9 @@
 import Head from "next/head";
+import { SelectField } from "@/components/shared/SelectField";
 import { useRouter } from "next/router";
 import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
 import { TableauNoteCollective } from "@/components/Evaluation/TableauNoteCollective";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
-import Sélecteur from "@/client/components/_commons/Sélecteur/Sélecteur";
 import { formatterTitreEvaluation } from "@/client/components/PageAppreciation/utilsTexteEvaluation";
 
 export const ContenuPageNoteCollective = () => {
@@ -68,16 +68,16 @@ export const ContenuPageNoteCollective = () => {
               </h2>
               <div className="flex items-center gap-2 w-fit">
                 <span className="pt-2">Territoire : </span>
-                <Sélecteur
-                  htmlName="select-territoire"
+                <SelectField
+                  name="select-territoire"
                   onChange={handleRattachementChange}
                   options={rattachements.map((rattachement) => {
                     return {
                       valeur: rattachement.code,
-                      libellé: rattachement.libelle,
+                      libelle: rattachement.libelle,
                     };
                   })}
-                  valeurSélectionnée={rattachementCode}
+                  value={rattachementCode}
                 />
               </div>
             </div>

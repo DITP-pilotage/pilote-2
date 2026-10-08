@@ -1,4 +1,8 @@
 import { $Enums } from "@prisma/client";
+import {
+  SelectField,
+  type SelectFieldOption,
+} from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
 import { Controller, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
@@ -14,10 +18,8 @@ import {
 } from "@/components/PageAdminPorteurs/usePorteurForm";
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
 interface Props {
   porteurId: string;
@@ -26,11 +28,11 @@ interface Props {
   idSuivant: string | null;
 }
 
-const OPTIONS_TYPE: SélecteurOption<$Enums.porteur_type>[] = [
-  { libellé: "Ministère (MIN)", valeur: "MIN" },
-  { libellé: "Direction d'Administration Centrale (DAC)", valeur: "DAC" },
-  { libellé: "Délégation interministérielle (DI)", valeur: "DI" },
-  { libellé: "Autre", valeur: "AUTRE" },
+const OPTIONS_TYPE: SelectFieldOption<$Enums.porteur_type>[] = [
+  { libelle: "Ministère (MIN)", valeur: "MIN" },
+  { libelle: "Direction d'Administration Centrale (DAC)", valeur: "DAC" },
+  { libelle: "Délégation interministérielle (DI)", valeur: "DI" },
+  { libelle: "Autre", valeur: "AUTRE" },
 ];
 
 const PageAdminPorteurEdition = ({
@@ -185,12 +187,12 @@ const PageAdminPorteurEdition = ({
                     control={reactHookForm.control}
                     name="porteurType"
                     render={({ field }) => (
-                      <Sélecteur
-                        htmlName="porteurType"
-                        libellé="Type"
+                      <SelectField
+                        name="porteurType"
+                        label="Type"
                         onChange={field.onChange}
                         options={OPTIONS_TYPE}
-                        valeurSélectionnée={field.value}
+                        value={field.value}
                       />
                     )}
                   />

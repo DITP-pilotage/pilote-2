@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
-import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
+import { SelectField } from "@/components/shared/SelectField";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
@@ -13,18 +13,18 @@ const SélecteurZonegroup = () => {
       control={control}
       name="zgApplicable"
       render={({ field }) => (
-        <Sélecteur
-          htmlName="zgApplicable"
-          libellé="Zone group"
+        <SelectField
+          name="zgApplicable"
+          label="Zone group"
           options={[
-            { libellé: "— Aucune —", valeur: "" },
+            { libelle: "— Aucune —", valeur: "" },
             ...zonegroups.map((z) => ({
-              libellé: `${z.id} — ${z.nom}`,
+              libelle: `${z.id} — ${z.nom}`,
               valeur: z.id,
             })),
           ]}
           onChange={(val) => field.onChange(val || null)}
-          valeurSélectionnée={field.value ?? ""}
+          value={field.value ?? ""}
         />
       )}
     />

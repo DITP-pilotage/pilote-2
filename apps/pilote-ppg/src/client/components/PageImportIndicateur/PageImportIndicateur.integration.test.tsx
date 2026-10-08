@@ -148,15 +148,14 @@ describe("PageImportIndicateur", () => {
       );
 
       // Then
-      const titreCatégorieIndicateur1 = screen.getByText(
-        "IND-156798 : IND-156798-CH-123 nom indicateur",
-      );
-      const titreCatégorieIndicateur2 = screen.getByText(
-        "IND-156799 : IND-156799-CH-124 nom indicateur 2",
-      );
+      const optionsProposees = screen
+        .getAllByRole("option", { hidden: true })
+        .map((option) => option.textContent);
 
-      expect(titreCatégorieIndicateur1).toBeInTheDocument();
-      expect(titreCatégorieIndicateur2).toBeInTheDocument();
+      expect(optionsProposees).toEqual([
+        "IND-156798 : IND-156798-CH-123 nom indicateur",
+        "IND-156799 : IND-156799-CH-124 nom indicateur 2",
+      ]);
     });
   });
 });
