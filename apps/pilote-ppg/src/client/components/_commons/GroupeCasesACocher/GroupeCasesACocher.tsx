@@ -15,7 +15,12 @@ const OptionCase = ({
   const idCase = useId();
   return (
     <label className="flex items-center gap-2 cursor-pointer" htmlFor={idCase}>
-      <Checkbox checked={estCoché} id={idCase} onCheckedChange={onToggle} />
+      <Checkbox
+        size="sm"
+        checked={estCoché}
+        id={idCase}
+        onCheckedChange={onToggle}
+      />
       {option.label}
     </label>
   );

@@ -140,6 +140,7 @@ export const MultiSelectFiltre = ({
                     {showGroupSelection ? (
                       <div className="px-4 py-2 flex items-center gap-2 cursor-pointer">
                         <Checkbox
+                          size="sm"
                           checked={allGroupSelected}
                           className={someGroupSelected ? "opacity-50" : ""}
                           onCheckedChange={() => {
@@ -177,6 +178,7 @@ export const MultiSelectFiltre = ({
                           >
                             <label className="flex items-center gap-2">
                               <Checkbox
+                                size="sm"
                                 checked={checked}
                                 onCheckedChange={() => {
                                   if (checked) {

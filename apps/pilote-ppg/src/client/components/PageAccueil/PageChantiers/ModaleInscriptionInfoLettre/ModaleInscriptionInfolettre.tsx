@@ -1,4 +1,6 @@
 import { FunctionComponent } from "react";
+import { Controller } from "react-hook-form";
+import { CheckboxField } from "@/components/shared/Checkbox";
 import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
@@ -13,6 +15,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
 }> = ({ open, onOpenChange }) => {
   const {
     register,
+    control,
     handleFermetureModale,
     handleSubmitForm,
     estConsentantALinscription,
@@ -69,21 +72,30 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
                 {...register("emailUtilisateur")}
               />
             </div>
-            <div className="fr-checkbox-group">
-              <input
-                id="consentement"
-                type="checkbox"
-                {...register("consentement")}
-              />
-              <label className="fr-label" htmlFor="consentement">
-                Je consens à recevoir l'infolettre "Minute PILOTE" contenant des
-                actualités et informations liées à l'évolution de l'outil. Je
-                pourrai me désabonner à tout moment via le lien présent dans
-                chaque envoi.
-                {}
-                <span className="!text-error">*</span>
-              </label>
-            </div>
+            <Controller
+              control={control}
+              name="consentement"
+              render={({ field }) => (
+                <CheckboxField
+                  checked={field.value}
+                  id="consentement"
+                  label={
+                    <>
+                      Je consens à recevoir l'infolettre "Minute PILOTE"
+                      contenant des actualités et informations liées à
+                      l'évolution de l'outil. Je pourrai me désabonner à tout
+                      moment via le lien présent dans chaque envoi.
+                      <span className="!text-error">*</span>
+                    </>
+                  }
+                  name={field.name}
+                  onBlur={field.onBlur}
+                  onCheckedChange={(checked) =>
+                    field.onChange(checked === true)
+                  }
+                />
+              )}
+            />
             <Button
               variant="primary"
               className="mt-6"

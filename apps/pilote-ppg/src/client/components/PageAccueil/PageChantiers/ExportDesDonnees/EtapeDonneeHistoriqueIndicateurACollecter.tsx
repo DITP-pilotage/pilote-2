@@ -1,7 +1,40 @@
 import { parseAsString, useQueryState } from "nuqs";
-import { Button } from "@/components/shared/Button";
-import { Modale } from "@/components/shared/Modale";
-import { useExportStep } from "./useExportStep";
+import { ExportOption, ExportOptionsSection } from "./ExportOptionsSection";
+import { CollectStepFooter } from "./CollectStepFooter";
+
+const OPTIONS_DEFINITION: ExportOption[] = [
+  {
+    value: "identifiant",
+    disabled: true,
+    label: (
+      <>
+        <span className="font-bold">identifiants</span> de l'indicateur et du
+        territoire
+      </>
+    ),
+  },
+  {
+    value: "valeur-cible",
+    disabled: true,
+    label: (
+      <>
+        <span className="font-bold">valeur initiale et valeurs cibles*</span> de
+        l'indicateur sur le territoire
+      </>
+    ),
+    hint: "*les valeurs cibles sont fournies pour l'année en cours et à échéance",
+  },
+  {
+    value: "valeur-avancement",
+    disabled: true,
+    label: (
+      <>
+        <span className="font-bold">valeurs d'avancement</span> de l'indicateur
+        sur le territoire, mois par mois
+      </>
+    ),
+  },
+];
 
 export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
   const [optionsExport] = useQueryState(
@@ -13,102 +46,23 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
       }),
   );
 
-  const { goToStep } = useExportStep();
-
   return (
     <div>
-      <p className="fr-mt-2w fr-mb-0">
+      <p className="mt-4 mb-0">
         Vous avez choisi d'exporter{" "}
         <strong>l'historique des indicateurs.</strong>
       </p>
-      <p className="fr-mt-1w fr-mb-0">
+      <p className="mt-2 mb-0">
         Pour chacun des indicateurs et des territoires inclus dans le périmètre
         d'export, les données collectées sont les suivantes :
       </p>
-      <div className="fr-fieldset__element fr-pl-0 fr-pb-2w">
-        <h3 className="fr-text--md underline fr-mb-1w">DÉFINITION</h3>
-        <div className="fr-checkbox-group">
-          <input
-            checked={optionsExport.split(",").includes("identifiant")}
-            className="fr-input"
-            disabled
-            id="identifiant"
-            name="identifiant"
-            type="checkbox"
-          />
-          <label className="fr-label" htmlFor="identifiant">
-            <span>
-              <span className="fr-text--bold">identifiants</span> de
-              l'indicateur et du territoire
-            </span>
-          </label>
-        </div>
-        <div className="fr-checkbox-group fr-mt-1w">
-          <input
-            checked={optionsExport.split(",").includes("valeur-cible")}
-            className="fr-input"
-            disabled
-            id="valeur-cible"
-            name="valeur-cible"
-            type="checkbox"
-          />
-          <label className="fr-label" htmlFor="valeur-cible">
-            <span>
-              <span className="fr-text--bold">
-                valeur initiale et valeurs cibles*
-              </span>{" "}
-              de l'indicateur sur le territoire
-            </span>
-          </label>
-          <span className="fr-label fr-text--xs !text-dsfr-mention-grey fr-mb-0 fr-ml-4w">
-            *les valeurs cibles sont fournies pour l'année en cours et à
-            échéance
-          </span>
-        </div>
-        <div className="fr-checkbox-group fr-mt-1w">
-          <input
-            checked={optionsExport.split(",").includes("valeur-avancement")}
-            className="fr-input"
-            disabled
-            id="valeur-avancement"
-            name="valeur-avancement"
-            type="checkbox"
-          />
-          <label className="fr-label" htmlFor="valeur-avancement">
-            <span>
-              <span className="fr-text--bold">valeurs d'avancement</span> de
-              l'indicateur sur le territoire, mois par mois
-            </span>
-          </label>
-        </div>
-      </div>
-      <div className="w-full flex justify-end fr-mt-2w">
-        <Modale.Close asChild>
-          <button
-            className="fr-link fr-mr-2w"
-            title="Fermer la fenêtre modale"
-            type="button"
-          >
-            Annuler
-          </button>
-        </Modale.Close>
-        <Button
-          variant="secondary"
-          className="mr-4"
-          onClick={() => goToStep(2)}
-          type="button"
-        >
-          Étape précédente
-        </Button>
-        <Button
-          variant="primary"
-          className="mr-4"
-          onClick={() => goToStep(4)}
-          type="button"
-        >
-          Étape suivante
-        </Button>
-      </div>
+      <ExportOptionsSection
+        className="pb-4"
+        options={OPTIONS_DEFINITION}
+        selectedOptions={optionsExport.split(",")}
+        title="DÉFINITION"
+      />
+      <CollectStepFooter />
     </div>
   );
 };

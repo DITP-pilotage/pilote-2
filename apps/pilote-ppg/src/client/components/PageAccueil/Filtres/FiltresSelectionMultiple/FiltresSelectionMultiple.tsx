@@ -1,5 +1,6 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
+import { CheckboxField } from "@/components/shared/Checkbox";
 import { FunctionComponent } from "react";
 
 interface Filtre {
@@ -29,29 +30,24 @@ export const FiltresSelectionMultiple: FunctionComponent<
   return (
     <div>
       <CollapsibleSection title={libelle}>
-        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w list-none">
+        <ul className="m-0 mb-2 list-none p-0 pl-2">
           {filtres.map((filtre) => (
-            <li className="fr-p-0 fr-my-1w fr-mr-0" key={filtre.id}>
-              <div className="fr-checkbox-group fr-pb-1w">
-                <input
-                  checked={filtresNew.includes(filtre.id)}
-                  className="fr-input"
-                  id={filtre.id}
-                  onChange={() => {
-                    let arrFiltresNew = filtresNew.split(",").filter(Boolean);
-                    if (arrFiltresNew.includes(filtre.id)) {
-                      arrFiltresNew.splice(arrFiltresNew.indexOf(filtre.id), 1);
-                    } else {
-                      arrFiltresNew.push(filtre.id);
-                    }
-                    onChange(arrFiltresNew);
-                  }}
-                  type="checkbox"
-                />
-                <label className="fr-label" htmlFor={filtre.id}>
-                  {filtre.nom}
-                </label>
-              </div>
+            <li className="my-2 mr-0 p-0" key={filtre.id}>
+              <CheckboxField
+                checked={filtresNew.includes(filtre.id)}
+                className="pb-2"
+                id={filtre.id}
+                label={filtre.nom}
+                onCheckedChange={() => {
+                  let arrFiltresNew = filtresNew.split(",").filter(Boolean);
+                  if (arrFiltresNew.includes(filtre.id)) {
+                    arrFiltresNew.splice(arrFiltresNew.indexOf(filtre.id), 1);
+                  } else {
+                    arrFiltresNew.push(filtre.id);
+                  }
+                  onChange(arrFiltresNew);
+                }}
+              />
             </li>
           ))}
         </ul>

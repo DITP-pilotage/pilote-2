@@ -3,6 +3,7 @@ import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
+import { CheckboxField } from "@/components/shared/Checkbox";
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
@@ -12,7 +13,6 @@ import {
 } from "@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire";
 import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import { UtilisateurFormulaireProps } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
-import CaseACocher from "@/components/_commons/CaseACocher/CaseACocher";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
@@ -261,9 +261,19 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
           Droits de saisie des données quantitatives
         </Titre>
-        <CaseACocher
-          libellé="Accorder les droits de saisie des données quantitatives"
-          register={register("saisieIndicateur")}
+        <Controller
+          control={control}
+          name="saisieIndicateur"
+          render={({ field }) => (
+            <CheckboxField
+              checked={field.value}
+              className="mb-4 px-2"
+              label="Accorder les droits de saisie des données quantitatives"
+              name={field.name}
+              onBlur={field.onBlur}
+              onCheckedChange={(checked) => field.onChange(checked === true)}
+            />
+          )}
         />
       </div>
       <div className={`${afficherChampSaisieCommentaire ? "" : "fr-hidden"}`}>
@@ -303,9 +313,19 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
           Droits de gestion des comptes utilisateurs
         </Titre>
-        <CaseACocher
-          libellé="Accorder les droits de gestion des comptes utilisateurs"
-          register={register("gestionUtilisateur")}
+        <Controller
+          control={control}
+          name="gestionUtilisateur"
+          render={({ field }) => (
+            <CheckboxField
+              checked={field.value}
+              className="mb-4 px-2"
+              label="Accorder les droits de gestion des comptes utilisateurs"
+              name={field.name}
+              onBlur={field.onBlur}
+              onCheckedChange={(checked) => field.onChange(checked === true)}
+            />
+          )}
         />
       </div>
       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">

@@ -108,6 +108,7 @@ export const MultiSelect: FunctionComponent<MultiSelectProps> = ({
                           key={option.value}
                         >
                           <Checkbox
+                            size="sm"
                             checked={valeursSélectionnées.has(option.value)}
                             disabled={option.disabled}
                             id={optionId}
