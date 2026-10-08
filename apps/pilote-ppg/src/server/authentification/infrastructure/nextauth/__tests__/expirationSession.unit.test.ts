@@ -1,4 +1,4 @@
-import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
+import { sessionExpiree } from "@/server/authentification/infrastructure/nextauth/expirationSession";
 
 const MAINTENANT = new Date("2026-09-08T12:00:00Z").getTime();
 const IL_Y_A_UNE_HEURE = MAINTENANT - 3_600_000;

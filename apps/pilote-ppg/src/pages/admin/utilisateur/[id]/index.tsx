@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next/types";
 import Head from "next/head";
 import { FunctionComponent } from "react";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import PageUtilisateur from "@/components/PageUtilisateur/PageUtilisateur";
 import {
@@ -40,7 +40,7 @@ export async function getServerSideProps(
     return redirigerVersPageAccueil;
   }
 
-  const tokenAPIInformation = await getContainer("legacy")
+  const tokenAPIInformation = await getContainer("authentification")
     .resolve("recupererTokenAPIInformationUseCase")
     .run({ email: utilisateurDemandé.email })
     .then((tokenAPI) => {

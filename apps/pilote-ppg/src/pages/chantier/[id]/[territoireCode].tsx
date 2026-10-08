@@ -3,7 +3,7 @@ import Head from "next/head";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import { PageChantier } from "@/components/PageChantier/PageChantier";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerritoire";

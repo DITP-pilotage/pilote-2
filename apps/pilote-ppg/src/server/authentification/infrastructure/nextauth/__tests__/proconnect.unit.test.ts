@@ -1,9 +1,9 @@
-import { ErreurProConnect } from "@/server/infrastructure/api/auth/ErreurProConnect";
+import { ErreurProConnect } from "@/server/authentification/infrastructure/nextauth/ErreurProConnect";
 import {
   acrFromIdToken,
   decoderPayloadJwt,
   profilProConnectSchema,
-} from "@/server/infrastructure/api/auth/proconnect";
+} from "@/server/authentification/infrastructure/nextauth/proconnect";
 
 const encoderJwt = (payload: object): string => {
   const enBase64Url = (valeur: string) =>

@@ -8,7 +8,7 @@ import PageImportIndicateur from "@/components/PageImportIndicateur/PageImportIn
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { ChantierInformations } from "@/components/PageImportIndicateur/ChantierInformation.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import {
   presenterEnRapportContrat,
   RapportContrat,

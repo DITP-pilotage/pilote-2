@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { TRI_CHANTIERS_PAR_DEFAUT } from "@/server/chantiers/app/contrats/TriChantiers";
 import assert from "node:assert/strict";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Alerte from "@/server/domain/alerte/Alerte";

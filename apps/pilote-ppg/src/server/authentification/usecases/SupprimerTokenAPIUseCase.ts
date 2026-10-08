@@ -1,5 +1,5 @@
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/authentification/module";
 
 export class SupprimerTokenAPIUseCase {
   private tokenAPIInformationRepository: TokenAPIInformationRepository;

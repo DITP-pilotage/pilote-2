@@ -3,7 +3,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { createLoader, parseAsInteger } from "nuqs/server";
 import assert from "node:assert";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
 import { PageFicheConducteur } from "@/components/PageFicheConducteur/PageFicheConducteur";
 import { estAutoriséAConsulterLaFicheConducteur } from "@/client/utils/fiche-conducteur/fiche-conducteur";

@@ -2,7 +2,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { pageInstruction } from "@/components/PageInstruction/PageInstructionServerSideContext";
 import { FormulaireInstruction } from "@/components/PageInstruction/FormulaireInstruction";
 

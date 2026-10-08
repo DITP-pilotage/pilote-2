@@ -4,7 +4,7 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { FormulaireAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/FormulaireAutoEvaluationManieresDeServir";
 import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
 

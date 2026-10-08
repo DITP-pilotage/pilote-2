@@ -1,5 +1,5 @@
 import { type GetServerSideProps } from "next";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import PageRapportsHebdomadaires from "@/client/components/PageRapportsHebdomadaires/PageRapportsHebdomadaires";
 

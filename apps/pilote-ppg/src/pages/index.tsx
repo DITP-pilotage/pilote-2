@@ -2,7 +2,7 @@ import Head from "next/head";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { FunctionComponent } from "react";
 import { createLoader, parseAsString } from "nuqs/server";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
 const loadSearchParams = createLoader({
   callbackUrl: parseAsString,

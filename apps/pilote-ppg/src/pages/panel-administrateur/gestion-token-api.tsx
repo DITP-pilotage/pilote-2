@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { FunctionComponent } from "react";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import PageAdminGestionTokenAPI from "@/components/PageAdminGestionTokenAPI/PageAdminGestionTokenAPI";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 import { getContainer } from "@/server/dependances";
@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const listeTokenAPIInformation = await getContainer("legacy")
+  const listeTokenAPIInformation = await getContainer("authentification")
     .resolve("listerTokenAPIInformationUseCase")
     .run();
 

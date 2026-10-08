@@ -3,7 +3,7 @@ import {
   presenterEnTokenAPIInformationContrat,
   TokenAPIInformationContrat,
 } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/authentification/module";
 
 export class ListerTokenAPIInformationUseCase {
   private readonly tokenAPIInformationRepository: TokenAPIInformationRepository;

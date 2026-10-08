@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { stringify } from "csv-stringify";
 import { Options } from "csv-stringify/sync";
 import assert from "node:assert/strict";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { OptionsExportUtilisateur } from "@/server/gestion-utilisateur/domain/OptionsExportUtilisateur";
 import { getContainer } from "@/server/dependances";

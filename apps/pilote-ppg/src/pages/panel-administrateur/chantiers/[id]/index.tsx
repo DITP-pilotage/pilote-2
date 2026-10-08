@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { z } from "zod";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { getContainer } from "@/server/dependances";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";

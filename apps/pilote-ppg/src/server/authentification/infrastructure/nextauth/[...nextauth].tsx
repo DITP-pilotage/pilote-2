@@ -10,11 +10,11 @@ import { configuration } from "@/config";
 import {
   acrFromIdToken,
   proconnect,
-} from "@/server/infrastructure/api/auth/proconnect";
-import { PROVIDER_PROCONNECT } from "@/server/infrastructure/api/auth/ErreurProConnect";
+} from "@/server/authentification/infrastructure/nextauth/proconnect";
+import { PROVIDER_PROCONNECT } from "@/server/authentification/infrastructure/nextauth/ErreurProConnect";
 import { autoriserConnexionProConnect } from "@/server/authentification/domain/autoriserConnexionProConnect";
-import { sessionExpiree } from "@/server/infrastructure/api/auth/expirationSession";
-import { loggerAuthJs } from "@/server/infrastructure/api/auth/loggerAuthJs";
+import { sessionExpiree } from "@/server/authentification/infrastructure/nextauth/expirationSession";
+import { loggerAuthJs } from "@/server/authentification/infrastructure/nextauth/loggerAuthJs";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 
 export const keycloak = KeycloakProvider({
@@ -272,7 +272,7 @@ const credentialsProvider = CredentialsProvider({
       return null;
     }
     const { getContainer } = await import("@/server/dependances");
-    const utilisateurRepository = getContainer("legacy").resolve(
+    const utilisateurRepository = getContainer("authentification").resolve(
       "utilisateurRepository",
     );
     const utilisateur = await utilisateurRepository.récupérer(username);
@@ -436,7 +436,7 @@ export const authConfig: NextAuthConfig = {
     async session({ session, token }) {
       const piloteToken = toPiloteJWTPayload(token);
       const { getContainer } = await import("@/server/dependances");
-      const utilisateurRepository = getContainer("legacy").resolve(
+      const utilisateurRepository = getContainer("authentification").resolve(
         "utilisateurRepository",
       );
       const utilisateur = await utilisateurRepository.récupérer(
@@ -444,7 +444,7 @@ export const authConfig: NextAuthConfig = {
       );
 
       const profilRepository =
-        getContainer("legacy").resolve("profilRepository");
+        getContainer("authentification").resolve("profilRepository");
       const profil = await profilRepository.récupérer(utilisateur!.profil);
 
       logger.debug(

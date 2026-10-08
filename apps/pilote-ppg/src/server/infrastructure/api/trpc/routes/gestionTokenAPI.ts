@@ -18,7 +18,7 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
 
       habilitations.verifierAutorisationModificationTokenAPI();
 
-      return getContainer("legacy")
+      return getContainer("authentification")
         .resolve("creerTokenAPIUseCase")
         .run({ email: input.email });
     }),
@@ -32,7 +32,7 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
 
       habilitations.verifierAutorisationModificationTokenAPI();
 
-      return getContainer("legacy")
+      return getContainer("authentification")
         .resolve("supprimerTokenAPIUseCase")
         .run({ email: input.email });
     }),

@@ -5,7 +5,7 @@ import {
 } from "next";
 import Head from "next/head";
 import { FunctionComponent } from "react";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import PageAdminUtilisateurs from "@/components/PageAdminUtilisateurs/PageAdminUtilisateurs";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";

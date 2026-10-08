@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { DetailValidationFichier } from "@/server/import-indicateur/domain/DetailValidationFichier";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { configuration } from "@/config";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";

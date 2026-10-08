@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { PageMonProfilUtilisateur } from "@/components/PageMonProfilUtilisateur/PageMonProfilUtilisateur";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
 export default function NextPageMonProfilUtilisateur() {
   return (

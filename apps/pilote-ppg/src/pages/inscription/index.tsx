@@ -4,7 +4,7 @@ import Head from "next/head";
 import { getContainer } from "@/server/dependances";
 import ValidationInscription from "@/components/PageInscription/ValidationInscription";
 import ErreurInscription from "@/components/PageInscription/ErreurInscription";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
 export interface NextPageInscriptionProps {
   contactAjouterALaListe: boolean;

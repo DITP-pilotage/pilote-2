@@ -7,8 +7,6 @@ import CommentaireRepository from "@/server/domain/chantier/commentaire/Commenta
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
-import { UtilisateurRepository as AuthentificationUtilisateurRepository } from "@/server/authentification/domain/ports/UtilisateurRepository";
-import { ProfilRepository as AuthentificationProfilRepository } from "@/server/authentification/domain/ports/ProfilRepository";
 import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
 import { TerritoireRepository as FicheTerritorialeTerritoireRepository } from "@/server/fiche-territoriale/domain/ports/TerritoireRepository";
 import { ChantierRepository as FicheTerritorialeChantierRepository } from "@/server/fiche-territoriale/domain/ports/ChantierRepository";
@@ -19,8 +17,6 @@ import { IndicateurRepository as ChantierIndicateurRepository } from "@/server/c
 import ProfilRepository from "@/server/domain/profil/ProfilRepository";
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
 import { IndicateurRepository as ImportIndicateurRepository } from "@/server/import-indicateur/domain/ports/IndicateurRepository";
-import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
-import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
 import AxeSQLRepository from "@/server/infrastructure/accès_données/axe/AxeSQLRepository";
 import MinistèreSQLRepository from "@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository";
@@ -30,8 +26,6 @@ import CommentaireSQLRepository from "@/server/infrastructure/accès_données/ch
 import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
-import { PrismaUtilisateurRepository } from "@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository";
-import { PrismaProfilRepository } from "@/server/authentification/infrastructure/adapters/PrismaProfilRepository";
 import { TerritoireSQLRepository } from "@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository";
 import { PrismaTerritoireRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository";
 import { PrismaChantierRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository";
@@ -42,9 +36,6 @@ import { PrismaIndicateurRepository as PrismaChantierIndicateurRepository } from
 import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/ProfilSQLRepository";
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
 import { PrismaIndicateurRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository";
-import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
-import { PrismaTokenAPIInformationRepository } from "@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository";
-import { configuration } from "@/config";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
@@ -52,11 +43,6 @@ import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase fro
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { RécupérerTerritoiresAvecNombreUtilisateursUseCase } from "@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase";
-import { RecupererTokenAPIInformationUseCase } from "@/server/authentification/usecases/RecupererTokenAPIInformationUseCase";
-import { ListerTokenAPIInformationUseCase } from "@/server/authentification/usecases/ListerTokenAPIInformationUseCase";
-import { SupprimerTokenAPIUseCase } from "@/server/authentification/usecases/SupprimerTokenAPIUseCase";
-import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
-import { CreerTokenAPIUseCase } from "@/server/authentification/usecases/CreerTokenAPIUseCase";
 import { ListerDonneesIndicateurParIndicIdUseCase } from "@/server/chantiers/usecases/ListerDonneesIndicateurParIndicIdUseCase";
 import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTerritoireParCodeUseCase";
 import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
@@ -83,8 +69,6 @@ type LegacyOwnCradle = LegacyExport & {
   objectifRepository: ObjectifRepository;
   décisionStratégiqueRepository: DécisionStratégiqueRepository;
   utilisateurRepository: UtilisateurRepository;
-  authentificationUtilisateurRepository: AuthentificationUtilisateurRepository;
-  authentificationProfilRepository: AuthentificationProfilRepository;
   territoireRepository: TerritoireRepository;
   ficheTerritorialeTerritoireRepository: FicheTerritorialeTerritoireRepository;
   ficheTerritorialeChantierRepository: FicheTerritorialeChantierRepository;
@@ -95,19 +79,12 @@ type LegacyOwnCradle = LegacyExport & {
   profilRepository: ProfilRepository;
   rapportRepository: RapportRepository;
   importIndicateurRepository: ImportIndicateurRepository;
-  tokenAPIService: TokenAPIService;
-  tokenAPIInformationRepository: TokenAPIInformationRepository;
   recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
   récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase;
   récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase;
   récupérerUnUtilisateurUseCase: RécupérerUnUtilisateurUseCase;
   récupérerUnProfilUseCase: RécupérerUnProfilUseCase;
   récupérerTerritoiresAvecNombreUtilisateursUseCase: RécupérerTerritoiresAvecNombreUtilisateursUseCase;
-  recupererTokenAPIInformationUseCase: RecupererTokenAPIInformationUseCase;
-  listerTokenAPIInformationUseCase: ListerTokenAPIInformationUseCase;
-  supprimerTokenAPIUseCase: SupprimerTokenAPIUseCase;
-  utilisateurAuthentifieJWTService: UtilisateurAuthentifieJWTService;
-  creerTokenAPIUseCase: CreerTokenAPIUseCase;
   listerDonneesIndicateurParIndicIdUseCase: ListerDonneesIndicateurParIndicIdUseCase;
   récupérerTerritoireParCodeUseCase: RécupérerTerritoireParCodeUseCase;
   récupérerTauxAvancementTerritoireUseCase: RécupérerTauxAvancementTerritoireUseCase;
@@ -136,12 +113,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
         DécisionStratégiqueSQLRepository,
       ).scoped(),
       utilisateurRepository: asModuleClass(UtilisateurSQLRepository).scoped(),
-      authentificationUtilisateurRepository: asModuleClass(
-        PrismaUtilisateurRepository,
-      ).scoped(),
-      authentificationProfilRepository: asModuleClass(
-        PrismaProfilRepository,
-      ).scoped(),
       territoireRepository: asModuleClass(TerritoireSQLRepository).scoped(),
       ficheTerritorialeTerritoireRepository: asModuleClass(
         PrismaTerritoireRepository,
@@ -166,13 +137,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
       importIndicateurRepository: asModuleClass(
         PrismaIndicateurRepository,
       ).scoped(),
-      tokenAPIService: asModuleFunction(
-        () =>
-          new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
-      ).scoped(),
-      tokenAPIInformationRepository: asModuleClass(
-        PrismaTokenAPIInformationRepository,
-      ).scoped(),
       recupererRepartitionsMeteoChantiersUseCase: asModuleClass(
         RecupererRepartitionsMeteoChantiersUseCase,
       ).scoped(),
@@ -195,39 +159,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
       ).scoped(),
       récupérerTerritoiresAvecNombreUtilisateursUseCase: asModuleClass(
         RécupérerTerritoiresAvecNombreUtilisateursUseCase,
-      ).scoped(),
-      recupererTokenAPIInformationUseCase: asModuleClass(
-        RecupererTokenAPIInformationUseCase,
-      ).scoped(),
-      listerTokenAPIInformationUseCase: asModuleClass(
-        ListerTokenAPIInformationUseCase,
-      ).scoped(),
-      supprimerTokenAPIUseCase: asModuleClass(
-        SupprimerTokenAPIUseCase,
-      ).scoped(),
-      utilisateurAuthentifieJWTService: asModuleFunction(
-        ({
-          utilisateurRepository,
-          tokenAPIInformationRepository,
-          authentificationProfilRepository,
-        }) =>
-          new UtilisateurAuthentifieJWTService({
-            utilisateurRepository,
-            tokenAPIRepository: tokenAPIInformationRepository,
-            profilRepository: authentificationProfilRepository,
-          }),
-      ).scoped(),
-      creerTokenAPIUseCase: asModuleFunction(
-        ({
-          tokenAPIService,
-          tokenAPIInformationRepository,
-          authentificationUtilisateurRepository,
-        }) =>
-          new CreerTokenAPIUseCase({
-            tokenAPIService,
-            tokenAPIInformationRepository,
-            utilisateurRepository: authentificationUtilisateurRepository,
-          }),
       ).scoped(),
       listerDonneesIndicateurParIndicIdUseCase: asModuleFunction(
         ({ chantierIndicateurRepository }) =>

@@ -1,3 +1,3 @@
-import { handlers } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { handlers } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
 export const { GET, POST } = handlers;

@@ -4,7 +4,7 @@ import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configuration } from "@/config";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
 import { ContenuPageNoteCollective } from "@/components/PageNoteCollective/PageNoteCollective";
 

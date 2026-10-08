@@ -10,7 +10,7 @@ export const recupererUtilisateurAuthentifieOpenApi = (
 ): Promise<UtilisateurAuthentifie> => {
   const token = (request.headers["authorization"] || "").split(" ")[1];
 
-  return getContainer("legacy")
+  return getContainer("authentification")
     .resolve("utilisateurAuthentifieJWTService")
     .recupererUtilisateurAuthentifie(token);
 };
