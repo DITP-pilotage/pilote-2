@@ -29,6 +29,7 @@ import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
 import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { legacyModule } from "./legacy/module";
 import { gestionContenuModule } from "./gestion-contenu/module";
+import { ficheTerritorialeModule } from "./fiche-territoriale/module";
 import { actualitesModule } from "./actualites/module";
 import { mbSyncModule } from "./mb-sync/module";
 import { metadataChantierModule } from "./metadataChantier/module";
@@ -64,6 +65,7 @@ const allModules = [
   datajobsExecutionModule,
   legacyModule,
   gestionContenuModule,
+  ficheTerritorialeModule,
   applicationLogModule,
   actualitesModule,
   mbSyncModule,
@@ -118,6 +120,7 @@ function registerContainer(): ContainerDependencies {
     datajobsExecution: getContainer("datajobsExecution"),
     legacy: getContainer("legacy"),
     gestionContenu: getContainer("gestionContenu"),
+    ficheTerritoriale: getContainer("ficheTerritoriale"),
     applicationLog: getContainer("applicationLog"),
     actualites: getContainer("actualites"),
     mbSync: getContainer("mbSync"),

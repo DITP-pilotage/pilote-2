@@ -11,22 +11,22 @@ export const ficheTerritorialeHandler = () => {
     jalon: number,
   ): Promise<FicheTerritorialeContrat> => {
     const territoire = presenterEnTerritoireContrat(
-      await getContainer("legacy")
+      await getContainer("ficheTerritoriale")
         .resolve("récupérerTerritoireParCodeUseCase")
         .run({ territoireCode: territoireCode as string }),
     );
 
-    const avancementTerritoire = await getContainer("legacy")
+    const avancementTerritoire = await getContainer("ficheTerritoriale")
       .resolve("récupérerTauxAvancementTerritoireUseCase")
       .run({ territoireCode, jalon })
       .then(presenterEnTauxAvancementAnnuelTerritoireContrat);
 
-    const répartitionMétéos = await getContainer("legacy")
+    const répartitionMétéos = await getContainer("ficheTerritoriale")
       .resolve("récupérerRépartitionMétéoUseCase")
       .run({ territoireCode, jalon })
       .then(presenterEnRépartitionsMétéosContrat);
 
-    const chantiersFicheTerritoriale = await getContainer("legacy")
+    const chantiersFicheTerritoriale = await getContainer("ficheTerritoriale")
       .resolve("récupérerListeChantierFicheTerritorialeUseCase")
       .run({ territoireCode, jalon })
       .then((result) =>
