@@ -5,7 +5,7 @@ import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain
 import { logger } from "@/server/framework/logger";
 import { supprimerLeFichier } from "@/server/import-indicateur/infrastructure/adapters/FichierService";
 import { createValidationImportMetadataIndicateurFormulaire } from "@/validation/metadata-indicateur";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
 import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import type { Inject } from "@/server/parametrage-indicateur/module";

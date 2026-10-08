@@ -7,7 +7,7 @@ import {
 } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { Axe } from "@/shared/axe/Axe.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import {
   ChantierAccueilContratV2,

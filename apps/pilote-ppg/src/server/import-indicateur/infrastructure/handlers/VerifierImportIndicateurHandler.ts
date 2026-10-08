@@ -7,7 +7,7 @@ import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailVali
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { configuration } from "@/config";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 import type { Inject } from "@/server/import-indicateur/module";
 

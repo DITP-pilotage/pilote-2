@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/referentiels/module";
 import { CheckPerimetreUsageQuery } from "@/server/referentiels/perimetre/queries/CheckPerimetreUsageQuery";
-import { ConflictError } from "@/server/app/error-boundary/conflict-error";
+import { ConflictError } from "@/shared/errors/conflict-error";
 
 export class ArchivePerimetreHandler {
   private readonly prisma: PrismaPilote;

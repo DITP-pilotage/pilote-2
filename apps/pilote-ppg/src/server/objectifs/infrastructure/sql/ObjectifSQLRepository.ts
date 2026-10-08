@@ -6,7 +6,7 @@ import {
   TypeObjectif,
 } from "@/shared/chantier/objectif/Objectif.interface";
 import { Chantier } from "@/shared/chantier/Chantier.interface";
-import { groupByAndTransform } from "@/client/utils/arrays";
+import { groupByAndTransform } from "@/utils/arrays";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {

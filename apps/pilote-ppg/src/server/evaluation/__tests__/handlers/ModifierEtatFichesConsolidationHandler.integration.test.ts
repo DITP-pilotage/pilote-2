@@ -4,7 +4,7 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { ModifierEtatFichesConsolidationHandler } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { NotificationEmailService } from "@/server/evaluation/services/NotificationEmailService";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 

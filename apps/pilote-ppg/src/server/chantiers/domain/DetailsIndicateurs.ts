@@ -1,6 +1,9 @@
+import {
+  PropositionStatutDirectionProjet,
+  PropositionStatutTerritoire,
+} from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Avancement } from "@/shared/chantier/avancement/Avancement.interface";
 import { CodeInsee } from "@/shared/territoire/Territoire.interface";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 export type DetailsIndicateurTerritoire = Record<CodeInsee, DetailsIndicateur>;
 export type DetailsIndicateurs = Record<string, DetailsIndicateurTerritoire>;
@@ -46,23 +49,8 @@ export type DetailsIndicateur = {
   dateValeurCibleAnnuelle: string | null;
   avancement: Avancement;
   proposition: DetailIndicateurPropositionValeurAvancement | null;
-  propositionStatutTerritoire: {
-    statut:
-      | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
-      | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE
-      | EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE;
-    date: string;
-    dateTime: string;
-  } | null;
-  propositionStatutDirectionProjet: {
-    statut:
-      | EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE
-      | EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION
-      | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE
-      | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION;
-    date: string;
-    dateTime: string;
-  } | null;
+  propositionStatutTerritoire: PropositionStatutTerritoire;
+  propositionStatutDirectionProjet: PropositionStatutDirectionProjet;
   unite: string | null;
   estApplicable: boolean | null;
   dateImport: string | null;

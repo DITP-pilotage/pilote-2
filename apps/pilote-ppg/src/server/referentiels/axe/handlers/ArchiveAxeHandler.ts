@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/referentiels/module";
 import { CheckAxeUsageQuery } from "@/server/referentiels/axe/queries/CheckAxeUsageQuery";
-import { ConflictError } from "@/server/app/error-boundary/conflict-error";
+import { ConflictError } from "@/shared/errors/conflict-error";
 
 export class ArchiveAxeHandler {
   private readonly prisma: PrismaPilote;

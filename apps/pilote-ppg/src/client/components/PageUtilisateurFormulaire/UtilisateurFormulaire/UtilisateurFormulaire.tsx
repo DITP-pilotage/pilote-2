@@ -14,7 +14,7 @@ import { api } from "@/server/framework/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { useEnv } from "@/client/hooks/useEnv";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import {
   UtilisateurFormInputs,
   UtilisateurFormulaireContainerProps,

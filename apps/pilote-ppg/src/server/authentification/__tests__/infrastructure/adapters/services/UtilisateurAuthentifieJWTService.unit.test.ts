@@ -6,7 +6,7 @@ import { HabilitationAuthentitificationAPIBuilder } from "@/server/authentificat
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
 import { ProfilRepository } from "@/server/authentification/domain/ports/ProfilRepository";
 import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { configuration } from "@/config";
 

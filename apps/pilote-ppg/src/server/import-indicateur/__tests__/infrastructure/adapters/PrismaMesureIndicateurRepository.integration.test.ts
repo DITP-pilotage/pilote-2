@@ -4,7 +4,7 @@ import { IndicateurDataBuilder } from "@/server/import-indicateur/app/builder/In
 import { UtilisateurÀCréerOuMettreÀJourBuilder } from "@/test/builders/UtilisateurACreerOuMettreAJour.builder";
 import { DetailValidationFichierBuilder } from "@/server/import-indicateur/app/builder/DetailValidationFichier.builder";
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { createIntegrationTest } from "@/test/createIntegrationTest";

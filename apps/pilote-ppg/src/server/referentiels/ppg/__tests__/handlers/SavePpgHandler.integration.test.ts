@@ -3,7 +3,7 @@ import { SavePpgHandler } from "@/server/referentiels/ppg/handlers/SavePpgHandle
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 
 describe("SavePpgHandler", () => {
   let handler: SavePpgHandler;

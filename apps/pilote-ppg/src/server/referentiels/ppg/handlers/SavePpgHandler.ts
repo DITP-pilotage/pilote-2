@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/referentiels/module";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 
 export const ppgCommandSchema = z.object({
   ppgId: z.string().min(1),

@@ -4,7 +4,7 @@ import { CheckZonegroupUsageQuery } from "@/server/referentiels/zonegroup/querie
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { ConflictError } from "@/server/app/error-boundary/conflict-error";
+import { ConflictError } from "@/shared/errors/conflict-error";
 
 describe("ArchiveZonegroupHandler", () => {
   let handler: ArchiveZonegroupHandler;

@@ -1,7 +1,7 @@
 import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { Alerte } from "@/shared/alerte/Alerte";
 import { ChantierTendance } from "@/shared/chantier/Chantier.interface";
 

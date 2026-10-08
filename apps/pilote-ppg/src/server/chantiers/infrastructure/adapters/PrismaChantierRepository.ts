@@ -6,7 +6,7 @@ import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 import {
   ProfilCode,
   profilsTerritoriaux,

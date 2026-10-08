@@ -9,7 +9,7 @@ import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/Ch
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 import { logger } from "@/server/framework/logger";
 

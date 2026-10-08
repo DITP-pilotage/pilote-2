@@ -3,7 +3,7 @@ import { ProfilRepository } from "@/server/authentification/domain/ports/ProfilR
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
-import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
+import { ForbiddenError } from "@/shared/errors/forbidden-error";
 import { configuration } from "@/config";
 import { logger } from "@/server/framework/logger";
 

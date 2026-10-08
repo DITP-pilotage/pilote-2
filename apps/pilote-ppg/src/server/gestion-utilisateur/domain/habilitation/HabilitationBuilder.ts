@@ -1,7 +1,7 @@
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { Habilitations } from "@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 export class HabilitationBuilder {
   private readonly _habilitations: Habilitations;

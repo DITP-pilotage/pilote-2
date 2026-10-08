@@ -9,7 +9,7 @@ import {
   ImportDonneeIndicateurAPIContrat,
 } from "@/server/import-indicateur/app/contrats/DataImportDonneeIndicateurAPIContrat";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 import { isENOENTError } from "@/server/utils/errors";

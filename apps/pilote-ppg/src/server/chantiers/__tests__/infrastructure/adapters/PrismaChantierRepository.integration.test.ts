@@ -1,5 +1,5 @@
 import { chantier_territoire_jalon } from "@prisma/client";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";

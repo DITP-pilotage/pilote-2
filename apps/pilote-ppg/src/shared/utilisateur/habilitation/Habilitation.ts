@@ -9,8 +9,8 @@ import {
   TerritoireNonAutoriséErreur,
   TerritoiresNonAutorisésCreationModificationUtilisateurErreur,
   TerritoiresNonAutorisésSuppressionUtilisateurErreur,
-} from "@/server/utils/errors";
-import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from "@/client/utils/arrays";
+} from "@/shared/errors/authorization-errors";
+import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from "@/utils/arrays";
 import { Profil } from "@/shared/profil/Profil.interface";
 import { Habilitations } from "./Habilitation.interface";
 

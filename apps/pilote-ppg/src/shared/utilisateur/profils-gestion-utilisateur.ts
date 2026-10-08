@@ -1,5 +1,5 @@
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
+import { Profil } from "@/shared/profil/Profil.interface";
 
 export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
   if (profil) {

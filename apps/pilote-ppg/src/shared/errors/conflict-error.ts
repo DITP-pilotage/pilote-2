@@ -1,4 +1,4 @@
-import { PiloteError } from "@/server/app/error-boundary/pilote-error";
+import { PiloteError } from "@/shared/errors/pilote-error";
 
 export class ConflictError extends PiloteError {
   constructor(message: string) {

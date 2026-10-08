@@ -2,7 +2,7 @@ import {
   Indicateur,
   libellesTypeIndicateur,
 } from "@/shared/indicateur/Indicateur.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 export const libellesTypologieIndicateur = libellesTypeIndicateur;
 

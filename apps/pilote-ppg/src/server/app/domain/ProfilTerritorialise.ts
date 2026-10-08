@@ -1,4 +1,4 @@
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 export const LISTE_PROFIL_TERRITORIALISE = [
   ProfilEnum.COORDINATEUR_REGION,

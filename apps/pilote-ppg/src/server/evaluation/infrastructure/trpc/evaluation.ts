@@ -4,7 +4,7 @@ import {
   protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
-import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
+import { ForbiddenError } from "@/shared/errors/forbidden-error";
 import { enregistrerEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
 import { modifierEtatFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";

@@ -1,5 +1,5 @@
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
-import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { EmailManager } from "@/server/framework/email";
 
 export class BrevoContactInfoLettresService implements ContactInfoLettresService {

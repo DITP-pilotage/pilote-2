@@ -5,7 +5,7 @@ import {
   TypeCommentaireChantier,
 } from "@/shared/chantier/commentaire/Commentaire.interface";
 import { Chantier } from "@/shared/chantier/Chantier.interface";
-import { groupByAndTransform } from "@/client/utils/arrays";
+import { groupByAndTransform } from "@/utils/arrays";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 

@@ -3,7 +3,7 @@ import { anyString } from "vitest-mock-extended";
 import { UtilisateurÀCréerOuMettreÀJourBuilder } from "@/test/builders/UtilisateurACreerOuMettreAJour.builder";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/test/NextAuthHelper";
 import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";

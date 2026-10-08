@@ -10,11 +10,11 @@ import { CODES_MAILLES } from "@/shared/maille/mailleSQLParser";
 import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Maille } from "@/shared/maille/Maille.interface";
 import { CodeInsee } from "@/shared/territoire/Territoire.interface";
-import { groupByAndTransform } from "@/client/utils/arrays";
+import { groupByAndTransform } from "@/utils/arrays";
 import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
   calculerDateDernierImport,
