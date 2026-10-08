@@ -12,7 +12,7 @@ export const EtapePerimetreExport = () => {
 
   return (
     <div>
-      <p className="fr-mb-1w">Précisez le périmètre de votre export :</p>
+      <p className="mb-2">Précisez le périmètre de votre export :</p>
       <RadioGroup.Root
         name="ressource-à-exporter"
         onValueChange={(valeur) =>
@@ -32,15 +32,15 @@ export const EtapePerimetreExport = () => {
           value="indicateurs"
         />
       </RadioGroup.Root>
-      <div className="w-full flex justify-end fr-mt-2w">
+      <div className="mt-4 flex w-full items-center justify-end">
         <Modale.Close asChild>
-          <button
-            className="fr-link fr-mr-2w"
+          <Button
+            className="mr-4"
             title="Fermer la fenêtre modale"
-            type="button"
+            variant="link"
           >
             Annuler
-          </button>
+          </Button>
         </Modale.Close>
         <Button
           variant="secondary"

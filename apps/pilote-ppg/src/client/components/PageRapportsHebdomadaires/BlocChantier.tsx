@@ -7,6 +7,7 @@ import {
   type SectionChantier,
   type TypeValeurIndicateur,
 } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
+import { TextLink } from "@/components/shared/TextLink";
 
 const formatterTypeValeur = (typeValeur: TypeValeurIndicateur): string => {
   switch (typeValeur) {
@@ -29,15 +30,16 @@ export const BlocChantier = ({
   return (
     <Bloc contenuClassesSupplémentaires="!p-0">
       <div className="p-4 flex items-baseline gap-3">
-        <h3 className="fr-text--lg fr-mb-0">
+        <h3 className="mb-0 text-lg">
           {chantier.id} - {chantier.nom}
         </h3>
-        <a
-          className="fr-link fr-text--sm shrink-0"
+        <TextLink
+          className="shrink-0"
           href={`/chantier/${chantier.id}/${territoireCode}`}
+          size="sm"
         >
           Voir le chantier
-        </a>
+        </TextLink>
       </div>
       <Accordion.Root type="multiple">
         {chantier.indicateurs.map((indicateur) => (

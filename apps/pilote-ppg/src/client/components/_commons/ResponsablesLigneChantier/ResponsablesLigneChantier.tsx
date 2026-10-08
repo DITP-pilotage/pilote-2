@@ -3,6 +3,7 @@ import Link from "next/link";
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
+import { TextLink } from "@/components/shared/TextLink";
 
 interface Responsable {
   nom: string;
@@ -49,16 +50,17 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
           <div className="fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end max-[450px]:items-end print:hidden">
             <div className="flex align-start">
               <Icone
-                className="fr-mr-1v fr-text-title--blue-france"
+                className="mr-1 text-dsfr-blue-france-sun-113"
                 icone={EnveloppeContourIcon}
               />
-              <Link
-                className="fr-link fr-link--sm"
-                href={`mailto:${libelleEmailsResponsables}?subject=${objetCourriel}`}
-                title={`Contacter ${libelleEmailsResponsables}`}
-              >
-                Contacter
-              </Link>
+              <TextLink asChild size="sm">
+                <Link
+                  href={`mailto:${libelleEmailsResponsables}?subject=${objetCourriel}`}
+                  title={`Contacter ${libelleEmailsResponsables}`}
+                >
+                  Contacter
+                </Link>
+              </TextLink>
             </div>
           </div>
         ) : null}

@@ -52,15 +52,15 @@ La bibliothèque DSFR doit disparaître (lot F) : aucun lot ne doit écrire du c
 
 ## Lot B — dernières primitives client (S–M, stack de 4 PR)
 
-- [ ] **B1. Cases à cocher → `shared/Checkbox`** (M). `fr-checkbox-group` brut et `fr-input` associés dans :
+- [x] **B1. Cases à cocher → `shared/Checkbox`** (fait : #2533, `shared/Checkbox` DSFR + `CheckboxField`) (M). `fr-checkbox-group` brut et `fr-input` associés dans :
   - `PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple.tsx`, `FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean.tsx` ;
   - `PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeChantierACollecter.tsx`, `EtapeDonneeHistoriqueIndicateurACollecter.tsx`, `EtapeDonneeIndicateurACollecter.tsx` ;
   - `PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre.tsx` ;
   - `_commons/CaseACocher/CaseACocher.tsx` (à supprimer une fois ses 3 importeurs migrés).
 
   Recette : filtres de `/accueil/chantier/NAT-FR`, modale d'export jusqu'au téléchargement, consentement de l'infolettre.
-- [ ] **B2. Indicateur d'étapes sans `fr-stepper`** (S). `_commons/IndicateurDEtapes/IndicateurDEtapes.tsx` réécrit en Tailwind, puis les 4 modales de proposition de valeur qui posent `fr-stepper` à la main passent dessus : `ModalePropositionValeurAvancement`, `ModaleAccepterPropositionValeurAvancement`, `ModaleAccuserReceptionPropositionValeurAvancement`, `ModaleSuppressionValeurAvancement` (dans `_commons/IndicateursChantier/Bloc/`). Recette : les 4 modales sur une page chantier régionale.
-- [ ] **B3. Liens `fr-link` → `shared/Button` (variante lien)** (S). 12 fichiers : 6 étapes de `ExportDesDonnees/`, `PageConnexion/PageConnexion.tsx`, `PageImportIndicateur/PageImportIndicateurSectionRessource/…`, `PageRapportsHebdomadaires/BlocChantier.tsx`, `IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications.tsx`, `_commons/MiseEnPage/MiseEnPage.tsx`, `_commons/ResponsablesLigneChantier/ResponsablesLigneChantier.tsx`. Le `fr-btn` restant de `MiseEnPage.tsx` suit.
+- [x] **B2. Indicateur d'étapes sans `fr-stepper`** (fait : #2534, `shared/StepIndicator`) (S). `_commons/IndicateurDEtapes/IndicateurDEtapes.tsx` réécrit en Tailwind, puis les 4 modales de proposition de valeur qui posent `fr-stepper` à la main passent dessus : `ModalePropositionValeurAvancement`, `ModaleAccepterPropositionValeurAvancement`, `ModaleAccuserReceptionPropositionValeurAvancement`, `ModaleSuppressionValeurAvancement` (dans `_commons/IndicateursChantier/Bloc/`). Recette : les 4 modales sur une page chantier régionale.
+- [x] **B3. Liens `fr-link` → `shared/Button` (variante lien)** (fait : liens de navigation sur `shared/TextLink`, actions « Annuler » sur `Button variant="link"` ; la règle d'impression de `MiseEnPage` reste tant que Pilote Eval utilise `fr-btn` / `fr-link`) (S). 12 fichiers : 6 étapes de `ExportDesDonnees/`, `PageConnexion/PageConnexion.tsx`, `PageImportIndicateur/PageImportIndicateurSectionRessource/…`, `PageRapportsHebdomadaires/BlocChantier.tsx`, `IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications.tsx`, `_commons/MiseEnPage/MiseEnPage.tsx`, `_commons/ResponsablesLigneChantier/ResponsablesLigneChantier.tsx`. Le `fr-btn` restant de `MiseEnPage.tsx` suit.
 - [ ] **B4. Chargement, onglets, barre de territoire** (S) :
   - `shared/Skeleton` et `shared/Spinner`, à la place de `_commons/Loader`, `Squelette`, `PointsAttente` (5 importeurs : tableaux admin indicateurs, annuaire, tableau admin, historique d'une valeur, `MiseEnPage`) ; `ChatUI/DashboardLoader` et `CarteNewsletterSkeleton` s'appuient dessus ;
   - `shared/Tabs` (radix), à la place de `_commons/NavigationTertiaire` (3 importeurs : édition d'un chantier, annuaire, panneau Albert) ;
