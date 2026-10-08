@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import clsx from "clsx";
 import { Infobulle } from "@/components/shared/Infobulle";
-import Titre from "@/components/_commons/Titre/Titre";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 
 export const TitreRubrique: FunctionComponent<{
@@ -17,12 +16,9 @@ export const TitreRubrique: FunctionComponent<{
 }) => {
   return (
     <TitreInfobulleConteneur>
-      <Titre
-        baliseHtml="h2"
-        className={clsx("fr-text--lg fr-ml-md-0", classNameTitre)}
-      >
+      <h2 className={clsx("text-lg md:ml-0", classNameTitre)}>
         {`${rubriqueNom} (${nombreIndicateurRubrique})`}
-      </Titre>
+      </h2>
       {rubriqueDescription ? (
         <Infobulle>{rubriqueDescription}</Infobulle>
       ) : null}

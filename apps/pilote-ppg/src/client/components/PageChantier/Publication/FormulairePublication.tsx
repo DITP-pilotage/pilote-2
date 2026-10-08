@@ -1,6 +1,5 @@
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/shared/Button";
-import Titre from "@/components/_commons/Titre/Titre";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
@@ -40,9 +39,9 @@ export const FormulairePublication = <T extends PublicationValues>({
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onModifier)}>
         <div className="flex items-center gap-2 fr-mb-1v">
-          <Titre baliseHtml="h3" className="text-xl mb-0">
+          <h3 className="text-xl mb-0">
             {`Modifier le commentaire "${libelle}"`}
-          </Titre>
+          </h3>
           <Infobulle classNameIcone="w-5 h-5">{consigne}</Infobulle>
         </div>
         {publication ? (

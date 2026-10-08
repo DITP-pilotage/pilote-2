@@ -1,7 +1,6 @@
 import { FunctionComponent, useState } from "react";
 import { Button } from "@/components/shared/Button";
 import AdminIndicateurBarreLatérale from "@/components/PageAdminIndicateurs/AdminIndicateurBarreLatérale";
-import Titre from "@/components/_commons/Titre/Titre";
 import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import TableauAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs";
 import usePageAdminIndicateurs from "@/components/PageAdminIndicateurs/UsePageAdminIndicateurs";
@@ -20,9 +19,9 @@ const PageAdminIndicateurs: FunctionComponent = () => {
         <main className="fr-container--fluid fr-p-2w">
           <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-2w">
             <div className="fr-col-12 fr-col-md-9">
-              <Titre baliseHtml="h1" className="fr-h1 fr-mb-0">
+              <h1 className="text-h1 md:text-h1-md mb-0">
                 Gestion des paramètres des indicateurs
-              </Titre>
+              </h1>
             </div>
             <div className="fr-col-12 fr-col-md-3 flex items-end justify-end max-[576px]:justify-center">
               <Button

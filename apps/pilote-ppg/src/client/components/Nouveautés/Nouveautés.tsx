@@ -7,7 +7,6 @@ import {
   CLASSES_INTERIEUR_ACCORDEON_DSFR,
   CLASSES_ITEM_ACCORDEON_DSFR,
 } from "@/components/shared/Accordion";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { useNouveautés } from "./useNouveautés";
 
@@ -19,19 +18,19 @@ const Nouveautés: FunctionComponent = () => {
       <main>
         <div className="fr-container fr-pb-2w">
           <div className="fr-grid-row fr-py-4w">
-            <Titre baliseHtml="h1" className="fr-my-auto">
-              Nouveautés
-            </Titre>
+            <h1 className="my-auto">Nouveautés</h1>
           </div>
           {!estChargementListeNouveautes ? (
             <Bloc>
               {!listeNouveautes || listeNouveautes.length === 0 ? (
-                <h2 className="fr-h3">Aucune nouveautés sur le projet</h2>
+                <h2 className="text-h3 md:text-h3-md">
+                  Aucune nouveautés sur le projet
+                </h2>
               ) : (
                 <>
                   <div className="fr-grid-row">
                     <div className="fr-col-12">
-                      <h2 className="fr-h3">
+                      <h2 className="text-h3 md:text-h3-md">
                         Version{" "}
                         {`${listeNouveautes[0].version} du ${new Date(listeNouveautes[0].date).toLocaleDateString("fr-FR")}`}
                       </h2>
@@ -54,7 +53,7 @@ const Nouveautés: FunctionComponent = () => {
                           key={`nouveauté-${element.date}-${element.id}`}
                         >
                           <div className="fr-col-12">
-                            <h2 className="fr-h3">
+                            <h2 className="text-h3 md:text-h3-md">
                               Version{" "}
                               {`${element.version} du ${new Date(element.date).toLocaleDateString("fr-FR")}`}
                             </h2>

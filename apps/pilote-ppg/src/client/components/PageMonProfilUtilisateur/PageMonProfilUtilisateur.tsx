@@ -5,7 +5,6 @@ import { Button } from "@/components/shared/Button";
 import { useState } from "react";
 import { z } from "zod";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Titre from "@/components/_commons/Titre/Titre";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
@@ -129,9 +128,9 @@ export const PageMonProfilUtilisateur = () => {
     <div className="bg-dsfr-alt-blue-france">
       <div className="fr-container py-10">
         <div className="flex flex-col gap-6">
-          <Titre baliseHtml="h1" className="fr-h1 text-primary fr-mt-4w mb-0">
+          <h1 className="text-h1 md:text-h1-md text-primary mt-8 mb-0">
             Mon profil utilisateur
-          </Titre>
+          </h1>
 
           {alerte ? <Alerte {...alerte} /> : null}
 

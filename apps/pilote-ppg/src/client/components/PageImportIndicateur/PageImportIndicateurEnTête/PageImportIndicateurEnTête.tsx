@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
-import Titre from "@/components/_commons/Titre/Titre";
 import { ChantierInformations } from "@/client/components/PageImportIndicateur/ChantierInformation.interface";
 
 interface PageImportIndicateurEnTêteProps {
@@ -18,9 +17,9 @@ const PageImportIndicateurEnTête: FunctionComponent<
           chemin={[{ nom: "Chantier", lien: hrefBoutonRetour }]}
           libelléPageCourante="Indicateurs"
         />
-        <Titre baliseHtml="h1" className="fr-h2 fr-mt-2w fr-mb-1w">
+        <h1 className="text-h2 md:text-h2-md mt-4 mb-2">
           {chantierInformations.nom}
-        </Titre>
+        </h1>
       </div>
     </header>
   );

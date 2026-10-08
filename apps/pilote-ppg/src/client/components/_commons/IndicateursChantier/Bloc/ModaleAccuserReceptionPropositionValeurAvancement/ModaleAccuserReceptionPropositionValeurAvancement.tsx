@@ -85,7 +85,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
               {etapeAccuserReception ===
               EtapeAccuserReception.EXAMEN_PROPOSITION ? (
                 <>
-                  <h2 className="fr-h4">
+                  <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
                   <p className="fr-text fr-text--sm fr-mb-1w">

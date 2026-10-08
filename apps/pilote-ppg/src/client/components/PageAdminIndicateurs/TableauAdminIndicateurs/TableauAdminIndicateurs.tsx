@@ -3,7 +3,6 @@ import { Button } from "@/components/shared/Button";
 import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
 import { SearchInput } from "@/components/shared/SearchInput";
 import Loader from "@/components/_commons/Loader/Loader";
-import Titre from "@/components/_commons/Titre/Titre";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -68,15 +67,12 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
           <div className="fr-container--fluid fr-mb-2w fr-mt-4w">
             <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-md-6">
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-text-title--blue-france"
-                >
+                <h2 className="text-h4 md:text-h4-md mb-0 text-dsfr-blue-france-sun-113">
                   {table.getFilteredRowModel().rows.length}{" "}
                   {table.getFilteredRowModel().rows.length > 1
                     ? "indicateurs"
                     : "indicateur"}
-                </Titre>
+                </h2>
               </div>
               <div className="fr-col-12 fr-col-md-6 flex justify-center min-[576px]:justify-start min-[1050px]:justify-end">
                 <Button

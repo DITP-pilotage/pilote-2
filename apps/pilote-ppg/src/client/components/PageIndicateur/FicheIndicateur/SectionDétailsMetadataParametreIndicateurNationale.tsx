@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
@@ -45,9 +44,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
 
   return (
     <div>
-      <Titre baliseHtml="h2" className="fr-h5">
-        Maille nationale
-      </Titre>
+      <h2 className="text-h5 md:text-h5-md">Maille nationale</h2>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataChamp

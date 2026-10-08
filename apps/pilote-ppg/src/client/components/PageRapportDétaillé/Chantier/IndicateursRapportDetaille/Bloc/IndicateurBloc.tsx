@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Titre from "@/components/_commons/Titre/Titre";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
 import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
@@ -51,10 +50,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
         <section>
           <div className="flex justify-between">
             <div>
-              <Titre
-                baliseHtml="h4"
-                className="fr-text--xl fr-mb-1w flex gap-2 items-center"
-              >
+              <h4 className="fr-text--xl mb-2 flex gap-2 items-center">
                 {indicateur.estIndicateurDuBaromètre ? (
                   <PictoBaromètre />
                 ) : null}
@@ -62,7 +58,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   (indicateur.unité === null || indicateur.unité === ""
                     ? ""
                     : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
-              </Titre>
+              </h4>
               <div className="fr-ml-2w fr-mb-3w">
                 <p className="fr-mb-0 fr-text--xs !text-dsfr-mention-grey">
                   Dernière mise à jour de la valeur d'avancement pour le
