@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
+import { Button } from "@/components/shared/Button";
 import { SubmitHandler } from "react-hook-form";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/shared/Infobulle";
@@ -62,12 +62,12 @@ export const PublicationModalButton = <T extends PublicationValues>({
       open={open}
       title={`Nouveau commentaire "${libelle}"`}
       trigger={
-        <Bouton
+        <Button
           aria-label={hasDraft ? undefined : ariaLabel}
           iconLeft={
             <Icone className="text-current h-4 w-4" icone={Icone1Icon} />
           }
-          iconRight={
+          addon={
             <Infobulle classNameIcone="w-5 h-5">
               {hasDraft
                 ? "Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez pas publié. Vous pouvez éditer ce nouveau commentaire pour le publier ou le conserver en tant que brouillon."
@@ -77,9 +77,10 @@ export const PublicationModalButton = <T extends PublicationValues>({
               l'historique des commentaires.
             </Infobulle>
           }
-          label={hasDraft ? "Editer un brouillon" : "Nouveau commentaire"}
           variant="secondary"
-        />
+        >
+          {hasDraft ? "Editer un brouillon" : "Nouveau commentaire"}
+        </Button>
       }
     />
   );

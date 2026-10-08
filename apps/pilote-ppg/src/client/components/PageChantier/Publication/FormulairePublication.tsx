@@ -1,9 +1,9 @@
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "@/components/shared/Button";
 import Titre from "@/components/_commons/Titre/Titre";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Infobulle } from "@/components/shared/Infobulle";
 import {
@@ -55,22 +55,24 @@ export const FormulairePublication = <T extends PublicationValues>({
           maxLength={formConfig.maxLength}
         />
         <div className="flex justify-end fr-mt-2w">
-          <Bouton
+          <Button
             className="mr-3"
             disabled={!form.formState.isValid}
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
             }
-            label="Valider"
             type="submit"
             variant="primary"
-          />
-          <Bouton
+          >
+            Valider
+          </Button>
+          <Button
             iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
-            label="Annuler"
             onClick={annulationCallback}
             variant="secondary"
-          />
+          >
+            Annuler
+          </Button>
         </div>
       </form>
     </FormProvider>

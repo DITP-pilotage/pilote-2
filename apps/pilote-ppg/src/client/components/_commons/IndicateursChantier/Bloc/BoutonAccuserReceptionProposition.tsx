@@ -1,6 +1,6 @@
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { Button } from "@/components/shared/Button";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
-import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleAccuserReceptionPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { Mail1Icon } from "@/components/_commons/Icones/Mail1Icon";
@@ -23,13 +23,14 @@ export const BoutonAccuserReceptionProposition = ({
       territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
       territoireNom={détailTerritoireSélectionné.nom}
     >
-      <BoutonSousLigné
-        className="!text-dsfr-moutarde-main-679"
+      <Button
+        variant="link"
+        className="text-dsfr-moutarde-main-679"
         iconLeft={<Icone className="text-current h-4 w-4" icone={Mail1Icon} />}
         type="button"
       >
         Accuser réception
-      </BoutonSousLigné>
+      </Button>
     </ModaleAccuserReceptionPropositionValeurAvancement>
   );
 };

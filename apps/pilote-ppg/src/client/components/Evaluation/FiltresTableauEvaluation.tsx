@@ -1,9 +1,9 @@
 import { useId } from "react";
+import { Button } from "@/components/shared/Button";
 import type { TableEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 import { Icone } from "@/components/_commons/Icone";
 import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Checkbox } from "@/components/shared/Checkbox";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 
@@ -110,12 +110,13 @@ export function FiltresTableauEvaluation({
       <header className="flex items-baseline gap-2 border-t pt-3">
         <Icone className="h-4.5 w-4.5 self-center" icone={FilterIcon} />
         <h2 className="!text-base !mb-0 !text-primary">Filtrage</h2>
-        <Bouton
-          label="Réinitialiser les filtres"
+        <Button
           onClick={() => table.resetColumnFilters(false)}
           size="sm"
           variant="link"
-        />
+        >
+          Réinitialiser les filtres
+        </Button>
       </header>
       {table
         .getAllColumns()

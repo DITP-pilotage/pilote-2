@@ -1,8 +1,8 @@
 import { Controller } from "react-hook-form";
+import { Button } from "@/components/shared/Button";
 import { FunctionComponent } from "react";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
-import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
   MultiSelectTerritoire,
@@ -303,12 +303,15 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         />
       </div>
       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
-        <SubmitBouton
+        <Button
           iconRight={
             <Icone className="text-current h-4 w-4" icone={ArrowLine1Icon} />
           }
-          label="Suivant"
-        />
+          title="Suivant"
+          type="submit"
+        >
+          Suivant
+        </Button>
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import type { ZoneDisponible } from "@/server/metadataZonegroup/queries/ListerZonesDisponiblesQuery";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Button } from "@/components/shared/Button";
 
 const BoutonAction = ({
   label,
@@ -8,13 +8,9 @@ const BoutonAction = ({
   label: string;
   onClick: () => void;
 }) => (
-  <Bouton
-    label={label}
-    onClick={onClick}
-    size="sm"
-    type="button"
-    variant="secondary"
-  />
+  <Button onClick={onClick} size="sm" type="button" variant="secondary">
+    {label}
+  </Button>
 );
 
 export const ActionsSelection = ({

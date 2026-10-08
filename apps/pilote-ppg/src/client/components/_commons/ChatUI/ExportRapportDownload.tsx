@@ -1,5 +1,5 @@
 import type { ToolUIPart } from "ai";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { DownloadIcon } from "@/components/_commons/Icones/DownloadIcon";
 import type { PiloteUITools } from "@/server/albert/PiloteUIMessage";
@@ -75,15 +75,16 @@ export const ExportRapportDownload = ({
         )}
       </div>
       {isReady && (
-        <Bouton
+        <Button
           iconLeft={
             <Icone className="h-4 w-4 !text-current" icone={DownloadIcon} />
           }
-          label="Télécharger"
           onClick={handleDownload}
           size="sm"
           variant="secondary"
-        />
+        >
+          Télécharger
+        </Button>
       )}
     </div>
   );

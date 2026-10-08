@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -7,7 +8,6 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Modale } from "@/components/shared/Modale";
-import { Bouton } from "@/client/components/_commons/Bouton/Bouton";
 import { Notice } from "@/components/shared/Notice";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
@@ -116,17 +116,16 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
                         <Modale.Close asChild>
-                          <Bouton
-                            className="!mr-2"
-                            label="Annuler"
-                            variant="secondary"
-                          />
+                          <Button className="!mr-2" variant="secondary">
+                            Annuler
+                          </Button>
                         </Modale.Close>
-                        <Bouton
-                          label="Confirmer la désactivation"
+                        <Button
                           onClick={desactiverUtilisateur}
                           variant="primary"
-                        />
+                        >
+                          Confirmer la désactivation
+                        </Button>
                       </div>
                     </Modale>
                     {alerte ? (
@@ -173,17 +172,16 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
                         <Modale.Close asChild>
-                          <Bouton
-                            className="!mr-2"
-                            label="Annuler"
-                            variant="secondary"
-                          />
+                          <Button className="!mr-2" variant="secondary">
+                            Annuler
+                          </Button>
                         </Modale.Close>
-                        <Bouton
-                          label="Confirmer la réactivation"
+                        <Button
                           onClick={reactiverUtilisateur}
                           variant="primary"
-                        />
+                        >
+                          Confirmer la réactivation
+                        </Button>
                       </div>
                     </Modale>
                   </div>

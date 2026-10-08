@@ -1,6 +1,6 @@
-import { Lien } from "@/components/_commons/Lien/Lien";
+import { Button } from "@/components/shared/Button";
+import Link from "next/link";
 import { ModaleTransmissionDITP } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/ModaleVerrouillageConsolidation";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 
 export const InformationEnteteAppreciation = ({
@@ -41,12 +41,15 @@ export const InformationEnteteAppreciation = ({
             </ul>
           </div>
           <div className="mt-auto">
-            <Lien
+            <Button
+              asChild
               className="!w-full !justify-center"
-              href="appreciation/espace-appreciation"
-              label="Accéder à l'espace d'appréciation"
-              variant="button"
-            />
+              variant="primary"
+            >
+              <Link href="appreciation/espace-appreciation">
+                Accéder à l'espace d'appréciation
+              </Link>
+            </Button>
           </div>
         </div>
 
@@ -68,11 +71,9 @@ export const InformationEnteteAppreciation = ({
 
           <div className="mt-auto">
             <ModaleTransmissionDITP fichesAppreciation={fiches}>
-              <Bouton
-                className="!w-full !justify-center"
-                label="Transmettre les appréciations"
-                variant="primary"
-              />
+              <Button className="!w-full !justify-center" variant="primary">
+                Transmettre les appréciations
+              </Button>
             </ModaleTransmissionDITP>
           </div>
         </div>
@@ -90,11 +91,11 @@ export const InformationEnteteAppreciation = ({
         </p>
         <p>Nous vous remercions pour votre collaboration.</p>
         <div className="flex justify-center mb-4">
-          <Lien
-            href="appreciation/espace-appreciation"
-            label="Consulter mon espace d'appréciation"
-            variant="button-secondary"
-          />
+          <Button asChild variant="secondary">
+            <Link href="appreciation/espace-appreciation">
+              Consulter mon espace d'appréciation
+            </Link>
+          </Button>
         </div>
       </div>
     );

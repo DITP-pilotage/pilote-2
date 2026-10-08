@@ -1,9 +1,9 @@
 import { Fragment, useState } from "react";
+import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import BarreDeProgression from "@/client/components/_commons/BarreDeProgression/BarreDeProgression";
 import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { EyeIcon } from "@/components/_commons/Icones/EyeIcon";
 import { EyeOffIcon } from "@/components/_commons/Icones/EyeOffIcon";
@@ -109,7 +109,7 @@ export const TableauNoteCollective = () => {
                           {chantier.nom}
                         </div>
                         <div className="flex items-center gap-4 ml-9">
-                          <Bouton
+                          <Button
                             className="!text-xs"
                             iconLeft={
                               <Icone
@@ -117,17 +117,16 @@ export const TableauNoteCollective = () => {
                                 icone={isExpanded ? EyeOffIcon : EyeIcon}
                               />
                             }
-                            label={
-                              isExpanded
-                                ? "Masquer le détails des indicateurs"
-                                : "Afficher le détail des indicateurs"
-                            }
                             onClick={(event) => {
                               event.stopPropagation();
                               toggleChantier(chantier.id);
                             }}
                             variant="link"
-                          />
+                          >
+                            {isExpanded
+                              ? "Masquer le détails des indicateurs"
+                              : "Afficher le détail des indicateurs"}
+                          </Button>
                           <Link
                             className="!text-primary !text-xs"
                             href={`${baseUrl}/chantier/${chantier.id}/${rattachementCode}`}

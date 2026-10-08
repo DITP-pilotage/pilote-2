@@ -1,7 +1,7 @@
 import clsx from "clsx";
+import { Button } from "@/components/shared/Button";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
-import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import {
   estPropositionAcceptee,
   estPropositionAccepteeAvecModification,
@@ -121,8 +121,9 @@ export const IndicateurPropositionValeur = ({
     return (
       <LigneInformationPropositionValeur
         action={
-          <BoutonSousLigné
-            className="!text-current fr-link--xs"
+          <Button
+            variant="link"
+            className="text-current text-xs leading-5"
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -135,7 +136,7 @@ export const IndicateurPropositionValeur = ({
             {propositionEstVisible
               ? "Masquer la proposition"
               : "Afficher la proposition"}
-          </BoutonSousLigné>
+          </Button>
         }
         className={clsx({
           "text-dsfr-info-main-525": !estChantierArchive,
@@ -169,8 +170,9 @@ export const IndicateurPropositionValeur = ({
     return (
       <LigneInformationPropositionValeur
         action={
-          <BoutonSousLigné
-            className="!text-current fr-link--xs"
+          <Button
+            variant="link"
+            className="text-current text-xs leading-5"
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -183,7 +185,7 @@ export const IndicateurPropositionValeur = ({
             {propositionEstVisible
               ? "Masquer la proposition"
               : "Afficher la proposition"}
-          </BoutonSousLigné>
+          </Button>
         }
         className={clsx({
           "text-dsfr-info-main-525": !estChantierArchive,
@@ -233,8 +235,9 @@ export const IndicateurPropositionValeur = ({
     return (
       <LigneInformationPropositionValeur
         action={
-          <BoutonSousLigné
-            className="!text-current fr-link--xs"
+          <Button
+            variant="link"
+            className="text-current text-xs leading-5"
             iconLeft={
               <Icone
                 className="text-current h-3 w-3"
@@ -247,7 +250,7 @@ export const IndicateurPropositionValeur = ({
             {propositionEstVisible
               ? "Masquer la proposition"
               : "Afficher la proposition"}
-          </BoutonSousLigné>
+          </Button>
         }
         className={clsx({
           "text-dsfr-moutarde-main-679": !estChantierArchive,
@@ -270,8 +273,9 @@ export const IndicateurPropositionValeur = ({
   return (
     <LigneInformationPropositionValeur
       action={
-        <BoutonSousLigné
-          className="!text-current fr-link--xs"
+        <Button
+          variant="link"
+          className="text-current text-xs leading-5"
           iconLeft={
             <Icone
               className="text-current h-3 w-3"
@@ -284,7 +288,7 @@ export const IndicateurPropositionValeur = ({
           {propositionEstVisible
             ? "Masquer la proposition"
             : "Afficher la proposition"}
-        </BoutonSousLigné>
+        </Button>
       }
       className={clsx({
         "text-dsfr-moutarde-main-679": !estChantierArchive,

@@ -1,10 +1,10 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Loader from "@/components/_commons/Loader/Loader";
 import Titre from "@/components/_commons/Titre/Titre";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
-import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
 const TableauAdminIndicateurs: FunctionComponent = () => {
@@ -51,11 +51,14 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
               }
             >
               <InputFichier accept=".csv" onChange={définirLeFichier} />
-              <SubmitBouton
+              <Button
                 className="fr-my-2w fr-my-md-1w fr-text--sm no-wrap"
                 disabled={!file}
-                label="Importer en masse"
-              />
+                title="Importer en masse"
+                type="submit"
+              >
+                Importer en masse
+              </Button>
             </form>
           </div>
         </div>

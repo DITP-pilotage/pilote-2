@@ -1,5 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { Lien } from "@/components/_commons/Lien/Lien";
+import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { useTableauAdminZonegroups } from "./useTableauAdminZonegroups";
 
@@ -30,11 +31,11 @@ const PageAdminZonegroups = () => {
               </p>
             )}
           </div>
-          <Lien
-            href="/panel-administrateur/referentiels/zonegroups/nouveau?_action=creer-zonegroup"
-            label="+ Créer un groupe"
-            variant="button"
-          />
+          <Button asChild variant="primary">
+            <Link href="/panel-administrateur/referentiels/zonegroups/nouveau?_action=creer-zonegroup">
+              + Créer un groupe
+            </Link>
+          </Button>
         </div>
 
         <TableauAdmin

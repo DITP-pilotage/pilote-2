@@ -1,5 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { Lien } from "@/components/_commons/Lien/Lien";
+import Link from "next/link";
+import { Button } from "@/components/shared/Button";
 import { TableauAdmin } from "@/components/_commons/TableauAdmin/TableauAdmin";
 import { useTableauAdminPerimetres } from "./useTableauAdminPerimetres";
 
@@ -31,11 +32,11 @@ const PageAdminPerimetres = () => {
               </p>
             )}
           </div>
-          <Lien
-            href="/panel-administrateur/referentiels/perimetres/nouveau?_action=creer-perimetre"
-            label="+ Créer un périmètre"
-            variant="button"
-          />
+          <Button asChild variant="primary">
+            <Link href="/panel-administrateur/referentiels/perimetres/nouveau?_action=creer-perimetre">
+              + Créer un périmètre
+            </Link>
+          </Button>
         </div>
 
         <TableauAdmin

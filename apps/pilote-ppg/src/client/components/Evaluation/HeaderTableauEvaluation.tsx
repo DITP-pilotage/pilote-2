@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
+import { Button } from "@/components/shared/Button";
 import { Fragment } from "react";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { formaterDate } from "@/client/utils/date/date";
@@ -54,14 +54,15 @@ export const HeaderTableauEvaluation = ({
       </div>
       <div className="flex flex-col items-end gap-1">
         {!estEnLectureSeule && (
-          <Bouton
+          <Button
             className="underline flex items-center gap-1 !-mr-4 !text-xs"
             iconLeft={<Icone className="!h-3 !w-3" icone={SaveIcon} />}
-            label="Enregistrer le brouillon"
             size="sm"
             type="submit"
             variant="link"
-          />
+          >
+            Enregistrer le brouillon
+          </Button>
         )}
         {dateDerniereModification ? (
           <span className="italic text-xs">
@@ -69,15 +70,16 @@ export const HeaderTableauEvaluation = ({
             {formaterDate(dateDerniereModification, "DD/MM/YYYY [à] H[h]mm")}
           </span>
         ) : null}
-        <Bouton
+        <Button
           className="underline flex items-center gap-1 !-mr-4 !text-xs"
           iconLeft={<Icone className="!h-3 !w-3" icone={Printer1Icon} />}
-          label="Imprimer"
           onClick={handleImprimer}
           size="sm"
           type="button"
           variant="link"
-        />
+        >
+          Imprimer
+        </Button>
       </div>
     </header>
   );

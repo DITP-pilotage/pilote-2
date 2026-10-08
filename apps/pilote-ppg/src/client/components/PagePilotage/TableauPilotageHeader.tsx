@@ -9,7 +9,6 @@ import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
 import { Icone } from "@/components/_commons/Icone";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ModaleFicheCadrage } from "@/components/Evaluation/ModaleFicheCadrage";
 import { Chat2Icon } from "@/components/_commons/Icones/Chat2Icon";
 import { LightbulbIcon } from "@/components/_commons/Icones/LightbulbIcon";
@@ -168,18 +167,13 @@ export const TableauPilotageHeader = ({
             return (
               <HeaderCell className="!p-1" key={`critere-header-${critere.id}`}>
                 <ModaleFicheCadrage critere={critere}>
-                  <Bouton
-                    className="!flex items-center text-left !px-2 !py-1"
-                    iconLeft={
-                      <Icone
-                        className="shrink-0 w-4 h-4"
-                        icone={IconComponent}
-                      />
-                    }
-                    label={
-                      <span className="line-clamp-1">{critere.libelle}</span>
-                    }
-                  />
+                  <button
+                    className="flex items-center gap-2 text-left px-2 py-1"
+                    type="button"
+                  >
+                    <Icone className="shrink-0 w-4 h-4" icone={IconComponent} />
+                    <span className="line-clamp-1">{critere.libelle}</span>
+                  </button>
                 </ModaleFicheCadrage>
               </HeaderCell>
             );
