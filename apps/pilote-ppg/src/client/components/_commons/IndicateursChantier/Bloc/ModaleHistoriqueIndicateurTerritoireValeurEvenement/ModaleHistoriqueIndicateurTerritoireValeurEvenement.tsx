@@ -243,18 +243,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                 key={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
                 value={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
               >
-                <Accordion.Header
-                  asChild
-                  className="border-t-0 !bg-transparent"
-                >
+                <Accordion.Header asChild className="border-t-0 bg-transparent">
                   <div>
-                    <Accordion.Trigger className="!bg-dsfr-blue-france-850 !text-primary !py-0 !px-3 mb-1">
+                    <Accordion.Trigger className="bg-dsfr-blue-france-850 text-primary py-0 px-3 mb-1">
                       Valeur d'avancement à la date du {dateFormatee}
                     </Accordion.Trigger>
                   </div>
                 </Accordion.Header>
                 <Accordion.Content
-                  className="!bg-transparent"
+                  className="bg-transparent"
                   innerClassName="p-0"
                 >
                   <div className="fr-my-2w">
@@ -280,7 +277,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                           <div className="fr-col-10 flex items-center">
                             {evenement.donneesComplementaires ? (
                               <Infobulle
-                                classNameBouton="fr-p-0 fr-mr-1w !text-primary"
+                                classNameBouton="fr-p-0 fr-mr-1w text-primary"
                                 classNameInfoBulle="tooltip-accordeon"
                                 styleIconInfoBulle="documentation"
                               >

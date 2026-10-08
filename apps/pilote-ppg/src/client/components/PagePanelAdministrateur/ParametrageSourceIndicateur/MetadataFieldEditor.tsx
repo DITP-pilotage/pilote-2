@@ -36,7 +36,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
     <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden w-full">
       <div className="flex flex-col p-6 gap-8">
         <div>
-          <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 flex items-center !mb-2">
+          <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 flex items-center mb-2">
             Informations de base
           </h3>
           <div className="grid grid-cols-2 gap-4 mb-4">
@@ -69,7 +69,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
 
         {/* Section Type et affichage */}
         <div>
-          <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-4 flex items-center gap-2 !mb-2">
+          <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-4 flex items-center gap-2 mb-2">
             Type et affichage
           </h3>
           <div className="space-y-4">
@@ -101,7 +101,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
             {/* Valeurs acceptées si multi-select */}
             {editBoxType === "multi-select" && (
               <div className="pt-4">
-                <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-4 flex items-center gap-2 !mb-2">
+                <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-4 flex items-center gap-2 mb-2">
                   Valeurs acceptées
                 </h3>
                 {estChampZoneGroupe ? (
@@ -147,7 +147,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
 
         {/* Section Validation */}
         <div>
-          <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-0 flex items-center gap-2 !mb-2">
+          <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-0 flex items-center gap-2 mb-2">
             Validation
           </h3>
           <div className="flex mb-4">

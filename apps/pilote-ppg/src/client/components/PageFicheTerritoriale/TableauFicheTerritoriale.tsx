@@ -24,13 +24,13 @@ export const TableauFicheTerritoriale: FunctionComponent<{
 }> = ({ chantiersFicheTerritoriale, jalon }) => {
   return (
     <div className="fr-container--fluid fr-mt-2v">
-      <div className="fr-grid-row fr-p-2w fr-background-action-low--blue-france border-b-2 border-b-black rounded-tl-lg rounded-tr-lg print:!py-2 print:!px-2">
-        <div className="fr-col-8 fr-text--bold fr-px-4w print:!text-[0.6rem]">
+      <div className="fr-grid-row fr-p-2w fr-background-action-low--blue-france border-b-2 border-b-black rounded-tl-lg rounded-tr-lg print:py-2 print:px-2">
+        <div className="fr-col-8 fr-text--bold fr-px-4w print:text-[0.6rem]">
           Chantiers publiés au baromètre de l'action publique et leurs
           indicateurs
         </div>
-        <div className="fr-col-2 fr-text--bold print:!text-[0.6rem]">Météo</div>
-        <div className="fr-col-2 fr-text--bold print:!text-[0.6rem]">
+        <div className="fr-col-2 fr-text--bold print:text-[0.6rem]">Météo</div>
+        <div className="fr-col-2 fr-text--bold print:text-[0.6rem]">
           Avancement global
         </div>
       </div>
@@ -38,7 +38,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
         return (
           <>
             <div
-              className="fr-grid-row fr-px-2w fr-py-1w fr-background-alt--grey print:!py-0"
+              className="fr-grid-row fr-px-2w fr-py-1w fr-background-alt--grey print:py-0"
               key={`chantier-fiche-territoriale-${index}`}
             >
               <div className="fr-col-8 fr-text--bold flex items-center fr-p-1v">
@@ -52,7 +52,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   {chantierFicheTerritoriale.nom}
                 </span>
               </div>
-              <div className="fr-col-2 flex !text-[0.8rem] leading-4 print:!text-[0.6rem] flex-col justify-center">
+              <div className="fr-col-2 flex text-[0.8rem] leading-4 print:text-[0.6rem] flex-col justify-center">
                 {chantierFicheTerritoriale.meteo !== "NON_RENSEIGNEE" ? (
                   <MeteoPicto meteo={chantierFicheTerritoriale.meteo} />
                 ) : (
@@ -64,7 +64,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   {chantierFicheTerritoriale.dateQualitative}
                 </span>
               </div>
-              <div className="fr-col-2 flex !text-[0.8rem] leading-4 print:!text-[0.6rem] flex-col justify-center">
+              <div className="fr-col-2 flex text-[0.8rem] leading-4 print:text-[0.6rem] flex-col justify-center">
                 {chantierFicheTerritoriale.tauxAvancement !== null ? (
                   <p className="fr-text--bold fr-text--xl fr-text-title--blue-france fr-my-0">
                     {`${chantierFicheTerritoriale.tauxAvancement.toFixed(0)}%`}
@@ -77,30 +77,30 @@ export const TableauFicheTerritoriale: FunctionComponent<{
               </div>
             </div>
             <div
-              className="fr-grid-row fr-pt-1w print:!py-0 print:!m-0 fr-px-2w"
+              className="fr-grid-row fr-pt-1w print:py-0 print:m-0 fr-px-2w"
               key={`indicateur-fiche-territoriale-${index}`}
             >
               <div className="fr-col-4 flex items-center fr-p-0 fr-m-0" />
               <div className="fr-col-2 flex flex-col fr-p-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 fr-text-mention--grey">
                   Dernière valeur
                 </span>
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 fr-text-mention--grey">
                   {chantierFicheTerritoriale.dateQuantitative}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-col  fr-p-0 fr-m-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   {`Cible ${jalon}`}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-col fr-p-0 fr-m-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   {`Avancement ${jalon}`}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-col fr-p-0 fr-m-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   Avancement national
                 </span>
               </div>
@@ -123,7 +123,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                           {`${indicateur.valeurAvancement.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === "pourcentage" ? "%" : ""}`}
                         </span>
                       ) : (
-                        <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem]">
+                        <span className="text-[0.8rem] leading-4 print:text-[0.6rem]">
                           Aucune valeur saisie
                         </span>
                       )}
@@ -134,7 +134,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                           {`${indicateur.valeurCible.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === "pourcentage" ? "%" : ""}`}
                         </span>
                       ) : (
-                        <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem]">
+                        <span className="text-[0.8rem] leading-4 print:text-[0.6rem]">
                           Aucune cible définie
                         </span>
                       )}
@@ -151,7 +151,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                           {`${indicateur.tauxAvancement.toFixed(0)}%`}
                         </Badge>
                       ) : (
-                        <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem]">
+                        <span className="text-[0.8rem] leading-4 print:text-[0.6rem]">
                           Paramètre(s) de calcul manquant(s)
                         </span>
                       )}
@@ -162,7 +162,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                           {`${indicateur.tauxAvancementNational.toFixed(0)}%`}
                         </span>
                       ) : (
-                        <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem]">
+                        <span className="text-[0.8rem] leading-4 print:text-[0.6rem]">
                           Paramètre(s) de calcul manquant(s)
                         </span>
                       )}

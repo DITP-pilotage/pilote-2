@@ -56,7 +56,7 @@ export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
   }));
 
   return (
-    <div className="relative flex flex-1 flex-col h-full overflow-y-auto !bg-dsfr-contrast-grey">
+    <div className="relative flex flex-1 flex-col h-full overflow-y-auto bg-dsfr-contrast-grey">
       <MenuBar
         avecFichiersNumeriques={avecFichiersNumeriques}
         editor={editor}

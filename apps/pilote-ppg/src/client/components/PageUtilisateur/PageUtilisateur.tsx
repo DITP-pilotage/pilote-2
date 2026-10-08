@@ -43,7 +43,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
           <div className="flex">
             <Link
               aria-label="Retour à l'accueil"
-              className="flex items-center gap-2 !text-primary"
+              className="flex items-center gap-2 text-primary"
               href="/admin/utilisateurs"
             >
               <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
@@ -115,7 +115,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
                         <Modale.Close asChild>
-                          <Button className="!mr-2" variant="secondary">
+                          <Button className="mr-2" variant="secondary">
                             Annuler
                           </Button>
                         </Modale.Close>
@@ -171,7 +171,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
                         <Modale.Close asChild>
-                          <Button className="!mr-2" variant="secondary">
+                          <Button className="mr-2" variant="secondary">
                             Annuler
                           </Button>
                         </Modale.Close>

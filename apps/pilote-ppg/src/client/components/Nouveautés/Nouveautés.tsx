@@ -14,7 +14,7 @@ const Nouveautés: FunctionComponent = () => {
   const { listeNouveautes, estChargementListeNouveautes } = useNouveautés();
 
   return (
-    <div className="[&_p]:mb-0 [&_h4]:my-2 [&_hr]:!my-2">
+    <div className="[&_p]:mb-0 [&_h4]:my-2 [&_hr]:my-2">
       <main>
         <div className="fr-container fr-pb-2w">
           <div className="fr-grid-row fr-py-4w">

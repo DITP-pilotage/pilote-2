@@ -27,7 +27,7 @@ export const Utilisateur = () => {
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
       <Dropdown.Trigger asChild>
         <button
-          className="flex items-center !text-sm !p-0 !text-primary"
+          className="flex items-center text-sm p-0 text-primary"
           name="Utilisateur connecté"
           type="button"
         >

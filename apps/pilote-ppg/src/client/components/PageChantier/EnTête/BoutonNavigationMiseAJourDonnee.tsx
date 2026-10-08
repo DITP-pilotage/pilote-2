@@ -8,7 +8,7 @@ export const BoutonNavigationMiseAJourDonnee = ({
   chantierId: string;
 }) => (
   <Link
-    className="!text-sm flex items-center gap-1 pb-1"
+    className="text-sm flex items-center gap-1 pb-1"
     href={`/chantier/${chantierId}/indicateurs`}
     title="Mettre à jour les données"
   >

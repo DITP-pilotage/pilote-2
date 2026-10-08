@@ -12,7 +12,7 @@ export const NextPanelAdministrateurLayout: FunctionComponent<
     <div className="flex min-vh-100">
       <MenuLateralPanelAdministrateur pageActive={pageActive} />
       <main className="flex-grow min-w-0">
-        <div className="!mt-4 !mx-4 !mb-3">{children}</div>
+        <div className="mt-4 mx-4 mb-3">{children}</div>
       </main>
     </div>
   );

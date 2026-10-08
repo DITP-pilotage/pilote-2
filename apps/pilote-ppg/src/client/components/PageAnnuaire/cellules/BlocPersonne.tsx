@@ -17,7 +17,7 @@ export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
 
   return (
     <div className="flex flex-col gap-0.5">
-      <p className="!m-0 text-sm">
+      <p className="m-0 text-sm">
         <NomUtilisateurAvecTooltip
           className="font-medium decoration-dotted decoration-dsfr-grey-625 underline-offset-4 hover:decoration-dsfr-grey-200"
           fonction={personne.fonction}
@@ -25,7 +25,7 @@ export function BlocPersonne({ personne }: { personne: PersonneAnnuaire }) {
           service={personne.service}
         />
       </p>
-      <p className="!m-0 text-sm [overflow-wrap:anywhere]">
+      <p className="m-0 text-sm [overflow-wrap:anywhere]">
         <a
           className="bg-none text-primary underline decoration-primary/30 decoration-1 underline-offset-4 hover:decoration-primary"
           href={`mailto:${personne.email}`}

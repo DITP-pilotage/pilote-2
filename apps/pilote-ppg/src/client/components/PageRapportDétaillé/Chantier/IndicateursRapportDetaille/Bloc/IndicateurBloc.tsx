@@ -60,7 +60,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </h4>
               <div className="fr-ml-2w fr-mb-3w">
-                <p className="fr-mb-0 fr-text--xs !text-dsfr-mention-grey">
+                <p className="fr-mb-0 fr-text--xs text-dsfr-mention-grey">
                   Dernière mise à jour de la valeur d'avancement pour le
                   territoire :{" "}
                   <span className="fr-text--bold">
@@ -101,7 +101,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     `Avancement ${jalon}`,
                   ].map((libellé) => (
                     <Table.ColumnHeaderCell
-                      className="py-2 md:py-2 px-1 md:px-1 min-[992px]:px-4 max-[49rem]:!text-xs"
+                      className="py-2 md:py-2 px-1 md:px-1 min-[992px]:px-4 max-[49rem]:text-xs"
                       key={libellé}
                     >
                       {libellé}

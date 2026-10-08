@@ -97,7 +97,7 @@ export const SectionIndicateurs = () => {
           "text-h4 md:text-h4-md mb-4 mt-3 md:mt-6 mx-4 md:mx-0",
           {
             "text-primary": !estChantierArchive,
-            "!text-dsfr-grey-50": estChantierArchive,
+            "text-dsfr-grey-50": estChantierArchive,
           },
         )}
       >

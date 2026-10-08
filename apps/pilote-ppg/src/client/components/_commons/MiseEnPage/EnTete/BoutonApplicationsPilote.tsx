@@ -43,9 +43,9 @@ const SectionBouton = ({
       </span>
       <Dropdown.Link
         className={clsxm(
-          "border border-gray-200 rounded min-w-[250px] flex items-center gap-3 !py-2 !mx-0",
+          "border border-gray-200 rounded min-w-[250px] flex items-center gap-3 py-2 mx-0",
           {
-            "!bg-dsfr-alt-blue-france !text-primary":
+            "bg-dsfr-alt-blue-france text-primary":
               currentApplication === application.id,
           },
         )}
@@ -73,7 +73,7 @@ export const BoutonApplicationsPilote = () => {
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
       <Dropdown.Trigger asChild>
         <button
-          className="flex items-center !p-0 !text-primary !text-sm"
+          className="flex items-center p-0 text-primary text-sm"
           type="button"
         >
           <Icone icone={GridIcon} />
@@ -88,7 +88,7 @@ export const BoutonApplicationsPilote = () => {
         </button>
       </Dropdown.Trigger>
 
-      <Dropdown.Content align="end" className="flex flex-col gap-4 !pb-4">
+      <Dropdown.Content align="end" className="flex flex-col gap-4 pb-4">
         <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
           <img alt="" className="w-8" src="/favicon/favicon.svg" />
           <div className="flex flex-col">

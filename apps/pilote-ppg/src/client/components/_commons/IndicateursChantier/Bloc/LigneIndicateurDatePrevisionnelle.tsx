@@ -25,7 +25,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
           : "text-dsfr-mention-grey",
       )}
     >
-      <p className="!mb-0 fr-text--xs pr-1">
+      <p className="mb-0 fr-text--xs pr-1">
         Date prévisionnelle de la prochaine mise à jour des données (de
         l'indicateur) :{" "}
         <span className="fr-text--bold">
@@ -41,10 +41,10 @@ export const LigneIndicateurDatePrevisionnelle = () => {
         }
         classNameInfoBulle="tooltip-accordeon"
       >
-        <p className="!text-sm !text-primary !mb-2 font-bold">
+        <p className="text-sm text-primary mb-2 font-bold">
           Date prévisionnelle de mise à jour de l'indicateur :
         </p>
-        <p className="!text-sm !mb-0">
+        <p className="text-sm mb-0">
           Elle est calculée à partir de la date de la valeur d'avancement, de la
           période de mise à jour et du délai de disponibilité des données. Plus
           d'informations dans l'accordéon "Description de l'indicateur et

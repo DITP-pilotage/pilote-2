@@ -18,7 +18,7 @@ export const BoutonsAffichage = ({
     <>
       {!deplie ? (
         <Button
-          className="!inline-flex !items-center mt-1 !text-sm"
+          className="inline-flex items-center mt-1 text-sm"
           iconRight={<Icone className="h-4 w-4" icone={ArrowSLine2Icon} />}
           onClick={deplierLeContenu}
           variant="link"
@@ -28,7 +28,7 @@ export const BoutonsAffichage = ({
       ) : null}
       {deplie ? (
         <Button
-          className="!inline-flex !items-center !text-sm"
+          className="inline-flex items-center text-sm"
           iconRight={<Icone className="h-4 w-4" icone={ArrowSLineIcon} />}
           onClick={replierLeContenu}
           variant="link"

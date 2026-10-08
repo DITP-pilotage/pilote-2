@@ -31,7 +31,7 @@ export const ObjectifSection = ({
 
   return (
     <Accordion.Item value={type}>
-      <Accordion.Header className="!bg-white border-t-0">
+      <Accordion.Header className="bg-white border-t-0">
         <Accordion.Trigger className="py-3 text-primary">
           {libellésTypesObjectif[type]}
         </Accordion.Trigger>

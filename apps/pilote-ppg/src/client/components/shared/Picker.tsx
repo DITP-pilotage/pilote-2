@@ -138,7 +138,7 @@ export const Picker = <T extends string>({
               className={
                 striped
                   ? "w-full px-4 py-2 border-0 border-b-2 border-solid border-dsfr-grey-200 text-base bg-dsfr-grey-950 placeholder:italic placeholder:text-dsfr-mention-grey"
-                  : "w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
+                  : "w-full px-3 py-2 border-b-2 border-primary text-sm bg-dsfr-alt-blue-france placeholder-dsfr-mention-grey placeholder:italic"
               }
               onChange={(event) => {
                 setRecherche(event.target.value);
@@ -189,7 +189,7 @@ export const Picker = <T extends string>({
                           <Select.Label
                             className={clsxm(
                               striped &&
-                                "py-2 !text-base font-normal text-dsfr-mention-grey",
+                                "py-2 text-base font-normal text-dsfr-mention-grey",
                             )}
                           >
                             {group.libelle}

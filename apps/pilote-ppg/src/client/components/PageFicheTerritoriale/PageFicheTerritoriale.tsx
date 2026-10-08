@@ -30,7 +30,7 @@ export const PageFicheTerritoriale: FunctionComponent<
   const now = new Date();
 
   return (
-    <div className="print:[&_.fr-text--xl]:!text-[0.8rem] print:[&_.fr-text--lg]:!text-[0.9rem] print:[&_.fr-text--md]:!text-[0.8rem] print:[&_.fr-text--md]:!leading-[1.1rem] print:[&_.fr-text--sm]:!text-[0.6rem] print:[&_.fr-text--sm]:!leading-4 print:[&_.fr-text--xs]:!text-[0.6rem] print:[&_.fr-text--xs]:!leading-4 print:[&_div.fr-grid-row]:!text-[0.7rem] print:[&_.bloc__contenu]:!pt-2 print:[&_.fr-logo]:text-[0.8rem] print:[&_.fr-logo]:after:!bg-[position:0_calc(100%+0.875rem)] print:[&_.fr-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.fr-logo]:before:mb-0 print:[&_.fr-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.fr-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
+    <div className="print:[&_.fr-text--xl]:text-[0.8rem] print:[&_.fr-text--lg]:text-[0.9rem] print:[&_.fr-text--md]:text-[0.8rem] print:[&_.fr-text--md]:leading-[1.1rem] print:[&_.fr-text--sm]:text-[0.6rem] print:[&_.fr-text--sm]:leading-4 print:[&_.fr-text--xs]:text-[0.6rem] print:[&_.fr-text--xs]:leading-4 print:[&_div.fr-grid-row]:text-[0.7rem] print:[&_.bloc__contenu]:pt-2 print:[&_.fr-logo]:text-[0.8rem] print:[&_.fr-logo]:after:bg-[position:0_calc(100%+0.875rem)] print:[&_.fr-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.fr-logo]:before:mb-0 print:[&_.fr-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.fr-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
       <HeaderFicheTerritoriale />
       <main>
         <div className="fr-container fr-pb-2w pt-4 print:pt-0">

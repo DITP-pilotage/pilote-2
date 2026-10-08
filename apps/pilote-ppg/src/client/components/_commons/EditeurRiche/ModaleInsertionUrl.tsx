@@ -160,7 +160,7 @@ export const ModaleInsertionUrl = ({
       {(aDesExtensions || type === "lien") && (
         <div className="flex gap-2 mb-4">
           <button
-            className={`px-3 py-1 rounded text-sm border ${mode === "direct" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}
+            className={`px-3 py-1 rounded text-sm border ${mode === "direct" ? "bg-primary text-white border-primary" : "bg-white text-dsfr-grey-200 border-dsfr-grey-900"}`}
             onClick={() => {
               setMode("direct");
               setErreur("");
@@ -171,7 +171,7 @@ export const ModaleInsertionUrl = ({
           </button>
           {avecFichiersNumeriques && (
             <button
-              className={`px-3 py-1 rounded text-sm border ${mode === "constructeur" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}
+              className={`px-3 py-1 rounded text-sm border ${mode === "constructeur" ? "bg-primary text-white border-primary" : "bg-white text-dsfr-grey-200 border-dsfr-grey-900"}`}
               onClick={() => {
                 setMode("constructeur");
                 setErreur("");
@@ -183,7 +183,7 @@ export const ModaleInsertionUrl = ({
           )}
           {type === "lien" && (
             <button
-              className={`px-3 py-1 rounded text-sm border ${mode === "email" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}
+              className={`px-3 py-1 rounded text-sm border ${mode === "email" ? "bg-primary text-white border-primary" : "bg-white text-dsfr-grey-200 border-dsfr-grey-900"}`}
               onClick={() => {
                 setMode("email");
                 setErreur("");
@@ -269,7 +269,7 @@ export const ModaleInsertionUrl = ({
         {erreur && <p className="text-sm text-red-600">{erreur}</p>}
 
         <button
-          className="self-end px-4 py-2 rounded text-sm !bg-primary !text-white"
+          className="self-end px-4 py-2 rounded text-sm bg-primary text-white"
           type="submit"
         >
           Insérer

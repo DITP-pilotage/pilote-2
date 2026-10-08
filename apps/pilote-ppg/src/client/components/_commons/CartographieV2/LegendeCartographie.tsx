@@ -18,10 +18,10 @@ export const LegendeCartographie: FunctionComponent<
   LegendeCartographieProps
 > = ({ items }) => {
   return (
-    <ul className="fr-pl-0 flex gap-1 flex-wrap list-none !mb-4">
+    <ul className="fr-pl-0 flex gap-1 flex-wrap list-none mb-4">
       {items.map((item) => (
         <li
-          className="fr-pr-3v !text-dsfr-mention-grey flex items-center gap-1"
+          className="fr-pr-3v text-dsfr-mention-grey flex items-center gap-1"
           key={item.libellé}
         >
           <svg

@@ -67,7 +67,7 @@ export const FeedbackNegatifModale = ({
         }
       }}
       open={open}
-      titleClassName="!mb-2"
+      titleClassName="mb-2"
       size="sm"
       sousTitre="Dites-nous ce qui n'a pas fonctionné"
       sousTitreClassName="mb-2"

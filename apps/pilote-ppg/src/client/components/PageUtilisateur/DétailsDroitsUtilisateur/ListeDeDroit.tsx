@@ -26,7 +26,7 @@ export const ListeDeDroit = ({
           <div className="mr-2">
             <Icone className="text-dsfr-warning-425" icone={CloseLineIcon} />
           </div>
-          <p className="fr-text--sm !mb-0">Aucun droit</p>
+          <p className="fr-text--sm mb-0">Aucun droit</p>
         </div>
       </div>
     );
@@ -40,7 +40,7 @@ export const ListeDeDroit = ({
           <div className="mr-2">
             <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
           </div>
-          <p className={clsx("fr-text--sm !mb-0", element.className)}>
+          <p className={clsx("fr-text--sm mb-0", element.className)}>
             {element.label}
           </p>
         </div>

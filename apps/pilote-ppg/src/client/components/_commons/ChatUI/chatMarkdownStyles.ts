@@ -57,7 +57,7 @@ export const chatMarkdownStyles = `
     color: #6b7280;
   }
   .albert-markdown hr {
-    margin: 2rem 0 !important;
+    margin: 2rem 0 important;
     padding: 1px;
   }
   .albert-markdown > p,

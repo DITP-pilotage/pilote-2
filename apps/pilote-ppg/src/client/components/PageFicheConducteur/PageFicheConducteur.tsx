@@ -51,13 +51,13 @@ const PageFicheConducteur: FunctionComponent<
                 className="h-full print:p-0 print:border-dsfr-grey-925"
                 contenuClassesSupplémentaires="fr-px-1w fr-py-1v"
               >
-                <div className="fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0 print:!text-[10px] print:!leading-4">
+                <div className="fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0 print:text-[10px] print:leading-4">
                   <span className="fr-col-2 fr-text--bold">DAC</span>
                   <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
                     {chantier.directeursAdministrationCentrale}
                   </span>
                 </div>
-                <div className="fr-grid-row border-b fr-py-1v fr-text--xs fr-m-0 print:!text-[10px] print:!leading-4">
+                <div className="fr-grid-row border-b fr-py-1v fr-text--xs fr-m-0 print:text-[10px] print:leading-4">
                   <span className="fr-col-2 fr-text--bold">DP</span>
                   <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
                     {chantier.directeursProjet}
@@ -119,14 +119,14 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
                 <div>
                   {commentaire ? (
-                    <div className="fr-text--xs fr-mb-1w print:!text-[10px] print:!leading-4">
+                    <div className="fr-text--xs fr-mb-1w print:text-[10px] print:leading-4">
                       <RenduContenuHtml
-                        className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:!text-[10px] print:[&_p]:!leading-4"
+                        className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:text-[10px] print:[&_p]:leading-4"
                         html={commentaire}
                       />
                     </div>
                   ) : (
-                    <p className="fr-text--xs print:!text-[10px] print:!leading-4">
+                    <p className="fr-text--xs print:text-[10px] print:leading-4">
                       Aucune synthèse des résultats
                     </p>
                   )}
@@ -140,7 +140,7 @@ const PageFicheConducteur: FunctionComponent<
             className="print:p-0 print:border-dsfr-grey-925"
             contenuClassesSupplémentaires="fr-px-0 fr-py-0"
           >
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:!text-[10px] print:!leading-4">
+            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:text-[10px] print:leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-5 fr-text--bold">
                   Avancement des indicateurs d'impact pris en compte dans le TA
@@ -245,7 +245,7 @@ const PageFicheConducteur: FunctionComponent<
             className="print:p-0 print:border-dsfr-grey-925"
             contenuClassesSupplémentaires="fr-px-0"
           >
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:!text-[10px] print:!leading-4">
+            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:text-[10px] print:leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-2 fr-text--bold">Catégorie</div>
                 <div className="fr-col-10 fr-text--bold">Détail</div>
@@ -260,7 +260,7 @@ const PageFicheConducteur: FunctionComponent<
                   </div>
                   <div className="fr-col-10">
                     <RenduContenuHtml
-                      className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:!text-[10px] print:[&_p]:!leading-4"
+                      className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:text-[10px] print:[&_p]:leading-4"
                       html={publication.valeur}
                     />
                   </div>
