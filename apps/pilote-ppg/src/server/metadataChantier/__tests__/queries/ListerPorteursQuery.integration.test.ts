@@ -1,8 +1,8 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ListerPorteursQuery } from "@/server/metadataChantier/queries/ListerPorteursQuery";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { fixtures } from "@/test/fixtures";
 
 describe("ListerPorteursQuery", () => {
   let query: ListerPorteursQuery;

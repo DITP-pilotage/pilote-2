@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { ImporterPublicationCSVUseCase } from "@/server/infrastructure/import_csv/publication/ImporterPublicationCSVUseCase";
 import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
 import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";

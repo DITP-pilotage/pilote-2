@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures as f } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures as f } from "@/test/fixtures";
 
 describe("ListerFichesAutoEvaluationQuery", () => {
   let query: ListerFichesAutoEvaluationQuery;

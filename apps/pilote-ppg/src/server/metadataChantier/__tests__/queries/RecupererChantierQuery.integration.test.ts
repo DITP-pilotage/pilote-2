@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { RecupererChantierQuery } from "@/server/metadataChantier/queries/RecupererChantierQuery";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("RecupererChantierQuery", () => {
   let query: RecupererChantierQuery;

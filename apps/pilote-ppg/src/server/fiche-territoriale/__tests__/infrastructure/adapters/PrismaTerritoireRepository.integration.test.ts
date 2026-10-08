@@ -1,5 +1,5 @@
 import { PrismaTerritoireRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaTerritoireRepository", () => {
   let prismaTerritoireRepository: PrismaTerritoireRepository;

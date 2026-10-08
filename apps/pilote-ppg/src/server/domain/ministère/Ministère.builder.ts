@@ -5,7 +5,7 @@ import {
   générerPeutÊtreNull,
   générerUnIdentifiantUnique,
   générerUnLibellé,
-} from "@/server/infrastructure/test/builders/utils";
+} from "@/test/builders/utils";
 
 const ÉCHANTILLONS_ICÔNES = [
   "material-icons::diversity_3::filled",

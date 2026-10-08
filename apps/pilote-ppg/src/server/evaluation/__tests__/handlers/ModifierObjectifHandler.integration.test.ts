@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { ModifierObjectifHandler } from "@/server/evaluation/handlers/ModifierObjectifHandler";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("ModifierObjectifHandler", () => {
   let handler: ModifierObjectifHandler;

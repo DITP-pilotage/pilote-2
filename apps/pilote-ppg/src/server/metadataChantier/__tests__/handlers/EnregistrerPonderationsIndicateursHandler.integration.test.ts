@@ -1,6 +1,6 @@
 import { EnregistrerPonderationsIndicateursHandler } from "@/server/metadataChantier/handlers/EnregistrerPonderationsIndicateursHandler";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";

@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
   let handler: EnregistrerBrouillonAutoEvaluationObjectifsHandler;

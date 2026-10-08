@@ -2,8 +2,8 @@ import { ValiderSaisieCriteresHandler } from "@/server/evaluation/handlers/Valid
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("ValiderSaisieCriteresHandler", () => {
   let handler: ValiderSaisieCriteresHandler;

@@ -1,4 +1,4 @@
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { fixtures } from "@/test/fixtures";
 import { indicateurDuChantier } from "./world";
 
 /**

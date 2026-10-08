@@ -1,5 +1,5 @@
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { fixtures } from "@/test/fixtures";
 import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 /**

@@ -3,8 +3,8 @@ import { $Enums } from "@prisma/client";
 import { PrismaUtilisateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaUtilisateurRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ListerResponsablesAnnuaireQuery } from "@/server/annuaire/queries/ListerResponsablesAnnuaireQuery";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 const RHONE = {
   code: "DEPT-69",

@@ -7,7 +7,7 @@ import { ErreurValidationFichierBuilder } from "@/server/import-indicateur/app/b
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { getContainer } from "@/server/dependances";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaErreurValidationFichierRepository", () => {
   let prismaRapportRepository: PrismaRapportRepository;

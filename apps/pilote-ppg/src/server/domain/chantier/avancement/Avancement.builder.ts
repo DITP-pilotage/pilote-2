@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker/locale/fr";
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
-import { générerPeutÊtreNull } from "@/server/infrastructure/test/builders/utils";
+import { générerPeutÊtreNull } from "@/test/builders/utils";
 
 export default class AvancementBuilder {
   private _global: Avancement["global"];

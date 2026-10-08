@@ -1,8 +1,8 @@
 import { getContainer } from "@/server/dependances";
 import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("RécupérerInformationMetadataIndicateurUseCase", () => {
   let useCase: RécupérerInformationMetadataIndicateurUseCase;

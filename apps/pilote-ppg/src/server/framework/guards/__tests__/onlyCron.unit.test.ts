@@ -1,8 +1,5 @@
 import { onlyCron } from "@/server/framework/guards/onlyCron";
-import {
-  setupRequest,
-  setupResponse,
-} from "@/server/infrastructure/test/apiTestHelpers";
+import { setupRequest, setupResponse } from "@/test/apiTestHelpers";
 
 vi.mock("@/config", () => ({
   configuration: vi.fn(() => ({

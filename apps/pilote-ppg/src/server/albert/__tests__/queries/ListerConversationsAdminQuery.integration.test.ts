@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { ListerConversationsAdminQuery } from "@/server/albert/queries/ListerConversationsAdminQuery";
 
