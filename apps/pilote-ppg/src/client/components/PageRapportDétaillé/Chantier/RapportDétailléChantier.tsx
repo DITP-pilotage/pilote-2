@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FunctionComponent } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import Encart from "@/components/_commons/Encart/Encart";
+import { TitleBand } from "@/components/shared/TitleBand";
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import RapportDétailléChantierProps from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface";
 import Responsables from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
@@ -120,11 +120,11 @@ const RapportDétailléChantier: FunctionComponent<
                   <Icone className="w-4 h-4" icone={ArrowLineIcon} />
                   Haut de page
                 </Link>
-                <Encart>
+                <TitleBand>
                   <Titre baliseHtml="h1" className="fr-h2 fr-mb-1w">
                     {chantier.nom}
                   </Titre>
-                </Encart>
+                </TitleBand>
                 <Titre
                   baliseHtml="h2"
                   className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"

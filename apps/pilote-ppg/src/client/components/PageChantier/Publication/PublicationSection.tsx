@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
+import { Notice } from "@/components/shared/Notice";
 import AlertePublication from "@/components/PageChantier/Publication/AlertePublication";
 import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
 import { FormulairePublication } from "@/components/PageChantier/Publication/FormulairePublication";
@@ -66,9 +66,11 @@ export const PublicationSection = <T extends PublicationValues>({
       ) : null}
       {brouillon?.dateModification ? (
         <div className="my-2">
-          <BandeauInformation bandeauType="INFO" classNameContainer="px-4">
-            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${PiloteDateFormatter.isoDateFranceMetropolitaine(brouillon.dateModification)}`}
-          </BandeauInformation>
+          <Notice
+            containerClassName="px-4"
+            dismissible
+            title={`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${PiloteDateFormatter.isoDateFranceMetropolitaine(brouillon.dateModification)}`}
+          />
         </div>
       ) : null}
       {modeÉdition && modeEcriture ? (

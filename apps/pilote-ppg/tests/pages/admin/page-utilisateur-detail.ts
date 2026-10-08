@@ -7,7 +7,7 @@ export class PageUtilisateurDetail extends BasePage {
   }
 
   private get bandeauInfo() {
-    return this.page.locator(".fr-notice .fr-notice__title");
+    return this.page.getByRole("main").getByRole("note");
   }
 
   private get boutonModifier() {

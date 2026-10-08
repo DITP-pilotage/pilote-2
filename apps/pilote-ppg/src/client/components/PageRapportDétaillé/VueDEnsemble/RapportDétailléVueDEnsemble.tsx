@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import { Badge } from "@/components/shared/Badge";
-import Encart from "@/components/_commons/Encart/Encart";
+import { TitleBand } from "@/components/shared/TitleBand";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
@@ -60,11 +60,11 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
 
   return (
     <section className="break-after-page">
-      <Encart>
+      <TitleBand>
         <Titre baliseHtml="h2" className="fr-h2 fr-mb-0">
           Vue d'ensemble
         </Titre>
-      </Encart>
+      </TitleBand>
       <div className="fr-mt-3w grid grid-cols-1 gap-6 min-[62rem]:grid-cols-2 print:grid-cols-2 print:break-inside-avoid">
         <Bloc>
           <section>
