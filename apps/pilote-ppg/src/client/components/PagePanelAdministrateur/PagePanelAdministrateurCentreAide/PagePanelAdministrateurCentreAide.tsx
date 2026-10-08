@@ -41,7 +41,7 @@ const CarteAction: FunctionComponent<{
     onClick={onClick}
     type="button"
   >
-    <Icone className="h-4 w-4 !text-primary" icone={icone} />
+    <Icone className="h-4 w-4 text-primary" icone={icone} />
     {label}
   </button>
 );
@@ -171,7 +171,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                     </Dropdown.Item>
                     <Dropdown.Divider />
                     <Dropdown.Item
-                      className="m-0 px-2 py-2 text-error hover:!bg-dsfr-warning-950"
+                      className="m-0 px-2 py-2 text-error hover:bg-dsfr-warning-950"
                       onSelect={supprimer}
                     >
                       Supprimer définitivement
@@ -199,7 +199,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
               <Icone
-                className="h-6 w-6 !text-dsfr-grey-625"
+                className="h-6 w-6 text-dsfr-grey-625"
                 icone={Book2ContourIcon}
               />
               <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">

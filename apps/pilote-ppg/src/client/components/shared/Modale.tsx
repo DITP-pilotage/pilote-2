@@ -34,7 +34,7 @@ export const Modale = ({
         <Dialog.Content className="fixed inset-0 md:inset-8 z-10 flex items-end md:items-center md:justify-center pointer-events-none">
           <div
             className={clsxm(
-              "relative w-full bg-white p-8 rounded-t-md md:rounded-md shadow-md !pointer-events-auto [word-break:break-word]",
+              "relative w-full bg-white p-8 rounded-t-md md:rounded-md shadow-md pointer-events-auto [word-break:break-word]",
               {
                 "max-w-[1280px]": size === "xl",
                 "max-w-[1000px]": size === "lg",
@@ -50,10 +50,7 @@ export const Modale = ({
                 type="button"
               >
                 Fermer
-                <Icone
-                  className="w-4 h-4 !text-current"
-                  icone={CloseLineIcon}
-                />
+                <Icone className="w-4 h-4 text-current" icone={CloseLineIcon} />
               </button>
             </Dialog.Close>
             <Dialog.Title

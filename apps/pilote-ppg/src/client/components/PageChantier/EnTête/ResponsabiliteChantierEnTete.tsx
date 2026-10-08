@@ -27,7 +27,7 @@ export const ResponsabiliteChantierEnTete = () => {
     return (
       <div className="flex gap-2">
         <div>
-          <Icone className="!text-current" icone={DraftContourIcon} />
+          <Icone className="text-current" icone={DraftContourIcon} />
         </div>
         <div>
           <span className="mb-0 fr-text--xs">
@@ -42,7 +42,7 @@ export const ResponsabiliteChantierEnTete = () => {
   return (
     <div className="flex gap-2">
       <div>
-        <Icone className="!text-current" icone={DraftContourIcon} />
+        <Icone className="text-current" icone={DraftContourIcon} />
       </div>
       <div>
         <span className="mb-0 fr-text--xs">

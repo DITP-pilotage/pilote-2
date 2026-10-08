@@ -35,7 +35,7 @@ export const HistoriquePublication = <P extends Publication>({
         variant="link"
         aria-label={ariaLabel}
         className="fr-mt-1w fr-ml-3w"
-        iconLeft={<Icone className="w-4 h-4 !text-current" icone={Eye1Icon} />}
+        iconLeft={<Icone className="w-4 h-4 text-current" icone={Eye1Icon} />}
         type="button"
       >
         Voir l'historique

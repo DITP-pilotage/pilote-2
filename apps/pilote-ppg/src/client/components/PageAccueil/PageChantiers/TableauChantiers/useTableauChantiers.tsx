@@ -276,9 +276,7 @@ export const useTableauChantiers = (
                 aria-expanded={estDéroulé}
                 className={clsxm(
                   "after:absolute after:inset-0 after:content-['']",
-                  chantiersSontArchives
-                    ? "!text-dsfr-grey-925"
-                    : "!text-primary",
+                  chantiersSontArchives ? "text-dsfr-grey-925" : "text-primary",
                 )}
                 onClick={aggregatedCellContext.row.getToggleExpandedHandler()}
                 type="button"
@@ -287,7 +285,7 @@ export const useTableauChantiers = (
                   {`${estDéroulé ? "Replier" : "Déplier"} ${ministère}`}
                 </span>
                 <Icone
-                  className="!text-current"
+                  className="text-current"
                   icone={estDéroulé ? ArrowSLineIcon : ArrowSLine2Icon}
                 />
               </button>

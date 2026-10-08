@@ -57,7 +57,7 @@ export const AlbertDock = ({
         onClick={close}
         type="button"
       >
-        <Icone className="h-4 w-4 !text-current" icone={CloseLineIcon} />
+        <Icone className="h-4 w-4 text-current" icone={CloseLineIcon} />
       </button>
     </div>
   );

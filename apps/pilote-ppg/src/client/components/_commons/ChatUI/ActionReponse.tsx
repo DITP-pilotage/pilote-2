@@ -20,7 +20,7 @@ export const ActionReponse = forwardRef<
       type="button"
       {...props}
     >
-      <Icone className="h-4 w-4 !text-current" icone={icone} />
+      <Icone className="h-4 w-4 text-current" icone={icone} />
       {label}
     </button>
   );

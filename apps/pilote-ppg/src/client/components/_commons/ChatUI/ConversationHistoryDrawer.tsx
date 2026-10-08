@@ -46,7 +46,7 @@ export const ConversationHistoryDrawer = ({
       <Button
         className="mx-3 mb-1 mt-3 justify-start"
         iconLeft={
-          <Icone className="h-4 w-4 !text-current" icone={AddLineIcon} />
+          <Icone className="h-4 w-4 text-current" icone={AddLineIcon} />
         }
         onClick={onNouvelleConversation}
         size="sm"
@@ -100,7 +100,7 @@ export const ConversationHistoryDrawer = ({
                     type="button"
                   >
                     <Icone
-                      className="h-4 w-4 !text-current"
+                      className="h-4 w-4 text-current"
                       icone={DeleteIcon}
                     />
                   </button>

@@ -10,7 +10,7 @@ export const InputNote = forwardRef<
     <div className="flex flex-col text-center">
       {label ? (
         <label
-          className={clsxm("font-medium !text-xs mb-1 !italic", {
+          className={clsxm("font-medium text-xs mb-1 italic", {
             "text-error": !!errorMessage,
           })}
           htmlFor={id}
@@ -20,13 +20,13 @@ export const InputNote = forwardRef<
       ) : null}
       <input
         className={clsxm(
-          "!block border !rounded-t w-[10ch] !px-4 !py-2",
-          "!border-b !border-b-gray-600",
+          "block border rounded-t w-[10ch] px-4 py-2",
+          "border-b border-b-gray-600",
           "text-center",
           "[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
           className,
           {
-            "!border-error text-error": !!errorMessage,
+            "border-error text-error": !!errorMessage,
           },
         )}
         {...props}

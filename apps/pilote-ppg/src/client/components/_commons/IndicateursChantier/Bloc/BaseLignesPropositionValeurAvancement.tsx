@@ -99,7 +99,7 @@ export const BaseLignesPropositionValeurAvancement = ({
         {estPropositionSurLeBonJalon ? (
           <>
             {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
-            <Table.Cell className="mb-0 text-sm/6 !text-current text-center min-h-8 align-top p-0 md:p-0 md:py-2">
+            <Table.Cell className="mb-0 text-sm/6 text-current text-center min-h-8 align-top p-0 md:p-0 md:py-2">
               <ValeurEtDate
                 date={
                   detailIndicateurDuTerritoire.proposition.dateValeurAvancement
@@ -117,7 +117,7 @@ export const BaseLignesPropositionValeurAvancement = ({
                 valeur={detailIndicateurDuTerritoire.valeurCibleAnnuelle}
               />
             </Table.Cell>
-            <Table.Cell className="mb-0 text-sm/6 !text-current min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
+            <Table.Cell className="mb-0 text-sm/6 text-current min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
               {detailIndicateurDuTerritoire.proposition.statutTauxAvancement ===
               "EN_COURS" ? (
                 <BarreDeProgressionAVenir variante={varianteBarreProgression} />

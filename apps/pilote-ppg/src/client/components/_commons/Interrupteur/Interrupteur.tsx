@@ -27,7 +27,7 @@ const Interrupteur: FunctionComponent<InterrupteurProps> = ({
         className={clsxm(
           "flex flex-row gap-2 items-center",
           {
-            "!flex-row-reverse": direction === "inverse",
+            "flex-row-reverse": direction === "inverse",
           },
           className,
         )}
