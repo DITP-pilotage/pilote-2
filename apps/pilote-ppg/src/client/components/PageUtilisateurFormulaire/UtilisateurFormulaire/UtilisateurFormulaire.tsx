@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { $Enums } from "@prisma/client";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 import { donneValidationInfosBaseUtilisateur } from "@/validation/utilisateur";
 import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur";
 import { api } from "@/server/framework/trpc/api";
@@ -120,7 +120,13 @@ const UtilisateurFormulaire: FunctionComponent<
       </Titre>
       <Bloc>
         <div className="fr-px-10w fr-py-6w">
-          <IndicateurDEtapes étapeCourante={etapeCourante} étapes={étapes} />
+          <StepIndicator
+            className="mb-2"
+            currentStep={etapeCourante}
+            nextStep={étapes[etapeCourante]}
+            stepCount={étapes.length}
+            title={étapes[etapeCourante - 1]}
+          />
           <FormProvider {...reactHookForm}>
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {etapeCourante === 1 && (
