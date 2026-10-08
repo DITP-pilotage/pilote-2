@@ -1,14 +1,15 @@
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
-import { PrismaDecisionStrategiqueRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaDecisionStrategiqueRepository";
+import { PrismaPublicationRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaPublicationRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
-describe("PrismaDecisionStrategiqueRepository", () => {
-  let prismaDecisionStrategiqueRepository: PrismaDecisionStrategiqueRepository;
+describe("PrismaPublicationRepository (decisions-strategiques)", () => {
+  let prismaPublicationRepository: PrismaPublicationRepository;
 
   beforeEach(() => {
-    prismaDecisionStrategiqueRepository =
-      new PrismaDecisionStrategiqueRepository({ prisma: new PrismaPilote() });
+    prismaPublicationRepository = new PrismaPublicationRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#anonymiserAuteurs", () => {
@@ -41,7 +42,7 @@ describe("PrismaDecisionStrategiqueRepository", () => {
         });
 
         // When
-        await prismaDecisionStrategiqueRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
@@ -86,7 +87,7 @@ describe("PrismaDecisionStrategiqueRepository", () => {
         });
 
         // When
-        await prismaDecisionStrategiqueRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
@@ -128,7 +129,7 @@ describe("PrismaDecisionStrategiqueRepository", () => {
         });
 
         // When
-        await prismaDecisionStrategiqueRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
