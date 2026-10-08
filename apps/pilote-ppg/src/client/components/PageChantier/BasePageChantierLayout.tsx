@@ -1,7 +1,7 @@
 import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import { ReactNode, useState } from "react";
 import clsx from "clsx";
-import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
+import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
