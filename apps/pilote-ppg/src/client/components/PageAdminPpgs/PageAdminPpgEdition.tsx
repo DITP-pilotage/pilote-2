@@ -1,4 +1,5 @@
 import { Controller, FormProvider } from "react-hook-form";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import {
   FormTextField,
   FormTextareaField,
@@ -182,6 +183,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
                   name="ppgAxe"
                   render={({ field }) => (
                     <SelectField
+                      className={FIELD_GROUP_SPACING}
                       name="ppgAxe"
                       label="Axe"
                       onChange={(valeur) => field.onChange(valeur || null)}

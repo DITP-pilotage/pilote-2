@@ -1,4 +1,5 @@
 import { FormProvider } from "react-hook-form";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import { useState } from "react";
@@ -48,6 +49,7 @@ const PageMonProfilUtilisateurContent = () => {
   return (
     <>
       <TextField
+        className={FIELD_GROUP_SPACING}
         disabled
         id="email"
         required
@@ -57,6 +59,7 @@ const PageMonProfilUtilisateurContent = () => {
       />
 
       <TextField
+        className={FIELD_GROUP_SPACING}
         errorMessage={formState.errors.prenom?.message?.toString()}
         id="prénom"
         required
@@ -66,6 +69,7 @@ const PageMonProfilUtilisateurContent = () => {
       />
 
       <TextField
+        className={FIELD_GROUP_SPACING}
         errorMessage={formState.errors.nom?.message?.toString()}
         id="nom"
         required
@@ -96,6 +100,7 @@ const PageMonProfilUtilisateurContent = () => {
       )}
 
       <TextField
+        className={FIELD_GROUP_SPACING}
         errorMessage={formState.errors.fonction?.message?.toString()}
         id="fonction"
         required

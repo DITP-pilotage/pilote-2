@@ -1,4 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { SelectField } from "@/components/shared/SelectField";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
@@ -13,6 +14,7 @@ const SélecteurPpg = () => {
       name="chPpg"
       render={({ field }) => (
         <SelectField
+          className={FIELD_GROUP_SPACING}
           name="chPpg"
           label="PPG *"
           placeholder="Sélectionnez un PPG"

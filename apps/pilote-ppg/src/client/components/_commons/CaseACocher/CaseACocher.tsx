@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
 import { FunctionComponent, useId } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 

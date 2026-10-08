@@ -3,7 +3,6 @@ import { Button } from "@/components/shared/Button";
 import AdminIndicateurBarreLatérale from "@/components/PageAdminIndicateurs/AdminIndicateurBarreLatérale";
 import Titre from "@/components/_commons/Titre/Titre";
 import "@gouvfr/dsfr/dist/component/select/select.min.css";
-import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import TableauAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs";
 import usePageAdminIndicateurs from "@/components/PageAdminIndicateurs/UsePageAdminIndicateurs";
 

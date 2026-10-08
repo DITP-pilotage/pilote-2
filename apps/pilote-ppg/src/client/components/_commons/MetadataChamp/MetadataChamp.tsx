@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField, TextareaField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import {
@@ -79,6 +80,7 @@ function MetadataChampInterne<TForm extends FieldValues>(
     if (props.editBoxType === "text") {
       return (
         <TextField
+          className={FIELD_GROUP_SPACING}
           disabled={props.disabled}
           errorMessage={erreurMessage}
           id={name}
@@ -92,6 +94,7 @@ function MetadataChampInterne<TForm extends FieldValues>(
     if (props.editBoxType === "textarea") {
       return (
         <TextareaField
+          className={FIELD_GROUP_SPACING}
           errorMessage={erreurMessage}
           id={name}
           onChange={field.onChange}
@@ -117,6 +120,7 @@ function MetadataChampInterne<TForm extends FieldValues>(
 
     return (
       <SelectField
+        className={FIELD_GROUP_SPACING}
         disabled={props.estDesactive}
         errorMessage={erreurMessage}
         name={name}

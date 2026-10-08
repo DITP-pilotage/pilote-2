@@ -1,4 +1,5 @@
 import { Controller } from "react-hook-form";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
 import { Button } from "@/components/shared/Button";
@@ -76,6 +77,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         ) : null}
       </div>
       <TextField
+        className={FIELD_GROUP_SPACING}
         disabled={Boolean(utilisateur?.email)}
         errorMessage={errors.email?.message?.toString()}
         id="email"
@@ -85,12 +87,14 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         {...register("email")}
       />
       <TextField
+        className={FIELD_GROUP_SPACING}
         errorMessage={errors.nom?.message?.toString()}
         id="nom"
         label="Nom"
         {...register("nom")}
       />
       <TextField
+        className={FIELD_GROUP_SPACING}
         errorMessage={errors.prénom?.message?.toString()}
         id="prénom"
         label="Prénom"
@@ -110,12 +114,14 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         </div>
       )}
       <TextField
+        className={FIELD_GROUP_SPACING}
         errorMessage={errors.fonction?.message?.toString()}
         id="fonction"
         label="Fonction"
         {...register("fonction")}
       />
       <SelectField
+        className={FIELD_GROUP_SPACING}
         errorMessage={errors.profil?.message?.toString()}
         name="profil"
         label="Profil"

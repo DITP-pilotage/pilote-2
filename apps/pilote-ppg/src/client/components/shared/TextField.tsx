@@ -2,6 +2,10 @@ import { Label } from "radix-ui";
 import { ComponentProps, ReactNode, useId } from "react";
 import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { clsxm } from "@/utils/clsxm";
+import {
+  ERROR_SLOT_CLASSES,
+  splitFieldGroupSpacing,
+} from "@/components/shared/fieldGroupSpacing";
 
 // Reproduit le champ de saisie du DSFR (fr-input) : fond gris, trait bas, libellé
 // puis aide en gris ; en erreur, barre rouge à gauche, trait et message rouges.
@@ -44,54 +48,64 @@ const FieldShell = ({
   hintId: string;
   errorId: string;
   children: ReactNode;
-}) => (
-  <div
-    className={clsxm(
-      "relative flex flex-col",
-      errorMessage &&
-        "pl-3 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-dsfr-error-425",
-      className,
-    )}
-  >
-    {label ? (
-      <Label.Root
-        className={clsxm(
-          "block text-base leading-6 text-dsfr-grey-50",
-          errorMessage && "text-dsfr-error-425",
-        )}
-        htmlFor={controlId}
-      >
-        {label}
-        {required ? <ChampObligatoire /> : null}
-      </Label.Root>
-    ) : null}
-    {hint ? (
-      <span className="text-xs leading-5 text-dsfr-mention-grey" id={hintId}>
-        {hint}
-      </span>
-    ) : null}
-    {children}
-    {errorMessage || counter ? (
-      <div className="flex justify-between gap-2 mt-2">
-        {errorMessage ? (
-          <p
-            className="text-xs leading-5 text-dsfr-error-425 mb-0"
-            id={errorId}
-          >
-            {errorMessage}
-          </p>
-        ) : (
-          <span />
-        )}
-        {counter ? (
-          <span className="text-xs leading-5 text-dsfr-mention-grey">
-            {counter.length} / {counter.max}
-          </span>
-        ) : null}
-      </div>
-    ) : null}
-  </div>
-);
+}) => {
+  const { spaced, className: classNameSansEspacement } =
+    splitFieldGroupSpacing(className);
+  const ligneErreurReservee = spaced && !counter;
+
+  return (
+    <div
+      className={clsxm(
+        "relative flex flex-col",
+        errorMessage &&
+          "before:absolute before:inset-y-0 before:-left-3 before:w-0.5 before:bg-dsfr-error-425",
+        ligneErreurReservee ? classNameSansEspacement : className,
+      )}
+    >
+      {label ? (
+        <Label.Root
+          className={clsxm(
+            "block text-base leading-6 text-dsfr-grey-50",
+            errorMessage && "text-dsfr-error-425",
+          )}
+          htmlFor={controlId}
+        >
+          {label}
+          {required ? <ChampObligatoire /> : null}
+        </Label.Root>
+      ) : null}
+      {hint ? (
+        <span className="text-xs leading-5 text-dsfr-mention-grey" id={hintId}>
+          {hint}
+        </span>
+      ) : null}
+      {children}
+      {ligneErreurReservee ? (
+        <p className={ERROR_SLOT_CLASSES} id={errorId}>
+          {errorMessage}
+        </p>
+      ) : errorMessage || counter ? (
+        <div className="flex justify-between gap-2 mt-2">
+          {errorMessage ? (
+            <p
+              className="text-xs leading-5 text-dsfr-error-425 mb-0"
+              id={errorId}
+            >
+              {errorMessage}
+            </p>
+          ) : (
+            <span />
+          )}
+          {counter ? (
+            <span className="text-xs leading-5 text-dsfr-mention-grey">
+              {counter.length} / {counter.max}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+};
 
 const describedBy = (
   hint: ReactNode,

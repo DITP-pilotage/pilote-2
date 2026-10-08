@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import {
   SelectField,
   type SelectFieldOption,
@@ -126,6 +127,7 @@ export const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   return (
     <>
       <SelectField
+        className={FIELD_GROUP_SPACING}
         name="selecteur-carte"
         onChange={aLaSelectionCartographie}
         options={optionsCartographie}

@@ -40,10 +40,8 @@ export class PageUtilisateurFormulaire extends BasePage {
     return this.page.getByLabel("Fonction", { exact: true });
   }
 
-  private get blocService() {
-    return this.page.locator(".fr-input-group", {
-      has: this.page.locator("label", { hasText: "Service" }),
-    });
+  private get champService() {
+    return this.page.locator("#service");
   }
 
   async remplirIdentification(data: {
@@ -81,7 +79,7 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async expectErreurService(): Promise<void> {
-    await expect(this.blocService.locator(".fr-error-text")).toBeVisible();
+    await expect(this.champService).toHaveAttribute("aria-invalid", "true");
   }
 
   async expectPasErreurFonction(): Promise<void> {
@@ -91,7 +89,9 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async expectPasErreurService(): Promise<void> {
-    await expect(this.blocService.locator(".fr-error-text")).not.toBeVisible();
+    await expect(
+      this.champService.and(this.page.locator('[aria-invalid="true"]')),
+    ).toHaveCount(0);
   }
 
   async confirmer(): Promise<void> {

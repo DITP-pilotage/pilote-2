@@ -1,4 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
+import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import {
   FormTextField,
   FormTextareaField,
@@ -133,6 +134,7 @@ const FicheChantier = () => {
             name="chSaisieAte"
             render={({ field }) => (
               <SelectField
+                className={FIELD_GROUP_SPACING}
                 name="chSaisieAte"
                 label="Type ATE"
                 options={OPTIONS_ATE}
@@ -146,6 +148,7 @@ const FicheChantier = () => {
             name="chState"
             render={({ field }) => (
               <SelectField
+                className={FIELD_GROUP_SPACING}
                 name="chState"
                 label="Statut *"
                 options={OPTIONS_STATUT}
