@@ -174,7 +174,7 @@ export const BasePageAccueilLayout: FunctionComponent<
           </section>
         </BarreLatérale>
         <main className="w-full">
-          <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_var(--shadow-color)] bg-dsfr-blue-france-850 fr-grid-row fr-pt-2w">
+          <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_theme(colors.dsfr-shadow)] bg-dsfr-blue-france-850 fr-grid-row fr-pt-2w">
             <PanelMenuNavigation
               estAutoriseAVoirLeSelecteurDeMaille={
                 estAutoriseAVoirLeSelecteurDeMaille

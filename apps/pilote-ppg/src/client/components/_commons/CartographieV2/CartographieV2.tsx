@@ -59,9 +59,10 @@ export const CartographieV2 = ({
       return {
         key: territoire.code,
         className: clsxm(
+          "stroke-white",
           estSelectionnable && "cursor-pointer hover:opacity-70",
         ),
-        style: { stroke: "var(--grey-1000-50)", strokeWidth: 0.15 },
+        style: { strokeWidth: 0.15 },
         fill: estHachure(donnees[territoire.code]?.remplissage ?? "")
           ? "#ffffff"
           : (donnees[territoire.code]?.remplissage ?? "#e0e0e0"),

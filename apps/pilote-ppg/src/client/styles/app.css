@@ -2,24 +2,72 @@
 @config "../../../tailwind.config.js";
 @import "../components/_commons/EditeurRiche/prosemirror.css";
 
-.uppercase {
-  text-transform: uppercase;
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Light_Italic.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Regular_Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Medium_Italic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/marianne/Marianne-Bold_Italic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
 }
 
 .bold {
   font-weight: bold;
-}
-
-.font-normal {
-  font-weight: 400;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-1 {
-  flex: 1 1 0;
 }
 
 .flex-direction-row {
@@ -28,42 +76,6 @@
 
 .flex-direction-column {
   flex-direction: column;
-}
-
-.table {
-  display: table !important;
-}
-
-.flex-grow {
-  flex-grow: 1;
-}
-
-.justify-end {
-  justify-content: end;
-}
-
-.justify-start {
-  justify-content: flex-start;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.w-auto {
-  width: auto;
 }
 
 .\!w-auto {
@@ -90,40 +102,32 @@
   flex-direction: column;
 }
 
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
-.justify-end {
-  justify-content: flex-end;
-}
-
 .texte-gris {
-  color: var(--text-mention-grey) !important;
+  color: theme(colors.dsfr-mention-grey) !important;
 }
 
 .texte-success {
-  color: var(--text-default-success);
+  color: theme(colors.dsfr-success-425);
 }
 
 .texte-warning {
-  color: var(--text-default-warning);
+  color: theme(colors.dsfr-warning-425);
 }
 
 .texte-blue-france {
-  color: var(--text-title-blue-france);
+  color: theme(colors.dsfr-blue-france-sun-113);
 }
 
 .\!texte-blue-france {
-  color: var(--text-title-blue-france) !important;
+  color: theme(colors.dsfr-blue-france-sun-113) !important;
 }
 
 .texte-title-grey {
-  color: var(--text-title-grey);
+  color: theme(colors.dsfr-grey-50);
 }
 
 .\!texte-title-grey {
-  color: var(--text-title-grey) !important;
+  color: theme(colors.dsfr-grey-50) !important;
 }
 
 .\!texte-white {
@@ -138,28 +142,8 @@
   text-align: right;
 }
 
-.text-center {
-  text-align: center !important;
-}
-
-.text-lg {
-  font-size: x-large;
-}
-
 .text-italic {
   font-style: italic;
-}
-
-.no-underline {
-  text-decoration-line: none;
-}
-
-.underline {
-  text-decoration-line: underline;
-}
-
-.bg-none {
-  background-image: none;
 }
 
 .btn-radius {
@@ -170,24 +154,8 @@
   white-space: nowrap;
 }
 
-.whitespace-normal {
-  white-space: normal;
-}
-
-.break-normal {
-  word-break: normal;
-}
-
 .list-style-none {
   list-style: none;
-}
-
-.break-keep {
-  word-break: keep-all;
-}
-
-.h-40 {
-  height: 10rem;
 }
 
 .overflow-ellipsis {
@@ -196,40 +164,36 @@
   white-space: nowrap;
 }
 
-.overflow-y-auto {
-  overflow-y: auto !important;
-}
-
 .overflow-y-scroll {
   overflow-y: scroll !important;
 }
 
 .fr-text-title--blue-france {
-  color: var(--text-title-blue-france) !important;
+  color: theme(colors.dsfr-blue-france-sun-113) !important;
 }
 
 .fr-text-title--high-blue-france {
-  color: var(--background-action-high-blue-france) !important;
+  color: theme(colors.dsfr-blue-france-sun-113) !important;
 }
 
 .fr-text-title--light-blue-france {
-  color: var(--background-flat-info);
+  color: theme(colors.dsfr-flat-info);
 }
 
 .fr-background-action-low-blue-france {
-  background-color: var(--background-action-low-blue-france) !important;
+  background-color: theme(colors.dsfr-blue-france-925) !important;
 }
 
 .fr-background-blue-france-850 {
-  background-color: var(--blue-france-850-200) !important;
+  background-color: theme(colors.dsfr-blue-france-850) !important;
 }
 
 .fr-background-blue-france-925 {
-  background-color: var(--blue-france-925-125) !important;
+  background-color: theme(colors.dsfr-blue-france-925) !important;
 }
 
 .fr-background-blue-france-975 {
-  background-color: var(--blue-france-975-75) !important;
+  background-color: theme(colors.dsfr-alt-blue-france) !important;
 }
 
 .fr-background-transparent {
@@ -237,7 +201,7 @@
 }
 
 .fr-background-contrast-grey {
-  background-color: var(--background-contrast-grey) !important;
+  background-color: theme(colors.dsfr-contrast-grey) !important;
 }
 
 .\!background-black {
@@ -249,75 +213,47 @@
 }
 
 .\!background-bleu-cumulus {
-  background-color: var(--blue-cumulus-975-75-hover);
+  background-color: theme(colors.dsfr-blue-cumulus-975-hover);
 }
 
 .border-t {
   border-top-width: 1px;
-  border-top-color: var(--border-default-grey);
+  border-top-color: theme(colors.dsfr-grey-900);
   border-top-style: solid;
 }
 
 .border-r {
   border-right-width: 1px;
-  border-right-color: var(--border-default-grey);
+  border-right-color: theme(colors.dsfr-grey-900);
   border-right-style: solid;
 }
 
 .border-b {
   border-bottom-width: 1px !important;
-  border-bottom-color: var(--border-default-grey) !important;
+  border-bottom-color: theme(colors.dsfr-grey-900) !important;
   border-bottom-style: solid !important;
 }
 
-.border-t-black {
-  border-top-color: black !important;
-}
-
-.border-b-black {
-  border-bottom-color: black !important;
-}
-
 .border-b-high-grey {
-  border-bottom-color: var(--border-action-high-grey) !important;
+  border-bottom-color: theme(colors.dsfr-grey-50) !important;
 }
 
 .border-l {
   border-left-width: 1px;
-  border-left-color: var(--border-default-grey);
+  border-left-color: theme(colors.dsfr-grey-900);
   border-left-style: solid;
 }
 
 .border-blue-france {
-  border-color: var(--text-action-high-blue-france) !important;
+  border-color: theme(colors.dsfr-blue-france-sun-113) !important;
 }
 
 .border {
-  border: 1px solid var(--border-default-grey);
-}
-
-.border-collapse {
-  border-collapse: collapse;
+  border: 1px solid theme(colors.dsfr-grey-900);
 }
 
 .border-spacing-1-0 {
   border-spacing: 1rem 0 !important;
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.gap-4 {
-  gap: 1rem;
-}
-
-.resize-none {
-  resize: none;
-}
-
-.ml-auto {
-  margin-left: auto;
 }
 
 .\!ml-auto {
@@ -327,7 +263,7 @@
 @media screen and (min-width: 48rem) {
   .border-md-r {
     border-right-width: 1px;
-    border-right-color: var(--border-default-grey);
+    border-right-color: theme(colors.dsfr-grey-900);
     border-right-style: solid;
   }
 }
@@ -335,7 +271,7 @@
 @media screen and (min-width: 62rem) {
   .border-lg-r {
     border-right-width: 1px;
-    border-right-color: var(--border-default-grey);
+    border-right-color: theme(colors.dsfr-grey-900);
     border-right-style: solid;
   }
 
@@ -347,7 +283,7 @@
 @media screen and (min-width: 78rem) {
   .border-xl-r {
     border-right-width: 1px;
-    border-right-color: var(--border-default-grey);
+    border-right-color: theme(colors.dsfr-grey-900);
     border-right-style: solid;
   }
 }
@@ -357,7 +293,7 @@
 }
 
 .fr-text-warning {
-  color: var(--border-plain-warning);
+  color: theme(colors.dsfr-warning-425);
 }
 
 .input--sm {

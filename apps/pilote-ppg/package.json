@@ -185,7 +185,6 @@
     "portless": "^0.15.6",
     "prettier": "^3.9.6",
     "prisma": "7.10.0",
-    "sass": "1.104.0",
     "tailwindcss": "^4.3.3",
     "typescript": "7.0.2",
     "vitest": "^5.0.0",

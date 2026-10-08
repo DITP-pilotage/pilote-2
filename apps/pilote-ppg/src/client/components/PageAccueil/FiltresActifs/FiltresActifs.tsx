@@ -100,7 +100,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
 
   return (
     <Collapsible.Root
-      className="sticky w-full top-0 z-[1] bg-dsfr-blue-france-925 shadow-[0_6px_18px_var(--shadow-color)] max-[992px]:top-14"
+      className="sticky w-full top-0 z-[1] bg-dsfr-blue-france-925 shadow-[0_6px_18px_theme(colors.dsfr-shadow)] max-[992px]:top-14"
       id="filtres-actifs"
       onOpenChange={setEstOuvert}
       open={estOuvert}

@@ -36,7 +36,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
       ) : (
         <div className="relative flex grow flex-col">
           {afficherLeLoader ? (
-            <div className="fixed right-16 bottom-16 z-[1751] w-80 bg-dsfr-grey-1000 [filter:drop-shadow(var(--overlap-shadow))] shadow-[inset_0_0_0_1px_theme(colors.dsfr-grey-900)]">
+            <div className="fixed right-16 bottom-16 z-[1751] w-80 bg-dsfr-grey-1000 [filter:drop-shadow(0_2px_6px_theme(colors.dsfr-shadow))] shadow-[inset_0_0_0_1px_theme(colors.dsfr-grey-900)]">
               <div className="relative w-full h-[0.4em] bg-pilote-loader-bg">
                 <div className="relative h-full bg-pilote-loader-green bg-[size:23em_0.25em] animate-cssload-width" />
               </div>
