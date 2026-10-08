@@ -8,7 +8,7 @@ import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { api } from "@/server/framework/trpc/api";
 import { profilsRégionaux } from "@/shared/utilisateur/Utilisateur.interface";
 import { AAccesATousLesUtilisateurs } from "@/shared/utilisateur/profils-gestion-utilisateur";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import {
   listeTerritoires,
   récupérerDétailsSurUnTerritoire,

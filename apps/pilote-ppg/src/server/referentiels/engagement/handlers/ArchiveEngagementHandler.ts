@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/referentiels/module";
 import { CheckEngagementUsageQuery } from "@/server/referentiels/engagement/queries/CheckEngagementUsageQuery";
-import { ConflictError } from "@/server/app/error-boundary/conflict-error";
+import { ConflictError } from "@/shared/errors/conflict-error";
 
 export class ArchiveEngagementHandler {
   private readonly prisma: PrismaPilote;

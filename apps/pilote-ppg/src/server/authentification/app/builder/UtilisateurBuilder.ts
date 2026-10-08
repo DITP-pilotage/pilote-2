@@ -2,7 +2,7 @@ import { Utilisateur } from "@/server/authentification/domain/Utilisateur";
 import { HabilitationAuthentitificationAPI } from "@/server/authentification/domain/HabilitationAuthentitificationAPI";
 import { HabilitationAuthentitificationAPIBuilder } from "@/server/authentification/app/builder/HabilitationAuthentitificationAPIBuilder";
 import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 export class UtilisateurBuilder {
   private email: string = "test@test.com";

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Transaction } from "@/server/framework/persistence/Transaction";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 import type { Inject } from "@/server/evaluation/module";
 
 export const modifierObjectifCommandSchema = z.object({

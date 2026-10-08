@@ -24,7 +24,7 @@ import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/
 import { Axe } from "@/shared/axe/Axe.interface";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { profilsRégionaux } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-territoriale/fiche-territoriale";
 import { clsxm } from "@/utils/clsxm";

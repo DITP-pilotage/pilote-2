@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 import { SanitizerHTML } from "@/server/app/domain/SanitizerHTML";
 
 export class Nouveaute {

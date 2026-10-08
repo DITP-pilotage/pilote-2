@@ -1,5 +1,5 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 import { toISODate } from "@/server/app/domain/Dates";
 
 export function filtrerEvenementsRedondants(

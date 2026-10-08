@@ -5,8 +5,8 @@ import {
   protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
+import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
 
 const conversationsRouter = createTRPCRouter({
   lister: protectedProcedure.query(async ({ ctx }) => {

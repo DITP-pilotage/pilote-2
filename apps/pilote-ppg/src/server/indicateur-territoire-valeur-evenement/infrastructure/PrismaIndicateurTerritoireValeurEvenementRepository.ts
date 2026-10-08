@@ -12,7 +12,7 @@ import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/d
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { toISODate } from "@/server/app/domain/Dates";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 import { formaterDate } from "@/client/utils/date/date";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository implements IndicateurTerritoireValeurEvenementRepository {

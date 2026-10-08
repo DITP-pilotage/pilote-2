@@ -12,7 +12,7 @@ import { UtilisateurExportCSV } from "@/server/gestion-utilisateur/domain/Utilis
 import { recupererLesNomsDesTerritoires } from "@/server/app/RecupererLesNomsDesTerritoiresPourUnUtilisateur";
 import { Territoire } from "@/server/gestion-utilisateur/domain/Territoire";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
-import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
+import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
 import { ecrireCsvEnStreaming } from "@/server/framework/csv/ecrireCsvEnStreaming";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import {

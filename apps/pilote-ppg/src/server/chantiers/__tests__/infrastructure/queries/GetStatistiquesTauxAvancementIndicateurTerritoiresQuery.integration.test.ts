@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesTauxAvancementIndicateurTerritoiresQuery";
 import { ListerDetailsIndicateurTerritoireUseCase } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCase";

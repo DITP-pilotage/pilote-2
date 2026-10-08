@@ -9,7 +9,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
 import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PublierFichierIndicateurImporteUseCase", () => {

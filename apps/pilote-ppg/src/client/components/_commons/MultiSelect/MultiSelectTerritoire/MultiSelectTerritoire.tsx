@@ -5,7 +5,7 @@ import {
   MultiSelectOptionGroupée,
   MultiSelectOptionsGroupées,
 } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
-import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
+import { trierParOrdreAlphabétique } from "@/utils/arrays";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
 

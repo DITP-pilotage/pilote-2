@@ -12,7 +12,7 @@ import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
 import { Profil } from "@/shared/profil/Profil.interface";
 import { ProfilBuilder } from "@/test/builders/Profil.builder";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import CréerOuMettreÀJourUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/CréerOuMettreÀJourUnUtilisateurUseCase";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";

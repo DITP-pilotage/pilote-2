@@ -2,7 +2,7 @@ import {
   $Enums,
   indicateur_territoire_valeur_evenement as PrismaIndicateurTerritoireValeurEvenement,
 } from "@prisma/client";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 
 export type EvenementPourDateDernierImport = Pick<
   PrismaIndicateurTerritoireValeurEvenement,

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
-import { deuxTableauxSontIdentiques } from "@/client/utils/arrays";
+import { deuxTableauxSontIdentiques } from "@/utils/arrays";
 import { MultiSelectProps } from "./MultiSelect.interface";
 
 export function useMultiSelect(

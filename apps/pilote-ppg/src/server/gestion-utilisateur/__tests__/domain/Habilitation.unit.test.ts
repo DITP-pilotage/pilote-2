@@ -1,6 +1,6 @@
 import { HabilitationBuilder } from "@/server/gestion-utilisateur/domain/habilitation/HabilitationBuilder";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
+import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 

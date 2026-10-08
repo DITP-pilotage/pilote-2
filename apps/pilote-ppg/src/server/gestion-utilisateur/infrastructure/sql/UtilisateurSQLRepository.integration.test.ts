@@ -1,6 +1,6 @@
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
 import { TerritoireBuilder } from "@/test/builders/Territoire.builder";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { UtilisateurSQLRepository } from "./UtilisateurSQLRepository";

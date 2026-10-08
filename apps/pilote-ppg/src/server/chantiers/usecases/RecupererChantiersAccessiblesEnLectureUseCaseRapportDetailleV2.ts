@@ -3,7 +3,7 @@ import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.in
 import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { Axe } from "@/shared/axe/Axe.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { MailleChantierContrat } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import {

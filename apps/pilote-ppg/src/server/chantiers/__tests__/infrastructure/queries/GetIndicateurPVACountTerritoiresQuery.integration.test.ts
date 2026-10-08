@@ -7,7 +7,7 @@ import { PrismaTerritoireRepository } from "@/server/chantiers/infrastructure/ad
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 function habilitationsPourChantier(
   chantierId: string,

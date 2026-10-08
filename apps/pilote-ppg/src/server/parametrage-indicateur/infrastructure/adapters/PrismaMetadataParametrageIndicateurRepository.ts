@@ -9,7 +9,7 @@ import { logger } from "@/server/framework/logger";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain/ImportMetadataIndicateur";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 
 export interface RawMetadataParametrageIndicateurModel {
   indic_id: string;

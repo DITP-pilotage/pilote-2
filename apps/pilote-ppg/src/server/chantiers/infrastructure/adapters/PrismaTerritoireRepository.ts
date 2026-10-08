@@ -4,7 +4,7 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { NOMS_MAILLES } from "@/shared/maille/mailleSQLParser";
 import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
   private readonly prisma: PilotePrismaClient;

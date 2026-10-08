@@ -12,7 +12,7 @@ import {
 } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
 import { removeAccents } from "@/server/utils/remove-accents";

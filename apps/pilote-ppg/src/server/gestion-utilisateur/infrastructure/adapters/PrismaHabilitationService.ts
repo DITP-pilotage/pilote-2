@@ -1,7 +1,7 @@
 import { HabilitationService } from "@/server/gestion-utilisateur/domain/ports/HabilitationService";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { Habilitations } from "@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface";
-import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 export class PrismaHabilitationService implements HabilitationService {
   async recupererHabilitations(args: {

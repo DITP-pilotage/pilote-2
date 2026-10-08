@@ -14,7 +14,7 @@ import {
   profilsTerritoriaux,
 } from "@/shared/utilisateur/Utilisateur.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import type { Inject } from "@/server/chantiers/module";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import {

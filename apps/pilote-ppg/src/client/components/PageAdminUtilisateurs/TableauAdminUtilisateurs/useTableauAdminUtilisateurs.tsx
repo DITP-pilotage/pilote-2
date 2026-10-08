@@ -9,7 +9,7 @@ import { ChangeEvent, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { formaterDate } from "@/client/utils/date/date";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { TAILLE_DEFAUT_PAGINATION_UTILISATEUR } from "@/client/constants/constantes";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
 import { Icone } from "@/components/_commons/Icone";

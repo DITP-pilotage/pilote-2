@@ -4,7 +4,7 @@ import {
   IndicateurTerritoireValeurEvenement,
 } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 
 const estPropositionEnCours = (
   evenementsPropositionValeur: IndicateurTerritoireValeurEvenement | undefined,

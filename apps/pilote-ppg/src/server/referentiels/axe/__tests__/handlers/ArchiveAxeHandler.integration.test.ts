@@ -4,7 +4,7 @@ import { CheckAxeUsageQuery } from "@/server/referentiels/axe/queries/CheckAxeUs
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import { ConflictError } from "@/server/app/error-boundary/conflict-error";
+import { ConflictError } from "@/shared/errors/conflict-error";
 
 describe("ArchiveAxeHandler", () => {
   let handler: ArchiveAxeHandler;

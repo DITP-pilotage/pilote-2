@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJour,

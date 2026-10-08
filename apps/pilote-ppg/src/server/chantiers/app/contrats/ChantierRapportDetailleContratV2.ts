@@ -1,9 +1,10 @@
+import { MinisterePorteur } from "@/shared/ministere/MinisterePorteur.interface";
 import { Maille, MailleInterne } from "@/shared/maille/Maille.interface";
 import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import { TypeStatut } from "@/shared/chantier/Chantier.interface";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { Meteo } from "@/shared/meteo/Meteo.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
@@ -55,14 +56,6 @@ export type MailleRapportDetailleContrat = Record<
   ListeTerritoiresDonnéeRapportDetailleContrat
 >;
 
-export interface MinisterePorteurRapportDetailleContrat {
-  nom?: string;
-  icône?: string | null;
-  périmètresMinistériels: {
-    id: string;
-  }[];
-}
-
 export interface MinistereCoporteurRapportDetailleContrat {
   nom: string;
 }
@@ -80,7 +73,7 @@ export interface DirecteurProjetRapportDetailleContrat {
 }
 
 export interface ResponsableRapportDetailleContrat {
-  porteur: MinisterePorteurRapportDetailleContrat | null;
+  porteur: MinisterePorteur | null;
   coporteurs: MinistereCoporteurRapportDetailleContrat[];
   directeursAdminCentrale: DirecteurAdministrationCentraleRapportDetailleContrat[];
   directeursProjet: DirecteurProjetRapportDetailleContrat[];

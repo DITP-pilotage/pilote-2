@@ -5,7 +5,7 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
-import { TerritoireNonAutoriséErreur } from "@/server/utils/errors";
+import { TerritoireNonAutoriséErreur } from "@/shared/errors/authorization-errors";
 
 export const chantierRouter = createTRPCRouter({
   recupererTousSynthetisesAccessiblesEnLecture: protectedProcedure.query(

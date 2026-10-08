@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PiloteError } from "@/server/app/error-boundary/pilote-error";
+import { PiloteError } from "@/shared/errors/pilote-error";
 import { logger } from "@/server/framework/logger";
 
 export const errorHandler =

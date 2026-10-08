@@ -4,8 +4,8 @@ import { handleListerIndicateurs } from "@/server/chantiers/infrastructure/handl
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { recupererUtilisateurAuthentifieOpenApi } from "@/server/app/open-api/endpointOpenApi";
-import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { ForbiddenError } from "@/shared/errors/forbidden-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 
 export const config = {
   api: {

@@ -2,7 +2,7 @@ import { MockProxy, mock } from "vitest-mock-extended";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 
 describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => {
   let useCase: RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase;
