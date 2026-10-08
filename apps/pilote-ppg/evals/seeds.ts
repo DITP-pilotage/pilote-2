@@ -2,7 +2,7 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { indicateurDuChantier } from "./world";
 
 /**
- * Briques de données réutilisables, appelées depuis la `task` d'un cas.
+ * Briques de données réutilisables, appelées au seed du monde d'un fichier.
  *
  * Les seuils viennent de `GetChantiersQuery` : en retard si l'écart à la
  * médiane est <= -10 ; en difficulté si le chantier n'est pas en retard et que
@@ -96,23 +96,5 @@ export async function seedChantierEnDifficulte({
     meteo: "ORAGE",
     ecart: ECART_A_L_HEURE,
     taux: 58,
-  });
-}
-
-export async function seedChantierWithTaux({
-  chantierId,
-  territoire,
-  taux,
-}: {
-  chantierId: string;
-  territoire: TerritoireRef;
-  taux: number;
-}) {
-  await seedChantierTerritoire({
-    chantierId,
-    territoire,
-    meteo: "SOLEIL",
-    ecart: ECART_A_L_HEURE,
-    taux,
   });
 }

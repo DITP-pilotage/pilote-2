@@ -2,7 +2,12 @@ import { randomUUID } from "node:crypto";
 import { evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
-import { BRETAGNE, EVAL_TIMEOUT_MS, seedEvalWorld } from "../world";
+import {
+  BRETAGNE,
+  EVAL_TIMEOUT_MS,
+  seedEvalWorld,
+  seedWorldPerFile,
+} from "../world";
 import { seedChantierEnDifficulte, seedChantierEnRetard } from "../seeds";
 import { scoreExpectedTools } from "../scoreExpectedTools";
 import type { AgentTurn, ObservedToolCall, ToolCase } from "../types";
@@ -35,6 +40,22 @@ export function toolSelectionEval({
   tool: string;
   cases: ToolCase[];
 }) {
+  const world = seedWorldPerFile(async () => {
+    const seeded = await seedEvalWorld();
+
+    // Sans écart ni météo, les vues de `get_chantiers` sont vides et l'agent
+    // peut légitimement enchaîner d'autres appels. Semé pour toutes les
+    // suites : un cas négatif d'une suite est souvent le cas positif d'une
+    // autre.
+    await seedChantierEnRetard({ chantierId: "CH-005", territoire: BRETAGNE });
+    await seedChantierEnDifficulte({
+      chantierId: "CH-006",
+      territoire: BRETAGNE,
+    });
+
+    return seeded;
+  });
+
   evalite<ToolCase, AgentTurn, ObservedToolCall[]>(
     `${FAMILLES[famille]} · ${tool}`,
     {
@@ -49,27 +70,13 @@ export function toolSelectionEval({
 
         await createIntegrationTest(
           async () => {
-            const world = await seedEvalWorld();
-
-            // Sans écart ni météo, les vues de `get_chantiers` sont vides et
-            // l'agent peut légitimement enchaîner d'autres appels. Semé pour
-            // toutes les suites : un cas négatif d'une suite est souvent le cas
-            // positif d'une autre.
-            await seedChantierEnRetard({
-              chantierId: "CH-005",
-              territoire: BRETAGNE,
-            });
-            await seedChantierEnDifficulte({
-              chantierId: "CH-006",
-              territoire: BRETAGNE,
-            });
-
+            const { habilitations, userId } = world();
             const result = await AssistantIA.generateText({
               chatId: randomUUID(),
               question: input.question,
-              habilitations: world.habilitations,
+              habilitations,
               agentContext: undefined,
-              userId: world.userId,
+              userId,
             });
 
             turn = {

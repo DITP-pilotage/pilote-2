@@ -6,7 +6,12 @@ export default defineProject({
     name: "server-integration",
     root: "./",
     environment: "node",
-    include: ["src/server/**/*.integration.test.{ts,tsx}"],
+    // Les helpers d'eval qui sèment la base sont testés à côté, comme leurs
+    // tests unitaires dans le projet server-unit.
+    include: [
+      "src/server/**/*.integration.test.{ts,tsx}",
+      "evals/**/*.integration.test.ts",
+    ],
     setupFiles: [
       "./vitest.setup.server.ts",
       "./src/server/infrastructure/test/integrationTestSetup.ts",

@@ -18,15 +18,56 @@ import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Hab
  * ambigus à proposer.
  */
 
+export type EvalProfile = "ditp" | "coordinateur";
+
+export type EvalUser = {
+  userId: string;
+  habilitations: Habilitations;
+};
+
 export type EvalWorld = {
+  /** Profil DITP, gardé au premier niveau pour les suites de niveau 2. */
   userId: string;
   habilitations: Habilitations;
   chantiers: { id: string; nom: string }[];
+  users: Record<EvalProfile, EvalUser>;
 };
 
 /**
+ * Le coordinateur territorial de l'écran d'accueil : lecture sur la Bretagne
+ * et ses départements. Le prompt système qu'il reçoit ne liste que ces codes,
+ * et les outils masquent le qualitatif des autres territoires.
+ */
+export const PERIMETRE_COORDINATEUR = [
+  "REG-53",
+  "DEPT-22",
+  "DEPT-29",
+  "DEPT-35",
+  "DEPT-56",
+];
+
+function habilitationsSur({
+  chantiers,
+  territoires,
+}: {
+  chantiers: string[];
+  territoires: string[];
+}): Habilitations {
+  const perimetre = { chantiers, territoires, périmètres: [] };
+
+  return {
+    lecture: perimetre,
+    saisieCommentaire: perimetre,
+    saisieIndicateur: perimetre,
+    responsabilite: perimetre,
+    gestionUtilisateur: perimetre,
+  };
+}
+
+/**
  * Identifiants stables et lisibles : un cas d'eval qui échoue doit pouvoir se
- * rejouer à la main. Pas d'aléatoire — l'isolation vient de la transaction.
+ * rejouer à la main. Pas d'aléatoire : le monde est vidé puis resemé à chaque
+ * fichier (`seedWorldPerFile`).
  */
 const CHANTIERS = [
   { id: "CH-001", nom: "Lutter contre les violences sexistes et sexuelles" },
@@ -309,25 +350,89 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
   // référentiel réel — sinon une question sur la Bretagne porterait sur un
   // territoire inexistant, et l'agent aurait raison de ne pas appeler l'outil.
   const territoires = await getPrisma().territoire.findMany();
-  const territoiresAccessibles = territoires.map(
-    (territoire) => territoire.code,
-  );
 
-  const fullPerimetre = {
-    chantiers: chantiersAccessibles,
-    territoires: territoiresAccessibles,
-    périmètres: [],
+  const ditp: EvalUser = {
+    userId: user.id,
+    habilitations: habilitationsSur({
+      chantiers: chantiersAccessibles,
+      territoires: territoires.map((territoire) => territoire.code),
+    }),
+  };
+
+  const coordinateurUser = await fixtures.utilisateur({
+    profilCode: "COORDINATEUR_REGION",
+  });
+
+  const coordinateur: EvalUser = {
+    userId: coordinateurUser.id,
+    habilitations: habilitationsSur({
+      chantiers: chantiersAccessibles,
+      territoires: PERIMETRE_COORDINATEUR,
+    }),
   };
 
   return {
-    userId: user.id,
+    userId: ditp.userId,
+    habilitations: ditp.habilitations,
     chantiers: CHANTIERS,
-    habilitations: {
-      lecture: fullPerimetre,
-      saisieCommentaire: fullPerimetre,
-      saisieIndicateur: fullPerimetre,
-      responsabilite: fullPerimetre,
-      gestionUtilisateur: fullPerimetre,
-    },
+    users: { ditp, coordinateur },
+  };
+}
+
+/**
+ * Vide les tables que les seeds des evals écrivent. Celles qui pointent vers
+ * une autre passent avant elle. Pas de `TRUNCATE` : une quinzaine de tables
+ * pointent vers celles-ci, `utilisateur` en tête, et `CASCADE` les viderait
+ * par ricochet. Un `deleteMany` échoue au contraire si l'une d'elles contient
+ * des lignes, ce qui n'arrive pas sur une base de test propre.
+ */
+async function clearEvalWorld() {
+  const prisma = getPrisma();
+  await prisma.synthese_des_resultats.deleteMany();
+  await prisma.commentaire.deleteMany();
+  await prisma.objectif.deleteMany();
+  await prisma.indicateur_territoire_jalon.deleteMany();
+  await prisma.indicateur_territoire.deleteMany();
+  await prisma.chantier_territoire_jalon.deleteMany();
+  await prisma.chantier_territoire.deleteMany();
+  await prisma.indicateur_identite.deleteMany();
+  await prisma.chantier_identite.deleteMany();
+  await prisma.utilisateur.deleteMany();
+}
+
+const SEED_TIMEOUT_MS = 60_000;
+
+/**
+ * Sème le monde une fois pour le fichier, hors de toute transaction : il est
+ * commité. Chaque cas garde sa transaction annulée, pour ce que l'agent écrit
+ * pendant son tour (`llm_calls`), mais ne sème plus rien.
+ *
+ * Semé dans la transaction du cas, le monde sérialisait les cas : ses
+ * identifiants sont fixes, et une insertion attend la fin de la transaction
+ * qui a inséré la même clé, soit tout un tour d'agent. `maxConcurrency` ne
+ * servait à rien.
+ *
+ * Vidé avant le seed, au cas où un run précédent aurait été interrompu, et
+ * après le fichier, pour rendre la base vide aux tests d'intégration. Les
+ * fichiers ne tournent jamais en parallèle (`fileParallelism: false`) : l'un
+ * viderait le monde de l'autre.
+ */
+export function seedWorldPerFile<World>(
+  seed: () => Promise<World>,
+): () => World {
+  let world: World | undefined;
+
+  beforeAll(async () => {
+    await clearEvalWorld();
+    world = await seed();
+  }, SEED_TIMEOUT_MS);
+
+  afterAll(clearEvalWorld, SEED_TIMEOUT_MS);
+
+  return () => {
+    if (!world) {
+      throw new Error("Le monde de l'eval n'est pas semé.");
+    }
+    return world;
   };
 }

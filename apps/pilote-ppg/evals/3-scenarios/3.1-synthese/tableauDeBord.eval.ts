@@ -1,0 +1,46 @@
+import { scenarioEval } from "../scenarioEval";
+import { TABLEAU_DE_BORD_CRITERIA } from "./tableauDeBord.criteria";
+
+/**
+ * Scénario « Tableau de bord du territoire » (DITP administrateur, envoyé),
+ * avec le message COMPLET de l'interface, pas la version abrégée du spike.
+ *
+ * La matière est la structure rendue par `create_dashboard`. Les données des
+ * widgets sont résolues au rendu : pas d'hallucination de chiffre possible,
+ * seul le choix des widgets est jugé. La « pleine largeur » relève du code de
+ * mise en page, elle n'est pas notée.
+ *
+ * Référence observée le 2026-09-30 : outils 100 %, forme 100 %, fond 100 %.
+ * Widgets conformes à la demande, une section par chantier.
+ * Second run du 2026-09-30 : outils 100 %, forme 93 %, fond 100 % ; un essai
+ * regroupe CH-005 et CH-006 dans la même section.
+ */
+
+scenarioEval({
+  suite: "Tableau de bord du territoire",
+  group: "synthese",
+  criteria: TABLEAU_DE_BORD_CRITERIA,
+  matter: "dashboard",
+  cases: [
+    {
+      question:
+        "Compose un tableau de bord pour Bretagne. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la météo et le commentaire de synthèse, la cartographie météo en pleine largeur et le tableau de ses indicateurs.",
+      reason: "Message envoyé tel quel",
+      truthScope: { territoires: ["REG-53"] },
+      expected: [
+        {
+          toolName: "get_chantiers",
+          input: { territoire_code: "REG-53", view: "en_retard" },
+        },
+        {
+          toolName: "get_chantiers",
+          input: { territoire_code: "REG-53", view: "en_difficulte" },
+        },
+        {
+          toolName: "create_dashboard",
+          input: { territoire_codes: ["REG-53"] },
+        },
+      ],
+    },
+  ],
+});
