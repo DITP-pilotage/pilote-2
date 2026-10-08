@@ -170,7 +170,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                             value="accepter-avec-modification"
                           />
                           <div className="pl-8">
-                            <p className="fr-text texte-warning fr-text--xs text-italic">
+                            <p className="fr-text texte-warning fr-text--xs italic">
                               *ce champ est obligatoire
                             </p>
                             <TextField
@@ -311,7 +311,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       </p>
                       <p className="fr-text--sm mb-0">
                         <span>Motif de la décision :</span>{" "}
-                        <span className="text-italic">
+                        <span className="italic">
                           {reactHookForm.getValues("motif") ||
                             "Aucun motif n'a été apporté"}
                         </span>

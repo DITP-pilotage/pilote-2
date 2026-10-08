@@ -26,7 +26,7 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
       {estEnChargement ? (
         <div
           aria-busy="true"
-          className="flex align-center gap-2 fr-mb-3w"
+          className="flex items-center gap-2 fr-mb-3w"
           role="status"
         >
           <span
@@ -38,7 +38,7 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
         </div>
       ) : (
         <form
-          className="flex align-center fr-mb-3w"
+          className="flex items-center fr-mb-3w"
           onSubmit={
             verifierLeFichier as React.FormEventHandler<HTMLFormElement>
           }

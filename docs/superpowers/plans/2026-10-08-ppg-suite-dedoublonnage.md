@@ -72,7 +72,7 @@ La bibliothèque DSFR doit disparaître (lot F) : aucun lot ne doit écrire du c
 
 ## Lot D — nettoyages Tailwind (M, 2 PR séparées)
 
-- [ ] **D1. `align-center` → `items-center`** (77 occurrences, 37 fichiers). Classe inexistante : l'alignement vertical attendu ne se fait pas aujourd'hui. Remplacer fichier par fichier en contrôlant le rendu ; garder l'étirement là où l'écran en dépend.
+- [x] **D1. `align-center` → `items-center`** (fait, élargi : `align-center` n'était pas inexistante — `app.css` la définissait — mais 14 utilitaires maison d'`app.css` doublonnaient Tailwind sous d'autres noms, invisibles pour `clsxm` : `align-*`, `flex-column`, `flex-direction-*`, `bold`, `no-wrap`, `text-italic`, `list-style-none`, `w-half-full`, `texte-gauche` / `-droite`, `overflow-ellipsis` → équivalents Tailwind ; 17 règles retirées d'`app.css`.)
 - [ ] **D2. Préfixe `!` des classes** (489 occurrences, 176 fichiers). `tailwind.config.js` a `important: true`, le `!` est redondant et empêche `clsxm`/`twMerge` de résoudre les conflits. D'abord là où il surcharge une classe par défaut d'un composant (`Icone`, boutons, liens), puis le reste ; vérifier au cas par cas les `!` qui combattent une règle DSFR non utilitaire.
 
 ## Lot E — serveur (stack, du plus mécanique au plus risqué)

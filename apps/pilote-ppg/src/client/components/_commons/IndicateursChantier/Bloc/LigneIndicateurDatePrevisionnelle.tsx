@@ -19,7 +19,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
   return (
     <div
       className={clsxm(
-        `flex align-center w-full relative`,
+        `flex items-center w-full relative`,
         estIndicateurEnAlerte
           ? "text-dsfr-warning-425"
           : "text-dsfr-mention-grey",
@@ -41,7 +41,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
         }
         classNameInfoBulle="tooltip-accordeon"
       >
-        <p className="!text-sm !text-primary !mb-2 bold">
+        <p className="!text-sm !text-primary !mb-2 font-bold">
           Date prévisionnelle de mise à jour de l'indicateur :
         </p>
         <p className="!text-sm !mb-0">

@@ -7,7 +7,7 @@ export const EnteteFicheConducteur: FunctionComponent<
 > = ({ children, titleBandClassName }) => {
   return (
     <TitleBand className={titleBandClassName}>
-      <div className="flex justify-between align-center gap-2">
+      <div className="flex justify-between items-center gap-2">
         <h2 className="!text-lg !mb-0 !text-primary">{children}</h2>
         <BoutonImpression />
       </div>

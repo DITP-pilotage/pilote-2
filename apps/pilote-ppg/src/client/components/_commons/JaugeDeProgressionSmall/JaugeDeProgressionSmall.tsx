@@ -30,7 +30,7 @@ export const JaugeDeProgressionSmall: FunctionComponent<
             pourcentage={pourcentage !== undefined ? pourcentage : null}
           />
         </div>
-        <div className="flex flex-column justify-center">
+        <div className="flex flex-col justify-center">
           <p
             className={`mb-0 break-normal ${COULEUR_TEXTE[couleur]} text-center text-h5 md:text-h5-md font-bold`}
           >

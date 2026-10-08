@@ -23,7 +23,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
 }) => {
   return (
     <>
-      <div className="flex flex-direction-column flex-wrap justify-center align-center">
+      <div className="flex flex-col flex-wrap justify-center items-center">
         <strong className="fr-text--sm fr-mb-0 text-center">
           {titreTauxAvancement}
         </strong>

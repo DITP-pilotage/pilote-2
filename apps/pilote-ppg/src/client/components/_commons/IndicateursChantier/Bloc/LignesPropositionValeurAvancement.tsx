@@ -67,11 +67,11 @@ export const LignesPropositionValeurAvancement = ({
             )}
           >
             <Table.Cell colSpan={8}>
-              <div className="flex w-full align-center justify-end gap-4">
+              <div className="flex w-full items-center justify-end gap-4">
                 {!estPropositionAccuseeReception(
                   detailIndicateurDuTerritoire,
                 ) && (
-                  <div className="flex align-center">
+                  <div className="flex items-center">
                     <BoutonAccuserReceptionProposition
                       detailIndicateur={detailIndicateurDuTerritoire}
                       détailTerritoireSélectionné={détailTerritoireSélectionné}

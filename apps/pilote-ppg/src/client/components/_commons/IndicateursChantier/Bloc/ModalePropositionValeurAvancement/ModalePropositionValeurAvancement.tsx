@@ -95,7 +95,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   <p className="fr-text fr-text--sm fr-mb-1w">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
-                  <p className="fr-text texte-warning fr-text--xs text-italic fr-mb-2w">
+                  <p className="fr-text texte-warning fr-text--xs italic fr-mb-2w">
                     *tous les champs sont obligatoires
                   </p>
                   {detailIndicateurDuTerritoire.proposition !== null ? (
@@ -123,17 +123,17 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     </p>
                   ) : null}
                   <div className="w-full flex fr-mt-2w">
-                    <div className="w-half-full fr-mr-1w border flex flex-column">
+                    <div className="w-1/2 fr-mr-1w border flex flex-col">
                       <span className="fr-background-action-low-blue-france flex justify-center fr-p-1w border">
                         Valeur d'avancement importée par la direction de projet
                       </span>
-                      <div className="w-full flex flex-column justify-between fr-pt-1w">
+                      <div className="w-full flex flex-col justify-between fr-pt-1w">
                         <span className="flex justify-center fr-mb-5v">
                           {detailIndicateurDuTerritoire.valeurAvancementMandat?.toLocaleString(
                             "fr-FR",
                           )}
                         </span>
-                        <span className="flex justify-center align-end texte-gris">
+                        <span className="flex justify-center items-end texte-gris">
                           (
                           {formaterDate(
                             detailIndicateurDuTerritoire.dateValeurAvancementMandat,
@@ -143,7 +143,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         </span>
                       </div>
                     </div>
-                    <div className="w-half-full fr-ml-1w border">
+                    <div className="w-1/2 fr-ml-1w border">
                       {estUneModificationDeProposition ? (
                         <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
                           <span>
@@ -198,7 +198,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                           <ChampObligatoire />
                         </span>
                       )}
-                      <div className="w-full flex flex-column align-center fr-pt-1w">
+                      <div className="w-full flex flex-col items-center fr-pt-1w">
                         {estUneModificationDeProposition ? (
                           <span className="flex justify-center fr-mb-5v">
                             {
@@ -207,7 +207,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                             }
                           </span>
                         ) : (
-                          <div className="w-half-full flex fr-mb-1w">
+                          <div className="w-1/2 flex fr-mb-1w">
                             <TextField
                               className={FIELD_GROUP_SPACING}
                               errorMessage={
@@ -383,7 +383,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         <span className="fr-text--bold">
                           Date de la proposition de valeur d'avancement : 
                         </span>
-                        <span className="text-italic">
+                        <span className="italic">
                           {reactHookForm.getValues("moisValeurAvancement")}
                         </span>
                       </p>
@@ -391,7 +391,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         <span className="fr-text--bold">
                           Motif de la proposition :
                         </span>{" "}
-                        <span className="text-italic">
+                        <span className="italic">
                           {reactHookForm.getValues("motifProposition")}
                         </span>
                       </p>
@@ -399,7 +399,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         <span className="fr-text--bold">
                           Source des données et méthode de calcul :
                         </span>{" "}
-                        <span className="text-italic">
+                        <span className="italic">
                           {reactHookForm.getValues(
                             "sourceDonneeEtMethodeCalcul",
                           )}

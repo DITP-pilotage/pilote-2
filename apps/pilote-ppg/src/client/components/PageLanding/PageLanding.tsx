@@ -159,7 +159,7 @@ const PageLanding = () => {
                   secrétaire général de la Présidence de la République et le
                   directeur du cabinet de la Première ministre.
                 </p>
-                <p className="fr-text--lg bold">
+                <p className="fr-text--lg font-bold">
                   Objectif : veiller en continu à la cohérence des objectifs et
                   des décisions, au rythme de mise en œuvre des chantiers et
                   rendre les arbitrages pour lever les freins rencontrés.
