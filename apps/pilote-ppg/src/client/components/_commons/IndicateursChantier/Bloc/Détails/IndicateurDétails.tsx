@@ -14,7 +14,7 @@ import IndicateurSpécifications from "@/components/_commons/IndicateursChantier
 import { IndicateurDetailsParTerritoire } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import CartographieAvecSelecteurIndicateur from "@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur";
+import { CartographieAvecSelecteurIndicateur } from "@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useIndicateurDetailsMode } from "@/components/PageChantier/IndicateurDetailsContext";
 import { useEnv } from "@/client/hooks/useEnv";

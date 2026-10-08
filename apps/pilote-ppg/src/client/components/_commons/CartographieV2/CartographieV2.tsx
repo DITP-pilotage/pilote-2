@@ -17,6 +17,8 @@ type CartographieV2Props = {
   donnees: Record<string, CartographieV2Donnee>;
   territoiresSelectionnes?: string[];
   onTerritoireSelect?: (territoireCode: string) => void;
+  // Si fourni, seuls ces territoires réagissent au clic (habilitations).
+  territoiresSelectionnables?: string[];
   children?: ReactNode;
 };
 
@@ -25,6 +27,7 @@ export const CartographieV2 = ({
   donnees,
   territoiresSelectionnes,
   onTerritoireSelect,
+  territoiresSelectionnables,
   children,
 }: CartographieV2Props) => {
   const territoiresAffiches = getListeTerritoires(maille);
@@ -48,25 +51,35 @@ export const CartographieV2 = ({
     : null;
 
   const getTerritoireProps: GetTerritoireProps = useCallback(
-    (territoire) => ({
-      key: territoire.code,
-      className: clsxm(onTerritoireSelect && "cursor-pointer hover:opacity-70"),
-      style: { stroke: "var(--grey-1000-50)", strokeWidth: 0.15 },
-      fill: estHachure(donnees[territoire.code]?.remplissage ?? "")
-        ? "#ffffff"
-        : (donnees[territoire.code]?.remplissage ?? "#e0e0e0"),
-      onClick: () => onTerritoireSelect?.(territoire.code),
-      onMouseEnter: (event) => {
-        setHovered({
-          code: territoire.code,
-          element: event.currentTarget as unknown as HTMLElement,
-        });
-      },
-      onMouseLeave: () => {
-        setHovered(null);
-      },
-    }),
-    [donnees, onTerritoireSelect],
+    (territoire) => {
+      const estSelectionnable =
+        !!onTerritoireSelect &&
+        (!territoiresSelectionnables ||
+          territoiresSelectionnables.includes(territoire.code));
+      return {
+        key: territoire.code,
+        className: clsxm(
+          estSelectionnable && "cursor-pointer hover:opacity-70",
+        ),
+        style: { stroke: "var(--grey-1000-50)", strokeWidth: 0.15 },
+        fill: estHachure(donnees[territoire.code]?.remplissage ?? "")
+          ? "#ffffff"
+          : (donnees[territoire.code]?.remplissage ?? "#e0e0e0"),
+        onClick: estSelectionnable
+          ? () => onTerritoireSelect?.(territoire.code)
+          : undefined,
+        onMouseEnter: (event) => {
+          setHovered({
+            code: territoire.code,
+            element: event.currentTarget as unknown as HTMLElement,
+          });
+        },
+        onMouseLeave: () => {
+          setHovered(null);
+        },
+      };
+    },
+    [donnees, onTerritoireSelect, territoiresSelectionnables],
   );
 
   return (

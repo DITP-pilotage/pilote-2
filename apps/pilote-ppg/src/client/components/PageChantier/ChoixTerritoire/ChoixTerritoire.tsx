@@ -4,7 +4,7 @@ import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatér
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { SélecteursMaillesEtTerritoires } from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import PageChantierEnTête from "@/components/PageChantier/EnTête/EnTête";
-import Cartographie from "@/components/_commons/Cartographie/Cartographie";
+import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import useCartographie from "@/components/_commons/Cartographie/useCartographie";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
@@ -12,7 +12,7 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/client/stores/useLarge
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { Icone } from "@/components/_commons/Icone";
 import { Equalizer1Icon } from "@/components/_commons/Icones/Equalizer1Icon";
-import useChoixTerritoire from "./useChoixTerritoire";
+import { useChoixTerritoire } from "./useChoixTerritoire";
 
 const ChoixTerritoire = () => {
   const { territoireCode, mailleSelectionnee, mailleQuery } =
@@ -21,7 +21,8 @@ const ChoixTerritoire = () => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue("md");
   const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
-  const { donnéesCartographie } = useChoixTerritoire(mailleSelectionnee);
+  const { donnéesCartographie, territoiresSelectionnables } =
+    useChoixTerritoire(mailleSelectionnee);
 
   const { auClicTerritoireCallback } = useCartographie(
     territoireCode,
@@ -71,12 +72,16 @@ const ChoixTerritoire = () => {
                   <Titre baliseHtml="h3" className="fr-text--lg">
                     Veuillez sélectionner un DROM
                   </Titre>
-                  <Cartographie
-                    auClicTerritoireCallback={auClicTerritoireCallback}
-                    données={donnéesCartographie}
-                    mailleSelectionnee={mailleQuery}
-                    pathname="/chantier/[id]/[territoireCode]"
-                    territoireCode={territoireCode}
+                  <CartographieV2
+                    donnees={donnéesCartographie}
+                    maille={mailleQuery}
+                    onTerritoireSelect={(code) =>
+                      auClicTerritoireCallback(code, true)
+                    }
+                    territoiresSelectionnables={territoiresSelectionnables}
+                    territoiresSelectionnes={
+                      territoireCode === "NAT-FR" ? [] : [territoireCode]
+                    }
                   />
                 </section>
               </Bloc>
