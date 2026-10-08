@@ -1,5 +1,5 @@
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/gestion-contenu/module";
 
 export class ModifierMessageInformationUseCase {
   private gestionContenuRepository: GestionContenuRepository;

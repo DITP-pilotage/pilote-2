@@ -3,7 +3,7 @@ import {
   FeatureFlipKey,
   FEATURE_FLIP_KEYS,
 } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/gestion-contenu/module";
 
 export class ModifierFeatureFlipUseCase {
   private gestionContenuRepository: GestionContenuRepository;

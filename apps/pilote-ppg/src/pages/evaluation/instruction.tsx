@@ -12,7 +12,7 @@ export const getServerSideProps = async (
   const session = await auth(context);
   assert(session);
 
-  const featureFlips = await getContainer("legacy")
+  const featureFlips = await getContainer("gestionContenu")
     .resolve("recupererFeatureFlipsUseCase")
     .run();
 

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const variables = await getContainer("legacy")
+    const variables = await getContainer("gestionContenu")
       .resolve("recupererToutesLesVariablesContenuUseCase")
       .run();
 

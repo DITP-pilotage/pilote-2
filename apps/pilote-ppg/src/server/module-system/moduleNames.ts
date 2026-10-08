@@ -21,6 +21,7 @@ export const moduleNames = [
   "parametrageCentreAide",
   "datajobsExecution",
   "legacy",
+  "gestionContenu",
   "applicationLog",
   "actualites",
   "mbSync",

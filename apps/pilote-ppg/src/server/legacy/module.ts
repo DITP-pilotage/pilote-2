@@ -19,7 +19,6 @@ import { IndicateurRepository as ChantierIndicateurRepository } from "@/server/c
 import ProfilRepository from "@/server/domain/profil/ProfilRepository";
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
 import { IndicateurRepository as ImportIndicateurRepository } from "@/server/import-indicateur/domain/ports/IndicateurRepository";
-import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
 import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
@@ -43,7 +42,6 @@ import { PrismaIndicateurRepository as PrismaChantierIndicateurRepository } from
 import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/ProfilSQLRepository";
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
 import { PrismaIndicateurRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository";
-import { PrismaGestionContenuRepository } from "@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
 import { PrismaTokenAPIInformationRepository } from "@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository";
 import { configuration } from "@/config";
@@ -56,11 +54,6 @@ import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnPro
 import { RécupérerTerritoiresAvecNombreUtilisateursUseCase } from "@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase";
 import { RecupererTokenAPIInformationUseCase } from "@/server/authentification/usecases/RecupererTokenAPIInformationUseCase";
 import { ListerTokenAPIInformationUseCase } from "@/server/authentification/usecases/ListerTokenAPIInformationUseCase";
-import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase";
-import { ModifierMessageInformationUseCase } from "@/server/gestion-contenu/usecases/ModifierMessageInformationUseCase";
-import { ModifierFeatureFlipUseCase } from "@/server/gestion-contenu/usecases/ModifierFeatureFlipUseCase";
-import { RecupererFeatureFlipsUseCase } from "@/server/gestion-contenu/usecases/RecupererFeatureFlipsUseCase";
-import { RecupererToutesLesVariablesContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererToutesLesVariablesContenuUseCase";
 import { SupprimerTokenAPIUseCase } from "@/server/authentification/usecases/SupprimerTokenAPIUseCase";
 import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
 import { CreerTokenAPIUseCase } from "@/server/authentification/usecases/CreerTokenAPIUseCase";
@@ -69,6 +62,7 @@ import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale
 import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
 import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoriale/usecases/RécupérerRépartitionMétéoUseCase";
 import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
+import type { GestionContenuExports } from "@/server/gestion-contenu/module";
 import {
   defineModule,
   type ExtractScope,
@@ -79,7 +73,7 @@ export type LegacyExport = {
   agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
 };
 
-type LegacyCradle = LegacyExport & {
+type LegacyOwnCradle = LegacyExport & {
   chantierRepository: ChantierRepository;
   axeRepository: AxeRepository;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
@@ -101,7 +95,6 @@ type LegacyCradle = LegacyExport & {
   profilRepository: ProfilRepository;
   rapportRepository: RapportRepository;
   importIndicateurRepository: ImportIndicateurRepository;
-  gestionContenuRepository: GestionContenuRepository;
   tokenAPIService: TokenAPIService;
   tokenAPIInformationRepository: TokenAPIInformationRepository;
   recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
@@ -112,11 +105,6 @@ type LegacyCradle = LegacyExport & {
   récupérerTerritoiresAvecNombreUtilisateursUseCase: RécupérerTerritoiresAvecNombreUtilisateursUseCase;
   recupererTokenAPIInformationUseCase: RecupererTokenAPIInformationUseCase;
   listerTokenAPIInformationUseCase: ListerTokenAPIInformationUseCase;
-  récupérerMessageInformationUseCase: RécupérerMessageInformationUseCase;
-  modifierMessageInformationUseCase: ModifierMessageInformationUseCase;
-  modifierFeatureFlipUseCase: ModifierFeatureFlipUseCase;
-  recupererFeatureFlipsUseCase: RecupererFeatureFlipsUseCase;
-  recupererToutesLesVariablesContenuUseCase: RecupererToutesLesVariablesContenuUseCase;
   supprimerTokenAPIUseCase: SupprimerTokenAPIUseCase;
   utilisateurAuthentifieJWTService: UtilisateurAuthentifieJWTService;
   creerTokenAPIUseCase: CreerTokenAPIUseCase;
@@ -127,9 +115,11 @@ type LegacyCradle = LegacyExport & {
   récupérerListeChantierFicheTerritorialeUseCase: RécupérerListeChantierFicheTerritorialeUseCase;
 };
 
+type LegacyCradle = LegacyOwnCradle & GestionContenuExports;
+
 export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
   name: "legacy",
-  imports: ["shared"],
+  imports: ["shared", "gestionContenu"],
   exports: ["agregerAvancementsChantiersUseCase"],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
@@ -176,9 +166,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
       importIndicateurRepository: asModuleClass(
         PrismaIndicateurRepository,
       ).scoped(),
-      gestionContenuRepository: asModuleClass(
-        PrismaGestionContenuRepository,
-      ).scoped(),
       tokenAPIService: asModuleFunction(
         () =>
           new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
@@ -214,21 +201,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
       ).scoped(),
       listerTokenAPIInformationUseCase: asModuleClass(
         ListerTokenAPIInformationUseCase,
-      ).scoped(),
-      récupérerMessageInformationUseCase: asModuleClass(
-        RécupérerMessageInformationUseCase,
-      ).scoped(),
-      modifierMessageInformationUseCase: asModuleClass(
-        ModifierMessageInformationUseCase,
-      ).scoped(),
-      modifierFeatureFlipUseCase: asModuleClass(
-        ModifierFeatureFlipUseCase,
-      ).scoped(),
-      recupererFeatureFlipsUseCase: asModuleClass(
-        RecupererFeatureFlipsUseCase,
-      ).scoped(),
-      recupererToutesLesVariablesContenuUseCase: asModuleClass(
-        RecupererToutesLesVariablesContenuUseCase,
       ).scoped(),
       supprimerTokenAPIUseCase: asModuleClass(
         SupprimerTokenAPIUseCase,
@@ -306,7 +278,7 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
             ministereRepository: ficheTerritorialeMinistereRepository,
           }),
       ).scoped(),
-    } satisfies VerifyCradle<LegacyCradle>);
+    } satisfies VerifyCradle<LegacyOwnCradle>);
   },
 });
 
