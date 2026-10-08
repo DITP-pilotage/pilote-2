@@ -1,9 +1,6 @@
 import { logger } from "@/server/framework/logger";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
-import { CommentaireRepository } from "@/server/gestion-utilisateur/domain/ports/CommentaireRepository";
-import { SyntheseDesResultatsRepository } from "@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository";
-import { DecisionStrategiqueRepository } from "@/server/gestion-utilisateur/domain/ports/DecisionStrategiqueRepository";
-import { ObjectifRepository } from "@/server/gestion-utilisateur/domain/ports/ObjectifRepository";
+import { PublicationRepository } from "@/server/gestion-utilisateur/domain/ports/PublicationRepository";
 import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/RapportRepository";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
@@ -25,13 +22,7 @@ export class SupprimerLesComptesDesactivesUseCase {
 
   private utilisateurIAMRepository: UtilisateurIAMRepository;
 
-  private commentaireRepository: CommentaireRepository;
-
-  private syntheseDesResultatsRepository: SyntheseDesResultatsRepository;
-
-  private decisionStrategiqueRepository: DecisionStrategiqueRepository;
-
-  private objectifRepository: ObjectifRepository;
+  private publicationRepository: PublicationRepository;
 
   private rapportRepository: RapportRepository;
 
@@ -44,10 +35,7 @@ export class SupprimerLesComptesDesactivesUseCase {
   constructor({
     utilisateurRepository,
     utilisateurIAMRepository,
-    commentaireRepository,
-    syntheseDesResultatsRepository,
-    decisionStrategiqueRepository,
-    objectifRepository,
+    publicationRepository,
     rapportRepository,
     indicateurTerritoireValeurEvenementRepository,
     historisationModification,
@@ -55,10 +43,7 @@ export class SupprimerLesComptesDesactivesUseCase {
   }: Inject<
     | "utilisateurRepository"
     | "utilisateurIAMRepository"
-    | "commentaireRepository"
-    | "syntheseDesResultatsRepository"
-    | "decisionStrategiqueRepository"
-    | "objectifRepository"
+    | "publicationRepository"
     | "rapportRepository"
     | "indicateurTerritoireValeurEvenementRepository"
     | "historisationModification"
@@ -66,10 +51,7 @@ export class SupprimerLesComptesDesactivesUseCase {
   >) {
     this.utilisateurRepository = utilisateurRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
-    this.commentaireRepository = commentaireRepository;
-    this.syntheseDesResultatsRepository = syntheseDesResultatsRepository;
-    this.decisionStrategiqueRepository = decisionStrategiqueRepository;
-    this.objectifRepository = objectifRepository;
+    this.publicationRepository = publicationRepository;
     this.rapportRepository = rapportRepository;
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
@@ -101,19 +83,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     for (const utilisateur of utilisateursASupprimer) {
       try {
         await this.transaction.run(async () => {
-          await this.commentaireRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          );
-          await this.syntheseDesResultatsRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          );
-          await this.decisionStrategiqueRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          );
-          await this.objectifRepository.anonymiserAuteurs(
+          await this.publicationRepository.anonymiserAuteurs(
             [utilisateur.id],
             EMAIL_AUTEUR_REMPLACEMENT,
           );
