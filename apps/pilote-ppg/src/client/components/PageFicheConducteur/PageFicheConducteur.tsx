@@ -214,11 +214,9 @@ const PageFicheConducteur: FunctionComponent<
                   <div>
                     <Bloc className="print:border-none">
                       <CartographieAvancement
-                        auClicTerritoireCallback={() => {}}
                         données={donnéesCartographie.tauxAvancement}
                         jalon={jalon}
                         mailleSelectionnee="departementale"
-                        pathname={null}
                         élémentsDeLégende={
                           ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS
                         }
@@ -236,10 +234,8 @@ const PageFicheConducteur: FunctionComponent<
                   <div>
                     <Bloc className="print:border-none">
                       <CartographieMétéo
-                        auClicTerritoireCallback={() => {}}
                         données={donnéesCartographie.meteo}
                         mailleSelectionnee="departementale"
-                        pathname={null}
                         élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
                       />
                     </Bloc>

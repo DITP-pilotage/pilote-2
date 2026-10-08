@@ -53,12 +53,9 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 </Infobulle>
               </TitreInfobulleConteneur>
               <CartographieAvancement
-                auClicTerritoireCallback={() => {}}
                 données={donnéesCartographieAvancement}
                 jalon={jalon}
                 mailleSelectionnee={mailleSelectionnee}
-                options={{ estInteractif: false }}
-                pathname={null}
                 territoireCode={territoireCode}
                 élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
               />
@@ -86,11 +83,8 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 </Infobulle>
               </TitreInfobulleConteneur>
               <CartographieMétéo
-                auClicTerritoireCallback={() => {}}
                 données={donnéesCartographieMétéo}
                 mailleSelectionnee={mailleSelectionnee}
-                options={{ estInteractif: false }}
-                pathname={null}
                 territoireCode={territoireCode}
                 élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
               />
