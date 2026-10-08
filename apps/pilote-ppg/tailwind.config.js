@@ -6,7 +6,43 @@ module.exports = {
   darkMode: false,
   important: true,
   theme: {
+    // Points de rupture du DSFR 1.15.2 (36 / 48 / 62 / 78 em).
+    screens: {
+      sm: "36em",
+      md: "48em",
+      lg: "62em",
+      xl: "78em",
+      "2xl": "96em",
+    },
     extend: {
+      fontFamily: {
+        sans: ["Marianne", "arial", "sans-serif"],
+      },
+      // Échelle de texte (`fr-text--*`) et titres (`fr-h*`, mobile puis ≥ md) du DSFR 1.15.2.
+      fontSize: {
+        xs: ["0.75rem", { lineHeight: "1.25rem" }],
+        sm: ["0.875rem", { lineHeight: "1.5rem" }],
+        base: ["1rem", { lineHeight: "1.5rem" }],
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],
+        lead: ["1.25rem", { lineHeight: "2rem" }],
+        h1: ["2rem", { lineHeight: "2.5rem", fontWeight: "700" }],
+        h2: ["1.75rem", { lineHeight: "2.25rem", fontWeight: "700" }],
+        h3: ["1.5rem", { lineHeight: "2rem", fontWeight: "700" }],
+        h4: ["1.375rem", { lineHeight: "1.75rem", fontWeight: "700" }],
+        h5: ["1.25rem", { lineHeight: "1.75rem", fontWeight: "700" }],
+        h6: ["1.125rem", { lineHeight: "1.5rem", fontWeight: "700" }],
+        "h1-md": ["2.5rem", { lineHeight: "3rem", fontWeight: "700" }],
+        "h2-md": ["2rem", { lineHeight: "2.5rem", fontWeight: "700" }],
+        "h3-md": ["1.75rem", { lineHeight: "2.25rem", fontWeight: "700" }],
+        "h4-md": ["1.5rem", { lineHeight: "2rem", fontWeight: "700" }],
+        "h5-md": ["1.375rem", { lineHeight: "1.75rem", fontWeight: "700" }],
+        "h6-md": ["1.25rem", { lineHeight: "1.75rem", fontWeight: "700" }],
+      },
+      boxShadow: {
+        "dsfr-raised": "0 1px 3px rgba(0, 0, 18, 0.16)",
+        "dsfr-overlap": "0 2px 6px rgba(0, 0, 18, 0.16)",
+        "dsfr-lifted": "0 3px 9px rgba(0, 0, 18, 0.16)",
+      },
       colors: {
         // Le même que dsfr-blue-france-sun-113 car c'est le bleu marianne principal qu'on utilise presque partout
         primary: "#000091",
@@ -83,6 +119,8 @@ module.exports = {
         "dsfr-blue-ecume-850": "#bfccfb",
         "dsfr-flat-info": "#0063cb",
         "dsfr-focus": "#0A76F6",
+        "dsfr-blue-cumulus-975-hover": "#D3DFFC",
+        "dsfr-shadow": "rgba(0, 0, 18, 0.16)",
         "pilote-gris-moyen": "#bababa",
         "pilote-loader-green": "#3c763d",
         "pilote-loader-bg": "#e5e9eb",

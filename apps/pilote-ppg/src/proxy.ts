@@ -205,6 +205,8 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // s'applique à toutes les urls sauf / - ^/js/ - _next/static - _next/image - favicon.ico
-  matcher: ["/((?!js/|_next/static|_next/image|favicon.ico|favicon/).+)"],
+  // s'applique à toutes les urls sauf / - ^/js/ - ^/fonts/ - _next/static - _next/image - favicon.ico
+  matcher: [
+    "/((?!js/|fonts/|_next/static|_next/image|favicon.ico|favicon/).+)",
+  ],
 };

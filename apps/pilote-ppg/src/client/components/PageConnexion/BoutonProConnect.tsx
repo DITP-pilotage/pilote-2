@@ -11,7 +11,7 @@ type BoutonProConnectProps = {
  *
  * Reprend le composant `fr-connect` du DSFR, dont le glyphe FranceConnect est
  * remplacé par celui de ProConnect via la surcharge `.proconnect-button`
- * définie dans app.scss. C'est la première des trois intégrations proposées par
+ * définie dans app.css. C'est la première des trois intégrations proposées par
  * la DINUM, celle destinée aux services déjà sous DSFR.
  *
  * Tant que le feature flip est fermé, le bouton reste affiché mais désactivé

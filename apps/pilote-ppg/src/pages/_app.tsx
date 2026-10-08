@@ -4,7 +4,7 @@ import "@gouvfr/dsfr/dist/component/connect/connect.min.css";
 import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import "@gouvfr/dsfr/dist/component/input/input.min.css";
 import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
-import "@/client/styles/app.scss";
+import "@/client/styles/app.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
