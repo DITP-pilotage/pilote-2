@@ -98,10 +98,10 @@ const SecureTooltip: FunctionComponent<SecureTooltipProps> = ({
   return createPortal(
     <div
       className={clsxm(
-        "fixed z-[10000] min-w-[400px] max-w-[500px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg shadow-[0_4px_2px_rgba(0,0,0,0.1)] p-3 transition-opacity duration-200 pointer-events-none whitespace-normal break-words [&_.fr-text--sm]:!m-0",
+        "fixed z-[10000] min-w-[400px] max-w-[500px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg shadow-[0_4px_2px_rgba(0,0,0,0.1)] p-3 transition-opacity duration-200 pointer-events-none whitespace-normal break-words [&_.fr-text--sm]:m-0",
         isVisible ? "opacity-100 visible" : "opacity-0 invisible",
-        classNameInfoBulle === "infobull--sm" && "!min-w-[250px] !p-0",
-        classNameInfoBulle === "tooltip-accordeon" && "!max-w-[50%]",
+        classNameInfoBulle === "infobull--sm" && "min-w-[250px] p-0",
+        classNameInfoBulle === "tooltip-accordeon" && "max-w-[50%]",
         classNameInfoBulle,
       )}
       ref={tooltipRef}

@@ -83,11 +83,11 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                     <div>
                       <Accordion.Trigger
                         className={clsxm(
-                          "min-h-10 border-b rounded-t-lg !py-0 !px-3 !text-black",
+                          "min-h-10 border-b rounded-t-lg py-0 px-3 text-black",
                           {
-                            "!bg-dsfr-blue-france-925 !border-dsfr-blue-france-sun-113":
+                            "bg-dsfr-blue-france-925 border-dsfr-blue-france-sun-113":
                               chantier.statut !== "ARCHIVE",
-                            "!bg-dsfr-grey-925 !border-dsfr-grey-200":
+                            "bg-dsfr-grey-925 border-dsfr-grey-200":
                               chantier.statut === "ARCHIVE",
                           },
                         )}

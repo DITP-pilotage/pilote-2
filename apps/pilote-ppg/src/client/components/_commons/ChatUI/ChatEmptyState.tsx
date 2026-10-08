@@ -52,7 +52,7 @@ export const ChatEmptyState = ({
           type="button"
         >
           {scenario.icone && (
-            <Icone className="h-4 w-4 !text-primary" icone={scenario.icone} />
+            <Icone className="h-4 w-4 text-primary" icone={scenario.icone} />
           )}
           {scenario.label}
         </button>

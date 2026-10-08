@@ -296,7 +296,7 @@ export const EtapeRecapitulatif = ({
             className="bg-primary font-medium text-white rounded flex items-center gap-2 px-4"
             type="submit"
           >
-            <Icone className="!text-current w-4 h-4" icone={Download1Icon} />
+            <Icone className="text-current w-4 h-4" icone={Download1Icon} />
             Exporter les données
           </button>
         </div>

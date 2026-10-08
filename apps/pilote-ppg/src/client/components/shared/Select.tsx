@@ -12,8 +12,8 @@ export const Select = Object.assign({}, SelectPrimitive, {
   }: ComponentProps<typeof SelectPrimitive.Trigger>) => (
     <SelectPrimitive.Trigger
       className={clsxm(
-        "!flex items-center justify-between gap-3 !px-4 !py-1.5 !font-medium !font-normal border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey",
-        "data-[state=open]:!border-b-primary",
+        "flex items-center justify-between gap-3 px-4 py-1.5 font-medium font-normal border rounded-t border-b-2 border-b-gray-600 bg-dsfr-contrast-grey",
+        "data-[state=open]:border-b-primary",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className,
       )}
@@ -71,7 +71,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
       <SelectPrimitive.Content
         className={clsxm(
           "bg-white rounded-md shadow-md border border-gray-100 z-50",
-          "md:!min-w-[400px] !max-w-[450px]",
+          "md:min-w-[400px] max-w-[450px]",
           "data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out",
           className,
         )}
@@ -93,7 +93,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
   }: ComponentProps<typeof SelectPrimitive.Item>) => (
     <SelectPrimitive.Item
       className={clsxm(
-        "relative flex items-center px-4 py-2 !text-sm cursor-pointer select-none outline-none",
+        "relative flex items-center px-4 py-2 text-sm cursor-pointer select-none outline-none",
         "data-[highlighted]:bg-dsfr-alt-blue-france",
         "data-[disabled]:opacity-50 data-[disabled]:pointer-events-none",
         className,
@@ -119,7 +119,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
   }: ComponentProps<typeof SelectPrimitive.Label>) => (
     <SelectPrimitive.Label
       className={clsxm(
-        "px-4 py-1 !text-xs font-bold text-dsfr-grey-200 uppercase",
+        "px-4 py-1 text-xs font-bold text-dsfr-grey-200 uppercase",
         className,
       )}
       {...props}

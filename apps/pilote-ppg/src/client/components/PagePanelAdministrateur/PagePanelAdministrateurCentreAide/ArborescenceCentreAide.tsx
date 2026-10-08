@@ -36,7 +36,7 @@ export const ArborescenceCentreAideAdmin: FunctionComponent<
         <Button
           className="mx-3 mt-3 mb-1 justify-start"
           iconLeft={
-            <Icone className="h-4 w-4 !text-current" icone={AddLineIcon} />
+            <Icone className="h-4 w-4 text-current" icone={AddLineIcon} />
           }
           size="sm"
           variant="secondary"

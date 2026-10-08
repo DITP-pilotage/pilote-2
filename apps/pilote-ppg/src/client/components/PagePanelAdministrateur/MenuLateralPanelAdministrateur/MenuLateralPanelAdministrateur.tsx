@@ -187,11 +187,11 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
                   <Link
                     aria-current={isActive ? "page" : undefined}
                     className={clsxm(
-                      `!block !py-2 !rounded-md !transition-colors !bg-none`,
-                      item.indent ? "!pl-7 !pr-4" : "!px-4",
+                      `block py-2 rounded-md transition-colors bg-none`,
+                      item.indent ? "pl-7 pr-4" : "px-4",
                       {
-                        "!bg-blue-100 !text-blue-700 !font-medium": isActive,
-                        "!text-gray-700 !hover:bg-gray-100": !isActive,
+                        "bg-blue-100 text-blue-700 font-medium": isActive,
+                        "text-gray-700 hover:bg-gray-100": !isActive,
                       },
                     )}
                     href={item.href}

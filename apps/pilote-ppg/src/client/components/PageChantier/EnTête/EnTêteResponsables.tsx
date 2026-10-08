@@ -11,7 +11,7 @@ export const ResponsableChantierEnTete: FunctionComponent<{
   return (
     <div className="flex gap-2">
       <div>
-        <Icone className="!text-current" icone={icone} />
+        <Icone className="text-current" icone={icone} />
       </div>
       <div>
         <p className="mb-0 fr-text--xs font-bold">{libellé}</p>
