@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react";
+import { SelectField } from "@/components/shared/SelectField";
 import { Modale } from "@/client/components/shared/Modale";
 import {
   estUrlMediaFichiers,
@@ -252,23 +253,16 @@ export const ModaleInsertionUrl = ({
                 value={nomFichier}
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium" htmlFor="extension">
-                Extension
-              </label>
-              <select
-                className="border rounded px-3 py-2 text-sm"
-                id="extension"
-                onChange={(event) => setExtension(event.target.value)}
-                value={extension}
-              >
-                {EXTENSIONS_PAR_TYPE[type].map((ext) => (
-                  <option key={ext} value={ext}>
-                    .{ext}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="Extension"
+              name="extension"
+              onChange={setExtension}
+              options={EXTENSIONS_PAR_TYPE[type].map((ext) => ({
+                valeur: ext,
+                libelle: `.${ext}`,
+              }))}
+              value={extension}
+            />
           </>
         )}
 

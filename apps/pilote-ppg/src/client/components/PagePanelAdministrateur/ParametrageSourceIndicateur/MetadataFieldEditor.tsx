@@ -74,23 +74,25 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
               <SelectMetadata
                 label="Type de données"
                 name={`metadataList.${fieldIndex}.dataType`}
+                options={[
+                  { valeur: "text", libelle: "Texte" },
+                  { valeur: "boolean", libelle: "Booléen" },
+                  { valeur: "number", libelle: "Nombre" },
+                ]}
                 required
-              >
-                <option value="text">Texte</option>
-                <option value="boolean">Booléen</option>
-                <option value="number">Nombre</option>
-              </SelectMetadata>
+              />
 
               <SelectMetadata
                 label="Type de champ de saisie"
                 name={`metadataList.${fieldIndex}.editBoxType`}
-              >
-                <option value="">Aucun</option>
-                <option value="text">Texte</option>
-                <option value="textarea">Zone de texte</option>
-                <option value="boolean">Booléen</option>
-                <option value="multi-select">Multi-select</option>
-              </SelectMetadata>
+                options={[
+                  { valeur: "", libelle: "Aucun" },
+                  { valeur: "text", libelle: "Texte" },
+                  { valeur: "textarea", libelle: "Zone de texte" },
+                  { valeur: "boolean", libelle: "Booléen" },
+                  { valeur: "multi-select", libelle: "Multi-select" },
+                ]}
+              />
             </div>
 
             {/* Valeurs acceptées si multi-select */}
@@ -111,14 +113,14 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
               <SelectMetadata
                 label="Valeur par défaut"
                 name={`metadataList.${fieldIndex}.defaultValue`}
-              >
-                <option value="">Aucune valeur par défaut</option>
-                {optionsValeurParDefaut?.map((valeur) => (
-                  <option key={valeur.valeur} value={valeur.valeur}>
-                    {valeur.nom || valeur.valeur}
-                  </option>
-                ))}
-              </SelectMetadata>
+                options={[
+                  { valeur: "", libelle: "Aucune valeur par défaut" },
+                  ...(optionsValeurParDefaut ?? []).map((valeur) => ({
+                    valeur: valeur.valeur,
+                    libelle: valeur.nom || valeur.valeur,
+                  })),
+                ]}
+              />
             )}
 
             {editBoxType === "boolean" && (

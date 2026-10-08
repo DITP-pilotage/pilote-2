@@ -94,10 +94,10 @@ describe("PaginationView", () => {
       />,
     );
 
-    await userEvent.selectOptions(
+    await userEvent.click(
       screen.getByRole("combobox", { name: "Lignes par page" }),
-      "20",
     );
+    await userEvent.click(screen.getByRole("option", { name: "20" }));
 
     expect(onPageSizeChange).toHaveBeenCalledWith(20);
   });
