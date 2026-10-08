@@ -1,4 +1,5 @@
-import mailSend from "@gouvfr/dsfr/dist/artwork/pictograms/digital/mail-send.svg";
+import { Icone } from "@/components/_commons/Icone";
+import { MailSend1Icon } from "@/components/_commons/Icones/MailSend1Icon";
 
 const CarteFantome = () => {
   return (
@@ -24,25 +25,9 @@ export const ActualitesIndisponibles = () => {
       </div>
       <div className="absolute inset-0 flex items-center justify-center px-4">
         <div className="flex max-w-xl flex-col items-center rounded border border-gray-200 bg-white px-10 py-8 text-center shadow-lg">
-          <svg
-            aria-hidden="true"
-            className="fr-artwork mb-4 h-20 w-20"
-            viewBox="0 0 80 80"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <use
-              className="fr-artwork-decorative"
-              href={`${mailSend.src}#artwork-decorative`}
-            />
-            <use
-              className="fr-artwork-minor"
-              href={`${mailSend.src}#artwork-minor`}
-            />
-            <use
-              className="fr-artwork-major"
-              href={`${mailSend.src}#artwork-major`}
-            />
-          </svg>
+          <span aria-hidden="true" className="mb-4">
+            <Icone className="h-14 w-14" icone={MailSend1Icon} />
+          </span>
           <h2 className="text-lg font-bold leading-snug text-blue-900">
             Les newsletters ne sont pas chargées sur cet environnement
           </h2>
