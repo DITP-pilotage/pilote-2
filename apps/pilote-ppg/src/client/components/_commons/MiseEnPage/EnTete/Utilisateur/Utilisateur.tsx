@@ -75,10 +75,8 @@ export const Utilisateur = () => {
   );
 };
 
-// Version du menu mobile : sous-menu dépliable dans le flux plutôt qu'un menu
-// flottant, qui recouvrirait les liens du menu plein écran.
-// Version du menu mobile : les liens de l'espace utilisateur prennent le style
-// des liens de navigation, sans menu flottant qui recouvrirait le menu plein écran.
+// Version du menu mobile : sous-menu dépliable dans le flux, au style des liens
+// de navigation, plutôt qu'un menu flottant qui recouvrirait le menu plein écran.
 export const IdentiteMenuMobile = () => {
   const { email, prenom, nom } = useProfilUtilisateurConnecte();
   return (
