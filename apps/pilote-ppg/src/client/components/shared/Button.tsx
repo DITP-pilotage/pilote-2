@@ -27,11 +27,17 @@ const SIZES = {
 
 export type ButtonSize = keyof typeof SIZES;
 
+const FOCUS_CLASSES =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dsfr-focus";
+
 type ButtonProps = ComponentProps<"button"> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
+  // Élément interactif (ex. Infobulle) affiché dans le cadre du bouton mais
+  // hors du <button>, un bouton ne pouvant pas en contenir un autre.
+  addon?: ReactNode;
   asChild?: boolean;
 };
 
@@ -42,6 +48,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       size = "md",
       iconLeft,
       iconRight,
+      addon,
       asChild = false,
       className,
       children,
@@ -50,14 +57,55 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) {
-    const classes = clsxm(
-      "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dsfr-focus",
+    const sizeClasses =
       variant === "link"
         ? "p-0 min-h-0 h-6 text-base leading-6"
-        : clsxm("bg-none", SIZES[size]),
+        : clsxm("bg-none", SIZES[size]);
+    const classes = clsxm(
+      "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed",
+      FOCUS_CLASSES,
+      sizeClasses,
       VARIANTS[variant],
       className,
     );
+
+    if (addon) {
+      return (
+        <span
+          className={clsxm(
+            "inline-flex items-center w-fit font-medium",
+            sizeClasses,
+            VARIANTS[variant],
+            "p-0",
+            className,
+          )}
+        >
+          <button
+            className={clsxm(
+              "inline-flex items-center gap-2 self-stretch bg-transparent text-current border-0 rounded-none disabled:cursor-not-allowed",
+              FOCUS_CLASSES,
+              sizeClasses,
+              "pr-0",
+            )}
+            ref={ref}
+            type={type}
+            {...props}
+          >
+            {iconLeft}
+            {children}
+            {iconRight}
+          </button>
+          <span
+            className={clsxm(
+              "inline-flex items-center self-stretch",
+              variant !== "link" && "pr-3",
+            )}
+          >
+            {addon}
+          </span>
+        </span>
+      );
+    }
 
     if (asChild) {
       return (

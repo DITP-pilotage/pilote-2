@@ -67,7 +67,7 @@ export const PublicationModalButton = <T extends PublicationValues>({
           iconLeft={
             <Icone className="text-current h-4 w-4" icone={Icone1Icon} />
           }
-          iconRight={
+          addon={
             <Infobulle classNameIcone="w-5 h-5">
               {hasDraft
                 ? "Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez pas publié. Vous pouvez éditer ce nouveau commentaire pour le publier ou le conserver en tant que brouillon."
