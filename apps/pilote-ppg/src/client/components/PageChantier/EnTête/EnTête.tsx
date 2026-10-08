@@ -71,9 +71,9 @@ const PageChantierEnTête: FunctionComponent<{
       </div>
       <h1
         className={clsxm(
-          "select-all text-h2 md:text-h2-md !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3 !text-[1.875rem] !leading-9",
+          "select-all text-h2 md:text-h2-md mb-4 mt-2 text-dsfr-blue-france-sun-113 line-clamp-3 text-[1.875rem] leading-9",
           {
-            "!text-dsfr-grey-200": chantierEstArchive,
+            "text-dsfr-grey-200": chantierEstArchive,
           },
         )}
         title={chantier.nom}

@@ -57,11 +57,11 @@ export const MenuBar = ({
     clsxm(
       "flex items-center justify-center w-8 h-8 p-0 transition-all duration-150 ease-in-out rounded border",
       {
-        "!text-primary !bg-dsfr-blue-france-925 !border-primary": isActive,
-        "!text-dsfr-grey-200 !bg-transparent !border-transparent": !isActive,
-        "!hover:bg-dsfr-grey-925 !hover:border-dsfr-grey-900 !active:bg-dsfr-grey-950-hover":
+        "text-primary bg-dsfr-blue-france-925 border-primary": isActive,
+        "text-dsfr-grey-200 bg-transparent border-transparent": !isActive,
+        "hover:bg-dsfr-grey-925 hover:border-dsfr-grey-900 active:bg-dsfr-grey-950-hover":
           !isActive,
-        "!disabled:text-dsfr-grey-625 !disabled:cursor-not-allowed !disabled:opacity-50": true,
+        "disabled:text-dsfr-grey-625 disabled:cursor-not-allowed disabled:opacity-50": true,
       },
     );
 

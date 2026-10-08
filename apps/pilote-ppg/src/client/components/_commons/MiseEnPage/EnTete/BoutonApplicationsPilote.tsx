@@ -52,7 +52,7 @@ const SectionBouton = ({
         href={application.url}
         onClick={onSelect}
       >
-        <Icone className="!h-4 !w-4" icone={icone} />
+        <Icone className="h-4 w-4" icone={icone} />
         {application.label}
       </Dropdown.Link>
     </div>

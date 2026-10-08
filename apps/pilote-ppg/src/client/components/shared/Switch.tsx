@@ -12,11 +12,11 @@ export const Switch = Object.assign({}, BaseSwitch, {
   }: ComponentProps<typeof BaseSwitch.Root>) => (
     <BaseSwitch.Root
       className={clsxm(
-        "w-10 relative !p-0",
-        "rounded-full border !border-primary",
-        "bg-white transition-colors data-[state=checked]:!bg-primary",
+        "w-10 relative p-0",
+        "rounded-full border border-primary",
+        "bg-white transition-colors data-[state=checked]:bg-primary",
         {
-          "!border-gray-500 data-[state=checked]:!bg-gray-300": props.disabled,
+          "border-gray-500 data-[state=checked]:bg-gray-300": props.disabled,
         },
         className,
       )}
@@ -33,17 +33,17 @@ export const Switch = Object.assign({}, BaseSwitch, {
     <BaseSwitch.Thumb
       className={clsxm(
         "group h-6 w-6 block",
-        "rounded-full border !border-primary",
-        "translate-x-0 transition-transform data-[state=checked]:!translate-x-4",
+        "rounded-full border border-primary",
+        "translate-x-0 transition-transform data-[state=checked]:translate-x-4",
         "bg-white",
-        { "!border-gray-500 !text-gray-500": disabled },
+        { "border-gray-500 text-gray-500": disabled },
         "flex items-center justify-center",
         className,
       )}
       {...props}
     >
       <Icone
-        className="h-5 w-5 text-current !hidden group-data-[state=checked]:!block"
+        className="h-5 w-5 text-current hidden group-data-[state=checked]:block"
         icone={CheckLineIcon}
       />
     </BaseSwitch.Thumb>

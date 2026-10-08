@@ -69,9 +69,7 @@ export const MultiSelectFiltre = ({
   };
 
   return (
-    <div
-      className={clsxm("flex gap-2 !text-sm !w-full items-center", className)}
-    >
+    <div className={clsxm("flex gap-2 text-sm w-full items-center", className)}>
       {label ? (
         <div className="font-semibold whitespace-nowrap">{label} :</div>
       ) : null}
@@ -79,7 +77,7 @@ export const MultiSelectFiltre = ({
         <Dropdown.Trigger asChild>
           <button
             className={clsxm(
-              "!flex items-center justify-between gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey",
+              "flex items-center justify-between gap-3 px-4 py-1.5 font-medium border rounded-t border-b-2 border-b-gray-600 bg-dsfr-contrast-grey",
               classNameBouton,
             )}
             type="button"
@@ -93,7 +91,7 @@ export const MultiSelectFiltre = ({
 
         <Dropdown.Content
           align="start"
-          className="!w-[var(--radix-dropdown-menu-trigger-width)]"
+          className="w-[var(--radix-dropdown-menu-trigger-width)]"
         >
           <div className="divide-y divide-dsfr-mention-grey -m-4 max-h-96 overflow-y-auto">
             <div className="sticky top-0 bg-white z-10">
@@ -115,7 +113,7 @@ export const MultiSelectFiltre = ({
                 <div className="px-4 pb-2 pt-1">
                   <input
                     aria-label="Rechercher"
-                    className="w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
+                    className="w-full px-3 py-2 border-b-2 border-primary text-sm bg-dsfr-alt-blue-france placeholder-dsfr-mention-grey placeholder:italic"
                     onChange={(event) => setRecherche(event.target.value)}
                     placeholder="Rechercher"
                     type="text"
@@ -168,12 +166,12 @@ export const MultiSelectFiltre = ({
                         {group.label}
                       </div>
                     )}
-                    <ul className="!p-0 !m-0">
+                    <ul className="p-0 m-0">
                       {group.options.map((optionValue) => {
                         const checked = values.includes(optionValue);
                         return (
                           <li
-                            className="!list-none block !py-1 bg-dsfr-grey-925 even:bg-dsfr-grey-1000 !px-4"
+                            className="list-none block py-1 bg-dsfr-grey-925 even:bg-dsfr-grey-1000 px-4"
                             key={optionValue}
                           >
                             <label className="flex items-center gap-2">
