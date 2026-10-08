@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
 import { BoutonSeDeconnecter } from "@/components/_commons/BoutonSeDeconnecter";
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
+import { Collapsible } from "@/components/shared/Collapsible";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -27,7 +28,6 @@ export const Utilisateur = () => {
       <Dropdown.Trigger asChild>
         <button
           className="flex items-center !text-sm !p-0 !text-primary"
-          data-fr-prevent-conceal
           name="Utilisateur connecté"
           type="button"
         >
@@ -72,5 +72,75 @@ export const Utilisateur = () => {
         <BoutonSeDeconnecter />
       </Dropdown.Content>
     </Dropdown.Root>
+  );
+};
+
+// Version du menu mobile : sous-menu dépliable dans le flux, au style des liens
+// de navigation, plutôt qu'un menu flottant qui recouvrirait le menu plein écran.
+export const IdentiteMenuMobile = () => {
+  const { email, prenom, nom } = useProfilUtilisateurConnecte();
+  return (
+    <div className="min-w-0">
+      <p className="mb-0 truncate text-base font-bold text-dsfr-grey-50">
+        {prenom} {nom}
+      </p>
+      <p className="mb-0 truncate text-sm text-dsfr-mention-grey">{email}</p>
+    </div>
+  );
+};
+
+export const MonEspaceMenuMobile = ({
+  onNavigate,
+}: {
+  onNavigate: () => void;
+}) => {
+  const session = useSession();
+  const showPanelAdministrateur = peutAccederPanelAdministrateur(session);
+
+  return (
+    <nav aria-label="Mon espace" className="fr-nav">
+      <ul className="fr-nav__list">
+        <li className="fr-nav__item">
+          <Collapsible.Root>
+            <Collapsible.Trigger className="fr-nav__btn" type="button">
+              Mon espace
+            </Collapsible.Trigger>
+            <Collapsible.Content>
+              <ul className="list-none p-0 pl-4">
+                <li>
+                  <Link
+                    className="fr-nav__link"
+                    href="/mon-profil-utilisateur"
+                    onClick={onNavigate}
+                  >
+                    Mon profil utilisateur
+                  </Link>
+                </li>
+                {showPanelAdministrateur ? (
+                  <li>
+                    <Link
+                      className="fr-nav__link"
+                      href="/panel-administrateur/parametrage-metadata-indicateur"
+                      onClick={onNavigate}
+                    >
+                      Panel administrateur
+                    </Link>
+                  </li>
+                ) : null}
+                <li>
+                  <button
+                    className="fr-nav__link w-full text-left"
+                    onClick={() => signOut()}
+                    type="button"
+                  >
+                    Se déconnecter
+                  </button>
+                </li>
+              </ul>
+            </Collapsible.Content>
+          </Collapsible.Root>
+        </li>
+      </ul>
+    </nav>
   );
 };

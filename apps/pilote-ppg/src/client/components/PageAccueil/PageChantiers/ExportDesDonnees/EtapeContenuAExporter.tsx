@@ -1,16 +1,9 @@
-import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
 import { Callout } from "@/components/shared/Callout";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
 import { RadioGroup } from "@/components/shared/RadioGroup";
-import { useExportStep } from "./useExportStep";
-
-const TYPES_EXPORT = [
-  "chantiers",
-  "indicateurs",
-  "historique-indicateurs",
-] as const;
+import { TYPES_EXPORT, useExportStep } from "./useExportStep";
 
 type TypeExport = (typeof TYPES_EXPORT)[number];
 
@@ -18,33 +11,20 @@ const estTypeExport = (valeur: string): valeur is TypeExport =>
   TYPES_EXPORT.some((typeExport) => typeExport === valeur);
 
 export const EtapeContenuAExporter = () => {
-  const [typeExport, setTypeExport] = useQueryState(
-    "typeExport",
-    parseAsStringLiteral(TYPES_EXPORT).withDefault("chantiers").withOptions({
-      shallow: true,
-    }),
-  );
-  const [, setOptionsExport] = useQueryState(
-    "optionsExport",
-    parseAsString.withDefault("identifiant").withOptions({
-      shallow: true,
-    }),
-  );
+  const {
+    exportState: { typeExport },
+    updateExport,
+    goToStep,
+  } = useExportStep();
 
-  const { goToStep } = useExportStep();
-
-  const modifierTypeExport = (typeExportADefinir: TypeExport) => {
-    if (
-      typeExportADefinir === "chantiers" ||
-      typeExportADefinir === "indicateurs"
-    ) {
-      setOptionsExport("identifiant");
-    }
-    if (typeExportADefinir === "historique-indicateurs") {
-      setOptionsExport("identifiant,valeur-cible,valeur-avancement");
-    }
-    setTypeExport(typeExportADefinir);
-  };
+  const modifierTypeExport = (typeExportADefinir: TypeExport) =>
+    updateExport({
+      typeExport: typeExportADefinir,
+      optionsExport:
+        typeExportADefinir === "historique-indicateurs"
+          ? "identifiant,valeur-cible,valeur-avancement"
+          : "identifiant",
+    });
 
   return (
     <div>

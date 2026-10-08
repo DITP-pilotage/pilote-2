@@ -11,6 +11,10 @@ import { BoutonApplicationsPilote } from "@/components/_commons/MiseEnPage/EnTet
 import { ClientOnly } from "@/components/shared/ClientOnly";
 import { LogoPilote } from "@/components/_commons/LogoPilote";
 import { useEnv } from "@/client/hooks/useEnv";
+import { Button } from "@/components/shared/Button";
+import { Icone } from "@/components/_commons/Icone";
+import { MenuFillIcon } from "@/components/_commons/Icones/MenuFillIcon";
+import { MenuMobileProvider, useMenuMobile } from "./MenuMobileContext";
 
 const InformationsEspaceConnecte = () => {
   const { data: session } = useSession();
@@ -33,6 +37,20 @@ const InformationsEspaceConnecte = () => {
   return <BoutonSeConnecter />;
 };
 
+const BoutonMenuMobile = () => {
+  const { setOpen } = useMenuMobile();
+  return (
+    <Button
+      aria-label="Menu"
+      className="ml-auto min-[62em]:hidden"
+      iconLeft={<Icone className="w-5 h-5 text-current" icone={MenuFillIcon} />}
+      onClick={() => setOpen(true)}
+      title="Menu"
+      variant="tertiary"
+    />
+  );
+};
+
 const useEntete = () => {
   const { data: messageInformation } =
     api.gestionContenu.recupererMessageInformation.useQuery();
@@ -52,54 +70,47 @@ export const EnTete = () => {
   const bandeauType = messageInformation?.bandeauType || "WARNING";
 
   return (
-    <header className="fr-header z-[2] print:hidden" role="banner">
-      <div className="fr-header__body">
-        <div className="fr-container">
-          <div className="fr-header__body-row">
-            <div className="fr-header__brand fr-enlarge-link">
-              <div className="fr-header__brand-top fr-grid-row">
-                <LogoPilote />
-                {!!session ? (
-                  <div className="fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0">
-                    <button
-                      aria-controls="modale-menu-principal"
-                      className="fr-btn--menu fr-btn"
-                      data-fr-opened="false"
-                      id="bouton-menu-principal"
-                      title="Menu"
-                      type="button"
-                    >
-                      Menu
-                    </button>
-                  </div>
-                ) : null}
+    <MenuMobileProvider>
+      <header className="fr-header z-[2] print:hidden" role="banner">
+        <div className="fr-header__body">
+          <div className="fr-container">
+            <div className="fr-header__body-row">
+              <div className="fr-header__brand fr-enlarge-link">
+                <div className="fr-header__brand-top fr-grid-row">
+                  <LogoPilote />
+                  {!!session ? (
+                    <div className="fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0">
+                      <BoutonMenuMobile />
+                    </div>
+                  ) : null}
+                </div>
               </div>
-            </div>
-            <div className="fr-header__tools">
-              <div className="hidden min-[62em]:flex min-[62em]:flex-row min-[62em]:justify-end min-[62em]:gap-2">
-                <div className="flex align-center gap-4">
-                  <BoutonContacterEquipePilote />
-                  <ClientOnly>
-                    <InformationsEspaceConnecte />
-                  </ClientOnly>
+              <div className="fr-header__tools">
+                <div className="hidden min-[62em]:flex min-[62em]:flex-row min-[62em]:justify-end min-[62em]:gap-2">
+                  <div className="flex align-center gap-4">
+                    <BoutonContacterEquipePilote />
+                    <ClientOnly>
+                      <InformationsEspaceConnecte />
+                    </ClientOnly>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      {session?.user ? (
-        <ClientOnly>
-          <Navigation />
-        </ClientOnly>
-      ) : null}
-      {isBandeauActif ? (
-        <Notice
-          dismissible
-          title={bandeauTexte}
-          variant={bandeauType === "INFO" ? "info" : "warning"}
-        />
-      ) : null}
-    </header>
+        {session?.user ? (
+          <ClientOnly>
+            <Navigation />
+          </ClientOnly>
+        ) : null}
+        {isBandeauActif ? (
+          <Notice
+            dismissible
+            title={bandeauTexte}
+            variant={bandeauType === "INFO" ? "info" : "warning"}
+          />
+        ) : null}
+      </header>
+    </MenuMobileProvider>
   );
 };
