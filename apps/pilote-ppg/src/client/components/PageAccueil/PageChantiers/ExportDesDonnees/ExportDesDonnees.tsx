@@ -2,7 +2,7 @@ import "@gouvfr/dsfr/dist/component/radio/radio.min.css";
 import { FunctionComponent, PropsWithChildren } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
-import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 import { EtapeContenuAExporter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeContenuAExporter";
 import { EtapeDonneeChantierACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeChantierACollecter";
 import { EtapePerimetreExport } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapePerimetreExport";
@@ -76,10 +76,13 @@ export const ExportDesDonnees: FunctionComponent<
       titleHidden
       trigger={children}
     >
-      <IndicateurDEtapes
-        sousTitreEtape="Exporter les données"
-        étapeCourante={etapeCourante}
-        étapes={étapes}
+      <StepIndicator
+        className="mb-2"
+        currentStep={etapeCourante}
+        label="Exporter les données"
+        nextStep={étapes[etapeCourante]}
+        stepCount={étapes.length}
+        title={étapes[etapeCourante - 1]}
       />
       {etapeCourante === Stepper.ETAPE_ELEMENTS_A_EXPORTER.numeroEtape ? (
         <EtapeContenuAExporter />

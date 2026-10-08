@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextareaField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
@@ -63,25 +64,14 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
     >
       {etapeAccuserReception ? (
         <>
-          <div className="fr-stepper fr-mb-1w">
-            <h2 className="fr-stepper__title">
-              <span>{`${Stepper[etapeAccuserReception].titre}`}</span>
-              <span className="fr-stepper__state">
-                {`Accuser réception - Étape ${Stepper[etapeAccuserReception].numeroEtape} sur 2`}
-              </span>
-            </h2>
-            <div
-              className="fr-stepper__steps"
-              data-fr-current-step={Stepper[etapeAccuserReception].numeroEtape}
-              data-fr-steps="2"
-            />
-            {Stepper[etapeAccuserReception].etapeSuivante ? (
-              <p className="fr-stepper__details">
-                <span className="fr-text--bold">Étape suivante :</span>
-                {` ${Stepper[etapeAccuserReception].etapeSuivante}`}
-              </p>
-            ) : null}
-          </div>
+          <StepIndicator
+            className="mb-2"
+            currentStep={Stepper[etapeAccuserReception].numeroEtape}
+            label="Accuser réception"
+            nextStep={Stepper[etapeAccuserReception].etapeSuivante}
+            stepCount={2}
+            title={Stepper[etapeAccuserReception].titre}
+          />
           <FormProvider {...reactHookForm}>
             <form
               method="post"

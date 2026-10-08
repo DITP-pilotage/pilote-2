@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { FunctionComponent, useState } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
@@ -59,7 +59,13 @@ const PageImportIndicateurSectionImport: FunctionComponent<
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.TITRE}
         </Titre>
         <Bloc>
-          <IndicateurDEtapes étapeCourante={etapeCourante} étapes={étapes} />
+          <StepIndicator
+            className="mb-2"
+            currentStep={etapeCourante}
+            nextStep={étapes[etapeCourante]}
+            stepCount={étapes.length}
+            title={étapes[etapeCourante - 1]}
+          />
           <div
             className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && "fr-hidden"}`}
           >

@@ -1,4 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
 import { TextField, TextareaField } from "@/components/shared/TextField";
 import { SelectField } from "@/components/shared/SelectField";
@@ -63,31 +64,18 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
     >
       {etapePropositionValeurAvancement ? (
         <>
-          <div className="fr-stepper fr-mb-1w">
-            <h2 className="fr-stepper__title">
-              <span>
-                {`${Stepper[etapePropositionValeurAvancement].titre}`}
-              </span>
-              <span className="fr-stepper__state">
-                {estUneModificationDeProposition
-                  ? `Modifier la proposition de valeur d'avancement - Étape ${Stepper[etapePropositionValeurAvancement].numeroEtape} sur 2`
-                  : `Proposer une autre valeur d'avancement - Étape ${Stepper[etapePropositionValeurAvancement].numeroEtape} sur 2`}
-              </span>
-            </h2>
-            <div
-              className="fr-stepper__steps"
-              data-fr-current-step={
-                Stepper[etapePropositionValeurAvancement].numeroEtape
-              }
-              data-fr-steps="2"
-            />
-            {Stepper[etapePropositionValeurAvancement].etapeSuivante ? (
-              <p className="fr-stepper__details">
-                <span className="fr-text--bold">Étape suivante :</span>
-                {` ${Stepper[etapePropositionValeurAvancement].etapeSuivante}`}
-              </p>
-            ) : null}
-          </div>
+          <StepIndicator
+            className="mb-2"
+            currentStep={Stepper[etapePropositionValeurAvancement].numeroEtape}
+            label={
+              estUneModificationDeProposition
+                ? "Modifier la proposition de valeur d'avancement"
+                : "Proposer une autre valeur d'avancement"
+            }
+            nextStep={Stepper[etapePropositionValeurAvancement].etapeSuivante}
+            stepCount={2}
+            title={Stepper[etapePropositionValeurAvancement].titre}
+          />
           <FormProvider {...reactHookForm}>
             <form
               method="post"
