@@ -28,7 +28,7 @@ export const EtapeContenuAExporter = () => {
 
   return (
     <div>
-      <p className="fr-mt-2w fr-mb-2w">
+      <p className="mt-4 mb-4">
         Sélectionnez et exportez les données de votre choix, selon vos besoins
       </p>
       <Callout.Root color="highlight">
@@ -39,18 +39,18 @@ export const EtapeContenuAExporter = () => {
           </Callout.Title>
           <ul>
             <li>
-              indiquer les <span className="fr-text--bold">éléments</span> dont
-              vous souhaitez récupérer les données : les chantiers, les
-              indicateurs ou l'historique des indicateurs (étape 1) ;
+              indiquer les <span className="font-bold">éléments</span> dont vous
+              souhaitez récupérer les données : les chantiers, les indicateurs
+              ou l'historique des indicateurs (étape 1) ;
             </li>
             <li>
-              préciser le <span className="fr-text--bold">périmètre</span> de
-              votre export : le cas échéant, filtrage des chantiers ou
-              indicateurs et sélection des territoires (étape 2) ;
+              préciser le <span className="font-bold">périmètre</span> de votre
+              export : le cas échéant, filtrage des chantiers ou indicateurs et
+              sélection des territoires (étape 2) ;
             </li>
             <li>
               enfin – s'il ne s'agit pas d'un export d'historique – choisir les{" "}
-              <span className="fr-text--bold">données</span> que vous souhaitez
+              <span className="font-bold">données</span> que vous souhaitez
               collecter pour ces chantiers ou indicateurs, territoire par
               territoire : gouvernance, commentaires, données quantitatives,
               etc. (étape 3)
@@ -58,7 +58,7 @@ export const EtapeContenuAExporter = () => {
           </ul>
         </Callout.Text>
       </Callout.Root>
-      <p className="fr-my-1w">
+      <p className="my-2">
         Dans un premier temps, indiquez les éléments dont vous souhaitez
         exporter les données :
       </p>
@@ -86,15 +86,15 @@ export const EtapeContenuAExporter = () => {
           value="historique-indicateurs"
         />
       </RadioGroup.Root>
-      <div className="w-full flex justify-end fr-mt-2w">
+      <div className="mt-4 flex w-full items-center justify-end">
         <Modale.Close asChild>
-          <button
-            className="fr-link fr-mr-2w"
+          <Button
+            className="mr-4"
             title="Fermer la fenêtre modale"
-            type="button"
+            variant="link"
           >
             Annuler
-          </button>
+          </Button>
         </Modale.Close>
         <Button
           variant="primary"

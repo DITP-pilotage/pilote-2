@@ -4,6 +4,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import "@gouvfr/dsfr/dist/component/download/download.min.css";
 import { Table } from "@/components/shared/Table";
+import { TextLink } from "@/components/shared/TextLink";
 
 const PageImportIndicateurSectionRessource: FunctionComponent = () => {
   return (
@@ -393,15 +394,14 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
                   .SECTION_CONTACT.MESSAGE_CONTACT
               }
             </b>
-            <a
-              className="fr-link"
+            <TextLink
               href={`mailto:${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_CONTACT.ADRESSE_MAIL}`}
             >
               {
                 wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
                   .SECTION_CONTACT.ADRESSE_MAIL
               }
-            </a>
+            </TextLink>
           </p>
         </Bloc>
       </div>

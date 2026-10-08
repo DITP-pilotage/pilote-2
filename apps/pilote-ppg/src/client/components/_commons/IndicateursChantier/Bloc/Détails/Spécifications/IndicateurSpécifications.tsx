@@ -6,6 +6,7 @@ import { useEnv } from "@/client/hooks/useEnv";
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
+import { TextLink } from "@/components/shared/TextLink";
 
 interface IndicateurSpécificationsProps {
   dateValeurAvancement: string | null;
@@ -136,16 +137,17 @@ const IndicateurSpécifications: FunctionComponent<
           </div>
           <div className="flex align-end justify-end">
             <Icone
-              className="fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0"
+              className="mt-4 mr-1 text-dsfr-blue-france-sun-113 lg:mt-0"
               icone={EnveloppeContourIcon}
             />
-            <Link
-              className="fr-link"
-              href={`mailto:${responsablesMails.join(", ")}?subject=${objectMail}`}
-              title={`Contacter ${responsablesMails.join(", ")}`}
-            >
-              Contacter
-            </Link>
+            <TextLink asChild>
+              <Link
+                href={`mailto:${responsablesMails.join(", ")}?subject=${objectMail}`}
+                title={`Contacter ${responsablesMails.join(", ")}`}
+              >
+                Contacter
+              </Link>
+            </TextLink>
           </div>
         </div>
       ) : null}

@@ -7,6 +7,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonProConnect } from "./BoutonProConnect";
 import { messageDeConnexion } from "./messagesConnexion";
+import { TextLink } from "@/components/shared/TextLink";
 
 const ADRESSE_ASSISTANCE = "pilote.ditp@modernisation.gouv.fr";
 
@@ -84,14 +85,11 @@ export const PageConnexion = () => {
               </span>
             </Button>
 
-            <p className="text-dsfr-mention-grey fr-mt-4w fr-mb-0 fr-text--xs">
+            <p className="mt-8 mb-0 text-xs text-dsfr-mention-grey">
               Un problème pour vous connecter ?{" "}
-              <a
-                className="fr-link fr-link--xs"
-                href={`mailto:${ADRESSE_ASSISTANCE}`}
-              >
+              <TextLink href={`mailto:${ADRESSE_ASSISTANCE}`} size="xs">
                 {ADRESSE_ASSISTANCE}
-              </a>
+              </TextLink>
             </p>
           </div>
         </div>

@@ -7,21 +7,21 @@ export const EtapeDonneeEnCoursDeTelechargement = () => {
   const { goToStep } = useExportStep();
 
   return (
-    <div className="fr-mt-2w">
+    <div className="mt-4">
       <Alerte
         message="Votre fichier d'export sera disponible dans le dossier des fichiers téléchargés de votre navigateur"
         titre="Vos données sont en cours de téléchargement"
         type="succès"
       />
-      <div className="w-full flex justify-end fr-mt-2w">
+      <div className="mt-4 flex w-full items-center justify-end">
         <Modale.Close asChild>
-          <button
-            className="fr-link fr-mr-2w"
+          <Button
+            className="mr-4"
             title="Fermer la fenêtre modale"
-            type="button"
+            variant="link"
           >
             Annuler
-          </button>
+          </Button>
         </Modale.Close>
         <Button
           variant="secondary"
