@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import {
   createColumnHelper,
@@ -29,15 +29,24 @@ export function useTableauLogs() {
   const [dateFin, setDateFin] = useState<string | undefined>();
   const [logsExpandus, setLogsExpandus] = useState<Set<string>>(new Set());
 
-  const [data] = api.applicationLog.lister.useSuspenseQuery({
-    page,
-    taillePage: TAILLE_PAGE,
-    filtreLevel,
-    filtreCategorie,
-    filtreRecherche,
-    dateDebut,
-    dateFin,
-  });
+  // Différé : un changement de filtre garde le tableau affiché pendant le
+  // chargement au lieu de remplacer les filtres par le fallback du Suspense.
+  const parametres = useDeferredValue(
+    useMemo(
+      () => ({
+        page,
+        taillePage: TAILLE_PAGE,
+        filtreLevel,
+        filtreCategorie,
+        filtreRecherche,
+        dateDebut,
+        dateFin,
+      }),
+      [page, filtreLevel, filtreCategorie, filtreRecherche, dateDebut, dateFin],
+    ),
+  );
+
+  const [data] = api.applicationLog.lister.useSuspenseQuery(parametres);
 
   const toggleExpansion = useCallback((id: string) => {
     setLogsExpandus((prev) => {
