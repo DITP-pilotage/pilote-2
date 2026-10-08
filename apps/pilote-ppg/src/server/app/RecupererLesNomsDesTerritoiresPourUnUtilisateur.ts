@@ -3,7 +3,7 @@ import {
   profilsDépartementaux,
   profilsTerritoriaux,
 } from "@/shared/utilisateur/Utilisateur.interface";
-import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { Habilitations } from "@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface";
 
 export const recupererLesNomsDesTerritoires = (

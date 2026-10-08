@@ -1,6 +1,6 @@
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
+import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 import { Habilitations } from "./Habilitation.interface";

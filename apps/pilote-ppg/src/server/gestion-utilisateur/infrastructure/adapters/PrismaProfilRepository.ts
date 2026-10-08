@@ -1,7 +1,8 @@
 import { profil as PrismaProfil } from "@prisma/client";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { ProfilRepository } from "@/server/gestion-utilisateur/domain/ports/ProfilRepository";
-import { Profil, ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { Profil } from "@/shared/profil/Profil.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 const convertirEnProfil = (prismaProfil: PrismaProfil): Profil => {
   return {

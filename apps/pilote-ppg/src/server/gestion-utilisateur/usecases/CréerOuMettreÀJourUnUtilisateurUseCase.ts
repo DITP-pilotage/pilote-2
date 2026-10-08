@@ -16,7 +16,7 @@ import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/Perimetre
 import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
 import { HistorisationModification } from "@/server/historisation-modification/domain/HistorisationModification";
 import { Profil } from "@/shared/profil/Profil.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
@@ -24,8 +24,8 @@ import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/Ch
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
-import { ConflictError } from "@/server/app/error-boundary/conflict-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
+import { ConflictError } from "@/shared/errors/conflict-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 import { logger } from "@/server/framework/logger";
 

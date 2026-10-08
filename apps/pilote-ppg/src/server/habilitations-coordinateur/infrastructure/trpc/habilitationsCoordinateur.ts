@@ -3,8 +3,8 @@ import {
   protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
-import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ForbiddenError } from "@/shared/errors/forbidden-error";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ajouterLesChantierAuxHabilitationsCommandSchema } from "@/server/habilitations-coordinateur/handlers/AjouterLesChantierAuxHabilitationsHandler";
 
 export const habilitationsCoordinateurRouter = createTRPCRouter({

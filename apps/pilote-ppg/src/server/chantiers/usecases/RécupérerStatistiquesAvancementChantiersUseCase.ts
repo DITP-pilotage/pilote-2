@@ -3,7 +3,7 @@ import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/shared/maille/Maille.interface";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
-import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
+import { MailleNonAutoriséeErreur } from "@/shared/errors/authorization-errors";
 import type { Inject } from "@/server/chantiers/module";
 import { GetStatistiquesAvancementChantiersQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 

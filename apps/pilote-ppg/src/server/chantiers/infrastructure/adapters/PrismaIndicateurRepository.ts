@@ -27,7 +27,7 @@ import { getServiceLibelle } from "@/utils/referentiel-services";
 import {
   EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE,
   EvenementValeurEnum,
-} from "@/server/app/domain/EvenementValeurEnum";
+} from "@/shared/indicateur/EvenementValeurEnum";
 import {
   calculerDateDernierImport,
   EvenementPourDateDernierImport,

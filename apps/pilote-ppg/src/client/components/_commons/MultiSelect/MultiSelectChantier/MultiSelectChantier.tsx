@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { MultiSelect } from "@/client/components/_commons/MultiSelect/MultiSelect";
 import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
-import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
+import { trierParOrdreAlphabétique } from "@/utils/arrays";
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 
 interface MultiSelectChantierProps {

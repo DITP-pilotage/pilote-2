@@ -24,7 +24,7 @@ import {
 import { objectEntries } from "@/client/utils/objects/objects";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { prisma } from "@/server/framework/persistence/prisma";
 
 // TODO: TOUT TESTEEEEER

@@ -1,4 +1,4 @@
-import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 export interface EmailManager {
   sendTransactionalEmail(

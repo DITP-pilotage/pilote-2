@@ -1,7 +1,7 @@
 import { MockProxy, mock } from "vitest-mock-extended";
 import { CreerNouveauteUseCase } from "@/server/parametrage-nouveautes/usecases/CreerNouveauteUseCase";
 import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 
 describe("CreerNouveauteUseCase", () => {
   let creerNouveauteUseCase: CreerNouveauteUseCase;

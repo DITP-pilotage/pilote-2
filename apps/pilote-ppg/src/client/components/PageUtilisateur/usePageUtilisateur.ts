@@ -8,7 +8,7 @@ import {
 import { api } from "@/server/framework/trpc/api";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set([
   ProfilEnum.DITP_ADMIN,

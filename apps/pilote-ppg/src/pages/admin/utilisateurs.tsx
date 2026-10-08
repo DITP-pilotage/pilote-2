@@ -11,7 +11,7 @@ import PageAdminUtilisateurs from "@/components/PageAdminUtilisateurs/PageAdminU
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
 import { FiltreQueryParams } from "@/server/gestion-utilisateur/app/contrats/FiltreQueryParams";
-import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
+import { Profil } from "@/shared/profil/Profil.interface";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import {
   presenterEnUtilisateurListeGestionContrat,

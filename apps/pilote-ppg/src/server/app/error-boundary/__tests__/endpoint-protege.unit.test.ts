@@ -1,7 +1,7 @@
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { setupRequest, setupResponse } from "@/test/apiTestHelpers";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
-import { PiloteError } from "@/server/app/error-boundary/pilote-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
+import { PiloteError } from "@/shared/errors/pilote-error";
 import { logger } from "@/server/framework/logger";
 
 const { MockTokenAPIJWTService } = vi.hoisted(() => ({

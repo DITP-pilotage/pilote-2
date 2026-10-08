@@ -1,7 +1,7 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
-import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 import { errorHandler } from "@/server/app/error-boundary/error-handler";
 import { configuration } from "@/config";
 

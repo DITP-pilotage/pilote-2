@@ -3,7 +3,7 @@ import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { RecupererRapportHebdomadaireQuery } from "@/server/rapports-hebdomadaires/queries/RecupererRapportHebdomadaireQuery";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 import { type ContenuRapport } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 
 describe("RecupererRapportHebdomadaireQuery", () => {

@@ -1,7 +1,7 @@
 import { decode, encode } from "next-auth/jwt";
 import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
 import { TokenAPIInformation } from "@/server/authentification/domain/TokenAPIInformation";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 import { logger } from "@/server/framework/logger";
 
 export class TokenAPIJWTService implements TokenAPIService {

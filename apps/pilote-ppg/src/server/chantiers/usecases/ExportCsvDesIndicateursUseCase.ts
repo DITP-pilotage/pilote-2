@@ -10,7 +10,7 @@ import {
 } from "@/server/framework/csv/valeurs";
 import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import {
   IndicateurPourExport,
   verifierApplicabiliteMaille,

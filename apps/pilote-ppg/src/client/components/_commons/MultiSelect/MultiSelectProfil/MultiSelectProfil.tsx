@@ -4,8 +4,8 @@ import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiS
 import {
   deuxTableauxSontIdentiques,
   trierParOrdreAlphabétique,
-} from "@/client/utils/arrays";
-import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
+} from "@/utils/arrays";
+import { Profil } from "@/shared/profil/Profil.interface";
 
 interface MultiSelectProfilsProps {
   changementValeursSélectionnéesCallback: (

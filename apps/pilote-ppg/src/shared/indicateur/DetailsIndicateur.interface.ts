@@ -1,6 +1,6 @@
 import { Avancement } from "@/shared/chantier/avancement/Avancement.interface";
 import { CodeInsee } from "@/shared/territoire/Territoire.interface";
-import { DetailsIndicateur } from "@/server/chantiers/domain/DetailsIndicateurs";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 import { Indicateur } from "./Indicateur.interface";
 
 export type DétailsIndicateurTerritoire = Record<CodeInsee, DétailsIndicateur>;
@@ -8,6 +8,25 @@ export type DétailsIndicateurs = Record<
   Indicateur["id"],
   DétailsIndicateurTerritoire
 >;
+
+export type PropositionStatutTerritoire = {
+  statut:
+    | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
+    | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE
+    | EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE;
+  date: string;
+  dateTime: string;
+} | null;
+
+export type PropositionStatutDirectionProjet = {
+  statut:
+    | EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE
+    | EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION
+    | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE
+    | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION;
+  date: string;
+  dateTime: string;
+} | null;
 
 interface DetailIndicateurPropositionValeurAvancement {
   valeurAvancement: number;
@@ -50,8 +69,8 @@ export type DétailsIndicateur = {
   dateValeurCibleAnnuelle: string | null;
   avancement: Avancement;
   proposition: DetailIndicateurPropositionValeurAvancement | null;
-  propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"];
-  propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"];
+  propositionStatutTerritoire: PropositionStatutTerritoire;
+  propositionStatutDirectionProjet: PropositionStatutDirectionProjet;
   unite: string | null;
   estApplicable: boolean | null;
   dateImport: string | null;

@@ -19,7 +19,7 @@ import {
 } from "@/shared/utilisateur/profils-gestion-utilisateur";
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
-import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
+import { Profil } from "@/shared/profil/Profil.interface";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
 import { listeTerritoires } from "@/client/constants/territoires";
 

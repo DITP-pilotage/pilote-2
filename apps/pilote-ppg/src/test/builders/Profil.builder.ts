@@ -1,4 +1,4 @@
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { Profil } from "@/shared/profil/Profil.interface";
 
 export class ProfilBuilder {

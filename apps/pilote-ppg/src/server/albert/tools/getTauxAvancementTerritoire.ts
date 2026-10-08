@@ -1,7 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
-import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
+import { MailleNonAutoriséeErreur } from "@/shared/errors/authorization-errors";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/shared/maille/Maille.interface";

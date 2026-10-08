@@ -1,8 +1,9 @@
+import { MinisterePorteur } from "@/shared/ministere/MinisterePorteur.interface";
 import { TypeStatut } from "@/shared/chantier/Chantier.interface";
 import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { NOMS_MAILLES } from "@/shared/maille/mailleSQLParser";
 import { Maille } from "@/shared/maille/Maille.interface";
@@ -50,14 +51,6 @@ type MailleAccueilContrat = Record<
   ListeTerritoiresDonnéeAccueilContrat
 >;
 
-export interface MinistereAccueilPorteur {
-  nom?: string;
-  icône?: string | null;
-  périmètresMinistériels: {
-    id: string;
-  }[];
-}
-
 export interface ChantierAccueilContratV2 {
   id: string;
   nom: string;
@@ -76,7 +69,7 @@ export interface ChantierAccueilContratV2 {
   météoDonnéeTerritorialisée: Record<"regionale" | "departementale", Boolean>;
   maillesApplicables: Maille[];
   responsables: {
-    porteur: MinistereAccueilPorteur | null;
+    porteur: MinisterePorteur | null;
   };
   dateDeMàjDonnéesQuantitatives: string | null;
   dateDeMàjDonnéesQualitatives: string | null;

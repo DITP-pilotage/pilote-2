@@ -1,7 +1,7 @@
 import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { UtilisateurRepository } from "@/server/authentification/domain/ports/UtilisateurRepository";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 
 export class CreerTokenAPIUseCase {
   private readonly tokenAPIService: TokenAPIService;

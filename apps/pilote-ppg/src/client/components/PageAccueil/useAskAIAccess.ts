@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useEnv } from "@/client/hooks/useEnv";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import {
   calculerAccesAskAI,
   construireFeatureFlipsAskAI,

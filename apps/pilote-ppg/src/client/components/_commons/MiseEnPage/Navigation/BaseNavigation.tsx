@@ -12,7 +12,7 @@ import {
   IdentiteMenuMobile,
   MonEspaceMenuMobile,
 } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";

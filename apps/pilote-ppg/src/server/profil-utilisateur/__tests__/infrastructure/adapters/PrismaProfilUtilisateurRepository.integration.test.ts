@@ -2,7 +2,7 @@ import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { PrismaProfilUtilisateurRepository } from "@/server/profil-utilisateur/infrastructure/adapters/PrismaProfilUtilisateurRepository";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 import { creerProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
 
 describe("PrismaProfilUtilisateurRepository", () => {

@@ -3,7 +3,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import { PiloteError } from "@/server/app/error-boundary/pilote-error";
+import { PiloteError } from "@/shared/errors/pilote-error";
 import { CreateContextOptions } from "./trpc.interface";
 
 const createInternalTRPCContext = (opts: CreateContextOptions) => {

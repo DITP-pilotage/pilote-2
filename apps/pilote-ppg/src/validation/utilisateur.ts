@@ -4,7 +4,7 @@ import {
   ProfilCode,
   profilsCodes,
 } from "@/shared/utilisateur/Utilisateur.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 const customErrorMail =
   "Vous essayez de créer un compte pour une adresse dont le domaine n'est pas en .gouv.fr. Veuillez contacter pilote.ditp@modernisation.gouv.fr pour plus d'informations.";
