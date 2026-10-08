@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { RowData } from "@tanstack/react-table";
-import Loader from "@/components/_commons/Loader/Loader";
+import { PageLoader } from "@/components/shared/PageLoader";
 import type {
   AppFeatures,
   DataTable,
@@ -34,7 +34,7 @@ export function TableauAnnuaire<TData extends RowData>({
     >
       {isLoading ? (
         <div className="relative py-20">
-          <Loader />
+          <PageLoader />
         </div>
       ) : (
         <>

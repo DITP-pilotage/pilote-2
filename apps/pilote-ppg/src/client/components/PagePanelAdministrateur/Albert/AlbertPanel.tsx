@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
+import { Tabs } from "@/components/shared/Tabs";
 import { AlbertChat } from "@/components/PagePanelAdministrateur/Albert/AlbertChat";
 import { AlbertDashboard } from "@/components/PagePanelAdministrateur/Albert/AlbertDashboard";
 
@@ -34,11 +34,7 @@ export const AlbertPanel = () => {
 
   return (
     <div>
-      <NavigationTertiaire
-        items={ITEMS}
-        onValueChange={changerOnglet}
-        value={ongletActif}
-      />
+      <Tabs items={ITEMS} onValueChange={changerOnglet} value={ongletActif} />
       <div className="!mt-6">
         {ongletActif === "discussion" ? <AlbertChat /> : <AlbertDashboard />}
       </div>

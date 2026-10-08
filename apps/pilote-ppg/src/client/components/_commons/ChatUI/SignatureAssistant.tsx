@@ -1,5 +1,5 @@
 import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
-import { PointsAttente } from "@/components/_commons/ChatUI/PointsAttente";
+import { LoadingDots } from "@/components/shared/LoadingDots";
 import {
   libelleActiviteAssistant,
   NOM_ASSISTANT,
@@ -21,7 +21,7 @@ export const SignatureAssistant = ({
         <span aria-live="polite">
           {libelleActiviteAssistant(LIBELLES_ETAT_ASSISTANT[etat])}
         </span>
-        <PointsAttente />
+        <LoadingDots />
       </>
     ) : (
       <span className="font-bold text-dsfr-grey-50">{NOM_ASSISTANT}</span>

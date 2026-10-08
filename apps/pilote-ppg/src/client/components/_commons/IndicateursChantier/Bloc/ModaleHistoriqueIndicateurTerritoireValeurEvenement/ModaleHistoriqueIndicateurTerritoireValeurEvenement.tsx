@@ -2,7 +2,7 @@ import { PropsWithChildren, useState } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Accordion } from "@/components/shared/Accordion";
 import clsx from "clsx";
-import Loader from "@/components/_commons/Loader/Loader";
+import { PageLoader } from "@/components/shared/PageLoader";
 import { formaterDate } from "@/client/utils/date/date";
 import { Infobulle } from "@/components/shared/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
@@ -218,7 +218,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
         </span>
       </div>
       {isLoading ? (
-        <Loader />
+        <PageLoader />
       ) : datesTriees.length === 0 ? (
         <Alerte type="info">
           <p>Aucun événement trouvé pour cet indicateur sur ce territoire.</p>

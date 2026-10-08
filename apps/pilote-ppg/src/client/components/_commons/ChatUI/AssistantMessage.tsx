@@ -12,7 +12,7 @@ import {
   estSourcePart,
   SourcesConsultees,
 } from "@/components/_commons/ChatUI/SourcesConsultees";
-import { SqueletteTexte } from "@/components/_commons/ChatUI/Squelette";
+import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 
@@ -56,7 +56,7 @@ export const AssistantMessage = memo(function AssistantMessage({
     -1,
   );
 
-  const afficherSquelette = isStreaming && !hasText && sources.length > 0;
+  const showSkeleton = isStreaming && !hasText && sources.length > 0;
 
   const copier = () => {
     navigator.clipboard.writeText(extractMessageText(message)).then(() => {
@@ -70,7 +70,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
       {sources.length > 0 && <SourcesConsultees parts={sources} />}
 
-      {afficherSquelette && <SqueletteTexte />}
+      {showSkeleton && <SkeletonText />}
 
       {parts.map((part, index) => {
         if (part.type === "text") {

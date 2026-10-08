@@ -2,7 +2,7 @@ import { FormProvider } from "react-hook-form";
 import { Button } from "@/components/shared/Button";
 import { useState } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
-import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
+import { Tabs } from "@/components/shared/Tabs";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import OngletPonderationsIndicateurs from "@/components/PageAdminChantiers/OngletPonderationsIndicateurs";
 import { MetadataChantier } from "@/server/parametrage-chantier/queries/GetChantierQuery";
@@ -83,7 +83,7 @@ const PageAdminChantierEdition = ({
 
         {!isCreation && (
           <div className="mb-6">
-            <NavigationTertiaire
+            <Tabs
               items={ONGLETS}
               onValueChange={(valeur) => {
                 if (isOnglet(valeur)) setOngletActif(valeur);
