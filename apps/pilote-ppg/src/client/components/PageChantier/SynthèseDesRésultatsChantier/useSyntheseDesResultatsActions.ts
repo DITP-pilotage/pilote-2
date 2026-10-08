@@ -18,14 +18,14 @@ export const useSyntheseDesResultatsActions = ({
   const csrf = () => récupérerUnCookie("csrf") ?? "";
   const refreshRouter = useRefreshRouter();
 
-  const publierMutation = api.synthèseDesRésultats.publier.useMutation();
+  const publierMutation = api.syntheseDesResultats.publier.useMutation();
   const enregistrerEnBrouillonMutation =
-    api.synthèseDesRésultats.enregistrerEnBrouillon.useMutation();
+    api.syntheseDesResultats.enregistrerEnBrouillon.useMutation();
   const publierUnBrouillonMutation =
-    api.synthèseDesRésultats.publierUnBrouillon.useMutation();
+    api.syntheseDesResultats.publierUnBrouillon.useMutation();
   const modifierLeBrouillonMutation =
-    api.synthèseDesRésultats.modifierLeBrouillon.useMutation();
-  const modifierMutation = api.synthèseDesRésultats.modifier.useMutation();
+    api.syntheseDesResultats.modifierLeBrouillon.useMutation();
+  const modifierMutation = api.syntheseDesResultats.modifier.useMutation();
 
   const publier = ({ contenu, meteo }: SyntheseDesResultatsValues) =>
     publierMutation.mutateAsync(

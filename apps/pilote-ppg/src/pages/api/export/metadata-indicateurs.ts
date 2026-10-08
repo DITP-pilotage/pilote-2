@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { handleExportMetadataIndicateurs } from "@/server/infrastructure/api/export/metadata-indicateurs";
+import { handleExportMetadataIndicateurs } from "@/server/parametrage-indicateur/infrastructure/handlers/metadata-indicateurs";
 
 export default async function handle(
   request: NextApiRequest,

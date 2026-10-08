@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { $Enums } from "@prisma/client";
-import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
+import type { appRouter } from "@/server/app/trpc/appRouter";
 import { Badge, type BadgeVariant } from "@/components/shared/Badge";
 import { formaterDateCourte } from "@/client/utils/date/date";
 import {

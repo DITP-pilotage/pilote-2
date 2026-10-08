@@ -1,4 +1,4 @@
-import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
+import type { appRouter } from "@/server/app/trpc/appRouter";
 import {
   CATEGORIE_LOG_PAR_DEFAUT,
   type CategorieLog,
@@ -33,9 +33,9 @@ const CATEGORIE_PAR_ROUTEUR_TRPC: Record<RouteurTRPC, CategorieLog> = {
   profil: "utilisateur",
   profilUtilisateur: "utilisateur",
   propositionValeurAvancement: "pva",
-  périmètreMinistériel: "referentiel",
+  perimetreMinisteriel: "referentiel",
   rapportHebdomadaire: "rapport",
-  synthèseDesRésultats: "chantier",
+  syntheseDesResultats: "chantier",
   territoire: "referentiel",
   utilisateur: "utilisateur",
 };

@@ -6,26 +6,26 @@ import { auth } from "@/server/authentification/infrastructure/nextauth/[...next
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { CreateContextOptions } from "./trpc.interface";
 
-const créerContextTRPCInterne = (opts: CreateContextOptions) => {
+const createInternalTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     csrfDuCookie: opts.csrfDuCookie,
   };
 };
 
-export const créerContextTRPC = async (opts: CreateNextContextOptions) => {
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
   const session = await auth(req, res);
   const csrfDuCookie = req.cookies.csrf ?? null;
 
-  return créerContextTRPCInterne({
+  return createInternalTRPCContext({
     session,
     csrfDuCookie,
   });
 };
 
-const trpc = initTRPC.context<typeof créerContextTRPC>().create({
+const trpc = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     const formattedData = { ...shape.data };
@@ -47,24 +47,19 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
   },
 });
 
-const vérifierSiUtilisateurEstConnectéTRPCMiddleware = trpc.middleware(
-  ({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
+const isAuthenticatedMiddleware = trpc.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
 
-    return next({
-      ctx: {
-        session: { ...ctx.session, user: ctx.session.user },
-      },
-    });
-  },
-);
+  return next({
+    ctx: {
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
 
-export const vérifierSiLeCSRFEstValide = (
-  csrfDuCookie: string | null,
-  csrfDuBody: string,
-) => {
+export const checkCsrf = (csrfDuCookie: string | null, csrfDuBody: string) => {
   if (!csrfDuCookie || !csrfDuBody) {
     throw new TRPCError({
       code: "FORBIDDEN",
@@ -78,8 +73,6 @@ export const vérifierSiLeCSRFEstValide = (
   }
 };
 
-export const créerRouteurTRPC = trpc.router;
-export const procédureProtégée = trpc.procedure.use(
-  vérifierSiUtilisateurEstConnectéTRPCMiddleware,
-);
-export const procédureNonConnecte = trpc.procedure;
+export const createTRPCRouter = trpc.router;
+export const protectedProcedure = trpc.procedure.use(isAuthenticatedMiddleware);
+export const publicProcedure = trpc.procedure;

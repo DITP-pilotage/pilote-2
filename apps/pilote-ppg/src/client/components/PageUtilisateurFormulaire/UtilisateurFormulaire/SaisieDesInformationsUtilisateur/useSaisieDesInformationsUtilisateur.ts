@@ -55,32 +55,31 @@ function PeutDonnerDesAccesSurDesPerimetre(profilCode: ProfilCode) {
 }
 
 export default function useSectionDétailsMetadataAutresIndicateurForm() {
-  const { data: profils } = api.profil.récupérerTous.useQuery(undefined, {
+  const { data: profils } = api.profil.list.useQuery(undefined, {
     staleTime: Number.POSITIVE_INFINITY,
   });
   const { data: chantiers } =
-    api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(
+    api.chantier.recupererTousSynthetisesAccessiblesEnLecture.useQuery(
       undefined,
       { staleTime: Number.POSITIVE_INFINITY },
     );
-  const { data: territoires } = api.territoire.récupérerListe.useQuery(
+  const { data: territoires } = api.territoire.list.useQuery(
     { territoireCodes: null },
     { staleTime: Number.POSITIVE_INFINITY },
   );
   const { data: perimetresMinisteriels } =
-    api.périmètreMinistériel.récupérerTous.useQuery(undefined, {
+    api.perimetreMinisteriel.list.useQuery(undefined, {
       staleTime: Number.POSITIVE_INFINITY,
     });
 
   const { data: session } = useSession();
-  const { data: territoiresSélectionnables } =
-    api.territoire.récupérerListe.useQuery(
-      {
-        territoireCodes:
-          session?.habilitations.gestionUtilisateur.territoires ?? null,
-      },
-      { staleTime: Number.POSITIVE_INFINITY },
-    );
+  const { data: territoiresSélectionnables } = api.territoire.list.useQuery(
+    {
+      territoireCodes:
+        session?.habilitations.gestionUtilisateur.territoires ?? null,
+    },
+    { staleTime: Number.POSITIVE_INFINITY },
+  );
   const {
     register,
     control,

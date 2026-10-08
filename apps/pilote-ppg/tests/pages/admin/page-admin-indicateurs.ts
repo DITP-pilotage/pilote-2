@@ -109,7 +109,7 @@ export class PageAdminIndicateurs extends BasePage {
   ): Promise<void> {
     const rechargement = this.page.waitForResponse((reponse) =>
       decodeURIComponent(reponse.url()).includes(
-        "listerMetadataIndicateurFiltrés",
+        "listerMetadataIndicateurFiltres",
       ),
     );
     await action();

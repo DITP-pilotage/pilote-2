@@ -35,11 +35,11 @@ const UtilisateurFormulaire: FunctionComponent<
   const estAutoriseAVoirLeSelecteurApplication =
     ffPiloteEval && [ProfilEnum.DITP_ADMIN].includes(session!.profil);
   const { data: chantiers } =
-    api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(
+    api.chantier.recupererTousSynthetisesAccessiblesEnLecture.useQuery(
       undefined,
       { staleTime: Number.POSITIVE_INFINITY },
     );
-  const { data: territoires } = api.territoire.récupérerListe.useQuery(
+  const { data: territoires } = api.territoire.list.useQuery(
     { territoireCodes: null },
     { staleTime: Number.POSITIVE_INFINITY },
   );

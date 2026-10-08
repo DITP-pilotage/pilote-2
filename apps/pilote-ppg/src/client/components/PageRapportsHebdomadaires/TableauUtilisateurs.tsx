@@ -7,7 +7,7 @@ export const TableauUtilisateurs = ({
 }: {
   comptes: CompteActivite[];
 }) => {
-  const [profils] = api.profil.récupérerTous.useSuspenseQuery();
+  const [profils] = api.profil.list.useSuspenseQuery();
 
   const profilParCode = new Map(
     profils.map((p: { code: string; nom: string }) => [p.code, p.nom]),

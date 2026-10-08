@@ -23,7 +23,7 @@ export default function useFicheUtilisateur(
     api.chantier.recupererTousLesInformationsChantiers.useQuery(undefined, {
       staleTime: Number.POSITIVE_INFINITY,
     });
-  const { data: profil } = api.profil.récupérer.useQuery(
+  const { data: profil } = api.profil.get.useQuery(
     { profilCode: utilisateur.profil },
     { staleTime: Number.POSITIVE_INFINITY },
   );
