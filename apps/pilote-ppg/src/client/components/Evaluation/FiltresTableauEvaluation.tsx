@@ -35,6 +35,7 @@ const CheckboxesFiltre = ({
               key={option}
             >
               <Checkbox
+                size="sm"
                 checked={isActive}
                 id={optionId}
                 onCheckedChange={() => {

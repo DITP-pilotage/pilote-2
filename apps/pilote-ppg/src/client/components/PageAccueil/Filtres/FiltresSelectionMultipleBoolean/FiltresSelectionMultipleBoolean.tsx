@@ -5,6 +5,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
+import { CheckboxField } from "@/components/shared/Checkbox";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
@@ -55,28 +56,23 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
   return (
     <div>
       <CollapsibleSection title={libelle}>
-        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w list-none">
+        <ul className="m-0 mb-2 list-none p-0 pl-2">
           {listeCategorieDeFiltre.map((filtre) => (
-            <li className="fr-p-0 fr-my-1w fr-mr-0" key={filtre}>
-              <div className="fr-checkbox-group fr-pb-1w">
-                <input
-                  checked={filtresNew[filtre] ?? false}
-                  className="fr-input"
-                  id={filtre}
-                  onChange={() => {
-                    sauvegarderFiltres({ [filtre]: !filtresNew[filtre] });
-                    setPagination(null);
-                    return setListeFiltresNew({
-                      ...filtresNew,
-                      [filtre]: !filtresNew[filtre],
-                    });
-                  }}
-                  type="checkbox"
-                />
-                <label className="fr-label" htmlFor={filtre}>
-                  {valuesFiltres[filtre]}
-                </label>
-              </div>
+            <li className="my-2 mr-0 p-0" key={filtre}>
+              <CheckboxField
+                checked={filtresNew[filtre] ?? false}
+                className="pb-2"
+                id={filtre}
+                label={valuesFiltres[filtre]}
+                onCheckedChange={() => {
+                  sauvegarderFiltres({ [filtre]: !filtresNew[filtre] });
+                  setPagination(null);
+                  return setListeFiltresNew({
+                    ...filtresNew,
+                    [filtre]: !filtresNew[filtre],
+                  });
+                }}
+              />
             </li>
           ))}
         </ul>

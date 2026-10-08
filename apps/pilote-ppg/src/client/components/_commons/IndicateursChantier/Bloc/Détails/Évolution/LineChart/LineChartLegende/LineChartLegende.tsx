@@ -125,6 +125,7 @@ export const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
                 key={indicateurDetail.territoireCode}
               >
                 <Checkbox
+                  size="sm"
                   checked={territoiresAAfficher[nom]}
                   className={checkboxClass}
                   onCheckedChange={() => {

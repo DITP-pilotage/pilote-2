@@ -126,6 +126,7 @@ export const ModaleTransmissionDITP = ({
                     <div className="grid grid-cols-3 gap-x-4 gap-y-6">
                       <label className="col-span-3 flex items-center gap-3 cursor-pointer">
                         <Checkbox
+                          size="sm"
                           checked={tousSelectionnes}
                           onCheckedChange={toggleTout}
                         />
@@ -147,6 +148,7 @@ export const ModaleTransmissionDITP = ({
                             key={fiche.id}
                           >
                             <Checkbox
+                              size="sm"
                               checked={
                                 reactHookForm.watch(
                                   `territoiresSelectionnes.${fiche.id}`,

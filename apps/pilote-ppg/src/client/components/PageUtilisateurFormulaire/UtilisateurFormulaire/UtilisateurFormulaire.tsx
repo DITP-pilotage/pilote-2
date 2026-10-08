@@ -59,8 +59,8 @@ const UtilisateurFormulaire: FunctionComponent<
       serviceAutre: utilisateur?.serviceAutre ?? "",
       perimetreMinisteriel: utilisateur?.perimetreMinisteriel ?? "",
       profil: utilisateur?.profil,
-      gestionUtilisateur: utilisateur?.gestionUtilisateur,
-      saisieIndicateur: utilisateur?.saisieIndicateur,
+      gestionUtilisateur: utilisateur?.gestionUtilisateur ?? false,
+      saisieIndicateur: utilisateur?.saisieIndicateur ?? false,
       applicationsAccessibles: utilisateur
         ? utilisateur?.applicationsAccessibles
         : [$Enums.application_accessible.PILOTE],

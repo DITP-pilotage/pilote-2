@@ -22,13 +22,14 @@ export const useModaleInscriptionInfolettre = () => {
   const desactiverPopupInfolettre =
     api.utilisateur.desactiverPopupInfolettre.useMutation();
 
-  const { handleSubmit, register, watch } = useForm<InscriptionInfoLettreForm>({
-    mode: "all",
-    defaultValues: {
-      consentement: false,
-      emailUtilisateur: session?.user.email ?? "",
-    },
-  });
+  const { handleSubmit, register, watch, control } =
+    useForm<InscriptionInfoLettreForm>({
+      mode: "all",
+      defaultValues: {
+        consentement: false,
+        emailUtilisateur: session?.user.email ?? "",
+      },
+    });
 
   const handleFermetureModale = () => {
     if (session?.user.id) {
@@ -52,6 +53,7 @@ export const useModaleInscriptionInfolettre = () => {
   return {
     session,
     register,
+    control,
     watch,
     handleFermetureModale,
     handleSubmitForm,
