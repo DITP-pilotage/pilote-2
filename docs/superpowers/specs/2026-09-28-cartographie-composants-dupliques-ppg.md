@@ -352,7 +352,7 @@ Les lots 1 à 3 changent peu le rendu ; le lot 4 change l'apparence de composant
 - **Gestion des comptes** (demandé le 2026-10-02) :
   - **Tableau des comptes** (`/admin/utilisateurs`) : 4 à 5 s de chargement. Mesurer d'abord (requêtes SQL, volume renvoyé, calculs côté client du `DataTable`), puis corriger.
   - **Formulaire de création / modification d'un compte** (`PageUtilisateurFormulaire`, `useSaisieDesInformationsUtilisateur`) : beaucoup de règles (profil → habilitations lecture / saisie / commentaires, territoires et périmètres gérables, limites de comptes par territoire, service, chantiers), code difficile à suivre. **Couvrir d'abord par des E2E de caractérisation** (une règle par scénario, par profil créateur et profil créé), puis refactorer à couverture égale.
-- **Flags restants** : `PPG_ARCHIVE`, `COMPARAISON_TERRITOIRES` (acquis en prod, retrait à faire).
+- **Flags restants** : `PPG_ARCHIVE` et `COMPARAISON_TERRITOIRES` retirés (#2505, empilée sur #2502) ; l'incohérence SSR du § 0 disparaît avec `PPG_ARCHIVE`.
 - **Serveur** : fusion des use cases de liste de chantiers accueil / rapport (§ 7.2) — à coordonner avec les optimisations de performance en cours sur ces use cases.
 - **Corrections repérées** : voir § 12 (préfixe `!`, `align-center`, bouton imbriqué, `app.scss`, triangles de tri, `territoire.récupérerListe`, instabilité E2E à surveiller).
 - `shared/Accordion` : si d'autres écrans ont besoin du rendu DSFR, transformer les classes `CLASSES_*_ACCORDEON_DSFR` en variante sur `Accordion.Root`.

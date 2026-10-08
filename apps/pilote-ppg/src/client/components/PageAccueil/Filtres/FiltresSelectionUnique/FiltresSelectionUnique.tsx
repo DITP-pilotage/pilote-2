@@ -9,7 +9,6 @@ import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
-import { useEnv } from "@/client/hooks/useEnv";
 import {
   statutArchive,
   statutBrouillon,
@@ -31,7 +30,6 @@ export const FiltresSelectionUnique: FunctionComponent<
 > = ({ categorieDeFiltre, libelle }) => {
   const { data: session } = useSession();
 
-  const variableContenuFFPpgArchive = useEnv("NEXT_PUBLIC_FF_PPG_ARCHIVE");
   const profilPeutAccederAuxBrouillons =
     !!session?.profilAAccèsAuxChantiersBrouillons;
 
@@ -42,12 +40,8 @@ export const FiltresSelectionUnique: FunctionComponent<
   };
 
   const statutsDisponibles: StatutFiltre[] = profilPeutAccederAuxBrouillons
-    ? [statutPublie, statutBrouillon, statutBrouillonEtPublie]
-    : [statutPublie];
-
-  if (variableContenuFFPpgArchive) {
-    statutsDisponibles.push(statutArchive);
-  }
+    ? [statutPublie, statutBrouillon, statutBrouillonEtPublie, statutArchive]
+    : [statutPublie, statutArchive];
 
   const valuesFiltres = {
     statut: {

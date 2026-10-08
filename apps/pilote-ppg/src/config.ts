@@ -170,11 +170,6 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ANNUAIRE",
     },
-    ppgArchive: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
-    },
     poserUneQuestionIndicateur: {
       format: Boolean,
       default: false,
@@ -254,11 +249,6 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_ACCES_PILOTE",
-    },
-    comparaisonTerritoires: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
     },
     featureFlipAdmin: {
       format: Boolean,
