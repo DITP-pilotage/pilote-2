@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 export default function usePageAdminIndicateurs() {
   const { data: identifiantGénéré } =

@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { FormValuesCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";

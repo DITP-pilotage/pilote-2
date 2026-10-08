@@ -7,7 +7,7 @@ import { ActionReponse } from "@/components/_commons/ChatUI/ActionReponse";
 import { FeedbackCategorieCard } from "@/components/_commons/ChatUI/FeedbackCategorieCard";
 import { ThumbDownIcon } from "@/components/_commons/Icones/ThumbDownIcon";
 import { FEEDBACK_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 export const FeedbackNegatifModale = ({
   chatId,

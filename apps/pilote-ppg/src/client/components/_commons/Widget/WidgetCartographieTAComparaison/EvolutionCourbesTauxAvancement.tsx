@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import type { TerritoireEvolutionDonnees } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import useIndicateurEvolution from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolution";
 import LineChart from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";

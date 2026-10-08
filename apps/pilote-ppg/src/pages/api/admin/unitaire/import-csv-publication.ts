@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "csv-parse/sync";
 import { File } from "formidable";
 import fs from "node:fs";
-import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
+import { onlyCron } from "@/server/framework/guards/onlyCron";
 import { getContainer } from "@/server/dependances";
 import { logger } from "@/server/framework/logger";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";

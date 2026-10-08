@@ -20,7 +20,7 @@ import {
 } from "react";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
 import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { filtresModifierIndicateursActifsStore } from "@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore";
 import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { formaterDate, horodatage } from "@/client/utils/date/date";

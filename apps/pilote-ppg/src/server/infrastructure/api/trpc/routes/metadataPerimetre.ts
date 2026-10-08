@@ -3,11 +3,11 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { perimetreCommandSchema } from "@/server/metadataPerimetre/handlers/EnregistrerPerimetreHandler";
-import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/vérifierPermissionAdmin";
+import { vérifierPermissionAdmin } from "@/server/framework/trpc/vérifierPermissionAdmin";
 
 export const metadataPerimetreRouter = créerRouteurTRPC({
   lister: procédureProtégée.query(async ({ ctx }) => {

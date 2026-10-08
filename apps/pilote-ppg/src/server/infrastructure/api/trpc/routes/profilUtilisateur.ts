@@ -2,7 +2,7 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { getContainer } from "@/server/dependances";
 import { validationModifierMonProfil } from "@/validation/mon-profil";

@@ -3,11 +3,11 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
-} from "@/server/infrastructure/api/trpc/trpc";
+} from "@/server/framework/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { zonegroupCommandSchema } from "@/server/metadataZonegroup/handlers/EnregistrerZonegroupHandler";
-import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/vérifierPermissionAdmin";
+import { vérifierPermissionAdmin } from "@/server/framework/trpc/vérifierPermissionAdmin";
 
 export const metadataZonegroupRouter = créerRouteurTRPC({
   lister: procédureProtégée

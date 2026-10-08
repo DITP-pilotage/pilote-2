@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { validationContenu } from "@/validation/gestion-contenu";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";

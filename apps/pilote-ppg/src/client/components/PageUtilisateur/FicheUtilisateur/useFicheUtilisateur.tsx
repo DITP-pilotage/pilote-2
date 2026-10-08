@@ -5,7 +5,7 @@ import {
 } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { profilsRégionaux } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { AAccesATousLesUtilisateurs } from "@/server/domain/utilisateur/profils-gestion-utilisateur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";

@@ -3,7 +3,7 @@ import { Button } from "@/components/shared/Button";
 import { Dialog } from "radix-ui";
 import { $Enums } from "@prisma/client";
 import { Modale } from "@/components/shared/Modale";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 export const FeedbackPositiveModale = ({
   chatId,

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { parseAsString, useQueryState } from "nuqs";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { construireArbre } from "./types";
 
 export const useLectureCentreAide = () => {

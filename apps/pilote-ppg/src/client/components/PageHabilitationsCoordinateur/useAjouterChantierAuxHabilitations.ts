@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { pageHabilitationsCoordinateur } from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateurServerSideContext";
 
 export const useAjouterChantierAuxHabilitations = () => {

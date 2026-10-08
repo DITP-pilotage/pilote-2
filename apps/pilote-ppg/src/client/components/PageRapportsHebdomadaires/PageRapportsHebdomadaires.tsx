@@ -1,7 +1,7 @@
 import { Suspense, useState } from "react";
 import { Button } from "@/components/shared/Button";
 import { parseAsString, useQueryState } from "nuqs";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";

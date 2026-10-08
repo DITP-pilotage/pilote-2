@@ -1,5 +1,5 @@
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
-import { RouterInputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+import { RouterInputs } from "@/server/framework/trpc/trpc.interface";
 
 export interface UtilisateurFormulaireProps {
   utilisateur?: Utilisateur;

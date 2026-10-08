@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { MultiSelect } from "@/components/_commons/MultiSelect/MultiSelect";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 export const MultiSelectPorteursSecondaires = () => {

@@ -4,7 +4,7 @@ import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { useExportCsv } from "@/client/hooks/useExportCsv";
 import { filtrerLesTerritoires } from "@/client/utils/csv";
 import { buildJalons } from "@/client/utils/jalons";
-import api from "@/server/infrastructure/api/trpc/api";
+import { api } from "@/server/framework/trpc/api";
 
 export const BoutonExportCsvTAIndicateur = ({
   indicateurId,
