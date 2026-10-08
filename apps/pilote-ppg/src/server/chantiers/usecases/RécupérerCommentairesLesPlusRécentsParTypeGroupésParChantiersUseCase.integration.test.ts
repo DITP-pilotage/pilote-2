@@ -5,7 +5,7 @@ import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import { fixtures } from "@/test/fixtures";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "./RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
+import { RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase } from "./RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 
 describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase", () => {
   const commentaireRepository = new CommentaireSQLRepository({

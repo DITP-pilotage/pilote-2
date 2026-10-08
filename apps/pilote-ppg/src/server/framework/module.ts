@@ -2,7 +2,7 @@ import {
   BrevoEmailManager,
   type EmailManager,
   StubEmailManager,
-} from "@/server/infrastructure/email-manager";
+} from "@/server/framework/email";
 import { configuration } from "@/config";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { type Transaction } from "@/server/framework/persistence/Transaction";

@@ -5,7 +5,7 @@ import {
   type VerifyCradle,
 } from "@/server/module-system";
 import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository";
-import { ApplicationLogSQLRepository } from "@/server/infrastructure/accès_données/application-log/ApplicationLogSQLRepository";
+import { ApplicationLogSQLRepository } from "@/server/application-log/infrastructure/ApplicationLogSQLRepository";
 import { ListerLogsQuery } from "@/server/application-log/queries/ListerLogsQuery";
 import { ObtenirStatistiquesLogsQuery } from "@/server/application-log/queries/ObtenirStatistiquesLogsQuery";
 import { PurgerLogsUseCase } from "@/server/application-log/usecases/PurgerLogsUseCase";

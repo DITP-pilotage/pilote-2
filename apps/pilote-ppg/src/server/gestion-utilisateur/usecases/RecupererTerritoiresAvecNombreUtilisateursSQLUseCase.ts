@@ -2,7 +2,7 @@ import { TerritoireAvecNombreUtilisateurs } from "@/server/domain/territoire/Ter
 import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
 import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
 
-export class RécupérerTerritoiresAvecNombreUtilisateursUseCase {
+export class RecupererTerritoiresAvecNombreUtilisateursSQLUseCase {
   private territoireRepository: TerritoireRepository;
 
   private utilisateurRepository: UtilisateurRepository;

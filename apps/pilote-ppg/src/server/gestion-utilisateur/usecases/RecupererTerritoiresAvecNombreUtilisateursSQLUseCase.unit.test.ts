@@ -3,18 +3,18 @@ import TerritoireRepository from "@/server/domain/territoire/TerritoireRepositor
 import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
 import TerritoireBuilder from "@/server/domain/territoire/Territoire.builder";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import { RécupérerTerritoiresAvecNombreUtilisateursUseCase } from "./RécupérerTerritoiresAvecNombreUtilisateursUseCase";
+import { RecupererTerritoiresAvecNombreUtilisateursSQLUseCase } from "./RecupererTerritoiresAvecNombreUtilisateursSQLUseCase";
 
-describe("RécupérerTerritoiresAvecNombreUtilisateursUseCase", () => {
+describe("RecupererTerritoiresAvecNombreUtilisateursSQLUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
   let territoireRepository: MockProxy<TerritoireRepository>;
-  let récupérerTerritoiresAvecNombreUtilisateursUseCase: RécupérerTerritoiresAvecNombreUtilisateursUseCase;
+  let récupérerTerritoiresAvecNombreUtilisateursUseCase: RecupererTerritoiresAvecNombreUtilisateursSQLUseCase;
 
   beforeEach(() => {
     utilisateurRepository = mock<UtilisateurRepository>();
     territoireRepository = mock<TerritoireRepository>();
     récupérerTerritoiresAvecNombreUtilisateursUseCase =
-      new RécupérerTerritoiresAvecNombreUtilisateursUseCase({
+      new RecupererTerritoiresAvecNombreUtilisateursSQLUseCase({
         territoireRepository,
         utilisateurRepository,
       });

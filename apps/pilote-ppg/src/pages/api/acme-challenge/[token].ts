@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { acmeChallengeStore } from "@/server/infrastructure/acme/acmeChallengeStore";
+import { acmeChallengeStore } from "@/server/framework/acme/acmeChallengeStore";
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {

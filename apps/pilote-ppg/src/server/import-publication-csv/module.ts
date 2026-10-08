@@ -1,4 +1,4 @@
-import { ImporterPublicationCSVUseCase } from "@/server/infrastructure/import_csv/publication/ImporterPublicationCSVUseCase";
+import { ImporterPublicationCSVUseCase } from "@/server/import-publication-csv/ImporterPublicationCSVUseCase";
 import type { CommentaireExports } from "@/server/commentaires/module";
 import type { ImportSyntheseDesResultatsExports } from "@/server/syntheses-des-resultats/module";
 import type { ImportDecisionStrategiqueExports } from "@/server/decisions-strategiques/module";

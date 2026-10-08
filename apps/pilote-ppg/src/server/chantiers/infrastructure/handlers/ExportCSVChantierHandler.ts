@@ -6,12 +6,12 @@ import { auth } from "@/server/authentification/infrastructure/nextauth/[...next
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { configuration } from "@/config";
 import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon";
-import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
+import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ExportCsvDesChantiersUseCase } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import { ecrireCsvEnStreaming } from "@/server/infrastructure/export_csv/ecrireCsvEnStreaming";
+import { ecrireCsvEnStreaming } from "@/server/framework/csv/ecrireCsvEnStreaming";
 
 export const handleExportDesChantiers = async (
   request: NextApiRequest,

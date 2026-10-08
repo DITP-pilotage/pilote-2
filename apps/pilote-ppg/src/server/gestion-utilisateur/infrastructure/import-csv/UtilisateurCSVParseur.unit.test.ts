@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import fs from "node:fs";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
-import UtilisateurCSVParseur from "./UtilisateurCSVParseur";
+import { UtilisateurCSVParseur } from "./UtilisateurCSVParseur";
 
 describe("UtilisateurCSVParseur", () => {
   it("lit un fichier CSV et retourne un tableau d'utilisateur à créer ou mettre à jour", () => {

@@ -2,7 +2,7 @@ import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifReposi
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
-export default class RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase {
+export class RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase {
   private readonly objectifRepository: ObjectifRepository;
 
   constructor({

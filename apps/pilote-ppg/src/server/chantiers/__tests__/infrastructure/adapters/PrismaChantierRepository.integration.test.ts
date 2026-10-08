@@ -3,7 +3,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
+import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
