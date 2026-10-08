@@ -25,7 +25,7 @@ import { filtresModifierIndicateursActifsStore } from "@/stores/useFiltresModifi
 import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { formaterDate, horodatage } from "@/client/utils/date/date";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";

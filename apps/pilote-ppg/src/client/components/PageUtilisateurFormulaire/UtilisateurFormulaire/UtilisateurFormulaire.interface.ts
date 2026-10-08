@@ -1,4 +1,4 @@
-import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Utilisateur } from "@/shared/utilisateur/Utilisateur.interface";
 import { RouterInputs } from "@/server/framework/trpc/trpc.interface";
 
 export interface UtilisateurFormulaireProps {

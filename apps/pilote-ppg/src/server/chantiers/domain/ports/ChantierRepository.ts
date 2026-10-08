@@ -1,16 +1,16 @@
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import {
   PrismaChantier,
   PrismaChantierPourTerritoire,
 } from "@/server/chantiers/domain/PrismaChantier";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 export interface ChantierRepository {
   modifierMeteo(

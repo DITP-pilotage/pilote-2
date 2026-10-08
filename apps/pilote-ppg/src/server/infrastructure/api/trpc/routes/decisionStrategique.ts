@@ -5,7 +5,7 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import {
   validationDecisionStrategiqueContexte,
   validationDecisionStrategiqueFormulaire,

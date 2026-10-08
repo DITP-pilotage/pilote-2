@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useId, useState } from "react";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { HachuresDiagonales } from "@/client/constants/légendes/hachure/hachures";
 import { estHachure } from "@/client/constants/légendes/hachure/hachure";
 import { getTraceSvg } from "@/components/_commons/Cartographie/SVG/CartographieSVGContrat";

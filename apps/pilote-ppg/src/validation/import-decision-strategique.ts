@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TypeDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { TypeDecisionStrategique } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 
 export const typesDecisionStrategiqueAPIVersDomaine = {
   suivi_des_decisions: "suiviDesDecisionsStrategiques",

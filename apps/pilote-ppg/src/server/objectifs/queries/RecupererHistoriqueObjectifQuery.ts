@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { getServiceLibelle } from "@/utils/referentiel-services";
-import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
-import { CODES_TYPES_OBJECTIFS } from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
+import { TypeObjectif } from "@/shared/chantier/objectif/Objectif.interface";
+import { CODES_TYPES_OBJECTIFS } from "@/server/objectifs/infrastructure/sql/ObjectifSQLRepository";
 
 export type ObjectifHistoriqueItem = {
   contenu: string;

@@ -8,8 +8,8 @@ import { ModifierObjectifPublieUseCase } from "@/server/objectifs/usecases/Modif
 import { RecupererDerniersObjectifsQuery } from "@/server/objectifs/queries/RecupererDerniersObjectifsQuery";
 import { RecupererBrouillonObjectifQuery } from "@/server/objectifs/queries/RecupererBrouillonObjectifQuery";
 import { RecupererHistoriqueObjectifQuery } from "@/server/objectifs/queries/RecupererHistoriqueObjectifQuery";
-import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
+import { ObjectifRepository } from "@/server/objectifs/infrastructure/sql/ObjectifRepository.interface";
+import { ObjectifSQLRepository } from "@/server/objectifs/infrastructure/sql/ObjectifSQLRepository";
 import {
   defineModule,
   type ExtractScope,

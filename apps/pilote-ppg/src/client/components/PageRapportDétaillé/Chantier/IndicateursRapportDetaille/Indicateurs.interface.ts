@@ -2,8 +2,8 @@ import {
   CategoriesIndicateur,
   ÉlémentPageIndicateursType,
 } from "@/client/utils/rubriques";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 
 export default interface RubriquesIndicateursProps {
   détailsIndicateurs: DétailsIndicateurs;

@@ -1,4 +1,4 @@
-import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 

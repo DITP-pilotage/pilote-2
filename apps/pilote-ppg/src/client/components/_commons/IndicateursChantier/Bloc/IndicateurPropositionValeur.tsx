@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Button } from "@/components/shared/Button";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import {
   estPropositionAcceptee,

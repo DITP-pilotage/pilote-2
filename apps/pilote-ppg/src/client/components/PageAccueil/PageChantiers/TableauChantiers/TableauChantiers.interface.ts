@@ -1,5 +1,5 @@
-import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
+import { ChantierVueDEnsemble } from "@/shared/chantier/Chantier.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
 
 export default interface TableauChantiersProps {
   nombreTotalChantiersAvecAlertes: number;

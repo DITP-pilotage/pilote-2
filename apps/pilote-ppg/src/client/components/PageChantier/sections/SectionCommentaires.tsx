@@ -3,7 +3,7 @@ import { Commentaires } from "@/components/PageChantier/Commentaires/Commentaire
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import {
   pageChantier,
   useTerritoireSelectionne,

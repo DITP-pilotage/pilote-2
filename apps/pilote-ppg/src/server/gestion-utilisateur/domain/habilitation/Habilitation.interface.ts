@@ -1,6 +1,6 @@
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
+import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 
 export const scopesUtilisateurs = ["gestionUtilisateur"] as const;
 export const scopesChantiers = [

@@ -1,8 +1,8 @@
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
-import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import { creerObjectifPublie } from "@/server/domain/chantier/objectif/Objectif";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { TypeObjectif } from "@/shared/chantier/objectif/Objectif.interface";
+import { ObjectifRepository } from "@/server/objectifs/infrastructure/sql/ObjectifRepository.interface";
+import { creerObjectifPublie } from "@/server/objectifs/domain/Objectif";
 
 export class PublierObjectifUseCase {
   constructor(

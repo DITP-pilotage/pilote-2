@@ -1,6 +1,6 @@
 import { Maille } from "@prisma/client";
-import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+import { CodeInsee } from "@/shared/territoire/Territoire.interface";
+import { MailleTerritoireSelectionne } from "@/shared/maille/Maille.interface";
 
 export const territoireCodeVersMailleCodeInsee = (
   territoireCode: string,

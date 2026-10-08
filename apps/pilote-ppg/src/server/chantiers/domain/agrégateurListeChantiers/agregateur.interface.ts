@@ -1,6 +1,6 @@
-import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
-import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { Avancement } from "@/shared/chantier/avancement/Avancement.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
+import { CodeInsee } from "@/shared/territoire/Territoire.interface";
 
 type RepartitionAvancements = {
   global: {

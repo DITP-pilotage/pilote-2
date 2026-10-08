@@ -1,7 +1,7 @@
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
-import { modifierCommentairePublie } from "@/server/domain/chantier/commentaire/Commentaire";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { CommentaireRepository } from "@/server/commentaires/infrastructure/sql/CommentaireRepository.interface";
+import { modifierCommentairePublie } from "@/server/commentaires/domain/Commentaire";
 
 export class ModifierCommentairePublieUseCase {
   constructor(

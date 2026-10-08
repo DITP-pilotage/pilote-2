@@ -1,5 +1,5 @@
-import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
+import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { MinistereRepository } from "@/server/chantiers/domain/ports/MinistereRepository";
 

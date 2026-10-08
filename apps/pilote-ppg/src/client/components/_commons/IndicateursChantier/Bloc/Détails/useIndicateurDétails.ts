@@ -1,4 +1,4 @@
-import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateurTerritoire } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 
 export const useIndicateurDétails = (

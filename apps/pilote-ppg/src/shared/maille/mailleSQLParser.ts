@@ -1,0 +1,20 @@
+import { Maille as MaillePrisma } from "@prisma/client";
+import { Maille } from "@/shared/maille/Maille.interface";
+
+export const NOMS_MAILLES: Record<MaillePrisma, Maille> = {
+  NAT: "nationale",
+  DEPT: "departementale",
+  REG: "regionale",
+};
+
+export const CODES_MAILLES: Record<Maille, MaillePrisma> = {
+  nationale: "NAT",
+  departementale: "DEPT",
+  regionale: "REG",
+};
+
+export const NOMS_CODES_MAILLES: Record<Maille, string> = {
+  nationale: "Nationale",
+  regionale: "Régionale",
+  departementale: "Départementale",
+};

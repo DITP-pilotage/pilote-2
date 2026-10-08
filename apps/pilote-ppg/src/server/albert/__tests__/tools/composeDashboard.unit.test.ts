@@ -2,7 +2,7 @@ import {
   composeDashboardInputSchema,
   createComposeDashboardTool,
 } from "@/server/albert/tools/composeDashboard";
-import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 const buildHabilitations = (territoires: string[]): Habilitations => ({
   lecture: { chantiers: [], territoires, périmètres: [] },

@@ -1,4 +1,4 @@
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
 
 export interface ChantierInformations {
   id: Chantier["id"];

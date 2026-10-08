@@ -3,7 +3,7 @@ import {
   libellesMeteos,
   MeteoSaisissable,
   meteosSaisissables,
-} from "@/server/domain/météo/Météo.interface";
+} from "@/shared/meteo/Meteo.interface";
 import { MeteoComponentMap } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 
 export const SelecteurMeteo = forwardRef<

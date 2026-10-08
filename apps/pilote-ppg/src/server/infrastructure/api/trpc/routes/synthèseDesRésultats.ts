@@ -12,7 +12,7 @@ import {
 } from "@/validation/synthèseDesRésultats";
 
 import { getContainer } from "@/server/dependances";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),

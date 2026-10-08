@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "@/server/framework/trpc/api";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { HistoriquePublication } from "@/components/PageChantier/Publication/Historique/HistoriquePublication";
-import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { TypeObjectif } from "@/shared/chantier/objectif/Objectif.interface";
 import { libellésTypesObjectif } from "@/client/constants/libellésObjectif";
 
 export const HistoriqueObjectif = ({ type }: { type: TypeObjectif }) => {

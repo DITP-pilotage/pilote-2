@@ -24,6 +24,7 @@
       "@/stores/*": ["./src/client/stores/*"],
       "@/validation/*": ["./src/validation/*"],
       "@/test/*": ["./src/test/*"],
+      "@/shared/*": ["./src/shared/*"],
       "@/config": ["./src/config.ts"]
     },
     "plugins": [

@@ -5,13 +5,13 @@ import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { ImporterPublicationCSVUseCase } from "@/server/import-publication-csv/ImporterPublicationCSVUseCase";
 import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
-import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+import { CommentaireSQLRepository } from "@/server/commentaires/infrastructure/sql/CommentaireSQLRepository";
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
-import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
+import { SynthèseDesRésultatsSQLRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsSQLRepository";
 import { ImporterDecisionsStrategiquesUseCase } from "@/server/decisions-strategiques/usecases/ImporterDecisionsStrategiquesUseCase";
-import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
+import { DécisionStratégiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
 import { ImporterObjectifsUseCase } from "@/server/objectifs/usecases/ImporterObjectifsUseCase";
-import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
+import { ObjectifSQLRepository } from "@/server/objectifs/infrastructure/sql/ObjectifSQLRepository";
 
 const EMAIL_UTILISATEUR_IMPORT = "import.csv@modernisation.gouv.fr";
 

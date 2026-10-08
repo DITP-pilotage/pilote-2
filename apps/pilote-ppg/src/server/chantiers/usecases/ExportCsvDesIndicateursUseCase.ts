@@ -8,7 +8,7 @@ import {
   NON_RENSEIGNEE,
   OUI,
 } from "@/server/framework/csv/valeurs";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { OptionsExport } from "@/server/chantiers/usecases/OptionsExport";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import {

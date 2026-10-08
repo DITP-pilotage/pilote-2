@@ -6,14 +6,14 @@ import {
 } from "nuqs";
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import Axe from "@/server/domain/axe/Axe.interface";
-import Ppg from "@/server/domain/ppg/Ppg.interface";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
-import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
-import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
+import { Axe } from "@/shared/axe/Axe.interface";
+import { Ppg } from "@/shared/ppg/Ppg.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
+import { libellesMeteos } from "@/shared/meteo/Meteo.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
+import { NOMS_CODES_MAILLES } from "@/shared/maille/mailleSQLParser";
 import FiltresSélectionnésCatégorie from "./Catégorie/FiltresSélectionnésCatégorie";
 
 interface FiltresSélectionnésProps {

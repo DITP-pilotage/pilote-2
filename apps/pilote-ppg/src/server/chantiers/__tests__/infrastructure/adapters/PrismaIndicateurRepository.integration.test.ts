@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";

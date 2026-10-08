@@ -10,7 +10,7 @@ import { Accordion } from "@/components/shared/Accordion";
 import {
   ObjectifV2,
   ObjectifV2AvecNomAuteur,
-} from "@/server/domain/chantier/objectif/Objectif.interface";
+} from "@/shared/chantier/objectif/Objectif.interface";
 import { useObjectifActions } from "./useObjectifActions";
 import { HistoriqueObjectif } from "./HistoriqueObjectif";
 

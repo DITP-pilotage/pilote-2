@@ -1,6 +1,6 @@
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import {
   DetailsIndicateursTerritoireContrat,

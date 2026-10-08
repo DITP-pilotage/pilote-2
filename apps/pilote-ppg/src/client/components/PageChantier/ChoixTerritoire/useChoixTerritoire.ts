@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { listeTerritoires } from "@/client/constants/territoires";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";

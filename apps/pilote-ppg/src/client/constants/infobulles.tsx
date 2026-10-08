@@ -2,7 +2,7 @@ import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaro
 import { PictoChantierBrouillon } from "@/components/_commons/PictoChantierBrouillon/PictoChantierBrouillon";
 import { PictoTerritorialise } from "@/components/_commons/PictoTerritorialisé/PictoTerritorialise";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
 
 const INFOBULLE_CONTENUS = {
   chantiers: {

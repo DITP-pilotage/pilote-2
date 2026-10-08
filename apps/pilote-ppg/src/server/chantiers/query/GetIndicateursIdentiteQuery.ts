@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { libellesTypeIndicateur } from "@/server/domain/indicateur/Indicateur.interface";
+import { libellesTypeIndicateur } from "@/shared/indicateur/Indicateur.interface";
 
 export type IndicateurIdentiteResult = {
   id: string;

@@ -1,7 +1,7 @@
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm";
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
+import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
+import { HistorisationModification } from "@/server/historisation-modification/domain/HistorisationModification";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import type { Inject } from "@/server/parametrage-indicateur/module";
 

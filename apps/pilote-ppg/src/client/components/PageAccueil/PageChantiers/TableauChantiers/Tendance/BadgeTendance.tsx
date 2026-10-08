@@ -2,7 +2,7 @@ import { ComponentType, FunctionComponent } from "react";
 import { Badge, BadgeVariant } from "@/components/shared/Badge";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowRightUp1Icon } from "@/components/_commons/Icones/ArrowRightUp1Icon";
-import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierTendance } from "@/shared/chantier/Chantier.interface";
 import { ArrowRightDown1Icon } from "@/components/_commons/Icones/ArrowRightDown1Icon";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 

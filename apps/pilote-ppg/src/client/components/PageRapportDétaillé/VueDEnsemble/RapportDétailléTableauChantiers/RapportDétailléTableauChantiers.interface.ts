@@ -1,4 +1,4 @@
-import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
+import { ChantierVueDEnsemble } from "@/shared/chantier/Chantier.interface";
 
 export default interface RapportDétailléTableauChantiersProps {
   données: DonnéesTableauChantiers[];

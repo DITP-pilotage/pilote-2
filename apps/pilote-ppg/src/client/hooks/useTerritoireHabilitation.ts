@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { territoires as _territoires } from "@/client/constants/territoires.json";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import {
   DétailTerritoire,
   Territoire,
-} from "@/server/domain/territoire/Territoire.interface";
+} from "@/shared/territoire/Territoire.interface";
 
 const territoires = _territoires as Territoire[];
 

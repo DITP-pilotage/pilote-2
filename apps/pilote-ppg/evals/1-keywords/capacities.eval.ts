@@ -1,7 +1,7 @@
 import { createScorer, evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
-import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
 /**
  * Niveau 1 — outils chargés selon la conversation.

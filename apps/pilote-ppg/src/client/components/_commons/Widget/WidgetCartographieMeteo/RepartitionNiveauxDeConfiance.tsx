@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { getLabelTerritoire } from "@/client/constants/territoires";
-import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/shared/meteo/Meteo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";

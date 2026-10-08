@@ -1,7 +1,7 @@
-import Alerte from "@/server/domain/alerte/Alerte";
+import { Alerte } from "@/shared/alerte/Alerte";
 import { MeteoDisponible } from "@/server/fiche-territoriale/domain/MeteoDisponible";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
-import { Maille } from "@/server/domain/maille/Maille.interface";
+import { Maille } from "@/shared/maille/Maille.interface";
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 

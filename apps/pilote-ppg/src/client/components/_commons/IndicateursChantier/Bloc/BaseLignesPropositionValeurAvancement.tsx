@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import clsx from "clsx";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import {
   estPropositionAccepteeOuAccepteeAvecModification,
   estPropositionAccuseeReception,

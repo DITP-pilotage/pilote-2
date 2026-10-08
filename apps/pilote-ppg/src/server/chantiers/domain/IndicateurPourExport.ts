@@ -1,9 +1,10 @@
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import Chantier, {
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import {
+  Chantier,
   ChantierTendance,
-} from "@/server/domain/chantier/Chantier.interface";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+} from "@/shared/chantier/Chantier.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 
 export type IndicateurPourExport = {
   maille: string;

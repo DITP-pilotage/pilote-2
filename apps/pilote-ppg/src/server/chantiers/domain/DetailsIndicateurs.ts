@@ -1,5 +1,5 @@
-import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
-import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { Avancement } from "@/shared/chantier/avancement/Avancement.interface";
+import { CodeInsee } from "@/shared/territoire/Territoire.interface";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 export type DetailsIndicateurTerritoire = Record<CodeInsee, DetailsIndicateur>;

@@ -4,7 +4,7 @@ import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import {
   DecisionStrategiqueV2,
   TypeDecisionStrategique,
-} from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+} from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 import { PublicationActions } from "@/components/PageChantier/Publication/Publication.interface";
 
 export const useDecisionStrategiqueActions = ({

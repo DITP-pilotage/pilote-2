@@ -1,6 +1,6 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Badge } from "@/components/shared/Badge";
-import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DécisionStratégique } from "@/shared/chantier/decisionStrategique/DecisionStrategique.interface";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";

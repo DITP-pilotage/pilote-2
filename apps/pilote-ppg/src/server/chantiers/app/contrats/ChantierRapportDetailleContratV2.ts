@@ -1,13 +1,13 @@
-import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { Maille, MailleInterne } from "@/shared/maille/Maille.interface";
 import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
-import { TypeStatut } from "@/server/domain/chantier/Chantier.interface";
-import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { TypeStatut } from "@/shared/chantier/Chantier.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { NOMS_MAILLES } from "@/shared/maille/mailleSQLParser";
 import {
   EntreePrismaChantier,
   PrismaChantier,

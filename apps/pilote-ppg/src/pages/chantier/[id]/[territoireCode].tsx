@@ -10,7 +10,7 @@ import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerr
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
-import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateurTerritoire } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";

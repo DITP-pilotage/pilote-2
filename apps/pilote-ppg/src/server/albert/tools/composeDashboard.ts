@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import {
   DEFAULT_WIDTHS,
   type WidgetType,

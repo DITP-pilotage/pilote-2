@@ -1,5 +1,5 @@
 import React, { Fragment, ReactNode } from "react";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/shared/maille/Maille.interface";
 
 type SVGTerritoire = { "attr-territoire-code": string };
 type SVGPath = { "attr-d": string };

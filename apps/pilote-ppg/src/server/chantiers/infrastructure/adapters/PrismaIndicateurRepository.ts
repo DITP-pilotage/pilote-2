@@ -12,9 +12,9 @@ import {
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 import { IndicateurPourExport } from "@/server/chantiers/domain/IndicateurPourExport";
-import { historique_valeurs } from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
+import { historique_valeurs } from "@/server/chantiers/infrastructure/sql/IndicateurSQLRepository";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
 import {
   DetailIndicateurPropositionValeurAvancement,
@@ -34,12 +34,12 @@ import {
 } from "@/server/chantiers/domain/calculerDateDernierImport";
 import { regrouperDerniersImportsParIndicateur } from "@/server/chantiers/infrastructure/regrouperDerniersImportsParIndicateur";
 import { toISODate, toISODateTime } from "@/server/app/domain/Dates";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import {
   ProfilCode,
   profilsTerritoriaux,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+} from "@/shared/utilisateur/Utilisateur.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 const convertirEnDonneeIndicateur = (

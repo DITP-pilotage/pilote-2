@@ -1,6 +1,6 @@
 import { territoires as _territoires } from "@/client/constants/territoires.json";
 import { PickerOptionGroup } from "@/components/shared/Picker";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
 
 const territoires = _territoires as Territoire[];
 

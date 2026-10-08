@@ -4,8 +4,8 @@ import {
   valeurMaximum,
 } from "@/client/utils/statistiques/statistiques";
 import type { Inject } from "@/server/chantiers/module";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 export class GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery {
   constructor(

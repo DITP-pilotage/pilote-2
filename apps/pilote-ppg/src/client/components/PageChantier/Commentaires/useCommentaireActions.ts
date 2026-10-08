@@ -3,7 +3,7 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import {
   CommentaireV2,
   TypeCommentaireChantier,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { PublicationActions } from "@/components/PageChantier/Publication/Publication.interface";
 

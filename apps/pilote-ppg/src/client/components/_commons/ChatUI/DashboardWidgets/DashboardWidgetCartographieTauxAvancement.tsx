@@ -1,4 +1,4 @@
-import type { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import type { MailleInterne } from "@/shared/maille/Maille.interface";
 import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { DashboardPanel } from "./DashboardPanel";
 

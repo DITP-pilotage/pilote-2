@@ -1,9 +1,10 @@
-import Chantier, {
+import {
+  Chantier,
   ChantierTendance,
-} from "@/server/domain/chantier/Chantier.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { Meteo } from "@/server/domain/météo/Météo.interface";
+} from "@/shared/chantier/Chantier.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
+import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
 
 export type HistoriqueIndicateurPourExport = {
   maille: string;

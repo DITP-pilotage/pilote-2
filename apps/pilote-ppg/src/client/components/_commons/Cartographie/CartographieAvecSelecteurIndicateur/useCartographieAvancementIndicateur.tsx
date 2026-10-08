@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
-import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateurTerritoire } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 function determinerValeurAffichee(

@@ -1,6 +1,6 @@
-import { Profil } from "@/server/domain/profil/Profil.interface";
-import ProfilRepository from "@/server/domain/profil/ProfilRepository";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { Profil } from "@/shared/profil/Profil.interface";
+import { ProfilRepository } from "@/server/gestion-utilisateur/infrastructure/sql/ProfilRepository";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 export class RécupérerUnProfilUseCase {
   private readonly profilRepository: ProfilRepository;

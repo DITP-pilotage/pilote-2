@@ -1,4 +1,4 @@
-import { TerritoireAvecNombreUtilisateurs } from "@/server/domain/territoire/Territoire.interface";
+import { TerritoireAvecNombreUtilisateurs } from "@/shared/territoire/Territoire.interface";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import type { Inject } from "@/server/gestion-utilisateur/module";

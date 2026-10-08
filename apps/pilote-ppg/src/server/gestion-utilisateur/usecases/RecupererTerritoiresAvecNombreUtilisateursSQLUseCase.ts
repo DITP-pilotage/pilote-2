@@ -1,6 +1,6 @@
-import { TerritoireAvecNombreUtilisateurs } from "@/server/domain/territoire/Territoire.interface";
-import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
-import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
+import { TerritoireAvecNombreUtilisateurs } from "@/shared/territoire/Territoire.interface";
+import { TerritoireRepository } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireRepository.interface";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
 
 export class RecupererTerritoiresAvecNombreUtilisateursSQLUseCase {
   private territoireRepository: TerritoireRepository;

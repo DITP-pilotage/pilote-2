@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
+import { MeteoSaisissable } from "@/shared/meteo/Meteo.interface";
 
 export const météosOpenAPI = [
   "OBJECTIF_COMPROMIS",

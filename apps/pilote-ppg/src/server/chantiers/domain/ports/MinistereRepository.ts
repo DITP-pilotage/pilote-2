@@ -1,4 +1,4 @@
-import Ministère from "@/server/domain/ministère/Ministère.interface";
+import { Ministère } from "@/shared/ministere/Ministere.interface";
 
 export interface MinistereRepository {
   getListe(): Promise<Ministère[]>;

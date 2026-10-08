@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTÈRES_COMMENTAIRE = 5000;

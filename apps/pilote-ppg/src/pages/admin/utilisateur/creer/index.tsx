@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import PageCréerUtilisateur from "@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCréerUtilisateur";
 import { pageCreerUtilisateur } from "@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCreerUtilisateurServerSideContext";
 

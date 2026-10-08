@@ -2,7 +2,7 @@ import {
   CommentaireAvecNomsAuteurs,
   CommentaireV2,
   TypeCommentaireChantier,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+} from "@/shared/chantier/commentaire/Commentaire.interface";
 import {
   libellesTypesCommentaire,
   consignesEcritureCommentaire,

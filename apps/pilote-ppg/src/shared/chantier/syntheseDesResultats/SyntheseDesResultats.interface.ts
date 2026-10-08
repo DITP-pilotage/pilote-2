@@ -1,0 +1,32 @@
+import { $Enums } from "@prisma/client";
+import { Meteo } from "@/shared/meteo/Meteo.interface";
+
+export type SynthèseDesRésultats = {
+  id: string;
+  contenu: string;
+  date: string;
+  auteur: string;
+  météo: Meteo;
+} | null;
+
+export type SyntheseDesResultatsV2 = {
+  chantierId: string;
+  territoireCode: string;
+  id: string;
+  contenu: string;
+  meteo: Meteo;
+  auteurCreationId: string;
+  dateCreation: string;
+  auteurModificationId: string;
+  dateModification: string;
+  statut: $Enums.statut_publication;
+};
+
+export type SyntheseDesResultatsAvecNomsAuteurs = SyntheseDesResultatsV2 & {
+  auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
+  auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
+};

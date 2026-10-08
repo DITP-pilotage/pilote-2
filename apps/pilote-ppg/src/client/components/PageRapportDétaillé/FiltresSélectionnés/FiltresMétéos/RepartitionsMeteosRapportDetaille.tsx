@@ -3,7 +3,7 @@ import { parseAsString, useQueryState } from "nuqs";
 import {
   libellesMeteos,
   meteosSaisissables,
-} from "@/server/domain/météo/Météo.interface";
+} from "@/shared/meteo/Meteo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { clsxm } from "@/utils/clsxm";

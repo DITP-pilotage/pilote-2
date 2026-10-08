@@ -1,8 +1,8 @@
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Button } from "@/components/shared/Button";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 import { Icone } from "@/components/_commons/Icone";
 import { Delete1Icon } from "@/components/_commons/Icones/Delete1Icon";
 

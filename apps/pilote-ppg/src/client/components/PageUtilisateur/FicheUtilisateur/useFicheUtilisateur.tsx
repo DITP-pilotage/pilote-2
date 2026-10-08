@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import {
   ScopeChantiers,
   ScopeUtilisateurs,
-} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+} from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Territoire } from "@/shared/territoire/Territoire.interface";
+import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { api } from "@/server/framework/trpc/api";
-import { profilsRégionaux } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { AAccesATousLesUtilisateurs } from "@/server/domain/utilisateur/profils-gestion-utilisateur";
+import { profilsRégionaux } from "@/shared/utilisateur/Utilisateur.interface";
+import { AAccesATousLesUtilisateurs } from "@/shared/utilisateur/profils-gestion-utilisateur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import {
   listeTerritoires,

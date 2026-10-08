@@ -1,5 +1,5 @@
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
-import type { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import type { MailleInterne } from "@/shared/maille/Maille.interface";
 import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetCartographieMeteo = ({

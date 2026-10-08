@@ -1,12 +1,13 @@
 import { useRouter } from "next/router";
 import { Session } from "next-auth";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import Utilisateur, {
+import {
+  Utilisateur,
   ProfilCode,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+} from "@/shared/utilisateur/Utilisateur.interface";
 import { api } from "@/server/framework/trpc/api";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set([

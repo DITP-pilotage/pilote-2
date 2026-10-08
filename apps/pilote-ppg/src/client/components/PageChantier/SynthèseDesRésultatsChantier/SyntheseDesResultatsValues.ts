@@ -1,7 +1,7 @@
 import {
   MeteoSaisissable,
   meteosSaisissables,
-} from "@/server/domain/météo/Météo.interface";
+} from "@/shared/meteo/Meteo.interface";
 
 export interface SyntheseDesResultatsValues {
   contenu: string;
