@@ -1,4 +1,4 @@
-import { createElement, Fragment, ReactNode } from "react";
+import { createElement, Fragment, ReactNode, useMemo } from "react";
 import {
   Callout,
   CalloutColor,
@@ -204,8 +204,16 @@ export const RenduContenuHtml = ({
   html: string;
   className?: string;
 }) => {
-  if (!html) return null;
+  const content = useMemo(
+    () =>
+      html
+        ? renderChildren(
+            new DOMParser().parseFromString(html, "text/html").body,
+          )
+        : null,
+    [html],
+  );
+  if (!content) return null;
 
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  return <div className={className}>{renderChildren(doc.body)}</div>;
+  return <div className={className}>{content}</div>;
 };
