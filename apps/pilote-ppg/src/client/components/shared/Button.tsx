@@ -62,7 +62,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ? "p-0 min-h-0 h-6 text-base leading-6"
         : clsxm("bg-none", SIZES[size]);
     const classes = clsxm(
-      "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed",
+      "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed print:hidden",
       FOCUS_CLASSES,
       sizeClasses,
       VARIANTS[variant],
@@ -73,7 +73,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         <span
           className={clsxm(
-            "inline-flex items-center w-fit font-medium",
+            "inline-flex items-center w-fit font-medium print:hidden",
             sizeClasses,
             VARIANTS[variant],
             "p-0",
