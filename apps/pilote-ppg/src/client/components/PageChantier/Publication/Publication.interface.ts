@@ -1,4 +1,5 @@
-import { SubmitHandler } from "react-hook-form";
+import { ReactNode } from "react";
+import { DefaultValues, Resolver, SubmitHandler } from "react-hook-form";
 
 export interface Publication {
   contenu: string;
@@ -18,10 +19,24 @@ export interface PublicationBrouillon {
   dateModification: string;
 }
 
-export interface PublicationActions {
-  publier: SubmitHandler<{ contenu: string }>;
-  enregistrerEnBrouillon: SubmitHandler<{ contenu: string }>;
-  publierBrouillon: SubmitHandler<{ contenu: string }>;
-  modifierBrouillon: SubmitHandler<{ contenu: string }>;
-  modifier: SubmitHandler<{ contenu: string }>;
+export interface PublicationValues {
+  contenu: string;
+}
+
+export interface PublicationActions<
+  T extends PublicationValues = PublicationValues,
+> {
+  publier: SubmitHandler<T>;
+  enregistrerEnBrouillon: SubmitHandler<T>;
+  publierBrouillon: SubmitHandler<T>;
+  modifierBrouillon: SubmitHandler<T>;
+  modifier: SubmitHandler<T>;
+}
+
+export interface PublicationFormConfig<T extends PublicationValues> {
+  resolver: Resolver<T>;
+  maxLength: number;
+  editValues: DefaultValues<T>;
+  newValues: DefaultValues<T>;
+  extraFields?: ReactNode;
 }

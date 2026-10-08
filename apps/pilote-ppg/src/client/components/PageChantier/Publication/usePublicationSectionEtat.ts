@@ -1,42 +1,38 @@
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { CommentaireAction } from "./AlertePublication";
-import { PublicationActions } from "./Publication.interface";
+import { PublicationActions, PublicationValues } from "./Publication.interface";
 
-export const usePublicationSectionEtat = (actions: PublicationActions) => {
+export const usePublicationSectionEtat = <T extends PublicationValues>(
+  actions: PublicationActions<T>,
+) => {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [alerteAction, setAlerteAction] = useState<CommentaireAction | null>(
     null,
   );
 
-  const handleModifier: SubmitHandler<{ contenu: string }> = async (data) => {
+  const handleModifier: SubmitHandler<T> = async (data) => {
     await actions.modifier(data);
     setModeÉdition(false);
     setAlerteAction("modification-reussie");
   };
 
-  const handlePublier: SubmitHandler<{ contenu: string }> = async (data) => {
+  const handlePublier: SubmitHandler<T> = async (data) => {
     await actions.publier(data);
     setAlerteAction("publication-reussie");
   };
 
-  const handleEnregistrerEnBrouillon: SubmitHandler<{
-    contenu: string;
-  }> = async (data) => {
+  const handleEnregistrerEnBrouillon: SubmitHandler<T> = async (data) => {
     await actions.enregistrerEnBrouillon(data);
     setAlerteAction(null);
   };
 
-  const handlePublierBrouillon: SubmitHandler<{
-    contenu: string;
-  }> = async (data) => {
+  const handlePublierBrouillon: SubmitHandler<T> = async (data) => {
     await actions.publierBrouillon(data);
     setAlerteAction("publication-reussie");
   };
 
-  const handleModifierBrouillon: SubmitHandler<{
-    contenu: string;
-  }> = async (data) => {
+  const handleModifierBrouillon: SubmitHandler<T> = async (data) => {
     await actions.modifierBrouillon(data);
     setAlerteAction(null);
   };

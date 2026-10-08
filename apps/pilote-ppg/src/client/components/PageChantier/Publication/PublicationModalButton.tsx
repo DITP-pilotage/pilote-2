@@ -1,50 +1,61 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/shared/Infobulle";
 import {
-  PublicationBrouillon,
+  PublicationFormConfig,
   Publication,
+  PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { ModaleFormulairePublication } from "@/components/PageChantier/Publication/ModaleFormulairePublication";
 
-export const BoutonEditerBrouillonPublication = ({
+export const PublicationModalButton = <T extends PublicationValues>({
+  hasDraft,
   commentaire,
-  brouillon,
+  aside,
+  emptyMessage,
   libelle,
   consigne,
   complementConsigneGenerique,
+  formConfig,
   onPublier,
   onEnregistrerBrouillon,
+  ariaLabel,
 }: {
+  hasDraft: boolean;
   commentaire: Publication | null;
-  brouillon: PublicationBrouillon | null;
+  aside?: ReactNode;
+  emptyMessage?: string;
   libelle: string;
   consigne: string;
   complementConsigneGenerique: string;
-  onPublier: SubmitHandler<{ contenu: string }>;
-  onEnregistrerBrouillon: SubmitHandler<{ contenu: string }>;
+  formConfig: PublicationFormConfig<T>;
+  onPublier: SubmitHandler<T>;
+  onEnregistrerBrouillon: SubmitHandler<T>;
+  ariaLabel?: string;
 }) => {
   const [open, setOpen] = useState(false);
 
-  const handlePublier: SubmitHandler<{ contenu: string }> = async (data) => {
+  const handlePublier: SubmitHandler<T> = async (data) => {
     await onPublier(data);
     setOpen(false);
   };
 
-  const handleBrouillon: SubmitHandler<{ contenu: string }> = async (data) => {
+  const handleBrouillon: SubmitHandler<T> = async (data) => {
     await onEnregistrerBrouillon(data);
     setOpen(false);
   };
 
   return (
     <ModaleFormulairePublication
-      brouillon={brouillon}
+      aside={aside}
       commentaire={commentaire}
       complementConsigneGenerique={complementConsigneGenerique}
       consigne={consigne}
+      formConfig={formConfig}
+      emptyMessage={emptyMessage}
       onEnregistrerBrouillon={handleBrouillon}
       onOpenChange={setOpen}
       onPublier={handlePublier}
@@ -52,17 +63,21 @@ export const BoutonEditerBrouillonPublication = ({
       title={`Nouveau commentaire "${libelle}"`}
       trigger={
         <Bouton
+          aria-label={hasDraft ? undefined : ariaLabel}
           iconLeft={
             <Icone className="text-current h-4 w-4" icone={Icone1Icon} />
           }
           iconRight={
             <Infobulle classNameIcone="w-5 h-5">
-              Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez
-              pas publié. Vous pouvez éditer ce nouveau commentaire pour le
-              publier ou le conserver en tant que brouillon.
+              {hasDraft
+                ? "Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez pas publié. Vous pouvez éditer ce nouveau commentaire pour le publier ou le conserver en tant que brouillon."
+                : "Vous pouvez ici saisir un nouveau commentaire et le publier ou l'enregistrer en tant que brouillon."}{" "}
+              Si vous choisissez de publier votre nouveau commentaire, le
+              commentaire précédemment affiché sera automatiquement archivé dans
+              l'historique des commentaires.
             </Infobulle>
           }
-          label="Editer un brouillon"
+          label={hasDraft ? "Editer un brouillon" : "Nouveau commentaire"}
           variant="secondary"
         />
       }

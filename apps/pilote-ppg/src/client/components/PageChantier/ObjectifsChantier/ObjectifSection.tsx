@@ -5,6 +5,7 @@ import {
   TypeObjectif,
 } from "@/client/constants/libellésObjectif";
 import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
+import { commentaireForm } from "@/components/PageChantier/Publication/commentaireForm";
 import { Accordion } from "@/components/shared/Accordion";
 import {
   ObjectifV2,
@@ -43,6 +44,10 @@ export const ObjectifSection = ({
             complementsConsigneGeneriqueObjectif[type]
           }
           consigne={consignesDÉcritureObjectif[type]}
+          formConfig={commentaireForm({
+            publication: objectif,
+            brouillon: brouillon,
+          })}
           historiqueNode={<HistoriqueObjectif type={type} />}
           libelle={libellésTypesObjectif[type]}
           modeEcriture={modeEcriture}

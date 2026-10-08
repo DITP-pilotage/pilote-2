@@ -1,5 +1,5 @@
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
-import SyntheseDesResultats from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats";
+import { SyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { usePageChantier } from "@/components/PageChantier/usePageChantier";
 import { BasePageChantierSection } from "./BasePageChantierSection";

@@ -1,104 +1,83 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
-import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
-import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
-import { BoutonNouvelleSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonNouvelleSyntheseDesResultats";
-import { BoutonEditerBrouillonSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonEditerBrouillonSyntheseDesResultats";
-import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
-import { formaterDate } from "@/client/utils/date/date";
+import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
 import {
-  AlerteSyntheseDesResultats,
-  SyntheseDesResultatsAction,
-} from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
-import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+  CONSIGNE_SYNTHÈSE_DES_RÉSULTATS,
+  LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS,
+} from "@/client/constants/libellesSyntheseDesResultats";
+import {
+  LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
+  validationSynthèseDesRésultatsFormulaire,
+} from "@/validation/synthèseDesRésultats";
+import { MeteoField } from "./MeteoField";
+import { HistoriqueSyntheseDesResultats } from "./HistoriqueSyntheseDesResultats";
+import { MeteoSyntheseDesResultats } from "./MeteoSyntheseDesResultats";
+import { useSyntheseDesResultatsActions } from "./useSyntheseDesResultatsActions";
+import { toMeteoSaisissable } from "./SyntheseDesResultatsValues";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
   modeEcriture?: boolean;
 }
 
-const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
-  nomTerritoire,
-  modeEcriture = false,
-}) => {
-  const { syntheseDesResultats, syntheseDesResultatsBrouillon, chantier } =
-    pageChantier.useServerSidePropsContext();
+export const SyntheseDesResultats: FunctionComponent<
+  SyntheseDesResultatsProps
+> = ({ nomTerritoire, modeEcriture = false }) => {
+  const {
+    syntheseDesResultats,
+    syntheseDesResultatsBrouillon,
+    chantier,
+    territoireCode,
+  } = pageChantier.useServerSidePropsContext();
 
-  const [action, setAction] = useState<SyntheseDesResultatsAction | null>(null);
-  const [modeÉdition, setModeÉdition] = useState(false);
-  const refreshRouter = useRefreshRouter();
+  const actions = useSyntheseDesResultatsActions({
+    chantierId: chantier.id,
+    territoireCode,
+    syntheseId: syntheseDesResultats?.id,
+    brouillonId: syntheseDesResultatsBrouillon?.id,
+  });
 
   return (
-    <div>
-      <Bloc
-        backgroundClassNameTitre={
-          chantier.statut === "ARCHIVE"
-            ? "bg-dsfr-grey-925"
-            : "bg-dsfr-blue-france-925"
+    <Bloc
+      backgroundClassNameTitre={
+        chantier.statut === "ARCHIVE"
+          ? "bg-dsfr-grey-925"
+          : "bg-dsfr-blue-france-925"
+      }
+      className="h-full"
+      contenuClassesSupplémentaires=""
+      titre={nomTerritoire}
+    >
+      <PublicationSection
+        actions={actions}
+        showLabel={false}
+        aside={
+          <MeteoSyntheseDesResultats meteo={syntheseDesResultats?.meteo} />
         }
-        className="h-full"
-        contenuClassesSupplémentaires=""
-        titre={nomTerritoire}
-      >
-        {syntheseDesResultatsBrouillon?.dateModification ? (
-          <BandeauInformation bandeauType="INFO" classNameContainer="px-4">
-            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(syntheseDesResultatsBrouillon?.dateModification, "DD/MM/YYYY")}`}
-          </BandeauInformation>
-        ) : null}
-        <div className="p-4">
-          {modeÉdition && modeEcriture ? (
-            <SyntheseDesResultatsFormulaire
-              annulationCallback={() => setModeÉdition(false)}
-              onSucess={(action) => {
-                setAction(action);
-                refreshRouter();
-                setModeÉdition(false);
-              }}
-            />
-          ) : (
-            <>
-              <AlerteSyntheseDesResultats action={action} />
-              <div className="flex gap-4 pt-2">
-                <div className="flex flex-col gap-4 align-center">
-                  <MétéoBadge
-                    météo={syntheseDesResultats?.meteo ?? "NON_RENSEIGNEE"}
-                  />
-                  {syntheseDesResultats ? (
-                    <MeteoPicto meteo={syntheseDesResultats.meteo} />
-                  ) : null}
-                </div>
-                <div>
-                  <SynthèseDesRésultatsAffichage
-                    itemHistoriqueSyntheseDesResultats={syntheseDesResultats}
-                    onModifier={
-                      modeEcriture ? () => setModeÉdition(true) : undefined
-                    }
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end items-center gap-4 mt-2">
-                {!!syntheseDesResultats ? (
-                  <SynthèseDesRésultatsHistorique />
-                ) : null}
-                {modeEcriture &&
-                  (syntheseDesResultatsBrouillon?.dateModification ? (
-                    <BoutonEditerBrouillonSyntheseDesResultats
-                      onAction={setAction}
-                    />
-                  ) : (
-                    <BoutonNouvelleSyntheseDesResultats onAction={setAction} />
-                  ))}
-              </div>
-            </>
-          )}
-        </div>
-      </Bloc>
-    </div>
+        brouillon={syntheseDesResultatsBrouillon}
+        complementConsigneGenerique="à la météo et à la synthèse des résultats"
+        consigne={CONSIGNE_SYNTHÈSE_DES_RÉSULTATS}
+        formConfig={{
+          resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
+          maxLength: LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
+          editValues: {
+            contenu: syntheseDesResultats?.contenu ?? "",
+            meteo: toMeteoSaisissable(syntheseDesResultats?.meteo),
+          },
+          newValues: {
+            contenu: syntheseDesResultatsBrouillon?.contenu ?? "",
+            meteo: toMeteoSaisissable(syntheseDesResultatsBrouillon?.meteo),
+          },
+          extraFields: <MeteoField />,
+        }}
+        historiqueNode={<HistoriqueSyntheseDesResultats />}
+        libelle={LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}
+        emptyMessage="Aucune synthèse des résultats."
+        modeEcriture={modeEcriture}
+        publication={syntheseDesResultats}
+      />
+    </Bloc>
   );
 };
-
-export default SyntheseDesResultats;
