@@ -1,4 +1,5 @@
 import { FunctionComponent, useMemo, useState } from "react";
+import { SearchInput } from "@/components/shared/SearchInput";
 import {
   FEATURE_FLIP_KEYS,
   FEATURE_FLIP_LABELS,
@@ -106,12 +107,11 @@ export const PagePanelAdministrateurFeatureFlipping: FunctionComponent = () => {
             {nbActifs} / {FEATURE_FLIP_KEYS.length} actifs
           </span>
         </div>
-        <input
-          className="border !rounded-t !border-b !border-b-gray-600 !bg-white !py-2 !px-4 text-sm w-64"
-          onChange={(e) => setRecherche(e.target.value)}
-          aria-label="Rechercher un feature flip"
+        <SearchInput
+          className="w-72"
+          label="Rechercher un feature flip"
+          onChange={(event) => setRecherche(event.target.value)}
           placeholder="Rechercher un feature flip..."
-          type="text"
           value={recherche}
         />
       </div>

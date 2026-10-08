@@ -1,4 +1,5 @@
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import { SearchInput } from "@/components/shared/SearchInput";
 import {
   NoeudArbre,
   aDesModificationsNonPubliees,
@@ -202,12 +203,12 @@ export const ArborescenceCentreAide: FunctionComponent<
   return (
     <>
       <div className="px-3 pt-2 pb-1">
-        <input
-          aria-label="Rechercher dans l'arborescence"
-          className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+        <SearchInput
+          button="none"
+          inputClassName="px-2 py-1.5 text-sm"
+          label="Rechercher dans l'arborescence"
           onChange={(event) => setRecherche(event.target.value)}
           placeholder="Rechercher..."
-          type="text"
           value={recherche}
         />
       </div>

@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react";
+import { SearchInput } from "@/components/shared/SearchInput";
 import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import { FEEDBACK_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
@@ -69,19 +70,13 @@ export const AlbertDashboardFilters = ({
   return (
     <div className="!mb-4 flex flex-wrap items-center gap-3">
       <form className="flex items-center gap-2" onSubmit={validerRecherche}>
-        <input
-          className="!border !border-dsfr-grey-900 !rounded-md !px-3 !py-2 !text-sm !w-72"
+        <SearchInput
+          button="submit"
+          className="w-96"
           onChange={(event) => setRechercheLocale(event.target.value)}
           placeholder="Rechercher dans le titre ou le 1er message"
-          type="search"
           value={rechercheLocale}
         />
-        <button
-          className="!px-3 !py-2 !text-sm !rounded-md !bg-dsfr-blue-france-sun-113 !text-white"
-          type="submit"
-        >
-          Rechercher
-        </button>
       </form>
 
       {[
