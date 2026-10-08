@@ -1,4 +1,5 @@
 import { parseAsString, useQueryState } from "nuqs";
+import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
 import { useExportStep } from "./useExportStep";
 
@@ -91,20 +92,22 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
             Annuler
           </button>
         </Modale.Close>
-        <button
-          className="fr-btn fr-btn--secondary fr-mr-2w"
+        <Button
+          variant="secondary"
+          className="mr-4"
           onClick={() => goToStep(2)}
           type="button"
         >
           Étape précédente
-        </button>
-        <button
-          className="fr-btn fr-mr-2w"
+        </Button>
+        <Button
+          variant="primary"
+          className="mr-4"
           onClick={() => goToStep(4)}
           type="button"
         >
           Étape suivante
-        </button>
+        </Button>
       </div>
     </div>
   );

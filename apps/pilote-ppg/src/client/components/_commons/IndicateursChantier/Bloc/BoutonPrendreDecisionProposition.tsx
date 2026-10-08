@@ -1,4 +1,5 @@
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { Button } from "@/components/shared/Button";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { ModaleAccepterPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
@@ -24,13 +25,14 @@ export const BoutonPrendreDecisionProposition = ({
       territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
       territoireNom={détailTerritoireSélectionné.nom}
     >
-      <button
-        className="fr-btn gap-2 fr-btn--secondary !text-current ![box-shadow:inset_0_0_0_1px_currentColor]"
+      <Button
+        variant="secondary"
+        className="gap-2 text-current ring-current"
         type="button"
       >
         <Icone className="h-4 w-4 text-current" icone={Scales3Icon} />
         Prendre une décision
-      </button>
+      </Button>
     </ModaleAccepterPropositionValeurAvancement>
   );
 };

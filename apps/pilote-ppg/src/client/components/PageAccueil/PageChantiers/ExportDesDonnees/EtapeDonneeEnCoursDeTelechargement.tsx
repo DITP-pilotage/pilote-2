@@ -1,4 +1,5 @@
 import { Modale } from "@/components/shared/Modale";
+import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { useExportStep } from "./useExportStep";
 
@@ -22,13 +23,14 @@ export const EtapeDonneeEnCoursDeTelechargement = () => {
             Annuler
           </button>
         </Modale.Close>
-        <button
-          className="fr-btn fr-btn--secondary fr-mr-2w"
+        <Button
+          variant="secondary"
+          className="mr-4"
           onClick={() => goToStep(4)}
           type="button"
         >
           Étape précédente
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+import { Button } from "@/components/shared/Button";
 import { Badge } from "@/components/shared/Badge";
 import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";
 import technicalError from "@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg";
@@ -35,12 +36,11 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
                   Si vous avez besoin d'une aide immédiate, merci de nous
                   contacter.
                 </p>
-                <a
-                  className="fr-btn fr-btn--secondary"
-                  href="mailto:pilote.ditp@modernisation.gouv.fr"
-                >
-                  Contactez-nous
-                </a>
+                <Button asChild variant="secondary">
+                  <a href="mailto:pilote.ditp@modernisation.gouv.fr">
+                    Contactez-nous
+                  </a>
+                </Button>
               </div>
               <div className="fr-col-12 fr-col-md-3 fr-col-offset-md-1 fr-p-0">
                 <svg

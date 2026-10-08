@@ -1,4 +1,5 @@
 import { FunctionComponent, useRef } from "react";
+import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { Modale } from "@/components/shared/Modale";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -47,9 +48,9 @@ export const ModaleVideoAccueil: FunctionComponent<{
             de PILOTE
           </p>
           <Modale.Close asChild>
-            <button className="fr-btn" title="Passer la vidéo" type="button">
+            <Button variant="primary" title="Passer la vidéo" type="button">
               Passer
-            </button>
+            </Button>
           </Modale.Close>
         </div>
       </div>

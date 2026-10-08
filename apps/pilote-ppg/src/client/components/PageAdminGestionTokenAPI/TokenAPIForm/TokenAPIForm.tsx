@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import Input from "@/components/_commons/Input/Input";
 import { useTokenAPIForm } from "@/components/PageAdminGestionTokenAPI/TokenAPIForm/useTokenAPIForm";
 
@@ -18,13 +19,14 @@ const TokenAPIForm: FunctionComponent = () => {
           />
         </div>
         <div className="fr-col-4 flex align-end">
-          <button
-            className="fr-btn fr-ml-2w"
+          <Button
+            variant="primary"
+            className="ml-4"
             key="submit-token-api"
             type="submit"
           >
             Créer un token API
-          </button>
+          </Button>
         </div>
       </div>
     </div>

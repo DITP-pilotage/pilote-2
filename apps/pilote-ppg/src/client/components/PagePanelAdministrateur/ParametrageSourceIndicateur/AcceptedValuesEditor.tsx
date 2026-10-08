@@ -1,4 +1,5 @@
 import { useFieldArray } from "react-hook-form";
+import { Button } from "@/components/shared/Button";
 import { Input } from "@/components/_commons/Input";
 import { useFormParametrageSource } from "./form";
 import { ValeurAccepte } from "./types";
@@ -34,13 +35,14 @@ export const AcceptedValuesEditor = ({
         <div className="border fr-mb-2w rounded" key={item.id}>
           <div className="flex justify-between align-center fr-mb-1w border-b border-b-dsfr-blue-france-sun-113 p-3">
             <span className="font-bold">Valeur {index + 1}</span>
-            <button
-              className="fr-btn fr-btn--sm fr-btn--secondary"
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => remove(index)}
               type="button"
             >
               Supprimer
-            </button>
+            </Button>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters p-3">
             <div className="fr-col-3">
@@ -90,13 +92,9 @@ export const AcceptedValuesEditor = ({
           </div>
         </div>
       ))}
-      <button
-        className="fr-btn fr-btn--secondary"
-        onClick={ajouterValeur}
-        type="button"
-      >
+      <Button variant="secondary" onClick={ajouterValeur} type="button">
         Ajouter une valeur
-      </button>
+      </Button>
     </div>
   );
 };

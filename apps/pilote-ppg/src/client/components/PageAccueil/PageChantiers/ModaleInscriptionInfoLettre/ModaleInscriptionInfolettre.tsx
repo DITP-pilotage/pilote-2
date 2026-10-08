@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Modale } from "@/components/shared/Modale";
 import Titre from "@/components/_commons/Titre/Titre";
@@ -81,13 +82,14 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
                 <span className="!text-error">*</span>
               </label>
             </div>
-            <button
-              className="fr-btn fr-mt-3w"
+            <Button
+              variant="primary"
+              className="mt-6"
               disabled={!estConsentantALinscription}
               type="submit"
             >
               M'inscrire maintenant
-            </button>
+            </Button>
           </form>
         </div>
       ) : (

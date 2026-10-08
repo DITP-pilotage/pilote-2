@@ -1,4 +1,5 @@
 import { FunctionComponent, useMemo } from "react";
+import { Button } from "@/components/shared/Button";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import { useAjouterChantierAuxHabilitations } from "@/components/PageHabilitationsCoordinateur/useAjouterChantierAuxHabilitations";
 
@@ -49,22 +50,22 @@ const PageHabilitationsCoordinateur: FunctionComponent = () => {
       </div>
 
       <div className="fr-btns-group fr-btns-group--inline fr-mt-3w">
-        <button
-          className="fr-btn"
+        <Button
+          variant="primary"
           disabled={chantierIdsSelectionnes.length === 0 || isLoading}
           onClick={() => ajouterAuxHabilitations("saisieCommentaire")}
           type="button"
         >
           Ajouter en saisie commentaire
-        </button>
-        <button
-          className="fr-btn fr-btn--secondary"
+        </Button>
+        <Button
+          variant="secondary"
           disabled={chantierIdsSelectionnes.length === 0 || isLoading}
           onClick={() => ajouterAuxHabilitations("gestionUtilisateur")}
           type="button"
         >
           Ajouter en gestion utilisateur
-        </button>
+        </Button>
       </div>
     </>
   );
