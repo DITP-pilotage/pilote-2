@@ -7,6 +7,7 @@ import { evaluationRouter } from "@/server/evaluation/infrastructure/trpc/evalua
 import { habilitationsCoordinateurRouter } from "@/server/habilitations-coordinateur/infrastructure/trpc/habilitationsCoordinateur";
 import { profilUtilisateurRouter } from "@/server/profil-utilisateur/infrastructure/trpc/profilUtilisateur";
 import { rapportHebdomadaireRouter } from "@/server/rapports-hebdomadaires/infrastructure/trpc/rapportHebdomadaire";
+import { rapportDetailleRouter } from "@/server/rapport-detaille/infrastructure/trpc/rapportDetaille";
 import { chantierRouter } from "@/server/chantiers/infrastructure/trpc/chantier";
 import { syntheseDesResultatsRouter } from "@/server/syntheses-des-resultats/infrastructure/trpc/syntheseDesResultats";
 import { commentaireRouter } from "@/server/commentaires/infrastructure/trpc/commentaire";
@@ -51,6 +52,7 @@ export const appRouter = createTRPCRouter({
   habilitationsCoordinateur: habilitationsCoordinateurRouter,
   profilUtilisateur: profilUtilisateurRouter,
   rapportHebdomadaire: rapportHebdomadaireRouter,
+  rapportDetaille: rapportDetailleRouter,
   albert: albertRouter,
   parametrageCentreAide: parametrageCentreAideRouter,
   applicationLog: applicationLogRouter,

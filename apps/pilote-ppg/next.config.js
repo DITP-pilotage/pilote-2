@@ -12,7 +12,12 @@ const nextConfig = {
     turbopackFileSystemCacheForBuild: process.env.CI !== "true",
   },
   output: "standalone",
-  outputFileTracingRoot: path.join(__dirname, '../..'),
+  outputFileTracingRoot: path.join(__dirname, "../.."),
+  outputFileTracingIncludes: {
+    "/api/rapport-detaille/pdf": [
+      "./node_modules/@gouvfr/dsfr/dist/fonts/Marianne-*.woff2",
+    ],
+  },
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx"],
   allowedDevOrigins: [

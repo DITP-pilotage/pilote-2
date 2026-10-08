@@ -4,7 +4,7 @@ import { FunctionComponent } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { TitleBand } from "@/components/shared/TitleBand";
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
-import RapportDétailléChantierProps from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface";
+import { RapportDétailléChantierProps } from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface";
 import Responsables from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import SynthèseDesRésultats from "@/components/PageRapportDétaillé/SynthèseDesRésultats/SynthèseDesRésultats";
 import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille";
@@ -28,25 +28,28 @@ import { Icone } from "@/components/_commons/Icone";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { useEnv } from "@/client/hooks/useEnv";
 
-const RapportDétailléChantier: FunctionComponent<
+export const RapportDétailléChantier: FunctionComponent<
   RapportDétailléChantierProps
 > = ({
   mailleSelectionnee,
   territoireSélectionné,
   territoireCode,
   chantier,
-  indicateurs,
-  détailsIndicateurs,
-  synthèseDesRésultats,
-  commentaires,
-  objectifs,
-  décisionStratégique,
-  mapChantierStatistiques,
-  donnéesCartographieAvancement,
-  donnéesCartographieMétéo,
+  detail,
   jalon,
-  listeIndicateursPrisEnCompteAvancement,
 }) => {
+  const {
+    indicateurs,
+    détailsIndicateurs,
+    synthèseDesRésultats,
+    commentaires,
+    objectifs,
+    décisionStratégique,
+    avancement: avancements,
+    donnéesCartographieAvancement,
+    donnéesCartographieMétéo,
+    listeIndicateursPrisEnCompteAvancement,
+  } = detail;
   const ffMasquerIndicateursNonApplicables = useEnv(
     "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
   );
@@ -54,8 +57,6 @@ const RapportDétailléChantier: FunctionComponent<
     chantier?.responsableLocalTerritoireSélectionné ?? [];
   const listeCoordinateursTerritorials =
     chantier?.coordinateurTerritorialTerritoireSélectionné ?? [];
-
-  const avancements = mapChantierStatistiques.get(chantier.id)!;
 
   const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType =
     {
@@ -308,5 +309,3 @@ const RapportDétailléChantier: FunctionComponent<
     </section>
   );
 };
-
-export default RapportDétailléChantier;
