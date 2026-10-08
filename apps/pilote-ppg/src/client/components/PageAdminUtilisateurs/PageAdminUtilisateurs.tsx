@@ -2,7 +2,6 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import TableauAdminUtilisateurs from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs";
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
@@ -111,9 +110,9 @@ const PageAdminUtilisateurs: FunctionComponent<{
           ) : null}
           <div className="fr-grid-row fr-grid-row--middle fr-mb-3w !px-4">
             <div className="fr-col-12 fr-col-md-6">
-              <Titre baliseHtml="h1" className="fr-h1 fr-mb-0">
+              <h1 className="text-h1 md:text-h1-md mb-0">
                 Gestion des comptes
-              </Titre>
+              </h1>
             </div>
             <div className="flex justify-end align-center gap-2 w-full">
               <ExportDesDonnees />

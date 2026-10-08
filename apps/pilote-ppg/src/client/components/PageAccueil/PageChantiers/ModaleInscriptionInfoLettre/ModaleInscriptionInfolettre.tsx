@@ -6,7 +6,6 @@ import { TextField } from "@/components/shared/TextField";
 import { Button } from "@/components/shared/Button";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Modale } from "@/components/shared/Modale";
-import Titre from "@/components/_commons/Titre/Titre";
 import { useModaleInscriptionInfolettre } from "./useModaleInscriptionInfolettre";
 
 export const ModaleInscriptionInfolettre: FunctionComponent<{
@@ -37,12 +36,9 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
     >
       {!succesEnvoieEmail ? (
         <div>
-          <Titre
-            baliseHtml="h1"
-            className="fr-modal__title fr-mb-1w fr-text-title--blue-france flex justify-center"
-          >
+          <h1 className="text-h4 md:text-h4-md mb-2 text-dsfr-blue-france-sun-113 flex justify-center">
             Ne manquez pas les actualités de PILOTE
-          </Titre>
+          </h1>
           <p className="fr-mt-3w">
             Inscrivez-vous à notre infolettre{" "}
             <strong>pour rester informé des évolutions de PILOTE.</strong>

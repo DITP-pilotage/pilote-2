@@ -5,7 +5,6 @@ import {
   useQueryStates,
 } from "nuqs";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
 import { Axe } from "@/shared/axe/Axe.interface";
@@ -150,9 +149,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
 
   return (
     <div className="fr-mb-2w print:hidden">
-      <Titre baliseHtml="h2" className="fr-text--lg text-dsfr-grey-50">
-        Contenu du rapport détaillé
-      </Titre>
+      <h2 className="text-lg text-dsfr-grey-50">Contenu du rapport détaillé</h2>
       <div className="columns-4 gap-8 pl-0 text-[0.95rem]">
         {filtresCatégories.map(({ nom, filtresActifs }) => (
           <FiltresSélectionnésCatégorie

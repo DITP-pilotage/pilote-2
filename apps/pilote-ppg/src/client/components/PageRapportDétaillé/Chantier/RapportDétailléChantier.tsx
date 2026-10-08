@@ -11,7 +11,6 @@ import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chant
 import { DecisionsStrategiquesRapportDetaille } from "@/components/PageRapportDétaillé/Chantier/DecisionsStrategiquesRapportDetaille";
 import CommentairesRapportDetaille from "@/client/components/PageRapportDétaillé/Commentaires/CommentairesRapportDetaille";
 import { ObjectifsRapportDetaille } from "@/client/components/PageRapportDétaillé/Objectifs/ObjectifsRapportDetaille";
-import Titre from "@/components/_commons/Titre/Titre";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -127,16 +126,11 @@ const RapportDétailléChantier: FunctionComponent<
                   </Link>
                 </Button>
                 <TitleBand>
-                  <Titre baliseHtml="h1" className="fr-h2 fr-mb-1w">
-                    {chantier.nom}
-                  </Titre>
+                  <h1 className="text-h2 md:text-h2-md mb-2">{chantier.nom}</h1>
                 </TitleBand>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                >
+                <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Avancement du chantier
-                </Titre>
+                </h2>
                 <AvancementChantier
                   avancements={avancements}
                   donneesComparaisonDuTauxDAvancement={
@@ -149,12 +143,9 @@ const RapportDétailléChantier: FunctionComponent<
                 />
               </section>
               <section className="break-inside-avoid [grid-area:responsables]">
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                >
+                <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Responsables
-                </Titre>
+                </h2>
                 <Responsables
                   afficheResponsablesLocaux={
                     territoireSélectionné?.maille !== "nationale"
@@ -173,12 +164,9 @@ const RapportDétailléChantier: FunctionComponent<
             </>
           )}
           <section className="break-inside-avoid [grid-area:synthèse] print:break-inside-avoid">
-            <Titre
-              baliseHtml="h2"
-              className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-            >
+            <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
               Météo et synthèse des résultats
-            </Titre>
+            </h2>
             <SynthèseDesRésultats
               nomTerritoire={territoireSélectionné!.nomAffiché}
               synthèseDesRésultats={synthèseDesRésultats}
@@ -190,12 +178,9 @@ const RapportDétailléChantier: FunctionComponent<
         chantier.estTerritorialisé ? (
           <div className="fr-my-2w print:break-inside-avoid">
             <section className="break-inside-avoid">
-              <Titre
-                baliseHtml="h2"
-                className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-              >
+              <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                 Répartition géographique
-              </Titre>
+              </h2>
               <Cartes
                 afficheCarteAvancement={
                   !!chantier.tauxAvancementDonnéeTerritorialisée[
@@ -219,12 +204,9 @@ const RapportDétailléChantier: FunctionComponent<
           <div className="fr-my-2w print:break-inside-avoid">
             <section className="break-inside-avoid">
               <div className="rubrique__conteneur [&>div]:h-auto">
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                >
+                <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Objectifs
-                </Titre>
+                </h2>
                 <ObjectifsRapportDetaille objectifs={objectifs} />
               </div>
             </section>
@@ -234,12 +216,9 @@ const RapportDétailléChantier: FunctionComponent<
           <div className="fr-my-2w print:break-inside-avoid">
             <section className="break-inside-avoid">
               <div className="rubrique__conteneur [&>div]:h-auto">
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                >
+                <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Indicateurs
-                </Titre>
+                </h2>
                 {indicateursApplicables.length > 0 ? (
                   <IndicateursRapportDetaille
                     categoriesIndicateurRepartition={
@@ -268,12 +247,9 @@ const RapportDétailléChantier: FunctionComponent<
             <div className="fr-my-2w print:break-inside-avoid">
               <section className="break-inside-avoid">
                 <div className="rubrique__conteneur [&>div]:h-auto">
-                  <Titre
-                    baliseHtml="h2"
-                    className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                  >
+                  <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                     Décisions stratégiques
-                  </Titre>
+                  </h2>
                   <DecisionsStrategiquesRapportDetaille
                     décisionStratégique={décisionStratégique}
                   />
@@ -285,12 +261,9 @@ const RapportDétailléChantier: FunctionComponent<
           <div className="fr-my-2w print:break-inside-avoid">
             <section className="break-inside-avoid">
               <div className="rubrique__conteneur [&>div]:h-auto">
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                >
+                <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Commentaires du chantier
-                </Titre>
+                </h2>
                 <CommentairesRapportDetaille
                   commentaires={commentaires}
                   nomTerritoire={territoireSélectionné!.nomAffiché}

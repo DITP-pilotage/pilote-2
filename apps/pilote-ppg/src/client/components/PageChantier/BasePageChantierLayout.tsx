@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
-import Titre from "@/components/_commons/Titre/Titre";
 import {
   CategoriesIndicateur,
   listeRubriquesChantier,
@@ -158,12 +157,9 @@ export const BasePageChantierLayout = ({
           />
         </div>
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w hidden print:block print:mb-4 print:[page-break-after:avoid]">
-          <Titre
-            baliseHtml="h1"
-            className="fr-h2 fr-mb-0 fr-text--center !text-[1.875rem] !leading-9"
-          >
+          <h1 className="text-h2 md:text-h2-md mb-0 !text-[1.875rem] !leading-9">
             {chantier.nom}
-          </Titre>
+          </h1>
         </div>
         {mailleSourceDonnees === "regionale" ? (
           <Notice title="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département." />

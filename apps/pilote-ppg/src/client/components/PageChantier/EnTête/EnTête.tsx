@@ -1,7 +1,6 @@
 import "@gouvfr/dsfr/dist/dsfr.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { getFiltresActifs } from "@/client/stores/useFiltresStore/useFiltresStore";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -70,10 +69,9 @@ const PageChantierEnTête: FunctionComponent<{
           Retour
         </Link>
       </div>
-      <Titre
-        baliseHtml="h1"
+      <h1
         className={clsxm(
-          "select-all fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3 !text-[1.875rem] !leading-9",
+          "select-all text-h2 md:text-h2-md !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3 !text-[1.875rem] !leading-9",
           {
             "!text-dsfr-grey-200": chantierEstArchive,
           },
@@ -81,7 +79,7 @@ const PageChantierEnTête: FunctionComponent<{
         title={chantier.nom}
       >
         {chantier.nom}
-      </Titre>
+      </h1>
       <div className="!pb-6 !mb-6 border-b border-blue-france flex">
         <div className="icone-entete fr-mb-1w fr-pr-1w">
           <IconeMinistere icone={responsables?.porteur?.icône} />

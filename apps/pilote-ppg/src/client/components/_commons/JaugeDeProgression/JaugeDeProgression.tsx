@@ -37,17 +37,17 @@ const classesÀPartirDeTaille: Record<
   { valeur: string; libellé: string }
 > = {
   sm: {
-    valeur: "fr-h6",
+    valeur: "text-h6 md:text-h6-md font-bold",
     libellé: "",
   },
   md: {
     valeur:
-      "absolute top-[calc(50%_-_1.4rem)] w-full !leading-10 fr-h4 text-center",
+      "absolute top-[calc(50%_-_1.4rem)] w-full !leading-10 text-h4 md:text-h4-md font-bold text-center",
     libellé: "text-center",
   },
   lg: {
     valeur:
-      "absolute top-[calc(50%_-_1.4rem)] w-full !leading-10 fr-h1 text-center",
+      "absolute top-[calc(50%_-_1.4rem)] w-full !leading-10 text-h1 md:text-h1-md font-bold text-center",
     libellé: "text-center",
   },
 };

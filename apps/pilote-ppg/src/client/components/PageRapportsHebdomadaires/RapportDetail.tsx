@@ -21,7 +21,7 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
 
   return (
     <div className="space-y-10 my-10">
-      <h2 className="fr-h2 text-primary">
+      <h2 className="text-h2 md:text-h2-md text-primary">
         Semaine du{" "}
         {PiloteDateFormatter.dateFrancaiseLongue(rapportDetail.periodeDebut)} au{" "}
         {PiloteDateFormatter.dateFrancaiseLongue(rapportDetail.periodeFin)}

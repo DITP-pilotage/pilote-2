@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { z } from "zod";
 import { useEnv } from "@/client/hooks/useEnv";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonProConnect } from "./BoutonProConnect";
 import { messageDeConnexion } from "./messagesConnexion";
 import { TextLink } from "@/components/shared/TextLink";
@@ -44,9 +43,9 @@ export const PageConnexion = () => {
       <div className="fr-container fr-py-10w">
         <div className="mx-auto w-full max-w-[38rem]">
           <div className="border-dsfr-grey-925 border bg-white p-6 md:p-8">
-            <Titre baliseHtml="h1" className="fr-h4 fr-mb-1w text-center">
+            <h1 className="text-h4 md:text-h4-md mb-2 text-center">
               Connexion à PILOTE
-            </Titre>
+            </h1>
             <p className="text-dsfr-mention-grey fr-mb-4w fr-text--sm">
               {ffProConnect
                 ? "Choisissez votre mode de connexion."

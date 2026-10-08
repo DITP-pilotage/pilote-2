@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import clsx from "clsx";
-import Titre from "@/components/_commons/Titre/Titre";
 import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -35,23 +34,23 @@ export const BasePageChantierSection = ({
     >
       {infobulle ? (
         <TitreInfobulleConteneur className={titreConteneurClassName}>
-          <Titre
-            baliseHtml="h2"
-            className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-              "text-primary": !estChantierArchive,
-              "!text-dsfr-grey-50": estChantierArchive,
-            })}
-            estInline
+          <h2
+            className={
+              "inline " +
+              clsx("text-h4 md:text-h4-md mb-0 py-1", {
+                "text-primary": !estChantierArchive,
+                "!text-dsfr-grey-50": estChantierArchive,
+              })
+            }
           >
             {titre}
-          </Titre>
+          </h2>
           <Infobulle>{infobulle}</Infobulle>
         </TitreInfobulleConteneur>
       ) : (
-        <Titre
-          baliseHtml="h2"
+        <h2
           className={clsx(
-            "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
+            "text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0",
             {
               "text-primary": !estChantierArchive,
               "!text-dsfr-grey-50": estChantierArchive,
@@ -59,7 +58,7 @@ export const BasePageChantierSection = ({
           )}
         >
           {titre}
-        </Titre>
+        </h2>
       )}
       {children}
     </section>

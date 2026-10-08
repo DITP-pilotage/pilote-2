@@ -2,21 +2,20 @@ import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";
 import success from "@gouvfr/dsfr/dist/artwork/pictograms/system/success.svg";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 
 const ValidationInscription: FunctionComponent = () => {
   return (
     <div className="fr-px-15w fr-pb-12w fr-container--fluid">
       <div className="fr-grid-row fr-py-4w">
-        <Titre baliseHtml="h1" className="fr-my-auto">
+        <h1 className="my-auto">
           Nous vous remercions pour votre inscription !
-        </Titre>
+        </h1>
       </div>
       <Bloc>
         <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
           <div className="fr-p-0 fr-pr-4w fr-col-12 fr-col-md-6">
-            <p className="fr-h4">
+            <p className="text-h4 md:text-h4-md font-bold mb-6 text-dsfr-grey-50">
               Votre inscription à l'infolettre est validée
             </p>
             <p>

@@ -43,7 +43,7 @@ const RepartitionsMeteosRapportDetaille: FunctionComponent<
             type="button"
           >
             <MeteoPicto meteo={meteo} />
-            <p className="fr-h1 fr-mb-0 text-primary">
+            <p className="text-h1 md:text-h1-md font-bold mb-0 text-primary">
               {repartitionMeteos[meteo]}
             </p>
             <p className="fr-mb-0 break-keep text-dsfr-grey-50 max-[80rem]:!text-xs">

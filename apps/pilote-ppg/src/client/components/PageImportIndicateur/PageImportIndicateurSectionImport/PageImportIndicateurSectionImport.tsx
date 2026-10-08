@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { FunctionComponent, useState } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { StepIndicator } from "@/components/shared/StepIndicator";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
@@ -55,9 +54,9 @@ const PageImportIndicateurSectionImport: FunctionComponent<
   return (
     <section className="bg-dsfr-alt-blue-france">
       <div className="fr-container fr-py-3w">
-        <Titre baliseHtml="h2" className="text-primary">
+        <h2 className="text-primary">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.TITRE}
-        </Titre>
+        </h2>
         <Bloc>
           <StepIndicator
             className="mb-2"

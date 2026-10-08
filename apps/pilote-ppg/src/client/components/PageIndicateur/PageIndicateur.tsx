@@ -3,7 +3,6 @@ import { Button } from "@/components/shared/Button";
 import { FormProvider } from "react-hook-form";
 import { FunctionComponent } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheIndicateur from "@/components/PageIndicateur/FicheIndicateur/FicheIndicateur";
 import {
@@ -108,7 +107,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                   />
                 </div>
               ) : null}
-              <Titre baliseHtml="h1" className="fr-h1 fr-mt-4w">
+              <h1 className="text-h1 md:text-h1-md mt-8">
                 Fiche de l'indicateur {indicateur.indicId}
                 <div className="fr-grid-row fr-mt-4w">
                   {isCreation ? (
@@ -154,7 +153,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                     </Button>
                   )}
                 </div>
-              </Titre>
+              </h1>
               <Bloc>
                 <div className="fr-py-4w fr-px-10w">
                   <FicheIndicateur

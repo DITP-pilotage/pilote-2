@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 
 const MentionsLegales: FunctionComponent = () => {
@@ -7,14 +6,12 @@ const MentionsLegales: FunctionComponent = () => {
     <main>
       <div className="fr-container fr-pb-2w">
         <div className="fr-grid-row fr-py-4w">
-          <Titre baliseHtml="h1" className="fr-my-auto">
-            Mentions légales
-          </Titre>
+          <h1 className="my-auto">Mentions légales</h1>
         </div>
         <Bloc>
           <div className="fr-grid-row">
             <div className="fr-col-12">
-              <h4 className="fr-h4">Éditeur</h4>
+              <h4 className="text-h4 md:text-h4-md">Éditeur</h4>
               <p>
                 Ce site est édité par la Direction Interministérielle de la
                 Transformation Publique.
@@ -29,7 +26,9 @@ const MentionsLegales: FunctionComponent = () => {
           </div>
           <div className="fr-grid-row">
             <div className="fr-col-12">
-              <h4 className="fr-h4">Direction de la publication</h4>
+              <h4 className="text-h4 md:text-h4-md">
+                Direction de la publication
+              </h4>
               <p>
                 Ce site est édité par la Direction Interministérielle de la
                 Transformation Publique.
@@ -38,13 +37,13 @@ const MentionsLegales: FunctionComponent = () => {
           </div>
           <div className="fr-grid-row">
             <div className="fr-col-12">
-              <h4 className="fr-h4">Responsable éditoriale</h4>
+              <h4 className="text-h4 md:text-h4-md">Responsable éditoriale</h4>
               <p>Cécile Le Guen</p>
             </div>
           </div>
           <div className="fr-grid-row">
             <div className="fr-col-12">
-              <h4 className="fr-h4">Hébergement</h4>
+              <h4 className="text-h4 md:text-h4-md">Hébergement</h4>
               <ul className="list-style-none fr-p-0">
                 <li>Scalingo SAS</li>
                 <li>3 place de Haguenau</li>

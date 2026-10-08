@@ -1,6 +1,5 @@
 import { FormProvider } from "react-hook-form";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { useMessageInformation } from "@/components/PageAdminGestionContenus/useMessageInformation";
 import MessageInformationForm from "@/components/PageAdminGestionContenus/MessageInformationForm/MessageInformationForm";
@@ -21,9 +20,9 @@ const PageMessageInformation: FunctionComponent<{
       <main>
         <div className="fr-mt-2w fr-mx-4w fr-mb-3w">
           <div className="fr-container">
-            <Titre baliseHtml="h1" className="fr-h1 fr-mb-2w">
+            <h1 className="text-h1 md:text-h1-md mb-4">
               Message d'information
-            </Titre>
+            </h1>
             <Bloc>
               {modificationReussie ? (
                 <div className="fr-my-2w">
