@@ -146,7 +146,7 @@ export const BasePageAccueilLayout: FunctionComponent<
             >
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>
-            <div className="inline-flex flex-col gap-1">
+            <div className="flex flex-col items-start gap-2">
               {estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",
               ) ? (

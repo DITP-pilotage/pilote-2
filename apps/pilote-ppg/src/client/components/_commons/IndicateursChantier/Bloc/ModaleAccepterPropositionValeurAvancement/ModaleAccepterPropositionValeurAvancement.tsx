@@ -1,5 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Callout } from "@/components/shared/Callout";
 import { Controller, FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 import { RadioGroup } from "@/components/shared/RadioGroup";
@@ -264,68 +265,72 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     Veuillez vérifier si la synthèse ci-dessous est conforme à
                     votre décision et prête pour publication immédiate.
                   </span>
-                  <div className="fr-callout fr-py-2w fr-mt-2w">
-                    <h3 className="fr-callout__title fr-mb-0">
-                      {`${indicateur.id} ${indicateur.nom}`}
-                    </h3>
-                    <p className="fr-text fr-text--sm fr-mb-1w">
-                      {`${territoireCodeInsee} - ${territoireNom}`}
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span>
-                        Valeur d'avancement proposée le{" "}
-                        {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
-                        par{" "}
-                        <NomUtilisateurAvecTooltip
-                          nom={detailIndicateur.proposition!.auteur!}
-                          service={
-                            detailIndicateur.proposition?.auteurService ?? null
-                          }
-                          fonction={
-                            detailIndicateur.proposition?.auteurFonction ?? null
-                          }
-                        />{" "}
-                        :{" "}
-                      </span>
-                      <span className="fr-text--bold">
-                        {detailIndicateur.proposition?.valeurAvancement} (
-                        {formaterDate(
-                          detailIndicateur.proposition?.dateValeurAvancement,
-                          "MM/YYYY",
+                  <Callout.Root className="mt-4 px-6 py-4" color="highlight">
+                    <Callout.Text>
+                      <Callout.Title>
+                        {`${indicateur.id} ${indicateur.nom}`}
+                      </Callout.Title>
+                      <p className="fr-text fr-text--sm fr-mb-1w">
+                        {`${territoireCodeInsee} - ${territoireNom}`}
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span>
+                          Valeur d'avancement proposée le{" "}
+                          {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
+                          par{" "}
+                          <NomUtilisateurAvecTooltip
+                            nom={detailIndicateur.proposition!.auteur!}
+                            service={
+                              detailIndicateur.proposition?.auteurService ??
+                              null
+                            }
+                            fonction={
+                              detailIndicateur.proposition?.auteurFonction ??
+                              null
+                            }
+                          />{" "}
+                          :{" "}
+                        </span>
+                        <span className="fr-text--bold">
+                          {detailIndicateur.proposition?.valeurAvancement} (
+                          {formaterDate(
+                            detailIndicateur.proposition?.dateValeurAvancement,
+                            "MM/YYYY",
+                          )}
+                          )
+                        </span>
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        Décision : la proposition est{" "}
+                        {decision === "refuser" ? (
+                          <span className="fr-text--bold">refusée</span>
+                        ) : decision === "accepter-avec-modification" ? (
+                          <>
+                            <span>la proposition est </span>
+                            <span className="fr-text--bold">modifiée </span>
+                            <span>avec la valeur </span>
+                            <span className="fr-text--bold">
+                              {reactHookForm.getValues("valeurModification")} (
+                              {formaterDate(
+                                detailIndicateur.dateValeurAvancement,
+                                "MM/YYYY",
+                              )}
+                              )
+                            </span>
+                          </>
+                        ) : (
+                          <span className="fr-text--bold">acceptée</span>
                         )}
-                        )
-                      </span>
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      Décision : la proposition est{" "}
-                      {decision === "refuser" ? (
-                        <span className="fr-text--bold">refusée</span>
-                      ) : decision === "accepter-avec-modification" ? (
-                        <>
-                          <span>la proposition est </span>
-                          <span className="fr-text--bold">modifiée </span>
-                          <span>avec la valeur </span>
-                          <span className="fr-text--bold">
-                            {reactHookForm.getValues("valeurModification")} (
-                            {formaterDate(
-                              detailIndicateur.dateValeurAvancement,
-                              "MM/YYYY",
-                            )}
-                            )
-                          </span>
-                        </>
-                      ) : (
-                        <span className="fr-text--bold">acceptée</span>
-                      )}
-                    </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span>Motif de la décision :</span>{" "}
-                      <span className="text-italic">
-                        {reactHookForm.getValues("motif") ||
-                          "Aucun motif n'a été apporté"}
-                      </span>
-                    </p>
-                  </div>
+                      </p>
+                      <p className="fr-text--sm mb-0">
+                        <span>Motif de la décision :</span>{" "}
+                        <span className="text-italic">
+                          {reactHookForm.getValues("motif") ||
+                            "Aucun motif n'a été apporté"}
+                        </span>
+                      </p>
+                    </Callout.Text>
+                  </Callout.Root>
                   <Alerte type="info">
                     <h3>
                       {decision === "refuser"
