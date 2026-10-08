@@ -2,10 +2,10 @@ import { HistorisationModificationRepository } from "@/server/historisation-modi
 import CreerUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/CreerUneMetadataIndicateurUseCase";
 import ModifierUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ModifierUneMetadataIndicateurUseCase";
 import InitialiserNouvelIndicateurUseCase from "@/server/parametrage-indicateur/usecases/InitialiserNouvelIndicateurUseCase";
-import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
-import RécupérerListeMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerListeMetadataIndicateurUseCase";
-import RécupérerMetadataIndicateurIdentifiantGénéréUseCase from "@/server/parametrage-indicateur/usecases/RécupérerMetadataIndicateurIdentifiantGénéréUseCase";
-import RécupérerUnIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerUnIndicateurUseCase";
+import RecupererInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RecupererInformationMetadataIndicateurUseCase";
+import RecupererListeMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RecupererListeMetadataIndicateurUseCase";
+import RecupererMetadataIndicateurIdentifiantGenereUseCase from "@/server/parametrage-indicateur/usecases/RecupererMetadataIndicateurIdentifiantGenereUseCase";
+import RecupererUnIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RecupererUnIndicateurUseCase";
 import { ImportMasseMetadataIndicateurHandler } from "@/server/parametrage-indicateur/infrastructure/handlers/ImportMasseMetadataIndicateurHandler";
 import ImportMasseMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
@@ -29,10 +29,10 @@ type ParametrageIndicateurCradle = ParametrageIndicateurExports & {
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;
   initialiserNouvelIndicateurUseCase: InitialiserNouvelIndicateurUseCase;
-  récupérerInformationMetadataIndicateurUseCase: RécupérerInformationMetadataIndicateurUseCase;
-  récupérerListeMetadataIndicateurUseCase: RécupérerListeMetadataIndicateurUseCase;
-  récupérerMetadataIndicateurIdentifiantGénéréUseCase: RécupérerMetadataIndicateurIdentifiantGénéréUseCase;
-  récupérerUnIndicateurUseCase: RécupérerUnIndicateurUseCase;
+  récupérerInformationMetadataIndicateurUseCase: RecupererInformationMetadataIndicateurUseCase;
+  récupérerListeMetadataIndicateurUseCase: RecupererListeMetadataIndicateurUseCase;
+  récupérerMetadataIndicateurIdentifiantGénéréUseCase: RecupererMetadataIndicateurIdentifiantGenereUseCase;
+  récupérerUnIndicateurUseCase: RecupererUnIndicateurUseCase;
   importMasseMetadataIndicateurHandler: ImportMasseMetadataIndicateurHandler;
   importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
   metadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery;
@@ -65,15 +65,15 @@ export const parametrageIndicateurModule = defineModule<
         InitialiserNouvelIndicateurUseCase,
       ),
       récupérerInformationMetadataIndicateurUseCase: asModuleClass(
-        RécupérerInformationMetadataIndicateurUseCase,
+        RecupererInformationMetadataIndicateurUseCase,
       ),
       récupérerListeMetadataIndicateurUseCase: asModuleClass(
-        RécupérerListeMetadataIndicateurUseCase,
+        RecupererListeMetadataIndicateurUseCase,
       ),
       récupérerMetadataIndicateurIdentifiantGénéréUseCase: asModuleClass(
-        RécupérerMetadataIndicateurIdentifiantGénéréUseCase,
+        RecupererMetadataIndicateurIdentifiantGenereUseCase,
       ),
-      récupérerUnIndicateurUseCase: asModuleClass(RécupérerUnIndicateurUseCase),
+      récupérerUnIndicateurUseCase: asModuleClass(RecupererUnIndicateurUseCase),
       importMasseMetadataIndicateurHandler: asModuleClass(
         ImportMasseMetadataIndicateurHandler,
       ),

@@ -1,0 +1,23 @@
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/sql/UtilisateurRepository.interface";
+import { Utilisateur } from "@/shared/utilisateur/Utilisateur.interface";
+
+export default class RecupererUnUtilisateurUseCase {
+  private readonly utilisateurRepository: UtilisateurRepository;
+
+  constructor({
+    utilisateurRepository,
+  }: {
+    utilisateurRepository: UtilisateurRepository;
+  }) {
+    this.utilisateurRepository = utilisateurRepository;
+  }
+
+  async run(utilisateurId: Utilisateur["id"]): Promise<Utilisateur | null> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    if (!utilisateur) {
+      return null;
+    }
+
+    return utilisateur;
+  }
+}

@@ -1,6 +1,6 @@
 import { MockProxy, mock } from "vitest-mock-extended";
 import { $Enums } from "@prisma/client";
-import { SynthèseDesRésultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
+import { SyntheseDesResultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
 import { SyntheseDesResultatsV2 } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { PublierBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierBrouillonSyntheseDesResultatsUseCase";
@@ -47,12 +47,12 @@ function syntheseAvecStatut(
 describe("PublierBrouillonSyntheseDesResultatsUseCase", () => {
   let useCase: PublierBrouillonSyntheseDesResultatsUseCase;
   let enregistrerSyntheseDesResultatsService: MockProxy<EnregistrerSyntheseDesResultatsService>;
-  let synthèseDesRésultatsRepository: MockProxy<SynthèseDesRésultatsRepository>;
+  let synthèseDesRésultatsRepository: MockProxy<SyntheseDesResultatsRepository>;
 
   beforeEach(() => {
     enregistrerSyntheseDesResultatsService =
       mock<EnregistrerSyntheseDesResultatsService>();
-    synthèseDesRésultatsRepository = mock<SynthèseDesRésultatsRepository>();
+    synthèseDesRésultatsRepository = mock<SyntheseDesResultatsRepository>();
     useCase = new PublierBrouillonSyntheseDesResultatsUseCase({
       enregistrerSyntheseDesResultatsService,
       synthèseDesRésultatsRepository,

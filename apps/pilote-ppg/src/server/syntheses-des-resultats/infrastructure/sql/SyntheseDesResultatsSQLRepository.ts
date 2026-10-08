@@ -1,5 +1,5 @@
 import { synthese_des_resultats } from "@prisma/client";
-import { SynthèseDesRésultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
+import { SyntheseDesResultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
 import { CODES_MAILLES } from "@/shared/maille/mailleSQLParser";
 import { Maille } from "@/shared/maille/Maille.interface";
 import { CodeInsee } from "@/shared/territoire/Territoire.interface";
@@ -12,7 +12,7 @@ import { Chantier } from "@/shared/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import type { FrameworkDependencies } from "@/server/framework/module";
 
-export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
+export class SynthèseDesRésultatsSQLRepository implements SyntheseDesResultatsRepository {
   constructor(private readonly deps: Pick<FrameworkDependencies, "prisma">) {}
 
   get prisma() {
