@@ -756,9 +756,6 @@ importers:
       react:
         specifier: ^19.2.8
         version: 19.2.8
-      react-accessible-dropdown-menu-hook:
-        specifier: ^4.0.1
-        version: 4.0.1
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
@@ -6408,9 +6405,6 @@ packages:
 
   rc9@3.1.0:
     resolution: {integrity: sha512-ufjkNVzbRHKcCOmTahZkmVsyc3W+MSk3jY03m+a7tGHkIsdVMG9l10/3HvFbWkkKzY5VFp3pkRsIo/UYgmFL7Q==}
-
-  react-accessible-dropdown-menu-hook@4.0.1:
-    resolution: {integrity: sha512-WmKs1OJdoHzktF4QuX+eXV39YEBzBPZZW7TrEH+WIIv+H5yn8jIwTSxHuTibXXIsiUZG78EPsQS5vAuAfxoJKg==}
 
   react-dom@19.2.8:
     resolution: {integrity: sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==}
@@ -12754,8 +12748,6 @@ snapshots:
     dependencies:
       defu: 6.1.7
       destr: 2.0.5
-
-  react-accessible-dropdown-menu-hook@4.0.1: {}
 
   react-dom@19.2.8(react@19.2.8):
     dependencies:

@@ -130,7 +130,6 @@
     "pino": "^10.3.1",
     "radix-ui": "^1.6.7",
     "react": "^19.2.8",
-    "react-accessible-dropdown-menu-hook": "^4.0.1",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.87.0",
     "react-markdown": "^10.1.0",

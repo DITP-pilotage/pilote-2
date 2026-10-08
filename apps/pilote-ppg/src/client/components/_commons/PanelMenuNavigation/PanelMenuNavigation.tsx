@@ -1,4 +1,4 @@
-import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
+import { SélecteursMaillesEtTerritoires } from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import { Button } from "@/components/shared/Button";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { SélecteurMaille } from "@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille";
@@ -38,7 +38,7 @@ export const PanelMenuNavigation = ({
         />
       </div>
       <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
-        <div className="flex align-center">
+        <div className="flex items-center">
           <label className="fr-label fr-mr-1w no-wrap" htmlFor="jalon">
             Jalon :
           </label>

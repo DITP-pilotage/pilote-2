@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Select } from "@/components/shared/Select";
 import { AnimateEntry } from "@/components/shared/AnimateEntry";
+import { clsxm } from "@/utils/clsxm";
 
 export type PickerOption<T> = {
   libelle: string;
@@ -21,8 +22,13 @@ function isGroupedOptions<T extends string>(
   return "options" in options[0];
 }
 
+// « striped » reproduit l'ancienne liste DSFR du sélecteur de territoire :
+// lignes zébrées sans retrait, titres de groupe gris, recherche grise.
+export type PickerAppearance = "default" | "striped";
+
 export const Picker = <T extends string>({
   name,
+  appearance = "default",
   options,
   value,
   onValueChange,
@@ -34,6 +40,7 @@ export const Picker = <T extends string>({
   trigger,
 }: {
   name?: string;
+  appearance?: PickerAppearance;
   options: PickerOption<T>[] | PickerOptionGroup<T>[];
   value?: T;
   onValueChange?: (value: T, group?: PickerOptionGroup<T> | null) => void;
@@ -50,6 +57,16 @@ export const Picker = <T extends string>({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const isGrouped = isGroupedOptions(options);
+  const striped = appearance === "striped";
+  const stripedItemClassName = (index: number) =>
+    striped
+      ? clsxm(
+          "px-4 py-3 !text-base data-[highlighted]:bg-dsfr-grey-925 data-[state=checked]:text-dsfr-mention-grey data-[state=checked]:cursor-not-allowed",
+          index % 2 === 0
+            ? "bg-dsfr-grey-1000 data-[state=checked]:data-[highlighted]:bg-dsfr-grey-1000"
+            : "bg-dsfr-grey-950 data-[state=checked]:data-[highlighted]:bg-dsfr-grey-950",
+        )
+      : undefined;
 
   const rechercheNormalisee = recherche.toLowerCase();
 
@@ -110,10 +127,19 @@ export const Picker = <T extends string>({
 
       <Select.Content className={contentClassName}>
         {showSearch ? (
-          <div className="sticky top-0 bg-white z-10 px-4 pb-2 pt-1">
+          <div
+            className={clsxm(
+              "sticky top-0 bg-white z-10 px-4 pb-2 pt-1",
+              striped && "pt-3",
+            )}
+          >
             <input
               aria-label="Rechercher"
-              className="w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
+              className={
+                striped
+                  ? "w-full px-4 py-2 border-0 border-b-2 border-solid border-dsfr-grey-200 text-base bg-dsfr-grey-950 placeholder:italic placeholder:text-dsfr-mention-grey"
+                  : "w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
+              }
               onChange={(event) => {
                 setRecherche(event.target.value);
                 if (scrollContainerRef.current) {
@@ -152,10 +178,23 @@ export const Picker = <T extends string>({
                     key={String(group.valeur)}
                     visible={!shouldHideGroup}
                   >
-                    {index > 0 && <Select.Separator />}
-                    <Select.Group>
+                    {index > 0 && (
+                      <Select.Separator
+                        className={clsxm(striped && "my-0 bg-dsfr-grey-200")}
+                      />
+                    )}
+                    <Select.Group className={clsxm(striped && "py-0")}>
                       <div className="flex items-center justify-between">
-                        <Select.Label>{group.libelle}</Select.Label>
+                        {group.libelle ? (
+                          <Select.Label
+                            className={clsxm(
+                              striped &&
+                                "py-2 !text-base font-normal text-dsfr-mention-grey",
+                            )}
+                          >
+                            {group.libelle}
+                          </Select.Label>
+                        ) : null}
                         {onValuesChange && (
                           <button
                             className="text-xs text-primary hover:underline px-2 py-1"
@@ -182,8 +221,8 @@ export const Picker = <T extends string>({
                           </button>
                         )}
                       </div>
-                      <div className="pl-3">
-                        {group.options.map((option) => {
+                      <div className={clsxm(!striped && "pl-3")}>
+                        {group.options.map((option, optionIndex) => {
                           const shouldHideOption = !isVisibleBySearch(
                             option,
                             groupMatchesSearch,
@@ -195,6 +234,7 @@ export const Picker = <T extends string>({
                               visible={!shouldHideOption}
                             >
                               <Select.Item
+                                className={stripedItemClassName(optionIndex)}
                                 data-value={option.valeur}
                                 disabled={option.desactivee}
                                 value={option.valeur}
@@ -209,7 +249,7 @@ export const Picker = <T extends string>({
                   </AnimateEntry>
                 );
               })
-            : (options as PickerOption<T>[]).map((option) => {
+            : (options as PickerOption<T>[]).map((option, optionIndex) => {
                 const shouldHideOption = !isVisibleBySearch(option, false);
 
                 return (
@@ -218,6 +258,7 @@ export const Picker = <T extends string>({
                     visible={!shouldHideOption}
                   >
                     <Select.Item
+                      className={stripedItemClassName(optionIndex)}
                       data-value={option.valeur}
                       disabled={option.desactivee}
                       value={option.valeur}
