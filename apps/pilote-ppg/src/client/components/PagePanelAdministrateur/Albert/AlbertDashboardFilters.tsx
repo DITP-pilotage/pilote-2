@@ -68,7 +68,7 @@ export const AlbertDashboardFilters = ({
   };
 
   return (
-    <div className="!mb-4 flex flex-wrap items-center gap-3">
+    <div className="mb-4 flex flex-wrap items-center gap-3">
       <form className="flex items-center gap-2" onSubmit={validerRecherche}>
         <SearchInput
           button="submit"
@@ -101,16 +101,16 @@ export const AlbertDashboardFilters = ({
       ))}
 
       {profils && profils.length > 0 && (
-        <details className="!relative">
-          <summary className="!cursor-pointer !px-3 !py-2 !text-sm !rounded-md !border !border-dsfr-grey-900 !list-none">
+        <details className="relative">
+          <summary className="cursor-pointer px-3 py-2 text-sm rounded-md border border-dsfr-grey-900 list-none">
             Profils{" "}
             {filtres.profilCodes.length > 0 &&
               `(${filtres.profilCodes.length})`}
           </summary>
-          <div className="!absolute !z-10 !mt-1 !p-3 !bg-white !border !border-dsfr-grey-925 !rounded-md !shadow-md !max-h-72 !overflow-y-auto !w-64">
+          <div className="absolute z-10 mt-1 p-3 bg-white border border-dsfr-grey-925 rounded-md shadow-md max-h-72 overflow-y-auto w-64">
             {profils.map((profil) => (
               <label
-                className="!flex !items-center !gap-2 !text-sm !py-1"
+                className="flex items-center gap-2 text-sm py-1"
                 key={profil.code}
               >
                 <input
@@ -125,15 +125,15 @@ export const AlbertDashboardFilters = ({
         </details>
       )}
 
-      <details className="!relative">
-        <summary className="!cursor-pointer !px-3 !py-2 !text-sm !rounded-md !border !border-dsfr-grey-900 !list-none">
+      <details className="relative">
+        <summary className="cursor-pointer px-3 py-2 text-sm rounded-md border border-dsfr-grey-900 list-none">
           Catégories{" "}
           {filtres.categories.length > 0 && `(${filtres.categories.length})`}
         </summary>
-        <div className="!absolute !z-10 !mt-1 !p-3 !bg-white !border !border-dsfr-grey-925 !rounded-md !shadow-md !w-64">
+        <div className="absolute z-10 mt-1 p-3 bg-white border border-dsfr-grey-925 rounded-md shadow-md w-64">
           {FEEDBACK_CATEGORIES.map((categorie) => (
             <label
-              className="!flex !items-center !gap-2 !text-sm !py-1"
+              className="flex items-center gap-2 text-sm py-1"
               key={categorie.valeur}
             >
               <input
@@ -148,7 +148,7 @@ export const AlbertDashboardFilters = ({
       </details>
 
       <button
-        className="!px-3 !py-2 !text-sm !rounded-md !text-dsfr-grey-200 !underline"
+        className="px-3 py-2 text-sm rounded-md text-dsfr-grey-200 underline"
         onClick={reinitialiser}
         type="button"
       >

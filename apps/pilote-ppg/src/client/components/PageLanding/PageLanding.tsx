@@ -21,7 +21,7 @@ const PageLanding = () => {
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
-                <h1 className="!text-black">
+                <h1 className="text-black">
                   Piloter l'action publique par les résultats
                 </h1>
                 <p className="text-lead">

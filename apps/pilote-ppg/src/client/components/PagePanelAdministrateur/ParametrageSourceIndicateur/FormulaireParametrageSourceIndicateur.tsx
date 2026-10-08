@@ -64,7 +64,7 @@ export const FormulaireParametrageSourceIndicateur = () => {
   return (
     <FormProvider {...form}>
       <div className="flex flex-col">
-        <div className="flex justify-between items-center !mb-2">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="text-h2 md:text-h2-md mb-0">
             Configuration des métadonnées
           </h2>
@@ -95,9 +95,9 @@ export const FormulaireParametrageSourceIndicateur = () => {
                   <div className="border rounded" key={field.id}>
                     <button
                       className={clsxm(`flex w-full p-2 text-left`, {
-                        "!bg-blue-100 !border-blue-500":
+                        "bg-blue-100 border-blue-500":
                           selectedIndex === originalIndex,
-                        "!hover:bg-gray-100": selectedIndex !== originalIndex,
+                        "hover:bg-gray-100": selectedIndex !== originalIndex,
                       })}
                       onClick={() => setSelectedIndex(originalIndex)}
                       type="button"

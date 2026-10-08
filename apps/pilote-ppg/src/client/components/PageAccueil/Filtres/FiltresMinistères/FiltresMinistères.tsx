@@ -120,7 +120,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
                     <li className="p-0 my-2 mr-0 ml-8" key={périmètre.id}>
                       <button
                         className={clsxm(
-                          "!m-0 p-2 fr-text--md rounded w-full text-left focus:-outline-offset-2",
+                          "m-0 p-2 fr-text--md rounded w-full text-left focus:-outline-offset-2",
                           perimetres.includes(périmètre.id) &&
                             "font-bold text-white bg-primary focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
                         )}

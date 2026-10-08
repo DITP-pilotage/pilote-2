@@ -86,7 +86,7 @@ export const ExportDesDonnees: FunctionComponent = () => {
     >
       <div className="w-full flex justify-end items-center">
         <button
-          className="!text-primary flex items-center gap-2 font-medium"
+          className="text-primary flex items-center gap-2 font-medium"
           type="submit"
         >
           <Icone className="w-4 h-4" icone={Download1Icon} />

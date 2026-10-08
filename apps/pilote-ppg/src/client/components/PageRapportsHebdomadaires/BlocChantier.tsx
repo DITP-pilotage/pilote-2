@@ -28,7 +28,7 @@ export const BlocChantier = ({
   territoireCode: string;
 }) => {
   return (
-    <Bloc contenuClassesSupplémentaires="!p-0">
+    <Bloc contenuClassesSupplémentaires="p-0">
       <div className="p-4 flex items-baseline gap-3">
         <h3 className="mb-0 text-lg">
           {chantier.id} - {chantier.nom}
@@ -50,14 +50,14 @@ export const BlocChantier = ({
           >
             <Accordion.Header
               className={clsxm(
-                "group-odd:!bg-transparent group-even:!bg-dsfr-contrast-grey/30 border-t-0",
+                "group-odd:bg-transparent group-even:bg-dsfr-contrast-grey/30 border-t-0",
               )}
             >
-              <Accordion.Trigger className="!bg-transparent hover:!bg-transparent !pl-8">
+              <Accordion.Trigger className="bg-transparent hover:bg-transparent pl-8">
                 {indicateur.id} - {indicateur.nom}
               </Accordion.Trigger>
             </Accordion.Header>
-            <Accordion.Content className="!bg-transparent" innerClassName="p-0">
+            <Accordion.Content className="bg-transparent" innerClassName="p-0">
               <Table.Root
                 caption={`Valeurs saisies pour ${indicateur.nom}`}
                 captionHidden

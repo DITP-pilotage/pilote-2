@@ -117,7 +117,7 @@ export const SelectField = <T extends string>({
         trigger={
           <Select.Trigger
             className={clsxm("w-full text-left", triggerClassName, {
-              "!border-b-red-500": errorMessage,
+              "border-b-red-500": errorMessage,
             })}
             aria-describedby={errorMessage ? `${name}-error` : undefined}
             aria-invalid={errorMessage ? true : undefined}

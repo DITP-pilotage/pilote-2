@@ -58,7 +58,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
               <label className="fr-label fr-text--bold" htmlFor="email">
                 EMAIL
                 {}
-                <span className="!text-error">*</span>
+                <span className="text-error">*</span>
               </label>
               <TextField
                 className={FIELD_GROUP_SPACING}
@@ -81,7 +81,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
                       contenant des actualités et informations liées à
                       l'évolution de l'outil. Je pourrai me désabonner à tout
                       moment via le lien présent dans chaque envoi.
-                      <span className="!text-error">*</span>
+                      <span className="text-error">*</span>
                     </>
                   }
                   name={field.name}

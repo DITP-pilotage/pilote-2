@@ -51,7 +51,7 @@ export const MultiSelectChantier: FunctionComponent<
           label: `${chantier.id} - ${chantier.nom} (archivés)`,
           value: chantier.id,
           disabled: valeursDésactivées?.includes(chantier.id),
-          classesSupplementaires: "italic !text-dsfr-mention-grey",
+          classesSupplementaires: "italic text-dsfr-mention-grey",
         })),
         "label",
       ),

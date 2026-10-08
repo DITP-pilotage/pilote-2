@@ -58,7 +58,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           clsxm("px-4 py-2", row.getIsGrouped() ? ligneGroupe : lignesFeuille)
         }
       >
-        <table.Header cellClassName="px-4 md:px-4 max-[78rem]:!text-xs" />
+        <table.Header cellClassName="px-4 md:px-4 max-[78rem]:text-xs" />
         <table.Body
           cellClassName="px-4 py-2 md:px-4 md:py-2"
           rowClassName={(row) =>

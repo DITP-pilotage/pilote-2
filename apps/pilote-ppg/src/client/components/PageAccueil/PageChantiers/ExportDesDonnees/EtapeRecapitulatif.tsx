@@ -278,7 +278,7 @@ export const EtapeRecapitulatif = ({
         <div className="w-full flex justify-end fr-mt-2w gap-4">
           <Modale.Close asChild>
             <button
-              className="!text-primary font-medium !px-4"
+              className="text-primary font-medium px-4"
               title="Fermer la fenêtre modale"
               type="button"
             >
@@ -286,14 +286,14 @@ export const EtapeRecapitulatif = ({
             </button>
           </Modale.Close>
           <button
-            className="!text-primary font-medium !border !border-primary !py-2 !px-4"
+            className="text-primary font-medium border border-primary py-2 px-4"
             onClick={() => goToStep(3)}
             type="button"
           >
             Étape précédente
           </button>
           <button
-            className="!bg-primary font-medium !text-white rounded flex items-center gap-2 !px-4"
+            className="bg-primary font-medium text-white rounded flex items-center gap-2 px-4"
             type="submit"
           >
             <Icone className="!text-current w-4 h-4" icone={Download1Icon} />

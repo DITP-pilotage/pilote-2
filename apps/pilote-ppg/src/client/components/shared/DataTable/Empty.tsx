@@ -27,7 +27,7 @@ export function DataTableEmpty({
   return (
     <div className="bg-dsfr-info-950 py-4 text-dsfr-flat-info" role="status">
       <div className="flex flex-col items-start gap-2 px-4 md:px-6">
-        <p className="!mb-0 flex items-center gap-1 font-bold">
+        <p className="mb-0 flex items-center gap-1 font-bold">
           <Icone
             className="w-6 h-6 shrink-0 text-current"
             icone={InformationPleineIcon}

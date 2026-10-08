@@ -13,7 +13,7 @@ interface BlocProps {
 
 const Bloc: FunctionComponent<BlocProps> = ({
   children,
-  contenuClassesSupplémentaires = "!p-4",
+  contenuClassesSupplémentaires = "p-4",
   titre,
   contenuInfobulle,
   className = "",

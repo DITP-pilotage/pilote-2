@@ -24,8 +24,8 @@ export const SectionDecisionsStrategiques = () => {
       className="grid grid-rows-[auto_1fr] print:block"
       id="décisions-stratégiques"
     >
-      <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex items-center">
-        <h2 className="text-h4 md:text-h4-md !m-0 inline">
+      <TitreInfobulleConteneur className="mb-4 mt-3 md:mt-0 mx-4 md:mx-0 flex items-center">
+        <h2 className="text-h4 md:text-h4-md m-0 inline">
           Décisions stratégiques
         </h2>
         <Infobulle>

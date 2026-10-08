@@ -66,8 +66,8 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       </p>
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="!mb-2 !text-lg">Identification</h2>
-          <p className="!text-xs !text-dsfr-mention-grey !mb-8">
+          <h2 className="mb-2 text-lg">Identification</h2>
+          <p className="text-xs text-dsfr-mention-grey mb-8">
             Tous les champs sont obligatoires.
           </p>
         </div>
@@ -135,7 +135,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       >
         <hr className="fr-hr" />
         <h2 className="text-base mb-4">Droits de lecture</h2>
-        <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
+        <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
           {`Afin de paramétrer l'espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`}
         </p>
@@ -217,7 +217,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         >
           <hr className="fr-hr" />
           <h2 className="text-base mb-4">Responsabilités</h2>
-          <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
+          <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
             Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour
             lesquels l'utilisateur a des responsabilités spécifiques (directeur
             de projet ou responsable local). L'utilisateur apparaîtra
@@ -274,7 +274,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       <div className={`${afficherChampSaisieCommentaire ? "" : "fr-hidden"}`}>
         <hr className="fr-hr" />
         <h2 className="text-base mb-4">Droits de saisie des commentaires</h2>
-        <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
+        <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
           Parmi les chantiers autorisés en lecture, merci d'indiquer, le cas
           échéant, ceux pour lesquels l'utilisateur est autorisé à saisir des
           commentaires qualitatifs (dont la météo et la synthèse des résultats).

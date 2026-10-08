@@ -22,7 +22,7 @@ export default function useDetailsDroitsUtilisateur({
       if (info.statut === "ARCHIVE") {
         elements.push({
           label: `${info.nom} (archivés)`,
-          className: "italic !text-dsfr-mention-grey",
+          className: "italic text-dsfr-mention-grey",
         });
       } else {
         elements.push({ label: info.nom });

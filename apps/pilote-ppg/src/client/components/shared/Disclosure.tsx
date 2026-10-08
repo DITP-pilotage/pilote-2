@@ -15,13 +15,13 @@ export const Disclosure = ({
   return (
     <Accordion.Root collapsible type="single">
       <Accordion.Item className="border-0" value="item-1">
-        <Accordion.Header className="!mb-0">
+        <Accordion.Header className="mb-0">
           <Accordion.Trigger asChild className="group">
             {trigger}
           </Accordion.Trigger>
         </Accordion.Header>
         <Accordion.Content
-          className={clsxm("overflow-hidden", "accordion-content", "!pt-4")}
+          className={clsxm("overflow-hidden", "accordion-content", "pt-4")}
         >
           {children}
         </Accordion.Content>

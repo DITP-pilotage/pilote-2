@@ -255,7 +255,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         value={reactHookForm.watch("moisValeurAvancement")}
                         triggerClassName="w-50"
                       />
-                      <span className="flex texte-gris fr-text--xs !mt-1">
+                      <span className="flex texte-gris fr-text--xs mt-1">
                         Dernière date de la valeur d'avancement :
                         {formaterDate(
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat,

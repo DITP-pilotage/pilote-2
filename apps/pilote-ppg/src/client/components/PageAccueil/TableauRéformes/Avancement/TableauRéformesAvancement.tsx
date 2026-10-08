@@ -16,7 +16,7 @@ const TableauRéformesAvancement: FunctionComponent<
   return (
     <div className="grid grid-rows-[2rem_0.75rem] items-center text-[10px] w-full">
       {avancement === null ? (
-        <span className="!text-dsfr-mention-grey fr-text--xs">
+        <span className="text-dsfr-mention-grey fr-text--xs">
           Non renseigné
         </span>
       ) : (
@@ -34,7 +34,7 @@ const TableauRéformesAvancement: FunctionComponent<
         />
       )}
       {!!dateDeMàjDonnéesQuantitatives && (
-        <span className="!text-dsfr-mention-grey">
+        <span className="text-dsfr-mention-grey">
           ({formaterDate(dateDeMàjDonnéesQuantitatives, "MM/YYYY")})
         </span>
       )}

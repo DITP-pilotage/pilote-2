@@ -41,7 +41,7 @@ export const CelluleStatutProposition = ({
   ) {
     infoBulle = (
       <Infobulle
-        classNameBouton="!text-current"
+        classNameBouton="text-current"
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
@@ -67,7 +67,7 @@ export const CelluleStatutProposition = ({
   ) {
     infoBulle = (
       <Infobulle
-        classNameBouton="!text-current"
+        classNameBouton="text-current"
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
@@ -86,7 +86,7 @@ export const CelluleStatutProposition = ({
   } else {
     infoBulle = (
       <Infobulle
-        classNameBouton="!text-current"
+        classNameBouton="text-current"
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
@@ -123,11 +123,11 @@ export const CelluleStatutProposition = ({
         <div className="flex items-center selecteur-infobulle-conteneur">
           {estPropositionAccuseeReception(detailIndicateurDuTerritoire) ? (
             <>
-              <span className="fr-text--xs !text-dsfr-mention-grey">
+              <span className="fr-text--xs text-dsfr-mention-grey">
                 la direction de projet a accusé réception
               </span>
               <Infobulle
-                classNameBouton="!text-dsfr-mention-grey"
+                classNameBouton="text-dsfr-mention-grey"
                 classNameInfoBulle="tooltip-accordeon"
               >
                 {estAutoriseAProposerUneValeurAvancement ? (
@@ -149,11 +149,11 @@ export const CelluleStatutProposition = ({
             </>
           ) : (
             <>
-              <span className="fr-text--xs !text-dsfr-mention-grey">
+              <span className="fr-text--xs text-dsfr-mention-grey">
                 En attente de lecture par la direction de projet
               </span>
               <Infobulle
-                classNameBouton="!text-dsfr-mention-grey"
+                classNameBouton="text-dsfr-mention-grey"
                 classNameInfoBulle="tooltip-accordeon"
               >
                 <p className="fr-text--sm">

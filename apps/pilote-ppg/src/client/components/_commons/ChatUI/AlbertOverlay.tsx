@@ -37,7 +37,7 @@ const AlbertEnTete = ({
 }) => (
   <div className="flex h-14 shrink-0 items-center gap-3 border-b border-dsfr-grey-900 pl-5 pr-4">
     <AlbertMonogramme />
-    <Dialog.Title className="!mb-0 !text-base font-bold leading-5 !text-dsfr-grey-50">
+    <Dialog.Title className="mb-0 text-base font-bold leading-5 text-dsfr-grey-50">
       {NOM_ASSISTANT}
     </Dialog.Title>
     <span className="ml-2 inline-flex h-7 items-center gap-1.5 border border-dsfr-blue-france-925 bg-dsfr-blue-france-950 px-2.5 text-[13px] font-medium leading-5 text-primary">
@@ -99,7 +99,7 @@ export const AlbertOverlay = () => {
       open
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-10 !bg-black/50" />
+        <Dialog.Overlay className="fixed inset-0 z-10 bg-black/50" />
         <Dialog.Content
           aria-describedby={undefined}
           className="fixed inset-4 z-10 flex flex-col border border-dsfr-grey-900 bg-white shadow-md focus:outline-none"
