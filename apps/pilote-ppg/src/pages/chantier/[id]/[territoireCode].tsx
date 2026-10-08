@@ -73,8 +73,8 @@ export const getServerSideProps = async (
         ? "departementale"
         : "regionale";
 
-  const territoireRepository = getContainer("legacy").resolve(
-    "territoireRepository",
+  const territoireRepository = getContainer("chantiers").resolve(
+    "territoireSQLRepository",
   );
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
@@ -97,8 +97,8 @@ export const getServerSideProps = async (
       getContainer("chantiers")
         .resolve("recupererChantierUseCase")
         .run(chantierId, session.habilitations, session.profil, jalon),
-      getContainer("legacy")
-        .resolve("indicateurRepository")
+      getContainer("chantiers")
+        .resolve("indicateurSQLRepository")
         .récupérerParChantierId(chantierId),
       getContainer("importSyntheseDesResultats")
         .resolve("récupérerDerniereSyntheseDesResultatsQuery")

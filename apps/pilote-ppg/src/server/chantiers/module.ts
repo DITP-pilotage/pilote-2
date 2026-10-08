@@ -12,7 +12,28 @@ import {
   type ExtractScope,
   type VerifyCradle,
 } from "@/server/module-system";
-import type { LegacyExport } from "@/server/legacy/module";
+import ChantierSQLRepositoryInterface from "@/server/domain/chantier/ChantierRepository.interface";
+import AxeSQLRepositoryInterface from "@/server/domain/axe/AxeRepository.interface";
+import SynthèseDesRésultatsSQLRepositoryInterface from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
+import MinistèreSQLRepositoryInterface from "@/server/domain/ministère/MinistèreRepository.interface";
+import IndicateurSQLRepositoryInterface from "@/server/domain/indicateur/IndicateurRepository.interface";
+import CommentaireSQLRepositoryInterface from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
+import ObjectifSQLRepositoryInterface from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
+import DécisionStratégiqueSQLRepositoryInterface from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
+import TerritoireSQLRepositoryInterface from "@/server/domain/territoire/TerritoireRepository.interface";
+import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
+import AxeSQLRepository from "@/server/infrastructure/accès_données/axe/AxeSQLRepository";
+import MinistèreSQLRepository from "@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository";
+import IndicateurSQLRepository from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
+import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
+import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
+import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
+import { TerritoireSQLRepository } from "@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository";
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
+import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
+import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
+import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
@@ -88,10 +109,22 @@ type ChantierExports = {
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
-  LegacyExport &
   DatajobsExecutionExports;
 
 type ChantierOwnCradle = ChantierExports & {
+  chantierSQLRepository: ChantierSQLRepositoryInterface;
+  axeSQLRepository: AxeSQLRepositoryInterface;
+  synthèseDesRésultatsSQLRepository: SynthèseDesRésultatsSQLRepositoryInterface;
+  ministèreSQLRepository: MinistèreSQLRepositoryInterface;
+  indicateurSQLRepository: IndicateurSQLRepositoryInterface;
+  commentaireSQLRepository: CommentaireSQLRepositoryInterface;
+  objectifSQLRepository: ObjectifSQLRepositoryInterface;
+  décisionStratégiqueSQLRepository: DécisionStratégiqueSQLRepositoryInterface;
+  territoireSQLRepository: TerritoireSQLRepositoryInterface;
+  agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
+  recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
+  récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase;
+  récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase;
   listerDonneesIndicateurParIndicIdUseCase: ListerDonneesIndicateurParIndicIdUseCase;
   chantierRepository: ChantierRepository;
   indicateurRepository: IndicateurRepository;
@@ -145,7 +178,6 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "shared",
     "indicateurTerritoireValeurEvenement",
     "datajobsExecution",
-    "legacy",
   ],
   exports: [
     "recupererChantiersQuery",
@@ -162,8 +194,49 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
   ],
-  register: (container, { asModuleClass }) => {
+  register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({
+      chantierSQLRepository: asModuleClass(ChantierSQLRepository).scoped(),
+      axeSQLRepository: asModuleClass(AxeSQLRepository).scoped(),
+      synthèseDesRésultatsSQLRepository: asModuleClass(
+        SynthèseDesRésultatsSQLRepository,
+      ).scoped(),
+      ministèreSQLRepository: asModuleClass(MinistèreSQLRepository).scoped(),
+      indicateurSQLRepository: asModuleClass(IndicateurSQLRepository).scoped(),
+      commentaireSQLRepository: asModuleClass(
+        CommentaireSQLRepository,
+      ).scoped(),
+      objectifSQLRepository: asModuleClass(ObjectifSQLRepository).scoped(),
+      décisionStratégiqueSQLRepository: asModuleClass(
+        DécisionStratégiqueSQLRepository,
+      ).scoped(),
+      territoireSQLRepository: asModuleClass(TerritoireSQLRepository).scoped(),
+      agregerAvancementsChantiersUseCase: asModuleFunction(
+        ({ chantierSQLRepository }) =>
+          new AgregerAvancementsChantiersUseCase({
+            chantierRepository: chantierSQLRepository,
+          }),
+      ).scoped(),
+      recupererRepartitionsMeteoChantiersUseCase: asModuleFunction(
+        ({ chantierSQLRepository }) =>
+          new RecupererRepartitionsMeteoChantiersUseCase({
+            chantierRepository: chantierSQLRepository,
+          }),
+      ).scoped(),
+      récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
+        asModuleFunction(
+          ({ commentaireSQLRepository }) =>
+            new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
+              { commentaireRepository: commentaireSQLRepository },
+            ),
+        ).scoped(),
+      récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase:
+        asModuleFunction(
+          ({ objectifSQLRepository }) =>
+            new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
+              { objectifRepository: objectifSQLRepository },
+            ),
+        ).scoped(),
       listerDonneesIndicateurParIndicIdUseCase: asModuleClass(
         ListerDonneesIndicateurParIndicIdUseCase,
       ),

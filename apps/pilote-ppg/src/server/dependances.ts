@@ -27,7 +27,6 @@ import { rapportsHebdomadairesModule } from "./rapports-hebdomadaires/module";
 import { albertModule } from "./albert/module";
 import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
 import { datajobsExecutionModule } from "./datajobs-execution/module";
-import { legacyModule } from "./legacy/module";
 import { gestionContenuModule } from "./gestion-contenu/module";
 import { ficheTerritorialeModule } from "./fiche-territoriale/module";
 import { actualitesModule } from "./actualites/module";
@@ -63,7 +62,6 @@ const allModules = [
   albertModule,
   parametrageCentreAideModule,
   datajobsExecutionModule,
-  legacyModule,
   gestionContenuModule,
   ficheTerritorialeModule,
   applicationLogModule,
@@ -118,7 +116,6 @@ function registerContainer(): ContainerDependencies {
     importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
     importPublicationCSV: getContainer("importPublicationCSV"),
     datajobsExecution: getContainer("datajobsExecution"),
-    legacy: getContainer("legacy"),
     gestionContenu: getContainer("gestionContenu"),
     ficheTerritoriale: getContainer("ficheTerritoriale"),
     applicationLog: getContainer("applicationLog"),

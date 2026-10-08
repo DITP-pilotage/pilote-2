@@ -69,8 +69,8 @@ export async function getServerSideProps(
     .resolve("recupererChantierUseCase")
     .run(params.id, session.habilitations, session.profil, jalon);
 
-  const indicateurRepository = getContainer("legacy").resolve(
-    "indicateurRepository",
+  const indicateurRepository = getContainer("chantiers").resolve(
+    "indicateurSQLRepository",
   );
   const indicateurs = await indicateurRepository.récupérerParChantierId(
     params.id,

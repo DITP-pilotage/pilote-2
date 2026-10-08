@@ -116,11 +116,11 @@ export const getServerSideProps = async (
     session.habilitations.lecture.chantiers.length === 0
       ? Promise.resolve<[Ministère[], Axe[]]>([[], []])
       : Promise.all([
-          getContainer("legacy")
-            .resolve("ministèreRepository")
+          getContainer("chantiers")
+            .resolve("ministèreSQLRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
-          getContainer("legacy")
-            .resolve("axeRepository")
+          getContainer("chantiers")
+            .resolve("axeSQLRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
         ]),
     getContainer("gestionUtilisateur")
@@ -206,7 +206,7 @@ export const getServerSideProps = async (
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run(chantierIdsAvecAlertes, mailleQuery, session.habilitations, jalon)
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
-      getContainer("legacy")
+      getContainer("chantiers")
         .resolve("agregerAvancementsChantiersUseCase")
         .run(chantierIdsAvecAlertes, jalon),
     ]);

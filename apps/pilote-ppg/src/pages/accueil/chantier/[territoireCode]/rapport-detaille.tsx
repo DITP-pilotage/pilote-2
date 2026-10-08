@@ -140,15 +140,15 @@ export const getServerSideProps: GetServerSideProps<
       session.habilitations.lecture.chantiers.length === 0
         ? Promise.resolve<[Ministère[], Axe[]]>([[], []])
         : Promise.all([
-            getContainer("legacy")
-              .resolve("ministèreRepository")
+            getContainer("chantiers")
+              .resolve("ministèreSQLRepository")
               .getListePourChantiers(session.habilitations.lecture.chantiers),
-            getContainer("legacy")
-              .resolve("axeRepository")
+            getContainer("chantiers")
+              .resolve("axeSQLRepository")
               .getListePourChantiers(session.habilitations.lecture.chantiers),
           ]),
-      getContainer("legacy")
-        .resolve("territoireRepository")
+      getContainer("chantiers")
+        .resolve("territoireSQLRepository")
         .récupérer(territoireCode),
       loadBootstrap(session),
     ]);
@@ -213,7 +213,7 @@ export const getServerSideProps: GetServerSideProps<
         })
       : chantiers;
 
-  const repartitionMeteosChantiers = await getContainer("legacy")
+  const repartitionMeteosChantiers = await getContainer("chantiers")
     .resolve("recupererRepartitionsMeteoChantiersUseCase")
     .run(
       territoireCode,
@@ -325,8 +325,8 @@ export const getServerSideProps: GetServerSideProps<
 
   const chantiersIds = chantiers.map((chantier) => chantier.id);
 
-  const indicateursRepository = getContainer("legacy").resolve(
-    "indicateurRepository",
+  const indicateursRepository = getContainer("chantiers").resolve(
+    "indicateurSQLRepository",
   );
   const indicateursGroupésParChantier =
     await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
@@ -346,8 +346,8 @@ export const getServerSideProps: GetServerSideProps<
       chantiersIds,
     );
 
-  const synthèseDesRésultatsRepository = getContainer("legacy").resolve(
-    "synthèseDesRésultatsRepository",
+  const synthèseDesRésultatsRepository = getContainer("chantiers").resolve(
+    "synthèseDesRésultatsSQLRepository",
   );
   const synthèsesDesRésultatsGroupéesParChantier =
     await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(
@@ -361,8 +361,8 @@ export const getServerSideProps: GetServerSideProps<
     DécisionStratégique | null
   > = Object.fromEntries(chantiersIds.map((id) => [id, null]));
   if (habilitation.peutAccéderAuTerritoire("NAT-FR")) {
-    const décisionStratégiqueRepository = getContainer("legacy").resolve(
-      "décisionStratégiqueRepository",
+    const décisionStratégiqueRepository = getContainer("chantiers").resolve(
+      "décisionStratégiqueSQLRepository",
     );
     décisionStratégiquesGroupéesParChantier =
       await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(
@@ -370,13 +370,13 @@ export const getServerSideProps: GetServerSideProps<
       );
   }
 
-  const commentairesGroupésParChantier = await getContainer("legacy")
+  const commentairesGroupésParChantier = await getContainer("chantiers")
     .resolve(
       "récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase",
     )
     .run(chantiersIds, territoireCode, session.habilitations);
 
-  const objectifsGroupésParChantier = await getContainer("legacy")
+  const objectifsGroupésParChantier = await getContainer("chantiers")
     .resolve(
       "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
     )
@@ -397,7 +397,9 @@ export const getServerSideProps: GetServerSideProps<
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const { agregat: donneesTerritoiresAgregees } = await getContainer("legacy")
+  const { agregat: donneesTerritoiresAgregees } = await getContainer(
+    "chantiers",
+  )
     .resolve("agregerAvancementsChantiersUseCase")
     .run(
       chantiersAvecAlertes.map((chantier) => chantier.id),
