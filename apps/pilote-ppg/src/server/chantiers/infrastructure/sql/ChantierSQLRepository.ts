@@ -2,7 +2,7 @@ import { Prisma, type_statut } from "@prisma/client";
 import { ChantierRepository } from "@/server/chantiers/infrastructure/sql/ChantierRepository.interface";
 import { Maille } from "@/shared/maille/Maille.interface";
 import { NOMS_MAILLES } from "@/shared/maille/mailleSQLParser";
-import { ChantierPourAgregation } from "@/server/chantiers/domain/agrégateurListeChantiers/agregateur";
+import { ChantierPourAgregation } from "@/server/chantiers/domain/agregateurListeChantiers/agregateur";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";

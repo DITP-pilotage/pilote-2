@@ -4,7 +4,7 @@ import {
   SyntheseDesResultatsV2,
 } from "@/shared/chantier/syntheseDesResultats/SyntheseDesResultats.interface";
 
-export interface SynthèseDesRésultatsRepository {
+export interface SyntheseDesResultatsRepository {
   save(synthèse: SyntheseDesResultatsV2): Promise<void>;
   getById(id: string): Promise<SyntheseDesResultatsV2 | null>;
   récupérerLesPlusRécentesGroupéesParChantier(

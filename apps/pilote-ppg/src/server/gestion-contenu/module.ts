@@ -4,7 +4,7 @@ import { ModifierFeatureFlipUseCase } from "@/server/gestion-contenu/usecases/Mo
 import { ModifierMessageInformationUseCase } from "@/server/gestion-contenu/usecases/ModifierMessageInformationUseCase";
 import { RecupererFeatureFlipsUseCase } from "@/server/gestion-contenu/usecases/RecupererFeatureFlipsUseCase";
 import { RecupererToutesLesVariablesContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererToutesLesVariablesContenuUseCase";
-import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase";
+import { RecupererMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RecupererMessageInformationUseCase";
 import {
   defineModule,
   type ExtractScope,
@@ -17,7 +17,7 @@ type GestionContenuExports = {
 
 type GestionContenuCradle = GestionContenuExports & {
   gestionContenuRepository: GestionContenuRepository;
-  récupérerMessageInformationUseCase: RécupérerMessageInformationUseCase;
+  récupérerMessageInformationUseCase: RecupererMessageInformationUseCase;
   modifierMessageInformationUseCase: ModifierMessageInformationUseCase;
   modifierFeatureFlipUseCase: ModifierFeatureFlipUseCase;
   recupererFeatureFlipsUseCase: RecupererFeatureFlipsUseCase;
@@ -36,7 +36,7 @@ export const gestionContenuModule = defineModule<
         PrismaGestionContenuRepository,
       ).scoped(),
       récupérerMessageInformationUseCase: asModuleClass(
-        RécupérerMessageInformationUseCase,
+        RecupererMessageInformationUseCase,
       ).scoped(),
       modifierMessageInformationUseCase: asModuleClass(
         ModifierMessageInformationUseCase,
