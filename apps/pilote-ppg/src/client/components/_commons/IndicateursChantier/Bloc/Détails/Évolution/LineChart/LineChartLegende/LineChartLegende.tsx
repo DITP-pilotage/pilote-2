@@ -4,7 +4,7 @@ import { getLabelTerritoire } from "@/client/constants/territoires";
 import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { Checkbox } from "@/components/shared/Checkbox";
-import { clsxm } from "@/utils/clsxm";
+import { TagToggleGroup } from "@/components/shared/Tag";
 
 const PALETTE_CHECKBOX_CLASSES: Record<string, string> = {
   "#68A532":
@@ -54,7 +54,7 @@ interface LineChartLegendeProps {
   afficherInterrupteurCibles?: boolean;
 }
 
-const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
+export const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
   tousLesIndicateursDetails,
   territoiresAAfficher,
   setTerritoiresAAfficher,
@@ -80,20 +80,20 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
             />
           ) : null}
           <div className="flex items-center flex-wrap gap-2">
-            <span className="text-sm">zoomer sur : </span>
-            {periodesSelectionnablesZoom.map((periode) => (
-              <button
-                className={clsxm(
-                  "fr-tag fr-mr-1w min-h-0",
-                  periode === periodeSelectionnee && "text-white bg-primary",
-                )}
-                key={periode}
-                onClick={() => changerLaPeriodeSelectionnee(periode)}
-                type="button"
-              >
-                <p className="titre-ellipsis text-xs">{periode}</p>
-              </button>
-            ))}
+            <span className="text-sm" id={`libelle-zoom-${id}`}>
+              zoomer sur :
+            </span>
+            <TagToggleGroup.Root
+              aria-labelledby={`libelle-zoom-${id}`}
+              onValueChange={changerLaPeriodeSelectionnee}
+              value={periodeSelectionnee}
+            >
+              {periodesSelectionnablesZoom.map((periode) => (
+                <TagToggleGroup.Item key={periode} size="sm" value={periode}>
+                  {periode}
+                </TagToggleGroup.Item>
+              ))}
+            </TagToggleGroup.Root>
           </div>
         </div>
       ) : null}
@@ -143,5 +143,3 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
     </div>
   );
 };
-
-export default LineChartLegende;

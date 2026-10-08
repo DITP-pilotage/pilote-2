@@ -16,7 +16,7 @@ import {
   statutPublie,
 } from "@/client/constants/statut";
 import { Infobulle } from "@/components/shared/Infobulle";
-import { clsxm } from "@/utils/clsxm";
+import { TagToggleGroup } from "@/components/shared/Tag";
 
 type AvailableFiltres = "statut";
 
@@ -121,30 +121,27 @@ export const FiltresSelectionUnique: FunctionComponent<
         {libelle}
       </button>
       <div className="fr-collapse" id={`fr-sidemenu-item-${categorieDeFiltre}`}>
-        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w list-none">
+        <TagToggleGroup.Root
+          aria-label={libelle}
+          className="flex-col items-start gap-0 fr-mb-1w fr-pl-1w"
+          onValueChange={auChangement}
+          value={filtresNew}
+        >
           {valuesFiltres[categorieDeFiltre].valeurDisponible.map((filtre) => (
-            <li className="fr-p-0 fr-my-1w fr-mr-0 flex gap-2" key={filtre.id}>
-              <button
-                className={clsxm(
-                  "fr-tag fr-tag--icon-left fr-mr-1w w-auto min-w-0 text-left",
-                  filtresNew === filtre.id &&
-                    "text-white bg-primary hover:text-white hover:bg-primary hover:cursor-not-allowed",
-                )}
+            <div className="fr-my-1w flex items-center gap-2" key={filtre.id}>
+              <TagToggleGroup.Item
+                className="min-w-0 text-left"
                 id={`${categorieDeFiltre}-${filtre.id}`}
-                key={`${categorieDeFiltre}-${filtre.id}`}
-                onClick={() =>
-                  filtresNew !== filtre.id && auChangement(filtre.id)
-                }
-                type="button"
+                value={filtre.id}
               >
                 {filtre.nom}
-              </button>
+              </TagToggleGroup.Item>
               {filtre.texteInfobulle ? (
                 <Infobulle>{filtre.texteInfobulle}</Infobulle>
               ) : null}
-            </li>
+            </div>
           ))}
-        </ul>
+        </TagToggleGroup.Root>
       </div>
     </div>
   );

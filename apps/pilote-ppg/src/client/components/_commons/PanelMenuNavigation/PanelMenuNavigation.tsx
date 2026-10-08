@@ -1,6 +1,6 @@
 import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import SélecteurMaille from "@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille";
+import { SélecteurMaille } from "@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import { Infobulle } from "@/components/shared/Infobulle";
 import SelecteurJalon from "@/client/components/_commons/SelecteurJalon/SelecteurJalon";

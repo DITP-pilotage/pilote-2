@@ -22,10 +22,10 @@ const EcartTauxAvancementPPG: FunctionComponent<
 
   return (
     <Badge
-      taille="sm"
-      variante={
+      size="sm"
+      variant={
         estArchive
-          ? "defaut"
+          ? "default"
           : VARIANTE_BADGE_ECART[couleurEcartArrondi.couleur]
       }
     >

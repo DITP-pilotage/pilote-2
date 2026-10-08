@@ -37,7 +37,7 @@ export const BoutonProConnect = ({ onClick }: BoutonProConnectProps) => {
       </button>
       {ffProConnect ? null : (
         <p className="fr-mt-1w fr-mb-1w">
-          <Badge id="proconnect-a-venir" taille="sm" variante="info">
+          <Badge id="proconnect-a-venir" size="sm" variant="info">
             Bientôt disponible
           </Badge>
         </p>

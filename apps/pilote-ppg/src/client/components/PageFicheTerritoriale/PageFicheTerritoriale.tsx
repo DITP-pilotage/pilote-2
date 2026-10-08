@@ -167,13 +167,13 @@ export const PageFicheTerritoriale: FunctionComponent<
                 </Titre>
                 <div className="flex align-center">
                   <div />
-                  <Badge className="ml-4" taille="sm" variante="succes">
+                  <Badge className="ml-4" size="sm" variant="success">
                     Avancement positif
                   </Badge>
-                  <Badge className="ml-4" taille="sm" variante="attention">
+                  <Badge className="ml-4" size="sm" variant="warning">
                     Léger retard
                   </Badge>
-                  <Badge className="ml-4" taille="sm" variante="erreur">
+                  <Badge className="ml-4" size="sm" variant="error">
                     Retard important
                   </Badge>
                 </div>

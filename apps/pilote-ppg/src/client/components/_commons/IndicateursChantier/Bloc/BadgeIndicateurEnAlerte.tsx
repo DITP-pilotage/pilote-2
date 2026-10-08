@@ -14,8 +14,8 @@ export const BadgeIndicateurEnAlerte = () => {
       <Badge
         aria-hidden="true"
         className="px-1"
-        icone={WarningIcon}
-        variante="attention"
+        icon={WarningIcon}
+        variant="warning"
       />
     </span>
   );

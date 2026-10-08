@@ -11,7 +11,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { MultiSelectPérimètreMinistériel } from "@/client/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import Interrupteur from "@/client/components/_commons/Interrupteur/Interrupteur";
-import { Tag } from "@/client/components/_commons/Tag/Tag";
+import { Tag } from "@/components/shared/Tag";
 import Titre from "@/client/components/_commons/Titre/Titre";
 
 interface AdminIndicateursBarreLatéraleProps {
@@ -114,7 +114,6 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
             return label === null ? null : (
               <Tag
                 key={perimetreId}
-                libelle={label}
                 onClick={() => {
                   const filtresApresSuppression =
                     filtresActifs.perimetresMinisteriels.toSpliced(
@@ -125,7 +124,9 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
                     perimetresMinisteriels: filtresApresSuppression,
                   });
                 }}
-              />
+              >
+                {label}
+              </Tag>
             );
           })}
         </div>
@@ -145,7 +146,6 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
             return label === null ? null : (
               <Tag
                 key={chantierId}
-                libelle={label}
                 onClick={() => {
                   const filtresApresSuppression =
                     filtresActifs.chantiers.toSpliced(
@@ -154,7 +154,9 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
                     );
                   sauvegarderFiltres({ chantiers: filtresApresSuppression });
                 }}
-              />
+              >
+                {label}
+              </Tag>
             );
           })}
         </div>
@@ -170,20 +172,22 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
           {filtresActifs.estTerritorialise ? (
             <Tag
               key="estTerritorialise"
-              libelle="Indicateurs territorialisés"
               onClick={() => {
                 sauvegarderFiltres({ estTerritorialise: false });
               }}
-            />
+            >
+              Indicateurs territorialisés
+            </Tag>
           ) : null}
           {filtresActifs.estBarometre ? (
             <Tag
               key="estBarometre"
-              libelle="Indicateurs du baromètre"
               onClick={() => {
                 sauvegarderFiltres({ estBarometre: false });
               }}
-            />
+            >
+              Indicateurs du baromètre
+            </Tag>
           ) : null}
         </div>
       </div>

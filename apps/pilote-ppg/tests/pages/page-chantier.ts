@@ -230,19 +230,19 @@ export class PageChantier extends BasePage {
 
   async expectMailleSelectorVisible(): Promise<void> {
     await expect(
-      this.page.getByRole("button", { name: "Régions" }),
+      this.page.getByRole("radio", { name: "Régions" }),
     ).toBeVisible();
     await expect(
-      this.page.getByRole("button", { name: "Départements" }),
+      this.page.getByRole("radio", { name: "Départements" }),
     ).toBeVisible();
   }
 
   async expectMailleSelectorNotVisible(): Promise<void> {
     await expect(
-      this.page.getByRole("button", { name: "Régions" }),
+      this.page.getByRole("radio", { name: "Régions" }),
     ).not.toBeVisible();
     await expect(
-      this.page.getByRole("button", { name: "Départements" }),
+      this.page.getByRole("radio", { name: "Départements" }),
     ).not.toBeVisible();
   }
 
