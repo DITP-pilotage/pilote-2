@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { RowData } from "@tanstack/react-table";
-import Loader from "@/components/_commons/Loader/Loader";
+import { PageLoader } from "@/components/shared/PageLoader";
 import type { TableAdmin } from "./tableauAdminDataTable";
 
 export type LibellesTableauAdmin = {
@@ -34,7 +34,7 @@ export function TableauAdmin<TRow extends RowData>({
     <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925 overflow-hidden">
       {isLoading ? (
         <div className="relative py-20">
-          <Loader />
+          <PageLoader />
         </div>
       ) : (
         <>

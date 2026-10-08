@@ -1,6 +1,6 @@
 import { clsxm } from "@/utils/clsxm";
 
-export const PointsAttente = ({ className }: { className?: string }) => (
+export const LoadingDots = ({ className }: { className?: string }) => (
   <span
     aria-hidden="true"
     className={clsxm("inline-flex items-center gap-1", className)}

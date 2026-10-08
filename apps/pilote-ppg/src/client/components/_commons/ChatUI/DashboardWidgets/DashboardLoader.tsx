@@ -1,4 +1,4 @@
-import { Squelette } from "@/components/_commons/ChatUI/Squelette";
+import { Skeleton } from "@/components/shared/Skeleton";
 import { LoaderIcon } from "@/components/_commons/Icones/LoaderIcon";
 
 export const DashboardLoader = () => (
@@ -12,11 +12,11 @@ export const DashboardLoader = () => (
       />
     </div>
     <div className="grid grid-cols-4 gap-3 p-3">
-      <Squelette className="h-[88px]" />
-      <Squelette className="h-[88px]" />
-      <Squelette className="h-[88px]" />
-      <Squelette className="h-[88px]" />
-      <Squelette className="col-span-4 h-[120px]" />
+      <Skeleton className="h-[88px]" />
+      <Skeleton className="h-[88px]" />
+      <Skeleton className="h-[88px]" />
+      <Skeleton className="h-[88px]" />
+      <Skeleton className="col-span-4 h-[120px]" />
     </div>
   </div>
 );

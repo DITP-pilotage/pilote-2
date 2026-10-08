@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 import PageLanding from "@/components/PageLanding/PageLanding";
-import Loader from "@/client/components/_commons/Loader/Loader";
+import { PageLoader } from "@/components/shared/PageLoader";
 import { ClientOnly } from "@/components/shared/ClientOnly";
 import { usePrefetchUtilisateurConnecte } from "@/client/hooks/usePrefetchUtilisateurConnecte";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
@@ -32,7 +32,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
     <div className="flex min-h-screen flex-col break-words [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_.fr-btn]:hidden print:[&_.fr-link]:hidden print:[&_*]:scrollbar-none print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:!bg-white">
       <EnTete />
       {status === "loading" ? (
-        <Loader />
+        <PageLoader />
       ) : (
         <div className="relative flex grow flex-col">
           {afficherLeLoader ? (

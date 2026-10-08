@@ -1,10 +1,12 @@
+import { Skeleton } from "@/components/shared/Skeleton";
+
 export const CarteNewsletterSkeleton = () => {
   return (
     <div className="flex min-h-48 flex-col rounded border border-gray-200 bg-white p-6">
-      <div className="h-6 w-full animate-pulse rounded bg-gray-200" />
-      <div className="mt-2 h-6 w-1/3 animate-pulse rounded bg-gray-200" />
-      <div className="mt-6 h-4 w-1/2 animate-pulse rounded bg-gray-200" />
-      <div className="mt-auto h-5 w-5 animate-pulse self-end rounded bg-gray-200" />
+      <Skeleton className="h-6 w-full rounded" />
+      <Skeleton className="mt-2 h-6 w-1/3 rounded" />
+      <Skeleton className="mt-6 h-4 w-1/2 rounded" />
+      <Skeleton className="mt-auto h-5 w-5 self-end rounded" />
     </div>
   );
 };

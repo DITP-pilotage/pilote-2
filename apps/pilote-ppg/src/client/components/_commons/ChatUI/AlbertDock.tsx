@@ -3,7 +3,7 @@ import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
-import { PointsAttente } from "@/components/_commons/ChatUI/PointsAttente";
+import { LoadingDots } from "@/components/shared/LoadingDots";
 import { libelleActiviteAssistant } from "@/components/_commons/ChatUI/libellesAssistant";
 import { LIBELLES_ETAT_ASSISTANT } from "@/components/_commons/ChatUI/deriverEtatAssistant";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
@@ -32,7 +32,7 @@ export const AlbertDock = ({
         <p className="flex items-center gap-1.5 text-[11px] leading-[14px] text-dsfr-mention-grey fr-mb-0">
           {enCours ? (
             <>
-              <PointsAttente className="[&>span]:h-1 [&>span]:w-1" />
+              <LoadingDots className="[&>span]:h-1 [&>span]:w-1" />
               <span className="min-w-0 truncate text-primary">
                 {libelleActiviteAssistant(LIBELLES_ETAT_ASSISTANT.redige)}…
               </span>

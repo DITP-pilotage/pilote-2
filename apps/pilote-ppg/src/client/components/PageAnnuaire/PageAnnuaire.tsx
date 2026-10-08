@@ -1,5 +1,5 @@
 import { parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
-import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
+import { Tabs } from "@/components/shared/Tabs";
 import { TableauCoordinateurs } from "./TableauCoordinateurs";
 import { TableauResponsables } from "./TableauResponsables";
 
@@ -62,7 +62,7 @@ const PageAnnuaire = () => {
             responsables locaux de chaque chantier.
           </p>
         </div>
-        <NavigationTertiaire
+        <Tabs
           items={[...ONGLETS]}
           onValueChange={(valeur) => {
             if (estOnglet(valeur)) {
@@ -84,7 +84,7 @@ const PageAnnuaire = () => {
               <TableauResponsables />
             )}
           </div>
-        </NavigationTertiaire>
+        </Tabs>
       </div>
     </div>
   );

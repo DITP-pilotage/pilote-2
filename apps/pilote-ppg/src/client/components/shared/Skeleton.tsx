@@ -1,6 +1,6 @@
 import { clsxm } from "@/utils/clsxm";
 
-export const Squelette = ({ className }: { className?: string }) => (
+export const Skeleton = ({ className }: { className?: string }) => (
   <div
     aria-hidden="true"
     className={clsxm(
@@ -12,10 +12,10 @@ export const Squelette = ({ className }: { className?: string }) => (
   </div>
 );
 
-export const SqueletteTexte = () => (
+export const SkeletonText = () => (
   <div className="flex flex-col gap-2.5">
-    <Squelette className="h-3.5 w-[92%]" />
-    <Squelette className="h-3.5 w-[78%]" />
-    <Squelette className="h-3.5 w-[60%]" />
+    <Skeleton className="h-3.5 w-[92%]" />
+    <Skeleton className="h-3.5 w-[78%]" />
+    <Skeleton className="h-3.5 w-[60%]" />
   </div>
 );

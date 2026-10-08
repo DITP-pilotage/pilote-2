@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import { Button } from "@/components/shared/Button";
 import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
 import { SearchInput } from "@/components/shared/SearchInput";
-import Loader from "@/components/_commons/Loader/Loader";
+import { PageLoader } from "@/components/shared/PageLoader";
 import Titre from "@/components/_commons/Titre/Titre";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -62,7 +62,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
         </div>
       </div>
       {estEnChargement ? (
-        <Loader />
+        <PageLoader />
       ) : (
         <>
           <div className="fr-container--fluid fr-mb-2w fr-mt-4w">
