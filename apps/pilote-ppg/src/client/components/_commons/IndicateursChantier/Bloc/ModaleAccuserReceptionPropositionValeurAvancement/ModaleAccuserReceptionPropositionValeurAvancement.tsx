@@ -219,7 +219,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                           <span className="fr-text--bold">
                             Informations complémentaires :
                           </span>{" "}
-                          <span className="text-italic">
+                          <span className="italic">
                             {reactHookForm.getValues("motif")}
                           </span>
                         </p>

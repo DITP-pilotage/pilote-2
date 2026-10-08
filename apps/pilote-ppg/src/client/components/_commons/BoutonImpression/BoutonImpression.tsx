@@ -9,7 +9,7 @@ export const BoutonImpression = ({
   return (
     <button
       className={clsxm(
-        "!text-sm flex align-center gap-1 !pl-0 pb-0.5 border-b !border-b-current !text-primary no-wrap print:hidden",
+        "!text-sm flex items-center gap-1 !pl-0 pb-0.5 border-b !border-b-current !text-primary whitespace-nowrap print:hidden",
         className,
       )}
       onClick={() => window.print()}

@@ -87,7 +87,7 @@ export const EnTete = () => {
               </div>
               <div className="fr-header__tools">
                 <div className="hidden min-[62em]:flex min-[62em]:flex-row min-[62em]:justify-end min-[62em]:gap-2">
-                  <div className="flex align-center gap-4">
+                  <div className="flex items-center gap-4">
                     <BoutonContacterEquipePilote />
                     <ClientOnly>
                       <InformationsEspaceConnecte />

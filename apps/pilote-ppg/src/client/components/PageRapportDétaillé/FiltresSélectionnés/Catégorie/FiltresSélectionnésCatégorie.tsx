@@ -25,7 +25,7 @@ const FiltresSélectionnésCatégorie: FunctionComponent<
       <ul className="!p-0 !m-0">
         {filtres.map((filtre) => (
           <li
-            className="flex align-start !text-sm !text-dsfr-mention-grey !mb-1 list-none gap-2"
+            className="flex items-start !text-sm !text-dsfr-mention-grey !mb-1 list-none gap-2"
             key={filtre}
           >
             <div>

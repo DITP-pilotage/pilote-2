@@ -41,7 +41,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
               className="fr-grid-row fr-px-2w fr-py-1w fr-background-alt--grey print:!py-0"
               key={`chantier-fiche-territoriale-${index}`}
             >
-              <div className="fr-col-8 fr-text--bold flex align-center fr-p-1v">
+              <div className="fr-col-8 fr-text--bold flex items-center fr-p-1v">
                 <div className="pr-2">
                   <IconeMinistere
                     className="text-dsfr-blue-france-sun-113"
@@ -52,7 +52,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   {chantierFicheTerritoriale.nom}
                 </span>
               </div>
-              <div className="fr-col-2 flex !text-[0.8rem] leading-4 print:!text-[0.6rem] flex-column justify-center">
+              <div className="fr-col-2 flex !text-[0.8rem] leading-4 print:!text-[0.6rem] flex-col justify-center">
                 {chantierFicheTerritoriale.meteo !== "NON_RENSEIGNEE" ? (
                   <MeteoPicto meteo={chantierFicheTerritoriale.meteo} />
                 ) : (
@@ -64,7 +64,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   {chantierFicheTerritoriale.dateQualitative}
                 </span>
               </div>
-              <div className="fr-col-2 flex !text-[0.8rem] leading-4 print:!text-[0.6rem] flex-column justify-center">
+              <div className="fr-col-2 flex !text-[0.8rem] leading-4 print:!text-[0.6rem] flex-col justify-center">
                 {chantierFicheTerritoriale.tauxAvancement !== null ? (
                   <p className="fr-text--bold fr-text--xl fr-text-title--blue-france fr-my-0">
                     {`${chantierFicheTerritoriale.tauxAvancement.toFixed(0)}%`}
@@ -80,8 +80,8 @@ export const TableauFicheTerritoriale: FunctionComponent<{
               className="fr-grid-row fr-pt-1w print:!py-0 print:!m-0 fr-px-2w"
               key={`indicateur-fiche-territoriale-${index}`}
             >
-              <div className="fr-col-4 flex align-center fr-p-0 fr-m-0" />
-              <div className="fr-col-2 flex flex-column fr-p-0">
+              <div className="fr-col-4 flex items-center fr-p-0 fr-m-0" />
+              <div className="fr-col-2 flex flex-col fr-p-0">
                 <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-text-mention--grey">
                   Dernière valeur
                 </span>
@@ -89,17 +89,17 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   {chantierFicheTerritoriale.dateQuantitative}
                 </span>
               </div>
-              <div className="fr-col-2 fr-text--bold flex flex-column  fr-p-0 fr-m-0">
+              <div className="fr-col-2 fr-text--bold flex flex-col  fr-p-0 fr-m-0">
                 <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   {`Cible ${jalon}`}
                 </span>
               </div>
-              <div className="fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0">
+              <div className="fr-col-2 fr-text--bold flex flex-col fr-p-0 fr-m-0">
                 <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   {`Avancement ${jalon}`}
                 </span>
               </div>
-              <div className="fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0">
+              <div className="fr-col-2 fr-text--bold flex flex-col fr-p-0 fr-m-0">
                 <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   Avancement national
                 </span>
@@ -112,12 +112,12 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                     className="fr-grid-row not-first:border-t not-first:border-t-dsfr-grey-1000 fr-px-2w fr-py-1w"
                     key={`indicateur-fiche-territoriale-${index}-${indexFicheTerritoriale}`}
                   >
-                    <div className="fr-col-4 flex align-center fr-pr-1v">
+                    <div className="fr-col-4 flex items-center fr-pr-1v">
                       <span className="fr-text--xs fr-m-0">
                         {indicateur.nom}
                       </span>
                     </div>
-                    <div className="fr-col-2 flex flex-column justify-center">
+                    <div className="fr-col-2 flex flex-col justify-center">
                       {indicateur.valeurAvancement !== null ? (
                         <span className="fr-text--xs fr-m-0">
                           {`${indicateur.valeurAvancement.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === "pourcentage" ? "%" : ""}`}
@@ -128,7 +128,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                         </span>
                       )}
                     </div>
-                    <div className="fr-col-2 flex flex-column justify-center">
+                    <div className="fr-col-2 flex flex-col justify-center">
                       {indicateur.valeurCible !== null ? (
                         <span className="fr-text--xs fr-m-0">
                           {`${indicateur.valeurCible.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === "pourcentage" ? "%" : ""}`}
@@ -139,7 +139,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                         </span>
                       )}
                     </div>
-                    <div className="fr-col-2 flex flex-column justify-center">
+                    <div className="fr-col-2 flex flex-col justify-center">
                       {indicateur.tauxAvancement !== null ? (
                         <Badge
                           size="sm"
@@ -156,7 +156,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                         </span>
                       )}
                     </div>
-                    <div className="fr-col-2 flex flex-column justify-center">
+                    <div className="fr-col-2 flex flex-col justify-center">
                       {indicateur.tauxAvancementNational !== null ? (
                         <span className="fr-text--xs fr-m-0">
                           {`${indicateur.tauxAvancementNational.toFixed(0)}%`}

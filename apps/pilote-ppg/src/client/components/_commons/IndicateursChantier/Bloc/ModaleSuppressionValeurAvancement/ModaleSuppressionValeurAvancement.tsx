@@ -89,17 +89,17 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
                   <div className="w-full flex fr-mt-2w">
-                    <div className="w-half-full fr-mr-1w border flex flex-column">
+                    <div className="w-1/2 fr-mr-1w border flex flex-col">
                       <span className="fr-background-action-low-blue-france flex justify-center fr-p-1w border">
                         Valeur d'avancement importée par la direction de projet
                       </span>
-                      <div className="w-full flex flex-column justify-between fr-pt-1w">
+                      <div className="w-full flex flex-col justify-between fr-pt-1w">
                         <span className="flex justify-center fr-mb-5v">
                           {detailIndicateur.valeurAvancementMandat?.toLocaleString(
                             "fr-FR",
                           )}
                         </span>
-                        <span className="flex justify-center align-end texte-gris">
+                        <span className="flex justify-center items-end texte-gris">
                           (
                           {formaterDate(
                             detailIndicateur.dateValeurAvancementMandat,
@@ -109,7 +109,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                         </span>
                       </div>
                     </div>
-                    <div className="w-half-full fr-ml-1w border">
+                    <div className="w-1/2 fr-ml-1w border">
                       <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
                         <span>
                           {`Valeur d'avancement proposée par `}
@@ -127,7 +127,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                           {` le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
                         </span>
                       </span>
-                      <div className="w-full flex flex-column align-center fr-pt-1w">
+                      <div className="w-full flex flex-col items-center fr-pt-1w">
                         <span className="flex justify-center fr-mb-5v">
                           {detailIndicateur.proposition?.valeurAvancement}
                         </span>
@@ -227,7 +227,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                         <span className="fr-text--bold">
                           Motif de la suppression :
                         </span>{" "}
-                        <span className="text-italic">
+                        <span className="italic">
                           {reactHookForm.getValues("motifSuppression")}
                         </span>
                       </p>

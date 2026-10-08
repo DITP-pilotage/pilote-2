@@ -121,7 +121,7 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
         >
           <p
             className={clsxm(
-              "mb-0 bold mr-2 whitespace-nowrap align-middle",
+              "mb-0 font-bold mr-2 whitespace-nowrap align-middle",
               dimensions[taille].className,
               positionTexte === "côté" && "pl-2 text-right",
             )}

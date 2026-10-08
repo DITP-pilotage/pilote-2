@@ -49,7 +49,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
             >
               <InputFichier accept=".csv" onChange={définirLeFichier} />
               <Button
-                className="fr-my-2w fr-my-md-1w fr-text--sm no-wrap"
+                className="fr-my-2w fr-my-md-1w fr-text--sm whitespace-nowrap"
                 disabled={!file}
                 title="Importer en masse"
                 type="submit"

@@ -47,8 +47,8 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
             : "Non renseigné"}
         </p>
         {libelleEmailsResponsables ? (
-          <div className="fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end max-[450px]:items-end print:hidden">
-            <div className="flex align-start">
+          <div className="fr-col-5 fr-col-md-4 fr-col-xl-2 flex items-start justify-end max-[450px]:items-end print:hidden">
+            <div className="flex items-start">
               <Icone
                 className="mr-1 text-dsfr-blue-france-sun-113"
                 icone={EnveloppeContourIcon}

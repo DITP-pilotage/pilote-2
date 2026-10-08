@@ -39,7 +39,10 @@ export const PanelMenuNavigation = ({
       </div>
       <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
         <div className="flex items-center">
-          <label className="fr-label fr-mr-1w no-wrap" htmlFor="jalon">
+          <label
+            className="fr-label fr-mr-1w whitespace-nowrap"
+            htmlFor="jalon"
+          >
             Jalon :
           </label>
           <SelecteurJalon />
@@ -47,7 +50,7 @@ export const PanelMenuNavigation = ({
         </div>
       </div>
       {estAutoriseAVoirLeSelecteurDeMaille ? (
-        <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w flex align-center">
+        <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w flex items-center">
           <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
         </div>
       ) : null}

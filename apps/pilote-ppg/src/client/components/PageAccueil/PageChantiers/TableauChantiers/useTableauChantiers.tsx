@@ -145,7 +145,7 @@ export const useTableauChantiers = (
         }),
         reactTableColonnesHelper.accessor("typologie", {
           header: () => (
-            <div className="flex align-center no-wrap">
+            <div className="flex items-center whitespace-nowrap">
               <span>Typologie</span>
               <Infobulle classNameBouton="infobulle-header-typologie">
                 {infobulles.chantiers.listeDesChantiersHeaderTypologie}
@@ -163,7 +163,7 @@ export const useTableauChantiers = (
         }),
         reactTableColonnesHelper.accessor("météo", {
           header: () => (
-            <div className="flex align-center no-wrap">
+            <div className="flex items-center whitespace-nowrap">
               <span>Météo</span>
               <Infobulle classNameBouton="infobulle-header-meteo">
                 {infobulles.chantiers.listeDesChantiersHeaderMeteo}
@@ -188,7 +188,7 @@ export const useTableauChantiers = (
         }),
         reactTableColonnesHelper.accessor("tendance", {
           header: () => (
-            <div className="flex align-center no-wrap">
+            <div className="flex items-center whitespace-nowrap">
               <span>Tendance</span>
               <Infobulle classNameBouton="infobulle-header-tendance">
                 {infobulles.chantiers.listeDesChantiersHeaderTendance}
@@ -209,7 +209,7 @@ export const useTableauChantiers = (
         }),
         reactTableColonnesHelper.accessor("avancement", {
           header: () => (
-            <div className="flex align-center no-wrap">
+            <div className="flex items-center whitespace-nowrap">
               <span className="whitespace-normal break-normal">
                 {`Avancement ${jalon}`}
               </span>
@@ -244,7 +244,7 @@ export const useTableauChantiers = (
         }),
         reactTableColonnesHelper.accessor("écart", {
           header: () => (
-            <div className="flex align-center no-wrap">
+            <div className="flex items-center whitespace-nowrap">
               <span>{`Écart ${jalon}`}</span>
               <Infobulle classNameBouton="infobulle-header-écart">
                 {infobulles.chantiers.listeDesChantiersHeaderEcart}

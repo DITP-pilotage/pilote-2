@@ -54,7 +54,7 @@ export const PageFicheTerritoriale: FunctionComponent<
             <div className="fr-col-4 fr-pr-1v h-full">
               <div className="fiche-territoriale__avancement--moyen fr-mb-1w">
                 <Bloc>
-                  <div className="flex flex-column align-center">
+                  <div className="flex flex-col items-center">
                     <TitreInfobulleConteneur className="fr-mb-2w">
                       <h2 className="fr-text--md mb-0 py-1 inline">
                         Taux d'avancement moyen
@@ -82,7 +82,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                   </TitreInfobulleConteneur>
                   <ul className="fr-raw-list">
                     <li className="fr-mb-1w">
-                      <div className="flex align-center">
+                      <div className="flex items-center">
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="ORAGE" />
                         </div>
@@ -94,7 +94,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                       </div>
                     </li>
                     <li className="fr-mb-1w">
-                      <div className="flex align-center">
+                      <div className="flex items-center">
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="NUAGE" />
                         </div>
@@ -107,7 +107,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                       </div>
                     </li>
                     <li className="fr-mb-1w fr-text--sm">
-                      <div className="flex align-center">
+                      <div className="flex items-center">
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="COUVERT" />
                         </div>
@@ -119,7 +119,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                       </div>
                     </li>
                     <li className="fr-mb-1w">
-                      <div className="flex align-center">
+                      <div className="flex items-center">
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="SOLEIL" />
                         </div>
@@ -147,7 +147,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                 <h2 className="fr-text--lg mb-0 py-1 inline">
                   {`Liste des chantiers (${chantiersFicheTerritoriale.length})`}
                 </h2>
-                <div className="flex align-center">
+                <div className="flex items-center">
                   <div />
                   <Badge className="ml-4" size="sm" variant="success">
                     Avancement positif

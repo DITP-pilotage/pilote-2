@@ -135,7 +135,7 @@ const IndicateurSpécifications: FunctionComponent<
               </p>
             </div>
           </div>
-          <div className="flex align-end justify-end">
+          <div className="flex items-end justify-end">
             <Icone
               className="mt-4 mr-1 text-dsfr-blue-france-sun-113 lg:mt-0"
               icone={EnveloppeContourIcon}

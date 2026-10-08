@@ -178,7 +178,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         titre="France"
       >
         <div className="fr-py-1w jauge [&>div]:m-auto">
-          <div className="flex flex-direction-column flex-wrap justify-center align-center">
+          <div className="flex flex-col flex-wrap justify-center items-center">
             <strong className="fr-text--sm fr-mb-0 text-center">
               Taux d'avancement national
             </strong>
@@ -208,21 +208,21 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       >
         <div className="fr-px-md-1w fr-px-lg-2w fr-py-1w">
           {mailleQuery === "regionale" ? (
-            <div className="flex flex-direction-column flex-wrap justify-center align-center">
+            <div className="flex flex-col flex-wrap justify-center items-center">
               <strong className="fr-text--sm fr-mb-0 text-center">
                 Répartition régionale
               </strong>
               <span className="fr-text--sm fr-ml-1v">{jalon}</span>
             </div>
           ) : (
-            <div className="flex flex-direction-column flex-wrap justify-center align-center">
+            <div className="flex flex-col flex-wrap justify-center items-center">
               <strong className="fr-text--sm fr-mb-0 text-center">
                 Répartition départementale
               </strong>
               <span className="fr-text--sm fr-ml-1w">{jalon}</span>
             </div>
           )}
-          <div className="flex flex-column justify-center">
+          <div className="flex flex-col justify-center">
             <JaugeDeProgressionSmall
               couleur="vert"
               libellé="Maximum"
@@ -269,8 +269,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       >
         {territoireCode !== "NAT-FR" ? (
           <>
-            <div className="fr-py-1w flex flex-direction-column flex-wrap justify-center align-center">
-              <div className="flex flex-direction-column flex-wrap justify-center align-center">
+            <div className="fr-py-1w flex flex-col flex-wrap justify-center items-center">
+              <div className="flex flex-col flex-wrap justify-center items-center">
                 <strong className="fr-text--xs fr-mb-0 text-center">
                   SITUATION PAR RAPPORT AUX AUTRES{" "}
                   {tuileEcartTAAPartirDeLaMaille[
@@ -304,7 +304,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             <hr className="fr-hr fr-py-1w" />
           </>
         ) : null}
-        <div className="fr-py-1w flex flex-direction-column flex-wrap justify-center align-center">
+        <div className="fr-py-1w flex flex-col flex-wrap justify-center items-center">
           <strong className="fr-text--xs fr-mb-0 text-center">
             EVOLUTION TEMPORELLE
           </strong>
@@ -335,7 +335,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 )
               </div>
             ) : (
-              <p className="fr-text--xs fr-m-0 bold text-primary">
+              <p className="fr-text--xs fr-m-0 font-bold text-primary">
                 (Non défini)
               </p>
             )}

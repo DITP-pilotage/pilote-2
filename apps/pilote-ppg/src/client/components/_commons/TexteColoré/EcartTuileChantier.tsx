@@ -33,7 +33,7 @@ export const EcartTuileChantier = ({
   if (couleurEcartArrondi === null) return null;
 
   return (
-    <div className={clsxm("bold", couleurEcartArrondi.couleur)}>
+    <div className={clsxm("font-bold", couleurEcartArrondi.couleur)}>
       {couleurEcartArrondi.ecartArrondi.toFixed(1)}
     </div>
   );

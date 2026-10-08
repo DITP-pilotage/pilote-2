@@ -10,7 +10,10 @@ const TokenAPIForm: FunctionComponent = () => {
     <div className="fr-container">
       <div className="fr-grid-row">
         <div className="fr-col-4">
-          <label className="fr-text--md bold fr-mb-1v relative" htmlFor="email">
+          <label
+            className="fr-text--md font-bold fr-mb-1v relative"
+            htmlFor="email"
+          >
             Émail
           </label>
           <TextField
@@ -20,7 +23,7 @@ const TokenAPIForm: FunctionComponent = () => {
             {...register("email")}
           />
         </div>
-        <div className="fr-col-4 flex align-end">
+        <div className="fr-col-4 flex items-end">
           <Button
             variant="primary"
             className="ml-4"

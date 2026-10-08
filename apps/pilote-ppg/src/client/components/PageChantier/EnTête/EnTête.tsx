@@ -88,7 +88,7 @@ const PageChantierEnTête: FunctionComponent<{
           {listeNomsResponsablesMinistèrePorteur.join(", ") || "Non renseigné"}
         </p>
       </div>
-      <div className="!mb-2 flex flex-column gap-y-2">
+      <div className="!mb-2 flex flex-col gap-y-2">
         <ResponsableChantierEnTete
           icone={GovernmentIcon}
           libellé="Autres ministères co-porteurs"

@@ -9,7 +9,7 @@ export const IndicateurTendance = ({
   if (tendance !== "BAISSE") return null;
 
   return (
-    <div className="flex flex-direction-row fr-ml-2w fr-mr-1w">
+    <div className="flex flex-row fr-ml-2w fr-mr-1w">
       <Icone icone={DecroissanceIcon} />
       <p className="fr-text--xs !text-dsfr-mention-grey fr-ml-1w fr-pt-1v fr-mb-1w">
         Attention, cet indicateur a un objectif de baisse. La cible représente
