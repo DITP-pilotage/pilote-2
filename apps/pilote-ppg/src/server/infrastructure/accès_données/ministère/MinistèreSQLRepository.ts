@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import MinistèreRepository from "@/server/domain/ministère/MinistèreRepository.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 type MinistèreQueryResult = {
   nom: string;

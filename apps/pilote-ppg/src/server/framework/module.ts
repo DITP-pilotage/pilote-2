@@ -4,25 +4,25 @@ import {
   StubEmailManager,
 } from "@/server/infrastructure/email-manager";
 import { configuration } from "@/config";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { type Transaction } from "@/server/db/Transaction";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { type Transaction } from "@/server/framework/persistence/Transaction";
+import { PrismaTransaction } from "@/server/framework/persistence/PrismaTransaction";
 import {
   defineModule,
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
 
-type SharedCradle = {
+type FrameworkCradle = {
   prisma: PrismaPilote;
   transaction: Transaction;
   emailManager: EmailManager;
 };
 
-export type SharedDependencies = SharedCradle;
+export type FrameworkDependencies = FrameworkCradle;
 
-export const sharedModule = defineModule<NoExports, SharedCradle>()({
-  name: "shared",
+export const frameworkModule = defineModule<NoExports, FrameworkCradle>()({
+  name: "framework",
   imports: [],
   exports: [],
   register: (container, { asModuleFunction }) => {
@@ -34,6 +34,6 @@ export const sharedModule = defineModule<NoExports, SharedCradle>()({
           ? new StubEmailManager()
           : new BrevoEmailManager(),
       ).singleton(),
-    } satisfies VerifyCradle<SharedCradle>);
+    } satisfies VerifyCradle<FrameworkCradle>);
   },
 });

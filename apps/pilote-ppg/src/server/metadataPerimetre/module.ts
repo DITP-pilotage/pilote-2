@@ -27,7 +27,7 @@ export const metadataPerimetreModule = defineModule<
   MetadataPerimetreCradle
 >()({
   name: "metadataPerimetre",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

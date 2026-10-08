@@ -17,7 +17,7 @@ type ActualitesCradle = {
 
 export const actualitesModule = defineModule<NoExports, ActualitesCradle>()({
   name: "actualites",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({

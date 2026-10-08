@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { prisma } from "@/server/db/prisma";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaChatConversationRepository } from "@/server/albert/infrastructure/PrismaChatConversationRepository";
 
 describe("PrismaChatConversationRepository", () => {

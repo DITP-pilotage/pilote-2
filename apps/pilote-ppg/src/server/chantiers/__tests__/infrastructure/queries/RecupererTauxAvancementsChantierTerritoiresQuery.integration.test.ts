@@ -2,7 +2,7 @@ import { createIntegrationTest } from "@/server/infrastructure/test/createIntegr
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { RecupererTauxAvancementsChantierTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererTauxAvancementsChantierTerritoiresQuery";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
 
 const prismaPilote = new PrismaPilote();

@@ -1,6 +1,6 @@
 import { RetournerAppreciationHandler } from "@/server/evaluation/handlers/RetournerAppreciationHandler";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 

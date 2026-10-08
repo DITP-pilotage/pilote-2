@@ -1,5 +1,5 @@
-import { prisma } from "@/server/db/prisma";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { prisma } from "@/server/framework/persistence/prisma";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import ChantierSQLRepository from "./ChantierSQLRepository";

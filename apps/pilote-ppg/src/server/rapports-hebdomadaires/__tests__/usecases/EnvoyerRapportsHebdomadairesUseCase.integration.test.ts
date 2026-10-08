@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { EnvoyerRapportsHebdomadairesUseCase } from "@/server/rapports-hebdomadaires/usecases/EnvoyerRapportsHebdomadairesUseCase";
 import {
   ContenuRapport,

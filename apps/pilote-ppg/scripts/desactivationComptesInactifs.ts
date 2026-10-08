@@ -1,6 +1,6 @@
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
 
@@ -13,23 +13,53 @@ const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? "";
 async function main() {
   const container = getContainer("gestionUtilisateur");
 
-  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs" }, "Phase 1 : Création des actions pour les comptes inactifs");
+  logger.info(
+    { categorie: "utilisateur", source: "desactivationComptesInactifs" },
+    "Phase 1 : Création des actions pour les comptes inactifs",
+  );
   const resultatCreation = await container
     .resolve("creerLesActionsComptesInactifsUseCase")
     .run();
-  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs", ...resultatCreation }, "Phase 1 terminée");
+  logger.info(
+    {
+      categorie: "utilisateur",
+      source: "desactivationComptesInactifs",
+      ...resultatCreation,
+    },
+    "Phase 1 terminée",
+  );
 
-  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs" }, "Phase 2 : Envoi des relances");
+  logger.info(
+    { categorie: "utilisateur", source: "desactivationComptesInactifs" },
+    "Phase 2 : Envoi des relances",
+  );
   const resultatRelances = await container
     .resolve("envoyerLesRelancesUseCase")
     .run();
-  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs", ...resultatRelances }, "Phase 2 terminée");
+  logger.info(
+    {
+      categorie: "utilisateur",
+      source: "desactivationComptesInactifs",
+      ...resultatRelances,
+    },
+    "Phase 2 terminée",
+  );
 
-  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs" }, "Phase 3 : Désactivation des comptes");
+  logger.info(
+    { categorie: "utilisateur", source: "desactivationComptesInactifs" },
+    "Phase 3 : Désactivation des comptes",
+  );
   const resultatDesactivation = await container
     .resolve("desactiverLesComptesInactifsUseCase")
     .run();
-  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs", ...resultatDesactivation }, "Phase 3 terminée");
+  logger.info(
+    {
+      categorie: "utilisateur",
+      source: "desactivationComptesInactifs",
+      ...resultatDesactivation,
+    },
+    "Phase 3 terminée",
+  );
 
   return { resultatCreation, resultatRelances, resultatDesactivation };
 }

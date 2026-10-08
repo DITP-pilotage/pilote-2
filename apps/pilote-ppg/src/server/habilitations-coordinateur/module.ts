@@ -17,7 +17,7 @@ export const habilitationsCoordinateurModule = defineModule<
   HabilitationsCoordinateurCradle
 >()({
   name: "habilitationsCoordinateur",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

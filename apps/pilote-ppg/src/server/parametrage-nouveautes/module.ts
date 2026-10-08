@@ -22,7 +22,7 @@ export const parametrageNouveautesModule = defineModule<
   ParametrageNouveautesCradle
 >()({
   name: "parametrageNouveautes",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

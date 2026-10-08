@@ -24,7 +24,7 @@ import { objectEntries } from "@/client/utils/objects/objects";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 // TODO: TOUT TESTEEEEER
 export class UtilisateurSQLRepository implements UtilisateurRepository {

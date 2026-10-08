@@ -1,5 +1,5 @@
 import type { metadata_engagement as MetadataEngagementPrisma } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadataEngagement/module";
 
 export interface EngagementAdminListItem {

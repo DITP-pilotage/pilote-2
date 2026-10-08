@@ -1,7 +1,7 @@
 import { erreur_validation_fichier as ErreurValidationFichierModel } from "@prisma/client";
 import { ErreurValidationFichier } from "@/server/import-indicateur/domain/ErreurValidationFichier";
 import { ErreurValidationFichierRepository } from "@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 const convertirEnModel = (
   erreurValidationFichier: ErreurValidationFichier,

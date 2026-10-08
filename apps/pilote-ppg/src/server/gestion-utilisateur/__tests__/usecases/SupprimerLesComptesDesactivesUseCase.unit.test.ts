@@ -12,8 +12,8 @@ import {
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { Transaction } from "@/server/db/Transaction";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 
 describe("SupprimerLesComptesDesactivesUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;

@@ -50,7 +50,7 @@ export const rapportsHebdomadairesModule = defineModule<
 >()({
   name: "rapportsHebdomadaires",
   imports: [
-    "shared",
+    "framework",
     "gestionUtilisateur",
     "chantiers",
     "indicateurTerritoireValeurEvenement",

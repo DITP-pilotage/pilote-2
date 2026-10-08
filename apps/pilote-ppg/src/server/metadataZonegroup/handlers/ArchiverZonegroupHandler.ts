@@ -1,4 +1,4 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/metadataZonegroup/module";
 import { VerifierUtilisationZonegroupQuery } from "@/server/metadataZonegroup/queries/VerifierUtilisationZonegroupQuery";
 import { ConflictError } from "@/server/app/error-boundary/conflict-error";

@@ -1,5 +1,5 @@
-import logger from "@/server/infrastructure/Logger";
-import { prisma } from "@/server/db/prisma";
+import { logger } from "@/server/framework/logger";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 async function sauvegardeNotes() {
   const LISTE_CHANTIERS_INCLUS_FICHE_EVALUATION = [
@@ -147,9 +147,15 @@ async function sauvegardeNotes() {
 
 sauvegardeNotes()
   .then(() => {
-    logger.info({ categorie: "systeme", source: "sauvegarde_notes_evaluation_prefet" }, "Script exécuté avec succès");
+    logger.info(
+      { categorie: "systeme", source: "sauvegarde_notes_evaluation_prefet" },
+      "Script exécuté avec succès",
+    );
   })
   .catch((error) => {
-    logger.error({ categorie: "systeme", source: "sauvegarde_notes_evaluation_prefet" }, (error as Error).message);
+    logger.error(
+      { categorie: "systeme", source: "sauvegarde_notes_evaluation_prefet" },
+      (error as Error).message,
+    );
     throw error;
   });

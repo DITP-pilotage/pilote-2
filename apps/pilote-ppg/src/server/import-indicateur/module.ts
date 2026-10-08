@@ -47,7 +47,7 @@ export const importIndicateurModule = defineModule<
   ImportIndicateurCradle
 >()({
   name: "importIndicateur",
-  imports: ["shared", "indicateurTerritoireValeurEvenement"],
+  imports: ["framework", "indicateurTerritoireValeurEvenement"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

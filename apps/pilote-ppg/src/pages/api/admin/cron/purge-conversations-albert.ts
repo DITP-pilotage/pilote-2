@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {

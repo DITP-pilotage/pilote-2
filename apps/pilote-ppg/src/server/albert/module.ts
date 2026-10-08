@@ -33,9 +33,9 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
-import type { SharedDependencies } from "@/server/shared/module";
+import type { FrameworkDependencies } from "@/server/framework/module";
 
-type AlbertImports = SharedDependencies & ChantierExports;
+type AlbertImports = FrameworkDependencies & ChantierExports;
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
@@ -83,7 +83,7 @@ type AlbertCradle = AlbertOwnCradle & AlbertImports;
 
 export const albertModule = defineModule<NoExports, AlbertCradle>()({
   name: "albert",
-  imports: ["shared", "chantiers"],
+  imports: ["framework", "chantiers"],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({

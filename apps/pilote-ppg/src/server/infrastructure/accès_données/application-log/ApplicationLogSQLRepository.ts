@@ -1,4 +1,4 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository";
 
 export class ApplicationLogSQLRepository implements ApplicationLogRepository {

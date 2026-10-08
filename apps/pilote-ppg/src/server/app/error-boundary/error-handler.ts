@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
-import Logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 
 export const errorHandler =
   (handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>) =>
@@ -9,7 +9,7 @@ export const errorHandler =
       await handler(req, res);
     } catch (error) {
       if (error instanceof PiloteError) {
-        Logger.error(
+        logger.error(
           {
             categorie: "systeme",
             source: "error-handler",
@@ -22,7 +22,7 @@ export const errorHandler =
           .status(error.status)
           .json({ success: false, message: error.message });
       } else {
-        Logger.error(
+        logger.error(
           { categorie: "systeme", source: "error-handler", statusCode: 500 },
           `Erreur interne : ${(error as Error).message}`,
         );

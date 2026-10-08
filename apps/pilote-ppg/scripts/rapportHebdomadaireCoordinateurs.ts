@@ -1,7 +1,7 @@
 import "./load-env";
 import process from "node:process";
 import assert from "node:assert/strict";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
 
@@ -23,7 +23,14 @@ function parseOptionalDateArg(arg: string | undefined): Date {
 async function main() {
   const maintenant = parseOptionalDateArg(process.argv[2]);
 
-  logger.info({ categorie: "rapport", source: "rapportHebdomadaireCoordinateurs", dateExecution: maintenant.toISOString() }, "Génération des rapports hebdomadaires");
+  logger.info(
+    {
+      categorie: "rapport",
+      source: "rapportHebdomadaireCoordinateurs",
+      dateExecution: maintenant.toISOString(),
+    },
+    "Génération des rapports hebdomadaires",
+  );
 
   const container = getContainer("rapportsHebdomadaires");
 
@@ -83,7 +90,14 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then((result) => {
-      logger.info({ categorie: "rapport", source: "rapportHebdomadaireCoordinateurs", ...result }, "Exécution terminée");
+      logger.info(
+        {
+          categorie: "rapport",
+          source: "rapportHebdomadaireCoordinateurs",
+          ...result,
+        },
+        "Exécution terminée",
+      );
       process.exit(0);
     })
     .catch((error) => {
@@ -97,7 +111,10 @@ if (isMain) {
       ].join("\n");
 
       envoieMessageTchap(messageErreur, baseUrl, roomId, accessToken);
-      logger.error({ categorie: "rapport", source: "rapportHebdomadaireCoordinateurs" }, (error as Error).message);
+      logger.error(
+        { categorie: "rapport", source: "rapportHebdomadaireCoordinateurs" },
+        (error as Error).message,
+      );
       process.exit(1);
     });
 }

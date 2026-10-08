@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import {
   InformationDerniereModificationMetadataIndicateurContrat,
   InformationHistorisationMetadataIndicateurContrat,

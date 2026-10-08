@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration } from "@/config";
 
@@ -12,7 +12,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const isProd = configuration().scalingoEnvironment === "PROD";
 
   try {
-    const prisma = getContainer("shared").resolve("prisma");
+    const prisma = getContainer("framework").resolve("prisma");
 
     logger.info(
       { categorie: "rapport", source: "cron/rapport-service-autre" },

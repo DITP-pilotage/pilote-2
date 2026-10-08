@@ -1,4 +1,4 @@
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { CommentaireRepository } from "@/server/gestion-utilisateur/domain/ports/CommentaireRepository";
 import { SyntheseDesResultatsRepository } from "@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository";
@@ -8,7 +8,7 @@ import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/Rap
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export const EMAIL_AUTEUR_REMPLACEMENT =

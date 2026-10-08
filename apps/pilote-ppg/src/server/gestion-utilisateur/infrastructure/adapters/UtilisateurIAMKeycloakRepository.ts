@@ -2,7 +2,7 @@ import KcAdminClient from "@keycloak/keycloak-admin-client";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { configuration } from "@/config";
 import UtilisateurPourIAM from "@/server/gestion-utilisateur/domain/UtilisateurIAM.interface";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import { isUtilisateurDoublonError } from "@/server/utils/errors";
 
 const KEYCLOAK_REALM = "DITP";

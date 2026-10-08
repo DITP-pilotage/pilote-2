@@ -4,7 +4,7 @@ import CommentaireSQLRepository, {
 } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import {
   creerCommentairePublie,
   creerCommentaireBrouillon,
@@ -13,7 +13,7 @@ import {
 const TERRITOIRE_CODE = "NAT-FR";
 const MAILLE = "NAT";
 const CODE_INSEE = "FR";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("CommentaireSQLRepository", () => {
   let repository: CommentaireSQLRepository;

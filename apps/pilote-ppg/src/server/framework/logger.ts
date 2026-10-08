@@ -1,6 +1,6 @@
 import pino, { type LogFn } from "pino";
 import { type Prisma } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { configuration } from "@/config";
 import {
   CATEGORIE_LOG_PAR_DEFAUT,
@@ -166,6 +166,4 @@ class AppLogger implements StructuredLogger {
   }
 }
 
-const logger = new AppLogger();
-
-export default logger;
+export const logger = new AppLogger();

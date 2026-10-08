@@ -1,7 +1,7 @@
 import { gestion_contenu as GestionContenuModel } from "@prisma/client";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
 import { VARIABLE_CONTENU_DISPONIBLE } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 const convertirEnModel = ({
   nomVariableContenu,

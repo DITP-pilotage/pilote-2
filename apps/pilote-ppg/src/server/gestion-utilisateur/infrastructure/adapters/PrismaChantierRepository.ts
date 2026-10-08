@@ -5,7 +5,7 @@ import {
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
 const convertirEnInformationChantierUtilisateur = (

@@ -4,8 +4,8 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
-import { Transaction } from "@/server/db/Transaction";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
+import { PrismaTransaction } from "@/server/framework/persistence/PrismaTransaction";
 import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
 import { PrismaArticleCentreAideRepository } from "./infrastructure/adapters/PrismaArticleCentreAideRepository";
 import { ArticleCentreAideRepository } from "./domain/ports/ArticleCentreAideRepository";
@@ -35,7 +35,7 @@ export const parametrageCentreAideModule = defineModule<
   ParametrageCentreAideCradle
 >()({
   name: "parametrageCentreAide",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

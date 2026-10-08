@@ -27,7 +27,7 @@ export const metadataPorteurModule = defineModule<
   MetadataPorteurCradle
 >()({
   name: "metadataPorteur",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

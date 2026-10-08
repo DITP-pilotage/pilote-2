@@ -4,7 +4,7 @@ import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/ad
 import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesTauxAvancementIndicateurTerritoiresQuery";
 import { ListerDetailsIndicateurTerritoireUseCase } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCase";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";

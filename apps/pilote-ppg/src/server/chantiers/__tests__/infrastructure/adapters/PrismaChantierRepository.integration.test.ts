@@ -6,8 +6,8 @@ import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.int
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { getPrisma } from "@/server/db/PrismaTransaction";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaChantierRepository", () => {
   let prismaChantierRepository: PrismaChantierRepository;

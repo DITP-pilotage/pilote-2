@@ -3,9 +3,9 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { RefuserPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/RefuserPropositionValeurAvancementUseCase";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/framework/persistence/Transaction";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
 import { BREVO_TEMPLATE_IDS } from "@/server/indicateur-territoire-valeur-evenement/domain/brevoEmailTemplateIds";

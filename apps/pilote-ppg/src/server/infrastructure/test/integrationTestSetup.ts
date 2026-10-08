@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 /**
  * L'isolation entre tests d'integration est assuree par `createIntegrationTest`,

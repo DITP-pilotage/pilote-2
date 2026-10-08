@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { InMemoryTransaction } from "@/server/framework/persistence/InMemoryTransaction";
 import { SetTraitementEvaluationHandler } from "@/server/evaluation/handlers/SetTraitementEvaluationHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";

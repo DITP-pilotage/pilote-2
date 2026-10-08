@@ -2,7 +2,7 @@ import { territoire as TerritoirePrisma } from "@prisma/client";
 import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 class ErreurTerritoireNonTrouvé extends Error {
   constructor() {

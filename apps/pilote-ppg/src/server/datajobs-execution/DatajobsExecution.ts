@@ -1,6 +1,6 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { toISODateTime } from "@/server/app/domain/Dates";
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 
 export type DatajobsExecution = {
   derniereDateExecution: string;

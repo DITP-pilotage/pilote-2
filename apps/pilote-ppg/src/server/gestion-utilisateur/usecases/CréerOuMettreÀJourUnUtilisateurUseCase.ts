@@ -26,7 +26,7 @@ import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/po
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ConflictError } from "@/server/app/error-boundary/conflict-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private utilisateurIAMRepository: UtilisateurIAMRepository;

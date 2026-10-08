@@ -1,4 +1,4 @@
-import { type PrismaPilote } from "@/server/db/PrismaPilote";
+import { type PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
   type IndicateurIdentite,
   type IndicateurIdentiteRepository,

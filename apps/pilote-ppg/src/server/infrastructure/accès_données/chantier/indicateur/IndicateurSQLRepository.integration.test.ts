@@ -3,7 +3,7 @@ import IndicateurSQLRepository from "@/server/infrastructure/accès_données/cha
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("IndicateurSQLRepository", () => {
   let prismaIndicateurRepository: IndicateurSQLRepository;

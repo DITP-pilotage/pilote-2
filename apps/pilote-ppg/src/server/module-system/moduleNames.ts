@@ -1,5 +1,5 @@
 export const moduleNames = [
-  "shared",
+  "framework",
   "authentification",
   "chantiers",
   "parametrageIndicateur",

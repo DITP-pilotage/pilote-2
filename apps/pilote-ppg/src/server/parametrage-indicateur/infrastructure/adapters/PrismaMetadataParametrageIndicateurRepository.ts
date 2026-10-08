@@ -3,9 +3,9 @@
  */
 
 import { Prisma } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
-import { executerEnLot } from "@/server/db/executerEnLot";
-import Logger from "@/server/infrastructure/Logger";
+import { prisma } from "@/server/framework/persistence/prisma";
+import { executerEnLot } from "@/server/framework/persistence/executerEnLot";
+import { logger } from "@/server/framework/logger";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain/ImportMetadataIndicateur";
@@ -240,7 +240,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
         convertirEnMetadataParametrageIndicateur,
       );
     } catch (error: unknown) {
-      Logger.error(
+      logger.error(
         {
           categorie: "indicateur",
           source: "PrismaMetadataParametrageIndicateurRepository",
@@ -274,7 +274,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
         listeRawMetadataParametrageIndicateur[0],
       );
     } catch (error: unknown) {
-      Logger.error(
+      logger.error(
         {
           categorie: "indicateur",
           source: "PrismaMetadataParametrageIndicateurRepository",

@@ -76,7 +76,7 @@ type PiloteEvalCradle = {
 
 export const piloteEvalModule = defineModule<NoExports, PiloteEvalCradle>()({
   name: "piloteEval",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

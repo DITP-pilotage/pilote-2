@@ -28,7 +28,7 @@ export const gestionContenuModule = defineModule<
   GestionContenuCradle
 >()({
   name: "gestionContenu",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: ["recupererToutesLesVariablesContenuUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({

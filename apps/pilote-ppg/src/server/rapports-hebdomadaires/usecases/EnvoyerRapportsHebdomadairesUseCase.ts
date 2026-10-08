@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import type { Inject } from "@/server/rapports-hebdomadaires/module";
 import {
   marquerCommeEchec,

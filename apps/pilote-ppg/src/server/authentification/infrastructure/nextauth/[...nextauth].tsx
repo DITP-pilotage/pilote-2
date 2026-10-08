@@ -5,7 +5,7 @@ import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import axios from "axios";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import { configuration } from "@/config";
 import {
   acrFromIdToken,

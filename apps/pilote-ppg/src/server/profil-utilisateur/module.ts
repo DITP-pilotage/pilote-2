@@ -11,9 +11,9 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
-import type { SharedDependencies } from "@/server/shared/module";
+import type { FrameworkDependencies } from "@/server/framework/module";
 
-type ProfilUtilisateurImports = SharedDependencies;
+type ProfilUtilisateurImports = FrameworkDependencies;
 
 type ProfilUtilisateurOwnCradle = {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
@@ -30,7 +30,7 @@ export const profilUtilisateurModule = defineModule<
   ProfilUtilisateurCradle
 >()({
   name: "profilUtilisateur",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({

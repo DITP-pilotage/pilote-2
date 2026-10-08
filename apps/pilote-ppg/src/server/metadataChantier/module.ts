@@ -37,7 +37,7 @@ export const metadataChantierModule = defineModule<
   MetadataChantierCradle
 >()({
   name: "metadataChantier",
-  imports: ["shared", "parametrageIndicateur"],
+  imports: ["framework", "parametrageIndicateur"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

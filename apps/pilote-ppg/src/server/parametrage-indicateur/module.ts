@@ -45,7 +45,7 @@ export const parametrageIndicateurModule = defineModule<
   ParametrageIndicateurCradle
 >()({
   name: "parametrageIndicateur",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [
     "historisationModificationRepository",
     "metadataParametrageIndicateurRepository",

@@ -42,7 +42,7 @@ export const authentificationModule = defineModule<
   AuthentificationCradle
 >()({
   name: "authentification",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({

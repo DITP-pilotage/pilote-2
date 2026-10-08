@@ -1,7 +1,7 @@
 import { PrismaStatutCompteQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaStatutCompteQuery";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 describe("PrismaStatutCompteQuery", () => {
   let query: PrismaStatutCompteQuery;

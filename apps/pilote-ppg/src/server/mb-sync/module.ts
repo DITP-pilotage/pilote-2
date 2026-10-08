@@ -28,7 +28,7 @@ type MbSyncCradle = MbSyncExports & {
 
 export const mbSyncModule = defineModule<MbSyncExports, MbSyncCradle>()({
   name: "mbSync",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: ["syncMbMetadonneesUseCase", "syncMbValeursUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({

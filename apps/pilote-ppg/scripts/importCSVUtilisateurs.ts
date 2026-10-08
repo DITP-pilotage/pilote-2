@@ -1,7 +1,7 @@
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import assert from "node:assert/strict";
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
 import { getContainer } from "@/server/dependances";
 
@@ -68,10 +68,16 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then(() => {
-      logger.info({ categorie: "utilisateur", source: "importCSVUtilisateurs" }, "Import OK.");
+      logger.info(
+        { categorie: "utilisateur", source: "importCSVUtilisateurs" },
+        "Import OK.",
+      );
     })
     .catch((error) => {
-      logger.error({ categorie: "utilisateur", source: "importCSVUtilisateurs" }, (error as Error).message);
+      logger.error(
+        { categorie: "utilisateur", source: "importCSVUtilisateurs" },
+        (error as Error).message,
+      );
       throw new Error("Import échoué.", { cause: error });
     });
 }

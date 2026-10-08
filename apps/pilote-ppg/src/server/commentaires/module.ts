@@ -40,7 +40,7 @@ export const commentaireModule = defineModule<
   CommentaireCradle
 >()({
   name: "commentaires",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: ["importerCommentairesUseCase"],
   register: (container, { asModuleClass }) => {
     container.register({

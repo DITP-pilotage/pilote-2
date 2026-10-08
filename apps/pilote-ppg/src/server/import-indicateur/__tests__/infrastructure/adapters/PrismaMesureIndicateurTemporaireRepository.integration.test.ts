@@ -5,7 +5,7 @@ import { DetailValidationFichierBuilder } from "@/server/import-indicateur/app/b
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { getContainer } from "@/server/dependances";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 

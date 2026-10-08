@@ -15,7 +15,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
   calculerDateDernierImport,
   EvenementPourDateDernierImport,

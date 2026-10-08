@@ -22,7 +22,7 @@ export const applicationLogModule = defineModule<
   ApplicationLogCradle
 >()({
   name: "applicationLog",
-  imports: ["shared"],
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({

@@ -1,4 +1,4 @@
-import logger from "@/server/infrastructure/Logger";
+import { logger } from "@/server/framework/logger";
 import { type ProfilTerritorialise } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import {
   type ChantierAvecIndicateurs,

@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { SyntheseDesResultatsRepository } from "@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository";
 import { SyntheseDesResultats } from "@/server/fiche-territoriale/domain/SyntheseDesResultats";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultatsRepository {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}

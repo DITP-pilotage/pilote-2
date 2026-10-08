@@ -1,6 +1,6 @@
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { TokenAPIInformation } from "@/server/authentification/domain/TokenAPIInformation";
-import { prisma } from "@/server/db/prisma";
+import { prisma } from "@/server/framework/persistence/prisma";
 
 export class PrismaTokenAPIInformationRepository implements TokenAPIInformationRepository {
   async recupererTokenAPIInformation({

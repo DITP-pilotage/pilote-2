@@ -1,5 +1,5 @@
 import keyBy from "lodash.keyby";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export type ChantierAvecIndicateursDTO = {
   id: string;

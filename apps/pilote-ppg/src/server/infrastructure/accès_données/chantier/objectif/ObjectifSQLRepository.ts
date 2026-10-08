@@ -6,7 +6,7 @@ import Objectif, {
 } from "@/server/domain/chantier/objectif/Objectif.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { groupByAndTransform } from "@/client/utils/arrays";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: "notreAmbition",
