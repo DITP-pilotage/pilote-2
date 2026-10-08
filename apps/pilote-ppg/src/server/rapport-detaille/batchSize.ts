@@ -1,0 +1,1 @@
+export const CHANTIER_DETAILS_BATCH_SIZE = 5;
