@@ -8,6 +8,10 @@ import {
 } from "@/components/shared/Picker";
 import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { clsxm } from "@/utils/clsxm";
+import {
+  ERROR_SLOT_CLASSES,
+  splitFieldGroupSpacing,
+} from "@/components/shared/fieldGroupSpacing";
 
 export type SelectFieldOption<T extends string> = PickerOption<T>;
 export type SelectFieldOptionGroup<T extends string> = PickerOptionGroup<T>;
@@ -65,6 +69,8 @@ export const SelectField = <T extends string>({
   appearance?: PickerAppearance;
 }) => {
   const grouped = isGrouped(options);
+  const { spaced, className: classNameSansEspacement } =
+    splitFieldGroupSpacing(className);
   const hasEmptyOption =
     !grouped && options.some((option) => option.valeur === "");
 
@@ -81,7 +87,12 @@ export const SelectField = <T extends string>({
       );
 
   return (
-    <div className={clsxm("flex flex-col gap-1", className)}>
+    <div
+      className={clsxm(
+        "flex flex-col gap-1",
+        spaced ? classNameSansEspacement : className,
+      )}
+    >
       {label ? (
         <label className="fr-label" htmlFor={name}>
           {label}
@@ -121,7 +132,14 @@ export const SelectField = <T extends string>({
         value={toPicker(value)}
       />
 
-      {errorMessage ? (
+      {spaced ? (
+        <p
+          className={clsxm(ERROR_SLOT_CLASSES, "min-h-5 pt-0")}
+          id={`${name}-error`}
+        >
+          {errorMessage}
+        </p>
+      ) : errorMessage ? (
         <p className="fr-error-text fr-mt-1v" id={`${name}-error`}>
           {errorMessage}
         </p>
