@@ -1,13 +1,28 @@
-import { Suspense } from "react";
 import { api } from "@/server/framework/trpc/api";
+import { ActualitesIndisponibles } from "./ActualitesIndisponibles";
 import { CarteNewsletter } from "./CarteNewsletter";
 import { ListeNewslettersSkeleton } from "./CarteNewsletterSkeleton";
 
 const ListeNewsletters = () => {
-  const [newsletters] = api.actualites.listerNewsletters.useSuspenseQuery(
-    undefined,
-    { staleTime: 3_600_000 },
-  );
+  const {
+    data: newsletters,
+    isPending,
+    isError,
+  } = api.actualites.listerNewsletters.useQuery(undefined, {
+    staleTime: 3_600_000,
+  });
+
+  if (isPending) {
+    return <ListeNewslettersSkeleton />;
+  }
+
+  if (isError) {
+    return (
+      <p className="text-gray-500">
+        Les actualités sont momentanément indisponibles.
+      </p>
+    );
+  }
 
   if (newsletters.length === 0) {
     return (
@@ -26,13 +41,15 @@ const ListeNewsletters = () => {
   );
 };
 
-export const PageActualites = () => {
+type PageActualitesProps = {
+  brevoDesactive: boolean;
+};
+
+export const PageActualites = ({ brevoDesactive }: PageActualitesProps) => {
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="mb-8 text-3xl font-bold text-gray-900">Actualités</h1>
-      <Suspense fallback={<ListeNewslettersSkeleton />}>
-        <ListeNewsletters />
-      </Suspense>
+      {brevoDesactive ? <ActualitesIndisponibles /> : <ListeNewsletters />}
     </main>
   );
 };

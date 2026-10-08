@@ -2,6 +2,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { getContainer } from "@/server/dependances";
+import { configuration } from "@/config";
 import { PageNewsletterDetail } from "@/components/PageActualites/PageNewsletterDetail";
 
 export const getServerSideProps = async (
@@ -15,7 +16,7 @@ export const getServerSideProps = async (
 
   const idParam = Number(context.params?.id);
 
-  if (isNaN(idParam)) {
+  if (isNaN(idParam) || configuration().brevo.disableEmails) {
     return { redirect: { destination: "/actualites", permanent: false } };
   }
 
