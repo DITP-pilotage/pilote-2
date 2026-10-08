@@ -21,7 +21,7 @@ export const ListeDeDroit = ({
   if (listeElement.length === 0) {
     return (
       <div className="fr-col-12 fr-col-md-6">
-        <p className="fr-text--md bold fr-mb-1v">{label}</p>
+        <p className="fr-text--md font-bold fr-mb-1v">{label}</p>
         <div className="flex mb-0">
           <div className="mr-2">
             <Icone className="text-dsfr-warning-425" icone={CloseLineIcon} />
@@ -34,7 +34,7 @@ export const ListeDeDroit = ({
 
   return (
     <div className="fr-col-12 fr-col-md-6">
-      <p className="fr-text--md bold fr-mb-1v">{label}</p>
+      <p className="fr-text--md font-bold fr-mb-1v">{label}</p>
       {listeElement.map((element, index) => (
         <div className="flex" key={`${id}-${element}-${index}`}>
           <div className="mr-2">

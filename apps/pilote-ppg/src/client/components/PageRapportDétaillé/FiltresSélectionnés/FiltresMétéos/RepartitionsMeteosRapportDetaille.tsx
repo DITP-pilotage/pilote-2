@@ -34,7 +34,7 @@ const RepartitionsMeteosRapportDetaille: FunctionComponent<
         >
           <button
             className={clsxm(
-              "h-full shadow-lg p-2 border !border-dsfr-grey-925 rounded flex flex-column items-center",
+              "h-full shadow-lg p-2 border !border-dsfr-grey-925 rounded flex flex-col items-center",
               {
                 "!border-primary": meteos.includes(meteo),
               },

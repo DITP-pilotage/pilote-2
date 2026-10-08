@@ -71,8 +71,8 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
 
   return (
     <>
-      <div className="flex justify-between align-center fr-mb-1w fr-px-3w fr-mt-3w">
-        <h1 className="text-h4 md:text-h4-md mb-0 flex align-center">
+      <div className="flex justify-between items-center fr-mb-1w fr-px-3w fr-mt-3w">
+        <h1 className="text-h4 md:text-h4-md mb-0 flex items-center">
           Filtres
         </h1>
         <BoutonReintialiserLesFiltres />

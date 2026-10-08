@@ -17,8 +17,8 @@ export const ComparaisonValeurBox = ({
   proposition?: DetailIndicateurPropositionValeurAvancement | null;
 }) => {
   return (
-    <div className="w-half-full fr-mr-1w border flex flex-column">
-      <span className="bold fr-background-action-low-blue-france flex justify-center fr-p-1w">
+    <div className="w-1/2 fr-mr-1w border flex flex-col">
+      <span className="font-bold fr-background-action-low-blue-france flex justify-center fr-p-1w">
         {titre}
         {indicateurId && proposition ? (
           <Infobulle classNameInfoBulle="tooltip-accordeon">
@@ -40,9 +40,9 @@ export const ComparaisonValeurBox = ({
           </Infobulle>
         ) : null}
       </span>
-      <div className="w-full flex flex-column justify-between fr-py-2w">
+      <div className="w-full flex flex-col justify-between fr-py-2w">
         <span className="fr-mb-2w text-center">{valeur}</span>
-        <span className="flex justify-center align-end !text-dsfr-mention-grey">
+        <span className="flex justify-center items-end !text-dsfr-mention-grey">
           ({formaterDate(date, "MM/YYYY")})
         </span>
       </div>

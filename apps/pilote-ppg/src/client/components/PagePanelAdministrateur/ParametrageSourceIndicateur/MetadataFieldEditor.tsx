@@ -34,7 +34,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden w-full">
-      <div className="flex flex-column p-6 gap-8">
+      <div className="flex flex-col p-6 gap-8">
         <div>
           <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 flex items-center !mb-2">
             Informations de base

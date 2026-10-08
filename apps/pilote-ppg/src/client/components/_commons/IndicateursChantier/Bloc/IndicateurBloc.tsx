@@ -143,7 +143,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           <section>
             <div className="flex justify-between">
               <div>
-                <h4 className="text-lead !mb-2 flex align-center">
+                <h4 className="text-lead !mb-2 flex items-center">
                   <BadgeIndicateurEnAlerte />
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}
@@ -156,7 +156,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   <p className="fr-mb-0 fr-text--xs texte-gris">
                     Dernière mise à jour de la valeur d'avancement pour le
                     territoire :{" "}
-                    <span className="bold">
+                    <span className="font-bold">
                       {dateDeMiseAJourIndicateur ?? "Non renseignée"}
                     </span>
                   </p>
@@ -195,35 +195,35 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <Table.Cell className="mb-0 p-2 pl-4 md:p-2 md:py-2 md:pl-4" />
                     <Table.Cell className="mb-0 !text-sm p-0 md:p-0 md:py-2" />
                     <Table.ColumnHeaderCell
-                      className="bg-dsfr-contrast-grey border-b border-b-high-grey text-center mb-0 !text-sm bold p-0 md:p-0 md:py-2"
+                      className="bg-dsfr-contrast-grey border-b border-b-high-grey text-center mb-0 !text-sm font-bold p-0 md:p-0 md:py-2"
                       colSpan={3}
                     >
-                      <div className="flex align-center justify-center">
+                      <div className="flex items-center justify-center">
                         <span className="pr-1">DONNÉES À ÉCHÉANCE {jalon}</span>
                       </div>
                     </Table.ColumnHeaderCell>
                   </Table.Row>
                   <Table.Row className="border-b border-b-high-grey">
-                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm bold no-wrap px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm font-bold whitespace-nowrap px-2 md:py-2 md:px-2 border-b-0">
                       Territoire(s)
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur initiale
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur d'avancement
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       valeur cible
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm bold px-2 md:py-2 md:px-2 border-b-0">
+                    <Table.ColumnHeaderCell className="bg-dsfr-contrast-grey text-center mb-0 !text-sm font-bold px-2 md:py-2 md:px-2 border-b-0">
                       taux d'avancement
                     </Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
                   <Table.Row key={détailTerritoireSélectionné.nomAffiché}>
-                    <Table.RowHeaderCell className="mb-0 !text-sm bold text-primary min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
+                    <Table.RowHeaderCell className="mb-0 !text-sm font-bold text-primary min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
                       {détailTerritoireSélectionné.nomAffiché}
                     </Table.RowHeaderCell>
                     <Table.Cell className="mb-0 !text-sm text-center min-h-8 align-top p-0 md:p-0 md:py-2">

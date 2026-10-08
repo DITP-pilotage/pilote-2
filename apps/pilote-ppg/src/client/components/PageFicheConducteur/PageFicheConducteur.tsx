@@ -43,7 +43,7 @@ const PageFicheConducteur: FunctionComponent<
         </div>
         <div className="fr-container">
           <div className="fr-grid-row fr-grid-row--gutters">
-            <div className="fr-col-4 flex flex-column fr-pr-1v">
+            <div className="fr-col-4 flex flex-col fr-pr-1v">
               <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113 h-full">
                 Responsables & État d'avancement
               </h2>
@@ -64,7 +64,7 @@ const PageFicheConducteur: FunctionComponent<
                   </span>
                 </div>
                 <div className="fr-grid-row fr-py-1w">
-                  <div className="fr-col-5 flex justify-center align-end">
+                  <div className="fr-col-5 flex justify-center items-end">
                     <JaugeDeProgression
                       couleur="bleu"
                       libellé={`Taux d'avancement à échéance ${jalon}`}
@@ -73,7 +73,7 @@ const PageFicheConducteur: FunctionComponent<
                     />
                   </div>
                   <div className="fr-col-7 fr-grid-row fr-grid-row-md--gutters">
-                    <div className="fr-col-4 flex justify-center align-end">
+                    <div className="fr-col-4 flex justify-center items-end">
                       <JaugeDeProgression
                         couleur="orange"
                         libellé="Minimum"
@@ -81,7 +81,7 @@ const PageFicheConducteur: FunctionComponent<
                         taille="sm"
                       />
                     </div>
-                    <div className="fr-col-4 flex justify-center align-end">
+                    <div className="fr-col-4 flex justify-center items-end">
                       <JaugeDeProgression
                         couleur="violet"
                         libellé="Médiane"
@@ -89,7 +89,7 @@ const PageFicheConducteur: FunctionComponent<
                         taille="sm"
                       />
                     </div>
-                    <div className="fr-col-4 flex justify-center align-end">
+                    <div className="fr-col-4 flex justify-center items-end">
                       <JaugeDeProgression
                         couleur="vert"
                         libellé="Maximum"
@@ -101,7 +101,7 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
               </Bloc>
             </div>
-            <div className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3 flex flex-column fr-pl-1v">
+            <div className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3 flex flex-col fr-pl-1v">
               <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113 h-full">
                 Météo et synthèse des résultats
               </h2>
@@ -109,7 +109,7 @@ const PageFicheConducteur: FunctionComponent<
                 className="p-4 h-full print:p-0 print:border-dsfr-grey-925"
                 contenuClassesSupplémentaires="flex gap-2"
               >
-                <div className="flex flex-col gap-2 align-center">
+                <div className="flex flex-col gap-2 items-center">
                   <MétéoBadge
                     météo={synthèseDesRésultats.meteo || "NON_RENSEIGNEE"}
                   />
@@ -146,16 +146,16 @@ const PageFicheConducteur: FunctionComponent<
                   Avancement des indicateurs d'impact pris en compte dans le TA
                 </div>
                 <div className="fr-col-7 fr-grid-row">
-                  <div className="fr-col-3 fr-text--bold flex align-center no-wrap">
+                  <div className="fr-col-3 fr-text--bold flex items-center whitespace-nowrap">
                     {`V.Initiale ${chantier.derniereValeurInitiale}`}
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex align-center">
+                  <div className="fr-col-3 fr-text--bold flex items-center">
                     V. Actuelle
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex align-center">
+                  <div className="fr-col-3 fr-text--bold flex items-center">
                     {`Cible ${jalon}`}
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex align-center">
+                  <div className="fr-col-3 fr-text--bold flex items-center">
                     {`TA ${jalon}`}
                   </div>
                 </div>
@@ -171,16 +171,16 @@ const PageFicheConducteur: FunctionComponent<
                     {indicateur.nom}
                   </div>
                   <div className="fr-col-7 fr-grid-row">
-                    <div className="fr-col-3 flex align-center">
+                    <div className="fr-col-3 flex items-center">
                       {indicateur.valeurInitiale}
                     </div>
-                    <div className="fr-col-3 flex align-center fr-pr-1w">
+                    <div className="fr-col-3 flex items-center fr-pr-1w">
                       {`${indicateur.valeurAvancement} ${indicateur.dateValeurAvancement}`}
                     </div>
-                    <div className="fr-col-3 flex align-center">
+                    <div className="fr-col-3 flex items-center">
                       {indicateur.valeurCible}
                     </div>
-                    <div className="fr-col-3 flex align-center">
+                    <div className="fr-col-3 flex items-center">
                       {indicateur.tauxAvancement}
                     </div>
                   </div>
@@ -255,7 +255,7 @@ const PageFicheConducteur: FunctionComponent<
                   className="fr-grid-row fr-px-1w fr-py-1w border-t"
                   key={`publication-${index}`}
                 >
-                  <div className="fr-col-2 fr-text--bold flex align-center">
+                  <div className="fr-col-2 fr-text--bold flex items-center">
                     {publication.libellé}
                   </div>
                   <div className="fr-col-10">

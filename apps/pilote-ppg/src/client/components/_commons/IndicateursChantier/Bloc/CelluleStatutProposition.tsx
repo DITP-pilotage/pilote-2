@@ -111,7 +111,7 @@ export const CelluleStatutProposition = ({
 
   return (
     <Table.Cell className="mb-0 text-sm/6 min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
-      <div className="flex align-center selecteur-infobulle-conteneur">
+      <div className="flex items-center selecteur-infobulle-conteneur">
         <span className="texte-proposition font-bold">
           {labelStatutProposition}
         </span>
@@ -120,7 +120,7 @@ export const CelluleStatutProposition = ({
       {!estPropositionAccepteeOuAccepteeAvecModification(
         detailIndicateurDuTerritoire,
       ) && (
-        <div className="flex align-center selecteur-infobulle-conteneur">
+        <div className="flex items-center selecteur-infobulle-conteneur">
           {estPropositionAccuseeReception(detailIndicateurDuTerritoire) ? (
             <>
               <span className="fr-text--xs !text-dsfr-mention-grey">

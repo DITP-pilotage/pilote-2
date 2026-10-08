@@ -63,8 +63,8 @@ export const FormulaireParametrageSourceIndicateur = () => {
 
   return (
     <FormProvider {...form}>
-      <div className="flex flex-column">
-        <div className="flex justify-between align-center !mb-2">
+      <div className="flex flex-col">
+        <div className="flex justify-between items-center !mb-2">
           <h2 className="text-h2 md:text-h2-md mb-0">
             Configuration des métadonnées
           </h2>
@@ -85,7 +85,7 @@ export const FormulaireParametrageSourceIndicateur = () => {
               value={searchTerm}
             />
 
-            <div className="flex flex-column gap-2">
+            <div className="flex flex-col gap-2">
               {metadataFiltrees.map((field) => {
                 const originalIndex = metadataFields.findIndex(
                   (metadataField) => metadataField.id === field.id,
@@ -102,7 +102,7 @@ export const FormulaireParametrageSourceIndicateur = () => {
                       onClick={() => setSelectedIndex(originalIndex)}
                       type="button"
                     >
-                      <span className="w-[20ch] truncate bold">
+                      <span className="w-[20ch] truncate font-bold">
                         {metadata.name || "(Sans nom)"}
                       </span>
                     </button>

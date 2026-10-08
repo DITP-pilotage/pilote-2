@@ -33,7 +33,7 @@ export const FormulaireConfigurationDroits = () => {
         <h1 className="text-2xl font-bold text-dsfr-grey-50 mb-2">
           Configuration des droits
         </h1>
-        <p className="text-sm font-semibold text-italic">{email}</p>
+        <p className="text-sm font-semibold italic">{email}</p>
       </header>
 
       <div className="bg-white p-8 rounded-sm shadow-sm">

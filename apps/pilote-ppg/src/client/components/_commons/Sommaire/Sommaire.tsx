@@ -10,7 +10,7 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
   return (
     <div className="sticky top-0 max-w-80">
       <nav className="fr-pt-3w fr-pl-7v fr-pr-4w">
-        <p className="bold fr-text--lg fr-mb-1w">Sommaire</p>
+        <p className="font-bold fr-text--lg fr-mb-1w">Sommaire</p>
         <ul className="fr-text--sm fr-pl-3w [&_a:not(:hover,:active)]:[--underline-idle-width:0]">
           {rubriques.map((rubrique) => (
             <li

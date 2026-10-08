@@ -29,7 +29,7 @@ function déterminerValeurAffichée(
   }
   return (
     <>
-      <div className="flex justify-center align-center fr-text--bold">
+      <div className="flex justify-center items-center fr-text--bold">
         <div className="fr-mr-1w">VA :</div>
         <div>
           {valeur === null
@@ -37,7 +37,7 @@ function déterminerValeurAffichée(
             : valeur.toLocaleString() + unitéAffichée}
         </div>
       </div>
-      <div className="flex justify-center align-center">
+      <div className="flex justify-center items-center">
         <div className="fr-mr-1w">{`VC ${jalon} : `}</div>
         <div>
           {valeurCibleAnnuelle === null

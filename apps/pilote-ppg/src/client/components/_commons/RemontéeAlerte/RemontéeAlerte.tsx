@@ -26,7 +26,7 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({
       <span className="text-h1 md:text-h1-md font-bold mb-0 text-warning">
         {nombre ?? "-"}
       </span>
-      <span className="fr-mb-0 texte-gauche text-xs text-dsfr-grey-50 md:text-base">
+      <span className="fr-mb-0 text-left text-xs text-dsfr-grey-50 md:text-base">
         {libellé}
       </span>
     </button>

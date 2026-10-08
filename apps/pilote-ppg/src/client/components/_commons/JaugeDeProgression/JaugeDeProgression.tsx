@@ -83,7 +83,7 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
           className={clsxm(
             "fr-text--xs fr-mb-0 text-center",
             classesÀPartirDeTaille[taille].libellé,
-            noWrap && "no-wrap",
+            noWrap && "whitespace-nowrap",
           )}
         >
           {libellé}
@@ -94,7 +94,7 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
           className={clsxm(
             "fr-text--xs fr-mb-0 text-center",
             classesÀPartirDeTaille[taille].libellé,
-            noWrap && "no-wrap",
+            noWrap && "whitespace-nowrap",
           )}
         >
           {date ? `(${formaterDate(date, "MM/YYYY")})` : " "}

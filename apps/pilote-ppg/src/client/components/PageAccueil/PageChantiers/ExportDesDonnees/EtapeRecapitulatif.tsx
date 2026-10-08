@@ -235,7 +235,7 @@ export const EtapeRecapitulatif = ({
         )}
       </p>
       <h3 className="fr-text--md fr-mb-0 fr-mt-2w">Données collectées</h3>
-      <ul className="list-style-none fr-pl-0">
+      <ul className="list-none fr-pl-0">
         {Object.entries(arrayDonneeAExporter)
           .filter(([key]) => filtres.optionsExport.includes(key))
           .map(([key, value]) => {
@@ -293,7 +293,7 @@ export const EtapeRecapitulatif = ({
             Étape précédente
           </button>
           <button
-            className="!bg-primary font-medium !text-white rounded flex align-center gap-2 !px-4"
+            className="!bg-primary font-medium !text-white rounded flex items-center gap-2 !px-4"
             type="submit"
           >
             <Icone className="!text-current w-4 h-4" icone={Download1Icon} />

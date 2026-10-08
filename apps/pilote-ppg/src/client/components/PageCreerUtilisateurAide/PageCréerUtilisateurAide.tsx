@@ -25,10 +25,10 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
   return (
     <div className="bg-dsfr-alt-blue-france">
       <main className="fr-container fr-py-6w">
-        <h3 className="fr-mb-0 flex justify-center align-center">
+        <h3 className="fr-mb-0 flex justify-center items-center">
           Coordinateurs PILOTE
         </h3>
-        <h3 className="flex justify-center align-center">
+        <h3 className="flex justify-center items-center">
           Créer un compte pour un utilisateur sur votre territoire
         </h3>
         <p className="fr-text fr-text--sm">
@@ -80,11 +80,11 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
           </p>
         </div>
         <div className="bg-white fr-p-2w">
-          <div className="flex justify-center align-center">
+          <div className="flex justify-center items-center">
             <DescriptionEtapes etapes={etapes} />
           </div>
         </div>
-        <div className="flex justify-center align-center sticky bottom-px z-10 w-full py-5 bg-white/90">
+        <div className="flex justify-center items-center sticky bottom-px z-10 w-full py-5 bg-white/90">
           <Button asChild variant="primary">
             <Link href="/admin/utilisateur/creer" title="Créer un compte">
               Créer un compte

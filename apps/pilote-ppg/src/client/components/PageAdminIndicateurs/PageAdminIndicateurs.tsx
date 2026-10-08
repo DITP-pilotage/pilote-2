@@ -26,7 +26,7 @@ const PageAdminIndicateurs: FunctionComponent = () => {
             <div className="fr-col-12 fr-col-md-3 flex items-end justify-end max-[576px]:justify-center">
               <Button
                 variant="primary"
-                className="no-wrap"
+                className="whitespace-nowrap"
                 onClick={naviguerVersCreationIndicateur}
                 type="button"
               >
