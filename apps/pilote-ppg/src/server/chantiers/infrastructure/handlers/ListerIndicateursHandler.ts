@@ -11,7 +11,7 @@ export const handleListerIndicateurs = async ({
   request: NextApiRequest;
   response: NextApiResponse;
 }) => {
-  const listeDonneesIndicateurs = await getContainer("legacy")
+  const listeDonneesIndicateurs = await getContainer("chantiers")
     .resolve("listerDonneesIndicateurParIndicIdUseCase")
     .run({
       indicId: request.query.indicateurId as string,

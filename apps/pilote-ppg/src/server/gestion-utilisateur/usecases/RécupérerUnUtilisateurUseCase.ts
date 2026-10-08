@@ -1,11 +1,14 @@
 import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
-import type { Inject } from "@/server/legacy/module";
 
 export default class RécupérerUnUtilisateurUseCase {
   private readonly utilisateurRepository: UtilisateurRepository;
 
-  constructor({ utilisateurRepository }: Inject<"utilisateurRepository">) {
+  constructor({
+    utilisateurRepository,
+  }: {
+    utilisateurRepository: UtilisateurRepository;
+  }) {
     this.utilisateurRepository = utilisateurRepository;
   }
 

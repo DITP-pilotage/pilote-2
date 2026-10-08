@@ -1,4 +1,13 @@
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
+import UtilisateurSQLRepositoryInterface from "@/server/domain/utilisateur/UtilisateurRepository.interface";
+import ProfilSQLRepositoryInterface from "@/server/domain/profil/ProfilRepository";
+import TerritoireSQLRepositoryInterface from "@/server/domain/territoire/TerritoireRepository.interface";
+import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
+import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/ProfilSQLRepository";
+import { TerritoireSQLRepository } from "@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository";
+import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
+import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
+import { RécupérerTerritoiresAvecNombreUtilisateursUseCase as RécupérerTerritoiresAvecNombreUtilisateursSQLUseCase } from "@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase";
 import { PrismaChantierRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaChantierRepository";
 import { RecupererChantiersSynthetisesUseCase } from "@/server/gestion-utilisateur/usecases/RecupererChantiersSynthetisesUseCase";
 import { PrismaPerimetreMinisterielRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaPerimetreMinisteriel";
@@ -70,6 +79,12 @@ type GestionUtilisateurExports = {
 };
 
 type GestionUtilisateurCradle = GestionUtilisateurExports & {
+  utilisateurSQLRepository: UtilisateurSQLRepositoryInterface;
+  profilSQLRepository: ProfilSQLRepositoryInterface;
+  territoireSQLRepository: TerritoireSQLRepositoryInterface;
+  récupérerUnUtilisateurUseCase: RécupérerUnUtilisateurUseCase;
+  récupérerUnProfilUseCase: RécupérerUnProfilUseCase;
+  récupérerTerritoiresAvecNombreUtilisateursSQLUseCase: RécupérerTerritoiresAvecNombreUtilisateursSQLUseCase;
   utilisateurRepository: UtilisateurRepository;
   territoireRepository: TerritoireRepository;
   utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -120,8 +135,32 @@ export const gestionUtilisateurModule = defineModule<
   name: "gestionUtilisateur",
   imports: ["shared"],
   exports: ["activiteComptesQuery", "utilisateursQuery"],
-  register: (container, { asModuleClass }) => {
+  register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({
+      utilisateurSQLRepository: asModuleClass(
+        UtilisateurSQLRepository,
+      ).scoped(),
+      profilSQLRepository: asModuleClass(ProfilSQLRepository).scoped(),
+      territoireSQLRepository: asModuleClass(TerritoireSQLRepository).scoped(),
+      récupérerUnUtilisateurUseCase: asModuleFunction(
+        ({ utilisateurSQLRepository }) =>
+          new RécupérerUnUtilisateurUseCase({
+            utilisateurRepository: utilisateurSQLRepository,
+          }),
+      ).scoped(),
+      récupérerUnProfilUseCase: asModuleFunction(
+        ({ profilSQLRepository }) =>
+          new RécupérerUnProfilUseCase({
+            profilRepository: profilSQLRepository,
+          }),
+      ).scoped(),
+      récupérerTerritoiresAvecNombreUtilisateursSQLUseCase: asModuleFunction(
+        ({ territoireSQLRepository, utilisateurSQLRepository }) =>
+          new RécupérerTerritoiresAvecNombreUtilisateursSQLUseCase({
+            territoireRepository: territoireSQLRepository,
+            utilisateurRepository: utilisateurSQLRepository,
+          }),
+      ).scoped(),
       activiteComptesQuery: asModuleClass(PrismaActiviteComptesQuery),
       utilisateursQuery: asModuleClass(PrismaUtilisateursQuery),
       utilisateurRepository: asModuleClass(PrismaUtilisateurRepository),

@@ -32,7 +32,7 @@ export async function getServerSideProps(
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;
   }
-  const utilisateurDemandé = await getContainer("legacy")
+  const utilisateurDemandé = await getContainer("gestionUtilisateur")
     .resolve("récupérerUnUtilisateurUseCase")
     .run(params.id);
 

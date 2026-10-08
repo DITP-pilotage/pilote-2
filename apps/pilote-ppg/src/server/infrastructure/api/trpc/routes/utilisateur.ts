@@ -23,7 +23,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await getContainer("legacy")
+      const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
@@ -40,7 +40,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await getContainer("legacy")
+      const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
@@ -57,7 +57,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await getContainer("legacy")
+      const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
@@ -73,7 +73,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationReactiverUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await getContainer("legacy")
+      const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")

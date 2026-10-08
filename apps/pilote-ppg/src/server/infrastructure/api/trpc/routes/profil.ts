@@ -15,7 +15,7 @@ export const profilRouter = créerRouteurTRPC({
   récupérer: procédureProtégée
     .input(validationProfilContexte)
     .query(({ input }) => {
-      return getContainer("legacy")
+      return getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(input.profilCode);
     }),

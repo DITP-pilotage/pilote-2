@@ -23,6 +23,7 @@ import { RecupererDetailsIndicateursUseCase } from "./usecases/RecupererDetailsI
 import { RecupererChantiersAccessiblesEnLectureUseCaseV2 } from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseV2";
 import RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2 from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2";
 import { ExportCsvDesChantiersUseCase } from "./usecases/ExportCsvDesChantiersUseCase";
+import { ListerDonneesIndicateurParIndicIdUseCase } from "./usecases/ListerDonneesIndicateurParIndicIdUseCase";
 import { RécupérerStatistiquesAvancementChantiersUseCase } from "./usecases/RécupérerStatistiquesAvancementChantiersUseCase";
 import { ExportCsvDesIndicateursUseCase } from "./usecases/ExportCsvDesIndicateursUseCase";
 import { ExportCsvDesHistoriquesIndicateursUseCase } from "./usecases/ExportCsvDesHistoriquesIndicateursUseCase";
@@ -91,6 +92,7 @@ type ChantierImports = IndicateurTerritoireValeurEvenementExports &
   DatajobsExecutionExports;
 
 type ChantierOwnCradle = ChantierExports & {
+  listerDonneesIndicateurParIndicIdUseCase: ListerDonneesIndicateurParIndicIdUseCase;
   chantierRepository: ChantierRepository;
   indicateurRepository: IndicateurRepository;
   territoireRepository: TerritoireRepository;
@@ -162,6 +164,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   ],
   register: (container, { asModuleClass }) => {
     container.register({
+      listerDonneesIndicateurParIndicIdUseCase: asModuleClass(
+        ListerDonneesIndicateurParIndicIdUseCase,
+      ),
       chantierRepository: asModuleClass(PrismaChantierRepository),
       indicateurRepository: asModuleClass(PrismaIndicateurRepository),
       territoireRepository: asModuleClass(PrismaTerritoireRepository),

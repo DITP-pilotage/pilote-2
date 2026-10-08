@@ -14,8 +14,8 @@ export const territoireRouter = créerRouteurTRPC({
   récupérerListe: procédureProtégée
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {
-      return getContainer("legacy")
-        .resolve("récupérerTerritoiresAvecNombreUtilisateursUseCase")
+      return getContainer("gestionUtilisateur")
+        .resolve("récupérerTerritoiresAvecNombreUtilisateursSQLUseCase")
         .run({ territoireCodes: input.territoireCodes });
     }),
 });
