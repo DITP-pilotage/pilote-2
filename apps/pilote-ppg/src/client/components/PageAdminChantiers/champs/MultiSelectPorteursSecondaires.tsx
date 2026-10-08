@@ -5,7 +5,7 @@ import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 export const MultiSelectPorteursSecondaires = () => {
   const { data: porteurs = [] } =
-    api.metadataChantier.listerPorteursMinistere.useQuery();
+    api.parametrageChantier.listPorteursMinistere.useQuery();
   const { control } = useFormContext<ChantierForm>();
 
   return (

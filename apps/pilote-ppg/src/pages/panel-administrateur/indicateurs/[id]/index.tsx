@@ -21,7 +21,7 @@ export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat;
   informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat;
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat;
-  estUneCréation: boolean;
+  isCreation: boolean;
   modificationReussie: boolean;
   creationReussie: boolean;
   chantiers: ChantierSynthétisé[];
@@ -60,8 +60,8 @@ export async function getServerSideProps(
   let indicateurDemandé: MetadataParametrageIndicateurContrat;
   let creationReussie = query._action === "creation-reussie";
   let modificationReussie = query._action === "modification-reussie";
-  let estUneCréation = query._action === "creer-indicateur";
-  if (estUneCréation) {
+  let isCreation = query._action === "creer-indicateur";
+  if (isCreation) {
     indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(
       await getContainer("parametrageIndicateur")
         .resolve("initialiserNouvelIndicateurUseCase")
@@ -103,7 +103,7 @@ export async function getServerSideProps(
       informationHistorisationIndicateur,
       mapInformationMetadataIndicateur,
       chantiers,
-      estUneCréation,
+      isCreation,
       creationReussie,
       modificationReussie,
     },
@@ -116,7 +116,7 @@ const NextPageAdminIndicateur: FunctionComponent<
   indicateur,
   informationHistorisationIndicateur,
   mapInformationMetadataIndicateur,
-  estUneCréation,
+  isCreation,
   modificationReussie,
   creationReussie,
   chantiers,
@@ -132,7 +132,7 @@ const NextPageAdminIndicateur: FunctionComponent<
         <PageIndicateur
           chantiers={chantiers}
           creationReussie={creationReussie}
-          estUneCréation={estUneCréation}
+          isCreation={isCreation}
           indicateur={indicateur}
           informationHistorisationIndicateur={
             informationHistorisationIndicateur

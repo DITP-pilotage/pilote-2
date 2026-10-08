@@ -15,7 +15,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataPorteur } from "@/server/metadataPorteur/queries/RecupererPorteurQuery";
+import { MetadataPorteur } from "@/server/referentiels/porteur/queries/GetPorteurQuery";
 import {
   defaultPorteurVide,
   PorteurForm,
@@ -26,7 +26,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {
   porteurId: string;
-  estUneCréation: boolean;
+  isCreation: boolean;
   porteurData: MetadataPorteur | null;
   idSuivant: string | null;
 }
@@ -40,14 +40,12 @@ const OPTIONS_TYPE: SelectFieldOption<$Enums.porteur_type>[] = [
 
 const PageAdminPorteurEdition = ({
   porteurId,
-  estUneCréation,
+  isCreation,
   porteurData,
   idSuivant,
 }: Props) => {
   const refreshRouter = useRefreshRouter();
-  const porteurIdEffectif = estUneCréation
-    ? (idSuivant ?? porteurId)
-    : porteurId;
+  const porteurIdEffectif = isCreation ? (idSuivant ?? porteurId) : porteurId;
 
   const defaultValues: PorteurForm = porteurData
     ? {
@@ -63,10 +61,10 @@ const PageAdminPorteurEdition = ({
 
   const { reactHookForm, enregistrer, isPending } = usePorteurForm({
     defaultValues,
-    estUneCréation,
+    isCreation,
   });
 
-  const archiverMutation = api.metadataPorteur.archiver.useMutation({
+  const archiverMutation = api.referentielPorteur.archive.useMutation({
     onSuccess: () => {
       toast.success("Porteur archivé avec succès.", {
         position: "bottom-right",
@@ -76,7 +74,7 @@ const PageAdminPorteurEdition = ({
     },
   });
 
-  const restorerMutation = api.metadataPorteur.restorer.useMutation({
+  const restaurerMutation = api.referentielPorteur.restore.useMutation({
     onSuccess: () => {
       toast.success("Porteur restauré avec succès.", {
         position: "bottom-right",
@@ -88,14 +86,13 @@ const PageAdminPorteurEdition = ({
 
   const estSupprime = porteurData?.deletedAt != null;
 
-  const { data: utilisation } =
-    api.metadataPorteur.verifierUtilisation.useQuery(
-      { porteurId: porteurIdEffectif },
-      { enabled: !estUneCréation && !estSupprime },
-    );
+  const { data: utilisation } = api.referentielPorteur.checkUsage.useQuery(
+    { porteurId: porteurIdEffectif },
+    { enabled: !isCreation && !estSupprime },
+  );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const titre = estUneCréation
+  const titre = isCreation
     ? `Nouveau porteur - ${porteurIdEffectif}`
     : `Porteur ${porteurId}`;
 
@@ -112,7 +109,7 @@ const PageAdminPorteurEdition = ({
           libelléPageCourante={titre}
         />
 
-        {!estUneCréation && !estSupprime && estUtilisé && (
+        {!isCreation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
             titre={`Ce porteur est associé à ${utilisation?.nombrePerimetres} périmètre(s) et ${utilisation?.nombreChantiers} chantier(s) et ne peut pas être supprimé.`}
@@ -128,14 +125,14 @@ const PageAdminPorteurEdition = ({
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                  {estUneCréation ? "Nouveau porteur" : "Édition"}
+                  {isCreation ? "Nouveau porteur" : "Édition"}
                 </p>
                 <h1 className="text-3xl font-bold text-dsfr-grey-200">
                   {titre}
                 </h1>
               </div>
               <div className="flex items-center gap-3">
-                {!estUneCréation && (
+                {!isCreation && (
                   <div className="flex items-center gap-2">
                     <Button
                       className={
@@ -146,7 +143,7 @@ const PageAdminPorteurEdition = ({
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               porteurId: porteurIdEffectif,
                             })
@@ -163,7 +160,7 @@ const PageAdminPorteurEdition = ({
                   </div>
                 )}
                 <Button disabled={isPending} type="submit" variant="primary">
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
+                  {isCreation ? "Créer" : "Sauvegarder"}
                 </Button>
               </div>
             </div>
@@ -240,7 +237,7 @@ const PageAdminPorteurEdition = ({
 
             <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
               <Button disabled={isPending} type="submit" variant="primary">
-                {estUneCréation ? "Créer" : "Sauvegarder"}
+                {isCreation ? "Créer" : "Sauvegarder"}
               </Button>
             </div>
           </form>

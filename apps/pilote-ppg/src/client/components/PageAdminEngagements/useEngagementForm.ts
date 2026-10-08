@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { engagementCommandSchema } from "@/server/metadataEngagement/handlers/EnregistrerEngagementHandler";
+import { engagementCommandSchema } from "@/server/referentiels/engagement/handlers/SaveEngagementHandler";
 
 export type EngagementForm = z.infer<typeof engagementCommandSchema>;
 
@@ -15,15 +15,15 @@ export const defaultEngagementVide = (
   engagementId,
   engagementShort: "",
   engagementName: "",
-  estUneCréation: true,
+  isCreation: true,
 });
 
 export const useEngagementForm = ({
   defaultValues,
-  estUneCréation,
+  isCreation,
 }: {
   defaultValues: EngagementForm;
-  estUneCréation: boolean;
+  isCreation: boolean;
 }) => {
   const router = useRouter();
 
@@ -32,15 +32,15 @@ export const useEngagementForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataEngagement.enregistrer.useMutation({
+  const mutation = api.referentielEngagement.save.useMutation({
     onSuccess: () => {
       toast.success(
-        estUneCréation
+        isCreation
           ? "Engagement créé avec succès."
           : "Engagement modifié avec succès.",
         { position: "bottom-right", richColors: true },
       );
-      if (estUneCréation) {
+      if (isCreation) {
         void router.push(
           "/panel-administrateur/referentiels-deprecies/engagements",
         );

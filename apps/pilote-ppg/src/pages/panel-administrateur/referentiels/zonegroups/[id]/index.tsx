@@ -28,23 +28,23 @@ export async function getServerSideProps(
   const parsed = z.string().min(1).safeParse(params?.id);
   if (!parsed.success) return redirigerVersAccueil;
   const zoneGroupId = parsed.data;
-  const estUneCréation = query._action === "creer-zonegroup";
-  const container = getContainer("metadataZonegroup");
+  const isCreation = query._action === "creer-zonegroup";
+  const container = getContainer("referentiels");
 
-  const zonegroupData = estUneCréation
+  const zonegroupData = isCreation
     ? null
-    : await container.resolve("recupererZonegroupQuery").run({ zoneGroupId });
+    : await container.resolve("getZonegroupQuery").run({ zoneGroupId });
 
-  const idSuivant = estUneCréation
-    ? await container.resolve("recupererIdSuivantZonegroupQuery").run()
+  const idSuivant = isCreation
+    ? await container.resolve("getNextZonegroupIdQuery").run()
     : null;
 
-  return { props: { zoneGroupId, estUneCréation, zonegroupData, idSuivant } };
+  return { props: { zoneGroupId, isCreation, zonegroupData, idSuivant } };
 }
 
 const NextPageAdminZonegroupEdition = ({
   zoneGroupId,
-  estUneCréation,
+  isCreation,
   zonegroupData,
   idSuivant,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
@@ -54,7 +54,7 @@ const NextPageAdminZonegroupEdition = ({
     </Head>
     <NextPanelAdministrateurLayout pageActive="referentiels-zonegroups">
       <PageAdminZonegroupEdition
-        estUneCréation={estUneCréation}
+        isCreation={isCreation}
         idSuivant={idSuivant}
         zonegroupData={zonegroupData}
         zoneGroupId={zoneGroupId}

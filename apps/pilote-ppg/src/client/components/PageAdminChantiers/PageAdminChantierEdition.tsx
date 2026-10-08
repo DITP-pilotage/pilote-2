@@ -5,8 +5,8 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import OngletPonderationsIndicateurs from "@/components/PageAdminChantiers/OngletPonderationsIndicateurs";
-import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
-import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
+import { MetadataChantier } from "@/server/parametrage-chantier/queries/GetChantierQuery";
+import { IndicateurPonderation } from "@/server/parametrage-chantier/queries/GetIndicateursPonderationsChantierQuery";
 import {
   useChantierForm,
   defaultChantierVide,
@@ -15,7 +15,7 @@ import {
 
 interface PageAdminChantierEditionProps {
   chantierId: string;
-  estUneCréation: boolean;
+  isCreation: boolean;
   chantierData: MetadataChantier | null;
   ponderations: IndicateurPonderation[] | null;
   idSuivant: string | null;
@@ -33,12 +33,12 @@ const isOnglet = (value: string): value is Onglet =>
 
 const PageAdminChantierEdition = ({
   chantierId,
-  estUneCréation,
+  isCreation,
   chantierData,
   ponderations,
   idSuivant,
 }: PageAdminChantierEditionProps) => {
-  const chantierIdEffectif = estUneCréation
+  const chantierIdEffectif = isCreation
     ? (idSuivant ?? chantierId)
     : chantierId;
 
@@ -55,11 +55,11 @@ const PageAdminChantierEdition = ({
 
   const [ongletActif, setOngletActif] = useState<Onglet>("metadata");
 
-  const titre = estUneCréation
+  const titre = isCreation
     ? `Nouveau chantier — ${chantierIdEffectif}`
     : `Chantier ${chantierId}`;
 
-  const labelBouton = estUneCréation ? "Créer le chantier" : "Sauvegarder";
+  const labelBouton = isCreation ? "Créer le chantier" : "Sauvegarder";
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -76,12 +76,12 @@ const PageAdminChantierEdition = ({
 
         <div className="mb-6">
           <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-            {estUneCréation ? "Nouveau chantier" : "Édition"}
+            {isCreation ? "Nouveau chantier" : "Édition"}
           </p>
           <h1 className="text-3xl font-bold text-dsfr-grey-50">{titre}</h1>
         </div>
 
-        {!estUneCréation && (
+        {!isCreation && (
           <div className="mb-6">
             <NavigationTertiaire
               items={ONGLETS}
@@ -93,13 +93,13 @@ const PageAdminChantierEdition = ({
           </div>
         )}
 
-        {estUneCréation || ongletActif === "metadata" ? (
+        {isCreation || ongletActif === "metadata" ? (
           <>
             <FormProvider {...reactHookForm}>
               <form
                 method="post"
                 onSubmit={reactHookForm.handleSubmit(
-                  estUneCréation ? creerChantier : modifierChantier,
+                  isCreation ? creerChantier : modifierChantier,
                 )}
               >
                 <div className="flex justify-end mb-6">

@@ -11,7 +11,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataPerimetre } from "@/server/metadataPerimetre/queries/RecupererPerimetreQuery";
+import { MetadataPerimetre } from "@/server/referentiels/perimetre/queries/GetPerimetreQuery";
 import {
   defaultPerimetreVide,
   PerimetreForm,
@@ -22,19 +22,19 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {
   perimetreId: string;
-  estUneCréation: boolean;
+  isCreation: boolean;
   perimetreData: MetadataPerimetre | null;
   idSuivant: string | null;
 }
 
 const PageAdminPerimetreEdition = ({
   perimetreId,
-  estUneCréation,
+  isCreation,
   perimetreData,
   idSuivant,
 }: Props) => {
   const refreshRouter = useRefreshRouter();
-  const perimetreIdEffectif = estUneCréation
+  const perimetreIdEffectif = isCreation
     ? (idSuivant ?? perimetreId)
     : perimetreId;
 
@@ -48,10 +48,10 @@ const PageAdminPerimetreEdition = ({
 
   const { reactHookForm, enregistrer, isPending } = usePerimetreForm({
     defaultValues,
-    estUneCréation,
+    isCreation,
   });
 
-  const archiverMutation = api.metadataPerimetre.archiver.useMutation({
+  const archiverMutation = api.referentielPerimetre.archive.useMutation({
     onSuccess: () => {
       toast.success("Périmètre archivé avec succès.", {
         position: "bottom-right",
@@ -61,7 +61,7 @@ const PageAdminPerimetreEdition = ({
     },
   });
 
-  const restorerMutation = api.metadataPerimetre.restorer.useMutation({
+  const restaurerMutation = api.referentielPerimetre.restore.useMutation({
     onSuccess: () => {
       toast.success("Périmètre restauré avec succès.", {
         position: "bottom-right",
@@ -73,14 +73,13 @@ const PageAdminPerimetreEdition = ({
 
   const estSupprimé = perimetreData?.deletedAt != null;
 
-  const { data: utilisation } =
-    api.metadataPerimetre.verifierUtilisation.useQuery(
-      { perimetreId: perimetreIdEffectif },
-      { enabled: !estUneCréation && !estSupprimé },
-    );
+  const { data: utilisation } = api.referentielPerimetre.checkUsage.useQuery(
+    { perimetreId: perimetreIdEffectif },
+    { enabled: !isCreation && !estSupprimé },
+  );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const { data: porteurs = [] } = api.metadataPorteur.lister.useQuery();
+  const { data: porteurs = [] } = api.referentielPorteur.list.useQuery();
   const porteursActifs = porteurs.filter((p) => p.deletedAt === null);
   const optionsPorteurs: SelectFieldOption<string>[] = [
     { libelle: "- Aucun -", valeur: "" },
@@ -90,7 +89,7 @@ const PageAdminPerimetreEdition = ({
     })),
   ];
 
-  const titre = estUneCréation
+  const titre = isCreation
     ? `Nouveau périmètre - ${perimetreIdEffectif}`
     : `Périmètre ${perimetreId}`;
 
@@ -107,7 +106,7 @@ const PageAdminPerimetreEdition = ({
           libelléPageCourante={titre}
         />
 
-        {!estUneCréation && !estSupprimé && estUtilisé && (
+        {!isCreation && !estSupprimé && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
             titre={`Ce périmètre est associé à ${utilisation?.nombreChantiers} chantier(s) et ne peut pas être supprimé.`}
@@ -123,14 +122,14 @@ const PageAdminPerimetreEdition = ({
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                  {estUneCréation ? "Nouveau périmètre" : "Édition"}
+                  {isCreation ? "Nouveau périmètre" : "Édition"}
                 </p>
                 <h1 className="text-3xl font-bold text-dsfr-grey-200">
                   {titre}
                 </h1>
               </div>
               <div className="flex items-center gap-3">
-                {!estUneCréation && (
+                {!isCreation && (
                   <div className="flex items-center gap-2">
                     <Button
                       className={
@@ -141,7 +140,7 @@ const PageAdminPerimetreEdition = ({
                       disabled={!estSupprimé && estUtilisé}
                       onClick={() =>
                         estSupprimé
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               perimetreId: perimetreIdEffectif,
                             })
@@ -158,7 +157,7 @@ const PageAdminPerimetreEdition = ({
                   </div>
                 )}
                 <Button disabled={isPending} type="submit" variant="primary">
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
+                  {isCreation ? "Créer" : "Sauvegarder"}
                 </Button>
               </div>
             </div>
@@ -207,7 +206,7 @@ const PageAdminPerimetreEdition = ({
 
             <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
               <Button disabled={isPending} type="submit" variant="primary">
-                {estUneCréation ? "Créer" : "Sauvegarder"}
+                {isCreation ? "Créer" : "Sauvegarder"}
               </Button>
             </div>
           </form>

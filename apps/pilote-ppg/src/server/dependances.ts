@@ -31,13 +31,8 @@ import { gestionContenuModule } from "./gestion-contenu/module";
 import { ficheTerritorialeModule } from "./fiche-territoriale/module";
 import { actualitesModule } from "./actualites/module";
 import { mbSyncModule } from "./mb-sync/module";
-import { metadataChantierModule } from "./metadataChantier/module";
-import { metadataPorteurModule } from "./metadataPorteur/module";
-import { metadataPerimetreModule } from "./metadataPerimetre/module";
-import { metadataZonegroupModule } from "./metadataZonegroup/module";
-import { metadataAxeModule } from "./metadataAxe/module";
-import { metadataPpgModule } from "./metadataPpg/module";
-import { metadataEngagementModule } from "./metadataEngagement/module";
+import { parametrageChantierModule } from "./parametrage-chantier/module";
+import { referentielsModule } from "./referentiels/module";
 import { annuaireModule } from "./annuaire/module";
 
 const allModules = [
@@ -67,13 +62,8 @@ const allModules = [
   applicationLogModule,
   actualitesModule,
   mbSyncModule,
-  metadataChantierModule,
-  metadataPorteurModule,
-  metadataPerimetreModule,
-  metadataZonegroupModule,
-  metadataAxeModule,
-  metadataPpgModule,
-  metadataEngagementModule,
+  parametrageChantierModule,
+  referentielsModule,
   annuaireModule,
 ];
 
@@ -121,13 +111,8 @@ function registerContainer(): ContainerDependencies {
     applicationLog: getContainer("applicationLog"),
     actualites: getContainer("actualites"),
     mbSync: getContainer("mbSync"),
-    metadataChantier: getContainer("metadataChantier"),
-    metadataPorteur: getContainer("metadataPorteur"),
-    metadataPerimetre: getContainer("metadataPerimetre"),
-    metadataZonegroup: getContainer("metadataZonegroup"),
-    metadataAxe: getContainer("metadataAxe"),
-    metadataPpg: getContainer("metadataPpg"),
-    metadataEngagement: getContainer("metadataEngagement"),
+    parametrageChantier: getContainer("parametrageChantier"),
+    referentiels: getContainer("referentiels"),
     annuaire: getContainer("annuaire"),
   };
 }

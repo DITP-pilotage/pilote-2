@@ -10,7 +10,7 @@ const LIBELLES = {
 };
 
 const PageAdminAxes = () => {
-  const { data: axes, isLoading } = api.metadataAxe.lister.useQuery();
+  const { data: axes, isLoading } = api.referentielAxe.list.useQuery();
   const table = useTableauAdminAxes(axes ?? []);
   const nombreAxesFiltres = table.getFilteredRowModel().rows.length;
 

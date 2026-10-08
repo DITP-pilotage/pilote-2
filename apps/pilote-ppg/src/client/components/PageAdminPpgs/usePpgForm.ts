@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { ppgCommandSchema } from "@/server/metadataPpg/handlers/EnregistrerPpgHandler";
+import { ppgCommandSchema } from "@/server/referentiels/ppg/handlers/SavePpgHandler";
 
 export type PpgForm = z.infer<typeof ppgCommandSchema>;
 
@@ -14,15 +14,15 @@ export const defaultPpgVide = (): PpgForm => ({
   ppgNom: "",
   ppgDesc: null,
   ppgAxe: null,
-  estUneCréation: true,
+  isCreation: true,
 });
 
 export const usePpgForm = ({
   defaultValues,
-  estUneCréation,
+  isCreation,
 }: {
   defaultValues: PpgForm;
-  estUneCréation: boolean;
+  isCreation: boolean;
 }) => {
   const router = useRouter();
 
@@ -31,13 +31,13 @@ export const usePpgForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataPpg.enregistrer.useMutation({
+  const mutation = api.referentielPpg.save.useMutation({
     onSuccess: () => {
       toast.success(
-        estUneCréation ? "PPG créé avec succès." : "PPG modifié avec succès.",
+        isCreation ? "PPG créé avec succès." : "PPG modifié avec succès.",
         { position: "bottom-right", richColors: true },
       );
-      if (estUneCréation) {
+      if (isCreation) {
         void router.push("/panel-administrateur/referentiels-deprecies/ppgs");
       }
     },

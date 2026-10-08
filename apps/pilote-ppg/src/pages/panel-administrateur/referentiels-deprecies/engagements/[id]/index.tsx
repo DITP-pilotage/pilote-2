@@ -28,23 +28,23 @@ export async function getServerSideProps(
   const parsed = z.string().min(1).safeParse(params?.id);
   if (!parsed.success) return redirigerVersAccueil;
   const engagementId = parsed.data;
-  const estUneCréation = query._action === "creer-engagement";
-  const container = getContainer("metadataEngagement");
+  const isCreation = query._action === "creer-engagement";
+  const container = getContainer("referentiels");
 
-  const engagementData = estUneCréation
+  const engagementData = isCreation
     ? null
-    : await container.resolve("recupererEngagementQuery").run({ engagementId });
+    : await container.resolve("getEngagementQuery").run({ engagementId });
 
-  const idSuivant = estUneCréation
-    ? await container.resolve("recupererIdSuivantEngagementQuery").run()
+  const idSuivant = isCreation
+    ? await container.resolve("getNextEngagementIdQuery").run()
     : null;
 
-  return { props: { engagementId, estUneCréation, engagementData, idSuivant } };
+  return { props: { engagementId, isCreation, engagementData, idSuivant } };
 }
 
 const NextPageAdminEngagementEdition = ({
   engagementId,
-  estUneCréation,
+  isCreation,
   engagementData,
   idSuivant,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
@@ -56,7 +56,7 @@ const NextPageAdminEngagementEdition = ({
       <PageAdminEngagementEdition
         engagementData={engagementData}
         engagementId={engagementId}
-        estUneCréation={estUneCréation}
+        isCreation={isCreation}
         idSuivant={idSuivant}
       />
     </NextPanelAdministrateurLayout>

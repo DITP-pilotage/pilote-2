@@ -28,20 +28,18 @@ export async function getServerSideProps(
   const parsed = z.string().min(1).safeParse(params?.id);
   if (!parsed.success) return redirigerVersAccueil;
   const axeId = parsed.data;
-  const estUneCréation = query._action === "creer-axe";
+  const isCreation = query._action === "creer-axe";
 
-  const axeData = estUneCréation
+  const axeData = isCreation
     ? null
-    : await getContainer("metadataAxe")
-        .resolve("recupererAxeQuery")
-        .run({ axeId });
+    : await getContainer("referentiels").resolve("getAxeQuery").run({ axeId });
 
-  return { props: { axeId, estUneCréation, axeData } };
+  return { props: { axeId, isCreation, axeData } };
 }
 
 const NextPageAdminAxeEdition = ({
   axeId,
-  estUneCréation,
+  isCreation,
   axeData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
   <>
@@ -52,7 +50,7 @@ const NextPageAdminAxeEdition = ({
       <PageAdminAxeEdition
         axeData={axeData}
         axeId={axeId}
-        estUneCréation={estUneCréation}
+        isCreation={isCreation}
       />
     </NextPanelAdministrateurLayout>
   </>

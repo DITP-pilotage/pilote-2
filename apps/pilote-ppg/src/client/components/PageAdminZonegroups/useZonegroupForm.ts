@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { zonegroupCommandSchema } from "@/server/metadataZonegroup/handlers/EnregistrerZonegroupHandler";
+import { zonegroupCommandSchema } from "@/server/referentiels/zonegroup/handlers/SaveZonegroupHandler";
 
 export type ZonegroupForm = z.infer<typeof zonegroupCommandSchema>;
 
@@ -18,10 +18,10 @@ export const defaultZonegroupVide = (zoneGroupId: string): ZonegroupForm => ({
 
 export const useZonegroupForm = ({
   defaultValues,
-  estUneCréation,
+  isCreation,
 }: {
   defaultValues: ZonegroupForm;
-  estUneCréation: boolean;
+  isCreation: boolean;
 }) => {
   const router = useRouter();
 
@@ -30,15 +30,15 @@ export const useZonegroupForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataZonegroup.enregistrer.useMutation({
+  const mutation = api.referentielZonegroup.save.useMutation({
     onSuccess: () => {
       toast.success(
-        estUneCréation
+        isCreation
           ? "Zone groupe créée avec succès."
           : "Zone groupe modifiée avec succès.",
         { position: "bottom-right", richColors: true },
       );
-      if (estUneCréation) {
+      if (isCreation) {
         void router.push("/panel-administrateur/referentiels/zonegroups");
       }
     },

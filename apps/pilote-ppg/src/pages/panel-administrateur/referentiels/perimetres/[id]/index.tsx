@@ -28,23 +28,23 @@ export async function getServerSideProps(
   const parsed = z.string().min(1).safeParse(params?.id);
   if (!parsed.success) return redirigerVersAccueil;
   const perimetreId = parsed.data;
-  const estUneCréation = query._action === "creer-perimetre";
-  const container = getContainer("metadataPerimetre");
+  const isCreation = query._action === "creer-perimetre";
+  const container = getContainer("referentiels");
 
-  const perimetreData = estUneCréation
+  const perimetreData = isCreation
     ? null
-    : await container.resolve("recupererPerimetreQuery").run({ perimetreId });
+    : await container.resolve("getPerimetreQuery").run({ perimetreId });
 
-  const idSuivant = estUneCréation
-    ? await container.resolve("recupererIdSuivantPerimetreQuery").run()
+  const idSuivant = isCreation
+    ? await container.resolve("getNextPerimetreIdQuery").run()
     : null;
 
-  return { props: { perimetreId, estUneCréation, perimetreData, idSuivant } };
+  return { props: { perimetreId, isCreation, perimetreData, idSuivant } };
 }
 
 const NextPageAdminPerimetreEdition = ({
   perimetreId,
-  estUneCréation,
+  isCreation,
   perimetreData,
   idSuivant,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
@@ -54,7 +54,7 @@ const NextPageAdminPerimetreEdition = ({
     </Head>
     <NextPanelAdministrateurLayout pageActive="referentiels-perimetres">
       <PageAdminPerimetreEdition
-        estUneCréation={estUneCréation}
+        isCreation={isCreation}
         idSuivant={idSuivant}
         perimetreData={perimetreData}
         perimetreId={perimetreId}

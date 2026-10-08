@@ -15,8 +15,8 @@ import {
   urlStateAdmin,
 } from "@/components/_commons/TableauAdmin/tableauAdminDataTable";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
-import type { PerimetreAdminListItem } from "@/server/metadataPerimetre/queries/ListerPerimetresAdminQuery";
+import type { PorteurAdminListItem } from "@/server/referentiels/porteur/queries/ListPorteursAdminQuery";
+import type { PerimetreAdminListItem } from "@/server/referentiels/perimetre/queries/ListPerimetresAdminQuery";
 
 const champsRecherche = (perimetre: PerimetreAdminListItem) => [
   perimetre.perimetreId,

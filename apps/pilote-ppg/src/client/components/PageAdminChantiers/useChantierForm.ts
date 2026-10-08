@@ -6,7 +6,7 @@ import { $Enums } from "@prisma/client";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { MAILLES } from "@/server/metadataChantier/domain/maille";
+import { MAILLES } from "@/server/parametrage-chantier/domain/maille";
 
 export const validationChantierSchema = z.object({
   chantierId: z.string().regex(/^CH-\d{3}$/),
@@ -62,7 +62,7 @@ export const useChantierForm = ({
     defaultValues,
   });
 
-  const mutationModifier = api.metadataChantier.enregistrer.useMutation({
+  const mutationModifier = api.parametrageChantier.save.useMutation({
     onSuccess: () => {
       toast.success("Chantier modifié avec succès.", {
         position: "bottom-right",
@@ -76,7 +76,7 @@ export const useChantierForm = ({
       }),
   });
 
-  const mutationCreer = api.metadataChantier.enregistrer.useMutation({
+  const mutationCreer = api.parametrageChantier.save.useMutation({
     onSuccess: () => {
       toast.success("Chantier créé avec succès.", {
         position: "bottom-right",

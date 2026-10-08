@@ -19,7 +19,7 @@ import { MultiSelectPorteursSecondaires } from "@/components/PageAdminChantiers/
 import { MultiSelectPorteursDAC } from "@/components/PageAdminChantiers/champs/MultiSelectPorteursDAC";
 import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
-import { Maille } from "@/server/metadataChantier/domain/maille";
+import { Maille } from "@/server/parametrage-chantier/domain/maille";
 
 const OPTIONS_STATUT: SelectFieldOption<$Enums.type_statut>[] = [
   { libelle: "Brouillon", valeur: "BROUILLON" },

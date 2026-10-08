@@ -11,7 +11,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataPpg } from "@/server/metadataPpg/queries/RecupererPpgQuery";
+import { MetadataPpg } from "@/server/referentiels/ppg/queries/GetPpgQuery";
 import {
   defaultPpgVide,
   PpgForm,
@@ -22,11 +22,11 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {
   ppgId: string;
-  estUneCréation: boolean;
+  isCreation: boolean;
   ppgData: MetadataPpg | null;
 }
 
-const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
+const PageAdminPpgEdition = ({ ppgId, isCreation, ppgData }: Props) => {
   const refreshRouter = useRefreshRouter();
 
   const defaultValues: PpgForm = ppgData
@@ -35,19 +35,19 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
         ppgNom: ppgData.ppgNom,
         ppgDesc: ppgData.ppgDesc,
         ppgAxe: ppgData.ppgAxe,
-        estUneCréation: false,
+        isCreation: false,
       }
     : defaultPpgVide();
 
   const { reactHookForm, enregistrer, isPending } = usePpgForm({
     defaultValues,
-    estUneCréation,
+    isCreation,
   });
 
-  const { data: axes = [] } = api.metadataAxe.lister.useQuery();
+  const { data: axes = [] } = api.referentielAxe.list.useQuery();
   const axesActifs = axes.filter((axe) => axe.deletedAt === null);
 
-  const archiverMutation = api.metadataPpg.archiver.useMutation({
+  const archiverMutation = api.referentielPpg.archive.useMutation({
     onSuccess: () => {
       toast.success("PPG archivé avec succès.", {
         position: "bottom-right",
@@ -57,7 +57,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
     },
   });
 
-  const restorerMutation = api.metadataPpg.restorer.useMutation({
+  const restaurerMutation = api.referentielPpg.restore.useMutation({
     onSuccess: () => {
       toast.success("PPG restauré avec succès.", {
         position: "bottom-right",
@@ -69,13 +69,13 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
 
   const estSupprime = ppgData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataPpg.verifierUtilisation.useQuery(
+  const { data: utilisation } = api.referentielPpg.checkUsage.useQuery(
     { ppgId },
-    { enabled: !estUneCréation && !estSupprime },
+    { enabled: !isCreation && !estSupprime },
   );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const titre = estUneCréation ? "Nouveau PPG" : `PPG ${ppgId}`;
+  const titre = isCreation ? "Nouveau PPG" : `PPG ${ppgId}`;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -90,7 +90,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
           libelléPageCourante={titre}
         />
 
-        {!estUneCréation && !estSupprime && estUtilisé && (
+        {!isCreation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
             titre={`Ce PPG est associé à ${utilisation?.nombreChantiers} chantier(s) et ne peut pas être supprimé.`}
@@ -106,14 +106,14 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                  {estUneCréation ? "Nouveau PPG" : "Édition"}
+                  {isCreation ? "Nouveau PPG" : "Édition"}
                 </p>
                 <h1 className="text-3xl font-bold text-dsfr-grey-200">
                   {titre}
                 </h1>
               </div>
               <div className="flex items-center gap-3">
-                {!estUneCréation && (
+                {!isCreation && (
                   <div className="flex items-center gap-2">
                     <Button
                       className={
@@ -124,7 +124,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               ppgId,
                             })
@@ -141,7 +141,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
                   </div>
                 )}
                 <Button disabled={isPending} type="submit" variant="primary">
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
+                  {isCreation ? "Créer" : "Sauvegarder"}
                 </Button>
               </div>
             </div>
@@ -150,7 +150,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
               <section className="px-6 py-8">
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
-                  {estUneCréation ? (
+                  {isCreation ? (
                     <FormTextField<PpgForm>
                       control={reactHookForm.control}
                       label="ID"
@@ -213,7 +213,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
 
             <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
               <Button disabled={isPending} type="submit" variant="primary">
-                {estUneCréation ? "Créer" : "Sauvegarder"}
+                {isCreation ? "Créer" : "Sauvegarder"}
               </Button>
             </div>
           </form>

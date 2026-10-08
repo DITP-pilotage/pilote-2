@@ -10,7 +10,7 @@ const SélecteurPerimetre = () => {
     control: form.control,
     name: "porteurIdPrincipal",
   });
-  const { data: perimetres } = api.metadataChantier.listerPerimetres.useQuery(
+  const { data: perimetres } = api.parametrageChantier.listPerimetres.useQuery(
     { porteurId: porteurIdPrincipal },
     { enabled: !!porteurIdPrincipal },
   );

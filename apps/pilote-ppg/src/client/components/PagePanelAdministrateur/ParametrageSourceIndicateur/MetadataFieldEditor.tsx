@@ -20,10 +20,11 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
     `metadataList.${fieldIndex}.listeValeursAcceptes`,
   );
   const estChampZoneGroupe = name === NOM_CHAMP_ZONE_GROUPE;
-  const { data: zonegroupsActifs = [] } = api.metadataZonegroup.lister.useQuery(
-    { actifsSeulement: true },
-    { enabled: estChampZoneGroupe },
-  );
+  const { data: zonegroupsActifs = [] } =
+    api.referentielZonegroup.list.useQuery(
+      { actifsSeulement: true },
+      { enabled: estChampZoneGroupe },
+    );
   const optionsValeurParDefaut = estChampZoneGroupe
     ? zonegroupsActifs.map((zonegroup) => ({
         valeur: zonegroup.zoneGroupId,

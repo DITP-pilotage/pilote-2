@@ -4,13 +4,13 @@ import { Infobulle } from "@/components/shared/Infobulle";
 import {
   MAILLES,
   Maille,
-  LIBELLÉ_MAILLE,
-} from "@/server/metadataChantier/domain/maille";
+  LIBELLE_MAILLE,
+} from "@/server/parametrage-chantier/domain/maille";
 import {
   CHAMP_POIDS_PAR_MAILLE,
   usePonderationsIndicateursForm,
 } from "@/components/PageAdminChantiers/usePonderationsIndicateursForm";
-import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
+import { IndicateurPonderation } from "@/server/parametrage-chantier/queries/GetIndicateursPonderationsChantierQuery";
 import { Table } from "@/components/shared/Table";
 import { clsxm } from "@/utils/clsxm";
 
@@ -183,7 +183,7 @@ const OngletPonderationsIndicateurs = ({
                   )}
                   key={maille}
                 >
-                  {LIBELLÉ_MAILLE[maille]} (%)
+                  {LIBELLE_MAILLE[maille]} (%)
                 </Table.ColumnHeaderCell>
               ))}
             </Table.Row>

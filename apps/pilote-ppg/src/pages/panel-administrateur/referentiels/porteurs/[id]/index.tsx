@@ -28,23 +28,23 @@ export async function getServerSideProps(
   const parsed = z.string().min(1).safeParse(params?.id);
   if (!parsed.success) return redirigerVersAccueil;
   const porteurId = parsed.data;
-  const estUneCréation = query._action === "creer-porteur";
-  const container = getContainer("metadataPorteur");
+  const isCreation = query._action === "creer-porteur";
+  const container = getContainer("referentiels");
 
-  const porteurData = estUneCréation
+  const porteurData = isCreation
     ? null
-    : await container.resolve("recupererPorteurQuery").run({ porteurId });
+    : await container.resolve("getPorteurQuery").run({ porteurId });
 
-  const idSuivant = estUneCréation
-    ? await container.resolve("recupererIdSuivantPorteurQuery").run()
+  const idSuivant = isCreation
+    ? await container.resolve("getNextPorteurIdQuery").run()
     : null;
 
-  return { props: { porteurId, estUneCréation, porteurData, idSuivant } };
+  return { props: { porteurId, isCreation, porteurData, idSuivant } };
 }
 
 const NextPageAdminPorteurEdition = ({
   porteurId,
-  estUneCréation,
+  isCreation,
   porteurData,
   idSuivant,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
@@ -54,7 +54,7 @@ const NextPageAdminPorteurEdition = ({
     </Head>
     <NextPanelAdministrateurLayout pageActive="referentiels-porteurs">
       <PageAdminPorteurEdition
-        estUneCréation={estUneCréation}
+        isCreation={isCreation}
         idSuivant={idSuivant}
         porteurData={porteurData}
         porteurId={porteurId}

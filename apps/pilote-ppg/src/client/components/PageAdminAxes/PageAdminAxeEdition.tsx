@@ -9,7 +9,7 @@ import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { MetadataAxe } from "@/server/metadataAxe/queries/RecupererAxeQuery";
+import { MetadataAxe } from "@/server/referentiels/axe/queries/GetAxeQuery";
 import {
   AxeForm,
   defaultAxeVide,
@@ -20,11 +20,11 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {
   axeId: string;
-  estUneCréation: boolean;
+  isCreation: boolean;
   axeData: MetadataAxe | null;
 }
 
-const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
+const PageAdminAxeEdition = ({ axeId, isCreation, axeData }: Props) => {
   const refreshRouter = useRefreshRouter();
 
   const defaultValues: AxeForm = axeData
@@ -32,16 +32,16 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
         axeId: axeData.axeId,
         axeName: axeData.axeName,
         axeDesc: axeData.axeDesc,
-        estUneCréation: false,
+        isCreation: false,
       }
     : defaultAxeVide();
 
   const { reactHookForm, enregistrer, isPending } = useAxeForm({
     defaultValues,
-    estUneCréation,
+    isCreation,
   });
 
-  const archiverMutation = api.metadataAxe.archiver.useMutation({
+  const archiverMutation = api.referentielAxe.archive.useMutation({
     onSuccess: () => {
       toast.success("Axe archivé avec succès.", {
         position: "bottom-right",
@@ -51,7 +51,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
     },
   });
 
-  const restorerMutation = api.metadataAxe.restorer.useMutation({
+  const restaurerMutation = api.referentielAxe.restore.useMutation({
     onSuccess: () => {
       toast.success("Axe restauré avec succès.", {
         position: "bottom-right",
@@ -63,13 +63,13 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
 
   const estSupprime = axeData?.deletedAt != null;
 
-  const { data: utilisation } = api.metadataAxe.verifierUtilisation.useQuery(
+  const { data: utilisation } = api.referentielAxe.checkUsage.useQuery(
     { axeId },
-    { enabled: !estUneCréation && !estSupprime },
+    { enabled: !isCreation && !estSupprime },
   );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const titre = estUneCréation ? "Nouvel axe" : `Axe ${axeId}`;
+  const titre = isCreation ? "Nouvel axe" : `Axe ${axeId}`;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
@@ -84,7 +84,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
           libelléPageCourante={titre}
         />
 
-        {!estUneCréation && !estSupprime && estUtilisé && (
+        {!isCreation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
             titre={`Cet axe est associé à ${utilisation?.nombrePpgs} PPG et ne peut pas être supprimé.`}
@@ -100,14 +100,14 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                  {estUneCréation ? "Nouvel axe" : "Édition"}
+                  {isCreation ? "Nouvel axe" : "Édition"}
                 </p>
                 <h1 className="text-3xl font-bold text-dsfr-grey-200">
                   {titre}
                 </h1>
               </div>
               <div className="flex items-center gap-3">
-                {!estUneCréation && (
+                {!isCreation && (
                   <div className="flex items-center gap-2">
                     <Button
                       className={
@@ -118,7 +118,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
                       disabled={!estSupprime && estUtilisé}
                       onClick={() =>
                         estSupprime
-                          ? restorerMutation.mutate({
+                          ? restaurerMutation.mutate({
                               csrf: récupérerUnCookie("csrf") ?? "",
                               axeId,
                             })
@@ -135,7 +135,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
                   </div>
                 )}
                 <Button disabled={isPending} type="submit" variant="primary">
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
+                  {isCreation ? "Créer" : "Sauvegarder"}
                 </Button>
               </div>
             </div>
@@ -144,7 +144,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
               <section className="px-6 py-8">
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
-                  {estUneCréation ? (
+                  {isCreation ? (
                     <FormTextField<AxeForm>
                       control={reactHookForm.control}
                       label="ID"
@@ -183,7 +183,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
 
             <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
               <Button disabled={isPending} type="submit" variant="primary">
-                {estUneCréation ? "Créer" : "Sauvegarder"}
+                {isCreation ? "Créer" : "Sauvegarder"}
               </Button>
             </div>
           </form>

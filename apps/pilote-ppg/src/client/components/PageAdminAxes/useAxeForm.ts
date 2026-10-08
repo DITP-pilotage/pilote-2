@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { axeCommandSchema } from "@/server/metadataAxe/handlers/EnregistrerAxeHandler";
+import { axeCommandSchema } from "@/server/referentiels/axe/handlers/SaveAxeHandler";
 
 export type AxeForm = z.infer<typeof axeCommandSchema>;
 
@@ -13,15 +13,15 @@ export const defaultAxeVide = (): AxeForm => ({
   axeId: "",
   axeName: "",
   axeDesc: null,
-  estUneCréation: true,
+  isCreation: true,
 });
 
 export const useAxeForm = ({
   defaultValues,
-  estUneCréation,
+  isCreation,
 }: {
   defaultValues: AxeForm;
-  estUneCréation: boolean;
+  isCreation: boolean;
 }) => {
   const router = useRouter();
 
@@ -30,13 +30,13 @@ export const useAxeForm = ({
     defaultValues,
   });
 
-  const mutation = api.metadataAxe.enregistrer.useMutation({
+  const mutation = api.referentielAxe.save.useMutation({
     onSuccess: () => {
       toast.success(
-        estUneCréation ? "Axe créé avec succès." : "Axe modifié avec succès.",
+        isCreation ? "Axe créé avec succès." : "Axe modifié avec succès.",
         { position: "bottom-right", richColors: true },
       );
-      if (estUneCréation) {
+      if (isCreation) {
         void router.push("/panel-administrateur/referentiels-deprecies/axes");
       }
     },
