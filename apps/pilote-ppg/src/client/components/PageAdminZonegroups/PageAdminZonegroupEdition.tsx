@@ -1,4 +1,8 @@
 import { Controller, FormProvider } from "react-hook-form";
+import {
+  FormTextField,
+  FormTextareaField,
+} from "@/components/shared/FormTextField";
 import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -11,8 +15,6 @@ import {
   ZonegroupForm,
   useZonegroupForm,
 } from "@/components/PageAdminZonegroups/useZonegroupForm";
-import { Input } from "@/components/_commons/Input";
-import { Textarea } from "@/components/_commons/Textarea";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { SélecteurZones } from "@/components/PageAdminZonegroups/SélecteurZones";
@@ -172,13 +174,13 @@ const PageAdminZonegroupEdition = ({
               <section className="px-6 py-8">
                 <SectionTitle>Informations</SectionTitle>
                 <div className="flex flex-col gap-4">
-                  <Input<ZonegroupForm>
+                  <FormTextField<ZonegroupForm>
                     control={reactHookForm.control}
                     label="Nom"
                     name="zoneGroupName"
                     required
                   />
-                  <Textarea<ZonegroupForm>
+                  <FormTextareaField<ZonegroupForm>
                     control={reactHookForm.control}
                     label="Description"
                     name="zoneGroupDesc"

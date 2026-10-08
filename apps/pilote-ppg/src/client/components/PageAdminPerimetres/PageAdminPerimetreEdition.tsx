@@ -1,4 +1,5 @@
 import { Controller, FormProvider } from "react-hook-form";
+import { FormTextField } from "@/components/shared/FormTextField";
 import {
   SelectField,
   type SelectFieldOption,
@@ -15,7 +16,6 @@ import {
   PerimetreForm,
   usePerimetreForm,
 } from "@/components/PageAdminPerimetres/usePerimetreForm";
-import { Input } from "@/components/_commons/Input";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -180,7 +180,7 @@ const PageAdminPerimetreEdition = ({
               <section className="px-6 py-8">
                 <SectionTitle>Informations</SectionTitle>
                 <div className="flex flex-col gap-4">
-                  <Input<PerimetreForm>
+                  <FormTextField<PerimetreForm>
                     control={reactHookForm.control}
                     label="Nom"
                     name="perimetreNom"

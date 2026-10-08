@@ -1,4 +1,5 @@
 import { FormProvider } from "react-hook-form";
+import { FormTextField } from "@/components/shared/FormTextField";
 import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -11,7 +12,6 @@ import {
   EngagementForm,
   useEngagementForm,
 } from "@/components/PageAdminEngagements/useEngagementForm";
-import { Input } from "@/components/_commons/Input";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
@@ -161,7 +161,7 @@ const PageAdminEngagementEdition = ({
                       {engagementIdEffectif}
                     </p>
                   </div>
-                  <Input<EngagementForm>
+                  <FormTextField<EngagementForm>
                     control={reactHookForm.control}
                     label="Code (engagement_short)"
                     name="engagementShort"
@@ -173,7 +173,7 @@ const PageAdminEngagementEdition = ({
 
               <section className="px-6 py-8">
                 <SectionTitle>Dénomination</SectionTitle>
-                <Input<EngagementForm>
+                <FormTextField<EngagementForm>
                   control={reactHookForm.control}
                   label="Nom"
                   name="engagementName"
