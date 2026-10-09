@@ -9,7 +9,7 @@ import type {
   RecupererIndicateursNonAJourResult,
 } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
 
-const RESULTAT_QUERY: RecupererIndicateursNonAJourResult = {
+const QUERY_RESULT: RecupererIndicateursNonAJourResult = {
   chantiers: [
     {
       chantier: { id: "CH-001", nom: "Chantier bornes" },
@@ -41,7 +41,7 @@ const RESULTAT_QUERY: RecupererIndicateursNonAJourResult = {
 };
 
 const buildTool = ({
-  queryResult = RESULTAT_QUERY,
+  queryResult = QUERY_RESULT,
   territoiresAccessibles = ["NAT-FR", "DEPT-29", "DEPT-35"],
   chantiersAccessibles = ["CH-001", "CH-002"],
 }: {
@@ -290,7 +290,7 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("explique un territoire en retard sans date attendue par une périodicité non déclarée", async () => {
+  test("explique un territoire en retard sans date attendue par une périodicité ou un délai de mise à jour non déclaré", async () => {
     // Given
     const { tool } = buildTool();
 
