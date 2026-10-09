@@ -10,8 +10,9 @@ export type TerritoireEnRetard = {
 
 export type MailleIndicateurNonAJour = {
   maille: $Enums.Maille;
+  nbTerritoiresEnRetard: number;
   nbTerritoiresApplicables: number;
-  territoiresEnRetard: TerritoireEnRetard[];
+  territoiresEnRetard?: TerritoireEnRetard[];
 };
 
 export type IndicateurNonAJour = {
@@ -25,11 +26,6 @@ export type IndicateurNonAJour = {
 export type ChantierIndicateursNonAJour = {
   chantier: { id: string; nom: string };
   indicateurs: IndicateurNonAJour[];
-};
-
-export type RecupererIndicateursNonAJourResult = {
-  chantiers: ChantierIndicateursNonAJour[];
-  indicateursApplicablesIds: string[];
 };
 
 const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
@@ -47,7 +43,8 @@ export class RecupererIndicateursNonAJourQuery {
     chantierIds: string[];
     territoireCodes: string[];
     indicateurIds?: string[];
-  }): Promise<RecupererIndicateursNonAJourResult> {
+    avecDetailTerritoires: boolean;
+  }): Promise<ChantierIndicateursNonAJour[]> {
     const prisma = this.deps.prisma.getInstance();
 
     const scopeWhere: Prisma.indicateur_territoireWhereInput = {
@@ -137,16 +134,18 @@ export class RecupererIndicateursNonAJourQuery {
       if (!maille) {
         maille = {
           maille: row.maille,
+          nbTerritoiresEnRetard: 0,
           nbTerritoiresApplicables:
             applicableCountByIndicateurMaille.get(
               indicateurMailleKey(indicateurIdentite.id, row.maille),
             ) ?? 0,
-          territoiresEnRetard: [],
+          ...(params.avecDetailTerritoires ? { territoiresEnRetard: [] } : {}),
         };
         indicateur.mailles.push(maille);
       }
 
-      maille.territoiresEnRetard.push({
+      maille.nbTerritoiresEnRetard += 1;
+      maille.territoiresEnRetard?.push({
         code: row.territoire_code,
         nom: row.territoire_nom,
         dateDerniereValeur: formatDate(row.date_valeur_actuelle_mandat),
@@ -164,11 +163,6 @@ export class RecupererIndicateursNonAJourQuery {
       }
     }
 
-    return {
-      chantiers: [...chantiers.values()],
-      indicateursApplicablesIds: [
-        ...new Set(applicableCounts.map((count) => count.id)),
-      ].sort(),
-    };
+    return [...chantiers.values()];
   }
 }
