@@ -73,13 +73,14 @@ Conséquence : une maille est « à jour » dès qu'un seul de ses territoires a
 - paramètres : `chantierIds: string[]`, `territoireCodes: string[]` (territoires accessibles, ou le seul territoire demandé), `indicateurIds?: string[]` ;
 - filtres : `indicateur_identite.statut = PUBLIE`, `chantier_identite.statut = PUBLIE`, `est_applicable = true` ;
 - retourne, par (chantier, indicateur, maille) : le nombre de territoires applicables, et la liste des territoires non à jour (`est_a_jour` false ou NULL) avec `territoire_code`, `territoire_nom`, `date_valeur_actuelle_mandat`, `prochaine_date_maj` ;
-- nom du chantier et de l'indicateur inclus, ainsi que `periodicite` et `delai_disponibilite` de `indicateur_identite` (pour expliquer le retard).
+- nom du chantier et de l'indicateur inclus, ainsi que `periodicite` et `delai_disponibilite` de `indicateur_identite` (pour expliquer le retard) ;
+- en mode compteurs, les territoires en retard sont comptés en base (`groupBy` par indicateur et maille) sans lire les lignes une à une ; seul le mode détaillé lit les territoires.
 
 La méthode `recupererIndicateursNonAJourParChantierId` du repository reste dédiée au mail et n'est pas modifiée.
 
 ### Outil
 
-`apps/pilote-ppg/src/server/albert/tools/getIndicateursNonAJour.ts`, fabrique `createGetIndicateursNonAJourTool({ recupererIndicateursNonAJourQuery })` retournant `({ chantiersAccessibles, territoiresAccessibles }) => tool(...)`, sur le modèle de `getChantiersSignales.ts`.
+`apps/pilote-ppg/src/server/albert/tools/getIndicateursNonAJour.ts`, fabrique `createGetIndicateursNonAJourTool({ recupererIndicateursNonAJourQuery, getIndicateurContexteQuery })` retournant `({ chantiersAccessibles, territoiresAccessibles }) => tool(...)`, sur le modèle de `getChantiersSignales.ts`.
 
 Entrées (toutes optionnelles) :
 
@@ -94,6 +95,7 @@ Habilitations :
 - `chantier_ids` ∩ `chantiersAccessibles` ; intersection vide → résultat vide + instruction « aucun des chantiers demandés n'est accessible » ;
 - `territoire_code` hors `territoiresAccessibles` → `acces_refuse: true` + instruction de refus poli sans détail ;
 - sans `territoire_code`, la query est bornée à `territoiresAccessibles`.
+- chaque `indicateur_ids` est résolu avec `GetIndicateurContexteQuery`, comme dans `get_evolution_indicateur` et `get_historique_indicateur` : les indicateurs rattachés à un chantier non accessible sont retirés de la requête et signalés au modèle par leur identifiant, sans leur chantier ; si aucun indicateur demandé n'est accessible, l'outil renvoie un résultat vide avec l'instruction « aucun des indicateurs demandés n'est accessible », comme pour les chantiers, sans interroger la fraîcheur ; un indicateur introuvable est transmis tel quel à la query, qui renvoie un résultat vide.
 
 Sortie :
 
@@ -105,29 +107,27 @@ type GetIndicateursNonAJourOutput = {
       id: string;
       nom: string;
       periodicite: string | null; // ex. "Trimestrielle"
-      delai_disponibilite_mois: number | null;
+      delaiDisponibiliteMois: number | null;
       mailles: {
         maille: "NAT" | "REG" | "DEPT";
-        nb_territoires_en_retard: number;
-        nb_territoires_applicables: number;
+        nbTerritoiresEnRetard: number;
+        nbTerritoiresApplicables: number;
         // présent uniquement en mode détaillé
-        territoires_en_retard?: {
+        territoiresEnRetard?: {
           code: string;
-          nom: string;
-          date_derniere_valeur: string | null; // null = jamais renseignée
-          mise_a_jour_attendue_depuis: string | null; // prochaine_date_maj
+          nom: string | null;
+          dateDerniereValeur: string | null; // null = jamais renseignée
+          miseAJourAttendueDepuis: string | null; // prochaine_date_maj
         }[];
       }[];
     }[];
   }[];
-  // indicateur_ids demandés sans aucun territoire applicable dans le périmètre (N7)
-  indicateurs_non_suivis?: string[];
   acces_refuse?: boolean;
   _output_instructions: string;
 };
 ```
 
-Seuls les indicateurs ayant au moins un territoire en retard figurent dans `resultats`. Pour distinguer « à jour » de « non suivi » (N7), la query renvoie aussi les identifiants des indicateurs ayant au moins un territoire applicable dans le périmètre ; l'outil en déduit `indicateurs_non_suivis` parmi les `indicateur_ids` demandés.
+Seuls les indicateurs ayant au moins un territoire en retard figurent dans `resultats`. L'outil ne vérifie pas en amont l'existence ni l'applicabilité des indicateurs, chantiers et territoires demandés : seuls les garde-fous d'autorisation s'appliquent. Un résultat vide ne permet donc pas de distinguer « à jour » de « non suivi » ou « identifiant inconnu », et n'est jamais présenté comme « à jour ».
 
 Règle de volume : le **mode détaillé** (`territoires_en_retard`) n'est activé que si `indicateur_ids` ou `territoire_code` est fourni. Sinon seuls les compteurs sont renvoyés, et `_output_instructions` invite l'assistant à proposer le détail territorial sur un indicateur précis.
 
@@ -137,7 +137,8 @@ Instructions de restitution (`_output_instructions`) :
 - par défaut, regrouper par chantier puis indicateur, avec une ligne par maille du type « Départements : 12 / 101 territoires en retard » ;
 - si la question porte sur les chantiers (« sur quels chantiers… »), restituer une liste de chantiers avec leur nombre d'indicateurs non à jour, sans détailler les indicateurs, puis proposer le détail d'un chantier ;
 - en mode détaillé, lister les territoires avec la date attendue de mise à jour ; un territoire sans `date_derniere_valeur` est présenté comme « aucune valeur renseignée » ;
-- résultat vide → dire explicitement que toutes les données du périmètre interrogé sont à jour (pas de silence).
+- résultat vide → dire qu'aucun indicateur non à jour n'a été trouvé sur le périmètre demandé, sans conclure que les données sont à jour, et proposer d'élargir le périmètre ou de vérifier l'identifiant avec `search_indicateurs` ;
+- chantiers demandés non accessibles → le signaler, sans jamais les présenter comme à jour.
 
 ### Câblage
 
@@ -201,7 +202,7 @@ Bilan établi d'après la sortie de l'outil, la règle de volume et les habilita
 | N4 | « Qui doit mettre à jour l'IND-894 ? » | `responsables_donnees_mails` existe mais n'est pas exposé (choix : pas d'adresses e-mail dans les réponses de l'assistant) | Renvoyer vers la fiche indicateur |
 | N5 | « Quels indicateurs ont un taux d'avancement non calculable ? » (section « à paramétrer » du mail) | Hors périmètre de l'outil ; seul le signalement chantier `estEnAlerteTauxAvancementNonCalculé` existe via `get_chantiers_signales` | Répondre au niveau chantier via `get_chantiers_signales` |
 | N6 | « Quel est le contenu du dernier mail hebdomadaire ? » | Les rapports envoyés ne sont pas exposés | Indiquer que le contenu du mail n'est pas consultable |
-| N7 | « L'IND-894 est-il à jour dans le Var ? » pour un indicateur non territorialisé ou non applicable au Var | Pas de ligne applicable à cette maille / zone | Expliquer que l'indicateur n'est pas suivi sur ce territoire (pas « à jour ») |
+| N7 | « L'IND-894 est-il à jour dans le Var ? » pour un indicateur non territorialisé ou non applicable au Var | Pas de ligne applicable à cette maille / zone | Dire qu'aucun indicateur non à jour n'a été trouvé sur ce périmètre, sans conclure « à jour » ; la cause (non suivi, identifiant erroné) n'est pas distinguée |
 | N8 | Toute question sur un chantier ou territoire hors habilitations, ou sur un chantier / indicateur en brouillon | Filtres d'habilitation et de statut | Refus poli, ou « aucun résultat » sans divulguer de données |
 | N9 | « Quelle est la dernière valeur de l'IND-894 en Bretagne ? » (la valeur, pas sa date) | Hors périmètre de cet outil | Router vers `get_indicateurs` / `get_evolution_indicateur` |
 
