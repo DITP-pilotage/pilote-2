@@ -84,7 +84,7 @@ function buildOutputInstructions({
     "Sinon, regroupe par chantier puis par indicateur, avec une ligne par maille au format « Départements : 12 / 101 territoires en retard » (« Régions » pour REG, « National » pour NAT).",
     "Si l'utilisateur demande pourquoi une donnée n'est pas à jour, explique que la date théorique de mise à jour (date de la dernière valeur + periodicite + delaiDisponibiliteMois déclarés pour l'indicateur) est dépassée.",
     isDetailed
-      ? "Liste les territoires en retard avec la date à laquelle la mise à jour était attendue (miseAJourAttendueDepuis). Un territoire dont dateDerniereValeur est null n'a jamais eu de valeur renseignée : présente-le comme « aucune valeur renseignée ». Si miseAJourAttendueDepuis est null alors que dateDerniereValeur est renseignée, la périodicité ou le délai de mise à jour de l'indicateur n'est pas déclaré : dis-le au lieu d'afficher une date."
+      ? "Liste les territoires en retard avec la date à laquelle la mise à jour était attendue (miseAJourAttendueDepuis). Un territoire dont dateDerniereValeur est null n'a jamais eu de valeur renseignée : présente-le comme « aucune valeur renseignée ». Si miseAJourAttendueDepuis est null alors que dateDerniereValeur est renseignée, la date théorique de mise à jour n'a pas pu être calculée : dis-le au lieu d'afficher une date."
       : "Le détail par territoire n'est pas inclus. Propose à l'utilisateur de cibler un indicateur ou un territoire pour obtenir la liste des territoires en retard. Ne classe pas les territoires entre eux : cette information n'est pas disponible.",
     ...inaccessibles,
   ].join("\n\n");
