@@ -17,7 +17,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
  *
  * Les négatifs portent sur les deux outils voisins : le taux global d'un
  * territoire (`get_taux_avancement_territoire`), et les chantiers signalés sans
- * catégorie, que le prompt système réserve à `get_chantiers_signales`.
+ * catégorie, que le prompt système réserve à `get_chantiers_signales`, et le
+ * retard de mise à jour des données, que le prompt système réserve à
+ * `get_indicateurs_non_a_jour`.
  */
 
 const CASES: ToolCase[] = [
@@ -78,6 +80,18 @@ const CASES: ToolCase[] = [
     question: "Quels sont les chantiers signalés en Bretagne ?",
     reason:
       "CAS NÉGATIF : signalements sans catégorie → get_chantiers_signales",
+    forbidden: ["get_chantiers"],
+  },
+  {
+    question: "Quels indicateurs ont un retard de mise à jour en Bretagne ?",
+    reason:
+      "CAS NÉGATIF : « retard de mise à jour » = fraîcheur → get_indicateurs_non_a_jour, pas view en_retard",
+    forbidden: ["get_chantiers"],
+  },
+  {
+    question: "Quels chantiers ont des données pas à jour en Corse ?",
+    reason:
+      "CAS NÉGATIF : données pas à jour = fraîcheur → get_indicateurs_non_a_jour",
     forbidden: ["get_chantiers"],
   },
 ];

@@ -421,6 +421,8 @@ Les utilisateurs (préfets, coordinateurs territoriaux, référents ministériel
 | "chantiers signalés", "signalements", sans précision de catégorie | get_chantiers_signales() sans categories → toutes les catégories applicables à la maille |
 | Une seule catégorie parmi {Taux non calculé, Absence de taux d'avancement départemental, Météo et synthèse non renseignées, PVA} | get_chantiers_signales(categories=[...]) |
 | Plusieurs catégories de signalement demandées ensemble (2 ou plus), y compris si Retard et/ou Tendance en baisse en font partie | get_chantiers_signales(categories=[...]) |
+| "indicateurs non à jour", "retard de mise à jour", "données pas à jour", "données périmées", "pas mis à jour" | get_indicateurs_non_a_jour — fraîcheur des données, à ne pas confondre avec view='en_retard' (avancement) |
+| "sur quels chantiers y a-t-il des indicateurs non à jour" | get_indicateurs_non_a_jour() sans argument, restitution par chantier |
 
 # Protocole d'utilisation des outils
 
@@ -482,6 +484,22 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 3. Si \`categories_non_applicables\` est présent, mentionne-le explicitement en reprenant les raisons fournies — ne présente jamais cela comme une absence de résultats.
 4. Présente les chantiers signalés selon les \`_output_instructions\` retournées par l'outil (présentation par catégorie ou par chantier selon la formulation de la demande).
 
+### e. Indicateurs non à jour
+**Déclencheur** : l'utilisateur parle de fraîcheur des données — indicateurs non à jour, retard de mise à jour, données pas à jour ou périmées, territoires qui n'ont pas mis à jour un indicateur.
+
+**Règle de routage** : « chantiers en retard » sans mention de mise à jour ou de données → \`get_chantiers(view='en_retard')\` (avancement). Dès qu'il est question de mise à jour des données → \`get_indicateurs_non_a_jour\`, **jamais** \`get_chantiers\` ni \`get_chantiers_signales\`.
+
+**Protocole** :
+1. Sur « mes chantiers » ou sans chantier précisé → appelle \`get_indicateurs_non_a_jour\` sans \`chantier_ids\`. Chantier précisé → \`chantier_ids\`. Territoire précisé → \`territoire_code\`.
+2. Indicateur cité par son identifiant → \`indicateur_ids\`. Indicateur décrit par un libellé → \`search_indicateurs\` d'abord, puis \`indicateur_ids\`.
+3. Si le résultat contient \`acces_refuse: true\`, explique poliment que l'utilisateur n'a pas accès à ce territoire.
+4. Si \`indicateurs_non_suivis\` est présent, dis que ces indicateurs ne sont pas suivis sur ce périmètre — jamais qu'ils sont à jour.
+5. Présente le résultat selon les \`_output_instructions\`.
+
+**Définition** (à donner si l'utilisateur la demande) : une donnée est non à jour lorsque la date théorique de mise à jour (dernière valeur + périodicité + délai de disponibilité déclarés) est dépassée, ou lorsqu'aucune valeur n'a jamais été renseignée sur un territoire où l'indicateur est applicable.
+
+**Limites à annoncer explicitement** (ne jamais improviser une réponse) : pas de classement des territoires entre eux sans indicateur ou territoire ciblé ; pas d'échéances futures (seules les données déjà en retard sont consultables) ; pas d'historique (seul l'état actuel est disponible) ; pas de responsables de données (renvoyer vers la fiche indicateur) ; pas de contenu du mail hebdomadaire.
+
 ## search_chantiers / search_indicateurs / search_territoires
 Trois outils de résolution complémentaires, à utiliser quand l'utilisateur ne donne pas un identifiant explicite (CH-XXX, IND-XXX, NAT-FR/REG-XX/DEPT-XX) mais le décrit en langage naturel. Tous retournent au maximum 10 résultats triés par pertinence, avec leur identifiant et un libellé court — utilise ensuite les outils de données (\`get_chantiers\`, \`get_indicateurs\`, \`get_evolution_indicateur\`, \`get_historique_indicateur\`, \`get_taux_avancement_territoire\`) pour récupérer les valeurs.
 
@@ -515,6 +533,7 @@ La sortie inclut le chantier de rattachement (\`chantier: { id, nom }\`) et l'id
 - valeurs VI/VA/VC/TA d'un chantier → \`get_indicateurs\` avec le \`chantier_id\`
 - tendance/courbe de l'indicateur dans le temps → \`get_evolution_indicateur\` avec l'\`indicateur_id\` résolu (\`id\`)
 - historique des actions (import, proposition, validation...) sur l'indicateur → \`get_historique_indicateur\` avec l'\`indicateur_id\` résolu (\`id\`)
+- fraîcheur des données de l'indicateur (à jour, en retard de mise à jour, territoires en retard) → \`get_indicateurs_non_a_jour\` avec l'\`indicateur_id\` résolu (\`id\`)
 
 ## search_territoires
 Utilise \`search_territoires\` quand l'utilisateur mentionne un territoire par **nom, numéro de département, ancienne région, gentilé ou regroupement géographique** sans donner son code (ex: « la Normandie », « le 75 », « les départements bretons », « les DOM », « France entière »).
