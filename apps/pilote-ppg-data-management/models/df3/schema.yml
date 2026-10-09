@@ -210,10 +210,12 @@ models:
         description: la date max que l'on peut prendre en compte pour calculer le taa_courant du chantier précédemment
   - name: get_date_pro_maj_indic
     description: |
-      Pour chaque {indic_id, maille}, on va calculer si le TA est à jour par rapport à la périodicité déclarée de mise à jour des données.
+      Pour chaque {indic_id, zone_id}, on va calculer si le TA est à jour par rapport à la périodicité déclarée de mise à jour des données.
     columns:
+      - name: zone_id
+        description: "Zone (territoire) pour laquelle la fraîcheur est calculée."
       - name: last_va_date
-        description: "Date de la VA la plus récente pour toutes les zones de cette maille pour cet indicateur."
+        description: "Date de la VA la plus récente pour cette zone et cet indicateur."
       - name: prochaine_date_maj
         description: "Date de màj théorique des VA pour cet indicateur d'après la périodicité déclarée. La date est **le dernier jour du mois**."
       - name: prochaine_date_maj_jours

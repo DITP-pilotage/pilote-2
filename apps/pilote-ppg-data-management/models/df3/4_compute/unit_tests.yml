@@ -1,0 +1,56 @@
+version: 2
+
+unit_tests:
+  - name: test_get_date_pro_maj_indic_par_zone
+    description: |
+      Vérifie que la fraîcheur est calculée par {indic_id, zone_id} et non plus par maille :
+      - deux départements d'un même indicateur ont chacun leur statut (D29 à jour, D35 périmé) ;
+      - un département applicable sans aucune VA est non à jour (D22) ;
+      - prochaine_date_maj = dernière VA + périodicité + délai, ramenée au dernier jour du mois ;
+      - un indicateur non territorialisé n'a de ligne qu'au national.
+    model: get_date_pro_maj_indic
+    given:
+      # Format SQL : la colonne tableau zone_parent_id ne peut pas être castée depuis une fixture dict
+      - input: ref('stg_ppg_metadata__zones')
+        format: sql
+        rows: |
+          SELECT 'D29' AS id, 'Finistère' AS nom, '29' AS code_insee, 'DEPT' AS maille, NULL::TEXT AS zone_parent, NULL::TEXT[] AS zone_parent_id
+          UNION ALL SELECT 'D35', 'Ille-et-Vilaine', '35', 'DEPT', NULL, NULL
+          UNION ALL SELECT 'D22', 'Côtes-d''Armor', '22', 'DEPT', NULL, NULL
+          UNION ALL SELECT 'R53', 'Bretagne', '53', 'REG', NULL, NULL
+          UNION ALL SELECT 'FRANCE', 'France', 'FR', 'NAT', NULL, NULL
+      - input: ref('stg_ppg_metadata__indicateurs')
+        rows:
+          - {id: IND-001, chantier_id: CH-001}
+          - {id: IND-002, chantier_id: CH-001}
+      # Format SQL : les colonnes enum (ate, statut) et tableau ne peuvent pas être castées depuis une fixture dict
+      - input: ref('stg_ppg_metadata__chantiers')
+        format: sql
+        rows: |
+          SELECT
+            'CH-001' AS id, NULL::TEXT AS description, 'Chantier test' AS nom, NULL::TEXT AS ppg_id,
+            TRUE AS est_territorialise, NULL::TEXT AS nom_engagement, FALSE AS est_cache_dans_pilote,
+            NULL::type_ate AS ate, 'PUBLIE'::type_statut AS statut, NULL::TEXT AS zone_groupe_applicable,
+            NULL::TEXT[] AS ministeres_ids, NULL::TEXT[] AS directeurs_administration_centrale_ids,
+            NULL::TEXT[] AS perimetre_ids, NULL::TEXT[] AS maille_applicable_declaree,
+            NULL::TEXT AS replicate_val_reg_to, NULL::TEXT AS replicate_val_nat_to,
+            NULL::BOOLEAN AS ch_cible_attendue, 'DEPT' AS maille_pilotage,
+            NULL::TEXT AS conseiller_mail, NULL::TEXT[] AS maille_applicable
+      - input: source('ppg_metadata', 'metadata_indicateurs_complementaire')
+        rows:
+          - {indic_id: IND-001, indic_territorialise: true, periodicite: Mensuelle, delai_disponibilite: 1}
+          # IND-002 non territorialisé : seule la maille NAT doit ressortir
+          - {indic_id: IND-002, indic_territorialise: false, periodicite: Annuelle, delai_disponibilite: 0}
+      - input: ref('get_last_vaca')
+        rows:
+          - {indic_id: IND-001, zone_id: D29, date_valeur_actuelle: 2099-01-01}
+          - {indic_id: IND-001, zone_id: D35, date_valeur_actuelle: 2001-01-01}
+          - {indic_id: IND-002, zone_id: FRANCE, date_valeur_actuelle: 2099-01-01}
+    expect:
+      rows:
+        - {indic_id: IND-001, zone_id: D29, maille: DEPT, prochaine_date_maj: 2099-03-31, est_a_jour: true}
+        - {indic_id: IND-001, zone_id: D35, maille: DEPT, prochaine_date_maj: 2001-03-31, est_a_jour: false}
+        - {indic_id: IND-001, zone_id: D22, maille: DEPT, prochaine_date_maj: null, est_a_jour: false}
+        - {indic_id: IND-001, zone_id: R53, maille: REG, prochaine_date_maj: null, est_a_jour: false}
+        - {indic_id: IND-001, zone_id: FRANCE, maille: NAT, prochaine_date_maj: null, est_a_jour: false}
+        - {indic_id: IND-002, zone_id: FRANCE, maille: NAT, prochaine_date_maj: 2100-01-31, est_a_jour: true}

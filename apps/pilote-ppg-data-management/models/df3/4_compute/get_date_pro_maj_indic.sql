@@ -2,7 +2,7 @@
 
 -- Cette table indique la prochaine date théorique de mise à jour des données
 --	en fonction de la dernière date de màj + périodicité déclarée
---	pour chaque {indic, maille}
+--	pour chaque {indic, zone}
 
 WITH
 -- Liste des indicateurs territo
@@ -15,25 +15,21 @@ src_indic_territo AS (
     WHERE indic_territorialise
 ),
 
--- Liste des mailles pour un CROSS JOIN à suivre
-base_mailles AS (
-    SELECT * FROM (VALUES ('DEPT'), ('REG'), ('NAT')) AS a (maille)
-),
-
--- Base des indicateurs à étudier
--- 	+ date de la VA dispo la + récente
+-- Base des indicateurs à étudier, pour chaque zone
+-- 	+ date de la VA dispo la + récente sur cette zone
 src_indicateurs AS (
     SELECT
         indic.id AS indic_id,
         indic.chantier_id,
-        base_mailles.maille,
-        last_vaca.last_va_date
-    FROM base_mailles
+        zones.id AS zone_id,
+        zones.maille,
+        last_vaca.date_valeur_actuelle AS last_va_date
+    FROM {{ ref('stg_ppg_metadata__zones') }} AS zones
     CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS indic
-    LEFT JOIN {{ ref('get_last_vaca_maille') }} AS last_vaca
-        ON last_vaca.indic_id = indic.id
-        -- ajouter jointure avec la maille
-        AND base_mailles.maille = last_vaca.maille
+    LEFT JOIN {{ ref('get_last_vaca') }} AS last_vaca
+        ON
+            indic.id = last_vaca.indic_id
+            AND zones.id = last_vaca.zone_id
     LEFT JOIN
         {{ ref('stg_ppg_metadata__chantiers') }} AS chantier
         ON indic.chantier_id = chantier.id
@@ -42,21 +38,20 @@ src_indicateurs AS (
     WHERE
         -- Pour DEPT: les indics territo des chantiers territo + pilotés au DEPT
         (
-            base_mailles.maille = 'DEPT'
+            zones.maille = 'DEPT'
             AND chantier.est_territorialise
             AND src_indic_territo.indic_territo
             AND chantier.maille_pilotage = 'DEPT'
         )
         -- Pour REG: les indics territo des chantiers territo + 
         OR (
-            base_mailles.maille = 'REG'
+            zones.maille = 'REG'
             AND chantier.est_territorialise
             AND src_indic_territo.indic_territo
             AND chantier.maille_pilotage IN ('REG', 'DEPT')
         )
         -- Pour NAT: Tous les indics
-        OR (base_mailles.maille = 'NAT')
---ORDER BY indic.id, base_mailles.maille
+        OR (zones.maille = 'NAT')
 ),
 
 -- Récupération de la configuration temporelle
@@ -75,6 +70,7 @@ get_prochaine_date_va AS (
     SELECT
         src_indicateurs.indic_id,
         src_indicateurs.chantier_id,
+        src_indicateurs.zone_id,
         src_indicateurs.maille,
         src_indicateurs.last_va_date,
         config_tempo.periodicite,
@@ -133,7 +129,6 @@ get_est_a_jour_et_date_maj_jours AS (
         EXTRACT(DAY FROM prochaine_date_maj - CURRENT_DATE)
             AS prochaine_date_maj_jours
     FROM get_prochaine_date_maj
---ORDER BY indic_id, "maille"
 )
 
 SELECT * FROM get_est_a_jour_et_date_maj_jours
