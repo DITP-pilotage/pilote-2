@@ -45,7 +45,7 @@ type MailleOutput = {
   territoires_en_retard?: TerritoireEnRetardOutput[];
 };
 
-type ResultatChantierOutput = {
+type ChantierResultOutput = {
   chantier: { id: string; nom: string };
   indicateurs: {
     id: string;
@@ -57,16 +57,16 @@ type ResultatChantierOutput = {
 };
 
 export type GetIndicateursNonAJourOutput = {
-  resultats: ResultatChantierOutput[];
+  resultats: ChantierResultOutput[];
   indicateurs_non_suivis?: string[];
   acces_refuse?: boolean;
   _output_instructions: string;
 };
 
-function versSortie(
+function toOutput(
   chantiers: RecupererIndicateursNonAJourResult["chantiers"],
-  modeDetaille: boolean,
-): ResultatChantierOutput[] {
+  isDetailed: boolean,
+): ChantierResultOutput[] {
   return chantiers.map(({ chantier, indicateurs }) => ({
     chantier,
     indicateurs: indicateurs.map((indicateur) => ({
@@ -78,7 +78,7 @@ function versSortie(
         maille: maille.maille,
         nb_territoires_en_retard: maille.territoiresEnRetard.length,
         nb_territoires_applicables: maille.nbTerritoiresApplicables,
-        ...(modeDetaille
+        ...(isDetailed
           ? {
               territoires_en_retard: maille.territoiresEnRetard.map(
                 (territoire) => ({
@@ -97,13 +97,13 @@ function versSortie(
 }
 
 function buildOutputInstructions({
-  modeDetaille,
+  isDetailed,
   indicateursNonSuivis,
-  chantiersNonAccessibles,
+  inaccessibleChantierIds,
 }: {
-  modeDetaille: boolean;
+  isDetailed: boolean;
   indicateursNonSuivis: string[];
-  chantiersNonAccessibles: string[];
+  inaccessibleChantierIds: string[];
 }): string {
   const instructions = [
     'Présente chaque chantier au format "CH-XXX — Nom du chantier" et chaque indicateur au format "IND-XXX — Nom de l\'indicateur".',
@@ -112,9 +112,9 @@ function buildOutputInstructions({
     "Si l'utilisateur demande pourquoi une donnée n'est pas à jour, explique que la date théorique de mise à jour (date de la dernière valeur + periodicite + delai_disponibilite_mois déclarés pour l'indicateur) est dépassée.",
   ];
 
-  if (modeDetaille) {
+  if (isDetailed) {
     instructions.push(
-      "Liste les territoires en retard avec la date à laquelle la mise à jour était attendue (mise_a_jour_attendue_depuis). Un territoire dont date_derniere_valeur est null n'a jamais eu de valeur renseignée : présente-le comme « aucune valeur renseignée ». Si mise_a_jour_attendue_depuis est null alors que date_derniere_valeur est renseignée, la périodicité de l'indicateur n'est pas déclarée : dis-le au lieu d'afficher une date.",
+      "Liste les territoires en retard avec la date à laquelle la mise à jour était attendue (mise_a_jour_attendue_depuis). Un territoire dont date_derniere_valeur est null n'a jamais eu de valeur renseignée : présente-le comme « aucune valeur renseignée ». Si mise_a_jour_attendue_depuis est null alors que date_derniere_valeur est renseignée, la périodicité ou le délai de mise à jour de l'indicateur n'est pas déclaré : dis-le au lieu d'afficher une date.",
     );
   } else {
     instructions.push(
@@ -128,9 +128,9 @@ function buildOutputInstructions({
     );
   }
 
-  if (chantiersNonAccessibles.length > 0) {
+  if (inaccessibleChantierIds.length > 0) {
     instructions.push(
-      `Ces chantiers demandés ne sont pas accessibles à l'utilisateur : ${chantiersNonAccessibles.join(", ")}. Dis-le sans rien affirmer d'autre à leur sujet, et ne les présente jamais comme à jour.`,
+      `Ces chantiers demandés ne sont pas accessibles à l'utilisateur : ${inaccessibleChantierIds.join(", ")}. Dis-le sans rien affirmer d'autre à leur sujet, et ne les présente jamais comme à jour.`,
     );
   }
 
@@ -179,13 +179,13 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           };
         }
 
-        const chantierIdsDemandes =
+        const requestedChantierIds =
           input.chantier_ids && input.chantier_ids.length > 0
             ? input.chantier_ids
             : undefined;
 
-        const chantierIds = chantierIdsDemandes
-          ? chantierIdsDemandes.filter((chantierId) =>
+        const chantierIds = requestedChantierIds
+          ? requestedChantierIds.filter((chantierId) =>
               chantiersAccessibles.includes(chantierId),
             )
           : chantiersAccessibles;
@@ -201,7 +201,7 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
         if (chantierIds.length === 0) {
           return {
             resultats: [],
-            _output_instructions: chantierIdsDemandes
+            _output_instructions: requestedChantierIds
               ? "Aucun des chantiers demandés n'est accessible pour cet utilisateur."
               : "L'utilisateur n'a accès à aucun chantier : aucune donnée de mise à jour ne peut être consultée.",
           };
@@ -212,9 +212,9 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
             ? input.indicateur_ids
             : undefined;
 
-        const modeDetaille = Boolean(indicateurIds || input.territoire_code);
+        const isDetailed = Boolean(indicateurIds || input.territoire_code);
 
-        const resultat = await recupererIndicateursNonAJourQuery.execute({
+        const result = await recupererIndicateursNonAJourQuery.execute({
           chantierIds,
           territoireCodes: input.territoire_code
             ? [input.territoire_code]
@@ -224,22 +224,22 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
 
         const indicateursNonSuivis = (indicateurIds ?? []).filter(
           (indicateurId) =>
-            !resultat.indicateursApplicablesIds.includes(indicateurId),
+            !result.indicateursApplicablesIds.includes(indicateurId),
         );
 
-        const chantiersNonAccessibles = (chantierIdsDemandes ?? []).filter(
+        const inaccessibleChantierIds = (requestedChantierIds ?? []).filter(
           (chantierId) => !chantiersAccessibles.includes(chantierId),
         );
 
         return {
-          resultats: versSortie(resultat.chantiers, modeDetaille),
+          resultats: toOutput(result.chantiers, isDetailed),
           ...(indicateursNonSuivis.length > 0
             ? { indicateurs_non_suivis: indicateursNonSuivis }
             : {}),
           _output_instructions: buildOutputInstructions({
-            modeDetaille,
+            isDetailed,
             indicateursNonSuivis,
-            chantiersNonAccessibles,
+            inaccessibleChantierIds,
           }),
         };
       },

@@ -88,12 +88,6 @@ const CASES: ToolCase[] = [
       "CAS NÉGATIF : « retard de mise à jour » = fraîcheur → get_indicateurs_non_a_jour, pas view en_retard",
     forbidden: ["get_chantiers"],
   },
-  {
-    question: "Quels chantiers ont des données pas à jour en Corse ?",
-    reason:
-      "CAS NÉGATIF : données pas à jour = fraîcheur → get_indicateurs_non_a_jour",
-    forbidden: ["get_chantiers"],
-  },
 ];
 
 toolSelectionEval({

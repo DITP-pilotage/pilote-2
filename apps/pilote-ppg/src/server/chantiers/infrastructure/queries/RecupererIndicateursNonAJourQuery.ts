@@ -32,12 +32,12 @@ export type RecupererIndicateursNonAJourResult = {
   indicateursApplicablesIds: string[];
 };
 
-const ORDRE_MAILLES: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
+const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
 
-const formaterDate = (date: Date | null) =>
+const formatDate = (date: Date | null) =>
   date ? date.toISOString().slice(0, 10) : null;
 
-const cleIndicateurMaille = (indicateurId: string, maille: $Enums.Maille) =>
+const indicateurMailleKey = (indicateurId: string, maille: $Enums.Maille) =>
   `${indicateurId}|${maille}`;
 
 export class RecupererIndicateursNonAJourQuery {
@@ -50,7 +50,7 @@ export class RecupererIndicateursNonAJourQuery {
   }): Promise<RecupererIndicateursNonAJourResult> {
     const prisma = this.deps.prisma.getInstance();
 
-    const perimetre: Prisma.indicateur_territoireWhereInput = {
+    const scopeWhere: Prisma.indicateur_territoireWhereInput = {
       territoire_code: { in: params.territoireCodes },
       ...(params.indicateurIds ? { id: { in: params.indicateurIds } } : {}),
       est_applicable: true,
@@ -61,15 +61,15 @@ export class RecupererIndicateursNonAJourQuery {
       },
     };
 
-    const [comptesApplicables, lignesEnRetard] = await Promise.all([
+    const [applicableCounts, rowsNonAJour] = await Promise.all([
       prisma.indicateur_territoire.groupBy({
         by: ["id", "maille"],
-        where: perimetre,
+        where: scopeWhere,
         _count: { _all: true },
       }),
       prisma.indicateur_territoire.findMany({
         where: {
-          ...perimetre,
+          ...scopeWhere,
           OR: [{ est_a_jour: false }, { est_a_jour: null }],
         },
         select: {
@@ -96,17 +96,17 @@ export class RecupererIndicateursNonAJourQuery {
       }),
     ]);
 
-    const nbApplicablesParIndicateurMaille = new Map(
-      comptesApplicables.map((compte) => [
-        cleIndicateurMaille(compte.id, compte.maille),
-        compte._count._all,
+    const applicableCountByIndicateurMaille = new Map(
+      applicableCounts.map((count) => [
+        indicateurMailleKey(count.id, count.maille),
+        count._count._all,
       ]),
     );
 
     const chantiers = new Map<string, ChantierIndicateursNonAJour>();
 
-    for (const ligne of lignesEnRetard) {
-      const indicateurIdentite = ligne.indicateur_identite;
+    for (const row of rowsNonAJour) {
+      const indicateurIdentite = row.indicateur_identite;
       const chantierIdentite = indicateurIdentite.chantier_identite;
 
       if (!chantiers.has(chantierIdentite.id)) {
@@ -118,7 +118,7 @@ export class RecupererIndicateursNonAJourQuery {
       const chantier = chantiers.get(chantierIdentite.id)!;
 
       let indicateur = chantier.indicateurs.find(
-        (existant) => existant.id === indicateurIdentite.id,
+        (existing) => existing.id === indicateurIdentite.id,
       );
       if (!indicateur) {
         indicateur = {
@@ -132,14 +132,14 @@ export class RecupererIndicateursNonAJourQuery {
       }
 
       let maille = indicateur.mailles.find(
-        (existante) => existante.maille === ligne.maille,
+        (existing) => existing.maille === row.maille,
       );
       if (!maille) {
         maille = {
-          maille: ligne.maille,
+          maille: row.maille,
           nbTerritoiresApplicables:
-            nbApplicablesParIndicateurMaille.get(
-              cleIndicateurMaille(indicateurIdentite.id, ligne.maille),
+            applicableCountByIndicateurMaille.get(
+              indicateurMailleKey(indicateurIdentite.id, row.maille),
             ) ?? 0,
           territoiresEnRetard: [],
         };
@@ -147,19 +147,19 @@ export class RecupererIndicateursNonAJourQuery {
       }
 
       maille.territoiresEnRetard.push({
-        code: ligne.territoire_code,
-        nom: ligne.territoire_nom,
-        dateDerniereValeur: formaterDate(ligne.date_valeur_actuelle_mandat),
-        miseAJourAttendueDepuis: formaterDate(ligne.prochaine_date_maj),
+        code: row.territoire_code,
+        nom: row.territoire_nom,
+        dateDerniereValeur: formatDate(row.date_valeur_actuelle_mandat),
+        miseAJourAttendueDepuis: formatDate(row.prochaine_date_maj),
       });
     }
 
     for (const chantier of chantiers.values()) {
       for (const indicateur of chantier.indicateurs) {
         indicateur.mailles.sort(
-          (gauche, droite) =>
-            ORDRE_MAILLES.indexOf(gauche.maille) -
-            ORDRE_MAILLES.indexOf(droite.maille),
+          (left, right) =>
+            MAILLES_ORDER.indexOf(left.maille) -
+            MAILLES_ORDER.indexOf(right.maille),
         );
       }
     }
@@ -167,7 +167,7 @@ export class RecupererIndicateursNonAJourQuery {
     return {
       chantiers: [...chantiers.values()],
       indicateursApplicablesIds: [
-        ...new Set(comptesApplicables.map((compte) => compte.id)),
+        ...new Set(applicableCounts.map((count) => count.id)),
       ].sort(),
     };
   }
