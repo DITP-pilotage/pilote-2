@@ -85,8 +85,6 @@ SELECT
 
 FROM {{ source('db_schema_public', 'territoire') }} AS territoire
 CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
-LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS meta_zone
-    ON territoire.zone_id = meta_zone.id
 LEFT JOIN {{ ref('get_vcg') }} AS gvcg
     ON meta_indic.id = gvcg.indic_id AND territoire.zone_id = gvcg.zone_id
 LEFT JOIN {{ ref('get_last_vaca') }} AS last_vaca
@@ -108,7 +106,7 @@ LEFT JOIN {{ ref('int_ponderation_reelle') }} AS pond_reelle
 LEFT JOIN {{ ref('get_date_pro_maj_indic') }} AS date_pro_maj
     ON
         meta_indic.id = date_pro_maj.indic_id
-        AND meta_zone.maille = date_pro_maj.maille
+        AND territoire.zone_id = date_pro_maj.zone_id
 -- TODO: create stg table for this
 LEFT JOIN
     {{ source('ppg_metadata', 'metadata_parametrage_indicateurs') }}
