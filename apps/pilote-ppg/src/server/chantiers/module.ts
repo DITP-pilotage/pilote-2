@@ -71,6 +71,7 @@ import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "./infra
 import { GetRepartitionMeteoChantiersQuery } from "./infrastructure/queries/GetRepartitionMeteoChantiersQuery";
 import { GetChantiersSignalesQuery } from "./infrastructure/queries/GetChantiersSignalesQuery";
 import { GetChantiersSignalesDetailQuery } from "./infrastructure/queries/GetChantiersSignalesDetailQuery";
+import { RecupererIndicateursNonAJourQuery } from "./infrastructure/queries/RecupererIndicateursNonAJourQuery";
 import { ChantiersSignalesDataFetcher } from "./infrastructure/queries/ChantiersSignalesDataFetcher";
 import { GetStatistiquesAvancementChantiersQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 import { GetStatistiquesAvancementChantiersParChantierQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
@@ -106,6 +107,7 @@ type ChantierExports = {
   getHistoriqueIndicateurTerritoireQuery: GetHistoriqueIndicateurTerritoireQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
+  recupererIndicateursNonAJourQuery: RecupererIndicateursNonAJourQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -193,6 +195,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getHistoriqueIndicateurTerritoireQuery",
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
+    "recupererIndicateursNonAJourQuery",
   ],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({
@@ -335,6 +338,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantiersSignalesQuery: asModuleClass(GetChantiersSignalesQuery),
       getChantiersSignalesDetailQuery: asModuleClass(
         GetChantiersSignalesDetailQuery,
+      ),
+      recupererIndicateursNonAJourQuery: asModuleClass(
+        RecupererIndicateursNonAJourQuery,
       ),
       recupererEvolutionValeursAvancementTerritoiresQuery: asModuleClass(
         RecupererEvolutionValeursAvancementTerritoiresQuery,
