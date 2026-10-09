@@ -329,7 +329,7 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("explique un territoire en retard sans date attendue par une périodicité ou un délai de mise à jour non déclaré", async () => {
+  test("explique un territoire en retard sans date attendue par une date théorique non calculable, sans en supposer la cause", async () => {
     // Given
     const { tool } = buildTool();
 
@@ -338,7 +338,8 @@ describe("createGetIndicateursNonAJourTool execute", () => {
 
     // Then
     expect(result._output_instructions).toContain(
-      "miseAJourAttendueDepuis est null alors que dateDerniereValeur est renseignée",
+      "Si miseAJourAttendueDepuis est null alors que dateDerniereValeur est renseignée, la date théorique de mise à jour n'a pas pu être calculée : dis-le au lieu d'afficher une date.",
     );
+    expect(result._output_instructions).not.toContain("n'est pas déclaré");
   });
 });
