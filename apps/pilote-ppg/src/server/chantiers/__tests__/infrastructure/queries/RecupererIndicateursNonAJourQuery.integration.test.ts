@@ -6,11 +6,18 @@ import { RecupererIndicateursNonAJourQuery } from "@/server/chantiers/infrastruc
 type TerritoireTest = {
   territoire_code: string;
   code_insee: string;
-  maille: "DEPT";
+  maille: "NAT" | "DEPT";
   zone_id: string;
   territoire_nom: string;
 };
 
+const FRANCE: TerritoireTest = {
+  territoire_code: "NAT-FR",
+  code_insee: "FR",
+  maille: "NAT",
+  zone_id: "FRANCE",
+  territoire_nom: "France",
+};
 const FINISTERE: TerritoireTest = {
   territoire_code: "DEPT-29",
   code_insee: "29",
@@ -201,6 +208,37 @@ describe("RecupererIndicateursNonAJourQuery", () => {
   );
 
   it(
+    "ne renvoie pas un indicateur demandé rattaché à un chantier hors périmètre",
+    createIntegrationTest(async () => {
+      // given
+      await seedChantier("CH-001", [FINISTERE]);
+      await seedChantier("CH-002", [FINISTERE]);
+      await fixtures.indicateurIdentite({
+        id: "IND-002",
+        chantier_id: "CH-002",
+      });
+      await fixtures.indicateurTerritoire({
+        id: "IND-002",
+        chantier_id: "CH-002",
+        ...FINISTERE,
+        est_applicable: true,
+        est_a_jour: false,
+      });
+
+      // when
+      const result = await query.execute({
+        chantierIds: ["CH-001"],
+        territoireCodes: ["DEPT-29"],
+        indicateurIds: ["IND-002"],
+        avecDetailTerritoires: true,
+      });
+
+      // then
+      expect(result).toEqual([]);
+    }),
+  );
+
+  it(
     "ne renvoie pas un indicateur entièrement à jour",
     createIntegrationTest(async () => {
       // given
@@ -279,6 +317,110 @@ describe("RecupererIndicateursNonAJourQuery", () => {
                   maille: "DEPT",
                   nbTerritoiresEnRetard: 1,
                   nbTerritoiresApplicables: 2,
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+    }),
+  );
+
+  it(
+    "en mode compteurs, regroupe plusieurs chantiers, indicateurs et mailles dans l'ordre",
+    createIntegrationTest(async () => {
+      // given
+      await seedChantier("CH-002", [FRANCE, FINISTERE]);
+      await seedChantier("CH-001", [FRANCE, FINISTERE, ILLE_ET_VILAINE]);
+      for (const [indicateurId, chantierId] of [
+        ["IND-003", "CH-002"],
+        ["IND-002", "CH-001"],
+        ["IND-001", "CH-001"],
+      ]) {
+        await fixtures.indicateurIdentite({
+          id: indicateurId,
+          chantier_id: chantierId,
+          nom: `Indicateur ${indicateurId}`,
+          periodicite: "Mensuelle",
+          delai_disponibilite: 0,
+        });
+      }
+      const lignes: [string, string, TerritoireTest, boolean | null][] = [
+        ["IND-001", "CH-001", FINISTERE, false],
+        ["IND-001", "CH-001", ILLE_ET_VILAINE, null],
+        ["IND-001", "CH-001", FRANCE, false],
+        ["IND-002", "CH-001", FINISTERE, true],
+        ["IND-002", "CH-001", ILLE_ET_VILAINE, false],
+        ["IND-003", "CH-002", FRANCE, false],
+      ];
+      for (const [indicateurId, chantierId, territoire, estAJour] of lignes) {
+        await fixtures.indicateurTerritoire({
+          id: indicateurId,
+          chantier_id: chantierId,
+          ...territoire,
+          est_applicable: true,
+          est_a_jour: estAJour,
+        });
+      }
+
+      // when
+      const result = await query.execute({
+        chantierIds: ["CH-001", "CH-002"],
+        territoireCodes: ["NAT-FR", "DEPT-29", "DEPT-35"],
+        avecDetailTerritoires: false,
+      });
+
+      // then
+      expect(result).toEqual([
+        {
+          chantier: { id: "CH-001", nom: "Chantier CH-001" },
+          indicateurs: [
+            {
+              id: "IND-001",
+              nom: "Indicateur IND-001",
+              periodicite: "Mensuelle",
+              delaiDisponibiliteMois: 0,
+              mailles: [
+                {
+                  maille: "NAT",
+                  nbTerritoiresEnRetard: 1,
+                  nbTerritoiresApplicables: 1,
+                },
+                {
+                  maille: "DEPT",
+                  nbTerritoiresEnRetard: 2,
+                  nbTerritoiresApplicables: 2,
+                },
+              ],
+            },
+            {
+              id: "IND-002",
+              nom: "Indicateur IND-002",
+              periodicite: "Mensuelle",
+              delaiDisponibiliteMois: 0,
+              mailles: [
+                {
+                  maille: "DEPT",
+                  nbTerritoiresEnRetard: 1,
+                  nbTerritoiresApplicables: 2,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          chantier: { id: "CH-002", nom: "Chantier CH-002" },
+          indicateurs: [
+            {
+              id: "IND-003",
+              nom: "Indicateur IND-003",
+              periodicite: "Mensuelle",
+              delaiDisponibiliteMois: 0,
+              mailles: [
+                {
+                  maille: "NAT",
+                  nbTerritoiresEnRetard: 1,
+                  nbTerritoiresApplicables: 1,
                 },
               ],
             },
