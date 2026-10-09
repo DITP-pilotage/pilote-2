@@ -62,7 +62,6 @@ src_config_tempo AS (
         delai_disponibilite
     FROM
         {{ source('ppg_metadata', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
-    ORDER BY indic_id
 ),
 
 -- Calcul de la prochaine date de VA
