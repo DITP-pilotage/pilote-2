@@ -98,45 +98,44 @@ describe("RecupererIndicateursNonAJourQuery", () => {
       const result = await query.execute({
         chantierIds: ["CH-001"],
         territoireCodes: ["DEPT-29", "DEPT-35", "DEPT-22"],
+        avecDetailTerritoires: true,
       });
 
       // then
-      expect(result).toEqual({
-        chantiers: [
-          {
-            chantier: { id: "CH-001", nom: "Chantier CH-001" },
-            indicateurs: [
-              {
-                id: "IND-001",
-                nom: "Nombre de bornes",
-                periodicite: "Trimestrielle",
-                delaiDisponibiliteMois: 1,
-                mailles: [
-                  {
-                    maille: "DEPT",
-                    nbTerritoiresApplicables: 3,
-                    territoiresEnRetard: [
-                      {
-                        code: "DEPT-22",
-                        nom: "Côtes-d'Armor",
-                        dateDerniereValeur: null,
-                        miseAJourAttendueDepuis: null,
-                      },
-                      {
-                        code: "DEPT-29",
-                        nom: "Finistère",
-                        dateDerniereValeur: "2026-01-01",
-                        miseAJourAttendueDepuis: "2026-05-31",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        indicateursApplicablesIds: ["IND-001"],
-      });
+      expect(result).toEqual([
+        {
+          chantier: { id: "CH-001", nom: "Chantier CH-001" },
+          indicateurs: [
+            {
+              id: "IND-001",
+              nom: "Nombre de bornes",
+              periodicite: "Trimestrielle",
+              delaiDisponibiliteMois: 1,
+              mailles: [
+                {
+                  maille: "DEPT",
+                  nbTerritoiresEnRetard: 2,
+                  nbTerritoiresApplicables: 3,
+                  territoiresEnRetard: [
+                    {
+                      code: "DEPT-22",
+                      nom: "Côtes-d'Armor",
+                      dateDerniereValeur: null,
+                      miseAJourAttendueDepuis: null,
+                    },
+                    {
+                      code: "DEPT-29",
+                      nom: "Finistère",
+                      dateDerniereValeur: "2026-01-01",
+                      miseAJourAttendueDepuis: "2026-05-31",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ]);
     }),
   );
 
@@ -193,15 +192,16 @@ describe("RecupererIndicateursNonAJourQuery", () => {
       const result = await query.execute({
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: ["DEPT-29"],
+        avecDetailTerritoires: true,
       });
 
       // then
-      expect(result).toEqual({ chantiers: [], indicateursApplicablesIds: [] });
+      expect(result).toEqual([]);
     }),
   );
 
   it(
-    "renvoie un indicateur entièrement à jour dans indicateursApplicablesIds mais pas dans chantiers",
+    "ne renvoie pas un indicateur entièrement à jour",
     createIntegrationTest(async () => {
       // given
       await seedChantier("CH-001", [FINISTERE]);
@@ -221,14 +221,70 @@ describe("RecupererIndicateursNonAJourQuery", () => {
       const result = await query.execute({
         chantierIds: ["CH-001"],
         territoireCodes: ["DEPT-29"],
-        indicateurIds: ["IND-001", "IND-404"],
+        indicateurIds: ["IND-001"],
+        avecDetailTerritoires: true,
       });
 
       // then
-      expect(result).toEqual({
-        chantiers: [],
-        indicateursApplicablesIds: ["IND-001"],
+      expect(result).toEqual([]);
+    }),
+  );
+
+  it(
+    "sans détail des territoires, ne renvoie que les compteurs par maille",
+    createIntegrationTest(async () => {
+      // given
+      await seedChantier("CH-001", [FINISTERE, ILLE_ET_VILAINE]);
+      await fixtures.indicateurIdentite({
+        id: "IND-001",
+        chantier_id: "CH-001",
+        nom: "Nombre de bornes",
+        periodicite: "Trimestrielle",
+        delai_disponibilite: 1,
       });
+      await fixtures.indicateurTerritoire({
+        id: "IND-001",
+        chantier_id: "CH-001",
+        ...FINISTERE,
+        est_applicable: true,
+        est_a_jour: false,
+      });
+      await fixtures.indicateurTerritoire({
+        id: "IND-001",
+        chantier_id: "CH-001",
+        ...ILLE_ET_VILAINE,
+        est_applicable: true,
+        est_a_jour: true,
+      });
+
+      // when
+      const result = await query.execute({
+        chantierIds: ["CH-001"],
+        territoireCodes: ["DEPT-29", "DEPT-35"],
+        avecDetailTerritoires: false,
+      });
+
+      // then
+      expect(result).toEqual([
+        {
+          chantier: { id: "CH-001", nom: "Chantier CH-001" },
+          indicateurs: [
+            {
+              id: "IND-001",
+              nom: "Nombre de bornes",
+              periodicite: "Trimestrielle",
+              delaiDisponibiliteMois: 1,
+              mailles: [
+                {
+                  maille: "DEPT",
+                  nbTerritoiresEnRetard: 1,
+                  nbTerritoiresApplicables: 2,
+                },
+              ],
+            },
+          ],
+        },
+      ]);
     }),
   );
 });

@@ -1,10 +1,10 @@
 import { tool } from "ai";
 import { z } from "zod";
-import type { $Enums } from "@prisma/client";
 import type {
+  ChantierIndicateursNonAJour,
   RecupererIndicateursNonAJourQuery,
-  RecupererIndicateursNonAJourResult,
 } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
+import type { VerifierIndicateursDemandesQuery } from "@/server/chantiers/infrastructure/queries/VerifierIndicateursDemandesQuery";
 
 export const getIndicateursNonAJourInputSchema = z.object({
   chantier_ids: z
@@ -31,120 +31,146 @@ type GetIndicateursNonAJourInput = z.infer<
   typeof getIndicateursNonAJourInputSchema
 >;
 
-type TerritoireEnRetardOutput = {
-  code: string;
-  nom: string | null;
-  date_derniere_valeur: string | null;
-  mise_a_jour_attendue_depuis: string | null;
-};
-
-type MailleOutput = {
-  maille: $Enums.Maille;
-  nb_territoires_en_retard: number;
-  nb_territoires_applicables: number;
-  territoires_en_retard?: TerritoireEnRetardOutput[];
-};
-
-type ChantierResultOutput = {
-  chantier: { id: string; nom: string };
-  indicateurs: {
-    id: string;
-    nom: string;
-    periodicite: string | null;
-    delai_disponibilite_mois: number | null;
-    mailles: MailleOutput[];
+type IndicateursExclus = {
+  indicateurs_introuvables?: string[];
+  indicateurs_hors_chantiers_demandes?: {
+    indicateur_id: string;
+    chantier_id: string;
   }[];
+  indicateurs_non_applicables?: string[];
 };
 
-export type GetIndicateursNonAJourOutput = {
-  resultats: ChantierResultOutput[];
-  indicateurs_non_suivis?: string[];
+export type GetIndicateursNonAJourOutput = IndicateursExclus & {
+  resultats: ChantierIndicateursNonAJour[];
   acces_refuse?: boolean;
   _output_instructions: string;
 };
 
-function toOutput(
-  chantiers: RecupererIndicateursNonAJourResult["chantiers"],
-  isDetailed: boolean,
-): ChantierResultOutput[] {
-  return chantiers.map(({ chantier, indicateurs }) => ({
-    chantier,
-    indicateurs: indicateurs.map((indicateur) => ({
-      id: indicateur.id,
-      nom: indicateur.nom,
-      periodicite: indicateur.periodicite,
-      delai_disponibilite_mois: indicateur.delaiDisponibiliteMois,
-      mailles: indicateur.mailles.map((maille) => ({
-        maille: maille.maille,
-        nb_territoires_en_retard: maille.territoiresEnRetard.length,
-        nb_territoires_applicables: maille.nbTerritoiresApplicables,
-        ...(isDetailed
-          ? {
-              territoires_en_retard: maille.territoiresEnRetard.map(
-                (territoire) => ({
-                  code: territoire.code,
-                  nom: territoire.nom,
-                  date_derniere_valeur: territoire.dateDerniereValeur,
-                  mise_a_jour_attendue_depuis:
-                    territoire.miseAJourAttendueDepuis,
-                }),
-              ),
-            }
-          : {}),
-      })),
-    })),
-  }));
+function nonEmpty(ids: string[] | undefined): string[] | undefined {
+  return ids && ids.length > 0 ? ids : undefined;
 }
 
-function buildOutputInstructions({
-  isDetailed,
-  indicateursNonSuivis,
-  inaccessibleChantierIds,
+async function verifierIndicateursDemandes({
+  verifierIndicateursDemandesQuery,
+  indicateurIds,
+  territoireCodes,
+  chantierIds,
+  chantiersAccessibles,
 }: {
-  isDetailed: boolean;
-  indicateursNonSuivis: string[];
-  inaccessibleChantierIds: string[];
-}): string {
-  const instructions = [
-    'Présente chaque chantier au format "CH-XXX — Nom du chantier" et chaque indicateur au format "IND-XXX — Nom de l\'indicateur".',
-    "Si la question porte sur les chantiers (« sur quels chantiers… »), liste les chantiers avec leur nombre d'indicateurs non à jour, sans détailler les indicateurs, puis propose le détail d'un chantier.",
-    "Sinon, regroupe par chantier puis par indicateur, avec une ligne par maille au format « Départements : 12 / 101 territoires en retard » (« Régions » pour REG, « National » pour NAT).",
-    "Si l'utilisateur demande pourquoi une donnée n'est pas à jour, explique que la date théorique de mise à jour (date de la dernière valeur + periodicite + delai_disponibilite_mois déclarés pour l'indicateur) est dépassée.",
-  ];
+  verifierIndicateursDemandesQuery: VerifierIndicateursDemandesQuery;
+  indicateurIds: string[];
+  territoireCodes: string[];
+  chantierIds: string[];
+  chantiersAccessibles: string[];
+}): Promise<{ retenus: string[]; exclus: IndicateursExclus }> {
+  const indicateurs = new Map(
+    (
+      await verifierIndicateursDemandesQuery.execute({
+        indicateurIds,
+        territoireCodes,
+      })
+    ).map((indicateur) => [indicateur.id, indicateur]),
+  );
 
-  if (isDetailed) {
+  const retenus: string[] = [];
+  const introuvables: string[] = [];
+  const horsChantiersDemandes: {
+    indicateur_id: string;
+    chantier_id: string;
+  }[] = [];
+  const nonApplicables: string[] = [];
+
+  for (const indicateurId of indicateurIds) {
+    const indicateur = indicateurs.get(indicateurId);
+    if (!indicateur || !chantiersAccessibles.includes(indicateur.chantierId)) {
+      introuvables.push(indicateurId);
+    } else if (!chantierIds.includes(indicateur.chantierId)) {
+      horsChantiersDemandes.push({
+        indicateur_id: indicateurId,
+        chantier_id: indicateur.chantierId,
+      });
+    } else if (!indicateur.estApplicable) {
+      nonApplicables.push(indicateurId);
+    } else {
+      retenus.push(indicateurId);
+    }
+  }
+
+  const exclus: IndicateursExclus = {};
+  if (introuvables.length > 0) exclus.indicateurs_introuvables = introuvables;
+  if (horsChantiersDemandes.length > 0)
+    exclus.indicateurs_hors_chantiers_demandes = horsChantiersDemandes;
+  if (nonApplicables.length > 0)
+    exclus.indicateurs_non_applicables = nonApplicables;
+
+  return { retenus, exclus };
+}
+
+function buildExclusionInstructions(
+  exclus: IndicateursExclus,
+  inaccessibleChantierIds: string[],
+): string[] {
+  const instructions: string[] = [];
+
+  if (exclus.indicateurs_introuvables) {
     instructions.push(
-      "Liste les territoires en retard avec la date à laquelle la mise à jour était attendue (mise_a_jour_attendue_depuis). Un territoire dont date_derniere_valeur est null n'a jamais eu de valeur renseignée : présente-le comme « aucune valeur renseignée ». Si mise_a_jour_attendue_depuis est null alors que date_derniere_valeur est renseignée, la périodicité ou le délai de mise à jour de l'indicateur n'est pas déclaré : dis-le au lieu d'afficher une date.",
-    );
-  } else {
-    instructions.push(
-      "Le détail par territoire n'est pas inclus. Propose à l'utilisateur de cibler un indicateur ou un territoire pour obtenir la liste des territoires en retard. Ne classe pas les territoires entre eux : cette information n'est pas disponible.",
+      `Ces indicateurs sont introuvables ou ne sont pas accessibles à l'utilisateur : ${exclus.indicateurs_introuvables.join(", ")}. Dis-le sans rien affirmer d'autre à leur sujet.`,
     );
   }
 
-  if (indicateursNonSuivis.length > 0) {
+  if (exclus.indicateurs_hors_chantiers_demandes) {
+    const indicateurs = exclus.indicateurs_hors_chantiers_demandes.map(
+      ({ indicateur_id, chantier_id }) => `${indicateur_id} (${chantier_id})`,
+    );
     instructions.push(
-      `Ces indicateurs ne sont pas suivis, ou pas accessibles, sur le périmètre interrogé : ${indicateursNonSuivis.join(", ")}. Dis-le explicitement, ne les présente jamais comme à jour.`,
+      `Ces indicateurs n'appartiennent pas aux chantiers demandés : ${indicateurs.join(", ")}. Dis-le et propose d'interroger leur chantier de rattachement, indiqué entre parenthèses.`,
+    );
+  }
+
+  if (exclus.indicateurs_non_applicables) {
+    instructions.push(
+      `Ces indicateurs ne sont applicables sur aucun territoire du périmètre interrogé : ${exclus.indicateurs_non_applicables.join(", ")}. Dis-le et propose d'interroger un autre territoire ou le national.`,
     );
   }
 
   if (inaccessibleChantierIds.length > 0) {
     instructions.push(
-      `Ces chantiers demandés ne sont pas accessibles à l'utilisateur : ${inaccessibleChantierIds.join(", ")}. Dis-le sans rien affirmer d'autre à leur sujet, et ne les présente jamais comme à jour.`,
+      `Ces chantiers demandés ne sont pas accessibles à l'utilisateur : ${inaccessibleChantierIds.join(", ")}. Dis-le sans rien affirmer d'autre à leur sujet.`,
     );
   }
 
-  instructions.push(
-    "Si resultats est vide (hors indicateurs non suivis et chantiers non accessibles), dis explicitement que toutes les données du périmètre interrogé sont à jour.",
-  );
+  if (instructions.length > 0) {
+    instructions.push(
+      "Ne présente jamais ces indicateurs ou ces chantiers comme à jour.",
+    );
+  }
 
-  return instructions.join("\n\n");
+  return instructions;
+}
+
+function buildOutputInstructions(
+  isDetailed: boolean,
+  exclusionInstructions: string[],
+): string {
+  return [
+    'Présente chaque chantier au format "CH-XXX — Nom du chantier" et chaque indicateur au format "IND-XXX — Nom de l\'indicateur".',
+    "Si la question porte sur les chantiers (« sur quels chantiers… »), liste les chantiers avec leur nombre d'indicateurs non à jour, sans détailler les indicateurs, puis propose le détail d'un chantier.",
+    "Sinon, regroupe par chantier puis par indicateur, avec une ligne par maille au format « Départements : 12 / 101 territoires en retard » (« Régions » pour REG, « National » pour NAT).",
+    "Si l'utilisateur demande pourquoi une donnée n'est pas à jour, explique que la date théorique de mise à jour (date de la dernière valeur + periodicite + delaiDisponibiliteMois déclarés pour l'indicateur) est dépassée.",
+    isDetailed
+      ? "Liste les territoires en retard avec la date à laquelle la mise à jour était attendue (miseAJourAttendueDepuis). Un territoire dont dateDerniereValeur est null n'a jamais eu de valeur renseignée : présente-le comme « aucune valeur renseignée ». Si miseAJourAttendueDepuis est null alors que dateDerniereValeur est renseignée, la périodicité ou le délai de mise à jour de l'indicateur n'est pas déclaré : dis-le au lieu d'afficher une date."
+      : "Le détail par territoire n'est pas inclus. Propose à l'utilisateur de cibler un indicateur ou un territoire pour obtenir la liste des territoires en retard. Ne classe pas les territoires entre eux : cette information n'est pas disponible.",
+    ...exclusionInstructions,
+    "Si resultats est vide, dis explicitement que toutes les données interrogées sont à jour, hors indicateurs et chantiers signalés ci-dessus.",
+  ].join("\n\n");
 }
 
 export function createGetIndicateursNonAJourTool({
   recupererIndicateursNonAJourQuery,
+  verifierIndicateursDemandesQuery,
 }: {
   recupererIndicateursNonAJourQuery: RecupererIndicateursNonAJourQuery;
+  verifierIndicateursDemandesQuery: VerifierIndicateursDemandesQuery;
 }) {
   return ({
     territoiresAccessibles,
@@ -179,17 +205,6 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           };
         }
 
-        const requestedChantierIds =
-          input.chantier_ids && input.chantier_ids.length > 0
-            ? input.chantier_ids
-            : undefined;
-
-        const chantierIds = requestedChantierIds
-          ? requestedChantierIds.filter((chantierId) =>
-              chantiersAccessibles.includes(chantierId),
-            )
-          : chantiersAccessibles;
-
         if (!input.territoire_code && territoiresAccessibles.length === 0) {
           return {
             resultats: [],
@@ -197,6 +212,12 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
               "L'utilisateur n'a accès à aucun territoire : aucune donnée de mise à jour ne peut être consultée.",
           };
         }
+
+        const requestedChantierIds = nonEmpty(input.chantier_ids);
+        const chantierIds =
+          requestedChantierIds?.filter((chantierId) =>
+            chantiersAccessibles.includes(chantierId),
+          ) ?? chantiersAccessibles;
 
         if (chantierIds.length === 0) {
           return {
@@ -207,40 +228,54 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           };
         }
 
-        const indicateurIds =
-          input.indicateur_ids && input.indicateur_ids.length > 0
-            ? input.indicateur_ids
-            : undefined;
-
-        const isDetailed = Boolean(indicateurIds || input.territoire_code);
-
-        const result = await recupererIndicateursNonAJourQuery.execute({
-          chantierIds,
-          territoireCodes: input.territoire_code
-            ? [input.territoire_code]
-            : territoiresAccessibles,
-          indicateurIds,
-        });
-
-        const indicateursNonSuivis = (indicateurIds ?? []).filter(
-          (indicateurId) =>
-            !result.indicateursApplicablesIds.includes(indicateurId),
-        );
-
         const inaccessibleChantierIds = (requestedChantierIds ?? []).filter(
           (chantierId) => !chantiersAccessibles.includes(chantierId),
         );
+        const territoireCodes = input.territoire_code
+          ? [input.territoire_code]
+          : territoiresAccessibles;
+        const requestedIndicateurIds = nonEmpty(input.indicateur_ids);
+
+        const { retenus, exclus } = requestedIndicateurIds
+          ? await verifierIndicateursDemandes({
+              verifierIndicateursDemandesQuery,
+              indicateurIds: requestedIndicateurIds,
+              territoireCodes,
+              chantierIds,
+              chantiersAccessibles,
+            })
+          : { retenus: undefined, exclus: {} };
+
+        const exclusionInstructions = buildExclusionInstructions(
+          exclus,
+          inaccessibleChantierIds,
+        );
+
+        if (retenus?.length === 0) {
+          return {
+            resultats: [],
+            ...exclus,
+            _output_instructions: exclusionInstructions.join("\n\n"),
+          };
+        }
+
+        const isDetailed = Boolean(
+          requestedIndicateurIds || input.territoire_code,
+        );
+        const chantiers = await recupererIndicateursNonAJourQuery.execute({
+          chantierIds,
+          territoireCodes,
+          indicateurIds: retenus,
+          avecDetailTerritoires: isDetailed,
+        });
 
         return {
-          resultats: toOutput(result.chantiers, isDetailed),
-          ...(indicateursNonSuivis.length > 0
-            ? { indicateurs_non_suivis: indicateursNonSuivis }
-            : {}),
-          _output_instructions: buildOutputInstructions({
+          resultats: chantiers,
+          ...exclus,
+          _output_instructions: buildOutputInstructions(
             isDetailed,
-            indicateursNonSuivis,
-            inaccessibleChantierIds,
-          }),
+            exclusionInstructions,
+          ),
         };
       },
     });

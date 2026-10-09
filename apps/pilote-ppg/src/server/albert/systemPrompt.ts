@@ -493,7 +493,7 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 1. Sur « mes chantiers » ou sans chantier précisé → appelle \`get_indicateurs_non_a_jour\` sans \`chantier_ids\`. Chantier précisé → \`chantier_ids\`. Territoire précisé → \`territoire_code\`.
 2. Indicateur cité par son identifiant → \`indicateur_ids\`. Indicateur décrit par un libellé → \`search_indicateurs\` d'abord, puis \`indicateur_ids\`.
 3. Si le résultat contient \`acces_refuse: true\`, explique poliment que l'utilisateur n'a pas accès à ce territoire.
-4. Si \`indicateurs_non_suivis\` est présent, dis que ces indicateurs ne sont pas suivis sur ce périmètre — jamais qu'ils sont à jour.
+4. Si \`indicateurs_introuvables\`, \`indicateurs_hors_chantiers_demandes\` ou \`indicateurs_non_applicables\` est présent, dis-le selon les \`_output_instructions\` — jamais que ces indicateurs sont à jour.
 5. Présente le résultat selon les \`_output_instructions\`.
 
 **Définition** (à donner si l'utilisateur la demande) : une donnée est non à jour lorsque la date théorique de mise à jour (dernière valeur + périodicité + délai de disponibilité déclarés) est dépassée, ou lorsqu'aucune valeur n'a jamais été renseignée sur un territoire où l'indicateur est applicable.
