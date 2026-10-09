@@ -100,6 +100,13 @@ const CASES: ToolCase[] = [
     reason: "CAS NÉGATIF : météo dégradée, pas un signalement",
     forbidden: ["get_chantiers_signales"],
   },
+  {
+    question:
+      "Quels chantiers ont des indicateurs non mis à jour en Bretagne ?",
+    reason:
+      "CAS NÉGATIF : pas une catégorie de signalement → get_indicateurs_non_a_jour",
+    forbidden: ["get_chantiers_signales"],
+  },
 ];
 
 toolSelectionEval({

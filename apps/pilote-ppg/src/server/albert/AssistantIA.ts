@@ -75,6 +75,9 @@ export class AssistantIA {
       get_chantiers_signales: container.resolve(
         "createGetChantiersSignalesTool",
       )({ territoiresAccessibles, chantiersAccessibles }),
+      get_indicateurs_non_a_jour: container.resolve(
+        "createGetIndicateursNonAJourTool",
+      )({ territoiresAccessibles, chantiersAccessibles }),
       search_chantiers: container.resolve("createSearchChantiersTool")({
         chantiersAccessibles,
       }),

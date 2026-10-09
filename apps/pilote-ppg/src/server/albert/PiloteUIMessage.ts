@@ -49,6 +49,10 @@ import {
   type GetChantiersSignalesOutput,
 } from "@/server/albert/tools/getChantiersSignales";
 import {
+  getIndicateursNonAJourInputSchema,
+  type GetIndicateursNonAJourOutput,
+} from "@/server/albert/tools/getIndicateursNonAJour";
+import {
   getEvolutionIndicateurInputSchema,
   type GetEvolutionIndicateurOutput,
 } from "@/server/albert/tools/getEvolutionIndicateur";
@@ -85,6 +89,10 @@ export type PiloteUITools = {
   get_chantiers_signales: {
     input: z.input<typeof getChantiersSignalesInputSchema>;
     output: GetChantiersSignalesOutput;
+  };
+  get_indicateurs_non_a_jour: {
+    input: z.input<typeof getIndicateursNonAJourInputSchema>;
+    output: GetIndicateursNonAJourOutput;
   };
   get_evolution_indicateur: {
     input: z.input<typeof getEvolutionIndicateurInputSchema>;
