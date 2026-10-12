@@ -43,7 +43,7 @@ const indicateurMailleKey = (indicateurId: string, maille: $Enums.Maille) =>
 
 const formatDate = (date: Date | null) => (date ? toISODate(date) : null);
 
-export class RecupererIndicateursNonAJourQuery {
+export class GetIndicateursNonAJourQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
 
   async execute(params: {
@@ -70,8 +70,8 @@ export class RecupererIndicateursNonAJourQuery {
     };
 
     const maillesEnRetard = params.avecDetailTerritoires
-      ? await this.recupererMaillesEnRetardDetaillees(nonAJourWhere)
-      : await this.recupererMaillesEnRetardCompteurs(nonAJourWhere);
+      ? await this.getMaillesEnRetardDetaillees(nonAJourWhere)
+      : await this.getMaillesEnRetardCompteurs(nonAJourWhere);
 
     if (maillesEnRetard.length === 0) return [];
 
@@ -87,13 +87,7 @@ export class RecupererIndicateursNonAJourQuery {
       }),
       prisma.indicateur_identite.findMany({
         where: { id: { in: indicateurIds } },
-        select: {
-          id: true,
-          nom: true,
-          periodicite: true,
-          delai_disponibilite: true,
-          chantier_identite: { select: { id: true, nom: true } },
-        },
+        include: { chantier_identite: true },
         orderBy: [{ chantier_id: "asc" }, { id: "asc" }],
       }),
     ]);
@@ -144,7 +138,7 @@ export class RecupererIndicateursNonAJourQuery {
     return [...chantiers.values()];
   }
 
-  private async recupererMaillesEnRetardCompteurs(
+  private async getMaillesEnRetardCompteurs(
     where: Prisma.indicateur_territoireWhereInput,
   ): Promise<MailleEnRetard[]> {
     const counts = await this.deps.prisma
@@ -162,21 +156,13 @@ export class RecupererIndicateursNonAJourQuery {
     }));
   }
 
-  private async recupererMaillesEnRetardDetaillees(
+  private async getMaillesEnRetardDetaillees(
     where: Prisma.indicateur_territoireWhereInput,
   ): Promise<MailleEnRetard[]> {
     const rows = await this.deps.prisma
       .getInstance()
       .indicateur_territoire.findMany({
         where,
-        select: {
-          id: true,
-          maille: true,
-          territoire_code: true,
-          territoire_nom: true,
-          date_valeur_actuelle_mandat: true,
-          prochaine_date_maj: true,
-        },
         orderBy: { territoire_code: "asc" },
       });
 

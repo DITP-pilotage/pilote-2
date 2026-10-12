@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { RecupererIndicateursNonAJourQuery } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
+import { GetIndicateursNonAJourQuery } from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 
 type TerritoireTest = {
   territoire_code: string;
@@ -57,8 +57,8 @@ async function seedChantier(
   }
 }
 
-describe("RecupererIndicateursNonAJourQuery", () => {
-  const query = new RecupererIndicateursNonAJourQuery({
+describe("GetIndicateursNonAJourQuery", () => {
+  const query = new GetIndicateursNonAJourQuery({
     prisma: new PrismaPilote(),
   });
 

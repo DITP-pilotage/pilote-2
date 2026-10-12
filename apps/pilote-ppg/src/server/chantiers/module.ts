@@ -70,7 +70,7 @@ import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "./infra
 import { GetRepartitionMeteoChantiersQuery } from "./infrastructure/queries/GetRepartitionMeteoChantiersQuery";
 import { GetChantiersSignalesQuery } from "./infrastructure/queries/GetChantiersSignalesQuery";
 import { GetChantiersSignalesDetailQuery } from "./infrastructure/queries/GetChantiersSignalesDetailQuery";
-import { RecupererIndicateursNonAJourQuery } from "./infrastructure/queries/RecupererIndicateursNonAJourQuery";
+import { GetIndicateursNonAJourQuery } from "./infrastructure/queries/GetIndicateursNonAJourQuery";
 import { ChantiersSignalesDataFetcher } from "./infrastructure/queries/ChantiersSignalesDataFetcher";
 import { GetStatistiquesAvancementChantiersQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 import { GetStatistiquesAvancementChantiersParChantierQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
@@ -106,7 +106,7 @@ type ChantierExports = {
   getHistoriqueIndicateurTerritoireQuery: GetHistoriqueIndicateurTerritoireQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
-  recupererIndicateursNonAJourQuery: RecupererIndicateursNonAJourQuery;
+  getIndicateursNonAJourQuery: GetIndicateursNonAJourQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -193,7 +193,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getHistoriqueIndicateurTerritoireQuery",
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
-    "recupererIndicateursNonAJourQuery",
+    "getIndicateursNonAJourQuery",
   ],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({
@@ -331,9 +331,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantiersSignalesDetailQuery: asModuleClass(
         GetChantiersSignalesDetailQuery,
       ),
-      recupererIndicateursNonAJourQuery: asModuleClass(
-        RecupererIndicateursNonAJourQuery,
-      ),
+      getIndicateursNonAJourQuery: asModuleClass(GetIndicateursNonAJourQuery),
       recupererEvolutionValeursAvancementTerritoiresQuery: asModuleClass(
         RecupererEvolutionValeursAvancementTerritoiresQuery,
       ),

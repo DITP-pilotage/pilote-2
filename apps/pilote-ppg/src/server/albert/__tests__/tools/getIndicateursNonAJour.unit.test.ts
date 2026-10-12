@@ -2,12 +2,13 @@ import { describe, expect, test } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
   createGetIndicateursNonAJourTool,
+  getIndicateursNonAJourInputSchema,
   type GetIndicateursNonAJourOutput,
 } from "@/server/albert/tools/getIndicateursNonAJour";
 import type {
   ChantierIndicateursNonAJour,
-  RecupererIndicateursNonAJourQuery,
-} from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
+  GetIndicateursNonAJourQuery,
+} from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 
 const QUERY_RESULT: ChantierIndicateursNonAJour[] = [
@@ -50,7 +51,7 @@ const buildTool = ({
   chantiersAccessibles?: string[];
   chantierParIndicateur?: Record<string, string>;
 } = {}) => {
-  const query = mock<RecupererIndicateursNonAJourQuery>();
+  const query = mock<GetIndicateursNonAJourQuery>();
   query.execute.mockResolvedValue(queryResult);
   const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>();
   getIndicateurContexteQuery.execute.mockImplementation(
@@ -70,7 +71,7 @@ const buildTool = ({
     },
   );
   const tool = createGetIndicateursNonAJourTool({
-    recupererIndicateursNonAJourQuery: query,
+    getIndicateursNonAJourQuery: query,
     getIndicateurContexteQuery,
   })({ territoiresAccessibles, chantiersAccessibles });
   return { tool, query };
@@ -84,7 +85,7 @@ const executeTool = async (
     territoire_code?: string;
   },
 ): Promise<GetIndicateursNonAJourOutput> =>
-  tool.execute!(input, {
+  tool.execute!(getIndicateursNonAJourInputSchema.parse(input), {
     toolCallId: "test",
     messages: [],
     abortSignal: undefined,

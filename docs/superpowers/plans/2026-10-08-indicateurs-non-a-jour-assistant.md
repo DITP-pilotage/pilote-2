@@ -4,7 +4,7 @@
 
 **Goal:** Rendre `est_a_jour` territorial dans dbt et exposer un outil `get_indicateurs_non_a_jour` à l'assistant Albert de pilote-ppg.
 
-**Architecture:** Le modèle dbt `get_date_pro_maj_indic` passe de la granularité (indicateur, maille) à (indicateur, zone) ; `indicateur_territoire` le joint sur `zone_id`. Côté app, une query Prisma `RecupererIndicateursNonAJourQuery` (module `chantiers`) lit `indicateur_territoire`, et un outil Albert l'expose avec filtrage par habilitations, règle de volume (compteurs vs détail) et consignes de restitution.
+**Architecture:** Le modèle dbt `get_date_pro_maj_indic` passe de la granularité (indicateur, maille) à (indicateur, zone) ; `indicateur_territoire` le joint sur `zone_id`. Côté app, une query Prisma `GetIndicateursNonAJourQuery` (module `chantiers`) lit `indicateur_territoire`, et un outil Albert l'expose avec filtrage par habilitations, règle de volume (compteurs vs détail) et consignes de restitution.
 
 **Tech Stack:** dbt (PostgreSQL, unit tests dbt ≥ 1.8, `uv`), Next.js / TypeScript, Prisma, Awilix (`defineModule`), Vercel AI SDK (`tool`), Zod, Vitest, evalite.
 
@@ -40,8 +40,8 @@
 | `apps/pilote-ppg-data-management/models/df3/4_compute/unit_tests.yml` | Create | Unit test dbt du calcul par zone |
 | `apps/pilote-ppg-data-management/models/df3/schema.yml` | Modify | Documentation de la nouvelle granularité |
 | `apps/pilote-ppg-data-management/models/exposition/indicateur/indicateur_territoire.sql` | Modify | Jointure sur `zone_id` |
-| `apps/pilote-ppg/src/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery.ts` | Create | Lecture Prisma + regroupement chantier → indicateur → maille |
-| `apps/pilote-ppg/src/server/chantiers/__tests__/infrastructure/queries/RecupererIndicateursNonAJourQuery.integration.test.ts` | Create | Tests d'intégration de la query |
+| `apps/pilote-ppg/src/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery.ts` | Create | Lecture Prisma + regroupement chantier → indicateur → maille |
+| `apps/pilote-ppg/src/server/chantiers/__tests__/infrastructure/queries/GetIndicateursNonAJourQuery.integration.test.ts` | Create | Tests d'intégration de la query |
 | `apps/pilote-ppg/src/server/chantiers/module.ts` | Modify | Enregistrement + export de la query |
 | `apps/pilote-ppg/src/server/albert/tools/getIndicateursNonAJour.ts` | Create | Outil Albert (habilitations, volume, instructions) |
 | `apps/pilote-ppg/src/server/albert/__tests__/tools/getIndicateursNonAJour.unit.test.ts` | Create | Tests unitaires de l'outil |
@@ -403,11 +403,11 @@ git commit -m "feat(dbt): est_a_jour d'indicateur_territoire calculé par territ
 
 ---
 
-### Task 3: Query `RecupererIndicateursNonAJourQuery`
+### Task 3: Query `GetIndicateursNonAJourQuery`
 
 **Files:**
-- Create: `apps/pilote-ppg/src/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery.ts`
-- Create: `apps/pilote-ppg/src/server/chantiers/__tests__/infrastructure/queries/RecupererIndicateursNonAJourQuery.integration.test.ts`
+- Create: `apps/pilote-ppg/src/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery.ts`
+- Create: `apps/pilote-ppg/src/server/chantiers/__tests__/infrastructure/queries/GetIndicateursNonAJourQuery.integration.test.ts`
 - Modify: `apps/pilote-ppg/src/server/chantiers/module.ts` (imports ~l.73, `ChantierExports` ~l.108, `exports` ~l.195, `register` ~l.336)
 
 **Interfaces:**
@@ -437,19 +437,19 @@ export type ChantierIndicateursNonAJour = {
   chantier: { id: string; nom: string };
   indicateurs: IndicateurNonAJour[];
 };
-export type RecupererIndicateursNonAJourResult = {
+export type GetIndicateursNonAJourResult = {
   chantiers: ChantierIndicateursNonAJour[];
   indicateursApplicablesIds: string[];
 };
-class RecupererIndicateursNonAJourQuery {
+class GetIndicateursNonAJourQuery {
   execute(params: {
     chantierIds: string[];
     territoireCodes: string[];
     indicateurIds?: string[];
-  }): Promise<RecupererIndicateursNonAJourResult>;
+  }): Promise<GetIndicateursNonAJourResult>;
 }
 ```
-Clé DI exportée : `recupererIndicateursNonAJourQuery`.
+Clé DI exportée : `getIndicateursNonAJourQuery`.
 
 - [ ] **Step 1: Écrire les tests d'intégration (en échec)**
 
@@ -457,7 +457,7 @@ Clé DI exportée : `recupererIndicateursNonAJourQuery`.
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { RecupererIndicateursNonAJourQuery } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
+import { GetIndicateursNonAJourQuery } from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 
 const FINISTERE = {
   territoire_code: "DEPT-29",
@@ -495,8 +495,8 @@ async function seedChantier(
   }
 }
 
-describe("RecupererIndicateursNonAJourQuery", () => {
-  const query = new RecupererIndicateursNonAJourQuery({
+describe("GetIndicateursNonAJourQuery", () => {
+  const query = new GetIndicateursNonAJourQuery({
     prisma: new PrismaPilote(),
   });
 
@@ -674,8 +674,8 @@ Note : si `chantierTerritoire` n'accepte pas `territoire_nom` (colonne absente d
 
 - [ ] **Step 2: Lancer les tests et vérifier qu'ils échouent**
 
-Run (depuis `apps/pilote-ppg`): `pnpm vitest run --project server-integration src/server/chantiers/__tests__/infrastructure/queries/RecupererIndicateursNonAJourQuery.integration.test.ts`
-Expected: FAIL — module `RecupererIndicateursNonAJourQuery` introuvable.
+Run (depuis `apps/pilote-ppg`): `pnpm vitest run --project server-integration src/server/chantiers/__tests__/infrastructure/queries/GetIndicateursNonAJourQuery.integration.test.ts`
+Expected: FAIL — module `GetIndicateursNonAJourQuery` introuvable.
 
 - [ ] **Step 3: Implémenter la query**
 
@@ -709,7 +709,7 @@ export type ChantierIndicateursNonAJour = {
   indicateurs: IndicateurNonAJour[];
 };
 
-export type RecupererIndicateursNonAJourResult = {
+export type GetIndicateursNonAJourResult = {
   chantiers: ChantierIndicateursNonAJour[];
   indicateursApplicablesIds: string[];
 };
@@ -722,14 +722,14 @@ const formaterDate = (date: Date | null) =>
 const cleIndicateurMaille = (indicateurId: string, maille: $Enums.Maille) =>
   `${indicateurId}|${maille}`;
 
-export class RecupererIndicateursNonAJourQuery {
+export class GetIndicateursNonAJourQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
 
   async execute(params: {
     chantierIds: string[];
     territoireCodes: string[];
     indicateurIds?: string[];
-  }): Promise<RecupererIndicateursNonAJourResult> {
+  }): Promise<GetIndicateursNonAJourResult> {
     const prisma = this.deps.prisma.getInstance();
 
     const perimetre: Prisma.indicateur_territoireWhereInput = {
@@ -857,26 +857,26 @@ export class RecupererIndicateursNonAJourQuery {
 Dans `src/server/chantiers/module.ts` :
 - import, à côté de `GetChantiersSignalesDetailQuery` :
 ```ts
-import { RecupererIndicateursNonAJourQuery } from "./infrastructure/queries/RecupererIndicateursNonAJourQuery";
+import { GetIndicateursNonAJourQuery } from "./infrastructure/queries/GetIndicateursNonAJourQuery";
 ```
 - dans `type ChantierExports`, après `getChantiersSignalesDetailQuery` :
 ```ts
-  recupererIndicateursNonAJourQuery: RecupererIndicateursNonAJourQuery;
+  getIndicateursNonAJourQuery: GetIndicateursNonAJourQuery;
 ```
 - dans le tableau `exports`, après `"getChantiersSignalesDetailQuery",` :
 ```ts
-    "recupererIndicateursNonAJourQuery",
+    "getIndicateursNonAJourQuery",
 ```
 - dans `container.register({...})`, après `getChantiersSignalesDetailQuery: asModuleClass(...)` :
 ```ts
-      recupererIndicateursNonAJourQuery: asModuleClass(
-        RecupererIndicateursNonAJourQuery,
+      getIndicateursNonAJourQuery: asModuleClass(
+        GetIndicateursNonAJourQuery,
       ),
 ```
 
 - [ ] **Step 5: Lancer les tests et vérifier qu'ils passent**
 
-Run: `pnpm vitest run --project server-integration src/server/chantiers/__tests__/infrastructure/queries/RecupererIndicateursNonAJourQuery.integration.test.ts`
+Run: `pnpm vitest run --project server-integration src/server/chantiers/__tests__/infrastructure/queries/GetIndicateursNonAJourQuery.integration.test.ts`
 Expected: PASS (3 tests).
 
 Si `groupBy` refuse le filtre relationnel `indicateur_identite` dans `where` (erreur Prisma à l'exécution), remplacer le `groupBy` par un `findMany` sur le même `perimetre` avec `select: { id: true, maille: true }` puis compter en mémoire par `cleIndicateurMaille` — le test reste inchangé.
@@ -889,7 +889,7 @@ Expected: aucune erreur.
 - [ ] **Step 7: Commit (sur accord de l'utilisateur)**
 
 ```bash
-git add src/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery.ts src/server/chantiers/__tests__/infrastructure/queries/RecupererIndicateursNonAJourQuery.integration.test.ts src/server/chantiers/module.ts
+git add src/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery.ts src/server/chantiers/__tests__/infrastructure/queries/GetIndicateursNonAJourQuery.integration.test.ts src/server/chantiers/module.ts
 git commit -m "feat(chantiers): query des indicateurs non à jour par territoire"
 ```
 
@@ -902,9 +902,9 @@ git commit -m "feat(chantiers): query des indicateurs non à jour par territoire
 - Create: `apps/pilote-ppg/src/server/albert/__tests__/tools/getIndicateursNonAJour.unit.test.ts`
 
 **Interfaces:**
-- Consumes: `RecupererIndicateursNonAJourQuery.execute({ chantierIds, territoireCodes, indicateurIds? })` et ses types (Task 3).
+- Consumes: `GetIndicateursNonAJourQuery.execute({ chantierIds, territoireCodes, indicateurIds? })` et ses types (Task 3).
 - Produces (utilisé par Task 5) :
-  - `createGetIndicateursNonAJourTool({ recupererIndicateursNonAJourQuery })` → `({ chantiersAccessibles, territoiresAccessibles }: { chantiersAccessibles: string[]; territoiresAccessibles: string[] }) => Tool`
+  - `createGetIndicateursNonAJourTool({ getIndicateursNonAJourQuery })` → `({ chantiersAccessibles, territoiresAccessibles }: { chantiersAccessibles: string[]; territoiresAccessibles: string[] }) => Tool`
   - `type GetIndicateursNonAJourOutput`
 
 - [ ] **Step 1: Écrire les tests unitaires (en échec)**
@@ -917,11 +917,11 @@ import {
   type GetIndicateursNonAJourOutput,
 } from "@/server/albert/tools/getIndicateursNonAJour";
 import type {
-  RecupererIndicateursNonAJourQuery,
-  RecupererIndicateursNonAJourResult,
-} from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
+  GetIndicateursNonAJourQuery,
+  GetIndicateursNonAJourResult,
+} from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 
-const RESULTAT_QUERY: RecupererIndicateursNonAJourResult = {
+const RESULTAT_QUERY: GetIndicateursNonAJourResult = {
   chantiers: [
     {
       chantier: { id: "CH-001", nom: "Chantier bornes" },
@@ -957,14 +957,14 @@ const buildTool = ({
   territoiresAccessibles = ["NAT-FR", "DEPT-29", "DEPT-35"],
   chantiersAccessibles = ["CH-001", "CH-002"],
 }: {
-  queryResult?: RecupererIndicateursNonAJourResult;
+  queryResult?: GetIndicateursNonAJourResult;
   territoiresAccessibles?: string[];
   chantiersAccessibles?: string[];
 } = {}) => {
-  const query = mock<RecupererIndicateursNonAJourQuery>();
+  const query = mock<GetIndicateursNonAJourQuery>();
   query.execute.mockResolvedValue(queryResult);
   const tool = createGetIndicateursNonAJourTool({
-    recupererIndicateursNonAJourQuery: query,
+    getIndicateursNonAJourQuery: query,
   })({ territoiresAccessibles, chantiersAccessibles });
   return { tool, query };
 };
@@ -1183,9 +1183,9 @@ import { tool } from "ai";
 import { z } from "zod";
 import type { $Enums } from "@prisma/client";
 import type {
-  RecupererIndicateursNonAJourQuery,
-  RecupererIndicateursNonAJourResult,
-} from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
+  GetIndicateursNonAJourQuery,
+  GetIndicateursNonAJourResult,
+} from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 
 export const getIndicateursNonAJourInputSchema = z.object({
   chantier_ids: z
@@ -1245,7 +1245,7 @@ export type GetIndicateursNonAJourOutput = {
 };
 
 function versSortie(
-  chantiers: RecupererIndicateursNonAJourResult["chantiers"],
+  chantiers: GetIndicateursNonAJourResult["chantiers"],
   modeDetaille: boolean,
 ): ResultatChantierOutput[] {
   return chantiers.map(({ chantier, indicateurs }) => ({
@@ -1315,9 +1315,9 @@ function buildOutputInstructions({
 }
 
 export function createGetIndicateursNonAJourTool({
-  recupererIndicateursNonAJourQuery,
+  getIndicateursNonAJourQuery,
 }: {
-  recupererIndicateursNonAJourQuery: RecupererIndicateursNonAJourQuery;
+  getIndicateursNonAJourQuery: GetIndicateursNonAJourQuery;
 }) {
   return ({
     territoiresAccessibles,
@@ -1389,7 +1389,7 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
 
         const modeDetaille = Boolean(indicateurIds || input.territoire_code);
 
-        const resultat = await recupererIndicateursNonAJourQuery.execute({
+        const resultat = await getIndicateursNonAJourQuery.execute({
           chantierIds,
           territoireCodes: input.territoire_code
             ? [input.territoire_code]
@@ -1441,7 +1441,7 @@ git commit -m "feat(albert): outil get_indicateurs_non_a_jour"
 - Modify: `apps/pilote-ppg/src/server/albert/__tests__/systemPrompt.unit.test.ts`
 
 **Interfaces:**
-- Consumes: `createGetIndicateursNonAJourTool` (Task 4), `recupererIndicateursNonAJourQuery` exporté par le module chantiers (Task 3).
+- Consumes: `createGetIndicateursNonAJourTool` (Task 4), `getIndicateursNonAJourQuery` exporté par le module chantiers (Task 3).
 - Produces: outil `get_indicateurs_non_a_jour` dans `AssistantIA.outilsCharges(...)` et dans les tours d'agent (utilisé par Task 6).
 
 - [ ] **Step 1: Écrire le test du prompt (en échec)**

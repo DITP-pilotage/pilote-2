@@ -68,7 +68,7 @@ Conséquence : une maille est « à jour » dès qu'un seul de ses territoires a
 
 ### Query
 
-`apps/pilote-ppg/src/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery.ts`, enregistrée dans le module `chantiers`, lecture Prisma sur `indicateur_territoire` :
+`apps/pilote-ppg/src/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery.ts`, enregistrée dans le module `chantiers`, lecture Prisma sur `indicateur_territoire` :
 
 - paramètres : `chantierIds: string[]`, `territoireCodes: string[]` (territoires accessibles, ou le seul territoire demandé), `indicateurIds?: string[]` ;
 - filtres : `indicateur_identite.statut = PUBLIE`, `chantier_identite.statut = PUBLIE`, `est_applicable = true` ;
@@ -80,7 +80,7 @@ La méthode `recupererIndicateursNonAJourParChantierId` du repository reste déd
 
 ### Outil
 
-`apps/pilote-ppg/src/server/albert/tools/getIndicateursNonAJour.ts`, fabrique `createGetIndicateursNonAJourTool({ recupererIndicateursNonAJourQuery, getIndicateurContexteQuery })` retournant `({ chantiersAccessibles, territoiresAccessibles }) => tool(...)`, sur le modèle de `getChantiersSignales.ts`.
+`apps/pilote-ppg/src/server/albert/tools/getIndicateursNonAJour.ts`, fabrique `createGetIndicateursNonAJourTool({ getIndicateursNonAJourQuery, getIndicateurContexteQuery })` retournant `({ chantiersAccessibles, territoiresAccessibles }) => tool(...)`, sur le modèle de `getChantiersSignales.ts`.
 
 Entrées (toutes optionnelles) :
 
