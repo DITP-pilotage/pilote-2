@@ -1,3 +1,4 @@
+import { WidgetCartographieIndicateursNonAJour } from "@/components/_commons/Widget/WidgetCartographieIndicateursNonAJour/WidgetCartographieIndicateursNonAJour";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
@@ -14,7 +15,7 @@ type ComparaisonTerritoiresProps = {
   territoireCode: string;
 };
 
-type TypeCarteChantier = "ta" | "meteo" | "pva";
+type TypeCarteChantier = "ta" | "meteo" | "pva" | "nonAJour";
 
 const options: (
   jalon: number,
@@ -25,6 +26,7 @@ const options: (
     value: "pva",
     label: "Carte des propositions de valeur d'avancement",
   },
+  { value: "nonAJour", label: "Carte des indicateurs non à jour" },
 ];
 
 export const ComparaisonTerritoires = ({
@@ -99,6 +101,16 @@ export const ComparaisonTerritoires = ({
             mode="chantier"
             chantierId={chantierId}
             jalon={jalon}
+            maille={maille}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      if (type === "nonAJour") {
+        return (
+          <WidgetCartographieIndicateursNonAJour
+            mode="chantier"
+            chantierId={chantierId}
             maille={maille}
             territoireCode={territoireCode}
           />
