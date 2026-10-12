@@ -1,9 +1,9 @@
 import type { $Enums, Prisma } from "@prisma/client";
 import type { Inject } from "@/server/chantiers/module";
+import { toISODate } from "@/server/app/domain/Dates";
 import {
-  formatDate,
   NON_A_JOUR_WHERE,
-  perimetreIndicateursPubliesWhere,
+  indicateursPubliesWhere,
 } from "./indicateurNonAJour";
 
 export type TerritoireEnRetard = {
@@ -56,17 +56,17 @@ export class GetIndicateursNonAJourQuery {
   }): Promise<ChantierIndicateursNonAJour[]> {
     const prisma = this.deps.prisma.getInstance();
 
-    const perimetre = perimetreIndicateursPubliesWhere({
+    const publiesWhere = indicateursPubliesWhere({
       chantierIds: params.chantierIds,
       territoireCodes: params.territoireCodes,
       indicateurIds: params.indicateurIds,
     });
     const scopeWhere: Prisma.indicateur_territoireWhereInput = {
-      ...perimetre,
+      ...publiesWhere,
       est_applicable: true,
     };
     const nonAJourWhere: Prisma.indicateur_territoireWhereInput = {
-      AND: [perimetre, NON_A_JOUR_WHERE],
+      AND: [publiesWhere, NON_A_JOUR_WHERE],
     };
 
     const maillesEnRetard = params.avecDetailTerritoires
@@ -181,8 +181,12 @@ export class GetIndicateursNonAJourQuery {
       maille.territoiresEnRetard.push({
         code: row.territoire_code,
         nom: row.territoire_nom,
-        dateDerniereValeur: formatDate(row.date_valeur_actuelle_mandat),
-        miseAJourAttendueDepuis: formatDate(row.prochaine_date_maj),
+        dateDerniereValeur: row.date_valeur_actuelle_mandat
+          ? toISODate(row.date_valeur_actuelle_mandat)
+          : null,
+        miseAJourAttendueDepuis: row.prochaine_date_maj
+          ? toISODate(row.prochaine_date_maj)
+          : null,
       });
     }
 
