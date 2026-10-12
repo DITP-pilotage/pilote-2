@@ -1,6 +1,10 @@
 import type { $Enums, Prisma } from "@prisma/client";
 import type { Inject } from "@/server/chantiers/module";
-import { toISODate } from "@/server/app/domain/Dates";
+import {
+  formatDate,
+  NON_A_JOUR_WHERE,
+  perimetreIndicateursPubliesWhere,
+} from "./indicateurNonAJour";
 
 export type TerritoireEnRetard = {
   code: string;
@@ -41,8 +45,6 @@ const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
 const indicateurMailleKey = (indicateurId: string, maille: $Enums.Maille) =>
   `${indicateurId}|${maille}`;
 
-const formatDate = (date: Date | null) => (date ? toISODate(date) : null);
-
 export class GetIndicateursNonAJourQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
 
@@ -54,19 +56,17 @@ export class GetIndicateursNonAJourQuery {
   }): Promise<ChantierIndicateursNonAJour[]> {
     const prisma = this.deps.prisma.getInstance();
 
+    const perimetre = perimetreIndicateursPubliesWhere({
+      chantierIds: params.chantierIds,
+      territoireCodes: params.territoireCodes,
+      indicateurIds: params.indicateurIds,
+    });
     const scopeWhere: Prisma.indicateur_territoireWhereInput = {
-      chantier_id: { in: params.chantierIds },
-      territoire_code: { in: params.territoireCodes },
-      ...(params.indicateurIds ? { id: { in: params.indicateurIds } } : {}),
+      ...perimetre,
       est_applicable: true,
-      indicateur_identite: {
-        statut: "PUBLIE",
-        chantier_identite: { statut: "PUBLIE" },
-      },
     };
     const nonAJourWhere: Prisma.indicateur_territoireWhereInput = {
-      ...scopeWhere,
-      OR: [{ est_a_jour: false }, { est_a_jour: null }],
+      AND: [perimetre, NON_A_JOUR_WHERE],
     };
 
     const maillesEnRetard = params.avecDetailTerritoires
