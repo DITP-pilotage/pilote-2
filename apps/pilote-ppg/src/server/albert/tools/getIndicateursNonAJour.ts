@@ -2,8 +2,8 @@ import { tool } from "ai";
 import { z } from "zod";
 import type {
   ChantierIndicateursNonAJour,
-  RecupererIndicateursNonAJourQuery,
-} from "@/server/chantiers/infrastructure/queries/RecupererIndicateursNonAJourQuery";
+  GetIndicateursNonAJourQuery,
+} from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 import type {
   GetIndicateurContexteQuery,
   IndicateurContexteResult,
@@ -13,12 +13,14 @@ export const getIndicateursNonAJourInputSchema = z.object({
   chantier_ids: z
     .array(z.string())
     .optional()
+    .default([])
     .describe(
       "Identifiants de chantiers (ex: ['CH-042']). Absent = tous les chantiers accessibles à l'utilisateur (« mes chantiers »).",
     ),
   indicateur_ids: z
     .array(z.string())
     .optional()
+    .default([])
     .describe(
       "Identifiants d'indicateurs (ex: ['IND-894']). Si l'indicateur est décrit sans identifiant, résous-le d'abord avec search_indicateurs.",
     ),
@@ -39,10 +41,6 @@ export type GetIndicateursNonAJourOutput = {
   acces_refuse?: boolean;
   _output_instructions: string;
 };
-
-function nonEmpty(ids: string[] | undefined): string[] | undefined {
-  return ids && ids.length > 0 ? ids : undefined;
-}
 
 function buildInaccessiblesInstruction(
   libelle: "chantiers" | "indicateurs",
@@ -102,10 +100,10 @@ function indicateursInaccessibles(
 }
 
 export function createGetIndicateursNonAJourTool({
-  recupererIndicateursNonAJourQuery,
+  getIndicateursNonAJourQuery,
   getIndicateurContexteQuery,
 }: {
-  recupererIndicateursNonAJourQuery: RecupererIndicateursNonAJourQuery;
+  getIndicateursNonAJourQuery: GetIndicateursNonAJourQuery;
   getIndicateurContexteQuery: GetIndicateurContexteQuery;
 }) {
   return ({
@@ -149,12 +147,12 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           };
         }
 
-        const requestedChantierIds = nonEmpty(input.chantier_ids);
-        const chantierIdsInaccessibles = (requestedChantierIds ?? []).filter(
+        const chantiersDemandes = input.chantier_ids.length > 0;
+        const chantierIdsInaccessibles = input.chantier_ids.filter(
           (chantierId) => !chantiersAccessibles.includes(chantierId),
         );
-        const chantierIds = requestedChantierIds
-          ? requestedChantierIds.filter(
+        const chantierIds = chantiersDemandes
+          ? input.chantier_ids.filter(
               (chantierId) => !chantierIdsInaccessibles.includes(chantierId),
             )
           : chantiersAccessibles;
@@ -162,15 +160,15 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
         if (chantierIds.length === 0) {
           return {
             resultats: [],
-            _output_instructions: requestedChantierIds
+            _output_instructions: chantiersDemandes
               ? "Aucun des chantiers demandés n'est accessible pour cet utilisateur."
               : "L'utilisateur n'a accès à aucun chantier : aucune donnée de mise à jour ne peut être consultée.",
           };
         }
 
-        const requestedIndicateurIds = nonEmpty(input.indicateur_ids);
+        const indicateursDemandes = input.indicateur_ids.length > 0;
         const contextesIndicateurs = await Promise.all(
-          (requestedIndicateurIds ?? []).map((indicateurId) =>
+          input.indicateur_ids.map((indicateurId) =>
             getIndicateurContexteQuery.execute({ indicateurId }),
           ),
         );
@@ -178,11 +176,11 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           contextesIndicateurs,
           chantiersAccessibles,
         );
-        const indicateurIds = requestedIndicateurIds?.filter(
+        const indicateurIds = input.indicateur_ids.filter(
           (indicateurId) => !indicateurIdsInaccessibles.includes(indicateurId),
         );
 
-        if (indicateurIds?.length === 0) {
+        if (indicateursDemandes && indicateurIds.length === 0) {
           return {
             resultats: [],
             _output_instructions:
@@ -190,13 +188,14 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           };
         }
 
-        const isDetailed = Boolean(indicateurIds || input.territoire_code);
-        const resultats = await recupererIndicateursNonAJourQuery.execute({
+        const isDetailed =
+          indicateursDemandes || Boolean(input.territoire_code);
+        const resultats = await getIndicateursNonAJourQuery.execute({
           chantierIds,
           territoireCodes: input.territoire_code
             ? [input.territoire_code]
             : territoiresAccessibles,
-          indicateurIds,
+          indicateurIds: indicateursDemandes ? indicateurIds : undefined,
           avecDetailTerritoires: isDetailed,
         });
 
