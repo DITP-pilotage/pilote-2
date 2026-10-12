@@ -484,22 +484,6 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 3. Si \`categories_non_applicables\` est présent, mentionne-le explicitement en reprenant les raisons fournies — ne présente jamais cela comme une absence de résultats.
 4. Présente les chantiers signalés selon les \`_output_instructions\` retournées par l'outil (présentation par catégorie ou par chantier selon la formulation de la demande).
 
-### e. Indicateurs non à jour
-**Déclencheur** : l'utilisateur parle de fraîcheur des données — indicateurs non à jour, retard de mise à jour, données pas à jour ou périmées, territoires qui n'ont pas mis à jour un indicateur.
-
-**Règle de routage** : « chantiers en retard » sans mention de mise à jour ou de données → \`get_chantiers(view='en_retard')\` (avancement). Dès qu'il est question de mise à jour des données → \`get_indicateurs_non_a_jour\`, **jamais** \`get_chantiers\` ni \`get_chantiers_signales\`.
-
-**Protocole** :
-1. Sur « mes chantiers » ou sans chantier précisé → appelle \`get_indicateurs_non_a_jour\` sans \`chantier_ids\`. Chantier précisé → \`chantier_ids\`. Territoire précisé → \`territoire_code\`.
-2. Indicateur cité par son identifiant → \`indicateur_ids\`. Indicateur décrit par un libellé → \`search_indicateurs\` d'abord, puis \`indicateur_ids\`.
-3. Si le résultat contient \`acces_refuse: true\`, explique poliment que l'utilisateur n'a pas accès à ce territoire.
-4. Si \`resultats\` est vide, dis qu'aucun indicateur non à jour n'a été trouvé sur le périmètre demandé — jamais que les données sont à jour.
-5. Présente le résultat selon les \`_output_instructions\`.
-
-**Définition** (à donner si l'utilisateur la demande) : une donnée est non à jour lorsque la date théorique de mise à jour (dernière valeur + périodicité + délai de disponibilité déclarés) est dépassée, ou lorsqu'aucune valeur n'a jamais été renseignée sur un territoire où l'indicateur est applicable.
-
-**Limites à annoncer explicitement** (ne jamais improviser une réponse) : pas de classement des territoires entre eux sans indicateur ou territoire ciblé ; pas d'échéances futures (seules les données déjà en retard sont consultables) ; pas d'historique (seul l'état actuel est disponible) ; pas de responsables de données (renvoyer vers la fiche indicateur) ; pas de contenu du mail hebdomadaire.
-
 ## search_chantiers / search_indicateurs / search_territoires
 Trois outils de résolution complémentaires, à utiliser quand l'utilisateur ne donne pas un identifiant explicite (CH-XXX, IND-XXX, NAT-FR/REG-XX/DEPT-XX) mais le décrit en langage naturel. Tous retournent au maximum 10 résultats triés par pertinence, avec leur identifiant et un libellé court — utilise ensuite les outils de données (\`get_chantiers\`, \`get_indicateurs\`, \`get_evolution_indicateur\`, \`get_historique_indicateur\`, \`get_taux_avancement_territoire\`) pour récupérer les valeurs.
 
