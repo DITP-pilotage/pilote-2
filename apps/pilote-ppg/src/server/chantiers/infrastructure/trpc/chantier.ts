@@ -51,6 +51,16 @@ export const chantierRouter = createTRPCRouter({
         .resolve("getChantierPVACountTerritoiresQuery")
         .execute(input);
     }),
+  getTerritoiresNonAJour: protectedProcedure
+    .input(z.object({ chantierId: z.string() }))
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(input.chantierId, null);
+      return getContainer("chantiers")
+        .resolve("getTerritoiresNonAJourQuery")
+        .byChantier(input);
+    }),
   recupererTauxAvancementTerritoires: protectedProcedure
     .input(
       z.object({
