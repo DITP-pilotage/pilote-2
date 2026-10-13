@@ -1,6 +1,5 @@
 import "@gouvfr/dsfr/dist/core/core.min.css";
 import "@gouvfr/dsfr/dist/component/link/link.min.css";
-import "@gouvfr/dsfr/dist/component/connect/connect.min.css";
 import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import "@gouvfr/dsfr/dist/component/input/input.min.css";
 import "@/client/styles/app.css";
