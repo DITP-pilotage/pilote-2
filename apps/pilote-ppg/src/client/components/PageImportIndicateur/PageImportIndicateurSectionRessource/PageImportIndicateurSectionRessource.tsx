@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
+import { DownloadLink } from "@/components/shared/DownloadLink";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { wording } from "@/client/utils/i18n/i18n";
-import "@gouvfr/dsfr/dist/component/download/download.min.css";
 import { Table } from "@/components/shared/Table";
 import { TextLink } from "@/components/shared/TextLink";
 
@@ -297,50 +297,33 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
             }
           </p>
           <div className="flex">
-            <div className="fr-download fr-mr-3w fr-hidden">
-              <p>
-                <a
-                  className="fr-download__link"
-                  download
-                  href="/referentiel/referentiel_territoires.xlsx"
-                >
-                  {
-                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
-                      .SECTION_REFERENTIEL
-                      .LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR
-                  }
-                  <span className="fr-download__detail">
-                    {
-                      wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
-                        .SECTION_REFERENTIEL
-                        .FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR
-                    }
-                  </span>
-                </a>
-              </p>
-            </div>
-            <div className="fr-download">
-              <p>
-                <a
-                  className="fr-download__link"
-                  download
-                  href="/referentiel/referentiel_territoires.xlsx"
-                >
-                  {
-                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
-                      .SECTION_REFERENTIEL
-                      .LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE
-                  }
-                  <span className="fr-download__detail">
-                    {
-                      wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
-                        .SECTION_REFERENTIEL
-                        .FORMAT_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE
-                    }
-                  </span>
-                </a>
-              </p>
-            </div>
+            <DownloadLink
+              className="mr-6 hidden"
+              detail={
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_REFERENTIEL
+                  .FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR
+              }
+              href="/referentiel/referentiel_territoires.xlsx"
+              label={
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_REFERENTIEL
+                  .LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR
+              }
+            />
+            <DownloadLink
+              detail={
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_REFERENTIEL
+                  .FORMAT_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE
+              }
+              href="/referentiel/referentiel_territoires.xlsx"
+              label={
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_REFERENTIEL
+                  .LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE
+              }
+            />
           </div>
           <h3>
             {
