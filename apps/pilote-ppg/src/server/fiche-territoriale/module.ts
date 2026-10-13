@@ -8,10 +8,10 @@ import { PrismaIndicateurRepository } from "@/server/fiche-territoriale/infrastr
 import { PrismaMinistereRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository";
 import { PrismaSyntheseDesResultatsRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
 import { PrismaTerritoireRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository";
-import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
-import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoriale/usecases/RécupérerRépartitionMétéoUseCase";
-import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
-import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTerritoireParCodeUseCase";
+import { RecupererListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RecupererListeChantierFicheTerritorialeUseCase";
+import { RecupererRepartitionMeteoUseCase } from "@/server/fiche-territoriale/usecases/RecupererRepartitionMeteoUseCase";
+import { RecupererTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RecupererTauxAvancementTerritoireUseCase";
+import { RecupererTerritoireParCodeUseCase } from "@/server/fiche-territoriale/usecases/RecupererTerritoireParCodeUseCase";
 import {
   defineModule,
   type ExtractScope,
@@ -25,10 +25,10 @@ type FicheTerritorialeCradle = {
   ministereRepository: MinistereRepository;
   syntheseDesResultatsRepository: SyntheseDesResultatsRepository;
   territoireRepository: TerritoireRepository;
-  récupérerTerritoireParCodeUseCase: RécupérerTerritoireParCodeUseCase;
-  récupérerTauxAvancementTerritoireUseCase: RécupérerTauxAvancementTerritoireUseCase;
-  récupérerRépartitionMétéoUseCase: RécupérerRépartitionMétéoUseCase;
-  récupérerListeChantierFicheTerritorialeUseCase: RécupérerListeChantierFicheTerritorialeUseCase;
+  récupérerTerritoireParCodeUseCase: RecupererTerritoireParCodeUseCase;
+  récupérerTauxAvancementTerritoireUseCase: RecupererTauxAvancementTerritoireUseCase;
+  récupérerRépartitionMétéoUseCase: RecupererRepartitionMeteoUseCase;
+  récupérerListeChantierFicheTerritorialeUseCase: RecupererListeChantierFicheTerritorialeUseCase;
 };
 
 export const ficheTerritorialeModule = defineModule<
@@ -48,16 +48,16 @@ export const ficheTerritorialeModule = defineModule<
       ).scoped(),
       territoireRepository: asModuleClass(PrismaTerritoireRepository).scoped(),
       récupérerTerritoireParCodeUseCase: asModuleClass(
-        RécupérerTerritoireParCodeUseCase,
+        RecupererTerritoireParCodeUseCase,
       ).scoped(),
       récupérerTauxAvancementTerritoireUseCase: asModuleClass(
-        RécupérerTauxAvancementTerritoireUseCase,
+        RecupererTauxAvancementTerritoireUseCase,
       ).scoped(),
       récupérerRépartitionMétéoUseCase: asModuleClass(
-        RécupérerRépartitionMétéoUseCase,
+        RecupererRepartitionMeteoUseCase,
       ).scoped(),
       récupérerListeChantierFicheTerritorialeUseCase: asModuleClass(
-        RécupérerListeChantierFicheTerritorialeUseCase,
+        RecupererListeChantierFicheTerritorialeUseCase,
       ).scoped(),
     } satisfies VerifyCradle<FicheTerritorialeCradle>);
   },

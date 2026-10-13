@@ -14,7 +14,7 @@ import {
 } from "@/server/module-system";
 import { ChantierRepository as ChantierSQLRepositoryInterface } from "@/server/chantiers/infrastructure/sql/ChantierRepository.interface";
 import { AxeRepository as AxeSQLRepositoryInterface } from "@/server/chantiers/infrastructure/sql/AxeRepository.interface";
-import { SynthèseDesRésultatsRepository as SynthèseDesRésultatsSQLRepositoryInterface } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
+import { SyntheseDesResultatsRepository as SynthèseDesRésultatsSQLRepositoryInterface } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
 import { MinistèreRepository as MinistèreSQLRepositoryInterface } from "@/server/chantiers/infrastructure/sql/MinistereRepository.interface";
 import { IndicateurRepository as IndicateurSQLRepositoryInterface } from "@/server/chantiers/infrastructure/sql/IndicateurRepository.interface";
 import { CommentaireRepository as CommentaireSQLRepositoryInterface } from "@/server/commentaires/infrastructure/sql/CommentaireRepository.interface";
@@ -28,10 +28,10 @@ import { IndicateurSQLRepository } from "@/server/chantiers/infrastructure/sql/I
 import { SynthèseDesRésultatsSQLRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsSQLRepository";
 import { CommentaireSQLRepository } from "@/server/commentaires/infrastructure/sql/CommentaireSQLRepository";
 import { ObjectifSQLRepository } from "@/server/objectifs/infrastructure/sql/ObjectifSQLRepository";
-import { DécisionStratégiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
+import { DecisionStrategiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
 import { TerritoireSQLRepository } from "@/server/gestion-utilisateur/infrastructure/sql/TerritoireSQLRepository";
-import { RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase } from "@/server/chantiers/usecases/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import { RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase } from "@/server/chantiers/usecases/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
+import { RecupererCommentairesLesPlusRecentsParTypeGroupesParChantiersUseCase } from "@/server/chantiers/usecases/RecupererCommentairesLesPlusRecentsParTypeGroupesParChantiersUseCase";
+import { RecupererObjectifsLesPlusRecentsParTypeGroupesParChantiersUseCase } from "@/server/chantiers/usecases/RecupererObjectifsLesPlusRecentsParTypeGroupesParChantiersUseCase";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
@@ -45,7 +45,7 @@ import { RecupererChantiersAccessiblesEnLectureUseCaseV2 } from "./usecases/Recu
 import RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2 from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2";
 import { ExportCsvDesChantiersUseCase } from "./usecases/ExportCsvDesChantiersUseCase";
 import { ListerDonneesIndicateurParIndicIdUseCase } from "./usecases/ListerDonneesIndicateurParIndicIdUseCase";
-import { RécupérerStatistiquesAvancementChantiersUseCase } from "./usecases/RécupérerStatistiquesAvancementChantiersUseCase";
+import { RecupererStatistiquesAvancementChantiersUseCase } from "./usecases/RecupererStatistiquesAvancementChantiersUseCase";
 import { ExportCsvDesIndicateursUseCase } from "./usecases/ExportCsvDesIndicateursUseCase";
 import { ExportCsvDesHistoriquesIndicateursUseCase } from "./usecases/ExportCsvDesHistoriquesIndicateursUseCase";
 import { MinistereRepository } from "./domain/ports/MinistereRepository";
@@ -123,8 +123,8 @@ type ChantierOwnCradle = ChantierExports & {
   territoireSQLRepository: TerritoireSQLRepositoryInterface;
   agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
   recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
-  récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase;
-  récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase;
+  récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RecupererCommentairesLesPlusRecentsParTypeGroupesParChantiersUseCase;
+  récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RecupererObjectifsLesPlusRecentsParTypeGroupesParChantiersUseCase;
   listerDonneesIndicateurParIndicIdUseCase: ListerDonneesIndicateurParIndicIdUseCase;
   chantierRepository: ChantierRepository;
   indicateurRepository: IndicateurRepository;
@@ -134,7 +134,7 @@ type ChantierOwnCradle = ChantierExports & {
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
-  récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
+  récupérerStatistiquesAvancementChantiersUseCase: RecupererStatistiquesAvancementChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
   recupererDetailsIndicateursUseCase: RecupererDetailsIndicateursUseCase;
@@ -208,7 +208,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ).scoped(),
       objectifSQLRepository: asModuleClass(ObjectifSQLRepository).scoped(),
       décisionStratégiqueSQLRepository: asModuleClass(
-        DécisionStratégiqueSQLRepository,
+        DecisionStrategiqueSQLRepository,
       ).scoped(),
       territoireSQLRepository: asModuleClass(TerritoireSQLRepository).scoped(),
       agregerAvancementsChantiersUseCase: asModuleFunction(
@@ -226,14 +226,14 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
         asModuleFunction(
           ({ commentaireSQLRepository }) =>
-            new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
+            new RecupererCommentairesLesPlusRecentsParTypeGroupesParChantiersUseCase(
               { commentaireRepository: commentaireSQLRepository },
             ),
         ).scoped(),
       récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase:
         asModuleFunction(
           ({ objectifSQLRepository }) =>
-            new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
+            new RecupererObjectifsLesPlusRecentsParTypeGroupesParChantiersUseCase(
               { objectifRepository: objectifSQLRepository },
             ),
         ).scoped(),
@@ -251,7 +251,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ),
       exportCsvDesChantiersUseCase: asModuleClass(ExportCsvDesChantiersUseCase),
       récupérerStatistiquesAvancementChantiersUseCase: asModuleClass(
-        RécupérerStatistiquesAvancementChantiersUseCase,
+        RecupererStatistiquesAvancementChantiersUseCase,
       ),
       exportCsvDesIndicateursUseCase: asModuleClass(
         ExportCsvDesIndicateursUseCase,

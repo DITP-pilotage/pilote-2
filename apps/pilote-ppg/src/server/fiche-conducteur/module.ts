@@ -3,19 +3,19 @@ import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/Chant
 import { PrismaChantierRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository";
 import { IndicateurRepository } from "@/server/fiche-conducteur/domain/ports/IndicateurRepository";
 import { PrismaIndicateurRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository";
-import { RécupererChantierFicheConducteurUseCase } from "@/server/fiche-conducteur/usecases/RécupererChantierFicheConducteurUseCase";
+import { RecupererChantierFicheConducteurUseCase } from "@/server/fiche-conducteur/usecases/RecupererChantierFicheConducteurUseCase";
 import { ObjectifRepository } from "@/server/fiche-conducteur/domain/ports/ObjectifRepository";
 import { PrismaObjectifRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaObjectifRepository";
 import { PrismaCommentaireRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaCommentaireRepository";
 import { PrismaDecisionStrategiqueRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaDecisionStrategiqueRepository";
 import { CommentaireRepository } from "@/server/fiche-conducteur/domain/ports/CommentaireRepository";
 import { DecisionStrategiqueRepository } from "@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository";
-import { RécupérerPublicationsUseCase } from "@/server/fiche-conducteur/usecases/RécupérerPublicationsUseCase";
-import { RécupérerAvancementUseCase } from "@/server/fiche-conducteur/usecases/RécupérerAvancementUseCase";
-import { RécupérerDernièreSynthèseDesRésultatsUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDernièreSynthèseDesRésultatsUseCase";
-import { RécupérerDonnéesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase";
-import { PrismaSynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository";
-import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
+import { RecupererPublicationsUseCase } from "@/server/fiche-conducteur/usecases/RecupererPublicationsUseCase";
+import { RecupererAvancementUseCase } from "@/server/fiche-conducteur/usecases/RecupererAvancementUseCase";
+import { RecupererDerniereSyntheseDesResultatsUseCase } from "@/server/fiche-conducteur/usecases/RecupererDerniereSyntheseDesResultatsUseCase";
+import { RecupererDonneesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RecupererDonneesCartographieUseCase";
+import { PrismaSyntheseDesResultatsRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
+import { SyntheseDesResultatsRepository } from "@/server/fiche-conducteur/domain/ports/SyntheseDesResultatsRepository";
 import {
   defineModule,
   type ExtractScope,
@@ -25,16 +25,16 @@ import {
 
 type FicheConducteurCradle = {
   ficheConducteurHandler: FicheConducteurHandler;
-  recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
-  recupererAvancementUseCase: RécupérerAvancementUseCase;
-  recupererDerniereSyntheseDesResultatsUseCase: RécupérerDernièreSynthèseDesRésultatsUseCase;
-  recupererDonneesCartographieUseCase: RécupérerDonnéesCartographieUseCase;
-  recupererPublicationsUseCase: RécupérerPublicationsUseCase;
+  recupererChantierFicheConducteurUseCase: RecupererChantierFicheConducteurUseCase;
+  recupererAvancementUseCase: RecupererAvancementUseCase;
+  recupererDerniereSyntheseDesResultatsUseCase: RecupererDerniereSyntheseDesResultatsUseCase;
+  recupererDonneesCartographieUseCase: RecupererDonneesCartographieUseCase;
+  recupererPublicationsUseCase: RecupererPublicationsUseCase;
   chantierRepository: ChantierRepository;
   indicateurRepository: IndicateurRepository;
   objectifRepository: ObjectifRepository;
   commentaireRepository: CommentaireRepository;
-  synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
+  synthèseDesRésultatsRepository: SyntheseDesResultatsRepository;
   decisionStrategiqueRepository: DecisionStrategiqueRepository;
 };
 
@@ -49,22 +49,22 @@ export const ficheConducteurModule = defineModule<
     container.register({
       ficheConducteurHandler: asModuleClass(FicheConducteurHandler),
       recupererChantierFicheConducteurUseCase: asModuleClass(
-        RécupererChantierFicheConducteurUseCase,
+        RecupererChantierFicheConducteurUseCase,
       ),
-      recupererAvancementUseCase: asModuleClass(RécupérerAvancementUseCase),
+      recupererAvancementUseCase: asModuleClass(RecupererAvancementUseCase),
       recupererDerniereSyntheseDesResultatsUseCase: asModuleClass(
-        RécupérerDernièreSynthèseDesRésultatsUseCase,
+        RecupererDerniereSyntheseDesResultatsUseCase,
       ),
       recupererDonneesCartographieUseCase: asModuleClass(
-        RécupérerDonnéesCartographieUseCase,
+        RecupererDonneesCartographieUseCase,
       ),
-      recupererPublicationsUseCase: asModuleClass(RécupérerPublicationsUseCase),
+      recupererPublicationsUseCase: asModuleClass(RecupererPublicationsUseCase),
       chantierRepository: asModuleClass(PrismaChantierRepository),
       indicateurRepository: asModuleClass(PrismaIndicateurRepository),
       objectifRepository: asModuleClass(PrismaObjectifRepository),
       commentaireRepository: asModuleClass(PrismaCommentaireRepository),
       synthèseDesRésultatsRepository: asModuleClass(
-        PrismaSynthèseDesRésultatsRepository,
+        PrismaSyntheseDesResultatsRepository,
       ),
       decisionStrategiqueRepository: asModuleClass(
         PrismaDecisionStrategiqueRepository,

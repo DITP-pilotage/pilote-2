@@ -9,7 +9,7 @@ import { RecupererDerniereDecisionStrategiqueQuery } from "@/server/decisions-st
 import { RecupererBrouillonDecisionStrategiqueQuery } from "@/server/decisions-strategiques/queries/RecupererBrouillonDecisionStrategiqueQuery";
 import { RecupererHistoriqueDecisionStrategiqueQuery } from "@/server/decisions-strategiques/queries/RecupererHistoriqueDecisionStrategiqueQuery";
 import { DécisionStratégiqueRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueRepository.interface";
-import { DécisionStratégiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
+import { DecisionStrategiqueSQLRepository } from "@/server/decisions-strategiques/infrastructure/sql/DecisionStrategiqueSQLRepository";
 import {
   defineModule,
   type ExtractScope,
@@ -45,7 +45,7 @@ export const importDecisionStrategiqueModule = defineModule<
   register: (container, { asModuleClass }) => {
     container.register({
       décisionStratégiqueRepository: asModuleClass(
-        DécisionStratégiqueSQLRepository,
+        DecisionStrategiqueSQLRepository,
       ),
       importerDecisionsStrategiquesUseCase: asModuleClass(
         ImporterDecisionsStrategiquesUseCase,
