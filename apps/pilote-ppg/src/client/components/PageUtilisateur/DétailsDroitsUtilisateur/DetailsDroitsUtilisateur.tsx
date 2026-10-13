@@ -41,7 +41,7 @@ export const DetailsDroitsUtilisateur: FunctionComponent<
           listeElement={listeElementsChantiers}
         />
       </div>
-      <hr className="fr-hr fr-mt-3w" />
+      <hr className="fr-mt-3w" />
     </div>
   );
 };

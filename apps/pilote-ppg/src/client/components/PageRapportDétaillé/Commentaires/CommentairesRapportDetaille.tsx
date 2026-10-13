@@ -39,7 +39,7 @@ const CommentairesRapportDetaille: FunctionComponent<
         const commentaire = commentaireParType.get(type) ?? null;
         return (
           <Fragment key={type}>
-            {index !== 0 && <hr className="fr-hr p-1" />}
+            {index !== 0 && <hr className="p-1" />}
             <div className="py-4 px-6">
               <p className="font-bold mb-1 text-xl">
                 {libellesTypesCommentaire[type]}

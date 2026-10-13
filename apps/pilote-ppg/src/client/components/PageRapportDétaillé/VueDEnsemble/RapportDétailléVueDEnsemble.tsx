@@ -78,7 +78,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
             />
           </section>
-          <hr className="fr-hr fr-my-3w fr-pb-1v" />
+          <hr className="fr-my-3w fr-pb-1v" />
           <section>
             <TitreInfobulleConteneur>
               <h2 className="text-lg mb-0 py-1 inline">

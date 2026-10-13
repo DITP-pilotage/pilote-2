@@ -64,14 +64,14 @@ const ResponsablesPageChantier: FunctionComponent<
       />
       {afficheResponsablesLocaux ? (
         <>
-          <hr className="fr-hr fr-py-1w" />
+          <hr className="fr-py-1w" />
           <ResponsablesLigneChantier
             libelleEmailsResponsables={libelleEmailsResponsablesLocal}
             responsables={listeResponsablesLocaux}
             libellé="Responsable local"
             libelléChantier={libelléChantier}
           />
-          <hr className="fr-hr fr-py-1w" />
+          <hr className="fr-py-1w" />
           <ResponsablesLigneChantier
             libelleEmailsResponsables={libelleEmailsCoordinateursTerritorial}
             responsables={listeCoordinateursTerritorials}

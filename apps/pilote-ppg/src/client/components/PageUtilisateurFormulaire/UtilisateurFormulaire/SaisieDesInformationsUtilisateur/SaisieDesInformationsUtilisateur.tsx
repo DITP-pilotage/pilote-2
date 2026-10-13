@@ -133,7 +133,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       <div
         className={`${afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers ? "" : "fr-hidden"}`}
       >
-        <hr className="fr-hr" />
+        <hr />
         <h2 className="text-base mb-4">Droits de lecture</h2>
         <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
           {`Afin de paramétrer l'espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
@@ -215,7 +215,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         <div
           className={`${afficherChampResponsabiliteChantiers ? "" : "fr-hidden"}`}
         >
-          <hr className="fr-hr" />
+          <hr />
           <h2 className="text-base mb-4">Responsabilités</h2>
           <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
             Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour
@@ -252,7 +252,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         </div>
       </div>
       <div className={`${afficherChampSaisieIndicateur ? "" : "fr-hidden"}`}>
-        <hr className="fr-hr" />
+        <hr />
         <h2 className="text-base mb-4">
           Droits de saisie des données quantitatives
         </h2>
@@ -272,7 +272,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         />
       </div>
       <div className={`${afficherChampSaisieCommentaire ? "" : "fr-hidden"}`}>
-        <hr className="fr-hr" />
+        <hr />
         <h2 className="text-base mb-4">Droits de saisie des commentaires</h2>
         <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
           Parmi les chantiers autorisés en lecture, merci d'indiquer, le cas
@@ -302,7 +302,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         />
       </div>
       <div className={`${afficherChampGestionCompte ? "" : "fr-hidden"}`}>
-        <hr className="fr-hr" />
+        <hr />
         <h2 className="text-base mb-4">
           Droits de gestion des comptes utilisateurs
         </h2>

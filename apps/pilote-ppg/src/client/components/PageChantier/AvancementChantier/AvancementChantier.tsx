@@ -301,7 +301,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 </p>
               </div>
             </div>
-            <hr className="fr-hr fr-py-1w" />
+            <hr className="fr-py-1w" />
           </>
         ) : null}
         <div className="fr-py-1w flex flex-col flex-wrap justify-center items-center">
