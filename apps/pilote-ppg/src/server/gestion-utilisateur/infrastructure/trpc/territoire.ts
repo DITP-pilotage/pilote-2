@@ -14,8 +14,12 @@ export const territoireRouter = createTRPCRouter({
   list: protectedProcedure
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {
+      // Une liste vide (gestionnaire sans territoire) ne donne aucun territoire ; null les donne tous.
+      if (input.territoireCodes?.length === 0) {
+        return [];
+      }
       return getContainer("gestionUtilisateur")
-        .resolve("recupererTerritoiresAvecNombreUtilisateursSQLUseCase")
+        .resolve("recupererTerritoiresAvecNombreUtilisateursUseCase")
         .run({ territoireCodes: input.territoireCodes });
     }),
 });
