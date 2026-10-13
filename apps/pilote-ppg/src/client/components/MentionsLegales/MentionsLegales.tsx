@@ -16,7 +16,7 @@ const MentionsLegales: FunctionComponent = () => {
                 Ce site est édité par la Direction Interministérielle de la
                 Transformation Publique.
               </p>
-              <ul className="list-style-none fr-p-0">
+              <ul className="list-none fr-p-0">
                 <li>20 avenue de Ségur</li>
                 <li>75334 Paris Cedex 07</li>
                 <li>France</li>
@@ -44,7 +44,7 @@ const MentionsLegales: FunctionComponent = () => {
           <div className="fr-grid-row">
             <div className="fr-col-12">
               <h4 className="text-h4 md:text-h4-md">Hébergement</h4>
-              <ul className="list-style-none fr-p-0">
+              <ul className="list-none fr-p-0">
                 <li>Scalingo SAS</li>
                 <li>3 place de Haguenau</li>
                 <li>67000 Strasbourg</li>

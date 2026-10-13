@@ -170,7 +170,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
           <div className="text-lg font-bold mb-4 text-gray-900">
             Panel Administrateur
           </div>
-          <ul className="space-y-1 list-style-none !pl-0">
+          <ul className="space-y-1 list-none !pl-0">
             {menuItems.map((item, index) => {
               if (item.type === "heading") {
                 return (

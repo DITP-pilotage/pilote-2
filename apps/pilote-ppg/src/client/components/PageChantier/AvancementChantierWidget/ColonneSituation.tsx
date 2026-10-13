@@ -36,7 +36,7 @@ export const ColonneSituation: FunctionComponent = () => {
     >
       {!isNational && (
         <>
-          <div className="flex flex-col gap-3 flex-wrap justify-center align-center">
+          <div className="flex flex-col gap-3 flex-wrap justify-center items-center">
             <div className="flex flex-col items-center">
               <strong className="fr-mb-0 text-center">
                 Situation par rapport aux autres{" "}
@@ -61,7 +61,7 @@ export const ColonneSituation: FunctionComponent = () => {
           </div>
         </>
       )}
-      <div className="flex flex-col gap-3 justify-center align-center">
+      <div className="flex flex-col gap-3 justify-center items-center">
         <div className="flex flex-col items-center">
           <strong className="fr-mb-0 text-center">Evolution temporelle</strong>
           <span>{jalon}</span>
@@ -87,7 +87,7 @@ export const ColonneSituation: FunctionComponent = () => {
               )
             </>
           ) : (
-            <span className="fr-m-0 bold text-primary">(Non défini)</span>
+            <span className="fr-m-0 font-bold text-primary">(Non défini)</span>
           )}
         </div>
       </div>

@@ -259,7 +259,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                 >
                   <div className="fr-my-2w">
                     <div className="fr-grid-row fr-p-3v bg-dsfr-contrast-grey">
-                      <div className="fr-col-2 flex align-center">date</div>
+                      <div className="fr-col-2 flex items-center">date</div>
                       <div className="fr-col-10">action</div>
                     </div>
                     {evenements.map((evenement) => {
@@ -271,13 +271,13 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                           )}
                           key={evenement.id}
                         >
-                          <div className="fr-col-2 flex align-center">
+                          <div className="fr-col-2 flex items-center">
                             {formaterDate(
                               toISODateTime(evenement.dateCreation),
                               "DD/MM/YYYY HH[:]mm",
                             )}
                           </div>
-                          <div className="fr-col-10 flex align-center">
+                          <div className="fr-col-10 flex items-center">
                             {evenement.donneesComplementaires ? (
                               <Infobulle
                                 classNameBouton="fr-p-0 fr-mr-1w !text-primary"
@@ -288,7 +288,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                                   <span className="fr-text--bold">
                                     Motif de la proposition :
                                   </span>{" "}
-                                  <span className="text-italic">
+                                  <span className="italic">
                                     {evenement.donneesComplementaires.motif}
                                   </span>
                                 </p>
@@ -302,7 +302,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                                     <span className="fr-text--bold">
                                       Source des données et méthode de calcul :
                                     </span>{" "}
-                                    <span className="text-italic">
+                                    <span className="italic">
                                       {
                                         (
                                           evenement.donneesComplementaires as DonneesComplementaires<

@@ -46,7 +46,7 @@ export const BadgeTendance: FunctionComponent<{
       size="sm"
       variant={estArchive ? "default" : badgeTypeÀPartirDeLaTendance[tendance]}
     >
-      <div className="flex align-center pr-1">
+      <div className="flex items-center pr-1">
         <Icone
           className="w-3 h-3 text-current"
           icone={mapTendanceIcon[tendance ?? "STAGNATION"]}

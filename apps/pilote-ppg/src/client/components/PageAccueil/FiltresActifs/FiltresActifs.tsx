@@ -107,7 +107,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
     >
       <div className="flex items-center gap-2 px-6 pt-6 pb-4">
         <Collapsible.Trigger className="flex items-center gap-1 text-left">
-          <span className="bold text-xs mb-0">{nombreFiltresActifs}</span>
+          <span className="font-bold text-xs mb-0">{nombreFiltresActifs}</span>
           <span className="text-xs">
             {nombreFiltresActifs > 1
               ? "filtres actifs sur cette page"
