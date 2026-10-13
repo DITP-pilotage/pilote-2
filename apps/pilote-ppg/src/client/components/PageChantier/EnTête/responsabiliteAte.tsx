@@ -1,21 +1,20 @@
 const saisieAte = (
   <span>
-    saisis par les <span className="fr-text--bold">responsables locaux</span>{" "}
-    sous l'autorité des <span className="fr-text--bold">Préfets</span>
+    saisis par les <span className="font-bold">responsables locaux</span> sous
+    l'autorité des <span className="font-bold">Préfets</span>
   </span>
 );
 
 const saisieHorsAteCentrale = (
   <span>
-    saisis par <span className="fr-text--bold">l'administration centrale</span>
+    saisis par <span className="font-bold">l'administration centrale</span>
   </span>
 );
 
 const saisieHorsAteDeconcentre = (
   <span>
-    saisis par les <span className="fr-text--bold">responsables locaux</span>{" "}
-    sous l'autorité de{" "}
-    <span className="fr-text--bold">l'administration centrale</span>
+    saisis par les <span className="font-bold">responsables locaux</span> sous
+    l'autorité de <span className="font-bold">l'administration centrale</span>
   </span>
 );
 
@@ -23,11 +22,11 @@ const mailleAttendu = (mailleAttendue: "departementale" | "regionale") =>
   mailleAttendue === "departementale" ? (
     <span>
       attendus jusqu'à la maille{" "}
-      <span className="fr-text--bold">départementale</span>
+      <span className="font-bold">départementale</span>
     </span>
   ) : (
     <span>
-      attendus à la maille <span className="fr-text--bold">régionale</span>
+      attendus à la maille <span className="font-bold">régionale</span>
     </span>
   );
 

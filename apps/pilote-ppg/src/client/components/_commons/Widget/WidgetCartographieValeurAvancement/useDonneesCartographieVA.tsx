@@ -60,10 +60,10 @@ export const useDonneesCartographieVA = (
             libelle: getLabelTerritoire(territoire.territoireCode),
             contenuInfoBulle:
               territoire.estApplicable === false ? (
-                <div className="fr-text--bold">Non applicable</div>
+                <div className="font-bold">Non applicable</div>
               ) : (
                 <>
-                  <div className="flex justify-center items-center fr-text--bold">
+                  <div className="font-bold flex justify-center items-center">
                     <div className="mr-2">VA :</div>
                     <div>
                       {formatValeur(territoire.valeurAvancement, unite)}

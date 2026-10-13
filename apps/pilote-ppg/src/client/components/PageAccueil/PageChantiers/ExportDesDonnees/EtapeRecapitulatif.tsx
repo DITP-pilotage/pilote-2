@@ -209,7 +209,9 @@ export const EtapeRecapitulatif = ({
       <p className="mt-4 mb-4">
         Veuillez vérifier ci-dessous le contenu de votre fichier d'export :
       </p>
-      <h3 className="fr-text--md mb-0 mt-4">Éléments à exporter</h3>
+      <h3 className="m-[var(--text-spacing)] text-base mb-0 mt-4">
+        Éléments à exporter
+      </h3>
       <p className="flex gap-2">
         <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
         {filtres.typeExport === "chantiers" ? (
@@ -220,7 +222,9 @@ export const EtapeRecapitulatif = ({
           <span>historique des indicateurs</span>
         )}
       </p>
-      <h3 className="fr-text--md mb-0 mt-4">Périmètre de l'export</h3>
+      <h3 className="m-[var(--text-spacing)] text-base mb-0 mt-4">
+        Périmètre de l'export
+      </h3>
       <p className="flex gap-2">
         <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
         {filtres.isAvecFiltre ? (
@@ -234,7 +238,9 @@ export const EtapeRecapitulatif = ({
           </span>
         )}
       </p>
-      <h3 className="fr-text--md mb-0 mt-4">Données collectées</h3>
+      <h3 className="m-[var(--text-spacing)] text-base mb-0 mt-4">
+        Données collectées
+      </h3>
       <ul className="list-none pl-0">
         {Object.entries(arrayDonneeAExporter)
           .filter(([key]) => filtres.optionsExport.includes(key))

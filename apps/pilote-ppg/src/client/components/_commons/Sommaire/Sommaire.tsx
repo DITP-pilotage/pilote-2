@@ -10,8 +10,8 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
   return (
     <div className="sticky top-0 max-w-80">
       <nav className="pt-6 pl-7 pr-8">
-        <p className="font-bold fr-text--lg mb-2">Sommaire</p>
-        <ul className="fr-text--sm pl-6 [&_a:not(:hover,:active)]:[--underline-idle-width:0]">
+        <p className="text-lg font-bold mb-2">Sommaire</p>
+        <ul className="m-[var(--text-spacing)] text-sm print:text-base pl-6 [&_a:not(:hover,:active)]:[--underline-idle-width:0]">
           {rubriques.map((rubrique) => (
             <li
               className="pb-0 leading-8 text-primary list-none"

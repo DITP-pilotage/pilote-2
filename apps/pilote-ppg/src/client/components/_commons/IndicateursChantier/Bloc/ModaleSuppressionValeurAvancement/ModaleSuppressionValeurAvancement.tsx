@@ -85,7 +85,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="fr-text fr-text--sm mb-2">
+                  <p className="text-sm print:text-base fr-text mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
                   <div className="w-full flex mt-4">
@@ -189,11 +189,11 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="fr-text fr-text--sm mb-2">
+                      <p className="text-sm print:text-base fr-text mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Valeur d'avancement proposée le{" "}
                           {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
                           par{" "}
@@ -216,15 +216,15 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                           )
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           La proposition est supprimée le{" "}
                           {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
                           par {auteurModification}
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Motif de la suppression :
                         </span>{" "}
                         <span className="italic">

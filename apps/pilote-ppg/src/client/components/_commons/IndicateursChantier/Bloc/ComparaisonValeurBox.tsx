@@ -22,19 +22,19 @@ export const ComparaisonValeurBox = ({
         {titre}
         {indicateurId && proposition ? (
           <Infobulle classNameInfoBulle="tooltip-accordeon">
-            <p className="fr-text--sm texte-proposition">
+            <p className="text-sm print:text-base texte-proposition">
               Valeur d'avancement proposée le{" "}
               {formaterDate(proposition.dateProposition, "DD/MM/YYYY")} par{" "}
               {proposition.auteur}
             </p>
-            <p className="fr-text--sm">
+            <p className="text-sm print:text-base">
               <b>Motif de la proposition</b>
             </p>
-            <p className="fr-text--sm">{proposition.motif}</p>
-            <p className="fr-text--sm">
+            <p className="text-sm print:text-base">{proposition.motif}</p>
+            <p className="text-sm print:text-base">
               <b>Source des données et méthode de calcul</b>
             </p>
-            <p className="fr-text--sm mb-0">
+            <p className="text-sm print:text-base mb-0">
               {proposition.sourceDonneeEtMethodeCalcul}
             </p>
           </Infobulle>

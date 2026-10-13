@@ -25,11 +25,11 @@ function déterminerValeurAffichée(
   const unitéAffichée = unité?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
 
   if (estApplicable === false) {
-    return <div className="fr-text--bold">Non applicable</div>;
+    return <div className="font-bold">Non applicable</div>;
   }
   return (
     <>
-      <div className="flex justify-center items-center fr-text--bold">
+      <div className="font-bold flex justify-center items-center">
         <div className="mr-2">VA :</div>
         <div>
           {valeur === null

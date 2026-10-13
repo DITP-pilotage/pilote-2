@@ -33,7 +33,7 @@ export const ModaleRenseignerService: FunctionComponent<
             </>
           }
         />
-        <p className="fr-text--md mb-8 mt-4">
+        <p className="text-base mb-8 mt-4">
           Vous pourrez toujours compléter ou modifier ces informations depuis la
           page "Mon espace".
         </p>

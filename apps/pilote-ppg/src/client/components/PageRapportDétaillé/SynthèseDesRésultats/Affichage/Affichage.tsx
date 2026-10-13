@@ -11,18 +11,20 @@ const SynthèseDesRésultatsAffichage = ({
 }: SynthèseDesRésultatsAffichageProps) => {
   if (!synthèseDesRésultats) {
     return (
-      <p className="fr-text--sm texte-gris">Aucune synthèse des résultats.</p>
+      <p className="text-sm print:text-base texte-gris">
+        Aucune synthèse des résultats.
+      </p>
     );
   }
 
   return (
     <>
-      <p className="fr-text--xs texte-gris mb-2">
+      <p className="text-xs print:text-base texte-gris mb-2">
         {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, "DD/MM/YYYY")}`}
         {!!synthèseDesRésultats.auteur &&
           ` | Par ${synthèseDesRésultats.auteur}`}
       </p>
-      <div className="fr-text--sm mb-0">
+      <div className="m-[var(--text-spacing)] text-sm print:text-base mb-0">
         <RenduContenuHtml
           className="[&_p]:text-sm [&_p]:mb-1"
           html={synthèseDesRésultats.contenu}

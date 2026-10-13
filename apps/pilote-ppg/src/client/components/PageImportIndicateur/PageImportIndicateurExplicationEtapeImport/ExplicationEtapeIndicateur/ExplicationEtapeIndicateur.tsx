@@ -28,7 +28,7 @@ const ExplicationEtapeIndicateur: FunctionComponent<
         {numéro}
       </span>
       <h3 className="text-h6 md:text-h6-md mb-2">{titre}</h3>
-      <p className="mb-0 fr-text--sm">{texte}</p>
+      <p className="text-sm print:text-base mb-0">{texte}</p>
     </div>
   );
 };

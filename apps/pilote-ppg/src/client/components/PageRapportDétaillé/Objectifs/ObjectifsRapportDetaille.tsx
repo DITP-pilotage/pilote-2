@@ -42,7 +42,7 @@ export const ObjectifsRapportDetaille = ({
                   <p className="text-xs text-dsfr-mention-grey mb-1">
                     {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(objectif.date)} | Par ${objectif.auteur}`}
                   </p>
-                  <div className="fr-text--sm mb-0">
+                  <div className="m-[var(--text-spacing)] text-sm print:text-base mb-0">
                     <RenduContenuHtml
                       className="[&_p]:text-sm [&_p]:mb-1"
                       html={objectif.contenu}

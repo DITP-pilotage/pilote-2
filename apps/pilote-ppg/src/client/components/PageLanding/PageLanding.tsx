@@ -73,7 +73,7 @@ const PageLanding = () => {
                 <h2 className="text-h3 md:text-h3-md">
                   À qui s'adresse PILOTE ?
                 </h2>
-                <p className="fr-text--lg">
+                <p className="text-lg">
                   PILOTE mobilise l'ensemble des responsables de la mise en
                   œuvre des politiques prioritaires du Gouvernement à tous les
                   niveaux de l'organisation administrative.
@@ -90,7 +90,7 @@ const PageLanding = () => {
                     <h3 className="text-h5 md:text-h5-md">
                       Pour les administrations centrales
                     </h3>
-                    <p className="fr-text--lg mb-0">
+                    <p className="text-lg mb-0">
                       PILOTE permet de fixer les objectifs aux services
                       déconcentrés, de suivre l'avancement des chantiers et d'en
                       rendre compte. Il permet d'identifier les freins et
@@ -108,7 +108,7 @@ const PageLanding = () => {
                   </div>
                   <div className="p-8">
                     <h3 className="text-h5 md:text-h5-md">Pour les préfets</h3>
-                    <p className="fr-text--lg mb-0">
+                    <p className="text-lg mb-0">
                       PILOTE offre aux préfets une vision transversale des
                       objectifs et résultats de la feuille de route du
                       Gouvernement dans le territoire pour lequel ils sont
@@ -129,7 +129,7 @@ const PageLanding = () => {
                     <h3 className="text-h5 md:text-h5-md">
                       Pour les services déconcentrés
                     </h3>
-                    <p className="fr-text--lg mb-0">
+                    <p className="text-lg mb-0">
                       PILOTE permet de s'entendre avec l'administration centrale
                       sur les objectifs de chaque chantier prioritaire et de
                       rendre compte des résultats obtenus. Il permet aussi
@@ -150,7 +150,7 @@ const PageLanding = () => {
                 <h2 className="text-h3 md:text-h3-md">
                   Le pilotage des politiques prioritaires
                 </h2>
-                <p className="fr-text--lg">
+                <p className="text-lg">
                   Les politiques prioritaires du Gouvernement font l'objet d'un
                   suivi régulier à haut niveau dans chaque ministère mais aussi
                   au niveau interministériel. Chaque trimestre, les ministères
@@ -158,12 +158,12 @@ const PageLanding = () => {
                   secrétaire général de la Présidence de la République et le
                   directeur du cabinet de la Première ministre.
                 </p>
-                <p className="fr-text--lg font-bold">
+                <p className="text-lg font-bold">
                   Objectif : veiller en continu à la cohérence des objectifs et
                   des décisions, au rythme de mise en œuvre des chantiers et
                   rendre les arbitrages pour lever les freins rencontrés.
                 </p>
-                <p className="fr-text--lg">
+                <p className="text-lg">
                   La DITP est chargée d'animer, sous l'autorité de la Première
                   ministre, le déploiement des politiques prioritaires du
                   Gouvernement et la supervision interministérielle de leur mise

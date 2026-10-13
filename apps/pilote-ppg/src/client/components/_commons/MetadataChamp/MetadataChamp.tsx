@@ -142,7 +142,7 @@ function MetadataChampInterne<TForm extends FieldValues>(
 
   return (
     <>
-      <div className="fr-text--md font-bold mb-1 relative flex items-center ">
+      <div className="m-[var(--text-spacing)] text-base font-bold mb-1 relative flex items-center">
         <p className="m-0 overflow-x-hidden text-ellipsis whitespace-nowrap">
           {informationMetadata.metaPiloteAlias}
         </p>

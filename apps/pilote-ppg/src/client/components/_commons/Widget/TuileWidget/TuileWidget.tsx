@@ -41,7 +41,7 @@ export const TuileWidget = ({
 
   return (
     <div className="bg-white border border-dsfr-grey-925 p-6 flex flex-col gap-4 rounded-lg">
-      {titre && <span className="fr-text--xl font-bold m-0">{titre}</span>}
+      {titre && <span className="text-lead font-bold m-0">{titre}</span>}
       <div
         className="grid max-sm:grid-cols-1 gap-14"
         style={{ gridTemplateColumns: `repeat(${colonnes}, 1fr)` }}

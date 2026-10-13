@@ -138,7 +138,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     ) : null}
                     {tokenAPIInformation ? (
                       <Alerte type="info" classesSupplementaires="mt-4">
-                        <p className="fr-text--sm">
+                        <p className="text-sm print:text-base">
                           Information : Un token est déjà actif pour cet
                           utilisateur. La génération d'un nouveau token
                           supprimera ce token actif.

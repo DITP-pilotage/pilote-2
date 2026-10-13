@@ -12,7 +12,9 @@ const FiltresGroupe: FunctionComponent<FiltresGroupeProps> = ({
   return (
     <section className="px-6">
       {!!libellé && (
-        <h2 className="fr-text--lg mt-4 mb-2 font-bold">{libellé}</h2>
+        <h2 className="m-[var(--text-spacing)] text-lg mt-4 mb-2 font-bold">
+          {libellé}
+        </h2>
       )}
       {children}
     </section>

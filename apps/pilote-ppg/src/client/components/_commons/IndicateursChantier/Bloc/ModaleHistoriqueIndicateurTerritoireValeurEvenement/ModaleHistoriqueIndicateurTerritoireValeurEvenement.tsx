@@ -31,7 +31,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
     switch (typeEvenement) {
       case "VALEUR_CREEE":
         return (
-          <p className="mb-0 !texte-blue-france fr-text--bold">
+          <p className="font-bold mb-0 !texte-blue-france">
             → nouvelle valeur importée dans PILOTE : {valeur}
           </p>
         );
@@ -39,15 +39,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
         return (
           <div>
             <p className="mb-0">
-              <span className="fr-text--bold">import de données</span> par la
+              <span className="font-bold">import de données</span> par la
               direction de projet
             </p>
             {valeur === null ? (
-              <p className="mb-0 !texte-blue-france fr-text--bold">
+              <p className="font-bold mb-0 !texte-blue-france">
                 → la valeur a été supprimée de PILOTE
               </p>
             ) : (
-              <p className="mb-0 !texte-blue-france fr-text--bold">
+              <p className="font-bold mb-0 !texte-blue-france">
                 → nouvelle valeur importée dans PILOTE : {valeur}
               </p>
             )}
@@ -56,7 +56,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       case "VALEUR_HISTORISEE":
         return (
           <span>
-            <span className="fr-text--bold">
+            <span className="font-bold">
               import d'une valeur d'avancement plus récente
             </span>{" "}
             par la direction de projet
@@ -65,30 +65,28 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       case "PROPOSITION_VALEUR_CREEE":
         return (
           <span>
-            <span className="fr-text--bold">nouvelle proposition</span> du
+            <span className="font-bold">nouvelle proposition</span> du
             territoire : {valeur ?? "N/A"}
           </span>
         );
       case "PROPOSITION_VALEUR_MODIFIEE":
         return (
           <span>
-            <span className="fr-text--bold">
-              modification de la proposition
-            </span>{" "}
-            du territoire : {valeur ?? "N/A"}
+            <span className="font-bold">modification de la proposition</span> du
+            territoire : {valeur ?? "N/A"}
           </span>
         );
       case "PROPOSITION_VALEUR_SUPPRIMEE":
         return (
           <span>
-            <span className="fr-text--bold">suppression de la proposition</span>{" "}
-            par le territoire
+            <span className="font-bold">suppression de la proposition</span> par
+            le territoire
           </span>
         );
       case "PROPOSITION_VALEUR_ACCUSEE_RECEPTION":
         return (
           <span>
-            <span className="fr-text--bold">
+            <span className="font-bold">
               accusé de réception de la proposition
             </span>{" "}
             par la direction de projet
@@ -99,8 +97,8 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
           <div>
             <p className="mb-0">
               proposition
-              <span className="fr-text--bold"> refusée</span> par la direction
-              de projet
+              <span className="font-bold"> refusée</span> par la direction de
+              projet
             </p>
           </div>
         );
@@ -109,10 +107,10 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
           <div>
             <p className="mb-0">
               proposition
-              <span className="fr-text--bold"> acceptée</span> par la direction
-              de projet
+              <span className="font-bold"> acceptée</span> par la direction de
+              projet
             </p>
-            <p className="mb-0 !texte-blue-france fr-text--bold">
+            <p className="font-bold mb-0 !texte-blue-france">
               → nouvelle valeur importée dans PILOTE : {valeur}
             </p>
           </div>
@@ -122,13 +120,10 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
           <div>
             <p className="mb-0">
               proposition
-              <span className="fr-text--bold">
-                {" "}
-                acceptée avec modification
-              </span>{" "}
-              par la direction de projet
+              <span className="font-bold"> acceptée avec modification</span> par
+              la direction de projet
             </p>
-            <p className="mb-0 !texte-blue-france fr-text--bold">
+            <p className="font-bold mb-0 !texte-blue-france">
               → nouvelle valeur importée dans PILOTE : {valeur}
             </p>
           </div>
@@ -137,15 +132,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
         return (
           <div>
             <p className="mb-0">
-              <span className="fr-text--bold"> import de données</span> par la
+              <span className="font-bold"> import de données</span> par la
               direction de projet (la proposition en cours a été ignorée)
             </p>
             {valeur === null ? (
-              <p className="mb-0 !texte-blue-france fr-text--bold">
+              <p className="font-bold mb-0 !texte-blue-france">
                 → la valeur a été supprimée de PILOTE
               </p>
             ) : (
-              <p className="mb-0 !texte-blue-france fr-text--bold">
+              <p className="font-bold mb-0 !texte-blue-france">
                 → nouvelle valeur importée dans PILOTE : {valeur}
               </p>
             )}
@@ -154,7 +149,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE":
         return (
           <span>
-            <span className="fr-text--bold">
+            <span className="font-bold">
               import d'une valeur d'avancement plus récente
             </span>{" "}
             par la direction de projet (la proposition en cours a été ignorée)
@@ -196,24 +191,26 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       trigger={children}
     >
       <div className="fr-grid-row mt-2">
-        <span className="fr-text--lg fr-text--bold mb-0 fr-col-2 !texte-blue-france">
+        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-2 !texte-blue-france">
           {indicateur.id}
         </span>
-        <span className="fr-text--lg fr-text--bold mb-0 fr-col-10 !texte-blue-france">
+        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-10 !texte-blue-france">
           {indicateur.nom}
         </span>
       </div>
       <div className="fr-grid-row !texte-title-grey">
-        <span className="fr-text--lg fr-text--bold mb-0 fr-col-2">
+        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-2">
           {chantier.id}
         </span>
-        <span className="fr-text--lg fr-text--bold mb-0 fr-col-10">
+        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-10">
           {chantier.nom}
         </span>
       </div>
       <div className="fr-grid-row !texte-title-grey">
-        <span className="fr-text--lg mb-0 fr-col-2">Territoire</span>
-        <span className="fr-text--lg mb-0 fr-col-10">
+        <span className="m-[var(--text-spacing)] text-lg mb-0 fr-col-2">
+          Territoire
+        </span>
+        <span className="m-[var(--text-spacing)] text-lg mb-0 fr-col-10">
           {territoireSélectionné.codeInsee} - {territoireSélectionné.nom}
         </span>
       </div>
@@ -281,8 +278,8 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                                 classNameInfoBulle="tooltip-accordeon"
                                 styleIconInfoBulle="documentation"
                               >
-                                <p className="fr-text--sm mb-0">
-                                  <span className="fr-text--bold">
+                                <p className="text-sm print:text-base mb-0">
+                                  <span className="font-bold">
                                     Motif de la proposition :
                                   </span>{" "}
                                   <span className="italic">
@@ -295,8 +292,8 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                                     | "PROPOSITION_VALEUR_MODIFIEE"
                                   >
                                 )?.sourceDonneeEtMethodeCalcul ? (
-                                  <p className="fr-text--sm mb-0">
-                                    <span className="fr-text--bold">
+                                  <p className="text-sm print:text-base mb-0">
+                                    <span className="font-bold">
                                       Source des données et méthode de calcul :
                                     </span>{" "}
                                     <span className="italic">

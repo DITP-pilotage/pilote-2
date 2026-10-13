@@ -98,7 +98,7 @@ export const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
         </div>
       ) : null}
 
-      <div className="fr-text fr-text--bold mt-4">Légende :</div>
+      <div className="font-bold fr-text mt-4">Légende :</div>
       <div className="flex flex-col gap-4">
         <div className="mr-8">
           {afficherInterrupteurCibles ? (

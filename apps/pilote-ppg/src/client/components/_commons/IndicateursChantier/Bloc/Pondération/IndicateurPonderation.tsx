@@ -19,7 +19,7 @@ export const IndicateurPonderation = ({
     territoireCodeVersMailleCodeInsee(territoireCode);
 
   return (
-    <p className="fr-text--xs texte-gris mb-0">
+    <p className="text-xs print:text-base texte-gris mb-0">
       {indicateurPondération === null ? (
         `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleDuTerritoireSelectionnee]}.`
       ) : indicateurPondération === 0 ? (
@@ -27,7 +27,7 @@ export const IndicateurPonderation = ({
       ) : (
         <>
           Cet indicateur représente{" "}
-          <span className="fr-text--bold">
+          <span className="font-bold">
             {convertitEnPondération(indicateurPondération)}%
           </span>{" "}
           du taux d'avancement{" "}

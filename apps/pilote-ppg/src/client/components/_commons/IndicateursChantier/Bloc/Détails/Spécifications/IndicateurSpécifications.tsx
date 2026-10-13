@@ -34,63 +34,63 @@ const IndicateurSpécifications: FunctionComponent<
 
   return (
     <div className="relative">
-      <p className="fr-text--md inline-block mb-1 text-primary">
+      <p className="text-base inline-block mb-1 text-primary">
         Description de l'indicateur
       </p>
-      <p className="fr-text--sm mb-0">
+      <p className="text-sm print:text-base mb-0">
         {indicateur.description ?? libelléValeurNull}
       </p>
-      <p className="fr-text--md inline-block mb-1 text-primary mt-4">
+      <p className="text-base inline-block mb-1 text-primary mt-4">
         Typologie de l'indicateur
       </p>
-      <p className="fr-text--sm mb-0">
+      <p className="text-sm print:text-base mb-0">
         {libellesTypologieIndicateur[indicateur.type]}
       </p>
-      <p className="fr-text--md inline-block mb-1 text-primary mt-4">
+      <p className="text-base inline-block mb-1 text-primary mt-4">
         Méthode de calcul
       </p>
-      <p className="fr-text--sm mb-0">
+      <p className="text-sm print:text-base mb-0">
         {indicateur.modeDeCalcul ?? libelléValeurNull}
       </p>
-      <p className="fr-text--md inline-block mb-1 text-primary mt-4">Source</p>
-      <p className="fr-text--sm mb-0">
+      <p className="text-base inline-block mb-1 text-primary mt-4">Source</p>
+      <p className="text-sm print:text-base mb-0">
         {indicateur.source ?? libelléValeurNull}
       </p>
-      <p className="fr-text--md inline-block mb-1 text-primary mt-4">
+      <p className="text-base inline-block mb-1 text-primary mt-4">
         Mise à jour
       </p>
       {!detailIndicateurDuTerritoire.estApplicable ? (
-        <p className="fr-text--sm mb-0">
+        <p className="text-sm print:text-base mb-0">
           L'indicateur n'est pas applicable sur le territoire.
         </p>
       ) : !!dateProchaineDateMaj ? (
         <>
-          <p className="fr-text--sm mb-0">
+          <p className="text-sm print:text-base mb-0">
             La période de mise à jour pour cet indicateur est :{" "}
-            <span className="fr-text--bold">
+            <span className="font-bold">
               {indicateur.periodicite ?? libelléValeurNull}
             </span>
           </p>
-          <p className="fr-text--sm mb-0">
+          <p className="text-sm print:text-base mb-0">
             La date de valeur d'avancement de cet indicateur est :{" "}
-            <span className="fr-text--bold">
+            <span className="font-bold">
               {`${dateValeurAvancement ?? libelléValeurNull}.`}
             </span>{" "}
             La date de la prochaine valeur d'avancement sera donc :{" "}
-            <span className="fr-text--bold">
+            <span className="font-bold">
               {`${dateProchaineDateValeurAvancement ?? libelléValeurNull}.`}
             </span>
           </p>
-          <p className="fr-text--sm mb-0">
+          <p className="text-sm print:text-base mb-0">
             La mise à disposition d'une nouvelle valeur pour cet indicateur
             nécessite un délai de disponibilité de{" "}
-            <span className="fr-text--bold">
+            <span className="font-bold">
               {indicateur.delaiDisponibilite
                 ? `${indicateur.delaiDisponibilite} mois.`
                 : "Non renseigné"}
             </span>{" "}
             {`De ce fait, la mise à jour de la prochaine valeur d'avancement est requise ${detailIndicateurDuTerritoire.estAJour ? "au plus tard à" : "depuis"} la date :`}{" "}
-            <span className="fr-text--bold">
+            <span className="font-bold">
               {`${dateProchaineDateMaj ?? libelléValeurNull}.`}
             </span>
           </p>
@@ -98,16 +98,16 @@ const IndicateurSpécifications: FunctionComponent<
       ) : (
         <>
           {!!dateValeurAvancement ? (
-            <p className="fr-text--sm mb-0">
+            <p className="text-sm print:text-base mb-0">
               La période de mise à jour pour cet indicateur et/ou le délai de
               disponibilité ne sont pas renseignés.
             </p>
           ) : (
-            <p className="fr-text--sm mb-0">
+            <p className="text-sm print:text-base mb-0">
               La valeur d'avancement de cet indicateur est non renseignée.
             </p>
           )}
-          <p className="fr-text--sm mb-0">
+          <p className="text-sm print:text-base mb-0">
             De ce fait, la mise à jour de la prochaine valeur d'avancement ne
             peut être calculée.
           </p>
@@ -121,10 +121,10 @@ const IndicateurSpécifications: FunctionComponent<
               icone={QuestionIcon}
             />
             <div>
-              <p className="fr-text--md inline-block mb-1 text-primary">
+              <p className="text-base inline-block mb-1 text-primary">
                 Poser une question sur cet indicateur
               </p>
-              <p className="fr-text fr-text--sm mb-0">
+              <p className="text-sm print:text-base fr-text mb-0">
                 Des questions ou des remarques sur cet indicateur (définition de
                 l'indicateur, données source, méthode de calcul, mise à jour,
                 etc.) ? Contactez le responsable des données de la politique

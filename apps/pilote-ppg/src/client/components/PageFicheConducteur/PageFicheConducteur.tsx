@@ -51,14 +51,14 @@ const PageFicheConducteur: FunctionComponent<
                 className="h-full print:p-0 print:border-dsfr-grey-925"
                 contenuClassesSupplémentaires="px-2 py-1"
               >
-                <div className="fr-grid-row border-b pb-1 fr-text--xs m-0 print:text-[10px] print:leading-4">
-                  <span className="fr-col-2 fr-text--bold">DAC</span>
+                <div className="text-xs fr-grid-row border-b pb-1 m-0 print:text-[10px] print:leading-4">
+                  <span className="font-bold fr-col-2">DAC</span>
                   <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
                     {chantier.directeursAdministrationCentrale}
                   </span>
                 </div>
-                <div className="fr-grid-row border-b py-1 fr-text--xs m-0 print:text-[10px] print:leading-4">
-                  <span className="fr-col-2 fr-text--bold">DP</span>
+                <div className="text-xs fr-grid-row border-b py-1 m-0 print:text-[10px] print:leading-4">
+                  <span className="font-bold fr-col-2">DP</span>
                   <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
                     {chantier.directeursProjet}
                   </span>
@@ -119,14 +119,14 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
                 <div>
                   {commentaire ? (
-                    <div className="fr-text--xs mb-2 print:text-[10px] print:leading-4">
+                    <div className="m-[var(--text-spacing)] text-xs mb-2 print:text-[10px] print:leading-4">
                       <RenduContenuHtml
                         className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:text-[10px] print:[&_p]:leading-4"
                         html={commentaire}
                       />
                     </div>
                   ) : (
-                    <p className="fr-text--xs print:text-[10px] print:leading-4">
+                    <p className="text-xs print:text-[10px] print:leading-4">
                       Aucune synthèse des résultats
                     </p>
                   )}
@@ -140,22 +140,22 @@ const PageFicheConducteur: FunctionComponent<
             className="print:p-0 print:border-dsfr-grey-925"
             contenuClassesSupplémentaires="px-0 py-0"
           >
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs m-0 px-0 print:text-[10px] print:leading-4">
+            <div className="text-xs fiche-conducteur--tableau fr-container m-0 px-0 print:text-[10px] print:leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france px-2 py-2 border-b rounded-tl-md rounded-tr-md">
-                <div className="fr-col-5 fr-text--bold">
+                <div className="font-bold fr-col-5">
                   Avancement des indicateurs d'impact pris en compte dans le TA
                 </div>
                 <div className="fr-col-7 fr-grid-row">
-                  <div className="fr-col-3 fr-text--bold flex items-center whitespace-nowrap">
+                  <div className="font-bold fr-col-3 flex items-center whitespace-nowrap">
                     {`V.Initiale ${chantier.derniereValeurInitiale}`}
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex items-center">
+                  <div className="font-bold fr-col-3 flex items-center">
                     V. Actuelle
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex items-center">
+                  <div className="font-bold fr-col-3 flex items-center">
                     {`Cible ${jalon}`}
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex items-center">
+                  <div className="font-bold fr-col-3 flex items-center">
                     {`TA ${jalon}`}
                   </div>
                 </div>
@@ -166,7 +166,7 @@ const PageFicheConducteur: FunctionComponent<
                   key={`indicateur-${index}`}
                 >
                   <div
-                    className={`fr-col-5 pr-2${indicateur.type === "IMPACT" ? " fr-text--bold" : ""}`}
+                    className={`fr-col-5 pr-2${indicateur.type === "IMPACT" ? " font-bold" : ""}`}
                   >
                     {indicateur.nom}
                   </div>
@@ -245,17 +245,17 @@ const PageFicheConducteur: FunctionComponent<
             className="print:p-0 print:border-dsfr-grey-925"
             contenuClassesSupplémentaires="px-0"
           >
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs m-0 px-0 print:text-[10px] print:leading-4">
+            <div className="text-xs fiche-conducteur--tableau fr-container m-0 px-0 print:text-[10px] print:leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france px-2 py-2 border-b rounded-tl-md rounded-tr-md">
-                <div className="fr-col-2 fr-text--bold">Catégorie</div>
-                <div className="fr-col-10 fr-text--bold">Détail</div>
+                <div className="font-bold fr-col-2">Catégorie</div>
+                <div className="font-bold fr-col-10">Détail</div>
               </div>
               {publications.map((publication, index) => (
                 <div
                   className="fr-grid-row px-2 py-2 border-t"
                   key={`publication-${index}`}
                 >
-                  <div className="fr-col-2 fr-text--bold flex items-center">
+                  <div className="font-bold fr-col-2 flex items-center">
                     {publication.libellé}
                   </div>
                   <div className="fr-col-10">

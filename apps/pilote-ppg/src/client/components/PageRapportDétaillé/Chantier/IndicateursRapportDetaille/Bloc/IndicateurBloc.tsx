@@ -50,7 +50,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
         <section>
           <div className="flex justify-between">
             <div>
-              <h4 className="fr-text--xl mb-2 flex gap-2 items-center">
+              <h4 className="m-[var(--text-spacing)] text-lead mb-2 flex gap-2 items-center">
                 {indicateur.estIndicateurDuBaromètre ? (
                   <PictoBaromètre />
                 ) : null}
@@ -60,12 +60,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </h4>
               <div className="ml-4 mb-6">
-                <p className="mb-0 fr-text--xs text-dsfr-mention-grey">
+                <p className="text-xs print:text-base mb-0 text-dsfr-mention-grey">
                   Dernière mise à jour de la valeur d'avancement pour le
                   territoire :{" "}
-                  <span className="fr-text--bold">
-                    {dateDeMiseAJourIndicateur}
-                  </span>
+                  <span className="font-bold">{dateDeMiseAJourIndicateur}</span>
                 </p>
                 <IndicateurPonderation
                   indicateurPondération={

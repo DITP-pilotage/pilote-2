@@ -20,7 +20,7 @@ const PageRapportsHebdomadaires = () => {
     >
       <BarreLatérale estOuvert={isOpen} setEstOuvert={setIsOpen}>
         <BarreLatéraleEncart className="bg-dsfr-blue-france-925">
-          <div className="fr-text--sm fr-text--bold mb-2">
+          <div className="m-[var(--text-spacing)] text-sm print:text-base font-bold mb-2">
             {rapports.length} rapport{rapports.length > 1 ? "s" : ""}
           </div>
           <h2 className="text-h6 md:text-h6-md mb-4">Mes rapports</h2>
@@ -28,12 +28,14 @@ const PageRapportsHebdomadaires = () => {
 
         <div>
           {rapports.length === 0 ? (
-            <div className="p-4 fr-text--sm">Aucun rapport disponible</div>
+            <div className="m-[var(--text-spacing)] text-sm print:text-base p-4">
+              Aucun rapport disponible
+            </div>
           ) : (
             rapports.map((rapport, index) => (
               <button
                 key={rapport.id}
-                className={`w-full text-left p-4 mb-0 fr-text--sm ${
+                className={`m-[var(--text-spacing)] text-sm print:text-base w-full text-left p-4 mb-0${
                   effectiveRapportId === rapport.id
                     ? "bg-dsfr-blue-france-950"
                     : ""
@@ -76,7 +78,7 @@ const PageRapportsHebdomadaires = () => {
           </Button>
 
           {rapports.length === 0 ? (
-            <div className="p-12 flex items-center justify-center fr-text--sm text-dsfr-grey-625">
+            <div className="m-[var(--text-spacing)] text-sm print:text-base p-12 flex items-center justify-center text-dsfr-grey-625">
               Les rapports hebdomadaires apparaîtront ici lorsqu'ils seront
               disponibles.
             </div>

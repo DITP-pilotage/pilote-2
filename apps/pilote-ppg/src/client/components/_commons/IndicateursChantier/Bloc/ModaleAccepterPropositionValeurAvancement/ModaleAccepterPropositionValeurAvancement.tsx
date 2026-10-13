@@ -91,11 +91,11 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="fr-text fr-text--sm mb-2">
+                  <p className="text-sm print:text-base fr-text mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
                   {detailIndicateur.proposition !== null ? (
-                    <p className="fr-text--sm mt-1">
+                    <p className="text-sm print:text-base mt-1">
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
                       <NomUtilisateurAvecTooltip
@@ -144,7 +144,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       valeur={detailIndicateur.proposition?.valeurAvancement}
                     />
                   </div>
-                  <p className="fr-text--sm mt-4 mb-2">
+                  <p className="text-sm print:text-base mt-4 mb-2">
                     Indiquez la décision que vous souhaitez prendre concernant
                     cette proposition :
                   </p>
@@ -170,7 +170,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                             value="accepter-avec-modification"
                           />
                           <div className="pl-8">
-                            <p className="fr-text texte-warning fr-text--xs italic">
+                            <p className="text-xs print:text-base fr-text texte-warning italic">
                               *ce champ est obligatoire
                             </p>
                             <TextField
@@ -188,7 +188,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                               inputClassName="py-1 text-sm w-auto"
                               {...reactHookForm.register("valeurModification")}
                             />
-                            <span className="flex texte-gris fr-text--xs">
+                            <span className="m-[var(--text-spacing)] text-xs print:text-base flex texte-gris">
                               (
                               {formaterDate(
                                 detailIndicateur.proposition
@@ -257,10 +257,10 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="fr-text fr-text--sm mb-2">
+                      <p className="text-sm print:text-base fr-text mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
-                      <p className="fr-text--sm mb-0">
+                      <p className="text-sm print:text-base mb-0">
                         <span>
                           Valeur d'avancement proposée le{" "}
                           {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
@@ -278,7 +278,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                           />{" "}
                           :{" "}
                         </span>
-                        <span className="fr-text--bold">
+                        <span className="font-bold">
                           {detailIndicateur.proposition?.valeurAvancement} (
                           {formaterDate(
                             detailIndicateur.proposition?.dateValeurAvancement,
@@ -287,16 +287,16 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                           )
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
+                      <p className="text-sm print:text-base mb-0">
                         Décision : la proposition est{" "}
                         {decision === "refuser" ? (
-                          <span className="fr-text--bold">refusée</span>
+                          <span className="font-bold">refusée</span>
                         ) : decision === "accepter-avec-modification" ? (
                           <>
                             <span>la proposition est </span>
-                            <span className="fr-text--bold">modifiée </span>
+                            <span className="font-bold">modifiée </span>
                             <span>avec la valeur </span>
-                            <span className="fr-text--bold">
+                            <span className="font-bold">
                               {reactHookForm.getValues("valeurModification")} (
                               {formaterDate(
                                 detailIndicateur.dateValeurAvancement,
@@ -306,10 +306,10 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                             </span>
                           </>
                         ) : (
-                          <span className="fr-text--bold">acceptée</span>
+                          <span className="font-bold">acceptée</span>
                         )}
                       </p>
-                      <p className="fr-text--sm mb-0">
+                      <p className="text-sm print:text-base mb-0">
                         <span>Motif de la décision :</span>{" "}
                         <span className="italic">
                           {reactHookForm.getValues("motif") ||

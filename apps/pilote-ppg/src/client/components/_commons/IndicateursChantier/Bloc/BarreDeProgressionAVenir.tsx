@@ -25,7 +25,7 @@ export const BarreDeProgressionAVenir = ({
           {estPropositionAccepteeOuAccepteeAvecModification(
             detailIndicateurDuTerritoire,
           ) ? (
-            <p className="fr-text--sm mb-0">
+            <p className="text-sm print:text-base mb-0">
               La proposition de valeur d'avancement a bien été acceptée{" "}
               {estPropositionAccepteeAvecModification(
                 detailIndicateurDuTerritoire,
@@ -40,7 +40,7 @@ export const BarreDeProgressionAVenir = ({
               valeur d'avancement.
             </p>
           ) : (
-            <p className="fr-text--sm mb-0">
+            <p className="text-sm print:text-base mb-0">
               La proposition de valeur d'avancement a bien été prise en compte
               et est visible par tous les utilisateurs. Le taux d'avancement est
               en cours d'intégration dans la base de données de PILOTE et sera

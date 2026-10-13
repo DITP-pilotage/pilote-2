@@ -46,7 +46,7 @@ export const PageConnexion = () => {
             <h1 className="text-h4 md:text-h4-md mb-2 text-center">
               Connexion à PILOTE
             </h1>
-            <p className="text-dsfr-mention-grey mb-8 fr-text--sm">
+            <p className="text-sm print:text-base text-dsfr-mention-grey mb-8">
               {ffProConnect
                 ? "Choisissez votre mode de connexion."
                 : "ProConnect arrive bientôt sur PILOTE. Vous pourrez alors accéder à votre compte avec ProConnect ou continuer d'utiliser vos identifiants habituels."}

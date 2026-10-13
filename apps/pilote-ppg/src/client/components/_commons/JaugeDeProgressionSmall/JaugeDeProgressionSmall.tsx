@@ -36,7 +36,7 @@ export const JaugeDeProgressionSmall: FunctionComponent<
           >
             {`${pourcentage?.toFixed(0) ?? "- "}%`}
           </p>
-          <p className="fr-text--xs mb-0 text-center">{libellé}</p>
+          <p className="text-xs print:text-base mb-0 text-center">{libellé}</p>
         </div>
       </div>
     </div>

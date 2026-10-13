@@ -149,11 +149,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   {indicateurNomAvecUnite}
                 </h4>
                 <div className="ml-4 mb-6">
-                  <p className="mb-0 fr-text--xs texte-gris">
+                  <p className="text-xs print:text-base mb-0 texte-gris">
                     Identifiant de l'indicateur :{" "}
                     <strong>{indicateur.id}</strong>
                   </p>
-                  <p className="mb-0 fr-text--xs texte-gris">
+                  <p className="text-xs print:text-base mb-0 texte-gris">
                     Dernière mise à jour de la valeur d'avancement pour le
                     territoire :{" "}
                     <span className="font-bold">

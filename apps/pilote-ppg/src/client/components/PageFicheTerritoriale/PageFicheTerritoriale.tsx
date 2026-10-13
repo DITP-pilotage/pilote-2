@@ -30,7 +30,7 @@ export const PageFicheTerritoriale: FunctionComponent<
   const now = new Date();
 
   return (
-    <div className="print:[&_.fr-text--xl]:text-[0.8rem] print:[&_.fr-text--lg]:text-[0.9rem] print:[&_.fr-text--md]:text-[0.8rem] print:[&_.fr-text--md]:leading-[1.1rem] print:[&_.fr-text--sm]:text-[0.6rem] print:[&_.fr-text--sm]:leading-4 print:[&_.fr-text--xs]:text-[0.6rem] print:[&_.fr-text--xs]:leading-4 print:[&_div.fr-grid-row]:text-[0.7rem] print:[&_.bloc__contenu]:pt-2 print:[&_.marianne-logo]:text-[0.8rem] print:[&_.marianne-logo]:after:bg-[position:0_calc(100%+0.875rem)] print:[&_.marianne-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.marianne-logo]:before:mb-0 print:[&_.marianne-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.marianne-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
+    <div className="print:[&_.text-lead]:text-[0.8rem] print:[&_.text-lg]:text-[0.9rem] print:[&_.text-base]:text-[0.8rem] print:[&_.text-base]:leading-[1.1rem] print:[&_.text-sm]:text-[0.6rem] print:[&_.text-sm]:leading-4 print:[&_.text-xs]:text-[0.6rem] print:[&_.text-xs]:leading-4 print:[&_div.fr-grid-row]:text-[0.7rem] print:[&_.bloc__contenu]:pt-2 print:[&_.marianne-logo]:text-[0.8rem] print:[&_.marianne-logo]:after:bg-[position:0_calc(100%+0.875rem)] print:[&_.marianne-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.marianne-logo]:before:mb-0 print:[&_.marianne-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.marianne-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
       <HeaderFicheTerritoriale />
       <main>
         <div className="fr-container pb-4 pt-4 print:pt-0">
@@ -45,7 +45,7 @@ export const PageFicheTerritoriale: FunctionComponent<
             </div>
           </TitleBand>
           <p className="px-4 m-0">
-            <i className="fr-text--sm fr-ital">
+            <i className="m-[var(--text-spacing)] text-sm print:text-base fr-ital">
               {`Fiche de synthèse généré le ${now.toLocaleString()}`}
             </i>
           </p>
@@ -56,7 +56,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                 <Bloc>
                   <div className="flex flex-col items-center">
                     <TitreInfobulleConteneur className="mb-4">
-                      <h2 className="fr-text--md mb-0 py-1 inline">
+                      <h2 className="m-[var(--text-spacing)] text-base mb-0 py-1 inline">
                         Taux d'avancement moyen
                       </h2>
                       <Infobulle>
@@ -75,7 +75,7 @@ export const PageFicheTerritoriale: FunctionComponent<
               <Bloc className="print:h-full">
                 <div className="fr-grid-row">
                   <TitreInfobulleConteneur>
-                    <h2 className="fr-text--md mb-0 py-1 inline">
+                    <h2 className="m-[var(--text-spacing)] text-base mb-0 py-1 inline">
                       Répartition des météos renseignées
                     </h2>
                     <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
@@ -86,7 +86,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="ORAGE" />
                         </div>
-                        <span className="pl-2 fr-text--sm m-0">
+                        <span className="text-sm print:text-base pl-2 m-0">
                           Le déploiement du chantier prioritaire rencontrent des
                           difficultés importantes qui empêche la réalisation des
                           objectifs fixée.
@@ -98,7 +98,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="NUAGE" />
                         </div>
-                        <span className="pl-2 fr-text--sm m-0">
+                        <span className="text-sm print:text-base pl-2 m-0">
                           Le déploiement du chantier prioritaire rencontre des
                           obstacles importants. Une intervention directe du
                           directeur de projet est nécessaire afin de résoudre
@@ -106,12 +106,12 @@ export const PageFicheTerritoriale: FunctionComponent<
                         </span>
                       </div>
                     </li>
-                    <li className="mb-2 fr-text--sm">
+                    <li className="m-[var(--text-spacing)] text-sm print:text-base mb-2">
                       <div className="flex items-center">
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="COUVERT" />
                         </div>
-                        <span className="pl-2 fr-text--sm m-0">
+                        <span className="text-sm print:text-base pl-2 m-0">
                           Le déploiement du chantier prioritaire ne rencontre
                           pas de difficultés majeures. Les possibles difficultés
                           sont résolues directement sur le terrain.
@@ -123,7 +123,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                         <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="SOLEIL" />
                         </div>
-                        <span className="pl-2 fr-text--sm m-0">
+                        <span className="text-sm print:text-base pl-2 m-0">
                           Le chantier prioritaire se déploie sans difficultés.
                           Aucun appui nécessaire.
                         </span>
@@ -133,7 +133,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                   <div className="w-full px-4 mb-2">
                     <RépartitionMétéo météos={répartitionMétéos} />
                   </div>
-                  <span className="mb-0 fr-text--sm">
+                  <span className="m-[var(--text-spacing)] text-sm print:text-base mb-0">
                     Les météos sont saisies plusieurs fois par an par un
                     responsable local sous la responsabilité des préfectures
                   </span>
@@ -144,7 +144,7 @@ export const PageFicheTerritoriale: FunctionComponent<
           <div className="px-4 mt-4">
             <Bloc>
               <div className="flex w-full justify-between">
-                <h2 className="fr-text--lg mb-0 py-1 inline">
+                <h2 className="m-[var(--text-spacing)] text-lg mb-0 py-1 inline">
                   {`Liste des chantiers (${chantiersFicheTerritoriale.length})`}
                 </h2>
                 <div className="flex items-center">

@@ -88,7 +88,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="fr-text fr-text--sm mb-2">
+                  <p className="text-sm print:text-base fr-text mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
 
@@ -126,11 +126,11 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     />
                   </div>
 
-                  <p className="fr-text--sm mt-4">
+                  <p className="text-sm print:text-base mt-4">
                     En accusant réception, vous informez le territoire que vous
                     avez pris connaissance de sa proposition.
                   </p>
-                  <p className="fr-text--sm">
+                  <p className="text-sm print:text-base">
                     Afin de favoriser le dialogue avec le territoire, nous vous
                     invitons à partager ci-dessous toutes les informations qui
                     peuvent vous être nécessaires afin de prendre une décision
@@ -181,10 +181,10 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="fr-text fr-text--sm mb-2">
+                      <p className="text-sm print:text-base fr-text mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
-                      <p className="fr-text--sm mb-0">
+                      <p className="text-sm print:text-base mb-0">
                         <span>
                           Valeur d'avancement proposée le{" "}
                           {formaterDate(
@@ -205,7 +205,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                           />{" "}
                           :{" "}
                         </span>
-                        <span className="fr-text--bold">
+                        <span className="font-bold">
                           {detailIndicateur.proposition?.valeurAvancement} (
                           {formaterDate(
                             detailIndicateur.proposition?.dateValeurAvancement,
@@ -215,8 +215,8 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                         </span>
                       </p>
                       {reactHookForm.getValues("motif") && (
-                        <p className="fr-text--sm mb-0">
-                          <span className="fr-text--bold">
+                        <p className="text-sm print:text-base mb-0">
+                          <span className="font-bold">
                             Informations complémentaires :
                           </span>{" "}
                           <span className="italic">

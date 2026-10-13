@@ -7,8 +7,8 @@ const HeaderFicheTerritoriale: FunctionComponent = () => {
       <header className="flex px-8 mb-0" role="banner">
         <Logo />
         <div className="pt-2 ml-10">
-          <p className="fr-text--xl fr-text--bold mb-0">PILOTE</p>
-          <p className="fr-text--sm mb-0">
+          <p className="text-lead font-bold mb-0">PILOTE</p>
+          <p className="text-sm print:text-base mb-0">
             Piloter l'action publique par les résultats
           </p>
         </div>

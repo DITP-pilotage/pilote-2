@@ -61,10 +61,10 @@ const LABEL_WIDTHS: Record<ProgressBarSize, string> = {
 // Les tailles de texte gardent les classes du DSFR : l'impression de la fiche
 // territoriale les cible pour réduire les textes.
 const LABEL_SIZES: Record<ProgressBarSize, string> = {
-  xxs: "fr-text--xs",
-  xs: "fr-text--xs",
-  sm: "fr-text--xs",
-  md: "fr-text--sm",
+  xxs: "text-xs print:text-base",
+  xs: "text-xs print:text-base",
+  sm: "text-xs print:text-base",
+  md: "text-sm print:text-base",
   lg: "text-h1 md:text-h1-md font-bold text-dsfr-grey-50",
 };
 
@@ -132,10 +132,10 @@ export const ProgressBar = ({
           </p>
           {tooltip ? (
             <Infobulle styleIconInfoBulle="question">
-              <p className="fr-text--sm fr-text-title--blue-france">
+              <p className="text-sm print:text-base fr-text-title--blue-france">
                 Taux d'avancement :
               </p>
-              <p className="fr-text--sm mb-0">{tooltip}</p>
+              <p className="text-sm print:text-base mb-0">{tooltip}</p>
             </Infobulle>
           ) : null}
         </div>

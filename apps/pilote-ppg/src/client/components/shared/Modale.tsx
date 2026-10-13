@@ -61,7 +61,7 @@ export const Modale = ({
               {title}
             </Dialog.Title>
             {sousTitre ? (
-              <p className={clsxm("fr-text--lg font-bold", sousTitreClassName)}>
+              <p className={clsxm("text-lg font-bold", sousTitreClassName)}>
                 {sousTitre}
               </p>
             ) : null}

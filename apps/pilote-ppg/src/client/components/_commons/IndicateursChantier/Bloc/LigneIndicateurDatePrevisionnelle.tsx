@@ -25,10 +25,10 @@ export const LigneIndicateurDatePrevisionnelle = () => {
           : "text-dsfr-mention-grey",
       )}
     >
-      <p className="mb-0 fr-text--xs pr-1">
+      <p className="text-xs print:text-base mb-0 pr-1">
         Date prévisionnelle de la prochaine mise à jour des données (de
         l'indicateur) :{" "}
-        <span className="fr-text--bold">
+        <span className="font-bold">
           {indicateurEstApplicable
             ? (dateProchaineDateMaj ??
               "Données requises mais non renseignées par l'équipe projet")

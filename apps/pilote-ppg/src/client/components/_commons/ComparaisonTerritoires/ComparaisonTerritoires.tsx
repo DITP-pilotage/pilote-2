@@ -41,7 +41,7 @@ export const ComparaisonTerritoires = <T extends string>({
       }
     >
       {mode === "card" && (
-        <span className="fr-text--xl font-bold m-0">
+        <span className="text-lead font-bold m-0">
           Comparaison territoriale et évolution
         </span>
       )}
