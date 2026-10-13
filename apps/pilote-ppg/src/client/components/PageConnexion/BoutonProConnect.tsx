@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import { Badge } from "@/components/shared/Badge";
 import { useEnv } from "@/client/hooks/useEnv";
 

@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { parseAsString, useQueryState } from "nuqs";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";

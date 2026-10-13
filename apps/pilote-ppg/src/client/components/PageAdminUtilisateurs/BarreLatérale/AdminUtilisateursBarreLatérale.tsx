@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";

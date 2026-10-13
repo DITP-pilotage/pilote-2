@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import { Badge } from "@/components/shared/Badge";
 import { ChantierFicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 
 const classBadge = (

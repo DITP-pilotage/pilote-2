@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import { Button } from "@/components/shared/Button";
 import { Badge } from "@/components/shared/Badge";
 import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";

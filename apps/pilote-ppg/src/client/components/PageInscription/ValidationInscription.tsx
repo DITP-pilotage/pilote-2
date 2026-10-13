@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";
 import success from "@gouvfr/dsfr/dist/artwork/pictograms/system/success.svg";
 import { FunctionComponent } from "react";

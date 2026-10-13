@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";

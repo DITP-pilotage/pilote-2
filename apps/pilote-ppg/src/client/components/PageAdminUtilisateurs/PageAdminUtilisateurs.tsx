@@ -7,7 +7,6 @@ import TableauAdminUtilisateurs from "@/components/PageAdminUtilisateurs/Tableau
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import AlerteProps from "@/client/components/_commons/Alerte/Alerte.interface";
 import { AdminUtilisateursBarreLatérale } from "@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale";
-import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
