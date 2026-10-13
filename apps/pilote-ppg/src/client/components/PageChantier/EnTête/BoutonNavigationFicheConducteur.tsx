@@ -19,7 +19,7 @@ export const BoutonNavigationFicheConducteur = ({
     href={`/chantier/${chantierId}/fiche-conducteur?jalon=${jalon}`}
     title="Fiche conducteur"
   >
-    <Icone className="w-4 h-4 !text-current" icone={ArticleContourIcon} />
+    <Icone className="w-4 h-4 text-current" icone={ArticleContourIcon} />
     Fiche conducteur
   </Link>
 );

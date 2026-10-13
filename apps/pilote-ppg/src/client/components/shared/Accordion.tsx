@@ -10,29 +10,29 @@ import "./accordion.css";
 // Source unique des classes : la NodeView de l'editeur les redeclarait et le
 // contenu avait fini decale de 8px par rapport a son en-tete.
 export const CLASSES_ENTETE_ACCORDEON =
-  "flex !mb-0 !bg-dsfr-blue-france-925 border-t !border-t-primary";
+  "flex mb-0 bg-dsfr-blue-france-925 border-t border-t-primary";
 
 export const CLASSES_DECLENCHEUR_ACCORDEON = clsxm(
-  "flex flex-1 items-center justify-between !p-4 font-medium !text-base text-left !mb-0",
-  "hover:!bg-dsfr-blue-france-925-hover transition-colors",
+  "flex flex-1 items-center justify-between p-4 font-medium text-base text-left mb-0",
+  "hover:bg-dsfr-blue-france-925-hover transition-colors",
   "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
 );
 
-export const CLASSES_CONTENU_ACCORDEON = "!bg-dsfr-alt-blue-france px-4 py-3";
+export const CLASSES_CONTENU_ACCORDEON = "bg-dsfr-alt-blue-france px-4 py-3";
 
 // Rendu de l'accordéon standard du DSFR : transparent et texte bleu une fois
 // fermé, fond bleu clair une fois ouvert.
 export const CLASSES_ITEM_ACCORDEON_DSFR =
   "border-b-0 border-t border-dsfr-grey-900 last:border-b";
 
-export const CLASSES_ENTETE_ACCORDEON_DSFR = "!bg-transparent border-t-0";
+export const CLASSES_ENTETE_ACCORDEON_DSFR = "bg-transparent border-t-0";
 
-export const CLASSES_CONTENU_ACCORDEON_DSFR = "!bg-transparent";
+export const CLASSES_CONTENU_ACCORDEON_DSFR = "bg-transparent";
 
 export const CLASSES_INTERIEUR_ACCORDEON_DSFR = "pt-4 pb-6";
 
 export const CLASSES_DECLENCHEUR_ACCORDEON_DSFR =
-  "!py-3 !text-primary hover:!bg-dsfr-grey-1000 data-[state=open]:!bg-dsfr-blue-france-925 data-[state=open]:hover:!bg-dsfr-blue-france-925-hover";
+  "py-3 text-primary hover:bg-dsfr-grey-1000 data-[state=open]:bg-dsfr-blue-france-925 data-[state=open]:hover:bg-dsfr-blue-france-925-hover";
 
 export const Accordion = Object.assign({}, RadixAccordion, {
   Item: ({
@@ -85,7 +85,7 @@ export const Accordion = Object.assign({}, RadixAccordion, {
     <RadixAccordion.Content
       {...props}
       className={clsxm(
-        "!bg-dsfr-alt-blue-france overflow-hidden accordion-content",
+        "bg-dsfr-alt-blue-france overflow-hidden accordion-content",
         props.className,
       )}
     >

@@ -34,7 +34,7 @@ export const Tooltip = Object.assign({}, RadixTooltip, {
         type="button"
         {...props}
         className={clsxm(
-          "block !-mx-2 !-my-1 !px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
+          "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
           props.className,
         )}
       />

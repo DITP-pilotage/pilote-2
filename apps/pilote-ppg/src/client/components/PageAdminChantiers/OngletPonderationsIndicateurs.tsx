@@ -54,10 +54,10 @@ const LignePonderation = ({
             render={({ field }) => (
               <input
                 className={clsxm(
-                  "w-full text-right border rounded !py-1 !px-2",
+                  "w-full text-right border rounded py-1 px-2",
                   applicable
-                    ? "!bg-white border-dsfr-grey-900"
-                    : "!bg-dsfr-grey-1000 border-dsfr-grey-1000 text-dsfr-grey-900",
+                    ? "bg-white border-dsfr-grey-900"
+                    : "bg-dsfr-grey-1000 border-dsfr-grey-1000 text-dsfr-grey-900",
                 )}
                 disabled={!applicable}
                 onChange={(event) =>

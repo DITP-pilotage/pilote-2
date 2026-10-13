@@ -87,10 +87,10 @@ export const AlbertDashboardFilters = ({
         <button
           aria-pressed={filtres[champ]}
           className={clsxm(
-            "!px-3 !py-2 !text-sm !rounded-md !border",
+            "px-3 py-2 text-sm rounded-md border",
             filtres[champ]
-              ? "!bg-dsfr-blue-france-sun-113 !text-white !border-dsfr-blue-france-sun-113"
-              : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900",
+              ? "bg-dsfr-blue-france-sun-113 text-white border-dsfr-blue-france-sun-113"
+              : "bg-white text-dsfr-grey-200 border-dsfr-grey-900",
           )}
           key={champ}
           onClick={() => toggleBooleen(champ)}

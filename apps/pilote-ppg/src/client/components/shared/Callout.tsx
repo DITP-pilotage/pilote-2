@@ -53,44 +53,44 @@ const colorVariants: Record<
 > = {
   info: {
     bg: "bg-dsfr-info-950",
-    border: "!border-l-dsfr-info-main-525",
-    iconColor: "!text-dsfr-info-main-525",
+    border: "border-l-dsfr-info-main-525",
+    iconColor: "text-dsfr-info-main-525",
   },
   success: {
     bg: "bg-dsfr-green-emeraude-975",
-    border: "!border-l-dsfr-success-425",
-    iconColor: "!text-dsfr-success-425",
+    border: "border-l-dsfr-success-425",
+    iconColor: "text-dsfr-success-425",
   },
   warning: {
     bg: "bg-dsfr-warning-950",
-    border: "!border-l-dsfr-warning-425",
-    iconColor: "!text-dsfr-warning-425",
+    border: "border-l-dsfr-warning-425",
+    iconColor: "text-dsfr-warning-425",
   },
   error: {
     bg: "bg-dsfr-warning-950",
-    border: "!border-l-dsfr-error-425",
-    iconColor: "!text-dsfr-error-425",
+    border: "border-l-dsfr-error-425",
+    iconColor: "text-dsfr-error-425",
   },
   blue: {
     bg: "bg-dsfr-alt-blue-france",
-    border: "!border-l-primary",
-    iconColor: "!text-primary",
+    border: "border-l-primary",
+    iconColor: "text-primary",
   },
   moutarde: {
     bg: "bg-dsfr-moutarde-main-975",
-    border: "!border-l-dsfr-moutarde-main-679",
-    iconColor: "!text-dsfr-moutarde-main-679",
+    border: "border-l-dsfr-moutarde-main-679",
+    iconColor: "text-dsfr-moutarde-main-679",
   },
   neutral: {
     bg: "bg-dsfr-grey-1000",
-    border: "!border-l-dsfr-grey-625",
-    iconColor: "!text-dsfr-grey-200",
+    border: "border-l-dsfr-grey-625",
+    iconColor: "text-dsfr-grey-200",
   },
   // Reproduit la « mise en avant » du DSFR (fr-callout).
   highlight: {
     bg: "bg-dsfr-grey-950",
-    border: "!border-l-dsfr-blue-france-525",
-    iconColor: "!text-primary",
+    border: "border-l-dsfr-blue-france-525",
+    iconColor: "text-primary",
   },
 };
 
@@ -121,7 +121,7 @@ const CalloutRoot = ({
       <div
         {...props}
         className={clsxm(
-          "!border-l-4 p-4 flex gap-3 items-start",
+          "border-l-4 p-4 flex gap-3 items-start",
           variant.bg,
           variant.border,
           className,

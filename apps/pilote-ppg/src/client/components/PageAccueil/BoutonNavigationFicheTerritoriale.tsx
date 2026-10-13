@@ -13,7 +13,7 @@ export const BoutonNavigationFicheTerritoriale = ({
   if (territoireCode === "NAT-FR") {
     return (
       <div className="inline-flex items-center gap-1 w-fit pb-0.5 text-sm text-dsfr-grey-625">
-        <Icone className="w-4 h-4 !text-current" icone={ArticleContourIcon} />
+        <Icone className="w-4 h-4 text-current" icone={ArticleContourIcon} />
         Fiche territoriale
       </div>
     );

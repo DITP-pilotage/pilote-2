@@ -102,9 +102,9 @@ const colonnes = reactTableColonnesHelper.columns([
             {props.getValue() ? "Inactif" : "Actif"}
           </span>
           {props.getValue() ? (
-            <Icone className="!text-error" icone={CloseCircleIcon} />
+            <Icone className="text-error" icone={CloseCircleIcon} />
           ) : (
-            <Icone className="!text-success" icone={SuccessIcon} />
+            <Icone className="text-success" icone={SuccessIcon} />
           )}
         </div>
       );

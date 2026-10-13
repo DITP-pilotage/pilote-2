@@ -11,10 +11,10 @@ export const ButtonTag = ({
       {...props}
       className={clsxm(
         className,
-        "!py-1 !px-3 rounded-full max-w-[30ch] truncate",
+        "py-1 px-3 rounded-full max-w-[30ch] truncate",
         {
-          "!bg-primary !text-white": isActive,
-          "!bg-dsfr-blue-france-925 text-primary": !isActive,
+          "bg-primary text-white": isActive,
+          "bg-dsfr-blue-france-925 text-primary": !isActive,
         },
       )}
       type="button"

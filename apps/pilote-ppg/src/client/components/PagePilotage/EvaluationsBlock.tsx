@@ -52,7 +52,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
                     <Tooltip.Root>
                       <Tooltip.Trigger
                         aria-label="Afficher le nom de l'objectif"
-                        className="!px-0"
+                        className="px-0"
                       >
                         <Icone
                           aria-hidden

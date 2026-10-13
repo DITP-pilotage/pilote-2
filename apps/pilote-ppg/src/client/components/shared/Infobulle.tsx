@@ -64,9 +64,9 @@ export const Infobulle: FunctionComponent<
       <Popover.Portal>
         <Popover.Content
           className={clsxm(
-            "z-[10000] min-w-[400px] max-w-[500px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg border border-dsfr-blue-france-sun-113 shadow-[0_4px_2px_rgba(0,0,0,0.1)] p-3 pointer-events-none whitespace-normal break-words [&_.fr-text--sm]:!m-0",
-            classNameInfoBulle === "infobull--sm" && "!min-w-[250px] !p-0",
-            classNameInfoBulle === "tooltip-accordeon" && "!max-w-[50vw]",
+            "z-[10000] min-w-[400px] max-w-[500px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg border border-dsfr-blue-france-sun-113 shadow-[0_4px_2px_rgba(0,0,0,0.1)] p-3 pointer-events-none whitespace-normal break-words [&_.fr-text--sm]:m-0",
+            classNameInfoBulle === "infobull--sm" && "min-w-[250px] p-0",
+            classNameInfoBulle === "tooltip-accordeon" && "max-w-[50vw]",
             classNameInfoBulle,
           )}
           collisionPadding={10}

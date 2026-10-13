@@ -77,7 +77,7 @@ export const ExportRapportDownload = ({
       {isReady && (
         <Button
           iconLeft={
-            <Icone className="h-4 w-4 !text-current" icone={DownloadIcon} />
+            <Icone className="h-4 w-4 text-current" icone={DownloadIcon} />
           }
           onClick={handleDownload}
           size="sm"
