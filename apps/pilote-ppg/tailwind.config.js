@@ -62,6 +62,7 @@ module.exports = {
         "dsfr-grey-950": "#EEEEEE",
         "dsfr-error-425": "#CE0500",
         "dsfr-moutarde-main-679": "#C3992A",
+        "dsfr-red-marianne-main-472": "#E1000F",
         "dsfr-moutarde-main-850": "#FCC63A",
         "dsfr-moutarde-main-925": "#FDE2B5",
         "dsfr-moutarde-main-975": "#FEF5E8",

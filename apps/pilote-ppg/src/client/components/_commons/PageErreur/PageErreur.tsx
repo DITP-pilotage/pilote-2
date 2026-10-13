@@ -1,5 +1,5 @@
-import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";
-import technicalError from "@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg";
+import ovoidBackground from "../../../../../public/dsfr/artwork/background/ovoid.svg";
+import technicalError from "../../../../../public/dsfr/artwork/pictograms/system/technical-error.svg";
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 
@@ -32,31 +32,31 @@ const PageErreur: FunctionComponent<PageErreurProps> = ({
               <div className="fr-col-12 fr-col-md-3 fr-col-offset-md-1 fr-p-0">
                 <svg
                   aria-hidden="true"
-                  className="fr-responsive-img fr-artwork"
+                  className="h-auto w-full"
                   height="150"
                   viewBox="0 0 160 200"
                   width="160"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <use
-                    className="fr-artwork-motif"
+                    className="fill-dsfr-grey-925"
                     href={`${ovoidBackground.src}#artwork-motif`}
                   />
                   <use
-                    className="fr-artwork-background"
+                    className="fill-dsfr-grey-1000"
                     href={`${ovoidBackground.src}#artwork-background`}
                   />
                   <g transform="translate(40, 60)">
                     <use
-                      className="fr-artwork-decorative"
+                      className="fill-dsfr-blue-france-950"
                       href={`${technicalError.src}#artwork-decorative`}
                     />
                     <use
-                      className="fr-artwork-minor"
+                      className="fill-dsfr-red-marianne-main-472"
                       href={`${technicalError.src}#artwork-minor`}
                     />
                     <use
-                      className="fr-artwork-major"
+                      className="fill-dsfr-blue-france-sun-113"
                       href={`${technicalError.src}#artwork-major`}
                     />
                   </g>

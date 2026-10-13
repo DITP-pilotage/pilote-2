@@ -1,8 +1,8 @@
 import { Button } from "@/components/shared/Button";
 import Image from "next/image";
-import carteFranceSvg from "@gouvfr/dsfr/dist/artwork/pictograms/map/location-france.svg";
-import visualisationDonnéesSvg from "@gouvfr/dsfr/dist/artwork/pictograms/digital/data-visualization.svg";
-import téléchargementFichierSvg from "@gouvfr/dsfr/dist/artwork/pictograms/document/document-download.svg";
+import carteFranceSvg from "../../../../public/dsfr/artwork/pictograms/map/location-france.svg";
+import visualisationDonnéesSvg from "../../../../public/dsfr/artwork/pictograms/digital/data-visualization.svg";
+import téléchargementFichierSvg from "../../../../public/dsfr/artwork/pictograms/document/document-download.svg";
 import Link from "next/link";
 import Head from "next/head";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
