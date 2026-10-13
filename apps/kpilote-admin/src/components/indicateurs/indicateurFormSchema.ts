@@ -1,6 +1,10 @@
 import { z } from 'zod'
 
-import type { IndicateurApiModel, UpsertIndicateurBody } from '@pilote/kpilote-shared/indicateur'
+import type {
+  CreateIndicateurBody,
+  IndicateurApiModel,
+  UpsertIndicateurBody,
+} from '@pilote/kpilote-shared/indicateur'
 import {
   configurationIndicateurReferentielSchema,
   indicateurSourceUrlSchema,
@@ -9,70 +13,69 @@ import {
   uniteDureeSchema,
   uniteIndicateurCodeSchema,
 } from '@pilote/kpilote-shared/indicateur'
+import { slugSchema } from '@pilote/kpilote-shared/slug'
 
 import { emptyToNull } from '@/lib/emptyToNull'
 
 // Schéma du formulaire (valeurs saisies, toutes en chaînes natives). La
-// conversion vers le body PUT — `'' → null`, `jour → number` — est faite par
-// `toUpsertBody`. La validation de `id` dépend du mode (create : identifiant
-// requis et formaté ; edit : verrouillé, donc non validé).
-export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
-  z
-    .object({
-      id:
-        mode === 'create' ? z.string().regex(/^IND-\d+$/, 'Format attendu : IND-001') : z.string(),
-      nom: z.string().trim().min(1, 'Le nom est requis'),
-      visibilite: indicateurVisibiliteSchema,
-      unite: z.union([z.literal(''), uniteIndicateurCodeSchema]),
-      description: z.string(),
-      methodeCalcul: z.string(),
-      sourceDonnees: z.string(),
-      sourceUrl: z.union([z.literal(''), indicateurSourceUrlSchema]),
-      periodeMiseAJour: z.union([z.literal(''), periodeMiseAJourSchema]),
-      jourMiseAJour: z
-        .string()
-        .refine(
-          (value) =>
-            value === '' || (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 31),
-          'Entier entre 1 et 31',
-        ),
-      delaiNombre: z
-        .string()
-        .refine(
-          (value) => value === '' || (/^\d+$/.test(value) && Number(value) >= 1),
-          'Entier ≥ 1',
-        ),
-      delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
-      referentiels: z.array(configurationIndicateurReferentielSchema),
-      responsables: z.array(
-        z.object({
-          id: z.string(),
-          nom: z.string(),
-          prenom: z.string(),
-          email: z.string(),
-        }),
+// conversion vers le body d'écriture — `'' → null`, `jour → number` — est faite
+// par `toUpsertBody` / `toCreateBody`. `id` n'est jamais saisi : attribué par
+// l'API à la création, verrouillé en édition. `slug` ne sert qu'à la création,
+// pour imposer un identifiant plutôt que de le laisser dériver du nom.
+export const indicateurFormSchema = z
+  .object({
+    id: z.string(),
+    slug: z.union([z.literal(''), slugSchema]),
+    nom: z.string().trim().min(1, 'Le nom est requis'),
+    visibilite: indicateurVisibiliteSchema,
+    unite: z.union([z.literal(''), uniteIndicateurCodeSchema]),
+    description: z.string(),
+    methodeCalcul: z.string(),
+    sourceDonnees: z.string(),
+    sourceUrl: z.union([z.literal(''), indicateurSourceUrlSchema]),
+    periodeMiseAJour: z.union([z.literal(''), periodeMiseAJourSchema]),
+    jourMiseAJour: z
+      .string()
+      .refine(
+        (value) =>
+          value === '' || (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 31),
+        'Entier entre 1 et 31',
       ),
-    })
-    // Le délai (nombre + unité) est optionnel, mais indissociable : les deux
-    // champs doivent être remplis ensemble, sinon `toUpsertBody` effacerait
-    // silencieusement la saisie. On pose l'erreur sur le champ manquant.
-    .superRefine((values, ctx) => {
-      const nombreRempli = values.delaiNombre !== ''
-      const uniteRemplie = values.delaiUnite !== ''
-      if (nombreRempli !== uniteRemplie) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Renseignez le nombre et l’unité, ou laissez les deux vides',
-          path: [nombreRempli ? 'delaiUnite' : 'delaiNombre'],
-        })
-      }
-    })
+    delaiNombre: z
+      .string()
+      .refine((value) => value === '' || (/^\d+$/.test(value) && Number(value) >= 1), 'Entier ≥ 1'),
+    delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
+    referentiels: z.array(configurationIndicateurReferentielSchema),
+    responsables: z.array(
+      z.object({
+        id: z.string(),
+        nom: z.string(),
+        prenom: z.string(),
+        email: z.string(),
+      }),
+    ),
+  })
+  // Le délai (nombre + unité) est optionnel, mais indissociable : les deux
+  // champs doivent être remplis ensemble, sinon `toUpsertBody` effacerait
+  // silencieusement la saisie. On pose l'erreur sur le champ manquant.
+  .superRefine((values, ctx) => {
+    const nombreRempli = values.delaiNombre !== ''
+    const uniteRemplie = values.delaiUnite !== ''
+    if (nombreRempli !== uniteRemplie) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Renseignez le nombre et l’unité, ou laissez les deux vides',
+        path: [nombreRempli ? 'delaiUnite' : 'delaiNombre'],
+      })
+    }
+  })
 
-export type IndicateurFormValues = z.infer<ReturnType<typeof buildIndicateurFormSchema>>
+export type IndicateurFormValues = z.infer<typeof indicateurFormSchema>
 
 export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurFormValues {
   return {
     id: indicateur?.id ?? '',
+    slug: '',
     nom: indicateur?.nom ?? '',
     visibilite: indicateur?.visibilite ?? 'PUBLIC',
     unite: indicateur?.unite?.code ?? '',
@@ -98,8 +101,8 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
   }
 }
 
-// Mappe les valeurs du formulaire vers le body PUT. Les 6 métadonnées sont
-// toujours envoyées (chaîne vide → null = « effacer ») : ce que montre le
+// Mappe les valeurs du formulaire vers le body d'écriture. Les 6 métadonnées
+// sont toujours envoyées (chaîne vide → null = « effacer ») : ce que montre le
 // formulaire est ce qui est persisté.
 export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody {
   return {
@@ -118,5 +121,13 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
         : { nombre: Number(values.delaiNombre), unite: values.delaiUnite },
     referentiels: values.referentiels,
     responsables: values.responsables.map((responsable) => responsable.id),
+  }
+}
+
+// À la création, un identifiant laissé vide est dérivé du nom par l'API.
+export function toCreateBody(values: IndicateurFormValues): CreateIndicateurBody {
+  return {
+    ...toUpsertBody(values),
+    ...(values.slug !== '' && { slug: values.slug }),
   }
 }
