@@ -1,20 +1,20 @@
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
-import { PrismaCommentaireRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaCommentaireRepository";
+import { PrismaPublicationRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaPublicationRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
-describe("PrismaCommentaireRepository", () => {
-  let prismaCommentaireRepository: PrismaCommentaireRepository;
+describe("PrismaPublicationRepository (objectifs)", () => {
+  let prismaPublicationRepository: PrismaPublicationRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new PrismaCommentaireRepository({
+    prismaPublicationRepository = new PrismaPublicationRepository({
       prisma: new PrismaPilote(),
     });
   });
 
   describe("#anonymiserAuteurs", () => {
     it(
-      "doit anonymiser l'auteur de modification des commentaires saisis par l'utilisateur supprimé",
+      "doit anonymiser l'auteur de modification des objectifs saisis par l'utilisateur supprimé",
       createIntegrationTest(async (tx) => {
         // Given
         const auteurNonCible = await fixtures.utilisateur();
@@ -24,61 +24,45 @@ describe("PrismaCommentaireRepository", () => {
         });
 
         const chantier = await fixtures.chantierIdentite();
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          zone_id: "FRANCE",
-        });
 
-        await fixtures.commentaire({
+        await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_modification_id: auteurNonCible.id,
           auteur_creation_id: auteurNonCible.id,
         });
-        const commentaire2 = await fixtures.commentaire({
+        const objectif2 = await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_modification_id: auteurASupprimer.id,
           auteur_creation_id: auteurNonCible.id,
         });
-        const commentaire3 = await fixtures.commentaire({
+        const objectif3 = await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_modification_id: auteurASupprimer.id,
           auteur_creation_id: auteurNonCible.id,
         });
 
         // When
-        await prismaCommentaireRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
 
         // Then
-        const commentairesAnonymises = await tx.commentaire.findMany({
+        const objectifsAnonymises = await tx.objectif.findMany({
           where: { auteur_modification_id: auteurAnonyme.id },
         });
-        expect(commentairesAnonymises).toEqual([
-          expect.objectContaining({ id: commentaire2.id }),
-          expect.objectContaining({ id: commentaire3.id }),
+        expect(objectifsAnonymises).toEqual([
+          expect.objectContaining({ id: objectif2.id }),
+          expect.objectContaining({ id: objectif3.id }),
         ]);
       }),
     );
 
     it(
-      "doit anonymiser l'auteur de création des commentaires saisis par l'utilisateur supprimé",
+      "doit anonymiser l'auteur de création des objectifs saisis par l'utilisateur supprimé",
       createIntegrationTest(async (tx) => {
         // Given
         const auteurNonCible = await fixtures.utilisateur();
@@ -88,55 +72,39 @@ describe("PrismaCommentaireRepository", () => {
         });
 
         const chantier = await fixtures.chantierIdentite();
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          zone_id: "FRANCE",
-        });
 
-        await fixtures.commentaire({
+        await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_creation_id: auteurNonCible.id,
           auteur_modification_id: auteurNonCible.id,
         });
-        const commentaire2 = await fixtures.commentaire({
+        const objectif2 = await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_creation_id: auteurASupprimer.id,
           auteur_modification_id: auteurNonCible.id,
         });
-        const commentaire3 = await fixtures.commentaire({
+        const objectif3 = await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_creation_id: auteurASupprimer.id,
           auteur_modification_id: auteurNonCible.id,
         });
 
         // When
-        await prismaCommentaireRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
 
         // Then
-        const commentairesAnonymises = await tx.commentaire.findMany({
+        const objectifsAnonymises = await tx.objectif.findMany({
           where: { auteur_creation_id: auteurAnonyme.id },
         });
-        expect(commentairesAnonymises).toEqual([
-          expect.objectContaining({ id: commentaire2.id }),
-          expect.objectContaining({ id: commentaire3.id }),
+        expect(objectifsAnonymises).toEqual([
+          expect.objectContaining({ id: objectif2.id }),
+          expect.objectContaining({ id: objectif3.id }),
         ]);
       }),
     );
@@ -152,61 +120,45 @@ describe("PrismaCommentaireRepository", () => {
         });
 
         const chantier = await fixtures.chantierIdentite();
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          zone_id: "FRANCE",
-        });
 
         // auteur_creation = auteurASupprimer, auteur_modification = auteurNonCible
-        const commentaireCreationCible = await fixtures.commentaire({
+        const objectifCreationCible = await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_creation_id: auteurASupprimer.id,
           auteur_modification_id: auteurNonCible.id,
         });
         // auteur_creation = auteurNonCible, auteur_modification = auteurASupprimer
-        const commentaireModificationCible = await fixtures.commentaire({
+        const objectifModificationCible = await fixtures.objectifChantier({
           chantier_id: chantier.id,
-          territoire_code: "NAT-FR",
-          maille: "NAT",
-          code_insee: "FR",
-          type: "commentaires_sur_les_donnees",
+          type: "a_faire",
           auteur_creation_id: auteurNonCible.id,
           auteur_modification_id: auteurASupprimer.id,
         });
 
         // When
-        await prismaCommentaireRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
 
         // Then
-        const commentaires = await tx.commentaire.findMany({
+        const objectifs = await tx.objectif.findMany({
           where: {
             id: {
-              in: [
-                commentaireCreationCible.id,
-                commentaireModificationCible.id,
-              ],
+              in: [objectifCreationCible.id, objectifModificationCible.id],
             },
           },
         });
-        expect(commentaires).toEqual(
+        expect(objectifs).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
-              id: commentaireCreationCible.id,
+              id: objectifCreationCible.id,
               auteur_creation_id: auteurAnonyme.id,
               auteur_modification_id: auteurNonCible.id,
             }),
             expect.objectContaining({
-              id: commentaireModificationCible.id,
+              id: objectifModificationCible.id,
               auteur_creation_id: auteurNonCible.id,
               auteur_modification_id: auteurAnonyme.id,
             }),

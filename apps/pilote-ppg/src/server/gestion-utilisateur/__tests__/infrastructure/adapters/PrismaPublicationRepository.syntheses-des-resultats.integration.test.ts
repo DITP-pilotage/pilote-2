@@ -1,16 +1,15 @@
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
-import { PrismaSyntheseDesResultatsRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
+import { PrismaPublicationRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaPublicationRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
-describe("PrismaSyntheseDesResultatsRepository", () => {
-  let prismaSyntheseDesResultatsRepository: PrismaSyntheseDesResultatsRepository;
+describe("PrismaPublicationRepository (syntheses-des-resultats)", () => {
+  let prismaPublicationRepository: PrismaPublicationRepository;
 
   beforeEach(() => {
-    prismaSyntheseDesResultatsRepository =
-      new PrismaSyntheseDesResultatsRepository({
-        prisma: new PrismaPilote(),
-      });
+    prismaPublicationRepository = new PrismaPublicationRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#anonymiserAuteurs", () => {
@@ -59,7 +58,7 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
         });
 
         // When
-        await prismaSyntheseDesResultatsRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
@@ -120,7 +119,7 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
         });
 
         // When
-        await prismaSyntheseDesResultatsRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
@@ -175,7 +174,7 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
         });
 
         // When
-        await prismaSyntheseDesResultatsRepository.anonymiserAuteurs(
+        await prismaPublicationRepository.anonymiserAuteurs(
           [auteurASupprimer.id],
           "utilisateur.supprime@modernisation.gouv.fr",
         );
