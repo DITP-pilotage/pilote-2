@@ -1,4 +1,4 @@
-import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { EmailManager } from "./EmailManager";
 
 export class StubEmailManager implements EmailManager {

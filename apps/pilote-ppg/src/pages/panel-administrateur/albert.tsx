@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 import { AlbertPanel } from "@/components/PagePanelAdministrateur/Albert/AlbertPanel";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);

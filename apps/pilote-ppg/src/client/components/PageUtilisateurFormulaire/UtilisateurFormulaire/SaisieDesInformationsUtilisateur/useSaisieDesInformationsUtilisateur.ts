@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { UtilisateurFormInputs } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { api } from "@/server/framework/trpc/api";
 import {
   ProfilCode,
@@ -10,7 +10,7 @@ import {
   profilsRégionaux,
   profilsTerritoriaux,
 } from "@/shared/utilisateur/Utilisateur.interface";
-import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from "@/client/utils/arrays";
+import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from "@/utils/arrays";
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import {
   AAccesATousLesUtilisateurs,

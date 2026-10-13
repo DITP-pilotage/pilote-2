@@ -5,7 +5,7 @@ import { auth } from "@/server/authentification/infrastructure/nextauth/[...next
 import PageAdminGestionTokenAPI from "@/components/PageAdminGestionTokenAPI/PageAdminGestionTokenAPI";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 import { getContainer } from "@/server/dependances";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 const PROFIL_AUTORISE_A_MODIFIER = new Set([ProfilEnum.DITP_ADMIN]);

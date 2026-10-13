@@ -1,5 +1,5 @@
 import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
-import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { EvenementValeurEnum } from "@/shared/indicateur/EvenementValeurEnum";
 
 export const estPropositionSupprimee = (detailIndicateur: DétailsIndicateur) =>
   detailIndicateur.propositionStatutTerritoire?.statut ===

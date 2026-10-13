@@ -1,6 +1,6 @@
 import { BrevoClient } from "@getbrevo/brevo";
 import { configuration } from "@/config";
-import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 import { EmailManager } from "./EmailManager";
 
 export class BrevoEmailManager implements EmailManager {

@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import { sauvegarderFiltres } from "@/stores/useFiltresStore/useFiltresStore";
 import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
-import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
+import { trierParOrdreAlphabétique } from "@/utils/arrays";
 import { useSession } from "next-auth/react";
 import {
   SelectField,

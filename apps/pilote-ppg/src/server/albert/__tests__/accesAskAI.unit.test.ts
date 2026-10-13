@@ -2,7 +2,7 @@ import {
   calculerAccesAskAI,
   FeatureFlipsAskAI,
 } from "@/server/albert/accesAskAI";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 const featureFlipsTousDesactives: FeatureFlipsAskAI = {
   askAI: true,

@@ -10,7 +10,7 @@ import { Dropdown } from "@/components/shared/Dropdown";
 import { Collapsible } from "@/components/shared/Collapsible";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 const peutAccederPanelAdministrateur = (
   session: ReturnType<typeof useSession>,

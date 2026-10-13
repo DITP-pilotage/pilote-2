@@ -4,8 +4,8 @@ import { logger } from "@/server/framework/logger";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { recupererUtilisateurAuthentifieOpenApi } from "@/server/app/open-api/endpointOpenApi";
-import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { ForbiddenError } from "@/shared/errors/forbidden-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 
 const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   assert(request.query.chantierId, "Le chantier id est obligatoire");

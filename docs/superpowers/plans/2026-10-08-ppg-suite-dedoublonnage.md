@@ -77,7 +77,7 @@ La bibliothèque DSFR doit disparaître (lot F) : aucun lot ne doit écrire du c
 
 ## Lot E — serveur (stack, du plus mécanique au plus risqué)
 
-- [ ] **E1. Frontière `src/shared` → `@/server`** (S). 7 imports à inverser :
+- [x] **E1. Frontière `src/shared` → `@/server`** (S). (fait : `ProfilEnum`, `EvenementValeurEnum`, erreurs `PiloteError` et d'autorisation dans `shared/errors`, `utils/arrays`, `MinisterePorteur` ; `Profil` serveur (doublon) supprimé ; `src/shared` n'importe plus ni `@/server` ni `@/client`. Reste : deux classes `Habilitation` (shared et `gestion-utilisateur/domain`) à fusionner.) 7 imports à inverser :
   - `ProfilEnum` (`server/app/enum/profil.enum`) → `shared/utilisateur` ;
   - erreurs utilisées par `Habilitation` (`server/utils/errors`) → `shared` ;
   - `Profil` (`server/gestion-utilisateur/domain/Profil`) importé par `profils-gestion-utilisateur.ts` ;

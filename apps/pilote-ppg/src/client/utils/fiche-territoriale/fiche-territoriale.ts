@@ -1,4 +1,4 @@
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 const PROFIL_AUTORISE_A_CONSULTER = new Set([
   ProfilEnum.DITP_ADMIN,

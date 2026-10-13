@@ -1,4 +1,4 @@
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 import type { Inject } from "@/server/rapports-hebdomadaires/module";
 import {
   contenuRapportSchema,

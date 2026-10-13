@@ -1,7 +1,7 @@
 import { createMocks } from "node-mocks-http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { randomUUID } from "node:crypto";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";

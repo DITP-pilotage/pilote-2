@@ -2,7 +2,7 @@ import { territoire as TerritoireModel } from "@prisma/client";
 import { TerritoireRepository } from "@/server/fiche-territoriale/domain/ports/TerritoireRepository";
 import { Territoire } from "@/server/fiche-territoriale/domain/Territoire";
 import { prisma } from "@/server/framework/persistence/prisma";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 
 const convertirEnTerritoire = (
   territoireModel: TerritoireModel,

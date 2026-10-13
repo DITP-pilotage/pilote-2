@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { estAutoriséAImporterDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import { estAutoriséAConsulterLaFicheConducteur } from "@/client/utils/fiche-conducteur/fiche-conducteur";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from "@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";

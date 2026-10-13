@@ -1,6 +1,6 @@
 import { Session } from "next-auth";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
-import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
+import { ForbiddenError } from "@/shared/errors/forbidden-error";
 
 export function checkAdminPermission(
   session: Session & { user: Session["user"] },

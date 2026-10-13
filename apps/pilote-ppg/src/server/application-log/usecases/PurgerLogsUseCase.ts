@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { BadRequestError } from "@/shared/errors/bad-request-error";
 import type { Inject } from "@/server/application-log/module";
 
 const RETENTION_MINIMUM_JOURS = 7;

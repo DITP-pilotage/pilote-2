@@ -4,8 +4,7 @@ import { Axe } from "@/shared/axe/Axe.interface";
 import { Ppg } from "@/shared/ppg/Ppg.interface";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { Meteo } from "@/shared/meteo/Meteo.interface";
-import { MinistereAccueilPorteur } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
-import { MinisterePorteurRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
+import { MinisterePorteur } from "@/shared/ministere/MinisterePorteur.interface";
 
 export type DirecteurAdministrationCentrale = {
   nom: string;
@@ -69,8 +68,7 @@ export type ChantierVueDEnsemble = {
     estTerritorialisé: boolean;
     estBrouillon: boolean;
   };
-  porteur:
-    MinistereAccueilPorteur | MinisterePorteurRapportDetailleContrat | null;
+  porteur: MinisterePorteur | null;
   tendance: ChantierTendance | null;
   écart: number | null;
   dateDeMàjDonnéesQualitatives: string | null;

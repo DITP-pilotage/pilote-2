@@ -1,6 +1,6 @@
 import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
 import { PrismaProfilRepository } from "@/server/authentification/infrastructure/adapters/PrismaProfilRepository";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 
 describe("PrismaProfilRepository", () => {
