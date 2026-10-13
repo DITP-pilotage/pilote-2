@@ -8,7 +8,11 @@ export const displayChoicesInputSchema = z.object({
   choices: z
     .array(
       z.object({
-        label: z.string().describe("Texte à afficher sur le bouton"),
+        label: z
+          .string()
+          .describe(
+            "Texte du bouton, renvoyé tel quel comme message de l'utilisateur : il porte l'identifiant (ex: « CH-005 — Nom du chantier », « Vaucluse (DEPT-84) »)",
+          ),
         value: z
           .string()
           .describe("Valeur à renvoyer lorsque le bouton est cliqué"),
@@ -23,7 +27,7 @@ export type DisplayChoice = z.infer<
 
 export const displayChoicesTool = tool({
   description:
-    "Affiche des choix dans un panneau pour l'utilisateur. Le paramètre 'question' est la question affichée en haut du panneau. Utilise cet outil quand tu veux proposer des options à l'utilisateur. IMPORTANT : écris toujours ton message textuel AVANT d'appeler cet outil. Ne l'appelle jamais sans avoir d'abord rédigé le texte d'accompagnement.",
+    "Affiche des choix cliquables à l'utilisateur. Utilise cet outil dès qu'un doute t'obligerait à choisir à sa place : plusieurs résultats d'une recherche alors qu'il en vise un seul, un numéro de territoire qui peut désigner une région ou un département (« le 84 »), une demande qui se lit de plusieurs façons. Le paramètre 'question' est affiché en haut du panneau. Le 'label' d'un choix est renvoyé tel quel comme message de l'utilisateur : il doit se suffire à lui-même et porter l'identifiant (« Vaucluse (DEPT-84) »). IMPORTANT : écris toujours ton message textuel AVANT d'appeler cet outil.",
   inputSchema: displayChoicesInputSchema,
   execute: async ({
     question,

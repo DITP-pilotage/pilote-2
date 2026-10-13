@@ -6,47 +6,6 @@ import {
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
 describe("detecterCapacities", () => {
-  it("détecte une demande de synthèse explicite", () => {
-    // when
-    const result = detecterCapacities("Fais-moi la synthèse de la Bretagne");
-
-    // then
-    expect(result).toEqual({
-      synthese: true,
-      dashboard: false,
-      exportRapport: false,
-      inclureSousTerritoires: false,
-    });
-  });
-
-  it("détecte une synthèse via 'état des lieux'", () => {
-    // when
-    const result = detecterCapacities(
-      "Donne-moi un état des lieux de l'Île-de-France",
-    );
-
-    // then
-    expect(result).toEqual({
-      synthese: true,
-      dashboard: false,
-      exportRapport: false,
-      inclureSousTerritoires: false,
-    });
-  });
-
-  it("détecte une synthèse via 'résume'", () => {
-    // when
-    const result = detecterCapacities("Résume la situation pour 2025");
-
-    // then
-    expect(result).toEqual({
-      synthese: true,
-      dashboard: false,
-      exportRapport: false,
-      inclureSousTerritoires: false,
-    });
-  });
-
   it("détecte une demande de dashboard via 'cockpit'", () => {
     // when
     const result = detecterCapacities(
@@ -55,7 +14,6 @@ describe("detecterCapacities", () => {
 
     // then
     expect(result).toEqual({
-      synthese: false,
       dashboard: true,
       exportRapport: false,
       inclureSousTerritoires: false,
@@ -70,7 +28,6 @@ describe("detecterCapacities", () => {
 
     // then
     expect(result).toEqual({
-      synthese: false,
       dashboard: true,
       exportRapport: false,
       inclureSousTerritoires: false,
@@ -124,7 +81,6 @@ describe("detecterCapacities", () => {
 
     // then
     expect(result).toEqual({
-      synthese: false,
       dashboard: false,
       exportRapport: true,
       inclureSousTerritoires: false,
@@ -139,7 +95,7 @@ describe("detecterCapacities", () => {
     expect(result.exportRapport).toBe(true);
   });
 
-  it("active toutes les capacités sur une demande mixte", () => {
+  it("active dashboard et export sur une demande mixte", () => {
     // when
     const result = detecterCapacities(
       "Fais une synthèse puis un dashboard et exporte en PDF",
@@ -147,7 +103,6 @@ describe("detecterCapacities", () => {
 
     // then
     expect(result).toEqual({
-      synthese: true,
       dashboard: true,
       exportRapport: true,
       inclureSousTerritoires: false,
@@ -162,27 +117,10 @@ describe("detecterCapacities", () => {
 
     // then
     expect(result).toEqual({
-      synthese: false,
       dashboard: false,
       exportRapport: false,
       inclureSousTerritoires: false,
     });
-  });
-
-  it("est insensible à la casse", () => {
-    // when
-    const result = detecterCapacities("FAIS-MOI UNE SYNTHÈSE");
-
-    // then
-    expect(result.synthese).toBe(true);
-  });
-
-  it("détecte 'synthese' sans accent", () => {
-    // when
-    const result = detecterCapacities("fais une synthese rapide");
-
-    // then
-    expect(result.synthese).toBe(true);
   });
 
   it.each([
