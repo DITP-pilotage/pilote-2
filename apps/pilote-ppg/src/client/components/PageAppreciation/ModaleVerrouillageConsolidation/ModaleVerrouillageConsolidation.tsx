@@ -18,7 +18,7 @@ import { Tooltip } from "@/components/shared/Tooltip";
 
 const TooltipNonTraite = ({ children }: PropsWithChildren) => (
   <Tooltip.Root>
-    <Tooltip.Trigger className="!my-0">{children}</Tooltip.Trigger>
+    <Tooltip.Trigger className="my-0">{children}</Tooltip.Trigger>
     <Tooltip.Content>
       Les appréciations de ce territoire ne sont pas toutes marquées comme
       traitées.

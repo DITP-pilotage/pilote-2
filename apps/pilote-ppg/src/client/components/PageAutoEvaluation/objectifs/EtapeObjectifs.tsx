@@ -47,7 +47,7 @@ export function EtapeObjectifs() {
               <div className="flex items-center gap-2">
                 {ficheCadrageACompleter ? (
                   <Infobulle
-                    classNameBouton="!text-dsfr-warning-425 !fr-btn-sm"
+                    classNameBouton="text-dsfr-warning-425 !fr-btn-sm"
                     styleIconInfoBulle="warning"
                   >
                     Éditez la fiche de cadrage afin de compléter le descriptif
