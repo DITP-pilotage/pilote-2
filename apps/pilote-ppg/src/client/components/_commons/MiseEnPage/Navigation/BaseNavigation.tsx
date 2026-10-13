@@ -95,7 +95,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
                     !aConsulteLaDerniereNouveaute ? (
                       <span
                         aria-hidden
-                        className="absolute -right-2.5 -top-1 text-[0.625rem] leading-none !text-error"
+                        className="absolute -right-2.5 -top-1 text-[0.625rem] leading-none text-error"
                       >
                         ●
                       </span>

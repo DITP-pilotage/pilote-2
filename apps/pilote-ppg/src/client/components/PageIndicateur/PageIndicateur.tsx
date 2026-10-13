@@ -82,7 +82,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
               <div className="flex">
                 <Link
                   aria-label="Retour à l'accueil"
-                  className="flex items-center gap-2 !text-primary"
+                  className="flex items-center gap-2 text-primary"
                   href="/panel-administrateur/indicateurs"
                 >
                   <Icone className="w-4 h-4" icone={ArrowLine3Icon} />

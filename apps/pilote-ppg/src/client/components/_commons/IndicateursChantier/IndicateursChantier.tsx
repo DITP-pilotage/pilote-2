@@ -78,7 +78,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 <Accordion.Item className="border-b-0" value={valeurAccordeon}>
                   <Accordion.Header
                     asChild
-                    className="border-t-0 !bg-transparent"
+                    className="border-t-0 bg-transparent"
                   >
                     <div>
                       <Accordion.Trigger
@@ -95,8 +95,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         <TitreRubrique
                           classNameTitre={
                             chantier.statut === "ARCHIVE"
-                              ? "!m-0 !text-dsfr-grey-200"
-                              : "!m-0"
+                              ? "m-0 text-dsfr-grey-200"
+                              : "m-0"
                           }
                           nombreIndicateurRubrique={
                             indicateursDeCetteRubrique.length
@@ -108,7 +108,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                     </div>
                   </Accordion.Header>
                   <Accordion.Content
-                    className="!bg-transparent"
+                    className="bg-transparent"
                     innerClassName="p-0"
                   >
                     {indicateursDeCetteRubrique

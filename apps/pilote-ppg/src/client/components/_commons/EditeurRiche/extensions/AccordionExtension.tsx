@@ -62,7 +62,7 @@ function AccordionNodeView({ node, updateAttributes, editor }: NodeViewProps) {
         <div
           className={clsxm(
             "overflow-hidden transition-all duration-200",
-            isOpen ? CLASSES_CONTENU_ACCORDEON : "!bg-dsfr-alt-blue-france",
+            isOpen ? CLASSES_CONTENU_ACCORDEON : "bg-dsfr-alt-blue-france",
           )}
           style={isOpen ? undefined : { maxHeight: 0, padding: 0 }}
         >

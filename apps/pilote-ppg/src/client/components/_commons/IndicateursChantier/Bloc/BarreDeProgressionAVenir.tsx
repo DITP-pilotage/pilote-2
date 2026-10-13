@@ -19,7 +19,7 @@ export const BarreDeProgressionAVenir = ({
       <div className="flex items-center gap-1">
         <div className="font-bold">à venir</div>
         <Infobulle
-          classNameBouton="!-my-1 !text-current"
+          classNameBouton="-my-1 text-current"
           styleIconInfoBulle="question"
         >
           {estPropositionAccepteeOuAccepteeAvecModification(

@@ -45,7 +45,7 @@ const SectionBouton = ({
         className={clsxm(
           "border border-gray-200 rounded min-w-[250px] flex items-center gap-3 !py-2 !mx-0",
           {
-            "!bg-dsfr-alt-blue-france !text-primary":
+            "bg-dsfr-alt-blue-france text-primary":
               currentApplication === application.id,
           },
         )}
@@ -73,7 +73,7 @@ export const BoutonApplicationsPilote = () => {
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
       <Dropdown.Trigger asChild>
         <button
-          className="flex items-center !p-0 !text-primary !text-sm"
+          className="flex items-center p-0 text-primary text-sm"
           type="button"
         >
           <Icone icone={GridIcon} />

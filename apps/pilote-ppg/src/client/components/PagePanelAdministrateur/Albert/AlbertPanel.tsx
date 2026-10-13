@@ -35,7 +35,7 @@ export const AlbertPanel = () => {
   return (
     <div>
       <Tabs items={ITEMS} onValueChange={changerOnglet} value={ongletActif} />
-      <div className="!mt-6">
+      <div className="mt-6">
         {ongletActif === "discussion" ? <AlbertChat /> : <AlbertDashboard />}
       </div>
     </div>

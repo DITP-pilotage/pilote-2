@@ -13,9 +13,9 @@ export function ListePersonnes({
   personnes: PersonneAnnuaire[];
 }) {
   return (
-    <ul className="!m-0 !p-0 list-none flex flex-col gap-3">
+    <ul className="m-0 p-0 list-none flex flex-col gap-3">
       {personnes.map((personne) => (
-        <li className="!p-0" key={personne.id}>
+        <li className="p-0" key={personne.id}>
           <BlocPersonne personne={personne} />
         </li>
       ))}
@@ -29,9 +29,9 @@ export function ListeTerritoires({
   territoires: TerritoireAnnuaire[];
 }) {
   return (
-    <ul className="!m-0 !p-0 list-none flex flex-col gap-2">
+    <ul className="m-0 p-0 list-none flex flex-col gap-2">
       {territoires.map((territoire) => (
-        <li className="!p-0 flex items-start gap-2" key={territoire.code}>
+        <li className="p-0 flex items-start gap-2" key={territoire.code}>
           <div className="flex flex-col">
             <span className="text-sm font-medium">{territoire.nom}</span>
             {territoire.maille === "DEPT" && (
@@ -56,10 +56,10 @@ export function ListeAffectations({
   }[];
 }) {
   return (
-    <ul className="!m-0 !p-0 list-none flex flex-col gap-1.5">
+    <ul className="m-0 p-0 list-none flex flex-col gap-1.5">
       {affectations.map(({ chantier, territoire }) => (
         <li
-          className="!p-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm"
+          className="p-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm"
           key={`${chantier.id}|${territoire.code}`}
         >
           <span

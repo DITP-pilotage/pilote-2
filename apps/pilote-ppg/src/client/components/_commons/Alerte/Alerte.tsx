@@ -73,10 +73,10 @@ const Alerte: FunctionComponent<AlerteProps> = ({
       >
         <Icone className="w-6 h-6 text-white" icone={variante.icone} />
       </div>
-      <div className="flex-1 pt-4 pb-3 pl-4 pr-9 [&_h3]:!mb-1 [&_h3]:text-xl [&_h3]:leading-7 [&_h3]:font-bold [&_p:last-child]:!mb-0">
+      <div className="flex-1 pt-4 pb-3 pl-4 pr-9 [&_h3]:mb-1 [&_h3]:text-xl [&_h3]:leading-7 [&_h3]:font-bold [&_p:last-child]:mb-0">
         {!!titre && <h3>{titre}</h3>}
         {message ? (
-          <p className={clsxm("!mb-0", classesMessagePolice)}>{message}</p>
+          <p className={clsxm("mb-0", classesMessagePolice)}>{message}</p>
         ) : null}
         {children}
       </div>

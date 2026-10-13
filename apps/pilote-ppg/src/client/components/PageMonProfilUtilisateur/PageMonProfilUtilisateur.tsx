@@ -90,7 +90,7 @@ const PageMonProfilUtilisateurContent = () => {
             type="text"
             {...register("serviceAutre")}
           />
-          <p className="!text-sm">
+          <p className="text-sm">
             Afin de nous aider à compléter cette liste, merci de nous indiquer
             votre rattachement. Cette information ne sera pas publiée dans un
             premier temps.
@@ -138,8 +138,8 @@ export const PageMonProfilUtilisateur = () => {
             <form onSubmit={form.handleSubmit(soumettreFormulaire)}>
               <Bloc className="fr-px-10w fr-py-6w flex flex-col gap-4">
                 <div>
-                  <h2 className="!mb-2 !text-lg">Identification</h2>
-                  <p className="!text-xs !text-dsfr-mention-grey !mb-8">
+                  <h2 className="mb-2 text-lg">Identification</h2>
+                  <p className="text-xs text-dsfr-mention-grey mb-8">
                     Tous les champs sont obligatoires.
                   </p>
                 </div>
@@ -160,7 +160,7 @@ export const PageMonProfilUtilisateur = () => {
                   >
                     Enregistrer
                   </Button>
-                  <p className="!text-sm !text-dsfr-mention-grey !mb-0">
+                  <p className="text-sm text-dsfr-mention-grey mb-0">
                     {`Modifié le ${PiloteDateFormatter.isoDateTimeFranceMetropolitaine(profilUtilisateur.dateModification)}`}
                   </p>
                 </div>

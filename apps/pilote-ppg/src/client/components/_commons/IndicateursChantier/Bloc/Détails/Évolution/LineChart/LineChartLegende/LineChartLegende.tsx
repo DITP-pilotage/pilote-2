@@ -8,37 +8,37 @@ import { TagToggleGroup } from "@/components/shared/Tag";
 
 const PALETTE_CHECKBOX_CLASSES: Record<string, string> = {
   "#68A532":
-    "data-[state=checked]:!bg-dsfr-green-bourgeon-main-640 data-[state=checked]:!border-dsfr-green-bourgeon-main-640",
+    "data-[state=checked]:bg-dsfr-green-bourgeon-main-640 data-[state=checked]:border-dsfr-green-bourgeon-main-640",
   "#A558A0":
-    "data-[state=checked]:!bg-dsfr-purple-glycine-main-494 data-[state=checked]:!border-dsfr-purple-glycine-main-494",
+    "data-[state=checked]:bg-dsfr-purple-glycine-main-494 data-[state=checked]:border-dsfr-purple-glycine-main-494",
   "#417DC4":
-    "data-[state=checked]:!bg-dsfr-blue-cumulus-main-526 data-[state=checked]:!border-dsfr-blue-cumulus-main-526",
+    "data-[state=checked]:bg-dsfr-blue-cumulus-main-526 data-[state=checked]:border-dsfr-blue-cumulus-main-526",
   "#C8AA39":
-    "data-[state=checked]:!bg-dsfr-yellow-tournesol-main-731 data-[state=checked]:!border-dsfr-yellow-tournesol-main-731",
+    "data-[state=checked]:bg-dsfr-yellow-tournesol-main-731 data-[state=checked]:border-dsfr-yellow-tournesol-main-731",
   "#009081":
-    "data-[state=checked]:!bg-dsfr-green-menthe-main-548 data-[state=checked]:!border-dsfr-green-menthe-main-548",
+    "data-[state=checked]:bg-dsfr-green-menthe-main-548 data-[state=checked]:border-dsfr-green-menthe-main-548",
   "#E18B76":
-    "data-[state=checked]:!bg-dsfr-pink-macaron-main-689 data-[state=checked]:!border-dsfr-pink-macaron-main-689",
+    "data-[state=checked]:bg-dsfr-pink-macaron-main-689 data-[state=checked]:border-dsfr-pink-macaron-main-689",
   "#465F9D":
-    "data-[state=checked]:!bg-dsfr-blue-ecume-main-400 data-[state=checked]:!border-dsfr-blue-ecume-main-400",
+    "data-[state=checked]:bg-dsfr-blue-ecume-main-400 data-[state=checked]:border-dsfr-blue-ecume-main-400",
   "#C08C65":
-    "data-[state=checked]:!bg-dsfr-brown-caramel-main-648 data-[state=checked]:!border-dsfr-brown-caramel-main-648",
+    "data-[state=checked]:bg-dsfr-brown-caramel-main-648 data-[state=checked]:border-dsfr-brown-caramel-main-648",
   "#00A95F":
-    "data-[state=checked]:!bg-dsfr-green-emeraude-main-632 data-[state=checked]:!border-dsfr-green-emeraude-main-632",
+    "data-[state=checked]:bg-dsfr-green-emeraude-main-632 data-[state=checked]:border-dsfr-green-emeraude-main-632",
   "#E4794A":
-    "data-[state=checked]:!bg-dsfr-orange-terre-battue-main-645 data-[state=checked]:!border-dsfr-orange-terre-battue-main-645",
+    "data-[state=checked]:bg-dsfr-orange-terre-battue-main-645 data-[state=checked]:border-dsfr-orange-terre-battue-main-645",
   "#0078F3":
-    "data-[state=checked]:!bg-dsfr-info-main-525 data-[state=checked]:!border-dsfr-info-main-525",
+    "data-[state=checked]:bg-dsfr-info-main-525 data-[state=checked]:border-dsfr-info-main-525",
   "#D1B781":
-    "data-[state=checked]:!bg-dsfr-brown-cafe-creme-main-782 data-[state=checked]:!border-dsfr-brown-cafe-creme-main-782",
+    "data-[state=checked]:bg-dsfr-brown-cafe-creme-main-782 data-[state=checked]:border-dsfr-brown-cafe-creme-main-782",
   "#1F8D49":
-    "data-[state=checked]:!bg-dsfr-green-foret data-[state=checked]:!border-dsfr-green-foret",
+    "data-[state=checked]:bg-dsfr-green-foret data-[state=checked]:border-dsfr-green-foret",
   "#CE614A":
-    "data-[state=checked]:!bg-dsfr-pink-tuile-main-556 data-[state=checked]:!border-dsfr-pink-tuile-main-556",
+    "data-[state=checked]:bg-dsfr-pink-tuile-main-556 data-[state=checked]:border-dsfr-pink-tuile-main-556",
   "#009099":
-    "data-[state=checked]:!bg-dsfr-green-archipel-main-557 data-[state=checked]:!border-dsfr-green-archipel-main-557",
+    "data-[state=checked]:bg-dsfr-green-archipel-main-557 data-[state=checked]:border-dsfr-green-archipel-main-557",
   "#AEA397":
-    "data-[state=checked]:!bg-dsfr-beige-gris-galet-main-702 data-[state=checked]:!border-dsfr-beige-gris-galet-main-702",
+    "data-[state=checked]:bg-dsfr-beige-gris-galet-main-702 data-[state=checked]:border-dsfr-beige-gris-galet-main-702",
 };
 
 interface LineChartLegendeProps {

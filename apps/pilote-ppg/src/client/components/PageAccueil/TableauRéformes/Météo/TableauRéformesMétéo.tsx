@@ -39,13 +39,13 @@ const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> =
         <MeteoPicto meteo={météo} />
       ) : (
         <span
-          className={`!text-xs !text-dsfr-mention-grey ${libelléMétéosÀPartirDeLaTaille[taille].className}`}
+          className={`text-xs text-dsfr-mention-grey ${libelléMétéosÀPartirDeLaTaille[taille].className}`}
         >
           {libelléMétéosÀPartirDeLaTaille[taille].texte(météo)}
         </span>
       )}
       {dateDeMàjDonnéesQualitatives ? (
-        <span className="!text-dsfr-mention-grey !text-[10px]">
+        <span className="text-dsfr-mention-grey text-[10px]">
           {`(${formaterDate(dateDeMàjDonnéesQualitatives, "MM/YYYY")})`}
         </span>
       ) : null}

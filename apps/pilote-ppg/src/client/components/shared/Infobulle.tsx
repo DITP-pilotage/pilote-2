@@ -40,7 +40,7 @@ export const Infobulle: FunctionComponent<
         <button
           aria-describedby={estOuverte ? idContenu : undefined}
           className={clsxm(
-            "inline-flex items-center justify-center rounded-full !p-0 !text-primary transition-opacity hover:!bg-transparent hover:opacity-75",
+            "inline-flex items-center justify-center rounded-full p-0 text-primary transition-opacity hover:bg-transparent hover:opacity-75",
             classNameBouton,
           )}
           onBlur={fermer}
@@ -54,7 +54,7 @@ export const Infobulle: FunctionComponent<
             className={clsxm(
               styleIconInfoBulle === "information"
                 ? "text-current"
-                : "!text-current",
+                : "text-current",
               classNameIcone,
             )}
             icone={ICONES[styleIconInfoBulle]}

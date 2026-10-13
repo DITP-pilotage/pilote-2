@@ -76,7 +76,7 @@ export const LignesPropositionValeurAvancement = ({
                       detailIndicateur={detailIndicateurDuTerritoire}
                       détailTerritoireSélectionné={détailTerritoireSélectionné}
                     />
-                    <Infobulle classNameBouton="!text-current">
+                    <Infobulle classNameBouton="text-current">
                       <p>
                         En accusant réception, vous informez le territoire que
                         vous avez pris connaissance de sa proposition. Il vous

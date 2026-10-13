@@ -21,13 +21,13 @@ export const BaseIndicateurEvolution = forwardRef<
   const modeImpression = mode === "impression";
 
   return (
-    <section className="!p-10" ref={ref}>
+    <section className="p-10" ref={ref}>
       <div className="flex justify-between items-start gap-4 mb-2">
         <div>
           <h5 className="text-lg mb-0">
             Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
           </h5>
-          <p className="fr-text--xs !text-dsfr-mention-grey">
+          <p className="fr-text--xs text-dsfr-mention-grey">
             {`Mis à jour le : ${indicateur.dateDeMiseAJour} | Source : ${indicateur.source ?? "Non renseigné"}`}
           </p>
         </div>

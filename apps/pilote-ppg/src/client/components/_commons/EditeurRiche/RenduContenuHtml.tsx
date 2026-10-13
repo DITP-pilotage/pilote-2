@@ -190,7 +190,7 @@ export const classesRenduContenuHtml = [
   "[&_h4]:text-[16px] [&_h4]:font-bold [&_h4]:mt-5 [&_h4]:mb-2",
   "[&_h5]:text-[15px] [&_h5]:font-bold [&_h5]:mt-4 [&_h5]:mb-1",
   "[&_h6]:text-[14px] [&_h6]:font-bold [&_h6]:mt-4 [&_h6]:mb-1",
-  "[&_hr]:!my-6 [&_hr]:border-dsfr-grey-925",
+  "[&_hr]:my-6 [&_hr]:border-dsfr-grey-925",
   "[&_ul]:pl-6 [&_ol]:pl-8 [&_ul]:list-disc [&_ol]:list-decimal",
   "[&_blockquote]:border-l-4 [&_blockquote]:border-dsfr-blue-france-850",
   "[&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-dsfr-mention-grey",

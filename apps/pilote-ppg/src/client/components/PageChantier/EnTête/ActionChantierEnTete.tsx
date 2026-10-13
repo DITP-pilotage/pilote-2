@@ -31,7 +31,7 @@ export const ActionChantierEnTete: FunctionComponent<{
           <BoutonImpression
             className={
               chantierEstArchive
-                ? "!text-dsfr-grey-200 !border-dsfr-grey-200"
+                ? "text-dsfr-grey-200 border-dsfr-grey-200"
                 : ""
             }
           />

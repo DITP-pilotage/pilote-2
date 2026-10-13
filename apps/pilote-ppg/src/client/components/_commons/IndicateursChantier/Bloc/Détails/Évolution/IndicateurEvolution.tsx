@@ -128,7 +128,7 @@ export const IndicateurEvolution: FunctionComponent<{
   const actionButtons = (
     <div className="flex items-end flex-col gap-3">
       <button
-        className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm whitespace-nowrap"
+        className="flex items-center gap-2 text-dsfr-blue-france-sun-113 font-medium text-sm whitespace-nowrap"
         onClick={enregistrerCommeImage}
         type="button"
       >
