@@ -17,7 +17,7 @@ import {
   PpgForm,
   usePpgForm,
 } from "@/components/PageAdminPpgs/usePpgForm";
-import { SectionTitle } from "@/components/_commons/SectionTitle";
+import { SectionTitle } from "@/components/shared/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
 interface Props {

@@ -65,7 +65,9 @@ export const FormulaireParametrageSourceIndicateur = () => {
     <FormProvider {...form}>
       <div className="flex flex-column">
         <div className="flex justify-between align-center !mb-2">
-          <h2 className="fr-h2 fr-mb-0">Configuration des métadonnées</h2>
+          <h2 className="text-h2 md:text-h2-md mb-0">
+            Configuration des métadonnées
+          </h2>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={ajouterChamp} type="button">
               Ajouter un champ

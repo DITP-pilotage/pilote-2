@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import { Button } from "@/components/shared/Button";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
-import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import FormulaireIndicateur from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur";
 import ResultatValidationFichier from "@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier";
@@ -25,12 +24,12 @@ const EtapeChargerFichier: FunctionComponent<{
 }> = ({ indicateur, indicateurId, setRapport, rapport, chantierId }) => {
   return (
     <>
-      <Titre baliseHtml="h4">
+      <h4>
         {
           wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
             .ETAPE_CHARGER_FICHIER.TITRE
         }
-      </Titre>
+      </h4>
       <p>
         {
           wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT

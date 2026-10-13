@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import ExplicationEtapeIndicateur from "./ExplicationEtapeIndicateur/ExplicationEtapeIndicateur";
 
@@ -43,12 +42,12 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
   return (
     <section className="bg-dsfr-grey-1000">
       <div className="fr-container fr-pt-2w fr-pb-3w">
-        <Titre baliseHtml="h2" className="fr-h4 text-primary">
+        <h2 className="text-h4 md:text-h4-md text-primary">
           {
             wording.PAGE_IMPORT_MESURE_INDICATEUR
               .SECTION_EXPLICATION_ETAPE_IMPORT.TITRE
           }
-        </Titre>
+        </h2>
         <ol className="fr-grid-row fr-grid-row--gutters fr-m-0 fr-p-0">
           {explicationsEtapeImport.map(({ titre, texte }, index) => (
             <li

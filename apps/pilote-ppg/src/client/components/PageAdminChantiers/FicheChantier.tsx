@@ -20,6 +20,7 @@ import { MultiSelectPorteursDAC } from "@/components/PageAdminChantiers/champs/M
 import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 import { Maille } from "@/server/parametrage-chantier/domain/maille";
+import { SectionTitle } from "@/components/shared/SectionTitle";
 
 const OPTIONS_STATUT: SelectFieldOption<$Enums.type_statut>[] = [
   { libelle: "Brouillon", valeur: "BROUILLON" },
@@ -44,12 +45,6 @@ function maillesAttendues(
     ? ["NAT", "REG", "DEPT"]
     : ["NAT", "REG"];
 }
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
-    {children}
-  </h2>
-);
 
 const FicheChantier = () => {
   const form = useFormContext<ChantierForm>();

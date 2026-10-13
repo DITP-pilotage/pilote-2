@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { MenuLateralPanelAdministrateur } from "@/components/PagePanelAdministrateur/MenuLateralPanelAdministrateur/MenuLateralPanelAdministrateur";
 
 export const PagePanelAdministrateur = ({
@@ -14,9 +13,7 @@ export const PagePanelAdministrateur = ({
       <MenuLateralPanelAdministrateur pageActive={pageActive} />
       <main className="flex-grow">
         <div className="fr-mt-4w fr-mx-4w fr-mb-3w">
-          <Titre baliseHtml="h1" className="fr-h1 fr-mb-3w">
-            Panel Administrateur
-          </Titre>
+          <h1 className="text-h1 md:text-h1-md mb-6">Panel Administrateur</h1>
           {children}
         </div>
       </main>

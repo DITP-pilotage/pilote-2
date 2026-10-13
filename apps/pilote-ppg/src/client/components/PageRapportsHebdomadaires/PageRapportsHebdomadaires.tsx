@@ -23,7 +23,7 @@ const PageRapportsHebdomadaires = () => {
           <div className="fr-text--sm fr-text--bold mb-2">
             {rapports.length} rapport{rapports.length > 1 ? "s" : ""}
           </div>
-          <h2 className="fr-h6 mb-4">Mes rapports</h2>
+          <h2 className="text-h6 md:text-h6-md mb-4">Mes rapports</h2>
         </BarreLatéraleEncart>
 
         <div>
@@ -60,7 +60,9 @@ const PageRapportsHebdomadaires = () => {
       <main className="md:col-span-2 md:grid md:grid-cols-subgrid md:grid-rows-[auto_1fr]">
         <div className="fr-background-blue-france-850 col-span-2 grid grid-cols-subgrid">
           <div className="fr-container py-6">
-            <h1 className="fr-h3 fr-mb-0">Rapports hebdomadaires</h1>
+            <h1 className="text-h3 md:text-h3-md mb-0">
+              Rapports hebdomadaires
+            </h1>
           </div>
         </div>
 

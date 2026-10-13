@@ -7,7 +7,6 @@ import { useAskAIAccess } from "@/components/PageAccueil/useAskAIAccess";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
-import Titre from "@/components/_commons/Titre/Titre";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
 import { FiltresActifs } from "@/components/PageAccueil/FiltresActifs/FiltresActifs";
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
@@ -135,17 +134,16 @@ export const BasePageAccueilLayout: FunctionComponent<
           setEstOuvert={setEstOuverteBarreLatérale}
         >
           <BarreLatéraleEncart>
-            <Titre
-              baliseHtml="h1"
+            <h1
               className={clsxm(
-                `fr-h2 fr-p-0 fr-mb-3w`,
+                "text-h2 md:text-h2-md p-0 mb-6",
                 chantiersSontArchives
                   ? "titre-gris"
-                  : "fr-text-title--blue-france",
+                  : "text-dsfr-blue-france-sun-113",
               )}
             >
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
-            </Titre>
+            </h1>
             <div className="flex flex-col items-start gap-2">
               {estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",

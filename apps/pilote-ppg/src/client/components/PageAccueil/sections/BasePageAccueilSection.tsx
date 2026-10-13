@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
@@ -27,22 +26,11 @@ export const BasePageAccueilSection = ({
         <div>
           {infobulle ? (
             <TitreInfobulleConteneur className={titreConteneurClassName}>
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v leading-6"
-                estInline
-              >
-                {titre}
-              </Titre>
+              <h2 className="text-lg mb-0 py-1 leading-6 inline">{titre}</h2>
               <Infobulle>{infobulle}</Infobulle>
             </TitreInfobulleConteneur>
           ) : (
-            <Titre
-              baliseHtml="h2"
-              className="fr-text--lg fr-mb-0 fr-py-1v leading-6"
-            >
-              {titre}
-            </Titre>
+            <h2 className="text-lg mb-0 py-1 leading-6">{titre}</h2>
           )}
           {children}
         </div>

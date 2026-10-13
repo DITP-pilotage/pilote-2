@@ -4,7 +4,6 @@ import { Badge } from "@/components/shared/Badge";
 import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";
 import technicalError from "@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 
 interface PageVideProps {
@@ -17,9 +16,7 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
       <main>
         <div className="fr-px-15w fr-pb-12w fr-container--fluid">
           <div className="fr-grid-row fr-py-4w">
-            <Titre baliseHtml="h1" className="fr-my-auto">
-              {titre}
-            </Titre>
+            <h1 className="my-auto">{titre}</h1>
             <Badge className="ml-6 my-auto bg-dsfr-purple-glycine-950 text-dsfr-purple-glycine-text">
               À venir
             </Badge>
@@ -27,7 +24,9 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
           <Bloc>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
               <div className="fr-p-0 fr-pr-4w fr-col-12 fr-col-md-6">
-                <p className="fr-h4">Service bientôt disponible</p>
+                <p className="text-h4 md:text-h4-md font-bold mb-6 text-dsfr-grey-50">
+                  Service bientôt disponible
+                </p>
                 <p>
                   Merci de bien vouloir revenir ultérieurement, vous serez
                   bientôt en mesure d'accéder au service.

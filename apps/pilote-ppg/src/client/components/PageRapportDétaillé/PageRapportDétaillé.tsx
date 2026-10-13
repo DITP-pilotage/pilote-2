@@ -3,7 +3,6 @@ import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
-import Titre from "@/components/_commons/Titre/Titre";
 import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
 import RapportDétailléVueDEnsemble from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
 import RapportDétailléChantier from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier";
@@ -112,9 +111,9 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
         <main className="py-8 overflow-x-hidden print:p-0">
           <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
             <div className="fr-px-2w fr-px-md-0 flex justify-between print:hidden">
-              <Titre baliseHtml="h1" className="fr-h2">
+              <h1 className="text-h2 md:text-h2-md">
                 {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? "chantiers" : "chantier"}`}
-              </Titre>
+              </h1>
               <div>
                 <Button
                   asChild

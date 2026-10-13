@@ -10,7 +10,6 @@ import { sauvegarderFiltres } from "@/client/stores/useFiltresStore/useFiltresSt
 import { clsxm } from "@/utils/clsxm";
 import { api } from "@/server/framework/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Titre from "@/components/_commons/Titre/Titre";
 import { Infobulle } from "@/components/shared/Infobulle";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
@@ -82,13 +81,9 @@ export const WidgetChantiersSignales = ({
               icon={WarningIcon}
               variant="warning"
             />
-            <Titre
-              baliseHtml="h2"
-              className="fr-text--lg fr-mb-0 fr-py-1v !text-dsfr-warning-425"
-              estInline
-            >
+            <h2 className="text-lg mb-0 py-1 !text-dsfr-warning-425 inline">
               Chantiers signalés
-            </Titre>
+            </h2>
           </div>
           <Infobulle classNameBouton="!text-dsfr-warning-425">
             {INFOBULLE_CONTENUS.chantiers.alertes}

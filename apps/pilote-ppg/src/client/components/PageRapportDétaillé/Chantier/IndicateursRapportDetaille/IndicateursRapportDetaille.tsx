@@ -1,4 +1,3 @@
-import Titre from "@/components/_commons/Titre/Titre";
 import IndicateursProps from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.interface";
 import IndicateurBloc from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
@@ -31,12 +30,9 @@ export default function IndicateursRapportDetaille({
               id={rubriqueIndicateur.ancre}
               key={rubriqueIndicateur.ancre}
             >
-              <Titre
-                baliseHtml="h3"
-                className="fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0"
-              >
+              <h3 className="text-lg mb-2 mx-4 md:mx-0">
                 {`${rubriqueIndicateur.nom} (${indicateursDeCetteRubrique.length})`}
-              </Titre>
+              </h3>
               {!!codeInseeSélectionnée &&
                 indicateursDeCetteRubrique
                   .sort((a, b) =>

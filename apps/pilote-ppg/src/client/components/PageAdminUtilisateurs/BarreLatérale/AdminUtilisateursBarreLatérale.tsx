@@ -6,7 +6,6 @@ import { FunctionComponent } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
-import Titre from "@/components/_commons/Titre/Titre";
 import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
 import { MultiSelectTerritoire } from "@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire";
 import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
@@ -152,9 +151,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
         />
       </BarreLatéraleEncart>
       <div className="fr-px-3w fr-py-2w">
-        <Titre baliseHtml="h2" className="fr-h4">
-          Filtres actifs
-        </Titre>
+        <h2 className="text-h4 md:text-h4-md">Filtres actifs</h2>
         <Button
           variant="secondary"
           onClick={() => {

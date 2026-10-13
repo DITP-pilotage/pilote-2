@@ -2,21 +2,20 @@ import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import ovoidBackground from "@gouvfr/dsfr/dist/artwork/background/ovoid.svg";
 import error from "@gouvfr/dsfr/dist/artwork/pictograms/system/error.svg";
 import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 
 const ErreurInscription: FunctionComponent = () => {
   return (
     <div className="fr-px-15w fr-pb-12w fr-container--fluid">
       <div className="fr-grid-row fr-py-4w">
-        <Titre baliseHtml="h1" className="fr-my-auto">
+        <h1 className="my-auto">
           Erreur lors de votre inscription à l'infolettre
-        </Titre>
+        </h1>
       </div>
       <Bloc>
         <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
           <div className="fr-p-0 fr-pr-4w fr-col-12 fr-col-md-6">
-            <p className="fr-h4">
+            <p className="text-h4 md:text-h4-md font-bold mb-6 text-dsfr-grey-50">
               Une erreur est survenue lors de votre inscription. Votre demande
               n'a pas pu être enregistrée.
             </p>

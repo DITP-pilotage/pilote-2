@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import { Button } from "@/components/shared/Button";
 import { FormProvider } from "react-hook-form";
-import Titre from "@/components/_commons/Titre/Titre";
 import { Table } from "@/components/shared/Table";
 import Bloc from "@/client/components/_commons/Bloc/Bloc";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
@@ -21,9 +20,9 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
       <main>
         <div className="fr-mt-2w fr-mb-3w">
           <div className="fr-container">
-            <Titre baliseHtml="h1" className="fr-h1 fr-mb-2w">
+            <h1 className="text-h1 md:text-h1-md mb-4">
               Gestion des tokens API
-            </Titre>
+            </h1>
             <Bloc>
               {alerte ? (
                 <div className="fr-my-2w">
