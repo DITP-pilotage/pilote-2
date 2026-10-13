@@ -157,7 +157,7 @@ export const BasePageChantierLayout = ({
           />
         </div>
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w hidden print:block print:mb-4 print:[page-break-after:avoid]">
-          <h1 className="text-h2 md:text-h2-md mb-0 !text-[1.875rem] !leading-9">
+          <h1 className="font-bold mb-0 !text-[1.875rem] !leading-9">
             {chantier.nom}
           </h1>
         </div>
