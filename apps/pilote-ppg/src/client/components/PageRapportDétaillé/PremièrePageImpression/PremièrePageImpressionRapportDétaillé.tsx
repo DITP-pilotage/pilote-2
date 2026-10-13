@@ -1,3 +1,4 @@
+import { Logo } from "@/components/shared/Logo";
 import {
   parseAsBoolean,
   parseAsString,
@@ -136,7 +137,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
   return (
     <div className="hidden print:block [page-break-after:always]">
       <header className="flex fr-px-12w fr-mb-6w" role="banner">
-        <p className="fr-logo text-[0.7875rem]">Gouvernement</p>
+        <Logo className="text-[0.7875rem]" />
         <div className="fr-pt-1w fr-ml-5w">
           <p className="fr-text--xl fr-text--bold fr-mb-0">PILOTE</p>
           <p className="fr-text--sm fr-mb-0">
