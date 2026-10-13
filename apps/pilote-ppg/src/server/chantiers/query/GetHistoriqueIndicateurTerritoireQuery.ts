@@ -94,7 +94,7 @@ export class GetHistoriqueIndicateurTerritoireQuery {
     switch (typeEvenement) {
       case "VALEUR_CREEE":
         return {
-          description: `Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur affichée dans PILOTE : ${valeur}.`,
+          description: `Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur importée dans PILOTE : ${valeur}.`,
           categorie: "IMPORT",
         };
       case "VALEUR_MODIFIEE":
@@ -102,7 +102,7 @@ export class GetHistoriqueIndicateurTerritoireQuery {
           description:
             valeur === null
               ? "Import direct par la direction de projet : la valeur d'avancement a été supprimée de PILOTE pour cette date."
-              : `Import direct par la direction de projet : la valeur d'avancement affichée dans PILOTE a été remplacée. Nouvelle valeur affichée dans PILOTE : ${valeur}.`,
+              : `Import direct par la direction de projet : la valeur d'avancement importée dans PILOTE a été remplacée. Nouvelle valeur importée dans PILOTE : ${valeur}.`,
           categorie: "IMPORT",
         };
       case "VALEUR_HISTORISEE":
@@ -136,17 +136,17 @@ export class GetHistoriqueIndicateurTerritoireQuery {
       case "PROPOSITION_VALEUR_REFUSEE":
         return {
           description:
-            "La direction de projet refuse la proposition du territoire : la valeur affichée dans PILOTE ne change pas.",
+            "La direction de projet refuse la proposition du territoire : la valeur importée dans PILOTE ne change pas.",
           categorie: "PROPOSITION",
         };
       case "PROPOSITION_VALEUR_ACCEPTEE":
         return {
-          description: `La direction de projet accepte la proposition du territoire telle quelle. Nouvelle valeur affichée dans PILOTE : ${valeur}.`,
+          description: `La direction de projet accepte la proposition du territoire telle quelle. Nouvelle valeur importée dans PILOTE : ${valeur}.`,
           categorie: "PROPOSITION",
         };
       case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
         return {
-          description: `La direction de projet accepte la proposition du territoire en corrigeant sa valeur. Nouvelle valeur affichée dans PILOTE : ${valeur}.`,
+          description: `La direction de projet accepte la proposition du territoire en corrigeant sa valeur. Nouvelle valeur importée dans PILOTE : ${valeur}.`,
           categorie: "PROPOSITION",
         };
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE":
@@ -154,13 +154,13 @@ export class GetHistoriqueIndicateurTerritoireQuery {
           description:
             valeur === null
               ? "Un import direct par la direction de projet a pris le pas sur la proposition du territoire en cours pour cette date : elle est automatiquement écartée, sans validation. La valeur a été supprimée de PILOTE."
-              : `Un import direct par la direction de projet a pris le pas sur la proposition du territoire en cours pour cette date : elle est automatiquement écartée, sans validation. Nouvelle valeur affichée dans PILOTE : ${valeur}.`,
+              : `Un import direct par la direction de projet a pris le pas sur la proposition du territoire en cours pour cette date : elle est automatiquement écartée, sans validation. Nouvelle valeur importée dans PILOTE : ${valeur}.`,
           categorie: "IMPORT",
         };
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE":
         return {
           description:
-            "Une valeur d'avancement plus récente a été importée pour une date ultérieure, ce qui rend obsolète la proposition du territoire en cours sur cette date : elle est automatiquement écartée, sans validation, sans changer la valeur déjà affichée dans PILOTE.",
+            "Une valeur d'avancement plus récente a été importée pour une date ultérieure, ce qui rend obsolète la proposition du territoire en cours sur cette date : elle est automatiquement écartée, sans validation, sans changer la valeur déjà importée dans PILOTE.",
           categorie: "IMPORT",
         };
       default:
