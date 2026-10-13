@@ -17,12 +17,12 @@ const SynthèseDesRésultatsAffichage = ({
 
   return (
     <>
-      <p className="fr-text--xs texte-gris fr-mb-1w">
+      <p className="fr-text--xs texte-gris mb-2">
         {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, "DD/MM/YYYY")}`}
         {!!synthèseDesRésultats.auteur &&
           ` | Par ${synthèseDesRésultats.auteur}`}
       </p>
-      <div className="fr-text--sm fr-mb-0">
+      <div className="fr-text--sm mb-0">
         <RenduContenuHtml
           className="[&_p]:text-sm [&_p]:mb-1"
           html={synthèseDesRésultats.contenu}

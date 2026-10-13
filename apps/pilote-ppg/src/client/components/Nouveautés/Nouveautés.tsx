@@ -16,8 +16,8 @@ const Nouveautés: FunctionComponent = () => {
   return (
     <div className="[&_p]:mb-0 [&_h4]:my-2 [&_hr]:my-2">
       <main>
-        <div className="fr-container fr-pb-2w">
-          <div className="fr-grid-row fr-py-4w">
+        <div className="fr-container pb-4">
+          <div className="fr-grid-row py-8">
             <h1 className="my-auto">Nouveautés</h1>
           </div>
           {!estChargementListeNouveautes ? (
@@ -34,7 +34,7 @@ const Nouveautés: FunctionComponent = () => {
                         Version{" "}
                         {`${listeNouveautes[0].version} du ${new Date(listeNouveautes[0].date).toLocaleDateString("fr-FR")}`}
                       </h2>
-                      <div className="fr-mb-2w">
+                      <div className="mb-4">
                         <div
                           className="fr-content"
                           dangerouslySetInnerHTML={{
@@ -49,7 +49,7 @@ const Nouveautés: FunctionComponent = () => {
                     .map((element, index) => {
                       return (
                         <div
-                          className="fr-grid-row fr-mb-2w fr-mt-2w"
+                          className="fr-grid-row mb-4 mt-4"
                           key={`nouveauté-${element.date}-${element.id}`}
                         >
                           <div className="fr-col-12">

@@ -5,8 +5,8 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 const Accessibilite: FunctionComponent = () => {
   return (
     <main>
-      <div className="fr-container fr-pb-2w">
-        <div className="fr-grid-row fr-py-4w">
+      <div className="fr-container pb-4">
+        <div className="fr-grid-row py-8">
           <h1 className="my-auto">Accessibilité</h1>
         </div>
         <Bloc>
@@ -75,7 +75,7 @@ const Accessibilite: FunctionComponent = () => {
                 des services du portail et vous n'avez pas obtenu de réponse
                 satisfaisante.
               </p>
-              <p className="fr-mb-0">Vous pouvez :</p>
+              <p className="mb-0">Vous pouvez :</p>
               <ul>
                 <li>
                   Écrire un message au{" "}

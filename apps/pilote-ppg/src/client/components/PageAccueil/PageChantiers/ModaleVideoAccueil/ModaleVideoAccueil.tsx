@@ -42,7 +42,7 @@ export const ModaleVideoAccueil: FunctionComponent<{
           title="Vidéo d'accueil"
           width="100%"
         />
-        <div className="fr-mt-4w flex justify-between gap-2">
+        <div className="mt-8 flex justify-between gap-2">
           <p>
             Retrouvez cette vidéo et d'autres ressources dans le centre d'aide
             de PILOTE

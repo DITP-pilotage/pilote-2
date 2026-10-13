@@ -26,10 +26,10 @@ export const AlbertDock = ({
     <div className="fixed bottom-4 right-4 z-[1750] flex print:hidden h-12 max-w-[380px] items-center gap-2.5 border border-dsfr-grey-900 bg-white pl-2.5 pr-1.5 shadow-md">
       <AlbertMonogramme taille="sm" />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-medium leading-[18px] text-dsfr-grey-50 fr-mb-0">
+        <p className="truncate text-[13px] font-medium leading-[18px] text-dsfr-grey-50 mb-0">
           {deriverTitre(messages)}
         </p>
-        <p className="flex items-center gap-1.5 text-[11px] leading-[14px] text-dsfr-mention-grey fr-mb-0">
+        <p className="flex items-center gap-1.5 text-[11px] leading-[14px] text-dsfr-mention-grey mb-0">
           {enCours ? (
             <>
               <LoadingDots className="[&>span]:h-1 [&>span]:w-1" />

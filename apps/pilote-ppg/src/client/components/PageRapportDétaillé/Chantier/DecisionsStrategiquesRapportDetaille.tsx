@@ -25,7 +25,7 @@ export const DecisionsStrategiquesRapportDetaille = ({
             <p className="text-xs text-dsfr-mention-grey mb-1">
               {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(décisionStratégique.date)} | Par ${décisionStratégique.auteur}`}
             </p>
-            <div className="fr-text--sm fr-mb-0">
+            <div className="fr-text--sm mb-0">
               <RenduContenuHtml
                 className="[&_p]:text-sm [&_p]:mb-1"
                 html={décisionStratégique.contenu}

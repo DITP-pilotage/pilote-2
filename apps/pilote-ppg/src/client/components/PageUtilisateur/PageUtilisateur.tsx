@@ -36,10 +36,10 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
   const { creerTokenAPI, alerte } = useGestionTokenAPI();
 
   return (
-    <div className="bg-dsfr-alt-blue-france fr-pt-2w">
+    <div className="bg-dsfr-alt-blue-france pt-4">
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Utilisateur" />
-        <div className="fiche-utilisateur fr-pb-4w">
+        <div className="fiche-utilisateur pb-8">
           <div className="flex">
             <Link
               aria-label="Retour à l'accueil"
@@ -52,13 +52,13 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
           </div>
           <h1 className="text-h1 md:text-h1-md mt-4">Fiche du compte</h1>
           <Bloc>
-            <div className="fr-py-2w fr-px-4w">
+            <div className="py-4 px-8">
               {modificationEstImpossible(
                 session,
                 utilisateur.habilitations,
                 utilisateur.profil,
               ) && (
-                <div className="fr-pb-4w">
+                <div className="pb-8">
                   <Notice
                     title={donnneContenuBandeau(
                       session,
@@ -75,7 +75,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                   utilisateur.habilitations,
                   utilisateur.profil,
                 ) && (
-                  <div className="fr-grid-row fr-mt-4w">
+                  <div className="fr-grid-row mt-8">
                     <Button asChild variant="primary" className="mr-4">
                       <Link
                         href={`/admin/utilisateur/${utilisateur.id}/modifier`}
@@ -113,7 +113,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         <span className="uppercase">{utilisateur.prénom}</span>{" "}
                         <span className="uppercase">{utilisateur.nom}.</span>
                       </div>
-                      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+                      <div className="fr-grid-row fr-grid-row--right mt-8">
                         <Modale.Close asChild>
                           <Button className="mr-2" variant="secondary">
                             Annuler
@@ -128,7 +128,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                     </Modale>
                     {alerte ? (
-                      <div className="fr-my-2w">
+                      <div className="my-4">
                         <Alerte
                           message={alerte.message}
                           titre={alerte.titre}
@@ -137,7 +137,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                     ) : null}
                     {tokenAPIInformation ? (
-                      <Alerte type="info" classesSupplementaires="fr-mt-2w">
+                      <Alerte type="info" classesSupplementaires="mt-4">
                         <p className="fr-text--sm">
                           Information : Un token est déjà actif pour cet
                           utilisateur. La génération d'un nouveau token
@@ -153,7 +153,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                   utilisateur.habilitations,
                   utilisateur.profil,
                 ) && (
-                  <div className="fr-grid-row fr-mt-4w">
+                  <div className="fr-grid-row mt-8">
                     <Modale
                       title="Réactivation de compte"
                       trigger={
@@ -169,7 +169,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         message de réinitialisation de mot de passe lui sera
                         transmis automatiquement.
                       </div>
-                      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+                      <div className="fr-grid-row fr-grid-row--right mt-8">
                         <Modale.Close asChild>
                           <Button className="mr-2" variant="secondary">
                             Annuler

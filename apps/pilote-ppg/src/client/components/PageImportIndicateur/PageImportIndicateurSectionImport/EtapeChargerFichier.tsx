@@ -48,12 +48,12 @@ const EtapeChargerFichier: FunctionComponent<{
       />
       {rapport !== null && <ResultatValidationFichier rapport={rapport} />}
       {rapport?.estValide ? (
-        <div className="fr-mt-4w">
+        <div className="mt-8">
           <form method="GET">
             <input name="etapeCourante" type="hidden" value={3} />
             <input name="indicateurId" type="hidden" value={indicateur?.id} />
             <input name="rapportId" type="hidden" value={rapport?.id} />
-            <div className="fr-mt-4w flex justify-end">
+            <div className="mt-8 flex justify-end">
               <Button
                 className="ml-8"
                 iconRight={

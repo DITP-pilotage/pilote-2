@@ -58,7 +58,7 @@ export const IndicateurPropositionValeur = ({
 
   if (indicateur.mailleRegAgregee && mailleDuTerritoireSelectionnee === "REG") {
     return (
-      <div className="fr-text--xs texte-gris fr-mb-0 flex items-center">
+      <div className="fr-text--xs texte-gris mb-0 flex items-center">
         Impossible de proposer une autre valeur d'avancement
         <Infobulle classNameInfoBulle="tooltip-accordeon">
           <p className="fr-text--sm">

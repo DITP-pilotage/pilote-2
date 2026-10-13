@@ -12,7 +12,7 @@ const PageImportIndicateurEnTête: FunctionComponent<
 > = ({ chantierInformations, hrefBoutonRetour }) => {
   return (
     <header className="bg-dsfr-blue-france-925">
-      <div className="fr-container fr-py-4w">
+      <div className="fr-container py-8">
         <FilAriane
           chemin={[{ nom: "Chantier", lien: hrefBoutonRetour }]}
           libelléPageCourante="Indicateurs"

@@ -15,8 +15,8 @@ const PageAdminIndicateurs: FunctionComponent = () => {
           estOuverteBarreLatérale={estOuverteBarreLatérale}
           setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
         />
-        <main className="fr-container--fluid fr-p-2w">
-          <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-2w">
+        <main className="fr-container--fluid p-4">
+          <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters mb-4">
             <div className="fr-col-12 fr-col-md-9">
               <h1 className="text-h1 md:text-h1-md mb-0">
                 Gestion des paramètres des indicateurs
@@ -33,7 +33,7 @@ const PageAdminIndicateurs: FunctionComponent = () => {
               </Button>
             </div>
           </div>
-          <div className="fr-p-2w bg-white">
+          <div className="p-4 bg-white">
             <TableauAdminIndicateurs />
           </div>
         </main>

@@ -42,7 +42,7 @@ const SwaggerUIPOC = ({
       <Script src="/swagger-ui/swagger-ui-bundle.js" onLoad={initSwaggerUI} />
       <main>
         <div ref={containerRef}>
-          <div className="fr-container fr-pb-2w">
+          <div className="fr-container pb-4">
             Chargement de la documentation API
           </div>
         </div>

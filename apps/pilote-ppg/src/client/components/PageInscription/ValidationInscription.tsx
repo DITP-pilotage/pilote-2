@@ -5,15 +5,15 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 
 const ValidationInscription: FunctionComponent = () => {
   return (
-    <div className="fr-px-15w fr-pb-12w fr-container--fluid">
-      <div className="fr-grid-row fr-py-4w">
+    <div className="px-30 pb-24 fr-container--fluid">
+      <div className="fr-grid-row py-8">
         <h1 className="my-auto">
           Nous vous remercions pour votre inscription !
         </h1>
       </div>
       <Bloc>
         <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
-          <div className="fr-p-0 fr-pr-4w fr-col-12 fr-col-md-6">
+          <div className="p-0 pr-8 fr-col-12 fr-col-md-6">
             <p className="text-h4 md:text-h4-md font-bold mb-6 text-dsfr-grey-50">
               Votre inscription à l'infolettre est validée
             </p>
@@ -25,7 +25,7 @@ const ValidationInscription: FunctionComponent = () => {
             </p>
             <p>Merci de votre intérêt !</p>
           </div>
-          <div className="fr-col-12 fr-col-md-3 fr-col-offset-md-1 fr-p-0">
+          <div className="fr-col-12 fr-col-md-3 fr-col-offset-md-1 p-0">
             <svg
               aria-hidden="true"
               className="h-auto w-full"

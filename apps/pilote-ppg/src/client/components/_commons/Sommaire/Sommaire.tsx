@@ -9,12 +9,12 @@ interface SommaireProps {
 const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
   return (
     <div className="sticky top-0 max-w-80">
-      <nav className="fr-pt-3w fr-pl-7v fr-pr-4w">
-        <p className="font-bold fr-text--lg fr-mb-1w">Sommaire</p>
-        <ul className="fr-text--sm fr-pl-3w [&_a:not(:hover,:active)]:[--underline-idle-width:0]">
+      <nav className="pt-6 pl-7 pr-8">
+        <p className="font-bold fr-text--lg mb-2">Sommaire</p>
+        <ul className="fr-text--sm pl-6 [&_a:not(:hover,:active)]:[--underline-idle-width:0]">
           {rubriques.map((rubrique) => (
             <li
-              className="fr-pb-0 leading-8 text-primary list-none"
+              className="pb-0 leading-8 text-primary list-none"
               key={rubrique.ancre}
             >
               <a href={`#${rubrique.ancre}`} onClick={auClic}>
@@ -22,7 +22,7 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
               </a>
               {!!rubrique.sousRubriques &&
                 rubrique.sousRubriques.length > 0 && (
-                  <ul className="fr-pl-3w fr-my-0">
+                  <ul className="pl-6 my-0">
                     {rubrique.sousRubriques.map((sousRubrique) => (
                       <li
                         className="pb-3 leading-5 text-primary list-none"

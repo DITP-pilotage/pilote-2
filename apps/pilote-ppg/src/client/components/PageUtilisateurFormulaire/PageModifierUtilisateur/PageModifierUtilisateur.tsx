@@ -8,10 +8,10 @@ const PageModifierUtilisateur = () => {
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
 
   return (
-    <div className="bg-dsfr-alt-blue-france fr-pt-2w">
+    <div className="bg-dsfr-alt-blue-france pt-4">
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Modifier un compte" />
-        <div className="fr-pb-4w">
+        <div className="pb-8">
           <UtilisateurFormulaire utilisateur={utilisateur} />
         </div>
       </main>

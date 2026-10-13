@@ -31,7 +31,7 @@ const AlertePublication: FunctionComponent<{
   const { message, type } = ALERTES[action];
 
   return (
-    <div className="fr-mb-2w">
+    <div className="mb-4">
       <Alerte titre={message} type={type} />
     </div>
   );

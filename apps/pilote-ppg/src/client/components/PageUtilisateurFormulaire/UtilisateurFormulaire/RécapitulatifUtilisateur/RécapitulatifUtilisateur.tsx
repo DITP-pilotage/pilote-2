@@ -20,7 +20,7 @@ const RécapitulatifUtilisateur = ({
     <div>
       <FicheUtilisateur utilisateur={utilisateur} />
       {!!alerte && (
-        <div className="fr-my-4w">
+        <div className="my-8">
           <Alerte titre={alerte.titre} type={alerte.type} />
         </div>
       )}
@@ -39,7 +39,7 @@ const RécapitulatifUtilisateur = ({
           Confirmer
         </Button>
       </div>
-      <div className="fr-grid-row fr-mt-3w">
+      <div className="fr-grid-row mt-6">
         <Link href="/admin/utilisateurs">Annuler</Link>
       </div>
     </div>

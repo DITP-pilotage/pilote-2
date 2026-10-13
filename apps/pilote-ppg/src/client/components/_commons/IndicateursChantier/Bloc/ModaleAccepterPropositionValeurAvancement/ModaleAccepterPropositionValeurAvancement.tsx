@@ -91,11 +91,11 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="fr-text fr-text--sm fr-mb-1w">
+                  <p className="fr-text fr-text--sm mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
                   {detailIndicateur.proposition !== null ? (
-                    <p className="fr-text--sm fr-mt-1v">
+                    <p className="fr-text--sm mt-1">
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
                       <NomUtilisateurAvecTooltip
@@ -112,7 +112,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       et remplacera celle-ci.
                     </p>
                   ) : null}
-                  <div className="w-full flex fr-mt-2w">
+                  <div className="w-full flex mt-4">
                     <ComparaisonValeurBox
                       date={detailIndicateur.dateValeurAvancementMandat}
                       titre="Valeur d'avancement importée par la direction de projet"
@@ -144,7 +144,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       valeur={detailIndicateur.proposition?.valeurAvancement}
                     />
                   </div>
-                  <p className="fr-text--sm fr-mt-2w fr-mb-1w">
+                  <p className="fr-text--sm mt-4 mb-2">
                     Indiquez la décision que vous souhaitez prendre concernant
                     cette proposition :
                   </p>
@@ -208,7 +208,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     )}
                   />
 
-                  <div className="fr-mt-2w">
+                  <div className="mt-4">
                     <TextareaField
                       className={FIELD_GROUP_SPACING}
                       counter={{
@@ -231,7 +231,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     />
                   </div>
 
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
                       disabled={EtapeSuivanteEstDesactive}
@@ -257,7 +257,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="fr-text fr-text--sm fr-mb-1w">
+                      <p className="fr-text fr-text--sm mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
                       <p className="fr-text--sm mb-0">
@@ -340,7 +340,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       de nouvelles propositions pour cet indicateur.
                     </p>
                   </Alerte>
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="secondary"
                       className="mr-4"
@@ -373,7 +373,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
           </FormProvider>
         </>
       ) : (
-        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+        <Alerte type="succès" classesSupplementaires="mt-4">
           <h3>
             {decision === "refuser"
               ? "La proposition de valeur d'avancement a bien été refusée"

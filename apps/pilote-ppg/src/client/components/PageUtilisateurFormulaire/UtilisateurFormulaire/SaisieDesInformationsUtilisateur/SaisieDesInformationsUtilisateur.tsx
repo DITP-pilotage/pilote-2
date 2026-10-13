@@ -101,7 +101,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       />
       <SelectServiceAdmin />
       {service === "autre" && (
-        <div className="fr-mb-4w">
+        <div className="mb-8">
           <TextField
             className="mb-2"
             id="serviceAutre"
@@ -135,14 +135,14 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       >
         <hr />
         <h2 className="text-base mb-4">Droits de lecture</h2>
-        <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
+        <p className="fr-text--xs text-dsfr-mention-grey mb-8">
           {`Afin de paramétrer l'espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`}
         </p>
         <div
           className={`${afficherChampLectureTerritoires ? "" : "fr-hidden"}`}
         >
-          <div className="fr-mb-4w">
+          <div className="mb-8">
             <Controller
               control={control}
               name="habilitations.lecture.territoires"
@@ -167,7 +167,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           </div>
         </div>
         <div className={`${afficherChampLecturePérimètres ? "" : "fr-hidden"}`}>
-          <div className="fr-mb-4w">
+          <div className="mb-8">
             <Controller
               control={control}
               name="habilitations.lecture.périmètres"
@@ -189,7 +189,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           </div>
         </div>
         <div className={`${afficherChampLectureChantiers ? "" : "fr-hidden"}`}>
-          <div className="fr-mb-4w">
+          <div className="mb-8">
             <Controller
               control={control}
               name="habilitations.lecture.chantiers"
@@ -217,14 +217,14 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         >
           <hr />
           <h2 className="text-base mb-4">Responsabilités</h2>
-          <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
+          <p className="fr-text--xs text-dsfr-mention-grey mb-8">
             Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour
             lesquels l'utilisateur a des responsabilités spécifiques (directeur
             de projet ou responsable local). L'utilisateur apparaîtra
             nominativement comme directeur de projet ou responsable local de ces
             chantiers sur les pages des chantiers concernés dans PILOTE
           </p>
-          <div className="fr-mb-4w">
+          <div className="mb-8">
             <Controller
               control={control}
               name="habilitations.responsabilite.chantiers"
@@ -274,7 +274,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       <div className={`${afficherChampSaisieCommentaire ? "" : "fr-hidden"}`}>
         <hr />
         <h2 className="text-base mb-4">Droits de saisie des commentaires</h2>
-        <p className="fr-text--xs text-dsfr-mention-grey fr-mb-4w">
+        <p className="fr-text--xs text-dsfr-mention-grey mb-8">
           Parmi les chantiers autorisés en lecture, merci d'indiquer, le cas
           échéant, ceux pour lesquels l'utilisateur est autorisé à saisir des
           commentaires qualitatifs (dont la météo et la synthèse des résultats).
@@ -321,7 +321,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           )}
         />
       </div>
-      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+      <div className="fr-grid-row fr-grid-row--right mt-8">
         <Button
           iconRight={
             <Icone className="text-current h-4 w-4" icone={ArrowLine1Icon} />

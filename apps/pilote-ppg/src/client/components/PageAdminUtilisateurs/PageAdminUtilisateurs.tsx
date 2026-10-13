@@ -99,7 +99,7 @@ const PageAdminUtilisateurs: FunctionComponent<{
       <main>
         <div className="mt-8 mb-6 md:mx-4">
           {alerte ? (
-            <div className="fr-my-4w">
+            <div className="my-8">
               <Alerte
                 message={alerte.message}
                 titre={alerte.titre}
@@ -107,7 +107,7 @@ const PageAdminUtilisateurs: FunctionComponent<{
               />
             </div>
           ) : null}
-          <div className="fr-grid-row fr-grid-row--middle fr-mb-3w px-4">
+          <div className="fr-grid-row fr-grid-row--middle mb-6 px-4">
             <div className="fr-col-12 fr-col-md-6">
               <h1 className="text-h1 md:text-h1-md mb-0">
                 Gestion des comptes

@@ -63,7 +63,7 @@ const EtapeSelectionIndicateur: FunctionComponent<{
             options={options}
             value={valeurSélectionnée}
           />
-          <p className="fr-mt-3w">
+          <p className="mt-6">
             <b>
               {`Contraintes de saisie spécifiques à l'indicateur ${valeurSélectionnée} : `}
             </b>
@@ -72,7 +72,7 @@ const EtapeSelectionIndicateur: FunctionComponent<{
               valeurSélectionnée,
             )}
           </p>
-          <div className="fr-mt-4w flex justify-end">
+          <div className="mt-8 flex justify-end">
             <Button
               className="ml-8"
               iconRight={

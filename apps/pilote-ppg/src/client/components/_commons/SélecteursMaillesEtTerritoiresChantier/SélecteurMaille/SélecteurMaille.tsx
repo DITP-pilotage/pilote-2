@@ -49,7 +49,7 @@ export const SélecteurMaille: FunctionComponent<{
   return (
     <div className="w-full flex items-center">
       <span
-        className="fr-label fr-mr-1w whitespace-nowrap"
+        className="fr-label mr-2 whitespace-nowrap"
         id="libelle-selecteur-maille"
       >
         Affichage :

@@ -59,8 +59,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     ? ""
                     : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </h4>
-              <div className="fr-ml-2w fr-mb-3w">
-                <p className="fr-mb-0 fr-text--xs text-dsfr-mention-grey">
+              <div className="ml-4 mb-6">
+                <p className="mb-0 fr-text--xs text-dsfr-mention-grey">
                   Dernière mise à jour de la valeur d'avancement pour le
                   territoire :{" "}
                   <span className="fr-text--bold">

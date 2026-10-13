@@ -32,7 +32,7 @@ const EtapePublierFichier: FunctionComponent<{
   return (
     <div>
       {estFichierPublie ? (
-        <div className="fr-mt-4w">
+        <div className="mt-8">
           <Alerte
             message={
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
@@ -43,7 +43,7 @@ const EtapePublierFichier: FunctionComponent<{
             )}
             type="succès"
           />
-          <div className="fr-mt-3w flex justify-end">
+          <div className="mt-6 flex justify-end">
             <Button asChild variant="primary" className="ml-8">
               <Link
                 href={`/chantier/${chantierId}/indicateurs`}

@@ -135,7 +135,7 @@ export const ProgressBar = ({
               <p className="fr-text--sm fr-text-title--blue-france">
                 Taux d'avancement :
               </p>
-              <p className="fr-text--sm fr-mb-0">{tooltip}</p>
+              <p className="fr-text--sm mb-0">{tooltip}</p>
             </Infobulle>
           ) : null}
         </div>

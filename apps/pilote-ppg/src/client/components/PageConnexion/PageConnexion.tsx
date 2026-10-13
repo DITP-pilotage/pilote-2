@@ -40,13 +40,13 @@ export const PageConnexion = () => {
 
   return (
     <main>
-      <div className="fr-container fr-py-10w">
+      <div className="fr-container py-20">
         <div className="mx-auto w-full max-w-[38rem]">
           <div className="border-dsfr-grey-925 border bg-white p-6 md:p-8">
             <h1 className="text-h4 md:text-h4-md mb-2 text-center">
               Connexion à PILOTE
             </h1>
-            <p className="text-dsfr-mention-grey fr-mb-4w fr-text--sm">
+            <p className="text-dsfr-mention-grey mb-8 fr-text--sm">
               {ffProConnect
                 ? "Choisissez votre mode de connexion."
                 : "ProConnect arrive bientôt sur PILOTE. Vous pourrez alors accéder à votre compte avec ProConnect ou continuer d'utiliser vos identifiants habituels."}
@@ -55,7 +55,7 @@ export const PageConnexion = () => {
             {message ? (
               <div role="alert">
                 <Alerte
-                  classesSupplementaires="fr-mb-4w"
+                  classesSupplementaires="mb-8"
                   message={message}
                   type="erreur"
                 />
@@ -66,7 +66,7 @@ export const PageConnexion = () => {
               onClick={() => signIn("proconnect", { callbackUrl })}
             />
 
-            <div className="fr-my-4w flex items-center gap-4">
+            <div className="my-8 flex items-center gap-4">
               <span className="bg-dsfr-contrast-grey h-px flex-1" />
               <span className="text-dsfr-mention-grey text-sm">ou</span>
               <span className="bg-dsfr-contrast-grey h-px flex-1" />

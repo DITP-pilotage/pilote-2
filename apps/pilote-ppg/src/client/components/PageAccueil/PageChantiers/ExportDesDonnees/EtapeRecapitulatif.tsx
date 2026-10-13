@@ -206,10 +206,10 @@ export const EtapeRecapitulatif = ({
 
   return (
     <div>
-      <p className="fr-mt-2w fr-mb-2w">
+      <p className="mt-4 mb-4">
         Veuillez vérifier ci-dessous le contenu de votre fichier d'export :
       </p>
-      <h3 className="fr-text--md fr-mb-0 fr-mt-2w">Éléments à exporter</h3>
+      <h3 className="fr-text--md mb-0 mt-4">Éléments à exporter</h3>
       <p className="flex gap-2">
         <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
         {filtres.typeExport === "chantiers" ? (
@@ -220,7 +220,7 @@ export const EtapeRecapitulatif = ({
           <span>historique des indicateurs</span>
         )}
       </p>
-      <h3 className="fr-text--md fr-mb-0 fr-mt-2w">Périmètre de l'export</h3>
+      <h3 className="fr-text--md mb-0 mt-4">Périmètre de l'export</h3>
       <p className="flex gap-2">
         <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
         {filtres.isAvecFiltre ? (
@@ -234,8 +234,8 @@ export const EtapeRecapitulatif = ({
           </span>
         )}
       </p>
-      <h3 className="fr-text--md fr-mb-0 fr-mt-2w">Données collectées</h3>
-      <ul className="list-none fr-pl-0">
+      <h3 className="fr-text--md mb-0 mt-4">Données collectées</h3>
+      <ul className="list-none pl-0">
         {Object.entries(arrayDonneeAExporter)
           .filter(([key]) => filtres.optionsExport.includes(key))
           .map(([key, value]) => {
@@ -251,7 +251,7 @@ export const EtapeRecapitulatif = ({
           })}
       </ul>
       <form
-        className="fr-mt-2w"
+        className="mt-4"
         data-testid="form-export"
         onSubmit={(événement) => {
           événement.preventDefault();
@@ -275,7 +275,7 @@ export const EtapeRecapitulatif = ({
           }
         }}
       >
-        <div className="w-full flex justify-end fr-mt-2w gap-4">
+        <div className="w-full flex justify-end mt-4 gap-4">
           <Modale.Close asChild>
             <button
               className="text-primary font-medium px-4"

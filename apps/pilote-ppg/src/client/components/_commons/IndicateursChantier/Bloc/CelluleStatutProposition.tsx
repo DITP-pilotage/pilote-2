@@ -102,7 +102,7 @@ export const CelluleStatutProposition = ({
         <p className="fr-text--sm">
           <b>Source des données et méthode de calcul</b>
         </p>
-        <p className="fr-text--sm fr-mb-0">
+        <p className="fr-text--sm mb-0">
           {proposition.sourceDonneeEtMethodeCalcul}
         </p>
       </Infobulle>

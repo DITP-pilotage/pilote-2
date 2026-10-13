@@ -44,7 +44,7 @@ export const MultiSelect: FunctionComponent<MultiSelectProps> = ({
       </Label.Root>
       {afficherBoutonsSélection ? (
         <BoutonToutSélectionner
-          className="fr-mt-2w"
+          className="mt-4"
           onClickToutDésélectionner={() =>
             changementValeursSélectionnéesCallback([])
           }

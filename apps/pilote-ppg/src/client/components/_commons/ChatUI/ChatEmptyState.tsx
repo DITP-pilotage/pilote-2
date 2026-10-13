@@ -64,10 +64,10 @@ export const ChatEmptyState = ({
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-7 py-8">
       <div className="flex flex-col gap-3">
         <AlbertMonogramme taille="lg" />
-        <h2 className="text-[26px] font-bold leading-8 text-dsfr-grey-50 fr-mb-0">
+        <h2 className="text-[26px] font-bold leading-8 text-dsfr-grey-50 mb-0">
           Bonjour, je suis l&apos;{NOM_ASSISTANT}.
         </h2>
-        <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+        <p className="text-[15px] leading-6 text-dsfr-mention-grey mb-0">
           {contexte ? (
             <>
               Je synthétise les données PILOTE de{" "}
@@ -93,7 +93,7 @@ export const ChatEmptyState = ({
             .filter((group) => group.scenarios.length > 0)
             .map((group) => (
               <div className="flex flex-col gap-2.5" key={group.label}>
-                <p className="text-[11px] font-bold uppercase tracking-wide text-dsfr-mention-grey fr-mb-0">
+                <p className="text-[11px] font-bold uppercase tracking-wide text-dsfr-mention-grey mb-0">
                   {group.label}
                 </p>
                 {renderScenarioGrid(group.scenarios)}

@@ -15,7 +15,7 @@ const INFOBULLE_CONTENUS = {
           Le minimum, la médiane et le maximum dépendent des chantiers et de la
           maille sélectionnée (région ou département).
         </p>
-        <p className="fr-text--sm fr-mb-0">
+        <p className="fr-text--sm mb-0">
           La moyenne d'une maille supérieure (nationale ou régionale) ne
           correspond pas nécessairement à la moyenne des territoires des mailles
           inférieures parce que certains indicateurs qui entrent en compte dans
@@ -25,19 +25,19 @@ const INFOBULLE_CONTENUS = {
     ),
     jalon: (
       <>
-        <h5 className="fr-text--sm fr-mb-1w">Avancement à échéance</h5>
+        <h5 className="fr-text--sm mb-2">Avancement à échéance</h5>
         <p className="fr-text--sm">
           Ce sélecteur vous permet d'afficher les valeurs prises successivement
           par le taux d'avancement :
         </p>
-        <ul className="fr-text--sm fr-mb-0">
+        <ul className="fr-text--sm mb-0">
           <li>valeurs observées à la fin des années passées</li>
           <li>valeur à date (année en cours)</li>
         </ul>
       </>
     ),
     repartitions: (
-      <p className="fr-text--sm fr-mb-0">
+      <p className="fr-text--sm mb-0">
         Maximum, médiane et minimum des taux d'avancement observés sur les
         territoires de la maille sélectionnée
       </p>
@@ -48,7 +48,7 @@ const INFOBULLE_CONTENUS = {
           La météo désigne le niveau de confiance, estimé par le responsable,
           sur la possibilité d'atteindre les objectifs du chantier.
         </p>
-        <p className="fr-text--sm fr-mb-0">
+        <p className="fr-text--sm mb-0">
           Certains chantiers peuvent ne pas avoir de météo renseignée sur un
           territoire sélectionné. Les chantiers non territorialisés n'attendent
           pas de météo pour le niveau local.
@@ -56,7 +56,7 @@ const INFOBULLE_CONTENUS = {
       </>
     ),
     alertes: (
-      <ul className="fr-text--sm fr-mb-0">
+      <ul className="fr-text--sm mb-0">
         <li>
           La première alerte signale :
           <ul className="fr-text--sm liste-niveau2">
@@ -131,7 +131,7 @@ const INFOBULLE_CONTENUS = {
       </p>
     ),
     listeDesChantiersHeaderEcart: (
-      <p className="fr-text--sm fr-mb-0">
+      <p className="fr-text--sm mb-0">
         L'écart correspond à l'écart entre le taux d'avancement pour le
         territoire sélectionné et le taux d'avancement territorial médian. Il
         s'affiche si un département ou une région est sélectionné.
@@ -141,7 +141,7 @@ const INFOBULLE_CONTENUS = {
   chantier: {
     avancement: {
       aucunIndicateur: (maille: Maille) => (
-        <p className="fr-text--sm fr-mb-0">
+        <p className="fr-text--sm mb-0">
           {`À la maille ${maille}, `}
           aucun indicateur de ce chantier n'est pris en compte dans le calcul du
           taux d'avancement global.
@@ -151,7 +151,7 @@ const INFOBULLE_CONTENUS = {
         maille: Maille,
         indicateurPondération: IndicateurPondération,
       ) => (
-        <p className="fr-text--sm fr-mb-0">
+        <p className="fr-text--sm mb-0">
           {`À la maille ${maille}, `}
           le taux d'avancement global correspond au taux d'avancement de
           l'indicateur&nbsp;:
@@ -163,12 +163,12 @@ const INFOBULLE_CONTENUS = {
         indicateurPondérations: IndicateurPondération[],
       ) => (
         <>
-          <p className="fr-text--sm fr-mb-0">
+          <p className="fr-text--sm mb-0">
             {`À la maille ${maille}, `}
             le taux d'avancement global correspond à la somme des taux
             d'avancement des indicateurs, pondérés de la façon suivante&nbsp;:
           </p>
-          <ul className="fr-text--sm fr-mb-0">
+          <ul className="fr-text--sm mb-0">
             {indicateurPondérations.map(({ pondération, nom }) => (
               <li key={nom}>
                 {pondération}% du taux d'avancement de l'indicateur&nbsp;:
@@ -185,7 +185,7 @@ const INFOBULLE_CONTENUS = {
             territoire sélectionné et le taux d'avancement territorial (régional
             ou départemental) médian.
           </p>
-          <p className="fr-text--sm fr-mb-0">
+          <p className="fr-text--sm mb-0">
             L'évolution temporelle (ou tendance) correspond à la progression du
             taux d'avancement. Elle est calculée par rapport au taux
             d'avancement précédent du chantier sur le territoire. Elle est
@@ -197,7 +197,7 @@ const INFOBULLE_CONTENUS = {
         </>
       ),
       comparaisonDeLAvancementNat: (
-        <p className="fr-text--sm fr-mb-0">
+        <p className="fr-text--sm mb-0">
           L'évolution temporelle (ou tendance) correspond à la progression du
           taux d'avancement. Elle est calculée par rapport au taux d'avancement
           précédent du chantier sur le territoire. Elle est considérée en hausse
@@ -213,25 +213,25 @@ const INFOBULLE_CONTENUS = {
           La météo désigne le niveau de confiance, estimé par le responsable,
           sur la possibilité d'atteindre les objectifs du chantier.
         </p>
-        <p className="fr-text--sm fr-mb-0">
+        <p className="fr-text--sm mb-0">
           La synthèse est une présentation synthétique de l'état d'avancement du
           chantier, actualisé depuis la dernière mise à jour des données.
         </p>
       </>
     ),
     répartitionGéographiqueTauxAvancement: (
-      <p className="fr-text--sm fr-mb-0">
+      <p className="fr-text--sm mb-0">
         Territorialisation du taux d'avancement du chantier
       </p>
     ),
     répartitionGéographiqueNiveauDeConfiance: (
-      <p className="fr-text--sm fr-mb-0">
+      <p className="fr-text--sm mb-0">
         Répartition de la météo déclarée par chaque responsable local pour
         l'avancement de son chantier dans son territoire.
       </p>
     ),
     objectifs: (
-      <p className="fr-text--sm fr-mb-0">
+      <p className="fr-text--sm mb-0">
         Présentation des objectifs et des principales actions passées et à venir
         au niveau national. Si le chantier est territorialisé, ces éléments
         seront visibles par les services déconcentrés et doivent les aider à
@@ -251,7 +251,7 @@ const INFOBULLE_CONTENUS = {
             Diagnostic du directeur de projet repris pour les supports de
             présentation des réunions Elysée ↔ Matignon.
           </p>
-          <ul className="fr-text--sm fr-mb-0">
+          <ul className="fr-text--sm mb-0">
             <li>Explication des résultats chiffrés</li>
             <li>
               Analyse des résultats qui ne transparaissent pas dans les données
@@ -269,7 +269,7 @@ const INFOBULLE_CONTENUS = {
             Diagnostic du responsable local du chantier repris pour préparer les
             RIM régionales.
           </p>
-          <ul className="fr-text--sm fr-mb-0">
+          <ul className="fr-text--sm mb-0">
             <li>Explication des résultats chiffrés</li>
             <li>
               Présentation des résultats qui ne transparaissent pas dans les

@@ -140,7 +140,7 @@ export const SelectField = <T extends string>({
           {errorMessage}
         </p>
       ) : errorMessage ? (
-        <p className="fr-error-text fr-mt-1v" id={`${name}-error`}>
+        <p className="fr-error-text mt-1" id={`${name}-error`}>
           {errorMessage}
         </p>
       ) : null}

@@ -69,10 +69,10 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
         >
           {hoveredTerritoire ? (
             <div className="fr-text--sm">
-              <p className="fr-text--sm fr-background-contrast-grey fr-p-2w">
+              <p className="fr-text--sm fr-background-contrast-grey p-4">
                 {hoveredTerritoire.libellé}
               </p>
-              <div className="fr-text--sm fr-p-2w">
+              <div className="fr-text--sm p-4">
                 {hoveredTerritoire.contenuInfoBulle}
               </div>
             </div>

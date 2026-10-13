@@ -19,7 +19,7 @@ const PageLanding = () => {
         <section className="bloc-hero">
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
+              <div className="fr-col-12 fr-col-lg-6 py-16">
                 <h1 className="text-black">
                   Piloter l'action publique par les résultats
                 </h1>
@@ -47,7 +47,7 @@ const PageLanding = () => {
         </section>
         <section className="relative">
           <div className="absolute bottom-0 inset-x-0 h-1/2 bg-white" />
-          <div className="fr-container fr-py-8w isolate">
+          <div className="fr-container py-16 isolate">
             <div className="fr-grid-row fr-grid-row--center">
               <div className="fr-col-12 flex flex-col justify-center">
                 <h2 className="text-h3 md:text-h3-md">
@@ -67,7 +67,7 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-white">
-          <div className="fr-container fr-py-8w">
+          <div className="fr-container py-16">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12">
                 <h2 className="text-h3 md:text-h3-md">
@@ -86,11 +86,11 @@ const PageLanding = () => {
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={carteFranceSvg} />
                   </div>
-                  <div className="fr-p-4w">
+                  <div className="p-8">
                     <h3 className="text-h5 md:text-h5-md">
                       Pour les administrations centrales
                     </h3>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className="fr-text--lg mb-0">
                       PILOTE permet de fixer les objectifs aux services
                       déconcentrés, de suivre l'avancement des chantiers et d'en
                       rendre compte. Il permet d'identifier les freins et
@@ -106,9 +106,9 @@ const PageLanding = () => {
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={visualisationDonnéesSvg} />
                   </div>
-                  <div className="fr-p-4w">
+                  <div className="p-8">
                     <h3 className="text-h5 md:text-h5-md">Pour les préfets</h3>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className="fr-text--lg mb-0">
                       PILOTE offre aux préfets une vision transversale des
                       objectifs et résultats de la feuille de route du
                       Gouvernement dans le territoire pour lequel ils sont
@@ -125,11 +125,11 @@ const PageLanding = () => {
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={téléchargementFichierSvg} />
                   </div>
-                  <div className="fr-p-4w">
+                  <div className="p-8">
                     <h3 className="text-h5 md:text-h5-md">
                       Pour les services déconcentrés
                     </h3>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className="fr-text--lg mb-0">
                       PILOTE permet de s'entendre avec l'administration centrale
                       sur les objectifs de chaque chantier prioritaire et de
                       rendre compte des résultats obtenus. Il permet aussi
@@ -144,9 +144,9 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-dsfr-grey-1000">
-          <div className="fr-container fr-py-8w">
+          <div className="fr-container py-16">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-8 fr-pr-md-4w">
+              <div className="fr-col-12 fr-col-lg-8 md:pr-8">
                 <h2 className="text-h3 md:text-h3-md">
                   Le pilotage des politiques prioritaires
                 </h2>
@@ -214,7 +214,7 @@ const PageLanding = () => {
         </section>
         <section className="bg-white">
           <div className="fr-container">
-            <div className="fr-grid-row fr-py-8w gap-4 flex items-center">
+            <div className="fr-grid-row py-16 gap-4 flex items-center">
               <h2 className="text-h3 md:text-h3-md m-0">
                 Vous avez des questions ?
               </h2>

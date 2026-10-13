@@ -27,7 +27,7 @@ export const SectionCommentaires = () => {
     <BasePageChantierSection
       id="commentaires"
       infobulle={infobulle}
-      titreConteneurClassName="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0"
+      titreConteneurClassName="mb-4 mt-3 md:mt-6 mx-4 md:mx-0"
       titre="Commentaires du chantier"
     >
       <Commentaires

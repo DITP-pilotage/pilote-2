@@ -69,11 +69,8 @@ export const WidgetChantiersSignales = ({
 }) => {
   return (
     <section className="h-full">
-      <Bloc
-        className="h-full"
-        contenuClassesSupplémentaires="fr-py-2w fr-px-3w"
-      >
-        <TitreInfobulleConteneur className="justify-between fr-mb-2w">
+      <Bloc className="h-full" contenuClassesSupplémentaires="py-4 px-6">
+        <TitreInfobulleConteneur className="justify-between mb-4">
           <div className="flex items-center gap-2">
             <Badge
               aria-hidden="true"

@@ -64,13 +64,13 @@ export const useDonneesCartographieVA = (
               ) : (
                 <>
                   <div className="flex justify-center items-center fr-text--bold">
-                    <div className="fr-mr-1w">VA :</div>
+                    <div className="mr-2">VA :</div>
                     <div>
                       {formatValeur(territoire.valeurAvancement, unite)}
                     </div>
                   </div>
                   <div className="flex justify-center items-center">
-                    <div className="fr-mr-1w">{`VC ${jalon} : `}</div>
+                    <div className="mr-2">{`VC ${jalon} : `}</div>
                     <div>
                       {formatValeur(territoire.valeurCibleAnnuelle, unite)}
                     </div>

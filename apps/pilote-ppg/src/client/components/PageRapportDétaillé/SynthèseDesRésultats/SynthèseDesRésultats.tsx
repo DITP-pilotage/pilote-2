@@ -23,18 +23,18 @@ const SynthèseDesRésultats = ({
         titre={nomTerritoire}
         backgroundClassNameTitre="bg-dsfr-blue-france-925"
       >
-        <div className="fr-py-1w">
+        <div className="py-2">
           {mailleSourceDonnees === "regionale" && (
             <Alerte
-              classesSupplementaires="fr-mb-4w"
+              classesSupplementaires="mb-8"
               message="Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional."
               titre="Données régionales"
               type="info"
             />
           )}
           <div className="flex flex-wrap gap-x-4 justify-center">
-            <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 basis-32 text-center">
-              <div className="fr-mb-2w">
+            <div className="mx-2 mb-4 md:mb-0 basis-32 text-center">
+              <div className="mb-4">
                 <MétéoBadge
                   météo={synthèseDesRésultats?.météo ?? "NON_RENSEIGNEE"}
                 />

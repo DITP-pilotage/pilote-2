@@ -33,7 +33,7 @@ const PageRapportsHebdomadaires = () => {
             rapports.map((rapport, index) => (
               <button
                 key={rapport.id}
-                className={`w-full text-left p-4 fr-mb-0 fr-text--sm ${
+                className={`w-full text-left p-4 mb-0 fr-text--sm ${
                   effectiveRapportId === rapport.id
                     ? "bg-dsfr-blue-france-950"
                     : ""

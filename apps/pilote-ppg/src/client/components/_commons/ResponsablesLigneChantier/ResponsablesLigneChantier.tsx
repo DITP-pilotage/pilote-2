@@ -28,11 +28,11 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
 
   return (
     <section>
-      <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
-        <div className="fr-text--sm fr-text--bold fr-col-8 fr-col-md-4 fr-col-xl-5 fr-m-0 fr-pb-1v fr-py-md-1w">
+      <div className="fr-grid-row fr-grid-row--gutters pb-4">
+        <div className="fr-text--sm fr-text--bold fr-col-8 fr-col-md-4 fr-col-xl-5 m-0 pb-1 md:py-2">
           {libellé}
         </div>
-        <p className="fr-text--sm fr-col-7 fr-col-md-4 fr-col-xl-5 fr-m-0 fr-pb-1v fr-p-md-1w">
+        <p className="fr-text--sm fr-col-7 fr-col-md-4 fr-col-xl-5 m-0 pb-1 md:p-2">
           {responsables.length > 0
             ? responsables.map((r, i) => (
                 <Fragment key={r.nom}>

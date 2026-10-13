@@ -11,7 +11,7 @@ const TokenAPIForm: FunctionComponent = () => {
       <div className="fr-grid-row">
         <div className="fr-col-4">
           <label
-            className="fr-text--md font-bold fr-mb-1v relative"
+            className="fr-text--md font-bold mb-1 relative"
             htmlFor="email"
           >
             Émail

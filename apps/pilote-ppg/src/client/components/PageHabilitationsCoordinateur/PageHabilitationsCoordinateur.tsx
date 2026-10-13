@@ -37,7 +37,7 @@ const PageHabilitationsCoordinateur: FunctionComponent = () => {
     <>
       <h2>Habilitations coordinateurs</h2>
 
-      <div className="fr-mt-3w">
+      <div className="mt-6">
         <MultiSelectFiltre
           getOptionLabel={(id) => labelsParId.get(id) ?? id}
           label="Chantiers territorialisés"
@@ -49,7 +49,7 @@ const PageHabilitationsCoordinateur: FunctionComponent = () => {
         />
       </div>
 
-      <div className="flex flex-wrap gap-4 fr-mt-3w">
+      <div className="flex flex-wrap gap-4 mt-6">
         <Button
           variant="primary"
           disabled={chantierIdsSelectionnes.length === 0 || isLoading}

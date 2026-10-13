@@ -102,10 +102,10 @@ const RapportDétailléChantier: FunctionComponent<
 
   return (
     <section
-      className="fr-mt-4w fr-pb-4w [content-visibility:auto] break-before-page"
+      className="mt-8 pb-8 [content-visibility:auto] break-before-page"
       id={htmlId.chantier(chantier.id)}
     >
-      <div className="fr-mt-2w">
+      <div className="mt-4">
         <div
           className={`grid gap-6 ${territoireSélectionné!.maille === "nationale" ? "grid-cols-[auto_minmax(22.5rem,1fr)] [grid-template-areas:'avancement_avancement'_'responsables_responsables'_'synthèse_synthèse']" : "[grid-template-areas:'avancement'_'responsables'_'synthèse']"}`}
         >
@@ -176,7 +176,7 @@ const RapportDétailléChantier: FunctionComponent<
         {!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] ||
         !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
         chantier.estTerritorialisé ? (
-          <div className="fr-my-2w print:break-inside-avoid">
+          <div className="my-4 print:break-inside-avoid">
             <section className="break-inside-avoid">
               <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                 Répartition géographique
@@ -201,7 +201,7 @@ const RapportDétailléChantier: FunctionComponent<
           </div>
         ) : null}
         {objectifs !== null && objectifs.length > 0 ? (
-          <div className="fr-my-2w print:break-inside-avoid">
+          <div className="my-4 print:break-inside-avoid">
             <section className="break-inside-avoid">
               <div className="rubrique__conteneur [&>div]:h-auto">
                 <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
@@ -213,7 +213,7 @@ const RapportDétailléChantier: FunctionComponent<
           </div>
         ) : null}
         {indicateurs.length > 0 ? (
-          <div className="fr-my-2w print:break-inside-avoid">
+          <div className="my-4 print:break-inside-avoid">
             <section className="break-inside-avoid">
               <div className="rubrique__conteneur [&>div]:h-auto">
                 <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
@@ -244,7 +244,7 @@ const RapportDétailléChantier: FunctionComponent<
         ) : null}
         {décisionStratégique !== null &&
           territoireSélectionné!.maille === "nationale" && (
-            <div className="fr-my-2w print:break-inside-avoid">
+            <div className="my-4 print:break-inside-avoid">
               <section className="break-inside-avoid">
                 <div className="rubrique__conteneur [&>div]:h-auto">
                   <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
@@ -258,7 +258,7 @@ const RapportDétailléChantier: FunctionComponent<
             </div>
           )}
         {commentaires !== null && (
-          <div className="fr-my-2w print:break-inside-avoid">
+          <div className="my-4 print:break-inside-avoid">
             <section className="break-inside-avoid">
               <div className="rubrique__conteneur [&>div]:h-auto">
                 <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">

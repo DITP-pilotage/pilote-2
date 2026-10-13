@@ -57,13 +57,13 @@ export const ConversationHistoryDrawer = ({
 
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 && (
-          <p className="px-4 py-3 text-xs text-dsfr-mention-grey fr-mb-0">
+          <p className="px-4 py-3 text-xs text-dsfr-mention-grey mb-0">
             Aucune conversation.
           </p>
         )}
         {groupes.map((groupe) => (
           <div key={groupe.libelle}>
-            <p className="px-3 pb-1 pt-3 text-xs font-bold uppercase tracking-wide text-dsfr-mention-grey fr-mb-0">
+            <p className="px-3 pb-1 pt-3 text-xs font-bold uppercase tracking-wide text-dsfr-mention-grey mb-0">
               {groupe.libelle}
             </p>
             {groupe.conversations.map((conversation) => {
@@ -83,10 +83,10 @@ export const ConversationHistoryDrawer = ({
                     onClick={() => onSelectionner(conversation.id)}
                     type="button"
                   >
-                    <p className="truncate font-medium leading-5 text-dsfr-grey-50 fr-mb-0">
+                    <p className="truncate font-medium leading-5 text-dsfr-grey-50 mb-0">
                       {conversation.titre}
                     </p>
-                    <p className="text-xs leading-[18px] text-dsfr-mention-grey fr-mb-0">
+                    <p className="text-xs leading-[18px] text-dsfr-mention-grey mb-0">
                       {formaterDateConversation({
                         date: conversation.updatedAt,
                         maintenant: new Date(),

@@ -5,7 +5,7 @@ export const BadgeIndicateurBarometre = () => {
   const { indicateur } = useBlocIndicateurContext();
 
   return indicateur.estIndicateurDuBaromètre ? (
-    <span className="fr-mr-1v">
+    <span className="mr-1">
       <PictoBaromètre />
     </span>
   ) : null;

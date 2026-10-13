@@ -30,10 +30,10 @@ export const AcceptedValuesEditor = ({
   };
 
   return (
-    <div className="fr-mt-2w">
+    <div className="mt-4">
       {fields.map((item, index) => (
-        <div className="border fr-mb-2w rounded" key={item.id}>
-          <div className="flex justify-between items-center fr-mb-1w border-b border-b-dsfr-blue-france-sun-113 p-3">
+        <div className="border mb-4 rounded" key={item.id}>
+          <div className="flex justify-between items-center mb-2 border-b border-b-dsfr-blue-france-sun-113 p-3">
             <span className="font-bold">Valeur {index + 1}</span>
             <Button
               variant="secondary"

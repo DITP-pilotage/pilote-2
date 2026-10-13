@@ -13,7 +13,7 @@ const BarreLatéraleEncart: FunctionComponent<BarreLatéraleEncartProps> = ({
   return (
     <div
       className={clsxm(
-        "fr-p-3w w-full [&_select]:bg-dsfr-alt-blue-france",
+        "p-6 w-full [&_select]:bg-dsfr-alt-blue-france",
         className,
       )}
     >

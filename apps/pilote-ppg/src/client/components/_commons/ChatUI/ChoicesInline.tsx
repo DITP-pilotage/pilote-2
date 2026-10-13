@@ -16,7 +16,7 @@ export const ChoicesInline = ({
 
   return (
     <div className="flex flex-col gap-3">
-      {question && <p className="fr-mb-0">{question}</p>}
+      {question && <p className="mb-0">{question}</p>}
       <div className="flex flex-wrap gap-2">
         {choices.map((choice) => (
           <button

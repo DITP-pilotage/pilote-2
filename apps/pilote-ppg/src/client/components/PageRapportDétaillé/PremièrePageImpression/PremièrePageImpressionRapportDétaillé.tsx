@@ -136,29 +136,29 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
 
   return (
     <div className="hidden print:block [page-break-after:always]">
-      <header className="flex fr-px-12w fr-mb-6w" role="banner">
+      <header className="flex px-24 mb-12" role="banner">
         <Logo className="text-[0.7875rem]" />
-        <div className="fr-pt-1w fr-ml-5w">
-          <p className="fr-text--xl fr-text--bold fr-mb-0">PILOTE</p>
-          <p className="fr-text--sm fr-mb-0">
+        <div className="pt-2 ml-10">
+          <p className="fr-text--xl fr-text--bold mb-0">PILOTE</p>
+          <p className="fr-text--sm mb-0">
             Piloter l'action publique par les résultats
           </p>
         </div>
       </header>
-      <div className="fr-pt-6w fr-pb-3w bg-dsfr-alt-blue-france">
-        <div className="fr-mb-6w fr-display--md text-center titre-rapport-détaillé">
+      <div className="pt-12 pb-6 bg-dsfr-alt-blue-france">
+        <div className="mb-12 fr-display--md text-center titre-rapport-détaillé">
           État des lieux de l'avancement
           <br />
           des politiques prioritaires
           <br />
           du Gouvernement
         </div>
-        <div className="fr-px-12w">
+        <div className="px-24">
           {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), "DD/MM/YYYY [à] H[h]mm")}`}
         </div>
       </div>
-      <div className="fr-px-12w fr-py-4w max-h-[20cm]">
-        <ul className="fr-pl-0 columns-[auto_2] gap-8 [column-fill:auto] list-none">
+      <div className="px-24 py-8 max-h-[20cm]">
+        <ul className="pl-0 columns-[auto_2] gap-8 [column-fill:auto] list-none">
           <li className="pb-0">
             <span className="fr-text--bold text-[1.3rem] leading-7">
               Territoire sélectionné

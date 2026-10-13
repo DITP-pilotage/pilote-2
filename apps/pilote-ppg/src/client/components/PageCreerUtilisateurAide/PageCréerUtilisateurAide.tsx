@@ -24,8 +24,8 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
 
   return (
     <div className="bg-dsfr-alt-blue-france">
-      <main className="fr-container fr-py-6w">
-        <h3 className="fr-mb-0 flex justify-center items-center">
+      <main className="fr-container py-12">
+        <h3 className="mb-0 flex justify-center items-center">
           Coordinateurs PILOTE
         </h3>
         <h3 className="flex justify-center items-center">
@@ -43,9 +43,9 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
           il vous est demandé de prendre connaissance des règles ci-dessous puis
           de suivre les étapes indiquées.
         </p>
-        <div className="fr-mt-6w fr-p-2w fr-mb-6w bg-white">
+        <div className="mt-12 p-4 mb-12 bg-white">
           <h3>Règles de gestion des comptes</h3>
-          <h5 className="fr-mb-1w">Responsabilités du Coordinateur PILOTE</h5>
+          <h5 className="mb-2">Responsabilités du Coordinateur PILOTE</h5>
           <p className="fr-text fr-text--sm">
             En tant que coordinateur, il vous est demandé de gérer activement
             les comptes pour votre territoire. Vous disposez de droits de
@@ -58,7 +58,7 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
             régulièrement un suivi de la gestion des comptes pour chaque
             coordinateur
           </p>
-          <h5 className="fr-mb-1w">Confidentialité des données</h5>
+          <h5 className="mb-2">Confidentialité des données</h5>
           <p className="fr-text fr-text--sm">
             Il est important de garder à l'esprit que les données publiées sur
             cet outil sont protégées et ne sont pas destinées au grand public.
@@ -69,8 +69,8 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
               comptes qui ne respecteraient pas ces règles d'utilisation.
             </b>
           </p>
-          <h5 className="fr-mb-1w">Prérequis à la création d'un compte</h5>
-          <p className="fr-text fr-text--sm fr-mb-0">
+          <h5 className="mb-2">Prérequis à la création d'un compte</h5>
+          <p className="fr-text fr-text--sm mb-0">
             Les comptes doivent obligatoirement être associés à une adresse de
             messagerie électronique professionnelle valide de l'Etat (.gouv.fr).
             Les comptes rattachés à une adresse de messagerie générique (non
@@ -79,7 +79,7 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
             disposition pour vous aider.
           </p>
         </div>
-        <div className="bg-white fr-p-2w">
+        <div className="bg-white p-4">
           <div className="flex justify-center items-center">
             <DescriptionEtapes etapes={etapes} />
           </div>

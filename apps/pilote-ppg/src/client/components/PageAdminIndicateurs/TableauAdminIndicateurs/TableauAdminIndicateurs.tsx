@@ -22,7 +22,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
   return (
     <section>
       {!!alerte && (
-        <div className="fr-mt-2w">
+        <div className="mt-4">
           <Alerte
             message={alerte.message}
             titre={alerte.titre}
@@ -49,7 +49,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
             >
               <InputFichier accept=".csv" onChange={définirLeFichier} />
               <Button
-                className="fr-my-2w fr-my-md-1w fr-text--sm whitespace-nowrap"
+                className="my-4 md:my-2 fr-text--sm whitespace-nowrap"
                 disabled={!file}
                 title="Importer en masse"
                 type="submit"
@@ -64,7 +64,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
         <PageLoader />
       ) : (
         <>
-          <div className="fr-container--fluid fr-mb-2w fr-mt-4w">
+          <div className="fr-container--fluid mb-4 mt-8">
             <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-md-6">
                 <h2 className="text-h4 md:text-h4-md mb-0 text-dsfr-blue-france-sun-113">

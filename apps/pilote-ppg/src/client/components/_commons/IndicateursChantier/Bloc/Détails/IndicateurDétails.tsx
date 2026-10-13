@@ -114,7 +114,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           innerClassName={CLASSES_INTERIEUR_ACCORDEON_DSFR}
         >
           <div className="fr-container">
-            <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+            <div className="fr-grid-row fr-grid-row--gutters mb-2">
               <div className="fr-col-12">
                 {futOuvert ? (
                   <IndicateurSpécifications
@@ -169,7 +169,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
             </>
           ) : (
             <div className="fr-container">
-              <div className="fr-grid-row fr-grid-row--gutters fr-my-1w">
+              <div className="fr-grid-row fr-grid-row--gutters my-2">
                 {futOuvert &&
                 (donnéesCartographieAvancementTerritorialisées ||
                   donnéesCartographieValeurAvancementTerritorialisées ||
@@ -212,7 +212,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       />
                     </section>
 
-                    <div className="fr-mt-2w fr-container">
+                    <div className="mt-4 fr-container">
                       <Suspense>
                         <ComparaisonTerritoiresIndicateur
                           indicateurId={indicateur.id}

@@ -8,7 +8,7 @@ import { TextLink } from "@/components/shared/TextLink";
 const PageImportIndicateurSectionRessource: FunctionComponent = () => {
   return (
     <section className="bg-dsfr-alt-blue-france">
-      <div className="fr-container fr-py-3w">
+      <div className="fr-container py-6">
         <h2 className="text-primary">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.TITRE}
         </h2>

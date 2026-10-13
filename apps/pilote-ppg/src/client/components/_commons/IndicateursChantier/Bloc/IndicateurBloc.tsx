@@ -148,12 +148,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}
                 </h4>
-                <div className="fr-ml-2w fr-mb-3w">
-                  <p className="fr-mb-0 fr-text--xs texte-gris">
+                <div className="ml-4 mb-6">
+                  <p className="mb-0 fr-text--xs texte-gris">
                     Identifiant de l'indicateur :{" "}
                     <strong>{indicateur.id}</strong>
                   </p>
-                  <p className="fr-mb-0 fr-text--xs texte-gris">
+                  <p className="mb-0 fr-text--xs texte-gris">
                     Dernière mise à jour de la valeur d'avancement pour le
                     territoire :{" "}
                     <span className="font-bold">

@@ -22,8 +22,8 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   );
 
   return (
-    <section className="fr-px-1w">
-      <div className="w-full max-w-[20.5rem] fr-mt-2w">
+    <section className="px-2">
+      <div className="w-full max-w-[20.5rem] mt-4">
         <SearchInput
           onChange={changementDeLaRechercheCallback}
           value={valeurDeLaRecherche}

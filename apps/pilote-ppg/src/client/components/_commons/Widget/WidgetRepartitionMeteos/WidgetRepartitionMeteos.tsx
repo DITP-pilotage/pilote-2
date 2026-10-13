@@ -31,11 +31,8 @@ export const WidgetRepartitionMeteos = ({
 }) => {
   return (
     <section className="h-full">
-      <Bloc
-        className="h-full"
-        contenuClassesSupplémentaires="fr-py-2w fr-px-3w"
-      >
-        <TitreInfobulleConteneur className="justify-between fr-mb-2w">
+      <Bloc className="h-full" contenuClassesSupplémentaires="py-4 px-6">
+        <TitreInfobulleConteneur className="justify-between mb-4">
           <h2 className="text-lg mb-0 py-1 inline">
             Répartition des météos renseignées
           </h2>

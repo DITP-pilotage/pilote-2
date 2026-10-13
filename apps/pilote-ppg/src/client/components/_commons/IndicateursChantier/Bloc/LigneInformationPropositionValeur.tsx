@@ -11,7 +11,7 @@ export const LigneInformationPropositionValeur = ({
 }>) => {
   return (
     <div className={className}>
-      <p className="fr-text--xs fr-mb-0">{children}</p>
+      <p className="fr-text--xs mb-0">{children}</p>
       <div className="flex items-center">
         <BoutonVoirHistorique />
         {action}

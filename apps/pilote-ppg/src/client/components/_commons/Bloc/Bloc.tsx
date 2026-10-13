@@ -29,7 +29,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
       {titre ? (
         <div
           className={clsxm(
-            "titre h-16 border-b-2 border-b-dsfr-grey-200 rounded-t-[7px] fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex items-center justify-start relative w-full print:rounded-t-lg",
+            "titre h-16 border-b-2 border-b-dsfr-grey-200 rounded-t-[7px] mb-0 p-4 fr-text--sm fr-text--bold flex items-center justify-start relative w-full print:rounded-t-lg",
             backgroundClassNameTitre,
           )}
         >
@@ -38,9 +38,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
           </div>
           <div>
             {titre && contenuInfobulle ? (
-              <Infobulle classNameBouton="fr-pl-2w">
-                {contenuInfobulle}
-              </Infobulle>
+              <Infobulle classNameBouton="pl-4">{contenuInfobulle}</Infobulle>
             ) : null}
           </div>
         </div>

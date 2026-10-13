@@ -62,10 +62,10 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
       <TitleBand>
         <h2 className="text-h2 md:text-h2-md mb-0">Vue d'ensemble</h2>
       </TitleBand>
-      <div className="fr-mt-3w grid grid-cols-1 gap-6 min-[62rem]:grid-cols-2 print:grid-cols-2 print:break-inside-avoid">
+      <div className="mt-6 grid grid-cols-1 gap-6 min-[62rem]:grid-cols-2 print:grid-cols-2 print:break-inside-avoid">
         <Bloc>
           <section>
-            <TitreInfobulleConteneur className="fr-mb-2w">
+            <TitreInfobulleConteneur className="mb-4">
               <h2 className="text-lg mb-0 py-1 inline">
                 Taux d'avancement moyen
               </h2>
@@ -78,7 +78,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
             />
           </section>
-          <hr className="fr-my-3w fr-pb-1v" />
+          <hr className="my-6 pb-1" />
           <section>
             <TitreInfobulleConteneur>
               <h2 className="text-lg mb-0 py-1 inline">
@@ -107,8 +107,8 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         </Bloc>
       </div>
       {!chantiersSontArchives && (
-        <div className="fr-pt-3w fr-px-2w fr-px-md-0">
-          <div className="fr-mb-2w ">
+        <div className="pt-6 px-4 md:px-0">
+          <div className="mb-4 ">
             <TitreInfobulleConteneur>
               <Badge
                 aria-hidden="true"
@@ -138,12 +138,12 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         </div>
       )}
       <div
-        className="fr-grid-row fr-mt-7v print:break-inside-avoid"
+        className="fr-grid-row mt-7 print:break-inside-avoid"
         id={htmlId.listeDesChantiers()}
       >
         <div className="fr-col">
           <Bloc>
-            <TitreInfobulleConteneur className="fr-mb-1w">
+            <TitreInfobulleConteneur className="mb-2">
               <h2 className="text-lg mb-0 py-1 inline">Liste des chantiers</h2>
             </TitreInfobulleConteneur>
             <RapportDétailléTableauChantiers

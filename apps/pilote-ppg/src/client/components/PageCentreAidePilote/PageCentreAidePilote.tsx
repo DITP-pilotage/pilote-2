@@ -70,7 +70,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     <main>
       <div className="mx-auto flex min-h-[calc(100dvh-18rem)] max-w-screen-xl gap-6 px-6 py-8">
         <nav className="flex w-[280px] shrink-0 flex-col overflow-hidden border border-dsfr-grey-900 bg-white">
-          <h2 className="border-b border-dsfr-grey-900 px-4 py-3 text-[15px] font-bold text-dsfr-grey-50 fr-mb-0">
+          <h2 className="border-b border-dsfr-grey-900 px-4 py-3 text-[15px] font-bold text-dsfr-grey-50 mb-0">
             Centre d&apos;aide PILOTE
           </h2>
           <ArborescenceCentreAide
@@ -84,7 +84,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
         {itemSelectionne ? (
           <article className="min-w-0 flex-1 overflow-y-auto border border-dsfr-grey-900 bg-white px-8 py-10 sm:px-12">
             <div className={clsxm("w-full", LARGEUR_ARTICLE)}>
-              <h1 className="text-[26px] leading-8 font-bold text-dsfr-grey-50 fr-mb-0">
+              <h1 className="text-[26px] leading-8 font-bold text-dsfr-grey-50 mb-0">
                 {itemSelectionne.titreAffiche || itemSelectionne.titre}
               </h1>
               {aContenu ? (
@@ -92,7 +92,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
                   <RenduContenuHtml html={itemSelectionne.contenu!} />
                 </div>
               ) : (
-                <p className="mt-6 text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+                <p className="mt-6 text-[15px] leading-6 text-dsfr-mention-grey mb-0">
                   Cette rubrique regroupe les articles ci-contre. Choisissez-en
                   un pour le lire.
                 </p>
@@ -101,10 +101,10 @@ export const PageCentreAidePilote: FunctionComponent = () => {
           </article>
         ) : (
           <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 border border-dsfr-grey-900 bg-white px-8 text-center">
-            <p className="text-[15px] font-medium text-dsfr-grey-50 fr-mb-0">
+            <p className="text-[15px] font-medium text-dsfr-grey-50 mb-0">
               Aucun article ouvert
             </p>
-            <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+            <p className="text-[15px] leading-6 text-dsfr-mention-grey mb-0">
               Choisissez un article dans le sommaire à gauche.
             </p>
           </article>

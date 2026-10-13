@@ -10,7 +10,7 @@ export const SectionObjectifs = () => {
     <BasePageChantierSection
       id="objectifs"
       infobulle={INFOBULLE_CONTENUS.chantier.objectifs}
-      titreConteneurClassName="fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+      titreConteneurClassName="mb-4 mt-3 md:mt-0 mx-4 md:mx-0"
       titre="Objectifs"
     >
       <ObjectifsChantier modeÉcriture={estAutoriseAModifierLesObjectifs} />

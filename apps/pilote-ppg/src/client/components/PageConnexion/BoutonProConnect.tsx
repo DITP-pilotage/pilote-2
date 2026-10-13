@@ -34,13 +34,13 @@ export const BoutonProConnect = ({ onClick }: BoutonProConnectProps) => {
         <span className="proconnect-button__brand">ProConnect</span>
       </button>
       {ffProConnect ? null : (
-        <p className="fr-mt-1w fr-mb-1w">
+        <p className="mt-2 mb-2">
           <Badge id="proconnect-a-venir" size="sm" variant="info">
             Bientôt disponible
           </Badge>
         </p>
       )}
-      <p className="fr-mb-0">
+      <p className="mb-0">
         <a
           href="https://www.proconnect.gouv.fr/"
           rel="noopener noreferrer"

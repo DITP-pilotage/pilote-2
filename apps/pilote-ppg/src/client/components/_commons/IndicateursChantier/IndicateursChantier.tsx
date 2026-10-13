@@ -46,7 +46,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   return (
     <section>
       {alerteMiseAJourIndicateur && chantier.statut !== "ARCHIVE" ? (
-        <div className="fr-mb-2w">
+        <div className="mb-4">
           <Alerte titre="Mise à jour des données requise" type="warning" />
         </div>
       ) : null}

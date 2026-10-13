@@ -29,7 +29,7 @@ export const PanelMenuNavigation = ({
 }: PanelMenuNavigationProps) => {
   return (
     <>
-      <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
+      <div className="fr-col-12 fr-col-md-3 pb-4 px-4">
         <SélecteursMaillesEtTerritoires
           direction="horizontal"
           pathname={pathname}
@@ -37,12 +37,9 @@ export const PanelMenuNavigation = ({
           territoiresApplicables={territoiresApplicables}
         />
       </div>
-      <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
+      <div className="fr-col-12 fr-col-md-3 pb-4 px-4">
         <div className="flex items-center">
-          <label
-            className="fr-label fr-mr-1w whitespace-nowrap"
-            htmlFor="jalon"
-          >
+          <label className="fr-label mr-2 whitespace-nowrap" htmlFor="jalon">
             Jalon :
           </label>
           <SelecteurJalon />
@@ -50,11 +47,11 @@ export const PanelMenuNavigation = ({
         </div>
       </div>
       {estAutoriseAVoirLeSelecteurDeMaille ? (
-        <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w flex items-center">
+        <div className="fr-col-12 fr-col-md-3 pb-4 px-4 flex items-center">
           <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
         </div>
       ) : null}
-      <div className="fr-hidden-lg fr-py-1w fr-background-blue-france-975 w-full">
+      <div className="fr-hidden-lg py-2 fr-background-blue-france-975 w-full">
         <Button
           variant="tertiary-no-outline"
           className="gap-2"

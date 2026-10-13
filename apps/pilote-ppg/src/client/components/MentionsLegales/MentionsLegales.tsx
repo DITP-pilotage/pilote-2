@@ -4,8 +4,8 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 const MentionsLegales: FunctionComponent = () => {
   return (
     <main>
-      <div className="fr-container fr-pb-2w">
-        <div className="fr-grid-row fr-py-4w">
+      <div className="fr-container pb-4">
+        <div className="fr-grid-row py-8">
           <h1 className="my-auto">Mentions légales</h1>
         </div>
         <Bloc>
@@ -16,7 +16,7 @@ const MentionsLegales: FunctionComponent = () => {
                 Ce site est édité par la Direction Interministérielle de la
                 Transformation Publique.
               </p>
-              <ul className="list-none fr-p-0">
+              <ul className="list-none p-0">
                 <li>20 avenue de Ségur</li>
                 <li>75334 Paris Cedex 07</li>
                 <li>France</li>
@@ -44,7 +44,7 @@ const MentionsLegales: FunctionComponent = () => {
           <div className="fr-grid-row">
             <div className="fr-col-12">
               <h4 className="text-h4 md:text-h4-md">Hébergement</h4>
-              <ul className="list-none fr-p-0">
+              <ul className="list-none p-0">
                 <li>Scalingo SAS</li>
                 <li>3 place de Haguenau</li>
                 <li>67000 Strasbourg</li>

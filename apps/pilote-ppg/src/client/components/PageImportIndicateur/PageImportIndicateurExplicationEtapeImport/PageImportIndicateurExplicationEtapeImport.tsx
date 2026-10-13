@@ -41,14 +41,14 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
 
   return (
     <section className="bg-dsfr-grey-1000">
-      <div className="fr-container fr-pt-2w fr-pb-3w">
+      <div className="fr-container pt-4 pb-6">
         <h2 className="text-h4 md:text-h4-md text-primary">
           {
             wording.PAGE_IMPORT_MESURE_INDICATEUR
               .SECTION_EXPLICATION_ETAPE_IMPORT.TITRE
           }
         </h2>
-        <ol className="fr-grid-row fr-grid-row--gutters fr-m-0 fr-p-0">
+        <ol className="fr-grid-row fr-grid-row--gutters m-0 p-0">
           {explicationsEtapeImport.map(({ titre, texte }, index) => (
             <li
               className="fr-col-lg-4 min-[62rem]:first-of-type:pl-0 min-[62rem]:last-of-type:pr-0 marker:content-['']"

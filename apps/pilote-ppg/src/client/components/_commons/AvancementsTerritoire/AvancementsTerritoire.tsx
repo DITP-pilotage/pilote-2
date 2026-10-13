@@ -24,10 +24,10 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
   return (
     <>
       <div className="flex flex-col flex-wrap justify-center items-center">
-        <strong className="fr-text--sm fr-mb-0 text-center">
+        <strong className="fr-text--sm mb-0 text-center">
           {titreTauxAvancement}
         </strong>
-        <span className="fr-text--sm fr-ml-1v">{jalon}</span>
+        <span className="fr-text--sm ml-1">{jalon}</span>
       </div>
       <JaugeDeProgression
         couleur={couleurJaugeDeProgression}

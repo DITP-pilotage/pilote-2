@@ -19,7 +19,7 @@ export const IndicateurPonderation = ({
     territoireCodeVersMailleCodeInsee(territoireCode);
 
   return (
-    <p className="fr-text--xs texte-gris fr-mb-0">
+    <p className="fr-text--xs texte-gris mb-0">
       {indicateurPondération === null ? (
         `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleDuTerritoireSelectionnee]}.`
       ) : indicateurPondération === 0 ? (

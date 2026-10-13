@@ -51,7 +51,7 @@ export const DashboardRender = ({
   return (
     <div className="border border-dsfr-grey-900 bg-white">
       <div className="flex h-11 items-center gap-2.5 border-b border-dsfr-grey-900 bg-dsfr-grey-1000 pl-4 pr-2">
-        <h3 className="truncate text-sm font-bold leading-5 text-dsfr-grey-50 fr-mb-0">
+        <h3 className="truncate text-sm font-bold leading-5 text-dsfr-grey-50 mb-0">
           {output.titre}
         </h3>
         <span className="flex-1" />

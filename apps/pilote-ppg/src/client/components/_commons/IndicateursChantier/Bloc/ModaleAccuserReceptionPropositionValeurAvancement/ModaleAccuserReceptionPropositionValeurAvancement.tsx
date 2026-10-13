@@ -88,11 +88,11 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="fr-text fr-text--sm fr-mb-1w">
+                  <p className="fr-text fr-text--sm mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
 
-                  <div className="w-full flex fr-mt-2w gap-2">
+                  <div className="w-full flex mt-4 gap-2">
                     <ComparaisonValeurBox
                       date={detailIndicateur.dateValeurAvancementMandat}
                       titre="Valeur d'avancement importée par la direction de projet"
@@ -126,7 +126,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     />
                   </div>
 
-                  <p className="fr-text--sm fr-mt-2w">
+                  <p className="fr-text--sm mt-4">
                     En accusant réception, vous informez le territoire que vous
                     avez pris connaissance de sa proposition.
                   </p>
@@ -137,7 +137,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     sur cette proposition (facultatif) :
                   </p>
 
-                  <div className="fr-mt-2w">
+                  <div className="mt-4">
                     <TextareaField
                       className={FIELD_GROUP_SPACING}
                       counter={{
@@ -155,7 +155,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     />
                   </div>
 
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
                       disabled={etapeSuivanteEstDesactive}
@@ -181,7 +181,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="fr-text fr-text--sm fr-mb-1w">
+                      <p className="fr-text fr-text--sm mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
                       <p className="fr-text--sm mb-0">
@@ -235,7 +235,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       nouvel import de données.
                     </p>
                   </Alerte>
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="secondary"
                       className="mr-4"
@@ -264,7 +264,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
           </FormProvider>
         </>
       ) : (
-        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+        <Alerte type="succès" classesSupplementaires="mt-4">
           <h3>
             L'accusé de réception de cette proposition de valeur d'avancement a
             bien été enregistré

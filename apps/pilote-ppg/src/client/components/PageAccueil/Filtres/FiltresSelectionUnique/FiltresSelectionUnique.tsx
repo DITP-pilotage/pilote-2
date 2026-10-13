@@ -110,12 +110,12 @@ export const FiltresSelectionUnique: FunctionComponent<
       <CollapsibleSection title={libelle}>
         <TagToggleGroup.Root
           aria-label={libelle}
-          className="flex-col items-start gap-0 fr-mb-1w fr-pl-1w"
+          className="flex-col items-start gap-0 mb-2 pl-2"
           onValueChange={auChangement}
           value={filtresNew}
         >
           {valuesFiltres[categorieDeFiltre].valeurDisponible.map((filtre) => (
-            <div className="fr-my-1w flex items-center gap-2" key={filtre.id}>
+            <div className="my-2 flex items-center gap-2" key={filtre.id}>
               <TagToggleGroup.Item
                 className="min-w-0 text-left"
                 id={`${categorieDeFiltre}-${filtre.id}`}

@@ -108,8 +108,8 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
       />
       <div className="[&_h2]:text-primary print:m-[12mm] print:[&_table]:overflow-hidden print:[&_table_td]:bg-white">
         <main className="py-8 overflow-x-hidden print:p-0">
-          <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-            <div className="fr-px-2w fr-px-md-0 flex justify-between print:hidden">
+          <div className="fr-container mb-0 px-0 md:px-4">
+            <div className="px-4 md:px-0 flex justify-between print:hidden">
               <h1 className="text-h2 md:text-h2-md">
                 {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? "chantiers" : "chantier"}`}
               </h1>
@@ -141,7 +141,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               ministères={ministères}
               territoireSélectionné={territoireSélectionné}
             />
-            <div className="fr-mb-3w print:hidden">
+            <div className="mb-6 print:hidden">
               <Interrupteur
                 checked={afficherLesChantiers}
                 libellé="Afficher le détail des chantiers"

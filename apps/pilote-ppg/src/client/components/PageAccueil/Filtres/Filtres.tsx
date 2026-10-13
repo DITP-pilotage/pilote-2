@@ -71,13 +71,13 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
 
   return (
     <>
-      <div className="flex justify-between items-center fr-mb-1w fr-px-3w fr-mt-3w">
+      <div className="flex justify-between items-center mb-2 px-6 mt-6">
         <h1 className="text-h4 md:text-h4-md mb-0 flex items-center">
           Filtres
         </h1>
         <BoutonReintialiserLesFiltres />
       </div>
-      <section className="fr-px-3w">
+      <section className="px-6">
         <FiltresMinistères ministères={ministères} />
       </section>
       {afficherToutLesFiltres ? (
