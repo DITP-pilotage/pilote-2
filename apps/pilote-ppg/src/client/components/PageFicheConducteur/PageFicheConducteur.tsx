@@ -101,7 +101,7 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
               </Bloc>
             </div>
-            <div className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3 flex flex-column fr-pl-1v">
+            <div className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3 py-2 pr-2 pl-1 lg:py-3 lg:pr-3 flex flex-column">
               <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113 h-full">
                 Météo et synthèse des résultats
               </h2>
