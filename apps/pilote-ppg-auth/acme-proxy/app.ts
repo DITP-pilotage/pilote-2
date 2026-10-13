@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import { proxy } from 'hono/proxy'
 import { z } from 'zod'
 import { acmeChallengeStore } from './acmeChallengeStore.ts'
+import { logger } from './logger.ts'
 import { onlyAcmeApiKey } from './onlyAcmeApiKey.ts'
 
 const challengeBodySchema = z.object({
@@ -70,17 +71,7 @@ export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
         redirect: 'manual',
       })
     } catch (err) {
-      const cause = err instanceof Error ? err.cause : undefined
-      console.error('[acme-proxy] upstream fetch failed', {
-        method: c.req.method,
-        target,
-        message: err instanceof Error ? err.message : String(err),
-        stack: err instanceof Error ? err.stack : undefined,
-        cause:
-          cause instanceof Error
-            ? { name: cause.name, message: cause.message, stack: cause.stack }
-            : cause,
-      })
+      logger.error({ err, method: c.req.method, target }, 'upstream fetch failed')
       return c.text('Bad Gateway', 502)
     }
   })
