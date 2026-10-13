@@ -6,7 +6,10 @@ import { prisma } from "@/server/db/prisma";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/server/infrastructure/test/NextAuthHelper";
-import { construireCsv } from "@/server/import-indicateur/app/builder/TabularFile.builder";
+import {
+  construireCsv,
+  construireXlsx,
+} from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import { requeteMultipart } from "@/server/import-indicateur/__tests__/infrastructure/handlers/requeteImport.builder";
 
 // node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
@@ -174,6 +177,35 @@ describe("VerifierImportIndicateurHandler", () => {
         estValide: true,
         listeErreursValidation: [],
       });
+    }),
+  );
+
+  it(
+    "accepte un XLSX dont la colonne date_valeur est au format date du tableur",
+    createIntegrationTest(async () => {
+      const sessionToken = await creerAdminEtSeConnecter();
+
+      const { rapport } = await verifier({
+        sessionToken,
+        indicateurId: "IND-001",
+        nomDuFichier: "import.xlsx",
+        contenu: construireXlsx([
+          COLONNES,
+          ["IND-001", "D46", { date: "2023-12-30" }, "vi", "9"],
+        ]),
+      });
+
+      expect(rapport).toStrictEqual({
+        id: anyString(),
+        estValide: true,
+        listeErreursValidation: [],
+      });
+      expect(
+        await prisma.mesure_indicateur_temporaire.findMany({
+          where: { rapport_id: rapport.id },
+          select: { metric_date: true },
+        }),
+      ).toEqual([{ metric_date: "2023-12-30" }]);
     }),
   );
 

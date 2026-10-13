@@ -53,6 +53,44 @@ describe("readXlsx", () => {
     ]);
   });
 
+  it("rend au format AAAA-MM-JJ une cellule au format date du tableur", () => {
+    const classeur = construireXlsx([[{ date: "2023-12-30" }]]);
+
+    expect(readXlsx(classeur).lignes).toEqual([["2023-12-30"]]);
+  });
+
+  it("reconnaît une date sous un format personnalisé avec code de langue", () => {
+    const classeur = construireXlsx([[{ date: "2024-02-29" }]], {
+      formatDate: "[$-40C]dd/mm/yyyy;@",
+    });
+
+    expect(readXlsx(classeur).lignes).toEqual([["2024-02-29"]]);
+  });
+
+  it("tient compte du calendrier 1904 des classeurs Mac", () => {
+    const classeur = construireXlsx([[{ date: "2023-12-30" }]], {
+      date1904: true,
+    });
+
+    expect(readXlsx(classeur).lignes).toEqual([["2023-12-30"]]);
+  });
+
+  it("laisse tel quel un nombre au format Standard", () => {
+    const classeur = construireXlsx([[{ nombre: "45290" }]]);
+
+    expect(readXlsx(classeur).lignes).toEqual([["45290"]]);
+  });
+
+  it("laisse tel quel un nombre au format monétaire", () => {
+    // Les guillemets et crochets d'un format peuvent contenir des d, m, y, h
+    // ou s sans en faire un format de date.
+    const classeur = construireXlsx([[{ date: "2023-12-30" }]], {
+      formatDate: '#,##0.00 "dh";[Red]-#,##0.00 "dh"',
+    });
+
+    expect(readXlsx(classeur).lignes).toEqual([["45290"]]);
+  });
+
   it("n'expose aucun producteur quand docProps/app.xml est absent", () => {
     expect(readXlsx(construireXlsx([ENTETE])).producteur).toBeNull();
   });
