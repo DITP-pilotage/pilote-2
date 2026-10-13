@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
-import { BarreDeProgressionVariante } from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBarVariant } from "@/components/shared/ProgressBar";
 import { JaugeDeProgressionCouleur } from "@/client/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
 
 interface AvancementsTerritoireProps {
@@ -8,7 +8,7 @@ interface AvancementsTerritoireProps {
   avancement: number | null;
   dateAvancement: string | null;
   jalon: number;
-  couleurBarreDeProgression: BarreDeProgressionVariante;
+  couleurBarreDeProgression: ProgressBarVariant;
   couleurJaugeDeProgression: JaugeDeProgressionCouleur;
   titreTauxAvancement: string;
 }

@@ -1,6 +1,6 @@
 import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import ValeurEtDate from "@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
-import BarreDeProgression from "@/client/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Table } from "@/components/shared/Table";
 
 export const ChantierIndicateursTable = ({
@@ -51,12 +51,12 @@ export const ChantierIndicateursTable = ({
               />
             </Table.Cell>
             <Table.Cell>
-              <BarreDeProgression
-                taille="sm"
-                variante="primaire"
-                fond="blanc"
-                bordure={null}
-                valeur={indicateur.taux_avancement}
+              <ProgressBar
+                size="sm"
+                variant="primary"
+                background="white"
+                border={null}
+                value={indicateur.taux_avancement}
               />
             </Table.Cell>
           </Table.Row>

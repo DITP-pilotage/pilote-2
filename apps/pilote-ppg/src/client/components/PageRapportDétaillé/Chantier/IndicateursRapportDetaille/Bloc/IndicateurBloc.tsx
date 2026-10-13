@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
 import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
@@ -139,13 +139,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     />
                   </Table.Cell>
                   <Table.Cell className={CELLULE}>
-                    <BarreDeProgression
-                      afficherTexte
-                      fond="gris-clair"
-                      positionTexte="dessus"
-                      taille="md"
-                      valeur={ligne.données.avancement.annuel}
-                      variante="secondaire"
+                    <ProgressBar
+                      showLabel
+                      background="light-grey"
+                      labelPosition="top"
+                      size="md"
+                      value={ligne.données.avancement.annuel}
+                      variant="secondary"
                     />
                   </Table.Cell>
                 </Table.Row>

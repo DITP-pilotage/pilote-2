@@ -6,7 +6,7 @@ import {
   estPropositionAccuseeReception,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { CelluleStatutProposition } from "@/components/_commons/IndicateursChantier/Bloc/CelluleStatutProposition";
@@ -56,12 +56,12 @@ export const BaseLignesPropositionValeurAvancement = ({
   const estChantierArchive = chantier.statut === "ARCHIVE";
 
   const varianteBarreProgression = estChantierArchive
-    ? "secondaire"
+    ? "secondary"
     : estPropositionAccepteeOuAccepteeAvecModification(
           detailIndicateurDuTerritoire,
         ) || estPropositionAccuseeReception(detailIndicateurDuTerritoire)
-      ? "bleu-dsfr-info"
-      : "jaune-moutarde";
+      ? "info"
+      : "mustard";
 
   return (
     <>
@@ -122,16 +122,16 @@ export const BaseLignesPropositionValeurAvancement = ({
               "EN_COURS" ? (
                 <BarreDeProgressionAVenir variante={varianteBarreProgression} />
               ) : (
-                <BarreDeProgression
-                  afficherTexte
-                  fond="gris-clair"
-                  positionTexte="dessus"
-                  taille="md"
-                  valeur={
+                <ProgressBar
+                  showLabel
+                  background="light-grey"
+                  labelPosition="top"
+                  size="md"
+                  value={
                     detailIndicateurDuTerritoire.proposition
                       .tauxAvancementIntermediaire
                   }
-                  variante={varianteBarreProgression}
+                  variant={varianteBarreProgression}
                 />
               )}
             </Table.Cell>

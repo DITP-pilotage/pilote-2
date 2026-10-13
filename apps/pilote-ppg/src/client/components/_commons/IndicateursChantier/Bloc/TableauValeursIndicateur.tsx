@@ -1,4 +1,4 @@
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { formaterDate } from "@/client/utils/date/date";
 import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Table } from "@/components/shared/Table";
@@ -128,13 +128,13 @@ export const TableauValeursIndicateur = ({
               {"Avancement " + new Date().getFullYear().toString()}
             </Table.RowHeaderCell>
             <Table.Cell className={classeCellule}>
-              <BarreDeProgression
-                afficherTexte
-                fond="gris-clair"
-                positionTexte="côté"
-                taille="md"
-                valeur={avancement.annuel}
-                variante="secondaire"
+              <ProgressBar
+                showLabel
+                background="light-grey"
+                labelPosition="side"
+                size="md"
+                value={avancement.annuel}
+                variant="secondary"
               />
             </Table.Cell>
           </Table.Row>
@@ -160,13 +160,13 @@ export const TableauValeursIndicateur = ({
               Avancement 2026
             </Table.RowHeaderCell>
             <Table.Cell className={classeCellule}>
-              <BarreDeProgression
-                afficherTexte
-                fond="gris-clair"
-                positionTexte="côté"
-                taille="md"
-                valeur={avancement.global}
-                variante="primaire"
+              <ProgressBar
+                showLabel
+                background="light-grey"
+                labelPosition="side"
+                size="md"
+                value={avancement.global}
+                variant="primary"
               />
             </Table.Cell>
           </Table.Row>

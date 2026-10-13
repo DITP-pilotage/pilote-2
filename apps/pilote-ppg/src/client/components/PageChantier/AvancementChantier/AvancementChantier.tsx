@@ -117,7 +117,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           <div className="fr-py-1w jauge [&>div]:m-auto">
             <AvancementsTerritoire
               avancement={avancements.departementale.annuel.moyenne}
-              couleurBarreDeProgression="secondaire"
+              couleurBarreDeProgression="secondary"
               couleurJaugeDeProgression="bleu"
               dateAvancement={avancements.departementale.annuel.date}
               jalon={jalon}
@@ -153,8 +153,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               avancement={avancements.regionale.annuel.moyenne}
               couleurBarreDeProgression={
                 mailleSelectionnee === "regionale"
-                  ? "secondaire"
-                  : "secondaire-light"
+                  ? "secondary"
+                  : "secondary-light"
               }
               couleurJaugeDeProgression={
                 mailleSelectionnee === "regionale" ? "bleu" : "bleu-clair"
