@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/card/card.min.css";
 import { Button } from "@/components/shared/Button";
 import Image from "next/image";
 import carteFranceSvg from "@gouvfr/dsfr/dist/artwork/pictograms/map/location-france.svg";
@@ -83,7 +82,7 @@ const PageLanding = () => {
             </div>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-md-4">
-                <div className="fr-card">
+                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={carteFranceSvg} />
                   </div>
@@ -103,7 +102,7 @@ const PageLanding = () => {
                 </div>
               </div>
               <div className="fr-col-12 fr-col-md-4">
-                <div className="fr-card">
+                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={visualisationDonnéesSvg} />
                   </div>
@@ -122,7 +121,7 @@ const PageLanding = () => {
                 </div>
               </div>
               <div className="fr-col-12 fr-col-md-4">
-                <div className="fr-card">
+                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={téléchargementFichierSvg} />
                   </div>
@@ -180,29 +179,30 @@ const PageLanding = () => {
                 </Button>
               </div>
               <div className="fr-col-12 fr-col-lg-4">
-                <div className="fr-card fr-enlarge-link hover:bg-white">
-                  <div className="fr-card__body">
-                    <div className="fr-card__content">
+                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid hover:bg-white">
+                  <div className="order-2 flex h-full flex-[1_1_auto] flex-col px-8">
+                    <div className="order-1 -mx-8 flex h-full flex-col p-8 pb-20">
                       <h2 className="text-h3 md:text-h3-md">
                         <Link
+                          className="bg-none [outline-width:0] before:absolute before:inset-0 before:z-[1] before:block before:size-full before:content-[''] before:[outline-color:inherit] before:[outline-offset:2px] before:[outline-style:inherit] before:[outline-width:2px]"
                           href="https://www.gouvernement.fr/les-actions-du-gouvernement"
                           target="_blank"
                         >
                           Le baromètre des résultats de l'action publique
                         </Link>
                       </h2>
-                      <p className="fr-card__desc">
+                      <p className="order-3 mb-0 mt-3 text-sm leading-6 print:text-base print:leading-6">
                         Le baromètre des résultats de l'action publique reprend
                         les données de PILOTE pour rendre compte de l'avancement
                         des politiques publiques aux citoyens.
                       </p>
                     </div>
                   </div>
-                  <div className="fr-card__header">
-                    <div className="fr-card__img">
+                  <div className="relative order-1 flex-none">
+                    <div>
                       <Image
                         alt=""
-                        className="fr-responsive-img"
+                        className="block aspect-[16/9] h-auto w-full object-cover object-center"
                         src={baromètreCarteSvg}
                       />
                     </div>
