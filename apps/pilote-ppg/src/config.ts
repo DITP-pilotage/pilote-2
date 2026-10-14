@@ -285,6 +285,12 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_RECORD_ANALYTICS",
     },
+    dimensions: {
+      doc: 'Correspondance dimension → identifiant Matomo (JSON), ex. {"nom_dimension":12}',
+      format: String,
+      default: "",
+      env: "NEXT_PUBLIC_MATOMO_DIMENSIONS",
+    },
   },
   tokenAPI: {
     secret: {
