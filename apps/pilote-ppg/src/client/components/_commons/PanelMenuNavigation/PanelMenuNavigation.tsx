@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { SélecteursMaillesEtTerritoires } from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import { Button } from "@/components/shared/Button";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
@@ -39,7 +40,10 @@ export const PanelMenuNavigation = ({
       </div>
       <div className="w-full shrink-0 md:w-1/4 pb-4 px-4">
         <div className="flex items-center">
-          <label className="fr-label mr-2 whitespace-nowrap" htmlFor="jalon">
+          <label
+            className={`${LABEL_CLASSES} mr-2 whitespace-nowrap`}
+            htmlFor="jalon"
+          >
             Jalon :
           </label>
           <SelecteurJalon />

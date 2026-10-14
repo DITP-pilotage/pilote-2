@@ -1,3 +1,4 @@
+import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { $Enums } from "@prisma/client";
 import Head from "next/head";

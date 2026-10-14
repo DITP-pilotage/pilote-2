@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { FunctionComponent, PropsWithChildren } from "react";
 import { StepIndicator } from "@/components/shared/StepIndicator";
 import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
@@ -266,7 +267,10 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   ) : null}
                   {estUneModificationDeProposition ? (
                     <div className="mt-4">
-                      <label className="fr-label" htmlFor="valeurAvancement">
+                      <label
+                        className={LABEL_CLASSES}
+                        htmlFor="valeurAvancement"
+                      >
                         Valeur modifiée
                         <ChampObligatoire />
                       </label>

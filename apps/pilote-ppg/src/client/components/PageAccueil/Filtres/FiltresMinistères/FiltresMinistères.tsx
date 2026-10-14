@@ -78,7 +78,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
   );
 
   return (
-    <div className="fr-form-group">
+    <div>
       <CollapsibleSection title="Filtrer par ministères">
         <ul
           aria-label="Liste des filtres ministères"

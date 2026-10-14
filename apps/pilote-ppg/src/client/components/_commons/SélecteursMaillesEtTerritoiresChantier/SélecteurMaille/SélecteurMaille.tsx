@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
@@ -49,7 +50,7 @@ export const SélecteurMaille: FunctionComponent<{
   return (
     <div className="w-full flex items-center">
       <span
-        className="fr-label mr-2 whitespace-nowrap"
+        className={`${LABEL_CLASSES} mr-2 whitespace-nowrap`}
         id="libelle-selecteur-maille"
       >
         Affichage :

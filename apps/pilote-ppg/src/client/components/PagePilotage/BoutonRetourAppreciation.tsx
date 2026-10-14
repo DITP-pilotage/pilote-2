@@ -1,3 +1,4 @@
+import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import { Icone } from "@/components/_commons/Icone";
 import { Success1Icon } from "@/components/_commons/Icones/Success1Icon";
 import { useRetournerAppreciation } from "./useRetournerAppreciation";

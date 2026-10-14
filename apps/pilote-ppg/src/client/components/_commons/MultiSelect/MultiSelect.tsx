@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { Label, Popover } from "radix-ui";
 import { FunctionComponent, useId, useState } from "react";
 import { MultiSelectProps } from "@/components/_commons/MultiSelect/MultiSelect.interface";
@@ -39,7 +40,7 @@ export const MultiSelect: FunctionComponent<MultiSelectProps> = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <Label.Root className="fr-label" htmlFor={id}>
+      <Label.Root className={LABEL_CLASSES} htmlFor={id}>
         {label}
       </Label.Root>
       {afficherBoutonsSélection ? (

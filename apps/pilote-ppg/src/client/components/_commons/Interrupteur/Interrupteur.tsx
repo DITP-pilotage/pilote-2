@@ -1,3 +1,4 @@
+import { HINT_TEXT_CLASSES } from "@/components/shared/fieldTextClasses";
 import { FunctionComponent, useId } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { Switch } from "@/components/shared/Switch";
@@ -51,7 +52,7 @@ const Interrupteur: FunctionComponent<InterrupteurProps> = ({
         </label>
       </div>
       {messageSecondaire ? (
-        <p className="fr-hint-text" id={idMessageSecondaire}>
+        <p className={HINT_TEXT_CLASSES} id={idMessageSecondaire}>
           {messageSecondaire}
         </p>
       ) : null}

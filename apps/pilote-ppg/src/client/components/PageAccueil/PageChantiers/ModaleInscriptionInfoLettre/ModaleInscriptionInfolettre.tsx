@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { FunctionComponent } from "react";
 import { Controller } from "react-hook-form";
 import { CheckboxField } from "@/components/shared/Checkbox";
@@ -53,7 +54,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
           <p className="font-bold mt-4">👉 Une fois par mois, pas plus.</p>
           <form className="mt-6" method="post" onSubmit={handleSubmitForm}>
             <div className="mb-6">
-              <label className="font-bold fr-label" htmlFor="email">
+              <label className={`${LABEL_CLASSES} font-bold`} htmlFor="email">
                 EMAIL
                 {}
                 <span className="text-error">*</span>

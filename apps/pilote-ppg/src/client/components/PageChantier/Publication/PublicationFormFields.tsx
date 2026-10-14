@@ -1,3 +1,7 @@
+import {
+  ERROR_GROUP_CLASSES,
+  ERROR_TEXT_CLASSES,
+} from "@/components/shared/fieldTextClasses";
 import { ReactNode } from "react";
 import { useController, useWatch } from "react-hook-form";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
@@ -24,7 +28,7 @@ const ContentField = ({
     <div
       className={clsxm(
         "flex flex-col",
-        fieldState.error && "fr-input-group--error",
+        fieldState.error && ERROR_GROUP_CLASSES,
         className,
       )}
     >
@@ -38,7 +42,7 @@ const ContentField = ({
       <div className="flex justify-between mt-1">
         <div>
           {fieldState.error ? (
-            <p className="fr-error-text mt-0 mr-4">
+            <p className={clsxm(ERROR_TEXT_CLASSES, "mt-0 mr-4")}>
               {fieldState.error.message}
             </p>
           ) : null}

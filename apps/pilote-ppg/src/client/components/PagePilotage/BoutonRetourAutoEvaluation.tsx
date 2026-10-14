@@ -1,3 +1,4 @@
+import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import { Icone } from "@/components/_commons/Icone";
 import { QuillPenIcon } from "@/components/_commons/Icones/QuillPenIcon";
 import { useRetournerAutoEvaluation } from "./useRetournerAutoEvaluation";
