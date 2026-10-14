@@ -21,6 +21,7 @@ export type GetEvolutionIndicateurOutput = {
     chantier_id: string;
   } | null;
   territoire_code?: string;
+  construction_valeur_affichee?: string;
   points?: PointEvolutionAvancement[];
   introuvable?: true;
   _output_instructions: string;
@@ -28,6 +29,9 @@ export type GetEvolutionIndicateurOutput = {
 
 const OUTPUT_INSTRUCTIONS =
   "Ces données représentent une ÉVOLUTION : la tendance dans le temps de la valeur d'avancement et, quand disponible (champ taux_avancement_jalon non nul), du taux d'avancement affiché dans PILOTE pour cet indicateur et ce territoire. Chaque point est daté au format MM/AAAA (mois de la valeur d'avancement) — reprends ce format tel quel, ne le recalcule pas. Présente-les comme une évolution/tendance, en citant le nom et l'unité de l'indicateur plutôt que des chiffres bruts. Termine SYSTÉMATIQUEMENT ta réponse en proposant à l'utilisateur DEUX choses distinctes, sans en omettre une au profit de l'autre : (1) afficher un graphique de cette évolution — précise qu'il peut demander le graphique du taux d'avancement, celui de la valeur d'avancement, ou les deux — ne l'affiche jamais automatiquement, contente-toi de le proposer ; (2) obtenir le détail des actions ayant produit ces valeurs (qui a fait quoi, import, proposition, validation...), sans citer de nom d'outil technique pour ce second point.";
+
+const VALEUR_AFFICHEE_INSTRUCTIONS =
+  "Pour cet indicateur, les valeurs d'avancement de l'évolution ne sont pas les valeurs importées : `construction_valeur_affichee` explique comment elles sont construites. Précise-le quand c'est utile pour lire l'évolution (par exemple « valeurs cumulées depuis janvier de l'année ») et ne recalcule jamais toi-même les valeurs importées.";
 
 const INDICATEUR_INTROUVABLE_INSTRUCTIONS =
   "Cet indicateur est introuvable. Informe l'utilisateur qu'aucun indicateur ne correspond à cet identifiant.";
@@ -91,8 +95,13 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
             chantier_id: contexte.chantier.id,
           },
           territoire_code: input.territoire_code,
+          ...(contexte.explicationValeurAffichee && {
+            construction_valeur_affichee: contexte.explicationValeurAffichee,
+          }),
           points,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
+          _output_instructions: contexte.explicationValeurAffichee
+            ? `${OUTPUT_INSTRUCTIONS} ${VALEUR_AFFICHEE_INSTRUCTIONS}`
+            : OUTPUT_INSTRUCTIONS,
         };
       },
     });

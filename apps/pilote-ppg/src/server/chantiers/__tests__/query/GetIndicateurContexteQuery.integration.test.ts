@@ -40,7 +40,33 @@ describe("GetIndicateurContexteQuery", () => {
         chantier: { id: chantier.id, nom: "Chantier de test" },
         mailleNatAgregee: true,
         mailleRegAgregee: false,
+        explicationValeurAffichee: null,
       });
+    }),
+  );
+
+  it(
+    "explique la construction de la valeur affichée à partir du paramétrage de l'indicateur",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+      });
+      await fixtures.metadataParametrageIndicateurs({
+        indic_id: indicateur.id,
+        param_vaca_decumul_from: "_",
+        param_vaca_partition_date: "from_year_start",
+        param_vaca_op: "sum",
+      });
+
+      // When
+      const result = await query.execute({ indicateurId: indicateur.id });
+
+      // Then
+      expect(result?.explicationValeurAffichee).toEqual(
+        "Les valeurs sont importées mois par mois. La valeur affichée dans PILOTE est la somme des valeurs mensuelles depuis janvier de l'année.",
+      );
     }),
   );
 
