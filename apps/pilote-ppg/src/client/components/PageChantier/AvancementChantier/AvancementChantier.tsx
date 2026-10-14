@@ -337,7 +337,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                   {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + "%"}`}
                 </strong>
                 {", "}
-                <p className="text-xs print:text-base text-dsfr-mention-grey mb-0 ml-1">
+                <p className="text-xs print:text-base mb-0 ml-1">
                   {`${formaterDate(donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente, "MM/YYYY")}`}
                 </p>
                 )
