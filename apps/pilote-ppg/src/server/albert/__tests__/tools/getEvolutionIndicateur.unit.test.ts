@@ -29,6 +29,7 @@ describe("createGetEvolutionIndicateurTool execute", () => {
         chantier: { id: "CH-001", nom: "Chantier test" },
         mailleNatAgregee: false,
         mailleRegAgregee: false,
+        explicationValeurAffichee: null,
       }),
     });
     const getEvolutionIndicateurTerritoireQuery =
@@ -66,6 +67,59 @@ describe("createGetEvolutionIndicateurTool execute", () => {
         { date: "06/2024", valeur: 20, taux_avancement_jalon: 45 },
       ],
       _output_instructions: expect.any(String),
+    });
+  });
+
+  it("ajoute la construction de la valeur affichée quand elle diffère de la valeur importée", async () => {
+    // Given
+    const explicationValeurAffichee =
+      "Les valeurs sont importées mois par mois. La valeur affichée dans PILOTE est la somme des valeurs mensuelles depuis le début.";
+    const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
+      execute: async () => ({
+        id: "IND-001",
+        nom: "Indicateur test",
+        description: null,
+        uniteMesure: "%",
+        chantier: { id: "CH-001", nom: "Chantier test" },
+        mailleNatAgregee: false,
+        mailleRegAgregee: false,
+        explicationValeurAffichee,
+      }),
+    });
+    const getEvolutionIndicateurTerritoireQuery =
+      mock<GetEvolutionIndicateurTerritoireQuery>({
+        execute: async () => [
+          { date: "01/2024", valeur: 10, taux_avancement_jalon: null },
+        ],
+      });
+    const tool = createGetEvolutionIndicateurTool({
+      getIndicateurContexteQuery,
+      getEvolutionIndicateurTerritoireQuery,
+    })({
+      territoiresAccessibles: ["DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
+
+    // When
+    const result = await executeTool(tool, {
+      indicateur_id: "IND-001",
+      territoire_code: "DEPT-75",
+    });
+
+    // Then
+    expect(result).toEqual({
+      indicateur: {
+        id: "IND-001",
+        nom: "Indicateur test",
+        unite_mesure: "%",
+        chantier_id: "CH-001",
+      },
+      territoire_code: "DEPT-75",
+      construction_valeur_affichee: explicationValeurAffichee,
+      points: [{ date: "01/2024", valeur: 10, taux_avancement_jalon: null }],
+      _output_instructions: expect.stringContaining(
+        "construction_valeur_affichee",
+      ),
     });
   });
 
@@ -135,6 +189,7 @@ describe("createGetEvolutionIndicateurTool execute", () => {
         chantier: { id: "CH-INACCESSIBLE", nom: "Chantier test" },
         mailleNatAgregee: false,
         mailleRegAgregee: false,
+        explicationValeurAffichee: null,
       }),
     });
     const getEvolutionIndicateurTerritoireQuery =
