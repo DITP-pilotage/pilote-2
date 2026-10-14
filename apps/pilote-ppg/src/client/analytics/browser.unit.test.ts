@@ -129,6 +129,23 @@ describe("createBrowserAnalytics", () => {
     expect(() => analytics.trackEvent(event)).not.toThrow();
   });
 
+  it("se replie sur fetch quand le navigateur n'a pas sendBeacon", () => {
+    const fetchMock = vi.fn(() => Promise.resolve(new Response()));
+    vi.stubGlobal("navigator", {});
+    vi.stubGlobal("fetch", fetchMock);
+
+    createBrowserAnalytics({
+      config,
+      enabled: true,
+      doNotTrack: false,
+    }).trackEvent(event);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("https://stats.example.org/matomo.php?"),
+      { method: "POST", mode: "no-cors", keepalive: true },
+    );
+  });
+
   it("se replie sur fetch quand sendBeacon refuse l'envoi", () => {
     const sendBeacon = vi.fn(() => false);
     const fetchMock = vi.fn(() => Promise.reject(new Error("réseau")));

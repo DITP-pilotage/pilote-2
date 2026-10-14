@@ -40,7 +40,8 @@ export const createMutedAnalytics = (
 });
 
 const sendBeacon = (url: string): void => {
-  if (navigator.sendBeacon(url)) return;
+  if (typeof navigator.sendBeacon === "function" && navigator.sendBeacon(url))
+    return;
   void fetch(url, { method: "POST", mode: "no-cors", keepalive: true }).catch(
     () => {},
   );
