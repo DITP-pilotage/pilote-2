@@ -2,7 +2,10 @@ import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { PublicationActions } from "@/components/PageChantier/Publication/Publication.interface";
-import { SyntheseDesResultatsValues } from "./SyntheseDesResultatsValues";
+import {
+  SyntheseDesResultatsPublieeValues,
+  SyntheseDesResultatsValues,
+} from "./SyntheseDesResultatsValues";
 
 export const useSyntheseDesResultatsActions = ({
   chantierId,
@@ -14,7 +17,10 @@ export const useSyntheseDesResultatsActions = ({
   territoireCode: string;
   syntheseId: string | undefined;
   brouillonId: string | undefined;
-}): PublicationActions<SyntheseDesResultatsValues> => {
+}): PublicationActions<
+  SyntheseDesResultatsValues,
+  SyntheseDesResultatsPublieeValues
+> => {
   const csrf = () => récupérerUnCookie("csrf") ?? "";
   const refreshRouter = useRefreshRouter();
 
@@ -27,7 +33,7 @@ export const useSyntheseDesResultatsActions = ({
     api.syntheseDesResultats.modifierLeBrouillon.useMutation();
   const modifierMutation = api.syntheseDesResultats.modifier.useMutation();
 
-  const publier = ({ contenu, meteo }: SyntheseDesResultatsValues) =>
+  const publier = ({ contenu, meteo }: SyntheseDesResultatsPublieeValues) =>
     publierMutation.mutateAsync(
       { chantierId, territoireCode, contenu, meteo, csrf: csrf() },
       { onSuccess: () => refreshRouter() },
@@ -42,7 +48,10 @@ export const useSyntheseDesResultatsActions = ({
       { onSuccess: () => refreshRouter() },
     );
 
-  const publierBrouillon = ({ contenu, meteo }: SyntheseDesResultatsValues) =>
+  const publierBrouillon = ({
+    contenu,
+    meteo,
+  }: SyntheseDesResultatsPublieeValues) =>
     publierUnBrouillonMutation.mutateAsync(
       { brouillonId: brouillonId!, contenu, meteo, csrf: csrf() },
       { onSuccess: () => refreshRouter() },
@@ -54,7 +63,7 @@ export const useSyntheseDesResultatsActions = ({
       { onSuccess: () => refreshRouter() },
     );
 
-  const modifier = ({ contenu, meteo }: SyntheseDesResultatsValues) =>
+  const modifier = ({ contenu, meteo }: SyntheseDesResultatsPublieeValues) =>
     modifierMutation.mutateAsync(
       { syntheseId: syntheseId!, contenu, meteo, csrf: csrf() },
       { onSuccess: () => refreshRouter() },

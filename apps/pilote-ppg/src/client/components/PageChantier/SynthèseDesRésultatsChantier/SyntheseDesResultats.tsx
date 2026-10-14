@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
@@ -9,6 +8,7 @@ import {
 } from "@/client/constants/libellesSyntheseDesResultats";
 import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
+  validationSynthèseDesRésultatsBrouillon,
   validationSynthèseDesRésultatsFormulaire,
 } from "@/validation/synthèseDesRésultats";
 import { MeteoField } from "./MeteoField";
@@ -60,7 +60,8 @@ export const SyntheseDesResultats: FunctionComponent<
         complementConsigneGenerique="à la météo et à la synthèse des résultats"
         consigne={CONSIGNE_SYNTHÈSE_DES_RÉSULTATS}
         formConfig={{
-          resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
+          draftSchema: validationSynthèseDesRésultatsBrouillon,
+          publishSchema: validationSynthèseDesRésultatsFormulaire,
           maxLength: LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
           editValues: {
             contenu: syntheseDesResultats?.contenu ?? "",

@@ -1,6 +1,12 @@
-import { ReactNode } from "react";
+import { ReactNode, useId } from "react";
 import { Button } from "@/components/shared/Button";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
@@ -17,8 +23,13 @@ import {
   PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
+import { MotifsActionsIndisponiblesTexte } from "@/components/PageChantier/Publication/MotifsActionsIndisponiblesTexte";
+import { motifsActionsIndisponibles } from "@/components/PageChantier/Publication/motifsActionsIndisponibles";
 
-interface ModaleFormulairePublicationProps<T extends PublicationValues> {
+interface ModaleFormulairePublicationProps<
+  T extends PublicationValues,
+  P extends T,
+> {
   title: string;
   consigne: string;
   complementConsigneGenerique: string;
@@ -28,12 +39,15 @@ interface ModaleFormulairePublicationProps<T extends PublicationValues> {
   commentaire: Publication | null;
   aside?: ReactNode;
   emptyMessage?: string;
-  formConfig: PublicationFormConfig<T>;
-  onPublier: SubmitHandler<T>;
+  formConfig: PublicationFormConfig<T, P>;
+  onPublier: SubmitHandler<P>;
   onEnregistrerBrouillon: SubmitHandler<T>;
 }
 
-export const ModaleFormulairePublication = <T extends PublicationValues>({
+export const ModaleFormulairePublication = <
+  T extends PublicationValues,
+  P extends T = T,
+>({
   title,
   consigne,
   complementConsigneGenerique,
@@ -46,15 +60,20 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
   formConfig,
   onPublier,
   onEnregistrerBrouillon,
-}: ModaleFormulairePublicationProps<T>) => {
+}: ModaleFormulairePublicationProps<T, P>) => {
   const { chantierInformations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
 
   const form = useForm<T>({
     mode: "all",
-    resolver: formConfig.resolver,
+    resolver: zodResolver(formConfig.draftSchema),
     defaultValues: formConfig.newValues,
   });
+  const values = useWatch({ control: form.control });
+  const motifs = motifsActionsIndisponibles(values, formConfig);
+  const motifsId = useId();
+  const motifsDescribedBy = (motifsAction: string[]) =>
+    motifsAction.length > 0 ? motifsId : undefined;
 
   return (
     <Modale
@@ -83,7 +102,11 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
       <p className="text-sm mb-6">{consigne}</p>
       <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onPublier)}>
+        <form
+          onSubmit={form.handleSubmit((data) =>
+            onPublier(formConfig.publishSchema.parse(data)),
+          )}
+        >
           <PublicationFormFields
             extraFields={formConfig.extraFields}
             editorClassName="h-60"
@@ -91,7 +114,8 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
           />
           <div className="flex justify-end items-center gap-3 mt-6">
             <Button
-              disabled={!form.formState.isValid}
+              aria-describedby={motifsDescribedBy(motifs.publier)}
+              disabled={motifs.publier.length > 0}
               iconLeft={
                 <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
               }
@@ -109,8 +133,9 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
               Annuler
             </Button>
             <Button
+              aria-describedby={motifsDescribedBy(motifs.brouillon)}
               variant="link"
-              disabled={!form.formState.isValid}
+              disabled={motifs.brouillon.length > 0}
               iconLeft={
                 <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
               }
@@ -120,6 +145,7 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
               Enregistrer en tant que brouillon
             </Button>
           </div>
+          <MotifsActionsIndisponiblesTexte id={motifsId} motifs={motifs} />
         </form>
       </FormProvider>
     </Modale>

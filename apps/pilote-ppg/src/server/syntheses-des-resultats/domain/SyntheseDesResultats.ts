@@ -19,6 +19,14 @@ type ParamsModification = {
   dateModification: string;
 };
 
+type ParamsCreationBrouillon = Omit<ParamsCreation, "meteo"> & {
+  meteo: Meteo | undefined;
+};
+
+type ParamsModificationBrouillon = Omit<ParamsModification, "meteo"> & {
+  meteo: Meteo | undefined;
+};
+
 export function creerSyntheseDesResultatsPublie(
   params: ParamsCreation,
 ): SyntheseDesResultatsV2 {
@@ -37,14 +45,14 @@ export function creerSyntheseDesResultatsPublie(
 }
 
 export function creerSyntheseDesResultatsBrouillon(
-  params: ParamsCreation,
+  params: ParamsCreationBrouillon,
 ): SyntheseDesResultatsV2 {
   return {
     id: randomUUID(),
     chantierId: params.chantierId,
     territoireCode: params.territoireCode,
     contenu: params.contenu,
-    meteo: params.meteo,
+    meteo: params.meteo ?? "NON_RENSEIGNEE",
     auteurCreationId: params.auteurId,
     dateCreation: params.date,
     auteurModificationId: params.auteurId,
@@ -93,7 +101,7 @@ export function modifierSyntheseDesResultatsPubliee(
 
 export function modifierSyntheseDesResultatsBrouillon(
   existing: SyntheseDesResultatsV2,
-  params: ParamsModification,
+  params: ParamsModificationBrouillon,
 ): SyntheseDesResultatsV2 {
   if (existing.statut !== $Enums.statut_publication.BROUILLON)
     throw new Error(
@@ -103,7 +111,7 @@ export function modifierSyntheseDesResultatsBrouillon(
   return {
     ...existing,
     contenu: params.contenu,
-    meteo: params.meteo,
+    meteo: params.meteo ?? "NON_RENSEIGNEE",
     auteurModificationId: params.auteurModificationId,
     dateModification: params.dateModification,
     statut: $Enums.statut_publication.BROUILLON,

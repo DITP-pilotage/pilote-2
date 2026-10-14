@@ -7,6 +7,7 @@ import {
 import {
   validationBrouillonAPublier,
   validationSyntheseAModifier,
+  validationSynthèseDesRésultatsBrouillon,
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
 } from "@/validation/synthèseDesRésultats";
@@ -65,7 +66,7 @@ export const syntheseDesResultatsRouter = createTRPCRouter({
   enregistrerEnBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
-        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationSynthèseDesRésultatsBrouillon)
         .merge(validationSynthèseDesRésultatsContexte),
     )
     .mutation(({ input, ctx }) => {
@@ -108,7 +109,7 @@ export const syntheseDesResultatsRouter = createTRPCRouter({
   modifierLeBrouillon: protectedProcedure
     .input(
       zodValidateurCSRF
-        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationSynthèseDesRésultatsBrouillon)
         .merge(validationBrouillonAPublier),
     )
     .mutation(({ input, ctx }) => {

@@ -9,20 +9,29 @@ export const validationSynthèseDesRésultatsContexte = z.object({
   territoireCode: z.string(),
 });
 
+const validationContenuSynthèseDesRésultats = z
+  .string()
+  .refine(
+    (html) => extractVisibleText(html).trim().length >= 1,
+    "Le commentaire ne peut pas être vide",
+  )
+  .refine(
+    (html) =>
+      extractVisibleText(html).length <=
+      LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
+    `La limite maximale de ${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères a été dépassée`,
+  );
+
 export const validationSynthèseDesRésultatsFormulaire = z.object({
-  contenu: z
-    .string()
-    .refine(
-      (html) => extractVisibleText(html).trim().length >= 1,
-      "Le commentaire ne peut pas être vide",
-    )
-    .refine(
-      (html) =>
-        extractVisibleText(html).length <=
-        LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
-      `La limite maximale de ${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères a été dépassée`,
-    ),
-  meteo: z.enum(meteosSaisissables),
+  contenu: validationContenuSynthèseDesRésultats,
+  meteo: z.enum(meteosSaisissables, {
+    error: () => "La météo est obligatoire pour publier",
+  }),
+});
+
+export const validationSynthèseDesRésultatsBrouillon = z.object({
+  contenu: validationContenuSynthèseDesRésultats,
+  meteo: z.enum(meteosSaisissables).optional(),
 });
 
 export const validationBrouillonAPublier = z.object({

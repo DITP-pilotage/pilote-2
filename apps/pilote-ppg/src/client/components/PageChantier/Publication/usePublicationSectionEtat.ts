@@ -3,21 +3,24 @@ import { SubmitHandler } from "react-hook-form";
 import { CommentaireAction } from "./AlertePublication";
 import { PublicationActions, PublicationValues } from "./Publication.interface";
 
-export const usePublicationSectionEtat = <T extends PublicationValues>(
-  actions: PublicationActions<T>,
+export const usePublicationSectionEtat = <
+  T extends PublicationValues,
+  P extends T = T,
+>(
+  actions: PublicationActions<T, P>,
 ) => {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [alerteAction, setAlerteAction] = useState<CommentaireAction | null>(
     null,
   );
 
-  const handleModifier: SubmitHandler<T> = async (data) => {
+  const handleModifier: SubmitHandler<P> = async (data) => {
     await actions.modifier(data);
     setModeÉdition(false);
     setAlerteAction("modification-reussie");
   };
 
-  const handlePublier: SubmitHandler<T> = async (data) => {
+  const handlePublier: SubmitHandler<P> = async (data) => {
     await actions.publier(data);
     setAlerteAction("publication-reussie");
   };
@@ -27,7 +30,7 @@ export const usePublicationSectionEtat = <T extends PublicationValues>(
     setAlerteAction(null);
   };
 
-  const handlePublierBrouillon: SubmitHandler<T> = async (data) => {
+  const handlePublierBrouillon: SubmitHandler<P> = async (data) => {
     await actions.publierBrouillon(data);
     setAlerteAction("publication-reussie");
   };

@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { DefaultValues, Resolver, SubmitHandler } from "react-hook-form";
+import { DefaultValues, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
 
 export interface Publication {
   contenu: string;
@@ -23,18 +24,25 @@ export interface PublicationValues {
   contenu: string;
 }
 
+// T : valeurs saisies, suffisantes pour un brouillon.
+// P : valeurs exigées pour publier, plus strictes que T (ex. météo obligatoire).
 export interface PublicationActions<
   T extends PublicationValues = PublicationValues,
+  P extends T = T,
 > {
-  publier: SubmitHandler<T>;
+  publier: SubmitHandler<P>;
   enregistrerEnBrouillon: SubmitHandler<T>;
-  publierBrouillon: SubmitHandler<T>;
+  publierBrouillon: SubmitHandler<P>;
   modifierBrouillon: SubmitHandler<T>;
-  modifier: SubmitHandler<T>;
+  modifier: SubmitHandler<P>;
 }
 
-export interface PublicationFormConfig<T extends PublicationValues> {
-  resolver: Resolver<T>;
+export interface PublicationFormConfig<
+  T extends PublicationValues,
+  P extends T = T,
+> {
+  draftSchema: z.ZodType<T, T>;
+  publishSchema: z.ZodType<P, T>;
   maxLength: number;
   editValues: DefaultValues<T>;
   newValues: DefaultValues<T>;

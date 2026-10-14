@@ -1,4 +1,4 @@
-import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { MeteoSaisissable } from "@/shared/meteo/Meteo.interface";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { SyntheseDesResultatsRepository } from "@/server/syntheses-des-resultats/infrastructure/sql/SyntheseDesResultatsRepository.interface";
@@ -23,7 +23,7 @@ export class ModifierBrouillonSyntheseDesResultatsUseCase {
   }: {
     brouillonId: string;
     contenu: string;
-    meteo: Meteo;
+    meteo: MeteoSaisissable | undefined;
     auteurModificationId: string;
     dateModification: string;
     habilitations: Habilitations;

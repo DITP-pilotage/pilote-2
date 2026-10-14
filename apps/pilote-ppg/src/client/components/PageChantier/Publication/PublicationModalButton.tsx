@@ -11,7 +11,10 @@ import {
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { ModaleFormulairePublication } from "@/components/PageChantier/Publication/ModaleFormulairePublication";
 
-export const PublicationModalButton = <T extends PublicationValues>({
+export const PublicationModalButton = <
+  T extends PublicationValues,
+  P extends T = T,
+>({
   hasDraft,
   commentaire,
   aside,
@@ -31,14 +34,14 @@ export const PublicationModalButton = <T extends PublicationValues>({
   libelle: string;
   consigne: string;
   complementConsigneGenerique: string;
-  formConfig: PublicationFormConfig<T>;
-  onPublier: SubmitHandler<T>;
+  formConfig: PublicationFormConfig<T, P>;
+  onPublier: SubmitHandler<P>;
   onEnregistrerBrouillon: SubmitHandler<T>;
   ariaLabel?: string;
 }) => {
   const [open, setOpen] = useState(false);
 
-  const handlePublier: SubmitHandler<T> = async (data) => {
+  const handlePublier: SubmitHandler<P> = async (data) => {
     await onPublier(data);
     setOpen(false);
   };
