@@ -45,10 +45,75 @@ function lettresColonne(index: number): string {
   return lettres;
 }
 
+/**
+ * Cellule saisie comme une date dans le tableur : Excel l'enregistre comme un
+ * nombre de jours depuis son origine, et seul le style la rend lisible.
+ */
+export type CelluleDate = { date: string };
+
+/** Cellule numérique au format « Standard », sans style. */
+export type CelluleNombre = { nombre: string };
+
+type CelluleXlsx = string | CelluleDate | CelluleNombre;
+
+type OptionsXlsx = {
+  /** Identifiant de format intégré, ou code d'un format personnalisé. */
+  formatDate?: number | string;
+  date1904?: boolean;
+};
+
+const STYLE_DATE = 1;
+const ID_FORMAT_PERSONNALISE = 164;
+const MS_PAR_JOUR = 86_400_000;
+
+function serieExcel(dateIso: string, date1904: boolean): number {
+  const origine = date1904 ? Date.UTC(1904, 0, 1) : Date.UTC(1899, 11, 30);
+  return (Date.parse(`${dateIso}T00:00:00Z`) - origine) / MS_PAR_JOUR;
+}
+
+function celluleXml(
+  reference: string,
+  valeur: CelluleXlsx,
+  date1904: boolean,
+): string {
+  if (typeof valeur === "string") {
+    return `<c r="${reference}" t="inlineStr"><is><t xml:space="preserve">${echapper(valeur)}</t></is></c>`;
+  }
+  if ("nombre" in valeur) {
+    return `<c r="${reference}"><v>${valeur.nombre}</v></c>`;
+  }
+  return `<c r="${reference}" s="${STYLE_DATE}"><v>${serieExcel(valeur.date, date1904)}</v></c>`;
+}
+
+function stylesXml(formatDate: number | string): string {
+  const personnalise = typeof formatDate === "string";
+  const idFormat = personnalise ? ID_FORMAT_PERSONNALISE : formatDate;
+  const numFmts = personnalise
+    ? `<numFmts count="1"><numFmt numFmtId="${ID_FORMAT_PERSONNALISE}" formatCode="${echapper(formatDate).replace(/"/g, "&quot;")}"/></numFmts>`
+    : "";
+
+  // Index 1 de cellXfs = STYLE_DATE.
+  return (
+    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
+    `<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">` +
+    numFmts +
+    `<fonts count="1"><font/></fonts><fills count="1"><fill/></fills>` +
+    `<borders count="1"><border/></borders>` +
+    `<cellStyleXfs count="1"><xf numFmtId="0"/></cellStyleXfs>` +
+    `<cellXfs count="2"><xf numFmtId="0" xfId="0"/>` +
+    `<xf numFmtId="${idFormat}" xfId="0" applyNumberFormat="1"/></cellXfs>` +
+    `</styleSheet>`
+  );
+}
+
 /** Classeur .xlsx minimal : un onglet, chaînes inline, cellules vides omises. */
-export function construireXlsx(lignes: string[][]): Buffer {
+export function construireXlsx(
+  lignes: CelluleXlsx[][],
+  options: OptionsXlsx = {},
+): Buffer {
   return construireXlsxNumerote(
     lignes.map((ligne, index) => [index + 1, ligne]),
+    options,
   );
 }
 
@@ -58,20 +123,30 @@ export function construireXlsx(lignes: string[][]): Buffer {
  * lecture.
  */
 export function construireXlsxNumerote(
-  lignes: [numero: number, cellules: string[]][],
+  lignes: [numero: number, cellules: CelluleXlsx[]][],
+  { formatDate = 14, date1904 = false }: OptionsXlsx = {},
 ): Buffer {
   const rows = lignes
     .map(([numero, ligne]) => {
       const cellules = ligne
-        .map((valeur, colonne) => {
-          if (valeur === "") return "";
-          const reference = `${lettresColonne(colonne)}${numero}`;
-          return `<c r="${reference}" t="inlineStr"><is><t xml:space="preserve">${echapper(valeur)}</t></is></c>`;
-        })
+        .map((valeur, colonne) =>
+          valeur === ""
+            ? ""
+            : celluleXml(
+                `${lettresColonne(colonne)}${numero}`,
+                valeur,
+                date1904,
+              ),
+        )
         .join("");
       return `<row r="${numero}">${cellules}</row>`;
     })
     .join("");
+  // Feuille de styles seulement si utile : certains tests plafonnent la taille
+  // du classeur produit.
+  const avecStyles = lignes.some(([, ligne]) =>
+    ligne.some((valeur) => typeof valeur !== "string" && "date" in valeur),
+  );
 
   return ecrireZip([
     [
@@ -82,6 +157,9 @@ export function construireXlsxNumerote(
         `<Default Extension="xml" ContentType="application/xml"/>` +
         `<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>` +
         `<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>` +
+        (avecStyles
+          ? `<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>`
+          : "") +
         `</Types>`,
     ],
     [
@@ -96,6 +174,7 @@ export function construireXlsxNumerote(
       `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
         `<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ` +
         `xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">` +
+        (date1904 ? `<workbookPr date1904="1"/>` : "") +
         `<sheets><sheet name="Feuille1" sheetId="1" r:id="rId1"/></sheets></workbook>`,
     ],
     [
@@ -103,8 +182,14 @@ export function construireXlsxNumerote(
       `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
         `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">` +
         `<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>` +
+        (avecStyles
+          ? `<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>`
+          : "") +
         `</Relationships>`,
     ],
+    ...(avecStyles
+      ? [["xl/styles.xml", stylesXml(formatDate)] satisfies [string, string]]
+      : []),
     [
       "xl/worksheets/sheet1.xml",
       `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +

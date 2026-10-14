@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { stringify } from "csv-stringify/sync";
 import { test } from "./fixtures";
+import { construireXlsx } from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import { AppActions } from "./actions/app.actions";
 
 test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
@@ -153,5 +154,70 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
         await pageMaj.expectImportSuccess(chantier.indicateurId);
       });
     });
+  });
+});
+
+test("doit pouvoir importer un fichier Excel dont les dates sont au format date", async ({
+  page,
+  e2eContext,
+}) => {
+  const chantier = {
+    id: "129",
+    nom: "Moderniser la gestion des ressources",
+    indicateurId: "IND-021",
+    indicateurNom: "Nombre de conformité aux standards",
+  };
+
+  const appActions = new AppActions(page, e2eContext);
+  const pageAccueil = await appActions.loginAs();
+
+  const pageChantier = await pageAccueil.selectChantier(chantier.nom);
+  const pageMaj = await pageChantier.gotoMiseAJourDonnees();
+  await pageMaj.expectTitle(chantier.id);
+  await pageMaj.selectIndicateur(chantier.indicateurId, chantier.indicateurNom);
+  await pageMaj.nextStep();
+  await pageMaj.expectStep(2);
+
+  await test.step("Choix d'un fichier Excel dont la colonne date_valeur est typée date", async () => {
+    const classeur = construireXlsx([
+      [
+        "identifiant_indic",
+        "zone_id",
+        "zone_nom",
+        "date_valeur",
+        "type_valeur",
+        "valeur",
+      ],
+      [
+        chantier.indicateurId,
+        "D15",
+        "Cantal",
+        { date: "2023-03-31" },
+        "va",
+        "5",
+      ],
+      [
+        chantier.indicateurId,
+        "D16",
+        "Charente",
+        { date: "2023-01-17" },
+        "va",
+        "12",
+      ],
+    ]);
+
+    await pageMaj.uploadFile(`${chantier.indicateurId}.xlsx`, classeur);
+  });
+
+  await test.step("Vérification que le fichier est conforme", async () => {
+    await pageMaj.verifyFile();
+    await pageMaj.expectFileValid();
+  });
+
+  await test.step("Transmission des données vérifiées", async () => {
+    await pageMaj.nextStep();
+    await pageMaj.expectStep(3);
+    await pageMaj.submitData(process.env.E2E_USERNAME!);
+    await pageMaj.expectImportSuccess(chantier.indicateurId);
   });
 });
