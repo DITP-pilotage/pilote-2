@@ -1,6 +1,3 @@
-import "@gouvfr/dsfr/dist/component/link/link.min.css";
-import "@gouvfr/dsfr/dist/component/button/button.min.css";
-import "@gouvfr/dsfr/dist/component/stepper/stepper.min.css";
 import { FormProvider } from "react-hook-form";
 import { PropsWithChildren } from "react";
 import { Modale } from "@/components/shared/Modale";

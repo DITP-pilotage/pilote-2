@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/button/button.min.css";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/router";

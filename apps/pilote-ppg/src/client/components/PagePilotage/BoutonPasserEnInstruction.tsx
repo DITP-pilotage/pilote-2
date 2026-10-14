@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import { usePasserALEtapeInstruction } from "@/components/PagePilotage/usePasserALEtapeInstruction";
 import { Icone } from "@/components/_commons/Icone";
 import { DraftPleineIcon } from "@/components/_commons/Icones/DraftPleineIcon";

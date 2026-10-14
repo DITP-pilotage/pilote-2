@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/button/button.min.css";
 import { FunctionComponent } from "react";
 import { Modale } from "@/components/shared/Modale";
 

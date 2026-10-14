@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import { usePasserALaConsolidation } from "@/components/PagePilotage/usePasserALaConsolidation";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";

@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import { useModifierEtatFichesInstruction } from "@/components/PagePilotage/useModifierEtatFichesInstruction";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
