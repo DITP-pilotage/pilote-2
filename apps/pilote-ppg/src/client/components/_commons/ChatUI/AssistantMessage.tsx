@@ -129,22 +129,21 @@ export const AssistantMessage = memo(function AssistantMessage({
           return <DashboardLoader key={index} />;
         }
 
-        if (
+        return null;
+      })}
+
+      {/* Les choix ferment la réponse, même si le modèle a écrit du texte après l'appel. */}
+      {afficherChoix &&
+        parts.map((part, index) =>
           part.type === "tool-clarify_with_choices" &&
-          afficherChoix &&
-          part.state === "output-available"
-        ) {
-          return (
+          part.state === "output-available" ? (
             <ChoicesInline
               choices={part.output.choices}
               key={index}
               question={part.output.question}
             />
-          );
-        }
-
-        return null;
-      })}
+          ) : null,
+        )}
 
       {!isStreaming && (canCopy || evaluation) && (
         <div className="flex flex-wrap items-center gap-1">
