@@ -1,13 +1,11 @@
-import { Suspense, useRef } from "react";
-import { toBlob } from "html-to-image";
-import { toast } from "sonner";
+import { Suspense } from "react";
 import type {
   ComposeDashboardOutput,
   WidgetDefinition,
 } from "@/server/albert/tools/composeDashboard";
 import { DEFAULT_WIDTHS } from "@/server/albert/tools/composeDashboardLayout";
 import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
-import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
+import { markCopyableBlock } from "@/components/_commons/ChatUI/copyResponse";
 import { clsxm } from "@/utils/clsxm";
 import { DashboardWidgetRegistry } from "./DashboardWidgets/DashboardWidgetRegistry";
 import { DashboardWidgetErrorBoundary } from "./DashboardWidgets/DashboardWidgetErrorBoundary";
@@ -32,37 +30,17 @@ export const DashboardRender = ({
 }: {
   output: ComposeDashboardOutput;
 }) => {
-  const contenuRef = useRef<HTMLDivElement>(null);
-
-  const copierImage = async () => {
-    const element = contenuRef.current;
-    if (element == null) return;
-
-    const blob = await toBlob(element, {
-      pixelRatio: 2,
-      backgroundColor: "#ffffff",
-    });
-    if (blob == null) return;
-
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-    toast.success("Image copiée dans le presse-papiers", { duration: 3000 });
-  };
-
   return (
-    <div className="border border-dsfr-grey-900 bg-white">
-      <div className="flex h-11 items-center gap-2.5 border-b border-dsfr-grey-900 bg-dsfr-grey-1000 pl-4 pr-2">
+    <div
+      className="border border-dsfr-grey-900 bg-white"
+      {...markCopyableBlock("dashboard")}
+    >
+      <div className="flex h-11 items-center border-b border-dsfr-grey-900 bg-dsfr-grey-1000 pl-4 pr-2">
         <h3 className="truncate text-sm font-bold leading-5 text-dsfr-grey-50 mb-0">
           {output.titre}
         </h3>
-        <span className="flex-1" />
-        <BoutonCopier
-          className="h-7 px-2 text-xs font-medium"
-          libelle="Copier l'image"
-          onClick={copierImage}
-          texte="Copier l'image"
-        />
       </div>
-      <div className="bg-white p-3" ref={contenuRef}>
+      <div className="bg-white p-3">
         <Suspense fallback={<DashboardLoader />}>
           <div className="flex flex-col gap-3">
             {output.containers.map((container, containerIndex) => (

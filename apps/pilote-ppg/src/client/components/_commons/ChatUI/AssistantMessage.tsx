@@ -1,8 +1,12 @@
-import { memo, type ReactNode } from "react";
+import { memo, useRef, type ReactNode } from "react";
 import { toast } from "sonner";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { ChoicesInline } from "@/components/_commons/ChatUI/ChoicesInline";
+import {
+  copyResponse,
+  markCopyableBlock,
+} from "@/components/_commons/ChatUI/copyResponse";
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
 import type { EtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
@@ -34,6 +38,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   /** Boutons d'évaluation à afficher à côté de « Copier ». */
   evaluation?: ReactNode;
 }) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
 
@@ -51,6 +56,14 @@ export const AssistantMessage = memo(function AssistantMessage({
     (part) => part.type === "text" && part.text.trim().length > 0,
   );
 
+  const hasDashboard = parts.some(
+    (part) =>
+      part.type === "tool-create_dashboard" &&
+      part.state === "output-available",
+  );
+
+  const canCopy = hasText || hasDashboard;
+
   const lastTextIndex = parts.reduce<number>(
     (acc, part, index) => (part.type === "text" ? index : acc),
     -1,
@@ -59,13 +72,25 @@ export const AssistantMessage = memo(function AssistantMessage({
   const showSkeleton = isStreaming && !hasText && sources.length > 0;
 
   const copier = () => {
-    navigator.clipboard.writeText(extractMessageText(message)).then(() => {
-      toast.success("Texte copié dans le presse-papiers", { duration: 3000 });
-    });
+    const root = rootRef.current;
+    if (root == null) return;
+
+    copyResponse({ root, text: extractMessageText(message) })
+      .then(() => {
+        toast.success("Réponse copiée dans le presse-papiers", {
+          duration: 3000,
+        });
+      })
+      .catch(() => {
+        toast.error("La réponse n'a pas pu être copiée");
+      });
   };
 
   return (
-    <div className="flex w-full flex-col gap-3 text-[15px] leading-6 text-dsfr-grey-50">
+    <div
+      className="flex w-full flex-col gap-3 text-[15px] leading-6 text-dsfr-grey-50"
+      ref={rootRef}
+    >
       <SignatureAssistant etat={etat} />
 
       {sources.length > 0 && <SourcesConsultees parts={sources} />}
@@ -76,11 +101,12 @@ export const AssistantMessage = memo(function AssistantMessage({
         if (part.type === "text") {
           if (shouldHideText || part.text.length === 0) return null;
           return (
-            <AssistantMessageText
-              key={index}
-              streaming={isStreaming && index === lastTextIndex}
-              text={part.text}
-            />
+            <div key={index} {...markCopyableBlock("text")}>
+              <AssistantMessageText
+                streaming={isStreaming && index === lastTextIndex}
+                text={part.text}
+              />
+            </div>
           );
         }
 
@@ -120,12 +146,12 @@ export const AssistantMessage = memo(function AssistantMessage({
         return null;
       })}
 
-      {!isStreaming && (hasText || evaluation) && (
+      {!isStreaming && (canCopy || evaluation) && (
         <div className="flex flex-wrap items-center gap-1">
-          {hasText && (
+          {canCopy && (
             <BoutonCopier
               className="h-7 px-2 text-xs font-medium"
-              libelle="Copier dans le presse-papiers"
+              libelle="Copier la réponse dans le presse-papiers"
               onClick={copier}
               texte="Copier"
             />
