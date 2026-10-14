@@ -1,4 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { DownloadLink } from "@/components/shared/DownloadLink";
 import { Button } from "@/components/shared/Button";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { useFormulaireIndicateur } from "@/hooks/useFomulaireIndicateur";
@@ -26,7 +27,7 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
       {estEnChargement ? (
         <div
           aria-busy="true"
-          className="flex items-center gap-2 fr-mb-3w"
+          className="flex items-center gap-2 mb-6"
           role="status"
         >
           <span
@@ -38,7 +39,7 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
         </div>
       ) : (
         <form
-          className="flex items-center fr-mb-3w"
+          className="flex items-center mb-6"
           onSubmit={
             verifierLeFichier as React.FormEventHandler<HTMLFormElement>
           }
@@ -74,50 +75,29 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
         <b>{indicateurId}</b>
       </p>
       <div className="flex">
-        <div className="fr-download fr-mr-3w">
-          <p>
-            <a
-              className="fr-download__link"
-              download
-              href="/model/template_import_PILOTE.csv"
-            >
-              {
-                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                  .ETAPE_SELECTION_INDICATEUR
-                  .LABEL_BOUTON_TELECHARGER_MODELE_CSV
-              }
-              <span className="fr-download__detail">
-                {
-                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                    .ETAPE_SELECTION_INDICATEUR
-                    .FORMAT_BOUTON_TELECHARGER_MODELE_CSV
-                }
-              </span>
-            </a>
-          </p>
-        </div>
-        <div className="fr-download">
-          <p>
-            <a
-              className="fr-download__link"
-              download
-              href="/model/template_import_PILOTE.xlsx"
-            >
-              {
-                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                  .ETAPE_SELECTION_INDICATEUR
-                  .LABEL_BOUTON_TELECHARGER_MODELE_XLSX
-              }
-              <span className="fr-download__detail">
-                {
-                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                    .ETAPE_SELECTION_INDICATEUR
-                    .FORMAT_BOUTON_TELECHARGER_MODELE_XLSX
-                }
-              </span>
-            </a>
-          </p>
-        </div>
+        <DownloadLink
+          className="mr-6"
+          detail={
+            wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+              .ETAPE_SELECTION_INDICATEUR.FORMAT_BOUTON_TELECHARGER_MODELE_CSV
+          }
+          href="/model/template_import_PILOTE.csv"
+          label={
+            wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+              .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_TELECHARGER_MODELE_CSV
+          }
+        />
+        <DownloadLink
+          detail={
+            wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+              .ETAPE_SELECTION_INDICATEUR.FORMAT_BOUTON_TELECHARGER_MODELE_XLSX
+          }
+          href="/model/template_import_PILOTE.xlsx"
+          label={
+            wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+              .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_TELECHARGER_MODELE_XLSX
+          }
+        />
       </div>
     </>
   );

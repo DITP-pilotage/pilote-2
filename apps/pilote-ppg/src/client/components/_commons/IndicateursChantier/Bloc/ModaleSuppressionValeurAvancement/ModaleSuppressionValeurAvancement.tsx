@@ -85,16 +85,16 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="fr-text fr-text--sm fr-mb-1w">
+                  <p className="text-sm print:text-base mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
-                  <div className="w-full flex fr-mt-2w">
-                    <div className="w-1/2 fr-mr-1w border flex flex-col">
-                      <span className="fr-background-action-low-blue-france flex justify-center fr-p-1w border">
+                  <div className="w-full flex mt-4">
+                    <div className="w-1/2 mr-2 border flex flex-col">
+                      <span className="bg-dsfr-blue-france-925 flex justify-center p-2 border">
                         Valeur d'avancement importée par la direction de projet
                       </span>
-                      <div className="w-full flex flex-col justify-between fr-pt-1w">
-                        <span className="flex justify-center fr-mb-5v">
+                      <div className="w-full flex flex-col justify-between pt-2">
+                        <span className="flex justify-center mb-5">
                           {detailIndicateur.valeurAvancementMandat?.toLocaleString(
                             "fr-FR",
                           )}
@@ -109,8 +109,8 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                         </span>
                       </div>
                     </div>
-                    <div className="w-1/2 fr-ml-1w border">
-                      <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
+                    <div className="w-1/2 ml-2 border">
+                      <span className="bg-dsfr-blue-france-925 w-full flex justify-center p-2">
                         <span>
                           {`Valeur d'avancement proposée par `}
                           <NomUtilisateurAvecTooltip
@@ -127,8 +127,8 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                           {` le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
                         </span>
                       </span>
-                      <div className="w-full flex flex-col items-center fr-pt-1w">
-                        <span className="flex justify-center fr-mb-5v">
+                      <div className="w-full flex flex-col items-center pt-2">
+                        <span className="flex justify-center mb-5">
                           {detailIndicateur.proposition?.valeurAvancement}
                         </span>
                         <span className="flex justify-center texte-gris">
@@ -142,7 +142,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                       </div>
                     </div>
                   </div>
-                  <div className="fr-mt-2w">
+                  <div className="mt-4">
                     <TextareaField
                       className={FIELD_GROUP_SPACING}
                       counter={{
@@ -163,7 +163,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                       })}
                     />
                   </div>
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
                       disabled={etapeSuivanteEstDesactive}
@@ -189,11 +189,11 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="fr-text fr-text--sm fr-mb-1w">
+                      <p className="text-sm print:text-base mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Valeur d'avancement proposée le{" "}
                           {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
                           par{" "}
@@ -216,15 +216,15 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                           )
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           La proposition est supprimée le{" "}
                           {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
                           par {auteurModification}
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Motif de la suppression :
                         </span>{" "}
                         <span className="italic">
@@ -240,7 +240,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                       resteront visibles dans l'historique de l'indicateur.
                     </p>
                   </Alerte>
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="secondary"
                       className="mr-4"
@@ -269,7 +269,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
           </FormProvider>
         </>
       ) : (
-        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+        <Alerte type="succès" classesSupplementaires="mt-4">
           <h3>
             La proposition de valeur d'avancement a correctement été supprimée
           </h3>

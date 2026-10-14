@@ -1,3 +1,7 @@
+import {
+  ERROR_TEXT_CLASSES,
+  LABEL_CLASSES,
+} from "@/components/shared/fieldTextClasses";
 import { ReactNode } from "react";
 import { Select } from "@/components/shared/Select";
 import {
@@ -94,7 +98,7 @@ export const SelectField = <T extends string>({
       )}
     >
       {label ? (
-        <label className="fr-label" htmlFor={name}>
+        <label className={LABEL_CLASSES} htmlFor={name}>
           {label}
           {required ? <ChampObligatoire /> : null}
         </label>
@@ -140,7 +144,7 @@ export const SelectField = <T extends string>({
           {errorMessage}
         </p>
       ) : errorMessage ? (
-        <p className="fr-error-text fr-mt-1v" id={`${name}-error`}>
+        <p className={clsxm(ERROR_TEXT_CLASSES, "mt-1")} id={`${name}-error`}>
           {errorMessage}
         </p>
       ) : null}

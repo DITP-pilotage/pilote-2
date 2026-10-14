@@ -18,14 +18,14 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
   return (
     <div className="flex">
       <main>
-        <div className="fr-mt-2w fr-mb-3w">
-          <div className="fr-container">
+        <div className="mt-4 mb-6">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
             <h1 className="text-h1 md:text-h1-md mb-4">
               Gestion des tokens API
             </h1>
             <Bloc>
               {alerte ? (
-                <div className="fr-my-2w">
+                <div className="my-4">
                   <Alerte
                     message={alerte.message}
                     titre={alerte.titre}
@@ -34,7 +34,7 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                 </div>
               ) : null}
               {suppressionReussie ? (
-                <div className="fr-my-2w">
+                <div className="my-4">
                   <Alerte
                     message="Le token a correctement été supprimé, le consommateur ne pourra plus l'utiliser"
                     titre="Suppression réussie"
@@ -52,7 +52,7 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                   <TokenAPIForm />
                 </form>
               </FormProvider>
-              <div className="fr-container fr-mt-2w w-full">
+              <div className="mx-auto px-4 lg:px-6 xl:max-w-[78rem] mt-4 w-full">
                 <Table.Root
                   caption="Jetons d'API"
                   captionHidden
@@ -77,7 +77,6 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                         </Table.Cell>
                         <Table.Cell>
                           <Button
-                            aria-controls="supprimer-token"
                             onClick={() =>
                               supprimerTokenAPI({
                                 email: tokenAPIInformation.email,

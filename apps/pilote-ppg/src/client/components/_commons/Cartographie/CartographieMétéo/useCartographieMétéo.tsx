@@ -64,7 +64,7 @@ export default function useCartographieMétéo(
       ...acc,
       [val.territoireCode]: {
         contenu: (
-          <div className="fr-text--bold">
+          <div className="font-bold">
             {val.estApplicable === false
               ? "Non applicable"
               : libellesMeteos[val.valeur]}

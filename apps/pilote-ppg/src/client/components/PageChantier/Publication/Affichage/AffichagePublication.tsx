@@ -53,7 +53,9 @@ const ContenuPublication = ({
 
   if (!commentaire) {
     return emptyMessage ? (
-      <p className="fr-text--sm text-dsfr-mention-grey">{emptyMessage}</p>
+      <p className="text-sm print:text-base text-dsfr-mention-grey">
+        {emptyMessage}
+      </p>
     ) : (
       <Badge size="sm">Non renseigné</Badge>
     );
@@ -112,7 +114,7 @@ const ContenuPublication = ({
       <div
         ref={contenuRef}
         className={clsxm(
-          "fr-text--sm mb-1 print:line-clamp-none",
+          "text-sm print:text-base mb-1 print:line-clamp-none",
           !afficherContenuComplet && "line-clamp-3",
         )}
       >

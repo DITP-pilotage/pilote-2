@@ -11,6 +11,13 @@ import { Collapsible } from "@/components/shared/Collapsible";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
+import {
+  NAV_CLASSES,
+  NAV_BUTTON_CLASSES,
+  NAV_ITEM_CLASSES,
+  NAV_LINK_CLASSES,
+  NAV_LIST_CLASSES,
+} from "@/components/_commons/MiseEnPage/Navigation/navigationClasses";
 
 const peutAccederPanelAdministrateur = (
   session: ReturnType<typeof useSession>,
@@ -98,18 +105,18 @@ export const MonEspaceMenuMobile = ({
   const showPanelAdministrateur = peutAccederPanelAdministrateur(session);
 
   return (
-    <nav aria-label="Mon espace" className="fr-nav">
-      <ul className="fr-nav__list">
-        <li className="fr-nav__item">
+    <nav aria-label="Mon espace" className={NAV_CLASSES}>
+      <ul className={NAV_LIST_CLASSES}>
+        <li className={NAV_ITEM_CLASSES}>
           <Collapsible.Root>
-            <Collapsible.Trigger className="fr-nav__btn" type="button">
+            <Collapsible.Trigger className={NAV_BUTTON_CLASSES} type="button">
               Mon espace
             </Collapsible.Trigger>
             <Collapsible.Content>
               <ul className="list-none p-0 pl-4">
                 <li>
                   <Link
-                    className="fr-nav__link"
+                    className={NAV_LINK_CLASSES}
                     href="/mon-profil-utilisateur"
                     onClick={onNavigate}
                   >
@@ -119,7 +126,7 @@ export const MonEspaceMenuMobile = ({
                 {showPanelAdministrateur ? (
                   <li>
                     <Link
-                      className="fr-nav__link"
+                      className={NAV_LINK_CLASSES}
                       href="/panel-administrateur/parametrage-metadata-indicateur"
                       onClick={onNavigate}
                     >
@@ -129,7 +136,7 @@ export const MonEspaceMenuMobile = ({
                 ) : null}
                 <li>
                   <button
-                    className="fr-nav__link w-full text-left"
+                    className={clsxm(NAV_LINK_CLASSES, "w-full text-left")}
                     onClick={() => signOut()}
                     type="button"
                   >

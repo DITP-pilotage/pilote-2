@@ -35,7 +35,7 @@ export const Commentaires = ({
     >
       {typesCommentaire.map((type, i) => (
         <Fragment key={type}>
-          {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}
+          {i !== 0 && <hr className="-mx-4" />}
           <CommentaireSectionParType
             commentaire={commentaires[type]}
             commentaireBrouillon={commentairesBrouillon[type]}

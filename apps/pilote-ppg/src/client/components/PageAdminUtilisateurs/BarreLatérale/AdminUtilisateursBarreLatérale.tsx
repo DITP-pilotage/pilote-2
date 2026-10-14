@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
@@ -102,7 +101,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
       setEstOuvert={setEstOuverteBarreLatérale}
     >
       <BarreLatéraleEncart>
-        <div className="fr-mb-2w">
+        <div className="mb-4">
           <MultiSelectTerritoire
             changementValeursSélectionnéesCallback={(territoire) => {
               modifierFiltre(territoire, "territoires");
@@ -120,7 +119,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
             )}
           />
         </div>
-        <div className="fr-mb-2w">
+        <div className="mb-4">
           <MultiSelectPérimètreMinistériel
             changementValeursSélectionnéesCallback={(périmètreMinistériel) => {
               modifierFiltre(périmètreMinistériel, "perimetresMinisteriels");
@@ -133,7 +132,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
             )}
           />
         </div>
-        <div className="fr-mb-2w">
+        <div className="mb-4">
           <MultiSelectChantier
             changementValeursSélectionnéesCallback={(chantiers) => {
               modifierFiltre(chantiers, "chantiers");
@@ -150,7 +149,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
           profilsIdsSélectionnésParDéfaut={filtres.profils.split(",")}
         />
       </BarreLatéraleEncart>
-      <div className="fr-px-3w fr-py-2w">
+      <div className="px-6 py-4">
         <h2 className="text-h4 md:text-h4-md">Filtres actifs</h2>
         <Button
           variant="secondary"

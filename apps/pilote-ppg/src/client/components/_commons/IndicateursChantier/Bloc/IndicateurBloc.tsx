@@ -5,7 +5,7 @@ import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import IndicateurBlocIndicateurTuile from "@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile";
 import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/IndicateurTendance";
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
@@ -148,12 +148,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}
                 </h4>
-                <div className="fr-ml-2w fr-mb-3w">
-                  <p className="fr-mb-0 fr-text--xs texte-gris">
+                <div className="ml-4 mb-6">
+                  <p className="text-xs print:text-base mb-0 texte-gris">
                     Identifiant de l'indicateur :{" "}
                     <strong>{indicateur.id}</strong>
                   </p>
-                  <p className="fr-mb-0 fr-text--xs texte-gris">
+                  <p className="text-xs print:text-base mb-0 texte-gris">
                     Dernière mise à jour de la valeur d'avancement pour le
                     territoire :{" "}
                     <span className="font-bold">
@@ -253,20 +253,20 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       />
                     </Table.Cell>
                     <Table.Cell className="mb-0 text-sm flex min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
-                      <BarreDeProgression
-                        afficherTexte
-                        fond="gris-clair"
-                        positionTexte="dessus"
-                        taille="md"
-                        texteInfobulle={getCalculAvancementMessage(
+                      <ProgressBar
+                        showLabel
+                        background="light-grey"
+                        labelPosition="top"
+                        size="md"
+                        tooltip={getCalculAvancementMessage(
                           detailIndicateurDuTerritoire.valeurInitiale,
                           detailIndicateurDuTerritoire.valeurAvancement,
                           detailIndicateurDuTerritoire.valeurCibleAnnuelle,
                           detailIndicateurDuTerritoire.avancement.annuel,
                           jalon,
                         )}
-                        valeur={detailIndicateurDuTerritoire.avancement.annuel}
-                        variante="secondaire"
+                        value={detailIndicateurDuTerritoire.avancement.annuel}
+                        variant="secondary"
                       />
                     </Table.Cell>
                   </Table.Row>
@@ -347,16 +347,16 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               />
                             </Table.Cell>
                             <Table.Cell className="mb-0 text-sm min-h-8 align-top p-0 px-4 md:p-0 md:py-2 md:px-4">
-                              <BarreDeProgression
-                                afficherTexte
-                                fond="gris-clair"
-                                positionTexte="dessus"
-                                taille="md"
-                                valeur={
+                              <ProgressBar
+                                showLabel
+                                background="light-grey"
+                                labelPosition="top"
+                                size="md"
+                                value={
                                   informationIndicateurComparé.données
                                     .avancement.annuel
                                 }
-                                variante="secondaire-light"
+                                variant="secondary-light"
                               />
                             </Table.Cell>
                           </Table.Row>

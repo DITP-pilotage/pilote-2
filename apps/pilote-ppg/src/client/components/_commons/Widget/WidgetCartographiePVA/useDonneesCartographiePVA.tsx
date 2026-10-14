@@ -42,7 +42,7 @@ export const useDonneesCartographiePVA = (
           ),
           libelle: getLabelTerritoire(territoire.territoireCode),
           contenuInfoBulle: (
-            <div className="fr-text--bold">
+            <div className="font-bold">
               {formaterPropositions(
                 territoire.nombrePropositionsValeur,
                 territoire.estApplicable,

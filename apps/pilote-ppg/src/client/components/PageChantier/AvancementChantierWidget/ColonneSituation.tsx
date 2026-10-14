@@ -38,7 +38,7 @@ export const ColonneSituation: FunctionComponent = () => {
         <>
           <div className="flex flex-col gap-3 flex-wrap justify-center items-center">
             <div className="flex flex-col items-center">
-              <strong className="fr-mb-0 text-center">
+              <strong className="mb-0 text-center">
                 Situation par rapport aux autres{" "}
                 {getLabelMaille(territoireCode)}
               </strong>
@@ -49,7 +49,7 @@ export const ColonneSituation: FunctionComponent = () => {
               estArchive={estArchive}
             />
             {situation.mediane !== null && (
-              <p className="text-sm text-center fr-mb-0">
+              <p className="text-sm text-center mb-0">
                 <strong className="mr-1">écart</strong>
                 du taux d'avancement par rapport à la médiane (
                 <strong className="text-pilote-ecart-blue">
@@ -63,7 +63,7 @@ export const ColonneSituation: FunctionComponent = () => {
       )}
       <div className="flex flex-col gap-3 justify-center items-center">
         <div className="flex flex-col items-center">
-          <strong className="fr-mb-0 text-center">Evolution temporelle</strong>
+          <strong className="mb-0 text-center">Evolution temporelle</strong>
           <span>{jalon}</span>
         </div>
         <BadgeTendance estArchive={estArchive} tendance={situation.tendance} />
@@ -79,7 +79,7 @@ export const ColonneSituation: FunctionComponent = () => {
                 {situation.tauxAvancementPrecedent.toFixed(0)}%
               </strong>
               {", "}
-              <span className="fr-text-mention--grey">
+              <span>
                 {PiloteDateFormatter.isoMonthFranceMetropolitaine(
                   situation.dateTauxAvancementPrecedent,
                 )}
@@ -87,7 +87,7 @@ export const ColonneSituation: FunctionComponent = () => {
               )
             </>
           ) : (
-            <span className="fr-m-0 font-bold text-primary">(Non défini)</span>
+            <span className="m-0 font-bold text-primary">(Non défini)</span>
           )}
         </div>
       </div>

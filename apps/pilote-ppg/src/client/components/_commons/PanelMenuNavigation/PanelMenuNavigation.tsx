@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { SélecteursMaillesEtTerritoires } from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import { Button } from "@/components/shared/Button";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
@@ -29,7 +30,7 @@ export const PanelMenuNavigation = ({
 }: PanelMenuNavigationProps) => {
   return (
     <>
-      <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
+      <div className="w-full shrink-0 md:w-1/4 pb-4 px-4">
         <SélecteursMaillesEtTerritoires
           direction="horizontal"
           pathname={pathname}
@@ -37,10 +38,10 @@ export const PanelMenuNavigation = ({
           territoiresApplicables={territoiresApplicables}
         />
       </div>
-      <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
+      <div className="w-full shrink-0 md:w-1/4 pb-4 px-4">
         <div className="flex items-center">
           <label
-            className="fr-label fr-mr-1w whitespace-nowrap"
+            className={`${LABEL_CLASSES} mr-2 whitespace-nowrap`}
             htmlFor="jalon"
           >
             Jalon :
@@ -50,11 +51,11 @@ export const PanelMenuNavigation = ({
         </div>
       </div>
       {estAutoriseAVoirLeSelecteurDeMaille ? (
-        <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w flex items-center">
+        <div className="w-full shrink-0 md:w-1/4 pb-4 px-4 flex items-center">
           <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
         </div>
       ) : null}
-      <div className="fr-hidden-lg fr-py-1w fr-background-blue-france-975 w-full">
+      <div className="lg:hidden py-2 bg-dsfr-alt-blue-france w-full">
         <Button
           variant="tertiary-no-outline"
           className="gap-2"

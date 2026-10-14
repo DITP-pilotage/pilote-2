@@ -7,7 +7,7 @@ export const TitreWidget = ({ children }: { children: ReactNode }) => {
 
   return (
     <span
-      className={clsxm("fr-text font-bold", {
+      className={clsxm("font-bold", {
         "text-center": !isModeP,
       })}
     >

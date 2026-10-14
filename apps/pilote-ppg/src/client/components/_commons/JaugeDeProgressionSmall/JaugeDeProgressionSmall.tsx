@@ -23,8 +23,8 @@ export const JaugeDeProgressionSmall: FunctionComponent<
 > = ({ couleur, libellé, pourcentage }) => {
   return (
     <div className="relative flex flex-col items-center">
-      <div className="flex fr-mb-2w">
-        <div className="flex relative w-[3.75rem] fr-mr-1w">
+      <div className="flex mb-4">
+        <div className="flex relative w-[3.75rem] mr-2">
           <JaugeDeProgressionSVG
             couleur={couleur}
             pourcentage={pourcentage !== undefined ? pourcentage : null}
@@ -36,7 +36,7 @@ export const JaugeDeProgressionSmall: FunctionComponent<
           >
             {`${pourcentage?.toFixed(0) ?? "- "}%`}
           </p>
-          <p className="fr-text--xs mb-0 text-center">{libellé}</p>
+          <p className="text-xs print:text-base mb-0 text-center">{libellé}</p>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
 import { DétailsIndicateurs } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
@@ -50,7 +50,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
         <section>
           <div className="flex justify-between">
             <div>
-              <h4 className="fr-text--xl mb-2 flex gap-2 items-center">
+              <h4 className="m-[var(--text-spacing)] text-lead mb-2 flex gap-2 items-center">
                 {indicateur.estIndicateurDuBaromètre ? (
                   <PictoBaromètre />
                 ) : null}
@@ -59,13 +59,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     ? ""
                     : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </h4>
-              <div className="fr-ml-2w fr-mb-3w">
-                <p className="fr-mb-0 fr-text--xs text-dsfr-mention-grey">
+              <div className="ml-4 mb-6">
+                <p className="text-xs print:text-base mb-0 text-dsfr-mention-grey">
                   Dernière mise à jour de la valeur d'avancement pour le
                   territoire :{" "}
-                  <span className="fr-text--bold">
-                    {dateDeMiseAJourIndicateur}
-                  </span>
+                  <span className="font-bold">{dateDeMiseAJourIndicateur}</span>
                 </p>
                 <IndicateurPonderation
                   indicateurPondération={
@@ -139,13 +137,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     />
                   </Table.Cell>
                   <Table.Cell className={CELLULE}>
-                    <BarreDeProgression
-                      afficherTexte
-                      fond="gris-clair"
-                      positionTexte="dessus"
-                      taille="md"
-                      valeur={ligne.données.avancement.annuel}
-                      variante="secondaire"
+                    <ProgressBar
+                      showLabel
+                      background="light-grey"
+                      labelPosition="top"
+                      size="md"
+                      value={ligne.données.avancement.annuel}
+                      variant="secondary"
                     />
                   </Table.Cell>
                 </Table.Row>

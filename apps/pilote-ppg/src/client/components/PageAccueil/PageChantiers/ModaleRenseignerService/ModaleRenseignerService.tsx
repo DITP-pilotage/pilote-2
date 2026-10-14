@@ -33,11 +33,11 @@ export const ModaleRenseignerService: FunctionComponent<
             </>
           }
         />
-        <p className="fr-text--md fr-mb-4w fr-mt-2w">
+        <p className="text-base mb-8 mt-4">
           Vous pourrez toujours compléter ou modifier ces informations depuis la
           page "Mon espace".
         </p>
-        <div className="fr-mt-4w flex justify-end gap-3">
+        <div className="mt-8 flex justify-end gap-3">
           <Modale.Close asChild>
             <Button
               variant="secondary"

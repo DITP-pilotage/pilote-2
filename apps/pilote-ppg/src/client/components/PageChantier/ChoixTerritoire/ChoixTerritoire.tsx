@@ -46,9 +46,9 @@ const ChoixTerritoire = () => {
           />
         </BarreLatéraleEncart>
       </BarreLatérale>
-      <main className="fr-pb-5w">
+      <main className="pb-10">
         <div>
-          <div className="sticky top-0 z-[999] w-full bg-dsfr-alt-blue-france fr-hidden-lg fr-py-1w fr-px-1v">
+          <div className="sticky top-0 z-[999] w-full bg-dsfr-alt-blue-france lg:hidden py-2 px-1">
             <Button
               variant="tertiary-no-outline"
               className="text-primary gap-2"
@@ -64,8 +64,8 @@ const ChoixTerritoire = () => {
             </Button>
           </div>
           <PageChantierEnTête />
-          <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w">
-            <div className="fr-col-12 fr-col-xl-6">
+          <div className="flex flex-wrap justify-center -mb-2 lg:-mb-3 mt-10 mx-2">
+            <div className="p-2 lg:p-3 w-full shrink-0 xl:w-1/2">
               <Bloc>
                 <section>
                   <h3 className="text-lg">Veuillez sélectionner un DROM</h3>

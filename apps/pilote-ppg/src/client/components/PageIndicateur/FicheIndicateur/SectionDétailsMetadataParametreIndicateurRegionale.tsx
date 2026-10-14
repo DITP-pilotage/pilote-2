@@ -46,8 +46,8 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   return (
     <div>
       <h2 className="text-h5 md:text-h5-md">Maille régionale</h2>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-4">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -70,7 +70,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -93,7 +93,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -117,8 +117,8 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-4">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estDesactive={valeursRegFromDesactiveRegOp.has(viRegFromValue)}
@@ -135,7 +135,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estDesactive={valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
@@ -152,7 +152,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estDesactive={valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
@@ -170,7 +170,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
           />
         </div>
       </div>
-      <hr className="fr-hr fr-mt-3w" />
+      <hr className="mt-6" />
     </div>
   );
 };

@@ -17,6 +17,14 @@ import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { useMenuMobile } from "@/components/_commons/MiseEnPage/EnTete/MenuMobileContext";
+import { clsxm } from "@/utils/clsxm";
+import {
+  NAV_CLASSES,
+  NAV_ITEM_CLASSES,
+  NAV_LINK_CLASSES,
+  NAV_LIST_CLASSES,
+  NAV_LIST_HEADER_CLASSES,
+} from "./navigationClasses";
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) =>
   session?.profil === ProfilEnum.DITP_ADMIN;
@@ -73,18 +81,20 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
     !vérifierValeurApplicationEstIndisponible ||
     estAutoriséAParcourirSiIndisponible(session);
 
-  const listeDesLiens = (onNavigate?: () => void) =>
+  const listeDesLiens = (inHeader: boolean, onNavigate?: () => void) =>
     navigationAccessible ? (
-      <ul className="fr-nav__list">
+      <ul
+        className={clsxm(NAV_LIST_CLASSES, inHeader && NAV_LIST_HEADER_CLASSES)}
+      >
         {pages.map(
           (page) =>
             page.accessible && (
-              <li className="fr-nav__item" key={page.lien}>
+              <li className={NAV_ITEM_CLASSES} key={page.lien}>
                 <Link
                   aria-current={
                     page.matcher === urlActuelle ? "true" : undefined
                   }
-                  className="fr-nav__link relative"
+                  className={clsxm(NAV_LINK_CLASSES, "relative")}
                   href={page.lien}
                   onClick={onNavigate}
                   target={page.target}
@@ -110,10 +120,10 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
 
   return (
     <>
-      <div className="fr-header__menu max-[61.99em]:hidden">
-        <div className="fr-container">
-          <nav aria-label="Menu principal" className="fr-nav">
-            {listeDesLiens()}
+      <div className="max-[61.99em]:hidden lg:shadow-[inset_0_1px_0_0_var(--border-default-grey)] print:hidden">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+          <nav aria-label="Menu principal" className={NAV_CLASSES}>
+            {listeDesLiens(true)}
           </nav>
         </div>
       </div>
@@ -146,8 +156,8 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
               <BoutonContacterEquipePilote />
             </div>
             <MonEspaceMenuMobile onNavigate={() => setMenuOuvert(false)} />
-            <nav aria-label="Menu principal" className="fr-nav">
-              {listeDesLiens(() => setMenuOuvert(false))}
+            <nav aria-label="Menu principal" className={NAV_CLASSES}>
+              {listeDesLiens(false, () => setMenuOuvert(false))}
             </nav>
           </Dialog.Content>
         </Dialog.Portal>

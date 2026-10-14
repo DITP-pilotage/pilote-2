@@ -45,7 +45,7 @@ export const CelluleStatutProposition = ({
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
-        <p className="fr-text--sm texte-proposition">
+        <p className="text-sm print:text-base texte-proposition">
           La proposition de valeur d'avancement a bien été acceptée
           {estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
             ? " avec modification"
@@ -71,7 +71,7 @@ export const CelluleStatutProposition = ({
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
-        <p className="fr-text--sm texte-proposition">
+        <p className="text-sm print:text-base texte-proposition">
           La proposition de valeur d'avancement a bien été acceptée
           {estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
             ? " avec modification"
@@ -90,19 +90,19 @@ export const CelluleStatutProposition = ({
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
-        <p className="fr-text--sm texte-proposition">
+        <p className="text-sm print:text-base texte-proposition">
           Valeur d'avancement proposée le{" "}
           {formaterDate(proposition.dateProposition, "DD/MM/YYYY")} par{" "}
           {proposition.auteur}
         </p>
-        <p className="fr-text--sm">
+        <p className="text-sm print:text-base">
           <b>Motif de la proposition</b>
         </p>
-        <p className="fr-text--sm">{proposition.motif}</p>
-        <p className="fr-text--sm">
+        <p className="text-sm print:text-base">{proposition.motif}</p>
+        <p className="text-sm print:text-base">
           <b>Source des données et méthode de calcul</b>
         </p>
-        <p className="fr-text--sm fr-mb-0">
+        <p className="text-sm print:text-base mb-0">
           {proposition.sourceDonneeEtMethodeCalcul}
         </p>
       </Infobulle>
@@ -123,7 +123,7 @@ export const CelluleStatutProposition = ({
         <div className="flex items-center selecteur-infobulle-conteneur">
           {estPropositionAccuseeReception(detailIndicateurDuTerritoire) ? (
             <>
-              <span className="fr-text--xs text-dsfr-mention-grey">
+              <span className="m-[var(--text-spacing)] text-xs print:text-base text-dsfr-mention-grey">
                 la direction de projet a accusé réception
               </span>
               <Infobulle
@@ -131,14 +131,14 @@ export const CelluleStatutProposition = ({
                 classNameInfoBulle="tooltip-accordeon"
               >
                 {estAutoriseAProposerUneValeurAvancement ? (
-                  <p className="fr-text--sm">
+                  <p className="text-sm print:text-base">
                     Vous ne pouvez plus intervenir sur cet indicateur tant que
                     la direction de projet n'aura pas pris une décision
                     (accepter, accepter avec modification ou refuser) ou procédé
                     à un nouvel import de données.
                   </p>
                 ) : estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
-                  <p className="fr-text--sm">
+                  <p className="text-sm print:text-base">
                     Le territoire ne peut plus intervenir sur cet indicateur
                     tant que vous n'aurez pas pris une décision (accepter,
                     accepter avec modification ou refuser) ou procédé à un
@@ -149,14 +149,14 @@ export const CelluleStatutProposition = ({
             </>
           ) : (
             <>
-              <span className="fr-text--xs text-dsfr-mention-grey">
+              <span className="m-[var(--text-spacing)] text-xs print:text-base text-dsfr-mention-grey">
                 En attente de lecture par la direction de projet
               </span>
               <Infobulle
                 classNameBouton="text-dsfr-mention-grey"
                 classNameInfoBulle="tooltip-accordeon"
               >
-                <p className="fr-text--sm">
+                <p className="text-sm print:text-base">
                   La direction de projet n'a pas encore accusé réception de
                   votre proposition. Il vous est toujours possible de modifier
                   ou de supprimer celle-ci si vous le souhaitez.

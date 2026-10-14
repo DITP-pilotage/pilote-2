@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/radio/radio.min.css";
 import { FunctionComponent, PropsWithChildren } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Modale } from "@/components/shared/Modale";

@@ -6,6 +6,7 @@ import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/obje
 import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
 import { ConfirmerValidationSaisie } from "@/components/PageAutoEvaluation/ConfirmerValidationSaisie";
 import { SendIcon } from "@/components/_commons/Icones/SendIcon";
+import { Button } from "@/components/shared/Button";
 
 export const BoutonValiderSaisieObjectifs = ({
   ficheEvaluationId,
@@ -51,15 +52,13 @@ export const BoutonValiderSaisieObjectifs = ({
 
   return (
     <div>
-      <button
-        className="fr-btn"
+      <Button
         disabled={validerSaisie.isPending}
+        iconRight={<SendIcon className="h-4 w-4" />}
         onClick={handleOpenModal}
-        type="button"
       >
         Transmettre le formulaire
-        <SendIcon className="h-4 w-4 ml-2" />
-      </button>
+      </Button>
       <ConfirmerValidationSaisie
         annee={2025}
         isPending={validerSaisie.isPending}

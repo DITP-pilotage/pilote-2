@@ -58,10 +58,10 @@ export const IndicateurPropositionValeur = ({
 
   if (indicateur.mailleRegAgregee && mailleDuTerritoireSelectionnee === "REG") {
     return (
-      <div className="fr-text--xs texte-gris fr-mb-0 flex items-center">
+      <div className="m-[var(--text-spacing)] text-xs print:text-base texte-gris mb-0 flex items-center">
         Impossible de proposer une autre valeur d'avancement
         <Infobulle classNameInfoBulle="tooltip-accordeon">
-          <p className="fr-text--sm">
+          <p className="text-sm print:text-base">
             Les résultats de cet indicateur sont agrégés depuis le niveau
             départemental. Il n'est donc pas possible de proposer une valeur à
             une autre maille. Vous pouvez, soit proposer une valeur directement

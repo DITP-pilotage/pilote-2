@@ -7,7 +7,6 @@ import TableauAdminUtilisateurs from "@/components/PageAdminUtilisateurs/Tableau
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import AlerteProps from "@/client/components/_commons/Alerte/Alerte.interface";
 import { AdminUtilisateursBarreLatérale } from "@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale";
-import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
@@ -100,7 +99,7 @@ const PageAdminUtilisateurs: FunctionComponent<{
       <main>
         <div className="mt-8 mb-6 md:mx-4">
           {alerte ? (
-            <div className="fr-my-4w">
+            <div className="my-8">
               <Alerte
                 message={alerte.message}
                 titre={alerte.titre}
@@ -108,8 +107,8 @@ const PageAdminUtilisateurs: FunctionComponent<{
               />
             </div>
           ) : null}
-          <div className="fr-grid-row fr-grid-row--middle fr-mb-3w px-4">
-            <div className="fr-col-12 fr-col-md-6">
+          <div className="flex flex-wrap items-center mb-6 px-4">
+            <div className="w-full shrink-0 md:w-1/2">
               <h1 className="text-h1 md:text-h1-md mb-0">
                 Gestion des comptes
               </h1>

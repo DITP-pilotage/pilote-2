@@ -7,10 +7,10 @@ const PageCréerUtilisateur = () => {
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
 
   return (
-    <div className="bg-dsfr-alt-blue-france fr-pt-2w">
-      <main className="fr-container">
+    <div className="bg-dsfr-alt-blue-france pt-4">
+      <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <FilAriane chemin={chemin} libelléPageCourante="Ajouter un compte" />
-        <div className="fr-pb-4w">
+        <div className="pb-8">
           <UtilisateurFormulaire />
         </div>
       </main>

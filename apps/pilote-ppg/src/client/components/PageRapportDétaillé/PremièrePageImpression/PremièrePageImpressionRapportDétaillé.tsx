@@ -1,3 +1,4 @@
+import { Logo } from "@/components/shared/Logo";
 import {
   parseAsBoolean,
   parseAsString,
@@ -135,31 +136,31 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
 
   return (
     <div className="hidden print:block [page-break-after:always]">
-      <header className="flex fr-px-12w fr-mb-6w" role="banner">
-        <p className="fr-logo text-[0.7875rem]">Gouvernement</p>
-        <div className="fr-pt-1w fr-ml-5w">
-          <p className="fr-text--xl fr-text--bold fr-mb-0">PILOTE</p>
-          <p className="fr-text--sm fr-mb-0">
+      <header className="flex px-24 mb-12" role="banner">
+        <Logo className="text-[0.7875rem]" />
+        <div className="pt-2 ml-10">
+          <p className="text-lead font-bold mb-0">PILOTE</p>
+          <p className="text-sm print:text-base mb-0">
             Piloter l'action publique par les résultats
           </p>
         </div>
       </header>
-      <div className="fr-pt-6w fr-pb-3w bg-dsfr-alt-blue-france">
-        <div className="fr-mb-6w fr-display--md text-center titre-rapport-détaillé">
+      <div className="pt-12 pb-6 bg-dsfr-alt-blue-france">
+        <div className="m-[var(--display-spacing)] mb-12 font-bold text-[3.5rem] leading-[4rem] md:text-[4rem] md:leading-[4.5rem] text-center titre-rapport-détaillé">
           État des lieux de l'avancement
           <br />
           des politiques prioritaires
           <br />
           du Gouvernement
         </div>
-        <div className="fr-px-12w">
+        <div className="px-24">
           {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), "DD/MM/YYYY [à] H[h]mm")}`}
         </div>
       </div>
-      <div className="fr-px-12w fr-py-4w max-h-[20cm]">
-        <ul className="fr-pl-0 columns-[auto_2] gap-8 [column-fill:auto] list-none">
+      <div className="px-24 py-8 max-h-[20cm]">
+        <ul className="pl-0 columns-[auto_2] gap-8 [column-fill:auto] list-none">
           <li className="pb-0">
-            <span className="fr-text--bold text-[1.3rem] leading-7">
+            <span className="font-bold text-[1.3rem] leading-7">
               Territoire sélectionné
             </span>
             <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
@@ -168,14 +169,14 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
           </li>
           {[...ministereAvecPerimetreActif].length > 0 ? (
             <li className="pb-0">
-              <span className="fr-text--bold text-[1.3rem] leading-7">
+              <span className="font-bold text-[1.3rem] leading-7">
                 Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
               </span>
               <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {[...ministereAvecPerimetreActif].map(([, ministère]) => {
                   return (
                     <li className="pb-0" key={ministère.nom}>
-                      <span className="fr-text--bold">{ministère.nom}</span>
+                      <span className="font-bold">{ministère.nom}</span>
                       <ul className="pl-5 [margin-block:0_0.25rem]">
                         {ministère.perimetres.map((périmètre) => (
                           <li className="pb-0" key={périmètre.id}>
@@ -191,7 +192,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
           ) : null}
           {filtresTypologie.length > 0 && (
             <li className="pb-0">
-              <span className="fr-text--bold text-[1.3rem] leading-7">
+              <span className="font-bold text-[1.3rem] leading-7">
                 Type(s) de chantier sélectionné(s)
               </span>
               <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
@@ -205,9 +206,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
           )}
           {filtresAxes.length > 0 && (
             <li className="pb-0">
-              <span className="fr-text--bold text-[1.3rem] leading-7">
-                Axe(s)
-              </span>
+              <span className="font-bold text-[1.3rem] leading-7">Axe(s)</span>
               <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {filtresAxes.map((axe) => (
                   <li className="pb-0" key={axe}>
@@ -219,7 +218,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
           )}
           {filtresAlertes.length > 0 && (
             <li className="pb-0">
-              <span className="fr-text--bold text-[1.3rem] leading-7">
+              <span className="font-bold text-[1.3rem] leading-7">
                 Alerte(s) sélectionnée(s)
               </span>
               <ul className="pl-4 [margin-block:0.25rem_0] mb-4">

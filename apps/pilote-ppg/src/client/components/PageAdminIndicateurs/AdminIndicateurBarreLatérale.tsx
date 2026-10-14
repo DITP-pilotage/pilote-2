@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { Button } from "@/components/shared/Button";
 
@@ -87,7 +86,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
           />
         </div>
       </BarreLatéraleEncart>
-      <div className="fr-px-3w fr-py-2w">
+      <div className="px-6 py-4">
         <h2 className="text-h4 md:text-h4-md">Filtres actifs</h2>
         <Button variant="secondary" onClick={réinitialiser} type="button">
           Réinitialiser les filtres

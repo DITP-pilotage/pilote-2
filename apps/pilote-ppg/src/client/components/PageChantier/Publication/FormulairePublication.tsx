@@ -38,14 +38,14 @@ export const FormulairePublication = <T extends PublicationValues>({
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onModifier)}>
-        <div className="flex items-center gap-2 fr-mb-1v">
+        <div className="flex items-center gap-2 mb-1">
           <h3 className="text-xl mb-0">
             {`Modifier le commentaire "${libelle}"`}
           </h3>
           <Infobulle classNameIcone="w-5 h-5">{consigne}</Infobulle>
         </div>
         {publication ? (
-          <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
+          <p className="text-xs print:text-base mb-4 text-dsfr-mention-grey">
             {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(publication.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
           </p>
         ) : null}
@@ -53,7 +53,7 @@ export const FormulairePublication = <T extends PublicationValues>({
           extraFields={formConfig.extraFields}
           maxLength={formConfig.maxLength}
         />
-        <div className="flex justify-end fr-mt-2w">
+        <div className="flex justify-end mt-4">
           <Button
             className="mr-3"
             disabled={!form.formState.isValid}

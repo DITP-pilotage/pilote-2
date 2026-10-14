@@ -54,12 +54,12 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   } = usePageIndicateur(indicateur, mapInformationMetadataIndicateur);
 
   return (
-    <div className="bg-dsfr-alt-blue-france fr-pt-2w">
-      <main className="fr-container">
+    <div className="bg-dsfr-alt-blue-france pt-4">
+      <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <FilAriane chemin={chemin} libelléPageCourante="Indicateur" />
-        <div className="fiche-indicateur fr-pt-1w fr-pb-13w">
+        <div className="fiche-indicateur pt-2 pb-26">
           {!!alerte && (
-            <div className="fr-mt-2w">
+            <div className="mt-4">
               <Alerte titre={alerte.titre} type={alerte.type} />
             </div>
           )}
@@ -90,7 +90,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                 </Link>
               </div>
               {modificationReussie ? (
-                <div className="fr-my-4w">
+                <div className="my-8">
                   <Alerte
                     message="Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données"
                     titre="Bravo, l'indicateur a bien été modifié !"
@@ -99,7 +99,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                 </div>
               ) : null}
               {creationReussie ? (
-                <div className="fr-my-4w">
+                <div className="my-8">
                   <Alerte
                     message="La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données"
                     titre="Bravo, l'indicateur a bien été crée !"
@@ -109,7 +109,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
               ) : null}
               <h1 className="text-h1 md:text-h1-md mt-8">
                 Fiche de l'indicateur {indicateur.indicId}
-                <div className="fr-grid-row fr-mt-4w">
+                <div className="flex flex-wrap mt-8">
                   {isCreation ? (
                     <Button
                       variant="primary"
@@ -155,7 +155,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                 </div>
               </h1>
               <Bloc>
-                <div className="fr-py-4w fr-px-10w">
+                <div className="py-8 px-20">
                   <FicheIndicateur
                     chantiers={chantiers}
                     estEnCoursDeModification={

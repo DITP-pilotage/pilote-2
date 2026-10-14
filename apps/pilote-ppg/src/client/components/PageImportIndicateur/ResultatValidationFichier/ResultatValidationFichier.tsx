@@ -16,7 +16,7 @@ const ResultatValidationFichier: FunctionComponent<
   );
 
   return (
-    <section className="fr-my-2w">
+    <section className="my-4">
       {rapport.estValide ? (
         <Alerte
           message={
@@ -56,9 +56,7 @@ const ResultatValidationFichier: FunctionComponent<
               type="erreur"
             />
           )}
-          <h5 className="fr-mt-3w">
-            Rapport d'erreur de la validation du fichier
-          </h5>
+          <h5 className="mt-6">Rapport d'erreur de la validation du fichier</h5>
           <Table.Root
             caption="Rapport d'erreur de la validation du fichier"
             captionHidden

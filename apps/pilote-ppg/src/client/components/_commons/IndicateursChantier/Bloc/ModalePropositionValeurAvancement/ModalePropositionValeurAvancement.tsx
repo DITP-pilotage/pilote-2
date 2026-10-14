@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { FunctionComponent, PropsWithChildren } from "react";
 import { StepIndicator } from "@/components/shared/StepIndicator";
 import { FIELD_GROUP_SPACING } from "@/components/shared/fieldGroupSpacing";
@@ -92,14 +93,14 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="fr-text fr-text--sm fr-mb-1w">
+                  <p className="text-sm print:text-base mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
-                  <p className="fr-text texte-warning fr-text--xs italic fr-mb-2w">
+                  <p className="text-xs print:text-base texte-warning italic mb-4">
                     *tous les champs sont obligatoires
                   </p>
                   {detailIndicateurDuTerritoire.proposition !== null ? (
-                    <p className="fr-text--sm fr-mt-1v">
+                    <p className="text-sm print:text-base mt-1">
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
                       <NomUtilisateurAvecTooltip
@@ -122,13 +123,13 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       et remplacera celle-ci.
                     </p>
                   ) : null}
-                  <div className="w-full flex fr-mt-2w">
-                    <div className="w-1/2 fr-mr-1w border flex flex-col">
-                      <span className="fr-background-action-low-blue-france flex justify-center fr-p-1w border">
+                  <div className="w-full flex mt-4">
+                    <div className="w-1/2 mr-2 border flex flex-col">
+                      <span className="bg-dsfr-blue-france-925 flex justify-center p-2 border">
                         Valeur d'avancement importée par la direction de projet
                       </span>
-                      <div className="w-full flex flex-col justify-between fr-pt-1w">
-                        <span className="flex justify-center fr-mb-5v">
+                      <div className="w-full flex flex-col justify-between pt-2">
+                        <span className="flex justify-center mb-5">
                           {detailIndicateurDuTerritoire.valeurAvancementMandat?.toLocaleString(
                             "fr-FR",
                           )}
@@ -143,9 +144,9 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         </span>
                       </div>
                     </div>
-                    <div className="w-1/2 fr-ml-1w border">
+                    <div className="w-1/2 ml-2 border">
                       {estUneModificationDeProposition ? (
-                        <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
+                        <span className="bg-dsfr-blue-france-925 w-full flex justify-center p-2">
                           <span>
                             {`Valeur d'avancement proposée par `}
                             <NomUtilisateurAvecTooltip
@@ -165,7 +166,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                             {` le ${formaterDate(detailIndicateurDuTerritoire.proposition!.dateProposition, "DD/MM/YYYY")}`}
                           </span>
                           <Infobulle classNameInfoBulle="tooltip-accordeon">
-                            <p className="fr-text--sm texte-proposition">
+                            <p className="text-sm print:text-base texte-proposition">
                               Valeur d'avancement proposée le{" "}
                               {formaterDate(
                                 detailIndicateurDuTerritoire.proposition
@@ -175,16 +176,16 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                               par{" "}
                               {detailIndicateurDuTerritoire.proposition?.auteur}
                             </p>
-                            <p className="fr-text--sm">
+                            <p className="text-sm print:text-base">
                               <b>Motif de la proposition</b>
                             </p>
-                            <p className="fr-text--sm">
+                            <p className="text-sm print:text-base">
                               {detailIndicateurDuTerritoire.proposition?.motif}
                             </p>
-                            <p className="fr-text--sm">
+                            <p className="text-sm print:text-base">
                               <b>Source des données et méthode de calcul</b>
                             </p>
-                            <p className="fr-text--sm fr-mb-0">
+                            <p className="text-sm print:text-base mb-0">
                               {
                                 detailIndicateurDuTerritoire.proposition
                                   ?.sourceDonneeEtMethodeCalcul
@@ -193,21 +194,21 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                           </Infobulle>
                         </span>
                       ) : (
-                        <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
+                        <span className="bg-dsfr-blue-france-925 w-full flex justify-center p-2">
                           Proposition de nouvelle valeur d'avancement
                           <ChampObligatoire />
                         </span>
                       )}
-                      <div className="w-full flex flex-col items-center fr-pt-1w">
+                      <div className="w-full flex flex-col items-center pt-2">
                         {estUneModificationDeProposition ? (
-                          <span className="flex justify-center fr-mb-5v">
+                          <span className="flex justify-center mb-5">
                             {
                               detailIndicateurDuTerritoire.proposition
                                 ?.valeurAvancement
                             }
                           </span>
                         ) : (
-                          <div className="w-1/2 flex fr-mb-1w">
+                          <div className="w-1/2 flex mb-2">
                             <TextField
                               className={FIELD_GROUP_SPACING}
                               errorMessage={
@@ -229,7 +230,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     </div>
                   </div>
                   {ffPvaValeurDifferente && !estUneModificationDeProposition ? (
-                    <div className="fr-mt-2w">
+                    <div className="mt-4">
                       <SelectField
                         errorMessage={
                           reactHookForm.formState.errors.moisValeurAvancement
@@ -255,7 +256,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         value={reactHookForm.watch("moisValeurAvancement")}
                         triggerClassName="w-50"
                       />
-                      <span className="flex texte-gris fr-text--xs mt-1">
+                      <span className="m-[var(--text-spacing)] text-xs print:text-base flex texte-gris mt-1">
                         Dernière date de la valeur d'avancement :
                         {formaterDate(
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat,
@@ -265,8 +266,11 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     </div>
                   ) : null}
                   {estUneModificationDeProposition ? (
-                    <div className="fr-mt-2w">
-                      <label className="fr-label" htmlFor="valeurAvancement">
+                    <div className="mt-4">
+                      <label
+                        className={LABEL_CLASSES}
+                        htmlFor="valeurAvancement"
+                      >
                         Valeur modifiée
                         <ChampObligatoire />
                       </label>
@@ -281,7 +285,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         inputClassName="mt-1 py-1 text-sm"
                         {...reactHookForm.register("valeurAvancement")}
                       />
-                      <span className="flex texte-gris fr-text--xs">
+                      <span className="m-[var(--text-spacing)] text-xs print:text-base flex texte-gris">
                         (
                         {formaterDate(
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat,
@@ -291,7 +295,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       </span>
                     </div>
                   ) : null}
-                  <div className="fr-mt-2w">
+                  <div className="mt-4">
                     <TextareaField
                       className={FIELD_GROUP_SPACING}
                       counter={{
@@ -311,7 +315,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       })}
                     />
                   </div>
-                  <div className="fr-mt-2w">
+                  <div className="mt-4">
                     <TextareaField
                       className={FIELD_GROUP_SPACING}
                       counter={{
@@ -335,7 +339,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       )}
                     />
                   </div>
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
                       disabled={EtapeSuivanteEstDesactive}
@@ -363,11 +367,11 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="fr-text fr-text--sm fr-mb-1w">
+                      <p className="text-sm print:text-base mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Valeur d'avancement proposée le{" "}
                           {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
                           par {auteurModification} :{" "}
@@ -379,24 +383,24 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                           )
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Date de la proposition de valeur d'avancement : 
                         </span>
                         <span className="italic">
                           {reactHookForm.getValues("moisValeurAvancement")}
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Motif de la proposition :
                         </span>{" "}
                         <span className="italic">
                           {reactHookForm.getValues("motifProposition")}
                         </span>
                       </p>
-                      <p className="fr-text--sm mb-0">
-                        <span className="fr-text--bold">
+                      <p className="text-sm print:text-base mb-0">
+                        <span className="font-bold">
                           Source des données et méthode de calcul :
                         </span>{" "}
                         <span className="italic">
@@ -423,7 +427,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       cependant conservée dans la base de données de PILOTE.
                     </p>
                   </Alerte>
-                  <div className="w-full flex justify-end fr-mt-2w">
+                  <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="secondary"
                       className="mr-4"
@@ -452,7 +456,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
           </FormProvider>
         </>
       ) : (
-        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+        <Alerte type="succès" classesSupplementaires="mt-4">
           {!estUneModificationDeProposition ? (
             <>
               <h3>

@@ -4,6 +4,7 @@ import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/Multi
 import { useFormulaireConfigurationDroits } from "@/components/PageUtilisateurPiloteEval/useFormulaireConfigurationDroits";
 import { Icone } from "@/client/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/client/components/_commons/Icones/ArrowLine3Icon";
+import { Button } from "@/components/shared/Button";
 
 export const FormulaireConfigurationDroits = () => {
   const {
@@ -115,9 +116,7 @@ export const FormulaireConfigurationDroits = () => {
             </section>
 
             <div className="flex justify-end pt-4">
-              <button className="fr-btn" type="submit">
-                Enregistrer
-              </button>
+              <Button type="submit">Enregistrer</Button>
             </div>
           </div>
         </form>

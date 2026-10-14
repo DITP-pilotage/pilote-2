@@ -1,6 +1,7 @@
 import { useModifierEtatFichesInstruction } from "@/components/PagePilotage/useModifierEtatFichesInstruction";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
+import { TextLink } from "@/components/shared/TextLink";
 
 export const BoutonVerrouillerInstruction = ({
   fichesSelectionneesIds,
@@ -16,14 +17,11 @@ export const BoutonVerrouillerInstruction = ({
   };
 
   return (
-    <button
-      className="fr-link text-left !text-xs !flex items-center gap-1"
-      disabled={disabled}
-      onClick={handleBloquerFiches}
-      type="button"
-    >
-      <Icone className="inline h-3 w-3" icone={LockIcon} />
-      verrouiller l'instruction
-    </button>
+    <TextLink asChild className="text-left flex items-center gap-1" size="xs">
+      <button disabled={disabled} onClick={handleBloquerFiches} type="button">
+        <Icone className="inline h-3 w-3" icone={LockIcon} />
+        verrouiller l'instruction
+      </button>
+    </TextLink>
   );
 };

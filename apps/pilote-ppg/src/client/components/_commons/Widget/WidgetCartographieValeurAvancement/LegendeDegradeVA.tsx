@@ -12,8 +12,10 @@ export const LegendeDegradeVA = ({
   couleurMax: string;
 }) => {
   return (
-    <div className="fr-mt-1w max-w-[25rem] mx-auto w-full">
-      <p className="fr-text--xs text-dsfr-mention-grey fr-mb-0">{libelle}</p>
+    <div className="mt-2 max-w-[25rem] mx-auto w-full">
+      <p className="text-xs print:text-base text-dsfr-mention-grey mb-0">
+        {libelle}
+      </p>
       <div
         className="h-2"
         style={{
@@ -21,10 +23,10 @@ export const LegendeDegradeVA = ({
         }}
       />
       <div className="flex justify-between">
-        <p className="fr-text--xs text-dsfr-mention-grey fr-mb-0">
+        <p className="text-xs print:text-base text-dsfr-mention-grey mb-0">
           {valeurMin}
         </p>
-        <p className="fr-text--xs text-dsfr-mention-grey fr-mb-0">
+        <p className="text-xs print:text-base text-dsfr-mention-grey mb-0">
           {valeurMax}
         </p>
       </div>

@@ -1,5 +1,3 @@
-import "@gouvfr/dsfr/dist/utility/colors/colors.css";
-
 import { FunctionComponent } from "react";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
@@ -35,36 +33,36 @@ const PageFicheConducteur: FunctionComponent<
 
   return (
     <div>
-      <main className="fr-pb-2w">
-        <div className="fr-container fr-pb-1w ">
+      <main className="pb-4">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-2">
           <EnteteFicheConducteur titleBandClassName="p-2">
             {`${chantier.nom} - Principaux résultats`}
           </EnteteFicheConducteur>
         </div>
-        <div className="fr-container">
-          <div className="fr-grid-row fr-grid-row--gutters">
-            <div className="fr-col-4 flex flex-col fr-pr-1v">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+          <div className="flex flex-wrap -m-2 lg:-m-3">
+            <div className="pl-2 py-2 lg:pl-3 lg:py-3 w-1/3 shrink-0 flex flex-col pr-1">
               <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113 h-full">
                 Responsables & État d'avancement
               </h2>
               <Bloc
                 className="h-full print:p-0 print:border-dsfr-grey-925"
-                contenuClassesSupplémentaires="fr-px-1w fr-py-1v"
+                contenuClassesSupplémentaires="px-2 py-1"
               >
-                <div className="fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0 print:text-[10px] print:leading-4">
-                  <span className="fr-col-2 fr-text--bold">DAC</span>
+                <div className="flex flex-wrap text-xs border-b pb-1 m-0 print:text-[10px] print:leading-4">
+                  <span className="w-1/6 shrink-0 font-bold">DAC</span>
                   <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
                     {chantier.directeursAdministrationCentrale}
                   </span>
                 </div>
-                <div className="fr-grid-row border-b fr-py-1v fr-text--xs fr-m-0 print:text-[10px] print:leading-4">
-                  <span className="fr-col-2 fr-text--bold">DP</span>
+                <div className="flex flex-wrap text-xs border-b py-1 m-0 print:text-[10px] print:leading-4">
+                  <span className="w-1/6 shrink-0 font-bold">DP</span>
                   <span className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3">
                     {chantier.directeursProjet}
                   </span>
                 </div>
-                <div className="fr-grid-row fr-py-1w">
-                  <div className="fr-col-5 flex justify-center items-end">
+                <div className="flex flex-wrap py-2">
+                  <div className="w-5/12 shrink-0 flex justify-center items-end">
                     <JaugeDeProgression
                       couleur="bleu"
                       libellé={`Taux d'avancement à échéance ${jalon}`}
@@ -72,8 +70,8 @@ const PageFicheConducteur: FunctionComponent<
                       taille="md"
                     />
                   </div>
-                  <div className="fr-col-7 fr-grid-row fr-grid-row-md--gutters">
-                    <div className="fr-col-4 flex justify-center items-end">
+                  <div className="flex flex-wrap md:-m-2 lg:-m-3 w-7/12 shrink-0">
+                    <div className="md:p-2 lg:p-3 w-1/3 shrink-0 flex justify-center items-end">
                       <JaugeDeProgression
                         couleur="orange"
                         libellé="Minimum"
@@ -81,7 +79,7 @@ const PageFicheConducteur: FunctionComponent<
                         taille="sm"
                       />
                     </div>
-                    <div className="fr-col-4 flex justify-center items-end">
+                    <div className="md:p-2 lg:p-3 w-1/3 shrink-0 flex justify-center items-end">
                       <JaugeDeProgression
                         couleur="violet"
                         libellé="Médiane"
@@ -89,7 +87,7 @@ const PageFicheConducteur: FunctionComponent<
                         taille="sm"
                       />
                     </div>
-                    <div className="fr-col-4 flex justify-center items-end">
+                    <div className="md:p-2 lg:p-3 w-1/3 shrink-0 flex justify-center items-end">
                       <JaugeDeProgression
                         couleur="vert"
                         libellé="Maximum"
@@ -119,14 +117,14 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
                 <div>
                   {commentaire ? (
-                    <div className="fr-text--xs fr-mb-1w print:text-[10px] print:leading-4">
+                    <div className="m-[var(--text-spacing)] text-xs mb-2 print:text-[10px] print:leading-4">
                       <RenduContenuHtml
                         className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:text-[10px] print:[&_p]:leading-4"
                         html={commentaire}
                       />
                     </div>
                   ) : (
-                    <p className="fr-text--xs print:text-[10px] print:leading-4">
+                    <p className="text-xs print:text-[10px] print:leading-4">
                       Aucune synthèse des résultats
                     </p>
                   )}
@@ -135,52 +133,52 @@ const PageFicheConducteur: FunctionComponent<
             </div>
           </div>
         </div>
-        <div className="fr-container fr-mt-1w">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] mt-2">
           <Bloc
             className="print:p-0 print:border-dsfr-grey-925"
-            contenuClassesSupplémentaires="fr-px-0 fr-py-0"
+            contenuClassesSupplémentaires="px-0 py-0"
           >
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:text-[10px] print:leading-4">
-              <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
-                <div className="fr-col-5 fr-text--bold">
+            <div className="w-full xl:max-w-[78rem] text-xs fiche-conducteur--tableau m-0 px-0 print:text-[10px] print:leading-4">
+              <div className="flex flex-wrap bg-dsfr-blue-france-925 px-2 py-2 border-b rounded-tl-md rounded-tr-md">
+                <div className="w-5/12 shrink-0 font-bold">
                   Avancement des indicateurs d'impact pris en compte dans le TA
                 </div>
-                <div className="fr-col-7 fr-grid-row">
-                  <div className="fr-col-3 fr-text--bold flex items-center whitespace-nowrap">
+                <div className="flex flex-wrap w-7/12 shrink-0">
+                  <div className="w-1/4 shrink-0 font-bold flex items-center whitespace-nowrap">
                     {`V.Initiale ${chantier.derniereValeurInitiale}`}
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex items-center">
+                  <div className="w-1/4 shrink-0 font-bold flex items-center">
                     V. Actuelle
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex items-center">
+                  <div className="w-1/4 shrink-0 font-bold flex items-center">
                     {`Cible ${jalon}`}
                   </div>
-                  <div className="fr-col-3 fr-text--bold flex items-center">
+                  <div className="w-1/4 shrink-0 font-bold flex items-center">
                     {`TA ${jalon}`}
                   </div>
                 </div>
               </div>
               {chantier.indicateurs.map((indicateur, index) => (
                 <div
-                  className="fr-grid-row fr-px-1w fr-py-1v border-t"
+                  className="flex flex-wrap px-2 py-1 border-t"
                   key={`indicateur-${index}`}
                 >
                   <div
-                    className={`fr-col-5 fr-pr-1w${indicateur.type === "IMPACT" ? " fr-text--bold" : ""}`}
+                    className={`w-5/12 shrink-0 pr-2${indicateur.type === "IMPACT" ? " font-bold" : ""}`}
                   >
                     {indicateur.nom}
                   </div>
-                  <div className="fr-col-7 fr-grid-row">
-                    <div className="fr-col-3 flex items-center">
+                  <div className="flex flex-wrap w-7/12 shrink-0">
+                    <div className="w-1/4 shrink-0 flex items-center">
                       {indicateur.valeurInitiale}
                     </div>
-                    <div className="fr-col-3 flex items-center fr-pr-1w">
+                    <div className="w-1/4 shrink-0 flex items-center pr-2">
                       {`${indicateur.valeurAvancement} ${indicateur.dateValeurAvancement}`}
                     </div>
-                    <div className="fr-col-3 flex items-center">
+                    <div className="w-1/4 shrink-0 flex items-center">
                       {indicateur.valeurCible}
                     </div>
-                    <div className="fr-col-3 flex items-center">
+                    <div className="w-1/4 shrink-0 flex items-center">
                       {indicateur.tauxAvancement}
                     </div>
                   </div>
@@ -189,17 +187,17 @@ const PageFicheConducteur: FunctionComponent<
             </div>
           </Bloc>
         </div>
-        <div className="page-break fr-mb-2w" />
+        <div className="page-break mb-4" />
         {doitAfficherDonnéesCartographie ? (
           <>
-            <div className="fr-container fr-pb-1w hidden print:block">
+            <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-2 hidden print:block">
               <EnteteFicheConducteur titleBandClassName="p-2">
                 {`${chantier.nom} - Principaux résultats`}
               </EnteteFicheConducteur>
             </div>
-            <div className="fr-container">
-              <div className="fr-grid-row fr-grid-row--gutters">
-                <div className="fr-col-6">
+            <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+              <div className="flex flex-wrap -m-2 lg:-m-3">
+                <div className="p-2 lg:p-3 w-1/2 shrink-0">
                   <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113">
                     {`Taux d'avancement ${jalon}`}
                   </h2>
@@ -216,7 +214,7 @@ const PageFicheConducteur: FunctionComponent<
                     </Bloc>
                   </div>
                 </div>
-                <div className="fr-col-6">
+                <div className="p-2 lg:p-3 w-1/2 shrink-0">
                   <h2 className="text-h5 md:text-h5-md mb-2 text-dsfr-blue-france-sun-113">
                     Niveau de confiance
                   </h2>
@@ -232,33 +230,33 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
               </div>
             </div>
-            <div className="page-break fr-mb-2w" />
+            <div className="page-break mb-4" />
           </>
         ) : null}
-        <div className="fr-container fr-pb-1w hidden print:block">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-2 hidden print:block">
           <EnteteFicheConducteur titleBandClassName="p-2">
             {`${chantier.nom} - Point d'avancement`}
           </EnteteFicheConducteur>
         </div>
-        <div className="fr-container">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
           <Bloc
             className="print:p-0 print:border-dsfr-grey-925"
-            contenuClassesSupplémentaires="fr-px-0"
+            contenuClassesSupplémentaires="px-0"
           >
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:text-[10px] print:leading-4">
-              <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
-                <div className="fr-col-2 fr-text--bold">Catégorie</div>
-                <div className="fr-col-10 fr-text--bold">Détail</div>
+            <div className="w-full xl:max-w-[78rem] text-xs fiche-conducteur--tableau m-0 px-0 print:text-[10px] print:leading-4">
+              <div className="flex flex-wrap bg-dsfr-blue-france-925 px-2 py-2 border-b rounded-tl-md rounded-tr-md">
+                <div className="w-1/6 shrink-0 font-bold">Catégorie</div>
+                <div className="w-5/6 shrink-0 font-bold">Détail</div>
               </div>
               {publications.map((publication, index) => (
                 <div
-                  className="fr-grid-row fr-px-1w fr-py-1w border-t"
+                  className="flex flex-wrap px-2 py-2 border-t"
                   key={`publication-${index}`}
                 >
-                  <div className="fr-col-2 fr-text--bold flex items-center">
+                  <div className="w-1/6 shrink-0 font-bold flex items-center">
                     {publication.libellé}
                   </div>
-                  <div className="fr-col-10">
+                  <div className="w-5/6 shrink-0">
                     <RenduContenuHtml
                       className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:text-[10px] print:[&_p]:leading-4"
                       html={publication.valeur}

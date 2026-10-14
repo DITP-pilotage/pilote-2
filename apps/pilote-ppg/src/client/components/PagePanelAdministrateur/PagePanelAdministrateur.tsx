@@ -12,7 +12,7 @@ export const PagePanelAdministrateur = ({
     <div className="flex">
       <MenuLateralPanelAdministrateur pageActive={pageActive} />
       <main className="flex-grow">
-        <div className="fr-mt-4w fr-mx-4w fr-mb-3w">
+        <div className="mt-8 mx-8 mb-6">
           <h1 className="text-h1 md:text-h1-md mb-6">Panel Administrateur</h1>
           {children}
         </div>

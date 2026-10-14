@@ -25,10 +25,10 @@ export const LigneIndicateurDatePrevisionnelle = () => {
           : "text-dsfr-mention-grey",
       )}
     >
-      <p className="mb-0 fr-text--xs pr-1">
+      <p className="text-xs print:text-base mb-0 pr-1">
         Date prévisionnelle de la prochaine mise à jour des données (de
         l'indicateur) :{" "}
-        <span className="fr-text--bold">
+        <span className="font-bold">
           {indicateurEstApplicable
             ? (dateProchaineDateMaj ??
               "Données requises mais non renseignées par l'équipe projet")
@@ -41,7 +41,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
         }
         classNameInfoBulle="tooltip-accordeon"
       >
-        <p className="text-sm text-primary mb-2 font-bold">
+        <p className="text-[0.875rem] leading-6 text-primary mb-2 font-bold">
           Date prévisionnelle de mise à jour de l'indicateur :
         </p>
         <p className="text-sm mb-0">

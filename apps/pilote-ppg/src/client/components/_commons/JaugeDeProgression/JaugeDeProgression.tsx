@@ -81,7 +81,7 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
       {libellé && (
         <p
           className={clsxm(
-            "fr-text--xs fr-mb-0 text-center",
+            "text-xs print:text-base mb-0 text-center",
             classesÀPartirDeTaille[taille].libellé,
             noWrap && "whitespace-nowrap",
           )}
@@ -92,7 +92,7 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
       {date && (
         <p
           className={clsxm(
-            "fr-text--xs fr-mb-0 text-center",
+            "text-xs print:text-base mb-0 text-center",
             classesÀPartirDeTaille[taille].libellé,
             noWrap && "whitespace-nowrap",
           )}

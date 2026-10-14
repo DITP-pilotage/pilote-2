@@ -10,7 +10,7 @@ export const BadgeIndicateurEnAlerte = () => {
   if (!estIndicateurEnAlerte || chantier.statut === "ARCHIVE") return null;
 
   return (
-    <span className="fr-mr-1v">
+    <span className="mr-1">
       <Badge
         aria-hidden="true"
         className="px-1"

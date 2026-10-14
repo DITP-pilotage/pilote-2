@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/dsfr.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
@@ -55,7 +54,7 @@ const PageChantierEnTête: FunctionComponent<{
   const chantierEstArchive = chantier.statut === "ARCHIVE";
   return (
     <div
-      className={clsxm("fr-text-title--blue-france print:mt-4", {
+      className={clsxm("text-dsfr-blue-france-sun-113 print:mt-4", {
         "text-dsfr-grey-200": chantierEstArchive,
       })}
     >
@@ -81,10 +80,10 @@ const PageChantierEnTête: FunctionComponent<{
         {chantier.nom}
       </h1>
       <div className="pb-6 mb-6 border-b border-blue-france flex">
-        <div className="icone-entete fr-mb-1w fr-pr-1w">
+        <div className="icone-entete mb-2 pr-2">
           <IconeMinistere icone={responsables?.porteur?.icône} />
         </div>
-        <p className={clsxm(`fr-mb-0 uppercase`)}>
+        <p className={clsxm(`mb-0 uppercase`)}>
           {listeNomsResponsablesMinistèrePorteur.join(", ") || "Non renseigné"}
         </p>
       </div>

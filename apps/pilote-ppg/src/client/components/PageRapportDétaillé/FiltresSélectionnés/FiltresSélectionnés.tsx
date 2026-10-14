@@ -148,7 +148,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
   ];
 
   return (
-    <div className="fr-mb-2w print:hidden">
+    <div className="mb-4 print:hidden">
       <h2 className="text-lg text-dsfr-grey-50">Contenu du rapport détaillé</h2>
       <div className="columns-4 gap-8 pl-0 text-[0.95rem]">
         {filtresCatégories.map(({ nom, filtresActifs }) => (

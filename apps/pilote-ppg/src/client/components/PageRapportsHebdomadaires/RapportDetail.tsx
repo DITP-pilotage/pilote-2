@@ -30,8 +30,10 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
       <section className="space-y-4">
         <TitreSection>Activité des comptes</TitreSection>
 
-        <Bloc contenuClassesSupplémentaires="fr-p-0">
-          <h3 className="fr-text--lg fr-mb-0 p-4">Comptes créés</h3>
+        <Bloc contenuClassesSupplémentaires="p-0">
+          <h3 className="m-[var(--text-spacing)] text-lg mb-0 p-4">
+            Comptes créés
+          </h3>
           {comptesCrees.length === 0 ? (
             <BlocEtatVide>Aucun compte créé sur cette période.</BlocEtatVide>
           ) : (
@@ -39,8 +41,10 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
           )}
         </Bloc>
 
-        <Bloc contenuClassesSupplémentaires="fr-p-0">
-          <h3 className="fr-text--lg fr-mb-0 p-4">Comptes désactivés</h3>
+        <Bloc contenuClassesSupplémentaires="p-0">
+          <h3 className="m-[var(--text-spacing)] text-lg mb-0 p-4">
+            Comptes désactivés
+          </h3>
           {comptesDesactives.length === 0 ? (
             <BlocEtatVide>
               Aucun compte désactivé sur cette période.
@@ -55,7 +59,7 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
         <TitreSection>Suivi des chantiers</TitreSection>
 
         {chantiers.length === 0 ? (
-          <p className="fr-text--sm">
+          <p className="text-sm print:text-base">
             Aucune activité sur les chantiers pour cette période.
           </p>
         ) : (

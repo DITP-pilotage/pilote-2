@@ -31,7 +31,7 @@ export const DetailsDroitsUtilisateur: FunctionComponent<
   return (
     <div>
       <h2 className="text-h5 md:text-h5-md text-primary">{titre}</h2>
-      <div className="fr-grid-row">
+      <div className="flex flex-wrap">
         <ListeDeDroit
           label={labelTerritoires}
           listeElement={listeElementsTerritoires}
@@ -41,7 +41,7 @@ export const DetailsDroitsUtilisateur: FunctionComponent<
           listeElement={listeElementsChantiers}
         />
       </div>
-      <hr className="fr-hr fr-mt-3w" />
+      <hr className="mt-6" />
     </div>
   );
 };

@@ -14,7 +14,7 @@ const ExplicationEtapeIndicateur: FunctionComponent<
   return (
     <div
       className={clsxm(
-        "h-full bg-white border border-dsfr-grey-900 fr-p-3w",
+        "h-full bg-white border border-dsfr-grey-900 p-6",
         etapeCourante === numéro && "border-primary",
       )}
     >
@@ -28,7 +28,7 @@ const ExplicationEtapeIndicateur: FunctionComponent<
         {numéro}
       </span>
       <h3 className="text-h6 md:text-h6-md mb-2">{titre}</h3>
-      <p className="fr-mb-0 fr-text--sm">{texte}</p>
+      <p className="text-sm print:text-base mb-0">{texte}</p>
     </div>
   );
 };

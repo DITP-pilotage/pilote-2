@@ -1,3 +1,4 @@
+import { LABEL_CLASSES } from "@/components/shared/fieldTextClasses";
 import { FunctionComponent } from "react";
 import { Controller } from "react-hook-form";
 import { CheckboxField } from "@/components/shared/Checkbox";
@@ -39,7 +40,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
           <h1 className="text-h4 md:text-h4-md mb-2 text-dsfr-blue-france-sun-113 flex justify-center">
             Ne manquez pas les actualités de PILOTE
           </h1>
-          <p className="fr-mt-3w">
+          <p className="mt-6">
             Inscrivez-vous à notre infolettre{" "}
             <strong>pour rester informé des évolutions de PILOTE.</strong>
           </p>
@@ -50,12 +51,10 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
               Des conseils pratiques pour optimiser le pilotage de vos projets
             </li>
           </ul>
-          <p className="fr-text fr-text--bold fr-mt-2w">
-            👉 Une fois par mois, pas plus.
-          </p>
-          <form className="fr-mt-3w" method="post" onSubmit={handleSubmitForm}>
-            <div className="fr-mb-3w">
-              <label className="fr-label fr-text--bold" htmlFor="email">
+          <p className="font-bold mt-4">👉 Une fois par mois, pas plus.</p>
+          <form className="mt-6" method="post" onSubmit={handleSubmitForm}>
+            <div className="mb-6">
+              <label className={`${LABEL_CLASSES} font-bold`} htmlFor="email">
                 EMAIL
                 {}
                 <span className="text-error">*</span>
@@ -103,7 +102,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
           </form>
         </div>
       ) : (
-        <Alerte type="succès" classesSupplementaires="fr-mt-2w">
+        <Alerte type="succès" classesSupplementaires="mt-4">
           <h3>Inscription enregistrée.</h3>
           <span>
             <p>Merci pour votre inscription à l'infolettre Minute PILOTE.</p>

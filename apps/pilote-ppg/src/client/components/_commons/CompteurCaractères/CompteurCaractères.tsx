@@ -13,7 +13,7 @@ const CompteurCaractères: FunctionComponent<CompteurCaractèresProps> = ({
   className,
 }) => {
   return (
-    <p className={clsx("fr-text--xs fr-mb-0 text-right", className)}>
+    <p className={clsx("text-xs print:text-base mb-0 text-right", className)}>
       {compte}/{limiteDeCaractères}
     </p>
   );

@@ -39,7 +39,7 @@ const CommentairesRapportDetaille: FunctionComponent<
         const commentaire = commentaireParType.get(type) ?? null;
         return (
           <Fragment key={type}>
-            {index !== 0 && <hr className="fr-hr p-1" />}
+            {index !== 0 && <hr className="p-1" />}
             <div className="py-4 px-6">
               <p className="font-bold mb-1 text-xl">
                 {libellesTypesCommentaire[type]}
@@ -49,7 +49,7 @@ const CommentairesRapportDetaille: FunctionComponent<
                   <p className="text-xs text-dsfr-mention-grey mb-1">
                     {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.date)} | Par ${commentaire.auteur}`}
                   </p>
-                  <div className="fr-text--sm fr-mb-0">
+                  <div className="m-[var(--text-spacing)] text-sm print:text-base mb-0">
                     <RenduContenuHtml
                       className="[&_p]:text-sm [&_p]:mb-1"
                       html={commentaire.contenu}

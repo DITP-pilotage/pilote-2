@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { Button } from "@/components/shared/Button";
 import Link from "next/link";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
-import BarreDeProgression from "@/client/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
 import { Icone } from "@/components/_commons/Icone";
 import { EyeIcon } from "@/components/_commons/Icones/EyeIcon";
@@ -140,14 +140,14 @@ export const TableauNoteCollective = () => {
                     <Table.Cell
                       className={clsxm(CELLULE, "px-4 py-3 md:px-4 md:py-3")}
                     >
-                      <BarreDeProgression
-                        afficherTexte
-                        fond="blanc"
-                        positionTexte="dessus"
-                        taille="sm"
-                        texteCentre
-                        valeur={chantier.tauxAvancement}
-                        variante="primaire"
+                      <ProgressBar
+                        showLabel
+                        background="white"
+                        labelPosition="top"
+                        size="sm"
+                        centerLabel
+                        value={chantier.tauxAvancement}
+                        variant="primary"
                       />
                     </Table.Cell>
                   </Table.Row>
@@ -170,14 +170,14 @@ export const TableauNoteCollective = () => {
                               "px-4 py-2 md:px-4 md:py-2",
                             )}
                           >
-                            <BarreDeProgression
-                              afficherTexte
-                              fond="gris-clair"
-                              positionTexte="dessus"
-                              taille="sm"
-                              texteCentre
-                              valeur={indicateur.tauxAvancement}
-                              variante="secondaire"
+                            <ProgressBar
+                              showLabel
+                              background="light-grey"
+                              labelPosition="top"
+                              size="sm"
+                              centerLabel
+                              value={indicateur.tauxAvancement}
+                              variant="secondary"
                             />
                             <div className="flex justify-center text-[10px]/[12px] italic !text-dsfr-mention-grey mt-1">
                               pondération : {Math.round(indicateur.ponderation)}

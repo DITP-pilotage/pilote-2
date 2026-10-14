@@ -16,7 +16,7 @@ export const BasePageAccueilSection = ({
   id,
   titre,
   infobulle,
-  titreConteneurClassName = "fr-mb-1w fr-mt-3v fr-mt-md-0 flex w-full justify-between",
+  titreConteneurClassName = "mb-2 mt-3 md:mt-0 flex w-full justify-between",
   children,
   className,
 }: BasePageAccueilSectionProps) => {

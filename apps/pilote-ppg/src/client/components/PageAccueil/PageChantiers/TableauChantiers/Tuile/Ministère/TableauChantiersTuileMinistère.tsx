@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
@@ -24,11 +24,11 @@ const TableauChantiersTuileMinistère: FunctionComponent<
           </span>
         </span>
         <span className="block mx-6 mt-1 max-w-60">
-          <BarreDeProgression
-            fond="blanc"
-            taille="sm"
-            valeur={ministère.avancement}
-            variante={estArchive ? "secondaire" : "primaire"}
+          <ProgressBar
+            background="white"
+            size="sm"
+            value={ministère.avancement}
+            variant={estArchive ? "secondary" : "primary"}
           />
         </span>
       </span>

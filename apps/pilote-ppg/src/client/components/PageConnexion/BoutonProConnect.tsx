@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import { Badge } from "@/components/shared/Badge";
 import { useEnv } from "@/client/hooks/useEnv";
 
@@ -9,10 +8,9 @@ type BoutonProConnectProps = {
 /**
  * Bouton officiel ProConnect.
  *
- * Reprend le composant `fr-connect` du DSFR, dont le glyphe FranceConnect est
- * remplacé par celui de ProConnect via la surcharge `.proconnect-button`
- * définie dans app.css. C'est la première des trois intégrations proposées par
- * la DINUM, celle destinée aux services déjà sous DSFR.
+ * Reproduit le composant `fr-connect` du DSFR avec le glyphe ProConnect
+ * (classes `.proconnect-*` définies dans app.css). C'est la première des trois
+ * intégrations proposées par la DINUM, celle destinée aux services sous DSFR.
  *
  * Tant que le feature flip est fermé, le bouton reste affiché mais désactivé
  * pour annoncer l'arrivée de ProConnect.
@@ -24,25 +22,25 @@ export const BoutonProConnect = ({ onClick }: BoutonProConnectProps) => {
   const ffProConnect = useEnv("NEXT_PUBLIC_FF_PROCONNECT");
 
   return (
-    <div className="fr-connect-group text-center">
+    <div className="proconnect-group text-center">
       <button
         aria-describedby={ffProConnect ? undefined : "proconnect-a-venir"}
-        className="proconnect-button fr-connect"
+        className="proconnect-button"
         disabled={!ffProConnect}
         onClick={onClick}
         type="button"
       >
-        <span className="fr-connect__login">S'identifier avec</span>
-        <span className="fr-connect__brand">ProConnect</span>
+        <span className="proconnect-button__login">S'identifier avec</span>
+        <span className="proconnect-button__brand">ProConnect</span>
       </button>
       {ffProConnect ? null : (
-        <p className="fr-mt-1w fr-mb-1w">
+        <p className="mt-2 mb-2">
           <Badge id="proconnect-a-venir" size="sm" variant="info">
             Bientôt disponible
           </Badge>
         </p>
       )}
-      <p className="fr-mb-0">
+      <p className="mb-0">
         <a
           href="https://www.proconnect.gouv.fr/"
           rel="noopener noreferrer"

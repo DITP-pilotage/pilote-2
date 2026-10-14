@@ -12,7 +12,7 @@ const MessageInformationForm: FunctionComponent = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col">
-        <p className="fr-text--md font-bold fr-mb-1v relative">
+        <p className="text-base font-bold mb-1 relative">
           Type de message et de bannière
         </p>
         <div className="flex">
@@ -37,9 +37,7 @@ const MessageInformationForm: FunctionComponent = () => {
         </div>
       </div>
       <div>
-        <p className="fr-text--md font-bold fr-mb-1v relative">
-          Rédigez le message
-        </p>
+        <p className="text-base font-bold mb-1 relative">Rédigez le message</p>
         <Controller
           control={form.control}
           name="bandeauTexte"

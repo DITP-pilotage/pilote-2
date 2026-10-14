@@ -34,7 +34,7 @@ export const HistoriquePublication = <P extends Publication>({
       <Button
         variant="link"
         aria-label={ariaLabel}
-        className="fr-mt-1w fr-ml-3w"
+        className="mt-2 ml-6"
         iconLeft={<Icone className="w-4 h-4 text-current" icone={Eye1Icon} />}
         type="button"
       >
@@ -45,7 +45,7 @@ export const HistoriquePublication = <P extends Publication>({
     {historique ? (
       historique.map((item, index) => (
         <Fragment key={item.dateModification}>
-          {index !== 0 && <hr className="fr-mt-4w" />}
+          {index !== 0 && <hr className="mt-8" />}
           <AffichagePublication aside={aside?.(item)} commentaire={item} />
         </Fragment>
       ))

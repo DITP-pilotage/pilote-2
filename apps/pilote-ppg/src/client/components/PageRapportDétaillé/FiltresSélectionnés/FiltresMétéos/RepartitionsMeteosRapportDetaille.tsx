@@ -25,10 +25,10 @@ const RepartitionsMeteosRapportDetaille: FunctionComponent<
   );
 
   return (
-    <ul className="fr-grid-row fr-mx-n3v list-none">
+    <ul className="flex flex-wrap my-0 p-0 -mx-3 list-none">
       {meteosSaisissables.map((meteo) => (
         <li
-          className="fr-col-3 fr-p-2v max-[80rem]:p-0.5"
+          className="w-1/4 shrink-0 p-2 max-[80rem]:p-0.5"
           key={libellesMeteos[meteo]}
           title={libellesMeteos[meteo]}
         >
@@ -46,7 +46,7 @@ const RepartitionsMeteosRapportDetaille: FunctionComponent<
             <p className="text-h1 md:text-h1-md font-bold mb-0 text-primary">
               {repartitionMeteos[meteo]}
             </p>
-            <p className="fr-mb-0 break-keep text-dsfr-grey-50 max-[80rem]:text-xs">
+            <p className="mb-0 break-keep text-dsfr-grey-50 max-[80rem]:text-xs">
               {libellesMeteos[meteo]}
             </p>
           </button>

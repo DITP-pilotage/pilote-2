@@ -8,7 +8,7 @@ export const ZonegroupValuesPreview = ({
   zonegroupsActifs: ZonegroupAdminListItem[];
 }) => {
   return (
-    <div className="fr-mt-2w">
+    <div className="mt-4">
       <p className="text-sm text-gray-600 mb-3">
         Les valeurs sélectionnables pour ce champ proviennent directement du
         référentiel des zone-groupes. Pour créer, modifier ou archiver un
@@ -19,7 +19,7 @@ export const ZonegroupValuesPreview = ({
           Aucun zone-groupe actif pour le moment.
         </p>
       ) : (
-        <ul className="fr-mb-3w list-disc pl-5">
+        <ul className="mb-6 list-disc pl-5">
           {zonegroupsActifs.map((zonegroup) => (
             <li className="text-sm" key={zonegroup.zoneGroupId}>
               <span className="font-mono text-xs text-gray-400 mr-2">

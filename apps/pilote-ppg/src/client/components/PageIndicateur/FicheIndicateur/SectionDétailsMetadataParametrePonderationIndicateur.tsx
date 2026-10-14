@@ -22,8 +22,8 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       <h2 className="text-h5 md:text-h5-md">
         Pondération de l'indicateur dans le calcul du taux d'avancement global
       </h2>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-4">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             disabled={!indicateurEstTerritorialise}
             editBoxType="text"
@@ -38,7 +38,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             disabled={!indicateurEstTerritorialise}
             editBoxType="text"
@@ -53,7 +53,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -68,8 +68,8 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-4">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -83,7 +83,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -97,7 +97,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}

@@ -6,11 +6,11 @@ export const determinerValeurAfficheeAvancement = (
   jalon: number,
 ): ReactNode => {
   if (estApplicable === false) {
-    return <span className="fr-text--bold">Non applicable</span>;
+    return <span className="font-bold">Non applicable</span>;
   }
 
   if (valeurAnnuelle === null) {
-    return <span className="fr-text--bold">Non renseigné</span>;
+    return <span className="font-bold">Non renseigné</span>;
   }
 
   return <>{`TA ${jalon} : ${valeurAnnuelle.toFixed(0)}%`}</>;

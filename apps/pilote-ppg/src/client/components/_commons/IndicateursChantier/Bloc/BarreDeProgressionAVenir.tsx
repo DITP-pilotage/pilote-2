@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { BarreDeProgressionVariante } from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBarVariant } from "@/components/shared/ProgressBar";
 import { Infobulle } from "@/components/shared/Infobulle";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import {
@@ -10,7 +10,7 @@ import {
 export const BarreDeProgressionAVenir = ({
   variante,
 }: {
-  variante: BarreDeProgressionVariante;
+  variante: ProgressBarVariant;
 }) => {
   const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
 
@@ -25,7 +25,7 @@ export const BarreDeProgressionAVenir = ({
           {estPropositionAccepteeOuAccepteeAvecModification(
             detailIndicateurDuTerritoire,
           ) ? (
-            <p className="fr-text--sm fr-mb-0">
+            <p className="text-sm print:text-base mb-0">
               La proposition de valeur d'avancement a bien été acceptée{" "}
               {estPropositionAccepteeAvecModification(
                 detailIndicateurDuTerritoire,
@@ -40,7 +40,7 @@ export const BarreDeProgressionAVenir = ({
               valeur d'avancement.
             </p>
           ) : (
-            <p className="fr-text--sm fr-mb-0">
+            <p className="text-sm print:text-base mb-0">
               La proposition de valeur d'avancement a bien été prise en compte
               et est visible par tous les utilisateurs. Le taux d'avancement est
               en cours d'intégration dans la base de données de PILOTE et sera
@@ -52,9 +52,9 @@ export const BarreDeProgressionAVenir = ({
       <div
         className={clsx("w-full h-3 rounded-full overflow-hidden", {
           "[background-image:repeating-linear-gradient(135deg,#1483ff_0_4px,#fff_4px_8px)]":
-            variante === "bleu-dsfr-info",
+            variante === "info",
           "[background-image:repeating-linear-gradient(135deg,#c3992a_0_4px,#fff_4px_8px)]":
-            variante === "jaune-moutarde",
+            variante === "mustard",
         })}
       />
     </div>

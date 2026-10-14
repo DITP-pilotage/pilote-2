@@ -17,7 +17,7 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({
   return (
     <button
       className={clsxm(
-        "flex flex-col items-start w-full h-full bg-white border border-dsfr-grey-900 rounded-lg shadow-[0_2px_6px_0_#00001229] fr-p-3v fr-p-md-3w",
+        "flex flex-col items-start w-full h-full bg-white border border-dsfr-grey-900 rounded-lg shadow-[0_2px_6px_0_#00001229] p-3 md:p-6",
         estActivée && "border-warning",
       )}
       disabled={!auClic || nombre === null}
@@ -26,7 +26,7 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({
       <span className="text-h1 md:text-h1-md font-bold mb-0 text-warning">
         {nombre ?? "-"}
       </span>
-      <span className="fr-mb-0 text-left text-xs text-dsfr-grey-50 md:text-base">
+      <span className="mb-0 text-left text-xs text-dsfr-grey-50 md:text-base">
         {libellé}
       </span>
     </button>

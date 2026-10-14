@@ -22,7 +22,7 @@ export const useDonneesCartographie = (
             ),
             libelle: getLabelTerritoire(territoire.territoireCode),
             contenuInfoBulle: (
-              <div className="fr-text--bold">
+              <div className="font-bold">
                 {territoire.estApplicable === false
                   ? "Non applicable"
                   : libellesMeteos[meteo]}

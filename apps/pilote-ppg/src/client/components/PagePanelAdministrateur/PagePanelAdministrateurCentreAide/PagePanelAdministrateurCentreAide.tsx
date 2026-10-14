@@ -202,7 +202,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                 className="h-6 w-6 text-dsfr-grey-625"
                 icone={Book2ContourIcon}
               />
-              <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+              <p className="text-[15px] leading-6 text-dsfr-mention-grey mb-0">
                 Ce groupe range des articles. Il n&apos;a pas de contenu à
                 rédiger.
               </p>
@@ -212,10 +212,10 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
       ) : (
         <section className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-7 px-8">
           <div className="flex flex-col gap-3">
-            <h2 className="text-[26px] leading-8 font-bold text-dsfr-grey-50 fr-mb-0">
+            <h2 className="text-[26px] leading-8 font-bold text-dsfr-grey-50 mb-0">
               Le centre d&apos;aide de PILOTE
             </h2>
-            <p className="text-[15px] leading-6 text-dsfr-mention-grey fr-mb-0">
+            <p className="text-[15px] leading-6 text-dsfr-mention-grey mb-0">
               Rédigez les articles tels qu&apos;ils s&apos;afficheront, puis
               publiez-les. Choisissez un article à gauche, ou commencez ici.
             </p>

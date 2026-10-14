@@ -32,7 +32,7 @@ export const Notice = ({
   children,
   dismissible = false,
   className,
-  containerClassName = "fr-container",
+  containerClassName = "w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]",
 }: {
   variant?: NoticeVariant;
   title?: ReactNode;

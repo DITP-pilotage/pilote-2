@@ -113,9 +113,9 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           className={CLASSES_CONTENU_ACCORDEON_DSFR}
           innerClassName={CLASSES_INTERIEUR_ACCORDEON_DSFR}
         >
-          <div className="fr-container">
-            <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
-              <div className="fr-col-12">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+            <div className="flex flex-wrap -mx-2 -mt-2 lg:-mx-3 lg:-mt-3 mb-2">
+              <div className="p-2 lg:p-3 w-full shrink-0">
                 {futOuvert ? (
                   <IndicateurSpécifications
                     dateProchaineDateMaj={dateProchaineDateMaj}
@@ -168,14 +168,14 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
               ) : null}
             </>
           ) : (
-            <div className="fr-container">
-              <div className="fr-grid-row fr-grid-row--gutters fr-my-1w">
+            <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+              <div className="flex flex-wrap -mx-2 lg:-mx-3 my-2">
                 {futOuvert &&
                 (donnéesCartographieAvancementTerritorialisées ||
                   donnéesCartographieValeurAvancementTerritorialisées ||
                   chantierEstTerritorialisé) ? (
                   <>
-                    <section className="fr-col-12 fr-col-xl-6">
+                    <section className="p-2 lg:p-3 w-full shrink-0 xl:w-1/2">
                       <CartographieAvecSelecteurIndicateur
                         aLaSelectionCartographie={(
                           valeur: CartographieIndicateurType,
@@ -193,7 +193,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                         unité={indicateur.unité}
                       />
                     </section>
-                    <section className="fr-col-12 fr-col-xl-6">
+                    <section className="p-2 lg:p-3 w-full shrink-0 xl:w-1/2">
                       <CartographieAvecSelecteurIndicateur
                         aLaSelectionCartographie={(
                           valeur: CartographieIndicateurType,
@@ -212,7 +212,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       />
                     </section>
 
-                    <div className="fr-mt-2w fr-container">
+                    <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] mt-4">
                       <Suspense>
                         <ComparaisonTerritoiresIndicateur
                           indicateurId={indicateur.id}
@@ -227,7 +227,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                   </>
                 ) : null}
                 {futOuvert && detailIndicateurDuTerritoire ? (
-                  <section className="fr-col-12">
+                  <section className="p-2 lg:p-3 w-full shrink-0">
                     <IndicateurEvolution
                       dateDeMiseAJourIndicateur={
                         dateDeMiseAJourIndicateur ?? "Non renseignée"

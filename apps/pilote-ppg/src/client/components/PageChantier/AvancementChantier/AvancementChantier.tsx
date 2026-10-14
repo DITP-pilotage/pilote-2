@@ -114,10 +114,10 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           }
           titre={territoireSélectionné?.nomAffiché}
         >
-          <div className="fr-py-1w jauge [&>div]:m-auto">
+          <div className="py-2 jauge [&>div]:m-auto">
             <AvancementsTerritoire
               avancement={avancements.departementale.annuel.moyenne}
-              couleurBarreDeProgression="secondaire"
+              couleurBarreDeProgression="secondary"
               couleurJaugeDeProgression="bleu"
               dateAvancement={avancements.departementale.annuel.date}
               jalon={jalon}
@@ -126,8 +126,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             />
             {mailleSourceDonnees === "regionale" && (
               <Alerte
-                classesMessagePolice="fr-text fr-text--xs"
-                classesSupplementaires="fr-mt-2w"
+                classesMessagePolice="text-xs print:text-base"
+                classesSupplementaires="mt-4"
                 message="Données régionales"
                 type="info"
               />
@@ -148,13 +148,13 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               : territoireSélectionné.nomAffiché
           }
         >
-          <div className="fr-py-1w jauge [&>div]:m-auto">
+          <div className="py-2 jauge [&>div]:m-auto">
             <AvancementsTerritoire
               avancement={avancements.regionale.annuel.moyenne}
               couleurBarreDeProgression={
                 mailleSelectionnee === "regionale"
-                  ? "secondaire"
-                  : "secondaire-light"
+                  ? "secondary"
+                  : "secondary-light"
               }
               couleurJaugeDeProgression={
                 mailleSelectionnee === "regionale" ? "bleu" : "bleu-clair"
@@ -177,12 +177,14 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         }
         titre="France"
       >
-        <div className="fr-py-1w jauge [&>div]:m-auto">
+        <div className="py-2 jauge [&>div]:m-auto">
           <div className="flex flex-col flex-wrap justify-center items-center">
-            <strong className="fr-text--sm fr-mb-0 text-center">
+            <strong className="m-[var(--text-spacing)] text-sm print:text-base mb-0 text-center">
               Taux d'avancement national
             </strong>
-            <span className="fr-text--sm fr-ml-1v">{jalon}</span>
+            <span className="m-[var(--text-spacing)] text-sm print:text-base ml-1">
+              {jalon}
+            </span>
           </div>
           <JaugeDeProgression
             couleur={territoireCode !== "NAT-FR" ? "bleu-clair" : "bleu"}
@@ -202,24 +204,28 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
         }
         className="h-full"
-        contenuClassesSupplémentaires="fr-p-2w"
+        contenuClassesSupplémentaires="p-4"
         contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
         titre={`Répartition territoriale du taux d'avancement ${jalon}`}
       >
-        <div className="fr-px-md-1w fr-px-lg-2w fr-py-1w">
+        <div className="md:px-2 py-2">
           {mailleQuery === "regionale" ? (
             <div className="flex flex-col flex-wrap justify-center items-center">
-              <strong className="fr-text--sm fr-mb-0 text-center">
+              <strong className="m-[var(--text-spacing)] text-sm print:text-base mb-0 text-center">
                 Répartition régionale
               </strong>
-              <span className="fr-text--sm fr-ml-1v">{jalon}</span>
+              <span className="m-[var(--text-spacing)] text-sm print:text-base ml-1">
+                {jalon}
+              </span>
             </div>
           ) : (
             <div className="flex flex-col flex-wrap justify-center items-center">
-              <strong className="fr-text--sm fr-mb-0 text-center">
+              <strong className="m-[var(--text-spacing)] text-sm print:text-base mb-0 text-center">
                 Répartition départementale
               </strong>
-              <span className="fr-text--sm fr-ml-1w">{jalon}</span>
+              <span className="m-[var(--text-spacing)] text-sm print:text-base ml-2">
+                {jalon}
+              </span>
             </div>
           )}
           <div className="flex flex-col justify-center">
@@ -258,7 +264,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
         }
         className="h-full"
-        contenuClassesSupplémentaires="fr-p-2w"
+        contenuClassesSupplémentaires="p-4"
         contenuInfobulle={
           territoireCode !== "NAT-FR"
             ? INFOBULLE_CONTENUS.chantier.avancement
@@ -269,20 +275,22 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       >
         {territoireCode !== "NAT-FR" ? (
           <>
-            <div className="fr-py-1w flex flex-col flex-wrap justify-center items-center">
+            <div className="py-2 flex flex-col flex-wrap justify-center items-center">
               <div className="flex flex-col flex-wrap justify-center items-center">
-                <strong className="fr-text--xs fr-mb-0 text-center">
+                <strong className="m-[var(--text-spacing)] text-xs print:text-base mb-0 text-center">
                   SITUATION PAR RAPPORT AUX AUTRES{" "}
                   {tuileEcartTAAPartirDeLaMaille[
                     territoireSélectionné.maille
                   ].toUpperCase()}{" "}
                 </strong>
-                <span className="fr-text--sm fr-ml-1v fr-mb-1w">{jalon}</span>
+                <span className="m-[var(--text-spacing)] text-sm print:text-base ml-1 mb-2">
+                  {jalon}
+                </span>
                 <EcartTauxAvancementPPG
                   ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian}
                 />
-                <p className="fr-text--xs fr-mt-1w text-center jauge-tracé">
-                  <strong className="fr-mr-1v">écart</strong>
+                <p className="text-xs print:text-base mt-2 text-center jauge-tracé">
+                  <strong className="mr-1">écart</strong>
                   {`du taux d'avancement ${jalon} par rapport au taux médian des
                   autres`}{" "}
                   {tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille]}{" "}
@@ -301,19 +309,19 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 </p>
               </div>
             </div>
-            <hr className="fr-hr fr-py-1w" />
+            <hr className="py-2" />
           </>
         ) : null}
-        <div className="fr-py-1w flex flex-col flex-wrap justify-center items-center">
-          <strong className="fr-text--xs fr-mb-0 text-center">
+        <div className="py-2 flex flex-col flex-wrap justify-center items-center">
+          <strong className="m-[var(--text-spacing)] text-xs print:text-base mb-0 text-center">
             EVOLUTION TEMPORELLE
           </strong>
-          <p className="fr-text--sm fr-ml-1v fr-mb-1w">2026</p>
+          <p className="text-sm print:text-base ml-1 mb-2">2026</p>
           <BadgeTendance
             tendance={donneesComparaisonDuTauxDAvancement.ppgTendanceChantier}
           />
-          <div className="fr-text--xs fr-mb-0 fr-mt-1w text-center">
-            <strong className="fr-mr-1v">tendance</strong>
+          <div className="m-[var(--text-spacing)] text-xs print:text-base mb-0 mt-2 text-center">
+            <strong className="mr-1">tendance</strong>
             du taux d'avancement 2026 par rapport au taux d'avancement
             précédemment mesuré sur{" "}
             {
@@ -329,13 +337,13 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                   {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + "%"}`}
                 </strong>
                 {", "}
-                <p className="fr-text--xs fr-text-mention--grey fr-mb-0 fr-ml-1v">
+                <p className="text-xs print:text-base mb-0 ml-1">
                   {`${formaterDate(donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente, "MM/YYYY")}`}
                 </p>
                 )
               </div>
             ) : (
-              <p className="fr-text--xs fr-m-0 font-bold text-primary">
+              <p className="text-xs print:text-base m-0 font-bold text-primary">
                 (Non défini)
               </p>
             )}

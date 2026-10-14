@@ -105,7 +105,7 @@ export const SectionIndicateurs = () => {
       </h2>
       {mailleSourceDonnees === "regionale" && (
         <Alerte
-          classesSupplementaires="fr-mb-2w"
+          classesSupplementaires="mb-4"
           message="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département."
           titre="Données régionales"
           type="info"

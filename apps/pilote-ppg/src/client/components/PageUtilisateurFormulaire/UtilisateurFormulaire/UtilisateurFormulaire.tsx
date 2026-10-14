@@ -118,7 +118,7 @@ const UtilisateurFormulaire: FunctionComponent<
         {utilisateur ? "Modifier un compte" : "Créer un compte"}
       </h1>
       <Bloc>
-        <div className="fr-px-10w fr-py-6w">
+        <div className="px-20 py-12">
           <StepIndicator
             className="mb-2"
             currentStep={etapeCourante}

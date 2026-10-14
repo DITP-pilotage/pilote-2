@@ -34,27 +34,11 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     },
   });
 
-  const fermerLaModaleDeDesactivationUtilisateur = () => {
-    if (typeof window.dsfr === "function") {
-      window
-        .dsfr(document.querySelector<HTMLElement>("#desactiver-compte"))
-        ?.modal?.conceal();
-    }
-  };
-
   const desactiverUtilisateur = () => {
     mutationDesactiverUtilisateur.mutate({
       email: utilisateur.email,
       csrf: récupérerUnCookie("csrf") ?? "",
     });
-  };
-
-  const fermerLaModaleDeReactivationUtilisateur = () => {
-    if (typeof window.dsfr === "function") {
-      window
-        .dsfr(document.querySelector<HTMLElement>("#reactiver-compte"))
-        ?.modal?.conceal();
-    }
   };
 
   const reactiverUtilisateur = () => {
@@ -148,12 +132,10 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
   };
 
   return {
-    fermerLaModaleDeDesactivationUtilisateur,
     desactiverUtilisateur,
     modificationEstImpossible,
     donnneContenuBandeau,
     habilitationsAGenererUnTokenDAuthentification,
-    fermerLaModaleDeReactivationUtilisateur,
     reactiverUtilisateur,
   };
 }

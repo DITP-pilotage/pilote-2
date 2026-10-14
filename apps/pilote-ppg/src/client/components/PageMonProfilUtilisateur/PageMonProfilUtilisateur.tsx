@@ -126,7 +126,7 @@ export const PageMonProfilUtilisateur = () => {
 
   return (
     <div className="bg-dsfr-alt-blue-france">
-      <div className="fr-container py-10">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-10">
         <div className="flex flex-col gap-6">
           <h1 className="text-h1 md:text-h1-md text-primary mt-8 mb-0">
             Mon profil utilisateur
@@ -136,7 +136,7 @@ export const PageMonProfilUtilisateur = () => {
 
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(soumettreFormulaire)}>
-              <Bloc className="fr-px-10w fr-py-6w flex flex-col gap-4">
+              <Bloc className="px-20 py-12 flex flex-col gap-4">
                 <div>
                   <h2 className="mb-2 text-lg">Identification</h2>
                   <p className="text-xs text-dsfr-mention-grey mb-8">

@@ -7,11 +7,11 @@ import { useTokenAPIForm } from "@/components/PageAdminGestionTokenAPI/TokenAPIF
 const TokenAPIForm: FunctionComponent = () => {
   const { errors, register } = useTokenAPIForm();
   return (
-    <div className="fr-container">
-      <div className="fr-grid-row">
-        <div className="fr-col-4">
+    <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+      <div className="flex flex-wrap">
+        <div className="w-1/3 shrink-0">
           <label
-            className="fr-text--md font-bold fr-mb-1v relative"
+            className="m-[var(--text-spacing)] text-base font-bold mb-1 relative"
             htmlFor="email"
           >
             Émail
@@ -23,7 +23,7 @@ const TokenAPIForm: FunctionComponent = () => {
             {...register("email")}
           />
         </div>
-        <div className="fr-col-4 flex items-end">
+        <div className="w-1/3 shrink-0 flex items-end">
           <Button
             variant="primary"
             className="ml-4"

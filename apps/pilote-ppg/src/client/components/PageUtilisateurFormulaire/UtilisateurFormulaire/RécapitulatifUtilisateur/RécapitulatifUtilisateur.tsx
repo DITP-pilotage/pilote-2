@@ -20,11 +20,11 @@ const RécapitulatifUtilisateur = ({
     <div>
       <FicheUtilisateur utilisateur={utilisateur} />
       {!!alerte && (
-        <div className="fr-my-4w">
+        <div className="my-8">
           <Alerte titre={alerte.titre} type={alerte.type} />
         </div>
       )}
-      <div className="fr-grid-row mt-8 flex items-center gap-4">
+      <div className="flex-wrap mt-8 flex items-center gap-4">
         <Button
           iconLeft={<Icone className="h-4 w-4" icone={ArrowLine3Icon} />}
           onClick={auClicBoutonRetourCallback}
@@ -39,7 +39,7 @@ const RécapitulatifUtilisateur = ({
           Confirmer
         </Button>
       </div>
-      <div className="fr-grid-row fr-mt-3w">
+      <div className="flex flex-wrap mt-6">
         <Link href="/admin/utilisateurs">Annuler</Link>
       </div>
     </div>

@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import { Badge } from "@/components/shared/Badge";
 import { FunctionComponent } from "react";
 import { DetailsDroitsUtilisateur } from "@/components/PageUtilisateur/DétailsDroitsUtilisateur/DetailsDroitsUtilisateur";

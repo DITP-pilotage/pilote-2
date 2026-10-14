@@ -1,9 +1,3 @@
-import "@gouvfr/dsfr/dist/core/core.min.css";
-import "@gouvfr/dsfr/dist/component/link/link.min.css";
-import "@gouvfr/dsfr/dist/component/connect/connect.min.css";
-import "@gouvfr/dsfr/dist/component/form/form.min.css";
-import "@gouvfr/dsfr/dist/component/input/input.min.css";
-import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
 import "@/client/styles/app.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider } from "next-auth/react";
@@ -34,12 +28,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
   const finChargement = () => {
     setPageEnCoursDeChargement(false);
   };
-
-  // Le JS DSFR lit `window` dès son import (impossible côté serveur) et modifie le DOM
-  // au démarrage : on le charge après l'hydratation pour ne pas désynchroniser React.
-  useEffect(() => {
-    void import("@gouvfr/dsfr/dist/dsfr.module.min.js");
-  }, []);
 
   useEffect(() => {
     Router.events.on("routeChangeStart", débutChargement);

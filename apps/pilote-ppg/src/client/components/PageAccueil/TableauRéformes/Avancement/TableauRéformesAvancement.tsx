@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { formaterDate } from "@/client/utils/date/date";
 
 interface TableauRéformesAvancementProps {
@@ -16,20 +16,20 @@ const TableauRéformesAvancement: FunctionComponent<
   return (
     <div className="grid grid-rows-[2rem_0.75rem] items-center text-[10px] w-full">
       {avancement === null ? (
-        <span className="text-dsfr-mention-grey fr-text--xs">
+        <span className="m-[var(--text-spacing)] text-xs print:text-base text-dsfr-mention-grey">
           Non renseigné
         </span>
       ) : (
-        <BarreDeProgression
-          fond="blanc"
-          taille="sm"
-          valeur={avancement}
-          variante={
+        <ProgressBar
+          background="white"
+          size="sm"
+          value={avancement}
+          variant={
             typeDeRéforme === "chantier"
               ? estArchive
-                ? "secondaire"
-                : "primaire"
-              : "rose"
+                ? "secondary"
+                : "primary"
+              : "pink"
           }
         />
       )}

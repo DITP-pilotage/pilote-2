@@ -53,7 +53,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
 
   return (
     <section className="bg-dsfr-alt-blue-france">
-      <div className="fr-container fr-py-3w">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-6">
         <h2 className="text-primary">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.TITRE}
         </h2>
@@ -66,7 +66,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
             title={étapes[etapeCourante - 1]}
           />
           <div
-            className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && "fr-hidden"}`}
+            className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && "hidden"}`}
           >
             <EtapeSelectionIndicateur
               informationsIndicateur={informationsIndicateur}
@@ -76,7 +76,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
             />
           </div>
           <div
-            className={`${etapeCourante != EtapesImport.VERIFIER_FICHIER && "fr-hidden"}`}
+            className={`${etapeCourante != EtapesImport.VERIFIER_FICHIER && "hidden"}`}
           >
             <EtapeChargerFichier
               chantierId={chantierId}
@@ -87,7 +87,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
             />
           </div>
           <div
-            className={`${etapeCourante != EtapesImport.IMPORT_FICHIER && "fr-hidden"}`}
+            className={`${etapeCourante != EtapesImport.IMPORT_FICHIER && "hidden"}`}
           >
             <EtapePublierFichier
               chantierId={chantierId}

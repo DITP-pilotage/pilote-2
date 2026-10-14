@@ -27,7 +27,7 @@ export const BaseIndicateurEvolution = forwardRef<
           <h5 className="text-lg mb-0">
             Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
           </h5>
-          <p className="fr-text--xs text-dsfr-mention-grey">
+          <p className="text-xs print:text-base text-dsfr-mention-grey">
             {`Mis à jour le : ${indicateur.dateDeMiseAJour} | Source : ${indicateur.source ?? "Non renseigné"}`}
           </p>
         </div>

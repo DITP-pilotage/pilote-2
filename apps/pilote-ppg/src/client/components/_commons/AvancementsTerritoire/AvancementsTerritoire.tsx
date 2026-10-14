@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
-import { BarreDeProgressionVariante } from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { ProgressBarVariant } from "@/components/shared/ProgressBar";
 import { JaugeDeProgressionCouleur } from "@/client/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
 
 interface AvancementsTerritoireProps {
@@ -8,7 +8,7 @@ interface AvancementsTerritoireProps {
   avancement: number | null;
   dateAvancement: string | null;
   jalon: number;
-  couleurBarreDeProgression: BarreDeProgressionVariante;
+  couleurBarreDeProgression: ProgressBarVariant;
   couleurJaugeDeProgression: JaugeDeProgressionCouleur;
   titreTauxAvancement: string;
 }
@@ -24,10 +24,12 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
   return (
     <>
       <div className="flex flex-col flex-wrap justify-center items-center">
-        <strong className="fr-text--sm fr-mb-0 text-center">
+        <strong className="m-[var(--text-spacing)] text-sm print:text-base mb-0 text-center">
           {titreTauxAvancement}
         </strong>
-        <span className="fr-text--sm fr-ml-1v">{jalon}</span>
+        <span className="m-[var(--text-spacing)] text-sm print:text-base ml-1">
+          {jalon}
+        </span>
       </div>
       <JaugeDeProgression
         couleur={couleurJaugeDeProgression}

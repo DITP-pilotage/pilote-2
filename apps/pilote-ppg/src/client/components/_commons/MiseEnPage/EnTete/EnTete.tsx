@@ -1,5 +1,4 @@
-import "@gouvfr/dsfr/dist/component/header/header.min.css";
-import "@gouvfr/dsfr/dist/component/logo/logo.min.css";
+import { ENLARGE_LINK_CLASSES } from "@/components/shared/enlargeLinkClasses";
 import { useSession } from "next-auth/react";
 import { Navigation } from "@/components/_commons/MiseEnPage/Navigation/Navigation";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
@@ -71,21 +70,26 @@ export const EnTete = () => {
 
   return (
     <MenuMobileProvider>
-      <header className="fr-header z-[2] print:hidden" role="banner">
-        <div className="fr-header__body">
-          <div className="fr-container">
-            <div className="fr-header__body-row">
-              <div className="fr-header__brand fr-enlarge-link">
-                <div className="fr-header__brand-top fr-grid-row">
+      <header
+        className="relative z-[2] w-full [--li-bottom:0] [--ol-content:none] [--ol-start:0] [--ol-type:none] [--text-spacing:0] [--title-spacing:0] [--ul-start:0] [--ul-type:none] [--underline-img:none] [--xl-block:0] lg:[background-color:var(--background-raised-grey)] lg:[filter:drop-shadow(var(--raised-shadow))] lg:[--active:var(--background-raised-grey-active)] lg:[--hover:var(--background-raised-grey-hover)] lg:[--idle:transparent] print:hidden"
+        role="banner"
+      >
+        <div>
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+            <div className="-mx-4 flex flex-row items-center justify-start lg:py-6 print:p-0">
+              <div
+                className={`${ENLARGE_LINK_CLASSES} [@media(hover:hover)_and_(pointer:fine)]:hover:[background-color:var(--hover)] [@media(hover:hover)_and_(pointer:fine)]:active:[background-color:var(--active)] lg:[@media(hover:hover)_and_(pointer:fine)]:hover:[background-color:var(--hover)] lg:[@media(hover:hover)_and_(pointer:fine)]:active:[background-color:var(--active)] z-[calc(var(--ground)+750)] flex w-full flex-row flex-wrap items-center justify-start px-1 [background-color:var(--background-raised-grey)] [filter:drop-shadow(var(--raised-shadow))] [--active:var(--background-raised-grey-active)] [--hover:var(--background-raised-grey-hover)] [--idle:transparent] after:relative after:z-[1] after:block after:flex-1 after:self-stretch after:content-[''] [&_a[href]]:before:[outline-offset:-2px] lg:-my-4 lg:z-auto lg:w-auto lg:flex-nowrap lg:px-0 lg:[background:transparent] lg:[filter:none] lg:[&_a[href]]:before:[outline-offset:2px] print:flex-nowrap`}
+              >
+                <div className="flex-wrap flex w-full flex-row items-center justify-start overflow-hidden lg:w-auto print:w-auto">
                   <LogoPilote />
                   {!!session ? (
-                    <div className="fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0">
+                    <div className="w-1/6 max-w-1/6 md:w-1/12 md:max-w-1/12 z-[calc(var(--ground)+1000)] order-3 -mr-2 mt-1 flex flex-1 flex-row items-start justify-end self-stretch p-1 lg:hidden print:hidden">
                       <BoutonMenuMobile />
                     </div>
                   ) : null}
                 </div>
               </div>
-              <div className="fr-header__tools">
+              <div className="lg:ml-auto lg:flex-[1_0_auto] lg:flex-col lg:items-end lg:px-4 lg:text-right print:hidden">
                 <div className="hidden min-[62em]:flex min-[62em]:flex-row min-[62em]:justify-end min-[62em]:gap-2">
                   <div className="flex items-center gap-4">
                     <BoutonContacterEquipePilote />

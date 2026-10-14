@@ -1,9 +1,8 @@
-import "@gouvfr/dsfr/dist/component/card/card.min.css";
 import { Button } from "@/components/shared/Button";
 import Image from "next/image";
-import carteFranceSvg from "@gouvfr/dsfr/dist/artwork/pictograms/map/location-france.svg";
-import visualisationDonnéesSvg from "@gouvfr/dsfr/dist/artwork/pictograms/digital/data-visualization.svg";
-import téléchargementFichierSvg from "@gouvfr/dsfr/dist/artwork/pictograms/document/document-download.svg";
+import carteFranceSvg from "../../../../public/dsfr/artwork/pictograms/map/location-france.svg";
+import visualisationDonnéesSvg from "../../../../public/dsfr/artwork/pictograms/digital/data-visualization.svg";
+import téléchargementFichierSvg from "../../../../public/dsfr/artwork/pictograms/document/document-download.svg";
 import Link from "next/link";
 import Head from "next/head";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
@@ -18,9 +17,9 @@ const PageLanding = () => {
       </Head>
       <main>
         <section className="bloc-hero">
-          <div className="fr-container">
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="px-2 lg:px-3 w-full shrink-0 lg:w-1/2 py-16">
                 <h1 className="text-black">
                   Piloter l'action publique par les résultats
                 </h1>
@@ -40,7 +39,7 @@ const PageLanding = () => {
                   <Link href="/connexion">Se connecter</Link>
                 </Button>
               </div>
-              <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg flex justify-center">
+              <div className="p-2 lg:p-3 w-full shrink-0 lg:w-1/2 flex justify-center">
                 <Image alt="" priority src={captureÉcranPilote} />
               </div>
             </div>
@@ -48,9 +47,9 @@ const PageLanding = () => {
         </section>
         <section className="relative">
           <div className="absolute bottom-0 inset-x-0 h-1/2 bg-white" />
-          <div className="fr-container fr-py-8w isolate">
-            <div className="fr-grid-row fr-grid-row--center">
-              <div className="fr-col-12 flex flex-col justify-center">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-16 isolate">
+            <div className="flex flex-wrap justify-center">
+              <div className="w-full shrink-0 flex flex-col justify-center">
                 <h2 className="text-h3 md:text-h3-md">
                   Découvrez PILOTE en vidéo
                 </h2>
@@ -68,30 +67,30 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-white">
-          <div className="fr-container fr-py-8w">
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-16">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="p-2 lg:p-3 w-full shrink-0">
                 <h2 className="text-h3 md:text-h3-md">
                   À qui s'adresse PILOTE ?
                 </h2>
-                <p className="fr-text--lg">
+                <p className="text-lg">
                   PILOTE mobilise l'ensemble des responsables de la mise en
                   œuvre des politiques prioritaires du Gouvernement à tous les
                   niveaux de l'organisation administrative.
                 </p>
               </div>
             </div>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-md-4">
-                <div className="fr-card">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
+                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={carteFranceSvg} />
                   </div>
-                  <div className="fr-p-4w">
+                  <div className="p-8">
                     <h3 className="text-h5 md:text-h5-md">
                       Pour les administrations centrales
                     </h3>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className="text-lg mb-0">
                       PILOTE permet de fixer les objectifs aux services
                       déconcentrés, de suivre l'avancement des chantiers et d'en
                       rendre compte. Il permet d'identifier les freins et
@@ -102,14 +101,14 @@ const PageLanding = () => {
                   </div>
                 </div>
               </div>
-              <div className="fr-col-12 fr-col-md-4">
-                <div className="fr-card">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
+                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={visualisationDonnéesSvg} />
                   </div>
-                  <div className="fr-p-4w">
+                  <div className="p-8">
                     <h3 className="text-h5 md:text-h5-md">Pour les préfets</h3>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className="text-lg mb-0">
                       PILOTE offre aux préfets une vision transversale des
                       objectifs et résultats de la feuille de route du
                       Gouvernement dans le territoire pour lequel ils sont
@@ -121,16 +120,16 @@ const PageLanding = () => {
                   </div>
                 </div>
               </div>
-              <div className="fr-col-12 fr-col-md-4">
-                <div className="fr-card">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
+                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={téléchargementFichierSvg} />
                   </div>
-                  <div className="fr-p-4w">
+                  <div className="p-8">
                     <h3 className="text-h5 md:text-h5-md">
                       Pour les services déconcentrés
                     </h3>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className="text-lg mb-0">
                       PILOTE permet de s'entendre avec l'administration centrale
                       sur les objectifs de chaque chantier prioritaire et de
                       rendre compte des résultats obtenus. Il permet aussi
@@ -145,13 +144,13 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-dsfr-grey-1000">
-          <div className="fr-container fr-py-8w">
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-8 fr-pr-md-4w">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-16">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="p-2 lg:pl-3 lg:py-3 w-full shrink-0 lg:w-2/3 md:pr-8">
                 <h2 className="text-h3 md:text-h3-md">
                   Le pilotage des politiques prioritaires
                 </h2>
-                <p className="fr-text--lg">
+                <p className="text-lg">
                   Les politiques prioritaires du Gouvernement font l'objet d'un
                   suivi régulier à haut niveau dans chaque ministère mais aussi
                   au niveau interministériel. Chaque trimestre, les ministères
@@ -159,12 +158,12 @@ const PageLanding = () => {
                   secrétaire général de la Présidence de la République et le
                   directeur du cabinet de la Première ministre.
                 </p>
-                <p className="fr-text--lg font-bold">
+                <p className="text-lg font-bold">
                   Objectif : veiller en continu à la cohérence des objectifs et
                   des décisions, au rythme de mise en œuvre des chantiers et
                   rendre les arbitrages pour lever les freins rencontrés.
                 </p>
-                <p className="fr-text--lg">
+                <p className="text-lg">
                   La DITP est chargée d'animer, sous l'autorité de la Première
                   ministre, le déploiement des politiques prioritaires du
                   Gouvernement et la supervision interministérielle de leur mise
@@ -179,30 +178,31 @@ const PageLanding = () => {
                   </Link>
                 </Button>
               </div>
-              <div className="fr-col-12 fr-col-lg-4">
-                <div className="fr-card fr-enlarge-link hover:bg-white">
-                  <div className="fr-card__body">
-                    <div className="fr-card__content">
+              <div className="p-2 lg:p-3 w-full shrink-0 lg:w-1/3">
+                <div className="relative flex h-full flex-col group border border-dsfr-grey-900 bg-white print:break-inside-avoid">
+                  <div className="order-2 flex h-full flex-[1_1_auto] flex-col px-8">
+                    <div className="order-1 -mx-8 flex h-full flex-col p-8 pb-20">
                       <h2 className="text-h3 md:text-h3-md">
                         <Link
+                          className="bg-none [outline-width:0] before:absolute before:inset-0 before:z-[1] before:block before:size-full before:content-[''] before:[outline-color:inherit] before:[outline-offset:2px] before:[outline-style:inherit] before:[outline-width:2px]"
                           href="https://www.gouvernement.fr/les-actions-du-gouvernement"
                           target="_blank"
                         >
                           Le baromètre des résultats de l'action publique
                         </Link>
                       </h2>
-                      <p className="fr-card__desc">
+                      <p className="order-3 mb-0 mt-3 text-sm leading-6 print:text-base print:leading-6">
                         Le baromètre des résultats de l'action publique reprend
                         les données de PILOTE pour rendre compte de l'avancement
                         des politiques publiques aux citoyens.
                       </p>
                     </div>
                   </div>
-                  <div className="fr-card__header">
-                    <div className="fr-card__img">
+                  <div className="relative order-1 flex-none">
+                    <div className="[@media(hover:hover)_and_(pointer:fine)]:group-hover:brightness-90 [@media(hover:hover)_and_(pointer:fine)]:group-active:brightness-80">
                       <Image
                         alt=""
-                        className="fr-responsive-img"
+                        className="block aspect-[16/9] h-auto w-full object-cover object-center"
                         src={baromètreCarteSvg}
                       />
                     </div>
@@ -213,8 +213,8 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-white">
-          <div className="fr-container">
-            <div className="fr-grid-row fr-py-8w gap-4 flex items-center">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+            <div className="flex-wrap py-16 gap-4 flex items-center">
               <h2 className="text-h3 md:text-h3-md m-0">
                 Vous avez des questions ?
               </h2>
