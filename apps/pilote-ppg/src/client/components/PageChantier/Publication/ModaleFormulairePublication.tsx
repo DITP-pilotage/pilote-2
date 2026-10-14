@@ -2,6 +2,7 @@ import { ReactNode, useId } from "react";
 import { Button } from "@/components/shared/Button";
 import {
   FormProvider,
+  Path,
   SubmitHandler,
   useForm,
   useWatch,
@@ -75,6 +76,21 @@ export const ModaleFormulairePublication = <
   const motifsDescribedBy = (motifsAction: string[]) =>
     motifsAction.length > 0 ? motifsId : undefined;
 
+  const publier = (data: T) => {
+    const resultat = formConfig.publishSchema.safeParse(data);
+    if (!resultat.success) {
+      resultat.error.issues.forEach((issue, index) =>
+        form.setError(
+          issue.path.join(".") as Path<T>,
+          { message: issue.message },
+          { shouldFocus: index === 0 },
+        ),
+      );
+      return;
+    }
+    return onPublier(resultat.data);
+  };
+
   return (
     <Modale
       onOpenChange={onOpenChange}
@@ -102,11 +118,7 @@ export const ModaleFormulairePublication = <
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
       <p className="text-sm mb-6">{consigne}</p>
       <FormProvider {...form}>
-        <form
-          onSubmit={form.handleSubmit((data) =>
-            onPublier(formConfig.publishSchema.parse(data)),
-          )}
-        >
+        <form onSubmit={form.handleSubmit(publier)}>
           <PublicationFormFields
             extraFields={formConfig.extraFields}
             editorClassName="h-60"
