@@ -36,7 +36,6 @@ const Nouveautés: FunctionComponent = () => {
                       </h2>
                       <div className="mb-4">
                         <div
-                          className="fr-content"
                           dangerouslySetInnerHTML={{
                             __html: listeNouveautes[0].contenu,
                           }}
@@ -83,7 +82,6 @@ const Nouveautés: FunctionComponent = () => {
                                   }
                                 >
                                   <div
-                                    className="fr-content"
                                     dangerouslySetInnerHTML={{
                                       __html: element.contenu,
                                     }}

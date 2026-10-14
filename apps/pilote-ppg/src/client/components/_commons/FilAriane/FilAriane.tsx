@@ -38,8 +38,8 @@ const FilAriane: FunctionComponent<FilArianeProps> = ({
       <div
         className={clsxm(
           estOuvert
-            ? "fr-collapse--expanded"
-            : "fr-collapse -mx-1 -translate-y-1 px-1 md:mx-0 md:max-h-none md:translate-y-0 md:overflow-visible md:px-0 md:[visibility:inherit] md:before:content-none",
+            ? "overflow-x-hidden overflow-y-auto"
+            : "max-h-0 overflow-hidden invisible [transition:visibility_0.3s] before:block before:-mt-[99999px] before:[transition:margin-top_0.3s] before:content-[''] motion-reduce:transition-none motion-reduce:before:transition-none -mx-1 -translate-y-1 px-1 md:mx-0 md:max-h-none md:translate-y-0 md:overflow-visible md:px-0 md:[visibility:inherit] md:before:content-none",
         )}
         id={`breadcrumb-${id}`}
       >

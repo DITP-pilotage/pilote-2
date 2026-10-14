@@ -21,10 +21,8 @@ export const DescriptionEtapes: FunctionComponent<{
               data-step={index + 1}
               key={index}
             >
-              <p className="text-lg font-bold fr-text mb-0 px-4">
-                {etape.titre}
-              </p>
-              <p className="fr-text px-4">{etape.texte}</p>
+              <p className="text-lg font-bold mb-0 px-4">{etape.titre}</p>
+              <p className="px-4">{etape.texte}</p>
             </li>
           );
         })}

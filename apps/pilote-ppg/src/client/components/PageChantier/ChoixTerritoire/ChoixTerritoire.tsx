@@ -48,7 +48,7 @@ const ChoixTerritoire = () => {
       </BarreLatérale>
       <main className="pb-10">
         <div>
-          <div className="sticky top-0 z-[999] w-full bg-dsfr-alt-blue-france fr-hidden-lg py-2 px-1">
+          <div className="sticky top-0 z-[999] w-full bg-dsfr-alt-blue-france lg:hidden py-2 px-1">
             <Button
               variant="tertiary-no-outline"
               className="text-primary gap-2"

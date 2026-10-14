@@ -126,7 +126,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             />
             {mailleSourceDonnees === "regionale" && (
               <Alerte
-                classesMessagePolice="text-xs print:text-base fr-text"
+                classesMessagePolice="text-xs print:text-base"
                 classesSupplementaires="mt-4"
                 message="Données régionales"
                 type="info"
@@ -337,7 +337,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                   {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + "%"}`}
                 </strong>
                 {", "}
-                <p className="text-xs print:text-base fr-text-mention--grey mb-0 ml-1">
+                <p className="text-xs print:text-base text-dsfr-mention-grey mb-0 ml-1">
                   {`${formaterDate(donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente, "MM/YYYY")}`}
                 </p>
                 )

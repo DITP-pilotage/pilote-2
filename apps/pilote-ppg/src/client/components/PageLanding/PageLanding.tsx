@@ -39,7 +39,7 @@ const PageLanding = () => {
                   <Link href="/connexion">Se connecter</Link>
                 </Button>
               </div>
-              <div className="p-2 lg:p-3 w-full shrink-0 lg:w-1/2 fr-hidden fr-unhidden-lg flex justify-center">
+              <div className="p-2 lg:p-3 w-full shrink-0 lg:w-1/2 flex justify-center">
                 <Image alt="" priority src={captureÉcranPilote} />
               </div>
             </div>

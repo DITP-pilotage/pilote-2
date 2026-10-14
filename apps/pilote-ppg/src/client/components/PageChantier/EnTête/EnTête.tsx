@@ -55,7 +55,7 @@ const PageChantierEnTête: FunctionComponent<{
   const chantierEstArchive = chantier.statut === "ARCHIVE";
   return (
     <div
-      className={clsxm("fr-text-title--blue-france print:mt-4", {
+      className={clsxm("text-dsfr-blue-france-sun-113 print:mt-4", {
         "text-dsfr-grey-200": chantierEstArchive,
       })}
     >

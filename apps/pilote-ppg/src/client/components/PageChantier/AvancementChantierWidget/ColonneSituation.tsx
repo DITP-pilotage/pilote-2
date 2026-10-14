@@ -79,7 +79,7 @@ export const ColonneSituation: FunctionComponent = () => {
                 {situation.tauxAvancementPrecedent.toFixed(0)}%
               </strong>
               {", "}
-              <span className="fr-text-mention--grey">
+              <span className="text-dsfr-mention-grey">
                 {PiloteDateFormatter.isoMonthFranceMetropolitaine(
                   situation.dateTauxAvancementPrecedent,
                 )}

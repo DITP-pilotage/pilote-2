@@ -1,3 +1,4 @@
+import { ENLARGE_LINK_CLASSES } from "@/components/shared/enlargeLinkClasses";
 import { useSession } from "next-auth/react";
 import { Navigation } from "@/components/_commons/MiseEnPage/Navigation/Navigation";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
@@ -76,7 +77,9 @@ export const EnTete = () => {
         <div>
           <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
             <div className="-mx-4 flex flex-row items-center justify-start lg:py-6 print:p-0">
-              <div className="fr-enlarge-link [@media(hover:hover)_and_(pointer:fine)]:hover:[background-color:var(--hover)] [@media(hover:hover)_and_(pointer:fine)]:active:[background-color:var(--active)] lg:[@media(hover:hover)_and_(pointer:fine)]:hover:[background-color:var(--hover)] lg:[@media(hover:hover)_and_(pointer:fine)]:active:[background-color:var(--active)] z-[calc(var(--ground)+750)] flex w-full flex-row flex-wrap items-center justify-start px-1 [background-color:var(--background-raised-grey)] [filter:drop-shadow(var(--raised-shadow))] [--active:var(--background-raised-grey-active)] [--hover:var(--background-raised-grey-hover)] [--idle:transparent] after:relative after:z-[1] after:block after:flex-1 after:self-stretch after:content-[''] [&_a[href]]:before:[outline-offset:-2px] lg:-my-4 lg:z-auto lg:w-auto lg:flex-nowrap lg:px-0 lg:[background:transparent] lg:[filter:none] lg:[&_a[href]]:before:[outline-offset:2px] print:flex-nowrap">
+              <div
+                className={`${ENLARGE_LINK_CLASSES} [@media(hover:hover)_and_(pointer:fine)]:hover:[background-color:var(--hover)] [@media(hover:hover)_and_(pointer:fine)]:active:[background-color:var(--active)] lg:[@media(hover:hover)_and_(pointer:fine)]:hover:[background-color:var(--hover)] lg:[@media(hover:hover)_and_(pointer:fine)]:active:[background-color:var(--active)] z-[calc(var(--ground)+750)] flex w-full flex-row flex-wrap items-center justify-start px-1 [background-color:var(--background-raised-grey)] [filter:drop-shadow(var(--raised-shadow))] [--active:var(--background-raised-grey-active)] [--hover:var(--background-raised-grey-hover)] [--idle:transparent] after:relative after:z-[1] after:block after:flex-1 after:self-stretch after:content-[''] [&_a[href]]:before:[outline-offset:-2px] lg:-my-4 lg:z-auto lg:w-auto lg:flex-nowrap lg:px-0 lg:[background:transparent] lg:[filter:none] lg:[&_a[href]]:before:[outline-offset:2px] print:flex-nowrap`}
+              >
                 <div className="flex-wrap flex w-full flex-row items-center justify-start overflow-hidden lg:w-auto print:w-auto">
                   <LogoPilote />
                   {!!session ? (

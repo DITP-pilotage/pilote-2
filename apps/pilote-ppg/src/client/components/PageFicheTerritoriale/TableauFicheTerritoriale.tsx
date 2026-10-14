@@ -23,7 +23,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
 }> = ({ chantiersFicheTerritoriale, jalon }) => {
   return (
     <div className="max-w-none overflow-hidden mt-2">
-      <div className="flex flex-wrap print:text-[0.7rem] p-4 fr-background-action-low--blue-france border-b-2 border-b-black rounded-tl-lg rounded-tr-lg print:py-2 print:px-2">
+      <div className="flex flex-wrap print:text-[0.7rem] p-4 bg-dsfr-blue-france-925 border-b-2 border-b-black rounded-tl-lg rounded-tr-lg print:py-2 print:px-2">
         <div className="w-2/3 shrink-0 font-bold px-8 print:text-[0.6rem]">
           Chantiers publiés au baromètre de l'action publique et leurs
           indicateurs
@@ -39,7 +39,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
         return (
           <>
             <div
-              className="flex flex-wrap print:text-[0.7rem] px-4 py-2 fr-background-alt--grey print:py-0"
+              className="flex flex-wrap print:text-[0.7rem] px-4 py-2 bg-dsfr-grey-975 print:py-0"
               key={`chantier-fiche-territoriale-${index}`}
             >
               <div className="w-2/3 shrink-0 font-bold flex items-center p-1">
@@ -57,21 +57,21 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                 {chantierFicheTerritoriale.meteo !== "NON_RENSEIGNEE" ? (
                   <MeteoPicto meteo={chantierFicheTerritoriale.meteo} />
                 ) : (
-                  <span className="m-0 fr-text-mention--grey">
+                  <span className="m-0 text-dsfr-mention-grey">
                     Non renseignée
                   </span>
                 )}
-                <span className="m-0 fr-text-mention--grey">
+                <span className="m-0 text-dsfr-mention-grey">
                   {chantierFicheTerritoriale.dateQualitative}
                 </span>
               </div>
               <div className="w-1/6 shrink-0 flex text-[0.8rem] leading-4 print:text-[0.6rem] flex-col justify-center">
                 {chantierFicheTerritoriale.tauxAvancement !== null ? (
-                  <p className="font-bold text-lead fr-text-title--blue-france my-0">
+                  <p className="font-bold text-lead text-dsfr-blue-france-sun-113 my-0">
                     {`${chantierFicheTerritoriale.tauxAvancement.toFixed(0)}%`}
                   </p>
                 ) : (
-                  <span className="m-0 fr-text-mention--grey">
+                  <span className="m-0 text-dsfr-mention-grey">
                     Paramètre(s) de calcul manquant(s)
                   </span>
                 )}
@@ -83,25 +83,25 @@ export const TableauFicheTerritoriale: FunctionComponent<{
             >
               <div className="w-1/3 shrink-0 flex items-center p-0 m-0" />
               <div className="w-1/6 shrink-0 flex flex-col p-0">
-                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 text-dsfr-mention-grey">
                   Dernière valeur
                 </span>
-                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 text-dsfr-mention-grey">
                   {chantierFicheTerritoriale.dateQuantitative}
                 </span>
               </div>
               <div className="w-1/6 shrink-0 font-bold flex flex-col p-0 m-0">
-                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 m-0 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 m-0 text-dsfr-mention-grey">
                   {`Cible ${jalon}`}
                 </span>
               </div>
               <div className="w-1/6 shrink-0 font-bold flex flex-col p-0 m-0">
-                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 m-0 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 m-0 text-dsfr-mention-grey">
                   {`Avancement ${jalon}`}
                 </span>
               </div>
               <div className="w-1/6 shrink-0 font-bold flex flex-col p-0 m-0">
-                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 m-0 fr-text-mention--grey">
+                <span className="text-[0.8rem] leading-4 print:text-[0.6rem] print:max-h-4 m-0 text-dsfr-mention-grey">
                   Avancement national
                 </span>
               </div>

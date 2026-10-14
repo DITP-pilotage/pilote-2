@@ -18,7 +18,7 @@ export const ComparaisonValeurBox = ({
 }) => {
   return (
     <div className="w-1/2 mr-2 border flex flex-col">
-      <span className="font-bold fr-background-action-low-blue-france flex justify-center p-2">
+      <span className="font-bold bg-dsfr-blue-france-925 flex justify-center p-2">
         {titre}
         {indicateurId && proposition ? (
           <Infobulle classNameInfoBulle="tooltip-accordeon">

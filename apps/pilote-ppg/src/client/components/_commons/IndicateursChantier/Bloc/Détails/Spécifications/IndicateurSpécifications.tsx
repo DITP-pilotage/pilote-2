@@ -124,7 +124,7 @@ const IndicateurSpécifications: FunctionComponent<
               <p className="text-base inline-block mb-1 text-primary">
                 Poser une question sur cet indicateur
               </p>
-              <p className="text-sm print:text-base fr-text mb-0">
+              <p className="text-sm print:text-base mb-0">
                 Des questions ou des remarques sur cet indicateur (définition de
                 l'indicateur, données source, méthode de calcul, mise à jour,
                 etc.) ? Contactez le responsable des données de la politique

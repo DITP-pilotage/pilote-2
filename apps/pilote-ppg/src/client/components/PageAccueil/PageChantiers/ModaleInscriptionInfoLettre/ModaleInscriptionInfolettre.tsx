@@ -50,9 +50,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
               Des conseils pratiques pour optimiser le pilotage de vos projets
             </li>
           </ul>
-          <p className="font-bold fr-text mt-4">
-            👉 Une fois par mois, pas plus.
-          </p>
+          <p className="font-bold mt-4">👉 Une fois par mois, pas plus.</p>
           <form className="mt-6" method="post" onSubmit={handleSubmitForm}>
             <div className="mb-6">
               <label className="font-bold fr-label" htmlFor="email">

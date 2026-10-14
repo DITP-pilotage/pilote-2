@@ -99,6 +99,7 @@ module.exports = {
         "dsfr-green-tilleul-verveine-950": "#fceeac",
         "dsfr-green-tilleul-verveine-sun": "#695240",
         "dsfr-grey-900": "#dddddd",
+        "dsfr-grey-975": "#F6F6F6",
         "dsfr-grey-975-hover": "#DFDFDF",
         "dsfr-grey-950-hover": "#D2D2D2",
         "dsfr-blue-france-950-hover": "#CECEFC",

@@ -32,14 +32,14 @@ const PageRapportsHebdomadaires = () => {
               Aucun rapport disponible
             </div>
           ) : (
-            rapports.map((rapport, index) => (
+            rapports.map((rapport) => (
               <button
                 key={rapport.id}
                 className={`m-[var(--text-spacing)] text-sm print:text-base w-full text-left p-4 mb-0${
                   effectiveRapportId === rapport.id
                     ? "bg-dsfr-blue-france-950"
                     : ""
-                } ${index > 0 ? "fr-border-top" : ""}`}
+                }`}
                 onClick={() => {
                   setRapportId(rapport.id);
                   setIsOpen(false);
@@ -60,7 +60,7 @@ const PageRapportsHebdomadaires = () => {
       </BarreLatérale>
 
       <main className="md:col-span-2 md:grid md:grid-cols-subgrid md:grid-rows-[auto_1fr]">
-        <div className="fr-background-blue-france-850 col-span-2 grid grid-cols-subgrid">
+        <div className="bg-dsfr-blue-france-850 col-span-2 grid grid-cols-subgrid">
           <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-6">
             <h1 className="text-h3 md:text-h3-md mb-0">
               Rapports hebdomadaires

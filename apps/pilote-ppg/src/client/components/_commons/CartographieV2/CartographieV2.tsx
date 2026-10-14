@@ -92,7 +92,7 @@ export const CartographieV2 = ({
       >
         {hoveredTerritoire ? (
           <div className="m-[var(--text-spacing)] text-sm print:text-base">
-            <p className="text-sm print:text-base fr-background-contrast-grey p-4">
+            <p className="text-sm print:text-base bg-dsfr-contrast-grey p-4">
               {hoveredDonnee?.libelle ?? hoveredTerritoire.nom}
             </p>
             {hoveredDonnee?.contenuInfoBulle ? (

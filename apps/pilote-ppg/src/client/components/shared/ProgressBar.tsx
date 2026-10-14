@@ -132,7 +132,7 @@ export const ProgressBar = ({
           </p>
           {tooltip ? (
             <Infobulle styleIconInfoBulle="question">
-              <p className="text-sm print:text-base fr-text-title--blue-france">
+              <p className="text-sm print:text-base text-dsfr-blue-france-sun-113">
                 Taux d'avancement :
               </p>
               <p className="text-sm print:text-base mb-0">{tooltip}</p>

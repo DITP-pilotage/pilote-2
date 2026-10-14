@@ -92,10 +92,10 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="text-sm print:text-base fr-text mb-2">
+                  <p className="text-sm print:text-base mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
-                  <p className="text-xs print:text-base fr-text texte-warning italic mb-4">
+                  <p className="text-xs print:text-base texte-warning italic mb-4">
                     *tous les champs sont obligatoires
                   </p>
                   {detailIndicateurDuTerritoire.proposition !== null ? (
@@ -124,7 +124,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   ) : null}
                   <div className="w-full flex mt-4">
                     <div className="w-1/2 mr-2 border flex flex-col">
-                      <span className="fr-background-action-low-blue-france flex justify-center p-2 border">
+                      <span className="bg-dsfr-blue-france-925 flex justify-center p-2 border">
                         Valeur d'avancement importée par la direction de projet
                       </span>
                       <div className="w-full flex flex-col justify-between pt-2">
@@ -145,7 +145,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                     </div>
                     <div className="w-1/2 ml-2 border">
                       {estUneModificationDeProposition ? (
-                        <span className="fr-background-action-low-blue-france w-full flex justify-center p-2">
+                        <span className="bg-dsfr-blue-france-925 w-full flex justify-center p-2">
                           <span>
                             {`Valeur d'avancement proposée par `}
                             <NomUtilisateurAvecTooltip
@@ -193,7 +193,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                           </Infobulle>
                         </span>
                       ) : (
-                        <span className="fr-background-action-low-blue-france w-full flex justify-center p-2">
+                        <span className="bg-dsfr-blue-france-925 w-full flex justify-center p-2">
                           Proposition de nouvelle valeur d'avancement
                           <ChampObligatoire />
                         </span>
@@ -363,7 +363,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="text-sm print:text-base fr-text mb-2">
+                      <p className="text-sm print:text-base mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
                       <p className="text-sm print:text-base mb-0">

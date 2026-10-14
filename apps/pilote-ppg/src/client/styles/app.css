@@ -102,42 +102,6 @@
   overflow-y: scroll !important;
 }
 
-.fr-text-title--blue-france {
-  color: theme(colors.dsfr-blue-france-sun-113) !important;
-}
-
-.fr-text-title--high-blue-france {
-  color: theme(colors.dsfr-blue-france-sun-113) !important;
-}
-
-.fr-text-title--light-blue-france {
-  color: theme(colors.dsfr-flat-info);
-}
-
-.fr-background-action-low-blue-france {
-  background-color: theme(colors.dsfr-blue-france-925) !important;
-}
-
-.fr-background-blue-france-850 {
-  background-color: theme(colors.dsfr-blue-france-850) !important;
-}
-
-.fr-background-blue-france-925 {
-  background-color: theme(colors.dsfr-blue-france-925) !important;
-}
-
-.fr-background-blue-france-975 {
-  background-color: theme(colors.dsfr-alt-blue-france) !important;
-}
-
-.fr-background-transparent {
-  background-color: transparent !important;
-}
-
-.fr-background-contrast-grey {
-  background-color: theme(colors.dsfr-contrast-grey) !important;
-}
-
 .\!background-black {
   background-color: black !important;
 }
@@ -216,10 +180,6 @@
 
 .page-break {
   page-break-after: always;
-}
-
-.fr-text-warning {
-  color: theme(colors.dsfr-warning-425);
 }
 
 button {

@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/utility/colors/colors.css";
 import { Badge } from "@/components/shared/Badge";
 
 import { FunctionComponent } from "react";
@@ -45,7 +44,7 @@ export const PageFicheTerritoriale: FunctionComponent<
             </div>
           </TitleBand>
           <p className="px-4 m-0">
-            <i className="m-[var(--text-spacing)] text-sm print:text-base fr-ital">
+            <i className="m-[var(--text-spacing)] text-sm print:text-base">
               {`Fiche de synthèse généré le ${now.toLocaleString()}`}
             </i>
           </p>
@@ -80,7 +79,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                     </h2>
                     <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
                   </TitreInfobulleConteneur>
-                  <ul className="fr-raw-list">
+                  <ul className="[--li-bottom:0] [--ol-content:none] [--ol-start:0] [--ol-type:none] [--ul-start:0] [--ul-type:none] [--xl-block:0]">
                     <li className="mb-2">
                       <div className="flex items-center">
                         <div className="flex items-center justify-center min-w-12">

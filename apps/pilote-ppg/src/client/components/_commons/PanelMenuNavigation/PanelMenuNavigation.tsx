@@ -51,7 +51,7 @@ export const PanelMenuNavigation = ({
           <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
         </div>
       ) : null}
-      <div className="fr-hidden-lg py-2 fr-background-blue-france-975 w-full">
+      <div className="lg:hidden py-2 bg-dsfr-alt-blue-france w-full">
         <Button
           variant="tertiary-no-outline"
           className="gap-2"

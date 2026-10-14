@@ -103,7 +103,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     <Modale
                       title="Désactivation de compte"
                       trigger={
-                        <button className="fr-text text-primary" type="button">
+                        <button className="text-primary" type="button">
                           Désactiver le compte
                         </button>
                       }

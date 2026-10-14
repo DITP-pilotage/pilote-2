@@ -88,7 +88,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="text-sm print:text-base fr-text mb-2">
+                  <p className="text-sm print:text-base mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
 
@@ -181,7 +181,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="text-sm print:text-base fr-text mb-2">
+                      <p className="text-sm print:text-base mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
                       <p className="text-sm print:text-base mb-0">

@@ -66,7 +66,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
             title={étapes[etapeCourante - 1]}
           />
           <div
-            className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && "fr-hidden"}`}
+            className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && "hidden"}`}
           >
             <EtapeSelectionIndicateur
               informationsIndicateur={informationsIndicateur}
@@ -76,7 +76,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
             />
           </div>
           <div
-            className={`${etapeCourante != EtapesImport.VERIFIER_FICHIER && "fr-hidden"}`}
+            className={`${etapeCourante != EtapesImport.VERIFIER_FICHIER && "hidden"}`}
           >
             <EtapeChargerFichier
               chantierId={chantierId}
@@ -87,7 +87,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
             />
           </div>
           <div
-            className={`${etapeCourante != EtapesImport.IMPORT_FICHIER && "fr-hidden"}`}
+            className={`${etapeCourante != EtapesImport.IMPORT_FICHIER && "hidden"}`}
           >
             <EtapePublierFichier
               chantierId={chantierId}

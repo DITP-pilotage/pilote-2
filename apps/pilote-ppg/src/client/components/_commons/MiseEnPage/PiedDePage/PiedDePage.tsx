@@ -1,3 +1,7 @@
+import {
+  ENLARGE_LINK_CLASSES,
+  ENLARGE_LINK_HOVER_CLASSES,
+} from "@/components/shared/enlargeLinkClasses";
 import Link from "next/link";
 import { FunctionComponent } from "react";
 import { Logo } from "@/components/shared/Logo";
@@ -17,7 +21,9 @@ const PiedDePage: FunctionComponent = () => {
     >
       <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <div className="mb-4 flex flex-row flex-wrap items-center md:mb-6">
-          <div className="fr-enlarge-link flex flex-row items-center md:-my-4 md:-ml-4 md:mr-0 md:self-start md:p-4">
+          <div
+            className={`${ENLARGE_LINK_CLASSES} ${ENLARGE_LINK_HOVER_CLASSES} flex flex-row items-center md:-my-4 md:-ml-4 md:mr-0 md:self-start md:p-4`}
+          >
             <Link href="/" title="Retour à l'accueil du site">
               <Logo variant="footer" />
             </Link>

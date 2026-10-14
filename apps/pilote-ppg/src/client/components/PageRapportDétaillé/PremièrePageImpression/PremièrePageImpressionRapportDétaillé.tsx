@@ -146,7 +146,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
         </div>
       </header>
       <div className="pt-12 pb-6 bg-dsfr-alt-blue-france">
-        <div className="mb-12 fr-display--md text-center titre-rapport-détaillé">
+        <div className="m-[var(--display-spacing)] mb-12 font-bold text-[3.5rem] leading-[4rem] md:text-[4rem] md:leading-[4.5rem] text-center titre-rapport-détaillé">
           État des lieux de l'avancement
           <br />
           des politiques prioritaires

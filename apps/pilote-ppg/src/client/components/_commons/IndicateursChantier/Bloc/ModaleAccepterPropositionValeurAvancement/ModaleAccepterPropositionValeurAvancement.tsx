@@ -91,7 +91,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                   <h2 className="text-h4 md:text-h4-md">
                     {`${indicateur.id} ${indicateur.nom}`}
                   </h2>
-                  <p className="text-sm print:text-base fr-text mb-2">
+                  <p className="text-sm print:text-base mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
                   {detailIndicateur.proposition !== null ? (
@@ -170,7 +170,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                             value="accepter-avec-modification"
                           />
                           <div className="pl-8">
-                            <p className="text-xs print:text-base fr-text texte-warning italic">
+                            <p className="text-xs print:text-base texte-warning italic">
                               *ce champ est obligatoire
                             </p>
                             <TextField
@@ -257,7 +257,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       <Callout.Title>
                         {`${indicateur.id} ${indicateur.nom}`}
                       </Callout.Title>
-                      <p className="text-sm print:text-base fr-text mb-2">
+                      <p className="text-sm print:text-base mb-2">
                         {`${territoireCodeInsee} - ${territoireNom}`}
                       </p>
                       <p className="text-sm print:text-base mb-0">

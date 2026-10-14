@@ -131,7 +131,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         value={profilCodeSelectionne}
       />
       <div
-        className={`${afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers ? "" : "fr-hidden"}`}
+        className={`${afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers ? "" : "hidden"}`}
       >
         <hr />
         <h2 className="text-base mb-4">Droits de lecture</h2>
@@ -139,9 +139,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           {`Afin de paramétrer l'espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`}
         </p>
-        <div
-          className={`${afficherChampLectureTerritoires ? "" : "fr-hidden"}`}
-        >
+        <div className={`${afficherChampLectureTerritoires ? "" : "hidden"}`}>
           <div className="mb-8">
             <Controller
               control={control}
@@ -166,7 +164,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
             />
           </div>
         </div>
-        <div className={`${afficherChampLecturePérimètres ? "" : "fr-hidden"}`}>
+        <div className={`${afficherChampLecturePérimètres ? "" : "hidden"}`}>
           <div className="mb-8">
             <Controller
               control={control}
@@ -188,7 +186,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
             />
           </div>
         </div>
-        <div className={`${afficherChampLectureChantiers ? "" : "fr-hidden"}`}>
+        <div className={`${afficherChampLectureChantiers ? "" : "hidden"}`}>
           <div className="mb-8">
             <Controller
               control={control}
@@ -213,7 +211,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           </div>
         </div>
         <div
-          className={`${afficherChampResponsabiliteChantiers ? "" : "fr-hidden"}`}
+          className={`${afficherChampResponsabiliteChantiers ? "" : "hidden"}`}
         >
           <hr />
           <h2 className="text-base mb-4">Responsabilités</h2>
@@ -251,7 +249,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           </div>
         </div>
       </div>
-      <div className={`${afficherChampSaisieIndicateur ? "" : "fr-hidden"}`}>
+      <div className={`${afficherChampSaisieIndicateur ? "" : "hidden"}`}>
         <hr />
         <h2 className="text-base mb-4">
           Droits de saisie des données quantitatives
@@ -271,7 +269,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           )}
         />
       </div>
-      <div className={`${afficherChampSaisieCommentaire ? "" : "fr-hidden"}`}>
+      <div className={`${afficherChampSaisieCommentaire ? "" : "hidden"}`}>
         <hr />
         <h2 className="text-base mb-4">Droits de saisie des commentaires</h2>
         <p className="text-xs print:text-base text-dsfr-mention-grey mb-8">
@@ -301,7 +299,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           rules={{ required: true }}
         />
       </div>
-      <div className={`${afficherChampGestionCompte ? "" : "fr-hidden"}`}>
+      <div className={`${afficherChampGestionCompte ? "" : "hidden"}`}>
         <hr />
         <h2 className="text-base mb-4">
           Droits de gestion des comptes utilisateurs
