@@ -24,7 +24,7 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
 
   return (
     <div className="bg-dsfr-alt-blue-france">
-      <main className="fr-container py-12">
+      <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-12">
         <h3 className="mb-0 flex justify-center items-center">
           Coordinateurs PILOTE
         </h3>

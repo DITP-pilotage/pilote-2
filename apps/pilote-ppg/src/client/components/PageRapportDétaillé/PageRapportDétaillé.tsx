@@ -108,7 +108,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
       />
       <div className="[&_h2]:text-primary print:m-[12mm] print:[&_table]:overflow-hidden print:[&_table_td]:bg-white">
         <main className="py-8 overflow-x-hidden print:p-0">
-          <div className="fr-container mb-0 px-0 md:px-4">
+          <div className="w-full mx-auto xl:max-w-[78rem] mb-0 px-0 md:px-4">
             <div className="px-4 md:px-0 flex justify-between print:hidden">
               <h1 className="text-h2 md:text-h2-md">
                 {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? "chantiers" : "chantier"}`}

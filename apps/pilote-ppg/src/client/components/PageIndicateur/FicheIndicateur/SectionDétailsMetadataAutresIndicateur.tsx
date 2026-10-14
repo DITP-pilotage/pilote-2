@@ -22,8 +22,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   return (
     <div>
       <h2 className="text-h5 md:text-h5-md">Autres informations</h2>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -37,7 +37,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -52,8 +52,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -67,7 +67,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -82,8 +82,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -97,7 +97,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -112,8 +112,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -127,7 +127,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -142,8 +142,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -157,7 +157,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -172,8 +172,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -187,7 +187,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -202,8 +202,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -217,7 +217,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -232,8 +232,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -247,7 +247,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -262,8 +262,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -278,7 +278,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -294,8 +294,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -309,7 +309,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
           <MetadataChamp
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}

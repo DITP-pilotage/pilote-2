@@ -107,8 +107,8 @@ const PageAdminUtilisateurs: FunctionComponent<{
               />
             </div>
           ) : null}
-          <div className="fr-grid-row fr-grid-row--middle mb-6 px-4">
-            <div className="fr-col-12 fr-col-md-6">
+          <div className="flex flex-wrap items-center mb-6 px-4">
+            <div className="w-full shrink-0 md:w-1/2">
               <h1 className="text-h1 md:text-h1-md mb-0">
                 Gestion des comptes
               </h1>

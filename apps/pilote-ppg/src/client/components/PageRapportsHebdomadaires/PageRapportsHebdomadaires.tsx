@@ -61,14 +61,14 @@ const PageRapportsHebdomadaires = () => {
 
       <main className="md:col-span-2 md:grid md:grid-cols-subgrid md:grid-rows-[auto_1fr]">
         <div className="fr-background-blue-france-850 col-span-2 grid grid-cols-subgrid">
-          <div className="fr-container py-6">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-6">
             <h1 className="text-h3 md:text-h3-md mb-0">
               Rapports hebdomadaires
             </h1>
           </div>
         </div>
 
-        <div className="fr-container max-2xl:col-span-2">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] max-2xl:col-span-2">
           <Button
             variant="link"
             className="md:hidden mt-4"

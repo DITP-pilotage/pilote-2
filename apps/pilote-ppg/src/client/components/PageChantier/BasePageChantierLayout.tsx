@@ -140,7 +140,7 @@ export const BasePageChantierLayout = ({
           "bg-dsfr-grey-1000": estChantierArchive,
         })}
       >
-        <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_theme(colors.dsfr-shadow)] bg-dsfr-blue-france-850 fr-grid-row pt-4 print:hidden">
+        <div className="flex flex-wrap sticky top-0 z-[1] w-full shadow-[0_6px_18px_theme(colors.dsfr-shadow)] bg-dsfr-blue-france-850 pt-4 print:hidden">
           <PanelMenuNavigation
             estAutoriseAVoirLeSelecteurDeMaille={
               estAutoriseAVoirLeSelecteurDeMaille
@@ -156,7 +156,7 @@ export const BasePageChantierLayout = ({
             alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
           />
         </div>
-        <div className="fr-container--fluid py-4 md:px-4 hidden print:block print:mb-4 print:[page-break-after:avoid]">
+        <div className="max-w-none overflow-hidden py-4 md:px-4 hidden print:block print:mb-4 print:[page-break-after:avoid]">
           <h1 className="font-bold mb-0 text-[1.875rem] leading-9">
             {chantier.nom}
           </h1>
@@ -164,7 +164,9 @@ export const BasePageChantierLayout = ({
         {mailleSourceDonnees === "regionale" ? (
           <Notice title="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département." />
         ) : null}
-        <div className="fr-container--fluid py-4 md:px-4">{children}</div>
+        <div className="max-w-none overflow-hidden py-4 md:px-4">
+          {children}
+        </div>
       </main>
     </div>
   );

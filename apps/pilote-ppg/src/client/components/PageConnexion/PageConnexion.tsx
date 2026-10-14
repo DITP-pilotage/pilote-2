@@ -40,7 +40,7 @@ export const PageConnexion = () => {
 
   return (
     <main>
-      <div className="fr-container py-20">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-20">
         <div className="mx-auto w-full max-w-[38rem]">
           <div className="border-dsfr-grey-925 border bg-white p-6 md:p-8">
             <h1 className="text-h4 md:text-h4-md mb-2 text-center">

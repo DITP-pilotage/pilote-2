@@ -30,10 +30,10 @@ export const PageFicheTerritoriale: FunctionComponent<
   const now = new Date();
 
   return (
-    <div className="print:[&_.text-lead]:text-[0.8rem] print:[&_.text-lg]:text-[0.9rem] print:[&_.text-base]:text-[0.8rem] print:[&_.text-base]:leading-[1.1rem] print:[&_.text-sm:not([data-badge])]:text-[0.6rem] print:[&_.text-sm:not([data-badge])]:leading-4 print:[&_.text-xs:not([data-badge])]:text-[0.6rem] print:[&_.text-xs:not([data-badge])]:leading-4 print:[&_div.fr-grid-row]:text-[0.7rem] print:[&_.bloc__contenu]:pt-2 print:[&_.marianne-logo]:text-[0.8rem] print:[&_.marianne-logo]:after:bg-[position:0_calc(100%+0.875rem)] print:[&_.marianne-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.marianne-logo]:before:mb-0 print:[&_.marianne-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.marianne-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
+    <div className="print:[&_.text-lead]:text-[0.8rem] print:[&_.text-lg]:text-[0.9rem] print:[&_.text-base]:text-[0.8rem] print:[&_.text-base]:leading-[1.1rem] print:[&_.text-sm:not([data-badge])]:text-[0.6rem] print:[&_.text-sm:not([data-badge])]:leading-4 print:[&_.text-xs:not([data-badge])]:text-[0.6rem] print:[&_.text-xs:not([data-badge])]:leading-4 print:[&_.bloc__contenu]:pt-2 print:[&_.marianne-logo]:text-[0.8rem] print:[&_.marianne-logo]:after:bg-[position:0_calc(100%+0.875rem)] print:[&_.marianne-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.marianne-logo]:before:mb-0 print:[&_.marianne-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.marianne-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
       <HeaderFicheTerritoriale />
       <main>
-        <div className="fr-container pb-4 pt-4 print:pt-0">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-4 pt-4 print:pt-0">
           <TitleBand>
             <div className="flex justify-between">
               <h2 className="text-h4 md:text-h4-md mb-0 text-dsfr-blue-france-sun-113">
@@ -50,8 +50,8 @@ export const PageFicheTerritoriale: FunctionComponent<
             </i>
           </p>
           <h1 className="text-h3 md:text-h3-md mt-0 mb-2 px-4">Vue générale</h1>
-          <div className="fr-grid-row px-4">
-            <div className="fr-col-4 pr-1 h-full">
+          <div className="flex flex-wrap px-4 print:text-[0.7rem]">
+            <div className="w-1/3 shrink-0 pr-1 h-full">
               <div className="fiche-territoriale__avancement--moyen mb-2">
                 <Bloc>
                   <div className="flex flex-col items-center">
@@ -73,7 +73,7 @@ export const PageFicheTerritoriale: FunctionComponent<
             </div>
             <div className="w-2/3 max-w-2/3 shrink-0 grow-0 basis-2/3 pl-1">
               <Bloc className="print:h-full">
-                <div className="fr-grid-row">
+                <div className="flex flex-wrap print:text-[0.7rem]">
                   <TitreInfobulleConteneur>
                     <h2 className="m-[var(--text-spacing)] text-base mb-0 py-1 inline">
                       Répartition des météos renseignées

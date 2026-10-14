@@ -55,7 +55,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
 
   return (
     <div className="bg-dsfr-alt-blue-france pt-4">
-      <main className="fr-container">
+      <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <FilAriane chemin={chemin} libelléPageCourante="Indicateur" />
         <div className="fiche-indicateur pt-2 pb-26">
           {!!alerte && (
@@ -109,7 +109,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
               ) : null}
               <h1 className="text-h1 md:text-h1-md mt-8">
                 Fiche de l'indicateur {indicateur.indicId}
-                <div className="fr-grid-row mt-8">
+                <div className="flex flex-wrap mt-8">
                   {isCreation ? (
                     <Button
                       variant="primary"

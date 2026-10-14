@@ -37,7 +37,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
 
   return (
     <div className="bg-dsfr-alt-blue-france pt-4">
-      <main className="fr-container">
+      <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <FilAriane chemin={chemin} libelléPageCourante="Utilisateur" />
         <div className="fiche-utilisateur pb-8">
           <div className="flex">
@@ -75,7 +75,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                   utilisateur.habilitations,
                   utilisateur.profil,
                 ) && (
-                  <div className="fr-grid-row mt-8">
+                  <div className="flex flex-wrap mt-8">
                     <Button asChild variant="primary" className="mr-4">
                       <Link
                         href={`/admin/utilisateur/${utilisateur.id}/modifier`}
@@ -113,7 +113,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         <span className="uppercase">{utilisateur.prénom}</span>{" "}
                         <span className="uppercase">{utilisateur.nom}.</span>
                       </div>
-                      <div className="fr-grid-row fr-grid-row--right mt-8">
+                      <div className="flex flex-wrap justify-end mt-8">
                         <Modale.Close asChild>
                           <Button className="mr-2" variant="secondary">
                             Annuler
@@ -153,7 +153,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                   utilisateur.habilitations,
                   utilisateur.profil,
                 ) && (
-                  <div className="fr-grid-row mt-8">
+                  <div className="flex flex-wrap mt-8">
                     <Modale
                       title="Réactivation de compte"
                       trigger={
@@ -169,7 +169,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         message de réinitialisation de mot de passe lui sera
                         transmis automatiquement.
                       </div>
-                      <div className="fr-grid-row fr-grid-row--right mt-8">
+                      <div className="flex flex-wrap justify-end mt-8">
                         <Modale.Close asChild>
                           <Button className="mr-2" variant="secondary">
                             Annuler

@@ -16,8 +16,8 @@ const Nouveautés: FunctionComponent = () => {
   return (
     <div className="[&_p]:mb-0 [&_h4]:my-2 [&_hr]:my-2">
       <main>
-        <div className="fr-container pb-4">
-          <div className="fr-grid-row py-8">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-4">
+          <div className="flex flex-wrap py-8">
             <h1 className="my-auto">Nouveautés</h1>
           </div>
           {!estChargementListeNouveautes ? (
@@ -28,8 +28,8 @@ const Nouveautés: FunctionComponent = () => {
                 </h2>
               ) : (
                 <>
-                  <div className="fr-grid-row">
-                    <div className="fr-col-12">
+                  <div className="flex flex-wrap">
+                    <div className="w-full shrink-0">
                       <h2 className="text-h3 md:text-h3-md">
                         Version{" "}
                         {`${listeNouveautes[0].version} du ${new Date(listeNouveautes[0].date).toLocaleDateString("fr-FR")}`}
@@ -49,10 +49,10 @@ const Nouveautés: FunctionComponent = () => {
                     .map((element, index) => {
                       return (
                         <div
-                          className="fr-grid-row mb-4 mt-4"
+                          className="flex flex-wrap mb-4 mt-4"
                           key={`nouveauté-${element.date}-${element.id}`}
                         >
-                          <div className="fr-col-12">
+                          <div className="w-full shrink-0">
                             <h2 className="text-h3 md:text-h3-md">
                               Version{" "}
                               {`${element.version} du ${new Date(element.date).toLocaleDateString("fr-FR")}`}

@@ -24,8 +24,8 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
       <h2 className="text-h5 md:text-h5-md">
         Calcul de la valeur d'avancement
       </h2>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-4">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -44,7 +44,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -71,7 +71,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estDesactive
@@ -88,8 +88,8 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-4">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -108,7 +108,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
@@ -135,7 +135,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             )}
           />
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estDesactive
@@ -152,8 +152,8 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-4">
+      <div className="flex flex-wrap -m-2 lg:-m-3">
+        <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
           <MetadataChamp
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}

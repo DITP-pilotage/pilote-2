@@ -321,7 +321,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           )}
         />
       </div>
-      <div className="fr-grid-row fr-grid-row--right mt-8">
+      <div className="flex flex-wrap justify-end mt-8">
         <Button
           iconRight={
             <Icone className="text-current h-4 w-4" icone={ArrowLine1Icon} />

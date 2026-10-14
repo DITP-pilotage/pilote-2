@@ -148,7 +148,7 @@ export const IndicateurEvolution: FunctionComponent<{
     <div>
       {modeImpression ? (
         <div className="fixed inset-0 -z-1">
-          <div className="fr-container">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
             <BaseIndicateurEvolution
               chartConfig={chartConfig}
               aDesValeurs={aDesValeurs}

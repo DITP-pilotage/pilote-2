@@ -8,7 +8,7 @@ const PageCréerUtilisateur = () => {
 
   return (
     <div className="bg-dsfr-alt-blue-france pt-4">
-      <main className="fr-container">
+      <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <FilAriane chemin={chemin} libelléPageCourante="Ajouter un compte" />
         <div className="pb-8">
           <UtilisateurFormulaire />

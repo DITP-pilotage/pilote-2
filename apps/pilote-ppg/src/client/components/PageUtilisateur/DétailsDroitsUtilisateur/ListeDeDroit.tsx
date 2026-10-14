@@ -20,7 +20,7 @@ export const ListeDeDroit = ({
 
   if (listeElement.length === 0) {
     return (
-      <div className="fr-col-12 fr-col-md-6">
+      <div className="w-full shrink-0 md:w-1/2">
         <p className="text-base font-bold mb-1">{label}</p>
         <div className="flex mb-0">
           <div className="mr-2">
@@ -33,7 +33,7 @@ export const ListeDeDroit = ({
   }
 
   return (
-    <div className="fr-col-12 fr-col-md-6">
+    <div className="w-full shrink-0 md:w-1/2">
       <p className="text-base font-bold mb-1">{label}</p>
       {listeElement.map((element, index) => (
         <div className="flex" key={`${id}-${element}-${index}`}>

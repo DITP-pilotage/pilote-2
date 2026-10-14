@@ -44,8 +44,8 @@ export const AcceptedValuesEditor = ({
               Supprimer
             </Button>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters p-3">
-            <div className="fr-col-3">
+          <div className="flex flex-wrap -m-2 lg:-m-3 p-3">
+            <div className="p-2 lg:p-3 w-1/4 shrink-0">
               <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
@@ -56,7 +56,7 @@ export const AcceptedValuesEditor = ({
                 required
               />
             </div>
-            <div className="fr-col-3">
+            <div className="p-2 lg:p-3 w-1/4 shrink-0">
               <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
@@ -67,7 +67,7 @@ export const AcceptedValuesEditor = ({
                 required
               />
             </div>
-            <div className="fr-col-3">
+            <div className="p-2 lg:p-3 w-1/4 shrink-0">
               <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}
@@ -78,7 +78,7 @@ export const AcceptedValuesEditor = ({
                 required
               />
             </div>
-            <div className="fr-col-3">
+            <div className="p-2 lg:p-3 w-1/4 shrink-0">
               <FormTextField
                 className="text-sm font-normal min-h-[38px]"
                 control={form.control}

@@ -126,7 +126,7 @@ export const PageMonProfilUtilisateur = () => {
 
   return (
     <div className="bg-dsfr-alt-blue-france">
-      <div className="fr-container py-10">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-10">
         <div className="flex flex-col gap-6">
           <h1 className="text-h1 md:text-h1-md text-primary mt-8 mb-0">
             Mon profil utilisateur

@@ -17,19 +17,19 @@ const PageErreur: FunctionComponent<PageErreurProps> = ({
   return (
     <div className="bg-dsfr-alt-blue-france">
       <main>
-        <div className="px-30 pb-24 fr-container--fluid">
-          <div className="fr-grid-row py-8">
+        <div className="max-w-none overflow-hidden px-30 pb-24">
+          <div className="flex flex-wrap py-8">
             <h1 className="my-auto text-primary">{titre}</h1>
           </div>
           <Bloc>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
-              <div className="p-0 pr-8 fr-col-12 fr-col-md-6">
+            <div className="flex flex-wrap items-center justify-center -m-2 lg:-m-3">
+              <div className="w-full shrink-0 md:w-1/2 p-0 pr-8">
                 <p className="text-h4 md:text-h4-md font-bold mb-6 text-dsfr-grey-50">
                   {sousTitre}
                 </p>
                 <p>{message}</p>
               </div>
-              <div className="fr-col-12 fr-col-md-3 fr-col-offset-md-1 p-0">
+              <div className="w-full shrink-0 md:w-1/4 md:ml-[calc(100%/12)] p-0">
                 <svg
                   aria-hidden="true"
                   className="h-auto w-full"

@@ -172,7 +172,7 @@ export const BasePageAccueilLayout: FunctionComponent<
           </section>
         </BarreLatérale>
         <main className="w-full">
-          <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_theme(colors.dsfr-shadow)] bg-dsfr-blue-france-850 fr-grid-row pt-4">
+          <div className="flex flex-wrap sticky top-0 z-[1] w-full shadow-[0_6px_18px_theme(colors.dsfr-shadow)] bg-dsfr-blue-france-850 pt-4">
             <PanelMenuNavigation
               estAutoriseAVoirLeSelecteurDeMaille={
                 estAutoriseAVoirLeSelecteurDeMaille
@@ -205,7 +205,9 @@ export const BasePageAccueilLayout: FunctionComponent<
               ministères={ministères}
             />
           </div>
-          <div className="fr-container--fluid py-4 md:px-4">{children}</div>
+          <div className="max-w-none overflow-hidden py-4 md:px-4">
+            {children}
+          </div>
           <ModaleVideoAccueil
             onOpenChange={setIsModaleVideoAccueilOpen}
             open={isModaleVideoAccueilOpen}

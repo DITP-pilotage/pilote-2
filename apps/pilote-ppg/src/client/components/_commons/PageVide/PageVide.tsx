@@ -13,16 +13,16 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
   return (
     <div>
       <main>
-        <div className="px-30 pb-24 fr-container--fluid">
-          <div className="fr-grid-row py-8">
+        <div className="max-w-none overflow-hidden px-30 pb-24">
+          <div className="flex flex-wrap py-8">
             <h1 className="my-auto">{titre}</h1>
             <Badge className="ml-6 my-auto bg-dsfr-purple-glycine-950 text-dsfr-purple-glycine-text">
               À venir
             </Badge>
           </div>
           <Bloc>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
-              <div className="p-0 pr-8 fr-col-12 fr-col-md-6">
+            <div className="flex flex-wrap items-center justify-center -m-2 lg:-m-3">
+              <div className="w-full shrink-0 md:w-1/2 p-0 pr-8">
                 <p className="text-h4 md:text-h4-md font-bold mb-6 text-dsfr-grey-50">
                   Service bientôt disponible
                 </p>
@@ -40,7 +40,7 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
                   </a>
                 </Button>
               </div>
-              <div className="fr-col-12 fr-col-md-3 fr-col-offset-md-1 p-0">
+              <div className="w-full shrink-0 md:w-1/4 md:ml-[calc(100%/12)] p-0">
                 <svg
                   aria-hidden="true"
                   className="h-auto w-full"

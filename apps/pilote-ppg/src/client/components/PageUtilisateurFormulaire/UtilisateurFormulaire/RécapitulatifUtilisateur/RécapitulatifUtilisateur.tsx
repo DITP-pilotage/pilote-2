@@ -24,7 +24,7 @@ const RécapitulatifUtilisateur = ({
           <Alerte titre={alerte.titre} type={alerte.type} />
         </div>
       )}
-      <div className="fr-grid-row mt-8 flex items-center gap-4">
+      <div className="flex-wrap mt-8 flex items-center gap-4">
         <Button
           iconLeft={<Icone className="h-4 w-4" icone={ArrowLine3Icon} />}
           onClick={auClicBoutonRetourCallback}
@@ -39,7 +39,7 @@ const RécapitulatifUtilisateur = ({
           Confirmer
         </Button>
       </div>
-      <div className="fr-grid-row mt-6">
+      <div className="flex flex-wrap mt-6">
         <Link href="/admin/utilisateurs">Annuler</Link>
       </div>
     </div>

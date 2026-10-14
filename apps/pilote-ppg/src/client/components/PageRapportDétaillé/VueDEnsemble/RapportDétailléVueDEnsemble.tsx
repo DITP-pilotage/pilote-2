@@ -124,9 +124,9 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               </Infobulle>
             </TitreInfobulleConteneur>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters">
+          <div className="flex flex-wrap -m-2 lg:-m-3">
             {remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
-              <div className="fr-col" key={libellé}>
+              <div className="p-2 lg:p-3 flex-1" key={libellé}>
                 <RemontéeAlerte
                   estActivée={estActivée}
                   libellé={libellé}
@@ -138,10 +138,10 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         </div>
       )}
       <div
-        className="fr-grid-row mt-7 print:break-inside-avoid"
+        className="flex flex-wrap mt-7 print:break-inside-avoid"
         id={htmlId.listeDesChantiers()}
       >
-        <div className="fr-col">
+        <div className="flex-1">
           <Bloc>
             <TitreInfobulleConteneur className="mb-2">
               <h2 className="text-lg mb-0 py-1 inline">Liste des chantiers</h2>

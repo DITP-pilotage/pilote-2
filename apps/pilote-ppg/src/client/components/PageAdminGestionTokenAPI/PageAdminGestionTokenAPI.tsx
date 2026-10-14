@@ -19,7 +19,7 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
     <div className="flex">
       <main>
         <div className="mt-4 mb-6">
-          <div className="fr-container">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
             <h1 className="text-h1 md:text-h1-md mb-4">
               Gestion des tokens API
             </h1>
@@ -52,7 +52,7 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                   <TokenAPIForm />
                 </form>
               </FormProvider>
-              <div className="fr-container mt-4 w-full">
+              <div className="mx-auto px-4 lg:px-6 xl:max-w-[78rem] mt-4 w-full">
                 <Table.Root
                   caption="Jetons d'API"
                   captionHidden

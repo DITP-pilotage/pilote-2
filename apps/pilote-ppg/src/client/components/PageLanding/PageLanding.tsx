@@ -17,9 +17,9 @@ const PageLanding = () => {
       </Head>
       <main>
         <section className="bloc-hero">
-          <div className="fr-container">
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-6 py-16">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="px-2 lg:px-3 w-full shrink-0 lg:w-1/2 py-16">
                 <h1 className="text-black">
                   Piloter l'action publique par les résultats
                 </h1>
@@ -39,7 +39,7 @@ const PageLanding = () => {
                   <Link href="/connexion">Se connecter</Link>
                 </Button>
               </div>
-              <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg flex justify-center">
+              <div className="p-2 lg:p-3 w-full shrink-0 lg:w-1/2 fr-hidden fr-unhidden-lg flex justify-center">
                 <Image alt="" priority src={captureÉcranPilote} />
               </div>
             </div>
@@ -47,9 +47,9 @@ const PageLanding = () => {
         </section>
         <section className="relative">
           <div className="absolute bottom-0 inset-x-0 h-1/2 bg-white" />
-          <div className="fr-container py-16 isolate">
-            <div className="fr-grid-row fr-grid-row--center">
-              <div className="fr-col-12 flex flex-col justify-center">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-16 isolate">
+            <div className="flex flex-wrap justify-center">
+              <div className="w-full shrink-0 flex flex-col justify-center">
                 <h2 className="text-h3 md:text-h3-md">
                   Découvrez PILOTE en vidéo
                 </h2>
@@ -67,9 +67,9 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-white">
-          <div className="fr-container py-16">
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-16">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="p-2 lg:p-3 w-full shrink-0">
                 <h2 className="text-h3 md:text-h3-md">
                   À qui s'adresse PILOTE ?
                 </h2>
@@ -80,8 +80,8 @@ const PageLanding = () => {
                 </p>
               </div>
             </div>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-md-4">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
                 <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={carteFranceSvg} />
@@ -101,7 +101,7 @@ const PageLanding = () => {
                   </div>
                 </div>
               </div>
-              <div className="fr-col-12 fr-col-md-4">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
                 <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={visualisationDonnéesSvg} />
@@ -120,7 +120,7 @@ const PageLanding = () => {
                   </div>
                 </div>
               </div>
-              <div className="fr-col-12 fr-col-md-4">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/3">
                 <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={téléchargementFichierSvg} />
@@ -144,9 +144,9 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-dsfr-grey-1000">
-          <div className="fr-container py-16">
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-8 md:pr-8">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] py-16">
+            <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
+              <div className="p-2 lg:pl-3 lg:py-3 w-full shrink-0 lg:w-2/3 md:pr-8">
                 <h2 className="text-h3 md:text-h3-md">
                   Le pilotage des politiques prioritaires
                 </h2>
@@ -178,7 +178,7 @@ const PageLanding = () => {
                   </Link>
                 </Button>
               </div>
-              <div className="fr-col-12 fr-col-lg-4">
+              <div className="p-2 lg:p-3 w-full shrink-0 lg:w-1/3">
                 <div className="relative flex h-full flex-col group border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="order-2 flex h-full flex-[1_1_auto] flex-col px-8">
                     <div className="order-1 -mx-8 flex h-full flex-col p-8 pb-20">
@@ -213,8 +213,8 @@ const PageLanding = () => {
           </div>
         </section>
         <section className="bg-white">
-          <div className="fr-container">
-            <div className="fr-grid-row py-16 gap-4 flex items-center">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
+            <div className="flex-wrap py-16 gap-4 flex items-center">
               <h2 className="text-h3 md:text-h3-md m-0">
                 Vous avez des questions ?
               </h2>

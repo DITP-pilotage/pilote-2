@@ -5,13 +5,13 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 const Accessibilite: FunctionComponent = () => {
   return (
     <main>
-      <div className="fr-container pb-4">
-        <div className="fr-grid-row py-8">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-4">
+        <div className="flex flex-wrap py-8">
           <h1 className="my-auto">Accessibilité</h1>
         </div>
         <Bloc>
-          <div className="fr-grid-row">
-            <div className="fr-col-12">
+          <div className="flex flex-wrap">
+            <div className="w-full shrink-0">
               <h4 className="text-h4 md:text-h4-md">
                 Déclaration d'accessibilité
               </h4>
@@ -37,8 +37,8 @@ const Accessibilite: FunctionComponent = () => {
               </p>
             </div>
           </div>
-          <div className="fr-grid-row">
-            <div className="fr-col-12">
+          <div className="flex flex-wrap">
+            <div className="w-full shrink-0">
               <h4 className="text-h4 md:text-h4-md">Etat de conformité</h4>
               <p>
                 PILOTE est non conforme avec le RGAA. Le site n'a pas encore été
@@ -46,8 +46,8 @@ const Accessibilite: FunctionComponent = () => {
               </p>
             </div>
           </div>
-          <div className="fr-grid-row">
-            <div className="fr-col-12">
+          <div className="flex flex-wrap">
+            <div className="w-full shrink-0">
               <h4 className="text-h4 md:text-h4-md">Amélioration et contact</h4>
               <p>
                 Si vous n'arrivez pas à accéder à un contenu ou à un service,
@@ -65,8 +65,8 @@ const Accessibilite: FunctionComponent = () => {
               </p>
             </div>
           </div>
-          <div className="fr-grid-row">
-            <div className="fr-col-12">
+          <div className="flex flex-wrap">
+            <div className="w-full shrink-0">
               <h4 className="text-h4 md:text-h4-md">Voie de recours</h4>
               <p>
                 Cette procédure est à utiliser dans le cas suivant : vous avez

@@ -19,7 +19,7 @@ const PageMessageInformation: FunctionComponent<{
     <div className="flex">
       <main>
         <div className="mt-4 mx-8 mb-6">
-          <div className="fr-container">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
             <h1 className="text-h1 md:text-h1-md mb-4">
               Message d'information
             </h1>

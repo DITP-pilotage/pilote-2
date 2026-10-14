@@ -190,27 +190,27 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       title="Historique des actions sur les valeurs d'avancement"
       trigger={children}
     >
-      <div className="fr-grid-row mt-2">
-        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-2 !texte-blue-france">
+      <div className="flex flex-wrap mt-2">
+        <span className="w-1/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0 !texte-blue-france">
           {indicateur.id}
         </span>
-        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-10 !texte-blue-france">
+        <span className="w-5/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0 !texte-blue-france">
           {indicateur.nom}
         </span>
       </div>
-      <div className="fr-grid-row !texte-title-grey">
-        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-2">
+      <div className="flex flex-wrap !texte-title-grey">
+        <span className="w-1/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0">
           {chantier.id}
         </span>
-        <span className="m-[var(--text-spacing)] text-lg font-bold mb-0 fr-col-10">
+        <span className="w-5/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0">
           {chantier.nom}
         </span>
       </div>
-      <div className="fr-grid-row !texte-title-grey">
-        <span className="m-[var(--text-spacing)] text-lg mb-0 fr-col-2">
+      <div className="flex flex-wrap !texte-title-grey">
+        <span className="w-1/6 shrink-0 m-[var(--text-spacing)] text-lg mb-0">
           Territoire
         </span>
-        <span className="m-[var(--text-spacing)] text-lg mb-0 fr-col-10">
+        <span className="w-5/6 shrink-0 m-[var(--text-spacing)] text-lg mb-0">
           {territoireSélectionné.codeInsee} - {territoireSélectionné.nom}
         </span>
       </div>
@@ -252,26 +252,28 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
                   innerClassName="p-0"
                 >
                   <div className="my-4">
-                    <div className="fr-grid-row p-3 bg-dsfr-contrast-grey">
-                      <div className="fr-col-2 flex items-center">date</div>
-                      <div className="fr-col-10">action</div>
+                    <div className="flex flex-wrap p-3 bg-dsfr-contrast-grey">
+                      <div className="w-1/6 shrink-0 flex items-center">
+                        date
+                      </div>
+                      <div className="w-5/6 shrink-0">action</div>
                     </div>
                     {evenements.map((evenement) => {
                       return (
                         <div
                           className={clsx(
-                            "fr-grid-row p-3 border-t border-t-black",
+                            "flex flex-wrap p-3 border-t border-t-black",
                             backgroundEvenementValeur(evenement),
                           )}
                           key={evenement.id}
                         >
-                          <div className="fr-col-2 flex items-center">
+                          <div className="w-1/6 shrink-0 flex items-center">
                             {formaterDate(
                               toISODateTime(evenement.dateCreation),
                               "DD/MM/YYYY HH[:]mm",
                             )}
                           </div>
-                          <div className="fr-col-10 flex items-center">
+                          <div className="w-5/6 shrink-0 flex items-center">
                             {evenement.donneesComplementaires ? (
                               <Infobulle
                                 classNameBouton="p-0 mr-2 text-primary"

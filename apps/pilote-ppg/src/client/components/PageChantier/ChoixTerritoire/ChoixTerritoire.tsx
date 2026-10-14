@@ -64,8 +64,8 @@ const ChoixTerritoire = () => {
             </Button>
           </div>
           <PageChantierEnTête />
-          <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center mt-10 mx-2">
-            <div className="fr-col-12 fr-col-xl-6">
+          <div className="flex flex-wrap justify-center -mb-2 lg:-mb-3 mt-10 mx-2">
+            <div className="p-2 lg:p-3 w-full shrink-0 xl:w-1/2">
               <Bloc>
                 <section>
                   <h3 className="text-lg">Veuillez sélectionner un DROM</h3>

@@ -121,7 +121,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
   return (
     <>
       <div className="max-[61.99em]:hidden lg:shadow-[inset_0_1px_0_0_var(--border-default-grey)] print:hidden">
-        <div className="fr-container">
+        <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
           <nav aria-label="Menu principal" className={NAV_CLASSES}>
             {listeDesLiens(true)}
           </nav>

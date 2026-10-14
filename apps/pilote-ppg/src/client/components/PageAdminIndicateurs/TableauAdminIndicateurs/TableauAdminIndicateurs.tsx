@@ -30,9 +30,9 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
           />
         </div>
       )}
-      <div className="fr-container--fluid">
-        <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
-          <div className="fr-col-12 fr-col-md-6">
+      <div className="max-w-none overflow-hidden">
+        <div className="flex flex-wrap items-center -m-2 lg:-m-3">
+          <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
             <div className="w-full max-w-[20.5rem]">
               <SearchInput
                 onChange={changementDeLaRechercheCallback}
@@ -40,7 +40,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
               />
             </div>
           </div>
-          <div className="fr-col-12 fr-col-md-6">
+          <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
             <form
               className="flex flex-col items-center min-[576px]:items-start min-[1050px]:flex-row min-[1050px]:items-center"
               onSubmit={
@@ -64,9 +64,9 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
         <PageLoader />
       ) : (
         <>
-          <div className="fr-container--fluid mb-4 mt-8">
-            <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
-              <div className="fr-col-12 fr-col-md-6">
+          <div className="max-w-none overflow-hidden mb-4 mt-8">
+            <div className="flex flex-wrap items-center -m-2 lg:-m-3">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
                 <h2 className="text-h4 md:text-h4-md mb-0 text-dsfr-blue-france-sun-113">
                   {table.getFilteredRowModel().rows.length}{" "}
                   {table.getFilteredRowModel().rows.length > 1
@@ -74,7 +74,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
                     : "indicateur"}
                 </h2>
               </div>
-              <div className="fr-col-12 fr-col-md-6 flex justify-center min-[576px]:justify-start min-[1050px]:justify-end">
+              <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2 flex justify-center min-[576px]:justify-start min-[1050px]:justify-end">
                 <Button
                   variant="primary"
                   disabled={table.getFilteredRowModel().rows.length === 0}

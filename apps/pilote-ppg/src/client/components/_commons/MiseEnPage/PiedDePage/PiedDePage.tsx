@@ -15,7 +15,7 @@ const PiedDePage: FunctionComponent = () => {
       id="footer"
       role="contentinfo"
     >
-      <div className="fr-container">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <div className="mb-4 flex flex-row flex-wrap items-center md:mb-6">
           <div className="fr-enlarge-link flex flex-row items-center md:-my-4 md:-ml-4 md:mr-0 md:self-start md:p-4">
             <Link href="/" title="Retour à l'accueil du site">
