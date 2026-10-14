@@ -1,4 +1,4 @@
-import type { DisplayChoice } from "@/server/albert/tools/displayChoices";
+import type { ClarifyChoice } from "@/server/albert/tools/clarifyWithChoices";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { clsxm } from "@/utils/clsxm";
 
@@ -10,7 +10,7 @@ export const ChoicesInline = ({
   choices,
 }: {
   question: string;
-  choices: DisplayChoice[];
+  choices: ClarifyChoice[];
 }) => {
   const { sendMessage, fillInput } = useChatContext();
 

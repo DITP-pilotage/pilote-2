@@ -14,7 +14,7 @@ import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitati
  * dit plus rien de l'agent réel. D'où une vingtaine d'intitulés, groupés par
  * thème et volontairement proches — plusieurs chantiers « santé », plusieurs
  * « logement », plusieurs « égalité femmes-hommes » — pour que la sélection ait
- * quelque chose à discriminer, et que `display_choices` ait de vrais candidats
+ * quelque chose à discriminer, et que `clarify_with_choices` ait de vrais candidats
  * ambigus à proposer.
  */
 

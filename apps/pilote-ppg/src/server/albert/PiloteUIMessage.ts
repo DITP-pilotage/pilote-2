@@ -1,9 +1,9 @@
 import type { UIDataTypes, UIMessage } from "ai";
 import type { z } from "zod";
 import {
-  displayChoicesInputSchema,
-  type DisplayChoice,
-} from "@/server/albert/tools/displayChoices";
+  clarifyWithChoicesInputSchema,
+  type ClarifyChoice,
+} from "@/server/albert/tools/clarifyWithChoices";
 import {
   exportRapportInputSchema,
   type ExportRapportOutput,
@@ -58,9 +58,9 @@ import {
 } from "@/server/albert/tools/getHistoriqueIndicateur";
 
 export type PiloteUITools = {
-  display_choices: {
-    input: z.input<typeof displayChoicesInputSchema>;
-    output: { question: string; choices: DisplayChoice[] };
+  clarify_with_choices: {
+    input: z.input<typeof clarifyWithChoicesInputSchema>;
+    output: { question: string; choices: ClarifyChoice[] };
   };
   get_taux_avancement_territoire: {
     input: z.input<typeof getTauxAvancementTerritoireInputSchema>;

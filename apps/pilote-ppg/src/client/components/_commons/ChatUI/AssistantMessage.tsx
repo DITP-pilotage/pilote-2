@@ -33,7 +33,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   isStreaming: boolean;
   /** Ce que l'assistant est en train de faire, affiché sous sa signature. */
   etat?: EtatAssistant | null;
-  /** Rend la question à choix (display_choices) dans le fil. */
+  /** Rend la question à choix (clarify_with_choices) dans le fil. */
   afficherChoix?: boolean;
   /** Boutons d'évaluation à afficher à côté de « Copier ». */
   evaluation?: ReactNode;
@@ -130,7 +130,7 @@ export const AssistantMessage = memo(function AssistantMessage({
         }
 
         if (
-          part.type === "tool-display_choices" &&
+          part.type === "tool-clarify_with_choices" &&
           afficherChoix &&
           part.state === "output-available"
         ) {

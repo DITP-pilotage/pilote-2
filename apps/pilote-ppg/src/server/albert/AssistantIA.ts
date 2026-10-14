@@ -10,7 +10,7 @@ import {
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { getContainer } from "@/server/dependances";
-import { displayChoicesTool } from "@/server/albert/tools/displayChoices";
+import { clarifyWithChoicesTool } from "@/server/albert/tools/clarifyWithChoices";
 
 /**
  * Câblage de l'agent : quels outils, quel prompt système, pour quelles
@@ -82,7 +82,7 @@ export class AssistantIA {
         chantiersAccessibles,
       }),
       search_territoires: container.resolve("createSearchTerritoiresTool")(),
-      display_choices: displayChoicesTool,
+      clarify_with_choices: clarifyWithChoicesTool,
       ...(capacities.dashboard
         ? {
             create_dashboard: container.resolve("createCreateDashboardTool")({
