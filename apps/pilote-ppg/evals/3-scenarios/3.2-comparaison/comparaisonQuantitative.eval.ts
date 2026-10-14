@@ -16,6 +16,9 @@ import { COMPARAISON_QUANTITATIVE_CRITERIA } from "./comparaisonQuantitative.cri
  * Vaucluse dans 2 essais sur 3.
  * Second run du 2026-09-30 : outils 100 %, forme 82 %, fond 50 % ; plus aucun
  * tableau face aux Pays de la Loire (0/3).
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 82 %, fond
+ * 75 % ; échecs : Analyse des écarts 0/9, Territoires du tableau 4/9, Tableau
+ * comparatif 6/9.
  */
 
 const tauxDe = (territoire_code: string) => ({

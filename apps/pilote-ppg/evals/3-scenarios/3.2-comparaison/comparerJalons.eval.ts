@@ -14,6 +14,8 @@ import { COMPARER_JALONS_CRITERIA } from "./comparerJalons.criteria";
  * 2023 sans données est dit, sans invention (3/3). Sur « l'année
  * précédente », l'évolution en points manque dans un essai sur trois.
  * Second run du 2026-09-30 : outils 100 %, forme 100 %, fond 100 %.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 100 %, fond
+ * 100 % ; aucun échec.
  */
 
 const tauxBretagne = (jalon: number) => ({

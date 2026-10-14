@@ -14,6 +14,8 @@ import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "./syntheseDepartements.criteria"
  * dans un essai sur trois.
  * Second run du 2026-09-30 : outils 100 %, forme 89 %, fond 100 % ; recopie
  * 0/3.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 80 %, fond
+ * 87 % ; échecs : Pas de recopie 0/3, Chiffres exacts 2/3, Résumés fidèles 2/3.
  */
 
 const avecSousTerritoires = {

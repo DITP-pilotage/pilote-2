@@ -15,6 +15,8 @@ import { CHANTIERS_EN_RETARD_CRITERIA } from "./chantiersEnRetard.criteria";
  * redouté n'a pas lieu). Code météo NUAGE cité dans 3 essais sur 6, et
  * une recommandation côté coordinateur (1/3).
  * Second run du 2026-09-30 : outils 100 %, forme 92 %, fond 94 %.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 83 %, fond
+ * 96 % ; échecs : Libellés météo 2/6, Valeurs des indicateurs 5/6.
  */
 
 const MESSAGE =

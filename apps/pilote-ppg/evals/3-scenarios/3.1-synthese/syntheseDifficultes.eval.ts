@@ -19,6 +19,10 @@ import { SYNTHESE_TERRITOIRE_CRITERIA } from "./syntheseTerritoire.criteria";
  * incomplet. « Pas de commentaire disponible » manque sous CH-006 (0/3 sur
  * la Bretagne).
  * Second run du 2026-09-30 : outils 78 %, forme 67 %, fond 94 %.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 59 %, forme 71 %, fond
+ * 87 % ; échecs : Chantiers attendus 0/9, Absence de commentaire signalée 3/6,
+ * Écart et météo 6/9, Pas de recopie 6/9, Pas d'opinion 8/9, Résumés fidèles
+ * 8/9.
  */
 
 const workflowSynthese = (territoire_code: string) => [

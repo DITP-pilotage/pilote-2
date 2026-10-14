@@ -37,6 +37,9 @@ import { CALIBRATION_CASES, type CalibrationCase } from "./references";
  * (2/3). Une fois chacun : « Résumés fidèles » refuse la référence de la
  * synthèse régionale (2/3), « Widgets conformes à la demande » rate un
  * mutant (5/6).
+ * Run complet du niveau 3 du 2026-10-14 : 21 sur 22 ; « Widgets conformes à
+ * la demande » rate de nouveau un mutant (5/6), « Actions identifiées »
+ * détecte le sien 3/3.
  */
 
 const judgedCriteria = (testCase: CalibrationCase) =>

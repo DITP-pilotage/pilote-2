@@ -22,6 +22,9 @@ import { SYNTHESE_COMMENTAIRES_CRITERIA } from "./syntheseCommentaires.criteria"
  * que les types d'actions sont inaccessibles. Passages recopiés dans
  * 5 essais sur 9.
  * Second run du 2026-09-30 : outils 100 %, forme 83 %, fond 94 %.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 61 %, fond
+ * 91 % ; échecs : Pas de recopie 1/9, Format des chantiers 3/9, Actions
+ * identifiées 6/9 (critère non fiable), Doublons compactés 8/9.
  */
 
 const commentairesDe = (chantier_id: string) => ({

@@ -18,6 +18,9 @@ import { RAPPORT_COMPLET_CRITERIA } from "./rapportComplet.criteria";
  * l'usage visé par l'export, et le rapport se juge alors contre ce qui a été
  * dit (« Fidèle à la conversation »). Les sections du rapport ne sont plus
  * vérifiées : leur contenu dépend de ce que la conversation a produit.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 92 %, forme 80 %, fond
+ * 53 % ; échecs : Fidèle à la conversation 0/3, Export appelé 3/6, Réponse du
+ * chat 3/6, Chiffres exacts 4/6, Pas d'opinion 4/6.
  */
 
 const territoire = { territoire_code: "REG-53" };

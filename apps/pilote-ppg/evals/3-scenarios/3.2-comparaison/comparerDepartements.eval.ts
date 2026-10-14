@@ -17,6 +17,8 @@ import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria"
  * Un seul appel avec les sous-territoires (3/3), malgré l'absence de la
  * consigne. Pas d'analyse des écarts (0/3).
  * Second run du 2026-09-30 : outils 100 %, forme 100 %, fond 50 %.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 100 %, fond
+ * 73 % ; échecs : Analyse des écarts 0/3, Tableau comparatif 2/3.
  */
 
 scenarioEval({

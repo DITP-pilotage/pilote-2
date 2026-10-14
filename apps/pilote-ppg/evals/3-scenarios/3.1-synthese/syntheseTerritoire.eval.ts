@@ -16,6 +16,8 @@ import { SYNTHESE_TERRITOIRE_CRITERIA } from "./syntheseTerritoire.criteria";
  * retard » sans avoir interrogé les vues, et un autre écrit « le TA de la
  * région » pour un département.
  * Second run du 2026-09-30 : outils 93 %, forme 86 %, fond 97 %.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 87 %, fond
+ * 92 % ; échecs : Pas de recopie 2/9, Écart et météo 7/9, Pas d'opinion 8/9.
  */
 
 const workflowSynthese = (territoire_code: string) => [

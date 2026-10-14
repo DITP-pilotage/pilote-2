@@ -24,6 +24,8 @@ import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
  * note le fond à 100 %. L'attente d'outils est à trancher avec le produit.
  * Codes météo bruts (NUAGE, COUVERT) dans 5 essais sur 6.
  * Second run du 2026-09-30 : outils 50 %, forme 75 %, fond 100 %.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 42 %, forme 50 %, fond
+ * 100 % ; échecs : Libellés météo 0/6, Format des chantiers 3/6.
  */
 
 const MESSAGE = (territoire: string) =>

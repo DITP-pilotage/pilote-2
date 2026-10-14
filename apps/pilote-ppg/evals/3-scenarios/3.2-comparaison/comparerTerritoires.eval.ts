@@ -20,6 +20,8 @@ import { COMPARER_TERRITOIRES_CRITERIA } from "./comparerTerritoires.criteria";
  * nommé Auvergne-Rhône-Alpes (0/3), seulement « la région 84 ».
  * Second run du 2026-09-30 : outils 100 %, forme 96 %, fond 61 % ; REG-84 nommé
  * Auvergne-Rhône-Alpes 2/3.
+ * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 96 %, fond
+ * 75 % ; échecs : Analyse des écarts 0/9, Territoires du tableau 7/9.
  */
 
 const tauxDe = (territoire_code: string) => ({
