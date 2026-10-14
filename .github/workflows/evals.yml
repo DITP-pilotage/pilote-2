@@ -15,7 +15,6 @@ on:
 
 env:
   NODE_VERSION: 24.20.0
-  PAGE_URL: https://ditp-pilotage.github.io/pilote-2/docs/evals/
 
 # Deux runs simultanés doubleraient le débit vers Albert, qui sature dès
 # 2 requêtes, et se disputeraient l'historique publié.
@@ -69,7 +68,7 @@ jobs:
       - name: Run evals
         id: evals
         continue-on-error: true
-        run: pnpm -F @pilote/ppg eval --outputPath evals/resultats.json --threshold 0 --hideTable
+        run: pnpm -F @pilote/ppg eval --outputPath evals/resultats.json --threshold 0
 
       - name: Fetch published history
         if: hashFiles('apps/pilote-ppg/evals/resultats.json') != ''
@@ -92,88 +91,45 @@ jobs:
             apps/pilote-ppg/evals/resultats.json
           retention-days: 30
 
-      # Même mécanique que la doc dbt (pr-merged-dev.yml) : la branche gh-pages
-      # est servie telle quelle. On ne touche qu'à docs/evals.
+      # Même mécanique que la doc dbt (pr-merged-dev.yml) : on bascule le checkout
+      # sur gh-pages, servie telle quelle par GitHub Pages, et on ne touche qu'à
+      # docs/evals.
       - name: Publish report on GitHub Pages
         if: github.ref == 'refs/heads/dev' && hashFiles('apps/pilote-ppg/evals/rapport/site/data/rapport.json') != ''
         run: |
           set -e
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          PAGES="$RUNNER_TEMP/gh-pages"
 
-          # La doc dbt peut pousser sur gh-pages pendant ce temps : on repart du
-          # dernier état et on retente, les deux ne touchent pas les mêmes dossiers.
+          # Le site sort du checkout de dev avant la bascule sur gh-pages.
+          SITE="$RUNNER_TEMP/site-evals"
+          rm -rf "$SITE"
+          cp -R apps/pilote-ppg/evals/rapport/site "$SITE"
+
+          # La doc dbt peut pousser sur gh-pages pendant ce temps : le push est
+          # alors refusé, et on repart du nouvel état. Les deux ne touchent pas
+          # les mêmes dossiers.
           for tentative in 1 2 3; do
             git fetch origin gh-pages --depth=1
-            git worktree remove --force "$PAGES" 2>/dev/null || true
-            git worktree add --detach "$PAGES" FETCH_HEAD
+            git checkout -f -B gh-pages FETCH_HEAD
 
-            rm -rf "$PAGES/docs/evals"
-            mkdir -p "$PAGES/docs"
-            cp -R apps/pilote-ppg/evals/rapport/site "$PAGES/docs/evals"
-            git -C "$PAGES" add docs/evals
+            rm -rf docs/evals
+            mkdir -p docs
+            cp -R "$SITE" docs/evals
+            git add docs/evals
 
-            if git -C "$PAGES" diff --cached --quiet; then
+            if git diff --cached --quiet; then
               echo "Aucun changement à publier."
               exit 0
             fi
-            git -C "$PAGES" commit -m "Mise à jour du rapport des evals (${GITHUB_SHA::7})"
-            if git -C "$PAGES" push origin HEAD:gh-pages; then
+            git commit -m "Mise à jour du rapport des evals (${GITHUB_SHA::7})"
+            if git push origin gh-pages; then
               exit 0
             fi
             echo "gh-pages a bougé pendant la publication, nouvelle tentative ($tentative/3)."
             sleep 10
           done
           exit 1
-
-      # Facultatif : sans le secret TCHAP_ROOM_ID_EVALS, l'étape ne fait rien.
-      - name: Notify Tchap
-        if: hashFiles('apps/pilote-ppg/evals/rapport/site/data/rapport.json') != ''
-        env:
-          TCHAP_ROOM_ID: ${{ secrets.TCHAP_ROOM_ID_EVALS }}
-          TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
-          EVALS_OUTCOME: ${{ steps.evals.outcome }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          PUBLIE: ${{ github.ref == 'refs/heads/dev' }}
-        run: |
-          if [ -z "$TCHAP_ROOM_ID" ]; then
-            echo "TCHAP_ROOM_ID_EVALS absent : pas de notification."
-            exit 0
-          fi
-          DATA=apps/pilote-ppg/evals/rapport/site/data
-          if [ "$PUBLIE" = "true" ]; then LIEN="$PAGE_URL"; else LIEN="$RUN_URL"; fi
-
-          jq -n \
-            --slurpfile rapport "$DATA/rapport.json" \
-            --slurpfile historique "$DATA/historique.json" \
-            --arg lien "$LIEN" --arg branche "$GITHUB_REF_NAME" --arg issue "$EVALS_OUTCOME" '
-            def pct: (. * 100 | round | tostring) + " %";
-            def ecart($actuel; $precedent):
-              if $precedent == null then ""
-              else (($actuel - $precedent) * 100 | round) as $pts
-                | " (" + (if $pts > 0 then "+" else "" end) + ($pts | tostring) + " pt"
-                  + (if $pts > 1 or $pts < -1 then "s" else "" end) + ")"
-              end;
-            $rapport[0].resume as $r
-            | ($historique[0] | if length > 1 then .[-2] else null end) as $p
-            | ("Evals de l'\''Assistant IA (" + $branche + ") : " + ($r.score | pct) + ecart($r.score; $p.score)
-                + (if $issue == "failure" then " — des cas sont en erreur" else "" end)) as $titre
-            | ([["1", "Niveau 1"], ["2", "Niveau 2"], ["3", "Niveau 3"], ["juge", "Calibration du juge"]]
-                | map(select($r.niveaux[.[0]] != null)
-                  | "<li>" + .[1] + " : " + ($r.niveaux[.[0]] | pct) + ecart($r.niveaux[.[0]]; $p.niveaux[.[0]]) + "</li>")
-                | join("")) as $niveaux
-            | {
-                msgtype: "m.text",
-                body: ($titre + " " + $lien),
-                format: "org.matrix.custom.html",
-                formatted_body: ("<p><strong>" + $titre + "</strong></p><ul>" + $niveaux + "</ul><p><a href=\"" + $lien + "\">Voir le rapport</a></p>")
-              }' |
-            curl --fail-with-body --silent --show-error --max-time 6 --retry 3 --retry-all-errors \
-              -X POST "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/$TCHAP_ROOM_ID/send/m.room.message" \
-              -H "Authorization: Bearer $TCHAP_ACCESS_TOKEN" \
-              -H "Content-Type: application/json" \
-              --data-binary @-
 
       - name: Fail if evals errored
         if: steps.evals.outcome == 'failure'

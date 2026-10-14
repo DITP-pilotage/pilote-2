@@ -228,9 +228,8 @@ const rendreListe = () => {
       .filter(({ visibles }) => visibles.length > 0);
     if (suites.length === 0) return "";
 
-    const groupes = Map.groupBy(
-      suites,
-      ({ suite }) => `${suite.niveau} · ${suite.groupe}`,
+    const groupes = Map.groupBy(suites, ({ suite }) =>
+      [suite.niveau, suite.groupe].filter(Boolean).join(" · "),
     );
     return `<section class="niveau-bloc">
       <div>

@@ -132,11 +132,16 @@ const slug = (texte: string): string =>
     .replaceAll(/[^a-z0-9]+/g, "-")
     .replaceAll(/^-|-$/g, "");
 
-/** « 2.1 · Recherche · search_chantiers » → niveau, groupe, titre. */
+/**
+ * « 2.1 · Recherche · search_chantiers » → niveau, groupe, titre.
+ * « 1 · Outils chargés » → niveau et titre : le niveau 1 n'a pas de groupe.
+ */
 const decouperNom = ({ nom }: { nom: string }) => {
-  const [niveau = "", groupe = "", ...reste] = nom.split(" · ");
+  const [niveau = "", ...reste] = nom.split(" · ");
   if (reste.length === 0) return { niveau: "", groupe: "", titre: nom };
-  return { niveau, groupe, titre: reste.join(" · ") };
+  if (reste.length === 1) return { niveau, groupe: "", titre: reste[0] ?? "" };
+  const [groupe = "", ...titre] = reste;
+  return { niveau, groupe, titre: titre.join(" · ") };
 };
 
 /** Les descriptions des grilles commencent par « Mécanique — » ou « Jugé — ». */
@@ -325,6 +330,13 @@ export const preparerRapport = ({
   commit: string | null;
 }): Rapport => {
   const suites = preparerSuites({ resultats });
+  // Un run qui plante au chargement des suites laisse un JSON sans aucun cas :
+  // le publier remplacerait la page par un rapport vide, noté 0 %.
+  if (suites.every(({ cas }) => cas.length === 0)) {
+    throw new Error(
+      "Aucun cas dans les résultats d'Evalite : le run a échoué, rien à publier.",
+    );
+  }
   return {
     run: { id: resultats.run.id, date: resultats.run.createdAt, commit },
     resume: resumer({ suites }),

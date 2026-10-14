@@ -176,7 +176,7 @@ describe("preparerRapport", () => {
       },
     ]);
   });
-  it("exclut la calibration du juge du score de l'assistant, mais lui donne son propre score", () => {
+  it("range chaque suite dans son niveau, et exclut la calibration du juge du score de l'assistant", () => {
     const suite = ({
       name,
       averageScore,
@@ -188,7 +188,14 @@ describe("preparerRapport", () => {
       filepath: "/repo/apps/pilote-ppg/evals/x.eval.ts",
       status: "success",
       averageScore,
-      evals: [],
+      evals: [
+        essai({
+          colOrder: 0,
+          question: "Synthèse Bretagne",
+          reponse: "",
+          score: averageScore,
+        }),
+      ],
     });
 
     const rapport = preparerRapport({
@@ -196,6 +203,7 @@ describe("preparerRapport", () => {
       resultats: {
         run: { id: 1, createdAt: "2026-10-14 09:21:34" },
         suites: [
+          suite({ name: "1 · Outils chargés", averageScore: 1 }),
           suite({
             name: "2.1 · Recherche · search_chantiers",
             averageScore: 1,
@@ -210,9 +218,27 @@ describe("preparerRapport", () => {
     });
 
     expect(rapport.resume).toEqual({
-      score: 0.75,
-      niveaux: { "2": 1, "3": 0.5, juge: 0 },
+      score: 2.5 / 3,
+      niveaux: { "1": 1, "2": 1, "3": 0.5, juge: 0 },
     });
+    expect(
+      rapport.suites.map(({ niveau, groupe, titre }) => ({
+        niveau,
+        groupe,
+        titre,
+      })),
+    ).toEqual([
+      { niveau: "1", groupe: "", titre: "Outils chargés" },
+      { niveau: "2.1", groupe: "Recherche", titre: "search_chantiers" },
+      { niveau: "3.0", groupe: "Calibration du juge", titre: "Synthèse" },
+      { niveau: "3.1", groupe: "Synthèse", titre: "Synthèse" },
+    ]);
+  });
+
+  it("refuse un run sans aucun cas, pour ne pas publier un rapport vide", () => {
+    expect(() =>
+      preparerRapport({ commit: null, resultats: resultats({ evals: [] }) }),
+    ).toThrow("Aucun cas dans les résultats d'Evalite");
   });
 
   it("ajoute le run à la fin de l'historique", () => {
