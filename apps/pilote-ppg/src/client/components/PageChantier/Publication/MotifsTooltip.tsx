@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { Tooltip as RadixTooltip } from "radix-ui";
 import { Tooltip } from "@/components/shared/Tooltip";
 
@@ -10,17 +10,23 @@ export const MotifsTooltip = ({
 }: {
   motifs: string[];
   children: ReactElement;
-}) => (
-  <Tooltip.Root>
-    <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
-    {motifs.length > 0 ? (
-      <Tooltip.Content>
-        {motifs.map((motif) => (
-          <p className="mb-0" key={motif}>
-            {motif}
-          </p>
-        ))}
-      </Tooltip.Content>
-    ) : null}
-  </Tooltip.Root>
-);
+}) => {
+  const [ouvert, setOuvert] = useState(false);
+
+  // Sans motif, l'infobulle reste fermée : Radix n'ajoute alors pas
+  // d'aria-describedby pointant vers un contenu absent.
+  return (
+    <Tooltip.Root open={ouvert && motifs.length > 0} onOpenChange={setOuvert}>
+      <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+      {motifs.length > 0 ? (
+        <Tooltip.Content>
+          {motifs.map((motif) => (
+            <p className="mb-0" key={motif}>
+              {motif}
+            </p>
+          ))}
+        </Tooltip.Content>
+      ) : null}
+    </Tooltip.Root>
+  );
+};
