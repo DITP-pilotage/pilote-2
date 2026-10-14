@@ -5,6 +5,7 @@ import {
 } from "@/server/framework/trpc/trpc";
 import { validationHistoriqueIndicateurTerritoire } from "@/validation/indicateur";
 import { getContainer } from "@/server/dependances";
+import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 
 export const indicateurRouter = createTRPCRouter({
   recupererHistoriqueIndicateurTerritoire: protectedProcedure
@@ -136,6 +137,16 @@ export const indicateurRouter = createTRPCRouter({
           habilitations: ctx.session.habilitations,
           profil: ctx.session.profil,
         });
+    }),
+  getTerritoiresNonAJour: protectedProcedure
+    .input(z.object({ chantierId: z.string(), indicateurId: z.string() }))
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(input.chantierId, null);
+      return getContainer("chantiers")
+        .resolve("getTerritoiresNonAJourQuery")
+        .byIndicateur(input);
     }),
   recupererStatistiquesTauxAvancement: protectedProcedure
     .input(

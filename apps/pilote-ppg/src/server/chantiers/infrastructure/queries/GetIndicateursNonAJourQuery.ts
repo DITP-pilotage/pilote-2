@@ -1,6 +1,10 @@
 import type { $Enums, Prisma } from "@prisma/client";
 import type { Inject } from "@/server/chantiers/module";
 import { toISODate } from "@/server/app/domain/Dates";
+import {
+  NON_A_JOUR_WHERE,
+  indicateursPubliesWhere,
+} from "./indicateurNonAJour";
 
 export type TerritoireEnRetard = {
   code: string;
@@ -41,8 +45,6 @@ const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
 const indicateurMailleKey = (indicateurId: string, maille: $Enums.Maille) =>
   `${indicateurId}|${maille}`;
 
-const formatDate = (date: Date | null) => (date ? toISODate(date) : null);
-
 export class GetIndicateursNonAJourQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
 
@@ -54,19 +56,17 @@ export class GetIndicateursNonAJourQuery {
   }): Promise<ChantierIndicateursNonAJour[]> {
     const prisma = this.deps.prisma.getInstance();
 
+    const publiesWhere = indicateursPubliesWhere({
+      chantierIds: params.chantierIds,
+      territoireCodes: params.territoireCodes,
+      indicateurIds: params.indicateurIds,
+    });
     const scopeWhere: Prisma.indicateur_territoireWhereInput = {
-      chantier_id: { in: params.chantierIds },
-      territoire_code: { in: params.territoireCodes },
-      ...(params.indicateurIds ? { id: { in: params.indicateurIds } } : {}),
+      ...publiesWhere,
       est_applicable: true,
-      indicateur_identite: {
-        statut: "PUBLIE",
-        chantier_identite: { statut: "PUBLIE" },
-      },
     };
     const nonAJourWhere: Prisma.indicateur_territoireWhereInput = {
-      ...scopeWhere,
-      OR: [{ est_a_jour: false }, { est_a_jour: null }],
+      AND: [publiesWhere, NON_A_JOUR_WHERE],
     };
 
     const maillesEnRetard = params.avecDetailTerritoires
@@ -181,8 +181,12 @@ export class GetIndicateursNonAJourQuery {
       maille.territoiresEnRetard.push({
         code: row.territoire_code,
         nom: row.territoire_nom,
-        dateDerniereValeur: formatDate(row.date_valeur_actuelle_mandat),
-        miseAJourAttendueDepuis: formatDate(row.prochaine_date_maj),
+        dateDerniereValeur: row.date_valeur_actuelle_mandat
+          ? toISODate(row.date_valeur_actuelle_mandat)
+          : null,
+        miseAJourAttendueDepuis: row.prochaine_date_maj
+          ? toISODate(row.prochaine_date_maj)
+          : null,
       });
     }
 
