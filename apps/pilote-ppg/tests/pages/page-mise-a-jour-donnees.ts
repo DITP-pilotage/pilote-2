@@ -1,6 +1,9 @@
 import { expect } from "@playwright/test";
 import { BasePage } from "./base.page";
 
+const XLSX_MIME_TYPE =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
 export class PageMiseAJourDonnees extends BasePage {
   async expectTitle(chantierId: string): Promise<void> {
     await expect(this.page).toHaveTitle(
@@ -33,11 +36,11 @@ export class PageMiseAJourDonnees extends BasePage {
     await this.page.getByRole("button", { name: /Suivant/ }).click();
   }
 
-  async uploadFile(filename: string, csvContent: string): Promise<void> {
+  async uploadFile(filename: string, content: string | Buffer): Promise<void> {
     await this.page.getByLabel("Choisir un fichier").setInputFiles({
       name: filename,
-      mimeType: "text/csv",
-      buffer: Buffer.from(csvContent),
+      mimeType: filename.endsWith(".xlsx") ? XLSX_MIME_TYPE : "text/csv",
+      buffer: Buffer.from(content),
     });
   }
 
