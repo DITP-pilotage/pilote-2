@@ -8,10 +8,12 @@ import type { JudgedCriterion } from "./criterion";
  * pointent vers des modèles du catalogue. À température 0 et seed fixe,
  * `openweight-large` et `openai/gpt-oss-120b` rendent des sorties identiques
  * sur 2 prompts sur 3 : prendre gpt-oss-120b reviendrait à faire s'auto-noter
- * le modèle de production. `deepseek-v4-flash` diverge sur tous les prompts
- * testés.
+ * le modèle de production. `deepseek-v4-flash` divergeait sur tous les
+ * prompts testés, mais la clé du quota de production n'y a pas accès :
+ * `mistral-medium-3-5` est le plus gros modèle de son catalogue hors de la
+ * famille gpt-oss.
  */
-export const JUDGE_MODEL = "deepseek-v4-flash";
+export const JUDGE_MODEL = "mistral-medium-3-5";
 
 export type Verdict = Record<string, { conforme: boolean; preuve: string }>;
 
@@ -27,11 +29,18 @@ export const rawVerdictSchema = z.object({
       preuve: z
         .string()
         .describe(
-          "Extrait cité de la réponse, ou ce qui manque, en une phrase. À écrire AVANT de décider.",
+          "Extrait cité entre « » de la MATIÈRE À JUGER, ou « absent de la matière » suivi de ce qui manque. Jamais un extrait des données reçues ou de la fiche. À écrire AVANT de décider.",
+        ),
+      verification: z
+        .string()
+        .describe(
+          "Confronte la preuve aux références : refais le calcul, compare au commentaire reçu, vérifie chaque chantier ou territoire exigé. Conclus par le défaut précis trouvé, ou « aucun défaut ».",
         ),
       conforme: z
         .boolean()
-        .describe("La conclusion de la preuve qui précède, et rien d'autre."),
+        .describe(
+          "La conclusion de la vérification qui précède, et rien d'autre : false seulement si elle nomme un défaut précis.",
+        ),
     }),
   ),
 });
@@ -40,11 +49,17 @@ export const JUDGE_SYSTEM = `Tu vérifies la conformité des réponses d'Albert,
 
 Tu ne notes pas la qualité en général. Tu vérifies une liste fermée de critères, chacun tiré d'une règle écrite du prompt d'Albert.
 
+Deux sortes de blocs, à ne jamais confondre :
+- La MATIÈRE À JUGER, entre « DÉBUT DE LA MATIÈRE » et « FIN DE LA MATIÈRE » : ce qu'Albert a produit. C'est la seule chose que tu juges.
+- Les RÉFÉRENCES (demande, outils appelés, données reçues, territoires masqués, territoires attendus, fiche de vérité) : ce qu'Albert savait ou devait couvrir. Elles servent à comparer, jamais à prouver qu'un élément figure dans la réponse. Un élément présent dans les références mais absent de la matière est ABSENT. Une absence n'est un défaut que si le critère exige cet élément : condenser, résumer, ne pas tout reprendre est conforme, sauf si le critère dit le contraire.
+
 Règles :
 - Juge chaque critère indépendamment des autres. Un défaut ne compte que pour le critère qu'il concerne.
-- Appuie-toi sur la FICHE DE VÉRITÉ et sur les DONNÉES REÇUES PAR L'ASSISTANT, jamais sur tes propres connaissances.
+- Appuie-toi sur les références, jamais sur tes propres connaissances.
 - Un critère est conforme ou non conforme, sans intermédiaire.
-- Pour chaque critère, écris d'abord la preuve : un extrait de la matière jugée, ou ce qui manque précisément. Décide ensuite : le verdict suit la preuve, jamais l'inverse.
+- Pour chaque critère, écris d'abord la preuve : un extrait de la MATIÈRE cité entre « », ou « absent de la matière » et ce qui manque. Puis la vérification : confronte cette preuve aux références (calcul refait, commentaire comparé, chaque élément exigé contrôlé). Décide ensuite : le verdict suit la vérification, jamais l'inverse.
+- Non conforme exige un défaut précis, nommé dans la preuve : un élément exigé absent, ou un passage cité qui contredit le critère. Si la preuve cite ce que le critère exige, sans défaut, le critère est conforme.
+- Quand un critère exige un élément pour chaque chantier, section ou territoire, cherche-le dans la matière pour chacun, un par un. Un seul manquant rend le critère non conforme : nomme-le dans la preuve.
 - Un défaut qui relève d'un autre critère ne rend pas celui-ci non conforme.
 - Rends un verdict pour chaque critère listé, et seulement pour eux, en recopiant son identifiant.`;
 
@@ -82,7 +97,7 @@ export function buildJudgePrompt({
   const tableau =
     evidence.tableTerritories.length > 0
       ? [
-          `TERRITOIRES ATTENDUS DANS LE TABLEAU : ${evidence.tableTerritories
+          `TERRITOIRES QUE LE TABLEAU DE LA RÉPONSE DOIT CONTENIR (référence, à comparer au tableau de la matière) : ${evidence.tableTerritories
             .map((code) => {
               const nom = evidence.truth.territoires.find(
                 (territoire) => territoire.code === code,
@@ -119,7 +134,9 @@ export function buildJudgePrompt({
     JSON.stringify(sansInstructions(evidence.truth), null, 2),
     ``,
     `MATIÈRE À JUGER :`,
+    `=== DÉBUT DE LA MATIÈRE ===`,
     evidence.matter,
+    `=== FIN DE LA MATIÈRE ===`,
     ``,
     `CRITÈRES :`,
     ...criteria.map(
@@ -148,7 +165,10 @@ export function toVerdict({
       return [
         criterion.id,
         found
-          ? { conforme: found.conforme, preuve: found.preuve }
+          ? {
+              conforme: found.conforme,
+              preuve: `${found.preuve} — ${found.verification}`,
+            }
           : { conforme: false, preuve: "absent du verdict" },
       ];
     }),

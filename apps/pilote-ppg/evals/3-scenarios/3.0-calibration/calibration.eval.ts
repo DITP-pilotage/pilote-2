@@ -26,6 +26,17 @@ import { CALIBRATION_CASES, type CalibrationCase } from "./references";
  * Quatrième calibration (second run) : mêmes 5 critères non fiables ;
  * « Chiffres exacts » prend aussi le seuil « 10 points » du gabarit pour un
  * chiffre inventé.
+ *
+ * Ces mesures valaient pour `deepseek-v4-flash`, que la clé du quota de
+ * production n'ouvre pas. Avec `mistral-medium-3-5` et le prompt d'origine :
+ * 16 critères fiables sur 22 ; le juge cherchait dans les données reçues ce
+ * qui devait être dans la réponse (« Écart omis », widgets, territoire
+ * désigné par son code : 0/3). Prompt resserré sur la matière, puis champ
+ * `verification` entre la preuve et le verdict : 21, 21 puis 20 sur 22 sur
+ * trois runs (14/10). Non fiable à chaque run : « Actions identifiées »
+ * (2/3). Une fois chacun : « Résumés fidèles » refuse la référence de la
+ * synthèse régionale (2/3), « Widgets conformes à la demande » rate un
+ * mutant (5/6).
  */
 
 const judgedCriteria = (testCase: CalibrationCase) =>

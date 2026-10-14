@@ -34,7 +34,7 @@ export const TABLEAU_COMPARATIF_JUGE = judged({
   id: "Tableau comparatif",
   rule: "get_taux_avancement_territoire : plusieurs territoires → tableau comparatif ; codes et noms officiels des territoires",
   instruction:
-    "La réponse présente les taux d'avancement des TERRITOIRES ATTENDUS DANS LE TABLEAU sous forme de tableau, une ligne par territoire, chacun désigné par son nom officiel. Un territoire absent du tableau, ou désigné seulement par son code ou son numéro, est non conforme.",
+    "La réponse présente les taux d'avancement des territoires listés dans TERRITOIRES QUE LE TABLEAU DE LA RÉPONSE DOIT CONTENIR sous forme de tableau, une ligne par territoire, chacun désigné par son nom officiel. Lis chaque ligne du tableau de la matière et cite comment elle désigne son territoire. Un territoire absent du tableau, ou désigné seulement par son code ou son numéro (« DEPT-35 », « 35 »), est non conforme.",
 });
 
 export const ANALYSE_DES_ECARTS = judged({

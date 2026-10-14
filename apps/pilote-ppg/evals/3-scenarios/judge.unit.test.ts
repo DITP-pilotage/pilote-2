@@ -1,12 +1,14 @@
 import { buildJudgePrompt, rawVerdictSchema, toVerdict } from "./judge";
 
 describe("rawVerdictSchema", () => {
-  test("demande la preuve avant le verdict, pour que le juge tranche après avoir lu", () => {
+  test("demande la preuve puis la vérification avant le verdict, pour que le juge tranche après avoir raisonné", () => {
     // Calibration du 30/09 : avec le verdict en premier, la preuve disait
-    // « non conforme » sous un booléen conforme.
+    // « non conforme » sous un booléen conforme. Calibration d'octobre : avec
+    // une preuve réduite à une citation, le juge tranchait sans refaire le
+    // calcul ni comparer au commentaire.
     const champs = Object.keys(rawVerdictSchema.shape.verdicts.element.shape);
 
-    expect(champs).toEqual(["critere", "preuve", "conforme"]);
+    expect(champs).toEqual(["critere", "preuve", "verification", "conforme"]);
   });
 });
 import { judged } from "./criterion";
@@ -57,7 +59,8 @@ describe("toVerdict", () => {
           {
             critere: "Pas d'opinion",
             conforme: true,
-            preuve: "aucune recommandation",
+            preuve: "« Le taux est de 51 % »",
+            verification: "aucun défaut",
           },
         ],
       },
@@ -65,7 +68,10 @@ describe("toVerdict", () => {
 
     // Then
     expect(verdict).toEqual({
-      "Pas d'opinion": { conforme: true, preuve: "aucune recommandation" },
+      "Pas d'opinion": {
+        conforme: true,
+        preuve: "« Le taux est de 51 % » — aucun défaut",
+      },
       "Résumés condensés": { conforme: false, preuve: "absent du verdict" },
     });
   });
@@ -80,15 +86,24 @@ describe("toVerdict", () => {
             critere: "Pas d'opinion",
             conforme: false,
             preuve: "« il conviendrait »",
+            verification: "recommandation",
           },
-          { critere: "Ton", conforme: true, preuve: "neutre" },
+          {
+            critere: "Ton",
+            conforme: true,
+            preuve: "neutre",
+            verification: "aucun défaut",
+          },
         ],
       },
     });
 
     // Then
     expect(verdict).toEqual({
-      "Pas d'opinion": { conforme: false, preuve: "« il conviendrait »" },
+      "Pas d'opinion": {
+        conforme: false,
+        preuve: "« il conviendrait » — recommandation",
+      },
     });
   });
 });
@@ -157,7 +172,7 @@ describe("buildJudgePrompt", () => {
 
     // Then
     expect(prompt).toContain(
-      "TERRITOIRES ATTENDUS DANS LE TABLEAU : Bretagne (REG-53), Ille-et-Vilaine (DEPT-35)",
+      "TERRITOIRES QUE LE TABLEAU DE LA RÉPONSE DOIT CONTENIR (référence, à comparer au tableau de la matière) : Bretagne (REG-53), Ille-et-Vilaine (DEPT-35)",
     );
   });
 });
