@@ -37,6 +37,7 @@ export const Badge = ({
 }) => (
   <span
     {...props}
+    data-badge=""
     className={clsxm(
       "inline-flex items-center gap-1 w-fit max-w-full rounded font-bold uppercase whitespace-nowrap",
       SIZES[size].badge,

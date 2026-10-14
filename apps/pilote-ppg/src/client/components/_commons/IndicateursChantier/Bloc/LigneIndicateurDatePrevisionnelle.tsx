@@ -41,7 +41,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
         }
         classNameInfoBulle="tooltip-accordeon"
       >
-        <p className="text-sm text-primary mb-2 font-bold">
+        <p className="text-[0.875rem] leading-6 text-primary mb-2 font-bold">
           Date prévisionnelle de mise à jour de l'indicateur :
         </p>
         <p className="text-sm mb-0">
