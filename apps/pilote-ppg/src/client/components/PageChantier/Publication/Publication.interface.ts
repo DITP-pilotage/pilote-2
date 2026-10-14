@@ -42,9 +42,10 @@ export interface PublicationFormConfig<
   P extends T = T,
 > {
   draftSchema: z.ZodType<T, T>;
-  publishSchema: z.ZodType<P, P>;
+  publishSchema: z.ZodType<P, T>;
   maxLength: number;
-  editValues: DefaultValues<P>;
+  editValues: DefaultValues<T>;
   newValues: DefaultValues<T>;
+  contentLabel?: string;
   extraFields?: ReactNode;
 }

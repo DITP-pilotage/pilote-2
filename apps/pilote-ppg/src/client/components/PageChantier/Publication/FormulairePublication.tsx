@@ -33,7 +33,7 @@ export const FormulairePublication = <
   annulationCallback,
   onModifier,
 }: FormulairePublicationProps<T, P>) => {
-  const form = useForm<P>({
+  const form = useForm<T, unknown, P>({
     mode: "all",
     resolver: zodResolver(formConfig.publishSchema),
     defaultValues: formConfig.editValues,
@@ -54,6 +54,7 @@ export const FormulairePublication = <
           </p>
         ) : null}
         <PublicationFormFields
+          contentLabel={formConfig.contentLabel}
           extraFields={formConfig.extraFields}
           maxLength={formConfig.maxLength}
         />

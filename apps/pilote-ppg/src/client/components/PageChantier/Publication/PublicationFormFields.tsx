@@ -12,10 +12,12 @@ import { PublicationValues } from "./Publication.interface";
 
 const ContentField = ({
   maxLength,
+  label,
   className,
   editorClassName,
 }: {
   maxLength: number;
+  label?: string;
   className?: string;
   editorClassName?: string;
 }) => {
@@ -32,7 +34,8 @@ const ContentField = ({
         className,
       )}
     >
-      <div className={editorClassName}>
+      {label ? <p className="text-sm mb-2">{label}</p> : null}
+      <div className={clsxm("flex flex-auto flex-col", editorClassName)}>
         <EditeurSimple
           contenu={field.value}
           onBlur={field.onBlur}
@@ -58,10 +61,12 @@ const ContentField = ({
 
 export const PublicationFormFields = ({
   maxLength,
+  contentLabel,
   extraFields,
   editorClassName,
 }: {
   maxLength: number;
+  contentLabel?: string;
   extraFields?: ReactNode;
   editorClassName?: string;
 }) =>
@@ -71,9 +76,14 @@ export const PublicationFormFields = ({
       <ContentField
         className="flex-1"
         editorClassName={editorClassName}
+        label={contentLabel}
         maxLength={maxLength}
       />
     </div>
   ) : (
-    <ContentField editorClassName={editorClassName} maxLength={maxLength} />
+    <ContentField
+      editorClassName={editorClassName}
+      label={contentLabel}
+      maxLength={maxLength}
+    />
   );

@@ -71,6 +71,7 @@ export const SyntheseDesResultats: FunctionComponent<
             contenu: syntheseDesResultatsBrouillon?.contenu ?? "",
             meteo: toMeteoSaisissable(syntheseDesResultatsBrouillon?.meteo),
           },
+          contentLabel: "Synthèse des résultats",
           extraFields: <MeteoField />,
         }}
         historiqueNode={<HistoriqueSyntheseDesResultats />}

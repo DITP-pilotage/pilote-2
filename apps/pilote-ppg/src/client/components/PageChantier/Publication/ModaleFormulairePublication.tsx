@@ -1,11 +1,11 @@
-import { ReactNode, useId } from "react";
+import { ReactNode, useRef } from "react";
 import { Button } from "@/components/shared/Button";
 import {
   FormProvider,
   Path,
+  Resolver,
   SubmitHandler,
   useForm,
-  useWatch,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icone } from "@/components/_commons/Icone";
@@ -24,8 +24,6 @@ import {
   PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
-import { MotifsActionsIndisponiblesTexte } from "@/components/PageChantier/Publication/MotifsActionsIndisponiblesTexte";
-import { motifsActionsIndisponibles } from "@/components/PageChantier/Publication/motifsActionsIndisponibles";
 
 interface ModaleFormulairePublicationProps<
   T extends PublicationValues,
@@ -65,16 +63,20 @@ export const ModaleFormulairePublication = <
   const { chantierInformations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
 
+  // Les règles de validation suivent la dernière action tentée : après un
+  // clic sur « Publier », les erreurs de publication restent affichées
+  // jusqu'à leur correction.
+  const intention = useRef<"publier" | "brouillon">("brouillon");
+  const resolver: Resolver<T> = (values, context, options) =>
+    intention.current === "publier"
+      ? zodResolver(formConfig.publishSchema)(values, context, options)
+      : zodResolver(formConfig.draftSchema)(values, context, options);
+
   const form = useForm<T>({
     mode: "all",
-    resolver: zodResolver(formConfig.draftSchema),
+    resolver,
     defaultValues: formConfig.newValues,
   });
-  const values = useWatch({ control: form.control });
-  const motifs = motifsActionsIndisponibles(values, formConfig);
-  const motifsId = useId();
-  const motifsDescribedBy = (motifsAction: string[]) =>
-    motifsAction.length > 0 ? motifsId : undefined;
 
   const publier = (data: T) => {
     const resultat = formConfig.publishSchema.safeParse(data);
@@ -120,17 +122,19 @@ export const ModaleFormulairePublication = <
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(publier)}>
           <PublicationFormFields
+            contentLabel={formConfig.contentLabel}
             extraFields={formConfig.extraFields}
-            editorClassName="h-60"
+            editorClassName={formConfig.extraFields ? undefined : "h-60"}
             maxLength={formConfig.maxLength}
           />
           <div className="flex justify-end items-center gap-3 mt-6">
             <Button
-              aria-describedby={motifsDescribedBy(motifs.publier)}
-              disabled={motifs.publier.length > 0}
               iconLeft={
                 <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
               }
+              onClick={() => {
+                intention.current = "publier";
+              }}
               type="submit"
               variant="primary"
             >
@@ -145,19 +149,19 @@ export const ModaleFormulairePublication = <
               Annuler
             </Button>
             <Button
-              aria-describedby={motifsDescribedBy(motifs.brouillon)}
               variant="link"
-              disabled={motifs.brouillon.length > 0}
               iconLeft={
                 <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
               }
-              onClick={form.handleSubmit(onEnregistrerBrouillon)}
+              onClick={(event) => {
+                intention.current = "brouillon";
+                return form.handleSubmit(onEnregistrerBrouillon)(event);
+              }}
               type="button"
             >
               Enregistrer en tant que brouillon
             </Button>
           </div>
-          <MotifsActionsIndisponiblesTexte id={motifsId} motifs={motifs} />
         </form>
       </FormProvider>
     </Modale>

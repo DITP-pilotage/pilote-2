@@ -21,7 +21,7 @@ export const MeteoField = () => {
         value={field.value}
       />
       {fieldState.error ? (
-        <p className="fr-error-text mt-2">{fieldState.error.message}</p>
+        <p className="fr-error-text mt-1">{fieldState.error.message}</p>
       ) : null}
     </div>
   );
