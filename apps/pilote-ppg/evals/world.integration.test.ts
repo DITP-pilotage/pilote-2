@@ -1,4 +1,4 @@
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { PERIMETRE_COORDINATEUR, seedEvalWorld } from "./world";
 
 describe("seedEvalWorld", () => {

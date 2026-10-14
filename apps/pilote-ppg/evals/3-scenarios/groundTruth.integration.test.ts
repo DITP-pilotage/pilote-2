@@ -1,4 +1,4 @@
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { seedEvalWorld } from "../world";
 import { seedMondeTerritorial } from "./mondeTerritorial";
 import { readGroundTruth } from "./groundTruth";

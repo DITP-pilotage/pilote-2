@@ -1,4 +1,4 @@
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import type { GetChantiersOutput } from "@/server/albert/tools/getChantiers";
 import type {
   GetTauxAvancementTerritoireOutput,

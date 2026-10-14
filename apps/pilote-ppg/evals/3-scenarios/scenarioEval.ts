@@ -3,7 +3,7 @@ import type { ModelMessage } from "ai";
 import { createScorer, evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
 import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
-import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { createIntegrationTest } from "@/test/createIntegrationTest";
 import {
   EVAL_TIMEOUT_MS,
   seedEvalWorld,

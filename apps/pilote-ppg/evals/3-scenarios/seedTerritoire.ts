@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { getPrisma } from "@/server/db/PrismaTransaction";
-import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
+import { fixtures } from "@/test/fixtures";
 import type { TypeContenuChantier } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireRef } from "../seeds";
 import { indicateurDuChantier } from "../world";
