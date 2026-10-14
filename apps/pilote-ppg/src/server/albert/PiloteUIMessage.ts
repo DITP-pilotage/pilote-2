@@ -2,7 +2,7 @@ import type { UIDataTypes, UIMessage } from "ai";
 import type { z } from "zod";
 import {
   clarifyWithChoicesInputSchema,
-  type ClarifyChoice,
+  type ClarifyWithChoicesOutput,
 } from "@/server/albert/tools/clarifyWithChoices";
 import {
   exportRapportInputSchema,
@@ -60,7 +60,7 @@ import {
 export type PiloteUITools = {
   clarify_with_choices: {
     input: z.input<typeof clarifyWithChoicesInputSchema>;
-    output: { question: string; choices: ClarifyChoice[] };
+    output: ClarifyWithChoicesOutput;
   };
   get_taux_avancement_territoire: {
     input: z.input<typeof getTauxAvancementTerritoireInputSchema>;
