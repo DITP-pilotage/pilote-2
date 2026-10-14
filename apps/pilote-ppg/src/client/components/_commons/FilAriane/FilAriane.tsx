@@ -11,7 +11,7 @@ const ITEM_CLASSES =
   "inline leading-7 not-first:before:mx-1 not-first:before:inline-block not-first:before:size-4 not-first:before:flex-none not-first:before:bg-current not-first:before:align-[-0.0625em] not-first:before:content-[''] not-first:before:[mask-image:url(/dsfr/icons/arrows/arrow-right-s-line.svg)] not-first:before:[mask-size:100%_100%] forced-colors:not-first:before:bg-[canvastext] forced-colors:not-first:before:[forced-color-adjust:none]";
 
 const LINK_CLASSES =
-  "relative p-0 align-[0.25rem] text-xs leading-5 forced-colors:underline forced-colors:underline-offset-[5px] forced-colors:aria-[current=page]:no-underline";
+  "relative p-0 align-[0.25rem] text-xs leading-5 [--active-tint:var(--idle)] [--hover-tint:var(--idle)] forced-colors:underline forced-colors:underline-offset-[5px] forced-colors:aria-[current=page]:no-underline";
 
 const FilAriane: FunctionComponent<FilArianeProps> = ({
   chemin,
@@ -29,7 +29,7 @@ const FilAriane: FunctionComponent<FilArianeProps> = ({
       <button
         aria-controls={`breadcrumb-${id}`}
         aria-expanded={estOuvert}
-        className="m-0 p-0 text-xs leading-5 text-inherit bg-no-repeat [background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor)] [background-position:0_100%,0_calc(100%-0.0625em)] [background-size:0_0.125em,100%_0.0625em] hover:[background-size:100%_0.125em,100%_0.0625em] active:[background-size:100%_0.125em,100%_0.0625em] aria-expanded:hidden md:hidden"
+        className="m-0 p-0 text-xs leading-5 text-inherit bg-no-repeat [--active-tint:var(--idle)] [--hover-tint:var(--idle)] [background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor)] [background-position:0_100%,0_calc(100%-0.0625em)] [background-size:0_0.125em,100%_0.0625em] hover:[background-size:100%_0.125em,100%_0.0625em] active:[background-size:100%_0.125em,100%_0.0625em] aria-expanded:hidden md:hidden"
         onClick={() => setEstOuvert(!estOuvert)}
         type="button"
       >

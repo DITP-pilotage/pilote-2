@@ -179,7 +179,7 @@ const PageLanding = () => {
                 </Button>
               </div>
               <div className="fr-col-12 fr-col-lg-4">
-                <div className="relative flex h-full flex-col border border-dsfr-grey-900 bg-white print:break-inside-avoid hover:bg-white">
+                <div className="relative flex h-full flex-col group border border-dsfr-grey-900 bg-white print:break-inside-avoid">
                   <div className="order-2 flex h-full flex-[1_1_auto] flex-col px-8">
                     <div className="order-1 -mx-8 flex h-full flex-col p-8 pb-20">
                       <h2 className="text-h3 md:text-h3-md">
@@ -199,7 +199,7 @@ const PageLanding = () => {
                     </div>
                   </div>
                   <div className="relative order-1 flex-none">
-                    <div>
+                    <div className="[@media(hover:hover)_and_(pointer:fine)]:group-hover:brightness-90 [@media(hover:hover)_and_(pointer:fine)]:group-active:brightness-80">
                       <Image
                         alt=""
                         className="block aspect-[16/9] h-auto w-full object-cover object-center"
