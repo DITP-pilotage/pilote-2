@@ -33,7 +33,7 @@ export const FormulairePublication = <
   annulationCallback,
   onModifier,
 }: FormulairePublicationProps<T, P>) => {
-  const form = useForm<T, unknown, P>({
+  const form = useForm<P>({
     mode: "all",
     resolver: zodResolver(formConfig.publishSchema),
     defaultValues: formConfig.editValues,
