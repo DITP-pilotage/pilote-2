@@ -7,10 +7,11 @@ interface FilArianeProps {
   chemin?: { nom: string; lien: string }[];
 }
 
-const CLASSES_ELEMENT =
-  "inline leading-7 not-first:before:mx-1 not-first:before:inline-block not-first:before:size-4 not-first:before:flex-none not-first:before:bg-current not-first:before:align-[-0.0625em] not-first:before:content-[''] not-first:before:[mask-image:url(/dsfr/icons/arrows/arrow-right-s-line.svg)] not-first:before:[mask-size:100%_100%]";
+const ITEM_CLASSES =
+  "inline leading-7 not-first:before:mx-1 not-first:before:inline-block not-first:before:size-4 not-first:before:flex-none not-first:before:bg-current not-first:before:align-[-0.0625em] not-first:before:content-[''] not-first:before:[mask-image:url(/dsfr/icons/arrows/arrow-right-s-line.svg)] not-first:before:[mask-size:100%_100%] forced-colors:not-first:before:bg-[canvastext] forced-colors:not-first:before:[forced-color-adjust:none]";
 
-const CLASSES_LIEN = "relative p-0 align-[0.25rem] text-xs leading-5";
+const LINK_CLASSES =
+  "relative p-0 align-[0.25rem] text-xs leading-5 forced-colors:underline forced-colors:underline-offset-[5px] forced-colors:aria-[current=page]:no-underline";
 
 const FilAriane: FunctionComponent<FilArianeProps> = ({
   chemin,
@@ -43,25 +44,25 @@ const FilAriane: FunctionComponent<FilArianeProps> = ({
         id={`breadcrumb-${id}`}
       >
         <ol className="translate-y-1 [--li-bottom:0] [--ol-content:none] [--ol-start:0] [--ol-type:none] [--ul-start:0] [--ul-type:none] [--xl-block:0] md:translate-y-0">
-          <li className={CLASSES_ELEMENT}>
-            <Link className={CLASSES_LIEN} href="/">
+          <li className={ITEM_CLASSES}>
+            <Link className={LINK_CLASSES} href="/">
               Accueil
             </Link>
           </li>
           {chemin
             ? chemin.map((page) => (
-                <li className={CLASSES_ELEMENT} key={page.nom}>
-                  <Link className={CLASSES_LIEN} href={page.lien}>
+                <li className={ITEM_CLASSES} key={page.nom}>
+                  <Link className={LINK_CLASSES} href={page.lien}>
                     {page.nom}
                   </Link>
                 </li>
               ))
             : null}
-          <li className={CLASSES_ELEMENT}>
+          <li className={ITEM_CLASSES}>
             <span
               aria-current="page"
               className={clsxm(
-                CLASSES_LIEN,
+                LINK_CLASSES,
                 "pointer-events-none cursor-default text-dsfr-grey-200",
               )}
             >

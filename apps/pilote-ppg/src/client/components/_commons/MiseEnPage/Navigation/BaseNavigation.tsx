@@ -19,11 +19,11 @@ import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { useMenuMobile } from "@/components/_commons/MiseEnPage/EnTete/MenuMobileContext";
 import { clsxm } from "@/utils/clsxm";
 import {
-  CLASSES_NAV,
-  CLASSES_NAV_ELEMENT,
-  CLASSES_NAV_LIEN,
-  CLASSES_NAV_LISTE,
-  CLASSES_NAV_LISTE_EN_TETE,
+  NAV_CLASSES,
+  NAV_ITEM_CLASSES,
+  NAV_LINK_CLASSES,
+  NAV_LIST_CLASSES,
+  NAV_LIST_HEADER_CLASSES,
 } from "./navigationClasses";
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) =>
@@ -81,23 +81,20 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
     !vérifierValeurApplicationEstIndisponible ||
     estAutoriséAParcourirSiIndisponible(session);
 
-  const listeDesLiens = (dansEnTete: boolean, onNavigate?: () => void) =>
+  const listeDesLiens = (inHeader: boolean, onNavigate?: () => void) =>
     navigationAccessible ? (
       <ul
-        className={clsxm(
-          CLASSES_NAV_LISTE,
-          dansEnTete && CLASSES_NAV_LISTE_EN_TETE,
-        )}
+        className={clsxm(NAV_LIST_CLASSES, inHeader && NAV_LIST_HEADER_CLASSES)}
       >
         {pages.map(
           (page) =>
             page.accessible && (
-              <li className={CLASSES_NAV_ELEMENT} key={page.lien}>
+              <li className={NAV_ITEM_CLASSES} key={page.lien}>
                 <Link
                   aria-current={
                     page.matcher === urlActuelle ? "true" : undefined
                   }
-                  className={clsxm(CLASSES_NAV_LIEN, "relative")}
+                  className={clsxm(NAV_LINK_CLASSES, "relative")}
                   href={page.lien}
                   onClick={onNavigate}
                   target={page.target}
@@ -125,7 +122,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
     <>
       <div className="max-[61.99em]:hidden lg:shadow-[inset_0_1px_0_0_var(--border-default-grey)] print:hidden">
         <div className="fr-container">
-          <nav aria-label="Menu principal" className={CLASSES_NAV}>
+          <nav aria-label="Menu principal" className={NAV_CLASSES}>
             {listeDesLiens(true)}
           </nav>
         </div>
@@ -159,7 +156,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
               <BoutonContacterEquipePilote />
             </div>
             <MonEspaceMenuMobile onNavigate={() => setMenuOuvert(false)} />
-            <nav aria-label="Menu principal" className={CLASSES_NAV}>
+            <nav aria-label="Menu principal" className={NAV_CLASSES}>
               {listeDesLiens(false, () => setMenuOuvert(false))}
             </nav>
           </Dialog.Content>

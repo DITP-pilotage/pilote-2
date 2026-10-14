@@ -12,11 +12,11 @@ import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateu
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import {
-  CLASSES_NAV,
-  CLASSES_NAV_BOUTON,
-  CLASSES_NAV_ELEMENT,
-  CLASSES_NAV_LIEN,
-  CLASSES_NAV_LISTE,
+  NAV_CLASSES,
+  NAV_BUTTON_CLASSES,
+  NAV_ITEM_CLASSES,
+  NAV_LINK_CLASSES,
+  NAV_LIST_CLASSES,
 } from "@/components/_commons/MiseEnPage/Navigation/navigationClasses";
 
 const peutAccederPanelAdministrateur = (
@@ -105,18 +105,18 @@ export const MonEspaceMenuMobile = ({
   const showPanelAdministrateur = peutAccederPanelAdministrateur(session);
 
   return (
-    <nav aria-label="Mon espace" className={CLASSES_NAV}>
-      <ul className={CLASSES_NAV_LISTE}>
-        <li className={CLASSES_NAV_ELEMENT}>
+    <nav aria-label="Mon espace" className={NAV_CLASSES}>
+      <ul className={NAV_LIST_CLASSES}>
+        <li className={NAV_ITEM_CLASSES}>
           <Collapsible.Root>
-            <Collapsible.Trigger className={CLASSES_NAV_BOUTON} type="button">
+            <Collapsible.Trigger className={NAV_BUTTON_CLASSES} type="button">
               Mon espace
             </Collapsible.Trigger>
             <Collapsible.Content>
               <ul className="list-none p-0 pl-4">
                 <li>
                   <Link
-                    className={CLASSES_NAV_LIEN}
+                    className={NAV_LINK_CLASSES}
                     href="/mon-profil-utilisateur"
                     onClick={onNavigate}
                   >
@@ -126,7 +126,7 @@ export const MonEspaceMenuMobile = ({
                 {showPanelAdministrateur ? (
                   <li>
                     <Link
-                      className={CLASSES_NAV_LIEN}
+                      className={NAV_LINK_CLASSES}
                       href="/panel-administrateur/parametrage-metadata-indicateur"
                       onClick={onNavigate}
                     >
@@ -136,7 +136,7 @@ export const MonEspaceMenuMobile = ({
                 ) : null}
                 <li>
                   <button
-                    className={clsxm(CLASSES_NAV_LIEN, "w-full text-left")}
+                    className={clsxm(NAV_LINK_CLASSES, "w-full text-left")}
                     onClick={() => signOut()}
                     type="button"
                   >

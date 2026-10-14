@@ -337,6 +337,22 @@ html {
   background-color: transparent;
 }
 
+@media (forced-colors: active) {
+  .proconnect-button {
+    border: 1px solid;
+  }
+
+  .proconnect-button__login,
+  .proconnect-button__brand {
+    line-height: 1.1;
+  }
+
+  .proconnect-group .proconnect-button + p a {
+    text-decoration: underline;
+    text-underline-offset: 5px;
+  }
+}
+
 @media print {
   .proconnect-group {
     print-color-adjust: exact;
