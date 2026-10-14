@@ -38,7 +38,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
           </div>
           <div>
             {titre && contenuInfobulle ? (
-              <Infobulle classNameBouton="pl-4">{contenuInfobulle}</Infobulle>
+              <Infobulle>{contenuInfobulle}</Infobulle>
             ) : null}
           </div>
         </div>
