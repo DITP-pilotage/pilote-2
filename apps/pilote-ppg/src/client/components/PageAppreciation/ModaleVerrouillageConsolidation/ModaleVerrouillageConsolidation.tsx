@@ -14,6 +14,8 @@ import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { Tooltip } from "@/components/shared/Tooltip";
+import { Button } from "@/components/shared/Button";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 
 const TooltipNonTraite = ({ children }: PropsWithChildren) => (
   <Tooltip.Root>
@@ -62,25 +64,14 @@ export const ModaleTransmissionDITP = ({
     >
       {etapeTransmission ? (
         <>
-          <div className="fr-stepper !mb-1">
-            <h2 className="fr-stepper__title">
-              <span>{`${Stepper[etapeTransmission].titre}`}</span>
-              <span className="fr-stepper__state">
-                {`Transmettre les appréciations - Étape ${Stepper[etapeTransmission].numeroEtape} sur 2`}
-              </span>
-            </h2>
-            <div
-              className="fr-stepper__steps"
-              data-fr-current-step={Stepper[etapeTransmission].numeroEtape}
-              data-fr-steps="2"
-            />
-            {Stepper[etapeTransmission].etapeSuivante ? (
-              <p className="fr-stepper__details">
-                <span className="fr-text--bold">Étape suivante :</span>
-                {` ${Stepper[etapeTransmission].etapeSuivante}`}
-              </p>
-            ) : null}
-          </div>
+          <StepIndicator
+            className="mb-1"
+            currentStep={Stepper[etapeTransmission].numeroEtape}
+            label="Transmettre les appréciations"
+            nextStep={Stepper[etapeTransmission].etapeSuivante}
+            stepCount={2}
+            title={Stepper[etapeTransmission].titre}
+          />
 
           <FormProvider {...reactHookForm}>
             <form
@@ -184,20 +175,16 @@ export const ModaleTransmissionDITP = ({
 
                   <div className="w-full flex justify-end !mt-8 gap-2">
                     <Modale.Close asChild>
-                      <button className="fr-link !px-4" type="button">
-                        Annuler
-                      </button>
+                      <Button variant="tertiary-no-outline">Annuler</Button>
                     </Modale.Close>
-                    <button
-                      className="fr-btn"
+                    <Button
                       disabled={fichesSelectionnees.length === 0}
                       onClick={() =>
                         setEtapeTransmission(EtapeTransmission.VALIDATION)
                       }
-                      type="button"
                     >
                       Étape suivante
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -261,25 +248,21 @@ export const ModaleTransmissionDITP = ({
 
                   <div className="w-full flex justify-end !mt-8 gap-2">
                     <Modale.Close asChild>
-                      <button className="fr-link !px-4" type="button">
-                        Annuler
-                      </button>
+                      <Button variant="tertiary-no-outline">Annuler</Button>
                     </Modale.Close>
-                    <button
-                      className="fr-btn fr-btn--secondary gap-3"
+                    <Button
+                      className="gap-3"
+                      iconLeft={<Icone icone={ArrowLine3Icon} />}
                       onClick={() =>
                         setEtapeTransmission(
                           EtapeTransmission.SELECTION_TERRITOIRES,
                         )
                       }
-                      type="button"
+                      variant="secondary"
                     >
-                      <Icone icone={ArrowLine3Icon} />
                       Étape précédente
-                    </button>
-                    <button className="fr-btn" type="submit">
-                      Valider
-                    </button>
+                    </Button>
+                    <Button type="submit">Valider</Button>
                   </div>
                 </div>
               )}

@@ -1,6 +1,7 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { $Enums } from "@prisma/client";
 import Head from "next/head";
+import { TextLink } from "@/components/shared/TextLink";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
@@ -11,7 +12,6 @@ import {
   Disclosure,
   DisclosureIndicator,
 } from "@/components/shared/Disclosure";
-import { clsxm } from "@/utils/clsxm";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -109,16 +109,15 @@ export default function PageAppreciation(
               </p>
               <Disclosure
                 trigger={
-                  <button
-                    className={clsxm(
-                      "fr-link !inline-flex items-center gap-2 !font-normal",
-                      "!p-0 !mb-0",
-                    )}
-                    type="button"
+                  <TextLink
+                    asChild
+                    className="inline-flex items-center gap-2 p-0 mb-0 font-normal"
                   >
-                    En savoir plus
-                    <DisclosureIndicator />
-                  </button>
+                    <button type="button">
+                      En savoir plus
+                      <DisclosureIndicator />
+                    </button>
+                  </TextLink>
                 }
               >
                 <div className="flex flex-col gap-4">

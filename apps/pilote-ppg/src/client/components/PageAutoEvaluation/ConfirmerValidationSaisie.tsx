@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
 import { Modale } from "@/components/shared/Modale";
+import { Button } from "@/components/shared/Button";
 
 interface ConfirmerValidationSaisieProps {
   typeEvaluation: "objectifs" | "manieres-de-servir";
@@ -25,35 +26,26 @@ export const ConfirmerValidationSaisie: FunctionComponent<
       size="md"
       title="Confirmation de validation"
     >
-      <p className="fr-text fr-mb-2w">
+      <p className="mb-4">
         Vous êtes sur le point de valider définitivement l'auto-évaluation de{" "}
         {typeLabel} pour l'année {annee}.
       </p>
-      <p className="fr-text fr-mb-2w">
+      <p className="mb-4">
         Une fois validée, votre auto-évaluation restera consultable mais ne
         pourra plus être modifiée.
       </p>
-      <p className="fr-text fr-mb-3w">
+      <p className="mb-6">
         <strong>Souhaitez-vous confirmer cette validation ?</strong>
       </p>
       <div className="w-full flex justify-end gap-2">
         <Modale.Close asChild>
-          <button
-            className="fr-btn fr-btn--secondary"
-            disabled={isPending}
-            type="button"
-          >
+          <Button disabled={isPending} variant="secondary">
             Annuler
-          </button>
+          </Button>
         </Modale.Close>
-        <button
-          className="fr-btn"
-          disabled={isPending}
-          onClick={onConfirm}
-          type="button"
-        >
+        <Button disabled={isPending} onClick={onConfirm}>
           Confirmer la validation
-        </button>
+        </Button>
       </div>
     </Modale>
   );

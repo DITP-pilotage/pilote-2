@@ -1,6 +1,7 @@
 import { Icone } from "@/components/_commons/Icone";
 import { Success1Icon } from "@/components/_commons/Icones/Success1Icon";
 import { useRetournerAppreciation } from "./useRetournerAppreciation";
+import { TextLink } from "@/components/shared/TextLink";
 
 export const BoutonRetourAppreciation = ({
   fichesSelectionneesIds,
@@ -16,14 +17,15 @@ export const BoutonRetourAppreciation = ({
   };
 
   return (
-    <button
-      className="fr-link text-left !text-xs !flex items-center gap-1"
-      disabled={disabled}
-      onClick={handleRetournerAppreciation}
-      type="button"
-    >
-      <Icone className="inline h-3 w-3" icone={Success1Icon} />
-      retour en appréciation
-    </button>
+    <TextLink asChild className="text-left flex items-center gap-1" size="xs">
+      <button
+        disabled={disabled}
+        onClick={handleRetournerAppreciation}
+        type="button"
+      >
+        <Icone className="inline h-3 w-3" icone={Success1Icon} />
+        retour en appréciation
+      </button>
+    </TextLink>
   );
 };

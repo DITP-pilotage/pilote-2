@@ -6,6 +6,7 @@ import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manie
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 import { ConfirmerValidationSaisie } from "@/components/PageAutoEvaluation/ConfirmerValidationSaisie";
 import { SendIcon } from "@/components/_commons/Icones/SendIcon";
+import { Button } from "@/components/shared/Button";
 
 export const BoutonValiderSaisieCriteres = ({
   ficheEvaluationId,
@@ -49,15 +50,13 @@ export const BoutonValiderSaisieCriteres = ({
 
   return (
     <div>
-      <button
-        className="fr-btn"
+      <Button
         disabled={validerSaisie.isPending}
+        iconRight={<SendIcon className="h-4 w-4" />}
         onClick={handleOpenModal}
-        type="button"
       >
         Transmettre le formulaire
-        <SendIcon className="h-4 w-4 ml-2" />
-      </button>
+      </Button>
       <ConfirmerValidationSaisie
         annee={2025}
         isPending={validerSaisie.isPending}
