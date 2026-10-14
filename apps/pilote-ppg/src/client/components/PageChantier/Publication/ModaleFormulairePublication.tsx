@@ -98,9 +98,17 @@ export const ModaleFormulairePublication = <
     return onPublier(resultat.data);
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      intention.current = "brouillon";
+      form.reset(formConfig.newValues);
+    }
+    onOpenChange(isOpen);
+  };
+
   return (
     <Modale
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       open={open}
       title={title}
       titleClassName="text-dsfr-grey-50"
