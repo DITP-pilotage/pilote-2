@@ -5,7 +5,7 @@ export const HINT_TEXT_CLASSES =
   "block text-xs leading-5 text-dsfr-mention-grey [--text-spacing:0_0_1rem] print:text-base print:leading-6";
 
 export const ERROR_TEXT_CLASSES =
-  "flex flex-row items-center text-xs leading-5 mt-4 mb-0 text-dsfr-error-425 before:mr-1 before:inline-block before:size-4 before:flex-[0_0_auto] before:bg-current before:align-[calc((0.75em-1rem)*0.5)] before:[mask-image:url(/dsfr/icons/system/fr--error-fill.svg)] before:[mask-size:100%_100%] before:content-['']";
+  "flex flex-row items-center text-xs leading-5 mt-4 mb-0 text-dsfr-error-425 before:mr-1 before:inline-block before:size-4 before:flex-[0_0_auto] before:bg-current before:align-[calc((0.75em-1rem)*0.5)] before:[mask-image:url(/dsfr/icons/system/fr--error-fill.svg)] before:[mask-size:100%_100%] before:content-[''] forced-colors:before:bg-[canvastext] forced-colors:before:[forced-color-adjust:none]";
 
 // Barre rouge à gauche d'un groupe de champs en erreur (fr-input-group--error).
 export const ERROR_GROUP_CLASSES =
