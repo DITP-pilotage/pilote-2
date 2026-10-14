@@ -77,7 +77,6 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
                         </Table.Cell>
                         <Table.Cell>
                           <Button
-                            aria-controls="supprimer-token"
                             onClick={() =>
                               supprimerTokenAPI({
                                 email: tokenAPIInformation.email,
