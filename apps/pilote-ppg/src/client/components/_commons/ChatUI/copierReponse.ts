@@ -1,4 +1,4 @@
-import { toPng } from "html-to-image";
+import { toBlob } from "html-to-image";
 
 const ATTRIBUT_BLOC_COPIABLE = "data-bloc-copiable";
 
@@ -12,6 +12,29 @@ export const marquerBlocCopiable = (bloc: BlocCopiable) => ({
   [ATTRIBUT_BLOC_COPIABLE]: bloc,
 });
 
+const estDashboard = (bloc: HTMLElement) =>
+  bloc.getAttribute(ATTRIBUT_BLOC_COPIABLE) === "dashboard";
+
+const capturerDashboard = async (element: HTMLElement): Promise<Blob> => {
+  const capture = await toBlob(element, {
+    pixelRatio: 2,
+    backgroundColor: "#ffffff",
+  });
+  if (capture === null) {
+    throw new Error("La capture du dashboard a échoué");
+  }
+  return capture;
+};
+
+// Pas de fetch("data:…") : la CSP de l'app (connect-src) le bloque.
+const lireEnDataUrl = (capture: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const lecteur = new FileReader();
+    lecteur.onload = () => resolve(lecteur.result as string);
+    lecteur.onerror = () => reject(lecteur.error);
+    lecteur.readAsDataURL(capture);
+  });
+
 const convertirTexteEnHtml = (element: HTMLElement): string => {
   const copie = element.cloneNode(true) as HTMLElement;
   copie.querySelectorAll("a").forEach((lien) => {
@@ -23,14 +46,15 @@ const convertirTexteEnHtml = (element: HTMLElement): string => {
   return copie.innerHTML;
 };
 
-const convertirDashboardEnHtml = async (
-  element: HTMLElement,
-): Promise<string> => {
+const convertirCaptureEnHtml = async ({
+  element,
+  capture,
+}: {
+  element: HTMLElement;
+  capture: Blob;
+}): Promise<string> => {
   const image = document.createElement("img");
-  image.src = await toPng(element, {
-    pixelRatio: 2,
-    backgroundColor: "#ffffff",
-  });
+  image.src = await lireEnDataUrl(capture);
   image.alt = "Tableau de bord";
   // L'image est capturée en 2x : on fixe sa largeur d'affichage pour qu'elle
   // ne soit pas collée au double de sa taille à l'écran.
@@ -40,29 +64,42 @@ const convertirDashboardEnHtml = async (
   return `<p>${image.outerHTML}</p>`;
 };
 
-export const construireHtmlReponse = async ({
+/**
+ * Prépare les formats de la copie. Chaque application de destination choisit
+ * celui qu'elle sait lire : un éditeur riche (La Suite Docs) prend le HTML,
+ * un outil de dessin (Excalidraw) l'image, un champ simple le texte. Un
+ * presse-papier ne porte qu'une image : celle du premier dashboard.
+ */
+export const construireContenuCopie = ({
   racine,
 }: {
   racine: HTMLElement;
-}): Promise<string> => {
+}): { html: Promise<string>; image: Promise<Blob> | null } => {
   const blocs = Array.from(
     racine.querySelectorAll<HTMLElement>(`[${ATTRIBUT_BLOC_COPIABLE}]`),
   );
-  const fragments = await Promise.all(
-    blocs.map((bloc) =>
-      bloc.getAttribute(ATTRIBUT_BLOC_COPIABLE) === "dashboard"
-        ? convertirDashboardEnHtml(bloc)
-        : convertirTexteEnHtml(bloc),
-    ),
+  const captures = new Map(
+    blocs.filter(estDashboard).map((bloc) => [bloc, capturerDashboard(bloc)]),
   );
-  return `<meta charset="utf-8">${fragments.join("")}`;
+
+  const html = Promise.all(
+    blocs.map(async (bloc) => {
+      const capture = captures.get(bloc);
+      return capture === undefined
+        ? convertirTexteEnHtml(bloc)
+        : convertirCaptureEnHtml({ element: bloc, capture: await capture });
+    }),
+  ).then((fragments) => `<meta charset="utf-8">${fragments.join("")}`);
+
+  const image = captures.values().next().value ?? null;
+
+  return { html, image };
 };
 
 /**
- * Copie la réponse en HTML (texte mis en forme + dashboards en image) pour les
- * éditeurs riches, et en texte brut pour les autres. Le HTML est passé en
- * promesse : Safari n'autorise l'écriture que si `ClipboardItem` est construit
- * pendant le clic, avant la capture asynchrone des dashboards.
+ * Les formats sont passés en promesses : Safari n'autorise l'écriture que si
+ * `ClipboardItem` est construit pendant le clic, avant la capture asynchrone
+ * des dashboards.
  */
 export const copierReponse = async ({
   racine,
@@ -71,12 +108,15 @@ export const copierReponse = async ({
   racine: HTMLElement;
   texte: string;
 }): Promise<void> => {
+  const { html, image } = construireContenuCopie({ racine });
+
   await navigator.clipboard.write([
     new ClipboardItem({
-      "text/html": construireHtmlReponse({ racine }).then(
-        (html) => new Blob([html], { type: "text/html" }),
+      "text/html": html.then(
+        (contenu) => new Blob([contenu], { type: "text/html" }),
       ),
       "text/plain": new Blob([texte], { type: "text/plain" }),
+      ...(image === null ? {} : { "image/png": image }),
     }),
   ]);
 };

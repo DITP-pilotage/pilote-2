@@ -1,10 +1,10 @@
-import { construireHtmlReponse } from "@/components/_commons/ChatUI/copierReponse";
+import { construireContenuCopie } from "@/components/_commons/ChatUI/copierReponse";
 
 vi.mock("html-to-image", () => ({
-  toPng: async () => "data:image/png;base64,AAAA",
+  toBlob: async () => new Blob(["png"], { type: "image/png" }),
 }));
 
-describe("construireHtmlReponse", () => {
+describe("construireContenuCopie", () => {
   test("assemble le texte et l'image du dashboard dans l'ordre du message", async () => {
     // Given
     const racine = document.createElement("div");
@@ -16,11 +16,11 @@ describe("construireHtmlReponse", () => {
     ].join("");
 
     // When
-    const html = await construireHtmlReponse({ racine });
+    const { html } = construireContenuCopie({ racine });
 
     // Then
-    expect(html).toStrictEqual(
-      `<meta charset="utf-8"><p>Introduction</p><p><img src="data:image/png;base64,AAAA" alt="Tableau de bord"></p><p>Conclusion</p>`,
+    expect(await html).toStrictEqual(
+      `<meta charset="utf-8"><p>Introduction</p><p><img src="data:image/png;base64,cG5n" alt="Tableau de bord"></p><p>Conclusion</p>`,
     );
   });
 
@@ -30,11 +30,38 @@ describe("construireHtmlReponse", () => {
     racine.innerHTML = `<div data-bloc-copiable="texte"><p><a href="/chantier/CH-050/NAT-FR">CH-050</a></p></div>`;
 
     // When
-    const html = await construireHtmlReponse({ racine });
+    const { html } = construireContenuCopie({ racine });
 
     // Then
-    expect(html).toStrictEqual(
+    expect(await html).toStrictEqual(
       `<meta charset="utf-8"><p><a href="${window.location.origin}/chantier/CH-050/NAT-FR">CH-050</a></p>`,
     );
+  });
+
+  test("fournit l'image du dashboard pour les applications qui ne lisent pas le HTML", async () => {
+    // Given
+    const racine = document.createElement("div");
+    racine.innerHTML = [
+      `<div data-bloc-copiable="dashboard"><h3>Dashboard Sarthe</h3></div>`,
+      `<div data-bloc-copiable="texte"><p>Voici le tableau de bord demandé.</p></div>`,
+    ].join("");
+
+    // When
+    const { image } = construireContenuCopie({ racine });
+
+    // Then
+    expect((await image)?.type).toStrictEqual("image/png");
+  });
+
+  test("ne fournit pas d'image quand la réponse n'a pas de dashboard", () => {
+    // Given
+    const racine = document.createElement("div");
+    racine.innerHTML = `<div data-bloc-copiable="texte"><p>Réponse</p></div>`;
+
+    // When
+    const { image } = construireContenuCopie({ racine });
+
+    // Then
+    expect(image).toBeNull();
   });
 });
