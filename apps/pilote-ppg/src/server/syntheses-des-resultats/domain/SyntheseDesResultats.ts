@@ -7,28 +7,22 @@ type ParamsCreation = {
   chantierId: string;
   territoireCode: string;
   contenu: string;
-  meteo: Meteo;
   auteurId: string;
   date: string;
 };
 
 type ParamsModification = {
   contenu: string;
-  meteo: Meteo;
   auteurModificationId: string;
   dateModification: string;
 };
 
-type ParamsCreationBrouillon = Omit<ParamsCreation, "meteo"> & {
-  meteo: Meteo | undefined;
-};
+type MeteoObligatoire = { meteo: Meteo };
 
-type ParamsModificationBrouillon = Omit<ParamsModification, "meteo"> & {
-  meteo: Meteo | undefined;
-};
+type MeteoFacultative = { meteo?: Meteo };
 
 export function creerSyntheseDesResultatsPublie(
-  params: ParamsCreation,
+  params: ParamsCreation & MeteoObligatoire,
 ): SyntheseDesResultatsV2 {
   return {
     id: randomUUID(),
@@ -45,7 +39,7 @@ export function creerSyntheseDesResultatsPublie(
 }
 
 export function creerSyntheseDesResultatsBrouillon(
-  params: ParamsCreationBrouillon,
+  params: ParamsCreation & MeteoFacultative,
 ): SyntheseDesResultatsV2 {
   return {
     id: randomUUID(),
@@ -63,7 +57,7 @@ export function creerSyntheseDesResultatsBrouillon(
 
 export function publierBrouillonSyntheseDesResultats(
   existing: SyntheseDesResultatsV2,
-  params: ParamsModification,
+  params: ParamsModification & MeteoObligatoire,
 ): SyntheseDesResultatsV2 {
   if (existing.statut !== $Enums.statut_publication.BROUILLON)
     throw new Error(
@@ -82,7 +76,7 @@ export function publierBrouillonSyntheseDesResultats(
 
 export function modifierSyntheseDesResultatsPubliee(
   existing: SyntheseDesResultatsV2,
-  params: ParamsModification,
+  params: ParamsModification & MeteoObligatoire,
 ): SyntheseDesResultatsV2 {
   if (existing.statut !== $Enums.statut_publication.PUBLIE)
     throw new Error(
@@ -101,7 +95,7 @@ export function modifierSyntheseDesResultatsPubliee(
 
 export function modifierSyntheseDesResultatsBrouillon(
   existing: SyntheseDesResultatsV2,
-  params: ParamsModificationBrouillon,
+  params: ParamsModification & MeteoFacultative,
 ): SyntheseDesResultatsV2 {
   if (existing.statut !== $Enums.statut_publication.BROUILLON)
     throw new Error(
