@@ -43,27 +43,35 @@ export const ConversationHistoryDrawer = ({
 
   return (
     <aside className="flex h-full w-[280px] shrink-0 flex-col border-r border-dsfr-grey-900 bg-white">
-      <Button
-        className="mx-3 mb-1 mt-3 justify-start"
-        iconLeft={
-          <Icone className="h-4 w-4 text-current" icone={AddLineIcon} />
-        }
-        onClick={onNouvelleConversation}
-        size="sm"
-        variant="secondary"
-      >
-        Nouvelle conversation
-      </Button>
+      <div className="px-2 pb-2 pt-3">
+        <Button
+          className="w-full justify-start font-medium hover:bg-dsfr-alt-blue-france"
+          iconLeft={
+            <Icone
+              className="h-[18px] w-[18px] text-current"
+              icone={AddLineIcon}
+            />
+          }
+          onClick={onNouvelleConversation}
+          size="sm"
+          variant="tertiary-no-outline"
+        >
+          Nouvelle conversation
+        </Button>
+      </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <nav
+        aria-label="Historique des conversations"
+        className="flex-1 overflow-y-auto px-2 pb-4"
+      >
         {conversations.length === 0 && (
-          <p className="px-4 py-3 text-xs text-dsfr-mention-grey mb-0">
+          <p className="px-2.5 py-3 text-xs text-dsfr-mention-grey mb-0">
             Aucune conversation.
           </p>
         )}
         {groupes.map((groupe) => (
-          <div key={groupe.libelle}>
-            <p className="px-3 pb-1 pt-3 text-xs font-bold uppercase tracking-wide text-dsfr-mention-grey mb-0">
+          <div className="pb-1" key={groupe.libelle}>
+            <p className="px-2.5 pb-1.5 pt-4 text-xs font-bold leading-4 text-dsfr-mention-grey mb-0">
               {groupe.libelle}
             </p>
             {groupe.conversations.map((conversation) => {
@@ -71,32 +79,45 @@ export const ConversationHistoryDrawer = ({
               return (
                 <div
                   className={clsxm(
-                    "group flex items-start gap-2 border-l-[3px] py-2 pl-4 pr-3 text-sm",
+                    "group flex h-9 items-center gap-1 rounded pl-2.5 pr-1",
                     estActive
-                      ? "border-l-primary bg-dsfr-blue-france-950"
-                      : "border-l-transparent hover:bg-dsfr-grey-1000",
+                      ? "bg-dsfr-blue-france-950 text-primary"
+                      : "text-dsfr-grey-50 hover:bg-dsfr-grey-1000",
                   )}
                   key={conversation.id}
                 >
                   <button
-                    className="min-w-0 flex-1 text-left hover:bg-transparent"
+                    aria-current={estActive ? "true" : undefined}
+                    className="flex h-full min-w-0 flex-1 items-center gap-2 bg-transparent text-left hover:bg-transparent"
                     onClick={() => onSelectionner(conversation.id)}
+                    title={conversation.titre}
                     type="button"
                   >
-                    <p className="truncate font-medium leading-5 text-dsfr-grey-50 mb-0">
+                    <span
+                      className={clsxm(
+                        "min-w-0 flex-1 truncate text-sm leading-5",
+                        estActive && "font-medium",
+                      )}
+                    >
                       {conversation.titre}
-                    </p>
-                    <p className="text-xs leading-[18px] text-dsfr-mention-grey mb-0">
+                    </span>
+                    <span
+                      className={clsxm(
+                        "shrink-0 pr-1.5 text-xs leading-4 group-focus-within:hidden group-hover:hidden",
+                        estActive ? "text-primary" : "text-dsfr-mention-grey",
+                      )}
+                    >
                       {formaterDateConversation({
                         date: conversation.updatedAt,
                         maintenant: new Date(),
                       })}
-                    </p>
+                    </span>
                   </button>
                   <button
-                    aria-label="Supprimer"
-                    className="mt-0.5 text-dsfr-grey-625 opacity-0 hover:text-error focus:opacity-100 focus-visible:opacity-100 group-hover:opacity-100"
+                    aria-label="Supprimer la conversation"
+                    className="hidden h-7 w-7 shrink-0 items-center justify-center rounded bg-transparent text-dsfr-mention-grey hover:bg-dsfr-grey-925 hover:text-error group-focus-within:flex group-hover:flex"
                     onClick={() => handleSupprimer(conversation.id)}
+                    title="Supprimer"
                     type="button"
                   >
                     <Icone
@@ -109,7 +130,7 @@ export const ConversationHistoryDrawer = ({
             })}
           </div>
         ))}
-      </div>
+      </nav>
     </aside>
   );
 };
