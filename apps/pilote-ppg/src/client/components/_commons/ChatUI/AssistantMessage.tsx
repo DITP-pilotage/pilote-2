@@ -4,9 +4,9 @@ import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { ChoicesInline } from "@/components/_commons/ChatUI/ChoicesInline";
 import {
-  copierReponse,
-  marquerBlocCopiable,
-} from "@/components/_commons/ChatUI/copierReponse";
+  copyResponse,
+  markCopyableBlock,
+} from "@/components/_commons/ChatUI/copyResponse";
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
 import type { EtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
@@ -38,7 +38,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   /** Boutons d'évaluation à afficher à côté de « Copier ». */
   evaluation?: ReactNode;
 }) {
-  const racineRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
 
@@ -62,7 +62,7 @@ export const AssistantMessage = memo(function AssistantMessage({
       part.state === "output-available",
   );
 
-  const peutCopier = hasText || hasDashboard;
+  const canCopy = hasText || hasDashboard;
 
   const lastTextIndex = parts.reduce<number>(
     (acc, part, index) => (part.type === "text" ? index : acc),
@@ -72,10 +72,10 @@ export const AssistantMessage = memo(function AssistantMessage({
   const showSkeleton = isStreaming && !hasText && sources.length > 0;
 
   const copier = () => {
-    const racine = racineRef.current;
-    if (racine == null) return;
+    const root = rootRef.current;
+    if (root == null) return;
 
-    copierReponse({ racine, texte: extractMessageText(message) })
+    copyResponse({ root, text: extractMessageText(message) })
       .then(() => {
         toast.success("Réponse copiée dans le presse-papiers", {
           duration: 3000,
@@ -89,7 +89,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   return (
     <div
       className="flex w-full flex-col gap-3 text-[15px] leading-6 text-dsfr-grey-50"
-      ref={racineRef}
+      ref={rootRef}
     >
       <SignatureAssistant etat={etat} />
 
@@ -101,7 +101,7 @@ export const AssistantMessage = memo(function AssistantMessage({
         if (part.type === "text") {
           if (shouldHideText || part.text.length === 0) return null;
           return (
-            <div key={index} {...marquerBlocCopiable("texte")}>
+            <div key={index} {...markCopyableBlock("text")}>
               <AssistantMessageText
                 streaming={isStreaming && index === lastTextIndex}
                 text={part.text}
@@ -146,9 +146,9 @@ export const AssistantMessage = memo(function AssistantMessage({
         return null;
       })}
 
-      {!isStreaming && (peutCopier || evaluation) && (
+      {!isStreaming && (canCopy || evaluation) && (
         <div className="flex flex-wrap items-center gap-1">
-          {peutCopier && (
+          {canCopy && (
             <BoutonCopier
               className="h-7 px-2 text-xs font-medium"
               libelle="Copier la réponse dans le presse-papiers"
