@@ -1,3 +1,4 @@
+import "@gouvfr/dsfr/dist/component/button/button.min.css";
 import { Controller } from "react-hook-form";
 import Link from "next/link";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";

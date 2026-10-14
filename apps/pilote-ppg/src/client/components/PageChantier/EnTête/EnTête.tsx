@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/dsfr.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
