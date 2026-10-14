@@ -1,4 +1,9 @@
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
@@ -12,6 +17,8 @@ import {
   PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
+import { MotifsTooltip } from "@/components/PageChantier/Publication/MotifsTooltip";
+import { motifsBloquants } from "@/components/PageChantier/Publication/motifsActionsIndisponibles";
 
 interface FormulairePublicationProps<T extends PublicationValues, P extends T> {
   publication: Publication | null;
@@ -38,6 +45,8 @@ export const FormulairePublication = <
     resolver: zodResolver(formConfig.publishSchema),
     defaultValues: formConfig.editValues,
   });
+  const values = useWatch({ control: form.control });
+  const motifs = motifsBloquants(formConfig.publishSchema, values);
 
   return (
     <FormProvider {...form}>
@@ -59,17 +68,19 @@ export const FormulairePublication = <
           maxLength={formConfig.maxLength}
         />
         <div className="flex justify-end mt-4">
-          <Button
-            className="mr-3"
-            disabled={!form.formState.isValid}
-            iconLeft={
-              <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
-            }
-            type="submit"
-            variant="primary"
-          >
-            Valider
-          </Button>
+          <MotifsTooltip motifs={motifs}>
+            <Button
+              aria-disabled={motifs.length > 0 || undefined}
+              className="mr-3"
+              iconLeft={
+                <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
+              }
+              type="submit"
+              variant="primary"
+            >
+              Valider
+            </Button>
+          </MotifsTooltip>
           <Button
             iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
             onClick={annulationCallback}

@@ -5,7 +5,7 @@ export interface MotifsActionsIndisponibles {
   brouillon: string[];
 }
 
-const messagesErreur = (schema: z.ZodType, values: unknown) => {
+export const motifsBloquants = (schema: z.ZodType, values: unknown) => {
   const result = schema.safeParse(values);
   return result.success
     ? []
@@ -19,6 +19,6 @@ export const motifsActionsIndisponibles = (
     publishSchema,
   }: { draftSchema: z.ZodType; publishSchema: z.ZodType },
 ): MotifsActionsIndisponibles => ({
-  publier: messagesErreur(publishSchema, values),
-  brouillon: messagesErreur(draftSchema, values),
+  publier: motifsBloquants(publishSchema, values),
+  brouillon: motifsBloquants(draftSchema, values),
 });
