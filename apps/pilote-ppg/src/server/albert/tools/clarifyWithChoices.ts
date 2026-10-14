@@ -26,7 +26,7 @@ export type ClarifyChoice = z.infer<
 
 export const clarifyWithChoicesTool = tool({
   description:
-    "Demande à l'utilisateur de lever un doute en choisissant parmi des options que tu as identifiées. Appelle cet outil AVANT de produire une réponse dès que : plusieurs candidats correspondent (chantiers, indicateurs, territoires) ; la demande admet plusieurs interprétations qui mènent à des réponses différentes ; ou la demande ne peut pas être satisfaite telle quelle (ex. un type de graphique que le dashboard ne sait pas produire) et que tu peux proposer des alternatives réalisables. Mieux vaut demander que deviner. IMPORTANT : écris toujours ton message textuel AVANT d'appeler cet outil. Ne l'appelle jamais sans avoir d'abord rédigé le texte d'accompagnement.",
+    "Demande à l'utilisateur de lever un doute en choisissant parmi des options que tu as identifiées. Appelle cet outil AVANT de produire une réponse dès que : plusieurs candidats correspondent (chantiers, indicateurs, territoires) ; la demande admet plusieurs interprétations qui mènent à des réponses différentes ; ou la demande ne peut pas être satisfaite telle quelle (ex. un type de graphique que le dashboard ne sait pas produire) et que tu peux proposer des alternatives réalisables. Mieux vaut demander que deviner. Le paramètre 'question' porte toute l'explication affichée à l'utilisateur : n'écris pas de texte avant l'appel.",
   inputSchema: clarifyWithChoicesInputSchema,
   execute: async ({
     question,
