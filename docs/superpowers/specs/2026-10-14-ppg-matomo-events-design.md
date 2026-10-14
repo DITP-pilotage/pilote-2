@@ -66,12 +66,11 @@ Les dimensions `undefined` sont ignorées.
 
 ### `browser.ts`
 
-`createBrowserAnalytics({ config, enabled, doNotTrack, send?, getVisitorId? })` renvoie `{ status, trackEvent }`.
+`createBrowserAnalytics({ config, enabled, doNotTrack, send?, getVisitorId?, getPageUrl? })` renvoie `{ status, trackEvent }`.
 
 - Émetteur muet (`trackEvent` sans effet) si la config est absente, si le suivi est désactivé ou si Do Not Track est actif. `status` indique la raison.
 - Envoi par `navigator.sendBeacon`, repli `fetch` `keepalive` `no-cors` dont l'échec est ignoré. Le tout dans un `try/catch` : `trackEvent` ne lève jamais et ne renvoie rien d'attendable. Une erreur d'émission ne bloque donc aucune action utilisateur.
 - Pont de transition vers PIL-1889 : `getVisitorId` lit `window.Matomo.getAsyncTracker().getVisitorId()` quand `matomo.js` est chargé, pour que les événements tombent dans la même visite que les pages vues. Toute erreur ou absence donne `undefined` (pas de `_id`).
-- `globalDimensions` (dans la config) fusionnés sous les dimensions de l'événement.
 
 ### `analytics.ts`
 
@@ -83,7 +82,7 @@ Les dimensions `undefined` sont ignorées.
 
 ### `useAnalytics.ts`
 
-`useAnalytics()` renvoie `trackEvent(event)`, qui ajoute `profil_pilote: session.profil` (via `useSession`) aux dimensions. Les US n'ont rien à fournir pour le profil.
+`useAnalytics()` renvoie `trackEvent(event)`, qui ajoute `profil_pilote: session.profil` (via `useSession`) aux dimensions. Le type accepté par le hook exclut `profil_pilote` : les US ne peuvent ni le fournir ni l'écraser.
 
 ### Configuration
 
@@ -103,7 +102,7 @@ Les dimensions `undefined` sont ignorées.
 Tests unitaires vitest, projet `client`, fichiers `*.unit.test.ts` :
 
 - `buildRequest` : dimension avec ID → `dimension<ID>` ; sans ID → suffixe trié de `e_n` ; `undefined` ignorée ; `url` réduite au chemin ; `_id` présent seulement si fourni.
-- `browser` : muet si non configuré, désactivé ou DNT (`send` jamais appelé) ; un `send` qui lève ne remonte pas ; un `getVisitorId` qui lève donne une requête sans `_id` ; `globalDimensions` fusionnés et surchargés par l'événement.
+- `browser` : muet si non configuré, désactivé ou DNT (`send` jamais appelé) ; un `send` qui lève ne remonte pas ; un `getVisitorId` qui lève donne une requête sans `_id`.
 - Parsing de `NEXT_PUBLIC_MATOMO_DIMENSIONS` : JSON invalide, clé inconnue, ID non entier → ignorés.
 
 Pas d'E2E : aucun parcours utilisateur ne change. La vérification dans Matomo (événement visible avec catégorie, action, nom et dimensions) se fait en recette, une fois une US branchée ou par un appel manuel en console.
