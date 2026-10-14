@@ -32,7 +32,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       case "VALEUR_CREEE":
         return (
           <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-            → nouvelle valeur affichée dans PILOTE : {valeur}
+            → nouvelle valeur importée dans PILOTE : {valeur}
           </p>
         );
       case "VALEUR_MODIFIEE":
@@ -48,7 +48,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               </p>
             ) : (
               <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-                → nouvelle valeur affichée dans PILOTE : {valeur}
+                → nouvelle valeur importée dans PILOTE : {valeur}
               </p>
             )}
           </div>
@@ -113,7 +113,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               de projet
             </p>
             <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
+              → nouvelle valeur importée dans PILOTE : {valeur}
             </p>
           </div>
         );
@@ -129,7 +129,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               par la direction de projet
             </p>
             <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
+              → nouvelle valeur importée dans PILOTE : {valeur}
             </p>
           </div>
         );
@@ -146,7 +146,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               </p>
             ) : (
               <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-                → nouvelle valeur affichée dans PILOTE : {valeur}
+                → nouvelle valeur importée dans PILOTE : {valeur}
               </p>
             )}
           </div>

@@ -235,7 +235,7 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
                   ordre: 1,
                   date_creation: "15/01/2024 12:00",
                   description:
-                    "Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur affichée dans PILOTE : 10.",
+                    "Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur importée dans PILOTE : 10.",
                   categorie: "IMPORT",
                 },
               ],
@@ -271,7 +271,7 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
               ordre: 1,
               date_creation: "15/01/2024 12:00",
               description:
-                "Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur affichée dans PILOTE : 10.",
+                "Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur importée dans PILOTE : 10.",
               categorie: "IMPORT",
             },
           ],
