@@ -6,6 +6,7 @@ import {
   Resolver,
   SubmitHandler,
   useForm,
+  useWatch,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icone } from "@/components/_commons/Icone";
@@ -24,6 +25,8 @@ import {
   PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
+import { MotifsTooltip } from "@/components/PageChantier/Publication/MotifsTooltip";
+import { motifsActionsIndisponibles } from "@/components/PageChantier/Publication/motifsActionsIndisponibles";
 
 interface ModaleFormulairePublicationProps<
   T extends PublicationValues,
@@ -77,6 +80,8 @@ export const ModaleFormulairePublication = <
     resolver,
     defaultValues: formConfig.newValues,
   });
+  const values = useWatch({ control: form.control });
+  const motifs = motifsActionsIndisponibles(values, formConfig);
 
   const publier = (data: T) => {
     const resultat = formConfig.publishSchema.safeParse(data);
@@ -128,18 +133,21 @@ export const ModaleFormulairePublication = <
             maxLength={formConfig.maxLength}
           />
           <div className="flex justify-end items-center gap-3 mt-6">
-            <Button
-              iconLeft={
-                <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
-              }
-              onClick={() => {
-                intention.current = "publier";
-              }}
-              type="submit"
-              variant="primary"
-            >
-              Publier
-            </Button>
+            <MotifsTooltip motifs={motifs.publier}>
+              <Button
+                aria-disabled={motifs.publier.length > 0 || undefined}
+                iconLeft={
+                  <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
+                }
+                onClick={() => {
+                  intention.current = "publier";
+                }}
+                type="submit"
+                variant="primary"
+              >
+                Publier
+              </Button>
+            </MotifsTooltip>
             <Button
               iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
               onClick={() => onOpenChange(false)}
@@ -148,19 +156,22 @@ export const ModaleFormulairePublication = <
             >
               Annuler
             </Button>
-            <Button
-              variant="link"
-              iconLeft={
-                <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
-              }
-              onClick={(event) => {
-                intention.current = "brouillon";
-                return form.handleSubmit(onEnregistrerBrouillon)(event);
-              }}
-              type="button"
-            >
-              Enregistrer en tant que brouillon
-            </Button>
+            <MotifsTooltip motifs={motifs.brouillon}>
+              <Button
+                aria-disabled={motifs.brouillon.length > 0 || undefined}
+                variant="link"
+                iconLeft={
+                  <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
+                }
+                onClick={(event) => {
+                  intention.current = "brouillon";
+                  return form.handleSubmit(onEnregistrerBrouillon)(event);
+                }}
+                type="button"
+              >
+                Enregistrer en tant que brouillon
+              </Button>
+            </MotifsTooltip>
           </div>
         </form>
       </FormProvider>

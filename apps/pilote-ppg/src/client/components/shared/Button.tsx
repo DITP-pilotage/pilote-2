@@ -9,14 +9,14 @@ export type ButtonVariant =
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white hover:bg-dsfr-blue-france-sun-113-hover disabled:bg-dsfr-grey-925 disabled:text-dsfr-grey-625",
+    "bg-primary text-white hover:bg-dsfr-blue-france-sun-113-hover disabled:bg-dsfr-grey-925 aria-disabled:bg-dsfr-grey-925 disabled:text-dsfr-grey-625 aria-disabled:text-dsfr-grey-625 disabled:opacity-80 aria-disabled:opacity-80",
   secondary:
-    "bg-transparent text-primary ring-1 ring-inset ring-primary hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625 disabled:ring-dsfr-grey-925",
+    "bg-transparent text-primary ring-1 ring-inset ring-primary hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625 aria-disabled:text-dsfr-grey-625 disabled:ring-dsfr-grey-925 aria-disabled:ring-dsfr-grey-925",
   tertiary:
-    "bg-transparent text-primary ring-1 ring-inset ring-dsfr-grey-900 hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625",
+    "bg-transparent text-primary ring-1 ring-inset ring-dsfr-grey-900 hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625 aria-disabled:text-dsfr-grey-625 disabled:opacity-80 aria-disabled:opacity-80",
   "tertiary-no-outline":
-    "bg-transparent text-primary hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625",
-  link: "text-primary bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-bottom bg-no-repeat hover:bg-[length:100%_2px] disabled:bg-[length:100%_1px] disabled:opacity-80",
+    "bg-transparent text-primary hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625 aria-disabled:text-dsfr-grey-625 disabled:opacity-80 aria-disabled:opacity-80",
+  link: "text-primary bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-bottom bg-no-repeat hover:bg-[length:100%_2px] disabled:bg-[length:100%_1px] aria-disabled:bg-[length:100%_1px] disabled:text-dsfr-grey-625 aria-disabled:text-dsfr-grey-625 disabled:opacity-80 aria-disabled:opacity-80",
 };
 
 const SIZES = {
@@ -62,7 +62,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ? "p-0 min-h-0 h-6 text-base leading-6"
         : clsxm("bg-none", SIZES[size]);
     const classes = clsxm(
-      "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed print:hidden",
+      "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed aria-disabled:cursor-not-allowed print:hidden",
       FOCUS_CLASSES,
       sizeClasses,
       VARIANTS[variant],
@@ -82,7 +82,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         >
           <button
             className={clsxm(
-              "inline-flex items-center gap-2 self-stretch bg-transparent text-current border-0 rounded-none disabled:cursor-not-allowed",
+              "inline-flex items-center gap-2 self-stretch bg-transparent text-current border-0 rounded-none disabled:cursor-not-allowed aria-disabled:cursor-not-allowed",
               FOCUS_CLASSES,
               sizeClasses,
               "pr-0",

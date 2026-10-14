@@ -1,0 +1,26 @@
+import { ReactElement } from "react";
+import { Tooltip as RadixTooltip } from "radix-ui";
+import { Tooltip } from "@/components/shared/Tooltip";
+
+// Le bouton reste focusable (aria-disabled plutôt que disabled) pour que
+// l'infobulle s'affiche au survol comme au clavier.
+export const MotifsTooltip = ({
+  motifs,
+  children,
+}: {
+  motifs: string[];
+  children: ReactElement;
+}) => (
+  <Tooltip.Root>
+    <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+    {motifs.length > 0 ? (
+      <Tooltip.Content>
+        {motifs.map((motif) => (
+          <p className="mb-0" key={motif}>
+            {motif}
+          </p>
+        ))}
+      </Tooltip.Content>
+    ) : null}
+  </Tooltip.Root>
+);
