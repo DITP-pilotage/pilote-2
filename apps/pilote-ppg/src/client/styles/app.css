@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./dsfr-base.css" layer(base);
 @config "../../../tailwind.config.js";
 @import "../components/_commons/EditeurRiche/prosemirror.css";
 
