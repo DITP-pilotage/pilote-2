@@ -176,8 +176,8 @@ type ConsulterCentreAideOutput = {
 - **Si `trouve`** :
   - restituer fidèlement `reponse`, sans la compléter avec le glossaire ni
     d'autres connaissances ;
-  - l'illustrer, si c'est utile, avec des valeurs déjà présentes dans la
-    conversation ;
+  - ne poser aucun calcul sur des valeurs de la conversation, même quand la
+    question porte sur une donnée affichée plus tôt ;
   - ne pas écrire de lien : les pages sont affichées sous la réponse.
 - **Sinon** :
   - dire que le centre d'aide ne couvre pas la question ;
@@ -209,10 +209,12 @@ chargent, et aucun encart n'est affiché.
   - que, pour **expliquer** une notion à l'utilisateur, le centre d'aide prime
     sur le glossaire, qui sert à interpréter les résultats des outils ;
   - **le cas frontière** : « comment est calculé ce taux ? » après un
-    affichage. On appelle l'outil avec une question autonome, puis on applique
-    la définition aux valeurs déjà présentes dans la conversation. Pas de
-    question de clarification par défaut, et pas d'outil de données en plus
-    si les valeurs sont déjà là.
+    affichage. On appelle l'outil avec une question autonome et on répond
+    avec la définition du centre d'aide, sans calcul sur les valeurs de la
+    conversation, sans question de clarification et sans outil de données.
+    Appliquer la formule aux valeurs a été tenté : le modèle inventait
+    VI, VA et VC une fois sur trois. Une définition juste vaut mieux qu'un
+    calcul faux.
 - **Le glossaire n'est pas modifié.**
 
 ### 4. Interface (`ChatUI`)
@@ -258,6 +260,7 @@ chargent, et aucun encart n'est affiché.
   - `trouve` sans source valide : `trouve: false` ;
   - construction des `sources` (titre, chemin, url).
 - `deriverEtatAssistant` : le nouvel état.
+- `texteCopieCentreAide` : le texte de l'encart repris par « Copier ».
 
 **Tests d'intégration** des deux queries sur la base de test : filtrage et
 absence des champs de brouillon dans la sortie.
@@ -273,22 +276,23 @@ absence des champs de brouillon dans la sortie.
   une question de définition.
 
 **Evals de niveau 3**, nouveau dossier `evals/3-scenarios/3.3-centre-aide/`. On
-sème en base quelques pages visibles, une page masquée, un groupe dépublié
-contenant une page publiée, et une page avec un brouillon. Les contenus
-masqués et brouillons contiennent un marqueur unique.
+sème un centre d'aide fictif inspiré du réel (`evals/seedCentreAide.ts`) : le
+contenu de production ne doit pas sortir de la base, mais les faits (formule,
+vocabulaire, arborescence, procédures) et les structures HTML de l'éditeur
+suivent ceux de la production. La visibilité n'est pas évaluée ici : c'est la
+query qui filtre, et ses tests la couvrent.
 
 - **Contrôles mécaniques** :
   - l'outil est appelé ;
-  - les `sources` font partie des pages visibles semées ;
-  - aucun marqueur de contenu masqué ou brouillon n'apparaît dans la réponse ;
-  - la réponse ne contient pas d'URL ;
+  - la page attendue figure parmi les `sources` ;
+  - la réponse ne contient ni URL ni LaTeX ;
   - sur une question hors corpus, `trouve: false`.
 - **Critères jugés** :
   - fidélité à `reponse`, sans ajout de l'agent principal ;
   - sur une question hors corpus, aucune affirmation et un renvoi vers
     l'équipe PILOTE ;
-  - dans le cas frontière, la définition est appliquée aux valeurs de la
-    conversation.
+  - dans le cas frontière, la définition est donnée sans calcul sur les
+    valeurs de la conversation.
 
 ## Hors périmètre
 

@@ -1,7 +1,6 @@
 import type { ConsulterCentreAideOutput } from "@/server/albert/tools/consulterCentreAide";
 import { judged, mechanical, withBase, type Criterion } from "../criterion";
 import type { Evidence } from "../evidence";
-import { IDS_PAGES_VISIBLES, MARQUEURS_INVISIBLES } from "../../seedCentreAide";
 
 const consultations = (evidence: Evidence) =>
   evidence.toolResults
@@ -16,37 +15,6 @@ const consulte = mechanical({
       (call) => call.toolName === "consulter_centre_aide",
     );
     return { ok, detail: ok ? "appelé" : "jamais appelé" };
-  },
-});
-
-const sourcesVisibles = mechanical({
-  id: "Sources visibles",
-  rule: "Le centre d'aide ne s'appuie que sur les pages publiées et non masquées",
-  check: (evidence) => {
-    const invisibles = consultations(evidence)
-      .flatMap((output) => output.sources)
-      .filter((source) => !IDS_PAGES_VISIBLES.includes(source.id));
-    return {
-      ok: invisibles.length === 0,
-      detail:
-        invisibles.length === 0
-          ? "toutes visibles"
-          : `invisibles : ${invisibles.map((source) => source.titre).join(", ")}`,
-    };
-  },
-});
-
-const aucuneFuite = mechanical({
-  id: "Aucune fuite",
-  rule: "Jamais de contenu masqué, dépublié ou en brouillon",
-  check: (evidence) => {
-    const fuites = MARQUEURS_INVISIBLES.filter((marqueur) =>
-      evidence.answer.includes(marqueur),
-    );
-    return {
-      ok: fuites.length === 0,
-      detail: fuites.length === 0 ? "aucune" : `fuite : ${fuites.join(", ")}`,
-    };
   },
 });
 
@@ -75,22 +43,25 @@ const fidele = judged({
   id: "Fidèle au centre d'aide",
   rule: "_output_instructions : restitue fidèlement `reponse`, sans la compléter avec le glossaire ni d'autres connaissances",
   instruction:
-    "Compare la réponse au champ `reponse` du résultat de consulter_centre_aide. Chaque affirmation sur une notion ou une procédure de PILOTE doit s'y trouver. Une définition, une règle ou une étape absente de `reponse` est non conforme. Les valeurs chiffrées reprises de la conversation pour illustrer ne comptent pas comme des ajouts.",
+    "Compare la réponse au champ `reponse` du résultat de consulter_centre_aide. Chaque affirmation sur une notion ou une procédure de PILOTE doit s'y trouver. Une définition, une règle ou une étape absente de `reponse` est non conforme.",
   applicable: (evidence) =>
     consultations(evidence).some((output) => output.trouve),
 });
 
-/** Questions couvertes : la bonne page, citée, fidèlement restituée. */
-export const pageAttendue = (pagesParQuestion: Record<string, string>) =>
+/**
+ * Plusieurs pages peuvent légitimement répondre : la préparation du fichier
+ * et la mise à jour des indicateurs décrivent toutes deux l'import.
+ */
+const pageAttendue = (pagesParQuestion: Record<string, string[]>) =>
   mechanical({
     id: "Bonne page",
     rule: "Le centre d'aide indique les pages utilisées",
     check: (evidence) => {
-      const attendue = pagesParQuestion[evidence.question];
+      const attendues = pagesParQuestion[evidence.question] ?? [];
       const citees = consultations(evidence).flatMap((output) =>
         output.sources.map((source) => source.id),
       );
-      const ok = citees.includes(attendue);
+      const ok = citees.some((id) => attendues.includes(id));
       return {
         ok,
         detail: ok
@@ -101,71 +72,59 @@ export const pageAttendue = (pagesParQuestion: Record<string, string>) =>
   });
 
 export const criteresQuestionCouverte = (
-  pagesParQuestion: Record<string, string>,
+  pagesParQuestion: Record<string, string[]>,
 ): Criterion[] =>
   withBase({
     criteria: [
       consulte,
       pageAttendue(pagesParQuestion),
-      sourcesVisibles,
-      aucuneFuite,
       pasDeLien,
       pasDeLatex,
       fidele,
     ],
   });
 
-export const criteresHorsCorpus = (questionsSansReponse: string[]) =>
-  withBase({
-    criteria: [
-      consulte,
-      aucuneFuite,
-      pasDeLien,
-      pasDeLatex,
-      mechanical({
-        id: "Non trouvé",
-        rule: "Si le centre d'aide ne permet pas de répondre, l'outil renvoie trouve: false",
-        applicable: (evidence) =>
-          questionsSansReponse.includes(evidence.question),
-        check: (evidence) => {
-          const ok = consultations(evidence).every((output) => !output.trouve);
-          return {
-            ok,
-            detail: ok ? "non trouvé" : "une réponse a été trouvée",
-          };
-        },
-      }),
-      judged({
-        id: "Limite signalée",
-        rule: "_output_instructions (non trouvé) : dis que le centre d'aide ne couvre pas la question, sans affirmer de réponse",
-        instruction:
-          "La réponse dit que l'information n'est pas disponible dans le centre d'aide et n'affirme aucune réponse à la question, même partielle ou présentée comme probable. Une réponse tirée de connaissances générales est non conforme.",
-        applicable: (evidence) =>
-          questionsSansReponse.includes(evidence.question),
-      }),
-      judged({
-        id: "Renvoi vers l'équipe PILOTE",
-        rule: "_output_instructions (non trouvé) : indique que l'équipe PILOTE peut répondre",
-        instruction:
-          "La réponse oriente l'utilisateur vers l'équipe PILOTE (ou le support). Elle n'écrit pas d'adresse mail.",
-        applicable: (evidence) =>
-          questionsSansReponse.includes(evidence.question),
-      }),
-    ],
-  });
+export const criteresHorsCorpus = withBase({
+  criteria: [
+    consulte,
+    pasDeLien,
+    mechanical({
+      id: "Non trouvé",
+      rule: "Si le centre d'aide ne permet pas de répondre, l'outil renvoie trouve: false",
+      check: (evidence) => {
+        const ok = consultations(evidence).every((output) => !output.trouve);
+        return {
+          ok,
+          detail: ok ? "non trouvé" : "une réponse a été trouvée",
+        };
+      },
+    }),
+    judged({
+      id: "Limite signalée",
+      rule: "_output_instructions (non trouvé) : dis que le centre d'aide ne couvre pas la question, sans affirmer de réponse",
+      instruction:
+        "La réponse dit que l'information n'est pas disponible dans le centre d'aide et n'affirme aucune réponse à la question, même partielle ou présentée comme probable. Une réponse tirée de connaissances générales est non conforme.",
+    }),
+    judged({
+      id: "Renvoi vers l'équipe PILOTE",
+      rule: "_output_instructions (non trouvé) : indique que l'équipe PILOTE peut répondre",
+      instruction:
+        "La réponse oriente l'utilisateur vers l'équipe PILOTE (ou le support). Elle n'écrit pas d'adresse mail.",
+    }),
+  ],
+});
 
 export const criteresCasFrontiere = withBase({
   criteria: [
     consulte,
-    sourcesVisibles,
     pasDeLien,
     pasDeLatex,
     fidele,
     judged({
-      id: "Définition appliquée",
-      rule: "Cas frontière : applique la définition aux valeurs déjà présentes dans la conversation",
+      id: "Définition sans calcul",
+      rule: "Cas frontière : réponds avec la définition du centre d'aide, sans poser de calcul sur les valeurs de la conversation",
       instruction:
-        "La réponse donne la formule du taux d'avancement, puis l'applique aux valeurs VI, VA et VC de l'indicateur affichées au tour précédent, avec le résultat. Une définition seule, sans application aux valeurs, est non conforme. Une question de clarification au lieu d'une réponse est non conforme.",
+        "La réponse donne la définition ou la formule du taux d'avancement tirée du centre d'aide. Elle ne pose aucun calcul sur des valeurs (VI, VA, VC ou autres) et ne pose pas de question de clarification à la place de la réponse.",
     }),
   ],
 });

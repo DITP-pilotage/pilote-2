@@ -1,16 +1,18 @@
 import { scenarioEval } from "../scenarioEval";
-import { PAGE_IMPORT, PAGE_TAUX, seedCentreAide } from "../../seedCentreAide";
+import {
+  PAGE_MISE_A_JOUR_INDICATEURS,
+  PAGE_PREPARER_FICHIER,
+  PAGE_TAUX_AVANCEMENT,
+  seedCentreAide,
+} from "../../seedCentreAide";
 import { criteresQuestionCouverte } from "./centreAide.criteria";
 
 /**
  * Scénario « Question couverte par le centre d'aide » (PIL-1863). Une
  * définition que le glossaire du prompt connaît aussi, et une procédure qu'il
- * ne connaît pas. Le centre d'aide semé contient une page masquée, un groupe
- * dépublié et un brouillon, chacun marqué : rien ne doit en sortir.
+ * ne connaît pas, sur un centre d'aide fictif inspiré du réel.
  *
- * Référence observée le 2026-10-15 : 99 %. Seul échec, « Fidèle au centre
- * d'aide » 5/6 : sur l'import, l'agent ajoute des détails absents de la page
- * (format Excel ou CSV, colonnes du fichier).
+ * Référence observée le 2026-10-15 : 100 %.
  */
 
 const QUESTION_TAUX =
@@ -22,8 +24,8 @@ scenarioEval({
   group: "aide",
   seedSupplementaire: seedCentreAide,
   criteria: criteresQuestionCouverte({
-    [QUESTION_TAUX]: PAGE_TAUX,
-    [QUESTION_IMPORT]: PAGE_IMPORT,
+    [QUESTION_TAUX]: [PAGE_TAUX_AVANCEMENT],
+    [QUESTION_IMPORT]: [PAGE_PREPARER_FICHIER, PAGE_MISE_A_JOUR_INDICATEURS],
   }),
   cases: [
     {
@@ -34,7 +36,7 @@ scenarioEval({
     },
     {
       question: QUESTION_IMPORT,
-      reason: "procédure, avec une ancienne version masquée",
+      reason: "procédure répartie sur deux pages",
       truthScope: { territoires: ["REG-53"] },
       expected: [{ toolName: "consulter_centre_aide" }],
     },
