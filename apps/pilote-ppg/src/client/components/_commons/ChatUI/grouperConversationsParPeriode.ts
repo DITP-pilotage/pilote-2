@@ -19,6 +19,40 @@ const estCetteSemaine = ({
   maintenant: Date;
 }) => debutDeJournee(maintenant) - debutDeJournee(date) < 7 * UN_JOUR_MS;
 
+const estMemeAnnee = ({ date, maintenant }: { date: Date; maintenant: Date }) =>
+  date.getFullYear() === maintenant.getFullYear();
+
+const estCeMois = ({ date, maintenant }: { date: Date; maintenant: Date }) =>
+  estMemeAnnee({ date, maintenant }) &&
+  date.getMonth() === maintenant.getMonth();
+
+const libelleDuMois = ({
+  date,
+  maintenant,
+}: {
+  date: Date;
+  maintenant: Date;
+}): string => {
+  const libelle = date.toLocaleDateString("fr-FR", {
+    month: "long",
+    ...(estMemeAnnee({ date, maintenant }) ? {} : { year: "numeric" }),
+  });
+  return libelle.charAt(0).toUpperCase() + libelle.slice(1);
+};
+
+const libelleDePeriode = ({
+  date,
+  maintenant,
+}: {
+  date: Date;
+  maintenant: Date;
+}): string => {
+  if (estAujourdhui({ date, maintenant })) return "Aujourd'hui";
+  if (estCetteSemaine({ date, maintenant })) return "Cette semaine";
+  if (estCeMois({ date, maintenant })) return "Ce mois-ci";
+  return libelleDuMois({ date, maintenant });
+};
+
 export type GroupeConversations<T> = {
   libelle: string;
   conversations: T[];
@@ -31,24 +65,22 @@ export const grouperConversationsParPeriode = <T extends { updatedAt: Date }>({
   conversations: T[];
   maintenant: Date;
 }): GroupeConversations<T>[] => {
-  const groupes: GroupeConversations<T>[] = [
-    { libelle: "Aujourd'hui", conversations: [] },
-    { libelle: "Cette semaine", conversations: [] },
-    { libelle: "Plus ancien", conversations: [] },
-  ];
+  const groupes: GroupeConversations<T>[] = [];
 
   for (const conversation of conversations) {
-    const date = new Date(conversation.updatedAt);
-    if (estAujourdhui({ date, maintenant })) {
-      groupes[0].conversations.push(conversation);
-    } else if (estCetteSemaine({ date, maintenant })) {
-      groupes[1].conversations.push(conversation);
+    const libelle = libelleDePeriode({
+      date: new Date(conversation.updatedAt),
+      maintenant,
+    });
+    const dernierGroupe = groupes.at(-1);
+    if (dernierGroupe?.libelle === libelle) {
+      dernierGroupe.conversations.push(conversation);
     } else {
-      groupes[2].conversations.push(conversation);
+      groupes.push({ libelle, conversations: [conversation] });
     }
   }
 
-  return groupes.filter((groupe) => groupe.conversations.length > 0);
+  return groupes;
 };
 
 export const formaterDateConversation = ({
@@ -66,8 +98,8 @@ export const formaterDateConversation = ({
     });
   }
   return valeur.toLocaleDateString("fr-FR", {
-    weekday: "short",
-    day: "2-digit",
+    day: "numeric",
     month: "short",
+    ...(estMemeAnnee({ date: valeur, maintenant }) ? {} : { year: "numeric" }),
   });
 };

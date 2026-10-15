@@ -10,6 +10,8 @@ import { clsxm } from "@/utils/clsxm";
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
 // à la ToolSet dans src/app/api/albert/chat/route.ts.
 const TOOL_NAMES = [
+  "clarify_with_choices",
+  // Ancien nom, encore présent dans les conversations antérieures au renommage.
   "display_choices",
   "create_dashboard",
   "compose_dashboard",
@@ -36,7 +38,7 @@ function countParens(line: string): number {
 
 /**
  * Supprime du texte tout bloc ressemblant à un appel d'outil en pseudo-code
- * (ex: "display_choices({...})" écrit en texte au lieu d'être invoqué via le
+ * (ex: "clarify_with_choices({...})" écrit en texte au lieu d'être invoqué via le
  * mécanisme de function calling). Parfois, les petits modèles reproduisent la
  * syntaxe de tool call telle qu'ils l'ont vue en training, et le bloc apparaît
  * comme du texte brut à l'utilisateur. Ce helper est un filet de sécurité.

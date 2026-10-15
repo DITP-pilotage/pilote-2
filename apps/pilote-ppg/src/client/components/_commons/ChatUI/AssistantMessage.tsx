@@ -33,7 +33,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   isStreaming: boolean;
   /** Ce que l'assistant est en train de faire, affiché sous sa signature. */
   etat?: EtatAssistant | null;
-  /** Rend la question à choix (display_choices) dans le fil. */
+  /** Rend la question à choix (clarify_with_choices) dans le fil. */
   afficherChoix?: boolean;
   /** Boutons d'évaluation à afficher à côté de « Copier ». */
   evaluation?: ReactNode;
@@ -129,22 +129,21 @@ export const AssistantMessage = memo(function AssistantMessage({
           return <DashboardLoader key={index} />;
         }
 
-        if (
-          part.type === "tool-display_choices" &&
-          afficherChoix &&
-          part.state === "output-available"
-        ) {
-          return (
+        return null;
+      })}
+
+      {/* Les choix ferment la réponse, même si le modèle a écrit du texte après l'appel. */}
+      {afficherChoix &&
+        parts.map((part, index) =>
+          part.type === "tool-clarify_with_choices" &&
+          part.state === "output-available" ? (
             <ChoicesInline
               choices={part.output.choices}
               key={index}
               question={part.output.question}
             />
-          );
-        }
-
-        return null;
-      })}
+          ) : null,
+        )}
 
       {!isStreaming && (canCopy || evaluation) && (
         <div className="flex flex-wrap items-center gap-1">
