@@ -4,6 +4,10 @@ import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { ChoicesInline } from "@/components/_commons/ChatUI/ChoicesInline";
 import {
+  CentreAideEncart,
+  derniereConsultationCentreAide,
+} from "@/components/_commons/ChatUI/CentreAideEncart";
+import {
   copyResponse,
   markCopyableBlock,
 } from "@/components/_commons/ChatUI/copyResponse";
@@ -46,6 +50,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   const rootRef = useRef<HTMLDivElement>(null);
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
+  const consultationCentreAide = derniereConsultationCentreAide(parts);
 
   const shouldHideText = parts.some((part) => {
     const toolName = part.type.startsWith("tool-") ? part.type.slice(5) : null;
@@ -143,6 +148,11 @@ export const AssistantMessage = memo(function AssistantMessage({
 
         return null;
       })}
+
+      {/* Sous le texte, qui suit l'appel de l'outil dans les parts. */}
+      {consultationCentreAide && (
+        <CentreAideEncart output={consultationCentreAide} />
+      )}
 
       {/* Les choix ferment la réponse, même si le modèle a écrit du texte après l'appel. */}
       {afficherChoix &&

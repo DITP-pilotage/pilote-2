@@ -155,7 +155,10 @@ describe("deriverEtatAssistant", () => {
     ]);
 
     // When
-    const etat = deriverEtatAssistant({ message: dernier, status: "streaming" });
+    const etat = deriverEtatAssistant({
+      message: dernier,
+      status: "streaming",
+    });
 
     // Then
     expect(etat).toBe("consulte-le-centre-d-aide");

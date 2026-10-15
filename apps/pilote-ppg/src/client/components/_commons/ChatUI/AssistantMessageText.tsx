@@ -101,6 +101,46 @@ export function stripParagraphesVides(text: string): string {
     .join("\n");
 }
 
+/**
+ * Un lien vers une page de PILOTE depuis le chat : il navigue sans recharger
+ * et réduit la conversation dans le dock.
+ */
+export const LienInterneAssistant = ({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className?: string;
+  children?: ReactNode;
+}) => {
+  const router = useRouter();
+  const { minimize } = useAlbertConversation();
+  const track = useChatTracking();
+  const trackLink = () => track(linkEvent(href));
+  const trackMiddleClick = (event: MouseEvent) => {
+    if (event.button === 1) trackLink();
+  };
+
+  return (
+    <a
+      className={className}
+      href={href}
+      onAuxClick={trackMiddleClick}
+      onClick={(event) => {
+        trackLink();
+        // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
+        if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
+        event.preventDefault();
+        minimize();
+        router.push(href);
+      }}
+    >
+      {children}
+    </a>
+  );
+};
+
 const MarkdownLink = ({
   href,
   children,
@@ -108,8 +148,6 @@ const MarkdownLink = ({
   href?: string;
   children?: ReactNode;
 }) => {
-  const router = useRouter();
-  const { minimize } = useAlbertConversation();
   const track = useChatTracking();
   const trackLink = () => track(linkEvent(href));
   const trackMiddleClick = (event: MouseEvent) => {
@@ -130,22 +168,7 @@ const MarkdownLink = ({
     );
   }
 
-  return (
-    <a
-      href={href}
-      onAuxClick={trackMiddleClick}
-      onClick={(event) => {
-        trackLink();
-        // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
-        if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
-        event.preventDefault();
-        minimize();
-        router.push(href);
-      }}
-    >
-      {children}
-    </a>
-  );
+  return <LienInterneAssistant href={href}>{children}</LienInterneAssistant>;
 };
 
 const components = { a: MarkdownLink };
