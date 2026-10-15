@@ -39,6 +39,7 @@ const presenterEnHistoriqueIndicateurExportContrat = (
     historiqueIndicateurPourExport.chantierNom || NON_RENSEIGNEE,
     historiqueIndicateurPourExport.chantierId || NON_RENSEIGNEE,
     historiqueIndicateurPourExport.nom || NON_APPLICABLE,
+    historiqueIndicateurPourExport.id || NON_RENSEIGNEE,
     formaterNumériqueOuValeurNonRenseignee(
       historiqueIndicateurPourExport.valeurInitiale,
       historiqueIndicateurPourExport.estApplicable,
@@ -79,6 +80,7 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
       "Chantier",
       "Chantier Id",
       "Indicateur",
+      "Indicateur Id",
       "Valeur initiale",
       "Date valeur initiale",
       `Valeur cible année ${jalon}`,

@@ -24,6 +24,7 @@ export type IndicateurPourExport = {
   périmètreIds: string[];
   météo: Meteo | null;
   nom: Indicateur["nom"] | null;
+  id: Indicateur["id"] | null;
   valeurInitiale: number | null;
   dateValeurInitiale: string | null;
   valeurAvancement: number | null;

@@ -14,6 +14,7 @@ export type HistoriqueIndicateurPourExport = {
   chantierNom: Chantier["nom"] | null;
   chantierId: Chantier["id"] | null;
   nom: Indicateur["nom"] | null;
+  id: Indicateur["id"] | null;
   valeurInitiale: DétailsIndicateur["valeurInitiale"] | null;
   dateValeurInitiale: DétailsIndicateur["dateValeurInitiale"] | null;
   valeurCibleAnnuelle: DétailsIndicateur["valeurCible"] | null;
