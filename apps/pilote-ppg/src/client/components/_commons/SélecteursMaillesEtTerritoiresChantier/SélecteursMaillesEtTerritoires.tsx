@@ -144,7 +144,8 @@ export const SélecteursMaillesEtTerritoires: FunctionComponent<
       appearance="striped"
       className={clsxm(
         "w-full",
-        direction === "horizontal" && "flex-row items-center gap-2",
+        direction === "horizontal" &&
+          "flex-row items-center gap-2 [&>label]:whitespace-nowrap",
       )}
       contentClassName="w-[var(--radix-select-trigger-width)] md:min-w-0 max-w-none max-h-96 overflow-hidden rounded-none border-dsfr-grey-200 p-0 [&_[data-radix-select-viewport]]:p-0"
       label={direction === "horizontal" ? "Territoire :" : "Territoire"}
@@ -155,7 +156,10 @@ export const SélecteursMaillesEtTerritoires: FunctionComponent<
         avecFrance,
         territoiresApplicables,
       )}
-      triggerClassName="flex-1 w-full"
+      triggerClassName={clsxm(
+        "flex-1 w-full",
+        direction === "horizontal" && "min-w-64",
+      )}
       value={territoireCode}
     />
   );
