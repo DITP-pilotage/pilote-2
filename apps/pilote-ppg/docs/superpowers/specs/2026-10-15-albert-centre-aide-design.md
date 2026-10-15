@@ -84,9 +84,13 @@ comme il importe déjà `chantiers`. Une query par besoin d'outil, comme dans
 
 - `chemin` : la liste des titres des groupes ancêtres, de la racine vers la
   page.
-- `intertitres` : les titres de niveau 1 à 3 du contenu, extraits du markdown
-  converti. L'éditeur autorise les niveaux 1 à 6, et les titres d'accordéon
-  passent en `####`.
+- `intertitres` : les titres de tous niveaux du contenu, titres d'accordéon
+  compris, sans doublon, extraits du markdown converti. Le centre d'aide réel
+  structure ses pages en `h4` à `h6` (la FAQ pose ses questions en `h5`/`h6`) :
+  se limiter aux niveaux 1 à 3 laissait 39 pages sur 43 sans intertitre.
+- Le markdown est compacté pour le LLM : un `<br>` devient un simple retour,
+  un `<br>` en tête de titre est ignoré, les lignes vides sont regroupées et
+  le texte n'est pas échappé.
 - `url` : `/centre-aide-pilote?article=<id>`.
 
 **`GetPagesCentreAideQuery.execute({ ids })`** renvoie
