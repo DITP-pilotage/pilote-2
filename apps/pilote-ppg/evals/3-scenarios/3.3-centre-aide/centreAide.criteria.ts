@@ -50,6 +50,18 @@ const aucuneFuite = mechanical({
   },
 });
 
+const pasDeLatex = mechanical({
+  id: "Pas de LaTeX",
+  rule: "Formules : n'écris jamais de LaTeX, le chat ne l'affiche pas",
+  check: (evidence) => {
+    const latex = /\\(frac|text|times|cdot)\b|\\\[|\\\(/.exec(evidence.answer);
+    return {
+      ok: latex === null,
+      detail: latex === null ? "aucun" : `LaTeX : ${latex[0]}`,
+    };
+  },
+});
+
 const pasDeLien = mechanical({
   id: "Pas de lien dans le texte",
   rule: "N'écris jamais de lien vers le centre d'aide : les pages sont affichées sous ta réponse",
@@ -98,6 +110,7 @@ export const criteresQuestionCouverte = (
       sourcesVisibles,
       aucuneFuite,
       pasDeLien,
+      pasDeLatex,
       fidele,
     ],
   });
@@ -108,6 +121,7 @@ export const criteresHorsCorpus = (questionsSansReponse: string[]) =>
       consulte,
       aucuneFuite,
       pasDeLien,
+      pasDeLatex,
       mechanical({
         id: "Non trouvé",
         rule: "Si le centre d'aide ne permet pas de répondre, l'outil renvoie trouve: false",
@@ -145,6 +159,7 @@ export const criteresCasFrontiere = withBase({
     consulte,
     sourcesVisibles,
     pasDeLien,
+    pasDeLatex,
     fidele,
     judged({
       id: "Définition appliquée",

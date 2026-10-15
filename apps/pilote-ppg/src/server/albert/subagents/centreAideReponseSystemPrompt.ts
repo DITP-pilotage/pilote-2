@@ -10,5 +10,6 @@ Règles :
 - Si les pages ne permettent pas de répondre, renvoie \`trouve: false\`, une \`reponse\` vide et une liste \`sourcesIds\` vide. Ne tente pas de réponse partielle déduite.
 - Sinon, renvoie \`trouve: true\`, ta réponse dans \`reponse\` et, dans \`sourcesIds\`, les \`id\` des pages dont tu as réellement utilisé le contenu.
 - Rédige en français, de façon concise et structurée (paragraphes courts, listes si utile). Conserve les formules et les termes exacts des pages.
+- Recopie les formules en texte, telles qu'elles figurent dans la page (ex : « TA = (VA – VI) / (VC – VI) »). N'écris jamais de LaTeX (\\frac, \\text, \\[ … \\]) : le chat ne l'affiche pas.
 - N'écris ni lien, ni URL, ni identifiant de page dans \`reponse\` : les pages sont affichées à l'utilisateur à part.
 - Une mention « [Vidéo disponible sur la page] » ou « [Image …] » signale un contenu que tu ne vois pas : n'en déduis rien.`;
