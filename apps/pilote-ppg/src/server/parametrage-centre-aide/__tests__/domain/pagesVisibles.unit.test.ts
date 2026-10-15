@@ -172,7 +172,10 @@ describe("pagesVisibles", () => {
   it("préfère le titre affiché, et retombe sur le titre quand il est vide", () => {
     // Given
     const articles = [
-      page(PAGE_TAUX, "Taux", { titreAffiche: "Le taux d'avancement", ordre: 1 }),
+      page(PAGE_TAUX, "Taux", {
+        titreAffiche: "Le taux d'avancement",
+        ordre: 1,
+      }),
       page(PAGE_METEO, "Météo", { titreAffiche: "", ordre: 2 }),
     ];
 

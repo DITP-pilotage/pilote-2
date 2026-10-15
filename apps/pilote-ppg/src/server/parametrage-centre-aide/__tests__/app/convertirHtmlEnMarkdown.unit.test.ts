@@ -48,9 +48,7 @@ describe("convertirHtmlEnMarkdown", () => {
     const markdown = convertirHtmlEnMarkdown(html);
 
     // Then
-    expect(markdown).toBe(
-      "Avant\n\n[Vidéo disponible sur la page]\n\nAprès",
-    );
+    expect(markdown).toBe("Avant\n\n[Vidéo disponible sur la page]\n\nAprès");
   });
 
   it("remplace une iframe par une mention de vidéo", () => {

@@ -18,9 +18,7 @@ const estVisible = (article: ArticleCentreAide) =>
  * appliquée côté serveur. Un article invisible masque toute sa descendance,
  * et seuls les champs publiés sont lus.
  */
-export const pagesVisibles = (
-  articles: ArticleCentreAide[],
-): PageVisible[] => {
+export const pagesVisibles = (articles: ArticleCentreAide[]): PageVisible[] => {
   const enfantsVisibles = (parentId: string | null) =>
     articles
       .filter((article) => article.parentId === parentId && estVisible(article))
@@ -35,14 +33,14 @@ export const pagesVisibles = (
       // (`estGroupeSansContenu` dans `PageCentreAidePilote`).
       const page = article.contenu
         ? [
-              {
-                id: article.id,
-                titre: titreDe(article),
-                chemin,
-                contenu: article.contenu,
-              },
-            ]
-          : [];
+            {
+              id: article.id,
+              titre: titreDe(article),
+              chemin,
+              contenu: article.contenu,
+            },
+          ]
+        : [];
       return [...page, ...parcourir(article.id, [...chemin, titreDe(article)])];
     });
 
