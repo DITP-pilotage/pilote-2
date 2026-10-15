@@ -15,7 +15,6 @@ import { getContainer } from "@/server/dependances";
 import { loadBootstrap } from "@/server/app/bootstrap/loadBootstrap";
 import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchParams";
 import { PageAccueil } from "@/components/PageAccueil/PageAccueil";
-import { estEmailAutoriseAskAITerritoire } from "@/server/albert/emailsAutorisesAskAITerritoire";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -223,9 +222,12 @@ export const getServerSideProps = async (
     pageSize,
   );
 
-  const emailAutoriseAskAITerritoire = estEmailAutoriseAskAITerritoire(
-    session.user.email,
-  );
+  const accesAlbert = await getContainer("albertAccess")
+    .resolve("checkAlbertAccessUseCase")
+    .execute({
+      utilisateurId: session.user.id,
+      profil: session.profil ?? null,
+    });
 
   return {
     props: {
@@ -250,7 +252,7 @@ export const getServerSideProps = async (
       aDejaVuVideoAccueil: doitAfficherModaleVideoAccueil,
       doitAfficherLaModaleInfolettre,
       moyenneTerritoire,
-      emailAutoriseAskAITerritoire,
+      accesAlbert,
     },
   };
 };

@@ -36,7 +36,7 @@ export const PageAccueil: FunctionComponent<PageAccueilProps> = (props) => {
         axes={props.axes}
         aDejaVuVideoAccueil={props.aDejaVuVideoAccueil}
         doitAfficherLaModaleInfolettre={props.doitAfficherLaModaleInfolettre}
-        emailAutoriseAskAITerritoire={props.emailAutoriseAskAITerritoire}
+        accesAlbert={props.accesAlbert}
         jalon={props.jalon}
         mailleQuery={props.mailleQuery}
         mailleSelectionnee={props.mailleSelectionnee}

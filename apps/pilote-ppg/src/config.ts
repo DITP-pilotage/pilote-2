@@ -220,31 +220,6 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI",
     },
-    askAIDitpAdmin: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN",
-    },
-    askAIEquipeDirProjet: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
-    },
-    askAIDitpPilotage: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE",
-    },
-    askAITerritoire: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE",
-    },
-    askAICoordinateur: {
-      format: Boolean,
-      default: false,
-      env: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
-    },
     accesPilote: {
       format: Boolean,
       default: false,
@@ -410,12 +385,6 @@ const config = convict({
     default: "2000-01-31",
     doc: "Date (mois-année) avant laquelle afficher encore les VA,VC,TA de l année dernière",
     env: "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
-  },
-  askAITerritoireEmails: {
-    format: String,
-    default: "",
-    doc: "Emails autorisés à utiliser Ask AI sur les territoires, séparés par des virgules.",
-    env: "ASK_AI_TERRITOIRE_EMAILS",
   },
   e2e: {
     username: {
