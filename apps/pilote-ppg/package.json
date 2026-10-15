@@ -98,6 +98,7 @@
     "axios": "^1.20.0",
     "chroma-js": "^3.2.0",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "convict": "6.2.5",
     "convict-format-with-validator": "6.2.0",
     "csv-parse": "^7.0.2",
