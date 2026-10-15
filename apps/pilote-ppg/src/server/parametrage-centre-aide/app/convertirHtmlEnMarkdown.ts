@@ -47,9 +47,7 @@ const creerService = () => {
   service.addRule("image", {
     filter: "img",
     replacement: (_contenu, node) => {
-      const texteAlternatif = (node as HTMLElement)
-        .getAttribute("alt")
-        ?.trim();
+      const texteAlternatif = (node as HTMLElement).getAttribute("alt")?.trim();
       return texteAlternatif
         ? `[Image : ${texteAlternatif}]`
         : "[Image disponible sur la page]";
