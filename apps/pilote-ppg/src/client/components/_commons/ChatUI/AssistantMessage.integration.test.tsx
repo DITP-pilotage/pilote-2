@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { userEvent } from "@testing-library/user-event";
 import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
+import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
 vi.mock("next/router", async () => await vi.importActual("next-router-mock"));
@@ -52,4 +54,33 @@ test("affiche les pages du centre d'aide sous la réponse terminée", () => {
 
   // Then
   expect(screen.getByText("Pour plus d'informations")).toBeInTheDocument();
+});
+
+test("copie les pages du centre d'aide avec le texte de la réponse", async () => {
+  // Given
+  const writeText = vi.fn().mockResolvedValue(undefined);
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: { writeText },
+  });
+  const message: PiloteUIMessage = {
+    ...messageAvecConsultation,
+    parts: [
+      ...messageAvecConsultation.parts,
+      { type: "text", text: "Le taux se calcule ainsi." },
+    ],
+  };
+  render(
+    <ChantierLinksProvider options={{ buildUrl: (id) => `/chantier/${id}` }}>
+      <AssistantMessage isStreaming={false} message={message} />
+    </ChantierLinksProvider>,
+  );
+
+  // When
+  await userEvent.click(screen.getByRole("button", { name: /Copier/ }));
+
+  // Then
+  expect(writeText).toHaveBeenCalledWith(
+    `Le taux se calcule ainsi.\n\nPour plus d'informations :\n- Le taux d'avancement : ${window.location.origin}/centre-aide-pilote?article=taux`,
+  );
 });

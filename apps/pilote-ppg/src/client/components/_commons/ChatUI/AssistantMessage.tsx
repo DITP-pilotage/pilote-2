@@ -20,6 +20,7 @@ import {
   estSourcePart,
   SourcesConsultees,
 } from "@/components/_commons/ChatUI/SourcesConsultees";
+import { texteCopieCentreAide } from "@/components/_commons/ChatUI/texteCopieCentreAide";
 import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
@@ -88,8 +89,20 @@ export const AssistantMessage = memo(function AssistantMessage({
         dimensions: { llm_call_id: llmCallIdOf(message) },
       });
 
+    const texte = [
+      extractMessageText(message),
+      ...(consultationCentreAide
+        ? [
+            texteCopieCentreAide({
+              output: consultationCentreAide,
+              origine: window.location.origin,
+            }),
+          ]
+        : []),
+    ].join("\n\n");
+
     trackCopy("select");
-    copyResponse({ root, text: extractMessageText(message) })
+    copyResponse({ root, text: texte })
       .then(() => {
         trackCopy("success");
         toast.success("Réponse copiée dans le presse-papiers", {
