@@ -142,4 +142,22 @@ describe("deriverEtatAssistant", () => {
     // Then
     expect(etat).toBe("genere-le-rapport");
   });
+
+  test("consulte le centre d'aide quand l'outil du centre d'aide est en cours", () => {
+    // Given
+    const dernier = message([
+      {
+        type: "tool-consulter_centre_aide",
+        toolCallId: "appel-1",
+        state: "input-available",
+        input: { question: "comment est calculé le taux d'avancement" },
+      },
+    ]);
+
+    // When
+    const etat = deriverEtatAssistant({ message: dernier, status: "streaming" });
+
+    // Then
+    expect(etat).toBe("consulte-le-centre-d-aide");
+  });
 });
