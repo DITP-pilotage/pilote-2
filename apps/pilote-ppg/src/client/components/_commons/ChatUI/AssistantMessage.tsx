@@ -137,8 +137,9 @@ export const AssistantMessage = memo(function AssistantMessage({
         return null;
       })}
 
-      {/* Sous le texte, qui suit l'appel de l'outil dans les parts. */}
-      {consultationCentreAide && (
+      {/* Sous le texte, qui suit l'appel de l'outil dans les parts, et une
+          fois ce texte rédigé : l'encart ferme la réponse. */}
+      {!isStreaming && consultationCentreAide && (
         <CentreAideEncart output={consultationCentreAide} />
       )}
 
