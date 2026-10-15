@@ -27,3 +27,6 @@
 
 # Historique local des runs Evalite (plusieurs dizaines de Mo)
 evals/evalite.db*
+
+# Données de la page publique des evals, générées par `pnpm eval:rapport`
+evals/rapport/site/data/

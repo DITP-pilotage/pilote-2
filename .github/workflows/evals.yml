@@ -1,0 +1,138 @@
+name: Evals de l'Assistant IA
+
+# Mesure la qualité de l'Assistant IA PILOTE dans le temps (PIL-1816). Les evals
+# ne bloquent aucune PR : elles produisent un rapport. Les runs de dev sont
+# publiés sur https://ditp-pilotage.github.io/pilote-2/docs/evals/, à côté de la
+# doc dbt ; ceux d'une autre branche (workflow_dispatch, pour tester une
+# modification de prompt) restent en artefact du run.
+
+on:
+  schedule:
+    # Lundi, 4 h UTC : un run complet sollicite longtemps l'API Albert, mutualisée
+    # entre les agents de l'État. Mieux vaut le faire hors des heures de travail.
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 24.20.0
+
+# Deux runs simultanés doubleraient le débit vers Albert, qui sature dès
+# 2 requêtes, et se disputeraient l'historique publié.
+concurrency:
+  group: evals
+  cancel-in-progress: false
+
+jobs:
+  evals:
+    name: "pilote-ppg: evals"
+    runs-on: ubuntu-26.04
+    # `maxConcurrency: 1` et 3 essais par cas : le run est long, borné par le
+    # débit d'Albert et non par le CPU.
+    timeout-minutes: 300
+    permissions:
+      contents: write
+    services:
+      postgres:
+        image: postgres:16.6-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        # Les evals refusent toute autre base que celle de .env.test.
+        ports:
+          - 7433:5432
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Initialize database
+        run: pnpm test:database:init
+
+      - name: Configure Albert API key
+        env:
+          ALBERT_API_KEY: ${{ secrets.ALBERT_API_KEY }}
+        run: printf 'ALBERT_API_KEY=%s\n' "$ALBERT_API_KEY" > apps/pilote-ppg/.env.evals.local
+
+      # Un cas en erreur (timeout, quota Albert) fait échouer Evalite, mais le
+      # JSON des résultats est écrit quand même : on publie le rapport, et le job
+      # passe en échec à la fin.
+      - name: Run evals
+        id: evals
+        continue-on-error: true
+        run: pnpm -F @pilote/ppg eval --outputPath evals/resultats.json --threshold 0
+
+      - name: Fetch published history
+        if: hashFiles('apps/pilote-ppg/evals/resultats.json') != ''
+        run: |
+          git fetch origin gh-pages --depth=1
+          git show FETCH_HEAD:docs/evals/data/historique.json > "$RUNNER_TEMP/historique.json" \
+            || echo "[]" > "$RUNNER_TEMP/historique.json"
+
+      - name: Build report
+        if: hashFiles('apps/pilote-ppg/evals/resultats.json') != ''
+        run: pnpm -F @pilote/ppg eval:rapport evals/resultats.json --commit "$GITHUB_SHA" --historique "$RUNNER_TEMP/historique.json"
+
+      - name: Upload report
+        if: hashFiles('apps/pilote-ppg/evals/rapport/site/data/rapport.json') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: evals-rapport-${{ github.run_number }}
+          path: |
+            apps/pilote-ppg/evals/rapport/site/
+            apps/pilote-ppg/evals/resultats.json
+          retention-days: 30
+
+      # Même mécanique que la doc dbt (pr-merged-dev.yml) : on bascule le checkout
+      # sur gh-pages, servie telle quelle par GitHub Pages, et on ne touche qu'à
+      # docs/evals.
+      - name: Publish report on GitHub Pages
+        if: github.ref == 'refs/heads/dev' && hashFiles('apps/pilote-ppg/evals/rapport/site/data/rapport.json') != ''
+        run: |
+          set -e
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          # Le site sort du checkout de dev avant la bascule sur gh-pages.
+          SITE="$RUNNER_TEMP/site-evals"
+          rm -rf "$SITE"
+          cp -R apps/pilote-ppg/evals/rapport/site "$SITE"
+
+          # La doc dbt peut pousser sur gh-pages pendant ce temps : le push est
+          # alors refusé, et on repart du nouvel état. Les deux ne touchent pas
+          # les mêmes dossiers.
+          for tentative in 1 2 3; do
+            git fetch origin gh-pages --depth=1
+            git checkout -f -B gh-pages FETCH_HEAD
+
+            rm -rf docs/evals
+            mkdir -p docs
+            cp -R "$SITE" docs/evals
+            git add docs/evals
+
+            if git diff --cached --quiet; then
+              echo "Aucun changement à publier."
+              exit 0
+            fi
+            git commit -m "Mise à jour du rapport des evals (${GITHUB_SHA::7})"
+            if git push origin gh-pages; then
+              exit 0
+            fi
+            echo "gh-pages a bougé pendant la publication, nouvelle tentative ($tentative/3)."
+            sleep 10
+          done
+          exit 1
+
+      - name: Fail if evals errored
+        if: steps.evals.outcome == 'failure'
+        run: |
+          echo "::error::Evalite a terminé en erreur (cas en échec ou crash). Le rapport reflète ce run partiel."
+          exit 1
