@@ -73,7 +73,7 @@ describe("createGetEvolutionIndicateurTool execute", () => {
   it("ajoute la construction de la valeur affichée quand elle diffère de la valeur importée", async () => {
     // Given
     const explicationValeurAffichee =
-      "Les valeurs sont importées mois par mois. La valeur affichée dans PILOTE est la somme des valeurs mensuelles depuis le début.";
+      "La valeur affichée dans PILOTE est la somme de toutes les valeurs importées jusqu'à la date de la valeur.";
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => ({
         id: "IND-001",

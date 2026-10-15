@@ -285,7 +285,7 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
   it("ajoute la construction de la valeur affichée quand la valeur affichée diffère de la valeur importée", async () => {
     // Given
     const explicationValeurAffichee =
-      "Les valeurs sont importées mois par mois. La valeur affichée dans PILOTE est la somme des valeurs mensuelles depuis janvier de l'année.";
+      "La valeur affichée dans PILOTE est la somme des valeurs importées depuis janvier de l'année, jusqu'à la date de la valeur.";
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => ({
         ...contexteParDefaut,

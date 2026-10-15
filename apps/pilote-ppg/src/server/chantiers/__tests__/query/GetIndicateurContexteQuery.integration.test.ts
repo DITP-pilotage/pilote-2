@@ -65,7 +65,7 @@ describe("GetIndicateurContexteQuery", () => {
 
       // Then
       expect(result?.explicationValeurAffichee).toEqual(
-        "Les valeurs sont importées mois par mois. La valeur affichée dans PILOTE est la somme des valeurs mensuelles depuis janvier de l'année.",
+        "La valeur affichée dans PILOTE est la somme des valeurs importées depuis janvier de l'année, jusqu'à la date de la valeur.",
       );
     }),
   );
