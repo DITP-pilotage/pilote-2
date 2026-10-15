@@ -51,6 +51,9 @@ describe("buildContentCopy", () => {
 
     // When
     const copy = buildContentCopy({ root });
+    // La conversion HTML lit la capture avec un FileReader : sans l'attendre, la
+    // lecture peut se terminer après le démontage de jsdom et faire échouer le run.
+    await copy?.html;
 
     // Then
     expect((await copy?.image)?.type).toStrictEqual("image/png");
