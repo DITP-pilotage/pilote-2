@@ -437,12 +437,12 @@ model metadata_parametrage_indicateurs {
   va_nat_op                         String?
   vc_nat_from                       String?
   vc_nat_op                         String?
-  param_vaca_decumul_from           String?
-  param_vaca_partition_date         String?
-  param_vaca_op                     String?
-  param_vacg_decumul_from           String?
-  param_vacg_partition_date         String?
-  param_vacg_op                     String?
+  param_vaca_decumul_from           String  @default("_")
+  param_vaca_partition_date         String  @default("_")
+  param_vaca_op                     String  @default("current_value")
+  param_vacg_decumul_from           String  @default("_")
+  param_vacg_partition_date         String  @default("_")
+  param_vacg_op                     String  @default("current_value")
   poids_pourcent_dept_declaree      Float?
   poids_pourcent_reg_declaree       Float?
   poids_pourcent_nat_declaree       Float?
