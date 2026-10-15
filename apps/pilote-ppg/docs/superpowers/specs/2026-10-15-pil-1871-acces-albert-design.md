@@ -165,7 +165,11 @@ Pas de tests front.
 
 ## Déploiement
 
-Avant la mise en prod, relever sur chaque environnement Scalingo les valeurs de `ASK_AI_TERRITOIRE_EMAILS` et des `NEXT_PUBLIC_FF_ASK_AI_*`, puis réactiver les accès à la main via l'interface après mise en prod, et supprimer ces variables des environnements.
+Avant la mise en prod, sur chaque environnement :
+
+1. Relever les valeurs Scalingo de `ASK_AI_TERRITOIRE_EMAILS` et des `NEXT_PUBLIC_FF_ASK_AI_*`.
+2. Relever aussi les surcharges en base : quand `featureFlipAdmin` est actif, `RecupererToutesLesVariablesContenuUseCase` fait primer la table `gestion_contenu` sur l'environnement, et ces 5 flips disparaissent de `/panel-administrateur/feature-flipping` après la mise en prod. Requête : `SELECT nom_variable_contenu, valeur_variable_contenu FROM gestion_contenu WHERE nom_variable_contenu LIKE 'NEXT_PUBLIC_FF_ASK_AI_%';` (ou capture de la page feature-flipping avant mise en prod). La valeur effective est la valeur en base si elle existe, sinon celle de l'environnement.
+3. Après la mise en prod, réactiver les accès à la main via l'interface, supprimer ces variables des environnements et les lignes orphelines `NEXT_PUBLIC_FF_ASK_AI_*` de `gestion_contenu`.
 
 ## Hors périmètre
 
