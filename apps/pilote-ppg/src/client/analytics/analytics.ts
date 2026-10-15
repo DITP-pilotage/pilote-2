@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   createBrowserAnalytics,
   createMutedAnalytics,
@@ -9,26 +10,29 @@ import {
   type DimensionSlots,
 } from "@/client/analytics/schema";
 
-const isPositiveInteger = (value: unknown): value is number =>
-  typeof value === "number" && Number.isInteger(value) && value > 0;
+const dimensionSlotsSchema = z.record(z.string(), z.unknown());
+
+const slotSchema = z.number().int().positive();
+
+const parseJson = (raw: string) => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return undefined;
+  }
+};
 
 export const parseDimensionSlots = (
   raw: string | undefined,
 ): DimensionSlots => {
   if (!raw) return {};
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    return {};
-  }
-  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed))
-    return {};
+  const result = dimensionSlotsSchema.safeParse(parseJson(raw));
+  if (!result.success) return {};
 
   const slots: DimensionSlots = {};
   for (const dimension of ANALYTICS_DIMENSIONS) {
-    const slot: unknown = Reflect.get(parsed, dimension);
-    if (isPositiveInteger(slot)) slots[dimension] = slot;
+    const slot = slotSchema.safeParse(result.data[dimension]);
+    if (slot.success) slots[dimension] = slot.data;
   }
   return slots;
 };

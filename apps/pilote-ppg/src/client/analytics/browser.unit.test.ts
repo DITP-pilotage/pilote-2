@@ -6,7 +6,7 @@ import type {
 
 const config: AnalyticsConfig = {
   matomoUrl: "https://stats.example.org/",
-  siteId: "103",
+  siteId: "42",
   dimensionSlots: {},
 };
 

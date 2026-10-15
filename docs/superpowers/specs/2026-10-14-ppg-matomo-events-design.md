@@ -12,7 +12,7 @@ Donner à pilote-ppg un émetteur d'événements produit vers Matomo, avec un co
 - **Code porté dans ppg**, pas importé de kpilote (ppg n'utilise aucun package `kpilote-*`). Une mutualisation éventuelle fera l'objet d'un refacto ultérieur.
 - **Correspondance dimension → ID Matomo par variable d'env**, avec repli dans `e_n` pour toute dimension sans ID : le socle reste fonctionnel quelle que soit la configuration Matomo de l'environnement.
 
-## Dimensions Matomo (site 103, créées)
+## Dimensions Matomo (créées)
 
 Le paramètre de l'API de tracking est `dimension<idcustomdimension>`. Les identifiants ne figurent pas dans le dépôt : ils sont lus depuis `NEXT_PUBLIC_MATOMO_DIMENSIONS` (JSON `{"<dimension>":<idcustomdimension>}`), renseignée dans l'env de chaque environnement à partir de l'admin Matomo.
 

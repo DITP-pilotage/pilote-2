@@ -150,7 +150,7 @@ import type {
 
 const config: AnalyticsConfig = {
   matomoUrl: "https://stats.example.org",
-  siteId: "103",
+  siteId: "42",
   dimensionSlots: { profil_pilote: 11, conversation_id: 12 },
 };
 
@@ -168,7 +168,7 @@ describe("buildEventRequest", () => {
   it("transmet la catégorie, l'action, le nom, le site et la page", () => {
     const params = parse(buildEventRequest(event, config, context));
 
-    expect(params.get("idsite")).toBe("103");
+    expect(params.get("idsite")).toBe("42");
     expect(params.get("rec")).toBe("1");
     expect(params.get("apiv")).toBe("1");
     expect(params.get("e_c")).toBe("assistant_ia");
@@ -361,7 +361,7 @@ import type {
 
 const config: AnalyticsConfig = {
   matomoUrl: "https://stats.example.org/",
-  siteId: "103",
+  siteId: "42",
   dimensionSlots: {},
 };
 
