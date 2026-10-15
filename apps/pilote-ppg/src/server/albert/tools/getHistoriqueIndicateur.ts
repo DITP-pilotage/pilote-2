@@ -5,7 +5,6 @@ import {
   GetHistoriqueIndicateurTerritoireQuery,
   type GroupeHistoriqueIndicateur,
 } from "@/server/chantiers/query/GetHistoriqueIndicateurTerritoireQuery";
-import { GetEvolutionIndicateurTerritoireQuery } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { PROPOSITION_TYPES_EVENEMENT } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
@@ -35,10 +34,6 @@ export const getHistoriqueIndicateurInputSchema = z.object({
     ),
 });
 
-type GroupeHistoriqueAvecValeurAffichee = GroupeHistoriqueIndicateur & {
-  valeur_affichee?: number | null;
-};
-
 export type GetHistoriqueIndicateurOutput = {
   indicateur: { id: string; nom: string; unite_mesure: string | null } | null;
   territoire_code?: string;
@@ -49,7 +44,7 @@ export type GetHistoriqueIndicateurOutput = {
     date_evenement_la_plus_recente?: string;
   };
   construction_valeur_affichee?: string;
-  groupes?: GroupeHistoriqueAvecValeurAffichee[];
+  groupes?: GroupeHistoriqueIndicateur[];
   introuvable?: true;
   _output_instructions: string;
 };
@@ -58,7 +53,7 @@ const OUTPUT_INSTRUCTIONS =
   "Ces données représentent un HISTORIQUE : les actions qui ont eu lieu sur la valeur de cet indicateur (import, modification, proposition, acceptation, refus...), groupées par date et dans l'ordre chronologique. Deux dates distinctes apparaissent, ne les confonds pas : `date_valeur` (par groupe) est le mois auquel s'applique la valeur d'avancement, déjà au format MM/AAAA — reprends-le tel quel ; `date_creation` (par événement) est la date et l'heure réelles auxquelles l'action a eu lieu, déjà formatée en entier — reprends-la telle quelle aussi. Chaque événement porte `description` (ce qui s'est passé et son effet éventuel sur la valeur importée dans PILOTE) et `categorie` (IMPORT : import direct par la direction de projet ; PROPOSITION : étape du cycle de vie d'une proposition du territoire) — appuie-toi dessus pour comprendre et décrire l'enchaînement. Les valeurs citées sont les valeurs brutes importées : selon le paramétrage de l'indicateur (cumul des valeurs par exemple), la valeur d'avancement affichée sur la courbe et dans le tableau de PILOTE peut en différer. Présente-les donc comme des valeurs importées, jamais comme la valeur affichée, et ne les compare pas telles quelles aux valeurs d'une évolution.Si l'utilisateur veut plutôt la tendance/courbe de la valeur dans le temps, indique-lui simplement que c'est possible, sans citer de nom d'outil technique.";
 
 const VALEUR_AFFICHEE_INSTRUCTIONS =
-  "Pour cet indicateur, la valeur d'avancement affichée dans PILOTE n'est pas la valeur importée : `construction_valeur_affichee` explique comment elle est construite, et chaque groupe porte `valeur_affichee`, la valeur affichée aujourd'hui dans PILOTE pour ce mois (null s'il n'y en a pas) — c'est la valeur actuelle, pas celle visible au moment de chaque action. Appuie-toi dessus pour expliquer un écart entre les valeurs importées et la courbe ou le tableau de PILOTE, et ne recalcule jamais toi-même un cumul ou une moyenne.";
+  "Pour cet indicateur, la valeur d'avancement affichée dans PILOTE n'est pas la valeur importée : `construction_valeur_affichee` explique comment elle est construite. Appuie-toi dessus pour expliquer un écart entre les valeurs importées et la courbe ou le tableau de PILOTE, et ne recalcule jamais toi-même un cumul ou une moyenne.";
 
 const INDICATEUR_INTROUVABLE_INSTRUCTIONS =
   "Cet indicateur est introuvable. Informe l'utilisateur qu'aucun indicateur ne correspond à cet identifiant.";
@@ -75,11 +70,9 @@ function construireInstructionsBesoinPrecision(
 export function createGetHistoriqueIndicateurTool({
   getIndicateurContexteQuery,
   getHistoriqueIndicateurTerritoireQuery,
-  getEvolutionIndicateurTerritoireQuery,
 }: {
   getIndicateurContexteQuery: GetIndicateurContexteQuery;
   getHistoriqueIndicateurTerritoireQuery: GetHistoriqueIndicateurTerritoireQuery;
-  getEvolutionIndicateurTerritoireQuery: GetEvolutionIndicateurTerritoireQuery;
 }) {
   return ({
     territoiresAccessibles,
@@ -173,34 +166,16 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
         }
 
         const { explicationValeurAffichee } = contexte;
-        if (!explicationValeurAffichee) {
-          return {
-            indicateur: indicateurResume,
-            territoire_code: input.territoire_code,
-            groupes: resultat.groupes,
-            _output_instructions: OUTPUT_INSTRUCTIONS,
-          };
-        }
-
-        const pointsEvolution =
-          await getEvolutionIndicateurTerritoireQuery.execute({
-            indicateurId: input.indicateur_id,
-            territoireCode: input.territoire_code,
-          });
-        const valeurAfficheeParMois = new Map(
-          pointsEvolution.map((point) => [point.date, point.valeur]),
-        );
-
         return {
           indicateur: indicateurResume,
           territoire_code: input.territoire_code,
-          construction_valeur_affichee: explicationValeurAffichee,
-          groupes: resultat.groupes.map((groupe) => ({
-            ...groupe,
-            valeur_affichee:
-              valeurAfficheeParMois.get(groupe.date_valeur) ?? null,
-          })),
-          _output_instructions: `${OUTPUT_INSTRUCTIONS} ${VALEUR_AFFICHEE_INSTRUCTIONS}`,
+          ...(explicationValeurAffichee && {
+            construction_valeur_affichee: explicationValeurAffichee,
+          }),
+          groupes: resultat.groupes,
+          _output_instructions: explicationValeurAffichee
+            ? `${OUTPUT_INSTRUCTIONS} ${VALEUR_AFFICHEE_INSTRUCTIONS}`
+            : OUTPUT_INSTRUCTIONS,
         };
       },
     });

@@ -6,7 +6,6 @@ import {
 } from "@/server/albert/tools/getHistoriqueIndicateur";
 import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 import type { GetHistoriqueIndicateurTerritoireQuery } from "@/server/chantiers/query/GetHistoriqueIndicateurTerritoireQuery";
-import type { GetEvolutionIndicateurTerritoireQuery } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
 
 const contexteParDefaut = {
   id: "IND-001",
@@ -67,14 +66,11 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => null,
     });
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>();
     const getHistoriqueIndicateurTerritoireQuery =
       mock<GetHistoriqueIndicateurTerritoireQuery>();
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
       chantiersAccessibles: ["CH-001"],
@@ -104,14 +100,11 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
       const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
         execute: async () => ({ ...contexteParDefaut, ...drapeaux }),
       });
-      const getEvolutionIndicateurTerritoireQuery =
-        mock<GetEvolutionIndicateurTerritoireQuery>();
       const getHistoriqueIndicateurTerritoireQuery =
         mock<GetHistoriqueIndicateurTerritoireQuery>();
       const tool = createGetHistoriqueIndicateurTool({
         getIndicateurContexteQuery,
         getHistoriqueIndicateurTerritoireQuery,
-        getEvolutionIndicateurTerritoireQuery,
       })({
         territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
         chantiersAccessibles: ["CH-001"],
@@ -145,8 +138,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => contexteParDefaut,
     });
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>();
     const getHistoriqueIndicateurTerritoireQuery =
       mock<GetHistoriqueIndicateurTerritoireQuery>({
         execute: async () => ({
@@ -159,7 +150,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
       chantiersAccessibles: ["CH-001"],
@@ -189,8 +179,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => contexteParDefaut,
     });
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>();
     const getHistoriqueIndicateurTerritoireQuery =
       mock<GetHistoriqueIndicateurTerritoireQuery>({
         execute: async () => ({
@@ -203,7 +191,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
       chantiersAccessibles: ["CH-001"],
@@ -235,8 +222,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => contexteParDefaut,
     });
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>();
     const getHistoriqueIndicateurTerritoireQuery =
       mock<GetHistoriqueIndicateurTerritoireQuery>({
         execute: async () => ({
@@ -262,7 +247,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
       chantiersAccessibles: ["CH-001"],
@@ -296,12 +280,9 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
       ],
       _output_instructions: expect.any(String),
     });
-    expect(
-      getEvolutionIndicateurTerritoireQuery.execute,
-    ).not.toHaveBeenCalled();
   });
 
-  it("ajoute la construction et la valeur affichée par mois quand la valeur affichée diffère de la valeur importée", async () => {
+  it("ajoute la construction de la valeur affichée quand la valeur affichée diffère de la valeur importée", async () => {
     // Given
     const explicationValeurAffichee =
       "Les valeurs sont importées mois par mois. La valeur affichée dans PILOTE est la somme des valeurs mensuelles depuis janvier de l'année.";
@@ -330,18 +311,9 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
           ],
         }),
       });
-    // Aucun point d'évolution pour 03/2024
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>({
-        execute: vi.fn(async () => [
-          { date: "01/2024", valeur: 552, taux_avancement_jalon: null },
-          { date: "02/2024", valeur: 602, taux_avancement_jalon: null },
-        ]),
-      });
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["DEPT-75"],
       chantiersAccessibles: ["CH-001"],
@@ -359,24 +331,12 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
       territoire_code: "DEPT-75",
       construction_valeur_affichee: explicationValeurAffichee,
       groupes: [
-        {
-          date_valeur: "02/2024",
-          valeur_affichee: 602,
-          evenements: [evenementImport],
-        },
-        {
-          date_valeur: "03/2024",
-          valeur_affichee: null,
-          evenements: [evenementImport],
-        },
+        { date_valeur: "02/2024", evenements: [evenementImport] },
+        { date_valeur: "03/2024", evenements: [evenementImport] },
       ],
       _output_instructions: expect.stringContaining(
         "construction_valeur_affichee",
       ),
-    });
-    expect(getEvolutionIndicateurTerritoireQuery.execute).toHaveBeenCalledWith({
-      indicateurId: "IND-001",
-      territoireCode: "DEPT-75",
     });
   });
 
@@ -385,8 +345,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => contexteParDefaut,
     });
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>();
     const getHistoriqueIndicateurTerritoireQuery =
       mock<GetHistoriqueIndicateurTerritoireQuery>({
         execute: vi.fn(async () => ({
@@ -399,7 +357,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
       chantiersAccessibles: ["CH-001"],
@@ -433,14 +390,11 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
   it("rejette un territoire non accessible sans appeler la query de contexte", async () => {
     // Given
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>();
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>();
     const getHistoriqueIndicateurTerritoireQuery =
       mock<GetHistoriqueIndicateurTerritoireQuery>();
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
       chantiersAccessibles: ["CH-001"],
@@ -464,14 +418,11 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         chantier: { id: "CH-INACCESSIBLE", nom: "Chantier test" },
       }),
     });
-    const getEvolutionIndicateurTerritoireQuery =
-      mock<GetEvolutionIndicateurTerritoireQuery>();
     const getHistoriqueIndicateurTerritoireQuery =
       mock<GetHistoriqueIndicateurTerritoireQuery>();
     const tool = createGetHistoriqueIndicateurTool({
       getIndicateurContexteQuery,
       getHistoriqueIndicateurTerritoireQuery,
-      getEvolutionIndicateurTerritoireQuery,
     })({
       territoiresAccessibles: ["NAT-FR", "REG-11", "DEPT-75"],
       chantiersAccessibles: ["CH-001"],
