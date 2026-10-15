@@ -33,7 +33,8 @@ Critères d'acceptation du ticket :
   Le sous-agent ne voit que le centre d'aide, ce qui en fait sa seule source de
   vérité. L'agent principal garde la conversation et peut combiner la réponse
   avec les données.
-- **Pas d'embeddings ni d'index.** Le corpus compte une trentaine de pages. Le
+- **Pas d'embeddings ni d'index.** Le corpus compte 53 articles, dont 43
+  pages avec contenu (export du 2026-10-15). Le
   sous-agent choisit ses pages à partir d'un sommaire, puis les lit.
 - **Les liens ne passent pas par le LLM.** L'interface rend un encart
   déterministe à partir des `sources` renvoyées par l'outil. Le texte de la
@@ -69,10 +70,13 @@ comme il importe déjà `chantiers`. Une query par besoin d'outil, comme dans
 - Elle garde les articles `estPublie && !estMasque` **dont tous les ancêtres
   sont aussi publiés et non masqués**. C'est le comportement de la page
   publique (`PageCentreAidePilote.tsx`), mais appliqué côté serveur.
-- Elle ne renvoie que les articles de type `PAGE` qui ont un `contenu`.
+- Elle renvoie tous les articles visibles qui ont un `contenu`, groupes
+  compris : un groupe avec contenu s'affiche comme une page
+  (`estGroupeSansContenu` dans `PageCentreAidePilote`).
 - Elle ne lit que les champs publiés : `titre`, `titreAffiche`, `contenu`.
   Les champs `*_brouillon` ne sortent jamais.
-- Le titre retenu est `titreAffiche ?? titre`.
+- Le titre retenu est `titreAffiche || titre` (un `titreAffiche` vide retombe
+  sur `titre`, comme sur la page publique).
 - L'ordre est celui de l'arbre (`ordre`, en profondeur d'abord).
 
 **`GetSommaireCentreAideQuery.execute()`** renvoie
@@ -80,8 +84,9 @@ comme il importe déjà `chantiers`. Une query par besoin d'outil, comme dans
 
 - `chemin` : la liste des titres des groupes ancêtres, de la racine vers la
   page.
-- `intertitres` : les titres de niveau 2 et 3 du contenu, extraits du markdown
-  converti.
+- `intertitres` : les titres de niveau 1 à 3 du contenu, extraits du markdown
+  converti. L'éditeur autorise les niveaux 1 à 6, et les titres d'accordéon
+  passent en `####`.
 - `url` : `/centre-aide-pilote?article=<id>`.
 
 **`GetPagesCentreAideQuery.execute({ ids })`** renvoie
@@ -131,9 +136,10 @@ ou d'un territoire.
 sans boucle d'agent :
 
 1. **Sélection.** Le prompt contient la question et le sommaire au format JSON.
-   Le schéma de sortie est `{ ids: string[] (max 3), reasoning: string }`. Les
+   Le schéma de sortie est `{ ids: string[], reasoning: string }`, sans `max` :
+   un sous-agent qui renverrait quatre ids ferait échouer la validation. Les
    ids qui ne sont pas dans le sommaire sont écartés avec
-   `filtrerHallucinations`. S'il ne reste aucun id, on renvoie `trouve: false`
+   `filtrerHallucinations`, puis on garde les 3 premiers. S'il ne reste aucun id, on renvoie `trouve: false`
    sans faire le second appel.
 2. **Réponse.** Le prompt contient la question et les pages sélectionnées en
    markdown, chacune balisée avec son id. Le schéma de sortie est
@@ -223,8 +229,8 @@ chargent, et aucun encart n'est affiché.
     - Un clic a le même comportement que les liens internes actuels
       (`MarkdownLink`) : navigation dans l'app et réduction du chat.
   - **Sinon** : l'encart support, avec une phrase d'accroche et
-    `BoutonContacterEquipePilote`. Le composant est déplacé de `PageAccueil/`
-    vers `_commons/` pour être partagé.
+    `BoutonContacterEquipePilote`, importé depuis `PageAccueil/` comme le font
+    déjà `EnTete` et `BaseNavigation`.
   - Les deux encarts sont marqués `markCopyableBlock("text")` : le bouton
     Copier les inclut, avec leurs liens.
 - **Rendu de référence** : la variante « Cartes » des maquettes.
@@ -237,7 +243,7 @@ chargent, et aucun encart n'est affiché.
   - page publiée sous un groupe masqué ;
   - page publiée sous un groupe dépublié ;
   - champs de brouillon ignorés ;
-  - les groupes ne sont pas des pages ;
+  - un groupe avec contenu est une page ;
   - ordre de l'arbre.
 - `convertirHtmlEnMarkdown` : un cas par bloc de l'éditeur, et l'extraction
   des intertitres.
