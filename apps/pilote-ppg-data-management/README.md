@@ -216,16 +216,16 @@ Ensuite, on crée une colonne valeur cible annuelle dans laquelle on fait remont
 On crée aussi une colonne valeur cible globale qui fait remonter la valeur cible la plus ancienne que l'on a sur toutes les lignes de cette colonne.
 
 *4_decumul_va* : Certaines valeurs actuelles sont renseignées en cumuler (ex: on somme le nombre de kilomètres construits) ou bien en décumuler.
-Dans le paramétrage des indicateurs, on a un paramètre nécessaire, que l'on découpe en 2 dans le staging :
-- param_vaca_decumul_from est de la forme "condition_decumule::date". 
+Dans le paramétrage des indicateurs, on a un paramètre nécessaire :
+- param_vaca_decumul_from vaut `_` (pas de décumul), `from_year_start` (valeurs saisies cumulées depuis janvier) ou `from_beginning` (valeurs saisies cumulées depuis le début).
 
-On crée donc les colonnes decumul_va_par et decumul_va_depuis. Avec ces paramètres, on peut décumuler la va si nécessaire, à partir d'une date custom, d'un nombre de mois ou du début de l'année,...
+Le décumul retire de chaque va la va précédente, dans l'année (`from_year_start`) ou sur tout l'historique (`from_beginning`). La première va de la fenêtre est conservée telle quelle.
 
 *5_calcul_vaca_vacg* : cette étape permet de calculer la valeur actuelle comparable des indicateurs. 
 Pour cela, il est nécessaire de prendre la valeur va décumulée à l'étape précédente et de, selon le paramétrage, 
 l'agréger sur une durée donnée en paramètre. On a les paramètres :
 - param_vaca_partition_date : qui détermine depuis quand on agrège les va décumulées
-- param_vaca_op : qui donne l'opération à réaliser pour agréger les données (somme ou moyenne)
+- param_vaca_op : qui donne l'opération à réaliser : `sum` pour sommer les va décumulées, `current_value` pour prendre la va décumulée telle quelle
 
 *6_calcul_ta_indicateur* : on applique la formule classique sur tous les indicateurs pour obtenir 
 - le taux d'avancement annuel : (vaca-vi) / (vca-vi)
