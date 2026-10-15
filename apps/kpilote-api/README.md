@@ -118,7 +118,7 @@ Déployée sur Scalingo avec `APP_PACKAGE=@pilote/kpilote-api` :
 2. `build` applique les migrations et compile ;
 3. `deploy:bundle` produit `kpilote-api-deploy/` (`pnpm deploy --prod`) et copie `start.sh` à la racine.
 
-Le seed n'est **pas** joué au build : il est lancé sur `dev-kpilote-api` par le workflow `.github/workflows/seed-kpilote-dev.yml` (au merge d'une modification du seed, ou manuellement).
+Le seed n'est joué ni au build ni par la CI : il ne se lance qu'en local (`pnpm db:seed`).
 
 ## Documentation
 
