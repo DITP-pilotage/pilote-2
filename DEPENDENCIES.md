@@ -68,7 +68,7 @@ Il permet aussi, comme le pin précédent, ESLint 10 (qui requiert Node ≥ 20.1
 |---|---|
 | `engines.node` | racine + les 5 apps (`kpilote-api`, `kpilote-admin`, `kpilote-webapp`, `pilote-ppg`, `pilote-ppg-auth`) — les deux `packages/kpilote-*` n'en déclarent pas |
 | `.nvmrc` | `kpilote-api`, `kpilote-admin`, `kpilote-webapp` uniquement — **`pilote-ppg` et `pilote-ppg-auth` n'en ont pas** |
-| CI | `testAndLint.yml` et `seed-kpilote-dev.yml` via `NODE_VERSION` ; `e2e.yml` lit `node-version-file: package.json` et suit donc tout seul |
+| CI | `testAndLint.yml` via `NODE_VERSION` ; `e2e.yml` lit `node-version-file: package.json` et suit donc tout seul |
 | Docs | ce fichier et `README.md` |
 | Prod | le buildpack Scalingo lit `engines.node` — rien à changer séparément |
 
