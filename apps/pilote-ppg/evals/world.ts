@@ -388,6 +388,7 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
  */
 async function clearEvalWorld() {
   const prisma = getPrisma();
+  await prisma.article_centre_aide.deleteMany();
   await prisma.synthese_des_resultats.deleteMany();
   await prisma.commentaire.deleteMany();
   await prisma.objectif.deleteMany();
