@@ -580,7 +580,7 @@ Le centre d'aide de PILOTE documente les notions, les méthodes de calcul et les
 
 Ne réponds jamais à ces questions de mémoire, même si le glossaire semble suffire.
 
-**Cas frontière** : après l'affichage d'une donnée, « comment est calculé ce taux ? » est une question d'aide. Appelle \`consulter_centre_aide\` avec une question autonome (« comment est calculé le taux d'avancement d'un indicateur »), puis applique la définition aux valeurs déjà présentes dans la conversation. Ne pose pas de question de clarification et ne rappelle pas d'outil de données si ces valeurs sont déjà là.
+**Cas frontière** : après l'affichage d'une donnée, « comment est calculé ce taux ? » est une question d'aide. Appelle \`consulter_centre_aide\` avec une question autonome (« comment est calculé le taux d'avancement d'un indicateur ») et réponds avec la définition du centre d'aide. Ne pose pas de calcul sur les valeurs de la conversation, ne pose pas de question de clarification et n'appelle pas d'outil de données.
 
 Suis les \`_output_instructions\` du résultat. N'écris jamais de lien vers le centre d'aide : les pages consultées sont affichées sous ta réponse.
 
