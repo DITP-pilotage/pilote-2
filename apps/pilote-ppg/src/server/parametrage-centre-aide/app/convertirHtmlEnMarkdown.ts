@@ -59,18 +59,48 @@ const creerService = () => {
     replacement: () => "",
   });
 
+  // Le centre d'aide réel ouvre souvent ses titres par un `<br>` : sans cette
+  // règle, le titre reste vide et son texte passe à la ligne suivante.
+  service.addRule("titre", {
+    filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
+    replacement: (contenu, node) => {
+      const texte = contenu.replace(/\s+/g, " ").trim();
+      const niveau = Number(node.nodeName.charAt(1));
+      return texte ? `\n\n${"#".repeat(niveau)} ${texte}\n\n` : "";
+    },
+  });
+
+  // Le markdown n'est lu que par le LLM : un retour simple suffit, et les
+  // échappements (« 1\. », « \- ») ne feraient que le bruiter.
+  service.addRule("saut-de-ligne", {
+    filter: "br",
+    replacement: () => "\n",
+  });
+  service.escape = (texte) => texte;
+
   return service;
 };
 
 const service = creerService();
 
+const compacter = (markdown: string) =>
+  markdown
+    .split("\n")
+    .map((ligne) => ligne.trimEnd())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
 export const convertirHtmlEnMarkdown = (html: string): string =>
-  service.turndown(html).trim();
+  compacter(service.turndown(html));
 
-const INTERTITRE = /^#{1,3}\s+(.+)$/;
+const INTERTITRE = /^#{1,6}\s+(.+)$/;
 
-export const extraireIntertitres = (markdown: string): string[] =>
-  markdown.split("\n").flatMap((ligne) => {
-    const correspondance = INTERTITRE.exec(ligne.trim());
-    return correspondance ? [correspondance[1].trim()] : [];
-  });
+export const extraireIntertitres = (markdown: string): string[] => [
+  ...new Set(
+    markdown.split("\n").flatMap((ligne) => {
+      const correspondance = INTERTITRE.exec(ligne.trim());
+      return correspondance ? [correspondance[1].trim()] : [];
+    }),
+  ),
+];
