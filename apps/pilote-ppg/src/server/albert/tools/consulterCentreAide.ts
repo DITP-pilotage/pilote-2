@@ -52,7 +52,7 @@ export type ConsulterCentreAideOutput = {
 };
 
 const OUTPUT_INSTRUCTIONS_TROUVE = `Restitue fidèlement \`reponse\` à l'utilisateur : ne la complète pas avec le glossaire ni avec d'autres connaissances, et n'en retire rien d'important.
-Si la conversation contient déjà des valeurs auxquelles la réponse s'applique (par exemple VI, VA et VC d'un indicateur), tu peux l'illustrer avec ces valeurs, sans appeler d'autre outil.
+Si la question porte sur une donnée affichée plus tôt dans la conversation (« ce taux », « cet indicateur »), applique la réponse à cette donnée avec les valeurs exactes reçues des outils (par exemple VI, VA et VC d'un indicateur), et détaille le calcul jusqu'au résultat. N'invente jamais une valeur : si tu ne retrouves pas une valeur dans les résultats des outils, donne la définition seule. N'appelle pas d'autre outil pour cela.
 N'écris aucun lien ni URL : les pages du centre d'aide sont affichées sous ta réponse.`;
 
 const OUTPUT_INSTRUCTIONS_NON_TROUVE = `Le centre d'aide ne couvre pas cette question. Dis-le à l'utilisateur en une phrase, sans affirmer de réponse, même partielle, et sans t'appuyer sur tes connaissances générales.
