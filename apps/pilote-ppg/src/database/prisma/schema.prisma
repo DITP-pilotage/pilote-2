@@ -833,6 +833,7 @@ model utilisateur {
   rapports_hebdomadaires                 rapport_hebdomadaire_coordinateur[]
   rapports_propositions_avancement       rapport_propositions_avancement[]
   llm_calls                              llm_calls[]
+  albert_access_utilisateur              albert_access_utilisateur?
 
   @@schema("public")
 }
@@ -852,6 +853,7 @@ model profil {
   peut_saisir_des_commentaires                    Boolean       @default(false)
   a_access_aux_chantiers_brouillons               Boolean       @default(false)
   utilisateur                                     utilisateur[]
+  albert_access_profil                            albert_access_profil?
 
   @@schema("public")
 }
@@ -1402,6 +1404,22 @@ model chat_conversation {
 model mb_sync_execution {
   id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   derniere_date_sync DateTime
+
+  @@schema("public")
+}
+
+model albert_access_profil {
+  profil_code   String   @id
+  profil        profil   @relation(fields: [profil_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  date_creation DateTime @default(now())
+
+  @@schema("public")
+}
+
+model albert_access_utilisateur {
+  utilisateur_id String      @id @db.Uuid
+  utilisateur    utilisateur @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+  date_creation  DateTime    @default(now())
 
   @@schema("public")
 }
