@@ -8,8 +8,20 @@ import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
 
+const assertAlbertAccess = (session: {
+  user: { id: string };
+  profil?: string | null;
+}) =>
+  getContainer("albertAccess")
+    .resolve("assertAlbertAccessUseCase")
+    .execute({
+      utilisateurId: session.user.id,
+      profil: session.profil ?? null,
+    });
+
 const conversationsRouter = createTRPCRouter({
   lister: protectedProcedure.query(async ({ ctx }) => {
+    await assertAlbertAccess(ctx.session);
     const useCase = getContainer("albert").resolve(
       "listerConversationsUseCase",
     );
@@ -19,6 +31,7 @@ const conversationsRouter = createTRPCRouter({
   recuperer: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
+      await assertAlbertAccess(ctx.session);
       const useCase = getContainer("albert").resolve(
         "recupererConversationUseCase",
       );

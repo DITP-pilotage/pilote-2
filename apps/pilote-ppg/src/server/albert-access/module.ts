@@ -15,6 +15,7 @@ import { SearchUtilisateursUseCase } from "./usecases/SearchUtilisateursUseCase"
 import { AddUtilisateurUseCase } from "./usecases/AddUtilisateurUseCase";
 import { RemoveUtilisateurUseCase } from "./usecases/RemoveUtilisateurUseCase";
 import { CheckAlbertAccessUseCase } from "./usecases/CheckAlbertAccessUseCase";
+import { AssertAlbertAccessUseCase } from "./usecases/AssertAlbertAccessUseCase";
 
 type AlbertAccessImports = FrameworkDependencies & GestionContenuExports;
 
@@ -27,6 +28,7 @@ type AlbertAccessOwnCradle = {
   addUtilisateurUseCase: AddUtilisateurUseCase;
   removeUtilisateurUseCase: RemoveUtilisateurUseCase;
   checkAlbertAccessUseCase: CheckAlbertAccessUseCase;
+  assertAlbertAccessUseCase: AssertAlbertAccessUseCase;
 };
 
 type AlbertAccessCradle = AlbertAccessOwnCradle & AlbertAccessImports;
@@ -46,6 +48,7 @@ export const albertAccessModule = defineModule<NoExports, AlbertAccessCradle>()(
         addUtilisateurUseCase: asModuleClass(AddUtilisateurUseCase),
         removeUtilisateurUseCase: asModuleClass(RemoveUtilisateurUseCase),
         checkAlbertAccessUseCase: asModuleClass(CheckAlbertAccessUseCase),
+        assertAlbertAccessUseCase: asModuleClass(AssertAlbertAccessUseCase),
       } satisfies VerifyCradle<AlbertAccessOwnCradle>);
     },
   },

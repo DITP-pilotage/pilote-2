@@ -2,6 +2,7 @@ import { mock, MockProxy } from "vitest-mock-extended";
 import { AlbertAccessRepository } from "@/server/albert-access/domain/ports/AlbertAccessRepository";
 import { SetProfilActiveUseCase } from "@/server/albert-access/usecases/SetProfilActiveUseCase";
 import { BadRequestError } from "@/shared/errors/bad-request-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
 describe("SetProfilActiveUseCase", () => {
@@ -29,6 +30,13 @@ describe("SetProfilActiveUseCase", () => {
     await expect(
       useCase.execute({ profilCode: ProfilEnum.DITP_ADMIN, active: false }),
     ).rejects.toBeInstanceOf(BadRequestError);
+    expect(albertAccessRepository.setProfilActive).not.toHaveBeenCalled();
+  });
+
+  it("Doit refuser un profil inconnu", async () => {
+    await expect(
+      useCase.execute({ profilCode: "PROFIL_INCONNU", active: true }),
+    ).rejects.toBeInstanceOf(NotFoundError);
     expect(albertAccessRepository.setProfilActive).not.toHaveBeenCalled();
   });
 });
