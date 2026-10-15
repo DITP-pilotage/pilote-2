@@ -142,7 +142,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await test.step("vérification du fichier identifiant et cadrage", async () => {
       const contents = await fs.promises.readFile(await download.path());
       expect(contents.toString()).toMatch(
-        '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre"\n',
+        '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Indicateur Id";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre"\n',
       );
     });
   });
@@ -163,7 +163,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await test.step("vérification du fichier identifiant, gouvernance, valeur descriptive", async () => {
       const contents = await fs.promises.readFile(await download.path());
       expect(contents.toString()).toMatch(
-        `"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre";"Valeur initiale";"Date valeur initiale";"Valeur avancement";"Date valeur avancement";"Valeur cible à fin d'échéance ${jalonParDefaut}";"Date valeur cible à fin d'échéance ${jalonParDefaut}";"Taux d'avancement à fin d'échéance ${jalonParDefaut} (indicateur)"\n`,
+        `"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Indicateur Id";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre";"Valeur initiale";"Date valeur initiale";"Valeur avancement";"Date valeur avancement";"Valeur cible à fin d'échéance ${jalonParDefaut}";"Date valeur cible à fin d'échéance ${jalonParDefaut}";"Taux d'avancement à fin d'échéance ${jalonParDefaut} (indicateur)"\n`,
       );
     });
   });

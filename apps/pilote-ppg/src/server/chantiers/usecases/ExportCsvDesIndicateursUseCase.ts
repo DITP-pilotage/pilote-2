@@ -49,6 +49,7 @@ const presenterEnIndicateurExportContrat = (
     indicateurPourExport.chantierNom || NON_RENSEIGNEE,
     indicateurPourExport.chantierId || NON_RENSEIGNEE,
     indicateurPourExport.nom || NON_APPLICABLE,
+    indicateurPourExport.id || NON_RENSEIGNEE,
   ];
 
   if (optionsExport.listeOptionsExport.includes("cadrage")) {
@@ -171,6 +172,7 @@ export class ExportCsvDesIndicateursUseCase {
       "Chantier",
       "Chantier Id",
       "Indicateur",
+      "Indicateur Id",
     ];
 
     if (optionsExport.listeOptionsExport.includes("cadrage")) {

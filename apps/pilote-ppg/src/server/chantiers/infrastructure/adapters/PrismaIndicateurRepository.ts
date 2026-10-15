@@ -436,6 +436,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               .perimetre_ids,
           météo: indicateurPourExport.chantier_territoire.meteo as Meteo | null,
           nom: indicateurPourExport.indicateur_identite.nom,
+          id: indicateurPourExport.indicateur_identite.id,
           valeurInitiale: indicateurPourExport.valeur_initiale,
           dateValeurInitiale:
             indicateurPourExport.date_valeur_initiale?.toISOString() || null,
@@ -545,6 +546,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         },
       },
       select: {
+        id: true,
         nom: true,
         chantier_id: true,
         mailles_applicables: true,
@@ -686,6 +688,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               chantierNom: indicateurIdentite.chantier_identite.nom,
               chantierId: indicateurIdentite.chantier_id,
               nom: indicateurIdentite.nom,
+              id: indicateurIdentite.id,
               valeurInitiale: indicateurPourExport.valeur_initiale,
               dateValeurInitiale:
                 indicateurPourExport.date_valeur_initiale?.toISOString() ||
