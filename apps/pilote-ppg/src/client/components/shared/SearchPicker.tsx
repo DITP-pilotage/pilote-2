@@ -36,6 +36,10 @@ export const SearchPicker = <T,>({
   emptyLabel = "Aucun résultat",
 }: SearchPickerProps<T>) => {
   const [open, setOpen] = useState(false);
+  const annonceResultats =
+    items.length > 0
+      ? `${items.length} résultat${items.length > 1 ? "s" : ""}`
+      : emptyLabel;
 
   const changerOuverture = (next: boolean) => {
     setOpen(next);
@@ -59,6 +63,7 @@ export const SearchPicker = <T,>({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
+          aria-label={searchPlaceholder}
           align="start"
           className="z-50 w-[var(--radix-popover-trigger-width)] min-w-80 bg-white border border-solid border-dsfr-grey-900 shadow-lg"
           sideOffset={4}
@@ -102,6 +107,9 @@ export const SearchPicker = <T,>({
               ))}
             </Command.List>
           </Command>
+          <p aria-live="polite" className="sr-only">
+            {isLoading ? "" : annonceResultats}
+          </p>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
