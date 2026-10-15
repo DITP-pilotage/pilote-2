@@ -4,7 +4,6 @@ import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { trackPagesRouter } from "@socialgouv/matomo-next";
 import Router from "next/router";
 import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/pages";
@@ -13,6 +12,8 @@ import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcra
 import { api } from "@/server/framework/trpc/api";
 import { Tooltip } from "@/components/shared/Tooltip";
 import { BootstrapProvider } from "@/components/_commons/Bootstrap/BootstrapContext";
+import { getAnalytics } from "@/client/analytics/analytics";
+import { trackPageViews } from "@/client/analytics/pageViews";
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
@@ -56,19 +57,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
     return () => clearTimeout(timer);
   }, [pageEnCoursDeChargement]);
 
-  const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
-  const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
-  const estRecordAnalyticsActive = process.env.NEXT_PUBLIC_RECORD_ANALYTICS;
-
-  useEffect(() => {
-    if (estRecordAnalyticsActive === "true") {
-      trackPagesRouter({
-        url: matomoUrl as string,
-        siteId: matomoSiteId as string,
-        enableHeatmapSessionRecording: true,
-      });
-    }
-  }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
+  useEffect(() => trackPageViews(Router, getAnalytics()), []);
 
   return (
     <NuqsAdapter>

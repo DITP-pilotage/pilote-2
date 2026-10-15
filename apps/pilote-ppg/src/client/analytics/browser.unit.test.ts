@@ -22,7 +22,6 @@ const sentUrl = (send: ReturnType<typeof vi.fn>) =>
 describe("createBrowserAnalytics", () => {
   afterEach(() => {
     window.history.replaceState(null, "", "/");
-    delete window.Matomo;
     vi.unstubAllGlobals();
   });
 
@@ -44,6 +43,7 @@ describe("createBrowserAnalytics", () => {
     const analytics = createBrowserAnalytics({ ...options, send });
 
     analytics.trackEvent(event);
+    analytics.trackPageView({ title: "Accueil" });
 
     expect(analytics.status).toEqual({ active: false, reason });
     expect(send).not.toHaveBeenCalled();
@@ -84,10 +84,8 @@ describe("createBrowserAnalytics", () => {
     );
   });
 
-  it("rattache l'événement au visiteur matomo.js quand il est chargé", () => {
-    window.Matomo = {
-      getAsyncTracker: () => ({ getVisitorId: () => "0123456789abcdef" }),
-    };
+  it("envoie une page vue avec son titre et sans la query string", () => {
+    window.history.pushState(null, "", "/accueil?q=secret#ancre");
     const send = vi.fn();
 
     createBrowserAnalytics({
@@ -95,25 +93,14 @@ describe("createBrowserAnalytics", () => {
       enabled: true,
       doNotTrack: false,
       send,
-    }).trackEvent(event);
+    }).trackPageView({ title: "Accueil" });
 
-    expect(sentUrl(send).searchParams.get("_id")).toBe("0123456789abcdef");
-  });
-
-  it("émet sans identifiant visiteur si matomo.js lève une erreur", () => {
-    const send = vi.fn();
-
-    createBrowserAnalytics({
-      config,
-      enabled: true,
-      doNotTrack: false,
-      send,
-      getVisitorId: () => {
-        throw new Error("matomo.js indisponible");
-      },
-    }).trackEvent(event);
-
-    expect(sentUrl(send).searchParams.has("_id")).toBe(false);
+    const url = sentUrl(send);
+    expect(url.searchParams.get("action_name")).toBe("Accueil");
+    expect(url.searchParams.get("url")).toBe(
+      `${window.location.origin}/accueil`,
+    );
+    expect(url.searchParams.has("e_c")).toBe(false);
   });
 
   it("n'interrompt jamais l'appelant si l'envoi échoue", () => {

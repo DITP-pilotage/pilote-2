@@ -68,6 +68,10 @@ export type AnalyticsEvent = {
   dimensions?: AnalyticsDimensions;
 };
 
+export type AnalyticsPageView = {
+  title: string;
+};
+
 export type AnalyticsConfig = {
   matomoUrl: string;
   siteId: string;

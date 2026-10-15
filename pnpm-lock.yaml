@@ -585,9 +585,6 @@ importers:
       '@prisma/client':
         specifier: 7.10.0
         version: 7.10.0(prisma@7.10.0(@types/node@26.5.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(better-sqlite3@13.0.3)(magicast@0.5.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(typescript@7.0.2)
-      '@socialgouv/matomo-next':
-        specifier: 1.14.2
-        version: 1.14.2(next@16.3.8(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.104.0))(react@19.2.8)
       '@tanstack/react-query':
         specifier: ^5.102.8
         version: 5.102.8(react@19.2.8)
@@ -3298,13 +3295,6 @@ packages:
 
   '@sinclair/typebox@0.34.52':
     resolution: {integrity: sha512-XiMQh7qqVlxZzcVD+kkGMNGMzcTrDMLWI7S4x7z1MkCkbDPrekpZXEUK0eZqZFMuHQg2a2DZOcDIh9o5v3Gonw==}
-
-  '@socialgouv/matomo-next@1.14.2':
-    resolution: {integrity: sha512-K7blGIQdkV9+ihxxtR/ABxeMsTTet/MiIluPW7BMkBBmoTOhWKzIfxzjc1MrLvZHC5aInCLeuNdW8hRMi4jkog==}
-    engines: {node: '>=24.0.0', pnpm: '>=10.0.0'}
-    peerDependencies:
-      next: '>= 13.0.0'
-      react: '>= 18.0.0'
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -9369,11 +9359,6 @@ snapshots:
     optional: true
 
   '@sinclair/typebox@0.34.52': {}
-
-  '@socialgouv/matomo-next@1.14.2(next@16.3.8(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.104.0))(react@19.2.8)':
-    dependencies:
-      next: 16.3.8(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(sass@1.104.0)
-      react: 19.2.8
 
   '@standard-schema/spec@1.1.0': {}
 

@@ -1,4 +1,7 @@
-import { buildEventRequest } from "@/client/analytics/buildRequest";
+import {
+  buildEventRequest,
+  buildPageViewRequest,
+} from "@/client/analytics/buildRequest";
 import type {
   AnalyticsConfig,
   AnalyticsEvent,
@@ -139,18 +142,39 @@ describe("buildEventRequest", () => {
 
     expect(params.get("dimension17")).toBe("3");
   });
+});
 
-  it("n'ajoute l'identifiant visiteur que s'il est fourni", () => {
-    expect(parse(buildEventRequest(event, config, context)).has("_id")).toBe(
-      false,
+describe("buildPageViewRequest", () => {
+  it("transmet le titre, la page et le site sans paramètre d'événement", () => {
+    const params = parse(
+      buildPageViewRequest({ title: "Accueil" }, config, context),
     );
-    expect(
-      parse(
-        buildEventRequest(event, config, {
-          ...context,
-          visitorId: "0123456789abcdef",
-        }),
-      ).get("_id"),
-    ).toBe("0123456789abcdef");
+
+    expect(Object.fromEntries(params)).toEqual({
+      idsite: "42",
+      rec: "1",
+      apiv: "1",
+      action_name: "Accueil",
+      url: "https://pilote.example.org/accueil",
+      rand: "r1",
+    });
+  });
+
+  it("ajoute les dimensions globales configurées et ignore les autres", () => {
+    const params = parse(
+      buildPageViewRequest(
+        { title: "Accueil" },
+        {
+          ...config,
+          dimensionSlots: { environnement: 19 },
+          globalDimensions: { environnement: "dev", conversation_id: "c-1" },
+        },
+        context,
+      ),
+    );
+
+    expect(params.get("dimension19")).toBe("dev");
+    expect(params.get("url")).toBe("https://pilote.example.org/accueil");
+    expect(params.toString()).not.toContain("c-1");
   });
 });
