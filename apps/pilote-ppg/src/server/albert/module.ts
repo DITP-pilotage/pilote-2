@@ -14,6 +14,8 @@ import { createSearchTerritoiresTool } from "@/server/albert/tools/searchTerrito
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
 import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 import type { ChantierExports } from "@/server/chantiers/module";
+import type { ParametrageCentreAideExports } from "@/server/parametrage-centre-aide/module";
+import { createConsulterCentreAideTool } from "@/server/albert/tools/consulterCentreAide";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { EnregistrerConversationUseCase } from "@/server/albert/usecases/EnregistrerConversationUseCase";
 import { ListerConversationsUseCase } from "@/server/albert/usecases/ListerConversationsUseCase";
@@ -35,7 +37,9 @@ import {
 } from "@/server/module-system";
 import type { FrameworkDependencies } from "@/server/framework/module";
 
-type AlbertImports = FrameworkDependencies & ChantierExports;
+type AlbertImports = FrameworkDependencies &
+  ChantierExports &
+  ParametrageCentreAideExports;
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
@@ -68,6 +72,9 @@ type AlbertOwnCradle = {
   createComposeDashboardTool: ReturnType<typeof createComposeDashboardTool>;
   createCreateDashboardTool: ReturnType<typeof createCreateDashboardTool>;
   createExportRapportTool: ReturnType<typeof createExportRapportTool>;
+  createConsulterCentreAideTool: ReturnType<
+    typeof createConsulterCentreAideTool
+  >;
   evaluerChatUseCase: EvaluerChatUseCase;
   chatConversationRepository: ChatConversationRepository;
   enregistrerConversationUseCase: EnregistrerConversationUseCase;
@@ -83,7 +90,7 @@ type AlbertCradle = AlbertOwnCradle & AlbertImports;
 
 export const albertModule = defineModule<NoExports, AlbertCradle>()({
   name: "albert",
-  imports: ["framework", "chantiers"],
+  imports: ["framework", "chantiers", "parametrageCentreAide"],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
@@ -121,6 +128,9 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createComposeDashboardTool: asModuleFunction(createComposeDashboardTool),
       createCreateDashboardTool: asModuleFunction(createCreateDashboardTool),
       createExportRapportTool: asModuleFunction(createExportRapportTool),
+      createConsulterCentreAideTool: asModuleFunction(
+        createConsulterCentreAideTool,
+      ),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
       chatConversationRepository: asModuleClass(
         PrismaChatConversationRepository,

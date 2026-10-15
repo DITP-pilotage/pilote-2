@@ -82,6 +82,9 @@ export class AssistantIA {
         chantiersAccessibles,
       }),
       search_territoires: container.resolve("createSearchTerritoiresTool")(),
+      consulter_centre_aide: container.resolve(
+        "createConsulterCentreAideTool",
+      )(),
       clarify_with_choices: clarifyWithChoicesTool,
       ...(capacities.dashboard
         ? {
