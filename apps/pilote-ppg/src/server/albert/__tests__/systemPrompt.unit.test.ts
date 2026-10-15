@@ -54,4 +54,22 @@ describe("buildChatSystemPrompt — centre d'aide", () => {
     expect(prompt).toContain("## consulter_centre_aide");
     expect(prompt).toContain("il prime sur le glossaire de ce prompt");
   });
+
+  it("interdit le LaTeX, que le chat n'affiche pas", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: ["NAT-FR"],
+      agentContext: null,
+      capacities: {
+        synthese: false,
+        dashboard: false,
+        exportRapport: false,
+        inclureSousTerritoires: false,
+      },
+    });
+
+    // Then
+    expect(prompt).toContain("## Formules");
+    expect(prompt).toContain("N'écris **jamais** de LaTeX");
+  });
 });
