@@ -96,6 +96,38 @@ describe("buildEventRequest", () => {
     expect(parse(query).get("dimension12")).toBe("c-1");
   });
 
+  it("ajoute les dimensions globales de la configuration", () => {
+    const params = parse(
+      buildEventRequest(
+        event,
+        {
+          ...config,
+          dimensionSlots: { environnement: 19 },
+          globalDimensions: { environnement: "dev" },
+        },
+        context,
+      ),
+    );
+
+    expect(params.get("dimension19")).toBe("dev");
+  });
+
+  it("fait primer une dimension globale sur celle de l'événement", () => {
+    const params = parse(
+      buildEventRequest(
+        { ...event, dimensions: { environnement: "prod" } },
+        {
+          ...config,
+          dimensionSlots: { environnement: 19 },
+          globalDimensions: { environnement: "dev" },
+        },
+        context,
+      ),
+    );
+
+    expect(params.get("dimension19")).toBe("dev");
+  });
+
   it("transmet les nombres en texte", () => {
     const params = parse(
       buildEventRequest(

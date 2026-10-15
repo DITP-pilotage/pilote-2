@@ -29,6 +29,10 @@ export const ANALYTICS_EVENT_NAMES = [
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];
 
+export const ANALYTICS_ENVIRONNEMENTS = ["dev", "ppd", "prod"] as const;
+
+export type AnalyticsEnvironnement = (typeof ANALYTICS_ENVIRONNEMENTS)[number];
+
 export type AnalyticsDimensions = {
   profil_pilote?: ProfilCode;
   conversation_id?: string;
@@ -38,6 +42,7 @@ export type AnalyticsDimensions = {
   type_question?: "premiere_libre" | "premiere_proposition" | "suivante";
   nombre_choix?: number;
   position_choix?: number;
+  environnement?: AnalyticsEnvironnement;
 };
 
 export type AnalyticsDimension = keyof AnalyticsDimensions;
@@ -51,6 +56,7 @@ export const ANALYTICS_DIMENSIONS = [
   "type_question",
   "nombre_choix",
   "position_choix",
+  "environnement",
 ] as const satisfies readonly AnalyticsDimension[];
 
 export type DimensionSlots = Partial<Record<AnalyticsDimension, number>>;
@@ -66,4 +72,5 @@ export type AnalyticsConfig = {
   matomoUrl: string;
   siteId: string;
   dimensionSlots: DimensionSlots;
+  globalDimensions?: AnalyticsDimensions;
 };

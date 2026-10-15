@@ -7,7 +7,7 @@ import type {
 } from "@/client/analytics/schema";
 
 export type TrackedEvent = Omit<AnalyticsEvent, "dimensions"> & {
-  dimensions?: Omit<AnalyticsDimensions, "profil_pilote">;
+  dimensions?: Omit<AnalyticsDimensions, "profil_pilote" | "environnement">;
 };
 
 export const useAnalytics = () => {

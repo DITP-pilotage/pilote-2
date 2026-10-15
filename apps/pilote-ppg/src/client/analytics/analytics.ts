@@ -7,6 +7,8 @@ import {
 } from "@/client/analytics/browser";
 import {
   ANALYTICS_DIMENSIONS,
+  ANALYTICS_ENVIRONNEMENTS,
+  type AnalyticsEnvironnement,
   type DimensionSlots,
 } from "@/client/analytics/schema";
 
@@ -37,6 +39,15 @@ export const parseDimensionSlots = (
   return slots;
 };
 
+const environnementSchema = z.enum(ANALYTICS_ENVIRONNEMENTS);
+
+export const parseEnvironnement = (
+  raw: string | undefined,
+): AnalyticsEnvironnement | undefined => {
+  const result = environnementSchema.safeParse(raw);
+  return result.success ? result.data : undefined;
+};
+
 const respectDoNotTrack = (): boolean =>
   navigator.doNotTrack === "1" || navigator.doNotTrack === "yes";
 
@@ -64,6 +75,11 @@ const createAnalytics = (): Analytics => {
             dimensionSlots: parseDimensionSlots(
               process.env.NEXT_PUBLIC_MATOMO_DIMENSIONS,
             ),
+            globalDimensions: {
+              environnement: parseEnvironnement(
+                process.env.NEXT_PUBLIC_ANALYTICS_ENVIRONNEMENT,
+              ),
+            },
           }
         : null,
     enabled: process.env.NEXT_PUBLIC_RECORD_ANALYTICS === "true",

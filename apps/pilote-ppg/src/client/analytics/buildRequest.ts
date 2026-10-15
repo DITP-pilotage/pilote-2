@@ -23,7 +23,8 @@ export const buildEventRequest = (
   const unmapped: Array<[string, string]> = [];
 
   for (const dimension of ANALYTICS_DIMENSIONS) {
-    const value = event.dimensions?.[dimension];
+    const value =
+      config.globalDimensions?.[dimension] ?? event.dimensions?.[dimension];
     if (value === undefined) continue;
     const slot = config.dimensionSlots[dimension];
     if (slot === undefined) unmapped.push([dimension, String(value)]);

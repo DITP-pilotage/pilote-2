@@ -26,6 +26,7 @@ Le paramètre de l'API de tracking est `dimension<idcustomdimension>`. Les ident
 | `type_question` | Action | `premiere_libre`, `premiere_proposition`, `suivante` |
 | `nombre_choix` | Action | Entier |
 | `position_choix` | Action | Entier |
+| `environnement` | Visite | `dev`, `ppd`, `prod` (depuis `NEXT_PUBLIC_ANALYTICS_ENVIRONNEMENT`, ajoutée par l'instance à chaque événement) |
 
 ## Architecture
 

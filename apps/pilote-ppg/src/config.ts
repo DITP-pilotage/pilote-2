@@ -291,6 +291,12 @@ const config = convict({
       default: "",
       env: "NEXT_PUBLIC_MATOMO_DIMENSIONS",
     },
+    environnement: {
+      doc: "Environnement envoyé à Matomo (dimension environnement) : dev, ppd ou prod",
+      format: String,
+      default: "",
+      env: "NEXT_PUBLIC_ANALYTICS_ENVIRONNEMENT",
+    },
   },
   tokenAPI: {
     secret: {

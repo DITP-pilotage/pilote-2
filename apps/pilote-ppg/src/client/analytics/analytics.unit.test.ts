@@ -1,4 +1,7 @@
-import { parseDimensionSlots } from "@/client/analytics/analytics";
+import {
+  parseDimensionSlots,
+  parseEnvironnement,
+} from "@/client/analytics/analytics";
 
 describe("parseDimensionSlots", () => {
   it("lit la correspondance dimension → identifiant Matomo", () => {
@@ -21,4 +24,17 @@ describe("parseDimensionSlots", () => {
       ),
     ).toEqual({ profil_pilote: 11 });
   });
+});
+
+describe("parseEnvironnement", () => {
+  it.each(["dev", "ppd", "prod"])("accepte %s", (raw) => {
+    expect(parseEnvironnement(raw)).toBe(raw);
+  });
+
+  it.each([undefined, "", "TBD", "local", "preprod", "production", "DEV"])(
+    "ignore %s",
+    (raw) => {
+      expect(parseEnvironnement(raw)).toBeUndefined();
+    },
+  );
 });
