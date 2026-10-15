@@ -103,10 +103,13 @@ export function stripParagraphesVides(text: string): string {
 export const LienInterneAssistant = ({
   href,
   className,
+  libelle,
   children,
 }: {
   href: string;
   className?: string;
+  /** Nom accessible, quand le contenu du lien ne se lit pas bien d'un trait. */
+  libelle?: string;
   children?: ReactNode;
 }) => {
   const router = useRouter();
@@ -114,6 +117,7 @@ export const LienInterneAssistant = ({
 
   return (
     <a
+      aria-label={libelle}
       className={className}
       href={href}
       onClick={(event) => {

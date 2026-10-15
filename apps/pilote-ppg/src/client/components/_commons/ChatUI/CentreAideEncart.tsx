@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowRightLineIcon } from "@/components/_commons/Icones/ArrowRightLineIcon";
@@ -28,6 +29,8 @@ export const CentreAideEncart = ({
 }: {
   output: ConsulterCentreAideOutput;
 }) => {
+  const idTitre = useId();
+
   if (!output.trouve || output.sources.length === 0) {
     return (
       <div
@@ -45,19 +48,31 @@ export const CentreAideEncart = ({
 
   return (
     <div className="flex flex-col gap-2" {...markCopyableBlock("text")}>
-      <p className="mb-0 flex items-center gap-1.5 text-[13px] font-bold leading-5 text-dsfr-grey-200">
+      <p
+        className="mb-0 flex items-center gap-1.5 text-[13px] font-bold leading-5 text-dsfr-grey-200"
+        id={idTitre}
+      >
         <Icone className="h-4 w-4 text-primary" icone={Book2ContourIcon} />
         Pour plus d&apos;informations
       </p>
-      <ul className="m-0 flex list-none flex-col border border-dsfr-grey-925 p-0">
+      <ul
+        aria-labelledby={idTitre}
+        className="m-0 flex list-none flex-col border border-dsfr-grey-925 p-0"
+      >
         {output.sources.map((source) => (
           <li
             className="border-t border-dsfr-grey-925 p-0 first:border-t-0"
             key={source.id}
           >
+            {/* Sans libellé, le nom lu colle l'emplacement et le titre. */}
             <LienInterneAssistant
               className="flex items-center gap-3 bg-none px-3 py-2.5 hover:bg-dsfr-alt-blue-france"
               href={source.url}
+              libelle={
+                source.chemin.length > 0
+                  ? `${source.titre}, dans ${source.chemin.join(" › ")}`
+                  : source.titre
+              }
             >
               <span className="flex flex-col">
                 {source.chemin.length > 0 && (

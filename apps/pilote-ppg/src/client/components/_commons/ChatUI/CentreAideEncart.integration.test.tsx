@@ -38,6 +38,29 @@ test("liste les pages utilisées avec leur emplacement dans le centre d'aide", (
   ).toHaveAttribute("href", "/centre-aide-pilote?article=taux");
 });
 
+test("nomme chaque lien par son titre puis son emplacement, et la liste par le titre de l'encart", () => {
+  // Given
+  const output = {
+    trouve: true,
+    reponse: "TA = (VA − VI) / (VC − VI)",
+    sources: [SOURCE_TAUX],
+    _output_instructions: "",
+  };
+
+  // When
+  render(<CentreAideEncart output={output} />);
+
+  // Then
+  expect(
+    screen.getByRole("list", { name: "Pour plus d'informations" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("link", {
+      name: "Le taux d'avancement, dans Introduction et notions clés",
+    }),
+  ).toBeInTheDocument();
+});
+
 test("propose de contacter l'équipe PILOTE quand le centre d'aide ne répond pas", () => {
   // Given
   const output = {
