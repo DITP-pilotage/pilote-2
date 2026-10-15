@@ -292,10 +292,13 @@ masqués et brouillons contiennent un marqueur unique.
 
 ## Points d'attention
 
-- **PIL-1855** (`clarify_with_choices`, pas encore mergée dans `dev`) touche
-  les mêmes fichiers : `systemPrompt.ts`, `AssistantMessage.tsx` et
-  `PiloteUIMessage.ts`. Il faudra rebaser sur la branche qui sera mergée en
-  second.
+- **Cohabitation avec `clarify_with_choices`** (PIL-1855, mergée dans `dev`) :
+  - dans `AssistantMessage`, les choix « ferment la réponse ». L'encart du
+    centre d'aide se place donc sous le texte et **au-dessus** de
+    `ChoicesInline`, qui reste le dernier élément ;
+  - dans le prompt, la section `## clarify_with_choices` liste les cas où ne
+    pas l'utiliser. On y ajoute le cas frontière aide / donnée, qui se traite
+    avec `consulter_centre_aide` et non par une question de clarification.
 - **Latence** : le sous-agent fait deux appels LLM. Le nouvel état de
   chargement rend l'attente visible. Si c'est trop lent, on pourra passer le
   sous-agent sur `openweight-medium`.
