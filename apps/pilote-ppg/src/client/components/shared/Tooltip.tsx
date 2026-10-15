@@ -28,16 +28,22 @@ export const Tooltip = Object.assign({}, RadixTooltip, {
       </RadixTooltip.Content>
     </RadixTooltip.Portal>
   ),
-  Trigger: (props: ComponentProps<"button">) => (
-    <RadixTooltip.Trigger asChild>
-      <button
-        type="button"
-        {...props}
-        className={clsxm(
-          "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
-          props.className,
-        )}
-      />
-    </RadixTooltip.Trigger>
-  ),
+  Trigger: ({
+    asChild = false,
+    ...props
+  }: ComponentProps<"button"> & { asChild?: boolean }) =>
+    asChild ? (
+      <RadixTooltip.Trigger asChild {...props} />
+    ) : (
+      <RadixTooltip.Trigger asChild>
+        <button
+          type="button"
+          {...props}
+          className={clsxm(
+            "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
+            props.className,
+          )}
+        />
+      </RadixTooltip.Trigger>
+    ),
 });

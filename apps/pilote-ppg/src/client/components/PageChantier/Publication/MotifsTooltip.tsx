@@ -1,5 +1,4 @@
 import { ReactElement, useState } from "react";
-import { Tooltip as RadixTooltip } from "radix-ui";
 import { Tooltip } from "@/components/shared/Tooltip";
 
 // Le bouton reste focusable (aria-disabled plutôt que disabled) pour que
@@ -17,7 +16,7 @@ export const MotifsTooltip = ({
   // d'aria-describedby pointant vers un contenu absent.
   return (
     <Tooltip.Root open={ouvert && motifs.length > 0} onOpenChange={setOuvert}>
-      <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+      <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       {motifs.length > 0 ? (
         <Tooltip.Content>
           {motifs.map((motif) => (
