@@ -36,3 +36,22 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
     expect(prompt).not.toContain("Sous-territoires détectés dans la demande");
   });
 });
+describe("buildChatSystemPrompt — centre d'aide", () => {
+  it("fait primer le centre d'aide sur le glossaire pour les questions d'aide", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: ["NAT-FR"],
+      agentContext: null,
+      capacities: {
+        synthese: false,
+        dashboard: false,
+        exportRapport: false,
+        inclureSousTerritoires: false,
+      },
+    });
+
+    // Then
+    expect(prompt).toContain("## consulter_centre_aide");
+    expect(prompt).toContain("il prime sur le glossaire de ce prompt");
+  });
+});
