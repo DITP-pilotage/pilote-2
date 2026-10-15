@@ -96,26 +96,25 @@ export function stripParagraphesVides(text: string): string {
     .join("\n");
 }
 
-const MarkdownLink = ({
+/**
+ * Un lien vers une page de PILOTE depuis le chat : il navigue sans recharger
+ * et réduit la conversation dans le dock.
+ */
+export const LienInterneAssistant = ({
   href,
+  className,
   children,
 }: {
-  href?: string;
+  href: string;
+  className?: string;
   children?: ReactNode;
 }) => {
   const router = useRouter();
   const { minimize } = useAlbertConversation();
 
-  if (!href?.startsWith("/")) {
-    return (
-      <a href={href} rel="noopener noreferrer" target="_blank">
-        {children}
-      </a>
-    );
-  }
-
   return (
     <a
+      className={className}
       href={href}
       onClick={(event) => {
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
@@ -128,6 +127,24 @@ const MarkdownLink = ({
       {children}
     </a>
   );
+};
+
+const MarkdownLink = ({
+  href,
+  children,
+}: {
+  href?: string;
+  children?: ReactNode;
+}) => {
+  if (!href?.startsWith("/")) {
+    return (
+      <a href={href} rel="noopener noreferrer" target="_blank">
+        {children}
+      </a>
+    );
+  }
+
+  return <LienInterneAssistant href={href}>{children}</LienInterneAssistant>;
 };
 
 const components = { a: MarkdownLink };
