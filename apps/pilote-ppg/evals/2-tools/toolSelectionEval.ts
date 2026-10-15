@@ -10,6 +10,7 @@ import {
 } from "../world";
 import { seedChantierEnDifficulte, seedChantierEnRetard } from "../seeds";
 import { scoreExpectedTools } from "../scoreExpectedTools";
+import { seedCentreAide } from "../seedCentreAide";
 import type { AgentTurn, ObservedToolCall, ToolCase } from "../types";
 
 /**
@@ -22,6 +23,7 @@ const FAMILLES = {
   recherche: "2.1 · Recherche",
   donnees: "2.2 · Données",
   rendu: "2.3 · Rendu",
+  aide: "2.4 · Aide",
 };
 
 export type FamilleOutil = keyof typeof FAMILLES;
@@ -52,6 +54,10 @@ export function toolSelectionEval({
       chantierId: "CH-006",
       territoire: BRETAGNE,
     });
+
+    // L'outil du centre d'aide est toujours exposé : un cas négatif d'une
+    // autre suite peut l'appeler, il doit trouver un vrai sommaire.
+    await seedCentreAide();
 
     return seeded;
   });
