@@ -25,7 +25,7 @@ SELECT
             parametre_indic.partitionne_vacg_par = 'from_year_start'
             THEN 'annuel'
         WHEN
-            parametre_indic.partitionne_vacg_par = 'from_custom_date'
+            parametre_indic.partitionne_vacg_par = 'from_beginning'
             AND parametre_indic.vacg_operation = 'sum'
             THEN 'cumul_non_annuel'
         ELSE 'random'
