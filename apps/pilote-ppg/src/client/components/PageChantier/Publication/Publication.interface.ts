@@ -37,6 +37,10 @@ export interface PublicationActions<
   modifier: SubmitHandler<P>;
 }
 
+export type ConditionLabels<T extends PublicationValues> = Partial<
+  Record<Extract<keyof T, string>, string>
+>;
+
 export interface PublicationFormConfig<
   T extends PublicationValues,
   P extends T = T,
@@ -47,5 +51,6 @@ export interface PublicationFormConfig<
   editValues: DefaultValues<T>;
   newValues: DefaultValues<T>;
   contentLabel?: string;
+  conditionLabels: ConditionLabels<T>;
   extraFields?: ReactNode;
 }

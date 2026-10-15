@@ -24,14 +24,19 @@ export const Modale = ({
   sousTitreClassName?: string;
   titleHidden?: boolean;
   trigger?: ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "full";
 }) => {
   return (
     <Dialog.Root {...props}>
       {trigger ? <Dialog.Trigger asChild>{trigger}</Dialog.Trigger> : null}
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50 z-10" />
-        <Dialog.Content className="fixed inset-0 md:inset-8 z-10 flex items-end md:items-center md:justify-center pointer-events-none">
+        <Dialog.Content
+          className={clsxm(
+            "fixed inset-0 z-10 flex items-end md:items-center md:justify-center pointer-events-none",
+            size === "full" ? "md:inset-4" : "md:inset-8",
+          )}
+        >
           <div
             className={clsxm(
               "relative w-full bg-white p-8 rounded-t-md md:rounded-md shadow-md pointer-events-auto [word-break:break-word]",
@@ -40,6 +45,7 @@ export const Modale = ({
                 "max-w-[1000px]": size === "lg",
                 "max-w-[900px]": size === "md",
                 "max-w-[600px]": size === "sm",
+                "h-full flex flex-col": size === "full",
               },
             )}
           >
@@ -65,7 +71,12 @@ export const Modale = ({
                 {sousTitre}
               </p>
             ) : null}
-            <div className="max-h-[70vh] overflow-y-auto -mx-8 px-8 -mb-8 pb-8">
+            <div
+              className={clsxm(
+                "overflow-y-auto -mx-8 px-8 -mb-8 pb-8",
+                size === "full" ? "flex-1 min-h-0" : "max-h-[70vh]",
+              )}
+            >
               {children}
             </div>
           </div>

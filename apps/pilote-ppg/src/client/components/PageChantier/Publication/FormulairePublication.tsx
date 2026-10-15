@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
   FormProvider,
   SubmitHandler,
@@ -17,8 +18,11 @@ import {
   PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
-import { MotifsTooltip } from "@/components/PageChantier/Publication/MotifsTooltip";
-import { motifsBloquants } from "@/components/PageChantier/Publication/motifsActionsIndisponibles";
+import { ConditionsChecklist } from "@/components/PageChantier/Publication/ConditionsChecklist";
+import {
+  actionConditions,
+  allConditionsMet,
+} from "@/components/PageChantier/Publication/actionConditions";
 
 interface FormulairePublicationProps<T extends PublicationValues, P extends T> {
   publication: Publication | null;
@@ -46,7 +50,12 @@ export const FormulairePublication = <
     defaultValues: formConfig.editValues,
   });
   const values = useWatch({ control: form.control });
-  const motifs = motifsBloquants(formConfig.publishSchema, values);
+  const conditions = actionConditions(
+    formConfig.publishSchema,
+    values,
+    formConfig.conditionLabels,
+  );
+  const conditionsId = useId();
 
   return (
     <FormProvider {...form}>
@@ -67,11 +76,17 @@ export const FormulairePublication = <
           extraFields={formConfig.extraFields}
           maxLength={formConfig.maxLength}
         />
-        <div className="flex justify-end mt-4">
-          <MotifsTooltip motifs={motifs}>
+        <div className="flex items-center justify-between gap-6 mt-4">
+          <ConditionsChecklist
+            conditions={conditions}
+            id={conditionsId}
+            title="Pour valider :"
+          />
+          <div className="flex flex-none ml-auto whitespace-nowrap">
             <Button
-              aria-disabled={motifs.length > 0 || undefined}
+              aria-describedby={conditionsId}
               className="mr-3"
+              disabled={!allConditionsMet(conditions)}
               iconLeft={
                 <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
               }
@@ -80,14 +95,14 @@ export const FormulairePublication = <
             >
               Valider
             </Button>
-          </MotifsTooltip>
-          <Button
-            iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
-            onClick={annulationCallback}
-            variant="secondary"
-          >
-            Annuler
-          </Button>
+            <Button
+              iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
+              onClick={annulationCallback}
+              variant="secondary"
+            >
+              Annuler
+            </Button>
+          </div>
         </div>
       </form>
     </FormProvider>
