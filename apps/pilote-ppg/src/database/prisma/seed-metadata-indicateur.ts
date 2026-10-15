@@ -642,8 +642,9 @@ const metadataIndicateurs: Omit<metadata_indicateur, "valeurs_acceptees">[] = [
     est_visible: true,
     alias: "Décumul des valeurs saisies (TA annuel)",
     est_editable: true,
-    validation_regex: "",
-    validation_regex_error_message: null,
+    validation_regex: "^(_|from_year_start|from_beginning)$",
+    validation_regex_error_message:
+      "Le décumul doit valoir '_', 'from_year_start' ou 'from_beginning'",
     edit_box_type: "multi-select",
     default_value: "_",
     est_obligatoire: false,
@@ -659,8 +660,10 @@ const metadataIndicateurs: Omit<metadata_indicateur, "valeurs_acceptees">[] = [
     est_visible: true,
     alias: "Cumul des valeurs (TA annuel)",
     est_editable: true,
-    validation_regex: "",
-    validation_regex_error_message: null,
+    validation_regex:
+      "^(_|from_year_start|from_beginning|from_previous_month::12)$",
+    validation_regex_error_message:
+      "Le cumul doit valoir '_', 'from_year_start', 'from_beginning' ou 'from_previous_month::12'",
     edit_box_type: "multi-select",
     default_value: "_",
     est_obligatoire: false,
@@ -676,10 +679,11 @@ const metadataIndicateurs: Omit<metadata_indicateur, "valeurs_acceptees">[] = [
     est_visible: true,
     alias: "Opération (TA annuel)",
     est_editable: true,
-    validation_regex: "",
-    validation_regex_error_message: null,
+    validation_regex: "^(current_value|sum)$",
+    validation_regex_error_message:
+      "L'opération doit valoir 'current_value' ou 'sum'",
     edit_box_type: "multi-select",
-    default_value: "",
+    default_value: "current_value",
     est_obligatoire: false,
     doit_afficher_la_description: true,
     groupe: "METADATA_PARAMETRAGE_INDICATEURS",
@@ -693,8 +697,9 @@ const metadataIndicateurs: Omit<metadata_indicateur, "valeurs_acceptees">[] = [
     est_visible: true,
     alias: "Décumul des valeurs saisies (TA global)",
     est_editable: true,
-    validation_regex: "",
-    validation_regex_error_message: null,
+    validation_regex: "^(_|from_year_start|from_beginning)$",
+    validation_regex_error_message:
+      "Le décumul doit valoir '_', 'from_year_start' ou 'from_beginning'",
     edit_box_type: "multi-select",
     default_value: "_",
     est_obligatoire: false,
@@ -710,8 +715,10 @@ const metadataIndicateurs: Omit<metadata_indicateur, "valeurs_acceptees">[] = [
     est_visible: true,
     alias: "Cumul des valeurs (TA global)",
     est_editable: true,
-    validation_regex: "",
-    validation_regex_error_message: null,
+    validation_regex:
+      "^(_|from_year_start|from_beginning|from_previous_month::12)$",
+    validation_regex_error_message:
+      "Le cumul doit valoir '_', 'from_year_start', 'from_beginning' ou 'from_previous_month::12'",
     edit_box_type: "multi-select",
     default_value: "_",
     est_obligatoire: false,
@@ -727,10 +734,11 @@ const metadataIndicateurs: Omit<metadata_indicateur, "valeurs_acceptees">[] = [
     est_visible: true,
     alias: "Opération (TA global)",
     est_editable: true,
-    validation_regex: "",
-    validation_regex_error_message: null,
+    validation_regex: "^(current_value|sum)$",
+    validation_regex_error_message:
+      "L'opération doit valoir 'current_value' ou 'sum'",
     edit_box_type: "multi-select",
-    default_value: "",
+    default_value: "current_value",
     est_obligatoire: false,
     doit_afficher_la_description: true,
     groupe: "METADATA_PARAMETRAGE_INDICATEURS",
@@ -1764,7 +1772,7 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
   {
     metadata_indicateur_name: "param_vaca_decumul_from",
     ordre: 3,
-    valeur: "from_custom_date::2019-01-01",
+    valeur: "from_beginning",
     nom: "Oui, saisie en cumul depuis le début",
     description:
       "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.",
@@ -1788,7 +1796,7 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
   {
     metadata_indicateur_name: "param_vaca_partition_date",
     ordre: 3,
-    valeur: "from_custom_date::2019-01-01",
+    valeur: "from_beginning",
     nom: "Oui, cumul global",
     description: "Cumul de toutes les VA.",
   },
@@ -1803,13 +1811,6 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
   // param_vaca_op
   {
     metadata_indicateur_name: "param_vaca_op",
-    ordre: 0,
-    valeur: "",
-    nom: "Choisir une Opération (TA annuel)",
-    description: "Choisir une Opération (TA annuel)",
-  },
-  {
-    metadata_indicateur_name: "param_vaca_op",
     ordre: 1,
     valeur: "current_value",
     nom: "Valeur saisie",
@@ -1822,13 +1823,6 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
     valeur: "sum",
     nom: "Somme des VA",
     description: "Somme des VA",
-  },
-  {
-    metadata_indicateur_name: "param_vaca_op",
-    ordre: 3,
-    valeur: "avg",
-    nom: "Moyenne",
-    description: "Moyenne",
   },
 
   // param_vacg_decumul_from
@@ -1849,7 +1843,7 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
   {
     metadata_indicateur_name: "param_vacg_decumul_from",
     ordre: 3,
-    valeur: "from_custom_date::2019-01-01",
+    valeur: "from_beginning",
     nom: "Oui, saisie en cumul depuis le début",
     description:
       "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.",
@@ -1873,7 +1867,7 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
   {
     metadata_indicateur_name: "param_vacg_partition_date",
     ordre: 3,
-    valeur: "from_custom_date::2019-01-01",
+    valeur: "from_beginning",
     nom: "Oui, cumul global",
     description: "Cumul de toutes les VA.",
   },
@@ -1888,13 +1882,6 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
   // param_vacg_op
   {
     metadata_indicateur_name: "param_vacg_op",
-    ordre: 0,
-    valeur: "",
-    nom: "Choisir une Opération (TA global)",
-    description: "Choisir une Opération (TA global)",
-  },
-  {
-    metadata_indicateur_name: "param_vacg_op",
     ordre: 1,
     valeur: "current_value",
     nom: "Valeur saisie",
@@ -1907,13 +1894,6 @@ const valeursAcceptees: Omit<metadata_indicateur_valeur_acceptee, "id">[] = [
     valeur: "sum",
     nom: "Somme des VA",
     description: "Somme des VA",
-  },
-  {
-    metadata_indicateur_name: "param_vacg_op",
-    ordre: 3,
-    valeur: "avg",
-    nom: "Moyenne",
-    description: "Moyenne",
   },
 
   // tendance
