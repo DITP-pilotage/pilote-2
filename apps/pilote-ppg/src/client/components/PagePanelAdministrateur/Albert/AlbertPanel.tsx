@@ -1,18 +1,30 @@
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { ComponentType, useMemo } from "react";
 import { Tabs } from "@/components/shared/Tabs";
 import { AlbertChat } from "@/components/PagePanelAdministrateur/Albert/AlbertChat";
 import { AlbertDashboard } from "@/components/PagePanelAdministrateur/Albert/AlbertDashboard";
+import { AlbertProfilPermissions } from "@/components/PagePanelAdministrateur/Albert/AlbertProfilPermissions";
+import { AlbertUtilisateurPermissions } from "@/components/PagePanelAdministrateur/Albert/AlbertUtilisateurPermissions";
 
-type Onglet = "discussion" | "dashboard";
+type Onglet =
+  "discussion" | "dashboard" | "permissions-profils" | "permissions-emails";
 
-const ITEMS = [
+const ITEMS: { value: Onglet; label: string }[] = [
   { value: "discussion", label: "Discussion" },
   { value: "dashboard", label: "Dashboard" },
+  { value: "permissions-profils", label: "Permissions profils" },
+  { value: "permissions-emails", label: "Permissions emails" },
 ];
 
 const isOnglet = (value: string): value is Onglet =>
-  value === "discussion" || value === "dashboard";
+  ITEMS.some((item) => item.value === value);
+
+const CONTENU: Record<Onglet, ComponentType> = {
+  discussion: AlbertChat,
+  dashboard: AlbertDashboard,
+  "permissions-profils": AlbertProfilPermissions,
+  "permissions-emails": AlbertUtilisateurPermissions,
+};
 
 export const AlbertPanel = () => {
   const router = useRouter();
@@ -32,11 +44,13 @@ export const AlbertPanel = () => {
     );
   };
 
+  const Contenu = CONTENU[ongletActif];
+
   return (
     <div>
       <Tabs items={ITEMS} onValueChange={changerOnglet} value={ongletActif} />
       <div className="mt-6">
-        {ongletActif === "discussion" ? <AlbertChat /> : <AlbertDashboard />}
+        <Contenu />
       </div>
     </div>
   );
