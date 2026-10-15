@@ -27,34 +27,13 @@ add_decumul_start_date AS (
         *,
         -- Date pour effectuer le decumul des VA
         CASE
-        -- Si from_year_start -> 1er janvier de l'année de la mesure
+            -- Si from_year_start -> 1er janvier de l'année de la mesure
             WHEN
                 param_vaca_decumul_from = 'from_year_start'
                 THEN DATE_TRUNC('year', metric_date)
-            -- Si from_custom_date::X -> date X
-            WHEN param_vaca_decumul_from LIKE 'from_custom_date::%'
-                THEN SPLIT_PART(
-                    param_vaca_decumul_from,
-                    'from_custom_date::',
-                    2
-                )::DATE
-        -- Sinon, pas de date de début de décumul
-        END AS decumul_vaa_date,
-        -- Date pour effectuer le calcul des VACA
-        CASE
-        -- Si from_year_start -> 1er janvier de l'année de la mesure
-            WHEN
-                param_vaca_partition_date = 'from_year_start'
-                THEN DATE_TRUNC('year', metric_date)
-            -- Si from_custom_date::X -> date X
-            WHEN param_vaca_partition_date LIKE 'from_custom_date::%'
-                THEN SPLIT_PART(
-                    param_vaca_partition_date,
-                    'from_custom_date::',
-                    2
-                )::DATE
-        -- Sinon, pas de date de début de décumul
-        END AS vaca_partition_date
+        -- Sinon (from_beginning), pas de date : le décumul porte sur tout
+        -- l'historique de l'indicateur
+        END AS decumul_vaa_date
     FROM mesures_and_params
 ),
 
@@ -108,19 +87,6 @@ compute_vaca AS (
             WHEN
                 param_vaca_partition_date = 'from_previous_month::3'
                 AND param_vaca_op = 'sum' THEN SUM(va_decumul) OVER w3
-            -- avg avec les différentes fenetres autorisées
-            WHEN
-                param_vaca_partition_date = 'from_previous_month::48'
-                AND param_vaca_op = 'moy' THEN AVG(va_decumul) OVER w48
-            WHEN
-                param_vaca_partition_date = 'from_previous_month::12'
-                AND param_vaca_op = 'moy' THEN AVG(va_decumul) OVER w12
-            WHEN
-                param_vaca_partition_date = 'from_previous_month::6'
-                AND param_vaca_op = 'moy' THEN AVG(va_decumul) OVER w6
-            WHEN
-                param_vaca_partition_date = 'from_previous_month::3'
-                AND param_vaca_op = 'moy' THEN AVG(va_decumul) OVER w3
             -- si calcul de VACA avec from_year_start
             WHEN
                 param_vaca_partition_date = 'from_year_start'
@@ -132,35 +98,12 @@ compute_vaca AS (
                         DATE_TRUNC('year', metric_date)
                     ORDER BY metric_date
                 )
+            -- si calcul de VACA avec from_beginning : sur tout l'historique
             WHEN
-                param_vaca_partition_date = 'from_year_start'
-                AND param_vaca_op = 'moy'
-                THEN AVG(va_decumul) OVER (
-                    PARTITION BY
-                        indic_id,
-                        zone_id,
-                        DATE_TRUNC('year', metric_date)
-                    ORDER BY metric_date
-                )
-            -- si calcul de VACA avec from_custom_date
-            WHEN
-                param_vaca_partition_date LIKE 'from_custom_date::%'
+                param_vaca_partition_date = 'from_beginning'
                 AND param_vaca_op = 'sum'
                 THEN SUM(va_decumul) OVER (
-                    PARTITION BY
-                        indic_id,
-                        zone_id,
-                        vaca_partition_date
-                    ORDER BY metric_date
-                )
-            WHEN
-                param_vaca_partition_date LIKE 'from_custom_date::%'
-                AND param_vaca_op = 'moy'
-                THEN AVG(va_decumul) OVER (
-                    PARTITION BY
-                        indic_id,
-                        zone_id,
-                        vaca_partition_date
+                    PARTITION BY indic_id, zone_id
                     ORDER BY metric_date
                 )
         END AS vaca
