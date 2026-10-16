@@ -22,7 +22,9 @@ type ActionType =
   | "MESURE_INDICATEUR_IMPORTEE"
   | "RAPPORT_IMPORT_CREE"
   | "UTILISATEUR_DESACTIVE"
-  | "PROFIL_UTILISATEUR_MODIFIE";
+  | "PROFIL_UTILISATEUR_MODIFIE"
+  | "ACCES_ALBERT_PROFIL_ACTIVE"
+  | "ACCES_ALBERT_UTILISATEUR_AJOUTE";
 
 interface TrackedAction {
   type: ActionType;
@@ -90,6 +92,16 @@ export class E2ETestContext {
           await prisma.utilisateur.updateMany({
             where: { email: action.filters.email as string },
             data: action.filters.originalData as Record<string, unknown>,
+          });
+          break;
+        case "ACCES_ALBERT_PROFIL_ACTIVE":
+          await prisma.albert_access_profil.deleteMany({
+            where: { profil_code: action.filters.profilCode as string },
+          });
+          break;
+        case "ACCES_ALBERT_UTILISATEUR_AJOUTE":
+          await prisma.albert_access_utilisateur.deleteMany({
+            where: { utilisateur: { email: action.filters.email as string } },
           });
           break;
       }
