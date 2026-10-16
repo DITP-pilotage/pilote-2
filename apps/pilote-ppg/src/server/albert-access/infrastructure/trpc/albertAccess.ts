@@ -40,7 +40,7 @@ export const albertAccessRouter = createTRPCRouter({
   }),
 
   searchUtilisateurs: protectedProcedure
-    .input(z.object({ email: z.string() }))
+    .input(z.object({ query: z.string() }))
     .query(({ ctx, input }) => {
       assertDitpAdmin(ctx.session.profil);
       return getContainer("albertAccess")

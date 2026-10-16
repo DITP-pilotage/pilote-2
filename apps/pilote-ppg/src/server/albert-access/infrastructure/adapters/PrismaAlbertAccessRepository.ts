@@ -93,12 +93,19 @@ export class PrismaAlbertAccessRepository implements AlbertAccessRepository {
   }
 
   async searchUtilisateurs(
-    email: string,
+    query: string,
     limit: number,
   ): Promise<UtilisateurSearchResult[]> {
+    const mots = query.split(/\s+/).filter((mot) => mot.length > 0);
     const utilisateurs = await this.prisma.utilisateur.findMany({
       where: {
-        email: { contains: email, mode: "insensitive" },
+        AND: mots.map((mot) => ({
+          OR: [
+            { email: { contains: mot, mode: "insensitive" } },
+            { prenom: { contains: mot, mode: "insensitive" } },
+            { nom: { contains: mot, mode: "insensitive" } },
+          ],
+        })),
         profilCode: { not: ProfilEnum.DITP_ADMIN },
         date_desactivation: null,
       },

@@ -23,7 +23,7 @@ export interface AlbertAccessRepository {
   setProfilActive(profilCode: string, active: boolean): Promise<void>;
   listUtilisateurs(): Promise<UtilisateurAccess[]>;
   searchUtilisateurs(
-    email: string,
+    query: string,
     limit: number,
   ): Promise<UtilisateurSearchResult[]>;
   findUtilisateurProfil(utilisateurId: string): Promise<string | null>;

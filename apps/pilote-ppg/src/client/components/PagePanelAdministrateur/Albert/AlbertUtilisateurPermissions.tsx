@@ -30,7 +30,7 @@ export const AlbertUtilisateurPermissions = () => {
     api.albertAccess.listUtilisateurs.useQuery();
   const { data: resultats = [], isFetching } =
     api.albertAccess.searchUtilisateurs.useQuery(
-      { email: debouncedSearch },
+      { query: debouncedSearch },
       { enabled: rechercheActive },
     );
 
@@ -62,7 +62,7 @@ export const AlbertUtilisateurPermissions = () => {
           emptyLabel={
             rechercheActive
               ? "Aucun utilisateur Pilote ne correspond"
-              : `Saisissez au moins ${LONGUEUR_MIN_RECHERCHE} caractères de l'email`
+              : `Saisissez au moins ${LONGUEUR_MIN_RECHERCHE} caractères`
           }
           getKey={(utilisateur) => utilisateur.utilisateurId}
           isItemDisabled={(utilisateur) => utilisateur.dejaAjoute}
@@ -88,7 +88,7 @@ export const AlbertUtilisateurPermissions = () => {
             </span>
           )}
           search={search}
-          searchPlaceholder="Rechercher par email"
+          searchPlaceholder="Rechercher par nom, prénom ou email"
           triggerLabel="Ajouter un utilisateur…"
         />
       </div>

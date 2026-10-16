@@ -79,7 +79,7 @@ Structure calquée sur `src/server/parametrage-nouveautes/` :
   - `listProfils(): { code, nom, active }[]` (sans `DITP_ADMIN`)
   - `setProfilActive(profilCode, active)`
   - `listUtilisateurs(): { utilisateurId, email, nom, prenom, profilCode, profilNom, autoriseViaProfil }[]` (tri `date_creation` desc)
-  - `searchUtilisateurs(email, limit): { utilisateurId, email, nom, prenom, profilCode, profilNom, dejaAjoute, autoriseViaProfil }[]` (`contains` insensible à la casse, sans `DITP_ADMIN`)
+  - `searchUtilisateurs(query, limit): { utilisateurId, email, nom, prenom, profilCode, profilNom, dejaAjoute, autoriseViaProfil }[]` (chaque mot de la saisie doit apparaître dans l'email, le prénom ou le nom, `contains` insensible à la casse ; sans `DITP_ADMIN` ni compte désactivé)
   - `findUtilisateurProfil(utilisateurId): string | null`
   - `addUtilisateur(utilisateurId)` (upsert, idempotent) / `removeUtilisateur(utilisateurId)`
   - `getAccessFlags(utilisateurId, profil): { profilActive, utilisateurAutorise }`
@@ -95,7 +95,7 @@ Structure calquée sur `src/server/parametrage-nouveautes/` :
 | `listProfils` | — | `[{ code, nom, active }]` |
 | `setProfilActive` | `{ profilCode, active }` | refuse `DITP_ADMIN` |
 | `listUtilisateurs` | — | liste des autorisés individuellement |
-| `searchUtilisateurs` | `{ email }` (min 3 caractères) | max 10 résultats |
+| `searchUtilisateurs` | `{ query }` (min 3 caractères) | max 10 résultats, recherche sur email, prénom et nom |
 | `addUtilisateur` | `{ utilisateurId }` | refuse inconnu ou `DITP_ADMIN` ; idempotent |
 | `removeUtilisateur` | `{ utilisateurId }` | supprime la ligne |
 
@@ -113,7 +113,7 @@ Ajout de deux onglets aux côtés de Discussion / Dashboard : `?onglet=permissio
 
 ### Onglet « Permissions emails »
 
-- `SearchPicker` déclenché par « Ajouter un utilisateur… » : recherche à partir de 3 caractères, debounce 300 ms côté appelant ; résultat « Prénom Nom · email · profil » ; mention « Déjà autorisé via le profil X » (sélectionnable) ; « Déjà dans la liste » (désactivé) ; aucun résultat → « Aucun utilisateur Pilote ne correspond ». Sélection → `addUtilisateur`, fermeture, invalidation, toast.
+- `SearchPicker` déclenché par « Ajouter un utilisateur… » : recherche par nom, prénom ou email à partir de 3 caractères, debounce 300 ms côté appelant ; résultat « Prénom Nom · email · profil » ; mention « Déjà autorisé via le profil X » (sélectionnable) ; « Déjà dans la liste » (désactivé) ; aucun résultat → « Aucun utilisateur Pilote ne correspond ». Sélection → `addUtilisateur`, fermeture, invalidation, toast.
 - `Table` Nom / Email / Profil / action « Retirer » ; badge « Déjà autorisé via le profil X » si `autoriseViaProfil` ; état vide « Aucun utilisateur autorisé individuellement ». Retrait immédiat, sans modale.
 
 ### `shared/SearchPicker.tsx` (nouveau)
