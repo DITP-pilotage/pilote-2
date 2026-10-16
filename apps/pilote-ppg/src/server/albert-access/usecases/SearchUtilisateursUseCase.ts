@@ -15,11 +15,11 @@ export class SearchUtilisateursUseCase {
   }
 
   async execute({
-    email,
+    query,
   }: {
-    email: string;
+    query: string;
   }): Promise<UtilisateurSearchResult[]> {
-    const recherche = email.trim();
+    const recherche = query.trim();
     if (recherche.length < LONGUEUR_MIN_RECHERCHE) {
       return [];
     }

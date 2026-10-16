@@ -13,12 +13,12 @@ describe("SearchUtilisateursUseCase", () => {
   });
 
   it("Doit ne rien chercher en dessous de 3 caractères utiles", async () => {
-    expect(await useCase.execute({ email: "  je  " })).toEqual([]);
+    expect(await useCase.execute({ query: "  je  " })).toEqual([]);
     expect(albertAccessRepository.searchUtilisateurs).not.toHaveBeenCalled();
   });
 
-  it("Doit chercher l'email trimé avec une limite de 10", async () => {
-    await useCase.execute({ email: "  jean.d " });
+  it("Doit chercher la saisie trimée avec une limite de 10", async () => {
+    await useCase.execute({ query: "  jean.d " });
 
     expect(albertAccessRepository.searchUtilisateurs).toHaveBeenCalledWith(
       "jean.d",

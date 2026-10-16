@@ -213,6 +213,59 @@ describe("PrismaAlbertAccessRepository", () => {
     );
 
     it(
+      "Doit chercher sur le nom",
+      createIntegrationTest(async () => {
+        await prisma.utilisateur.create({
+          data: {
+            id: PREFET_ID,
+            email: "j.m@test.com",
+            nom: "Martin",
+            prenom: "Jeanne",
+            profilCode: ProfilEnum.PREFET_REGION,
+            date_creation: new Date(),
+          },
+        });
+
+        const resultats = await repository.searchUtilisateurs("marTIN", 10);
+
+        expect(resultats.map(({ email }) => email)).toEqual(["j.m@test.com"]);
+      }),
+    );
+
+    it(
+      "Doit chercher sur le prénom",
+      createIntegrationTest(async () => {
+        await prisma.utilisateur.create({
+          data: {
+            id: COORDINATEUR_ID,
+            email: "j.d@test.com",
+            nom: "Dupont",
+            prenom: "Jean",
+            profilCode: ProfilEnum.COORDINATEUR_REGION,
+            date_creation: new Date(),
+          },
+        });
+
+        const resultats = await repository.searchUtilisateurs("jean", 10);
+
+        expect(resultats.map(({ email }) => email)).toEqual(["j.d@test.com"]);
+      }),
+    );
+
+    it(
+      "Doit exiger que chaque mot apparaisse dans le prénom, le nom ou l'email",
+      createIntegrationTest(async () => {
+        await creerUtilisateurs();
+
+        const resultats = await repository.searchUtilisateurs("jean dup", 10);
+
+        expect(resultats.map(({ email }) => email)).toEqual([
+          "jean.dupont@test.com",
+        ]);
+      }),
+    );
+
+    it(
       "Doit limiter le nombre de résultats",
       createIntegrationTest(async () => {
         await creerUtilisateurs();
