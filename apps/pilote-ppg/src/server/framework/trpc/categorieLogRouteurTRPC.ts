@@ -10,6 +10,7 @@ const CATEGORIE_PAR_ROUTEUR_TRPC: Record<RouteurTRPC, CategorieLog> = {
   actualites: "contenu",
   annuaire: "utilisateur",
   albert: "albert",
+  albertAccess: "albert",
   applicationLog: "maintenance",
   chantier: "chantier",
   commentaire: "chantier",

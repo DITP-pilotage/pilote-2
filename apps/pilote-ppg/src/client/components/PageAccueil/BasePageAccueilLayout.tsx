@@ -3,7 +3,6 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
-import { useAskAIAccess } from "@/components/PageAccueil/useAskAIAccess";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
@@ -27,6 +26,7 @@ import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { profilsRégionaux } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-territoriale/fiche-territoriale";
 import { clsxm } from "@/utils/clsxm";
+import type { AlbertAccess } from "@/server/albert-access/domain/checkAlbertAccess";
 
 const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
   ProfilEnum.CABINET_MTFP,
@@ -65,7 +65,7 @@ interface BasePageAccueilLayoutProps {
   nombreTotalChantiersAvecAlertes: number;
   aDejaVuVideoAccueil: boolean;
   doitAfficherLaModaleInfolettre: boolean;
-  emailAutoriseAskAITerritoire: boolean;
+  accesAlbert: AlbertAccess;
   children: ReactNode;
 }
 
@@ -81,13 +81,12 @@ export const BasePageAccueilLayout: FunctionComponent<
   nombreTotalChantiersAvecAlertes,
   aDejaVuVideoAccueil,
   doitAfficherLaModaleInfolettre: doitAfficherLaModaleInfolettreInitial,
-  emailAutoriseAskAITerritoire,
+  accesAlbert,
   children,
 }) => {
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
-  const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
-    useAskAIAccess({ emailAutoriseAskAITerritoire });
+  const estDITPAdmin = session?.profil === ProfilEnum.DITP_ADMIN;
 
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");
@@ -182,13 +181,13 @@ export const BasePageAccueilLayout: FunctionComponent<
               setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
               territoireCode={territoireCode}
             />
-            {peutUtiliserAskAI ? (
+            {accesAlbert.peutUtiliser ? (
               <div className="h-full flex items-center pt-1 pr-2 ml-auto">
                 <BoutonSyntheseTerritoire
                   jalon={jalon}
                   territoireCode={territoireCode}
                   scenarios={
-                    estEligibleTerritoire
+                    accesAlbert.scenarios === "coordinateur"
                       ? scenariosTerritoireCoordinateur({ territoireCode })
                       : scenariosTerritoireDITP({
                           territoireCode,

@@ -19,6 +19,7 @@ import { perimetreMinisterielRouter } from "@/server/gestion-utilisateur/infrast
 import { profilRouter } from "@/server/gestion-utilisateur/infrastructure/trpc/profil";
 import { parametrageNouveautesRouter } from "@/server/parametrage-nouveautes/infrastructure/trpc/parametrageNouveautes";
 import { albertRouter } from "@/server/albert/infrastructure/trpc/albert";
+import { albertAccessRouter } from "@/server/albert-access/infrastructure/trpc/albertAccess";
 import { parametrageCentreAideRouter } from "@/server/parametrage-centre-aide/infrastructure/trpc/parametrageCentreAide";
 import { applicationLogRouter } from "@/server/application-log/infrastructure/trpc/applicationLog";
 import { actualitesRouter } from "@/server/actualites/infrastructure/trpc/actualites";
@@ -52,6 +53,7 @@ export const appRouter = createTRPCRouter({
   profilUtilisateur: profilUtilisateurRouter,
   rapportHebdomadaire: rapportHebdomadaireRouter,
   albert: albertRouter,
+  albertAccess: albertAccessRouter,
   parametrageCentreAide: parametrageCentreAideRouter,
   applicationLog: applicationLogRouter,
   actualites: actualitesRouter,

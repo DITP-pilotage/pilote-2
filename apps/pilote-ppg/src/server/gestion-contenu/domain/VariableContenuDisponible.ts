@@ -7,11 +7,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE: boolean;
   NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR: boolean;
   NEXT_PUBLIC_FF_ASK_AI: boolean;
-  NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: boolean;
-  NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: boolean;
-  NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE: boolean;
-  NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE: boolean;
-  NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR: boolean;
   NEXT_PUBLIC_FF_PILOTE_EVAL: boolean;
   NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: boolean;
   NEXT_PUBLIC_FF_RAPPORT_PVA: boolean;
@@ -47,31 +42,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     label: "Poser une question indicateur",
   },
   { envKey: "NEXT_PUBLIC_FF_ASK_AI", configKey: "askAI", label: "Ask AI" },
-  {
-    envKey: "NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN",
-    configKey: "askAIDitpAdmin",
-    label: "Ask AI — ouverture DITP Admin",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
-    configKey: "askAIEquipeDirProjet",
-    label: "Ask AI — ouverture Équipe Direction de Projet",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE",
-    configKey: "askAIDitpPilotage",
-    label: "Ask AI — ouverture DITP Pilotage",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE",
-    configKey: "askAITerritoire",
-    label: "Ask AI — ouverture Territoire",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
-    configKey: "askAICoordinateur",
-    label: "Ask AI — ouverture Coordinateurs région et département",
-  },
   {
     envKey: "NEXT_PUBLIC_FF_PILOTE_EVAL",
     configKey: "piloteEval",

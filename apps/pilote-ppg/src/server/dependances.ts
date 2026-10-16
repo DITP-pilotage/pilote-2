@@ -25,6 +25,7 @@ import { habilitationsCoordinateurModule } from "./habilitations-coordinateur/mo
 import { profilUtilisateurModule } from "./profil-utilisateur/module";
 import { rapportsHebdomadairesModule } from "./rapports-hebdomadaires/module";
 import { albertModule } from "./albert/module";
+import { albertAccessModule } from "./albert-access/module";
 import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
 import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { gestionContenuModule } from "./gestion-contenu/module";
@@ -55,6 +56,7 @@ const allModules = [
   profilUtilisateurModule,
   rapportsHebdomadairesModule,
   albertModule,
+  albertAccessModule,
   parametrageCentreAideModule,
   datajobsExecutionModule,
   gestionContenuModule,
@@ -100,6 +102,7 @@ function registerContainer(): ContainerDependencies {
     profilUtilisateur: getContainer("profilUtilisateur"),
     rapportsHebdomadaires: getContainer("rapportsHebdomadaires"),
     albert: getContainer("albert"),
+    albertAccess: getContainer("albertAccess"),
     parametrageCentreAide: getContainer("parametrageCentreAide"),
     decisionStrategique: getContainer("decisionStrategique"),
     objectif: getContainer("objectif"),

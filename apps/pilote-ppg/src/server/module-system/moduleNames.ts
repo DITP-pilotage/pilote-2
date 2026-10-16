@@ -18,6 +18,7 @@ export const moduleNames = [
   "profilUtilisateur",
   "rapportsHebdomadaires",
   "albert",
+  "albertAccess",
   "parametrageCentreAide",
   "datajobsExecution",
   "gestionContenu",
