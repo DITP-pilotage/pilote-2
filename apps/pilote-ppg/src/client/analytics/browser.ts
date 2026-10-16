@@ -1,16 +1,13 @@
-import { buildEventRequest } from "@/client/analytics/buildRequest";
+import {
+  buildEventRequest,
+  buildPageViewRequest,
+  type RequestContext,
+} from "@/client/analytics/buildRequest";
 import type {
   AnalyticsConfig,
   AnalyticsEvent,
+  AnalyticsPageView,
 } from "@/client/analytics/schema";
-
-declare global {
-  interface Window {
-    Matomo?: {
-      getAsyncTracker?: () => { getVisitorId?: () => string } | undefined;
-    };
-  }
-}
 
 export type InactiveAnalyticsReason =
   "not-configured" | "disabled" | "do-not-track";
@@ -20,6 +17,7 @@ export type AnalyticsStatus =
 
 export type Analytics = {
   status: AnalyticsStatus;
+  trackPageView: (pageView: AnalyticsPageView) => void;
   trackEvent: (event: AnalyticsEvent) => void;
 };
 
@@ -28,7 +26,6 @@ export type BrowserAnalyticsOptions = {
   enabled: boolean;
   doNotTrack: boolean;
   send?: (url: string) => void;
-  getVisitorId?: () => string | undefined;
   getPageUrl?: () => string;
 };
 
@@ -36,6 +33,7 @@ export const createMutedAnalytics = (
   reason: InactiveAnalyticsReason,
 ): Analytics => ({
   status: { active: false, reason },
+  trackPageView: () => {},
   trackEvent: () => {},
 });
 
@@ -47,21 +45,8 @@ const sendBeacon = (url: string): void => {
   );
 };
 
-const readMatomoVisitorId = (): string | undefined =>
-  window.Matomo?.getAsyncTracker?.()?.getVisitorId?.();
-
 const readPageUrl = (): string =>
   `${window.location.origin}${window.location.pathname}`;
-
-const safeVisitorId = (
-  getVisitorId: () => string | undefined,
-): string | undefined => {
-  try {
-    return getVisitorId();
-  } catch {
-    return undefined;
-  }
-};
 
 export const createBrowserAnalytics = (
   options: BrowserAnalyticsOptions,
@@ -72,23 +57,26 @@ export const createBrowserAnalytics = (
   if (doNotTrack) return createMutedAnalytics("do-not-track");
 
   const send = options.send ?? sendBeacon;
-  const getVisitorId = options.getVisitorId ?? readMatomoVisitorId;
   const getPageUrl = options.getPageUrl ?? readPageUrl;
   const endpoint = `${config.matomoUrl.replace(/\/$/, "")}/matomo.php`;
 
+  const emit = (buildQuery: (context: RequestContext) => string): void => {
+    try {
+      const query = buildQuery({
+        pageUrl: getPageUrl(),
+        random: Math.random().toString(36).slice(2),
+      });
+      send(`${endpoint}?${query}`);
+    } catch {
+      // L'analytics ne peut pas casser l'application.
+    }
+  };
+
   return {
     status: { active: true },
-    trackEvent: (event) => {
-      try {
-        const query = buildEventRequest(event, config, {
-          pageUrl: getPageUrl(),
-          visitorId: safeVisitorId(getVisitorId),
-          random: Math.random().toString(36).slice(2),
-        });
-        send(`${endpoint}?${query}`);
-      } catch {
-        // L'analytics ne peut pas casser l'application.
-      }
-    },
+    trackPageView: (pageView) =>
+      emit((context) => buildPageViewRequest(pageView, config, context)),
+    trackEvent: (event) =>
+      emit((context) => buildEventRequest(event, config, context)),
   };
 };
