@@ -1149,6 +1149,11 @@ sources:
             data_type: text
             description: >
               Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA annuel.
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ["_", "from_year_start", "from_beginning"]
             config:
               meta:
                 pilote_alias: "Décumul des valeurs saisies (TA annuel)"
@@ -1172,7 +1177,7 @@ sources:
                     },
                     {
                       "order_id": 3,
-                      "value": "from_custom_date::2019-01-01",
+                      "value": "from_beginning",
                       "name": "Oui, saisie en cumul depuis le début",
                       "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.",
                     },
@@ -1181,6 +1186,11 @@ sources:
             data_type: text
             description: >
               Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ["_", "from_year_start", "from_beginning", "from_previous_month::12"]
             config:
               meta:
                 pilote_alias: "Cumul des valeurs (TA annuel)"
@@ -1204,7 +1214,7 @@ sources:
                     },
                     {
                       "order_id": 3,
-                      "value": "from_custom_date::2019-01-01",
+                      "value": "from_beginning",
                       "name": "Oui, cumul global",
                       "desc": "Cumul de toutes les VA.",
                     },
@@ -1219,21 +1229,20 @@ sources:
             data_type: text
             description: >
               Indiquer s'il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ["current_value", "sum"]
             config:
               meta:
                 pilote_alias: "Opération (TA annuel)"
                 pilote_edit_boxType: multi-select
                 pilote_disp_dispDesc: true
-                pilote_create_defaultValue: ""
+                pilote_create_defaultValue: "current_value"
                 pilote_disp_blocId: 5
                 pilote_edit_acceptedValues:
                   [
-                    {
-                      "order_id": 0,
-                      "value": "",
-                      "name": "Choisir une Opération (TA annuel)",
-                      "desc": "Choisir une Opération (TA annuel)",
-                    },
                     {
                       "order_id": 1,
                       "value": "current_value",
@@ -1241,12 +1250,16 @@ sources:
                       "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)",
                     },
                     { "order_id": 2, "value": "sum", "name": "Somme des VA" },
-                    { "order_id": 3, "value": "avg", "name": "Moyenne" },
                   ]
           - name: param_vacg_decumul_from
             data_type: text
             description: >
               Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA global. Par défaut, saisir le même paramétrage que pour le TA annuel.
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ["_", "from_year_start", "from_beginning"]
             config:
               meta:
                 pilote_alias: "Décumul des valeurs saisies (TA global)"
@@ -1270,7 +1283,7 @@ sources:
                     },
                     {
                       "order_id": 3,
-                      "value": "from_custom_date::2019-01-01",
+                      "value": "from_beginning",
                       "name": "Oui, saisie en cumul depuis le début",
                       "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.",
                     },
@@ -1279,6 +1292,11 @@ sources:
             data_type: text
             description: >
               Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ["_", "from_year_start", "from_beginning", "from_previous_month::12"]
             config:
               meta:
                 pilote_alias: "Cumul des valeurs (TA global)"
@@ -1302,7 +1320,7 @@ sources:
                     },
                     {
                       "order_id": 3,
-                      "value": "from_custom_date::2019-01-01",
+                      "value": "from_beginning",
                       "name": "Oui, cumul global",
                       "desc": "Cumul de toutes les VA.",
                     },
@@ -1317,21 +1335,20 @@ sources:
             data_type: text
             description: >
               Indiquer s'il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ["current_value", "sum"]
             config:
               meta:
                 pilote_alias: "Opération (TA global)"
                 pilote_edit_boxType: multi-select
                 pilote_disp_dispDesc: true
-                pilote_create_defaultValue: ""
+                pilote_create_defaultValue: "current_value"
                 pilote_disp_blocId: 5
                 pilote_edit_acceptedValues:
                   [
-                    {
-                      "order_id": 0,
-                      "value": "",
-                      "name": "Choisir une Opération (TA global)",
-                      "desc": "Choisir une Opération (TA global)",
-                    },
                     {
                       "order_id": 1,
                       "value": "current_value",
@@ -1339,7 +1356,6 @@ sources:
                       "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)",
                     },
                     { "order_id": 2, "value": "sum", "name": "Somme des VA" },
-                    { "order_id": 3, "value": "avg", "name": "Moyenne" },
                   ]
           - name: tendance
             data_type: text

@@ -129,9 +129,10 @@ export const createValidationMetadataIndicateurFormulaire = (
         ),
       paramVacaOp: z
         .string()
-        .min(
-          1,
-          "Veuillez choisir une option valide pour l'Opération (TA annuel)",
+        .refine(
+          (value) =>
+            new RegExp(metadata.param_vaca_op.metaPiloteEditRegex).test(value),
+          metadata.param_vaca_op.metaPiloteEditRegexViolationMessage,
         ),
       paramVacgDecumulFrom: z
         .string()
@@ -154,9 +155,10 @@ export const createValidationMetadataIndicateurFormulaire = (
         ),
       paramVacgOp: z
         .string()
-        .min(
-          1,
-          "Veuillez choisir une option valide pour l'Opération (TA global)",
+        .refine(
+          (value) =>
+            new RegExp(metadata.param_vacg_op.metaPiloteEditRegex).test(value),
+          metadata.param_vacg_op.metaPiloteEditRegexViolationMessage,
         ),
       poidsPourcentDept: z
         .string()
@@ -403,9 +405,10 @@ export const createValidationImportMetadataIndicateurFormulaire = (
         ),
       paramVacaOp: z
         .string()
-        .min(
-          1,
-          "Veuillez choisir une option valide pour l'Opération (TA annuel)",
+        .refine(
+          (value) =>
+            new RegExp(metadata.param_vaca_op.metaPiloteEditRegex).test(value),
+          metadata.param_vaca_op.metaPiloteEditRegexViolationMessage,
         ),
       paramVacgDecumulFrom: z
         .string()
@@ -428,9 +431,10 @@ export const createValidationImportMetadataIndicateurFormulaire = (
         ),
       paramVacgOp: z
         .string()
-        .min(
-          1,
-          "Veuillez choisir une option valide pour l'Opération (TA global)",
+        .refine(
+          (value) =>
+            new RegExp(metadata.param_vacg_op.metaPiloteEditRegex).test(value),
+          metadata.param_vacg_op.metaPiloteEditRegexViolationMessage,
         ),
       poidsPourcentDept: z
         .string()
