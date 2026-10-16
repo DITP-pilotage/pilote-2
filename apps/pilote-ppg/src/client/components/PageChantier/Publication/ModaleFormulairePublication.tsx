@@ -1,6 +1,12 @@
-import { ReactNode } from "react";
+import { ReactNode, useId } from "react";
 import { Button } from "@/components/shared/Button";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
@@ -17,8 +23,16 @@ import {
   PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
+import { ConditionsChecklist } from "@/components/PageChantier/Publication/ConditionsChecklist";
+import {
+  actionConditions,
+  allConditionsMet,
+} from "@/components/PageChantier/Publication/actionConditions";
 
-interface ModaleFormulairePublicationProps<T extends PublicationValues> {
+interface ModaleFormulairePublicationProps<
+  T extends PublicationValues,
+  P extends T,
+> {
   title: string;
   consigne: string;
   complementConsigneGenerique: string;
@@ -28,12 +42,15 @@ interface ModaleFormulairePublicationProps<T extends PublicationValues> {
   commentaire: Publication | null;
   aside?: ReactNode;
   emptyMessage?: string;
-  formConfig: PublicationFormConfig<T>;
-  onPublier: SubmitHandler<T>;
+  formConfig: PublicationFormConfig<T, P>;
+  onPublier: SubmitHandler<P>;
   onEnregistrerBrouillon: SubmitHandler<T>;
 }
 
-export const ModaleFormulairePublication = <T extends PublicationValues>({
+export const ModaleFormulairePublication = <
+  T extends PublicationValues,
+  P extends T = T,
+>({
   title,
   consigne,
   complementConsigneGenerique,
@@ -46,20 +63,40 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
   formConfig,
   onPublier,
   onEnregistrerBrouillon,
-}: ModaleFormulairePublicationProps<T>) => {
+}: ModaleFormulairePublicationProps<T, P>) => {
   const { chantierInformations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
 
   const form = useForm<T>({
-    mode: "all",
-    resolver: formConfig.resolver,
+    resolver: zodResolver(formConfig.draftSchema),
     defaultValues: formConfig.newValues,
   });
+  const values = useWatch({ control: form.control });
+  const publishConditions = actionConditions(
+    formConfig.publishSchema,
+    values,
+    formConfig.conditionLabels,
+  );
+  const draftConditions = actionConditions(
+    formConfig.draftSchema,
+    values,
+    formConfig.conditionLabels,
+  );
+  const publishConditionsId = useId();
+  const draftConditionsId = useId();
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      form.reset(formConfig.newValues);
+    }
+    onOpenChange(isOpen);
+  };
 
   return (
     <Modale
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       open={open}
+      size="full"
       title={title}
       titleClassName="text-dsfr-grey-50"
       trigger={trigger}
@@ -83,42 +120,67 @@ export const ModaleFormulairePublication = <T extends PublicationValues>({
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
       <p className="text-sm mb-6">{consigne}</p>
       <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onPublier)}>
+        <form
+          onSubmit={form.handleSubmit((data) =>
+            onPublier(formConfig.publishSchema.parse(data)),
+          )}
+        >
           <PublicationFormFields
+            contentLabel={formConfig.contentLabel}
             extraFields={formConfig.extraFields}
-            editorClassName="h-60"
+            editorClassName={formConfig.extraFields ? undefined : "h-60"}
             maxLength={formConfig.maxLength}
           />
-          <div className="flex justify-end items-center gap-3 mt-6">
-            <Button
-              disabled={!form.formState.isValid}
-              iconLeft={
-                <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
-              }
-              type="submit"
-              variant="primary"
-            >
-              Publier
-            </Button>
-            <Button
-              iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
-              onClick={() => onOpenChange(false)}
-              type="button"
-              variant="secondary"
-            >
-              Annuler
-            </Button>
-            <Button
-              variant="link"
-              disabled={!form.formState.isValid}
-              iconLeft={
-                <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
-              }
-              onClick={form.handleSubmit(onEnregistrerBrouillon)}
-              type="button"
-            >
-              Enregistrer en tant que brouillon
-            </Button>
+          <div className="flex items-center justify-between gap-6 mt-6">
+            <div className="flex flex-1 min-w-0 flex-wrap gap-x-6 gap-y-2">
+              <ConditionsChecklist
+                conditions={publishConditions}
+                id={publishConditionsId}
+                title="Pour publier :"
+              />
+              <ConditionsChecklist
+                conditions={draftConditions}
+                id={draftConditionsId}
+                title="Pour enregistrer en brouillon :"
+              />
+            </div>
+            <div className="flex flex-none items-center gap-3 ml-auto whitespace-nowrap">
+              <Button
+                aria-describedby={publishConditionsId}
+                disabled={!allConditionsMet(publishConditions)}
+                iconLeft={
+                  <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
+                }
+                type="submit"
+                variant="primary"
+              >
+                Publier
+              </Button>
+              <Button
+                iconLeft={
+                  <Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />
+                }
+                onClick={() => onOpenChange(false)}
+                type="button"
+                variant="secondary"
+              >
+                Annuler
+              </Button>
+              <Button
+                aria-describedby={draftConditionsId}
+                disabled={!allConditionsMet(draftConditions)}
+                variant="link"
+                iconLeft={
+                  <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
+                }
+                onClick={(event) => {
+                  return form.handleSubmit(onEnregistrerBrouillon)(event);
+                }}
+                type="button"
+              >
+                Enregistrer en tant que brouillon
+              </Button>
+            </div>
           </div>
         </form>
       </FormProvider>

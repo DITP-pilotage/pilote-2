@@ -83,6 +83,22 @@ describe("creerSyntheseDesResultatsBrouillon", () => {
       }),
     );
   });
+
+  it("crée un brouillon sans météo avec la météo NON_RENSEIGNEE", () => {
+    // when
+    const result = creerSyntheseDesResultatsBrouillon({
+      ...paramsCreation,
+      meteo: undefined,
+    });
+
+    // then
+    expect(result).toEqual(
+      expect.objectContaining({
+        meteo: "NON_RENSEIGNEE",
+        statut: $Enums.statut_publication.BROUILLON,
+      }),
+    );
+  });
 });
 
 describe("publierBrouillonSyntheseDesResultats", () => {
@@ -171,6 +187,26 @@ describe("modifierSyntheseDesResultatsBrouillon", () => {
       dateModification: paramsModification.dateModification,
       statut: $Enums.statut_publication.BROUILLON,
     });
+  });
+
+  it("modifie un brouillon sans météo avec la météo NON_RENSEIGNEE", () => {
+    // given
+    const brouillon = syntheseAvecStatut($Enums.statut_publication.BROUILLON);
+
+    // when
+    const result = modifierSyntheseDesResultatsBrouillon(brouillon, {
+      ...paramsModification,
+      meteo: undefined,
+    });
+
+    // then
+    expect(result).toEqual(
+      expect.objectContaining({
+        contenu: paramsModification.contenu,
+        meteo: "NON_RENSEIGNEE",
+        statut: $Enums.statut_publication.BROUILLON,
+      }),
+    );
   });
 
   it("rejette une synthèse PUBLIE", () => {

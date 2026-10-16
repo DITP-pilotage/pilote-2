@@ -14,7 +14,7 @@ import {
 } from "./Publication.interface";
 import { usePublicationSectionEtat } from "./usePublicationSectionEtat";
 
-interface PublicationSectionProps<T extends PublicationValues> {
+interface PublicationSectionProps<T extends PublicationValues, P extends T> {
   libelle: string;
   showLabel?: boolean;
   consigne: string;
@@ -22,15 +22,18 @@ interface PublicationSectionProps<T extends PublicationValues> {
   publication: Publication | null;
   brouillon: PublicationBrouillon | null;
   modeEcriture?: boolean;
-  actions: PublicationActions<T>;
-  formConfig: PublicationFormConfig<T>;
+  actions: PublicationActions<T, P>;
+  formConfig: PublicationFormConfig<T, P>;
   aside?: ReactNode;
   emptyMessage?: string;
   historiqueNode?: ReactNode;
   type?: string;
 }
 
-export const PublicationSection = <T extends PublicationValues>({
+export const PublicationSection = <
+  T extends PublicationValues,
+  P extends T = T,
+>({
   libelle,
   showLabel = true,
   consigne,
@@ -44,7 +47,7 @@ export const PublicationSection = <T extends PublicationValues>({
   emptyMessage,
   historiqueNode,
   type,
-}: PublicationSectionProps<T>) => {
+}: PublicationSectionProps<T, P>) => {
   const {
     modeÉdition,
     entrerEnModeÉdition,

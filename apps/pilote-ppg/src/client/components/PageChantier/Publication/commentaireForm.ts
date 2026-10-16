@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LIMITE_CARACTÈRES_COMMENTAIRE,
   validationCommentaireFormulaire,
@@ -17,8 +16,12 @@ export const commentaireForm = ({
   publication: Publication | null;
   brouillon: PublicationBrouillon | null;
 }): PublicationFormConfig<PublicationValues> => ({
-  resolver: zodResolver(validationCommentaireFormulaire),
+  draftSchema: validationCommentaireFormulaire,
+  publishSchema: validationCommentaireFormulaire,
   maxLength: LIMITE_CARACTÈRES_COMMENTAIRE,
+  conditionLabels: {
+    contenu: `Saisir le commentaire (${LIMITE_CARACTÈRES_COMMENTAIRE} caractères max.)`,
+  },
   editValues: { contenu: publication?.contenu ?? "" },
   newValues: { contenu: brouillon?.contenu ?? "" },
 });
