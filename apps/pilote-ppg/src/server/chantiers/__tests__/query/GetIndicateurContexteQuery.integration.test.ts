@@ -40,6 +40,33 @@ describe("GetIndicateurContexteQuery", () => {
         chantier: { id: chantier.id, nom: "Chantier de test" },
         mailleNatAgregee: true,
         mailleRegAgregee: false,
+        parametrageValeurAffichee: null,
+      });
+    }),
+  );
+
+  it(
+    "remonte le paramétrage de la valeur affichée de l'indicateur",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+      });
+      await fixtures.metadataParametrageIndicateurs({
+        indic_id: indicateur.id,
+        param_vaca_decumul_from: "_",
+        param_vaca_partition_date: "from_year_start",
+        param_vaca_op: "sum",
+      });
+
+      // When
+      const result = await query.execute({ indicateurId: indicateur.id });
+
+      // Then
+      expect(result?.parametrageValeurAffichee).toEqual({
+        decumul: "_",
+        cumul: "from_year_start",
       });
     }),
   );
