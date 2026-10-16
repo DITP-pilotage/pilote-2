@@ -15,7 +15,7 @@ const contexteParDefaut = {
   chantier: { id: "CH-001", nom: "Chantier test" },
   mailleNatAgregee: false,
   mailleRegAgregee: false,
-  explicationValeurAffichee: null,
+  parametrageValeurAffichee: null,
 };
 
 const executeTool = async (
@@ -289,7 +289,7 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
       execute: async () => ({
         ...contexteParDefaut,
-        explicationValeurAffichee,
+        parametrageValeurAffichee: { decumul: "_", cumul: "from_year_start" },
       }),
     });
     const evenementImport = {

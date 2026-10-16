@@ -40,13 +40,13 @@ describe("GetIndicateurContexteQuery", () => {
         chantier: { id: chantier.id, nom: "Chantier de test" },
         mailleNatAgregee: true,
         mailleRegAgregee: false,
-        explicationValeurAffichee: null,
+        parametrageValeurAffichee: null,
       });
     }),
   );
 
   it(
-    "explique la construction de la valeur affichée à partir du paramétrage de l'indicateur",
+    "remonte le paramétrage de la valeur affichée de l'indicateur",
     createIntegrationTest(async () => {
       // Given
       const chantier = await fixtures.chantierIdentite();
@@ -64,9 +64,10 @@ describe("GetIndicateurContexteQuery", () => {
       const result = await query.execute({ indicateurId: indicateur.id });
 
       // Then
-      expect(result?.explicationValeurAffichee).toEqual(
-        "La valeur affichée dans PILOTE est la somme des valeurs importées depuis janvier de l'année, jusqu'à la date de la valeur.",
-      );
+      expect(result?.parametrageValeurAffichee).toEqual({
+        decumul: "_",
+        cumul: "from_year_start",
+      });
     }),
   );
 

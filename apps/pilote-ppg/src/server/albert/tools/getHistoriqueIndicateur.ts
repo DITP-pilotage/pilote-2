@@ -7,6 +7,7 @@ import {
 } from "@/server/chantiers/query/GetHistoriqueIndicateurTerritoireQuery";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { PROPOSITION_TYPES_EVENEMENT } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { expliquerConstructionValeurAffichee } from "@/server/albert/tools/expliquerConstructionValeurAffichee";
 
 const SEUIL_BESOIN_PRECISION = 100;
 
@@ -165,7 +166,9 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
           };
         }
 
-        const { explicationValeurAffichee } = contexte;
+        const explicationValeurAffichee = expliquerConstructionValeurAffichee(
+          contexte.parametrageValeurAffichee,
+        );
         return {
           indicateur: indicateurResume,
           territoire_code: input.territoire_code,

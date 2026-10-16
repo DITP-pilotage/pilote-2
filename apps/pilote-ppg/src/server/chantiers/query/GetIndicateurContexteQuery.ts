@@ -1,6 +1,11 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { expliquerConstructionValeurAffichee } from "@/server/chantiers/domain/expliquerConstructionValeurAffichee";
+
+// Paramétrage du TA annuel (param_vaca_*) dont dbt tire la valeur affichée
+export type ParametrageValeurAffichee = {
+  decumul: string;
+  cumul: string;
+};
 
 export type IndicateurContexteResult = {
   id: string;
@@ -10,7 +15,7 @@ export type IndicateurContexteResult = {
   chantier: { id: string; nom: string };
   mailleNatAgregee: boolean;
   mailleRegAgregee: boolean;
-  explicationValeurAffichee: string | null;
+  parametrageValeurAffichee: ParametrageValeurAffichee | null;
 };
 
 export class GetIndicateurContexteQuery {
@@ -38,7 +43,6 @@ export class GetIndicateurContexteQuery {
         select: {
           param_vaca_decumul_from: true,
           param_vaca_partition_date: true,
-          param_vaca_op: true,
         },
       });
 
@@ -53,13 +57,10 @@ export class GetIndicateurContexteQuery {
       },
       mailleNatAgregee: indicateur.maille_nat_agregee,
       mailleRegAgregee: indicateur.maille_reg_agregee,
-      explicationValeurAffichee: expliquerConstructionValeurAffichee(
-        parametrage && {
-          decumulFrom: parametrage.param_vaca_decumul_from,
-          partitionDate: parametrage.param_vaca_partition_date,
-          operation: parametrage.param_vaca_op,
-        },
-      ),
+      parametrageValeurAffichee: parametrage && {
+        decumul: parametrage.param_vaca_decumul_from,
+        cumul: parametrage.param_vaca_partition_date,
+      },
     };
   }
 }
