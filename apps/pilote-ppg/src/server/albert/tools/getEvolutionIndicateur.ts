@@ -3,6 +3,7 @@ import { z } from "zod";
 import { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 import { GetEvolutionIndicateurTerritoireQuery } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
 import type { PointEvolutionAvancement } from "@/server/chantiers/query/GetEvolutionIndicateurTerritoireQuery";
+import { expliquerConstructionValeurAffichee } from "@/server/albert/tools/expliquerConstructionValeurAffichee";
 
 export const getEvolutionIndicateurInputSchema = z.object({
   indicateur_id: z
@@ -87,6 +88,10 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
           territoireCode: input.territoire_code,
         });
 
+        const explicationValeurAffichee = expliquerConstructionValeurAffichee(
+          contexte.parametrageValeurAffichee,
+        );
+
         return {
           indicateur: {
             id: contexte.id,
@@ -95,11 +100,11 @@ Utilise cet outil quand l'utilisateur demande la tendance, la courbe, ou l'évol
             chantier_id: contexte.chantier.id,
           },
           territoire_code: input.territoire_code,
-          ...(contexte.explicationValeurAffichee && {
-            construction_valeur_affichee: contexte.explicationValeurAffichee,
+          ...(explicationValeurAffichee && {
+            construction_valeur_affichee: explicationValeurAffichee,
           }),
           points,
-          _output_instructions: contexte.explicationValeurAffichee
+          _output_instructions: explicationValeurAffichee
             ? `${OUTPUT_INSTRUCTIONS} ${VALEUR_AFFICHEE_INSTRUCTIONS}`
             : OUTPUT_INSTRUCTIONS,
         };

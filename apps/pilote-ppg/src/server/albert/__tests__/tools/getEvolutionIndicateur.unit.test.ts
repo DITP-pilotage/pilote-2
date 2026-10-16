@@ -29,7 +29,7 @@ describe("createGetEvolutionIndicateurTool execute", () => {
         chantier: { id: "CH-001", nom: "Chantier test" },
         mailleNatAgregee: false,
         mailleRegAgregee: false,
-        explicationValeurAffichee: null,
+        parametrageValeurAffichee: null,
       }),
     });
     const getEvolutionIndicateurTerritoireQuery =
@@ -83,7 +83,7 @@ describe("createGetEvolutionIndicateurTool execute", () => {
         chantier: { id: "CH-001", nom: "Chantier test" },
         mailleNatAgregee: false,
         mailleRegAgregee: false,
-        explicationValeurAffichee,
+        parametrageValeurAffichee: { decumul: "_", cumul: "from_beginning" },
       }),
     });
     const getEvolutionIndicateurTerritoireQuery =
@@ -189,7 +189,7 @@ describe("createGetEvolutionIndicateurTool execute", () => {
         chantier: { id: "CH-INACCESSIBLE", nom: "Chantier test" },
         mailleNatAgregee: false,
         mailleRegAgregee: false,
-        explicationValeurAffichee: null,
+        parametrageValeurAffichee: null,
       }),
     });
     const getEvolutionIndicateurTerritoireQuery =
