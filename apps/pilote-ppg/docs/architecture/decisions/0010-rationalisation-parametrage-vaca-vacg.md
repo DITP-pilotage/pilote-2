@@ -42,4 +42,4 @@ La migration de données et le changement de dbt sont livrés ensemble : l'app e
 - Une valeur de paramétrage hors de cette liste est refusée par PILOTE et fait échouer les tests dbt, au lieu de produire silencieusement une VAC NULL ou un run dbt en échec.
 - Un fichier d'import en masse exporté avant ce changement et contenant `from_custom_date::2019-01-01` est refusé : il faut le réexporter ou remplacer la valeur par `from_beginning`.
 - Réintroduire la moyenne demandera de l'ajouter à la fois aux valeurs acceptées, à la regex et à dbt, sous un même code.
-- Les fenêtres glissantes de 3, 6 et 48 mois restent calculées par dbt mais ne sont plus saisissables.
+- Les fenêtres glissantes de 3, 6 et 48 mois, jamais proposées à la saisie ni utilisées, sont supprimées de dbt : seule la fenêtre de 12 mois est calculée.

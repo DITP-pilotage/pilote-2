@@ -65,23 +65,11 @@ compute_vacg AS (
             -- Si 'current_value' -> on retourne va_decumul
             WHEN param_vacg_op = 'current_value' THEN va_decumul
             WHEN param_vacg_partition_date = '_' THEN va_decumul
-            -- sum avec les différentes fenetres autorisées
-            WHEN
-                param_vacg_partition_date = 'from_previous_month::48'
-                AND param_vacg_op = 'sum'
-                THEN SUM(va_decumul) OVER w48
+            -- sum sur les 12 derniers mois glissants
             WHEN
                 param_vacg_partition_date = 'from_previous_month::12'
                 AND param_vacg_op = 'sum'
                 THEN SUM(va_decumul) OVER w12
-            WHEN
-                param_vacg_partition_date = 'from_previous_month::6'
-                AND param_vacg_op = 'sum'
-                THEN SUM(va_decumul) OVER w6
-            WHEN
-                param_vacg_partition_date = 'from_previous_month::3'
-                AND param_vacg_op = 'sum'
-                THEN SUM(va_decumul) OVER w3
             -- si calcul de VACG avec from_year_start
             WHEN
                 param_vacg_partition_date = 'from_year_start'
@@ -106,29 +94,11 @@ compute_vacg AS (
         END AS vacg
     FROM perform_decumul
     WINDOW
-        w48 AS (
-            PARTITION BY indic_id, zone_id
-            ORDER BY
-                DATE_TRUNC('month', metric_date) ASC
-            RANGE BETWEEN INTERVAL '47 months' PRECEDING AND CURRENT ROW
-        ),
         w12 AS (
             PARTITION BY indic_id, zone_id
             ORDER BY
                 DATE_TRUNC('month', metric_date) ASC
             RANGE BETWEEN INTERVAL '11 months' PRECEDING AND CURRENT ROW
-        ),
-        w6 AS (
-            PARTITION BY indic_id, zone_id
-            ORDER BY
-                DATE_TRUNC('month', metric_date) ASC
-            RANGE BETWEEN INTERVAL '5 months' PRECEDING AND CURRENT ROW
-        ),
-        w3 AS (
-            PARTITION BY indic_id, zone_id
-            ORDER BY
-                DATE_TRUNC('month', metric_date) ASC
-            RANGE BETWEEN INTERVAL '2 months' PRECEDING AND CURRENT ROW
         )
 
 )

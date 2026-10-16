@@ -32,21 +32,9 @@ renamed AS (
         vc_nat_op,
         param_vaca_decumul_from AS decumule_vaa_par,
         SPLIT_PART(param_vaca_partition_date, '::', 1) AS partitionne_vaca_par,
-        CASE
-            WHEN
-                LENGTH(SPLIT_PART(param_vaca_partition_date, '::', 2)) > 0
-                AND LENGTH(SPLIT_PART(param_vaca_partition_date, '::', 2)) <= 2
-                THEN SPLIT_PART(param_vaca_partition_date, '::', 2)::INTEGER
-        END AS partitionne_vaca_nombre_de_mois,
         param_vaca_op AS vaca_operation,
         param_vacg_decumul_from AS decumule_vag_par,
         SPLIT_PART(param_vacg_partition_date, '::', 1) AS partitionne_vacg_par,
-        CASE
-            WHEN
-                LENGTH(SPLIT_PART(param_vacg_partition_date, '::', 2)) > 0
-                AND LENGTH(SPLIT_PART(param_vacg_partition_date, '::', 2)) <= 2
-                THEN SPLIT_PART(param_vacg_partition_date, '::', 2)::INTEGER
-        END AS partitionne_vacg_nombre_de_mois,
         param_vacg_op AS vacg_operation,
         poids_pourcent_dept_declaree,
         poids_pourcent_reg_declaree,

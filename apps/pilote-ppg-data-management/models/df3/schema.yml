@@ -113,7 +113,7 @@ models:
         - Avant d'effectuer le calcul de la VACA, on peut **décumuler les valeurs de VA** (`param_vaca_decumul_from`) : chaque VA est diminuée de la VA précédente, depuis le début de l'année avec `from_year_start` ou sur tout l'historique avec `from_beginning`. La première VA de la fenêtre est conservée telle quelle.
         - Le calcul de la VACA (`param_vaca_partition_date`, `param_vaca_op`) se fait avec :
           - l'opération `current_value` pour utiliser simplement la VA (décumulée le cas échéant), ou `sum` pour en faire la *somme*
-          - depuis un nombre de mois donné `from_previous_month::X`, avec `X` dans `{3,6,12,48}` mois
+          - sur les 12 derniers mois glissants `from_previous_month::12`
           - depuis le début de l'année `from_year_start`
           - sur tout l'historique `from_beginning`
   - name: compute_vacp

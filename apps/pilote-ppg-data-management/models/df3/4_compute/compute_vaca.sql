@@ -74,19 +74,10 @@ compute_vaca AS (
             WHEN param_vaca_partition_date = '_' THEN va_decumul
             -- TODO : Use macro ?
             -- Sum using case when instead of window functions ?
-            -- sum avec les différentes fenetres autorisées
-            WHEN
-                param_vaca_partition_date = 'from_previous_month::48'
-                AND param_vaca_op = 'sum' THEN SUM(va_decumul) OVER w48
+            -- sum sur les 12 derniers mois glissants
             WHEN
                 param_vaca_partition_date = 'from_previous_month::12'
                 AND param_vaca_op = 'sum' THEN SUM(va_decumul) OVER w12
-            WHEN
-                param_vaca_partition_date = 'from_previous_month::6'
-                AND param_vaca_op = 'sum' THEN SUM(va_decumul) OVER w6
-            WHEN
-                param_vaca_partition_date = 'from_previous_month::3'
-                AND param_vaca_op = 'sum' THEN SUM(va_decumul) OVER w3
             -- si calcul de VACA avec from_year_start
             WHEN
                 param_vaca_partition_date = 'from_year_start'
@@ -108,33 +99,12 @@ compute_vaca AS (
                 )
         END AS vaca
     FROM perform_decumul
-    WINDOW w48 AS (
-        PARTITION BY
-            indic_id, zone_id
-        ORDER BY
-            DATE_TRUNC('month', metric_date) ASC
-        RANGE BETWEEN INTERVAL '47 months' PRECEDING
-        AND CURRENT ROW
-    ), w12 AS (
+    WINDOW w12 AS (
         PARTITION BY
             indic_id, zone_id
         ORDER BY
             DATE_TRUNC('month', metric_date) ASC
         RANGE BETWEEN INTERVAL '11 months' PRECEDING
-        AND CURRENT ROW
-    ), w6 AS (
-        PARTITION BY
-            indic_id, zone_id
-        ORDER BY
-            DATE_TRUNC('month', metric_date) ASC
-        RANGE BETWEEN INTERVAL '5 months' PRECEDING
-        AND CURRENT ROW
-    ), w3 AS (
-        PARTITION BY
-            indic_id, zone_id
-        ORDER BY
-            DATE_TRUNC('month', metric_date) ASC
-        RANGE BETWEEN INTERVAL '2 months' PRECEDING
         AND CURRENT ROW
     )
 )
