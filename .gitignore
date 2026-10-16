@@ -30,7 +30,6 @@ yarn-error.log*
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/deps-campagne/
-!.claude/skills/feature/
 
 # misc
 qodana.yaml
