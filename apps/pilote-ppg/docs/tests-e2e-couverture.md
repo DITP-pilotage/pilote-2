@@ -906,6 +906,28 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 - Suppression de "Paris" (clic sur le bouton ✕)
 - Vérification que "Paris" n'est plus affiché
 
+## 13. Accès à l'assistant IA
+
+**Fichier :** `tests/acces-assistant-ia.spec.ts`
+
+Accès gérés par le DITP Admin dans `/panel-administrateur/albert`, onglets « Permissions profils » et « Permissions emails » (PIL-1871). L'accès est vérifié par la présence du bouton « Ouvrir l'Assistant IA PILOTE » sur la page d'accueil de l'utilisateur. Les accès créés pendant le test sont supprimés à la fin (`E2ETestContext`).
+
+### Test 1 : Accès par profil et par utilisateur
+
+Profils : `ditp.admin@example.com` (DITP_ADMIN), `services.deconcentres.region@example.com` (SERVICES_DECONCENTRES_REGION), `prefet.departement@example.com` (PREFET_DEPARTEMENT)
+
+- Le DITP Admin a accès à l'assistant IA
+- Un utilisateur Services déconcentrés régionaux n'a pas accès
+- Le DITP Admin active le profil Services déconcentrés régionaux
+- L'utilisateur Services déconcentrés régionaux a maintenant accès
+- Un préfet de département n'a pas accès
+- Le DITP Admin ajoute le préfet de département par recherche « prénom nom »
+- Le préfet de département a maintenant accès
+- Le DITP Admin active aussi le profil Préfet de département : la liste le signale
+- Le préfet de département a toujours accès via son profil
+- Le DITP Admin désactive le profil Préfet de département
+- Le préfet de département garde l'accès grâce à son autorisation individuelle
+
 ---
 
 ## Matrice profils × tests
@@ -948,6 +970,7 @@ Légende : ✓ = profil utilisé dans ce test
 | 11. Mon profil utilisateur              |     ✓      |            |      ✓      |             |           |             |             |                 |
 | 12. Carto PVA - Affichage widget        |     ✓      |            |             |             |           |             |             |                 |
 | 12. Carto PVA - Ajout/suppression terr. |     ✓      |            |             |             |           |             |             |                 |
+| 13. Accès assistant IA (+ SD Rég.)      |     ✓      |            |             |             |           |             |      ✓      |                 |
 
 **Identifiants des profils :**
 
@@ -962,6 +985,7 @@ Légende : ✓ = profil utilisé dans ce test
 | Préfet Dept       | `prefet.departement@example.com`                                          |
 | Préfet Multi-terr | `prefet.multi.territoires@example.com`                                    |
 | SD Hors ATE       | `services.deconcentres.hors-ate@example.com`                              |
+| SD Rég.           | `services.deconcentres.region@example.com`                                |
 | Éq. Dir. Projet   | `equipe.dir.projet@example.com` (API) / `pva.dir.projet@example.com` (UI) |
 | Coord. Rég. (PVA) | `pva.coordinateur.reg@example.com`                                        |
 | Coord. Dept (PVA) | `pva.coordinateur.dept@example.com`                                       |
