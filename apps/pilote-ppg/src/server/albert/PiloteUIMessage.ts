@@ -56,6 +56,10 @@ import {
   getHistoriqueIndicateurInputSchema,
   type GetHistoriqueIndicateurOutput,
 } from "@/server/albert/tools/getHistoriqueIndicateur";
+import {
+  consulterCentreAideInputSchema,
+  type ConsulterCentreAideOutput,
+} from "@/server/albert/tools/consulterCentreAide";
 
 export type PiloteUITools = {
   clarify_with_choices: {
@@ -105,6 +109,10 @@ export type PiloteUITools = {
   search_territoires: {
     input: z.input<typeof searchTerritoiresInputSchema>;
     output: SearchTerritoiresOutput;
+  };
+  consulter_centre_aide: {
+    input: z.input<typeof consulterCentreAideInputSchema>;
+    output: ConsulterCentreAideOutput;
   };
   create_dashboard: {
     input: z.input<typeof createDashboardInputSchema>;

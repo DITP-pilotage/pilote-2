@@ -31,6 +31,7 @@ import { JALON_COURANT } from "./territoires";
 export const GROUPS = {
   synthese: "3.1 · Synthèse",
   comparaison: "3.2 · Comparaison",
+  aide: "3.3 · Centre d'aide",
 };
 
 export type ScenarioCase = {
@@ -134,6 +135,7 @@ export function scenarioEval({
   cases,
   profile = "ditp",
   currentTerritory = "REG-53",
+  seedSupplementaire,
 }: {
   suite: string;
   group: keyof typeof GROUPS;
@@ -144,10 +146,13 @@ export function scenarioEval({
   cases: ScenarioCase[];
   profile?: EvalProfile;
   currentTerritory?: string;
+  /** Données semées en plus du monde territorial, une fois par fichier. */
+  seedSupplementaire?: () => Promise<void>;
 }) {
   const world = seedWorldPerFile(async () => {
     const seeded = await seedEvalWorld();
     await seedMondeTerritorial({ authorId: seeded.userId });
+    await seedSupplementaire?.();
     return seeded;
   });
 
