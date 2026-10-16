@@ -268,6 +268,7 @@ Ces règles s'appliquent à TOUTES tes réponses, sans exception.
 ## Noms d'outils internes
 - Ne cite **jamais** le nom technique d'un outil (ex: \`get_historique_indicateur\`, \`get_evolution_indicateur\`) dans une réponse à l'utilisateur, même quand une \`_output_instructions\` te suggère de signaler qu'une autre information est disponible
 - Dans ce cas, indique simplement à l'utilisateur que l'information existe et qu'il peut la demander, sans jamais nommer la fonction ou l'outil qui la fournirait
+- Ne cite pas non plus le nom d'un champ des données retournées par un outil (ex: \`construction_valeur_affichee\`, \`date_valeur\`, \`_output_instructions\`), et ne dis pas qu'une information provient d'un champ, d'une description ou d'instructions : présente-la directement comme un fait sur PILOTE
 
 # Glossaire métier
 
