@@ -1,9 +1,6 @@
 import { useController } from "react-hook-form";
 import { clsxm } from "@/utils/clsxm";
-import {
-  ERROR_GROUP_CLASSES,
-  ERROR_TEXT_CLASSES,
-} from "@/components/shared/fieldTextClasses";
+import { ERROR_TEXT_CLASSES } from "@/components/shared/fieldTextClasses";
 import { SyntheseDesResultatsValues } from "./SyntheseDesResultatsValues";
 import { SelecteurMeteo } from "./SelecteurMeteo";
 
@@ -16,7 +13,7 @@ export const MeteoField = () => {
   });
 
   return (
-    <div className={clsxm("relative", fieldState.error && ERROR_GROUP_CLASSES)}>
+    <div>
       <p className="text-sm mb-2">Météo</p>
       <SelecteurMeteo
         onBlur={field.onBlur}

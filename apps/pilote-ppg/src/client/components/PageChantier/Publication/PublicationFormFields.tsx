@@ -1,7 +1,4 @@
-import {
-  ERROR_GROUP_CLASSES,
-  ERROR_TEXT_CLASSES,
-} from "@/components/shared/fieldTextClasses";
+import { ERROR_TEXT_CLASSES } from "@/components/shared/fieldTextClasses";
 import { ReactNode } from "react";
 import { useController, useWatch } from "react-hook-form";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
@@ -27,13 +24,7 @@ const ContentField = ({
   const contenu = useWatch<PublicationValues>({ name: "contenu" });
 
   return (
-    <div
-      className={clsxm(
-        "relative flex flex-col",
-        fieldState.error && ERROR_GROUP_CLASSES,
-        className,
-      )}
-    >
+    <div className={clsxm("flex flex-col", className)}>
       {label ? <p className="text-sm mb-2">{label}</p> : null}
       <div
         className={clsxm("flex flex-auto flex-col min-h-0", editorClassName)}
