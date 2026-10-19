@@ -151,7 +151,10 @@ export const ComboboxPicker = <T extends string>({
               />
             </div>
             <Command.List
-              className={clsxm("max-h-80 overflow-y-auto", !striped && "p-1")}
+              className={clsxm(
+                "overflow-y-auto",
+                striped ? "max-h-80" : "max-h-[19rem] p-1",
+              )}
             >
               <Command.Empty className="px-4 py-2 text-sm text-dsfr-mention-grey text-center">
                 Aucun résultat

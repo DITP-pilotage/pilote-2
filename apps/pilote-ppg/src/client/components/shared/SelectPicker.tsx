@@ -65,7 +65,12 @@ export const SelectPicker = <T extends string>({
       </SelectPrimitive.Trigger>
 
       <Select.Content className={contentClassName}>
-        <div className="max-h-80 overflow-y-auto">
+        <div
+          className={clsxm(
+            "overflow-y-auto",
+            striped ? "max-h-80" : "max-h-[18.75rem]",
+          )}
+        >
           {isGroupedOptions(options)
             ? options.map((group, index) => (
                 <div key={String(group.valeur)}>
