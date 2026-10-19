@@ -1,5 +1,5 @@
 import { territoires as _territoires } from "@/client/constants/territoires.json";
-import { PickerOptionGroup } from "@/components/shared/Picker";
+import type { PickerOptionGroup } from "@/components/shared/pickerTypes";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
 
 const territoires = _territoires as Territoire[];

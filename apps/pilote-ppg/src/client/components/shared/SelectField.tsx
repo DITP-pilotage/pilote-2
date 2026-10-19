@@ -3,13 +3,15 @@ import {
   LABEL_CLASSES,
 } from "@/components/shared/fieldTextClasses";
 import { ReactNode } from "react";
-import { Select } from "@/components/shared/Select";
-import {
-  Picker,
-  type PickerAppearance,
-  type PickerOption,
-  type PickerOptionGroup,
-} from "@/components/shared/Picker";
+import { SELECT_TRIGGER_CLASSES } from "@/components/shared/Select";
+import { Picker } from "@/components/shared/Picker";
+import type {
+  PickerAppearance,
+  PickerOption,
+  PickerOptionGroup,
+} from "@/components/shared/pickerTypes";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { clsxm } from "@/utils/clsxm";
 import {
@@ -84,6 +86,10 @@ export const SelectField = <T extends string>({
     return (raw ?? "") as T;
   };
 
+  const selectedLabel = (
+    grouped ? options.flatMap((group) => group.options) : options
+  ).find((option) => option.valeur === value)?.libelle;
+
   const pickerOptions = grouped
     ? options
     : options.map((option) =>
@@ -111,6 +117,7 @@ export const SelectField = <T extends string>({
         appearance={appearance}
         contentClassName={contentClassName}
         disabled={disabled}
+        invalid={Boolean(errorMessage)}
         name={name}
         onValueChange={(selected, group) =>
           onChange?.((selected === EMPTY_VALUE ? "" : selected) as T, group)
@@ -119,19 +126,23 @@ export const SelectField = <T extends string>({
         placeholderRecherche={searchPlaceholder}
         showSearch={searchable ?? countOptions(options) > SEARCH_THRESHOLD}
         trigger={
-          <Select.Trigger
-            className={clsxm("w-full text-left", triggerClassName, {
-              "border-b-red-500": errorMessage,
-            })}
+          <button
+            className={clsxm(
+              SELECT_TRIGGER_CLASSES,
+              "w-full text-left",
+              triggerClassName,
+              { "border-b-red-500": errorMessage },
+            )}
             aria-describedby={errorMessage ? `${name}-error` : undefined}
-            aria-invalid={errorMessage ? true : undefined}
             data-value={value ?? ""}
             id={name}
+            type="button"
           >
-            <span className="line-clamp-1">
-              <Select.Value placeholder={placeholder} />
+            <span className="line-clamp-1">{selectedLabel ?? placeholder}</span>
+            <span aria-hidden="true">
+              <Icone className="text-current" icone={ArrowSLine2Icon} />
             </span>
-          </Select.Trigger>
+          </button>
         }
         value={toPicker(value)}
       />
