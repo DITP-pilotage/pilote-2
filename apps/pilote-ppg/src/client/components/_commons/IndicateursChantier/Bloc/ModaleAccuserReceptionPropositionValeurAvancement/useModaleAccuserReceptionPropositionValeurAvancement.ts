@@ -70,18 +70,26 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
     mutationAccuserReceptionPropositionValeurAvancement.mutate(inputs);
   };
 
+  const defaultValues: FormData = {
+    motif: "",
+    dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
+    indicId: indicateur.id,
+    territoireCode,
+  };
+
   const reactHookForm = useForm<FormData>({
-    mode: "all",
     resolver: zodResolver(validationAccuserReceptionPropostionValeurAvancement),
-    defaultValues: {
-      motif: "",
-      dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
-      indicId: indicateur.id,
-      territoireCode,
-    },
+    defaultValues,
   });
 
-  const etapeSuivanteEstDesactive = !reactHookForm.formState.isValid;
+  const reinitialiser = () => {
+    reactHookForm.reset(defaultValues);
+    setEtapeAccuserReception(EtapeAccuserReception.EXAMEN_PROPOSITION);
+  };
+
+  const passerALaValidation = reactHookForm.handleSubmit(() =>
+    setEtapeAccuserReception(EtapeAccuserReception.VALIDATION_ACCUSE_RECEPTION),
+  );
 
   const isPending =
     mutationAccuserReceptionPropositionValeurAvancement.isPending;
@@ -91,7 +99,8 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
     traiterAccuseReception,
     etapeAccuserReception,
     setEtapeAccuserReception,
-    etapeSuivanteEstDesactive,
+    reinitialiser,
+    passerALaValidation,
     isPending,
   };
 };

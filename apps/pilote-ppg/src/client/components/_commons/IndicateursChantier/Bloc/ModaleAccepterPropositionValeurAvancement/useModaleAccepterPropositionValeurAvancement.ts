@@ -6,8 +6,7 @@ import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-
-export const LIMIT_CARACTERES_MOTIF = 500;
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 
 const formSchema = z
   .object({
@@ -16,11 +15,11 @@ const formSchema = z
     dateValeurAvancement: z.string(),
     motif: z
       .string()
-      .trim()
       .max(
-        LIMIT_CARACTERES_MOTIF,
+        LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
         "La limite maximale de 500 caractères a été dépassée",
-      ),
+      )
+      .trim(),
     decision: z.enum(["accepter", "accepter-avec-modification", "refuser"]),
     valeurModification: z.string().optional(),
   })
@@ -32,7 +31,7 @@ const formSchema = z
       return true;
     },
     {
-      message: "Veuillez saisir un motif de refus",
+      message: "Veuillez saisir un motif de décision",
       path: ["motif"],
     },
   )
@@ -157,21 +156,41 @@ export const useModaleAccepterPropositionValeurAvancement = ({
     }
   };
 
+  const defaultValues: FormData = {
+    motif: "",
+    dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
+    indicId: indicateur.id,
+    territoireCode,
+    decision: "accepter",
+    valeurModification:
+      detailIndicateur.proposition?.valeurAvancement.toString(),
+  };
+
   const reactHookForm = useForm<FormData>({
-    mode: "all",
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      motif: "",
-      dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
-      indicId: indicateur.id,
-      territoireCode,
-      decision: "accepter",
-      valeurModification:
-        detailIndicateur.proposition?.valeurAvancement.toString(),
-    },
+    defaultValues,
   });
 
-  const etapeSuivanteEstDesactive = !reactHookForm.formState.isValid;
+  const reinitialiser = () => {
+    reactHookForm.reset(defaultValues);
+    setEtapePropositionValeurAvancement(
+      EtapePropositionValeurAvancement.DECISION_CONCERNANT_LA_PROPOSITION,
+    );
+  };
+
+  const passerALaValidation = reactHookForm.handleSubmit(() =>
+    setEtapePropositionValeurAvancement(
+      EtapePropositionValeurAvancement.VALIDATION_DECISION,
+    ),
+  );
+
+  // Les règles du motif et de la valeur dépendent de la décision : après une
+  // première validation, changer de décision les revalide.
+  const revaliderChampsLiesALaDecision = () => {
+    if (reactHookForm.formState.isSubmitted) {
+      void reactHookForm.trigger(["motif", "valeurModification"]);
+    }
+  };
 
   const isPending =
     mutationAccepterPropositonValeurAvancement.isPending ||
@@ -183,7 +202,9 @@ export const useModaleAccepterPropositionValeurAvancement = ({
     traiterDecision,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    etapeSuivanteEstDesactive,
+    reinitialiser,
+    passerALaValidation,
+    revaliderChampsLiesALaDecision,
     isPending,
   };
 };
