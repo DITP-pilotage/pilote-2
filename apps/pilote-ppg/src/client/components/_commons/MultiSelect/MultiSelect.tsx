@@ -105,10 +105,11 @@ export const MultiSelect: FunctionComponent<MultiSelectProps> = ({
                       const optionId = `${uniqueId}-${option.value}`;
                       return (
                         <div
-                          className="flex items-center gap-2"
+                          className="flex items-start gap-2"
                           key={option.value}
                         >
                           <Checkbox
+                            className="mt-1"
                             size="sm"
                             checked={valeursSélectionnées.has(option.value)}
                             disabled={option.disabled}
@@ -121,6 +122,7 @@ export const MultiSelect: FunctionComponent<MultiSelectProps> = ({
                             className={clsxm(
                               "flex items-center gap-2 text-sm",
                               option.disabled && "text-dsfr-grey-625",
+                              option.classesSupplementaires,
                             )}
                             htmlFor={optionId}
                           >

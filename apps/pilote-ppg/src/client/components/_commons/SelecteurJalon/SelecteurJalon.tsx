@@ -20,7 +20,7 @@ export const SelecteurJalon: FunctionComponent = () => {
 
   return (
     <SelectField
-      className="mr-2 flex-1"
+      className="mr-2 min-w-0 flex-1"
       name="jalon"
       onChange={(valeur) => setJalon(valeur)}
       options={listeOptionsJalon}

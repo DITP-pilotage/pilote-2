@@ -15,6 +15,7 @@ export type MultiSelectOption = {
   value: string;
   disabled?: boolean;
   afficherIcone?: boolean;
+  classesSupplementaires?: string;
 };
 
 export type MultiSelectOptionGroupée = {
