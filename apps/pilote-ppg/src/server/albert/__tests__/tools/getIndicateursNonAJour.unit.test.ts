@@ -66,6 +66,7 @@ const buildTool = ({
             chantier: { id: chantierId, nom: `Chantier ${chantierId}` },
             mailleNatAgregee: false,
             mailleRegAgregee: false,
+            parametrageValeurAffichee: null,
           }
         : null;
     },
