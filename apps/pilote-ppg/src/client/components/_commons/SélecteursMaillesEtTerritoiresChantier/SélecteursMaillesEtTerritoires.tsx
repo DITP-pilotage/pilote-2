@@ -156,7 +156,7 @@ export const SélecteursMaillesEtTerritoires: FunctionComponent<
         avecFrance,
         territoiresApplicables,
       )}
-      triggerClassName="flex-1 w-full"
+      triggerClassName="min-w-0 flex-1 w-full"
       value={territoireCode}
     />
   );
