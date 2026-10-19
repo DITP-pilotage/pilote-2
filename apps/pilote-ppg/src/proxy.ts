@@ -83,7 +83,7 @@ export async function proxy(request: NextRequest) {
     response.headers.set(
       "Content-Security-Policy",
       `default-src 'self';
-       script-src 'self' 'nonce-${nonce}' https://plausible.4p-analyse.fr https://app.livestorm.co/ https://stats.beta.gouv.fr/;
+       script-src 'self' 'nonce-${nonce}' https://plausible.4p-analyse.fr https://app.livestorm.co/;
        style-src 'self' 'unsafe-inline';
        img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/;
        font-src 'self' data:;
