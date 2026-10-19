@@ -30,52 +30,11 @@ renamed AS (
         va_nat_op,
         vc_nat_from,
         vc_nat_op,
-        SPLIT_PART(param_vaca_decumul_from, '::', 1) AS decumule_vaa_par,
-        TO_DATE(
-            NULLIF(SPLIT_PART(param_vaca_decumul_from, '::', 2), ''),
-            'YYYY-MM-DD'
-        ) AS decumule_vaa_depuis,
+        param_vaca_decumul_from AS decumule_vaa_par,
         SPLIT_PART(param_vaca_partition_date, '::', 1) AS partitionne_vaca_par,
-        CASE
-            WHEN
-                LENGTH(SPLIT_PART(param_vaca_partition_date, '::', 2)) > 2
-                THEN
-                    TO_DATE(
-                        NULLIF(
-                            SPLIT_PART(param_vaca_partition_date, '::', 2), ''
-                        ),
-                        'YYYY-MM-DD'
-                    )
-        END AS partitionne_vaca_depuis,
-        CASE
-            WHEN
-                LENGTH(SPLIT_PART(param_vaca_partition_date, '::', 2)) > 0
-                AND LENGTH(SPLIT_PART(param_vaca_partition_date, '::', 2)) <= 2
-                THEN SPLIT_PART(param_vaca_partition_date, '::', 2)::INTEGER
-        END AS partitionne_vaca_nombre_de_mois,
         param_vaca_op AS vaca_operation,
-        SPLIT_PART(param_vacg_decumul_from, '::', 1) AS decumule_vag_par,
-        TO_DATE(
-            NULLIF(SPLIT_PART(param_vacg_decumul_from, '::', 2), ''),
-            'YYYY-MM-DD'
-        ) AS decumule_vag_depuis,
+        param_vacg_decumul_from AS decumule_vag_par,
         SPLIT_PART(param_vacg_partition_date, '::', 1) AS partitionne_vacg_par,
-        CASE
-            WHEN LENGTH(SPLIT_PART(param_vacg_partition_date, '::', 2)) > 2
-                THEN
-                    TO_DATE(
-                        NULLIF(
-                            SPLIT_PART(param_vacg_partition_date, '::', 2), ''
-                        ),
-                        'YYYY-MM-DD'
-                    )
-        END AS partitionne_vacg_depuis,
-        CASE
-            WHEN
-                LENGTH(SPLIT_PART(param_vacg_partition_date, '::', 2)) > 0
-                AND LENGTH(SPLIT_PART(param_vacg_partition_date, '::', 2)) <= 2
-                THEN SPLIT_PART(param_vacg_partition_date, '::', 2)::INTEGER
-        END AS partitionne_vacg_nombre_de_mois,
         param_vacg_op AS vacg_operation,
         poids_pourcent_dept_declaree,
         poids_pourcent_reg_declaree,
