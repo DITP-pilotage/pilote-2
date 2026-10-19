@@ -118,6 +118,50 @@ export class ArticleCentreAide {
     return this._dateModification;
   }
 
+  publier(): ArticleCentreAide {
+    return this.copier({
+      titre: this._titreBrouillon ?? this._titre,
+      contenu: this._contenuBrouillon,
+      titreAffiche: this._titreAfficheBrouillon,
+      estPublie: true,
+    });
+  }
+
+  depublier(): ArticleCentreAide {
+    return this.copier({ estPublie: false });
+  }
+
+  basculerVisibilite(): ArticleCentreAide {
+    return this.copier({ estMasque: !this._estMasque });
+  }
+
+  private copier(
+    changements: Partial<{
+      titre: string;
+      contenu: string | null;
+      titreAffiche: string | null;
+      estPublie: boolean;
+      estMasque: boolean;
+    }>,
+  ): ArticleCentreAide {
+    return ArticleCentreAide.creerArticle({
+      id: this._id,
+      titre: this._titre,
+      contenu: this._contenu,
+      titreBrouillon: this._titreBrouillon,
+      contenuBrouillon: this._contenuBrouillon,
+      titreAffiche: this._titreAffiche,
+      titreAfficheBrouillon: this._titreAfficheBrouillon,
+      type: this._type,
+      ordre: this._ordre,
+      parentId: this._parentId,
+      estPublie: this._estPublie,
+      estMasque: this._estMasque,
+      dateCreation: this._dateCreation,
+      ...changements,
+    });
+  }
+
   static creerArticle({
     id,
     titre,

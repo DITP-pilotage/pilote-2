@@ -1,5 +1,4 @@
 import { ArticleCentreAideRepository } from "@/server/parametrage-centre-aide/domain/ports/ArticleCentreAideRepository";
-import { ArticleCentreAide } from "@/server/parametrage-centre-aide/domain/ArticleCentreAide";
 import type { Inject } from "@/server/parametrage-centre-aide/module";
 
 export class PublierArticleCentreAideUseCase {
@@ -15,22 +14,6 @@ export class PublierArticleCentreAideUseCase {
     const existant = await this.articleCentreAideRepository.recupererParId(id);
     if (!existant) throw new Error(`Article ${id} introuvable`);
 
-    const articlePublie = ArticleCentreAide.creerArticle({
-      id: existant.id,
-      titre: existant.titreBrouillon ?? existant.titre,
-      contenu: existant.contenuBrouillon,
-      titreBrouillon: existant.titreBrouillon,
-      contenuBrouillon: existant.contenuBrouillon,
-      titreAffiche: existant.titreAfficheBrouillon,
-      titreAfficheBrouillon: existant.titreAfficheBrouillon,
-      type: existant.type,
-      ordre: existant.ordre,
-      parentId: existant.parentId,
-      estPublie: true,
-      estMasque: existant.estMasque,
-      dateCreation: existant.dateCreation,
-    });
-
-    return this.articleCentreAideRepository.modifier(articlePublie);
+    return this.articleCentreAideRepository.modifier(existant.publier());
   }
 }
