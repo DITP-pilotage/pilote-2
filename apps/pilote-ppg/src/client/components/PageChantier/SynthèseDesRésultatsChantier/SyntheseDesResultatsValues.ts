@@ -5,6 +5,10 @@ import {
 
 export interface SyntheseDesResultatsValues {
   contenu: string;
+  meteo?: MeteoSaisissable;
+}
+
+export interface SyntheseDesResultatsPublieeValues extends SyntheseDesResultatsValues {
   meteo: MeteoSaisissable;
 }
 

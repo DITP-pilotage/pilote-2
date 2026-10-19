@@ -1,4 +1,4 @@
-import { Meteo } from "@/shared/meteo/Meteo.interface";
+import { MeteoSaisissable } from "@/shared/meteo/Meteo.interface";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
@@ -23,7 +23,7 @@ export class EnregistrerBrouillonSyntheseDesResultatsUseCase {
     chantierId: string;
     territoireCode: string;
     contenu: string;
-    meteo: Meteo;
+    meteo: MeteoSaisissable | undefined;
     auteurId: string;
     date: string;
     habilitations: Habilitations;

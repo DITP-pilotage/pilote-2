@@ -1,4 +1,5 @@
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/shared/Button";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
@@ -12,26 +13,28 @@ import {
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
 
-interface FormulairePublicationProps<T extends PublicationValues> {
+interface FormulairePublicationProps<T extends PublicationValues, P extends T> {
   publication: Publication | null;
   libelle: string;
   consigne: string;
-  formConfig: PublicationFormConfig<T>;
+  formConfig: PublicationFormConfig<T, P>;
   annulationCallback?: () => void;
-  onModifier: SubmitHandler<T>;
+  onModifier: SubmitHandler<P>;
 }
 
-export const FormulairePublication = <T extends PublicationValues>({
+export const FormulairePublication = <
+  T extends PublicationValues,
+  P extends T = T,
+>({
   publication,
   libelle,
   consigne,
   formConfig,
   annulationCallback,
   onModifier,
-}: FormulairePublicationProps<T>) => {
-  const form = useForm<T>({
-    mode: "all",
-    resolver: formConfig.resolver,
+}: FormulairePublicationProps<T, P>) => {
+  const form = useForm<T, unknown, P>({
+    resolver: zodResolver(formConfig.publishSchema),
     defaultValues: formConfig.editValues,
   });
 
@@ -50,13 +53,13 @@ export const FormulairePublication = <T extends PublicationValues>({
           </p>
         ) : null}
         <PublicationFormFields
+          contentLabel={formConfig.contentLabel}
           extraFields={formConfig.extraFields}
           maxLength={formConfig.maxLength}
         />
         <div className="flex justify-end mt-4">
           <Button
             className="mr-3"
-            disabled={!form.formState.isValid}
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
             }

@@ -1,7 +1,4 @@
-import {
-  ERROR_GROUP_CLASSES,
-  ERROR_TEXT_CLASSES,
-} from "@/components/shared/fieldTextClasses";
+import { ERROR_TEXT_CLASSES } from "@/components/shared/fieldTextClasses";
 import { ReactNode } from "react";
 import { useController, useWatch } from "react-hook-form";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
@@ -12,10 +9,12 @@ import { PublicationValues } from "./Publication.interface";
 
 const ContentField = ({
   maxLength,
+  label,
   className,
   editorClassName,
 }: {
   maxLength: number;
+  label?: string;
   className?: string;
   editorClassName?: string;
 }) => {
@@ -25,14 +24,11 @@ const ContentField = ({
   const contenu = useWatch<PublicationValues>({ name: "contenu" });
 
   return (
-    <div
-      className={clsxm(
-        "flex flex-col",
-        fieldState.error && ERROR_GROUP_CLASSES,
-        className,
-      )}
-    >
-      <div className={editorClassName}>
+    <div className={clsxm("flex flex-col", className)}>
+      {label ? <p className="text-sm mb-2">{label}</p> : null}
+      <div
+        className={clsxm("flex flex-auto flex-col min-h-0", editorClassName)}
+      >
         <EditeurSimple
           contenu={field.value}
           onBlur={field.onBlur}
@@ -58,22 +54,32 @@ const ContentField = ({
 
 export const PublicationFormFields = ({
   maxLength,
+  contentLabel,
   extraFields,
   editorClassName,
 }: {
   maxLength: number;
+  contentLabel?: string;
   extraFields?: ReactNode;
   editorClassName?: string;
 }) =>
   extraFields ? (
     <div className="flex gap-4 items-stretch">
       <div className="flex-none w-60">{extraFields}</div>
-      <ContentField
-        className="flex-1"
-        editorClassName={editorClassName}
-        maxLength={maxLength}
-      />
+      {/* Positionnée en absolu, la colonne du texte prend la hauteur des champs annexes sans l'agrandir : l'éditeur défile. */}
+      <div className="relative flex-1">
+        <ContentField
+          className="absolute inset-0"
+          editorClassName={editorClassName}
+          label={contentLabel}
+          maxLength={maxLength}
+        />
+      </div>
     </div>
   ) : (
-    <ContentField editorClassName={editorClassName} maxLength={maxLength} />
+    <ContentField
+      editorClassName={editorClassName}
+      label={contentLabel}
+      maxLength={maxLength}
+    />
   );
