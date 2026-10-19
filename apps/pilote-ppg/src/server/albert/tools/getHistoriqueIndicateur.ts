@@ -7,6 +7,7 @@ import {
 } from "@/server/chantiers/query/GetHistoriqueIndicateurTerritoireQuery";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { PROPOSITION_TYPES_EVENEMENT } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { expliquerConstructionValeurAffichee } from "@/server/albert/tools/expliquerConstructionValeurAffichee";
 
 const SEUIL_BESOIN_PRECISION = 100;
 
@@ -43,6 +44,7 @@ export type GetHistoriqueIndicateurOutput = {
     date_evenement_la_plus_ancienne?: string;
     date_evenement_la_plus_recente?: string;
   };
+  construction_valeur_affichee?: string;
   groupes?: GroupeHistoriqueIndicateur[];
   introuvable?: true;
   _output_instructions: string;
@@ -50,6 +52,9 @@ export type GetHistoriqueIndicateurOutput = {
 
 const OUTPUT_INSTRUCTIONS =
   "Ces données représentent un HISTORIQUE : les actions qui ont eu lieu sur la valeur de cet indicateur (import, modification, proposition, acceptation, refus...), groupées par date et dans l'ordre chronologique. Deux dates distinctes apparaissent, ne les confonds pas : `date_valeur` (par groupe) est le mois auquel s'applique la valeur d'avancement, déjà au format MM/AAAA — reprends-le tel quel ; `date_creation` (par événement) est la date et l'heure réelles auxquelles l'action a eu lieu, déjà formatée en entier — reprends-la telle quelle aussi. Chaque événement porte `description` (ce qui s'est passé et son effet éventuel sur la valeur importée dans PILOTE) et `categorie` (IMPORT : import direct par la direction de projet ; PROPOSITION : étape du cycle de vie d'une proposition du territoire) — appuie-toi dessus pour comprendre et décrire l'enchaînement. Les valeurs citées sont les valeurs brutes importées : selon le paramétrage de l'indicateur (cumul des valeurs par exemple), la valeur d'avancement affichée sur la courbe et dans le tableau de PILOTE peut en différer. Présente-les donc comme des valeurs importées, jamais comme la valeur affichée, et ne les compare pas telles quelles aux valeurs d'une évolution.Si l'utilisateur veut plutôt la tendance/courbe de la valeur dans le temps, indique-lui simplement que c'est possible, sans citer de nom d'outil technique.";
+
+const VALEUR_AFFICHEE_INSTRUCTIONS =
+  "Pour cet indicateur, la valeur d'avancement affichée dans PILOTE n'est pas la valeur importée : `construction_valeur_affichee` explique comment elle est construite. Appuie-toi dessus pour expliquer un écart entre les valeurs importées et la courbe ou le tableau de PILOTE, et ne recalcule jamais toi-même un cumul. Présente ce calcul avec tes mots, comme le fonctionnement de PILOTE (par exemple « dans PILOTE, la valeur affichée est la somme des valeurs importées depuis janvier »), sans jamais évoquer le champ `construction_valeur_affichee`, ni une « description » ou une « explication » qui t'aurait été fournie.";
 
 const INDICATEUR_INTROUVABLE_INSTRUCTIONS =
   "Cet indicateur est introuvable. Informe l'utilisateur qu'aucun indicateur ne correspond à cet identifiant.";
@@ -161,11 +166,19 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
           };
         }
 
+        const explicationValeurAffichee = expliquerConstructionValeurAffichee(
+          contexte.parametrageValeurAffichee,
+        );
         return {
           indicateur: indicateurResume,
           territoire_code: input.territoire_code,
+          ...(explicationValeurAffichee && {
+            construction_valeur_affichee: explicationValeurAffichee,
+          }),
           groupes: resultat.groupes,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
+          _output_instructions: explicationValeurAffichee
+            ? `${OUTPUT_INSTRUCTIONS} ${VALEUR_AFFICHEE_INSTRUCTIONS}`
+            : OUTPUT_INSTRUCTIONS,
         };
       },
     });

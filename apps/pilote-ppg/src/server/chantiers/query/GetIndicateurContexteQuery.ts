@@ -1,6 +1,12 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 
+// Paramétrage du TA annuel (param_vaca_*) dont dbt tire la valeur affichée
+export type ParametrageValeurAffichee = {
+  decumul: string;
+  cumul: string;
+};
+
 export type IndicateurContexteResult = {
   id: string;
   nom: string;
@@ -9,6 +15,7 @@ export type IndicateurContexteResult = {
   chantier: { id: string; nom: string };
   mailleNatAgregee: boolean;
   mailleRegAgregee: boolean;
+  parametrageValeurAffichee: ParametrageValeurAffichee | null;
 };
 
 export class GetIndicateurContexteQuery {
@@ -30,6 +37,15 @@ export class GetIndicateurContexteQuery {
 
     if (!indicateur) return null;
 
+    const parametrage =
+      await prisma.metadata_parametrage_indicateurs.findUnique({
+        where: { indic_id: params.indicateurId },
+        select: {
+          param_vaca_decumul_from: true,
+          param_vaca_partition_date: true,
+        },
+      });
+
     return {
       id: indicateur.id,
       nom: indicateur.nom,
@@ -41,6 +57,10 @@ export class GetIndicateurContexteQuery {
       },
       mailleNatAgregee: indicateur.maille_nat_agregee,
       mailleRegAgregee: indicateur.maille_reg_agregee,
+      parametrageValeurAffichee: parametrage && {
+        decumul: parametrage.param_vaca_decumul_from,
+        cumul: parametrage.param_vaca_partition_date,
+      },
     };
   }
 }

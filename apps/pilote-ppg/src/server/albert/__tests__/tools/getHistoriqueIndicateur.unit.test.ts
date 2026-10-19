@@ -15,6 +15,7 @@ const contexteParDefaut = {
   chantier: { id: "CH-001", nom: "Chantier test" },
   mailleNatAgregee: false,
   mailleRegAgregee: false,
+  parametrageValeurAffichee: null,
 };
 
 const executeTool = async (
@@ -278,6 +279,64 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         },
       ],
       _output_instructions: expect.any(String),
+    });
+  });
+
+  it("ajoute la construction de la valeur affichée quand la valeur affichée diffère de la valeur importée", async () => {
+    // Given
+    const explicationValeurAffichee =
+      "La valeur affichée dans PILOTE est la somme des valeurs importées depuis janvier de l'année, jusqu'à la date de la valeur.";
+    const getIndicateurContexteQuery = mock<GetIndicateurContexteQuery>({
+      execute: async () => ({
+        ...contexteParDefaut,
+        parametrageValeurAffichee: { decumul: "_", cumul: "from_year_start" },
+      }),
+    });
+    const evenementImport = {
+      ordre: 1,
+      date_creation: "15/02/2024 12:00",
+      description:
+        "Import direct par la direction de projet : première valeur d'avancement enregistrée pour cette date. Nouvelle valeur importée dans PILOTE : 50.",
+      categorie: "IMPORT" as const,
+    };
+    const getHistoriqueIndicateurTerritoireQuery =
+      mock<GetHistoriqueIndicateurTerritoireQuery>({
+        execute: async () => ({
+          nombreEvenements: 2,
+          dateMin: "2024-02-01",
+          dateMax: "2024-03-01",
+          groupes: [
+            { date_valeur: "02/2024", evenements: [evenementImport] },
+            { date_valeur: "03/2024", evenements: [evenementImport] },
+          ],
+        }),
+      });
+    const tool = createGetHistoriqueIndicateurTool({
+      getIndicateurContexteQuery,
+      getHistoriqueIndicateurTerritoireQuery,
+    })({
+      territoiresAccessibles: ["DEPT-75"],
+      chantiersAccessibles: ["CH-001"],
+    });
+
+    // When
+    const result = await executeTool(tool, {
+      indicateur_id: "IND-001",
+      territoire_code: "DEPT-75",
+    });
+
+    // Then
+    expect(result).toEqual({
+      indicateur: { id: "IND-001", nom: "Indicateur test", unite_mesure: "%" },
+      territoire_code: "DEPT-75",
+      construction_valeur_affichee: explicationValeurAffichee,
+      groupes: [
+        { date_valeur: "02/2024", evenements: [evenementImport] },
+        { date_valeur: "03/2024", evenements: [evenementImport] },
+      ],
+      _output_instructions: expect.stringContaining(
+        "construction_valeur_affichee",
+      ),
     });
   });
 
