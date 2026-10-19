@@ -1,0 +1,179 @@
+version: 2
+
+unit_tests:
+  - name: test_compute_vaca
+    description: |
+      Vérifie le calcul de la VACA pour chaque combinaison de paramétrage acceptée
+      (param_vaca_decumul_from, param_vaca_partition_date, param_vaca_op).
+    model: compute_vaca
+    given:
+      - input: ref('pivot_mesures')
+        rows:
+          # IND-001 : Pas de décumul ni de cumul : valeur importée ; pas de valeur, pas de VAC
+          - {indic_id: IND-001, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-001, zone_id: D01, metric_date: 2024-02-01, va: 20}
+          - {indic_id: IND-001, zone_id: D01, metric_date: 2024-03-01, va: null}
+          # IND-002 : Même décumul et même cumul : on retrouve la valeur importée
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2023-11-01, va: 50}
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2023-12-01, va: 80}
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2024-03-01, va: 25}
+          # IND-003 : Cumul depuis janvier, le cumul repart à chaque année
+          - {indic_id: IND-003, zone_id: D01, metric_date: 2023-12-01, va: 5}
+          - {indic_id: IND-003, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-003, zone_id: D01, metric_date: 2024-03-01, va: 20}
+          # IND-004 : Même décumul et même cumul depuis le début : on retrouve la valeur importée
+          - {indic_id: IND-004, zone_id: D01, metric_date: 2023-12-01, va: 100}
+          - {indic_id: IND-004, zone_id: D01, metric_date: 2024-01-01, va: 150}
+          - {indic_id: IND-004, zone_id: D01, metric_date: 2024-03-01, va: 170}
+          # IND-005 : Cumul sur tout l'historique
+          - {indic_id: IND-005, zone_id: D01, metric_date: 2023-12-01, va: 5}
+          - {indic_id: IND-005, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-005, zone_id: D01, metric_date: 2024-03-01, va: 20}
+          # IND-006 : Cumul sur les 12 derniers mois glissants, mois de la valeur compris
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2023-01-01, va: 1}
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2023-06-01, va: 2}
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2024-01-01, va: 4}
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2024-02-01, va: 8}
+          # IND-007 : Décumul annuel puis cumul sur tout l'historique : le cumul continue d'une année sur l'autre
+          - {indic_id: IND-007, zone_id: D01, metric_date: 2023-11-01, va: 50}
+          - {indic_id: IND-007, zone_id: D01, metric_date: 2023-12-01, va: 80}
+          - {indic_id: IND-007, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          # IND-008 : Décumul sur tout l'historique puis cumul depuis janvier
+          - {indic_id: IND-008, zone_id: D01, metric_date: 2023-12-01, va: 100}
+          - {indic_id: IND-008, zone_id: D01, metric_date: 2024-01-01, va: 150}
+          - {indic_id: IND-008, zone_id: D01, metric_date: 2024-03-01, va: 170}
+          # IND-009 : Décumul annuel seul : écart avec la valeur importée précédente de l'année, première valeur de l'année conservée
+          - {indic_id: IND-009, zone_id: D01, metric_date: 2023-11-01, va: 50}
+          - {indic_id: IND-009, zone_id: D01, metric_date: 2023-12-01, va: 80}
+          - {indic_id: IND-009, zone_id: D01, metric_date: 2024-01-01, va: 10}
+      - input: source('ppg_metadata', 'metadata_parametrage_indicateurs')
+        rows:
+          - {indic_id: IND-001, param_vaca_decumul_from: "_", param_vaca_partition_date: "_", param_vaca_op: current_value}
+          - {indic_id: IND-002, param_vaca_decumul_from: "from_year_start", param_vaca_partition_date: "from_year_start", param_vaca_op: sum}
+          - {indic_id: IND-003, param_vaca_decumul_from: "_", param_vaca_partition_date: "from_year_start", param_vaca_op: sum}
+          - {indic_id: IND-004, param_vaca_decumul_from: "from_beginning", param_vaca_partition_date: "from_beginning", param_vaca_op: sum}
+          - {indic_id: IND-005, param_vaca_decumul_from: "_", param_vaca_partition_date: "from_beginning", param_vaca_op: sum}
+          - {indic_id: IND-006, param_vaca_decumul_from: "_", param_vaca_partition_date: "from_previous_month::12", param_vaca_op: sum}
+          - {indic_id: IND-007, param_vaca_decumul_from: "from_year_start", param_vaca_partition_date: "from_beginning", param_vaca_op: sum}
+          - {indic_id: IND-008, param_vaca_decumul_from: "from_beginning", param_vaca_partition_date: "from_year_start", param_vaca_op: sum}
+          - {indic_id: IND-009, param_vaca_decumul_from: "from_year_start", param_vaca_partition_date: "_", param_vaca_op: current_value}
+    expect:
+      rows:
+        - {indic_id: IND-001, zone_id: D01, metric_date: 2024-01-01, vaca: 10}
+        - {indic_id: IND-001, zone_id: D01, metric_date: 2024-02-01, vaca: 20}
+        - {indic_id: IND-001, zone_id: D01, metric_date: 2024-03-01, vaca: null}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2023-11-01, vaca: 50}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2023-12-01, vaca: 80}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2024-01-01, vaca: 10}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2024-03-01, vaca: 25}
+        - {indic_id: IND-003, zone_id: D01, metric_date: 2023-12-01, vaca: 5}
+        - {indic_id: IND-003, zone_id: D01, metric_date: 2024-01-01, vaca: 10}
+        - {indic_id: IND-003, zone_id: D01, metric_date: 2024-03-01, vaca: 30}
+        - {indic_id: IND-004, zone_id: D01, metric_date: 2023-12-01, vaca: 100}
+        - {indic_id: IND-004, zone_id: D01, metric_date: 2024-01-01, vaca: 150}
+        - {indic_id: IND-004, zone_id: D01, metric_date: 2024-03-01, vaca: 170}
+        - {indic_id: IND-005, zone_id: D01, metric_date: 2023-12-01, vaca: 5}
+        - {indic_id: IND-005, zone_id: D01, metric_date: 2024-01-01, vaca: 15}
+        - {indic_id: IND-005, zone_id: D01, metric_date: 2024-03-01, vaca: 35}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2023-01-01, vaca: 1}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2023-06-01, vaca: 3}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2024-01-01, vaca: 6}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2024-02-01, vaca: 14}
+        - {indic_id: IND-007, zone_id: D01, metric_date: 2023-11-01, vaca: 50}
+        - {indic_id: IND-007, zone_id: D01, metric_date: 2023-12-01, vaca: 80}
+        - {indic_id: IND-007, zone_id: D01, metric_date: 2024-01-01, vaca: 90}
+        - {indic_id: IND-008, zone_id: D01, metric_date: 2023-12-01, vaca: 100}
+        - {indic_id: IND-008, zone_id: D01, metric_date: 2024-01-01, vaca: 50}
+        - {indic_id: IND-008, zone_id: D01, metric_date: 2024-03-01, vaca: 70}
+        - {indic_id: IND-009, zone_id: D01, metric_date: 2023-11-01, vaca: 50}
+        - {indic_id: IND-009, zone_id: D01, metric_date: 2023-12-01, vaca: 30}
+        - {indic_id: IND-009, zone_id: D01, metric_date: 2024-01-01, vaca: 10}
+  - name: test_compute_vacg
+    description: |
+      Vérifie le calcul de la VACG pour chaque combinaison de paramétrage acceptée
+      (param_vacg_decumul_from, param_vacg_partition_date, param_vacg_op).
+    model: compute_vacg
+    given:
+      - input: ref('pivot_mesures')
+        rows:
+          # IND-001 : Pas de décumul ni de cumul : valeur importée ; pas de valeur, pas de VAC
+          - {indic_id: IND-001, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-001, zone_id: D01, metric_date: 2024-02-01, va: 20}
+          - {indic_id: IND-001, zone_id: D01, metric_date: 2024-03-01, va: null}
+          # IND-002 : Même décumul et même cumul : on retrouve la valeur importée
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2023-11-01, va: 50}
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2023-12-01, va: 80}
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-002, zone_id: D01, metric_date: 2024-03-01, va: 25}
+          # IND-003 : Cumul depuis janvier, le cumul repart à chaque année
+          - {indic_id: IND-003, zone_id: D01, metric_date: 2023-12-01, va: 5}
+          - {indic_id: IND-003, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-003, zone_id: D01, metric_date: 2024-03-01, va: 20}
+          # IND-004 : Même décumul et même cumul depuis le début : on retrouve la valeur importée
+          - {indic_id: IND-004, zone_id: D01, metric_date: 2023-12-01, va: 100}
+          - {indic_id: IND-004, zone_id: D01, metric_date: 2024-01-01, va: 150}
+          - {indic_id: IND-004, zone_id: D01, metric_date: 2024-03-01, va: 170}
+          # IND-005 : Cumul sur tout l'historique
+          - {indic_id: IND-005, zone_id: D01, metric_date: 2023-12-01, va: 5}
+          - {indic_id: IND-005, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          - {indic_id: IND-005, zone_id: D01, metric_date: 2024-03-01, va: 20}
+          # IND-006 : Cumul sur les 12 derniers mois glissants, mois de la valeur compris
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2023-01-01, va: 1}
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2023-06-01, va: 2}
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2024-01-01, va: 4}
+          - {indic_id: IND-006, zone_id: D01, metric_date: 2024-02-01, va: 8}
+          # IND-007 : Décumul annuel puis cumul sur tout l'historique : le cumul continue d'une année sur l'autre
+          - {indic_id: IND-007, zone_id: D01, metric_date: 2023-11-01, va: 50}
+          - {indic_id: IND-007, zone_id: D01, metric_date: 2023-12-01, va: 80}
+          - {indic_id: IND-007, zone_id: D01, metric_date: 2024-01-01, va: 10}
+          # IND-008 : Décumul sur tout l'historique puis cumul depuis janvier
+          - {indic_id: IND-008, zone_id: D01, metric_date: 2023-12-01, va: 100}
+          - {indic_id: IND-008, zone_id: D01, metric_date: 2024-01-01, va: 150}
+          - {indic_id: IND-008, zone_id: D01, metric_date: 2024-03-01, va: 170}
+          # IND-009 : Décumul annuel seul : écart avec la valeur importée précédente de l'année, première valeur de l'année conservée
+          - {indic_id: IND-009, zone_id: D01, metric_date: 2023-11-01, va: 50}
+          - {indic_id: IND-009, zone_id: D01, metric_date: 2023-12-01, va: 80}
+          - {indic_id: IND-009, zone_id: D01, metric_date: 2024-01-01, va: 10}
+      - input: source('ppg_metadata', 'metadata_parametrage_indicateurs')
+        rows:
+          - {indic_id: IND-001, param_vacg_decumul_from: "_", param_vacg_partition_date: "_", param_vacg_op: current_value}
+          - {indic_id: IND-002, param_vacg_decumul_from: "from_year_start", param_vacg_partition_date: "from_year_start", param_vacg_op: sum}
+          - {indic_id: IND-003, param_vacg_decumul_from: "_", param_vacg_partition_date: "from_year_start", param_vacg_op: sum}
+          - {indic_id: IND-004, param_vacg_decumul_from: "from_beginning", param_vacg_partition_date: "from_beginning", param_vacg_op: sum}
+          - {indic_id: IND-005, param_vacg_decumul_from: "_", param_vacg_partition_date: "from_beginning", param_vacg_op: sum}
+          - {indic_id: IND-006, param_vacg_decumul_from: "_", param_vacg_partition_date: "from_previous_month::12", param_vacg_op: sum}
+          - {indic_id: IND-007, param_vacg_decumul_from: "from_year_start", param_vacg_partition_date: "from_beginning", param_vacg_op: sum}
+          - {indic_id: IND-008, param_vacg_decumul_from: "from_beginning", param_vacg_partition_date: "from_year_start", param_vacg_op: sum}
+          - {indic_id: IND-009, param_vacg_decumul_from: "from_year_start", param_vacg_partition_date: "_", param_vacg_op: current_value}
+    expect:
+      rows:
+        - {indic_id: IND-001, zone_id: D01, metric_date: 2024-01-01, vacg: 10}
+        - {indic_id: IND-001, zone_id: D01, metric_date: 2024-02-01, vacg: 20}
+        - {indic_id: IND-001, zone_id: D01, metric_date: 2024-03-01, vacg: null}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2023-11-01, vacg: 50}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2023-12-01, vacg: 80}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2024-01-01, vacg: 10}
+        - {indic_id: IND-002, zone_id: D01, metric_date: 2024-03-01, vacg: 25}
+        - {indic_id: IND-003, zone_id: D01, metric_date: 2023-12-01, vacg: 5}
+        - {indic_id: IND-003, zone_id: D01, metric_date: 2024-01-01, vacg: 10}
+        - {indic_id: IND-003, zone_id: D01, metric_date: 2024-03-01, vacg: 30}
+        - {indic_id: IND-004, zone_id: D01, metric_date: 2023-12-01, vacg: 100}
+        - {indic_id: IND-004, zone_id: D01, metric_date: 2024-01-01, vacg: 150}
+        - {indic_id: IND-004, zone_id: D01, metric_date: 2024-03-01, vacg: 170}
+        - {indic_id: IND-005, zone_id: D01, metric_date: 2023-12-01, vacg: 5}
+        - {indic_id: IND-005, zone_id: D01, metric_date: 2024-01-01, vacg: 15}
+        - {indic_id: IND-005, zone_id: D01, metric_date: 2024-03-01, vacg: 35}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2023-01-01, vacg: 1}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2023-06-01, vacg: 3}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2024-01-01, vacg: 6}
+        - {indic_id: IND-006, zone_id: D01, metric_date: 2024-02-01, vacg: 14}
+        - {indic_id: IND-007, zone_id: D01, metric_date: 2023-11-01, vacg: 50}
+        - {indic_id: IND-007, zone_id: D01, metric_date: 2023-12-01, vacg: 80}
+        - {indic_id: IND-007, zone_id: D01, metric_date: 2024-01-01, vacg: 90}
+        - {indic_id: IND-008, zone_id: D01, metric_date: 2023-12-01, vacg: 100}
+        - {indic_id: IND-008, zone_id: D01, metric_date: 2024-01-01, vacg: 50}
+        - {indic_id: IND-008, zone_id: D01, metric_date: 2024-03-01, vacg: 70}
+        - {indic_id: IND-009, zone_id: D01, metric_date: 2023-11-01, vacg: 50}
+        - {indic_id: IND-009, zone_id: D01, metric_date: 2023-12-01, vacg: 30}
+        - {indic_id: IND-009, zone_id: D01, metric_date: 2024-01-01, vacg: 10}

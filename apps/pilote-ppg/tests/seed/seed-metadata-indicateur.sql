@@ -50,12 +50,12 @@ INSERT INTO public.metadata_indicateur (name, data_type, description, est_visibl
 ('va_nat_op', 'text', 'Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote', true, 'Méthode d''agrégation - VA', true, '', NULL, 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 4),
 ('vc_nat_from', 'text', 'Source de la valeur cible nationale (import, agrégation géographique, agrégation d''indicateurs...)', true, 'Valeur cible - Origine', true, '', NULL, 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 4),
 ('vc_nat_op', 'text', 'Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote', true, 'Méthode d''agrégation - VC', true, '', NULL, 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 4),
-('param_vaca_decumul_from', 'text', 'Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA annuel.', true, 'Décumul des valeurs saisies (TA annuel)', true, '', NULL, 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
-('param_vaca_partition_date', 'text', 'Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?', true, 'Cumul des valeurs (TA annuel)', true, '', NULL, 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
-('param_vaca_op', 'text', 'Indiquer s''il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".', true, 'Opération (TA annuel)', true, '', NULL, 'multi-select', '', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
-('param_vacg_decumul_from', 'text', 'Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA global. Par défaut, saisir le même paramétrage que pour le TA annuel.', true, 'Décumul des valeurs saisies (TA global)', true, '', NULL, 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
-('param_vacg_partition_date', 'text', 'Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?', true, 'Cumul des valeurs (TA global)', true, '', NULL, 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
-('param_vacg_op', 'text', 'Indiquer s''il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".', true, 'Opération (TA global)', true, '', NULL, 'multi-select', '', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
+('param_vaca_decumul_from', 'text', 'Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA annuel.', true, 'Décumul des valeurs saisies (TA annuel)', true, '^(_|from_year_start|from_beginning)$', 'Le décumul doit valoir ''_'', ''from_year_start'' ou ''from_beginning''', 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
+('param_vaca_partition_date', 'text', 'Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?', true, 'Cumul des valeurs (TA annuel)', true, '^(_|from_year_start|from_beginning|from_previous_month::12)$', 'Le cumul doit valoir ''_'', ''from_year_start'', ''from_beginning'' ou ''from_previous_month::12''', 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
+('param_vaca_op', 'text', 'Indiquer s''il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".', true, 'Opération (TA annuel)', true, '^(current_value|sum)$', 'L''opération doit valoir ''current_value'' ou ''sum''', 'multi-select', 'current_value', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
+('param_vacg_decumul_from', 'text', 'Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA global. Par défaut, saisir le même paramétrage que pour le TA annuel.', true, 'Décumul des valeurs saisies (TA global)', true, '^(_|from_year_start|from_beginning)$', 'Le décumul doit valoir ''_'', ''from_year_start'' ou ''from_beginning''', 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
+('param_vacg_partition_date', 'text', 'Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?', true, 'Cumul des valeurs (TA global)', true, '^(_|from_year_start|from_beginning|from_previous_month::12)$', 'Le cumul doit valoir ''_'', ''from_year_start'', ''from_beginning'' ou ''from_previous_month::12''', 'multi-select', '_', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
+('param_vacg_op', 'text', 'Indiquer s''il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".', true, 'Opération (TA global)', true, '^(current_value|sum)$', 'L''opération doit valoir ''current_value'' ou ''sum''', 'multi-select', 'current_value', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
 ('tendance', 'text', 'Evolution attendue de l''indicateur. Si l''évolution attendue est stable, l''option "hausse" sera sélectionnée.', true, 'Tendance de l''indicateur', true, '', NULL, 'multi-select', 'HAUSSE', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 5),
 ('poids_pourcent_nat_declaree', 'number', 'Poids de l''indicateur dans le calcul du taux d''avancement global aux différentes mailles', true, 'Maille nationale', true, '(^\d{1,2}$)|(^\d{1,2}\.\d{1,2}$)|(^100$)', 'Pondération comprise entre 0 et 100.', 'text', '0', false, true, 'METADATA_PARAMETRAGE_INDICATEURS', 6),
 ('poids_pourcent_reg_declaree', 'number', 'Poids de l''indicateur dans le calcul du taux d''avancement global à la maille régionale si territorialisé à cette maille.', true, 'Maille régionale', true, '(^\d{1,2}$)|(^\d{1,2}\.\d{1,2}$)|(^100$)', 'Pondération comprise entre 0 et 100.', 'text', '0', false, false, 'METADATA_PARAMETRAGE_INDICATEURS', 6),
@@ -198,41 +198,37 @@ INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
 ('param_vaca_decumul_from', 1, '_', 'Non', 'Pas de décumul nécessaire'),
 ('param_vaca_decumul_from', 2, 'from_year_start', 'Oui, saisie en cumul annuel', 'Les valeurs sont saisies cumulées depuis le débur d''année'),
-('param_vaca_decumul_from', 3, 'from_custom_date::2019-01-01', 'Oui, saisie en cumul depuis le début', 'Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.');
+('param_vaca_decumul_from', 3, 'from_beginning', 'Oui, saisie en cumul depuis le début', 'Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.');
 
 -- param_vaca_partition_date
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
 ('param_vaca_partition_date', 1, '_', 'Non', 'Valeurs déjà cumulées ou non cumulables.'),
 ('param_vaca_partition_date', 2, 'from_year_start', 'Oui, cumul annuel', 'Cumul des VA depuis janvier (01) de l''année en cours.'),
-('param_vaca_partition_date', 3, 'from_custom_date::2019-01-01', 'Oui, cumul global', 'Cumul de toutes les VA.'),
+('param_vaca_partition_date', 3, 'from_beginning', 'Oui, cumul global', 'Cumul de toutes les VA.'),
 ('param_vaca_partition_date', 4, 'from_previous_month::12', 'Oui, cumul en année glissante', 'Cumul des VA des 12 derniers mois.');
 
 -- param_vaca_op
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
-('param_vaca_op', 0, '', 'Choisir une Opération (TA annuel)', 'Choisir une Opération (TA annuel)'),
 ('param_vaca_op', 1, 'current_value', 'Valeur saisie', 'VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)'),
-('param_vaca_op', 2, 'sum', 'Somme des VA', 'Somme des VA'),
-('param_vaca_op', 3, 'avg', 'Moyenne', 'Moyenne');
+('param_vaca_op', 2, 'sum', 'Somme des VA', 'Somme des VA');
 
 -- param_vacg_decumul_from
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
 ('param_vacg_decumul_from', 1, '_', 'Non', 'Pas de décumul nécessaire'),
 ('param_vacg_decumul_from', 2, 'from_year_start', 'Oui, saisie en cumul annuel', 'Les valeurs sont saisies cumulées depuis le débur d''année'),
-('param_vacg_decumul_from', 3, 'from_custom_date::2019-01-01', 'Oui, saisie en cumul depuis le début', 'Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.');
+('param_vacg_decumul_from', 3, 'from_beginning', 'Oui, saisie en cumul depuis le début', 'Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.');
 
 -- param_vacg_partition_date
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
 ('param_vacg_partition_date', 1, '_', 'Non', 'Valeurs déjà cumulées ou non cumulables.'),
 ('param_vacg_partition_date', 2, 'from_year_start', 'Oui, cumul annuel', 'Cumul des VA depuis janvier (01) de l''année en cours.'),
-('param_vacg_partition_date', 3, 'from_custom_date::2019-01-01', 'Oui, cumul global', 'Cumul de toutes les VA.'),
+('param_vacg_partition_date', 3, 'from_beginning', 'Oui, cumul global', 'Cumul de toutes les VA.'),
 ('param_vacg_partition_date', 4, 'from_previous_month::12', 'Oui, cumul en année glissante', 'Cumul des VA des 12 derniers mois.');
 
 -- param_vacg_op
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
-('param_vacg_op', 0, '', 'Choisir une Opération (TA global)', 'Choisir une Opération (TA global)'),
 ('param_vacg_op', 1, 'current_value', 'Valeur saisie', 'VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)'),
-('param_vacg_op', 2, 'sum', 'Somme des VA', 'Somme des VA'),
-('param_vacg_op', 3, 'avg', 'Moyenne', 'Moyenne');
+('param_vacg_op', 2, 'sum', 'Somme des VA', 'Somme des VA');
 
 -- tendance
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
