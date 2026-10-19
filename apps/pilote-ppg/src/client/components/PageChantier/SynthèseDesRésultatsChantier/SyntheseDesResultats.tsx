@@ -72,10 +72,6 @@ export const SyntheseDesResultats: FunctionComponent<
             meteo: toMeteoSaisissable(syntheseDesResultatsBrouillon?.meteo),
           },
           contentLabel: "Synthèse des résultats",
-          conditionLabels: {
-            contenu: `Saisir la synthèse (${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères max.)`,
-            meteo: "Sélectionner une météo",
-          },
           extraFields: <MeteoField />,
         }}
         historiqueNode={<HistoriqueSyntheseDesResultats />}

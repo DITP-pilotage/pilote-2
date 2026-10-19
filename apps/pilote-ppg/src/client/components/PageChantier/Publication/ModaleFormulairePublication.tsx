@@ -1,10 +1,10 @@
-import { ReactNode, useId } from "react";
+import { ReactNode, useRef } from "react";
 import { Button } from "@/components/shared/Button";
 import {
   FormProvider,
+  Resolver,
   SubmitHandler,
   useForm,
-  useWatch,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icone } from "@/components/_commons/Icone";
@@ -23,11 +23,6 @@ import {
   PublicationValues,
 } from "@/components/PageChantier/Publication/Publication.interface";
 import { PublicationFormFields } from "@/components/PageChantier/Publication/PublicationFormFields";
-import { ConditionsChecklist } from "@/components/PageChantier/Publication/ConditionsChecklist";
-import {
-  actionConditions,
-  allConditionsMet,
-} from "@/components/PageChantier/Publication/actionConditions";
 
 interface ModaleFormulairePublicationProps<
   T extends PublicationValues,
@@ -67,26 +62,23 @@ export const ModaleFormulairePublication = <
   const { chantierInformations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
 
+  // Les règles de validation suivent la dernière action tentée : après un
+  // clic sur « Publier », les erreurs de publication restent affichées
+  // jusqu'à leur correction.
+  const intention = useRef<"publier" | "brouillon">("brouillon");
+  const resolver: Resolver<T> = (values, context, options) =>
+    intention.current === "publier"
+      ? zodResolver(formConfig.publishSchema)(values, context, options)
+      : zodResolver(formConfig.draftSchema)(values, context, options);
+
   const form = useForm<T>({
-    resolver: zodResolver(formConfig.draftSchema),
+    resolver,
     defaultValues: formConfig.newValues,
   });
-  const values = useWatch({ control: form.control });
-  const publishConditions = actionConditions(
-    formConfig.publishSchema,
-    values,
-    formConfig.conditionLabels,
-  );
-  const draftConditions = actionConditions(
-    formConfig.draftSchema,
-    values,
-    formConfig.conditionLabels,
-  );
-  const publishConditionsId = useId();
-  const draftConditionsId = useId();
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
+      intention.current = "brouillon";
       form.reset(formConfig.newValues);
     }
     onOpenChange(isOpen);
@@ -131,56 +123,40 @@ export const ModaleFormulairePublication = <
             editorClassName={formConfig.extraFields ? undefined : "h-60"}
             maxLength={formConfig.maxLength}
           />
-          <div className="flex items-center justify-between gap-6 mt-6">
-            <div className="flex flex-1 min-w-0 flex-wrap gap-x-6 gap-y-2">
-              <ConditionsChecklist
-                conditions={publishConditions}
-                id={publishConditionsId}
-                title="Pour publier :"
-              />
-              <ConditionsChecklist
-                conditions={draftConditions}
-                id={draftConditionsId}
-                title="Pour enregistrer en brouillon :"
-              />
-            </div>
-            <div className="flex flex-none items-center gap-3 ml-auto whitespace-nowrap">
-              <Button
-                aria-describedby={publishConditionsId}
-                disabled={!allConditionsMet(publishConditions)}
-                iconLeft={
-                  <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
-                }
-                type="submit"
-                variant="primary"
-              >
-                Publier
-              </Button>
-              <Button
-                iconLeft={
-                  <Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />
-                }
-                onClick={() => onOpenChange(false)}
-                type="button"
-                variant="secondary"
-              >
-                Annuler
-              </Button>
-              <Button
-                aria-describedby={draftConditionsId}
-                disabled={!allConditionsMet(draftConditions)}
-                variant="link"
-                iconLeft={
-                  <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
-                }
-                onClick={(event) => {
-                  return form.handleSubmit(onEnregistrerBrouillon)(event);
-                }}
-                type="button"
-              >
-                Enregistrer en tant que brouillon
-              </Button>
-            </div>
+          <div className="flex justify-end items-center gap-3 mt-6">
+            <Button
+              iconLeft={
+                <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
+              }
+              onClick={() => {
+                intention.current = "publier";
+              }}
+              type="submit"
+              variant="primary"
+            >
+              Publier
+            </Button>
+            <Button
+              iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
+              onClick={() => onOpenChange(false)}
+              type="button"
+              variant="secondary"
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="link"
+              iconLeft={
+                <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
+              }
+              onClick={(event) => {
+                intention.current = "brouillon";
+                return form.handleSubmit(onEnregistrerBrouillon)(event);
+              }}
+              type="button"
+            >
+              Enregistrer en tant que brouillon
+            </Button>
           </div>
         </form>
       </FormProvider>

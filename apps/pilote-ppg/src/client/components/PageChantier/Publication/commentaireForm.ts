@@ -19,9 +19,6 @@ export const commentaireForm = ({
   draftSchema: validationCommentaireFormulaire,
   publishSchema: validationCommentaireFormulaire,
   maxLength: LIMITE_CARACTÈRES_COMMENTAIRE,
-  conditionLabels: {
-    contenu: `Saisir le commentaire (${LIMITE_CARACTÈRES_COMMENTAIRE} caractères max.)`,
-  },
   editValues: { contenu: publication?.contenu ?? "" },
   newValues: { contenu: brouillon?.contenu ?? "" },
 });

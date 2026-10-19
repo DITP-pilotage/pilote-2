@@ -24,7 +24,9 @@ const validationContenuSynthèseDesRésultats = z
 
 export const validationSynthèseDesRésultatsFormulaire = z.object({
   contenu: validationContenuSynthèseDesRésultats,
-  meteo: z.enum(meteosSaisissables),
+  meteo: z.enum(meteosSaisissables, {
+    error: () => "La météo est obligatoire pour publier",
+  }),
 });
 
 export const validationSynthèseDesRésultatsBrouillon = z.object({
