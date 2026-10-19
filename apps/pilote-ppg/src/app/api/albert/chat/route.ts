@@ -4,11 +4,6 @@ import { AssistantIA } from "@/server/albert/AssistantIA";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
-import {
-  calculerAccesAskAI,
-  construireFeatureFlipsAskAI,
-} from "@/server/albert/accesAskAI";
-import { estEmailAutoriseAskAITerritoire } from "@/server/albert/emailsAutorisesAskAITerritoire";
 
 const chatRequestSchema = z
   .object({
@@ -29,19 +24,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    const variables = await getContainer("gestionContenu")
-      .resolve("recupererToutesLesVariablesContenuUseCase")
-      .run();
+    const { peutUtiliser } = await getContainer("albertAccess")
+      .resolve("checkAlbertAccessUseCase")
+      .execute({
+        utilisateurId: session.user.id,
+        profil: session.profil ?? null,
+      });
 
-    const { peutUtiliserAskAI } = calculerAccesAskAI({
-      profil: session.profil ?? null,
-      emailAutoriseAskAITerritoire: estEmailAutoriseAskAITerritoire(
-        session.user.email,
-      ),
-      featureFlips: construireFeatureFlipsAskAI(variables),
-    });
-
-    if (!peutUtiliserAskAI) {
+    if (!peutUtiliser) {
       return new Response("Forbidden", { status: 403 });
     }
 

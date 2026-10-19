@@ -322,7 +322,7 @@ Retirer un flag touche : `config.ts` (`featureFlip`), `server/gestion-contenu/do
 | Flag | Prod | Raison |
 |---|---|---|
 | `APPLICATION_INDISPONIBLE` | inactif | interrupteur d'exploitation (`BaseNavigation.tsx:26`) |
-| `ASK_AI` + `ASK_AI_*` par profil | `EQUIPE_DIR_PROJET` inactif, autres actifs | ouverture progressive par profil (`server/albert/accesAskAI.ts`, `PageAccueil/useAskAIAccess.ts`) — à regrouper une fois tous les profils ouverts |
+| `ASK_AI` + `ASK_AI_*` par profil | `EQUIPE_DIR_PROJET` inactif, autres actifs | traité par PIL-1871 : les `ASK_AI_*` sont remplacés par des accès gérés en base (`server/albert-access/`), seul `ASK_AI` reste en kill switch |
 | `PROCONNECT` | inactif | migration Keycloak → ProConnect en cours (`PageConnexion.tsx:31`, `BoutonProConnect.tsx:23`) |
 | `CREATION_COMPTE_ARS` | inactif | `UtilisateurFormulaire.tsx:34` |
 | `EXPORT_CSV_WIDGETS` | inactif | `_commons/Widget/ExportableWidget.tsx:18` |

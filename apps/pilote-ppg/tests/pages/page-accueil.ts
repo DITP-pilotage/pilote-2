@@ -60,6 +60,23 @@ export class PageAccueil extends BasePage {
     return new PageChantier(this.page, this.e2eContext);
   }
 
+  private get boutonAssistantIA() {
+    return this.page.getByRole("button", {
+      name: "Ouvrir l'Assistant IA PILOTE",
+    });
+  }
+
+  async expectAccesAssistantIA(): Promise<void> {
+    await expect(this.boutonAssistantIA).toBeVisible();
+  }
+
+  async expectPasAccesAssistantIA(): Promise<void> {
+    await expect(
+      this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
+    ).toBeVisible();
+    await expect(this.boutonAssistantIA).toHaveCount(0);
+  }
+
   async openExportModal(): Promise<void> {
     await this.page
       .getByRole("button", { name: /Exporter les données/ })
