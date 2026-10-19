@@ -89,6 +89,28 @@ Il permet aussi, comme le pin précédent, ESLint 10 (qui requiert Node ≥ 20.1
 | `fast-xml-parser` | `5.7.3` | Bumpé en mai 2026 pour CVEs. Pinné car la 5.7.1 introduit `@nodable/entities` v2.1.0 avec breaking changes sur les entités — on fige tant qu'on n'a pas vérifié l'impact. | À évaluer pour passer en `^5.7.3` |
 | `@next/env`, `next-auth`, `convict*`, `dotenv`, `dotenv-expand`, `next-router-mock`, `jest-extended`, `sanitize-html`, `sass`, `swagger-ui-react`, `ws`, `zustand`, etc. | divers | Pins historiques par prudence. Chaque ligne pourrait être remplacée par `^` lors d'une campagne si on valide que le bump mineur est safe. | À réévaluer ponctuellement |
 
+## Dépendances hors registre
+
+**Interdites par défaut.** Une dépendance déclarée par URL de tarball, `git+…`, `github:…` ou
+`file:` (hors `workspace:`) sort de **tous** les garde-fous du dépôt à la fois :
+
+- **`pnpm outdated`** ne la voit pas : une version plus récente publiée en amont ne sera jamais
+  signalée. Le paquet est figé sans que rien ne le dise — même piège qu'un pin de préversion.
+- **`pnpm audit`** n'en dit rien de fiable : un audit à zéro ne vaut pas « sain » pour elle.
+- **`minimumReleaseAge`** ne s'applique pas : la quarantaine supply-chain est contournée.
+- Seul reste le hash `integrity` du lockfile : le contenu est figé, mais personne n'a jugé
+  de sa fraîcheur.
+
+On n'y recourt que lorsque **aucune version corrigée n'existe sur le registre** et que le
+remplacement coûte plus qu'un correctif de sécurité. Chaque exception a sa ligne ci-dessous, avec
+une condition de sortie et une date de revue. `pnpm deps:campagne` détecte ces specifiers dans
+tous les `package.json` et **refuse de démarrer** si l'un d'eux n'a pas sa ligne ici (le nom du
+paquet entre backticks en première colonne).
+
+| Paquet | Specifier | Raison | Condition de sortie | Revue |
+|---|---|---|---|---|
+| `xlsx` (kpilote-webapp) | `https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz` | SheetJS a quitté npm ; `0.18.5` (dernière sur npm) porte 2 high (prototype pollution `<0.19.3`, ReDoS `<0.20.2`) sans `patched_versions`. Détail plus bas. | SheetJS republie sur npm, **ou** remplacement par `read-excel-file` + `papaparse` | À chaque campagne : vérifier sur <https://cdn.sheetjs.com/> si une version plus récente que `0.20.3` existe |
+
 ## Overrides
 
 Définis dans `pnpm.overrides` du `package.json` racine. Tous ajoutés lors de la campagne sécu de mai 2026 pour corriger des CVEs dans des transitives profondes que les ranges parents ne pouvaient pas mettre à jour seuls.
@@ -581,6 +603,10 @@ bump**, et c'est mécanisable : un grep sur les imports, croisé avec les dépen
 
 ### `xlsx` : les deux dernières high de kpilote, et ce qu'elles coûtent vraiment
 
+> **Tranché le 2026-10-19 : option 1, tarball officiel `0.20.3`.** Voir « Dépendances hors
+> registre » et « Correctif sécu du 2026-10-19 ». L'analyse ci-dessous reste la référence pour la
+> sortie vers `read-excel-file` + `papaparse`.
+
 | | |
 |---|---|
 | Advisories | prototype pollution (`<0.19.3`) et ReDoS (`<0.20.2`), les deux **high** |
@@ -842,6 +868,23 @@ Hors campagne, uniquement pour fermer les advisories ouvertes (dont une **critiq
 - **Résiduel (4)**, sans version corrigée publiée : `xlsx` ×2 (kpilote-webapp, voir plus haut),
   `braces <=3.0.3` (`awilix>fast-glob>micromatch`, ppg) et `sprintf-js <=1.1.3`
   (`js-yaml-loader>js-yaml@3>argparse`, ppg).
+
+### Correctif sécu du 2026-10-19 — high 4 → 1
+
+Hors campagne, uniquement pour fermer les high ouvertes.
+
+| Changement | Advisories fermées | Condition de sortie |
+|---|---|---|
+| `sharp` → `^0.35.5` (ppg) et override relevé à `>=0.35.5 <0.36` | librsvg CVE-2026-96889 (high, GHSA-wq5f-xc86-pv6w) | `next` (optionalDependency `sharp: ^0.35.4` en 16.3.8) déclare `>=0.35.5` |
+| `xlsx` → tarball officiel SheetJS `0.20.3` (kpilote-webapp) | prototype pollution + ReDoS (2 high) | voir « Dépendances hors registre » |
+
+- **`sharp@0.35.5`** est publiée le 2026-09-27 : hors quarantaine, aucune exclusion nécessaire.
+  Seuls `sharp` et ses binaires `@img/*` bougent dans le lockfile.
+- **`xlsx@0.20.3`** n'a aucune dépendance : ses 8 transitives de la `0.18.5` (`cfb`, `ssf`,
+  `codepage`…) disparaissent. kpilote-webapp : lint, `tsc` et 132 tests verts, dont
+  `fichierVersMatrice.test.ts` qui fabrique ses classeurs avec `XLSX.write` et les relit.
+- **Résiduel (2)**, toujours sans version corrigée publiée : `braces <=3.0.3` (high,
+  `awilix>fast-glob>micromatch`, ppg — `3.0.3` est la `latest`) et `sprintf-js <=1.1.3` (moderate).
 
 ### Règles pour ajouter un override
 
