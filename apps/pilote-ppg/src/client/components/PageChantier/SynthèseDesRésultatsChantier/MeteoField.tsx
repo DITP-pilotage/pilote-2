@@ -16,7 +16,7 @@ export const MeteoField = () => {
   });
 
   return (
-    <div className={clsxm(fieldState.error && ERROR_GROUP_CLASSES)}>
+    <div className={clsxm("relative", fieldState.error && ERROR_GROUP_CLASSES)}>
       <p className="text-sm mb-2">Météo</p>
       <SelecteurMeteo
         onBlur={field.onBlur}
@@ -24,11 +24,14 @@ export const MeteoField = () => {
         ref={field.ref}
         value={field.value}
       />
-      {fieldState.error ? (
-        <p className={clsxm(ERROR_TEXT_CLASSES, "mt-1")}>
-          {fieldState.error.message}
-        </p>
-      ) : null}
+      {/* Hauteur réservée : l'apparition de l'erreur ne décale pas la mise en page. */}
+      <div className="min-h-5 mt-1">
+        {fieldState.error ? (
+          <p className={clsxm(ERROR_TEXT_CLASSES, "mt-0")}>
+            {fieldState.error.message}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 };

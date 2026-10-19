@@ -29,7 +29,7 @@ const ContentField = ({
   return (
     <div
       className={clsxm(
-        "flex flex-col",
+        "relative flex flex-col",
         fieldState.error && ERROR_GROUP_CLASSES,
         className,
       )}
