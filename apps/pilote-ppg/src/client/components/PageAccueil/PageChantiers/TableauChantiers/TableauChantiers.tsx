@@ -34,14 +34,14 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     <section className="m-0 p-0 text-dsfr-grey-50">
       <div className="flex flex-col justify-between 2xl:flex-row gap-4 2xl:items-end w-full mb-4">
         <div className="flex flex-col 2xl:flex-row gap-4">
-          <div className="w-80">
+          <div className="w-80 max-w-full">
             <SearchInput
               onChange={changementDeLaRechercheCallback}
               value={valeurDeLaRecherche}
             />
           </div>
         </div>
-        <div className="flex 2xl:flex-row gap-4 items-end">
+        <div className="flex flex-wrap gap-4 items-end">
           <SelecteurGroupementTableauChantier />
           <TableauChantiersActionsDeTri table={table} />
         </div>

@@ -17,8 +17,8 @@ export const TableauChantiersActionsDeTri: FunctionComponent<{
   const trier = (id: string, desc: boolean) => table.setSorting([{ id, desc }]);
 
   return (
-    <div className="flex items-end gap-2">
-      <div className="flex flex-col gap-1">
+    <div className="flex min-w-0 items-end gap-2">
+      <div className="flex min-w-0 flex-col gap-1">
         <label className="text-sm/6" htmlFor="tri-tableau-chantiers">
           Trier par
         </label>
@@ -28,7 +28,10 @@ export const TableauChantiersActionsDeTri: FunctionComponent<{
           }
           value={critère}
         >
-          <Select.Trigger className="w-64 text-left" id="tri-tableau-chantiers">
+          <Select.Trigger
+            className="w-64 max-w-full text-left"
+            id="tri-tableau-chantiers"
+          >
             <span className="line-clamp-1">
               <Select.Value />
             </span>

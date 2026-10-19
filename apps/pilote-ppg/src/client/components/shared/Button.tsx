@@ -16,7 +16,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "bg-transparent text-primary ring-1 ring-inset ring-dsfr-grey-900 hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625",
   "tertiary-no-outline":
     "bg-transparent text-primary hover:bg-dsfr-grey-1000 disabled:text-dsfr-grey-625",
-  link: "text-primary bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-bottom bg-no-repeat hover:bg-[length:100%_2px] disabled:bg-[length:100%_1px] disabled:opacity-80",
+  link: "text-primary underline decoration-1 underline-offset-4 hover:decoration-2 disabled:decoration-1 disabled:opacity-80",
 };
 
 const SIZES = {
@@ -59,7 +59,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) {
     const sizeClasses =
       variant === "link"
-        ? "p-0 min-h-0 h-6 text-base leading-6"
+        ? "p-0 min-h-6 text-left text-base leading-6"
         : clsxm("bg-none", SIZES[size]);
     const classes = clsxm(
       "inline-flex items-center gap-2 w-fit font-medium rounded-none border-0 disabled:cursor-not-allowed print:hidden",
