@@ -311,6 +311,23 @@ git log -S '"<paquet>"' --oneline -- package.json
   elle est invisible au vérificateur, et une exclusion que personne ne regarde est une régression
   de sécurité silencieuse, pas une ligne de config oubliée.
 
+- **Les dépendances hors registre portent des conditions de sortie, et l'outillage ne les voit
+  pas.** Une dépendance déclarée par URL de tarball, `git+…`, `github:…` ou `file:` échappe à
+  `pnpm outdated` (une version plus récente en amont n'est jamais signalée), à `pnpm audit` (un
+  zéro ne vaut pas « sain » pour elle) et à `minimumReleaseAge`. Le moteur les liste dans
+  `report.horsRegistre` et **refuse de démarrer** si l'une n'a pas sa ligne dans la section
+  « Dépendances hors registre » de `DEPENDENCIES.md`. Pour chacune :
+
+  - sa condition de sortie est-elle remplie (republication sur le registre, remplacement fait) ?
+    Si oui, proposer le retour au registre ;
+  - une version plus récente existe-t-elle **à la source** (CDN, tags du dépôt) ? C'est une
+    vérification à la main, que rien d'autre ne fera ;
+  - l'advisory qui justifiait l'exception a-t-elle un successeur ? L'audit ne le dira pas.
+
+  **Ne jamais en introduire une pour gagner du temps.** Ce n'est acceptable que quand aucune
+  version corrigée n'existe au registre et que le remplacement coûte plus qu'un correctif de
+  sécurité — et alors toujours avec sa ligne, sa condition de sortie et sa date de revue.
+
 ## 9. Ouvrir la PR
 
 ```bash
@@ -338,12 +355,15 @@ Structure du corps :
    (les réfutées, avec la preuve)
 4. **Overrides** — porteur ou inerte (avec la preuve de résolution), plancher ou plafond, condition
    de sortie remplie ou non, divergences
-5. **Non couvert** — chaque unité de §4 sans verdict, avec sa raison. Section présente même vide,
+5. **Hors registre** — chaque entrée de `report.horsRegistre`, sa condition de sortie, la
+   version la plus récente constatée à la source, et le rappel qu'elle n'est couverte ni par
+   l'audit ni par la quarantaine. Section présente même vide, et alors marquée « aucune ».
+6. **Non couvert** — chaque unité de §4 sans verdict, avec sa raison. Section présente même vide,
    et alors marquée « aucune ». Y faire figurer aussi ce que le moteur ne peut **pas** voir :
    une app sans `package.json` est hors pnpm, donc hors campagne par construction — ses
    dépendances (Python, dbt, autre écosystème) ne sont ni bumpées ni auditées. C'est une limite
    de l'outil, pas un oubli du run, et elle se dit.
-6. **Reste à faire** — la liste de courses, triée par niveau puis par commit
+7. **Reste à faire** — la liste de courses, triée par niveau puis par commit
 
 Préciser dans le corps que **les E2E n'ont pas tourné** (`e2e.yml` est en cron, 30 min, stack
 complète) et qu'ils sont à déclencher à la main sur la branche via `workflow_dispatch`.
@@ -362,12 +382,14 @@ tests ppg via les filtres de `testAndLint.yml`, et peut donc être rouge à caus
 3. **Ne jamais toucher aux conteneurs Docker.**
 4. **Ne pas prétendre à une couverture qui n'existe pas.** « app X : vert » est un mensonge par
    omission quand l'app n'a pas de tests — la vérité est « `tsc` vert, aucun test à faire tourner ».
-5. **Ne jamais pousser sur `dev`, ne jamais auto-merger.**
-6. **Ne jamais poser un ✅ sur une hypothèse non vérifiée.** Toute la valeur de l'analyse tient
+5. **Ne jamais introduire de dépendance hors registre** pour débloquer un bump. Le skill la
+   signale et la documente, il n'en crée pas.
+6. **Ne jamais pousser sur `dev`, ne jamais auto-merger.**
+7. **Ne jamais poser un ✅ sur une hypothèse non vérifiée.** Toute la valeur de l'analyse tient
    à la séparation PROUVÉ / HYPOTHÈSE. Un « safe » posé sur une supposition est précisément le
    mode d'échec qui discrédite ce genre d'outil.
-7. **Ne jamais laisser une unité disparaître en silence.** Un subagent en échec produit une ligne
+8. **Ne jamais laisser une unité disparaître en silence.** Un subagent en échec produit une ligne
    « non couvert », pas un blanc dans la PR.
-8. **Ne jamais inscrire l'état du monde dans ce fichier.** Compteurs d'overrides, versions en
+9. **Ne jamais inscrire l'état du monde dans ce fichier.** Compteurs d'overrides, versions en
    cours, majors du moment : tout ça se lit dans `report.json` et `DEPENDENCIES.md` au run. Figé
    ici, ça devient en deux campagnes un mensonge qui se lit comme une autorité.

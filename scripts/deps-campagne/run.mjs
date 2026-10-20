@@ -18,6 +18,11 @@ import {
   FILTRES_CAMPAGNE,
   verifierBaseTestPpgAccessible,
 } from './lib/oracle.mjs'
+import {
+  findOutsideRegistryDeps,
+  readDocumentedPackages,
+  getOutsideRegistryVerdicts,
+} from './lib/horsRegistre.mjs'
 
 const DOSSIER_SORTIE = '.deps-campagne'
 
@@ -91,6 +96,40 @@ function commiter(message) {
   exigerSucces(run(['git', 'add', 'package.json', 'pnpm-lock.yaml', 'apps', 'packages']), 'git add')
   exigerSucces(run(['git', 'commit', '-m', message, '--no-verify']), 'git commit')
   return exigerSucces(run(['git', 'rev-parse', '--short', 'HEAD']), 'git rev-parse').stdout.trim()
+}
+
+/**
+ * Une dépendance hors registre échappe à `outdated`, à `audit` et à la quarantaine : la
+ * campagne ne peut rien en dire. On refuse de démarrer tant que l'une d'elles n'est pas
+ * documentée, sans quoi elle resterait figée en silence, campagne après campagne.
+ */
+function verifierHorsRegistre() {
+  const chemins = exigerSucces(
+    run(['git', 'ls-files', '--', 'package.json', '*/package.json']),
+    'git ls-files',
+  )
+    .stdout.trim()
+    .split('\n')
+    .filter(Boolean)
+  const manifestes = chemins.map((chemin) => ({
+    chemin,
+    contenu: JSON.parse(readFileSync(chemin, 'utf8')),
+  }))
+  const verdicts = getOutsideRegistryVerdicts(
+    findOutsideRegistryDeps(manifestes),
+    readDocumentedPackages(readFileSync('DEPENDENCIES.md', 'utf8')),
+  )
+  const orphelines = verdicts.filter((v) => !v.documente)
+  if (orphelines.length > 0) {
+    throw new Error(
+      'dépendances hors registre sans ligne dans la section « Dépendances hors registre » de ' +
+        'DEPENDENCIES.md :\n' +
+        orphelines
+          .map((v) => `  ${v.paquet} (${v.manifeste}, ${v.champ}) : ${v.specifier}`)
+          .join('\n'),
+    )
+  }
+  return verdicts
 }
 
 /** Oracle complet seulement si le rapide passe : inutile de tester ce qui ne compile pas. */
@@ -201,6 +240,12 @@ function appliquerGroupe(groupe) {
 
 function main() {
   verifierPrealables()
+  const horsRegistre = verifierHorsRegistre()
+  for (const dep of horsRegistre) {
+    journal(
+      `hors registre : ${dep.paquet} (${dep.manifeste}) — invisible pour outdated, audit et quarantaine`,
+    )
+  }
 
   // Les exclusions de quarantaine sont des trous volontaires dans la mitigation
   // supply-chain. Trois campagnes de suite en ont laissé d'échues en place, faute que
@@ -230,6 +275,7 @@ function main() {
       majors: depart.filter((d) => d.isMajor).length,
       audit: resumeAudit,
     },
+    horsRegistre,
   })
 
   run(['git', 'checkout', '-b', `deps/campagne-${date}`])

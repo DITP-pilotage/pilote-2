@@ -4,8 +4,8 @@
  * Toutes les fonctions sont pures — elles rendent un nouveau rapport, sans muter l'entrée.
  */
 
-export function creerReport({ date, snapshot }) {
-  return { date, snapshot, commits: [], overrides: [] }
+export function creerReport({ date, snapshot, horsRegistre = [] }) {
+  return { date, snapshot, horsRegistre, commits: [], overrides: [] }
 }
 
 /**
