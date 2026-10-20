@@ -70,6 +70,7 @@ export type AnalyticsEvent = {
 
 export type AnalyticsPageView = {
   title: string;
+  dimensions?: AnalyticsDimensions;
 };
 
 export type AnalyticsConfig = {
