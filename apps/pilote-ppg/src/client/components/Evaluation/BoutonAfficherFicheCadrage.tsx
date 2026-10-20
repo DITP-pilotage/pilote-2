@@ -12,7 +12,7 @@ export const BoutonAfficherFicheCadrage = ({
   return (
     <ModaleFicheCadrage critere={critere}>
       <Button
-        className="whitespace-nowrap underline !p-2 -m-2 self-start gap-1.5 items-center"
+        className="whitespace-nowrap underline p-2 -m-2 self-start gap-1.5 items-center"
         iconLeft={<Icone className="h-3.5 w-3.5" icone={Eye1Icon} />}
         size="sm"
         variant="link"

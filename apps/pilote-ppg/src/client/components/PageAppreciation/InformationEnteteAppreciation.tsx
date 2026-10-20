@@ -41,11 +41,7 @@ export const InformationEnteteAppreciation = ({
             </ul>
           </div>
           <div className="mt-auto">
-            <Button
-              asChild
-              className="!w-full justify-center"
-              variant="primary"
-            >
+            <Button asChild className="w-full justify-center" variant="primary">
               <Link href="appreciation/espace-appreciation">
                 Accéder à l'espace d'appréciation
               </Link>
@@ -71,7 +67,7 @@ export const InformationEnteteAppreciation = ({
 
           <div className="mt-auto">
             <ModaleTransmissionDITP fichesAppreciation={fiches}>
-              <Button className="!w-full justify-center" variant="primary">
+              <Button className="w-full justify-center" variant="primary">
                 Transmettre les appréciations
               </Button>
             </ModaleTransmissionDITP>

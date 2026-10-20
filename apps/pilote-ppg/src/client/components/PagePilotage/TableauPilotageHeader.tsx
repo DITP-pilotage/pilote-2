@@ -165,7 +165,7 @@ export const TableauPilotageHeader = ({
           {(critere) => {
             const IconComponent = CRITERE_TYPE_TO_ICON[critere.type];
             return (
-              <HeaderCell className="!p-1" key={`critere-header-${critere.id}`}>
+              <HeaderCell className="p-1" key={`critere-header-${critere.id}`}>
                 <ModaleFicheCadrage critere={critere}>
                   <button
                     className="flex items-center gap-2 text-left px-2 py-1"

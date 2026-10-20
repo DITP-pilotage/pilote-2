@@ -55,8 +55,8 @@ export const HeaderTableauEvaluation = ({
       <div className="flex flex-col items-end gap-1">
         {!estEnLectureSeule && (
           <Button
-            className="underline flex items-center gap-1 -mr-4 !text-xs"
-            iconLeft={<Icone className="!h-3 !w-3" icone={SaveIcon} />}
+            className="underline flex items-center gap-1 -mr-4 text-xs"
+            iconLeft={<Icone className="h-3 w-3" icone={SaveIcon} />}
             size="sm"
             type="submit"
             variant="link"
@@ -71,8 +71,8 @@ export const HeaderTableauEvaluation = ({
           </span>
         ) : null}
         <Button
-          className="underline flex items-center gap-1 -mr-4 !text-xs"
-          iconLeft={<Icone className="!h-3 !w-3" icone={Printer1Icon} />}
+          className="underline flex items-center gap-1 -mr-4 text-xs"
+          iconLeft={<Icone className="h-3 w-3" icone={Printer1Icon} />}
           onClick={handleImprimer}
           size="sm"
           type="button"

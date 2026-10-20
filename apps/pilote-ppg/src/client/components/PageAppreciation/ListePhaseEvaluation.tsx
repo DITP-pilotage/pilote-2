@@ -63,7 +63,7 @@ export const ListePhaseEvaluation = () => {
                     <div className="flex flex-col gap-4">
                       <div>
                         <Button
-                          className="!text-xs"
+                          className="text-xs"
                           iconLeft={
                             <Icone
                               className="w-4 h-4"
@@ -113,7 +113,7 @@ export const ListePhaseEvaluation = () => {
                     <div className="flex flex-col gap-4">
                       <div>
                         <Button
-                          className="!text-xs"
+                          className="text-xs"
                           iconLeft={
                             <Icone
                               className="w-4 h-4"
@@ -161,7 +161,7 @@ export const ListePhaseEvaluation = () => {
                     <div className="flex flex-col gap-4">
                       <div>
                         <Button
-                          className="!text-xs"
+                          className="text-xs"
                           iconLeft={
                             <Icone
                               className="w-4 h-4"

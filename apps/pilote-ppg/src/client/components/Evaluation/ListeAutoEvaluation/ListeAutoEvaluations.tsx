@@ -93,7 +93,7 @@ export const ListeAutoEvaluations = ({
                   disabled={genererPDF.isPending}
                   iconLeft={
                     <Icone
-                      className="w-4 h-4 !text-current shrink-0"
+                      className="w-4 h-4 text-current shrink-0"
                       icone={Printer1Icon}
                     />
                   }
