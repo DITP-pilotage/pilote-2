@@ -74,6 +74,11 @@ const CASES: ToolCase[] = [
     reason: "CAS NÉGATIF : historique des actions → get_historique_indicateur",
     forbidden: ["get_indicateurs"],
   },
+  {
+    question: "Les indicateurs du CH-004 sont-ils à jour au national ?",
+    reason: "CAS NÉGATIF : fraîcheur des données → get_indicateurs_non_a_jour",
+    forbidden: ["get_indicateurs"],
+  },
 ];
 
 toolSelectionEval({
