@@ -39,7 +39,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
     <div className="bg-dsfr-alt-blue-france pt-4">
       <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <FilAriane chemin={chemin} libelléPageCourante="Utilisateur" />
-        <div className="fiche-utilisateur pb-8">
+        <div className="pb-8">
           <div className="flex">
             <Link
               aria-label="Retour à l'accueil"

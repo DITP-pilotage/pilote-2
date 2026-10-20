@@ -22,14 +22,14 @@ const Bloc: FunctionComponent<BlocProps> = ({
   return (
     <div
       className={clsxm(
-        "bloc-container min-w-full bg-white border border-dsfr-grey-925 rounded-lg print:h-auto print:border-pilote-grey-border-print",
+        "min-w-full bg-white border border-dsfr-grey-925 rounded-lg print:h-auto print:border-pilote-grey-border-print",
         className,
       )}
     >
       {titre ? (
         <div
           className={clsxm(
-            "text-sm print:text-base font-bold titre h-16 border-b-2 border-b-dsfr-grey-200 rounded-t-[7px] mb-0 p-4 flex items-center justify-start relative w-full print:rounded-t-lg",
+            "text-sm print:text-base font-bold h-16 border-b-2 border-b-dsfr-grey-200 rounded-t-[7px] mb-0 p-4 flex items-center justify-start relative w-full print:rounded-t-lg",
             backgroundClassNameTitre,
           )}
         >

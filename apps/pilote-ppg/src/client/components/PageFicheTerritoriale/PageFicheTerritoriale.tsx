@@ -51,7 +51,7 @@ export const PageFicheTerritoriale: FunctionComponent<
           <h1 className="text-h3 md:text-h3-md mt-0 mb-2 px-4">Vue générale</h1>
           <div className="flex flex-wrap px-4 print:text-[0.7rem]">
             <div className="w-1/3 shrink-0 pr-1 h-full">
-              <div className="fiche-territoriale__avancement--moyen mb-2">
+              <div className="mb-2">
                 <Bloc>
                   <div className="flex flex-col items-center">
                     <TitreInfobulleConteneur className="mb-4">

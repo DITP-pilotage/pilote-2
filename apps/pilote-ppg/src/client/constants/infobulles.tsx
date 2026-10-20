@@ -61,7 +61,7 @@ const INFOBULLE_CONTENUS = {
       <ul className="m-[var(--text-spacing)] text-sm print:text-base mb-0">
         <li>
           La première alerte signale :
-          <ul className="m-[var(--text-spacing)] text-sm print:text-base liste-niveau2">
+          <ul className="m-[var(--text-spacing)] text-sm print:text-base">
             <li>
               lorsque le niveau national est sélectionné : les chantiers n'ayant
               pas de taux d'avancement au niveau national en raison de l'absence
@@ -79,7 +79,7 @@ const INFOBULLE_CONTENUS = {
         </li>
         <li>
           La seconde alerte signale :
-          <ul className="m-[var(--text-spacing)] text-sm print:text-base liste-niveau2">
+          <ul className="m-[var(--text-spacing)] text-sm print:text-base">
             <li>
               lorsque le niveau national est sélectionné : les chantiers n'ayant
               aucun taux d'avancement au niveau départemental.

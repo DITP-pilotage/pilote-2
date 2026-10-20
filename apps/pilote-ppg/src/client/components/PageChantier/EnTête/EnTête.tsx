@@ -80,7 +80,7 @@ const PageChantierEnTête: FunctionComponent<{
         {chantier.nom}
       </h1>
       <div className="pb-6 mb-6 border-b border-dsfr-blue-france-sun-113 flex">
-        <div className="icone-entete mb-2 pr-2">
+        <div className="mb-2 pr-2">
           <IconeMinistere icone={responsables?.porteur?.icône} />
         </div>
         <p className={clsxm(`mb-0 uppercase`)}>

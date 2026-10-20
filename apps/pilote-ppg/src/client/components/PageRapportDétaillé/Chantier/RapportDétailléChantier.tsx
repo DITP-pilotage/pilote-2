@@ -203,7 +203,7 @@ const RapportDétailléChantier: FunctionComponent<
         {objectifs !== null && objectifs.length > 0 ? (
           <div className="my-4 print:break-inside-avoid">
             <section className="break-inside-avoid">
-              <div className="rubrique__conteneur [&>div]:h-auto">
+              <div className="[&>div]:h-auto">
                 <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Objectifs
                 </h2>
@@ -215,7 +215,7 @@ const RapportDétailléChantier: FunctionComponent<
         {indicateurs.length > 0 ? (
           <div className="my-4 print:break-inside-avoid">
             <section className="break-inside-avoid">
-              <div className="rubrique__conteneur [&>div]:h-auto">
+              <div className="[&>div]:h-auto">
                 <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Indicateurs
                 </h2>
@@ -246,7 +246,7 @@ const RapportDétailléChantier: FunctionComponent<
           territoireSélectionné!.maille === "nationale" && (
             <div className="my-4 print:break-inside-avoid">
               <section className="break-inside-avoid">
-                <div className="rubrique__conteneur [&>div]:h-auto">
+                <div className="[&>div]:h-auto">
                   <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                     Décisions stratégiques
                   </h2>
@@ -260,7 +260,7 @@ const RapportDétailléChantier: FunctionComponent<
         {commentaires !== null && (
           <div className="my-4 print:break-inside-avoid">
             <section className="break-inside-avoid">
-              <div className="rubrique__conteneur [&>div]:h-auto">
+              <div className="[&>div]:h-auto">
                 <h2 className="text-h4 md:text-h4-md mb-4 mt-3 md:mt-0 mx-4 md:mx-0">
                   Commentaires du chantier
                 </h2>

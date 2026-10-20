@@ -114,7 +114,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           }
           titre={territoireSélectionné?.nomAffiché}
         >
-          <div className="py-2 jauge [&>div]:m-auto">
+          <div className="py-2 [&>div]:m-auto">
             <AvancementsTerritoire
               avancement={avancements.departementale.annuel.moyenne}
               couleurBarreDeProgression="secondary"
@@ -148,7 +148,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               : territoireSélectionné.nomAffiché
           }
         >
-          <div className="py-2 jauge [&>div]:m-auto">
+          <div className="py-2 [&>div]:m-auto">
             <AvancementsTerritoire
               avancement={avancements.regionale.annuel.moyenne}
               couleurBarreDeProgression={
@@ -177,7 +177,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         }
         titre="France"
       >
-        <div className="py-2 jauge [&>div]:m-auto">
+        <div className="py-2 [&>div]:m-auto">
           <div className="flex flex-col flex-wrap justify-center items-center">
             <strong className="m-[var(--text-spacing)] text-sm print:text-base mb-0 text-center">
               Taux d'avancement national
@@ -289,7 +289,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 <EcartTauxAvancementPPG
                   ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian}
                 />
-                <p className="text-xs print:text-base mt-2 text-center jauge-tracé">
+                <p className="text-xs print:text-base mt-2 text-center">
                   <strong className="mr-1">écart</strong>
                   {`du taux d'avancement ${jalon} par rapport au taux médian des
                   autres`}{" "}

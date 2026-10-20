@@ -66,7 +66,7 @@ export const BaseLignesPropositionValeurAvancement = ({
   return (
     <>
       <Table.Row
-        className={clsx("ligne-modification-proposition-valeur-davancement", {
+        className={clsx({
           "bg-dsfr-grey-925 text-dsfr-grey-200": estChantierArchive,
           "bg-dsfr-info-950 text-dsfr-info-main-525":
             !estChantierArchive &&

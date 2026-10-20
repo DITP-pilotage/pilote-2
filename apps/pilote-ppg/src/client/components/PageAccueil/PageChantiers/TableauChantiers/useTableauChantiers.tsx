@@ -147,7 +147,7 @@ export const useTableauChantiers = (
           header: () => (
             <div className="flex items-center whitespace-nowrap">
               <span>Typologie</span>
-              <Infobulle classNameBouton="infobulle-header-typologie">
+              <Infobulle>
                 {infobulles.chantiers.listeDesChantiersHeaderTypologie}
               </Infobulle>
             </div>
@@ -165,7 +165,7 @@ export const useTableauChantiers = (
           header: () => (
             <div className="flex items-center whitespace-nowrap">
               <span>Météo</span>
-              <Infobulle classNameBouton="infobulle-header-meteo">
+              <Infobulle>
                 {infobulles.chantiers.listeDesChantiersHeaderMeteo}
               </Infobulle>
             </div>
@@ -190,7 +190,7 @@ export const useTableauChantiers = (
           header: () => (
             <div className="flex items-center whitespace-nowrap">
               <span>Tendance</span>
-              <Infobulle classNameBouton="infobulle-header-tendance">
+              <Infobulle>
                 {infobulles.chantiers.listeDesChantiersHeaderTendance}
               </Infobulle>
             </div>
@@ -213,7 +213,7 @@ export const useTableauChantiers = (
               <span className="whitespace-normal break-normal">
                 {`Avancement ${jalon}`}
               </span>
-              <Infobulle classNameBouton="infobulle-header-taux-avancement">
+              <Infobulle>
                 {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}
               </Infobulle>
             </div>
@@ -246,7 +246,7 @@ export const useTableauChantiers = (
           header: () => (
             <div className="flex items-center whitespace-nowrap">
               <span>{`Écart ${jalon}`}</span>
-              <Infobulle classNameBouton="infobulle-header-écart">
+              <Infobulle>
                 {infobulles.chantiers.listeDesChantiersHeaderEcart}
               </Infobulle>
             </div>

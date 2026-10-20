@@ -138,7 +138,7 @@ const PageFicheConducteur: FunctionComponent<
             className="print:p-0 print:border-dsfr-grey-925"
             contenuClassesSupplémentaires="px-0 py-0"
           >
-            <div className="w-full xl:max-w-[78rem] text-xs fiche-conducteur--tableau m-0 px-0 print:text-[10px] print:leading-4">
+            <div className="w-full xl:max-w-[78rem] text-xs m-0 px-0 print:text-[10px] print:leading-4">
               <div className="flex flex-wrap bg-dsfr-blue-france-925 px-2 py-2 border-b rounded-tl-md rounded-tr-md">
                 <div className="w-5/12 shrink-0 font-bold">
                   Avancement des indicateurs d'impact pris en compte dans le TA
@@ -243,7 +243,7 @@ const PageFicheConducteur: FunctionComponent<
             className="print:p-0 print:border-dsfr-grey-925"
             contenuClassesSupplémentaires="px-0"
           >
-            <div className="w-full xl:max-w-[78rem] text-xs fiche-conducteur--tableau m-0 px-0 print:text-[10px] print:leading-4">
+            <div className="w-full xl:max-w-[78rem] text-xs m-0 px-0 print:text-[10px] print:leading-4">
               <div className="flex flex-wrap bg-dsfr-blue-france-925 px-2 py-2 border-b rounded-tl-md rounded-tr-md">
                 <div className="w-1/6 shrink-0 font-bold">Catégorie</div>
                 <div className="w-5/6 shrink-0 font-bold">Détail</div>
