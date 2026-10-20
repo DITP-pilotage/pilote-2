@@ -12,6 +12,7 @@ import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState"
 import {
   answerOutcomeEvent,
   choicesPresentedEvent,
+  exportsAvailableEvents,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useAssistantTracking } from "@/components/_commons/ChatUI/useAssistantTracking";
 import {
@@ -104,6 +105,9 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
             message,
           });
           if (choices) trackRef.current(choices);
+          exportsAvailableEvents({ conversationId: id, message }).forEach(
+            (available) => trackRef.current(available),
+          );
         },
       }),
       agentContext,

@@ -43,6 +43,10 @@ export const ANALYTICS_EVENT_NAMES = [
   "response.link.external",
   "feedback.positive",
   "feedback.negative",
+  "export.text",
+  "export.dashboard_image",
+  "export.report_pdf",
+  "export.report_markdown",
 ] as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];

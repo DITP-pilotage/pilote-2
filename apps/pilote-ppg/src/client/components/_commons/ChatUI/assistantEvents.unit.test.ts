@@ -1,6 +1,8 @@
 import {
   answerOutcomeEvent,
   choicesPresentedEvent,
+  copyExportName,
+  exportsAvailableEvents,
   linkEvent,
   lastLlmCallId,
   prefilledPropositionAfterEdit,
@@ -224,5 +226,80 @@ describe("linkEvent", () => {
     { href: undefined, name: "response.link.external" },
   ])("classe $href en $name", ({ href, name }) => {
     expect(linkEvent(href)).toEqual({ action: "select", name });
+  });
+});
+
+const dashboardPart: PiloteUIMessage["parts"][number] = {
+  type: "tool-create_dashboard",
+  toolCallId: "call-dashboard",
+  state: "output-available",
+  input: { task: "Synthèse", territoire_codes: ["NAT-FR"], jalons: [2026] },
+  output: { titre: "Synthèse", containers: [], _output_instructions: "" },
+};
+
+const rapportPart = (
+  format: "markdown" | "pdf",
+): PiloteUIMessage["parts"][number] => ({
+  type: "tool-export_rapport",
+  toolCallId: `call-${format}`,
+  state: "output-available",
+  input: {
+    nom_fichier: "synthese",
+    titre: "Synthèse",
+    date: "20/10/2026",
+    resume: "Résumé",
+    format,
+    sections: [],
+  },
+  output: { url: "https://pilote.example.org/rapport", format },
+});
+
+describe("copyExportName", () => {
+  it("copie le texte d'une réponse sans dashboard", () => {
+    expect(copyExportName(assistantMessage)).toBe("export.text");
+  });
+
+  it("copie l'image dès qu'un dashboard est affiché", () => {
+    expect(
+      copyExportName({
+        ...assistantMessage,
+        parts: [...assistantMessage.parts, dashboardPart],
+      }),
+    ).toBe("export.dashboard_image");
+  });
+
+  it("ne propose rien sans texte ni dashboard", () => {
+    expect(
+      copyExportName({
+        ...assistantMessage,
+        parts: [{ type: "text", text: "  " }],
+      }),
+    ).toBeNull();
+  });
+});
+
+describe("exportsAvailableEvents", () => {
+  it("compte chaque export prêt dans la réponse", () => {
+    const events = exportsAvailableEvents({
+      conversationId: "conv-1",
+      message: {
+        ...assistantMessage,
+        parts: [
+          ...assistantMessage.parts,
+          rapportPart("markdown"),
+          rapportPart("pdf"),
+        ],
+      },
+    });
+
+    expect(events.map(({ action, name }) => [action, name])).toEqual([
+      ["view", "export.text"],
+      ["view", "export.report_markdown"],
+      ["view", "export.report_pdf"],
+    ]);
+    expect(events[0].dimensions).toEqual({
+      conversation_id: "conv-1",
+      llm_call_id: "llm-1",
+    });
   });
 });

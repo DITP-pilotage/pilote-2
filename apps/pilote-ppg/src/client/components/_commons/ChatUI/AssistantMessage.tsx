@@ -19,7 +19,11 @@ import {
 import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
-import { llmCallIdOf } from "@/components/_commons/ChatUI/assistantEvents";
+import {
+  copyExportName,
+  llmCallIdOf,
+} from "@/components/_commons/ChatUI/assistantEvents";
+import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
 
 const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
 
@@ -57,13 +61,9 @@ export const AssistantMessage = memo(function AssistantMessage({
     (part) => part.type === "text" && part.text.trim().length > 0,
   );
 
-  const hasDashboard = parts.some(
-    (part) =>
-      part.type === "tool-create_dashboard" &&
-      part.state === "output-available",
-  );
-
-  const canCopy = hasText || hasDashboard;
+  const copyExport = copyExportName(message);
+  const canCopy = copyExport !== null;
+  const track = useChatTracking();
 
   const lastTextIndex = parts.reduce<number>(
     (acc, part, index) => (part.type === "text" ? index : acc),
@@ -74,15 +74,25 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   const copier = () => {
     const root = rootRef.current;
-    if (root == null) return;
+    if (root == null || copyExport === null) return;
 
+    const trackCopy = (action: "select" | "success" | "error") =>
+      track({
+        action,
+        name: copyExport,
+        dimensions: { llm_call_id: llmCallIdOf(message) },
+      });
+
+    trackCopy("select");
     copyResponse({ root, text: extractMessageText(message) })
       .then(() => {
+        trackCopy("success");
         toast.success("Réponse copiée dans le presse-papiers", {
           duration: 3000,
         });
       })
       .catch(() => {
+        trackCopy("error");
         toast.error("La réponse n'a pas pu être copiée");
       });
   };
@@ -117,6 +127,7 @@ export const AssistantMessage = memo(function AssistantMessage({
             <ExportRapportDownload
               isStreaming={isStreaming}
               key={index}
+              llmCallId={llmCallIdOf(message)}
               part={part}
             />
           );
