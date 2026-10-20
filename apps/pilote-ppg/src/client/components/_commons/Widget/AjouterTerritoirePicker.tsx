@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { territoiresGroupesPourPicker } from "@/client/constants/territoires";
 import { Picker } from "@/components/shared/Picker";
-import { Select } from "@/components/shared/Select";
+import { LINK_BUTTON_TRIGGER_CLASSES } from "@/components/shared/Select";
+import { clsxm } from "@/utils/clsxm";
 
 export const AjouterTerritoirePicker = ({
   territoiresSelectionnesCodes,
@@ -35,9 +36,12 @@ export const AjouterTerritoirePicker = ({
         onValuesChange={onAjouterTerritoires}
         options={groupedOptions}
         trigger={
-          <Select.LinkButtonTrigger className="mt-2">
+          <button
+            className={clsxm(LINK_BUTTON_TRIGGER_CLASSES, "mt-2")}
+            type="button"
+          >
             + ajouter un territoire
-          </Select.LinkButtonTrigger>
+          </button>
         }
       />
     </div>

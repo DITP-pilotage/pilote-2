@@ -147,7 +147,7 @@ export const SélecteursMaillesEtTerritoires: FunctionComponent<
         direction === "horizontal" &&
           "flex-row items-center gap-2 [&>label]:whitespace-nowrap",
       )}
-      contentClassName="w-[var(--radix-select-trigger-width)] min-w-64 max-w-none max-h-96 overflow-hidden rounded-none border-dsfr-grey-200 p-0 [&_[data-radix-select-viewport]]:p-0"
+      contentClassName="w-[var(--radix-select-trigger-width,var(--radix-popover-trigger-width))] min-w-64 max-w-none max-h-96 overflow-hidden rounded-none border-dsfr-grey-200 p-0 [&_[data-radix-select-viewport]]:p-0"
       label={direction === "horizontal" ? "Territoire :" : "Territoire"}
       name="territoire"
       onChange={changerTerritoire}

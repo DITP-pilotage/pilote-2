@@ -4,6 +4,21 @@ import { clsxm } from "@/utils/clsxm";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 
+export const SELECT_TRIGGER_CLASSES = clsxm(
+  "flex items-center justify-between gap-3 px-4 py-1.5 font-medium font-normal border rounded-t border-b-2 border-b-gray-600 bg-dsfr-contrast-grey",
+  "data-[state=open]:border-b-primary",
+  "disabled:opacity-50 disabled:cursor-not-allowed",
+);
+
+export const LINK_BUTTON_TRIGGER_CLASSES =
+  "bg-transparent border-none p-0 text-xs cursor-pointer text-primary hover:underline";
+
+export const SELECT_CONTENT_CLASSES = clsxm(
+  "bg-white rounded-md shadow-md border border-gray-100 z-50",
+  "md:min-w-[400px] max-w-[450px]",
+  "data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out",
+);
+
 export const Select = Object.assign({}, SelectPrimitive, {
   Trigger: ({
     children,
@@ -11,34 +26,13 @@ export const Select = Object.assign({}, SelectPrimitive, {
     ...props
   }: ComponentProps<typeof SelectPrimitive.Trigger>) => (
     <SelectPrimitive.Trigger
-      className={clsxm(
-        "flex items-center justify-between gap-3 px-4 py-1.5 font-medium font-normal border rounded-t border-b-2 border-b-gray-600 bg-dsfr-contrast-grey",
-        "data-[state=open]:border-b-primary",
-        "disabled:opacity-50 disabled:cursor-not-allowed",
-        className,
-      )}
+      className={clsxm(SELECT_TRIGGER_CLASSES, className)}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
         <Icone className="text-current" icone={ArrowSLine2Icon} />
       </SelectPrimitive.Icon>
-    </SelectPrimitive.Trigger>
-  ),
-  LinkButtonTrigger: ({
-    children,
-    className,
-    ...props
-  }: ComponentProps<typeof SelectPrimitive.Trigger>) => (
-    <SelectPrimitive.Trigger
-      className={clsxm(
-        "bg-transparent border-none p-0 text-xs cursor-pointer",
-        "text-primary hover:underline",
-        className,
-      )}
-      {...props}
-    >
-      {children}
     </SelectPrimitive.Trigger>
   ),
   GhostButtonTrigger: ({
@@ -69,12 +63,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
   }: ComponentProps<typeof SelectPrimitive.Content>) => (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
-        className={clsxm(
-          "bg-white rounded-md shadow-md border border-gray-100 z-50",
-          "md:min-w-[400px] max-w-[450px]",
-          "data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out",
-          className,
-        )}
+        className={clsxm(SELECT_CONTENT_CLASSES, className)}
         position="popper"
         side="bottom"
         sideOffset={4}
