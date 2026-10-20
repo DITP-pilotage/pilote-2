@@ -80,8 +80,6 @@ SELECT
 
 FROM "dev_pilote__6230"."public"."territoire" AS territoire
 CROSS JOIN "dev_pilote__6230"."raw_data"."stg_ppg_metadata__indicateurs" AS meta_indic
-LEFT JOIN "dev_pilote__6230"."raw_data"."stg_ppg_metadata__zones" AS meta_zone
-    ON territoire.zone_id = meta_zone.id
 LEFT JOIN "dev_pilote__6230"."df3"."get_vcg" AS gvcg
     ON meta_indic.id = gvcg.indic_id AND territoire.zone_id = gvcg.zone_id
 LEFT JOIN "dev_pilote__6230"."df3"."get_last_vaca" AS last_vaca
@@ -103,7 +101,7 @@ LEFT JOIN "dev_pilote__6230"."marts"."int_ponderation_reelle" AS pond_reelle
 LEFT JOIN "dev_pilote__6230"."df3"."get_date_pro_maj_indic" AS date_pro_maj
     ON
         meta_indic.id = date_pro_maj.indic_id
-        AND meta_zone.maille = date_pro_maj.maille
+        AND territoire.zone_id = date_pro_maj.zone_id
 -- TODO: create stg table for this
 LEFT JOIN
     "dev_pilote__6230"."raw_data"."metadata_parametrage_indicateurs"
