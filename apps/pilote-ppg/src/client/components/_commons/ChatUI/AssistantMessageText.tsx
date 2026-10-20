@@ -113,6 +113,9 @@ const MarkdownLink = ({
     return (
       <a
         href={href}
+        onAuxClick={(event) => {
+          if (event.button === 1) track(linkEvent(href));
+        }}
         onClick={() => track(linkEvent(href))}
         rel="noopener noreferrer"
         target="_blank"
@@ -125,6 +128,9 @@ const MarkdownLink = ({
   return (
     <a
       href={href}
+      onAuxClick={(event) => {
+        if (event.button === 1) track(linkEvent(href));
+      }}
       onClick={(event) => {
         track(linkEvent(href));
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.

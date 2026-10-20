@@ -94,7 +94,7 @@ export const choicesPresentedEvent = ({
   conversationId: string;
   message: PiloteUIMessage;
 }): AssistantEvent | null => {
-  const clarification = message.parts.find(isPresentedChoices);
+  const clarification = (message.parts ?? []).find(isPresentedChoices);
   if (!clarification) return null;
   return {
     action: "view",
