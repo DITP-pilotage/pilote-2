@@ -48,7 +48,7 @@ export const LigneEtapeEvaluation = ({
   etape?: $Enums.etape_evaluation_enum;
 }) => {
   return (
-    <div className="flex !mb-0 !-mx-4 first:border-t-0">
+    <div className="flex mb-0 -mx-4 first:border-t-0">
       <div className="flex-1 border-r border-r-gray-200 p-4">
         {mode === "editable" || mode === "bloque" ? (
           <CommentaireTextareaEvaluation
@@ -69,7 +69,7 @@ export const LigneEtapeEvaluation = ({
         ) : (
           <>
             <div>
-              <span className="italic text-sm block !font-medium mb-2">
+              <span className="italic text-sm block font-medium mb-2">
                 {commentaireLabel}
               </span>
               <blockquote className="text-sm text-gray-700 pl-3 py-1 whitespace-pre-line">
@@ -79,12 +79,12 @@ export const LigneEtapeEvaluation = ({
 
             {annexe ? (
               <div className="mt-6">
-                <span className="italic text-sm block !font-medium mb-2">
+                <span className="italic text-sm block font-medium mb-2">
                   Annexe
                 </span>
 
                 <blockquote
-                  className="[&_*]:!text-sm text-gray-700 pl-3 py-1 whitespace-pre-line"
+                  className="[&_*]:text-sm text-gray-700 pl-3 py-1 whitespace-pre-line"
                   dangerouslySetInnerHTML={{ __html: annexe }}
                 />
               </div>

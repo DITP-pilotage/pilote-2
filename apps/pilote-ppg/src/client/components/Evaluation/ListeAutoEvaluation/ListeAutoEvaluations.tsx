@@ -84,7 +84,7 @@ export const ListeAutoEvaluations = ({
           <div className="flex flex-col gap-2" key={ficheEvaluation.id}>
             <header>
               <div className="flex justify-between items-center">
-                <h2 className="!text-2xl !text-primary !mb-0">
+                <h2 className="text-2xl text-primary mb-0">
                   {formatterTitreEvaluation(ficheEvaluation.rattachement)}
                 </h2>
 
@@ -93,7 +93,7 @@ export const ListeAutoEvaluations = ({
                   disabled={genererPDF.isPending}
                   iconLeft={
                     <Icone
-                      className="w-4 h-4 !text-current !shrink-0"
+                      className="w-4 h-4 !text-current shrink-0"
                       icone={Printer1Icon}
                     />
                   }

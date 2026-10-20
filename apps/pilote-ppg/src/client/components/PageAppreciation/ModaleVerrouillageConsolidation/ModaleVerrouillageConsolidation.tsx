@@ -81,7 +81,7 @@ export const ModaleTransmissionDITP = ({
             >
               {etapeTransmission === EtapeTransmission.SELECTION_TERRITOIRES ? (
                 <div className="pt-6 space-y-4">
-                  <p className="!text-sm mb-4">
+                  <p className="text-sm mb-4">
                     Vous pouvez transmettre vos appréciations à la DITP en
                     plusieurs fois, territoire par territoire. Le cas échéant,
                     l'ensemble de vos appréciations (sur les objectifs
@@ -89,7 +89,7 @@ export const ModaleTransmissionDITP = ({
                     vue d'être instruites.
                   </p>
 
-                  <p className="!text-sm mb-4">
+                  <p className="text-sm mb-4">
                     Une fois transmises, les appréciations d'un territoire
                     (qu'elles soient marquées comme traitées ou non) ne seront
                     plus modifiables mais resteront consultables et imprimables.
@@ -97,12 +97,12 @@ export const ModaleTransmissionDITP = ({
 
                   <hr className="mb-4" />
 
-                  <h3 className="font-bold !text-base !mb-2">
+                  <h3 className="font-bold text-base mb-2">
                     Territoires dont les appréciations n'ont pas encore été
                     transmises
                   </h3>
 
-                  <p className="!text-sm !mb-4">
+                  <p className="text-sm mb-4">
                     Indiquez ci-dessous les territoires dont vous souhaitez
                     transmettre toutes les appréciations :
                   </p>
@@ -173,7 +173,7 @@ export const ModaleTransmissionDITP = ({
                     </div>
                   )}
 
-                  <div className="w-full flex justify-end !mt-8 gap-2">
+                  <div className="w-full flex justify-end mt-8 gap-2">
                     <Modale.Close asChild>
                       <Button variant="tertiary-no-outline">Annuler</Button>
                     </Modale.Close>
@@ -189,7 +189,7 @@ export const ModaleTransmissionDITP = ({
                 </div>
               ) : (
                 <div className="pt-6 mt-6 space-y-6">
-                  <p className="!text-sm mb-4">
+                  <p className="text-sm mb-4">
                     Veuillez vérifier ci-dessous la liste des territoires dont
                     vous souhaitez transmettre vos appréciations :
                   </p>
@@ -246,7 +246,7 @@ export const ModaleTransmissionDITP = ({
                     </div>
                   )}
 
-                  <div className="w-full flex justify-end !mt-8 gap-2">
+                  <div className="w-full flex justify-end mt-8 gap-2">
                     <Modale.Close asChild>
                       <Button variant="tertiary-no-outline">Annuler</Button>
                     </Modale.Close>

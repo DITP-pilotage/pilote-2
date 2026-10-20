@@ -9,15 +9,13 @@ export const ModaleFicheCadrage = ({
   return (
     <Modale title={`Fiche de cadrage - ${critere.libelle}`} trigger={children}>
       <div>
-        <p className="whitespace-pre-line !text-sm !m-0">
-          {critere.descriptif}
-        </p>
+        <p className="whitespace-pre-line text-sm m-0">{critere.descriptif}</p>
 
-        <ul className="list-none !p-0 !m-0">
+        <ul className="list-none p-0 m-0">
           {critere.sousCriteres.map((sousCritere) => (
             <li key={sousCritere.id}>
-              <h3 className="!text-base !mb-1 italic">{sousCritere.libelle}</h3>
-              <p className="whitespace-pre-line !text-sm">
+              <h3 className="text-base mb-1 italic">{sousCritere.libelle}</h3>
+              <p className="whitespace-pre-line text-sm">
                 {sousCritere.descriptif}
               </p>
             </li>

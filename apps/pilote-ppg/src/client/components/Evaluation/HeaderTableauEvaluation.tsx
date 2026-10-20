@@ -39,9 +39,9 @@ export const HeaderTableauEvaluation = ({
   };
 
   return (
-    <header className="flex justify-between items-end border-b !border-dsfr-blue-france-sun-113 p-6">
+    <header className="flex justify-between items-end border-b border-dsfr-blue-france-sun-113 p-6">
       <div>
-        <h1 className="!text-2xl !mb-0 !text-primary">{titre}</h1>
+        <h1 className="text-2xl mb-0 text-primary">{titre}</h1>
         <div className="mt-3">
           de la région et des départements de :{" "}
           {regions.map((region, i) => (
@@ -55,7 +55,7 @@ export const HeaderTableauEvaluation = ({
       <div className="flex flex-col items-end gap-1">
         {!estEnLectureSeule && (
           <Button
-            className="underline flex items-center gap-1 !-mr-4 !text-xs"
+            className="underline flex items-center gap-1 -mr-4 !text-xs"
             iconLeft={<Icone className="!h-3 !w-3" icone={SaveIcon} />}
             size="sm"
             type="submit"
@@ -71,7 +71,7 @@ export const HeaderTableauEvaluation = ({
           </span>
         ) : null}
         <Button
-          className="underline flex items-center gap-1 !-mr-4 !text-xs"
+          className="underline flex items-center gap-1 -mr-4 !text-xs"
           iconLeft={<Icone className="!h-3 !w-3" icone={Printer1Icon} />}
           onClick={handleImprimer}
           size="sm"

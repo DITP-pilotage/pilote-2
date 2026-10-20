@@ -37,7 +37,7 @@ export const CelluleEvaluation = ({
 
   return (
     <div className="space-y-4">
-      <div className="bg-dsfr-blue-france-925 pb-2 border-b border-gray-200 -mx-4 p-4 flex justify-between gap-2 !mb-0 min-h-[80px]">
+      <div className="bg-dsfr-blue-france-925 pb-2 border-b border-gray-200 -mx-4 p-4 flex justify-between gap-2 mb-0 min-h-[80px]">
         <div className="text-primary font-bold text-sm flex flex-col gap-1 items-start">
           <span className="line-clamp-1" title={ligne.libelle}>
             {ligne.libelle}

@@ -22,7 +22,7 @@ const CheckboxesFiltre = ({
 }) => {
   const id = useId();
   return (
-    <div className="flex items-center gap-2 !text-sm">
+    <div className="flex items-center gap-2 text-sm">
       <div className="font-semibold whitespace-nowrap">{label} :</div>
       <div className="flex items-center flex-wrap gap-2">
         {options.map((option) => {
@@ -72,7 +72,7 @@ const TagsFiltre = ({
   onChange(value: string | null): void;
   getOptionLabel(option: string): string;
 }) => (
-  <div className="flex items-center gap-2 !text-sm">
+  <div className="flex items-center gap-2 text-sm">
     <div className="font-semibold whitespace-nowrap">{label} :</div>
     <div className="flex items-center flex-wrap gap-2">
       <ButtonTag isActive={value == null} onClick={() => onChange(null)}>
@@ -110,7 +110,7 @@ export function FiltresTableauEvaluation({
     <section className="space-y-2 px-6 pb-6">
       <header className="flex items-baseline gap-2 border-t pt-3">
         <Icone className="h-4.5 w-4.5 self-center" icone={FilterIcon} />
-        <h2 className="!text-base !mb-0 !text-primary">Filtrage</h2>
+        <h2 className="text-base mb-0 text-primary">Filtrage</h2>
         <Button
           onClick={() => table.resetColumnFilters(false)}
           size="sm"

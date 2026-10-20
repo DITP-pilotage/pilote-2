@@ -38,7 +38,7 @@ export const getServerSideProps = async (
 
 const AccueilEvaluationPage = () => {
   return (
-    <main className="py-6 pt-0 !bg-white">
+    <main className="py-6 pt-0 bg-white">
       <Head>
         <title>PILOTE - Évaluation</title>
       </Head>
@@ -46,15 +46,15 @@ const AccueilEvaluationPage = () => {
       <div className="min-h-[60vh] py-12">
         <div className="mx-auto w-full max-w-6xl">
           <header className="mb-9">
-            <h1 className="!text-3xl font-bold">Bienvenue sur PILOTE Éval</h1>
+            <h1 className="text-3xl font-bold">Bienvenue sur PILOTE Éval</h1>
           </header>
           <div className="flex flex-col gap-6">
             <div>
-              <h2 className="!text-2xl !text-primary !mb-4">
+              <h2 className="text-2xl text-primary mb-4">
                 L'outil unique d'évaluation des objectifs interministériels des
                 préfets
               </h2>
-              <p className="!mb-0">
+              <p className="mb-0">
                 PILOTE Éval est un outil de{" "}
                 <span className="font-bold text-primary">La Suite PILOTE</span>,
                 pensé pour rendre compte des résultats des objectifs collectifs,
@@ -63,21 +63,21 @@ const AccueilEvaluationPage = () => {
               </p>
             </div>
             <div>
-              <h2 className="!text-2xl !text-primary !mb-4">
+              <h2 className="text-2xl text-primary mb-4">
                 À quoi sert PILOTE Éval ?
               </h2>
-              <p className="!mb-2">
+              <p className="mb-2">
                 PILOTE Éval est l'outil d'évaluation des objectifs
                 interministériels assignés aux préfets par le Premier Ministre.
                 Il est mis à disposition par la Direction interministérielle de
                 la transformation publique.
               </p>
-              <p className="!mb-2">Il permet de :</p>
-              <ul className="list-disc !mb-0">
+              <p className="mb-2">Il permet de :</p>
+              <ul className="list-disc mb-0">
                 <li>
                   Suivre les résultats des objectifs interministériels pour
                   chacune de leurs composantes :
-                  <ul className="list-disc !mb-0">
+                  <ul className="list-disc mb-0">
                     <li>les objectifs collectifs,</li>
                     <li>les objectifs individuels,</li>
                     <li>la manière de servir.</li>
@@ -100,7 +100,7 @@ const AccueilEvaluationPage = () => {
               </ul>
             </div>
             <div>
-              <h2 className="!text-2xl !text-primary !mb-4">
+              <h2 className="text-2xl text-primary mb-4">
                 Ce que vous pouvez faire avec PILOTE Éval
               </h2>
               <div className="grid grid-cols-3 gap-4">
@@ -114,8 +114,8 @@ const AccueilEvaluationPage = () => {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="!text-xl !mb-3">Pour tous les préfets</h3>
-                    <span className="!font-bold">
+                    <h3 className="text-xl mb-3">Pour tous les préfets</h3>
+                    <span className="font-bold">
                       Tableau de bord personnalisé des résultats par préfet :
                     </span>{" "}
                     accédez à vos résultats mis à jour et pris en compte pour
@@ -133,10 +133,10 @@ const AccueilEvaluationPage = () => {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="!text-xl !mb-3">
+                    <h3 className="text-xl mb-3">
                       Pour les préfets de régions
                     </h3>
-                    <span className="!font-bold">
+                    <span className="font-bold">
                       Appréciation des résultats :
                     </span>{" "}
                     renseignez et transmettez vos propositions d'évaluation des
@@ -155,10 +155,10 @@ const AccueilEvaluationPage = () => {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="!text-xl !mb-3">
+                    <h3 className="text-xl mb-3">
                       Pour les administrations centrales
                     </h3>
-                    <span className="!font-bold">
+                    <span className="font-bold">
                       Instruction interministérielle :
                     </span>{" "}
                     prenez part à l'instruction des composantes de l'évaluation
@@ -168,29 +168,29 @@ const AccueilEvaluationPage = () => {
               </div>
             </div>
             <div>
-              <h2 className="!text-2xl !text-primary !mb-4">
+              <h2 className="text-2xl text-primary mb-4">
                 Déroulé de l'évaluation des objectifs interministériels des
                 préfets
               </h2>
-              <ul className="list-disc !mb-0">
+              <ul className="list-disc mb-0">
                 <li>
-                  <span className="!font-bold">Étape 1 :</span> Les préfets de
+                  <span className="font-bold">Étape 1 :</span> Les préfets de
                   région apprécient les résultats obtenus pour l'année N-1 pour
                   chaque préfet de département pour leurs objectifs individuels
                   et leur manière de servir.
                 </li>
                 <li>
-                  <span className="!font-bold">Étape 2 :</span> Les préfets
+                  <span className="font-bold">Étape 2 :</span> Les préfets
                   prennent connaissance de leurs résultats retenus dans le cadre
                   de l'évaluation des objectifs collectifs pour l'année N-1.
                 </li>
                 <li>
-                  <span className="!font-bold">Étape 3 :</span> Les résultats de
+                  <span className="font-bold">Étape 3 :</span> Les résultats de
                   chaque préfet sont consolidés lors d'une phase d'instruction
                   interministérielle.
                 </li>
                 <li>
-                  <span className="!font-bold">Étape 4 :</span> Les préfets
+                  <span className="font-bold">Étape 4 :</span> Les préfets
                   peuvent proposer les objectifs individuels qu'ils souhaitent
                   mettre en œuvre pour l'année en cours et sur lesquels ils
                   seront évalués l'année suivante.

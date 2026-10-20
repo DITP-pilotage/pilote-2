@@ -35,7 +35,7 @@ export const BaseCardEvaluation = ({
   const sectionContent = (
     <section
       className={clsxm(
-        "relative flex flex-col gap-4 h-full p-6 bg-white border border-gray-300 !border-b-4 !border-b-dsfr-blue-france-sun-113 rounded transition-shadow",
+        "relative flex flex-col gap-4 h-full p-6 bg-white border border-gray-300 border-b-4 border-b-dsfr-blue-france-sun-113 rounded transition-shadow",
         {
           "cursor-pointer hover:shadow-md": !!lien,
         },
@@ -63,7 +63,7 @@ export const BaseCardEvaluation = ({
         <span className="w-fit px-2 py-1.5 text-xs text-blue-600 bg-blue-100 rounded-xl">
           {texteBadge}
         </span>
-        <h3 className="!text-xl !mb-0 font-semibold !text-dsfr-blue-france-sun-113">
+        <h3 className="text-xl mb-0 font-semibold text-dsfr-blue-france-sun-113">
           {titre}
         </h3>
       </header>
@@ -77,16 +77,16 @@ export const BaseCardEvaluation = ({
 
               {informationMoyenne.moyenne !== null ? (
                 <span
-                  className={clsxm("!text-sm", {
-                    "!text-4xl !leading-8 font-bold ":
+                  className={clsxm("text-sm", {
+                    "text-4xl leading-8 font-bold ":
                       informationMoyenne.misEnAvant,
-                    "!text-warning":
+                    "text-warning":
                       statutCompletion === "NON_COMPLETE" &&
                       informationMoyenne.misEnAvant,
-                    "!text-primary":
+                    "text-primary":
                       statutCompletion === "COMPLETER" &&
                       informationMoyenne.misEnAvant,
-                    "!text-dsfr-grey-625": !statutCompletion,
+                    "text-dsfr-grey-625": !statutCompletion,
                   })}
                 >
                   {informationMoyenne.moyenne}
@@ -94,8 +94,8 @@ export const BaseCardEvaluation = ({
               ) : (
                 <span
                   className={clsxm("text-xl font-bold", {
-                    "!text-warning": statutCompletion === "NON_COMPLETE",
-                    "!text-primary": statutCompletion === "COMPLETER",
+                    "text-warning": statutCompletion === "NON_COMPLETE",
+                    "text-primary": statutCompletion === "COMPLETER",
                   })}
                 >
                   -

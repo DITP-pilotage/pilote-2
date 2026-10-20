@@ -22,22 +22,22 @@ export const ListePhaseEvaluation = () => {
         return (
           <div className="mb-8" key={groupe}>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="!text-2xl !text-primary !mb-0">
+              <h2 className="text-2xl text-primary mb-0">
                 {`Synthèse des appréciations pour la région et les départements de : ${groupe}`}
               </h2>
             </div>
 
-            <p className="!mb-1">
+            <p className="mb-1">
               Vous trouverez ci-dessous une synthèse des résultats retenus sur
               chacune des composantes et l'avancement de vos appréciations.
             </p>
 
-            <p className="!mb-1">
+            <p className="mb-1">
               Les tuiles "Objectifs individuels” (respectivement "Manière de
               servir”) vous donnent accès à votre espace d'appréciation filtré :
             </p>
 
-            <ul className="!mt-0 !mb-4">
+            <ul className="mt-0 mb-4">
               <li>
                 sur les objectifs individuels (respectivement sur les axes de la
                 manière de servir)

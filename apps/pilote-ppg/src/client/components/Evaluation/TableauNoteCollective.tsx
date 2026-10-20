@@ -48,7 +48,7 @@ export const TableauNoteCollective = () => {
         captionHidden
         className="min-w-full"
       >
-        <Table.Header className="bg-dsfr-blue-france-925 !border-b-2 !border-dsfr-grey-200 text-left text-sm font-bold text-dsfr-gray-500 tracking-wider">
+        <Table.Header className="bg-dsfr-blue-france-925 border-b-2 border-dsfr-grey-200 text-left text-sm font-bold text-dsfr-gray-500 tracking-wider">
           <Table.Row>
             <Table.ColumnHeaderCell
               className={clsxm(CELLULE, "px-6 py-3 md:px-6 md:py-3 border-b-0")}
@@ -65,7 +65,7 @@ export const TableauNoteCollective = () => {
             </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body className="!divide-y !divide-dsfr-grey-925">
+        <Table.Body className="divide-y divide-dsfr-grey-925">
           {chantiersEvaluation.length === 0 ? (
             <Table.Row>
               <Table.Cell
@@ -91,7 +91,7 @@ export const TableauNoteCollective = () => {
                 <Fragment key={chantier.id}>
                   <Table.Row
                     aria-expanded={isExpanded}
-                    className={`${bgColor} whitespace-nowrap text-sm !text-dsfr-grey-50`}
+                    className={`${bgColor} whitespace-nowrap text-sm text-dsfr-grey-50`}
                     tabIndex={0}
                   >
                     <Table.Cell
@@ -128,7 +128,7 @@ export const TableauNoteCollective = () => {
                               : "Afficher le détail des indicateurs"}
                           </Button>
                           <Link
-                            className="!text-primary !text-xs"
+                            className="text-primary text-xs"
                             href={`${baseUrl}/chantier/${chantier.id}/${rattachementCode}`}
                             target="_blank"
                           >
@@ -159,7 +159,7 @@ export const TableauNoteCollective = () => {
                           <Table.Cell
                             className={clsxm(
                               CELLULE,
-                              "px-6 py-2 md:px-6 md:py-2 text-sm !text-dsfr-grey-50 whitespace-normal",
+                              "px-6 py-2 md:px-6 md:py-2 text-sm text-dsfr-grey-50 whitespace-normal",
                             )}
                           >
                             <div className="ml-9 italic">{indicateur.nom}</div>
@@ -179,7 +179,7 @@ export const TableauNoteCollective = () => {
                               value={indicateur.tauxAvancement}
                               variant="secondary"
                             />
-                            <div className="flex justify-center text-[10px]/[12px] italic !text-dsfr-mention-grey mt-1">
+                            <div className="flex justify-center text-[10px]/[12px] italic text-dsfr-mention-grey mt-1">
                               pondération : {Math.round(indicateur.ponderation)}
                               %
                             </div>
@@ -191,7 +191,7 @@ export const TableauNoteCollective = () => {
                         <Table.Cell
                           className={clsxm(
                             CELLULE,
-                            "px-6 py-3 md:px-6 md:py-3 text-center text-sm !text-dsfr-grey-50 italic",
+                            "px-6 py-3 md:px-6 md:py-3 text-center text-sm text-dsfr-grey-50 italic",
                           )}
                           colSpan={2}
                         >

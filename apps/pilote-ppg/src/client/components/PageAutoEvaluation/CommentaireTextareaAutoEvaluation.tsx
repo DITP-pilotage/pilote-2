@@ -25,7 +25,7 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
       control={control}
       name={name}
       {...autosave}
-      className="!bg-dsfr-contrast-grey"
+      className="bg-dsfr-contrast-grey"
       onBlur={() => {
         autosave.onBlur();
       }}

@@ -24,7 +24,7 @@ export const FormulaireConfigurationDroits = () => {
         <div className="flex">
           <Link
             aria-label="Retour à l'accueil"
-            className="flex items-center gap-2 !text-primary mb-4"
+            className="flex items-center gap-2 text-primary mb-4"
             href="/evaluation/utilisateurs"
           >
             <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
@@ -41,7 +41,7 @@ export const FormulaireConfigurationDroits = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-8">
             <section>
-              <h2 className="!text-xl">Auto-évaluation</h2>
+              <h2 className="text-xl">Auto-évaluation</h2>
               <Controller
                 control={control}
                 name="autoEvaluation.rattachementCodes"
@@ -59,7 +59,7 @@ export const FormulaireConfigurationDroits = () => {
             </section>
 
             <section>
-              <h2 className="!text-xl">Consolidation</h2>
+              <h2 className="text-xl">Consolidation</h2>
               <Controller
                 control={control}
                 name="consolidation.rattachementCodes"
@@ -77,7 +77,7 @@ export const FormulaireConfigurationDroits = () => {
             </section>
 
             <section>
-              <h2 className="!text-xl">Instruction</h2>
+              <h2 className="text-xl">Instruction</h2>
               <div className="space-y-6">
                 <Controller
                   control={control}

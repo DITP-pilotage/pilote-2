@@ -32,7 +32,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
 }) {
   return (
     <div
-      className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
+      className="grid gap-0 grid-cols-subgrid border-l border-t border-black"
       style={{ gridColumn: `span ${items.length + 1}` }}
     >
       {rowGroup.subRows.map((row) => {
@@ -41,7 +41,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
           <React.Fragment key={row.id}>
             {items.map((item) => (
               <div
-                className={clsxm("grid border-b !border-black border-r", {
+                className={clsxm("grid border-b border-black border-r", {
                   "grid-cols-[30px_1fr_1fr_1fr]": getTooltipLabel,
                   "grid-cols-3": !getTooltipLabel,
                 })}
@@ -93,7 +93,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
                 })}
               </div>
             ))}
-            <div className="grid grid-cols-3 border-b !border-black border-r">
+            <div className="grid grid-cols-3 border-b border-black border-r">
               {ETAPES.map((etape) => {
                 const moyenne = getMoyenne({ row, etape: etape.key });
                 const { isAfterPhase, shouldShowBlueText, shouldShowDash } =
