@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
+import { answerOutcomeEvent } from "@/components/_commons/ChatUI/assistantEvents";
+import { useAssistantTracking } from "@/components/_commons/ChatUI/useAssistantTracking";
 import {
   createAlbertConversation,
   type AlbertAgentContext,
@@ -61,6 +63,14 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   );
   const [display, setDisplay] = useState<AlbertDisplay>("fullscreen");
   const trpcUtils = api.useUtils();
+  const track = useAssistantTracking();
+  // Un Chat garde le onFinish reçu à sa création : il lit le suivi courant,
+  // dont le profil de la session.
+  const trackRef = useRef(track);
+
+  useEffect(() => {
+    trackRef.current = track;
+  }, [track]);
 
   const build = useCallback(
     ({
@@ -78,7 +88,16 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         id,
         agentContext,
         messages,
-        onFinish: () => trpcUtils.albert.conversations.lister.invalidate(),
+        onFinish: ({ message, isAbort, isError }) => {
+          void trpcUtils.albert.conversations.lister.invalidate();
+          const event = answerOutcomeEvent({
+            conversationId: id,
+            message,
+            isAbort,
+            isError,
+          });
+          if (event) trackRef.current(event);
+        },
       }),
       agentContext,
       scenarios,
@@ -132,16 +151,31 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     });
   }, [load]);
 
+  // Rouvrir une conversation réduite est une reprise, pas une ouverture.
   const open = useCallback<AlbertConversationContextValue["open"]>(
     ({ agentContext, scenarios }) => {
-      setConversation(
-        (current) =>
-          current ??
-          build({ id: crypto.randomUUID(), agentContext, scenarios }),
-      );
+      if (conversation) {
+        track({
+          action: "resume",
+          name: "assistant.resume",
+          dimensions: { conversation_id: conversation.chat.id },
+        });
+      } else {
+        const created = build({
+          id: crypto.randomUUID(),
+          agentContext,
+          scenarios,
+        });
+        setConversation(created);
+        track({
+          action: "open",
+          name: "assistant.open",
+          dimensions: { conversation_id: created.chat.id },
+        });
+      }
       setDisplay("fullscreen");
     },
-    [build],
+    [build, conversation, track],
   );
 
   const minimize = useCallback(() => {
@@ -154,14 +188,26 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     setDisplay("minimized");
   }, [conversation]);
 
-  const restore = useCallback(() => setDisplay("fullscreen"), []);
+  const restore = useCallback(() => {
+    track({
+      action: "resume",
+      name: "assistant.resume",
+      dimensions: { conversation_id: conversation?.chat.id },
+    });
+    setDisplay("fullscreen");
+  }, [conversation, track]);
 
   const close = useCallback(() => {
+    track({
+      action: "close",
+      name: "assistant.close",
+      dimensions: { conversation_id: conversation?.chat.id },
+    });
     conversation?.chat.stop();
     clearMinimizedConversation();
     setConversation(null);
     setDisplay("fullscreen");
-  }, [conversation]);
+  }, [conversation, track]);
 
   const startNewConversation = useCallback(() => {
     if (!conversation) return;
@@ -180,6 +226,11 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   const selectConversation = useCallback(
     (id: string) => {
       if (!conversation) return;
+      track({
+        action: "select",
+        name: "conversation.history.open",
+        dimensions: { conversation_id: id },
+      });
       conversation.chat.stop();
       clearMinimizedConversation();
       load({
@@ -188,7 +239,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         targetDisplay: "fullscreen",
       });
     },
-    [conversation, load],
+    [conversation, load, track],
   );
 
   const value = useMemo(

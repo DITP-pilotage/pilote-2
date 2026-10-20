@@ -38,7 +38,7 @@ export const ChatInputForm = ({
   const [selectedModel, setSelectedModel] =
     useState<AlbertModel>("openweight-large");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage, status, stop } = useChatContext();
+  const { sendMessage, status, stop, track } = useChatContext();
   const isBusy = status === "submitted" || status === "streaming";
 
   useEffect(() => {
@@ -66,12 +66,20 @@ export const ChatInputForm = ({
     setInput((prev) => (prev ? `${prev} ${text}` : text));
   }, []);
 
+  const handleSpeechStart = useCallback(
+    () => track({ action: "start", name: "speech.start" }),
+    [track],
+  );
+
   const {
     state: micState,
     isSupported,
     toggle: toggleMic,
     stop: stopMic,
-  } = useSpeechRecognition({ onTranscript: handleTranscript });
+  } = useSpeechRecognition({
+    onTranscript: handleTranscript,
+    onStart: handleSpeechStart,
+  });
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();

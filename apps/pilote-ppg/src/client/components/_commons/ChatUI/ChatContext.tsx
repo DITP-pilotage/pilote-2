@@ -1,12 +1,14 @@
 import { createContext, PropsWithChildren, useContext, useMemo } from "react";
 import type { ChatStatus } from "ai";
+import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTracking";
 
 type ChatContextValue = {
-  sendMessage: (params: { text: string }) => void;
+  sendMessage: (params: { text: string; fromProposition?: boolean }) => void;
   fillInput: (text: string) => void;
   status: ChatStatus;
   error: Error | undefined;
   stop: () => void;
+  track: (event: AssistantEvent) => void;
 };
 
 const context = createContext<ChatContextValue | null>(null);
@@ -30,10 +32,11 @@ export const ChatContextProvider = ({
   status,
   error,
   stop,
+  track,
 }: PropsWithChildren<ChatContextValue>) => {
   const value = useMemo(
-    () => ({ sendMessage, fillInput, status, error, stop }),
-    [sendMessage, fillInput, status, error, stop],
+    () => ({ sendMessage, fillInput, status, error, stop, track }),
+    [sendMessage, fillInput, status, error, stop, track],
   );
 
   return <context.Provider value={value}>{children}</context.Provider>;

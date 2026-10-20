@@ -24,6 +24,14 @@ import type {
 } from "@/components/_commons/ChatUI/ChatEmptyState";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowDownCircleIcon } from "@/components/_commons/Icones/ArrowDownCircleIcon";
+import {
+  lastLlmCallId,
+  questionType,
+} from "@/components/_commons/ChatUI/assistantEvents";
+import {
+  useAssistantTracking,
+  type AssistantEvent,
+} from "@/components/_commons/ChatUI/useAssistantTracking";
 
 export type { ChatScenario, ChatScenarioGroup, ChatScenarios };
 
@@ -33,12 +41,14 @@ export const ChatUI = ({
   className = "h-[calc(100vh-200px)]",
   scenarios,
   contexteAccueil,
+  tracked = false,
 }: {
   conversation: AlbertConversation;
   placeholder?: string;
   className?: string;
   scenarios?: ChatScenarios;
   contexteAccueil?: ContexteAccueil;
+  tracked?: boolean;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -55,6 +65,62 @@ export const ChatUI = ({
       experimental_throttle: 250,
     });
   const enCours = status === "submitted" || status === "streaming";
+  const trackAssistant = useAssistantTracking();
+
+  const track = useCallback(
+    (event: AssistantEvent) => {
+      if (!tracked) return;
+      trackAssistant({
+        ...event,
+        dimensions: {
+          conversation_id: conversation.chat.id,
+          ...event.dimensions,
+        },
+      });
+    },
+    [tracked, trackAssistant, conversation],
+  );
+
+  const sendTrackedMessage = useCallback(
+    ({
+      text,
+      fromProposition = false,
+    }: {
+      text: string;
+      fromProposition?: boolean;
+    }) => {
+      track({
+        action: "submit",
+        name: "question.send",
+        dimensions: {
+          type_question: questionType({
+            previousMessageCount: conversation.chat.messages.length,
+            fromProposition,
+          }),
+        },
+      });
+      void sendMessage({ text });
+    },
+    [track, conversation, sendMessage],
+  );
+
+  const stopTracked = useCallback(() => {
+    track({
+      action: "stop",
+      name: "answer.stop",
+      dimensions: { llm_call_id: lastLlmCallId(conversation.chat.messages) },
+    });
+    void stop();
+  }, [track, conversation, stop]);
+
+  const retry = useCallback(() => {
+    track({
+      action: "retry",
+      name: "answer.retry",
+      dimensions: { llm_call_id: lastLlmCallId(conversation.chat.messages) },
+    });
+    void regenerate();
+  }, [track, conversation, regenerate]);
 
   useEffect(() => {
     if (messages.length === 0) return;
@@ -122,9 +188,10 @@ export const ChatUI = ({
     <ChatContextProvider
       error={error}
       fillInput={fillInput}
-      sendMessage={sendMessage}
+      sendMessage={sendTrackedMessage}
       status={status}
-      stop={stop}
+      stop={stopTracked}
+      track={track}
     >
       <ChantierLinksProvider options={chantierLinkOptions}>
         <div className={clsxm("flex flex-col bg-white", className)}>
@@ -183,7 +250,7 @@ export const ChatUI = ({
                   {error && (
                     <ErreurReponse
                       message={error.message}
-                      onReessayer={() => regenerate()}
+                      onReessayer={retry}
                     />
                   )}
 

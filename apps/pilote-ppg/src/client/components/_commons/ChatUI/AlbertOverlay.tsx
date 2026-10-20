@@ -12,6 +12,7 @@ import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/Conversa
 import { AlbertDock } from "@/components/_commons/ChatUI/AlbertDock";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
+import { useAssistantTracking } from "@/components/_commons/ChatUI/useAssistantTracking";
 
 const BOUTON_ICONE =
   "flex h-8 w-8 items-center justify-center text-primary transition-colors hover:bg-dsfr-alt-blue-france";
@@ -69,6 +70,7 @@ const AlbertEnTete = ({
 
 export const AlbertOverlay = () => {
   const { conversation, display, close, minimize } = useAlbertConversation();
+  const track = useAssistantTracking();
 
   if (!conversation) return null;
 
@@ -84,11 +86,20 @@ export const AlbertOverlay = () => {
     jalon,
   };
 
+  const reduire = () => {
+    track({
+      action: "minimize",
+      name: "assistant.minimize",
+      dimensions: { conversation_id: conversation.chat.id },
+    });
+    minimize();
+  };
+
   // Échap et clic en dehors réduisent la conversation au lieu de la fermer :
   // seul « Fermer » l'abandonne.
   const minimiserAuLieuDeFermer = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    minimize();
+    reduire();
   };
 
   return (
@@ -106,7 +117,7 @@ export const AlbertOverlay = () => {
           onEscapeKeyDown={minimiserAuLieuDeFermer}
           onInteractOutside={minimiserAuLieuDeFermer}
         >
-          <AlbertEnTete contexte={contexte} onReduire={minimize} />
+          <AlbertEnTete contexte={contexte} onReduire={reduire} />
           <div className="flex min-h-0 flex-1">
             <ConversationHistory chatId={conversation.chat.id} />
             <div className="relative min-w-0 flex-1">
@@ -117,6 +128,7 @@ export const AlbertOverlay = () => {
                 key={conversation.chat.id}
                 placeholder="Posez une question sur ce territoire..."
                 scenarios={conversation.scenarios}
+                tracked
               />
             </div>
           </div>

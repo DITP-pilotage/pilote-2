@@ -22,7 +22,17 @@ export const ANALYTICS_ACTIONS = [
 export type AnalyticsAction = (typeof ANALYTICS_ACTIONS)[number];
 
 export const ANALYTICS_EVENT_NAMES = [
+  "assistant.open",
+  "assistant.minimize",
+  "assistant.resume",
+  "assistant.close",
+  "conversation.history.open",
   "question.send",
+  "answer.complete",
+  "answer.error",
+  "answer.stop",
+  "answer.retry",
+  "speech.start",
   "response.choices",
   "response.choice",
 ] as const;

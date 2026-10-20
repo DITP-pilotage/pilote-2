@@ -36,7 +36,7 @@ export const ChatEmptyState = ({
 
   const handleClick = (scenario: ChatScenario) => {
     if (scenario.mode === "send") {
-      sendMessage({ text: scenario.message });
+      sendMessage({ text: scenario.message, fromProposition: true });
     } else {
       fillInput(scenario.message);
     }

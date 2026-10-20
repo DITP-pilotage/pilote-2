@@ -156,6 +156,7 @@ export class AssistantIA {
   }
 
   static async streamText({
+    llmCallId,
     chatId,
     messages,
     habilitations,
@@ -163,6 +164,7 @@ export class AssistantIA {
     userId,
     model,
   }: {
+    llmCallId?: string;
     chatId: string;
     messages: UIMessage[];
     habilitations: Habilitations;
@@ -181,6 +183,7 @@ export class AssistantIA {
     });
 
     return Albert.streamText({
+      llmCallId,
       chatId,
       messages,
       systemPrompt,
