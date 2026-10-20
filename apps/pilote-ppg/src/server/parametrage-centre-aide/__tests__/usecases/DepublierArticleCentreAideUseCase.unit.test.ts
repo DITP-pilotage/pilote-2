@@ -70,6 +70,35 @@ describe("DepublierArticleCentreAideUseCase", () => {
     );
   });
 
+  it("Doit conserver le titre de la page lors de la dépublication", async () => {
+    // Given
+    const article = ArticleCentreAide.creerArticle({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      titre: "Titre du sommaire",
+      contenu: "Mon contenu",
+      titreAffiche: "Titre de la page",
+      titreAfficheBrouillon: "Titre de la page modifié",
+      type: "PAGE",
+      ordre: 1,
+      estPublie: true,
+    });
+    articleCentreAideRepository.recupererParId.mockResolvedValue(article);
+
+    // When
+    await depublierArticleCentreAideUseCase.execute({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+    });
+
+    // Then
+    expect(articleCentreAideRepository.modifier).toHaveBeenCalledWith(
+      expect.objectContaining({
+        titreAffiche: "Titre de la page",
+        titreAfficheBrouillon: "Titre de la page modifié",
+        estPublie: false,
+      }),
+    );
+  });
+
   it("Doit lancer une erreur si l'article n'existe pas", async () => {
     // Given
     articleCentreAideRepository.recupererParId.mockResolvedValue(null);
