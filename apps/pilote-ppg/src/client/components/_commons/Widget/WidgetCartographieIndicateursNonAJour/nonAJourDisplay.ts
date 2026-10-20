@@ -2,11 +2,11 @@ import {
   LEGEND_ITEMS_NON_A_JOUR_CHANTIER,
   LEGEND_ITEMS_NON_A_JOUR_INDICATEUR,
 } from "@/client/constants/légendes/legendItemsIndicateursNonAJour";
-import { formaterDate } from "@/client/utils/date/date";
 import type {
   TerritoireNonAJourChantierViewModel,
   TerritoireNonAJourIndicateurViewModel,
 } from "@/server/chantiers/infrastructure/queries/GetTerritoiresNonAJourQuery";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 export type NonAJourMode = "chantier" | "indicateur";
 
@@ -67,15 +67,20 @@ export const formatEtatIndicateur = (
   return territoire.estAJour ? "À jour" : "Non à jour";
 };
 
-// Une date ISO sans heure est lue en UTC par `new Date` : on force minuit local
-// pour ne pas afficher la veille dans les fuseaux négatifs (Antilles, Guyane…).
-const formatIsoDate = (isoDate: string | null) =>
-  formaterDate(isoDate ? `${isoDate}T00:00:00` : null, "DD/MM/YYYY");
-
 export const formatDateDerniereValeur = (
   territoire: TerritoireNonAJourIndicateurViewModel,
-): string => formatIsoDate(territoire.dateDerniereValeur) ?? "Aucune valeur";
+): string =>
+  territoire.dateDerniereValeur
+    ? PiloteDateFormatter.isoDateFranceMetropolitaine(
+        territoire.dateDerniereValeur,
+      )
+    : "Aucune valeur";
 
 export const formatMiseAJourAttendueDepuis = (
   territoire: TerritoireNonAJourIndicateurViewModel,
-): string => formatIsoDate(territoire.miseAJourAttendueDepuis) ?? "-";
+): string =>
+  territoire.miseAJourAttendueDepuis
+    ? PiloteDateFormatter.isoDateFranceMetropolitaine(
+        territoire.miseAJourAttendueDepuis,
+      )
+    : "-";
