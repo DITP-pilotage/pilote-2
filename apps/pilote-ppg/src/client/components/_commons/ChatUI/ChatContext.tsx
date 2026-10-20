@@ -29,6 +29,12 @@ export const useChatContext = () => {
   return contextValue;
 };
 
+const ignoreEvent = () => {};
+
+// Une réponse peut être rendue hors d'un chat (transcript du panneau
+// administrateur) : rien n'y est suivi.
+export const useChatTracking = () => useContext(context)?.track ?? ignoreEvent;
+
 export const ChatContextProvider = ({
   children,
   sendMessage,

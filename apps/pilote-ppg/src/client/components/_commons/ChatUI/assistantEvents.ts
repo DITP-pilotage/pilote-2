@@ -75,3 +75,41 @@ export const answerOutcomeEvent = ({
     ? { action: "error", name: "answer.error", dimensions }
     : { action: "success", name: "answer.complete", dimensions };
 };
+
+type PresentedChoicesPart = Extract<
+  PiloteUIMessage["parts"][number],
+  { type: "tool-clarify_with_choices"; state: "output-available" }
+>;
+
+const isPresentedChoices = (
+  part: PiloteUIMessage["parts"][number],
+): part is PresentedChoicesPart =>
+  part.type === "tool-clarify_with_choices" &&
+  part.state === "output-available";
+
+export const choicesPresentedEvent = ({
+  conversationId,
+  message,
+}: {
+  conversationId: string;
+  message: PiloteUIMessage;
+}): AssistantEvent | null => {
+  const clarification = message.parts.find(isPresentedChoices);
+  if (!clarification) return null;
+  return {
+    action: "view",
+    name: "response.choices",
+    dimensions: {
+      conversation_id: conversationId,
+      llm_call_id: llmCallIdOf(message),
+      nombre_choix: clarification.output.choices.length,
+    },
+  };
+};
+
+export const linkEvent = (href: string | undefined): AssistantEvent => ({
+  action: "select",
+  name: href?.startsWith("/")
+    ? "response.link.internal"
+    : "response.link.external",
+});

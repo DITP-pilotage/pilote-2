@@ -1,5 +1,7 @@
 import {
   answerOutcomeEvent,
+  choicesPresentedEvent,
+  linkEvent,
   lastLlmCallId,
   prefilledPropositionAfterEdit,
   propositionMode,
@@ -165,5 +167,61 @@ describe("answerOutcomeEvent", () => {
     expect(
       answerOutcomeEvent({ ...params, isAbort: true, isError: false }),
     ).toBeNull();
+  });
+});
+
+describe("choicesPresentedEvent", () => {
+  const avecChoix: PiloteUIMessage = {
+    ...assistantMessage,
+    parts: [
+      {
+        type: "tool-clarify_with_choices",
+        toolCallId: "call-1",
+        state: "output-available",
+        input: { question: "Quel territoire ?", choices: [] },
+        output: {
+          question: "Quel territoire ?",
+          choices: [
+            { label: "Paris", value: "paris" },
+            { label: "Lyon", value: "lyon" },
+            { label: "Lille", value: "lille" },
+          ],
+          _output_instructions: "",
+        },
+      },
+    ],
+  };
+
+  it("compte les options présentées", () => {
+    expect(
+      choicesPresentedEvent({ conversationId: "conv-1", message: avecChoix }),
+    ).toEqual({
+      action: "view",
+      name: "response.choices",
+      dimensions: {
+        conversation_id: "conv-1",
+        llm_call_id: "llm-1",
+        nombre_choix: 3,
+      },
+    });
+  });
+
+  it("ne compte rien sans question à choix", () => {
+    expect(
+      choicesPresentedEvent({
+        conversationId: "conv-1",
+        message: assistantMessage,
+      }),
+    ).toBeNull();
+  });
+});
+
+describe("linkEvent", () => {
+  it.each([
+    { href: "/chantier/CH-001/NAT", name: "response.link.internal" },
+    { href: "https://www.info.gouv.fr", name: "response.link.external" },
+    { href: undefined, name: "response.link.external" },
+  ])("classe $href en $name", ({ href, name }) => {
+    expect(linkEvent(href)).toEqual({ action: "select", name });
   });
 });

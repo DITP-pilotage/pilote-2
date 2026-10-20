@@ -38,6 +38,11 @@ export const ANALYTICS_EVENT_NAMES = [
   "speech.start",
   "response.choices",
   "response.choice",
+  "response.choice.other",
+  "response.link.internal",
+  "response.link.external",
+  "feedback.positive",
+  "feedback.negative",
 ] as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];

@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
-import { answerOutcomeEvent } from "@/components/_commons/ChatUI/assistantEvents";
+import {
+  answerOutcomeEvent,
+  choicesPresentedEvent,
+} from "@/components/_commons/ChatUI/assistantEvents";
 import { useAssistantTracking } from "@/components/_commons/ChatUI/useAssistantTracking";
 import {
   createAlbertConversation,
@@ -95,6 +98,13 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
             isError,
           });
           if (event) trackRef.current(event);
+          // Compté à l'arrivée de la réponse : un nouvel affichage ne
+          // représente pas une nouvelle présentation des choix.
+          const choices =
+            event?.action === "success"
+              ? choicesPresentedEvent({ conversationId: id, message })
+              : null;
+          if (choices) trackRef.current(choices);
         },
       }),
       agentContext,

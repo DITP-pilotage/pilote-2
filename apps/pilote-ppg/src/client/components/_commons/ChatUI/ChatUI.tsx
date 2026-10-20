@@ -26,6 +26,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { ArrowDownCircleIcon } from "@/components/_commons/Icones/ArrowDownCircleIcon";
 import {
   lastLlmCallId,
+  llmCallIdOf,
   questionType,
   type PropositionOrigin,
 } from "@/components/_commons/ChatUI/assistantEvents";
@@ -249,7 +250,10 @@ export const ChatUI = ({
                         }
                         evaluation={
                           estDernier && status === "ready" ? (
-                            <EvaluationReponse chatId={conversation.chat.id} />
+                            <EvaluationReponse
+                              chatId={conversation.chat.id}
+                              llmCallId={llmCallIdOf(message)}
+                            />
                           ) : undefined
                         }
                         isStreaming={estDernier && enCours}

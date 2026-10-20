@@ -5,6 +5,8 @@ import remarkGfm from "remark-gfm";
 import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
+import { linkEvent } from "@/components/_commons/ChatUI/assistantEvents";
+import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
 import { clsxm } from "@/utils/clsxm";
 
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
@@ -105,10 +107,16 @@ const MarkdownLink = ({
 }) => {
   const router = useRouter();
   const { minimize } = useAlbertConversation();
+  const track = useChatTracking();
 
   if (!href?.startsWith("/")) {
     return (
-      <a href={href} rel="noopener noreferrer" target="_blank">
+      <a
+        href={href}
+        onClick={() => track(linkEvent(href))}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         {children}
       </a>
     );
@@ -118,6 +126,7 @@ const MarkdownLink = ({
     <a
       href={href}
       onClick={(event) => {
+        track(linkEvent(href));
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
         if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
         event.preventDefault();

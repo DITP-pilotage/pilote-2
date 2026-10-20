@@ -19,6 +19,7 @@ import {
 import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
+import { llmCallIdOf } from "@/components/_commons/ChatUI/assistantEvents";
 
 const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
 
@@ -140,6 +141,7 @@ export const AssistantMessage = memo(function AssistantMessage({
             <ChoicesInline
               choices={part.output.choices}
               key={index}
+              llmCallId={llmCallIdOf(message)}
               question={part.output.question}
             />
           ) : null,
