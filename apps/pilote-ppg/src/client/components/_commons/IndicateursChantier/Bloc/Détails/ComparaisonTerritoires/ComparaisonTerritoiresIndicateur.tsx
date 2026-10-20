@@ -1,3 +1,4 @@
+import { WidgetCartographieIndicateursNonAJour } from "@/components/_commons/Widget/WidgetCartographieIndicateursNonAJour/WidgetCartographieIndicateursNonAJour";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
@@ -7,7 +8,7 @@ import { BoutonExportCsvVA } from "@/components/_commons/Widget/WidgetCartograph
 import { BoutonExportCsvPVAIndicateur } from "@/components/_commons/Widget/WidgetCartographiePVA/BoutonExportCsvPVAIndicateur";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
-type TypeCarteIndicateur = "ta" | "va" | "pva";
+type TypeCarteIndicateur = "ta" | "va" | "pva" | "nonAJour";
 
 const options: (
   jalon: number,
@@ -18,6 +19,7 @@ const options: (
     value: "pva",
     label: "Carte des propositions de valeur d'avancement",
   },
+  { value: "nonAJour", label: "Carte de mise à jour de l'indicateur" },
 ];
 
 export const ComparaisonTerritoiresIndicateur = ({
@@ -107,6 +109,17 @@ export const ComparaisonTerritoiresIndicateur = ({
             indicateurId={indicateurId}
             chantierId={chantierId}
             jalon={jalon}
+            maille={maille}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      if (type === "nonAJour") {
+        return (
+          <WidgetCartographieIndicateursNonAJour
+            mode="indicateur"
+            indicateurId={indicateurId}
+            chantierId={chantierId}
             maille={maille}
             territoireCode={territoireCode}
           />
