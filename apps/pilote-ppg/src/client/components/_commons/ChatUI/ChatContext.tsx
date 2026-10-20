@@ -1,10 +1,14 @@
 import { createContext, PropsWithChildren, useContext, useMemo } from "react";
 import type { ChatStatus } from "ai";
+import type { PropositionOrigin } from "@/components/_commons/ChatUI/assistantEvents";
 import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTracking";
 
 type ChatContextValue = {
-  sendMessage: (params: { text: string; fromProposition?: boolean }) => void;
-  fillInput: (text: string) => void;
+  sendMessage: (params: {
+    text: string;
+    proposition?: PropositionOrigin;
+  }) => void;
+  fillInput: (text: string, proposition?: PropositionOrigin) => void;
   status: ChatStatus;
   error: Error | undefined;
   stop: () => void;

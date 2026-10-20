@@ -1,6 +1,8 @@
 import {
   answerOutcomeEvent,
   lastLlmCallId,
+  prefilledPropositionAfterEdit,
+  propositionMode,
   questionType,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
@@ -17,6 +19,38 @@ const assistantMessage: PiloteUIMessage = {
   metadata: { llmCallId: "llm-1" },
   parts: [{ type: "text", text: "Bonjour !" }],
 };
+
+describe("propositionMode", () => {
+  it("distingue l'envoi direct du préremplissage", () => {
+    expect(propositionMode("send")).toBe("envoi_direct");
+    expect(propositionMode("fill")).toBe("preremplissage");
+  });
+});
+
+describe("prefilledPropositionAfterEdit", () => {
+  const proposition = {
+    id: "comparer_territoire",
+    mode: "preremplissage",
+  } as const;
+
+  it("garde la proposition quand son contenu est complété ou modifié", () => {
+    expect(
+      prefilledPropositionAfterEdit(proposition, "Compare Paris avec Lyon"),
+    ).toBe(proposition);
+    expect(prefilledPropositionAfterEdit(proposition, "Com")).toBe(proposition);
+  });
+
+  it.each(["", "   "])(
+    "l'oublie une fois le contenu entièrement effacé (%j)",
+    (input) => {
+      expect(prefilledPropositionAfterEdit(proposition, input)).toBeUndefined();
+    },
+  );
+
+  it("ne réattribue pas une saisie libre", () => {
+    expect(prefilledPropositionAfterEdit(undefined, "Bonjour")).toBeUndefined();
+  });
+});
 
 describe("questionType", () => {
   it.each([

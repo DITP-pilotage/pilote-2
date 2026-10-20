@@ -3,8 +3,10 @@ import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme"
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { Icone } from "@/components/_commons/Icone";
+import { propositionMode } from "@/components/_commons/ChatUI/assistantEvents";
 
 export type ChatScenario = {
+  id: string;
   label: string;
   message: string;
   mode: "send" | "fill";
@@ -32,13 +34,25 @@ export const ChatEmptyState = ({
   scenarios: ChatScenarios;
   contexte?: ContexteAccueil;
 }) => {
-  const { sendMessage, fillInput } = useChatContext();
+  const { sendMessage, fillInput, track } = useChatContext();
 
   const handleClick = (scenario: ChatScenario) => {
+    const proposition = {
+      id: scenario.id,
+      mode: propositionMode(scenario.mode),
+    };
+    track({
+      action: "select",
+      name: "prompt_proposition.click",
+      dimensions: {
+        proposition_id: proposition.id,
+        proposition_mode: proposition.mode,
+      },
+    });
     if (scenario.mode === "send") {
-      sendMessage({ text: scenario.message, fromProposition: true });
+      sendMessage({ text: scenario.message, proposition });
     } else {
-      fillInput(scenario.message);
+      fillInput(scenario.message, proposition);
     }
   };
 
@@ -47,7 +61,7 @@ export const ChatEmptyState = ({
       {scenarioList.map((scenario) => (
         <button
           className="flex min-h-[76px] flex-col items-start gap-2 border border-dsfr-grey-900 bg-white p-3.5 text-left text-sm font-medium leading-5 text-dsfr-grey-50 transition-colors hover:border-primary hover:bg-dsfr-alt-blue-france hover:text-primary"
-          key={scenario.label}
+          key={scenario.id}
           onClick={() => handleClick(scenario)}
           type="button"
         >

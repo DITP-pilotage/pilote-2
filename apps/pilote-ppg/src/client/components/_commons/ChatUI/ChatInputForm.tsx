@@ -15,6 +15,10 @@ import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechReco
 import { libelleActiviteAssistant } from "@/components/_commons/ChatUI/libellesAssistant";
 import { Select } from "@/components/shared/Select";
 import { ChatAssistantDisclaimer } from "@/components/_commons/ChatUI/ChatAssistantDisclaimer";
+import {
+  prefilledPropositionAfterEdit,
+  type PropositionOrigin,
+} from "@/components/_commons/ChatUI/assistantEvents";
 
 export type AlbertModel = "openweight-medium" | "openweight-large";
 
@@ -31,10 +35,13 @@ export const ChatInputForm = ({
   onModelChange,
 }: {
   placeholder: string;
-  fillInputRef: MutableRefObject<((text: string) => void) | null>;
+  fillInputRef: MutableRefObject<
+    ((text: string, proposition?: PropositionOrigin) => void) | null
+  >;
   onModelChange: (model: AlbertModel) => void;
 }) => {
   const [input, setInput] = useState("");
+  const prefilledProposition = useRef<PropositionOrigin | undefined>(undefined);
   const [selectedModel, setSelectedModel] =
     useState<AlbertModel>("openweight-large");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -42,7 +49,8 @@ export const ChatInputForm = ({
   const isBusy = status === "submitted" || status === "streaming";
 
   useEffect(() => {
-    fillInputRef.current = (text: string) => {
+    fillInputRef.current = (text, proposition) => {
+      prefilledProposition.current = proposition;
       setInput(text);
       setTimeout(() => {
         const textarea = textareaRef.current;
@@ -87,8 +95,10 @@ export const ChatInputForm = ({
     if (!trimmedInput || isBusy) return;
 
     stopMic();
+    const proposition = prefilledProposition.current;
+    prefilledProposition.current = undefined;
     setInput("");
-    sendMessage({ text: trimmedInput });
+    sendMessage({ text: trimmedInput, proposition });
   };
 
   return (
@@ -105,7 +115,13 @@ export const ChatInputForm = ({
         <textarea
           className="w-full resize-none border-0 bg-transparent px-4 pb-1 pt-3 text-[15px] leading-6 text-dsfr-grey-50 placeholder:text-dsfr-grey-625 focus:outline-none focus:ring-0 disabled:cursor-not-allowed"
           disabled={isBusy}
-          onChange={(event) => setInput(event.target.value)}
+          onChange={(event) => {
+            prefilledProposition.current = prefilledPropositionAfterEdit(
+              prefilledProposition.current,
+              event.target.value,
+            );
+            setInput(event.target.value);
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();

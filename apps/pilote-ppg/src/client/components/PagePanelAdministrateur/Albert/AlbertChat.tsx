@@ -9,18 +9,21 @@ const scenarios: ChatScenarios = {
   kind: "flat",
   scenarios: [
     {
+      id: "admin_synthese_territoire",
       label: "Synthèse d'un territoire",
       message: "Fais moi la synthèse de ",
       mode: "fill",
       icone: AlignLeftIcon,
     },
     {
+      id: "admin_chantiers_en_retard",
       label: "Chantiers en retard",
       message: "Quels sont les chantiers en retard sur ",
       mode: "fill",
       icone: ErrorWarningIcon,
     },
     {
+      id: "admin_chantiers_en_difficulte",
       label: "Chantiers en difficulté",
       message: "Quels sont les chantiers en difficulté sur ",
       mode: "fill",

@@ -2,6 +2,23 @@ import type { AnalyticsDimensions } from "@/client/analytics/schema";
 import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTracking";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
+export type PropositionOrigin = {
+  id: string;
+  mode: NonNullable<AnalyticsDimensions["proposition_mode"]>;
+};
+
+export const propositionMode = (
+  mode: "send" | "fill",
+): PropositionOrigin["mode"] =>
+  mode === "send" ? "envoi_direct" : "preremplissage";
+
+// Une proposition préremplie reste à l'origine de la question tant que son
+// contenu n'a pas été entièrement effacé.
+export const prefilledPropositionAfterEdit = (
+  current: PropositionOrigin | undefined,
+  input: string,
+): PropositionOrigin | undefined => (input.trim() === "" ? undefined : current);
+
 export const questionType = ({
   previousMessages,
   fromProposition,

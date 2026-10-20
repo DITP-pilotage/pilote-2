@@ -27,6 +27,7 @@ import { ArrowDownCircleIcon } from "@/components/_commons/Icones/ArrowDownCircl
 import {
   lastLlmCallId,
   questionType,
+  type PropositionOrigin,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import {
   useAssistantTracking,
@@ -54,7 +55,9 @@ export const ChatUI = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const userHasScrolledRef = useRef(false);
   const prevMessageCountRef = useRef(0);
-  const fillInputRef = useRef<((text: string) => void) | null>(null);
+  const fillInputRef = useRef<
+    ((text: string, proposition?: PropositionOrigin) => void) | null
+  >(null);
   // L'utilisateur a remonté le fil pendant qu'Albert répond : on n'auto-scrolle
   // plus et on lui propose de revenir en bas.
   const [decroche, setDecroche] = useState(false);
@@ -84,18 +87,28 @@ export const ChatUI = ({
   const sendTrackedMessage = useCallback(
     ({
       text,
-      fromProposition = false,
+      proposition,
     }: {
       text: string;
-      fromProposition?: boolean;
+      proposition?: PropositionOrigin;
     }) => {
+      if (proposition) {
+        track({
+          action: "submit",
+          name: "prompt_proposition.send",
+          dimensions: {
+            proposition_id: proposition.id,
+            proposition_mode: proposition.mode,
+          },
+        });
+      }
       track({
         action: "submit",
         name: "question.send",
         dimensions: {
           type_question: questionType({
             previousMessages: conversation.chat.messages,
-            fromProposition,
+            fromProposition: proposition !== undefined,
           }),
         },
       });
@@ -162,9 +175,12 @@ export const ChatUI = ({
     container.scrollTop = container.scrollHeight;
   }, []);
 
-  const fillInput = useCallback((text: string) => {
-    fillInputRef.current?.(text);
-  }, []);
+  const fillInput = useCallback(
+    (text: string, proposition?: PropositionOrigin) => {
+      fillInputRef.current?.(text, proposition);
+    },
+    [],
+  );
 
   const handleModelChange = useCallback(
     (model: AlbertModel) => {
