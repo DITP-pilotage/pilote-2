@@ -96,7 +96,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   <p className="text-sm print:text-base mb-2">
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
-                  <p className="text-xs print:text-base texte-warning italic mb-4">
+                  <p className="text-xs print:text-base text-dsfr-warning-425 italic mb-4">
                     *tous les champs sont obligatoires
                   </p>
                   {detailIndicateurDuTerritoire.proposition !== null ? (
@@ -134,7 +134,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                             "fr-FR",
                           )}
                         </span>
-                        <span className="flex justify-center items-end texte-gris">
+                        <span className="flex justify-center items-end text-dsfr-mention-grey">
                           (
                           {formaterDate(
                             detailIndicateurDuTerritoire.dateValeurAvancementMandat,
@@ -166,7 +166,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                             {` le ${formaterDate(detailIndicateurDuTerritoire.proposition!.dateProposition, "DD/MM/YYYY")}`}
                           </span>
                           <Infobulle classNameInfoBulle="tooltip-accordeon">
-                            <p className="text-sm print:text-base texte-proposition">
+                            <p className="text-sm print:text-base">
                               Valeur d'avancement proposée le{" "}
                               {formaterDate(
                                 detailIndicateurDuTerritoire.proposition
@@ -223,7 +223,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                           </div>
                         )}
 
-                        <span className="flex justify-center texte-gris">
+                        <span className="flex justify-center text-dsfr-mention-grey">
                           ({reactHookForm.watch("moisValeurAvancement")})
                         </span>
                       </div>
@@ -256,7 +256,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         value={reactHookForm.watch("moisValeurAvancement")}
                         triggerClassName="w-50"
                       />
-                      <span className="m-[var(--text-spacing)] text-xs print:text-base flex texte-gris mt-1">
+                      <span className="m-[var(--text-spacing)] text-xs print:text-base flex text-dsfr-mention-grey mt-1">
                         Dernière date de la valeur d'avancement :
                         {formaterDate(
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat,
@@ -285,7 +285,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                         inputClassName="mt-1 py-1 text-sm"
                         {...reactHookForm.register("valeurAvancement")}
                       />
-                      <span className="m-[var(--text-spacing)] text-xs print:text-base flex texte-gris">
+                      <span className="m-[var(--text-spacing)] text-xs print:text-base flex text-dsfr-mention-grey">
                         (
                         {formaterDate(
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat,

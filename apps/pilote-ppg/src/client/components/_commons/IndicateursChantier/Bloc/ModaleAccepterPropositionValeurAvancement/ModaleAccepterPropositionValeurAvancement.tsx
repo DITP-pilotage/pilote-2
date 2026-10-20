@@ -170,7 +170,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                             value="accepter-avec-modification"
                           />
                           <div className="pl-8">
-                            <p className="text-xs print:text-base texte-warning italic">
+                            <p className="text-xs print:text-base text-dsfr-warning-425 italic">
                               *ce champ est obligatoire
                             </p>
                             <TextField
@@ -188,7 +188,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                               inputClassName="py-1 text-sm w-auto"
                               {...reactHookForm.register("valeurModification")}
                             />
-                            <span className="m-[var(--text-spacing)] text-xs print:text-base flex texte-gris">
+                            <span className="m-[var(--text-spacing)] text-xs print:text-base flex text-dsfr-mention-grey">
                               (
                               {formaterDate(
                                 detailIndicateur.proposition

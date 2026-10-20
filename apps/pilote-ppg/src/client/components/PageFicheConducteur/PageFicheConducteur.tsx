@@ -187,7 +187,7 @@ const PageFicheConducteur: FunctionComponent<
             </div>
           </Bloc>
         </div>
-        <div className="page-break mb-4" />
+        <div className="break-after-page mb-4" />
         {doitAfficherDonnéesCartographie ? (
           <>
             <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-2 hidden print:block">
@@ -230,7 +230,7 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
               </div>
             </div>
-            <div className="page-break mb-4" />
+            <div className="break-after-page mb-4" />
           </>
         ) : null}
         <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem] pb-2 hidden print:block">

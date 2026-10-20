@@ -99,7 +99,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                             "fr-FR",
                           )}
                         </span>
-                        <span className="flex justify-center items-end texte-gris">
+                        <span className="flex justify-center items-end text-dsfr-mention-grey">
                           (
                           {formaterDate(
                             detailIndicateur.dateValeurAvancementMandat,
@@ -131,7 +131,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                         <span className="flex justify-center mb-5">
                           {detailIndicateur.proposition?.valeurAvancement}
                         </span>
-                        <span className="flex justify-center texte-gris">
+                        <span className="flex justify-center text-dsfr-mention-grey">
                           (
                           {formaterDate(
                             detailIndicateur.dateValeurAvancementMandat,

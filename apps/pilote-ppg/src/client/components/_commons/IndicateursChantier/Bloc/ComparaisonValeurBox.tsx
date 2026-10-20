@@ -22,7 +22,7 @@ export const ComparaisonValeurBox = ({
         {titre}
         {indicateurId && proposition ? (
           <Infobulle classNameInfoBulle="tooltip-accordeon">
-            <p className="text-sm print:text-base texte-proposition">
+            <p className="text-sm print:text-base">
               Valeur d'avancement proposée le{" "}
               {formaterDate(proposition.dateProposition, "DD/MM/YYYY")} par{" "}
               {proposition.auteur}

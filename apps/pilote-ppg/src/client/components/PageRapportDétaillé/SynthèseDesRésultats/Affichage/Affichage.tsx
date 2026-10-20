@@ -11,7 +11,7 @@ const SynthèseDesRésultatsAffichage = ({
 }: SynthèseDesRésultatsAffichageProps) => {
   if (!synthèseDesRésultats) {
     return (
-      <p className="text-sm print:text-base texte-gris">
+      <p className="text-sm print:text-base text-dsfr-mention-grey">
         Aucune synthèse des résultats.
       </p>
     );
@@ -19,7 +19,7 @@ const SynthèseDesRésultatsAffichage = ({
 
   return (
     <>
-      <p className="text-xs print:text-base texte-gris mb-2">
+      <p className="text-xs print:text-base text-dsfr-mention-grey mb-2">
         {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, "DD/MM/YYYY")}`}
         {!!synthèseDesRésultats.auteur &&
           ` | Par ${synthèseDesRésultats.auteur}`}

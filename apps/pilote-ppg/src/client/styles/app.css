@@ -68,54 +68,6 @@
   font-display: swap;
 }
 
-.texte-gris {
-  color: theme(colors.dsfr-mention-grey) !important;
-}
-
-.texte-success {
-  color: theme(colors.dsfr-success-425);
-}
-
-.texte-warning {
-  color: theme(colors.dsfr-warning-425);
-}
-
-.texte-blue-france {
-  color: theme(colors.dsfr-blue-france-sun-113);
-}
-
-.\!texte-blue-france {
-  color: theme(colors.dsfr-blue-france-sun-113) !important;
-}
-
-.texte-title-grey {
-  color: theme(colors.dsfr-grey-50);
-}
-
-.\!texte-title-grey {
-  color: theme(colors.dsfr-grey-50) !important;
-}
-
-.\!texte-white {
-  color: white !important;
-}
-
-.overflow-y-scroll {
-  overflow-y: scroll !important;
-}
-
-.\!background-black {
-  background-color: black !important;
-}
-
-.\!background-jaune-moutarde {
-  background-color: #fcdca3;
-}
-
-.\!background-bleu-cumulus {
-  background-color: theme(colors.dsfr-blue-cumulus-975-hover);
-}
-
 .border-t {
   border-top-width: 1px;
   border-top-color: theme(colors.dsfr-grey-900);
@@ -134,54 +86,14 @@
   border-bottom-style: solid !important;
 }
 
-.border-b-high-grey {
-  border-bottom-color: theme(colors.dsfr-grey-50) !important;
-}
-
 .border-l {
   border-left-width: 1px;
   border-left-color: theme(colors.dsfr-grey-900);
   border-left-style: solid;
 }
 
-.border-blue-france {
-  border-color: theme(colors.dsfr-blue-france-sun-113) !important;
-}
-
 .border {
   border: 1px solid theme(colors.dsfr-grey-900);
-}
-
-@media screen and (min-width: 48rem) {
-  .border-md-r {
-    border-right-width: 1px;
-    border-right-color: theme(colors.dsfr-grey-900);
-    border-right-style: solid;
-  }
-}
-
-@media screen and (min-width: 62rem) {
-  .border-lg-r {
-    border-right-width: 1px;
-    border-right-color: theme(colors.dsfr-grey-900);
-    border-right-style: solid;
-  }
-
-  .border-lg-0 {
-    border-right-width: 0;
-  }
-}
-
-@media screen and (min-width: 78rem) {
-  .border-xl-r {
-    border-right-width: 1px;
-    border-right-color: theme(colors.dsfr-grey-900);
-    border-right-style: solid;
-  }
-}
-
-.page-break {
-  page-break-after: always;
 }
 
 button {
