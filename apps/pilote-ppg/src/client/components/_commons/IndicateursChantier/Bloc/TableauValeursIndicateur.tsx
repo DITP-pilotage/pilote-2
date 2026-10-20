@@ -23,10 +23,7 @@ export const TableauValeursIndicateur = ({
   );
   const classeCellule = clsxm(CELLULE, "leading-5", alignementImpression);
   const classeCelluleValeur = clsxm(classeCellule, "flex gap-1");
-  const classeDate = clsxm(
-    "text-[10px]",
-    modeImpression ? "text-dsfr-mention-grey" : "text-dsfr-mention-grey",
-  );
+  const classeDate = "text-[10px] text-dsfr-mention-grey";
 
   const {
     dateValeurInitiale,

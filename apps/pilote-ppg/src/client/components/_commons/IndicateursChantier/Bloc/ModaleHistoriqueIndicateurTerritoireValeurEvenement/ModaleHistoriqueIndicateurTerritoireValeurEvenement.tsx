@@ -168,7 +168,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
     switch (typeEvenement) {
       case "PROPOSITION_VALEUR_CREEE":
       case "PROPOSITION_VALEUR_MODIFIEE":
-        return "bg-[#fcdca3]";
+        return "bg-dsfr-jaune-moutarde";
       case "PROPOSITION_VALEUR_ACCUSEE_RECEPTION":
       case "PROPOSITION_VALEUR_REFUSEE":
       case "PROPOSITION_VALEUR_ACCEPTEE":
