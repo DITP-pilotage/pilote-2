@@ -52,7 +52,10 @@ const HeaderCell = ({
       })}
     >
       {isObjectif ? (
-        <div aria-label="Libellé objectif" className="!border-r" />
+        <div
+          aria-label="Libellé objectif"
+          className="border-r border-r-current"
+        />
       ) : null}
       {ETAPES.map((etape) => (
         <div

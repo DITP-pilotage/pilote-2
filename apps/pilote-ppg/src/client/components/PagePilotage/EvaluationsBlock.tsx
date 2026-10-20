@@ -48,7 +48,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
                 key={item.id}
               >
                 {getTooltipLabel ? (
-                  <div className="flex justify-center items-center !border-r">
+                  <div className="flex justify-center items-center border-r border-r-current">
                     <Tooltip.Root>
                       <Tooltip.Trigger
                         aria-label="Afficher le nom de l'objectif"
