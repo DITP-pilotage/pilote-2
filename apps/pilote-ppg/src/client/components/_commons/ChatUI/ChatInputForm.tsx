@@ -62,6 +62,12 @@ export const ChatInputForm = ({
     };
   }, [fillInputRef]);
 
+  // Une question partie d'ailleurs (autre proposition, choix) détache la
+  // proposition préremplie restée dans le champ.
+  useEffect(() => {
+    if (status === "submitted") prefilledProposition.current = undefined;
+  }, [status]);
+
   // La zone de saisie grandit avec le texte, jusqu'à une hauteur plafond.
   useEffect(() => {
     const textarea = textareaRef.current;
