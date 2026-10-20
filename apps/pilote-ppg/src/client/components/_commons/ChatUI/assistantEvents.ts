@@ -124,13 +124,14 @@ type ExportName = Extract<AnalyticsEventName, `export.${string}`>;
 
 // « Copier » emporte le dashboard en image dès qu'il y en a un.
 export const copyExportName = (message: PiloteUIMessage): ExportName | null => {
-  const hasDashboard = message.parts.some(
+  const parts = message.parts ?? [];
+  const hasDashboard = parts.some(
     (part) =>
       part.type === "tool-create_dashboard" &&
       part.state === "output-available",
   );
   if (hasDashboard) return "export.dashboard_image";
-  const hasText = message.parts.some(
+  const hasText = parts.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
   );
   return hasText ? "export.text" : null;
@@ -146,7 +147,7 @@ export const exportsAvailableEvents = ({
   conversationId: string;
   message: PiloteUIMessage;
 }): AssistantEvent[] => {
-  const reports = message.parts.flatMap((part) =>
+  const reports = (message.parts ?? []).flatMap((part) =>
     part.type === "tool-export_rapport" && part.state === "output-available"
       ? [reportExportName(part.output.format)]
       : [],
