@@ -48,7 +48,7 @@ export const TableauNoteCollective = () => {
         captionHidden
         className="min-w-full"
       >
-        <Table.Header className="bg-dsfr-blue-france-925 border-b-2 border-dsfr-grey-200 text-left text-sm font-bold text-dsfr-gray-500 tracking-wider">
+        <Table.Header className="bg-dsfr-blue-france-925 border-b-2 border-dsfr-grey-200 text-left text-sm font-bold text-inherit tracking-wider">
           <Table.Row>
             <Table.ColumnHeaderCell
               className={clsxm(CELLULE, "px-6 py-3 md:px-6 md:py-3 border-b-0")}

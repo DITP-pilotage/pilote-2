@@ -15,19 +15,15 @@ import {
 const TooltipContent = ({ territoire }: { territoire: TerritoireNonAJour }) => {
   if (isChantierMode(territoire)) {
     return (
-      <div className="fr-text--bold">
-        {formatNbIndicateursNonAJour(territoire)}
-      </div>
+      <div className="font-bold">{formatNbIndicateursNonAJour(territoire)}</div>
     );
   }
   if (!territoire.estApplicable || territoire.estAJour) {
-    return (
-      <div className="fr-text--bold">{formatEtatIndicateur(territoire)}</div>
-    );
+    return <div className="font-bold">{formatEtatIndicateur(territoire)}</div>;
   }
   return (
     <div>
-      <div className="fr-text--bold">{formatEtatIndicateur(territoire)}</div>
+      <div className="font-bold">{formatEtatIndicateur(territoire)}</div>
       <div>Dernière valeur : {formatDateDerniereValeur(territoire)}</div>
       <div>
         Mise à jour attendue depuis :{" "}

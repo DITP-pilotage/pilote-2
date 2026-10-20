@@ -31,7 +31,7 @@ export const LigneCardEvaluationInstruction = ({
           texteLienNavigation="consulter la liste des objectifs collectifs"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
-          <div className="text-xs text-grey-200">
+          <div className="text-xs text-dsfr-grey-200">
             Taux constaté dans PILOTE, en attente de la saisie finalisée des
             données par les ministères en charge des chantiers
           </div>

@@ -71,7 +71,7 @@ export const BaseCardEvaluation = ({
         {listeInformationsMoyennes.map((informationMoyenne, index) => {
           return (
             <div className="flex items-end" key={`${id}-${index}`}>
-              <span className="mr-2 text-grey-200">
+              <span className="mr-2 text-dsfr-grey-200">
                 {informationMoyenne.libelle} : 
               </span>
 
@@ -101,7 +101,7 @@ export const BaseCardEvaluation = ({
                   -
                 </span>
               )}
-              <span className="text-sm text-grey-200"> / 100</span>
+              <span className="text-sm text-dsfr-grey-200"> / 100</span>
             </div>
           );
         })}

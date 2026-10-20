@@ -48,14 +48,14 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
         </li>
       )}
       {autoEvaluationEnCours > 0 && (
-        <li className="text-grey-200">
+        <li className="text-dsfr-grey-200">
           <b>Phase d'auto-évaluation</b> : {autoEvaluationEnCours} formulaire(s){" "}
           {autoEvaluationEnCours === 1 ? "est" : "sont"} en cours
           d'auto-évaluation
         </li>
       )}
       {instructionEnCours > 0 && (
-        <li className="text-grey-200">
+        <li className="text-dsfr-grey-200">
           <b>Phase d'instruction</b> : {instructionEnCours} formulaire(s) en
           instruction
         </li>
