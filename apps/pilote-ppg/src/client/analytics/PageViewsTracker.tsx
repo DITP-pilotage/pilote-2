@@ -4,8 +4,6 @@ import { useEffect, useRef } from "react";
 import { getAnalytics } from "@/client/analytics/analytics";
 import { trackPageViews } from "@/client/analytics/pageViews";
 
-// La première page vue attend la session pour porter profil_pilote dès le
-// début de la visite ; un visiteur non connecté n'en envoie aucun.
 export const PageViewsTracker = () => {
   const { data: session, status } = useSession();
   const profil = useRef(session?.profil);

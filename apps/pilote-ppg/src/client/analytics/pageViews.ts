@@ -10,7 +10,7 @@ const pathnameOf = (url: string): string => url.split(/[?#]/)[0];
 export const trackPageViews = (
   router: Pick<Router, "events">,
   analytics: Analytics,
-  getDimensions: () => AnalyticsDimensions,
+  getDimensions: () => Pick<AnalyticsDimensions, "profil_pilote">,
 ): (() => void) => {
   let lastPathname: string | undefined;
 
