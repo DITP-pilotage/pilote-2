@@ -11,7 +11,6 @@ import {
   parseAsInteger,
   parseAsString,
   type SingleParserBuilder,
-  throttle,
   useQueryStates,
 } from "nuqs";
 import { useMemo } from "react";
@@ -33,7 +32,6 @@ export type UrlStateConfig = {
   grouping?: { param: string; default: string; values: string[] };
   shallow?: boolean;
   history?: "push" | "replace";
-  throttleMs?: number;
 };
 
 const resolve = <T>(updater: Updater<T>, previous: T): T =>
@@ -107,9 +105,6 @@ export function useUrlTableState(config?: UrlStateConfig): UrlTableState {
     clearOnDefault: true,
     shallow: stableConfig?.shallow ?? true,
     history: stableConfig?.history ?? "replace",
-    ...(stableConfig?.throttleMs
-      ? { limitUrlUpdates: throttle(stableConfig.throttleMs) }
-      : {}),
   };
   const [query, setQuery] = useQueryStates(tableParsers, options);
   const [filterValues, setFilterValues] = useQueryStates(

@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTableauPageAdminUtilisateurs } from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs";
-import { SearchInput } from "@/components/shared/SearchInput";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import { TagToggleGroup } from "@/components/shared/Tag";
 
@@ -9,8 +8,10 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
   nombreUtilisateur: number;
 }> = ({ listeUtilisateurs, nombreUtilisateur }) => {
-  const { table, changementDeLaRechercheCallback, valeurDeLaRecherche } =
-    useTableauPageAdminUtilisateurs(listeUtilisateurs, nombreUtilisateur);
+  const { table } = useTableauPageAdminUtilisateurs(
+    listeUtilisateurs,
+    nombreUtilisateur,
+  );
 
   const [typeCompte, setTypeCompte] = useQueryState(
     "typeCompte",
@@ -24,10 +25,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   return (
     <section className="px-2">
       <div className="w-full max-w-[20.5rem] mt-4">
-        <SearchInput
-          onChange={changementDeLaRechercheCallback}
-          value={valeurDeLaRecherche}
-        />
+        <table.Search debounceMs={300} />
       </div>
       <h2 className="text-h4 md:text-h4-md mt-6 mb-0 text-primary">
         {`${nombreUtilisateur} ${nombreUtilisateur > 1 ? "comptes" : "compte"}`}

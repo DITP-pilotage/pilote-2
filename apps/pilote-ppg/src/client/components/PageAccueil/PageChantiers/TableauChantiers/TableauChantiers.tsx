@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import { SearchInput } from "@/components/shared/SearchInput";
 import { useTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers";
 import { TableauChantiersActionsDeTri } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiersActionsDeTri";
 import { clsxm } from "@/utils/clsxm";
@@ -14,15 +13,14 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   jalon,
   chantiersSontArchives,
 }) => {
-  const { table, changementDeLaRechercheCallback, valeurDeLaRecherche } =
-    useTableauChantiers(
-      données,
-      ministèresDisponibles,
-      nombreTotalChantiersAvecAlertes,
-      chantiersSontArchives,
-      jalon,
-      territoireCode,
-    );
+  const { table } = useTableauChantiers(
+    données,
+    ministèresDisponibles,
+    nombreTotalChantiersAvecAlertes,
+    chantiersSontArchives,
+    jalon,
+    territoireCode,
+  );
 
   const lignesFeuille = chantiersSontArchives
     ? "even:bg-dsfr-contrast-grey odd:bg-dsfr-grey-1000 even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
@@ -35,10 +33,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
       <div className="flex flex-col justify-between 2xl:flex-row gap-4 2xl:items-end w-full mb-4">
         <div className="flex flex-col 2xl:flex-row gap-4">
           <div className="w-80 max-w-full">
-            <SearchInput
-              onChange={changementDeLaRechercheCallback}
-              value={valeurDeLaRecherche}
-            />
+            <table.Search debounceMs={300} />
           </div>
         </div>
         <div className="flex flex-wrap gap-4 items-end">

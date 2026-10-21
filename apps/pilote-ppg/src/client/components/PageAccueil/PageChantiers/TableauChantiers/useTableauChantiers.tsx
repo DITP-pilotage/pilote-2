@@ -18,7 +18,7 @@ import {
   rowSortingFeature,
   tableFeatures,
 } from "@tanstack/react-table";
-import { ChangeEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
 import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
@@ -372,16 +372,10 @@ export const useTableauChantiers = (
       globalFilter: true,
       shallow: false,
       history: "push",
-      throttleMs: 200,
     },
   });
 
-  return {
-    table,
-    changementDeLaRechercheCallback: (event: ChangeEvent<HTMLInputElement>) =>
-      table.setGlobalFilter(event.target.value),
-    valeurDeLaRecherche: table.store.state.globalFilter ?? "",
-  };
+  return { table };
 };
 
 export type ChantiersTable = ReturnType<typeof useTableauChantiers>["table"];

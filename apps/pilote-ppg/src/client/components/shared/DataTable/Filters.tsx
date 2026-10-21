@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/shared/Button";
-import { SearchInput } from "@/components/shared/SearchInput";
 import { GroupeCasesACocher } from "@/components/_commons/GroupeCasesACocher/GroupeCasesACocher";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import { clsxm } from "@/utils/clsxm";
 import { getColumnMeta, hasFeature } from "./features";
+import { DataTableSearch } from "./Search";
 import type { AnyColumn, AnyTable } from "./types";
 
 export type DataTableFiltersProps = {
@@ -88,10 +88,7 @@ export function DataTableFilters({
     : [];
 
   const recherche = hasFeature(table, "globalFilteringFeature") ? (
-    <SearchInput
-      onChange={(event) => table.setGlobalFilter(event.target.value)}
-      value={table.store.state.globalFilter ?? ""}
-    />
+    <DataTableSearch table={table} />
   ) : null;
 
   const reinitialiser = (

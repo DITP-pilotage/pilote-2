@@ -23,6 +23,7 @@ import {
   type DataTablePaginationProps,
 } from "./Pagination";
 import { DataTableRoot, type DataTableRootProps } from "./Root";
+import { DataTableSearch, type DataTableSearchProps } from "./Search";
 import type { PointDeRuptureÉcran } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore.interface";
 import type { AnyTable, DataTableColumnMeta } from "./types";
 import { type UrlStateConfig, useUrlTableState } from "./urlState";
@@ -64,6 +65,10 @@ type FiltersBricks<F> = F extends { columnFilteringFeature: unknown }
     ? { Filters: (props: DataTableFiltersProps) => ReactNode }
     : NoComponents;
 
+type SearchBricks<F> = F extends { globalFilteringFeature: unknown }
+  ? { Search: (props: DataTableSearchProps) => ReactNode }
+  : NoComponents;
+
 type PaginationBricks<F> = F extends { rowPaginationFeature: unknown }
   ? { Pagination: (props: DataTablePaginationProps) => ReactNode }
   : NoComponents;
@@ -81,7 +86,8 @@ export type DataTable<
 > &
   DataTableBricks &
   PaginationBricks<F> &
-  FiltersBricks<F>;
+  FiltersBricks<F> &
+  SearchBricks<F>;
 
 const bindBricks = (getTable: () => AnyTable) => {
   const bricks: DataTableBricks = {
@@ -122,6 +128,13 @@ const bindBricks = (getTable: () => AnyTable) => {
       ? {
           Pagination: (props: DataTablePaginationProps) => (
             <DataTablePagination table={getTable()} {...props} />
+          ),
+        }
+      : {}),
+    ...(hasFeature(getTable(), "globalFilteringFeature")
+      ? {
+          Search: (props: DataTableSearchProps) => (
+            <DataTableSearch table={getTable()} {...props} />
           ),
         }
       : {}),
