@@ -19,6 +19,9 @@ const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
 type ActionType =
   | "EVENEMENT_PROPOSITION_VALEUR_CREE"
   | "COMMENTAIRE_CREE"
+  | "SYNTHESE_CREEE"
+  | "OBJECTIF_CREE"
+  | "DECISION_STRATEGIQUE_CREEE"
   | "MESURE_INDICATEUR_IMPORTEE"
   | "RAPPORT_IMPORT_CREE"
   | "UTILISATEUR_CREE"
@@ -53,6 +56,21 @@ export class E2ETestContext {
           break;
         case "COMMENTAIRE_CREE":
           await prisma.commentaire.deleteMany({
+            where: action.filters,
+          });
+          break;
+        case "SYNTHESE_CREEE":
+          await prisma.synthese_des_resultats.deleteMany({
+            where: action.filters,
+          });
+          break;
+        case "OBJECTIF_CREE":
+          await prisma.objectif.deleteMany({
+            where: action.filters,
+          });
+          break;
+        case "DECISION_STRATEGIQUE_CREEE":
+          await prisma.decision_strategique.deleteMany({
             where: action.filters,
           });
           break;

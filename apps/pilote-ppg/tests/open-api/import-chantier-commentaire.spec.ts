@@ -1,18 +1,23 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "../fixtures";
+import {
+  CHANTIER_E2E,
+  CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
+} from "../seed/entites-dediees";
 import {
   ImportCommentaireErrorResponse,
   ImportCommentaireSuccessResponse,
 } from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
-import { ApiTestContext } from "./api-client/api-test-context";
 import { CommentaireInput } from "./api-client/open-api.client";
 
-test("Import de commentaires via l'API open-api", async ({ playwright }) => {
-  const apiContext = await ApiTestContext.create(
-    playwright,
-    "EQUIPE_DIR_PROJET",
-  );
+test("Import de commentaires via l'API open-api", async ({
+  openApi,
+  e2eContext,
+}) => {
+  e2eContext.track("COMMENTAIRE_CREE", { chantier_id: CHANTIER_E2E });
+  const apiContext = await openApi("EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
-  const chantierId = apiContext.chantierId!;
+  const chantierId = CHANTIER_E2E;
 
   await test.step("Import d'un commentaire valide sans date - doit retourner 200 OK", async () => {
     const commentaires: CommentaireInput[] = [
@@ -50,7 +55,9 @@ test("Import de commentaires via l'API open-api", async ({ playwright }) => {
 
     const responseBody =
       (await result.json()) as ImportCommentaireSuccessResponse;
-    expect(responseBody.message).toBeDefined();
+    expect(responseBody.message).toEqual(
+      "Les commentaires ont correctement été importés",
+    );
   });
 
   await test.step("Import de plusieurs commentaires valides - doit tous les créer", async () => {
@@ -79,7 +86,9 @@ test("Import de commentaires via l'API open-api", async ({ playwright }) => {
 
     const responseBody =
       (await result.json()) as ImportCommentaireSuccessResponse;
-    expect(responseBody.message).toBeDefined();
+    expect(responseBody.message).toEqual(
+      "Les commentaires ont correctement été importés",
+    );
   });
 
   await test.step("Import avec une date dans le futur - doit retourner 400", async () => {
@@ -102,7 +111,6 @@ test("Import de commentaires via l'API open-api", async ({ playwright }) => {
 
     const responseBody =
       (await result.json()) as ImportCommentaireErrorResponse;
-    expect(responseBody.erreurs).toBeDefined();
     expect(responseBody.erreurs.length).toBeGreaterThan(0);
   });
 
@@ -164,11 +172,11 @@ test("Import de commentaires via l'API open-api", async ({ playwright }) => {
 
     const responseBody =
       (await result.json()) as ImportCommentaireErrorResponse;
-    expect(responseBody.erreurs).toBeDefined();
+    expect(responseBody.erreurs.length).toBeGreaterThan(0);
   });
 
   await test.step("Import sur un chantier non autorisé - doit retourner 403", async () => {
-    const chantierNonAutorise = "CH-999";
+    const chantierNonAutorise = CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET;
     const commentaires: CommentaireInput[] = [
       {
         territoire: "NAT-FR",
@@ -184,6 +192,4 @@ test("Import de commentaires via l'API open-api", async ({ playwright }) => {
 
     expect(result.status()).toEqual(403);
   });
-
-  await apiContext.dispose();
 });

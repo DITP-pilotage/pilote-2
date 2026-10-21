@@ -1,20 +1,23 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "../fixtures";
+import {
+  CHANTIER_E2E,
+  CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
+} from "../seed/entites-dediees";
 import {
   ImportDecisionStrategiqueErrorResponse,
   ImportDecisionStrategiqueSuccessResponse,
 } from "@/server/decisions-strategiques/app/contrats/ImportDecisionStrategiqueAPIContrat";
-import { ApiTestContext } from "./api-client/api-test-context";
 import { DecisionStrategiqueInput } from "./api-client/open-api.client";
 
 test("Import de décisions stratégiques via l'API open-api", async ({
-  playwright,
+  openApi,
+  e2eContext,
 }) => {
-  const apiContext = await ApiTestContext.create(
-    playwright,
-    "EQUIPE_DIR_PROJET",
-  );
+  e2eContext.track("DECISION_STRATEGIQUE_CREEE", { chantier_id: CHANTIER_E2E });
+  const apiContext = await openApi("EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
-  const chantierId = apiContext.chantierId!;
+  const chantierId = CHANTIER_E2E;
 
   await test.step("Import d'une décision stratégique valide sans date - doit retourner 200 OK", async () => {
     const decisions: DecisionStrategiqueInput[] = [
@@ -56,7 +59,9 @@ test("Import de décisions stratégiques via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportDecisionStrategiqueSuccessResponse;
-    expect(responseBody.message).toBeDefined();
+    expect(responseBody.message).toEqual(
+      "Les décisions stratégiques ont correctement été importées",
+    );
   });
 
   await test.step("Import avec une date dans le futur - doit retourner 400", async () => {
@@ -81,7 +86,6 @@ test("Import de décisions stratégiques via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportDecisionStrategiqueErrorResponse;
-    expect(responseBody.erreurs).toBeDefined();
     expect(responseBody.erreurs.length).toBeGreaterThan(0);
   });
 
@@ -103,11 +107,11 @@ test("Import de décisions stratégiques via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportDecisionStrategiqueErrorResponse;
-    expect(responseBody.erreurs).toBeDefined();
+    expect(responseBody.erreurs.length).toBeGreaterThan(0);
   });
 
   await test.step("Import sur un chantier non autorisé - doit retourner 403", async () => {
-    const chantierNonAutorise = "CH-999";
+    const chantierNonAutorise = CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET;
     const decisions: DecisionStrategiqueInput[] = [
       {
         type: "suivi_des_decisions",
@@ -122,6 +126,4 @@ test("Import de décisions stratégiques via l'API open-api", async ({
 
     expect(result.status()).toEqual(403);
   });
-
-  await apiContext.dispose();
 });

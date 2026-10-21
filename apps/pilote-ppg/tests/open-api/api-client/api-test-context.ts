@@ -3,7 +3,7 @@ import { APIRequest } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { OpenApiClient } from "./open-api.client";
 
-export type UserProfile = "DITP_ADMIN" | "EQUIPE_DIR_PROJET";
+export type UserProfile = "DITP_ADMIN" | "EQUIPE_DIR_PROJET" | "PM_ET_CABINET";
 
 type UserConfig = {
   email: string;
@@ -19,6 +19,9 @@ const USER_PROFILES: Record<UserProfile, UserConfig> = {
     email: "equipe.dir.projet@example.com",
     chantierId: "CH-129",
     indicateurId: "IND-021",
+  },
+  PM_ET_CABINET: {
+    email: "premiere.ministre@example.com",
   },
 };
 
@@ -52,15 +55,11 @@ export class ApiTestContext {
     });
 
     // La ligne token_api_information est une donnée de test partagée par tous les
-    // fichiers open-api : on la crée si elle manque et on ne la supprime jamais,
+    // fichiers open-api : on la crée si elle manque (sans conflit entre workers) et on ne la supprime jamais,
     // sinon un fichier en parallèle perd son token (403) au dispose d'un autre.
-    await prisma.token_api_information.upsert({
-      where: { email: config.email },
-      update: {},
-      create: {
-        email: config.email,
-        date_creation: new Date().toISOString(),
-      },
+    await prisma.token_api_information.createMany({
+      data: [{ email: config.email, date_creation: new Date().toISOString() }],
+      skipDuplicates: true,
     });
 
     const apiContext = await playwright.request.newContext({
@@ -86,6 +85,7 @@ export class ApiTestContext {
   async dispose(): Promise<void> {
     if (this.client) {
       await this.client.dispose();
+      this.client = null;
     }
   }
 }

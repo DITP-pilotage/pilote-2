@@ -1,5 +1,14 @@
 import { Page, test as base } from "@playwright/test";
 import { E2ETestContext } from "./e2e-test-context";
+import {
+  ApiTestContext,
+  UserProfile,
+} from "./open-api/api-client/api-test-context";
+import { OpenApiClient } from "./open-api/api-client/open-api.client";
+import {
+  AuthorizationHeader,
+  createUnauthenticatedClient,
+} from "./open-api/api-client/unauthenticated-api.client";
 
 type StepWithBanner = (
   stepName: string,
@@ -53,6 +62,10 @@ function createStepWithBanner(page: Page): StepWithBanner {
 export const test = base.extend<{
   e2eContext: E2ETestContext;
   step: StepWithBanner;
+  openApi: (profile: UserProfile) => Promise<ApiTestContext>;
+  openApiSansAuthentification: (
+    authorization?: AuthorizationHeader,
+  ) => Promise<OpenApiClient>;
 }>({
   // eslint-disable-next-line no-empty-pattern
   e2eContext: async ({}, use) => {
@@ -64,5 +77,28 @@ export const test = base.extend<{
   step: async ({ page }, use) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(createStepWithBanner(page));
+  },
+  openApi: async ({ playwright }, use) => {
+    const contextes: ApiTestContext[] = [];
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    await use(async (profile) => {
+      const contexte = await ApiTestContext.create(playwright, profile);
+      contextes.push(contexte);
+      return contexte;
+    });
+    await Promise.all(contextes.map((contexte) => contexte.dispose()));
+  },
+  openApiSansAuthentification: async ({ playwright }, use) => {
+    const clients: OpenApiClient[] = [];
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    await use(async (authorization) => {
+      const client = await createUnauthenticatedClient(
+        playwright.request,
+        authorization,
+      );
+      clients.push(client);
+      return client;
+    });
+    await Promise.all(clients.map((client) => client.dispose()));
   },
 });
