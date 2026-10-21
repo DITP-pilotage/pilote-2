@@ -3,6 +3,7 @@ import {
   lastLlmCallId,
   prefilledPropositionAfterEdit,
   propositionMode,
+  propositionsShownEvent,
   questionType,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
@@ -24,6 +25,51 @@ describe("propositionMode", () => {
   it("distingue l'envoi direct du préremplissage", () => {
     expect(propositionMode("send")).toBe("envoi_direct");
     expect(propositionMode("fill")).toBe("preremplissage");
+  });
+});
+
+describe("propositionsShownEvent", () => {
+  const scenario = {
+    id: "synthese_territoire",
+    label: "Synthèse",
+    message: "Fais une synthèse",
+    mode: "send",
+  } as const;
+
+  it("compte les propositions d'une liste", () => {
+    const event = propositionsShownEvent({
+      kind: "flat",
+      scenarios: [scenario, { ...scenario, id: "chantiers_en_retard" }],
+    });
+
+    expect(event).toEqual({
+      action: "view",
+      name: "prompt_proposition.view",
+      dimensions: { nombre_choix: 2 },
+    });
+  });
+
+  it("compte les propositions de tous les groupes", () => {
+    const event = propositionsShownEvent({
+      kind: "grouped",
+      groups: [
+        { label: "Synthèses", scenarios: [scenario] },
+        { label: "Vide", scenarios: [] },
+        {
+          label: "Comparaisons",
+          scenarios: [
+            { ...scenario, id: "comparer_territoire" },
+            { ...scenario, id: "comparer_jalons" },
+          ],
+        },
+      ],
+    });
+
+    expect(event).toEqual({
+      action: "view",
+      name: "prompt_proposition.view",
+      dimensions: { nombre_choix: 3 },
+    });
   });
 });
 

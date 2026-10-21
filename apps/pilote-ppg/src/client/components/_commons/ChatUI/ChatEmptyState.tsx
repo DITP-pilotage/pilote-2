@@ -1,9 +1,12 @@
-import type { ComponentType } from "react";
+import { useEffect, useRef, type ComponentType } from "react";
 import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { Icone } from "@/components/_commons/Icone";
-import { propositionMode } from "@/components/_commons/ChatUI/assistantEvents";
+import {
+  propositionMode,
+  propositionsShownEvent,
+} from "@/components/_commons/ChatUI/assistantEvents";
 
 export type ChatScenario = {
   id: string;
@@ -35,6 +38,16 @@ export const ChatEmptyState = ({
   contexte?: ContexteAccueil;
 }) => {
   const { sendMessage, fillInput, track } = useChatContext();
+  const shownEvent = useRef(propositionsShownEvent(scenarios));
+  const trackRef = useRef(track);
+
+  useEffect(() => {
+    trackRef.current = track;
+  }, [track]);
+
+  useEffect(() => {
+    trackRef.current(shownEvent.current);
+  }, []);
 
   const handleClick = (scenario: ChatScenario) => {
     const proposition = {

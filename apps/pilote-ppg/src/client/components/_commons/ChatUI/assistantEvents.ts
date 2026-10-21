@@ -1,4 +1,5 @@
 import type { AnalyticsDimensions } from "@/client/analytics/schema";
+import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
 import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTracking";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
@@ -11,6 +12,22 @@ export const propositionMode = (
   mode: "send" | "fill",
 ): PropositionOrigin["mode"] =>
   mode === "send" ? "envoi_direct" : "preremplissage";
+
+export const propositionsShownEvent = (
+  scenarios: ChatScenarios,
+): AssistantEvent => ({
+  action: "view",
+  name: "prompt_proposition.view",
+  dimensions: {
+    nombre_choix:
+      scenarios.kind === "flat"
+        ? scenarios.scenarios.length
+        : scenarios.groups.reduce(
+            (total, group) => total + group.scenarios.length,
+            0,
+          ),
+  },
+});
 
 export const prefilledPropositionAfterEdit = (
   current: PropositionOrigin | undefined,

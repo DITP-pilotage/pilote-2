@@ -27,6 +27,7 @@ export const ANALYTICS_EVENT_NAMES = [
   "assistant.resume",
   "assistant.close",
   "conversation.history.open",
+  "prompt_proposition.view",
   "prompt_proposition.click",
   "prompt_proposition.send",
   "question.send",
