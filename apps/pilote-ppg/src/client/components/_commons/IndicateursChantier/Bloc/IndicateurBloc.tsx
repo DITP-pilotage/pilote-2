@@ -195,7 +195,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <Table.Cell className="mb-0 p-2 pl-4 md:p-2 md:py-2 md:pl-4" />
                     <Table.Cell className="mb-0 text-sm p-0 md:p-0 md:py-2" />
                     <Table.ColumnHeaderCell
-                      className="bg-dsfr-contrast-grey border-b text-center mb-0 text-sm font-bold p-0 md:p-0 md:py-2"
+                      className="bg-dsfr-contrast-grey text-center mb-0 text-sm font-bold p-0 md:p-0 md:py-2"
                       colSpan={3}
                     >
                       <div className="flex items-center justify-center">
