@@ -122,7 +122,6 @@ export const linkEvent = (href: string | undefined): AssistantEvent => ({
 
 type ExportName = Extract<AnalyticsEventName, `export.${string}`>;
 
-// « Copier » emporte le dashboard en image dès qu'il y en a un.
 export const copyExportName = (message: PiloteUIMessage): ExportName | null => {
   const parts = message.parts ?? [];
   const hasDashboard = parts.some(

@@ -292,14 +292,11 @@ describe("exportsAvailableEvents", () => {
       },
     });
 
-    expect(events.map(({ action, name }) => [action, name])).toEqual([
-      ["view", "export.text"],
-      ["view", "export.report_markdown"],
-      ["view", "export.report_pdf"],
+    const dimensions = { conversation_id: "conv-1", llm_call_id: "llm-1" };
+    expect(events).toEqual([
+      { action: "view", name: "export.text", dimensions },
+      { action: "view", name: "export.report_markdown", dimensions },
+      { action: "view", name: "export.report_pdf", dimensions },
     ]);
-    expect(events[0].dimensions).toEqual({
-      conversation_id: "conv-1",
-      llm_call_id: "llm-1",
-    });
   });
 });
