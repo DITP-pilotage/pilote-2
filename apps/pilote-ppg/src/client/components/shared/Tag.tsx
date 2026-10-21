@@ -104,7 +104,6 @@ export const TagDismissible = ({
   </button>
 );
 
-// Reproduit fr-tags-group : les tags d'un même ensemble sont structurés en liste.
 export const TagGroup = {
   Root: ({ className, ...props }: ComponentProps<"ul">) => (
     <ul

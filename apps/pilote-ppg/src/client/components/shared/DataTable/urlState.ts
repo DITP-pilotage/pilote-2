@@ -14,6 +14,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { useMemo } from "react";
+import { sameValues } from "@/client/utils/arrays";
 import {
   parseAsSorting,
   parseAsSortingAmong,
@@ -43,9 +44,6 @@ const toStringArray = (value: unknown): string[] =>
   Array.isArray(value)
     ? value.filter((item): item is string => typeof item === "string")
     : [];
-
-const sameValues = (left: string[], right: string[]) =>
-  left.length === right.length && left.every((value) => right.includes(value));
 
 export type UrlTableState = {
   state: {
