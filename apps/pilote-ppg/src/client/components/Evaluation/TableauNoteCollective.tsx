@@ -110,7 +110,7 @@ export const TableauNoteCollective = () => {
                         </div>
                         <div className="flex items-center gap-4 ml-9">
                           <Button
-                            className="text-xs"
+                            className="text-xs leading-6"
                             iconLeft={
                               <Icone
                                 className="w-4 h-4"

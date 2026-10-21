@@ -72,7 +72,8 @@ export function FormTextareaField<T extends FieldValues>({
   onBlur,
   ref,
   ...props
-}: Omit<ComponentProps<"textarea">, "name"> & FormFieldProps<T>) {
+}: Omit<ComponentProps<"textarea">, "name"> &
+  FormFieldProps<T> & { textareaClassName?: string }) {
   return (
     <Controller
       control={control}

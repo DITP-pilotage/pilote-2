@@ -136,7 +136,9 @@ export const BasePageAccueilLayout: FunctionComponent<
             <h1
               className={clsxm(
                 "text-h2 md:text-h2-md p-0 mb-6",
-                !chantiersSontArchives && "text-dsfr-blue-france-sun-113",
+                chantiersSontArchives
+                  ? "text-dsfr-mention-grey"
+                  : "text-dsfr-blue-france-sun-113",
               )}
             >
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
