@@ -14,10 +14,10 @@ export default class RecupererPerimetresMinisterielsUseCase {
   async run({
     perimetresMinisterielsIds,
   }: {
-    perimetresMinisterielsIds: string[];
+    perimetresMinisterielsIds: string[] | null;
   }): Promise<PerimetreMinisteriel[]> {
-    return this.perimetreMinisterielRepository.lister(
-      perimetresMinisterielsIds,
-    );
+    return perimetresMinisterielsIds === null
+      ? this.perimetreMinisterielRepository.listAll()
+      : this.perimetreMinisterielRepository.list(perimetresMinisterielsIds);
   }
 }

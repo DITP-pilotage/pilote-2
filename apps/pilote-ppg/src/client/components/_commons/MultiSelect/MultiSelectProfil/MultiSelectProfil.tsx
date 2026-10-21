@@ -1,10 +1,7 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { MultiSelect } from "@/client/components/_commons/MultiSelect/MultiSelect";
 import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
-import {
-  deuxTableauxSontIdentiques,
-  trierParOrdreAlphabétique,
-} from "@/utils/arrays";
+import { sameValues, trierParOrdreAlphabétique } from "@/utils/arrays";
 import { Profil } from "@/shared/profil/Profil.interface";
 
 interface MultiSelectProfilsProps {
@@ -49,7 +46,7 @@ export const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({
 
   useEffect(() => {
     if (
-      !deuxTableauxSontIdentiques(
+      !sameValues(
         profilsIdsSélectionnésParDéfaut ?? [],
         valeursSélectionnéesParDéfaut ?? [],
       )

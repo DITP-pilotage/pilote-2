@@ -1,70 +1,23 @@
 import { FunctionComponent } from "react";
-import { parseAsString, useQueryStates } from "nuqs";
+import { useAdminUtilisateursSearchParams } from "@/components/PageAdminUtilisateurs/useAdminUtilisateursSearchParams";
 import { horodatage } from "@/client/utils/date/date";
 import { Icone } from "@/components/_commons/Icone";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 
 export const ExportDesDonnees: FunctionComponent = () => {
-  const [filtres] = useQueryStates(
-    {
-      territoires: parseAsString.withDefault(""),
-      perimetresMinisteriels: parseAsString.withDefault(""),
-      chantiers: parseAsString.withDefault(""),
-      profils: parseAsString.withDefault(""),
-      typeCompte: parseAsString.withDefault("actif,desactive"),
-      q: parseAsString.withDefault(""),
-    },
-    {
-      shallow: false,
-      clearOnDefault: true,
-      history: "push",
-    },
-  );
+  const { params } = useAdminUtilisateursSearchParams();
 
-  const arrayOptionsExport: {
-    name: string;
-    value: string;
-  }[] = [
-    ...filtres.territoires
-      .split(",")
-      .filter(Boolean)
-      .map((filtreTerritoire) => ({
-        name: "territoires",
-        value: filtreTerritoire,
-      })),
-    ...filtres.perimetresMinisteriels
-      .split(",")
-      .filter(Boolean)
-      .map((filtrePerimetreMinisteriel) => ({
-        name: "perimetresMinisteriels",
-        value: filtrePerimetreMinisteriel,
-      })),
-    ...filtres.chantiers
-      .split(",")
-      .filter(Boolean)
-      .map((filtreChantier) => ({
-        name: "chantiers",
-        value: filtreChantier,
-      })),
-    ...filtres.profils
-      .split(",")
-      .filter(Boolean)
-      .map((filtreProfil) => ({
-        name: "profils",
-        value: filtreProfil,
-      })),
-    ...filtres.typeCompte
-      .split(",")
-      .filter(Boolean)
-      .map((filtreTypeCompte) => ({
-        name: "typeCompte",
-        value: filtreTypeCompte,
-      })),
-  ];
-
-  if (filtres.q) {
-    arrayOptionsExport.push({ name: "queryString", value: filtres.q });
-  }
+  const exportParams = new URLSearchParams([
+    ...params.territoires.map((value) => ["territoires", value]),
+    ...params.perimetresMinisteriels.map((value) => [
+      "perimetresMinisteriels",
+      value,
+    ]),
+    ...params.chantiers.map((value) => ["chantiers", value]),
+    ...params.profils.map((value) => ["profils", value]),
+    ...params.typeCompte.map((value) => ["typeCompte", value]),
+    ...(params.q ? [["queryString", params.q]] : []),
+  ]).toString();
 
   return (
     <form
@@ -75,8 +28,7 @@ export const ExportDesDonnees: FunctionComponent = () => {
         const baseDuNomDeFichier = "PILOTE-Utilisateurs";
 
         const a = window.document.createElement("a");
-        const strOptionsExport = `${arrayOptionsExport.map((option) => `${option.name}=${option.value}`).join("&")}`;
-        a.href = `${url}${strOptionsExport.length > 0 ? `?${strOptionsExport}` : ""}`;
+        a.href = `${url}${exportParams ? `?${exportParams}` : ""}`;
         a.target = "_self";
         a.download = `${baseDuNomDeFichier}-${horodatage()}.csv`;
         document.body.append(a);

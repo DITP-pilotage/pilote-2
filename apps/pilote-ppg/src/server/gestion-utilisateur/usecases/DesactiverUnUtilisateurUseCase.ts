@@ -62,11 +62,10 @@ export default class DesactiverUnUtilisateurUseCase {
   ): Promise<void> {
     const listeInformationsChantiersUtilisateurs =
       await this.chantierRepository.listerInformationsChantiersUtilisateurs();
-    const listeTerritoiresCodes = await this.territoireRepository.listerCodes(
-      [],
-    );
+    const listeTerritoiresCodes =
+      await this.territoireRepository.listAllCodes();
     const listePerimetresMinisteriels =
-      await this.perimetreMinisterielRepository.listerIds([]);
+      await this.perimetreMinisterielRepository.listAllIds();
 
     const utilisateurASupprimer = await this.utilisateurRepository.récupérer(
       email,

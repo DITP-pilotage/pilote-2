@@ -21,9 +21,10 @@ export class RecupererTerritoiresAvecNombreUtilisateursUseCase {
   }: {
     territoireCodes: string[] | null;
   }): Promise<TerritoireAvecNombreUtilisateurs[]> {
-    const territoires = await this.territoireRepository.lister(
-      territoireCodes || [],
-    );
+    const territoires =
+      territoireCodes === null
+        ? await this.territoireRepository.listAll()
+        : await this.territoireRepository.list(territoireCodes);
 
     const nombresUtilisateur =
       await this.utilisateurRepository.récupérerNombreUtilisateursParTerritoires(

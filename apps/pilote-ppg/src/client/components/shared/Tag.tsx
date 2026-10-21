@@ -8,6 +8,7 @@ import {
   ReactNode,
 } from "react";
 import { Icone } from "@/components/_commons/Icone";
+import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { clsxm } from "@/utils/clsxm";
 
 // Reproduit le composant « Tag » du DSFR (pastille arrondie bleu clair).
@@ -72,6 +73,48 @@ export const Tag = ({
     ) : null}
   </button>
 );
+
+// Reproduit le tag supprimable du DSFR (fr-tag--dismiss) : rappel d'un filtre actif, retiré au clic.
+export const TagDismissible = ({
+  size = "md",
+  className,
+  children,
+  ...props
+}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "children"> & {
+  size?: Size;
+  children: string;
+}) => (
+  <button
+    aria-label={`Retirer le filtre ${children}`}
+    {...props}
+    className={clsxm(
+      TAG_CLASSES,
+      SIZES[size].tag,
+      COLORS.default,
+      "justify-between text-left",
+      className,
+    )}
+    type="button"
+  >
+    <span>{children}</span>
+    <Icone
+      className={clsxm(SIZES[size].icon, "shrink-0 text-current")}
+      icone={CloseLineIcon}
+    />
+  </button>
+);
+
+export const TagGroup = {
+  Root: ({ className, ...props }: ComponentProps<"ul">) => (
+    <ul
+      {...props}
+      className={clsxm("m-0 flex list-none flex-wrap gap-2 p-0", className)}
+    />
+  ),
+  Item: ({ className, ...props }: ComponentProps<"li">) => (
+    <li {...props} className={clsxm("m-0 max-w-full p-0", className)} />
+  ),
+};
 
 // Groupe de tags à choix unique : un choix reste toujours sélectionné.
 export const TagToggleGroup = {

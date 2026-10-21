@@ -1,15 +1,23 @@
 import { CollapsibleSection } from "@/components/shared/CollapsibleSection";
 import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
-import { FunctionComponent } from "react";
-import { parseAsString, useQueryStates } from "nuqs";
+import { FunctionComponent, useRef } from "react";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
-import { parseAsTablePage } from "@/components/shared/DataTable/urlParsers";
+import {
+  AdminUtilisateursFilter,
+  useAdminUtilisateursSearchParams,
+} from "@/components/PageAdminUtilisateurs/useAdminUtilisateursSearchParams";
+import {
+  ProfilCode,
+  profilsCodes,
+} from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { MultiSelectTerritoire } from "@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire";
 import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
-import { Tag } from "@/components/shared/Tag";
+import { TagDismissible, TagGroup } from "@/components/shared/Tag";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { MultiSelectProfil } from "@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil";
 import {
   AAccesATousLesUtilisateurs,
@@ -56,44 +64,86 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
         ].includes(profil.code),
       );
 
-  const [, setPage] = useQueryStates(
-    { page: parseAsTablePage },
-    {
-      history: "push",
-      shallow: false,
-    },
-  );
-
-  const [filtres, setFiltres] = useQueryStates(
-    {
-      territoires: parseAsString.withDefault(""),
-      perimetresMinisteriels: parseAsString.withDefault(""),
-      chantiers: parseAsString.withDefault(""),
-      profils: parseAsString.withDefault(""),
-    },
-    {
-      shallow: false,
-      clearOnDefault: true,
-      history: "push",
-    },
-  );
+  const {
+    params: filtres,
+    setFilter,
+    resetSidebarFilters,
+  } = useAdminUtilisateursSearchParams();
 
   const modifierFiltre = (
     listeValues: string[],
-    idFiltre:
-      "territoires" | "perimetresMinisteriels" | "chantiers" | "profils",
-  ) => {
-    if (
-      filtres[idFiltre]
-        .split(",")
-        .sort()
-        .join(",")
-        .localeCompare(listeValues.filter(Boolean).sort().join(","))
-    ) {
-      setPage({ page: null });
-      setFiltres({ [idFiltre]: listeValues.filter(Boolean).join(",") });
-    }
-  };
+    idFiltre: Exclude<AdminUtilisateursFilter, "profils" | "typeCompte">,
+  ) => setFilter(idFiltre, listeValues.filter(Boolean));
+
+  const modifierFiltreProfils = (listeValues: string[]) =>
+    setFilter(
+      "profils",
+      listeValues.filter((value): value is ProfilCode =>
+        (profilsCodes as readonly string[]).includes(value),
+      ),
+    );
+
+  const activeFiltersHeading = useRef<HTMLHeadingElement>(null);
+
+  const activeFilterSections = [
+    {
+      title: "Territoire(s)",
+      items: filtres.territoires.map((code) => ({
+        value: code,
+        label: territoires.find((territoire) => territoire.code === code)
+          ?.nomAffiché,
+      })),
+      remove: (value: string) =>
+        modifierFiltre(
+          filtres.territoires.filter((code) => code !== value),
+          "territoires",
+        ),
+    },
+    {
+      title: "Périmètre(s) ministériel(s)",
+      items: filtres.perimetresMinisteriels.map((id) => ({
+        value: id,
+        label: listePerimetresMinisteriel.find(
+          (perimetreMinisteriel) => perimetreMinisteriel.id === id,
+        )?.nom,
+      })),
+      remove: (value: string) =>
+        modifierFiltre(
+          filtres.perimetresMinisteriels.filter((id) => id !== value),
+          "perimetresMinisteriels",
+        ),
+    },
+    {
+      title: "Chantier(s)",
+      items: filtres.chantiers.map((id) => ({
+        value: id,
+        label: listeChantiers.find((chantier) => chantier.id === id)?.nom,
+      })),
+      remove: (value: string) =>
+        modifierFiltre(
+          filtres.chantiers.filter((id) => id !== value),
+          "chantiers",
+        ),
+    },
+    {
+      title: "Profil(s)",
+      items: filtres.profils.map((code) => ({
+        value: code,
+        label: listeProfils.find((profil) => profil.code === code)?.nom,
+      })),
+      remove: (value: string) =>
+        modifierFiltreProfils(filtres.profils.filter((code) => code !== value)),
+    },
+  ].map((section) => ({
+    ...section,
+    items: section.items.filter(
+      (item): item is { value: string; label: string } =>
+        item.label !== undefined,
+    ),
+  }));
+  const hasActiveFilters = activeFilterSections.some(
+    (section) => section.items.length > 0,
+  );
 
   return (
     <BarreLatérale
@@ -114,9 +164,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               departementale: true,
             }}
             listeTerritoiresSelectionnable={listeTerritoiresSelectionnable}
-            territoiresCodesSélectionnésParDéfaut={filtres.territoires.split(
-              ",",
-            )}
+            territoiresCodesSélectionnésParDéfaut={filtres.territoires}
           />
         </div>
         <div className="mb-4">
@@ -127,9 +175,9 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
             listePerimetresMinisteriel={
               listePerimetresMinisterielSelectionnable
             }
-            périmètresMinistérielsIdsSélectionnésParDéfaut={filtres.perimetresMinisteriels.split(
-              ",",
-            )}
+            périmètresMinistérielsIdsSélectionnésParDéfaut={
+              filtres.perimetresMinisteriels
+            }
           />
         </div>
         <div className="mb-4">
@@ -138,116 +186,83 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               modifierFiltre(chantiers, "chantiers");
             }}
             chantiers={listeChantiers ?? []}
-            chantiersIdsSélectionnésParDéfaut={filtres.chantiers.split(",")}
+            chantiersIdsSélectionnésParDéfaut={filtres.chantiers}
           />
         </div>
         <MultiSelectProfil
           changementValeursSélectionnéesCallback={(profil) => {
-            modifierFiltre(profil, "profils");
+            modifierFiltreProfils(profil);
           }}
           profils={profilAccessibles ?? []}
-          profilsIdsSélectionnésParDéfaut={filtres.profils.split(",")}
+          profilsIdsSélectionnésParDéfaut={filtres.profils}
         />
       </BarreLatéraleEncart>
       <div className="px-6 py-4">
-        <h2 className="text-h4 md:text-h4-md">Filtres actifs</h2>
+        <h2
+          className="text-h6 md:text-h6-md mb-2 focus:outline-none"
+          ref={activeFiltersHeading}
+          tabIndex={-1}
+        >
+          Filtres actifs
+        </h2>
+        <div>
+          {activeFilterSections.map((section) => (
+            <CollapsibleSection
+              contentClassName="pb-3"
+              defaultOpen={section.items.length > 0}
+              key={`${section.title}-${section.items.length > 0}`}
+              title={
+                <span>
+                  {section.title}{" "}
+                  <span className="font-normal text-dsfr-mention-grey">
+                    ({section.items.length})
+                  </span>
+                </span>
+              }
+              triggerClassName="px-2 data-[state=open]:bg-transparent data-[state=open]:hover:bg-dsfr-grey-1000"
+            >
+              {section.items.length === 0 ? (
+                <p className="mb-0 px-2 text-sm text-dsfr-mention-grey">
+                  Aucun filtre
+                </p>
+              ) : (
+                <TagGroup.Root className="px-2">
+                  {section.items.map((item) => (
+                    <TagGroup.Item key={item.value}>
+                      <TagDismissible
+                        onClick={() => {
+                          section.remove(item.value);
+                          activeFiltersHeading.current?.focus();
+                        }}
+                        size="sm"
+                      >
+                        {item.label}
+                      </TagDismissible>
+                    </TagGroup.Item>
+                  ))}
+                </TagGroup.Root>
+              )}
+            </CollapsibleSection>
+          ))}
+        </div>
         <Button
-          variant="secondary"
+          className="mt-4"
+          disabled={!hasActiveFilters}
+          iconLeft={
+            <Icone
+              className="w-4 h-4 text-current rotate-y-180"
+              icone={ArrowGoBackIcon}
+            />
+          }
           onClick={() => {
-            setFiltres({
-              territoires: "",
-              chantiers: "",
-              profils: "",
-              perimetresMinisteriels: "",
-            });
+            resetSidebarFilters();
+            activeFiltersHeading.current?.focus();
           }}
-          type="button"
+          size="sm"
+          variant="secondary"
         >
           Réinitialiser les filtres
         </Button>
-        <CollapsibleSection defaultOpen title="Territoires(s)">
-          {filtres.territoires.split(",").map((territoireCode) => {
-            const libellé =
-              territoires.find((t) => t.code === territoireCode)?.nomAffiché ??
-              null;
-            return libellé === null ? null : (
-              <Tag
-                key={territoireCode}
-                onClick={() => {
-                  const arrFiltre = filtres.territoires.split(",");
-                  arrFiltre.splice(arrFiltre.indexOf(territoireCode), 1);
-                  modifierFiltre(arrFiltre, "territoires");
-                }}
-              >
-                {libellé}
-              </Tag>
-            );
-          })}
-        </CollapsibleSection>
-        <CollapsibleSection defaultOpen title="Périmètre(s) ministériel(s)">
-          {filtres.perimetresMinisteriels
-            .split(",")
-            .map((perimetreMinisterielId) => {
-              let libellé =
-                listePerimetresMinisteriel.find(
-                  (perimetreMinisteriel) =>
-                    perimetreMinisteriel.id === perimetreMinisterielId,
-                )?.nom ?? null;
-              return libellé === null ? null : (
-                <Tag
-                  key={perimetreMinisterielId}
-                  onClick={() => {
-                    const arrFiltre = filtres.perimetresMinisteriels.split(",");
-                    arrFiltre.splice(
-                      arrFiltre.indexOf(perimetreMinisterielId),
-                      1,
-                    );
-                    modifierFiltre(arrFiltre, "perimetresMinisteriels");
-                  }}
-                >
-                  {libellé}
-                </Tag>
-              );
-            })}
-        </CollapsibleSection>
-        <CollapsibleSection defaultOpen title="Chantier(s)">
-          {filtres.chantiers.split(",").map((chantierId) => {
-            let libellé =
-              listeChantiers?.find(
-                (chantierSynthetise) => chantierSynthetise.id === chantierId,
-              )?.nom ?? null;
-            return libellé === null ? null : (
-              <Tag
-                key={chantierId}
-                onClick={() => {
-                  const arrFiltre = filtres.chantiers.split(",");
-                  arrFiltre.splice(arrFiltre.indexOf(chantierId), 1);
-                  modifierFiltre(arrFiltre, "chantiers");
-                }}
-              >
-                {libellé}
-              </Tag>
-            );
-          })}
-        </CollapsibleSection>
-        <CollapsibleSection defaultOpen title="Profil(s)">
-          {filtres.profils.split(",").map((profilCode) => {
-            let libellé =
-              listeProfils?.find((c) => c.code === profilCode)?.nom ?? null;
-            return libellé === null ? null : (
-              <Tag
-                key={profilCode}
-                onClick={() => {
-                  const arrFiltre = filtres.profils.split(",");
-                  arrFiltre.splice(arrFiltre.indexOf(profilCode), 1);
-                  modifierFiltre(arrFiltre, "profils");
-                }}
-              >
-                {libellé}
-              </Tag>
-            );
-          })}
-        </CollapsibleSection>
       </div>
     </BarreLatérale>
   );

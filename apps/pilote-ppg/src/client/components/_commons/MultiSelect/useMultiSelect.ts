@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
-import { deuxTableauxSontIdentiques } from "@/utils/arrays";
+import { sameValues } from "@/utils/arrays";
 import { MultiSelectProps } from "./MultiSelect.interface";
 
 export function useMultiSelect(
@@ -100,10 +100,7 @@ export function useMultiSelect(
   useEffect(() => {
     if (
       !valeursSélectionnéesParDéfaut ||
-      !deuxTableauxSontIdentiques(
-        [...valeursSélectionnées],
-        valeursSélectionnéesParDéfaut,
-      )
+      !sameValues([...valeursSélectionnées], valeursSélectionnéesParDéfaut)
     ) {
       setValeursSélectionnées(new Set(valeursSélectionnéesParDéfaut));
     }

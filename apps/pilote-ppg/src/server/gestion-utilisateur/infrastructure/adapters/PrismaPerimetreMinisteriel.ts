@@ -25,36 +25,26 @@ const convertirEnPerimetreMinisteriel = (
 };
 
 export class PrismaPerimetreMinisterielRepository implements PerimetreMinisterielRepository {
-  async lister(
-    listePerimetresMinisterielsIds: string[],
-  ): Promise<PerimetreMinisteriel[]> {
-    const listePrismaPerimetreMinisteriel = await prisma.perimetre.findMany({
-      where: {
-        id:
-          listePerimetresMinisterielsIds.length > 0
-            ? { in: listePerimetresMinisterielsIds }
-            : undefined,
-      },
+  async list(ids: string[]): Promise<PerimetreMinisteriel[]> {
+    if (ids.length === 0) return [];
+    const perimetres = await prisma.perimetre.findMany({
+      where: { id: { in: ids } },
     });
 
-    return listePrismaPerimetreMinisteriel.map(convertirEnPerimetreMinisteriel);
+    return perimetres.map(convertirEnPerimetreMinisteriel);
   }
 
-  async listerIds(listePerimetresMinisterielsIds: string[]): Promise<string[]> {
-    const listePrismaPerimetreMinisteriel = await prisma.perimetre.findMany({
-      where: {
-        id:
-          listePerimetresMinisterielsIds.length > 0
-            ? { in: listePerimetresMinisterielsIds }
-            : undefined,
-      },
-      select: {
-        id: true,
-      },
+  async listAll(): Promise<PerimetreMinisteriel[]> {
+    const perimetres = await prisma.perimetre.findMany();
+
+    return perimetres.map(convertirEnPerimetreMinisteriel);
+  }
+
+  async listAllIds(): Promise<string[]> {
+    const perimetres = await prisma.perimetre.findMany({
+      select: { id: true },
     });
 
-    return listePrismaPerimetreMinisteriel.map(
-      (perimetreMinisteriel) => perimetreMinisteriel.id,
-    );
+    return perimetres.map((perimetre) => perimetre.id);
   }
 }

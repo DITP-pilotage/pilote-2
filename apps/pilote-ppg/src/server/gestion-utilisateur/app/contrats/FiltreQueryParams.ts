@@ -6,5 +6,4 @@ export type FiltreQueryParams = {
   chantiers: string[];
   profils: ProfilCode[];
   typeCompte: ("actif" | "desactive")[];
-  chantiersAssociésAuxPérimètres: string[];
 };

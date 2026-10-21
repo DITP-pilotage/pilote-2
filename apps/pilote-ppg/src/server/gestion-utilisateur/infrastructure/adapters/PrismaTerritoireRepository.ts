@@ -23,20 +23,24 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
     this.prisma = prisma.getInstance();
   }
 
-  async lister(codes: string[]) {
+  async list(codes: string[]) {
+    if (codes.length === 0) return [];
     const territoires = await this.prisma.territoire.findMany({
-      where: { code: codes.length > 0 ? { in: codes } : undefined },
+      where: { code: { in: codes } },
     });
 
     return territoires.map(convertirEnTerritoire);
   }
 
-  async listerCodes(codes: string[]) {
+  async listAll() {
+    const territoires = await this.prisma.territoire.findMany();
+
+    return territoires.map(convertirEnTerritoire);
+  }
+
+  async listAllCodes() {
     const territoires = await this.prisma.territoire.findMany({
-      where: { code: codes.length > 0 ? { in: codes } : undefined },
-      select: {
-        code: true,
-      },
+      select: { code: true },
     });
 
     return territoires.map((territoire) => territoire.code);
