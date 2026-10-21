@@ -12,8 +12,6 @@ export const propositionMode = (
 ): PropositionOrigin["mode"] =>
   mode === "send" ? "envoi_direct" : "preremplissage";
 
-// Une proposition préremplie reste à l'origine de la question tant que son
-// contenu n'a pas été entièrement effacé.
 export const prefilledPropositionAfterEdit = (
   current: PropositionOrigin | undefined,
   input: string,
