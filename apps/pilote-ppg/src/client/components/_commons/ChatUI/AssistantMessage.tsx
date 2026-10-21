@@ -4,6 +4,10 @@ import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { ChoicesInline } from "@/components/_commons/ChatUI/ChoicesInline";
 import {
+  CentreAideEncart,
+  derniereConsultationCentreAide,
+} from "@/components/_commons/ChatUI/CentreAideEncart";
+import {
   copyResponse,
   markCopyableBlock,
 } from "@/components/_commons/ChatUI/copyResponse";
@@ -16,6 +20,7 @@ import {
   estSourcePart,
   SourcesConsultees,
 } from "@/components/_commons/ChatUI/SourcesConsultees";
+import { texteCopieCentreAide } from "@/components/_commons/ChatUI/texteCopieCentreAide";
 import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
@@ -46,6 +51,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   const rootRef = useRef<HTMLDivElement>(null);
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
+  const consultationCentreAide = derniereConsultationCentreAide(parts);
 
   const shouldHideText = parts.some((part) => {
     const toolName = part.type.startsWith("tool-") ? part.type.slice(5) : null;
@@ -83,8 +89,20 @@ export const AssistantMessage = memo(function AssistantMessage({
         dimensions: { llm_call_id: llmCallIdOf(message) },
       });
 
+    const texte = [
+      extractMessageText(message),
+      ...(consultationCentreAide
+        ? [
+            texteCopieCentreAide({
+              output: consultationCentreAide,
+              origine: window.location.origin,
+            }),
+          ]
+        : []),
+    ].join("\n\n");
+
     trackCopy("select");
-    copyResponse({ root, text: extractMessageText(message) })
+    copyResponse({ root, text: texte })
       .then(() => {
         trackCopy("success");
         toast.success("Réponse copiée dans le presse-papiers", {
@@ -143,6 +161,12 @@ export const AssistantMessage = memo(function AssistantMessage({
 
         return null;
       })}
+
+      {/* Sous le texte, qui suit l'appel de l'outil dans les parts, et une
+          fois ce texte rédigé : l'encart ferme la réponse. */}
+      {!isStreaming && consultationCentreAide && (
+        <CentreAideEncart output={consultationCentreAide} />
+      )}
 
       {/* Les choix ferment la réponse, même si le modèle a écrit du texte après l'appel. */}
       {afficherChoix &&

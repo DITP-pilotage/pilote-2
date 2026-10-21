@@ -1,7 +1,6 @@
 import {
   defineModule,
   type ExtractScope,
-  type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
 import { Transaction } from "@/server/framework/persistence/Transaction";
@@ -16,8 +15,15 @@ import { PublierArticleCentreAideUseCase } from "./usecases/PublierArticleCentre
 import { DepublierArticleCentreAideUseCase } from "./usecases/DepublierArticleCentreAideUseCase";
 import { BasculerVisibiliteArticleCentreAideUseCase } from "./usecases/BasculerVisibiliteArticleCentreAideUseCase";
 import { DeplacerArticleCentreAideUseCase } from "./usecases/DeplacerArticleCentreAideUseCase";
+import { GetSommaireCentreAideQuery } from "./queries/GetSommaireCentreAideQuery";
+import { GetPagesCentreAideQuery } from "./queries/GetPagesCentreAideQuery";
 
-type ParametrageCentreAideCradle = {
+type ParametrageCentreAideExports = {
+  getSommaireCentreAideQuery: GetSommaireCentreAideQuery;
+  getPagesCentreAideQuery: GetPagesCentreAideQuery;
+};
+
+type ParametrageCentreAideCradle = ParametrageCentreAideExports & {
   creerArticleCentreAideUseCase: CreerArticleCentreAideUseCase;
   articleCentreAideRepository: ArticleCentreAideRepository;
   listerArticlesCentreAideUseCase: ListerArticlesCentreAideUseCase;
@@ -31,12 +37,12 @@ type ParametrageCentreAideCradle = {
 };
 
 export const parametrageCentreAideModule = defineModule<
-  NoExports,
+  ParametrageCentreAideExports,
   ParametrageCentreAideCradle
 >()({
   name: "parametrageCentreAide",
   imports: ["framework"],
-  exports: [],
+  exports: ["getSommaireCentreAideQuery", "getPagesCentreAideQuery"],
   register: (container, { asModuleClass }) => {
     container.register({
       creerArticleCentreAideUseCase: asModuleClass(
@@ -67,9 +73,12 @@ export const parametrageCentreAideModule = defineModule<
         DeplacerArticleCentreAideUseCase,
       ),
       transaction: asModuleClass(PrismaTransaction),
+      getSommaireCentreAideQuery: asModuleClass(GetSommaireCentreAideQuery),
+      getPagesCentreAideQuery: asModuleClass(GetPagesCentreAideQuery),
     } satisfies VerifyCradle<ParametrageCentreAideCradle>);
   },
 });
 
 type Scope = ExtractScope<typeof parametrageCentreAideModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;
+export type { ParametrageCentreAideExports };

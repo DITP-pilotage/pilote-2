@@ -4,6 +4,7 @@ import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 export type EtatAssistant =
   | "reflechit"
   | "consulte-les-sources"
+  | "consulte-le-centre-d-aide"
   | "redige"
   | "compose-le-tableau-de-bord"
   | "genere-le-rapport";
@@ -11,6 +12,7 @@ export type EtatAssistant =
 export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
   reflechit: "réfléchit",
   "consulte-les-sources": "consulte les sources",
+  "consulte-le-centre-d-aide": "consulte le centre d'aide",
   redige: "rédige",
   "compose-le-tableau-de-bord": "compose le tableau de bord",
   "genere-le-rapport": "génère le rapport",
@@ -53,6 +55,9 @@ export const deriverEtatAssistant = ({
   if (!enCours) return "reflechit";
 
   if (derniere.type === "tool-export_rapport") return "genere-le-rapport";
+  if (derniere.type === "tool-consulter_centre_aide") {
+    return "consulte-le-centre-d-aide";
+  }
   if (OUTILS_TABLEAU_DE_BORD.has(derniere.type)) {
     return "compose-le-tableau-de-bord";
   }

@@ -10,6 +10,7 @@ import {
   linkEvent,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
+import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTracking";
 import { clsxm } from "@/utils/clsxm";
 
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
@@ -101,6 +102,60 @@ export function stripParagraphesVides(text: string): string {
     .join("\n");
 }
 
+const useLinkTracking = (event: AssistantEvent) => {
+  const track = useChatTracking();
+  const trackLink = () => track(event);
+  const trackMiddleClick = (mouseEvent: MouseEvent) => {
+    if (mouseEvent.button === 1) trackLink();
+  };
+  return { trackLink, trackMiddleClick };
+};
+
+/**
+ * Un lien vers une page de PILOTE depuis le chat : il navigue sans recharger
+ * et réduit la conversation dans le dock.
+ */
+export const LienInterneAssistant = ({
+  href,
+  className,
+  libelle,
+  event,
+  children,
+}: {
+  href: string;
+  className?: string;
+  /** Nom accessible, quand le contenu du lien ne se lit pas bien d'un trait. */
+  libelle?: string;
+  /** Événement suivi au clic, à la place de celui des liens de la réponse. */
+  event?: AssistantEvent;
+  children?: ReactNode;
+}) => {
+  const router = useRouter();
+  const { minimize } = useAlbertConversation();
+  const { trackLink, trackMiddleClick } = useLinkTracking(
+    event ?? linkEvent(href),
+  );
+
+  return (
+    <a
+      aria-label={libelle}
+      className={className}
+      href={href}
+      onAuxClick={trackMiddleClick}
+      onClick={(event) => {
+        trackLink();
+        // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
+        if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
+        event.preventDefault();
+        minimize();
+        router.push(href);
+      }}
+    >
+      {children}
+    </a>
+  );
+};
+
 const MarkdownLink = ({
   href,
   children,
@@ -108,13 +163,7 @@ const MarkdownLink = ({
   href?: string;
   children?: ReactNode;
 }) => {
-  const router = useRouter();
-  const { minimize } = useAlbertConversation();
-  const track = useChatTracking();
-  const trackLink = () => track(linkEvent(href));
-  const trackMiddleClick = (event: MouseEvent) => {
-    if (event.button === 1) trackLink();
-  };
+  const { trackLink, trackMiddleClick } = useLinkTracking(linkEvent(href));
 
   if (!isInternalHref(href)) {
     return (
@@ -130,22 +179,7 @@ const MarkdownLink = ({
     );
   }
 
-  return (
-    <a
-      href={href}
-      onAuxClick={trackMiddleClick}
-      onClick={(event) => {
-        trackLink();
-        // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
-        if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
-        event.preventDefault();
-        minimize();
-        router.push(href);
-      }}
-    >
-      {children}
-    </a>
-  );
+  return <LienInterneAssistant href={href}>{children}</LienInterneAssistant>;
 };
 
 const components = { a: MarkdownLink };
