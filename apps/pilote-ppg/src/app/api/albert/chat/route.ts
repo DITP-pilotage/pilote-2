@@ -42,8 +42,6 @@ export async function POST(request: Request) {
 
     const messagesPilote = messages as PiloteUIMessage[];
 
-    // Généré ici pour être transmis au client avec la réponse : la ligne
-    // llm_calls n'est écrite qu'à la fin du flux.
     const llmCallId = crypto.randomUUID();
 
     const result = await AssistantIA.streamText({

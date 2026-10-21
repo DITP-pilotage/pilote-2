@@ -64,8 +64,6 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   const [display, setDisplay] = useState<AlbertDisplay>("fullscreen");
   const trpcUtils = api.useUtils();
   const track = useAssistantTracking();
-  // Un Chat garde le onFinish reçu à sa création : il lit le suivi courant,
-  // dont le profil de la session.
   const trackRef = useRef(track);
 
   useEffect(() => {
@@ -151,7 +149,6 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     });
   }, [load]);
 
-  // Rouvrir une conversation réduite est une reprise, pas une ouverture.
   const open = useCallback<AlbertConversationContextValue["open"]>(
     ({ agentContext, scenarios }) => {
       if (conversation) {
@@ -180,13 +177,18 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
 
   const minimize = useCallback(() => {
     if (conversation) {
+      track({
+        action: "minimize",
+        name: "assistant.minimize",
+        dimensions: { conversation_id: conversation.chat.id },
+      });
       writeMinimizedConversation({
         id: conversation.chat.id,
         agentContext: conversation.agentContext,
       });
     }
     setDisplay("minimized");
-  }, [conversation]);
+  }, [conversation, track]);
 
   const restore = useCallback(() => {
     track({

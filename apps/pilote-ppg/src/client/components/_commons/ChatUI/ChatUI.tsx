@@ -94,7 +94,7 @@ export const ChatUI = ({
         name: "question.send",
         dimensions: {
           type_question: questionType({
-            previousMessageCount: conversation.chat.messages.length,
+            previousMessages: conversation.chat.messages,
             fromProposition,
           }),
         },

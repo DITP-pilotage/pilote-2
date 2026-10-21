@@ -21,23 +21,37 @@ const assistantMessage: PiloteUIMessage = {
 describe("questionType", () => {
   it.each([
     {
-      previousMessageCount: 0,
+      previousMessages: [],
       fromProposition: false,
       attendu: "premiere_libre",
     },
     {
-      previousMessageCount: 0,
+      previousMessages: [],
       fromProposition: true,
       attendu: "premiere_proposition",
     },
-    { previousMessageCount: 2, fromProposition: false, attendu: "suivante" },
-    { previousMessageCount: 2, fromProposition: true, attendu: "suivante" },
+    {
+      previousMessages: [userMessage, assistantMessage],
+      fromProposition: false,
+      attendu: "suivante",
+    },
+    {
+      previousMessages: [userMessage, assistantMessage],
+      fromProposition: true,
+      attendu: "suivante",
+    },
   ])(
-    "$attendu après $previousMessageCount messages (proposition : $fromProposition)",
+    "$attendu après $previousMessages.length messages (proposition : $fromProposition)",
     ({ attendu, ...params }) => {
       expect(questionType(params)).toBe(attendu);
     },
   );
+
+  it("reste une première question tant qu'aucune réponse n'est arrivée", () => {
+    expect(
+      questionType({ previousMessages: [userMessage], fromProposition: false }),
+    ).toBe("premiere_libre");
+  });
 });
 
 describe("lastLlmCallId", () => {

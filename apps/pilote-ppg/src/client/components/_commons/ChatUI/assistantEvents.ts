@@ -3,13 +3,14 @@ import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTr
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
 export const questionType = ({
-  previousMessageCount,
+  previousMessages,
   fromProposition,
 }: {
-  previousMessageCount: number;
+  previousMessages: PiloteUIMessage[];
   fromProposition: boolean;
 }): NonNullable<AnalyticsDimensions["type_question"]> => {
-  if (previousMessageCount > 0) return "suivante";
+  if (previousMessages.some((message) => message.role === "assistant"))
+    return "suivante";
   return fromProposition ? "premiere_proposition" : "premiere_libre";
 };
 
@@ -22,9 +23,6 @@ export const lastLlmCallId = (
   messages: PiloteUIMessage[],
 ): string | undefined => llmCallIdOf(messages.at(-1));
 
-// Un arrêt est compté au clic sur « Arrêter » : la fin de flux qui suit, comme
-// celles provoquées par une fermeture ou un changement de conversation, ne
-// compte pas.
 export const answerOutcomeEvent = ({
   conversationId,
   message,
