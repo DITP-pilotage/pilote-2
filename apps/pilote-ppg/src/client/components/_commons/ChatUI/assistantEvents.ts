@@ -120,6 +120,16 @@ export const linkEvent = (href: string | undefined): AssistantEvent => ({
     : "response.link.external",
 });
 
+export const helpCenterLinkEvent: AssistantEvent = {
+  action: "select",
+  name: "response.help_center.link",
+};
+
+export const helpCenterContactEvent: AssistantEvent = {
+  action: "select",
+  name: "response.help_center.contact",
+};
+
 type ExportName = Extract<AnalyticsEventName, `export.${string}`>;
 
 export const copyExportName = (message: PiloteUIMessage): ExportName | null => {

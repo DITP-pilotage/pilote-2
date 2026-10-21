@@ -4,6 +4,11 @@ import { Icone } from "@/components/_commons/Icone";
 import { ArrowRightLineIcon } from "@/components/_commons/Icones/ArrowRightLineIcon";
 import { Book2ContourIcon } from "@/components/_commons/Icones/Book2ContourIcon";
 import { LienInterneAssistant } from "@/components/_commons/ChatUI/AssistantMessageText";
+import {
+  helpCenterContactEvent,
+  helpCenterLinkEvent,
+} from "@/components/_commons/ChatUI/assistantEvents";
+import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
 import { markCopyableBlock } from "@/components/_commons/ChatUI/copyResponse";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import type { ConsulterCentreAideOutput } from "@/server/albert/tools/consulterCentreAide";
@@ -30,6 +35,7 @@ export const CentreAideEncart = ({
   output: ConsulterCentreAideOutput;
 }) => {
   const idTitre = useId();
+  const track = useChatTracking();
 
   if (!output.trouve || output.sources.length === 0) {
     return (
@@ -41,7 +47,10 @@ export const CentreAideEncart = ({
           Une question sur PILOTE que le centre d&apos;aide ne couvre pas ?
           L&apos;équipe PILOTE vous répond par mail.
         </p>
-        <BoutonContacterEquipePilote variant="secondary" />
+        <BoutonContacterEquipePilote
+          onClick={() => track(helpCenterContactEvent)}
+          variant="secondary"
+        />
       </div>
     );
   }
@@ -67,6 +76,7 @@ export const CentreAideEncart = ({
             {/* Sans libellé, le nom lu colle l'emplacement et le titre. */}
             <LienInterneAssistant
               className="flex items-center gap-3 bg-none px-3 py-2.5 hover:bg-dsfr-alt-blue-france"
+              event={helpCenterLinkEvent}
               href={source.url}
               libelle={
                 source.chemin.length > 0

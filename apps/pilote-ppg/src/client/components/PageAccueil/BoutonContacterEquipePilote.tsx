@@ -4,11 +4,13 @@ import { Button, ButtonVariant } from "@/components/shared/Button";
 
 export const BoutonContacterEquipePilote = ({
   variant = "link",
+  onClick,
 }: {
   variant?: ButtonVariant;
+  onClick?: () => void;
 }) => (
   <Button asChild className="text-sm font-normal bg-none" variant={variant}>
-    <a href="mailto:pilote.ditp@modernisation.gouv.fr">
+    <a href="mailto:pilote.ditp@modernisation.gouv.fr" onClick={onClick}>
       <Icone className="text-current" icone={EnveloppeContourIcon} />
       Contacter l'équipe PILOTE
     </a>

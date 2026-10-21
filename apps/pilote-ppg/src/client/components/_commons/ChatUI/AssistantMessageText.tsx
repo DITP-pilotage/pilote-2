@@ -10,6 +10,7 @@ import {
   linkEvent,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
+import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTracking";
 import { clsxm } from "@/utils/clsxm";
 
 // Liste des noms d'outils Albert. À maintenir quand un nouvel outil est ajouté
@@ -109,20 +110,23 @@ export const LienInterneAssistant = ({
   href,
   className,
   libelle,
+  event,
   children,
 }: {
   href: string;
   className?: string;
   /** Nom accessible, quand le contenu du lien ne se lit pas bien d'un trait. */
   libelle?: string;
+  /** Événement suivi au clic, à la place de celui des liens de la réponse. */
+  event?: AssistantEvent;
   children?: ReactNode;
 }) => {
   const router = useRouter();
   const { minimize } = useAlbertConversation();
   const track = useChatTracking();
-  const trackLink = () => track(linkEvent(href));
-  const trackMiddleClick = (event: MouseEvent) => {
-    if (event.button === 1) trackLink();
+  const trackLink = () => track(event ?? linkEvent(href));
+  const trackMiddleClick = (mouseEvent: MouseEvent) => {
+    if (mouseEvent.button === 1) trackLink();
   };
 
   return (
