@@ -46,6 +46,7 @@ export class PageAccueil extends BasePage {
       .getByRole("button", { name: /Filtrer par ministères/ })
       .click();
     await this.page.getByRole("button", { name: ministereName }).click();
+    await this.page.waitForURL(/perimetres=/);
   }
 
   async selectChantier(chantierName: string): Promise<PageChantier> {
