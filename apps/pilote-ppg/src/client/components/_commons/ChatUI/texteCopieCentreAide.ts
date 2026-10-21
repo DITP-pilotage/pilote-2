@@ -1,7 +1,7 @@
+import { PILOTE_TEAM_EMAIL } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import type { ConsulterCentreAideOutput } from "@/server/albert/tools/consulterCentreAide";
 
-const CONTACT_EQUIPE_PILOTE =
-  "Contacter l'équipe PILOTE : pilote.ditp@modernisation.gouv.fr";
+const CONTACT_EQUIPE_PILOTE = `Contacter l'équipe PILOTE : ${PILOTE_TEAM_EMAIL}`;
 
 /**
  * L'encart du centre d'aide en texte brut, pour « Copier » : le collage n'a
