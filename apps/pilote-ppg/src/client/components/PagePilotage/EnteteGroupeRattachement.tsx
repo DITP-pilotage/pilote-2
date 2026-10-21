@@ -30,7 +30,7 @@ export const EnteteGroupeRattachement = ({
   return (
     <>
       <div className="flex mt-4 sticky left-0">
-        <div className="p-2 border-t border-l !border-black">
+        <div className="p-2 border-t border-l border-black">
           <input
             checked={allSelected}
             className="cursor-pointer"
@@ -55,12 +55,12 @@ export const EnteteGroupeRattachement = ({
         }}
       />
 
-      <div className="grid grid-cols-subgrid border !border-black sticky left-0 bg-white">
+      <div className="grid grid-cols-subgrid border border-black sticky left-0 bg-white">
         {rowGroup.subRows.map((row) => {
           const fiche = row.original;
           return (
             <div
-              className="flex items-center gap-2 border-b !border-black last:!border-none p-2"
+              className="flex items-center gap-2 border-b border-black last:border-none p-2"
               key={fiche.id}
             >
               <input

@@ -49,7 +49,7 @@ export const TableauPilotage = () => {
               />
 
               <div
-                className="grid grid-cols-subgrid border-t border-l border-r !border-black"
+                className="grid grid-cols-subgrid border-t border-l border-r border-black"
                 style={{ gridColumn: "span 1" }}
               >
                 {rowGroup.subRows.map((row) => {
@@ -58,7 +58,7 @@ export const TableauPilotage = () => {
                   return (
                     <div
                       className={clsxm(
-                        "border-b !border-black flex items-center justify-center font-bold",
+                        "border-b border-black flex items-center justify-center font-bold",
                         {
                           "bg-dsfr-contrast-grey":
                             noteObjectifsCollectifs == null,
@@ -105,14 +105,14 @@ export const TableauPilotage = () => {
               />
 
               <div
-                className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
+                className="grid gap-0 grid-cols-subgrid border-l border-t border-black"
                 style={{ gridColumn: "span 1" }}
               >
                 {rowGroup.subRows.map((row) => {
                   const fiche = row.original;
                   return (
                     <div
-                      className="grid grid-cols-3 border-b !border-black border-r"
+                      className="grid grid-cols-3 border-b border-black border-r"
                       key={`${fiche.id}-${fiche.rattachementCode}`}
                     >
                       {ETAPES.map((etape) => {

@@ -31,7 +31,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
     switch (typeEvenement) {
       case "VALEUR_CREEE":
         return (
-          <p className="font-bold mb-0 !texte-blue-france">
+          <p className="font-bold mb-0 text-dsfr-blue-france-sun-113">
             → nouvelle valeur importée dans PILOTE : {valeur}
           </p>
         );
@@ -43,11 +43,11 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               direction de projet
             </p>
             {valeur === null ? (
-              <p className="font-bold mb-0 !texte-blue-france">
+              <p className="font-bold mb-0 text-dsfr-blue-france-sun-113">
                 → la valeur a été supprimée de PILOTE
               </p>
             ) : (
-              <p className="font-bold mb-0 !texte-blue-france">
+              <p className="font-bold mb-0 text-dsfr-blue-france-sun-113">
                 → nouvelle valeur importée dans PILOTE : {valeur}
               </p>
             )}
@@ -110,7 +110,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               <span className="font-bold"> acceptée</span> par la direction de
               projet
             </p>
-            <p className="font-bold mb-0 !texte-blue-france">
+            <p className="font-bold mb-0 text-dsfr-blue-france-sun-113">
               → nouvelle valeur importée dans PILOTE : {valeur}
             </p>
           </div>
@@ -123,7 +123,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               <span className="font-bold"> acceptée avec modification</span> par
               la direction de projet
             </p>
-            <p className="font-bold mb-0 !texte-blue-france">
+            <p className="font-bold mb-0 text-dsfr-blue-france-sun-113">
               → nouvelle valeur importée dans PILOTE : {valeur}
             </p>
           </div>
@@ -136,11 +136,11 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
               direction de projet (la proposition en cours a été ignorée)
             </p>
             {valeur === null ? (
-              <p className="font-bold mb-0 !texte-blue-france">
+              <p className="font-bold mb-0 text-dsfr-blue-france-sun-113">
                 → la valeur a été supprimée de PILOTE
               </p>
             ) : (
-              <p className="font-bold mb-0 !texte-blue-france">
+              <p className="font-bold mb-0 text-dsfr-blue-france-sun-113">
                 → nouvelle valeur importée dans PILOTE : {valeur}
               </p>
             )}
@@ -168,12 +168,12 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
     switch (typeEvenement) {
       case "PROPOSITION_VALEUR_CREEE":
       case "PROPOSITION_VALEUR_MODIFIEE":
-        return "!background-jaune-moutarde";
+        return "bg-dsfr-jaune-moutarde";
       case "PROPOSITION_VALEUR_ACCUSEE_RECEPTION":
       case "PROPOSITION_VALEUR_REFUSEE":
       case "PROPOSITION_VALEUR_ACCEPTEE":
       case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
-        return "!background-bleu-cumulus";
+        return "bg-dsfr-blue-cumulus-975-hover";
       default:
         return "";
     }
@@ -191,14 +191,14 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
       trigger={children}
     >
       <div className="flex flex-wrap mt-2">
-        <span className="w-1/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0 !texte-blue-france">
+        <span className="w-1/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0 text-dsfr-blue-france-sun-113">
           {indicateur.id}
         </span>
-        <span className="w-5/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0 !texte-blue-france">
+        <span className="w-5/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0 text-dsfr-blue-france-sun-113">
           {indicateur.nom}
         </span>
       </div>
-      <div className="flex flex-wrap !texte-title-grey">
+      <div className="flex flex-wrap text-dsfr-grey-50">
         <span className="w-1/6 shrink-0 m-[var(--text-spacing)] text-lg font-bold mb-0">
           {chantier.id}
         </span>
@@ -206,7 +206,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
           {chantier.nom}
         </span>
       </div>
-      <div className="flex flex-wrap !texte-title-grey">
+      <div className="flex flex-wrap text-dsfr-grey-50">
         <span className="w-1/6 shrink-0 m-[var(--text-spacing)] text-lg mb-0">
           Territoire
         </span>
@@ -222,7 +222,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
         </Alerte>
       ) : (
         <Accordion.Root
-          className="historique-container mt-4"
+          className="mt-4"
           defaultValue={
             datesTriees.length > 0
               ? [`accordion-rubrique-${indicateur.id}-${datesTriees[0]}-0`]

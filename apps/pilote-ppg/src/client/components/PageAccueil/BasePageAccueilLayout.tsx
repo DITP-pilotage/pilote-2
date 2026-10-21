@@ -137,7 +137,7 @@ export const BasePageAccueilLayout: FunctionComponent<
               className={clsxm(
                 "text-h2 md:text-h2-md p-0 mb-6",
                 chantiersSontArchives
-                  ? "titre-gris"
+                  ? "text-dsfr-mention-grey"
                   : "text-dsfr-blue-france-sun-113",
               )}
             >

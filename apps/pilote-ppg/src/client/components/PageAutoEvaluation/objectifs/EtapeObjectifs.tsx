@@ -57,7 +57,7 @@ export function EtapeObjectifs() {
                 ) : null}
               </div>
             </header>
-            <div className="flex !bg-white">
+            <div className="flex bg-white">
               <div className="py-4 px-6 flex flex-col flex-1">
                 <CommentaireTextareaAutoEvaluation
                   control={form.control}

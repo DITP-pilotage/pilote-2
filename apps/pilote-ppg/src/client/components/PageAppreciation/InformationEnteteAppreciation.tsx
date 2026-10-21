@@ -23,16 +23,16 @@ export const InformationEnteteAppreciation = ({
   if (statutCompletionAppreciation === "APPRECIATION_EN_COURS") {
     return (
       <div className="grid md:grid-cols-2 mt-10 gap-6">
-        <div className="bg-dsfr-grey-1000 border !border-b-2 !border-dsfr-grey-900 !border-b-primary py-6 px-8 flex flex-col gap-4">
-          <h3 className="!text-primary !text-2xl !mb-6">
+        <div className="bg-dsfr-grey-1000 border border-b-2 border-dsfr-grey-900 border-b-primary py-6 px-8 flex flex-col gap-4">
+          <h3 className="text-primary text-2xl mb-6">
             Renseigner les appréciations
           </h3>
           <div className="flex flex-col gap-1">
-            <p className="!mb-0">
+            <p className="mb-0">
               L'espace d'appréciation vous permet de saisir vos appréciations
               (résultats quantitatifs et commentaires) :
             </p>
-            <ul className="!m-0">
+            <ul className="m-0">
               <li>
                 pour chaque objectif individuel et chaque axe de la manière de
                 servir,
@@ -41,11 +41,7 @@ export const InformationEnteteAppreciation = ({
             </ul>
           </div>
           <div className="mt-auto">
-            <Button
-              asChild
-              className="!w-full !justify-center"
-              variant="primary"
-            >
+            <Button asChild className="w-full justify-center" variant="primary">
               <Link href="appreciation/espace-appreciation">
                 Accéder à l'espace d'appréciation
               </Link>
@@ -53,16 +49,16 @@ export const InformationEnteteAppreciation = ({
           </div>
         </div>
 
-        <div className="bg-dsfr-grey-1000 border !border-b-2 !border-dsfr-grey-900 !border-b-primary py-6 px-8 flex flex-col gap-4">
-          <h3 className="!text-primary !text-2xl !mb-6">
+        <div className="bg-dsfr-grey-1000 border border-b-2 border-dsfr-grey-900 border-b-primary py-6 px-8 flex flex-col gap-4">
+          <h3 className="text-primary text-2xl mb-6">
             Transmettre les appréciations
           </h3>
           <div className="flex flex-col gap-1">
-            <p className="!mb-0">
+            <p className="mb-0">
               À tout moment, vous pouvez transmettre vos appréciations afin
               qu'elles soient instruites par les administrations centrales.
             </p>
-            <p className="!mb-0">
+            <p className="mb-0">
               Le parcours ci-dessous vous permet de choisir les territoires dont
               vous souhaitez transmettre les appréciations. À ce titre, vous
               pouvez transmettre vos appréciations en plusieurs fois.
@@ -71,7 +67,7 @@ export const InformationEnteteAppreciation = ({
 
           <div className="mt-auto">
             <ModaleTransmissionDITP fichesAppreciation={fiches}>
-              <Button className="!w-full !justify-center" variant="primary">
+              <Button className="w-full justify-center" variant="primary">
                 Transmettre les appréciations
               </Button>
             </ModaleTransmissionDITP>
@@ -84,8 +80,8 @@ export const InformationEnteteAppreciation = ({
   if (statutCompletionAppreciation === "TERMINE") {
     return (
       <div className="mt-10">
-        <h3 className="!text-primary !text-2xl !mb-4">Vos appréciations</h3>
-        <p className="!mb-0">
+        <h3 className="text-primary text-2xl mb-4">Vos appréciations</h3>
+        <p className="mb-0">
           La phase d'appréciation est close, toutes vos appréciations ont été
           transmises pour instruction.
         </p>

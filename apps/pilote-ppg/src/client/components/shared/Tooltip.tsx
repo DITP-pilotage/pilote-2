@@ -17,9 +17,8 @@ export const Tooltip = Object.assign({}, RadixTooltip, {
       <RadixTooltip.Content
         {...props}
         className={clsxm(
-          props.className,
           "bg-gray-900 text-white rounded px-3 py-2 text-sm z-50 max-w-96",
-          "data-[state=delayed-open]:animate-tooltip-fade-in data-[state=closed]:animate-tooltip-fade-out",
+          props.className,
         )}
         sideOffset={5}
       >
@@ -34,7 +33,7 @@ export const Tooltip = Object.assign({}, RadixTooltip, {
         type="button"
         {...props}
         className={clsxm(
-          "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
+          "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-colors font-medium",
           props.className,
         )}
       />

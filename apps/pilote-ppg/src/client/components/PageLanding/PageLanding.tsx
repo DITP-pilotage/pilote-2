@@ -16,7 +16,7 @@ const PageLanding = () => {
         <title>PILOTE - Piloter l'action publique par les résultats</title>
       </Head>
       <main>
-        <section className="bloc-hero">
+        <section>
           <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
             <div className="flex flex-wrap justify-center -m-2 lg:-m-3">
               <div className="px-2 lg:px-3 w-full shrink-0 lg:w-1/2 py-16">

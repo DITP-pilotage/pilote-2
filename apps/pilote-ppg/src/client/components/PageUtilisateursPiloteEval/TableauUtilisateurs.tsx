@@ -22,9 +22,9 @@ export const TableauUtilisateurs = () => {
 
   return (
     <div className="bg-white p-8 rounded shadow-sm">
-      <div className="!space-y-4">
+      <div className="space-y-4">
         <input
-          className="!px-4 !py-2 !border-b-2 !border-primary !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
+          className="px-4 py-2 border-b-2 border-primary bg-dsfr-alt-blue-france placeholder-dsfr-mention-grey placeholder:italic"
           onChange={(event) => setGlobalFilter(event.target.value)}
           placeholder="Rechercher"
           type="text"

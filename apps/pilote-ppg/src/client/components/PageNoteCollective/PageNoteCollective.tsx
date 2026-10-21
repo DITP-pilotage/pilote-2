@@ -38,16 +38,16 @@ export const ContenuPageNoteCollective = () => {
       <div className="min-h-[60vh] py-12">
         <div className="mx-auto w-full max-w-6xl">
           <header className="mb-6">
-            <h1 className="!text-3xl font-bold mb-2">
+            <h1 className="text-3xl font-bold mb-2">
               Les résultats des objectifs collectifs sur votre territoire
             </h1>
           </header>
           <div className="flex flex-col bg-white rounded shadow p-6 gap-8">
             <div>
-              <h2 className="!text-2xl font-bold !mb-0 !text-primary">
+              <h2 className="text-2xl font-bold mb-0 text-primary">
                 Les objectifs collectifs des préfets
               </h2>
-              <p className="!text-base !mt-4">
+              <p className="text-base mt-4">
                 Les préfets ont pour mission, sous l'autorité du Premier
                 Ministre, d'animer et de coordonner l'ensemble des services
                 déconcentrés de l'Etat et des représentations territoriales des
@@ -55,7 +55,7 @@ export const ContenuPageNoteCollective = () => {
                 juridictionnelles et militaires) pour assurer la mise en œuvre
                 effective des priorités de l'action gouvernementale.
               </p>
-              <p className="!mb-0">
+              <p className="mb-0">
                 Cette page vous permet de retrouver la liste des objectifs
                 collectifs retenus pour cette année sur votre territoire et de
                 prendre connaissance des résultats pris en compte dans leur
@@ -64,7 +64,7 @@ export const ContenuPageNoteCollective = () => {
               </p>
             </div>
             <div>
-              <h2 className="!text-2xl font-bold !mb-4 !text-primary">
+              <h2 className="text-2xl font-bold mb-4 text-primary">
                 Les résultats des objectifs collectifs sur votre territoire
               </h2>
               <div className="flex items-center gap-2 w-fit">
@@ -85,7 +85,7 @@ export const ContenuPageNoteCollective = () => {
             </div>
             {moyenneNote !== null && moyenneNote.count > 0 && (
               <div>
-                <h3 className="!text-xl !mb-4">
+                <h3 className="text-xl mb-4">
                   Taux d'atteinte des objectifs collectifs pour l'année 2025
                 </h3>
                 <p>

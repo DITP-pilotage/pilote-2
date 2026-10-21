@@ -38,7 +38,7 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
   });
 
   return (
-    <main className="!bg-white py-6 pt-0 w-full">
+    <main className="bg-white py-6 pt-0 w-full">
       <FormProvider {...form}>
         <div className="relative">
           <div className="sticky top-0 bg-white mb-6 z-1">
@@ -47,7 +47,7 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
                 <span className="w-fit px-2 py-1.5 text-sm text-blue-600 bg-blue-100 rounded-xl">
                   {formatterTitreEvaluation(autoEvaluation.rattachement)}
                 </span>
-                <h3 className="!text-xl !mb-0 font-semibold !text-dsfr-blue-france-sun-113">
+                <h3 className="text-xl mb-0 font-semibold text-dsfr-blue-france-sun-113">
                   Manière de servir
                 </h3>
               </div>

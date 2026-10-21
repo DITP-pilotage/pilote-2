@@ -44,7 +44,7 @@ export const ChoicesInline = ({
       <div className="flex flex-col gap-1" id={questionId}>
         <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
           <Icone
-            className="h-4 w-4 shrink-0 !text-primary"
+            className="h-4 w-4 shrink-0 text-primary"
             icone={QuestionIcon}
           />
           Précisez votre demande
@@ -64,7 +64,7 @@ export const ChoicesInline = ({
             >
               {choice.label}
               <Icone
-                className="h-4 w-4 shrink-0 !text-primary transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+                className="h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                 icone={ArrowLine1Icon}
               />
             </button>

@@ -66,7 +66,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   return (
     <div>
       <div
-        className={`group/noeud flex items-stretch transition-colors border-l-3 ${
+        className={`flex items-stretch transition-colors border-l-3 ${
           estDesactive
             ? "border-l-transparent"
             : estSelectionne

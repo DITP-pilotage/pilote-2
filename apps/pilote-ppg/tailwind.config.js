@@ -97,6 +97,7 @@ module.exports = {
         "dsfr-pink-macaron-sun-406": "#8D533E",
         "dsfr-pink-macaron-950": "#FEE9E6",
         "dsfr-green-tilleul-verveine-950": "#fceeac",
+        "dsfr-jaune-moutarde": "#fcdca3",
         "dsfr-green-tilleul-verveine-sun": "#695240",
         "dsfr-grey-900": "#dddddd",
         "dsfr-grey-975": "#F6F6F6",

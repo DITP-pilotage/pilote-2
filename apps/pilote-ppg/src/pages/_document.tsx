@@ -50,7 +50,7 @@ class MyDocument extends Document<MyDocumentProps> {
     const { nonce, isDevelopment, styles } = this.props;
 
     return (
-      <Html className="light" lang="fr" style={{ colorScheme: "light" }}>
+      <Html lang="fr">
         <Head>
           <meta charSet="utf-8" />
           <meta content="IE=edge" httpEquiv="X-UA-Compatible" />

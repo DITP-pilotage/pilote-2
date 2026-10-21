@@ -9,7 +9,7 @@ export const NextPanelAdministrateurLayout: FunctionComponent<
   PanelAdministrateurLayoutProps
 > = ({ children, pageActive = "" }) => {
   return (
-    <div className="flex min-vh-100">
+    <div className="flex grow">
       <MenuLateralPanelAdministrateur pageActive={pageActive} />
       <main className="flex-grow min-w-0">
         <div className="mt-4 mx-4 mb-3">{children}</div>

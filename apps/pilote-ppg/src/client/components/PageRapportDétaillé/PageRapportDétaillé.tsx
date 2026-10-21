@@ -163,7 +163,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
             />
             {afficherLesChantiers ? (
-              <div className="chantiers">
+              <div>
                 {chantiersFiltrés.map((chantier) => (
                   <RapportDétailléChantier
                     chantier={chantier}

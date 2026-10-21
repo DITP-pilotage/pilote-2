@@ -49,9 +49,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                     icone={chantierFicheTerritoriale.ministereIcone}
                   />
                 </div>
-                <span className="fiche-territoriale--contenu">
-                  {chantierFicheTerritoriale.nom}
-                </span>
+                <span>{chantierFicheTerritoriale.nom}</span>
               </div>
               <div className="w-1/6 shrink-0 flex text-[0.8rem] leading-4 print:text-[0.6rem] flex-col justify-center">
                 {chantierFicheTerritoriale.meteo !== "NON_RENSEIGNEE" ? (

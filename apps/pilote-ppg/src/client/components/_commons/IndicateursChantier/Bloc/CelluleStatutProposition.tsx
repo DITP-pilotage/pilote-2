@@ -45,7 +45,7 @@ export const CelluleStatutProposition = ({
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
-        <p className="text-sm print:text-base texte-proposition">
+        <p className="text-sm print:text-base">
           La proposition de valeur d'avancement a bien été acceptée
           {estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
             ? " avec modification"
@@ -71,7 +71,7 @@ export const CelluleStatutProposition = ({
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
-        <p className="text-sm print:text-base texte-proposition">
+        <p className="text-sm print:text-base">
           La proposition de valeur d'avancement a bien été acceptée
           {estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
             ? " avec modification"
@@ -90,7 +90,7 @@ export const CelluleStatutProposition = ({
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
-        <p className="text-sm print:text-base texte-proposition">
+        <p className="text-sm print:text-base">
           Valeur d'avancement proposée le{" "}
           {formaterDate(proposition.dateProposition, "DD/MM/YYYY")} par{" "}
           {proposition.auteur}
@@ -111,16 +111,14 @@ export const CelluleStatutProposition = ({
 
   return (
     <Table.Cell className="mb-0 text-sm/6 min-h-8 align-top p-2 pl-4 md:p-2 md:py-2 md:pl-4">
-      <div className="flex items-center selecteur-infobulle-conteneur">
-        <span className="texte-proposition font-bold">
-          {labelStatutProposition}
-        </span>
+      <div className="flex items-center">
+        <span className="font-bold">{labelStatutProposition}</span>
         {infoBulle}
       </div>
       {!estPropositionAccepteeOuAccepteeAvecModification(
         detailIndicateurDuTerritoire,
       ) && (
-        <div className="flex items-center selecteur-infobulle-conteneur">
+        <div className="flex items-center">
           {estPropositionAccuseeReception(detailIndicateurDuTerritoire) ? (
             <>
               <span className="m-[var(--text-spacing)] text-xs print:text-base text-dsfr-mention-grey">

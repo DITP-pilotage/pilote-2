@@ -84,7 +84,7 @@ export const ListeAutoEvaluations = ({
           <div className="flex flex-col gap-2" key={ficheEvaluation.id}>
             <header>
               <div className="flex justify-between items-center">
-                <h2 className="!text-2xl !text-primary !mb-0">
+                <h2 className="text-2xl text-primary mb-0">
                   {formatterTitreEvaluation(ficheEvaluation.rattachement)}
                 </h2>
 
@@ -93,7 +93,7 @@ export const ListeAutoEvaluations = ({
                   disabled={genererPDF.isPending}
                   iconLeft={
                     <Icone
-                      className="w-4 h-4 !text-current !shrink-0"
+                      className="w-4 h-4 text-current shrink-0"
                       icone={Printer1Icon}
                     />
                   }
@@ -137,7 +137,7 @@ export const ListeAutoEvaluations = ({
                 texteLienNavigation="consulter la liste des objectifs collectifs"
                 titre="Objectifs collectifs"
               >
-                <div className="text-xs text-grey-200">
+                <div className="text-xs text-dsfr-grey-200">
                   Taux constaté dans PILOTE, en attente de la saisie finalisée
                   des données par les ministères en charge des chantiers
                 </div>

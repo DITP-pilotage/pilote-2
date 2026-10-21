@@ -55,7 +55,7 @@ export default function UtilisateursPage(
         <div className="min-h-[60vh] py-12">
           <div className="mx-auto w-full max-w-6xl">
             <header className="mb-6">
-              <h1 className="!text-3xl font-bold mb-4">
+              <h1 className="text-3xl font-bold mb-4">
                 Gestion des utilisateurs Pilote Eval
               </h1>
             </header>

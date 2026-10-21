@@ -17,7 +17,7 @@ export const FeedbackCategorieCard = ({
       className={clsxm(
         "flex items-start gap-2 rounded-md border p-2 text-left transition-colors",
         selectionnee
-          ? "border-dsfr-blue-france-sun-113 bg-dsfr-blue-france-975"
+          ? "border-dsfr-blue-france-sun-113 bg-dsfr-alt-blue-france"
           : "border-gray-300 hover:bg-gray-50",
       )}
       onClick={onToggle}

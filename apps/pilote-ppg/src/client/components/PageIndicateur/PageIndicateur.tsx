@@ -57,7 +57,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
     <div className="bg-dsfr-alt-blue-france pt-4">
       <main className="w-full mx-auto px-4 lg:px-6 xl:max-w-[78rem]">
         <FilAriane chemin={chemin} libelléPageCourante="Indicateur" />
-        <div className="fiche-indicateur pt-2 pb-26">
+        <div className="pt-2 pb-26">
           {!!alerte && (
             <div className="mt-4">
               <Alerte titre={alerte.titre} type={alerte.type} />

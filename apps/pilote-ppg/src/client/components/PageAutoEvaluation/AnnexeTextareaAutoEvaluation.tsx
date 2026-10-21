@@ -35,7 +35,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
           const hasContent = field.value && field.value.trim() !== "";
           return (
             <button
-              className="-ml-4 !text-xs !text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
+              className="-ml-4 text-xs text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
               onClick={() => {
                 flushSync(() => {
                   setDisplayAnnexe(true);

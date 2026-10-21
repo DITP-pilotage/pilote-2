@@ -84,7 +84,7 @@ export default function PageAppreciation(
 
   return (
     <pageAppreciation.ServerSidePropsProvider value={props}>
-      <main className="py-6 pt-0 !bg-white">
+      <main className="py-6 pt-0 bg-white">
         <Head>
           <title>PILOTE - Appréciation</title>
         </Head>
@@ -93,14 +93,14 @@ export default function PageAppreciation(
           <div className="mx-auto w-full max-w-6xl mb-8">
             <header className="mb-6">
               <div className="flex justify-between">
-                <h1 className="!text-3xl font-bold mb-2">
+                <h1 className="text-3xl font-bold mb-2">
                   Bienvenue sur votre espace d'appréciation 2025
                 </h1>
               </div>
-              <h2 className="!text-2xl !text-primary">
+              <h2 className="text-2xl text-primary">
                 L'appréciation par les préfets de région
               </h2>
-              <p className="text-gray-600 !mb-0">
+              <p className="text-gray-600 mb-0">
                 Dans le cadre de l'évaluation des résultats des objectifs
                 interministériels des préfets, le Premier Ministre a chargé les
                 préfets de région de transmettre leur appréciation des résultats
@@ -122,7 +122,7 @@ export default function PageAppreciation(
               >
                 <div className="flex flex-col gap-4">
                   <div>
-                    <p className="!mb-0">
+                    <p className="mb-0">
                       Ces deux critères sont des composantes des objectifs
                       interministériels des préfets :
                     </p>
@@ -148,13 +148,13 @@ export default function PageAppreciation(
                     </ul>
                   </div>
 
-                  <p className="font-bold !text-2xl !text-primary !mb-0">
+                  <p className="font-bold text-2xl text-primary mb-0">
                     Quel est le contenu des appréciations par les préfets de
                     région ?
                   </p>
 
                   <div>
-                    <p className="!mb-0">
+                    <p className="mb-0">
                       Il vous est demandé de réaliser une appréciation pour
                       chacun des objectifs individuels retenus dans les
                       départements de votre région ainsi que pour chaque
@@ -185,13 +185,13 @@ export default function PageAppreciation(
                       </li>
                     </ul>
 
-                    <p className="!mb-0">
+                    <p className="mb-0">
                       <strong>Pour les objectifs collectifs</strong>, il n'est
                       demandé aucune appréciation aux préfets de région. Les
                       résultats des objectifs collectifs sont directement
                       constatés dans l'outil.
                     </p>
-                    <p className="!mb-0">
+                    <p className="mb-0">
                       La moyenne des résultats obtenus pour les objectifs
                       individuels et la manière de servir est ensuite intégrée à
                       la moyenne des résultats constatés pour les objectifs

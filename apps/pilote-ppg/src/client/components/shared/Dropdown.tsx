@@ -13,10 +13,10 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
       <DropdownMenu.Content
         {...props}
         className={clsxm(
-          props.className,
           "max-sm:w-[100vw]",
           "bg-white rounded-md shadow-md border border-gray-100 px-4 py-3 z-[1100]",
           "data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out",
+          props.className,
         )}
         sideOffset={8}
       >
@@ -30,7 +30,7 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
       type="button"
       {...props}
       className={clsxm(
-        "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
+        "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-colors font-medium",
         props.className,
       )}
     />
@@ -39,7 +39,7 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
     <Link
       {...props}
       className={clsxm(
-        "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium bg-none",
+        "block -mx-2 -my-1 px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-colors font-medium bg-none",
         props.className,
       )}
     />

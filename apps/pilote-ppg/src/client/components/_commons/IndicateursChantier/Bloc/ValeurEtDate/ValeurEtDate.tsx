@@ -27,8 +27,8 @@ const ValeurEtDate: FunctionComponent<ValeurEtDateProps> = ({
       {!!dateFormatée && (
         <p
           className={clsxm(
-            "h-4 text-[10px] leading-4",
-            modeImpression ? "text-dsfr-mention-grey" : "mb-0 texte-gris",
+            "h-4 text-[10px] leading-4 text-dsfr-mention-grey",
+            !modeImpression && "mb-0",
           )}
         >
           {`(${dateFormatée})`}

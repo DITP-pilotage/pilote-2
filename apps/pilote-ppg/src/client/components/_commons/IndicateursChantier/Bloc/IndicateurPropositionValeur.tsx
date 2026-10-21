@@ -58,7 +58,7 @@ export const IndicateurPropositionValeur = ({
 
   if (indicateur.mailleRegAgregee && mailleDuTerritoireSelectionnee === "REG") {
     return (
-      <div className="m-[var(--text-spacing)] text-xs print:text-base texte-gris mb-0 flex items-center">
+      <div className="m-[var(--text-spacing)] text-xs print:text-base text-dsfr-mention-grey mb-0 flex items-center">
         Impossible de proposer une autre valeur d'avancement
         <Infobulle classNameInfoBulle="tooltip-accordeon">
           <p className="text-sm print:text-base">
@@ -83,7 +83,7 @@ export const IndicateurPropositionValeur = ({
             <BoutonProposerValeur />
           ) : null
         }
-        className="texte-gris"
+        className="text-dsfr-mention-grey"
       >
         Aucune proposition pour la valeur d'avancement de cet indicateur -{" "}
         <strong>dernière proposition en date supprimée</strong> par le
@@ -104,7 +104,7 @@ export const IndicateurPropositionValeur = ({
             <BoutonProposerValeur />
           ) : null
         }
-        className="texte-gris"
+        className="text-dsfr-mention-grey"
       >
         Aucune proposition pour la valeur d'avancement de cet indicateur -{" "}
         <strong>dernière proposition en date refusée</strong> par la direction
@@ -224,7 +224,7 @@ export const IndicateurPropositionValeur = ({
             <BoutonProposerValeur />
           ) : null
         }
-        className="texte-gris"
+        className="text-dsfr-mention-grey"
       >
         Aucune proposition pour la valeur d'avancement de cet indicateur
       </LigneInformationPropositionValeur>

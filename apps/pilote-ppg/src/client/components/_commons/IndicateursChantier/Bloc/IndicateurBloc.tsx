@@ -149,11 +149,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   {indicateurNomAvecUnite}
                 </h4>
                 <div className="ml-4 mb-6">
-                  <p className="text-xs print:text-base mb-0 texte-gris">
+                  <p className="text-xs print:text-base mb-0 text-dsfr-mention-grey">
                     Identifiant de l'indicateur :{" "}
                     <strong>{indicateur.id}</strong>
                   </p>
-                  <p className="text-xs print:text-base mb-0 texte-gris">
+                  <p className="text-xs print:text-base mb-0 text-dsfr-mention-grey">
                     Dernière mise à jour de la valeur d'avancement pour le
                     territoire :{" "}
                     <span className="font-bold">
@@ -195,7 +195,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <Table.Cell className="mb-0 p-2 pl-4 md:p-2 md:py-2 md:pl-4" />
                     <Table.Cell className="mb-0 text-sm p-0 md:p-0 md:py-2" />
                     <Table.ColumnHeaderCell
-                      className="bg-dsfr-contrast-grey border-b border-b-high-grey text-center mb-0 text-sm font-bold p-0 md:p-0 md:py-2"
+                      className="bg-dsfr-contrast-grey text-center mb-0 text-sm font-bold p-0 md:p-0 md:py-2"
                       colSpan={3}
                     >
                       <div className="flex items-center justify-center">
@@ -203,7 +203,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       </div>
                     </Table.ColumnHeaderCell>
                   </Table.Row>
-                  <Table.Row className="border-b border-b-high-grey">
+                  <Table.Row className="border-b border-b-dsfr-grey-50">
                     <Table.ColumnHeaderCell className="bg-dsfr-blue-france-925 text-center mb-0 text-sm font-bold whitespace-nowrap px-2 md:py-2 md:px-2 border-b-0">
                       Territoire(s)
                     </Table.ColumnHeaderCell>

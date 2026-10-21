@@ -35,10 +35,10 @@ const HeaderCell = ({
   className?: string;
   isObjectif?: boolean;
 }>) => (
-  <div className="border-r !border-black last:!border-0">
+  <div className="border-r border-black last:border-0">
     <div
       className={clsxm(
-        "p-2 font-medium flex flex-col items-center border-b !border-black",
+        "p-2 font-medium flex flex-col items-center border-b border-black",
         className,
       )}
     >
@@ -52,7 +52,10 @@ const HeaderCell = ({
       })}
     >
       {isObjectif ? (
-        <div aria-label="Libellé objectif" className="!border-r" />
+        <div
+          aria-label="Libellé objectif"
+          className="border-r border-r-current"
+        />
       ) : null}
       {ETAPES.map((etape) => (
         <div
@@ -79,10 +82,10 @@ function HeaderGroup<T>({
 }) {
   return (
     <div
-      className="grid gap-0 grid-cols-subgrid border !border-black"
+      className="grid gap-0 grid-cols-subgrid border border-black"
       style={{ gridColumn: `span ${items.length + 1}` }}
     >
-      <div className="col-span-full text-center font-bold p-2 border-b !border-black">
+      <div className="col-span-full text-center font-bold p-2 border-b border-black">
         {label}
       </div>
       {items.map(children)}
@@ -147,10 +150,10 @@ export const TableauPilotageHeader = ({
         }}
       >
         <div
-          className="border !border-black grid grid-cols-subgrid"
+          className="border border-black grid grid-cols-subgrid"
           style={{ gridColumn: 1 }}
         >
-          <div className="col-span-full text-center font-bold p-2 border-b !border-black">
+          <div className="col-span-full text-center font-bold p-2 border-b border-black">
             Objectifs collectifs
           </div>
           <div
@@ -165,7 +168,7 @@ export const TableauPilotageHeader = ({
           {(critere) => {
             const IconComponent = CRITERE_TYPE_TO_ICON[critere.type];
             return (
-              <HeaderCell className="!p-1" key={`critere-header-${critere.id}`}>
+              <HeaderCell className="p-1" key={`critere-header-${critere.id}`}>
                 <ModaleFicheCadrage critere={critere}>
                   <button
                     className="flex items-center gap-2 text-left px-2 py-1"
