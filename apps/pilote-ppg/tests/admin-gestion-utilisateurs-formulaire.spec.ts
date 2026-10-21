@@ -1,4 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminUtilisateurs } from "./pages/admin/page-utilisateurs";
@@ -48,6 +50,57 @@ test("doit valider les champs obligatoires Service et Fonction à la création",
       await pageFormulaire.selectService("Préfecture de région");
       await pageFormulaire.expectPasErreurFonction();
       await pageFormulaire.expectPasErreurService();
+    },
+  );
+});
+
+test("doit créer un compte puis refuser un second compte avec la même adresse", async ({
+  page,
+  e2eContext,
+  step,
+}) => {
+  const email = `e2e.creation.${randomUUID().slice(0, 8)}@example.com`;
+  e2eContext.track("UTILISATEUR_CREE", { email });
+  const appActions = new AppActions(page, e2eContext);
+  const pageFormulaire = new PageUtilisateurFormulaire(page, e2eContext);
+
+  async function soumettreLeFormulaire(): Promise<void> {
+    await pageFormulaire.gotoCreer();
+    await pageFormulaire.remplirIdentification({
+      email,
+      nom: "Creation",
+      prenom: "E2E",
+    });
+    await pageFormulaire.selectProfil("DITP - Pilotage");
+    await pageFormulaire.remplirFonction("Testeur E2E");
+    await pageFormulaire.selectService("Préfecture de région");
+    await pageFormulaire.clickSuivantVersLaVerification();
+    await pageFormulaire.confirmer();
+  }
+
+  await step("Connexion en tant que DITP Admin", async () => {
+    await appActions.loginAs();
+  });
+
+  await step("Création du compte", async () => {
+    await soumettreLeFormulaire();
+    await pageFormulaire.expectSuccesModification();
+    const compte = await prisma.utilisateur.findUniqueOrThrow({
+      where: { email },
+      select: { profilCode: true, fonction: true },
+    });
+    expect(compte).toEqual({
+      profilCode: "DITP_PILOTAGE",
+      fonction: "Testeur E2E",
+    });
+  });
+
+  await step(
+    "Une seconde création avec la même adresse est refusée",
+    async () => {
+      await soumettreLeFormulaire();
+      await pageFormulaire.expectErreurEmailDejaUtilise();
+      expect(await prisma.utilisateur.count({ where: { email } })).toBe(1);
     },
   );
 });

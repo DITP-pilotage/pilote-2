@@ -24,6 +24,12 @@ UPDATE copie SET id = 'CH-902';
 INSERT INTO public.chantier_territoire SELECT * FROM copie;
 DROP TABLE copie;
 
+-- Métadonnées de CH-902 pour le paramétrage des chantiers (panel administrateur), copiées de CH-129
+CREATE TEMP TABLE copie AS SELECT * FROM raw_data.metadata_chantiers WHERE chantier_id = 'CH-129';
+UPDATE copie SET chantier_id = 'CH-902', ch_nom = 'Chantier e2e', maille_applicable = ARRAY['DEPT'];
+INSERT INTO raw_data.metadata_chantiers SELECT * FROM copie;
+DROP TABLE copie;
+
 -- CH-903 : chantier publié de la saisie des publications par l'IHM, copie de CH-129
 CREATE TEMP TABLE copie AS SELECT * FROM public.chantier_identite WHERE id = 'CH-129';
 UPDATE copie SET id = 'CH-903', nom = 'Chantier e2e saisie';

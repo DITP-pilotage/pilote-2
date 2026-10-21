@@ -1,5 +1,8 @@
 import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
+import { lireMetadataIndicateur } from "./e2e-test-context";
+import { CHANTIER_E2E, INDICATEUR_FORMULAIRE } from "./seed/entites-dediees";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminIndicateurForm } from "./pages/admin/page-admin-indicateur-form";
 import { PageAdminIndicateurs } from "./pages/admin/page-admin-indicateurs";
@@ -14,12 +17,19 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
   }) => {
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
+    e2eContext.track(
+      "INDICATEUR_MODIFIE",
+      await lireMetadataIndicateur(INDICATEUR_FORMULAIRE),
+    );
 
-    await step("Connexion et accès à la fiche indicateur IND-021", async () => {
-      await appActions.loginAs(DITP_ADMIN);
-      await pageForm.goto("IND-021");
-      await pageForm.expectTitreFiche("IND-021");
-    });
+    await step(
+      `Connexion et accès à la fiche indicateur ${INDICATEUR_FORMULAIRE}`,
+      async () => {
+        await appActions.loginAs(DITP_ADMIN);
+        await pageForm.goto(INDICATEUR_FORMULAIRE);
+        await pageForm.expectTitreFiche(INDICATEUR_FORMULAIRE);
+      },
+    );
 
     await step("Vérification du lien retour", async () => {
       await pageForm.expectLienRetourVisible();
@@ -53,10 +63,10 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
     );
 
     await step(
-      "Vérification des données de l'indicateur IND-021 dans la section identité",
+      `Vérification des données de l'indicateur ${INDICATEUR_FORMULAIRE} dans la section identité`,
       async () => {
-        await pageForm.expectDonneeAffichee("CH-129");
-        await pageForm.expectDonneeAffichee("IND-021");
+        await pageForm.expectDonneeAffichee(CHANTIER_E2E);
+        await pageForm.expectDonneeAffichee(INDICATEUR_FORMULAIRE);
       },
     );
 
@@ -150,21 +160,6 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
         await pageForm.expectDonneeAffichee("Oui");
       },
     );
-
-    await step("Restauration des valeurs d'origine et soumission", async () => {
-      await pageForm.clickModifier();
-      await pageForm.remplirInput("indicUnite", "");
-      await pageForm.remplirTextArea(
-        "indicDescr",
-        "Contrôles « terrain » réalisés au titre des plans de surveillance et de contrôle de l'environnement marin (PSCEM) et des plans interrégionaux des contrôles des pêches (PIRC) pour la pêche à pied loisir et professionnelle ainsi que pour la pêche de loisir embarquée et sous-marine. // Thématiques de contrôle : mouillage individuel ; zone de mouillage et d'équipement léger (ZMEL) ; rejet ; espèces protégées et leurs habitats (faune et flore) ; biens culturels maritimes ; épaves ; activités et manifestations soumises à évaluation d'incidence Natura 2000 ; domanialité publique (circulation et dégradation) ; culture marine ; travaux en milieu marin ; arrêtés à visa environnemental ; arrêté de protection ; réserve naturelle ; parc national ; pêche à pied, pêche de loisir embarqué et sous-marine, etc. // Corps de contrôle : DDT/(A)M / DGTM, Parcs Naturels Marins, Gendarmerie Nationale, Réserves Naturelles, Douane, Gendarmerie Maritime, Parcs Nationaux, Office Français de la Biodiversité, DIRM/DM, DMLC, Conservatoire du littoral, Marine Nationale, Police Municipale, DREAL/DEAL/DRIEAT/DEALM, Police Nationale, autres.",
-      );
-      await pageForm.ouvrirAccordionAutresInformations();
-      await pageForm.changerSelecteur("periodicite", "Trimestrielle");
-      await pageForm.clickSwitch("Phare");
-      await pageForm.clickConfirmerChangements();
-      await pageForm.expectAlerteSuccesModification();
-      await pageForm.expectModeConsultation();
-    });
 
     await step("Retour au listing depuis la fiche", async () => {
       await pageForm.clickRetour();
@@ -414,7 +409,7 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
 });
 
 test.describe("Formulaire indicateur — Création", () => {
-  test("doit afficher le formulaire en mode création et permettre de créer un indicateur", async ({
+  test("doit créer un indicateur depuis le formulaire de création", async ({
     page,
     e2eContext,
     step,
@@ -422,8 +417,9 @@ test.describe("Formulaire indicateur — Création", () => {
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
-    // IND-999 n'existe pas en base, il sera initialisé comme nouvel indicateur
-    const nouvelIndicateurId = "IND-999";
+    // IND-990 n'existe pas en base, il sera initialisé comme nouvel indicateur
+    const nouvelIndicateurId = "IND-990";
+    e2eContext.track("INDICATEUR_CREE", { indicId: nouvelIndicateurId });
 
     await step("Connexion et accès au formulaire de création", async () => {
       await appActions.loginAs(DITP_ADMIN);
@@ -433,17 +429,37 @@ test.describe("Formulaire indicateur — Création", () => {
 
     await step("Vérification du mode création", async () => {
       await pageForm.expectModeCreation();
+      await pageForm.expectSelecteurActifInactifVisible();
+      await pageForm.expectAccordionIdentiteOuvert();
+      await pageForm.expectAccordionParametragesFerme();
+      await pageForm.expectAccordionAutresInformationsFerme();
     });
 
-    await step(
-      "Vérification de la structure du formulaire en création",
-      async () => {
-        await pageForm.expectSelecteurActifInactifVisible();
-        await pageForm.expectAccordionIdentiteOuvert();
-        await pageForm.expectAccordionParametragesFerme();
-        await pageForm.expectAccordionAutresInformationsFerme();
-      },
-    );
+    await step("Saisie des champs et création", async () => {
+      await pageForm.remplirTextArea(
+        "indicNom",
+        "Indicateur créé par un test e2e",
+      );
+      await pageForm.changerSelecteur("indicParentCh", "CH-902");
+      await pageForm.remplirTextArea(
+        "indicDescr",
+        "Description de l'indicateur créé par un test e2e",
+      );
+      await pageForm.changerSelecteur("indicType", "IMPACT");
+      await pageForm.changerSelecteur("indicSchema", "sans-contraintes.json");
+      await pageForm.changerSelecteur("periodicite", "Trimestrielle");
+      await pageForm.clickCreerIndicateur();
+      await pageForm.expectAlerteSuccesCreation();
+    });
+
+    await step("L'indicateur créé est enregistré", async () => {
+      const indicateur =
+        await prisma.metadata_indicateurs_hidden.findUniqueOrThrow({
+          where: { indic_id: nouvelIndicateurId },
+          select: { indic_nom: true },
+        });
+      expect(indicateur.indic_nom).toBe("Indicateur créé par un test e2e");
+    });
   });
 });
 

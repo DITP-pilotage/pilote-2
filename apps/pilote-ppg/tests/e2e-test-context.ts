@@ -1,4 +1,11 @@
-import { $Enums, PrismaClient } from "@prisma/client";
+import {
+  $Enums,
+  metadata_chantiers,
+  metadata_indicateurs_complementaire,
+  metadata_indicateurs_hidden,
+  metadata_parametrage_indicateurs,
+  PrismaClient,
+} from "@prisma/client";
 
 import { creerAdapter } from "@/server/framework/persistence/adapter";
 
@@ -28,8 +35,36 @@ type ActionType =
   | "UTILISATEUR_DESACTIVE"
   | "PROFIL_UTILISATEUR_MODIFIE"
   | "TOKEN_API_CREE"
+  | "INDICATEUR_CREE"
+  | "INDICATEUR_MODIFIE"
+  | "CHANTIER_PARAMETRAGE_MODIFIE"
   | "ACCES_ALBERT_PROFIL_ACTIVE"
   | "ACCES_ALBERT_UTILISATEUR_AJOUTE";
+
+type MetadataIndicateur = {
+  hidden: metadata_indicateurs_hidden;
+  parametrage: metadata_parametrage_indicateurs;
+  complementaire: metadata_indicateurs_complementaire;
+};
+
+export async function lireMetadataIndicateur(
+  indicId: string,
+): Promise<MetadataIndicateur> {
+  const where = { indic_id: indicId };
+  return {
+    hidden: await prisma.metadata_indicateurs_hidden.findUniqueOrThrow({
+      where,
+    }),
+    parametrage:
+      await prisma.metadata_parametrage_indicateurs.findUniqueOrThrow({
+        where,
+      }),
+    complementaire:
+      await prisma.metadata_indicateurs_complementaire.findUniqueOrThrow({
+        where,
+      }),
+  };
+}
 
 interface TrackedAction {
   type: ActionType;
@@ -107,6 +142,40 @@ export class E2ETestContext {
             where: { email: action.filters.email as string },
           });
           break;
+        case "INDICATEUR_CREE": {
+          const where = { indic_id: action.filters.indicId as string };
+          await prisma.metadata_indicateurs_complementaire.deleteMany({
+            where,
+          });
+          await prisma.metadata_parametrage_indicateurs.deleteMany({ where });
+          await prisma.metadata_indicateurs_hidden.deleteMany({ where });
+          break;
+        }
+        case "INDICATEUR_MODIFIE": {
+          const original = action.filters as MetadataIndicateur;
+          const where = { indic_id: original.hidden.indic_id };
+          await prisma.metadata_indicateurs_hidden.update({
+            where,
+            data: original.hidden,
+          });
+          await prisma.metadata_parametrage_indicateurs.update({
+            where,
+            data: original.parametrage,
+          });
+          await prisma.metadata_indicateurs_complementaire.update({
+            where,
+            data: original.complementaire,
+          });
+          break;
+        }
+        case "CHANTIER_PARAMETRAGE_MODIFIE": {
+          const original = action.filters as metadata_chantiers;
+          await prisma.metadata_chantiers.update({
+            where: { chantier_id: original.chantier_id },
+            data: original,
+          });
+          break;
+        }
         case "TOKEN_API_CREE":
           await prisma.token_api_information.deleteMany({
             where: { email: action.filters.email as string },

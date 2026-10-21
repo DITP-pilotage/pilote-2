@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, Locator } from "@playwright/test";
 import { BasePage } from "../base.page";
 
 export class PageUtilisateurFormulaire extends BasePage {
@@ -59,15 +59,37 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async selectService(serviceName: string): Promise<void> {
-    await this.page.getByLabel(/^Service/).click();
-    await this.page.getByRole("option", { name: serviceName }).click();
+    await this.choisirOption(
+      this.page.getByLabel(/^Service/),
+      this.page.getByRole("option", { name: serviceName }),
+    );
   }
 
   async selectProfil(profilName: string): Promise<void> {
-    await this.page.getByLabel("Profil", { exact: true }).click();
-    await this.page
-      .getByRole("option", { name: profilName, exact: true })
-      .click();
+    await this.choisirOption(
+      this.page.getByLabel("Profil", { exact: true }),
+      this.page.getByRole("option", { name: profilName, exact: true }),
+    );
+  }
+
+  // Un clic sur la liste avant l'hydratation ne l'ouvre pas : on réessaie l'ouverture.
+  private async choisirOption(liste: Locator, option: Locator): Promise<void> {
+    await expect(async () => {
+      if (!(await option.isVisible())) {
+        await liste.click();
+      }
+      await option.click({ timeout: 2_000 });
+    }).toPass();
+  }
+
+  async clickSuivantVersLaVerification(): Promise<void> {
+    // Chaque réponse renouvelle le cookie csrf : confirmer avant la fin du chargement
+    // de l'étape 2 enverrait un jeton périmé.
+    const etapeVerificationChargee = this.page.waitForResponse(
+      /chantier\.recupererTousLesInformationsChantiers/,
+    );
+    await this.clickSuivant();
+    await etapeVerificationChargee;
   }
 
   async clickSuivant(): Promise<void> {
@@ -104,5 +126,13 @@ export class PageUtilisateurFormulaire extends BasePage {
     ).toBeVisible({
       timeout: 10_000,
     });
+  }
+
+  async expectErreurEmailDejaUtilise(): Promise<void> {
+    await expect(
+      this.page.getByRole("alert").getByRole("heading", {
+        name: "Un compte a déjà été créé avec cette adresse électronique.",
+      }),
+    ).toBeVisible();
   }
 }

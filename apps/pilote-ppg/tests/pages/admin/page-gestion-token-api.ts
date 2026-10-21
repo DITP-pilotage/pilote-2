@@ -3,7 +3,7 @@ import { BasePage } from "../base.page";
 
 export class PageGestionTokenApi extends BasePage {
   async goto(): Promise<void> {
-    await this.page.goto("/admin/gestion-token-api");
+    await this.page.goto("/panel-administrateur/gestion-token-api");
   }
 
   async createToken(email: string): Promise<string> {

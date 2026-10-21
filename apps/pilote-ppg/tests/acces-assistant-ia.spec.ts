@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminAlbertPermissions } from "./pages/admin/page-admin-albert-permissions";
@@ -119,4 +121,50 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
       await pageAccueil.expectAccesAssistantIA();
     },
   );
+});
+
+test.describe("Appels directs à l'assistant IA", () => {
+  test("un compte sans accès à l'assistant ne peut pas lui écrire", async ({
+    page,
+    e2eContext,
+  }) => {
+    await new AppActions(page, e2eContext).loginAs(
+      "premiere.ministre@example.com",
+    );
+
+    const reponse = await page.request.post("/api/albert/chat", {
+      data: { messages: [] },
+    });
+
+    expect(reponse.status()).toBe(403);
+  });
+
+  test("un compte ne télécharge que ses propres rapports", async ({
+    page,
+    e2eContext,
+  }) => {
+    await new AppActions(page, e2eContext).loginAs(ADMIN);
+    const autreCompte = await prisma.utilisateur.findUniqueOrThrow({
+      where: { email: "ditp.pilotage@example.com" },
+      select: { id: true },
+    });
+    const compteConnecte = await prisma.utilisateur.findUniqueOrThrow({
+      where: { email: ADMIN },
+      select: { id: true },
+    });
+
+    const rapportDUnAutre = await page.request.get(
+      `/api/albert/rapports/${autreCompte.id}/rapport-0123abcd.pdf`,
+    );
+    const nomInvalide = await page.request.get(
+      `/api/albert/rapports/${compteConnecte.id}/..%2Fsecret.pdf`,
+    );
+    const rapportAbsent = await page.request.get(
+      `/api/albert/rapports/${compteConnecte.id}/rapport-0123abcd.pdf`,
+    );
+
+    expect(rapportDUnAutre.status()).toBe(403);
+    expect(nomInvalide.status()).toBe(400);
+    expect(rapportAbsent.status()).toBe(404);
+  });
 });
