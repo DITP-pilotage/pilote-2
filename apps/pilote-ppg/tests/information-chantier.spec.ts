@@ -122,7 +122,7 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await step(
       "Navigation vers un chantier non autorisé — page 404",
       async () => {
-        await page.goto("/chantier/CH-001/NAT-FR");
+        await page.goto("/chantier/CH-070/NAT-FR");
         await pageChantier.expectPageNotFound();
       },
     );
