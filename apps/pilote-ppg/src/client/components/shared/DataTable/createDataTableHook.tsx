@@ -209,6 +209,7 @@ export function createDataTableHook(
           tileBreakpoint,
           tileLabel,
           sortingLabels: urlState?.sorting?.labels,
+          reloadsOnUrlChange: urlState?.shallow === false,
           ...(urlState
             ? {
                 urlFilters: {

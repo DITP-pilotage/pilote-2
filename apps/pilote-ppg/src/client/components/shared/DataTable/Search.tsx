@@ -1,5 +1,6 @@
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { SearchInput } from "@/components/shared/SearchInput";
+import { getDataTableConfig } from "./config";
 import type { AnyTable } from "./types";
 
 export type DataTableSearchProps = Omit<
@@ -9,48 +10,52 @@ export type DataTableSearchProps = Omit<
   debounceMs?: number;
 };
 
+const SERVER_SEARCH_DEBOUNCE_MS = 300;
+
 // La valeur issue de l'URL revient en retard après une navigation serveur : elle n'écrase pas la saisie en cours.
 export function DataTableSearch({
   table,
-  debounceMs = 0,
+  debounceMs,
   ...props
 }: DataTableSearchProps & { table: AnyTable }) {
-  const valeurTable: string = table.store.state.globalFilter ?? "";
-  const [valeur, setValeur] = useState(valeurTable);
-  const derniereValeurEnvoyee = useRef(valeurTable);
-  const envoiDiffere = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const delayMs =
+    debounceMs ??
+    (getDataTableConfig(table).reloadsOnUrlChange
+      ? SERVER_SEARCH_DEBOUNCE_MS
+      : 0);
+  const tableValue: string = table.store.state.globalFilter ?? "";
+  const [value, setValue] = useState(tableValue);
+  const lastSentValue = useRef(tableValue);
+  const pendingSend = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    if (valeurTable === derniereValeurEnvoyee.current) return;
-    clearTimeout(envoiDiffere.current);
-    derniereValeurEnvoyee.current = valeurTable;
-    setValeur(valeurTable);
-  }, [valeurTable]);
+    if (tableValue === lastSentValue.current) return;
+    clearTimeout(pendingSend.current);
+    lastSentValue.current = tableValue;
+    setValue(tableValue);
+  }, [tableValue]);
 
-  useEffect(() => () => clearTimeout(envoiDiffere.current), []);
+  useEffect(() => () => clearTimeout(pendingSend.current), []);
 
-  const envoyer = (suivante: string) => {
-    derniereValeurEnvoyee.current = suivante;
-    table.setGlobalFilter(suivante);
+  const send = (nextValue: string) => {
+    lastSentValue.current = nextValue;
+    table.setGlobalFilter(nextValue);
   };
 
   return (
     <SearchInput
       {...props}
       onChange={(event) => {
-        const suivante = event.target.value;
-        setValeur(suivante);
-        clearTimeout(envoiDiffere.current);
-        if (debounceMs > 0) {
-          envoiDiffere.current = setTimeout(
-            () => envoyer(suivante),
-            debounceMs,
-          );
+        const nextValue = event.target.value;
+        setValue(nextValue);
+        clearTimeout(pendingSend.current);
+        if (delayMs > 0) {
+          pendingSend.current = setTimeout(() => send(nextValue), delayMs);
         } else {
-          envoyer(suivante);
+          send(nextValue);
         }
       }}
-      value={valeur}
+      value={value}
     />
   );
 }

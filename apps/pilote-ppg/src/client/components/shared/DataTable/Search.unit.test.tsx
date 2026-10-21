@@ -13,41 +13,55 @@ type Chantier = { id: string; nom: string };
 const hook = createDataTableHook(
   tableFeatures({ columnFilteringFeature, globalFilteringFeature }),
 );
-const colonnes = (() => {
+const columns = (() => {
   const helper = hook.createColumnHelper<Chantier>();
   return helper.columns([helper.accessor("nom", { header: "Nom" })]);
 })();
 
-const DELAI_MS = 300;
+const DELAY_MS = 300;
 
-function Tableau({
-  valeurUrl,
-  onRecherche,
+function Table({
+  urlValue,
+  onSearch,
 }: {
-  valeurUrl: string;
-  onRecherche: (valeur: string) => void;
+  urlValue: string;
+  onSearch: (value: string) => void;
 }) {
   const table = hook.useDataTable({
     data: [],
-    columns: colonnes,
-    state: { globalFilter: valeurUrl },
+    columns: columns,
+    state: { globalFilter: urlValue },
     onGlobalFilterChange: (updater) =>
-      onRecherche(typeof updater === "function" ? updater(valeurUrl) : updater),
+      onSearch(typeof updater === "function" ? updater(urlValue) : updater),
   });
-  return <table.Search debounceMs={DELAI_MS} />;
+  return <table.Search debounceMs={DELAY_MS} />;
 }
 
-const avancer = (ms: number) => act(() => vi.advanceTimersByTime(ms));
+function UrlTable({ shallow }: { shallow: boolean }) {
+  const table = hook.useDataTable({
+    data: [],
+    columns: columns,
+    urlState: { globalFilter: true, shallow },
+  });
+  return (
+    <>
+      <table.Search />
+      <output>{table.store.state.globalFilter}</output>
+    </>
+  );
+}
+
+const advance = (ms: number) => act(() => vi.advanceTimersByTime(ms));
 
 describe("table.Search", () => {
-  const onRecherche = vi.fn();
-  const utilisateur = userEvent.setup({
+  const onSearch = vi.fn();
+  const user = userEvent.setup({
     advanceTimers: vi.advanceTimersByTime,
   });
 
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    onRecherche.mockClear();
+    onSearch.mockClear();
   });
 
   afterEach(() => {
@@ -55,40 +69,54 @@ describe("table.Search", () => {
   });
 
   it("n'envoie la recherche qu'une fois la saisie terminée", async () => {
-    render(<Tableau onRecherche={onRecherche} valeurUrl="" />);
+    render(<Table onSearch={onSearch} urlValue="" />);
 
-    await utilisateur.type(screen.getByRole("searchbox"), "eau");
-    expect(onRecherche).not.toHaveBeenCalled();
+    await user.type(screen.getByRole("searchbox"), "eau");
+    expect(onSearch).not.toHaveBeenCalled();
 
-    avancer(DELAI_MS);
-    expect(onRecherche.mock.calls).toEqual([["eau"]]);
+    advance(DELAY_MS);
+    expect(onSearch.mock.calls).toEqual([["eau"]]);
   });
 
   it("conserve la saisie en cours quand l'URL reçoit la recherche précédente", async () => {
-    const { rerender } = render(
-      <Tableau onRecherche={onRecherche} valeurUrl="" />,
-    );
-    const champ = screen.getByRole("searchbox");
-    await utilisateur.type(champ, "ea");
-    avancer(DELAI_MS);
+    const { rerender } = render(<Table onSearch={onSearch} urlValue="" />);
+    const input = screen.getByRole("searchbox");
+    await user.type(input, "ea");
+    advance(DELAY_MS);
 
-    await utilisateur.type(champ, "u");
-    rerender(<Tableau onRecherche={onRecherche} valeurUrl="ea" />);
+    await user.type(input, "u");
+    rerender(<Table onSearch={onSearch} urlValue="ea" />);
 
-    expect(champ).toHaveValue("eau");
+    expect(input).toHaveValue("eau");
   });
 
   it("reprend la valeur de l'URL quand elle change d'ailleurs et abandonne la saisie en attente", async () => {
-    const { rerender } = render(
-      <Tableau onRecherche={onRecherche} valeurUrl="eau" />,
-    );
-    const champ = screen.getByRole("searchbox");
-    await utilisateur.type(champ, "x");
+    const { rerender } = render(<Table onSearch={onSearch} urlValue="eau" />);
+    const input = screen.getByRole("searchbox");
+    await user.type(input, "x");
 
-    rerender(<Tableau onRecherche={onRecherche} valeurUrl="" />);
-    avancer(DELAI_MS);
+    rerender(<Table onSearch={onSearch} urlValue="" />);
+    advance(DELAY_MS);
 
-    expect(champ).toHaveValue("");
-    expect(onRecherche).not.toHaveBeenCalled();
+    expect(input).toHaveValue("");
+    expect(onSearch).not.toHaveBeenCalled();
+  });
+
+  it("attend une pause de frappe quand la recherche recharge la page", async () => {
+    render(<UrlTable shallow={false} />);
+
+    await user.type(screen.getByRole("searchbox"), "eau");
+    expect(screen.getByRole("status")).toHaveTextContent("");
+
+    advance(DELAY_MS);
+    expect(screen.getByRole("status")).toHaveTextContent("eau");
+  });
+
+  it("applique la recherche à chaque frappe quand le tableau filtre côté client", async () => {
+    render(<UrlTable shallow />);
+
+    await user.type(screen.getByRole("searchbox"), "e");
+
+    expect(screen.getByRole("status")).toHaveTextContent("e");
   });
 });

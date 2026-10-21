@@ -25,7 +25,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
   return (
     <section className="px-2">
       <div className="w-full max-w-[20.5rem] mt-4">
-        <table.Search debounceMs={300} />
+        <table.Search />
       </div>
       <h2 className="text-h4 md:text-h4-md mt-6 mb-0 text-primary">
         {`${nombreUtilisateur} ${nombreUtilisateur > 1 ? "comptes" : "compte"}`}

@@ -33,7 +33,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
       <div className="flex flex-col justify-between 2xl:flex-row gap-4 2xl:items-end w-full mb-4">
         <div className="flex flex-col 2xl:flex-row gap-4">
           <div className="w-80 max-w-full">
-            <table.Search debounceMs={300} />
+            <table.Search />
           </div>
         </div>
         <div className="flex flex-wrap gap-4 items-end">
