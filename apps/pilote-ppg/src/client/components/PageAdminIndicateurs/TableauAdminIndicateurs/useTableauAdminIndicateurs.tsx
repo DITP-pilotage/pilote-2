@@ -10,10 +10,8 @@ import {
   tableFeatures,
 } from "@tanstack/react-table";
 import {
-  ChangeEvent,
   ChangeEventHandler,
   FormEventHandler,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -184,13 +182,6 @@ export default function useTableauPageAdminIndicateurs() {
     table.setPageIndex(0);
   }, [filtresActifs, table]);
 
-  const changementDeLaRechercheCallback = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) =>
-      table.setGlobalFilter(event.target.value),
-    [table],
-  );
-  const valeurDeLaRecherche = table.store.state.globalFilter ?? "";
-
   const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.target.files && event.target.files[0]) {
       setFile(event.target.files[0]);
@@ -243,8 +234,6 @@ export default function useTableauPageAdminIndicateurs() {
     verifierLeFichier,
     table,
     estEnChargement,
-    valeurDeLaRecherche,
     exporterLesIndicateurs,
-    changementDeLaRechercheCallback,
   };
 }

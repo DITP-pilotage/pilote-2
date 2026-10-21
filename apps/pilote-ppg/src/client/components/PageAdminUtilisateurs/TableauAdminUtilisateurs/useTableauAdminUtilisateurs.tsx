@@ -5,7 +5,6 @@ import {
   rowSortingFeature,
   tableFeatures,
 } from "@tanstack/react-table";
-import { ChangeEvent, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { formaterDate } from "@/client/utils/date/date";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
@@ -117,19 +116,8 @@ export const useTableauPageAdminUtilisateurs = (
       globalFilter: true,
       shallow: false,
       history: "push",
-      throttleMs: 400,
     },
   });
 
-  const changementDeLaRechercheCallback = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) =>
-      table.setGlobalFilter(event.target.value),
-    [table],
-  );
-
-  return {
-    table,
-    changementDeLaRechercheCallback,
-    valeurDeLaRecherche: table.store.state.globalFilter ?? "",
-  };
+  return { table };
 };

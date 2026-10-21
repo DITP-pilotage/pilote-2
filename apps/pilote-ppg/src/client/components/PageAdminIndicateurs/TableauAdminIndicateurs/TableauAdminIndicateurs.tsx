@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import { Button } from "@/components/shared/Button";
 import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
-import { SearchInput } from "@/components/shared/SearchInput";
 import { PageLoader } from "@/components/shared/PageLoader";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -14,8 +13,6 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
     définirLeFichier,
     verifierLeFichier,
     estEnChargement,
-    changementDeLaRechercheCallback,
-    valeurDeLaRecherche,
     exporterLesIndicateurs,
   } = useTableauPageAdminIndicateurs();
 
@@ -34,10 +31,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
         <div className="flex flex-wrap items-center -m-2 lg:-m-3">
           <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
             <div className="w-full max-w-[20.5rem]">
-              <SearchInput
-                onChange={changementDeLaRechercheCallback}
-                value={valeurDeLaRecherche}
-              />
+              <table.Search />
             </div>
           </div>
           <div className="p-2 lg:p-3 w-full shrink-0 md:w-1/2">
