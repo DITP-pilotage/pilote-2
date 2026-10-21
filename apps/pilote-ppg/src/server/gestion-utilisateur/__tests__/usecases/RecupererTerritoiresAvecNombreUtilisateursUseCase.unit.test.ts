@@ -1,6 +1,5 @@
 import { mock, MockProxy } from "vitest-mock-extended";
 import { TerritoireBuilder } from "@/test/builders/Territoire.builder";
-import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { RecupererTerritoiresAvecNombreUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTerritoiresAvecNombreUtilisateursUseCase";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
@@ -20,7 +19,7 @@ describe("RecupererTerritoiresAvecNombreUtilisateursUseCase", () => {
       });
   });
 
-  it("doit récupérer les territoires associés aux codes avec un nombre d'utilisateur", async () => {
+  it("récupère les territoires demandés avec leur nombre d'utilisateurs", async () => {
     // Given
     const territoires = [
       new TerritoireBuilder()
@@ -32,98 +31,65 @@ describe("RecupererTerritoiresAvecNombreUtilisateursUseCase", () => {
         .avecMaille("regionale")
         .build(),
     ];
-    territoireRepository.lister.mockResolvedValue(territoires);
+    territoireRepository.list.mockResolvedValue(territoires);
     utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue(
-      {
-        "DEPT-01": 2,
-        "REG-84": 4,
-      },
+      { "DEPT-01": 2, "REG-84": 4 },
     );
 
     // When
-    const territoiresResults =
-      await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({
-        territoireCodes: ["DEPT-01", "REG-84"],
-      });
+    const result = await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({
+      territoireCodes: ["DEPT-01", "REG-84"],
+    });
 
     // Then
-    expect(territoireRepository.lister).toHaveBeenNthCalledWith(1, [
+    expect(territoireRepository.list).toHaveBeenCalledWith([
       "DEPT-01",
       "REG-84",
     ]);
-    expect(
-      utilisateurRepository.récupérerNombreUtilisateursParTerritoires,
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      utilisateurRepository.récupérerNombreUtilisateursParTerritoires,
-    ).toHaveBeenNthCalledWith(1, territoires);
-    expect(territoiresResults).toHaveLength(2);
-    expect(territoiresResults[0]).toHaveProperty("nombreUtilisateur");
+    expect(result).toEqual([
+      { ...territoires[0], nombreUtilisateur: 2 },
+      { ...territoires[1], nombreUtilisateur: 4 },
+    ]);
   });
 
-  it("si la liste de codes territoires est vide retourne une liste vide", async () => {
-    // Given
-    const territoires = [] as Territoire[];
-    territoireRepository.lister.mockResolvedValue(territoires);
-    utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue(
-      {},
-    );
-    // When
-    const territoiresResults =
-      await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({
-        territoireCodes: [],
-      });
-
-    // Then
-    expect(territoireRepository.lister).toHaveBeenNthCalledWith(1, []);
-    expect(
-      utilisateurRepository.récupérerNombreUtilisateursParTerritoires,
-    ).toHaveBeenNthCalledWith(1, territoires);
-    expect(
-      utilisateurRepository.récupérerNombreUtilisateursParTerritoires,
-    ).toHaveBeenCalledTimes(1);
-    expect(territoiresResults).toHaveLength(0);
-  });
-
-  it("si territoiresCode est null doit retourner tous les territoires", async () => {
+  it("récupère tous les territoires quand aucun code n'est demandé", async () => {
     // Given
     const territoires = [
       new TerritoireBuilder()
         .avecCode("DEPT-01")
         .avecMaille("departementale")
         .build(),
-      new TerritoireBuilder()
-        .avecCode("REG-84")
-        .avecMaille("regionale")
-        .build(),
-      new TerritoireBuilder()
-        .avecCode("DEPT-34")
-        .avecMaille("departementale")
-        .build(),
     ];
-    territoireRepository.lister.mockResolvedValue(territoires);
+    territoireRepository.listAll.mockResolvedValue(territoires);
     utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue(
-      {
-        "DEPT-01": 2,
-        "REG-84": 4,
-        "DEPT-34": 1,
-      },
+      { "DEPT-01": 2 },
     );
+
     // When
-    const territoiresResults =
-      await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({
-        territoireCodes: null,
-      });
+    const result = await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({
+      territoireCodes: null,
+    });
 
     // Then
-    expect(territoireRepository.lister).toHaveBeenCalledTimes(1);
-    expect(
-      utilisateurRepository.récupérerNombreUtilisateursParTerritoires,
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      utilisateurRepository.récupérerNombreUtilisateursParTerritoires,
-    ).toHaveBeenNthCalledWith(1, territoires);
-    expect(territoiresResults).toHaveLength(3);
-    expect(territoiresResults[0]).toHaveProperty("nombreUtilisateur");
+    expect(territoireRepository.list).not.toHaveBeenCalled();
+    expect(result).toEqual([{ ...territoires[0], nombreUtilisateur: 2 }]);
+  });
+
+  it("transmet une liste de codes vide au dépôt sans la convertir en « tous »", async () => {
+    // Given
+    territoireRepository.list.mockResolvedValue([]);
+    utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue(
+      {},
+    );
+
+    // When
+    const result = await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({
+      territoireCodes: [],
+    });
+
+    // Then
+    expect(territoireRepository.list).toHaveBeenCalledWith([]);
+    expect(territoireRepository.listAll).not.toHaveBeenCalled();
+    expect(result).toEqual([]);
   });
 });

@@ -8,6 +8,6 @@ export const perimetreMinisterielRouter = createTRPCRouter({
   list: protectedProcedure.query(() => {
     return getContainer("gestionUtilisateur")
       .resolve("recupererPerimetresMinisterielsUseCase")
-      .run({ perimetresMinisterielsIds: [] });
+      .run({ perimetresMinisterielsIds: null });
   }),
 });

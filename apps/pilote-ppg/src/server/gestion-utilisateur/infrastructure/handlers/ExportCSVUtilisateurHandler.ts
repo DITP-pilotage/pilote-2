@@ -225,7 +225,7 @@ export const handleExportDesUtilisateurs = async (
     .run();
   const listePerimetresMinisteriels = await getContainer("gestionUtilisateur")
     .resolve("perimetreMinisterielRepository")
-    .lister([]);
+    .listAll();
 
   const listeInformationsChantiersUtilisateurs = await getContainer(
     "gestionUtilisateur",

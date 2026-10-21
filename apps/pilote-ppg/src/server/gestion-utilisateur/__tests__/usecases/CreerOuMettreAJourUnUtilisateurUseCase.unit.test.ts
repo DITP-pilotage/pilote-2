@@ -96,10 +96,10 @@ describe("CreerOuMettreAJourUnUtilisateurUseCase", () => {
     mock<HistorisationModificationRepository>();
   const stubContactInfolettreService = mock<ContactInfoLettresService>();
 
-  stubTerritoireRepository.lister.mockResolvedValue(
+  stubTerritoireRepository.listAll.mockResolvedValue(
     fakeTerritoires as Territoire[],
   );
-  stubTerritoireRepository.listerCodes.mockResolvedValue(
+  stubTerritoireRepository.listAllCodes.mockResolvedValue(
     fakeTerritoires.map((territoire) => territoire.code),
   );
 
@@ -107,8 +107,8 @@ describe("CreerOuMettreAJourUnUtilisateurUseCase", () => {
     fakeChantiers,
   );
 
-  stubPérimètreMinistérielRepository.lister.mockResolvedValue(fakePérimètres);
-  stubPérimètreMinistérielRepository.listerIds.mockResolvedValue(
+  stubPérimètreMinistérielRepository.listAll.mockResolvedValue(fakePérimètres);
+  stubPérimètreMinistérielRepository.listAllIds.mockResolvedValue(
     fakePérimètres.map((perimetre) => perimetre.id),
   );
 

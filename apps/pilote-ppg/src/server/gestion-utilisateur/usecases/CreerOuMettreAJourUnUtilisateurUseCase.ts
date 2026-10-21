@@ -79,11 +79,10 @@ export default class CreerOuMettreAJourUnUtilisateurUseCase {
   ): Promise<void> {
     const listeInformationsChantiersUtilisateurs =
       await this.chantierRepository.listerInformationsChantiersUtilisateurs();
-    const listeTerritoiresCodes = await this.territoireRepository.listerCodes(
-      [],
-    );
+    const listeTerritoiresCodes =
+      await this.territoireRepository.listAllCodes();
     const listePerimetresMinisteriels =
-      await this.perimetreMinisterielRepository.listerIds([]);
+      await this.perimetreMinisterielRepository.listAllIds();
 
     const habilitationsFormatées = await this._définirLesHabilitations(
       utilisateur,
@@ -493,8 +492,8 @@ export default class CreerOuMettreAJourUnUtilisateurUseCase {
     utilisateur: UtilisateurÀCréerOuMettreÀJour,
     chantiers: InformationChantierUtilisateur[],
   ): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
-    const territoires = await this.territoireRepository.lister([]);
-    const périmètres = await this.perimetreMinisterielRepository.lister([]);
+    const territoires = await this.territoireRepository.listAll();
+    const périmètres = await this.perimetreMinisterielRepository.listAll();
 
     const chantiersResponsabilite =
       this._déterminerChantiersResponsabilite(utilisateur);

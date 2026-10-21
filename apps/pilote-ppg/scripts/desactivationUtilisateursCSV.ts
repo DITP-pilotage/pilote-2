@@ -31,9 +31,9 @@ async function main() {
 
   const listeInformationsChantiersUtilisateurs =
     await chantierRepository.listerInformationsChantiersUtilisateurs();
-  const listeTerritoiresCodes = await territoireRepository.listerCodes([]);
+  const listeTerritoiresCodes = await territoireRepository.listAllCodes();
   const listePerimetresMinisteriels =
-    await perimetreMinisterielRepository.listerIds([]);
+    await perimetreMinisterielRepository.listAllIds();
 
   const auteurGenerique = await utilisateurRepository.récupérer(
     "import.csv@modernisation.gouv.fr",

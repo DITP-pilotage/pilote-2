@@ -90,20 +90,25 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
   const listePerimetresMinisteriel = await getContainer("gestionUtilisateur")
     .resolve("recupererPerimetresMinisterielsUseCase")
     .run({
-      perimetresMinisterielsIds: filtres.perimetresMinisteriels,
+      perimetresMinisterielsIds:
+        filtres.perimetresMinisteriels.length > 0
+          ? filtres.perimetresMinisteriels
+          : null,
     });
 
+  const selectablePerimetreIds = [
+    ...new Set([
+      ...listeChantiers.flatMap((chantier) => chantier.périmètreIds),
+      ...session.habilitations.gestionUtilisateur.périmètres,
+    ]),
+  ];
   const listePerimetresMinisterielSelectionnable = await getContainer(
     "gestionUtilisateur",
   )
     .resolve("recupererPerimetresMinisterielsUseCase")
     .run({
-      perimetresMinisterielsIds: [
-        ...new Set([
-          ...listeChantiers.flatMap((chantier) => chantier.périmètreIds),
-          ...session.habilitations.gestionUtilisateur.périmètres,
-        ]),
-      ],
+      perimetresMinisterielsIds:
+        selectablePerimetreIds.length > 0 ? selectablePerimetreIds : null,
     });
 
   const listeProfils = await getContainer("gestionUtilisateur")

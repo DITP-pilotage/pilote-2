@@ -13,6 +13,6 @@ export class RecupererTousLesTerritoiresUseCase {
   }
 
   async run(): Promise<Territoire[]> {
-    return this.territoireRepository.lister([]);
+    return this.territoireRepository.listAll();
   }
 }

@@ -40,11 +40,10 @@ export class RecupererListeUtilisateursUseCase {
   }): Promise<UtilisateurListeGestion[]> {
     const listeInformationsChantiersUtilisateurs =
       await this.chantierRepository.listerInformationsChantiersUtilisateurs();
-    const listeTerritoiresCodes = await this.territoireRepository.listerCodes(
-      [],
-    );
+    const listeTerritoiresCodes =
+      await this.territoireRepository.listAllCodes();
     const listePerimetresMinisteriels =
-      await this.perimetreMinisterielRepository.listerIds([]);
+      await this.perimetreMinisterielRepository.listAllIds();
 
     return this.utilisateurRepository.recupererTous({
       sorting,

@@ -58,14 +58,13 @@ export default class ImporterDesUtilisateursUseCase {
   ): Promise<void> {
     const listeInformationsChantiersUtilisateurs =
       await this.chantierRepository.listerInformationsChantiersUtilisateurs();
-    const listeTerritoiresCodes = await this.territoireRepository.listerCodes(
-      [],
-    );
+    const listeTerritoiresCodes =
+      await this.territoireRepository.listAllCodes();
     const listePerimetresMinisteriels =
-      await this.perimetreMinisterielRepository.listerIds([]);
+      await this.perimetreMinisterielRepository.listAllIds();
 
     for (const utilisateur of utilisateurs) {
-      const territoires = await this.territoireRepository.lister([]);
+      const territoires = await this.territoireRepository.listAll();
 
       // FIXME:
       // ATTENTION CE USECASE N'IMPLEMENTE PAS TOUTES LES REGLES DE VERIFICATION DE LA COHERENCE ENTRE LES INFORMATIONS FOURNIES ET LES PROFILS
