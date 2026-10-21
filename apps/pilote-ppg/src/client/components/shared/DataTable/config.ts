@@ -14,7 +14,6 @@ export type DataTableConfig = {
   tileLabel?: (row: AnyRow) => string;
   urlFilters?: { hasActiveFilters: boolean; resetFilters: () => void };
   sortingLabels?: Record<string, string>;
-  reloadsOnUrlChange?: boolean;
 };
 
 export const getDataTableConfig = (table: AnyTable): DataTableConfig =>

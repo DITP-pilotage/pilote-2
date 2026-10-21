@@ -22,19 +22,13 @@ export class FiltrerListeUtilisateursUseCase {
   private utilisateurPasseLeFiltrePérimètreMinistériel(
     utilisateur: UtilisateurListeGestion,
     listePerimetresMinisteriels: string[],
-    listeChantiersAssociesAuxPerimetres: string[],
   ) {
     if (listePerimetresMinisteriels.length === 0) {
       return true;
     }
 
-    return (
-      utilisateur.habilitations.lecture.périmètres.some((périmètre) =>
-        listePerimetresMinisteriels.includes(périmètre),
-      ) ||
-      utilisateur.habilitations.lecture.chantiers.some((chantier) =>
-        listeChantiersAssociesAuxPerimetres.includes(chantier),
-      )
+    return utilisateur.habilitations.lecture.périmètres.some((périmètre) =>
+      listePerimetresMinisteriels.includes(périmètre),
     );
   }
 
@@ -98,7 +92,6 @@ export class FiltrerListeUtilisateursUseCase {
       this.utilisateurPasseLeFiltrePérimètreMinistériel(
         utilisateur,
         filtresActifs.perimetresMinisteriels,
-        filtresActifs.chantiersAssociésAuxPérimètres,
       ) &&
       this.utilisateurPasseLeFiltreProfil(utilisateur, filtresActifs.profils) &&
       this.utilisateurPasseLeFiltreTypeCompte(

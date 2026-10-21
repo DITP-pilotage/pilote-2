@@ -20,6 +20,7 @@ import { RecupererTerritoiresAvecNombreUtilisateursUseCase } from "@/server/gest
 import { FiltrerListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/FiltrerListeUtilisateursUseCase";
 import { RecupererTousLesTerritoiresUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTousLesTerritoiresUseCase";
 import { RecupererListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase";
+import { ListUtilisateursPageUseCase } from "@/server/gestion-utilisateur/usecases/ListUtilisateursPageUseCase";
 import { PrismaHistorisationModificationRepository } from "@/server/historisation-modification/infrastructure/PrismaHistorisationModificationRepository";
 import { HistorisationModificationRepository } from "@/server/historisation-modification/domain/HistorisationModificationRepository";
 import {
@@ -95,6 +96,7 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   filtrerListeUtilisateursUseCase: FiltrerListeUtilisateursUseCase;
   recupererTousLesTerritoiresUseCase: RecupererTousLesTerritoiresUseCase;
   recupererListeUtilisateursUseCase: RecupererListeUtilisateursUseCase;
+  listUtilisateursPageUseCase: ListUtilisateursPageUseCase;
   recupererEtatVisualisationVideoAccueilUseCase: RecupererEtatVisualisationVideoAccueilUseCase;
   desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase;
   recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse;
@@ -180,6 +182,7 @@ export const gestionUtilisateurModule = defineModule<
       recupererListeUtilisateursUseCase: asModuleClass(
         RecupererListeUtilisateursUseCase,
       ),
+      listUtilisateursPageUseCase: asModuleClass(ListUtilisateursPageUseCase),
       recupererEtatVisualisationVideoAccueilUseCase: asModuleClass(
         RecupererEtatVisualisationVideoAccueilUseCase,
       ),

@@ -189,19 +189,6 @@ export const handleExportDesUtilisateurs = async (
       : "",
   } satisfies OptionsExportUtilisateur;
 
-  const listeChantiers = await getContainer("gestionUtilisateur")
-    .resolve("recupererChantiersSynthetisesUseCase")
-    .run({
-      listeChantierIdLecture:
-        habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(),
-    });
-
-  const filtresChantiersSupplémentaires = listeChantiers.filter((chantier) =>
-    chantier.périmètreIds.some((perimetreId) =>
-      optionsExport.chantiers.includes(perimetreId),
-    ),
-  );
-
   const stringifier = stringify({
     header: true,
     columns: HeadersExportCSVUtilisateur(),
@@ -216,8 +203,6 @@ export const handleExportDesUtilisateurs = async (
     chantiers: optionsExport.chantiers,
     profils: optionsExport.profils,
     typeCompte: optionsExport.typeCompte,
-    chantiersAssociésAuxPérimètres:
-      filtresChantiersSupplémentaires?.map((chantier) => chantier.id) ?? [],
   } satisfies FiltreQueryParams;
 
   const listeDesTerritoires = await getContainer("gestionUtilisateur")

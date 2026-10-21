@@ -1,6 +1,5 @@
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { SearchInput } from "@/components/shared/SearchInput";
-import { getDataTableConfig } from "./config";
 import type { AnyTable } from "./types";
 
 export type DataTableSearchProps = Omit<
@@ -20,9 +19,7 @@ export function DataTableSearch({
 }: DataTableSearchProps & { table: AnyTable }) {
   const delayMs =
     debounceMs ??
-    (getDataTableConfig(table).reloadsOnUrlChange
-      ? SERVER_SEARCH_DEBOUNCE_MS
-      : 0);
+    (table.options.manualFiltering ? SERVER_SEARCH_DEBOUNCE_MS : 0);
   const tableValue: string = table.store.state.globalFilter ?? "";
   const [value, setValue] = useState(tableValue);
   const lastSentValue = useRef(tableValue);

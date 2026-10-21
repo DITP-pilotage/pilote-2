@@ -37,11 +37,12 @@ function Table({
   return <table.Search debounceMs={DELAY_MS} />;
 }
 
-function UrlTable({ shallow }: { shallow: boolean }) {
+function UrlTable({ manualFiltering }: { manualFiltering: boolean }) {
   const table = hook.useDataTable({
     data: [],
     columns: columns,
-    urlState: { globalFilter: true, shallow },
+    manualFiltering,
+    urlState: { globalFilter: true },
   });
   return (
     <>
@@ -102,8 +103,8 @@ describe("table.Search", () => {
     expect(onSearch).not.toHaveBeenCalled();
   });
 
-  it("attend une pause de frappe quand la recherche recharge la page", async () => {
-    render(<UrlTable shallow={false} />);
+  it("attend une pause de frappe quand le serveur filtre le tableau", async () => {
+    render(<UrlTable manualFiltering />);
 
     await user.type(screen.getByRole("searchbox"), "eau");
     expect(screen.getByRole("status")).toHaveTextContent("");
@@ -113,7 +114,7 @@ describe("table.Search", () => {
   });
 
   it("applique la recherche à chaque frappe quand le tableau filtre côté client", async () => {
-    render(<UrlTable shallow />);
+    render(<UrlTable manualFiltering={false} />);
 
     await user.type(screen.getByRole("searchbox"), "e");
 

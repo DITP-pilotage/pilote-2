@@ -10,13 +10,9 @@ import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import PageAdminUtilisateurs from "@/components/PageAdminUtilisateurs/PageAdminUtilisateurs";
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
-import { FiltreQueryParams } from "@/server/gestion-utilisateur/app/contrats/FiltreQueryParams";
 import { Profil } from "@/shared/profil/Profil.interface";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
-import {
-  presenterEnUtilisateurListeGestionContrat,
-  UtilisateurListeGestionContrat,
-} from "@/server/app/contrats/UtilisateurListeGestionContrat";
+import type { UtilisateursPage } from "@/server/gestion-utilisateur/usecases/ListUtilisateursPageUseCase";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
 import { loadAdminUtilisateursSearchParams } from "@/client/searchParams/adminUtilisateursSearchParams";
 
@@ -26,8 +22,7 @@ type UtilisateurProps = {
   listePerimetresMinisterielSelectionnable: PerimetreMinisteriel[];
   listeProfils: Profil[];
   listeTerritoiresSelectionnable: TerritoireAvecNombreUtilisateurs[];
-  listeUtilisateurs: UtilisateurListeGestionContrat[];
-  nombreUtilisateur: number;
+  initialPage: UtilisateursPage;
 };
 
 export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
@@ -60,93 +55,51 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
       listeChantierIdLecture,
     });
 
-  const searchParams = loadAdminUtilisateursSearchParams(query);
+  const { q, sort, page, pageSize, ...filters } =
+    loadAdminUtilisateursSearchParams(query);
 
-  const filtreChantiers = searchParams.chantiers;
-
-  const filtresChantiersSupplémentaires = listeChantiers.filter((chantier) =>
-    chantier.périmètreIds.some((périmètreId) =>
-      filtreChantiers.includes(périmètreId),
-    ),
+  const perimetresMinisteriels = getContainer("gestionUtilisateur").resolve(
+    "recupererPerimetresMinisterielsUseCase",
   );
-
-  const filtres: FiltreQueryParams = {
-    territoires: searchParams.territoires,
-    perimetresMinisteriels: searchParams.perimetresMinisteriels,
-    chantiers: filtreChantiers,
-    profils: searchParams.profils,
-    typeCompte: searchParams.typeCompte,
-    chantiersAssociésAuxPérimètres:
-      filtresChantiersSupplémentaires?.map((chantier) => chantier.id) ?? [],
-  };
-
-  const {
-    page,
-    pageSize,
-    sort: sorting,
-    q: valeurDeLaRecherche,
-  } = searchParams;
-
-  const listePerimetresMinisteriel = await getContainer("gestionUtilisateur")
-    .resolve("recupererPerimetresMinisterielsUseCase")
-    .run({
-      perimetresMinisterielsIds:
-        filtres.perimetresMinisteriels.length > 0
-          ? filtres.perimetresMinisteriels
-          : null,
-    });
-
   const selectablePerimetreIds = [
     ...new Set([
       ...listeChantiers.flatMap((chantier) => chantier.périmètreIds),
       ...session.habilitations.gestionUtilisateur.périmètres,
     ]),
   ];
-  const listePerimetresMinisterielSelectionnable = await getContainer(
-    "gestionUtilisateur",
-  )
-    .resolve("recupererPerimetresMinisterielsUseCase")
-    .run({
+
+  const [
+    listePerimetresMinisteriel,
+    listePerimetresMinisterielSelectionnable,
+    listeProfils,
+    listeTerritoiresSelectionnable,
+    initialPage,
+  ] = await Promise.all([
+    perimetresMinisteriels.run({ perimetresMinisterielsIds: null }),
+    perimetresMinisteriels.run({
       perimetresMinisterielsIds:
         selectablePerimetreIds.length > 0 ? selectablePerimetreIds : null,
-    });
-
-  const listeProfils = await getContainer("gestionUtilisateur")
-    .resolve("recupererListeProfilUseCase")
-    .run();
-
-  const [tousLesUtilisateurs, territoiresListe] = await Promise.all([
+    }),
     getContainer("gestionUtilisateur")
-      .resolve("recupererListeUtilisateursUseCase")
+      .resolve("recupererListeProfilUseCase")
+      .run(),
+    getContainer("gestionUtilisateur")
+      .resolve("recupererTerritoiresAvecNombreUtilisateursUseCase")
       .run({
-        sorting,
-        valeurDeLaRecherche: valeurDeLaRecherche,
+        territoireCodes: session.habilitations.gestionUtilisateur.territoires,
       }),
     getContainer("gestionUtilisateur")
-      .resolve("recupererTousLesTerritoiresUseCase")
-      .run(),
+      .resolve("listUtilisateursPageUseCase")
+      .run({
+        filters,
+        search: q,
+        sorting: sort,
+        page,
+        pageSize,
+        profil: session.profil,
+        habilitation: habilitations,
+      }),
   ]);
-
-  const habilitation = new Habilitation(session.habilitations);
-
-  const utilisateursFiltrés = getContainer("gestionUtilisateur")
-    .resolve("filtrerListeUtilisateursUseCase")
-    .run({
-      utilisateurs: tousLesUtilisateurs,
-      filtresActifs: filtres,
-      profil: session.profil,
-      habilitation,
-    });
-
-  const listeTerritoiresSelectionnable = await getContainer(
-    "gestionUtilisateur",
-  )
-    .resolve("recupererTerritoiresAvecNombreUtilisateursUseCase")
-    .run({
-      territoireCodes: session.habilitations.gestionUtilisateur.territoires,
-    });
-
-  const nombreUtilisateur = utilisateursFiltrés.length;
 
   return {
     props: {
@@ -155,15 +108,7 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
       listeProfils,
       listePerimetresMinisterielSelectionnable,
       listeTerritoiresSelectionnable,
-      listeUtilisateurs: utilisateursFiltrés
-        .splice(page * pageSize, pageSize)
-        .map((utilisateur) =>
-          presenterEnUtilisateurListeGestionContrat(
-            utilisateur,
-            territoiresListe,
-          ),
-        ),
-      nombreUtilisateur,
+      initialPage,
     },
   };
 };
@@ -176,8 +121,7 @@ const NextPageUtilisateurs: FunctionComponent<
   listePerimetresMinisterielSelectionnable,
   listeProfils,
   listeTerritoiresSelectionnable,
-  listeUtilisateurs,
-  nombreUtilisateur,
+  initialPage,
 }) => {
   return (
     <>
@@ -191,9 +135,8 @@ const NextPageUtilisateurs: FunctionComponent<
           listePerimetresMinisterielSelectionnable
         }
         listeProfils={listeProfils}
+        initialPage={initialPage}
         listeTerritoiresSelectionnable={listeTerritoiresSelectionnable}
-        listeUtilisateurs={listeUtilisateurs}
-        nombreUtilisateur={nombreUtilisateur}
       />
     </>
   );

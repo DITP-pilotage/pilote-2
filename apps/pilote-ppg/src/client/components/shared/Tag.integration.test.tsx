@@ -1,7 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { userEvent } from "@testing-library/user-event";
-import { Tag, TagToggleGroup } from "@/components/shared/Tag";
+import {
+  Tag,
+  TagDismissible,
+  TagGroup,
+  TagToggleGroup,
+} from "@/components/shared/Tag";
 
 test("le tag est un bouton qui porte son libellé et lance un évènement au clic", async () => {
   const auClic = vi.fn();
@@ -32,4 +37,22 @@ test("un groupe de tags à choix unique ne se vide pas quand on reclique le choi
 
   expect(screen.getByRole("radio", { name: "Régions" })).toBeChecked();
   expect(auChangement).toHaveBeenCalledExactlyOnceWith("departementale");
+});
+
+test("un tag supprimable annonce le filtre qu'il retire et le retire au clic", async () => {
+  const onDismiss = vi.fn();
+
+  render(
+    <TagGroup.Root>
+      <TagGroup.Item>
+        <TagDismissible onClick={onDismiss}>Agriculture</TagDismissible>
+      </TagGroup.Item>
+    </TagGroup.Root>,
+  );
+  await userEvent.click(
+    screen.getByRole("button", { name: "Retirer le filtre Agriculture" }),
+  );
+
+  expect(screen.getByRole("listitem")).toHaveTextContent("Agriculture");
+  expect(onDismiss).toHaveBeenCalledTimes(1);
 });

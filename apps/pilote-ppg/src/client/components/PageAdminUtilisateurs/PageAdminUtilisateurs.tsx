@@ -11,23 +11,24 @@ import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { ChantierSynthétisé } from "@/shared/chantier/Chantier.interface";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import { Profil } from "@/shared/profil/Profil.interface";
-import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
+import type { UtilisateursPage } from "@/server/gestion-utilisateur/usecases/ListUtilisateursPageUseCase";
+import { api } from "@/server/framework/trpc/api";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useAdminUtilisateursSearchParams } from "@/components/PageAdminUtilisateurs/useAdminUtilisateursSearchParams";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
 import { ExportDesDonnees } from "@/components/PageAdminUtilisateurs/ExportDesDonnees/ExportDesDonnees";
 import { Icone } from "@/components/_commons/Icone";
 import { Success1Icon } from "@/components/_commons/Icones/Success1Icon";
 
 const PageAdminUtilisateurs: FunctionComponent<{
-  listeUtilisateurs: UtilisateurListeGestionContrat[];
-  nombreUtilisateur: number;
+  initialPage: UtilisateursPage;
   listeChantiers: ChantierSynthétisé[];
   listePerimetresMinisteriel: PerimetreMinisteriel[];
   listePerimetresMinisterielSelectionnable: PerimetreMinisteriel[];
   listeProfils: Profil[];
   listeTerritoiresSelectionnable: TerritoireAvecNombreUtilisateurs[];
 }> = ({
-  listeUtilisateurs,
-  nombreUtilisateur,
+  initialPage,
   listeChantiers,
   listePerimetresMinisteriel,
   listePerimetresMinisterielSelectionnable,
@@ -38,6 +39,14 @@ const PageAdminUtilisateurs: FunctionComponent<{
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
   const { data: session } = useSession();
+  const { params } = useAdminUtilisateursSearchParams();
+  const utils = api.useUtils();
+  useState(() => utils.utilisateur.list.setData(params, initialPage));
+  const { data: utilisateursPage = initialPage } =
+    api.utilisateur.list.useQuery(params, {
+      placeholderData: keepPreviousData,
+      staleTime: 30_000,
+    });
 
   const donneLaRedirection = () => {
     if (!session) {
@@ -84,7 +93,7 @@ const PageAdminUtilisateurs: FunctionComponent<{
   }, [router]);
 
   return (
-    <div className="flex">
+    <div className="flex grow">
       <AdminUtilisateursBarreLatérale
         estOuverteBarreLatérale={estOuverteBarreLatérale}
         listeChantiers={listeChantiers}
@@ -96,42 +105,36 @@ const PageAdminUtilisateurs: FunctionComponent<{
         listeTerritoiresSelectionnable={listeTerritoiresSelectionnable}
         setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
       />
-      <main>
-        <div className="mt-8 mb-6 md:mx-4">
-          {alerte ? (
-            <div className="my-8">
-              <Alerte
-                message={alerte.message}
-                titre={alerte.titre}
-                type={alerte.type}
-              />
-            </div>
-          ) : null}
-          <div className="flex flex-wrap items-center mb-6 px-4">
-            <div className="w-full shrink-0 md:w-1/2">
-              <h1 className="text-h1 md:text-h1-md mb-0">
-                Gestion des comptes
-              </h1>
-            </div>
-            <div className="flex justify-end items-center gap-2 w-full">
-              <ExportDesDonnees />
-              <Link
-                className="bg-primary bg-none font-medium text-white rounded flex items-center gap-2 px-4 py-2 no-underline"
-                href={donneLaRedirection()}
-                title="Créer un compte"
-              >
-                <Icone className="w-4 h-4 text-current" icone={Success1Icon} />
-                Créer un compte
-              </Link>
-            </div>
-          </div>
-          <Bloc contenuClassesSupplémentaires="">
-            <TableauAdminUtilisateurs
-              listeUtilisateurs={listeUtilisateurs}
-              nombreUtilisateur={nombreUtilisateur}
+      <main className="flex min-w-0 flex-1 flex-col gap-6 px-4 py-8 md:px-8">
+        {alerte ? (
+          <div>
+            <Alerte
+              message={alerte.message}
+              titre={alerte.titre}
+              type={alerte.type}
             />
-          </Bloc>
+          </div>
+        ) : null}
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <h1 className="text-h1 md:text-h1-md mb-0">Gestion des comptes</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <ExportDesDonnees />
+            <Link
+              className="bg-primary bg-none font-medium text-white rounded flex items-center gap-2 px-4 py-2 no-underline"
+              href={donneLaRedirection()}
+              title="Créer un compte"
+            >
+              <Icone className="w-4 h-4 text-current" icone={Success1Icon} />
+              Créer un compte
+            </Link>
+          </div>
         </div>
+        <Bloc className="flex-1" contenuClassesSupplémentaires="p-4 md:p-6">
+          <TableauAdminUtilisateurs
+            listeUtilisateurs={utilisateursPage.utilisateurs}
+            nombreUtilisateur={utilisateursPage.total}
+          />
+        </Bloc>
       </main>
     </div>
   );

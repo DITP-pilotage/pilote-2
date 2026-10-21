@@ -106,6 +106,7 @@ export const useTableauPageAdminUtilisateurs = (
     getRowHref: (row) => `/admin/utilisateur/${row.original.id}`,
     manualPagination: true,
     manualSorting: true,
+    manualFiltering: true,
     rowCount: nombreUtilisateur,
     state: {
       columnVisibility: { territoire: estAutoriseAVoirLaColonneTerritoire },
@@ -114,7 +115,6 @@ export const useTableauPageAdminUtilisateurs = (
       sorting: { default: [{ id: "Dernière modification", desc: true }] },
       pagination: { pageSize: TAILLE_DEFAUT_PAGINATION_UTILISATEUR },
       globalFilter: true,
-      shallow: false,
       history: "push",
     },
   });

@@ -39,10 +39,8 @@ const récupérerChantiersParDéfaut = (
   let chantiersAccessibles = profilUtilisateur.a_acces_tous_chantiers
     ? listeInformationsChantiersUtilisateurs
     : profilUtilisateur.a_acces_tous_chantiers_territorialises
-      ? listeInformationsChantiersUtilisateurs.reduce(
-          (acc, chantier) =>
-            chantier.estTerritorialise ? [...acc, chantier] : acc,
-          [] as InformationChantierUtilisateur[],
+      ? listeInformationsChantiersUtilisateurs.filter(
+          (chantier) => chantier.estTerritorialise,
         )
       : [];
 
@@ -53,12 +51,11 @@ const récupérerChantiersParDéfaut = (
   let chantiersAccessiblesEnSaisieCommentaire = estUnProfilTerritorialise(
     profilUtilisateur.code as ProfilCode,
   )
-    ? chantiersAccessibles.reduce((acc, chantier) => {
-        if (chantier.estTerritorialise && chantier.ate === "ate") {
-          return [...acc, chantier.id];
-        }
-        return acc;
-      }, [] as string[])
+    ? chantiersAccessibles
+        .filter(
+          (chantier) => chantier.estTerritorialise && chantier.ate === "ate",
+        )
+        .map((chantier) => chantier.id)
     : listeChantiersAccessiblesIds;
 
   return {
@@ -75,6 +72,21 @@ const récupérerChantiersParDéfaut = (
       : [],
     responsabilite: [],
   };
+};
+
+const territoiresApplicablesCache = new WeakMap<
+  InformationChantierUtilisateur,
+  Set<string>
+>();
+const territoiresApplicablesParChantier = (
+  chantier: InformationChantierUtilisateur,
+) => {
+  let territoires = territoiresApplicablesCache.get(chantier);
+  if (!territoires) {
+    territoires = new Set(chantier.territoiresApplicables);
+    territoiresApplicablesCache.set(chantier, territoires);
+  }
+  return territoires;
 };
 
 const créerLesHabilitations = (
@@ -161,14 +173,24 @@ const créerLesHabilitations = (
     },
   };
 
+  const brouillonChantierIds = new Set(
+    listeInformationsChantiersUtilisateurs
+      .filter((chantier) => chantier.statut === "BROUILLON")
+      .map((chantier) => chantier.id),
+  );
+
   habilitations.forEach((habilitation) => {
     const scopeCode =
       habilitation.scopeCode as keyof Utilisateur["habilitations"];
+    const habilitationChantiers = new Set(habilitation.chantiers);
+    const habilitationPerimetres = new Set(habilitation.perimetres);
     const listeInformationsChantiersUtilisateursApplicableSurTerritoire =
       estUnProfilTerritorialise(profilUtilisateur.code as ProfilCode)
         ? listeInformationsChantiersUtilisateurs.filter((informationChantier) =>
-            informationChantier.territoiresApplicables.some((territoire) =>
-              habilitation.territoires.includes(territoire),
+            habilitation.territoires.some((territoire) =>
+              territoiresApplicablesParChantier(informationChantier).has(
+                territoire,
+              ),
             ),
           )
         : listeInformationsChantiersUtilisateurs;
@@ -187,7 +209,7 @@ const créerLesHabilitations = (
     const chantiersSupplémentaires =
       habilitation.chantiers.length > 0
         ? listeChantier
-            .filter((chantier) => habilitation.chantiers.includes(chantier.id))
+            .filter((chantier) => habilitationChantiers.has(chantier.id))
             .map((chantier) => chantier.id)
         : habilitation.chantiers;
 
@@ -195,8 +217,8 @@ const créerLesHabilitations = (
       habilitation.perimetres.length > 0
         ? listeChantier
             .filter((chantier) =>
-              chantier.perimetreIds.some((p) =>
-                habilitation.perimetres.includes(p),
+              chantier.perimetreIds.some((perimetreId) =>
+                habilitationPerimetres.has(perimetreId),
               ),
             )
             .map((chantier) => chantier.id)
@@ -210,20 +232,12 @@ const créerLesHabilitations = (
       ]),
     ];
 
-    const listeChantiersBrouillonsIds =
-      listeInformationsChantiersUtilisateurs.reduce((acc, chantier) => {
-        if (chantier.statut === "BROUILLON") {
-          return [...acc, chantier.id];
-        }
-        return acc;
-      }, [] as string[]);
-
     habilitationsGénérées[scopeCode].chantiers =
       profilUtilisateur.a_access_aux_chantiers_brouillons
         ? habilitationsChantier
         : habilitationsChantier.filter(
             (habilitationChantier) =>
-              !listeChantiersBrouillonsIds.includes(habilitationChantier),
+              !brouillonChantierIds.has(habilitationChantier),
           );
     habilitationsGénérées[scopeCode].territoires = [
       ...new Set([
@@ -241,6 +255,20 @@ const créerLesHabilitations = (
 
   return habilitationsGénérées;
 };
+
+const utilisateurListeGestionSelect = {
+  id: true,
+  email: true,
+  nom: true,
+  prenom: true,
+  fonction: true,
+  profilCode: true,
+  date_modification: true,
+  date_desactivation: true,
+  profil: true,
+  habilitation: true,
+  auteur_modification: { select: { nom: true, prenom: true } },
+} satisfies Prisma.utilisateurSelect;
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
   constructor(private readonly deps: Inject<"prisma">) {}
@@ -306,29 +334,24 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       valeurDeLaRecherche.toLowerCase(),
     );
 
-    const unaccentedUtilisateur = await this.prisma.$queryRawUnsafe<
-      { id: string }[]
-    >(
-      `SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
+    const matchingIds =
+      valeurDeLaRechercheSansAccentEtEnLowerCase === ""
+        ? null
+        : await this.prisma.$queryRawUnsafe<{ id: string }[]>(
+            `SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
       OR LOWER(unaccent(email)) ILIKE $1
       OR LOWER(unaccent(prenom)) ILIKE $1
       OR LOWER(unaccent(fonction)) ILIKE $1
       OR LOWER(unaccent(profil_code)) ILIKE $1
     `,
-      `%${valeurDeLaRechercheSansAccentEtEnLowerCase}%`,
-    );
+            `%${valeurDeLaRechercheSansAccentEtEnLowerCase}%`,
+          );
 
     const utilisateurs = await this.prisma.utilisateur.findMany({
-      include: {
-        profil: true,
-        habilitation: true,
-        auteur_modification: true,
-      },
-      where: {
-        id: {
-          in: unaccentedUtilisateur.map((utilisateurIds) => utilisateurIds.id),
-        },
-      },
+      select: utilisateurListeGestionSelect,
+      where: matchingIds
+        ? { id: { in: matchingIds.map((row) => row.id) } }
+        : undefined,
       orderBy: sorting.reduce((acc, val) => {
         acc[
           this.convertirEnIdPrisma(
@@ -759,11 +782,9 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[];
   }) {
     return (
-      utilisateurBrut: PrismaUtilisateurModel & {
-        profil: PrismaProfilModel;
-        habilitation: PrismaHabilitationModel[];
-        auteur_modification: PrismaUtilisateurModel | null;
-      },
+      utilisateurBrut: Prisma.utilisateurGetPayload<{
+        select: typeof utilisateurListeGestionSelect;
+      }>,
     ): UtilisateurListeGestion => {
       const habilitations = créerLesHabilitations(
         utilisateurBrut.profil,

@@ -16,10 +16,10 @@ export const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({
   children,
 }) => {
   return (
-    <div>
+    <div className="min-[993px]:bg-white min-[993px]:border-r min-[993px]:border-dsfr-grey-925 print:border-0">
       <div
         className={clsxm(
-          "barre-latérale sticky top-0 z-[2] w-80 h-screen pb-32 overflow-y-auto bg-white border-r border-dsfr-grey-925",
+          "barre-latérale sticky top-0 z-[2] w-80 max-h-screen pb-32 overflow-y-auto bg-white",
           "max-[992px]:fixed max-[992px]:top-0 max-[992px]:left-0 max-[992px]:z-[10000] max-[992px]:w-[90%] max-[992px]:h-[95%] max-[992px]:transition-transform max-[992px]:duration-500",
           estOuvert
             ? "max-[992px]:translate-x-0"
