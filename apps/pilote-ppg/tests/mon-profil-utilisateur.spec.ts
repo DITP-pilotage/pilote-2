@@ -1,6 +1,26 @@
+import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageMonProfilUtilisateur } from "./pages/page-mon-profil-utilisateur";
+
+async function dateDeModification(email: string): Promise<Date> {
+  const compte = await prisma.utilisateur.findUniqueOrThrow({
+    where: { email },
+    select: { date_modification: true },
+  });
+  return compte.date_modification;
+}
+
+function formatParis(date: Date): string {
+  const jour = date.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
+  const heure = date.toLocaleTimeString("fr-FR", {
+    timeZone: "Europe/Paris",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return `${jour} à ${heure}`;
+}
 
 test("doit afficher et modifier le profil utilisateur", async ({
   page,
@@ -50,31 +70,32 @@ test("doit afficher et modifier le profil utilisateur", async ({
     },
   );
 
-  let dateAvantModification: string;
+  let dateAvantModification: Date;
 
   await step("Modification du profil et vérification du succès", async () => {
-    dateAvantModification = await pageMonProfil.getDateModificationText();
+    dateAvantModification = await dateDeModification("ditp.admin@example.com");
     await pageMonProfil.modifierFonctionEtEnregistrer(
       "ditp.admin@example.com",
-      "",
       "Testeur E2E",
     );
     await pageMonProfil.expectSucces();
   });
 
   await step(
-    "Vérification que la date de modification est mise à jour",
+    "Vérification que la modification est enregistrée et datée",
     async () => {
-      const dateApresModification =
-        await pageMonProfil.getDateModificationText();
-      if (dateAvantModification === dateApresModification) {
-        const regex = /Modifié le \d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/;
-        if (!regex.test(dateApresModification)) {
-          throw new Error(
-            `Format de date inattendu : ${dateApresModification}`,
-          );
-        }
-      }
+      const compte = await prisma.utilisateur.findUniqueOrThrow({
+        where: { email: "ditp.admin@example.com" },
+        select: { fonction: true, service: true, date_modification: true },
+      });
+      expect(compte.fonction).toBe("Testeur E2E");
+      expect(compte.service).toBe("prefecture-de-region");
+      expect(compte.date_modification.getTime()).toBeGreaterThan(
+        dateAvantModification.getTime(),
+      );
+      await expect(pageMonProfil.dateModification).toHaveText(
+        `Modifié le ${formatParis(compte.date_modification)}`,
+      );
     },
   );
 

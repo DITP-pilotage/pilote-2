@@ -5,6 +5,10 @@ const XLSX_MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export class PageMiseAJourDonnees extends BasePage {
+  async goto(chantierId: string): Promise<void> {
+    await this.page.goto(`/chantier/${chantierId}/indicateurs`);
+  }
+
   async expectTitle(chantierId: string): Promise<void> {
     await expect(this.page).toHaveTitle(
       `Mettre à jour les données - Chantier ${chantierId} - PILOTE`,
@@ -44,18 +48,33 @@ export class PageMiseAJourDonnees extends BasePage {
     });
   }
 
-  async verifyFile(): Promise<void> {
+  async verifyFile(utilisateurEmail: string): Promise<void> {
+    const verification = this.page.waitForResponse(/\/verifier/);
     await this.page
       .getByRole("button", { name: /Vérifier le fichier/ })
       .click();
+    const rapport = (await (await verification).json()) as {
+      id: string;
+      estValide: boolean;
+      listeErreursValidation: { message: string }[];
+    };
+    // Pour un fichier invalide, l'identifiant renvoyé n'est pas celui du rapport
+    // enregistré : on le retrouve par ses erreurs.
+    this.e2eContext.track(
+      "RAPPORT_IMPORT_CREE",
+      rapport.estValide
+        ? { id: rapport.id }
+        : {
+            utilisateurEmail,
+            est_valide: false,
+            erreur_validation_fichier: {
+              some: { message: rapport.listeErreursValidation[0].message },
+            },
+          },
+    );
   }
 
-  async submitData(utilisateurEmail: string): Promise<void> {
-    this.e2eContext.track("RAPPORT_IMPORT_CREE", {
-      utilisateurEmail,
-      date_creation: { gte: new Date() },
-    });
-
+  async submitData(): Promise<void> {
     await this.page
       .getByRole("button", { name: /Transmettre les données/ })
       .first()

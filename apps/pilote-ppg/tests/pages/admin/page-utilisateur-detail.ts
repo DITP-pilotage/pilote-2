@@ -36,11 +36,6 @@ export class PageUtilisateurDetail extends BasePage {
     return this.page.getByRole("dialog");
   }
 
-  async goto(utilisateurId: string): Promise<void> {
-    await this.page.goto(`/admin/utilisateur/${utilisateurId}`);
-    await this.heading.waitFor({ state: "visible" });
-  }
-
   async confirmerDesactivation(email: string): Promise<void> {
     this.e2eContext.track("UTILISATEUR_DESACTIVE", { email });
 
@@ -53,10 +48,6 @@ export class PageUtilisateurDetail extends BasePage {
     await this.dialog
       .getByRole("button", { name: "Confirmer la réactivation" })
       .click();
-  }
-
-  async genererToken(): Promise<void> {
-    await this.boutonGenererToken.click();
   }
 
   async expectPageChargee(): Promise<void> {
@@ -93,10 +84,6 @@ export class PageUtilisateurDetail extends BasePage {
 
   async expectReactiverVisible(): Promise<void> {
     await expect(this.boutonReactiver).toBeVisible();
-  }
-
-  async expectReactiverNotVisible(): Promise<void> {
-    await expect(this.boutonReactiver).not.toBeVisible();
   }
 
   async expectTokenVisible(): Promise<void> {

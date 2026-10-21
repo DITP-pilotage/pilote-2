@@ -16,25 +16,6 @@ export class PageAccueil extends BasePage {
     this.exportModal = new ExportCsvModal(page);
   }
 
-  async expectStructure(): Promise<void> {
-    await expect(
-      this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
-    ).toBeVisible();
-    await expect(
-      this.page.getByRole("heading", { name: /Taux d'avancement moyen/ }),
-    ).toBeVisible();
-    await expect(
-      this.page.getByRole("heading", {
-        name: /Taux d'avancement des chantiers par territoire/,
-      }),
-    ).toBeVisible();
-    await expect(
-      this.page.getByRole("heading", {
-        name: /Répartition des météos renseignées/,
-      }),
-    ).toBeVisible();
-  }
-
   async expectFilterTag(tagName: string): Promise<void> {
     await expect(
       this.page.locator(`button[aria-label='Retirer le tag ${tagName}']`),

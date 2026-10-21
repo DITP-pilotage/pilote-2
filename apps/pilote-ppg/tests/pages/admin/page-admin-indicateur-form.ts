@@ -106,11 +106,6 @@ export class PageAdminIndicateurForm extends BasePage {
     }
   }
 
-  async remplirChampTexte(label: string, valeur: string): Promise<void> {
-    const champ = this.page.getByLabel(label, { exact: false });
-    await champ.fill(valeur);
-  }
-
   async expectTitreFiche(indicateurId: string): Promise<void> {
     await expect(this.titreFiche).toContainText(
       `Fiche de l'indicateur ${indicateurId}`,

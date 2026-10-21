@@ -197,3 +197,16 @@ Tests (un `test.describe` par famille, noms = comportement) :
 - [ ] **Step 3 : Lint + commit** `infra(PIL-1846): doc de couverture e2e à jour` (Tags: documentation).
 - [ ] **Step 4 : Confluence** — synchroniser la page 349077505 avec le document.
 - [ ] **Step 5 : Push + PR** vers `dev` (sans gif) : résumé par bloc, failles trouvées et reportées dans PIL-1921, tests sortis vers PIL-1921/1922, résultat de la campagne finale. Puis libérer worktree-2.
+
+### Task 11 : Firefox et WebKit sur les specs IHM
+
+Ajout demandé par l'utilisateur le 2026-10-21. Pas de configuration conditionnelle local/CI : si la CI doit suivre, elle suit.
+
+**Files:**
+- Modify: `apps/pilote-ppg/playwright.config.ts`, `.github/workflows/e2e.yml`
+
+- [ ] **Step 1 : Projets** `firefox` et `webkit` dans la config, chaînés par `dependencies` (chromium → firefox → webkit) pour ne jamais écrire en parallèle sur la même base ; specs d'appels directs (`api-autorisation`, `open-api/**`, `export-csv-cloisonnement`, tests `page.request` purs) exclus de firefox et webkit via `testIgnore`.
+- [ ] **Step 2 : Local** — `playwright install firefox webkit`, puis suite complète → vert sur les 3 projets ; instabilités propres à un navigateur corrigées dans les specs (pas de `skip` par navigateur sans ruling).
+- [ ] **Step 3 : CI** — `playwright install chromium firefox webkit --with-deps` dans `e2e.yml`.
+- [ ] **Step 4 : Doc** — mentionner les navigateurs couverts dans `tests-e2e-couverture.md`.
+- [ ] **Step 5 : Lint + commit** `infra(PIL-1846): e2e IHM sur Firefox et WebKit`.

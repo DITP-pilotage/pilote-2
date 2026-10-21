@@ -1,4 +1,5 @@
 import { Page, expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { BasePage } from "./base.page";
 import { E2ETestContext } from "../e2e-test-context";
 
@@ -49,7 +50,7 @@ export class PageMonProfilUtilisateur extends BasePage {
     return this.page.getByRole("button", { name: "Enregistrer" });
   }
 
-  private get dateModification() {
+  get dateModification() {
     return this.page.getByText(/Modifié le \d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/);
   }
 
@@ -95,18 +96,16 @@ export class PageMonProfilUtilisateur extends BasePage {
     await expect(this.nomInput).toHaveValue(data.nom);
   }
 
-  async getDateModificationText(): Promise<string> {
-    return this.dateModification.innerText();
-  }
-
   async modifierFonctionEtEnregistrer(
     email: string,
-    ancienneFonction: string,
     nouvelleFonction: string,
   ): Promise<void> {
     this.e2eContext.track("PROFIL_UTILISATEUR_MODIFIE", {
       email,
-      originalData: { fonction: ancienneFonction },
+      originalData: await prisma.utilisateur.findUniqueOrThrow({
+        where: { email },
+        select: { fonction: true, service: true, service_autre: true },
+      }),
     });
     await this.fonctionInput.clear();
     await this.fonctionInput.fill(nouvelleFonction);

@@ -46,10 +46,6 @@ export class PageAdminUtilisateurs extends BasePage {
     return this.page.getByRole("link", { name: /Créer un compte/ });
   }
 
-  private get boutonReinitialiser() {
-    return this.page.getByRole("button", { name: /Réinitialiser les filtres/ });
-  }
-
   private get alerteSucces() {
     return this.page
       .locator('[role="status"][data-color="success"]')
@@ -84,22 +80,29 @@ export class PageAdminUtilisateurs extends BasePage {
   }
 
   async rechercherUtilisateur(texte: string): Promise<void> {
-    await this.barreRecherche.fill(texte);
-    await expect(this.barreRecherche).toHaveValue(texte);
-    await this.page.waitForLoadState("networkidle");
+    await this.attendreLaListe(
+      (url) => url.searchParams.get("q") === texte,
+      async () => {
+        await this.barreRecherche.fill(texte);
+        await expect(this.barreRecherche).toHaveValue(texte);
+      },
+    );
   }
 
   async effacerRecherche(): Promise<void> {
     // Le clear peut être écrasé par une synchro URL ↔ state (nuqs) qui
     // réinjecte l'ancienne valeur après coup. On force un blur (Tab) pour
     // commiter immédiatement, puis on vérifie que la valeur reste vide.
-    await expect(async () => {
-      await this.barreRecherche.clear();
-      await this.barreRecherche.press("Tab");
-      await this.page.waitForTimeout(300);
-      await expect(this.barreRecherche).toHaveValue("");
-    }).toPass({ timeout: 10_000 });
-    await this.page.waitForLoadState("networkidle");
+    await this.attendreLaListe(
+      (url) => !url.searchParams.get("q"),
+      async () => {
+        await expect(async () => {
+          await this.barreRecherche.clear();
+          await this.barreRecherche.press("Tab");
+          await expect(this.barreRecherche).toHaveValue("", { timeout: 500 });
+        }).toPass({ timeout: 10_000 });
+      },
+    );
   }
 
   private async ensureRechercheVide(): Promise<void> {
@@ -113,12 +116,18 @@ export class PageAdminUtilisateurs extends BasePage {
     statut: "tous" | "actifs" | "desactives",
   ): Promise<void> {
     const tags = {
-      tous: this.tagTous,
-      actifs: this.tagActifs,
-      desactives: this.tagDesactives,
+      tous: { tag: this.tagTous, typeCompte: null },
+      actifs: { tag: this.tagActifs, typeCompte: "actif" },
+      desactives: { tag: this.tagDesactives, typeCompte: "desactive" },
     };
-    await tags[statut].click();
-    await this.page.waitForLoadState("networkidle");
+    const { tag, typeCompte } = tags[statut];
+    if (await tag.isChecked()) {
+      return;
+    }
+    await this.attendreLaListe(
+      (url) => url.searchParams.get("typeCompte") === typeCompte,
+      () => tag.click(),
+    );
   }
 
   async filtrerParProfil(nomProfil: string): Promise<void> {
@@ -133,11 +142,31 @@ export class PageAdminUtilisateurs extends BasePage {
       await label.waitFor({ state: "visible", timeout: 2_000 });
     }).toPass({ timeout: 10_000 });
 
-    await label.click();
-    await expect(checkbox).toBeChecked();
-    // fermer le dropdown en cliquant ailleurs
-    await this.page.getByRole("heading", { level: 1 }).click();
-    await this.page.waitForLoadState("networkidle");
+    await this.attendreLaListe(
+      (url) => url.searchParams.get("profils") !== null,
+      async () => {
+        await label.click();
+        await expect(checkbox).toBeChecked();
+        // fermer le dropdown en cliquant ailleurs
+        await this.page.getByRole("heading", { level: 1 }).click();
+      },
+    );
+  }
+
+  // Les filtres et la recherche rechargent la liste côté serveur (nuqs, shallow: false).
+  private async attendreLaListe(
+    correspondALaRequete: (url: URL) => boolean,
+    action: () => Promise<void>,
+  ): Promise<void> {
+    const listeRechargee = this.page.waitForResponse((reponse) => {
+      const url = new URL(reponse.url());
+      return (
+        url.pathname.endsWith("/admin/utilisateurs.json") &&
+        correspondALaRequete(url)
+      );
+    });
+    await action();
+    await listeRechargee;
   }
 
   async expectColonneVisible(nomColonne: string): Promise<void> {
@@ -150,11 +179,6 @@ export class PageAdminUtilisateurs extends BasePage {
     await expect(
       this.tableau.getByRole("columnheader", { name: nomColonne }),
     ).not.toBeVisible();
-  }
-
-  async expectNombreComptes(nombre: number): Promise<void> {
-    const texte = nombre <= 1 ? `${nombre} compte` : `${nombre} comptes`;
-    await expect(this.titreNombreComptes).toHaveText(texte);
   }
 
   async expectUtilisateurDansTableau(email: string): Promise<void> {
@@ -193,10 +217,6 @@ export class PageAdminUtilisateurs extends BasePage {
   async expectAlerte(titre: string | RegExp): Promise<void> {
     await expect(this.alerteSucces).toBeVisible();
     await expect(this.alerteSucces).toHaveText(titre);
-  }
-
-  async expectGestionDesComptesVisible(): Promise<void> {
-    await expect(this.lienGestionDesComptes).toBeVisible();
   }
 
   async expectGestionDesComptesNotVisible(): Promise<void> {
