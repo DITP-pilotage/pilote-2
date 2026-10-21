@@ -102,6 +102,15 @@ export function stripParagraphesVides(text: string): string {
     .join("\n");
 }
 
+const useLinkTracking = (event: AssistantEvent) => {
+  const track = useChatTracking();
+  const trackLink = () => track(event);
+  const trackMiddleClick = (mouseEvent: MouseEvent) => {
+    if (mouseEvent.button === 1) trackLink();
+  };
+  return { trackLink, trackMiddleClick };
+};
+
 /**
  * Un lien vers une page de PILOTE depuis le chat : il navigue sans recharger
  * et réduit la conversation dans le dock.
@@ -123,11 +132,9 @@ export const LienInterneAssistant = ({
 }) => {
   const router = useRouter();
   const { minimize } = useAlbertConversation();
-  const track = useChatTracking();
-  const trackLink = () => track(event ?? linkEvent(href));
-  const trackMiddleClick = (mouseEvent: MouseEvent) => {
-    if (mouseEvent.button === 1) trackLink();
-  };
+  const { trackLink, trackMiddleClick } = useLinkTracking(
+    event ?? linkEvent(href),
+  );
 
   return (
     <a
@@ -156,11 +163,7 @@ const MarkdownLink = ({
   href?: string;
   children?: ReactNode;
 }) => {
-  const track = useChatTracking();
-  const trackLink = () => track(linkEvent(href));
-  const trackMiddleClick = (event: MouseEvent) => {
-    if (event.button === 1) trackLink();
-  };
+  const { trackLink, trackMiddleClick } = useLinkTracking(linkEvent(href));
 
   if (!isInternalHref(href)) {
     return (
