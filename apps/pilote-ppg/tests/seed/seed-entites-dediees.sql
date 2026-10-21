@@ -24,6 +24,17 @@ UPDATE copie SET id = 'CH-902';
 INSERT INTO public.chantier_territoire SELECT * FROM copie;
 DROP TABLE copie;
 
+-- CH-903 : chantier publié de la saisie des publications par l'IHM, copie de CH-129
+CREATE TEMP TABLE copie AS SELECT * FROM public.chantier_identite WHERE id = 'CH-129';
+UPDATE copie SET id = 'CH-903', nom = 'Chantier e2e saisie';
+INSERT INTO public.chantier_identite SELECT * FROM copie;
+DROP TABLE copie;
+
+CREATE TEMP TABLE copie AS SELECT * FROM public.chantier_territoire WHERE id = 'CH-129';
+UPDATE copie SET id = 'CH-903';
+INSERT INTO public.chantier_territoire SELECT * FROM copie;
+DROP TABLE copie;
+
 -- IND-901 (import de données), IND-902 (formulaire indicateur), IND-903 (open-api) : copies d'IND-021 rattachées à CH-902
 CREATE TEMP TABLE correspondance (id text, nom text);
 INSERT INTO correspondance VALUES
@@ -89,12 +100,34 @@ DROP TABLE copie;
 
 DROP TABLE correspondance;
 
--- Habilitations : equipe.dir.projet (accès aux brouillons) voit CH-901 et écrit sur CH-902 ;
+-- Habilitations : equipe.dir.projet (accès aux brouillons) voit CH-901 et écrit sur CH-902 et CH-903 ;
 -- services.deconcentres.region (sans accès aux brouillons) est habilité sur CH-901 mais ne doit pas le voir.
 UPDATE public.habilitation
-SET chantiers = chantiers || ARRAY['CH-901', 'CH-902']
+SET chantiers = chantiers || ARRAY['CH-901', 'CH-902', 'CH-903']
 WHERE utilisateur_id = (SELECT id FROM public.utilisateur WHERE email = 'equipe.dir.projet@example.com');
 
 UPDATE public.habilitation
 SET chantiers = chantiers || ARRAY['CH-901']
 WHERE utilisateur_id = (SELECT id FROM public.utilisateur WHERE email = 'services.deconcentres.region@example.com');
+
+-- Comptes de la saisie des publications sur CH-903 / DEPT-56 : l'un rédige, l'autre vérifie qu'il ne voit pas ses brouillons.
+DO $$
+DECLARE
+  v_user_id UUID;
+BEGIN
+  INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, fonction, service, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)
+  VALUES (gen_random_uuid(), 'saisie.coordinateur.dept@example.com', 'Saisie-Coordinateur', 'Departement', 'COORDINATEUR_DEPARTEMENT', 'Coordinateur départemental', 'Préfecture de département', NOW(), NOW(), NOW(), NOW())
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
+    (v_user_id, 'lecture', ARRAY['DEPT-56'], ARRAY[]::text[], ARRAY['CH-903']),
+    (v_user_id, 'saisieCommentaire', ARRAY['DEPT-56'], ARRAY[]::text[], ARRAY['CH-903']);
+
+  INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, fonction, service, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)
+  VALUES (gen_random_uuid(), 'saisie.prefet.dept@example.com', 'Saisie-Prefet', 'Departement', 'PREFET_DEPARTEMENT', 'Préfet de département', 'Préfecture de département', NOW(), NOW(), NOW(), NOW())
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
+    (v_user_id, 'lecture', ARRAY['DEPT-56'], ARRAY[]::text[], ARRAY['CH-903']),
+    (v_user_id, 'saisieCommentaire', ARRAY['DEPT-56'], ARRAY[]::text[], ARRAY['CH-903']);
+END $$;
