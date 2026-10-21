@@ -13,7 +13,6 @@ import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.i
 
 import {
   EtapePropositionValeurAvancement,
-  LIMIT_CARACTERES_MOTIF,
   Stepper,
   useModaleAccepterPropositionValeurAvancement,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
@@ -21,6 +20,7 @@ import { formaterDate } from "@/client/utils/date/date";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 
 export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
   PropsWithChildren<{
@@ -42,7 +42,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
     reactHookForm,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    etapeSuivanteEstDesactive: EtapeSuivanteEstDesactive,
+    reinitialiser,
+    passerALaValidation,
+    revaliderChampsLiesALaDecision,
     traiterDecision,
     isPending,
   } = useModaleAccepterPropositionValeurAvancement({
@@ -57,7 +59,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
   return (
     <Modale
       onOpenChange={(open) => {
-        if (!open) {
+        if (open) {
+          reinitialiser();
+        } else {
           refreshRouter();
         }
       }}
@@ -154,7 +158,10 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     render={({ field }) => (
                       <RadioGroup.Root
                         name={field.name}
-                        onValueChange={field.onChange}
+                        onValueChange={(valeur) => {
+                          field.onChange(valeur);
+                          revaliderChampsLiesALaDecision();
+                        }}
                         value={field.value}
                       >
                         <RadioGroup.Item
@@ -213,7 +220,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       className={FIELD_GROUP_SPACING}
                       counter={{
                         length: reactHookForm.watch("motif").length,
-                        max: LIMIT_CARACTERES_MOTIF,
+                        max: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
                       }}
                       errorMessage={
                         reactHookForm.formState.errors.motif?.message
@@ -234,12 +241,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                   <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
-                      disabled={EtapeSuivanteEstDesactive}
-                      onClick={() =>
-                        setEtapePropositionValeurAvancement(
-                          EtapePropositionValeurAvancement.VALIDATION_DECISION,
-                        )
-                      }
+                      onClick={passerALaValidation}
                       type="button"
                     >
                       Étape suivante

@@ -41,7 +41,8 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
     reactHookForm,
     etapeAccuserReception,
     setEtapeAccuserReception,
-    etapeSuivanteEstDesactive,
+    reinitialiser,
+    passerALaValidation,
     traiterAccuseReception,
     isPending,
   } = useModaleAccuserReceptionPropositionValeurAvancement({
@@ -54,7 +55,9 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
   return (
     <Modale
       onOpenChange={(open) => {
-        if (!open) {
+        if (open) {
+          reinitialiser();
+        } else {
           refreshRouter();
         }
       }}
@@ -158,12 +161,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                   <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
-                      disabled={etapeSuivanteEstDesactive}
-                      onClick={() =>
-                        setEtapeAccuserReception(
-                          EtapeAccuserReception.VALIDATION_ACCUSE_RECEPTION,
-                        )
-                      }
+                      onClick={passerALaValidation}
                       type="button"
                     >
                       Étape suivante

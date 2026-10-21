@@ -40,7 +40,8 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
     supprimerPropositionValeurAvancement,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    etapeSuivanteEstDesactive,
+    reinitialiser,
+    passerALaValidation,
     isPending,
   } = useModaleSuppressionValeurAvancement({
     indicateur,
@@ -54,7 +55,9 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
   return (
     <Modale
       onOpenChange={(open) => {
-        if (!open) {
+        if (open) {
+          reinitialiser();
+        } else {
           refreshRouter();
         }
       }}
@@ -166,12 +169,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                   <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
-                      disabled={etapeSuivanteEstDesactive}
-                      onClick={() =>
-                        setEtapePropositionValeurAvancement(
-                          EtapeSuppressionPropositionValeurAvancement.VALIDATION_SUPPRESSION_PROPOSITION,
-                        )
-                      }
+                      onClick={passerALaValidation}
                       type="button"
                     >
                       Étape suivante

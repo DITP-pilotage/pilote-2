@@ -35,7 +35,9 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
     creerPropositonValeurAvancement,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    EtapeSuivanteEstDesactive,
+    reinitialiser,
+    passerALaValidation,
+    choisirMois,
     estUneModificationDeProposition,
     optionsMois,
     isPending,
@@ -55,7 +57,9 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
   return (
     <Modale
       onOpenChange={(open) => {
-        if (!open) {
+        if (open) {
+          reinitialiser();
+        } else {
           refreshRouter();
         }
       }}
@@ -243,15 +247,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                             <ChampObligatoire />
                           </>
                         }
-                        onChange={(valeur) => {
-                          reactHookForm.setValue(
-                            "moisValeurAvancement",
-                            valeur,
-                            {
-                              shouldValidate: true,
-                            },
-                          );
-                        }}
+                        onChange={choisirMois}
                         options={optionsMois}
                         value={reactHookForm.watch("moisValeurAvancement")}
                         triggerClassName="w-50"
@@ -342,12 +338,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                   <div className="w-full flex justify-end mt-4">
                     <Button
                       variant="primary"
-                      disabled={EtapeSuivanteEstDesactive}
-                      onClick={() =>
-                        setEtapePropositionValeurAvancement(
-                          EtapePropositionValeurAvancement.VALIDATION_VALEUR_ACTUELLE,
-                        )
-                      }
+                      onClick={passerALaValidation}
                       type="button"
                     >
                       Étape suivante

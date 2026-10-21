@@ -76,20 +76,35 @@ const useModaleSuppressionValeurAvancement = ({
 
     mutationSupprimerPropositionValeurAvancement.mutate(inputs);
   };
+  const defaultValues: SuppressionPropositionValeurAvancementForm = {
+    motifSuppression: "",
+  };
+
   const reactHookForm = useForm<SuppressionPropositionValeurAvancementForm>({
-    mode: "all",
     resolver: zodResolver(validationSuppressionPropositionValeurAvancement),
-    defaultValues: {
-      motifSuppression: "",
-    },
+    defaultValues,
   });
+
+  const reinitialiser = () => {
+    reactHookForm.reset(defaultValues);
+    setEtapePropositionValeurAvancement(
+      EtapeSuppressionPropositionValeurAvancement.SAISIE_MOTIF_SUPPRESSION_PROPOSITION,
+    );
+  };
+
+  const passerALaValidation = reactHookForm.handleSubmit(() =>
+    setEtapePropositionValeurAvancement(
+      EtapeSuppressionPropositionValeurAvancement.VALIDATION_SUPPRESSION_PROPOSITION,
+    ),
+  );
 
   return {
     reactHookForm,
     supprimerPropositionValeurAvancement,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    etapeSuivanteEstDesactive: !reactHookForm.formState.isValid,
+    reinitialiser,
+    passerALaValidation,
     isPending: mutationSupprimerPropositionValeurAvancement.isPending,
   };
 };
