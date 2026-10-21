@@ -21,8 +21,10 @@ type ActionType =
   | "COMMENTAIRE_CREE"
   | "MESURE_INDICATEUR_IMPORTEE"
   | "RAPPORT_IMPORT_CREE"
+  | "UTILISATEUR_CREE"
   | "UTILISATEUR_DESACTIVE"
   | "PROFIL_UTILISATEUR_MODIFIE"
+  | "TOKEN_API_CREE"
   | "ACCES_ALBERT_PROFIL_ACTIVE"
   | "ACCES_ALBERT_UTILISATEUR_AJOUTE";
 
@@ -82,6 +84,16 @@ export class E2ETestContext {
           }
           break;
         }
+        case "UTILISATEUR_CREE":
+          await prisma.utilisateur.deleteMany({
+            where: { email: action.filters.email as string },
+          });
+          break;
+        case "TOKEN_API_CREE":
+          await prisma.token_api_information.deleteMany({
+            where: { email: action.filters.email as string },
+          });
+          break;
         case "UTILISATEUR_DESACTIVE":
           await prisma.utilisateur.updateMany({
             where: action.filters,
