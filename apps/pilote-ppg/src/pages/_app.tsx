@@ -12,8 +12,7 @@ import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcra
 import { api } from "@/server/framework/trpc/api";
 import { Tooltip } from "@/components/shared/Tooltip";
 import { BootstrapProvider } from "@/components/_commons/Bootstrap/BootstrapContext";
-import { getAnalytics } from "@/client/analytics/analytics";
-import { trackPageViews } from "@/client/analytics/pageViews";
+import { PageViewsTracker } from "@/client/analytics/PageViewsTracker";
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
@@ -57,8 +56,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
     return () => clearTimeout(timer);
   }, [pageEnCoursDeChargement]);
 
-  useEffect(() => trackPageViews(Router, getAnalytics()), []);
-
   return (
     <NuqsAdapter>
       <Head>
@@ -79,6 +76,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
       <ReactQueryDevtools initialIsOpen={false} />
       <Tooltip.Provider>
         <SessionProvider session={pageProps.session}>
+          <PageViewsTracker />
           <BootstrapProvider
             value={{
               session: pageProps.session,

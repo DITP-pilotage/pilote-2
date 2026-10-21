@@ -12,10 +12,12 @@ import { api } from "@/server/framework/trpc/api";
 export const FeedbackNegatifModale = ({
   chatId,
   disabled,
+  onOpen,
   onSuccess,
 }: {
   chatId: string;
   disabled: boolean;
+  onOpen: () => void;
   onSuccess: () => void;
 }) => {
   const [open, setOpen] = useState(false);
@@ -61,6 +63,7 @@ export const FeedbackNegatifModale = ({
     <Modale
       onOpenChange={(ouvert) => {
         setOpen(ouvert);
+        if (ouvert) onOpen();
         if (!ouvert) {
           setCategories([]);
           setCommentaire("");

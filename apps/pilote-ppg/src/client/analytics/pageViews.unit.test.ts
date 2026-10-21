@@ -1,14 +1,16 @@
 import mitt from "next/dist/shared/lib/mitt";
 import { createMutedAnalytics } from "@/client/analytics/browser";
 import { trackPageViews } from "@/client/analytics/pageViews";
+import { ProfilEnum } from "@/shared/profil/ProfilEnum";
+import type { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
-const setup = () => {
+const setup = (getDimensions = () => ({})) => {
   const events = mitt();
   const analytics = {
     ...createMutedAnalytics("disabled"),
     trackPageView: vi.fn(),
   };
-  const stop = trackPageViews({ events }, analytics);
+  const stop = trackPageViews({ events }, analytics, getDimensions);
   const navigate = (url: string) => {
     window.history.pushState(null, "", url);
     events.emit("routeChangeComplete", url);
@@ -37,8 +39,8 @@ describe("trackPageViews", () => {
     navigate("/chantier/CH-001/NAT");
 
     expect(analytics.trackPageView.mock.calls).toEqual([
-      [{ title: "Accueil" }],
-      [{ title: "Chantier" }],
+      [{ title: "Accueil", dimensions: {} }],
+      [{ title: "Chantier", dimensions: {} }],
     ]);
   });
 
@@ -50,6 +52,25 @@ describe("trackPageViews", () => {
     navigate("/accueil#indicateurs");
 
     expect(analytics.trackPageView).toHaveBeenCalledTimes(1);
+  });
+
+  it("lit les dimensions au moment de l'envoi", () => {
+    let profil: ProfilCode | undefined;
+    const { analytics, navigate } = setup(() => ({ profil_pilote: profil }));
+    vi.runAllTimers();
+
+    profil = ProfilEnum.DITP_ADMIN;
+    navigate("/chantier/CH-001/NAT");
+
+    expect(analytics.trackPageView.mock.calls).toEqual([
+      [{ title: "Accueil", dimensions: { profil_pilote: undefined } }],
+      [
+        {
+          title: "Accueil",
+          dimensions: { profil_pilote: ProfilEnum.DITP_ADMIN },
+        },
+      ],
+    ]);
   });
 
   it("cesse d'écouter le router une fois désabonné", () => {

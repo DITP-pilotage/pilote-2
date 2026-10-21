@@ -4,6 +4,8 @@ import { Icone } from "@/components/_commons/Icone";
 import { DownloadIcon } from "@/components/_commons/Icones/DownloadIcon";
 import type { PiloteUITools } from "@/server/albert/PiloteUIMessage";
 import { clsxm } from "@/utils/clsxm";
+import { reportExportName } from "@/components/_commons/ChatUI/assistantEvents";
+import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
 
 type ExportRapportPart = Extract<
   ToolUIPart<PiloteUITools>,
@@ -13,10 +15,13 @@ type ExportRapportPart = Extract<
 export const ExportRapportDownload = ({
   part,
   isStreaming,
+  llmCallId,
 }: {
   part: ExportRapportPart;
   isStreaming: boolean;
+  llmCallId: string | undefined;
 }) => {
+  const track = useChatTracking();
   const isReady = part.state === "output-available" && !isStreaming;
   const format =
     part.state === "output-available"
@@ -27,6 +32,11 @@ export const ExportRapportDownload = ({
 
   const handleDownload = () => {
     if (!isReady) return;
+    track({
+      action: "select",
+      name: reportExportName(format),
+      dimensions: { llm_call_id: llmCallId },
+    });
     const anchor = document.createElement("a");
     anchor.href = part.output.url;
     anchor.download = "";

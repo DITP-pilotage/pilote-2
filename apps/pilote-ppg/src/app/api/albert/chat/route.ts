@@ -42,7 +42,10 @@ export async function POST(request: Request) {
 
     const messagesPilote = messages as PiloteUIMessage[];
 
+    const llmCallId = crypto.randomUUID();
+
     const result = await AssistantIA.streamText({
+      llmCallId,
       chatId: body.id,
       messages,
       habilitations: session.habilitations,
@@ -70,6 +73,8 @@ export async function POST(request: Request) {
     return result.toUIMessageStreamResponse<PiloteUIMessage>({
       originalMessages: messagesPilote,
       onError: onErreurFlux,
+      messageMetadata: ({ part }) =>
+        part.type === "start" ? { llmCallId } : undefined,
       onFinish: async ({ messages: messagesFinaux }) => {
         await enregistrerConversation.execute({
           id: body.id,

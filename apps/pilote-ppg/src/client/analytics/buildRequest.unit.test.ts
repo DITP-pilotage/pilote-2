@@ -177,4 +177,19 @@ describe("buildPageViewRequest", () => {
     expect(params.get("url")).toBe("https://pilote.example.org/accueil");
     expect(params.toString()).not.toContain("c-1");
   });
+
+  it("transmet les dimensions de la page vue dans leur slot", () => {
+    const params = parse(
+      buildPageViewRequest(
+        {
+          title: "Accueil",
+          dimensions: { profil_pilote: ProfilEnum.DITP_ADMIN },
+        },
+        config,
+        context,
+      ),
+    );
+
+    expect(params.get("dimension11")).toBe(ProfilEnum.DITP_ADMIN);
+  });
 });

@@ -1,5 +1,6 @@
 import type { Router } from "next/router";
 import type { Analytics } from "@/client/analytics/browser";
+import type { AnalyticsDimensions } from "@/client/analytics/schema";
 
 const pathnameOf = (url: string): string => url.split(/[?#]/)[0];
 
@@ -9,6 +10,7 @@ const pathnameOf = (url: string): string => url.split(/[?#]/)[0];
 export const trackPageViews = (
   router: Pick<Router, "events">,
   analytics: Analytics,
+  getDimensions: () => Pick<AnalyticsDimensions, "profil_pilote">,
 ): (() => void) => {
   let lastPathname: string | undefined;
 
@@ -16,7 +18,14 @@ export const trackPageViews = (
     const pathname = pathnameOf(url);
     if (pathname === lastPathname) return;
     lastPathname = pathname;
-    setTimeout(() => analytics.trackPageView({ title: document.title }), 0);
+    setTimeout(
+      () =>
+        analytics.trackPageView({
+          title: document.title,
+          dimensions: getDimensions(),
+        }),
+      0,
+    );
   };
 
   track(window.location.pathname);

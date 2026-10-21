@@ -7,6 +7,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import { BoutonProConnect } from "./BoutonProConnect";
 import { messageDeConnexion } from "./messagesConnexion";
 import { TextLink } from "@/components/shared/TextLink";
+import { useAnalytics } from "@/client/analytics/useAnalytics";
 
 const ADRESSE_ASSISTANCE = "pilote.ditp@modernisation.gouv.fr";
 
@@ -37,6 +38,16 @@ export const PageConnexion = () => {
     motif: parametres.motif,
     error: parametres.error,
   });
+  const { trackEvent } = useAnalytics();
+
+  const signInWith = (provider: "proconnect" | "keycloak") => {
+    trackEvent({
+      category: "authentification",
+      action: "select",
+      name: `login.${provider}`,
+    });
+    void signIn(provider, { callbackUrl });
+  };
 
   return (
     <main>
@@ -62,9 +73,7 @@ export const PageConnexion = () => {
               </div>
             ) : null}
 
-            <BoutonProConnect
-              onClick={() => signIn("proconnect", { callbackUrl })}
-            />
+            <BoutonProConnect onClick={() => signInWith("proconnect")} />
 
             <div className="my-8 flex items-center gap-4">
               <span className="bg-dsfr-contrast-grey h-px flex-1" />
@@ -75,7 +84,7 @@ export const PageConnexion = () => {
             <Button
               variant="secondary"
               className="w-full justify-center"
-              onClick={() => signIn("keycloak", { callbackUrl })}
+              onClick={() => signInWith("keycloak")}
               type="button"
             >
               <span className="flex flex-col text-center">

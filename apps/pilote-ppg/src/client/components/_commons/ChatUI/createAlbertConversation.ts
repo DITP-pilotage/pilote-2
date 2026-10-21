@@ -1,5 +1,5 @@
 import { Chat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { DefaultChatTransport, type ChatOnFinishCallback } from "ai";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
@@ -32,7 +32,7 @@ export const createAlbertConversation = ({
   endpoint?: string;
   agentContext?: AlbertAgentContext;
   messages?: PiloteUIMessage[];
-  onFinish?: () => void;
+  onFinish?: ChatOnFinishCallback<PiloteUIMessage>;
 }): AlbertConversation => {
   // Mutated in place and referenced by the transport: the model selector in
   // ChatInputForm must be able to switch models mid-conversation.
@@ -48,7 +48,7 @@ export const createAlbertConversation = ({
       api: endpoint,
       body: requestBody,
     }),
-    onFinish: () => onFinish?.(),
+    onFinish,
   });
 
   return { chat, requestBody };

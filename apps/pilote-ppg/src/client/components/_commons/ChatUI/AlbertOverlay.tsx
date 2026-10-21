@@ -117,6 +117,7 @@ export const AlbertOverlay = () => {
                 key={conversation.chat.id}
                 placeholder="Posez une question sur ce territoire..."
                 scenarios={conversation.scenarios}
+                tracked
               />
             </div>
           </div>

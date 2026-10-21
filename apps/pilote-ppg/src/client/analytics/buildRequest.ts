@@ -59,7 +59,7 @@ export const buildPageViewRequest = (
   context: RequestContext,
 ): string => {
   const params = baseParams(config);
-  setDimensions(params, config, undefined);
+  setDimensions(params, config, pageView.dimensions);
 
   params.set("action_name", pageView.title);
   params.set("url", context.pageUrl);

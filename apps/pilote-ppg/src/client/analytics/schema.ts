@@ -1,6 +1,9 @@
 import type { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
-export const ANALYTICS_CATEGORIES = ["assistant_ia"] as const;
+export const ANALYTICS_CATEGORIES = [
+  "assistant_ia",
+  "authentification",
+] as const;
 
 export type AnalyticsCategory = (typeof ANALYTICS_CATEGORIES)[number];
 
@@ -22,9 +25,33 @@ export const ANALYTICS_ACTIONS = [
 export type AnalyticsAction = (typeof ANALYTICS_ACTIONS)[number];
 
 export const ANALYTICS_EVENT_NAMES = [
+  "assistant.open",
+  "assistant.minimize",
+  "assistant.resume",
+  "assistant.close",
+  "conversation.history.open",
+  "prompt_proposition.view",
+  "prompt_proposition.click",
+  "prompt_proposition.send",
   "question.send",
+  "answer.complete",
+  "answer.error",
+  "answer.stop",
+  "answer.retry",
+  "speech.start",
   "response.choices",
   "response.choice",
+  "response.choice.other",
+  "response.link.internal",
+  "response.link.external",
+  "feedback.positive",
+  "feedback.negative",
+  "export.text",
+  "export.dashboard_image",
+  "export.report_pdf",
+  "export.report_markdown",
+  "login.proconnect",
+  "login.keycloak",
 ] as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];
@@ -70,6 +97,7 @@ export type AnalyticsEvent = {
 
 export type AnalyticsPageView = {
   title: string;
+  dimensions?: AnalyticsDimensions;
 };
 
 export type AnalyticsConfig = {

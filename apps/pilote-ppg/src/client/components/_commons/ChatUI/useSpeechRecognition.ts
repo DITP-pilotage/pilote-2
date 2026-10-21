@@ -11,9 +11,11 @@ type UseSpeechRecognitionReturn = {
 
 export const useSpeechRecognition = ({
   onTranscript,
+  onStart,
   lang = "fr-FR",
 }: {
   onTranscript: (text: string) => void;
+  onStart?: () => void;
   lang?: string;
 }): UseSpeechRecognitionReturn => {
   const isSupported =
@@ -23,10 +25,15 @@ export const useSpeechRecognition = ({
   const [state, setState] = useState<SpeechRecognitionState>("inactive");
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const onTranscriptRef = useRef(onTranscript);
+  const onStartRef = useRef(onStart);
 
   useEffect(() => {
     onTranscriptRef.current = onTranscript;
   }, [onTranscript]);
+
+  useEffect(() => {
+    onStartRef.current = onStart;
+  }, [onStart]);
 
   useEffect(() => {
     return () => {
@@ -59,6 +66,10 @@ export const useSpeechRecognition = ({
             onTranscriptRef.current(transcript);
           }
         }
+      };
+
+      recognition.onstart = () => {
+        onStartRef.current?.();
       };
 
       recognition.onerror = () => {

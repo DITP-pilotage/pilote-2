@@ -124,4 +124,12 @@ export type PiloteUITools = {
   };
 };
 
-export type PiloteUIMessage = UIMessage<unknown, UIDataTypes, PiloteUITools>;
+export type PiloteMessageMetadata = {
+  llmCallId?: string;
+};
+
+export type PiloteUIMessage = UIMessage<
+  PiloteMessageMetadata,
+  UIDataTypes,
+  PiloteUITools
+>;

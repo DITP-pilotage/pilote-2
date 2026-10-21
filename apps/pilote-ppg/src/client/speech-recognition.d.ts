@@ -33,6 +33,7 @@ export declare global {
     interimResults: boolean;
     onresult: ((event: SpeechRecognitionEvent) => void) | null;
     onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+    onstart: (() => void) | null;
     onend: (() => void) | null;
     start(): void;
     stop(): void;

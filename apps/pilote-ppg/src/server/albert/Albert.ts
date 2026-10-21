@@ -58,11 +58,13 @@ export class Albert {
   }
 
   private static async saveLlmCall({
+    id,
     chatId,
     userId,
     event,
     model = DEFAULT_MODEL,
   }: {
+    id?: string;
     chatId: string;
     userId: string;
     event: unknown;
@@ -93,6 +95,7 @@ export class Albert {
     // le comportement est donc inchangé.
     await getPrisma().llm_calls.create({
       data: {
+        id,
         chat_id: chatId,
         model,
         transcript,
@@ -173,6 +176,7 @@ export class Albert {
   }
 
   static async streamText({
+    llmCallId,
     chatId,
     messages,
     systemPrompt,
@@ -180,6 +184,7 @@ export class Albert {
     tools,
     model = DEFAULT_MODEL,
   }: {
+    llmCallId?: string;
     chatId: string;
     messages: UIMessage[];
     systemPrompt: string;
@@ -196,7 +201,8 @@ export class Albert {
       tools,
       stopWhen: stepCountIs(50),
       temperature: TEMPERATURE_STREAM_TEXT,
-      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event, model }),
+      onFinish: (event) =>
+        Albert.saveLlmCall({ id: llmCallId, chatId, userId, event, model }),
     });
   }
 }

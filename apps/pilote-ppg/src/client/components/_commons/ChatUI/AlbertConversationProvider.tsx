@@ -10,6 +10,12 @@ import {
 } from "react";
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
 import {
+  answerOutcomeEvent,
+  choicesPresentedEvent,
+  exportsAvailableEvents,
+} from "@/components/_commons/ChatUI/assistantEvents";
+import { useAssistantTracking } from "@/components/_commons/ChatUI/useAssistantTracking";
+import {
   createAlbertConversation,
   type AlbertAgentContext,
   type AlbertConversation,
@@ -61,6 +67,12 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   );
   const [display, setDisplay] = useState<AlbertDisplay>("fullscreen");
   const trpcUtils = api.useUtils();
+  const track = useAssistantTracking();
+  const trackRef = useRef(track);
+
+  useEffect(() => {
+    trackRef.current = track;
+  }, [track]);
 
   const build = useCallback(
     ({
@@ -78,7 +90,25 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         id,
         agentContext,
         messages,
-        onFinish: () => trpcUtils.albert.conversations.lister.invalidate(),
+        onFinish: ({ message, isAbort, isError }) => {
+          void trpcUtils.albert.conversations.lister.invalidate();
+          const event = answerOutcomeEvent({
+            conversationId: id,
+            message,
+            isAbort,
+            isError,
+          });
+          if (event) trackRef.current(event);
+          if (isAbort || isError) return;
+          const choices = choicesPresentedEvent({
+            conversationId: id,
+            message,
+          });
+          if (choices) trackRef.current(choices);
+          exportsAvailableEvents({ conversationId: id, message }).forEach(
+            (available) => trackRef.current(available),
+          );
+        },
       }),
       agentContext,
       scenarios,
@@ -134,34 +164,65 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
 
   const open = useCallback<AlbertConversationContextValue["open"]>(
     ({ agentContext, scenarios }) => {
-      setConversation(
-        (current) =>
-          current ??
-          build({ id: crypto.randomUUID(), agentContext, scenarios }),
-      );
+      if (conversation) {
+        track({
+          action: "resume",
+          name: "assistant.resume",
+          dimensions: { conversation_id: conversation.chat.id },
+        });
+      } else {
+        const created = build({
+          id: crypto.randomUUID(),
+          agentContext,
+          scenarios,
+        });
+        setConversation(created);
+        track({
+          action: "open",
+          name: "assistant.open",
+          dimensions: { conversation_id: created.chat.id },
+        });
+      }
       setDisplay("fullscreen");
     },
-    [build],
+    [build, conversation, track],
   );
 
   const minimize = useCallback(() => {
     if (conversation) {
+      track({
+        action: "minimize",
+        name: "assistant.minimize",
+        dimensions: { conversation_id: conversation.chat.id },
+      });
       writeMinimizedConversation({
         id: conversation.chat.id,
         agentContext: conversation.agentContext,
       });
     }
     setDisplay("minimized");
-  }, [conversation]);
+  }, [conversation, track]);
 
-  const restore = useCallback(() => setDisplay("fullscreen"), []);
+  const restore = useCallback(() => {
+    track({
+      action: "resume",
+      name: "assistant.resume",
+      dimensions: { conversation_id: conversation?.chat.id },
+    });
+    setDisplay("fullscreen");
+  }, [conversation, track]);
 
   const close = useCallback(() => {
+    track({
+      action: "close",
+      name: "assistant.close",
+      dimensions: { conversation_id: conversation?.chat.id },
+    });
     conversation?.chat.stop();
     clearMinimizedConversation();
     setConversation(null);
     setDisplay("fullscreen");
-  }, [conversation]);
+  }, [conversation, track]);
 
   const startNewConversation = useCallback(() => {
     if (!conversation) return;
@@ -180,6 +241,11 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   const selectConversation = useCallback(
     (id: string) => {
       if (!conversation) return;
+      track({
+        action: "select",
+        name: "conversation.history.open",
+        dimensions: { conversation_id: id },
+      });
       conversation.chat.stop();
       clearMinimizedConversation();
       load({
@@ -188,7 +254,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         targetDisplay: "fullscreen",
       });
     },
-    [conversation, load],
+    [conversation, load, track],
   );
 
   const value = useMemo(
