@@ -220,6 +220,7 @@ describe("linkEvent", () => {
   it.each([
     { href: "/chantier/CH-001/NAT", name: "response.link.internal" },
     { href: "https://www.info.gouv.fr", name: "response.link.external" },
+    { href: "//www.info.gouv.fr", name: "response.link.external" },
     { href: undefined, name: "response.link.external" },
   ])("classe $href en $name", ({ href, name }) => {
     expect(linkEvent(href)).toEqual({ action: "select", name });

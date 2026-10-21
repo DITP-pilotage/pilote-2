@@ -17,7 +17,7 @@ export const ChoicesInline = ({
 }) => {
   const { sendMessage, fillInput, track } = useChatContext();
 
-  const choisir = (choice: ClarifyChoice, index: number) => {
+  const selectChoice = (choice: ClarifyChoice, index: number) => {
     track({
       action: "select",
       name: "response.choice",
@@ -26,7 +26,7 @@ export const ChoicesInline = ({
     sendMessage({ text: choice.label });
   };
 
-  const ecrireAutreChose = () => {
+  const writeOtherRequest = () => {
     track({
       action: "select",
       name: "response.choice.other",
@@ -59,7 +59,7 @@ export const ChoicesInline = ({
           <li className="p-0" key={choice.value}>
             <button
               className="group flex w-full items-center justify-between gap-3 bg-white px-4 py-2.5 text-left text-sm font-medium text-primary shadow-[inset_0_0_0_1px_#E3E3FD] transition-colors hover:bg-dsfr-blue-france-925 hover:shadow-[inset_0_0_0_1px_#000091] focus-visible:outline-2 focus-visible:outline-dsfr-focus"
-              onClick={() => choisir(choice, index)}
+              onClick={() => selectChoice(choice, index)}
               type="button"
             >
               {choice.label}
@@ -74,7 +74,7 @@ export const ChoicesInline = ({
 
       <button
         className="inline-flex items-center gap-1.5 self-start text-sm text-dsfr-grey-200 underline-offset-4 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-dsfr-focus"
-        onClick={ecrireAutreChose}
+        onClick={writeOtherRequest}
         type="button"
       >
         <Icone className="h-4 w-4 shrink-0" icone={PencilIcon} />

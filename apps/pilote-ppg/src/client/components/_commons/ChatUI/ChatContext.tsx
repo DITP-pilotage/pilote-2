@@ -16,6 +16,7 @@ type ChatContextValue = {
 };
 
 const context = createContext<ChatContextValue | null>(null);
+const trackingContext = createContext<ChatContextValue["track"] | null>(null);
 
 export const useChatContext = () => {
   const contextValue = useContext(context);
@@ -31,9 +32,7 @@ export const useChatContext = () => {
 
 const ignoreEvent = () => {};
 
-// Une réponse peut être rendue hors d'un chat (transcript du panneau
-// administrateur) : rien n'y est suivi.
-export const useChatTracking = () => useContext(context)?.track ?? ignoreEvent;
+export const useChatTracking = () => useContext(trackingContext) ?? ignoreEvent;
 
 export const ChatContextProvider = ({
   children,
@@ -49,5 +48,11 @@ export const ChatContextProvider = ({
     [sendMessage, fillInput, status, error, stop, track],
   );
 
-  return <context.Provider value={value}>{children}</context.Provider>;
+  return (
+    <context.Provider value={value}>
+      <trackingContext.Provider value={track}>
+        {children}
+      </trackingContext.Provider>
+    </context.Provider>
+  );
 };

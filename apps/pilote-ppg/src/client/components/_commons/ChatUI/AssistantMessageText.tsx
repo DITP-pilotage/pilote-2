@@ -1,11 +1,14 @@
-import { memo, useMemo, type ReactNode } from "react";
+import { memo, useMemo, type MouseEvent, type ReactNode } from "react";
 import { useRouter } from "next/router";
 import ReactMarkdown, { type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
-import { linkEvent } from "@/components/_commons/ChatUI/assistantEvents";
+import {
+  isInternalHref,
+  linkEvent,
+} from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
 import { clsxm } from "@/utils/clsxm";
 
@@ -108,15 +111,17 @@ const MarkdownLink = ({
   const router = useRouter();
   const { minimize } = useAlbertConversation();
   const track = useChatTracking();
+  const trackLink = () => track(linkEvent(href));
+  const trackMiddleClick = (event: MouseEvent) => {
+    if (event.button === 1) trackLink();
+  };
 
-  if (!href?.startsWith("/")) {
+  if (!isInternalHref(href)) {
     return (
       <a
         href={href}
-        onAuxClick={(event) => {
-          if (event.button === 1) track(linkEvent(href));
-        }}
-        onClick={() => track(linkEvent(href))}
+        onAuxClick={trackMiddleClick}
+        onClick={trackLink}
         rel="noopener noreferrer"
         target="_blank"
       >
@@ -128,11 +133,9 @@ const MarkdownLink = ({
   return (
     <a
       href={href}
-      onAuxClick={(event) => {
-        if (event.button === 1) track(linkEvent(href));
-      }}
+      onAuxClick={trackMiddleClick}
       onClick={(event) => {
-        track(linkEvent(href));
+        trackLink();
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
         if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
         event.preventDefault();

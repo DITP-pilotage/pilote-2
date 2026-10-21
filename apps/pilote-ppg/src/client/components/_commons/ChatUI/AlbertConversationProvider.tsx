@@ -98,12 +98,11 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
             isError,
           });
           if (event) trackRef.current(event);
-          // Compté à l'arrivée de la réponse : un nouvel affichage ne
-          // représente pas une nouvelle présentation des choix.
-          const choices =
-            event?.action === "success"
-              ? choicesPresentedEvent({ conversationId: id, message })
-              : null;
+          if (isAbort || isError) return;
+          const choices = choicesPresentedEvent({
+            conversationId: id,
+            message,
+          });
           if (choices) trackRef.current(choices);
         },
       }),

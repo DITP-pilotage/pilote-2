@@ -107,9 +107,12 @@ export const choicesPresentedEvent = ({
   };
 };
 
+export const isInternalHref = (href: string | undefined): href is string =>
+  href !== undefined && href.startsWith("/") && !href.startsWith("//");
+
 export const linkEvent = (href: string | undefined): AssistantEvent => ({
   action: "select",
-  name: href?.startsWith("/")
+  name: isInternalHref(href)
     ? "response.link.internal"
     : "response.link.external",
 });
