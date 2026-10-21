@@ -91,7 +91,9 @@ const buildPromptReponse = (
 <pages>
 ${pages
   .map(
-    (page) => `<page id="${page.id}" titre="${page.titre}">
+    (
+      page,
+    ) => `<page id=${JSON.stringify(page.id)} titre=${JSON.stringify(page.titre)}>
 ${page.contenuMarkdown}
 </page>`,
   )
