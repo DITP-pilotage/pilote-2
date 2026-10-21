@@ -1,6 +1,9 @@
 import type { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
-export const ANALYTICS_CATEGORIES = ["assistant_ia"] as const;
+export const ANALYTICS_CATEGORIES = [
+  "assistant_ia",
+  "authentification",
+] as const;
 
 export type AnalyticsCategory = (typeof ANALYTICS_CATEGORIES)[number];
 
@@ -47,6 +50,8 @@ export const ANALYTICS_EVENT_NAMES = [
   "export.dashboard_image",
   "export.report_pdf",
   "export.report_markdown",
+  "login.proconnect",
+  "login.keycloak",
 ] as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];
