@@ -11,10 +11,10 @@ const consulte = mechanical({
   id: "Centre d'aide consulté",
   rule: "consulter_centre_aide : appelle-le dès qu'une question porte sur une définition, un calcul ou une procédure",
   check: (evidence) => {
-    const ok = evidence.toolCalls.some(
+    const passed = evidence.toolCalls.some(
       (call) => call.toolName === "consulter_centre_aide",
     );
-    return { ok, detail: ok ? "appelé" : "jamais appelé" };
+    return { ok: passed, detail: passed ? "appelé" : "jamais appelé" };
   },
 });
 
@@ -34,8 +34,11 @@ const pasDeLien = mechanical({
   id: "Pas de lien dans le texte",
   rule: "N'écris jamais de lien vers le centre d'aide : les pages sont affichées sous ta réponse",
   check: (evidence) => {
-    const ok = !/centre-aide-pilote|https?:\/\//.test(evidence.answer);
-    return { ok, detail: ok ? "aucun lien" : "lien écrit dans la réponse" };
+    const passed = !/centre-aide-pilote|https?:\/\//.test(evidence.answer);
+    return {
+      ok: passed,
+      detail: passed ? "aucun lien" : "lien écrit dans la réponse",
+    };
   },
 });
 
@@ -61,10 +64,10 @@ const pageAttendue = (pagesParQuestion: Record<string, string[]>) =>
       const citees = consultations(evidence).flatMap((output) =>
         output.sources.map((source) => source.id),
       );
-      const ok = citees.some((id) => attendues.includes(id));
+      const passed = citees.some((id) => attendues.includes(id));
       return {
-        ok,
-        detail: ok
+        ok: passed,
+        detail: passed
           ? "page attendue citée"
           : `citées : ${citees.join(", ") || "aucune"}`,
       };
@@ -92,10 +95,12 @@ export const criteresHorsCorpus = withBase({
       id: "Non trouvé",
       rule: "Si le centre d'aide ne permet pas de répondre, l'outil renvoie trouve: false",
       check: (evidence) => {
-        const ok = consultations(evidence).every((output) => !output.trouve);
+        const passed = consultations(evidence).every(
+          (output) => !output.trouve,
+        );
         return {
-          ok,
-          detail: ok ? "non trouvé" : "une réponse a été trouvée",
+          ok: passed,
+          detail: passed ? "non trouvé" : "une réponse a été trouvée",
         };
       },
     }),
