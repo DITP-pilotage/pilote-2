@@ -1,4 +1,4 @@
-import { sameValues } from "@/client/utils/arrays";
+import { sameValues } from "@/utils/arrays";
 
 describe("sameValues", () => {
   it("considère deux listes identiques à l'ordre près comme égales", () => {

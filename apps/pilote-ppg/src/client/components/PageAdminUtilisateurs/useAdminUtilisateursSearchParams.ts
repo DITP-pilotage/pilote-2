@@ -3,7 +3,7 @@ import {
   adminUtilisateursFilterParsers,
   adminUtilisateursSearchParams,
 } from "@/client/searchParams/adminUtilisateursSearchParams";
-import { sameValues } from "@/client/utils/arrays";
+import { sameValues } from "@/utils/arrays";
 
 type FilterValues = inferParserType<typeof adminUtilisateursFilterParsers>;
 

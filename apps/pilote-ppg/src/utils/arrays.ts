@@ -11,20 +11,8 @@ export function groupByAndTransform<T, U>(
   }, {});
 }
 
-export function deuxTableauxSontIdentiques(
-  tableau1: string[],
-  tableau2: string[],
-) {
-  if (tableau1.length !== tableau2.length) return false;
-
-  for (const element of tableau1) {
-    if (!tableau2.includes(element)) {
-      return false;
-    }
-  }
-
-  return true;
-}
+export const sameValues = (left: readonly string[], right: readonly string[]) =>
+  left.length === right.length && left.every((value) => right.includes(value));
 
 export function toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
   tableauContenu: (string | number | boolean | null)[],

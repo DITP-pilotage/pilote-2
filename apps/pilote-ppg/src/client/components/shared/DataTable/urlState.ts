@@ -14,7 +14,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { useMemo } from "react";
-import { sameValues } from "@/client/utils/arrays";
+import { sameValues } from "@/utils/arrays";
 import {
   parseAsSorting,
   parseAsSortingAmong,
