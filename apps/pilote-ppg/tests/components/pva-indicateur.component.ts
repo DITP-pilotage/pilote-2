@@ -25,7 +25,7 @@ export class PvaIndicateurComponent {
 
   // --- Actions---
 
-  async clickProposerAutreValeur(): Promise<PvaModalComponent> {
+  async clickProposeAnotherValeur(): Promise<PvaModalComponent> {
     this.trackPva();
     await this.section
       .getByRole("button", {
@@ -35,41 +35,41 @@ export class PvaIndicateurComponent {
     return new PvaModalComponent(this.page);
   }
 
-  async afficherProposition(): Promise<void> {
+  async showProposition(): Promise<void> {
     await this.section
       .getByRole("button", { name: /Afficher la proposition/ })
       .click();
   }
 
-  async clickModifierProposition(): Promise<PvaModalComponent> {
+  async clickEditProposition(): Promise<PvaModalComponent> {
     await this.section
       .getByRole("button", { name: /Modifier la proposition/ })
       .click();
     return new PvaModalComponent(this.page);
   }
 
-  async clickSupprimerProposition(): Promise<PvaModalComponent> {
+  async clickDeleteProposition(): Promise<PvaModalComponent> {
     await this.section
       .getByRole("button", { name: /Supprimer la proposition/ })
       .click();
     return new PvaModalComponent(this.page);
   }
 
-  async clickAccuserReception(): Promise<PvaModalComponent> {
+  async clickAccuseReception(): Promise<PvaModalComponent> {
     await this.section
       .getByRole("button", { name: /Accuser réception/ })
       .click();
     return new PvaModalComponent(this.page);
   }
 
-  async clickPrendreDecision(): Promise<PvaModalComponent> {
+  async clickMakeDecision(): Promise<PvaModalComponent> {
     await this.section
       .getByRole("button", { name: /Prendre une décision/ })
       .click();
     return new PvaModalComponent(this.page);
   }
 
-  async clickVoirHistorique(): Promise<PvaModalComponent> {
+  async clickShowHistorique(): Promise<PvaModalComponent> {
     await this.section
       .getByRole("button", { name: /Voir l'historique/ })
       .click();
@@ -82,7 +82,7 @@ export class PvaIndicateurComponent {
     await expect(this.section.getByText(statut)).toBeVisible();
   }
 
-  async expectProposerAutreValeurVisible(): Promise<void> {
+  async expectProposeAnotherValeurVisible(): Promise<void> {
     await expect(
       this.section.getByRole("button", {
         name: /Proposer une autre valeur d'avancement/,
@@ -90,7 +90,7 @@ export class PvaIndicateurComponent {
     ).toBeVisible();
   }
 
-  async expectProposerAutreValeurNotVisible(): Promise<void> {
+  async expectProposeAnotherValeurNotVisible(): Promise<void> {
     await expect(
       this.section.getByRole("button", {
         name: /Proposer une autre valeur d'avancement/,
@@ -98,7 +98,7 @@ export class PvaIndicateurComponent {
     ).not.toBeVisible();
   }
 
-  async expectModifierVisible(): Promise<void> {
+  async expectEditVisible(): Promise<void> {
     await expect(
       this.section.getByRole("button", {
         name: /Modifier la proposition/,
@@ -106,7 +106,7 @@ export class PvaIndicateurComponent {
     ).toBeVisible();
   }
 
-  async expectModifierNotVisible(): Promise<void> {
+  async expectEditNotVisible(): Promise<void> {
     await expect(
       this.section.getByRole("button", {
         name: /Modifier la proposition/,
@@ -114,7 +114,7 @@ export class PvaIndicateurComponent {
     ).not.toBeVisible();
   }
 
-  async expectSupprimerVisible(): Promise<void> {
+  async expectDeleteVisible(): Promise<void> {
     await expect(
       this.section.getByRole("button", {
         name: /Supprimer la proposition/,
@@ -122,7 +122,7 @@ export class PvaIndicateurComponent {
     ).toBeVisible();
   }
 
-  async expectSupprimerNotVisible(): Promise<void> {
+  async expectDeleteNotVisible(): Promise<void> {
     await expect(
       this.section.getByRole("button", {
         name: /Supprimer la proposition/,
@@ -130,7 +130,7 @@ export class PvaIndicateurComponent {
     ).not.toBeVisible();
   }
 
-  async expectBlocageMaille(): Promise<void> {
+  async expectMailleBlocked(): Promise<void> {
     await expect(
       this.section.getByText(
         /Impossible de proposer une autre valeur d'avancement/,

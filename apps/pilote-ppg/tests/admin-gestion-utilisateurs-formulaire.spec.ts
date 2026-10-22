@@ -19,13 +19,13 @@ test("doit valider les champs obligatoires Service et Fonction à la création",
   });
 
   await step("Navigation vers la page de création de compte", async () => {
-    await pageFormulaire.gotoCreer();
+    await pageFormulaire.gotoCreate();
   });
 
   await step(
     "Remplissage des champs email, nom, prénom et profil sans service ni fonction",
     async () => {
-      await pageFormulaire.remplirIdentification({
+      await pageFormulaire.fillIdentification({
         email: "test.validation@gouv.fr",
         nom: "Test",
         prenom: "Validation",
@@ -37,19 +37,19 @@ test("doit valider les champs obligatoires Service et Fonction à la création",
   await step(
     "Clic Suivant — erreurs de validation sur Service et Fonction",
     async () => {
-      await pageFormulaire.clickSuivant();
-      await pageFormulaire.expectErreurFonction();
-      await pageFormulaire.expectErreurService();
+      await pageFormulaire.clickNext();
+      await pageFormulaire.expectFonctionError();
+      await pageFormulaire.expectServiceError();
     },
   );
 
   await step(
     "Remplissage de Fonction et Service — les erreurs disparaissent",
     async () => {
-      await pageFormulaire.remplirFonction("Testeur E2E");
+      await pageFormulaire.fillFonction("Testeur E2E");
       await pageFormulaire.selectService("Préfecture de région");
-      await pageFormulaire.expectPasErreurFonction();
-      await pageFormulaire.expectPasErreurService();
+      await pageFormulaire.expectNoFonctionError();
+      await pageFormulaire.expectNoServiceError();
     },
   );
 });
@@ -65,17 +65,17 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
   const pageFormulaire = new PageUtilisateurFormulaire(page, e2eContext);
 
   async function submitForm(): Promise<void> {
-    await pageFormulaire.gotoCreer();
-    await pageFormulaire.remplirIdentification({
+    await pageFormulaire.gotoCreate();
+    await pageFormulaire.fillIdentification({
       email,
       nom: "Creation",
       prenom: "E2E",
     });
     await pageFormulaire.selectProfil("DITP - Pilotage");
-    await pageFormulaire.remplirFonction("Testeur E2E");
+    await pageFormulaire.fillFonction("Testeur E2E");
     await pageFormulaire.selectService("Préfecture de région");
     await pageFormulaire.clickNextToReview();
-    await pageFormulaire.confirmer();
+    await pageFormulaire.confirm();
   }
 
   await step("Connexion en tant que DITP Admin", async () => {
@@ -84,7 +84,7 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
 
   await step("Création du compte", async () => {
     await submitForm();
-    await pageFormulaire.expectSuccesModification();
+    await pageFormulaire.expectUpdateSuccess();
     const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
       where: { email },
       select: { profilCode: true, fonction: true },
@@ -140,17 +140,17 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
     "Navigation vers la fiche du coordinateur et clic Modifier",
     async () => {
       await pageUtilisateurs.goto();
-      await pageUtilisateurs.clickUtilisateurParEmail(MODALE_PROFIL);
-      await pageFormulaire.gotoModifierDepuisFiche();
+      await pageUtilisateurs.clickUtilisateurByEmail(MODALE_PROFIL);
+      await pageFormulaire.gotoEditFromFiche();
     },
   );
 
   await step(
     "Clic Suivant — erreurs de validation sur Service et Fonction",
     async () => {
-      await pageFormulaire.clickSuivant();
-      await pageFormulaire.expectErreurFonction();
-      await pageFormulaire.expectErreurService();
+      await pageFormulaire.clickNext();
+      await pageFormulaire.expectFonctionError();
+      await pageFormulaire.expectServiceError();
     },
   );
 
@@ -166,17 +166,17 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
           perimetre_ministeriel: null,
         },
       });
-      await pageFormulaire.remplirFonction("Coordinateur régional");
+      await pageFormulaire.fillFonction("Coordinateur régional");
       await pageFormulaire.selectService("Préfecture de région");
-      await pageFormulaire.clickSuivant();
-      await pageFormulaire.expectPasErreurFonction();
-      await pageFormulaire.expectPasErreurService();
+      await pageFormulaire.clickNext();
+      await pageFormulaire.expectNoFonctionError();
+      await pageFormulaire.expectNoServiceError();
     },
   );
 
   await step("Confirmation du récapitulatif — enregistrement", async () => {
-    await pageFormulaire.confirmer();
-    await pageFormulaire.expectSuccesModification();
+    await pageFormulaire.confirm();
+    await pageFormulaire.expectUpdateSuccess();
   });
 
   await step(

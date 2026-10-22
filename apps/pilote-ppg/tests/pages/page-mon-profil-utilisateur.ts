@@ -15,18 +15,18 @@ export class PageMonProfilUtilisateur extends BasePage {
     ).toBeVisible({ timeout: 30_000 });
   }
 
-  private get titre() {
+  private get heading() {
     return this.page.getByRole("heading", {
       name: "Mon profil utilisateur",
       level: 1,
     });
   }
 
-  private get sectionIdentification() {
+  private get identificationSection() {
     return this.page.getByRole("heading", { name: "Identification" });
   }
 
-  private get mentionChampsObligatoires() {
+  private get requiredFieldsNotice() {
     return this.page.getByText("Tous les champs sont obligatoires.");
   }
 
@@ -46,7 +46,7 @@ export class PageMonProfilUtilisateur extends BasePage {
     return this.page.getByRole("textbox", { name: "Fonction" });
   }
 
-  private get boutonEnregistrer() {
+  private get saveButton() {
     return this.page.getByRole("button", { name: "Enregistrer" });
   }
 
@@ -54,31 +54,31 @@ export class PageMonProfilUtilisateur extends BasePage {
     return this.page.getByText(/Modifié le \d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/);
   }
 
-  private get alerteSucces() {
+  private get successAlert() {
     return this.page.getByText(
       "Vos informations ont été modifiées avec succès",
     );
   }
 
-  private get champPrecisezService() {
+  private get serviceDetailsField() {
     return this.page.getByRole("textbox", { name: "Précisez votre service" });
   }
 
-  private get messageAideServiceAutre() {
+  private get serviceAutreHelpMessage() {
     return this.page.getByText(
       "Afin de nous aider à compléter cette liste, merci de nous indiquer votre rattachement.",
     );
   }
 
   async expectStructure(): Promise<void> {
-    await expect(this.titre).toBeVisible();
-    await expect(this.sectionIdentification).toBeVisible();
-    await expect(this.mentionChampsObligatoires).toBeVisible();
+    await expect(this.heading).toBeVisible();
+    await expect(this.identificationSection).toBeVisible();
+    await expect(this.requiredFieldsNotice).toBeVisible();
     await expect(this.emailInput).toBeVisible();
     await expect(this.prenomInput).toBeVisible();
     await expect(this.nomInput).toBeVisible();
     await expect(this.fonctionInput).toBeVisible();
-    await expect(this.boutonEnregistrer).toBeVisible();
+    await expect(this.saveButton).toBeVisible();
     await expect(this.dateModification).toBeVisible();
   }
 
@@ -86,7 +86,7 @@ export class PageMonProfilUtilisateur extends BasePage {
     await expect(this.emailInput).toBeDisabled();
   }
 
-  async expectChampsPreremplis(data: {
+  async expectPrefilledFields(data: {
     email: string;
     prenom: string;
     nom: string;
@@ -96,7 +96,7 @@ export class PageMonProfilUtilisateur extends BasePage {
     await expect(this.nomInput).toHaveValue(data.nom);
   }
 
-  async modifierFonctionEtEnregistrer(
+  async updateFonctionAndSave(
     email: string,
     nouvelleFonction: string,
   ): Promise<void> {
@@ -109,11 +109,11 @@ export class PageMonProfilUtilisateur extends BasePage {
     });
     await this.fonctionInput.clear();
     await this.fonctionInput.fill(nouvelleFonction);
-    await this.boutonEnregistrer.click();
+    await this.saveButton.click();
   }
 
-  async expectSucces(): Promise<void> {
-    await expect(this.alerteSucces).toBeVisible({ timeout: 10_000 });
+  async expectSuccess(): Promise<void> {
+    await expect(this.successAlert).toBeVisible({ timeout: 10_000 });
   }
 
   async selectService(serviceName: string): Promise<void> {
@@ -121,12 +121,12 @@ export class PageMonProfilUtilisateur extends BasePage {
     await this.page.getByRole("option", { name: serviceName }).click();
   }
 
-  async expectChampServiceAutreVisible(): Promise<void> {
-    await expect(this.champPrecisezService).toBeVisible();
-    await expect(this.messageAideServiceAutre).toBeVisible();
+  async expectServiceAutreFieldVisible(): Promise<void> {
+    await expect(this.serviceDetailsField).toBeVisible();
+    await expect(this.serviceAutreHelpMessage).toBeVisible();
   }
 
-  async expectChampServiceAutreNonVisible(): Promise<void> {
-    await expect(this.champPrecisezService).not.toBeVisible();
+  async expectServiceAutreFieldNotVisible(): Promise<void> {
+    await expect(this.serviceDetailsField).not.toBeVisible();
   }
 }

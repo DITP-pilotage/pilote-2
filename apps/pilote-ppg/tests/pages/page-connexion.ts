@@ -7,7 +7,7 @@ export class PageConnexion {
     return this.page.getByRole("button", { name: /identifiants PILOTE/ });
   }
 
-  async choisirConnexionParIdentifiants(): Promise<void> {
+  async chooseCredentialsLogin(): Promise<void> {
     await this.boutonIdentifiantsPilote.click();
   }
 }

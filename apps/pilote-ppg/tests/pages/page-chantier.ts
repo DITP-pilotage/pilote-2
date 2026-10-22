@@ -26,7 +26,7 @@ export class PageChantier extends BasePage {
     this.header = new HeaderComponent(page);
   }
 
-  async gotoMiseAJourDonnees(): Promise<PageMiseAJourDonnees> {
+  async gotoDataUpdate(): Promise<PageMiseAJourDonnees> {
     await this.page
       .getByRole("link", { name: /Mettre à jour les données/ })
       .click();
@@ -36,7 +36,7 @@ export class PageChantier extends BasePage {
     return new PageMiseAJourDonnees(this.page, this.e2eContext);
   }
 
-  async selectChantierAvecTerritoire(
+  async selectChantierWithTerritoire(
     chantierId: string,
     territoireCode: string,
   ): Promise<void> {
@@ -73,7 +73,7 @@ export class PageChantier extends BasePage {
     );
   }
 
-  async expectStructureNationale(): Promise<void> {
+  async expectNationalStructure(): Promise<void> {
     await expect(
       this.page.getByRole("heading", { name: /Avancement du chantier/ }),
     ).toBeVisible();
@@ -129,7 +129,7 @@ export class PageChantier extends BasePage {
     ).toBeVisible();
   }
 
-  async expectStructureTerritoriale(): Promise<void> {
+  async expectTerritorialStructure(): Promise<void> {
     await expect(
       this.page.getByRole("heading", { name: /Avancement du chantier/ }),
     ).toBeVisible();
@@ -212,7 +212,7 @@ export class PageChantier extends BasePage {
     await expect(this.page).toHaveTitle(/Page non trouvée|404/);
   }
 
-  async expectHistoriqueCommentaire(
+  async expectCommentaireInHistorique(
     typeCommentaire: string = "risquesEtFreinsÀLever",
   ): Promise<void> {
     const id = randomUUID();

@@ -42,21 +42,21 @@ export class PageAccueil extends BasePage {
     return new PageChantier(this.page, this.e2eContext);
   }
 
-  private get boutonAssistantIA() {
+  private get assistantIAButton() {
     return this.page.getByRole("button", {
       name: "Ouvrir l'Assistant IA PILOTE",
     });
   }
 
-  async expectAccesAssistantIA(): Promise<void> {
-    await expect(this.boutonAssistantIA).toBeVisible();
+  async expectAssistantIAAccess(): Promise<void> {
+    await expect(this.assistantIAButton).toBeVisible();
   }
 
-  async expectPasAccesAssistantIA(): Promise<void> {
+  async expectNoAssistantIAAccess(): Promise<void> {
     await expect(
       this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
     ).toBeVisible();
-    await expect(this.boutonAssistantIA).toHaveCount(0);
+    await expect(this.assistantIAButton).toHaveCount(0);
   }
 
   async openExportModal(): Promise<void> {

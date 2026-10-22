@@ -47,7 +47,7 @@ test("doit afficher et modifier le profil utilisateur", async ({
   });
 
   await step("Vérification que les champs sont pré-remplis", async () => {
-    await pageMonProfil.expectChampsPreremplis({
+    await pageMonProfil.expectPrefilledFields({
       email: "ditp.admin@example.com",
       prenom: "Admin",
       nom: "DITP",
@@ -58,7 +58,7 @@ test("doit afficher et modifier le profil utilisateur", async ({
     "Sélection du service Autre — champ supplémentaire visible",
     async () => {
       await pageMonProfil.selectService("Autre");
-      await pageMonProfil.expectChampServiceAutreVisible();
+      await pageMonProfil.expectServiceAutreFieldVisible();
     },
   );
 
@@ -66,7 +66,7 @@ test("doit afficher et modifier le profil utilisateur", async ({
     "Sélection d'un service standard — champ Autre disparaît",
     async () => {
       await pageMonProfil.selectService("Préfecture de région");
-      await pageMonProfil.expectChampServiceAutreNonVisible();
+      await pageMonProfil.expectServiceAutreFieldNotVisible();
     },
   );
 
@@ -76,11 +76,11 @@ test("doit afficher et modifier le profil utilisateur", async ({
     modificationDateBefore = await getModificationDate(
       "ditp.admin@example.com",
     );
-    await pageMonProfil.modifierFonctionEtEnregistrer(
+    await pageMonProfil.updateFonctionAndSave(
       "ditp.admin@example.com",
       "Testeur E2E",
     );
-    await pageMonProfil.expectSucces();
+    await pageMonProfil.expectSuccess();
   });
 
   await step(
@@ -106,7 +106,7 @@ test("doit afficher et modifier le profil utilisateur", async ({
     async () => {
       await appActions.switchUser("coordinateur.region@example.com");
       await pageMonProfil.goto();
-      await pageMonProfil.expectChampsPreremplis({
+      await pageMonProfil.expectPrefilledFields({
         email: "coordinateur.region@example.com",
         prenom: "Region",
         nom: "Coordinateur",

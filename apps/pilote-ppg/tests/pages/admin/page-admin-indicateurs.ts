@@ -11,7 +11,7 @@ export class PageAdminIndicateurs extends BasePage {
     this.header = new HeaderComponent(page);
   }
 
-  private get tableau() {
+  private get table() {
     return this.page.locator("table", {
       has: this.page.locator("caption", {
         hasText: "Tableau des indicateurs",
@@ -19,37 +19,37 @@ export class PageAdminIndicateurs extends BasePage {
     });
   }
 
-  private get titreNombreIndicateurs() {
+  private get indicateursCountHeading() {
     return this.page
       .getByRole("heading", { level: 2 })
       .filter({ hasText: /\d{1,10} indicateurs?/ });
   }
 
-  private get barreRecherche() {
+  private get searchBox() {
     return this.page.getByRole("search").locator("input[type='search']");
   }
 
-  private get boutonCreerIndicateur() {
+  private get createIndicateurButton() {
     return this.page.getByRole("button", { name: /Créer un indicateur/ });
   }
 
-  private get boutonExporter() {
+  private get exportButton() {
     return this.page.getByRole("button", { name: /Exporter/ });
   }
 
-  private get boutonReinitialiserFiltres() {
+  private get resetFiltersButton() {
     return this.page.getByRole("button", {
       name: /Réinitialiser les filtres/,
     });
   }
 
-  private get toggleTerritorialise() {
+  private get territorialiseToggle() {
     return this.page.getByRole("switch", {
       name: /Indicateurs territorialisés/,
     });
   }
 
-  private get toggleBarometre() {
+  private get barometreToggle() {
     return this.page.getByRole("switch", {
       name: /Indicateurs du baromètre/,
     });
@@ -68,66 +68,62 @@ export class PageAdminIndicateurs extends BasePage {
       .waitFor({ state: "visible" });
   }
 
-  async rechercherIndicateur(texte: string): Promise<void> {
-    await this.barreRecherche.fill(texte);
-    await expect(this.barreRecherche).toHaveValue(texte);
+  async searchIndicateur(text: string): Promise<void> {
+    await this.searchBox.fill(text);
+    await expect(this.searchBox).toHaveValue(text);
   }
 
-  async effacerRecherche(): Promise<void> {
-    await this.barreRecherche.clear();
-    await expect(this.barreRecherche).toHaveValue("");
+  async clearSearch(): Promise<void> {
+    await this.searchBox.clear();
+    await expect(this.searchBox).toHaveValue("");
   }
 
-  async filtrerParTerritorialise(): Promise<void> {
-    await this.attendreRechargementDuListing(() =>
-      this.toggleTerritorialise.click(),
-    );
-    await expect(this.toggleTerritorialise).toBeChecked();
+  async filterByTerritorialise(): Promise<void> {
+    await this.waitForListingReload(() => this.territorialiseToggle.click());
+    await expect(this.territorialiseToggle).toBeChecked();
   }
 
-  async filtrerParBarometre(): Promise<void> {
-    await this.attendreRechargementDuListing(() =>
-      this.toggleBarometre.click(),
-    );
-    await expect(this.toggleBarometre).toBeChecked();
+  async filterByBarometre(): Promise<void> {
+    await this.waitForListingReload(() => this.barometreToggle.click());
+    await expect(this.barometreToggle).toBeChecked();
   }
 
-  async reinitialiserFiltres(): Promise<void> {
-    await this.attendreRechargementDuListing(() =>
-      this.boutonReinitialiserFiltres.click(),
-    );
-    await expect(this.toggleTerritorialise).not.toBeChecked();
-    await expect(this.toggleBarometre).not.toBeChecked();
+  async resetFilters(): Promise<void> {
+    await this.waitForListingReload(() => this.resetFiltersButton.click());
+    await expect(this.territorialiseToggle).not.toBeChecked();
+    await expect(this.barometreToggle).not.toBeChecked();
   }
 
   /**
    * Le listing est filtré côté serveur : le compteur et le tableau ne sont à jour
    * qu'une fois la réponse tRPC reçue, pas dès que le filtre est coché.
    */
-  private async attendreRechargementDuListing(
+  private async waitForListingReload(
     action: () => Promise<void>,
   ): Promise<void> {
-    const rechargement = this.page.waitForResponse((response) =>
+    const listingReload = this.page.waitForResponse((response) =>
       decodeURIComponent(response.url()).includes(
         "listerMetadataIndicateurFiltres",
       ),
     );
     await action();
-    await rechargement;
+    await listingReload;
   }
 
-  async allerPageSuivante(): Promise<void> {
+  async goToNextPage(): Promise<void> {
     await this.pagination
       .getByRole("button", { name: "Page suivante" })
       .click();
   }
 
-  async allerPage(numero: number): Promise<void> {
-    await this.pagination.getByRole("button", { name: `${numero}` }).click();
+  async goToPage(pageNumber: number): Promise<void> {
+    await this.pagination
+      .getByRole("button", { name: `${pageNumber}` })
+      .click();
   }
 
-  async clickIndicateurParId(indicateurId: string): Promise<void> {
-    await this.tableau
+  async clickIndicateurById(indicateurId: string): Promise<void> {
+    await this.table
       .getByRole("row")
       .filter({ hasText: indicateurId })
       .getByRole("link")
@@ -138,7 +134,7 @@ export class PageAdminIndicateurs extends BasePage {
     );
   }
 
-  async expectTitrePage(): Promise<void> {
+  async expectPageTitle(): Promise<void> {
     await expect(
       this.page.getByRole("heading", {
         name: /Gestion des paramètres des indicateurs/,
@@ -146,69 +142,66 @@ export class PageAdminIndicateurs extends BasePage {
     ).toBeVisible();
   }
 
-  async expectColonneVisible(nomColonne: string): Promise<void> {
+  async expectColumnVisible(columnName: string): Promise<void> {
     await expect(
-      this.tableau.getByRole("columnheader", { name: nomColonne }),
+      this.table.getByRole("columnheader", { name: columnName }),
     ).toBeVisible();
   }
 
-  async expectNombreIndicateurs(nombre: number): Promise<void> {
-    const texte =
-      nombre <= 1 ? `${nombre} indicateur` : `${nombre} indicateurs`;
-    await expect(this.titreNombreIndicateurs).toHaveText(texte);
+  async expectIndicateursCount(count: number): Promise<void> {
+    const text = count <= 1 ? `${count} indicateur` : `${count} indicateurs`;
+    await expect(this.indicateursCountHeading).toHaveText(text);
   }
 
-  async expectNombreIndicateursSuperieurA(minimum: number): Promise<void> {
-    await expect(this.titreNombreIndicateurs).toBeVisible();
-    const texte = await this.titreNombreIndicateurs.textContent();
-    const match = texte?.match(/(\d+)/);
+  async expectIndicateursCountGreaterThan(minimum: number): Promise<void> {
+    await expect(this.indicateursCountHeading).toBeVisible();
+    const text = await this.indicateursCountHeading.textContent();
+    const match = text?.match(/(\d+)/);
     expect(match).not.toBeNull();
     expect(Number(match![1])).toBeGreaterThan(minimum);
   }
 
-  async expectIndicateurDansTableau(indicateurId: string): Promise<void> {
+  async expectIndicateurInTable(indicateurId: string): Promise<void> {
     await expect(
-      this.tableau.getByRole("row").filter({ hasText: indicateurId }),
+      this.table.getByRole("row").filter({ hasText: indicateurId }),
     ).toBeVisible();
   }
 
-  async expectBoutonCreerIndicateurVisible(): Promise<void> {
-    await expect(this.boutonCreerIndicateur).toBeVisible();
+  async expectCreateIndicateurButtonVisible(): Promise<void> {
+    await expect(this.createIndicateurButton).toBeVisible();
   }
 
-  async expectBoutonExporterVisible(): Promise<void> {
-    await expect(this.boutonExporter).toBeVisible();
+  async expectExportButtonVisible(): Promise<void> {
+    await expect(this.exportButton).toBeVisible();
   }
 
   async expectPaginationVisible(): Promise<void> {
     await expect(this.pagination).toBeVisible();
   }
 
-  async expectPaginationNonVisible(): Promise<void> {
+  async expectPaginationNotVisible(): Promise<void> {
     await expect(this.pagination).not.toBeVisible();
   }
 
-  async expectNombreLignesTableau(nombre: number): Promise<void> {
-    await expect(this.tableau.locator("tbody tr")).toHaveCount(nombre);
+  async expectTableRowCount(count: number): Promise<void> {
+    await expect(this.table.locator("tbody tr")).toHaveCount(count);
   }
 
-  async expectFiltreActifVisible(libelle: string): Promise<void> {
-    await expect(
-      this.page.getByRole("button", { name: libelle }),
-    ).toBeVisible();
+  async expectActiveFilterVisible(label: string): Promise<void> {
+    await expect(this.page.getByRole("button", { name: label })).toBeVisible();
   }
 
-  async getNombreIndicateursAffiches(): Promise<number> {
-    const texte = await this.titreNombreIndicateurs.textContent();
-    const match = texte?.match(/(\d+)/);
+  async getDisplayedIndicateursCount(): Promise<number> {
+    const text = await this.indicateursCountHeading.textContent();
+    const match = text?.match(/(\d+)/);
     return match ? Number(match[1]) : 0;
   }
 
-  private get lienIndicateursDesChantiers() {
+  private get indicateursDesChantiersLink() {
     return this.page.getByRole("link", { name: /Indicateurs des chantiers/ });
   }
 
-  async expectLienIndicateursDesChantiersNonVisible(): Promise<void> {
-    await expect(this.lienIndicateursDesChantiers).not.toBeVisible();
+  async expectIndicateursDesChantiersLinkNotVisible(): Promise<void> {
+    await expect(this.indicateursDesChantiersLink).not.toBeVisible();
   }
 }

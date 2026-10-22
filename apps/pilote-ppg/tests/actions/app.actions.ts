@@ -44,7 +44,7 @@ export class AppActions {
     // L'écran de choix du mode de connexion s'intercale entre le point d'entrée
     // de l'en-tête et le formulaire.
     const pageConnexion = new PageConnexion(this.page);
-    await pageConnexion.choisirConnexionParIdentifiants();
+    await pageConnexion.chooseCredentialsLogin();
 
     const pageLogin = new PageLogin(this.page, this.e2eContext);
     await pageLogin.fillCredentials(username, password);
@@ -87,10 +87,10 @@ export class AppActions {
 
     const redirection = response.headers().location ?? "";
     const cookies = await this.page.context().cookies();
-    const sessionPosee = cookies.some((cookie) =>
+    const sessionCookieSet = cookies.some((cookie) =>
       cookie.name.includes("session-token"),
     );
-    if (!sessionPosee || /error=/.test(redirection)) {
+    if (!sessionCookieSet || /error=/.test(redirection)) {
       throw new Error(
         `Connexion refusée pour ${username} (statut ${response.status()}, redirection vers ${redirection})`,
       );

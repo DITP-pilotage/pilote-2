@@ -7,9 +7,9 @@ export class PageAdminAlbertPermissions extends BasePage {
     super(page, e2eContext);
   }
 
-  private switchProfil(profilNom: string) {
+  private switchProfil(profilName: string) {
     return this.page.getByRole("switch", {
-      name: `Accès à l'assistant IA pour le profil ${profilNom}`,
+      name: `Accès à l'assistant IA pour le profil ${profilName}`,
     });
   }
 
@@ -37,42 +37,42 @@ export class PageAdminAlbertPermissions extends BasePage {
     ).toBeVisible();
   }
 
-  async activerProfil(profilCode: string, profilNom: string): Promise<void> {
-    const interrupteur = this.switchProfil(profilNom);
-    await expect(interrupteur).not.toBeChecked();
+  async enableProfil(profilCode: string, profilName: string): Promise<void> {
+    const toggle = this.switchProfil(profilName);
+    await expect(toggle).not.toBeChecked();
     this.e2eContext.track("ALBERT_ACCESS_PROFIL_ENABLED", { profilCode });
-    await interrupteur.click();
-    await expect(interrupteur).toBeChecked();
-    await expect(interrupteur).toBeEnabled();
+    await toggle.click();
+    await expect(toggle).toBeChecked();
+    await expect(toggle).toBeEnabled();
   }
 
-  async desactiverProfil(profilNom: string): Promise<void> {
-    const interrupteur = this.switchProfil(profilNom);
-    await expect(interrupteur).toBeChecked();
-    await interrupteur.click();
-    await expect(interrupteur).not.toBeChecked();
-    await expect(interrupteur).toBeEnabled();
+  async disableProfil(profilName: string): Promise<void> {
+    const toggle = this.switchProfil(profilName);
+    await expect(toggle).toBeChecked();
+    await toggle.click();
+    await expect(toggle).not.toBeChecked();
+    await expect(toggle).toBeEnabled();
   }
 
-  async ajouterUtilisateur(recherche: string, email: string): Promise<void> {
+  async addUtilisateur(query: string, email: string): Promise<void> {
     await this.page
       .getByRole("button", { name: "Ajouter un utilisateur…" })
       .click();
     await this.page
       .getByPlaceholder("Rechercher par nom, prénom ou email")
-      .fill(recherche);
+      .fill(query);
     this.e2eContext.track("ALBERT_ACCESS_UTILISATEUR_ADDED", { email });
     await this.page.getByRole("option").filter({ hasText: email }).click();
     await expect(this.ligneUtilisateur(email)).toBeVisible();
   }
 
-  async expectMentionProfil(email: string, profilNom: string): Promise<void> {
+  async expectProfilMention(email: string, profilName: string): Promise<void> {
     await expect(this.ligneUtilisateur(email)).toContainText(
-      `Déjà autorisé via le profil ${profilNom}`,
+      `Déjà autorisé via le profil ${profilName}`,
     );
   }
 
-  async expectSansMentionProfil(email: string): Promise<void> {
+  async expectNoProfilMention(email: string): Promise<void> {
     await expect(this.ligneUtilisateur(email)).toBeVisible();
     await expect(this.ligneUtilisateur(email)).not.toContainText(
       "Déjà autorisé via le profil",

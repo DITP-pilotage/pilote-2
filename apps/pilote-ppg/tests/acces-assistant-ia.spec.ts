@@ -26,14 +26,14 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
 
   await step("Le DITP Admin a accès à l'assistant IA", async () => {
     const pageAccueil = await appActions.loginAs(ADMIN);
-    await pageAccueil.expectAccesAssistantIA();
+    await pageAccueil.expectAssistantIAAccess();
   });
 
   await step(
     "Un utilisateur Services déconcentrés régionaux n'a pas accès",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_PROFIL);
-      await pageAccueil.expectPasAccesAssistantIA();
+      await pageAccueil.expectNoAssistantIAAccess();
     },
   );
 
@@ -42,7 +42,7 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoProfils();
-      await pagePermissions.activerProfil(
+      await pagePermissions.enableProfil(
         PROFIL_SERVICES_DECONCENTRES_REGION.code,
         PROFIL_SERVICES_DECONCENTRES_REGION.nom,
       );
@@ -53,13 +53,13 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     "L'utilisateur Services déconcentrés régionaux a maintenant accès",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_PROFIL);
-      await pageAccueil.expectAccesAssistantIA();
+      await pageAccueil.expectAssistantIAAccess();
     },
   );
 
   await step("Un préfet de département n'a pas accès", async () => {
     const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-    await pageAccueil.expectPasAccesAssistantIA();
+    await pageAccueil.expectNoAssistantIAAccess();
   });
 
   await step(
@@ -67,17 +67,17 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoEmails();
-      await pagePermissions.ajouterUtilisateur(
+      await pagePermissions.addUtilisateur(
         "departement prefet",
         UTILISATEUR_VIA_EMAIL,
       );
-      await pagePermissions.expectSansMentionProfil(UTILISATEUR_VIA_EMAIL);
+      await pagePermissions.expectNoProfilMention(UTILISATEUR_VIA_EMAIL);
     },
   );
 
   await step("Le préfet de département a maintenant accès", async () => {
     const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-    await pageAccueil.expectAccesAssistantIA();
+    await pageAccueil.expectAssistantIAAccess();
   });
 
   await step(
@@ -85,12 +85,12 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoProfils();
-      await pagePermissions.activerProfil(
+      await pagePermissions.enableProfil(
         PROFIL_PREFET_DEPARTEMENT.code,
         PROFIL_PREFET_DEPARTEMENT.nom,
       );
       await pagePermissions.gotoEmails();
-      await pagePermissions.expectMentionProfil(
+      await pagePermissions.expectProfilMention(
         UTILISATEUR_VIA_EMAIL,
         PROFIL_PREFET_DEPARTEMENT.nom,
       );
@@ -101,7 +101,7 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     "Le préfet de département a toujours accès via son profil",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-      await pageAccueil.expectAccesAssistantIA();
+      await pageAccueil.expectAssistantIAAccess();
     },
   );
 
@@ -110,7 +110,7 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoProfils();
-      await pagePermissions.desactiverProfil(PROFIL_PREFET_DEPARTEMENT.nom);
+      await pagePermissions.disableProfil(PROFIL_PREFET_DEPARTEMENT.nom);
     },
   );
 
@@ -118,7 +118,7 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     "Le préfet de département garde l'accès grâce à son autorisation individuelle",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-      await pageAccueil.expectAccesAssistantIA();
+      await pageAccueil.expectAssistantIAAccess();
     },
   );
 });

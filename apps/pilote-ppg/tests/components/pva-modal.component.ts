@@ -11,23 +11,23 @@ export class PvaModalComponent {
 
   // --- Actions communes ---
 
-  async passerEtapeSuivante(): Promise<void> {
+  async goToNextStep(): Promise<void> {
     await this.dialog.getByRole("button", { name: /Étape suivante/ }).click();
   }
 
-  async fermer(): Promise<void> {
+  async close(): Promise<void> {
     await this.page.getByTitle("Fermer la fenêtre modale").click();
     await expect(this.page.getByRole("dialog")).not.toBeVisible();
   }
 
-  async expectConfirmationEtFermer(messageConfirmation: RegExp): Promise<void> {
-    await expect(this.dialog.getByText(messageConfirmation)).toBeVisible({
+  async expectConfirmationAndClose(confirmationMessage: RegExp): Promise<void> {
+    await expect(this.dialog.getByText(confirmationMessage)).toBeVisible({
       timeout: 15_000,
     });
-    await this.fermer();
+    await this.close();
   }
 
-  async expectContient(text: string | RegExp): Promise<void> {
+  async expectContains(text: string | RegExp): Promise<void> {
     await expect(this.dialog.getByText(text)).toBeVisible();
   }
 
@@ -39,19 +39,19 @@ export class PvaModalComponent {
 
   // --- Proposition (création / modification) ---
 
-  async remplirProposition(
-    valeur: string,
+  async fillProposition(
+    value: string,
     motif: string,
     source: string,
   ): Promise<void> {
-    await this.dialog.locator('input[name="valeurAvancement"]').fill(valeur);
+    await this.dialog.locator('input[name="valeurAvancement"]').fill(value);
     await this.dialog.locator('textarea[name="motifProposition"]').fill(motif);
     await this.dialog
       .locator('textarea[name="sourceDonneeEtMethodeCalcul"]')
       .fill(source);
   }
 
-  async publierProposition(): Promise<void> {
+  async publishProposition(): Promise<void> {
     await this.dialog
       .getByRole("button", { name: /Publier la proposition/ })
       .click();
@@ -59,11 +59,11 @@ export class PvaModalComponent {
 
   // --- Accusé de réception ---
 
-  async remplirMotif(motif: string): Promise<void> {
+  async fillMotif(motif: string): Promise<void> {
     await this.dialog.locator('textarea[name="motif"]').fill(motif);
   }
 
-  async confirmerAccuseReception(): Promise<void> {
+  async confirmAccuseReception(): Promise<void> {
     await this.dialog
       .getByRole("button", {
         name: /Confirmer l'envoi de l'accusé de réception/,
@@ -73,7 +73,7 @@ export class PvaModalComponent {
 
   // --- Décision ---
 
-  async selectionnerDecision(decision: DecisionType): Promise<void> {
+  async selectDecision(decision: DecisionType): Promise<void> {
     const labels: Record<DecisionType, RegExp> = {
       accepter: /accepter la proposition$/,
       refuser: /refuser la proposition/,
@@ -82,23 +82,23 @@ export class PvaModalComponent {
     await this.dialog.getByLabel(labels[decision]).check({ force: true });
   }
 
-  async remplirValeurModification(valeur: string): Promise<void> {
-    await this.dialog.locator('input[name="valeurModification"]').fill(valeur);
+  async fillUpdatedValeur(value: string): Promise<void> {
+    await this.dialog.locator('input[name="valeurModification"]').fill(value);
   }
 
-  async accepterProposition(): Promise<void> {
+  async acceptProposition(): Promise<void> {
     await this.dialog
       .getByRole("button", { name: /Accepter la proposition/ })
       .click();
   }
 
-  async validerDecision(): Promise<void> {
+  async validateDecision(): Promise<void> {
     await this.dialog
       .getByRole("button", { name: /Valider la décision/ })
       .click();
   }
 
-  async accepterAvecModification(): Promise<void> {
+  async acceptWithModification(): Promise<void> {
     await this.dialog
       .getByRole("button", { name: /Accepter avec modification/ })
       .click();
@@ -106,11 +106,11 @@ export class PvaModalComponent {
 
   // --- Suppression ---
 
-  async remplirMotifSuppression(motif: string): Promise<void> {
+  async fillDeletionMotif(motif: string): Promise<void> {
     await this.dialog.locator('textarea[name="motifSuppression"]').fill(motif);
   }
 
-  async confirmerSuppression(): Promise<void> {
+  async confirmDeletion(): Promise<void> {
     await this.dialog
       .getByRole("button", { name: /Supprimer la proposition/ })
       .click();

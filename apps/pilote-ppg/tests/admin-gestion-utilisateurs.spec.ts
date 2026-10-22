@@ -26,71 +26,71 @@ test.describe("Gestion des comptes utilisateurs", () => {
     await test.step("Accès et structure du listing", async () => {
       await appActions.loginAs(DITP_ADMIN);
       await pageUtilisateurs.goto();
-      await pageUtilisateurs.expectColonneVisible("Territoire");
-      await pageUtilisateurs.expectBoutonCreerCompteVers(
+      await pageUtilisateurs.expectColumnVisible("Territoire");
+      await pageUtilisateurs.expectCreateUtilisateurButtonTo(
         /\/admin\/utilisateur\/creer$/,
       );
     });
 
     await test.step("Vérification des profils dans le filtre", async () => {
-      await pageUtilisateurs.expectProfilDansFiltre("DITP - Admin");
-      await pageUtilisateurs.expectProfilDansFiltre("DITP - Pilotage");
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter("DITP - Admin");
+      await pageUtilisateurs.expectProfilInFilter("DITP - Pilotage");
+      await pageUtilisateurs.expectProfilInFilter(
         "Coordinateur PILOTE régional",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Coordinateur PILOTE départemental",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Préfet de région et collaborateurs",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Préfet de département et collaborateurs",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Services déconcentrés régionaux",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Services déconcentrés départementaux",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Secrétariat général de ministère (cormod)",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Équipe de Directeur de projet",
       );
-      await pageUtilisateurs.expectProfilDansFiltre("Cabinets ministériels");
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter("Cabinets ministériels");
+      await pageUtilisateurs.expectProfilInFilter(
         "Direction d'administration centrale",
       );
     });
 
     await test.step("Fiche détail - actions complètes", async () => {
       const pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(COORDINATEUR_REGION);
+        await pageUtilisateurs.clickUtilisateurByEmail(COORDINATEUR_REGION);
       // La fiche détail affiche le code brut du profil, pas le libellé
-      await pageDetail.expectInfoUtilisateur(
+      await pageDetail.expectUtilisateurInfo(
         COORDINATEUR_REGION,
         "Region",
         "Coordinateur",
         "COORDINATEUR_REGION",
       );
-      await pageDetail.expectModifierVisible();
-      await pageDetail.expectDesactiverVisible();
-      await pageDetail.expectPasDeBandeau();
+      await pageDetail.expectEditVisible();
+      await pageDetail.expectDeactivateVisible();
+      await pageDetail.expectNoBanner();
       await page.goBack();
     });
 
     await test.step("Token API - profil éligible", async () => {
       const pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(EQUIPE_DIR_PROJET);
+        await pageUtilisateurs.clickUtilisateurByEmail(EQUIPE_DIR_PROJET);
       await pageDetail.expectTokenVisible();
       await page.goBack();
     });
 
     await test.step("Token API - profil non éligible", async () => {
       const pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(PREFET_REGION);
+        await pageUtilisateurs.clickUtilisateurByEmail(PREFET_REGION);
       await pageDetail.expectTokenNotVisible();
     });
   });
@@ -105,79 +105,75 @@ test.describe("Gestion des comptes utilisateurs", () => {
     await test.step("Listing - structure et visibilité", async () => {
       await appActions.loginAs(COORDINATEUR_REGION);
       await pageUtilisateurs.goto();
-      await pageUtilisateurs.expectColonneNotVisible("Territoire");
-      await pageUtilisateurs.expectBoutonCreerCompteVers(/aide/);
+      await pageUtilisateurs.expectColumnNotVisible("Territoire");
+      await pageUtilisateurs.expectCreateUtilisateurButtonTo(/aide/);
     });
 
     await test.step("Listing - profils autorisés dans le filtre", async () => {
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Coordinateur PILOTE régional",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Coordinateur PILOTE départemental",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Préfet de région et collaborateurs",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Préfet de département et collaborateurs",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Services déconcentrés régionaux",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Services déconcentrés départementaux",
       );
-      await pageUtilisateurs.expectProfilAbsentDuFiltre("DITP - Admin");
+      await pageUtilisateurs.expectProfilNotInFilter("DITP - Admin");
     });
 
     await test.step("Listing - utilisateurs visibles", async () => {
-      await pageUtilisateurs.expectUtilisateurDansTableau(COORDINATEUR_REGION);
-      await pageUtilisateurs.expectUtilisateurDansTableau(
-        COORDINATEUR_DEPARTEMENT,
-      );
-      await pageUtilisateurs.expectUtilisateurDansTableau(PREFET_REGION);
-      await pageUtilisateurs.expectUtilisateurDansTableau(PREFET_DEPARTEMENT);
-      await pageUtilisateurs.expectUtilisateurDansTableau(
+      await pageUtilisateurs.expectUtilisateurInTable(COORDINATEUR_REGION);
+      await pageUtilisateurs.expectUtilisateurInTable(COORDINATEUR_DEPARTEMENT);
+      await pageUtilisateurs.expectUtilisateurInTable(PREFET_REGION);
+      await pageUtilisateurs.expectUtilisateurInTable(PREFET_DEPARTEMENT);
+      await pageUtilisateurs.expectUtilisateurInTable(
         SERVICES_DECONCENTRES_REGION,
       );
-      await pageUtilisateurs.expectUtilisateurDansTableau(
+      await pageUtilisateurs.expectUtilisateurInTable(
         SERVICES_DECONCENTRES_DEPARTEMENT,
       );
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(DITP_ADMIN);
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(
-        EQUIPE_DIR_PROJET,
-      );
+      await pageUtilisateurs.expectUtilisateurNotInTable(DITP_ADMIN);
+      await pageUtilisateurs.expectUtilisateurNotInTable(EQUIPE_DIR_PROJET);
     });
 
     await test.step("Fiche PREFET_DEPARTEMENT - modifiable", async () => {
       const pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(PREFET_DEPARTEMENT);
-      await pageDetail.expectModifierVisible();
-      await pageDetail.expectDesactiverVisible();
-      await pageDetail.expectPasDeBandeau();
+        await pageUtilisateurs.clickUtilisateurByEmail(PREFET_DEPARTEMENT);
+      await pageDetail.expectEditVisible();
+      await pageDetail.expectDeactivateVisible();
+      await pageDetail.expectNoBanner();
       await pageDetail.expectTokenNotVisible();
       await page.goBack();
     });
 
     await test.step("Fiche SERVICES_DECONCENTRES_REGION - modifiable", async () => {
-      const pageDetail = await pageUtilisateurs.clickUtilisateurParEmail(
+      const pageDetail = await pageUtilisateurs.clickUtilisateurByEmail(
         SERVICES_DECONCENTRES_REGION,
       );
-      await pageDetail.expectModifierVisible();
-      await pageDetail.expectDesactiverVisible();
-      await pageDetail.expectPasDeBandeau();
+      await pageDetail.expectEditVisible();
+      await pageDetail.expectDeactivateVisible();
+      await pageDetail.expectNoBanner();
       await pageDetail.expectTokenNotVisible();
       await page.goBack();
     });
 
     await test.step("Fiche COORDINATEUR_DEPARTEMENT - restriction coordinateur", async () => {
-      const pageDetail = await pageUtilisateurs.clickUtilisateurParEmail(
+      const pageDetail = await pageUtilisateurs.clickUtilisateurByEmail(
         COORDINATEUR_DEPARTEMENT,
       );
-      await pageDetail.expectBandeauRestriction(/coordinateur PILOTE/);
-      await pageDetail.expectModifierNotVisible();
-      await pageDetail.expectDesactiverNotVisible();
+      await pageDetail.expectRestrictionBanner(/coordinateur PILOTE/);
+      await pageDetail.expectEditNotVisible();
+      await pageDetail.expectDeactivateNotVisible();
       await page.goBack();
     });
 
@@ -185,11 +181,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     // mais modificationEstImpossible ne vérifie les chantiers QUE pour le SG
     // → le coordinateur n'est PAS bloqué, l'utilisateur est modifiable
     await test.step("Fiche SERVICES_DECONCENTRES hors ATE - modifiable malgré chantier hors scope", async () => {
-      const pageDetail = await pageUtilisateurs.clickUtilisateurParEmail(
+      const pageDetail = await pageUtilisateurs.clickUtilisateurByEmail(
         "services.deconcentres.hors-ate@example.com",
       );
-      await pageDetail.expectModifierVisible();
-      await pageDetail.expectPasDeBandeau();
+      await pageDetail.expectEditVisible();
+      await pageDetail.expectNoBanner();
     });
   });
 
@@ -203,68 +199,64 @@ test.describe("Gestion des comptes utilisateurs", () => {
     await test.step("Listing - profils restreints", async () => {
       await appActions.loginAs(COORDINATEUR_DEPARTEMENT);
       await pageUtilisateurs.goto();
-      await pageUtilisateurs.expectColonneNotVisible("Territoire");
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectColumnNotVisible("Territoire");
+      await pageUtilisateurs.expectProfilInFilter(
         "Coordinateur PILOTE départemental",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Préfet de département et collaborateurs",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Services déconcentrés départementaux",
       );
-      await pageUtilisateurs.expectProfilAbsentDuFiltre(
+      await pageUtilisateurs.expectProfilNotInFilter(
         "Coordinateur PILOTE régional",
       );
-      await pageUtilisateurs.expectProfilAbsentDuFiltre(
+      await pageUtilisateurs.expectProfilNotInFilter(
         "Préfet de région et collaborateurs",
       );
-      await pageUtilisateurs.expectProfilAbsentDuFiltre(
+      await pageUtilisateurs.expectProfilNotInFilter(
         "Services déconcentrés régionaux",
       );
     });
 
     await test.step("Listing - utilisateurs visibles", async () => {
-      await pageUtilisateurs.expectUtilisateurDansTableau(PREFET_DEPARTEMENT);
-      await pageUtilisateurs.expectUtilisateurDansTableau(
-        COORDINATEUR_DEPARTEMENT,
-      );
-      await pageUtilisateurs.expectUtilisateurDansTableau(
+      await pageUtilisateurs.expectUtilisateurInTable(PREFET_DEPARTEMENT);
+      await pageUtilisateurs.expectUtilisateurInTable(COORDINATEUR_DEPARTEMENT);
+      await pageUtilisateurs.expectUtilisateurInTable(
         SERVICES_DECONCENTRES_DEPARTEMENT,
       );
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(
-        COORDINATEUR_REGION,
-      );
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(PREFET_REGION);
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(
+      await pageUtilisateurs.expectUtilisateurNotInTable(COORDINATEUR_REGION);
+      await pageUtilisateurs.expectUtilisateurNotInTable(PREFET_REGION);
+      await pageUtilisateurs.expectUtilisateurNotInTable(
         SERVICES_DECONCENTRES_REGION,
       );
     });
 
     await test.step("Fiche PREFET_DEPARTEMENT - modifiable", async () => {
       const pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(PREFET_DEPARTEMENT);
-      await pageDetail.expectModifierVisible();
-      await pageDetail.expectDesactiverVisible();
+        await pageUtilisateurs.clickUtilisateurByEmail(PREFET_DEPARTEMENT);
+      await pageDetail.expectEditVisible();
+      await pageDetail.expectDeactivateVisible();
       await page.goBack();
     });
 
     await test.step("Fiche SERVICES_DECONCENTRES_DEPARTEMENT - modifiable", async () => {
-      const pageDetail = await pageUtilisateurs.clickUtilisateurParEmail(
+      const pageDetail = await pageUtilisateurs.clickUtilisateurByEmail(
         SERVICES_DECONCENTRES_DEPARTEMENT,
       );
-      await pageDetail.expectModifierVisible();
-      await pageDetail.expectDesactiverVisible();
+      await pageDetail.expectEditVisible();
+      await pageDetail.expectDeactivateVisible();
       await page.goBack();
     });
 
     await test.step("Fiche COORDINATEUR_DEPARTEMENT - restriction soi-même", async () => {
-      const pageDetail = await pageUtilisateurs.clickUtilisateurParEmail(
+      const pageDetail = await pageUtilisateurs.clickUtilisateurByEmail(
         COORDINATEUR_DEPARTEMENT,
       );
-      await pageDetail.expectBandeauRestriction(/coordinateur PILOTE/);
-      await pageDetail.expectModifierNotVisible();
-      await pageDetail.expectDesactiverNotVisible();
+      await pageDetail.expectRestrictionBanner(/coordinateur PILOTE/);
+      await pageDetail.expectEditNotVisible();
+      await pageDetail.expectDeactivateNotVisible();
     });
   });
 
@@ -275,41 +267,41 @@ test.describe("Gestion des comptes utilisateurs", () => {
     await test.step("Listing - profils autorisés", async () => {
       await appActions.loginAs(SECRETARIAT_GENERAL);
       await pageUtilisateurs.goto();
-      await pageUtilisateurs.expectColonneNotVisible("Territoire");
-      await pageUtilisateurs.expectBoutonCreerCompteVers(/aide/);
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectColumnNotVisible("Territoire");
+      await pageUtilisateurs.expectCreateUtilisateurButtonTo(/aide/);
+      await pageUtilisateurs.expectProfilInFilter(
         "Services déconcentrés régionaux",
       );
-      await pageUtilisateurs.expectProfilDansFiltre(
+      await pageUtilisateurs.expectProfilInFilter(
         "Services déconcentrés départementaux",
       );
-      await pageUtilisateurs.expectProfilAbsentDuFiltre(
+      await pageUtilisateurs.expectProfilNotInFilter(
         "Préfet de région et collaborateurs",
       );
-      await pageUtilisateurs.expectProfilAbsentDuFiltre("DITP - Admin");
+      await pageUtilisateurs.expectProfilNotInFilter("DITP - Admin");
     });
 
     await test.step("Listing - utilisateurs visibles", async () => {
-      await pageUtilisateurs.expectUtilisateurDansTableau(
+      await pageUtilisateurs.expectUtilisateurInTable(
         SERVICES_DECONCENTRES_REGION,
       );
-      await pageUtilisateurs.expectUtilisateurDansTableau(
+      await pageUtilisateurs.expectUtilisateurInTable(
         SERVICES_DECONCENTRES_DEPARTEMENT,
       );
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(DITP_ADMIN);
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(PREFET_REGION);
+      await pageUtilisateurs.expectUtilisateurNotInTable(DITP_ADMIN);
+      await pageUtilisateurs.expectUtilisateurNotInTable(PREFET_REGION);
     });
 
     // Les profils SD ont a_acces_tous_chantiers_territorialises → lecture.chantiers inclut
     // TOUS les chantiers territorialisés par défaut. Le SG ne couvre qu'un sous-ensemble
     // → peutAccéderAuxChantiersUtilisateurs (every) échoue → bandeau "plusieurs chantiers"
     await test.step("Fiche utilisateur - restriction chantiers", async () => {
-      const pageDetail = await pageUtilisateurs.clickUtilisateurParEmail(
+      const pageDetail = await pageUtilisateurs.clickUtilisateurByEmail(
         SERVICES_DECONCENTRES_REGION,
       );
-      await pageDetail.expectBandeauRestriction(/plusieurs chantiers/);
-      await pageDetail.expectModifierNotVisible();
-      await pageDetail.expectDesactiverNotVisible();
+      await pageDetail.expectRestrictionBanner(/plusieurs chantiers/);
+      await pageDetail.expectEditNotVisible();
+      await pageDetail.expectDeactivateNotVisible();
       await pageDetail.expectTokenNotVisible();
     });
   });
@@ -352,36 +344,36 @@ test.describe("Gestion des comptes utilisateurs", () => {
       await appActions.loginAs(DITP_ADMIN);
       await pageUtilisateurs.goto();
       pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(utilisateurCible);
-      await pageDetail.expectDesactiverVisible();
+        await pageUtilisateurs.clickUtilisateurByEmail(utilisateurCible);
+      await pageDetail.expectDeactivateVisible();
       await page.getByText("Désactiver le compte").click();
-      await pageDetail.confirmerDesactivation(utilisateurCible);
-      await pageUtilisateurs.expectAlerte(/désactivé/);
+      await pageDetail.confirmDeactivation(utilisateurCible);
+      await pageUtilisateurs.expectAlert(/désactivé/);
     });
 
     await test.step("Vérifier le compte désactivé", async () => {
       pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(utilisateurCible);
-      await pageDetail.expectDesactive();
-      await pageDetail.expectModifierNotVisible();
-      await pageDetail.expectReactiverVisible();
+        await pageUtilisateurs.clickUtilisateurByEmail(utilisateurCible);
+      await pageDetail.expectDeactivated();
+      await pageDetail.expectEditNotVisible();
+      await pageDetail.expectReactivateVisible();
       await page.goBack();
     });
 
     await test.step("Réactiver le compte", async () => {
       pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(utilisateurCible);
-      await pageDetail.expectReactiverVisible();
+        await pageUtilisateurs.clickUtilisateurByEmail(utilisateurCible);
+      await pageDetail.expectReactivateVisible();
       await page.getByRole("button", { name: /Réactiver le compte/ }).click();
-      await pageDetail.confirmerReactivation();
-      await pageUtilisateurs.expectAlerte(/réactivé/);
+      await pageDetail.confirmReactivation();
+      await pageUtilisateurs.expectAlert(/réactivé/);
     });
 
     await test.step("Vérifier le compte réactivé", async () => {
       pageDetail =
-        await pageUtilisateurs.clickUtilisateurParEmail(utilisateurCible);
-      await pageDetail.expectActif();
-      await pageDetail.expectModifierVisible();
+        await pageUtilisateurs.clickUtilisateurByEmail(utilisateurCible);
+      await pageDetail.expectActive();
+      await pageDetail.expectEditVisible();
     });
   });
 
@@ -393,54 +385,50 @@ test.describe("Gestion des comptes utilisateurs", () => {
     await pageUtilisateurs.goto();
 
     await test.step("Filtre par statut - comptes actifs", async () => {
-      await pageUtilisateurs.filtrerParStatut("actifs");
-      await pageUtilisateurs.expectUtilisateurDansTableau(DITP_ADMIN);
-      await pageUtilisateurs.filtrerParStatut("tous");
+      await pageUtilisateurs.filterByStatut("actifs");
+      await pageUtilisateurs.expectUtilisateurInTable(DITP_ADMIN);
+      await pageUtilisateurs.filterByStatut("tous");
     });
 
     await test.step("Filtre par statut - comptes désactivés", async () => {
-      await pageUtilisateurs.filtrerParStatut("desactives");
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(DITP_ADMIN);
-      await pageUtilisateurs.filtrerParStatut("tous");
+      await pageUtilisateurs.filterByStatut("desactives");
+      await pageUtilisateurs.expectUtilisateurNotInTable(DITP_ADMIN);
+      await pageUtilisateurs.filterByStatut("tous");
     });
 
     await test.step("Recherche textuelle", async () => {
-      await pageUtilisateurs.rechercherUtilisateur("coordinateur");
-      await pageUtilisateurs.expectUtilisateurDansTableau(COORDINATEUR_REGION);
-      await pageUtilisateurs.expectUtilisateurDansTableau(
-        COORDINATEUR_DEPARTEMENT,
-      );
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(DITP_ADMIN);
-      await pageUtilisateurs.effacerRecherche();
+      await pageUtilisateurs.searchUtilisateur("coordinateur");
+      await pageUtilisateurs.expectUtilisateurInTable(COORDINATEUR_REGION);
+      await pageUtilisateurs.expectUtilisateurInTable(COORDINATEUR_DEPARTEMENT);
+      await pageUtilisateurs.expectUtilisateurNotInTable(DITP_ADMIN);
+      await pageUtilisateurs.clearSearch();
     });
 
     await test.step("Filtre par profil", async () => {
-      await pageUtilisateurs.filtrerParProfil(
+      await pageUtilisateurs.filterByProfil(
         "Préfet de département et collaborateurs",
       );
-      await pageUtilisateurs.expectUtilisateurDansTableau(PREFET_DEPARTEMENT);
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(DITP_ADMIN);
-      await pageUtilisateurs.expectUtilisateurAbsentDuTableau(
-        COORDINATEUR_REGION,
-      );
+      await pageUtilisateurs.expectUtilisateurInTable(PREFET_DEPARTEMENT);
+      await pageUtilisateurs.expectUtilisateurNotInTable(DITP_ADMIN);
+      await pageUtilisateurs.expectUtilisateurNotInTable(COORDINATEUR_REGION);
       await page
         .getByRole("button", { name: /Réinitialiser les filtres/ })
         .click();
       // Condition observable plutot qu'un delai fixe : les utilisateurs masques par
       // le filtre doivent etre revenus. Ca verifie aussi la reinitialisation, qui
       // n'etait jusqu'ici pas assertee du tout.
-      await pageUtilisateurs.expectUtilisateurDansTableau(DITP_ADMIN);
+      await pageUtilisateurs.expectUtilisateurInTable(DITP_ADMIN);
     });
 
     await test.step("Réinitialisation avec filtres combinés", async () => {
-      await pageUtilisateurs.filtrerParProfil("Coordinateur PILOTE régional");
-      await pageUtilisateurs.rechercherUtilisateur("coordinateur");
+      await pageUtilisateurs.filterByProfil("Coordinateur PILOTE régional");
+      await pageUtilisateurs.searchUtilisateur("coordinateur");
       await page
         .getByRole("button", { name: /Réinitialiser les filtres/ })
         .click();
       // Le bouton "Réinitialiser" ne clear que la barre latérale, pas la recherche
-      await pageUtilisateurs.effacerRecherche();
-      await pageUtilisateurs.expectUtilisateurDansTableau(DITP_ADMIN);
+      await pageUtilisateurs.clearSearch();
+      await pageUtilisateurs.expectUtilisateurInTable(DITP_ADMIN);
     });
   });
 
@@ -456,18 +444,18 @@ test.describe("Gestion des comptes utilisateurs", () => {
     await test.step("Coordinateur région - utilisateur visible dans le listing", async () => {
       await appActions.loginAs(COORDINATEUR_REGION);
       await pageUtilisateurs.goto();
-      await pageUtilisateurs.expectUtilisateurDansTableau(
+      await pageUtilisateurs.expectUtilisateurInTable(
         utilisateurMultiTerritoires,
       );
     });
 
     await test.step("Fiche - bandeau restriction multi-territoires", async () => {
-      const pageDetail = await pageUtilisateurs.clickUtilisateurParEmail(
+      const pageDetail = await pageUtilisateurs.clickUtilisateurByEmail(
         utilisateurMultiTerritoires,
       );
-      await pageDetail.expectBandeauRestriction(/plusieurs territoires/);
-      await pageDetail.expectModifierNotVisible();
-      await pageDetail.expectDesactiverNotVisible();
+      await pageDetail.expectRestrictionBanner(/plusieurs territoires/);
+      await pageDetail.expectEditNotVisible();
+      await pageDetail.expectDeactivateNotVisible();
     });
   });
 });

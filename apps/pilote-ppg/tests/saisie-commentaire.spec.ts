@@ -17,7 +17,7 @@ test.describe("Saisie des publications d'un chantier", () => {
     );
     await page.goto(`/chantier/${CHANTIER_FOR_PUBLICATIONS}/NAT-FR`);
 
-    await new PageChantier(page, e2eContext).expectHistoriqueCommentaire(
+    await new PageChantier(page, e2eContext).expectCommentaireInHistorique(
       "risquesEtFreinsÀLever",
     );
   });
