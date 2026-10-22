@@ -132,4 +132,20 @@ describe("generateRapportDetaillePdf", () => {
     expect(text.startsWith("%PDF")).toBe(true);
     expect(text.trimEnd().endsWith("%%EOF")).toBe(true);
   });
+
+  it("remplace l'espace fine insécable, absente de Marianne, par une espace insécable", () => {
+    const document = buildRapportDetailleDocument({
+      vue: buildTestVueDEnsemble({
+        chantiers: [buildTestChantier({ id: "A", nom: "Cible 10\u202f000" })],
+      }),
+      details: [buildTestChantierDetail({ chantierId: "A" })],
+      context: buildTestContext({ detail: "true" }),
+      hideNonApplicable: false,
+      now,
+    });
+    const serialized = JSON.stringify(document.content);
+
+    expect(serialized).not.toContain("\u202f");
+    expect(serialized).toContain("Cible 10\u00a0000");
+  });
 });
