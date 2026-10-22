@@ -4,7 +4,6 @@ import {
   loadChantiersByIds,
   loadVueDEnsemble,
   VueDEnsembleDependencies,
-  restrictHabilitationsToChantiers,
 } from "@/server/rapport-detaille/loadVueDEnsemble";
 import { buildRapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import { buildTestSession } from "@/server/rapport-detaille/testSession";
@@ -121,18 +120,6 @@ describe("loadVueDEnsemble", () => {
   });
 });
 
-describe("restrictHabilitationsToChantiers", () => {
-  it("ne garde en lecture que les chantiers demandés et habilités", () => {
-    const restricted = restrictHabilitationsToChantiers(session.habilitations, [
-      "A",
-      "Z",
-    ]);
-
-    expect(restricted.lecture.chantiers).toEqual(["A"]);
-    expect(restricted.lecture.territoires).toEqual(["NAT-FR"]);
-  });
-});
-
 describe("loadChantiersByIds", () => {
   it("garde les ministères et axes de toutes les habilitations pour ne restreindre que les chantiers", async () => {
     const dependencies = buildTestDependencies({
@@ -154,18 +141,13 @@ describe("loadChantiersByIds", () => {
 
     expect(dependencies.getMinistèresAndAxes).toHaveBeenCalledWith(["A", "B"]);
     expect(dependencies.chantiers).toHaveBeenCalledWith(
-      expect.objectContaining({
-        session: expect.objectContaining({
-          habilitations: expect.objectContaining({
-            lecture: expect.objectContaining({ chantiers: ["A"] }),
-          }),
-        }),
-      }),
+      context,
       expect.anything(),
       [
         expect.objectContaining({ id: "AXE-A" }),
         expect.objectContaining({ id: "AXE-B" }),
       ],
+      ["A"],
     );
   });
 });

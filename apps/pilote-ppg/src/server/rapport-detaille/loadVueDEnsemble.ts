@@ -3,7 +3,6 @@ import { Alerte } from "@/shared/alerte/Alerte";
 import { Axe } from "@/shared/axe/Axe.interface";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
-import { Habilitations } from "@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
@@ -36,6 +35,7 @@ export type VueDEnsembleDependencies = {
     context: RapportDetailleContext,
     ministères: Ministère[],
     axes: Axe[],
+    chantierIds?: string[],
   ) => Promise<ChantierRapportDetailleContrat[]>;
   getRépartitionMétéos: (
     territoireCode: string,
@@ -53,21 +53,6 @@ export type VueDEnsembleDependencies = {
     avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
   }>;
 };
-
-export function restrictHabilitationsToChantiers(
-  habilitations: Habilitations,
-  chantierIds: string[],
-): Habilitations {
-  return {
-    ...habilitations,
-    lecture: {
-      ...habilitations.lecture,
-      chantiers: habilitations.lecture.chantiers.filter((chantierId) =>
-        chantierIds.includes(chantierId),
-      ),
-    },
-  };
-}
 
 export function defaultVueDEnsembleDependencies(): VueDEnsembleDependencies {
   return {
@@ -87,7 +72,7 @@ export function defaultVueDEnsembleDependencies(): VueDEnsembleDependencies {
       getContainer("chantiers")
         .resolve("territoireSQLRepository")
         .récupérer(territoireCode),
-    chantiers: (context, ministères, axes) =>
+    chantiers: (context, ministères, axes, chantierIds) =>
       getContainer("chantiers")
         .resolve(
           "recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2",
@@ -103,6 +88,7 @@ export function defaultVueDEnsembleDependencies(): VueDEnsembleDependencies {
           context.sorting,
           context.jalon,
           context.defaultJalon,
+          chantierIds,
         ),
     getRépartitionMétéos: (territoireCode, chantierIds) =>
       getContainer("chantiers")
@@ -175,14 +161,20 @@ function filterByAlertes(
 export async function loadFilteredChantiers(
   context: RapportDetailleContext,
   dependencies: VueDEnsembleDependencies = defaultVueDEnsembleDependencies(),
-  referenceChantierIds: string[] = context.session.habilitations.lecture
-    .chantiers,
+  chantierIds?: string[],
 ) {
   const [{ ministères, axes }, selectedTerritoire] = await Promise.all([
-    dependencies.getMinistèresAndAxes(referenceChantierIds),
+    dependencies.getMinistèresAndAxes(
+      context.session.habilitations.lecture.chantiers,
+    ),
     dependencies.territoire(context.territoireCode),
   ]);
-  const allChantiers = await dependencies.chantiers(context, ministères, axes);
+  const allChantiers = await dependencies.chantiers(
+    context,
+    ministères,
+    axes,
+    chantierIds,
+  );
   return {
     ministères,
     axes,
@@ -197,20 +189,10 @@ export async function loadChantiersByIds(
   context: RapportDetailleContext,
   dependencies: VueDEnsembleDependencies = defaultVueDEnsembleDependencies(),
 ) {
-  const restrictedContext: RapportDetailleContext = {
-    ...context,
-    session: {
-      ...context.session,
-      habilitations: restrictHabilitationsToChantiers(
-        context.session.habilitations,
-        chantierIds,
-      ),
-    },
-  };
   const { chantiers, selectedTerritoire } = await loadFilteredChantiers(
-    restrictedContext,
+    context,
     dependencies,
-    context.session.habilitations.lecture.chantiers,
+    chantierIds,
   );
   return { chantiers, selectedTerritoire };
 }
