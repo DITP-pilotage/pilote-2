@@ -1,3 +1,5 @@
+import { downloadBlob } from "@/client/utils/downloadBlob";
+
 export const filtrerLesTerritoires = <
   T extends { estApplicable: boolean | null; territoireCode: string },
 >(
@@ -21,13 +23,8 @@ export const genererContenuCsv = (lignes: string[][]): string => {
 };
 
 export const telechargerCsv = (contenu: string, nomFichier: string): void => {
-  const blob = new Blob([contenu], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const lien = document.createElement("a");
-  lien.href = url;
-  lien.download = `${nomFichier}.csv`;
-  document.body.appendChild(lien);
-  lien.click();
-  document.body.removeChild(lien);
-  URL.revokeObjectURL(url);
+  downloadBlob(
+    new Blob([contenu], { type: "text/csv;charset=utf-8;" }),
+    `${nomFichier}.csv`,
+  );
 };
