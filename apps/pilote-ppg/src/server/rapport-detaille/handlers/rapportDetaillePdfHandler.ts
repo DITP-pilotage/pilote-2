@@ -39,6 +39,7 @@ const LOADING_TIMEOUT_MS = 60_000;
 const MAX_ABANDONED_LOADS = 2;
 
 class ClientGoneError extends Error {}
+class TooManyAbandonedLoadsError extends Error {}
 
 const generationQueue = createSerialQueue(MAX_PENDING_GENERATIONS);
 const pdfRequestSlots = createSlotLimiter(MAX_PDF_REQUESTS_IN_FLIGHT);
@@ -172,14 +173,19 @@ export async function handleRapportDetaillePdf(
 
   let pdf: Uint8Array;
   try {
-    pdf = await dependencies.enqueue(() =>
-      response.closed
-        ? Promise.reject(new ClientGoneError())
-        : generate(request.query, territoireCode, session, dependencies),
-    );
+    pdf = await dependencies.enqueue(async () => {
+      if (response.closed) throw new ClientGoneError();
+      if (dependencies.abandonedLoads.isFull()) {
+        throw new TooManyAbandonedLoadsError();
+      }
+      return generate(request.query, territoireCode, session, dependencies);
+    });
   } catch (error) {
     if (error instanceof ClientGoneError) return;
-    if (error instanceof QueueFullError) {
+    if (
+      error instanceof QueueFullError ||
+      error instanceof TooManyAbandonedLoadsError
+    ) {
       sendBusy(response);
       return;
     }
