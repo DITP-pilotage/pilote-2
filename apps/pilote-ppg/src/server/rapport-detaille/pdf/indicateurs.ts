@@ -264,12 +264,13 @@ export function indicateursPdf(params: {
     .map((rubrique) => {
       const indicateursRubrique = byCategory[
         rubrique.categorieIndicateur
-      ].toSorted((a, b) =>
+      ].toSorted((indicateur, autreIndicateur) =>
         comparerIndicateur(
-          a,
-          b,
-          détailsIndicateurs[a.id]?.[codeInsee]?.ponderation ?? null,
-          détailsIndicateurs[b.id]?.[codeInsee]?.ponderation ?? null,
+          indicateur,
+          autreIndicateur,
+          détailsIndicateurs[indicateur.id]?.[codeInsee]?.ponderation ?? null,
+          détailsIndicateurs[autreIndicateur.id]?.[codeInsee]?.ponderation ??
+            null,
         ),
       );
       return {

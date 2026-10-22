@@ -153,11 +153,19 @@ describe("loadChantiersByIds", () => {
     await loadChantiersByIds(["A"], context, dependencies);
 
     expect(dependencies.getMinistèresAndAxes).toHaveBeenCalledWith(["A", "B"]);
-    const [restrictedContext, , axes] = vi.mocked(dependencies.chantiers).mock
-      .calls[0];
-    expect(restrictedContext.session.habilitations.lecture.chantiers).toEqual([
-      "A",
-    ]);
-    expect(axes.map((axe) => axe.id)).toEqual(["AXE-A", "AXE-B"]);
+    expect(dependencies.chantiers).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session: expect.objectContaining({
+          habilitations: expect.objectContaining({
+            lecture: expect.objectContaining({ chantiers: ["A"] }),
+          }),
+        }),
+      }),
+      expect.anything(),
+      [
+        expect.objectContaining({ id: "AXE-A" }),
+        expect.objectContaining({ id: "AXE-B" }),
+      ],
+    );
   });
 });

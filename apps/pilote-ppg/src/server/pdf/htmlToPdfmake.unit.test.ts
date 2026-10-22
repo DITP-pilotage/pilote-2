@@ -62,7 +62,9 @@ describe("htmlToPdfmake", () => {
   });
 
   it("rend les listes ordonnées", () => {
-    expect(htmlToPdfmake("<ol><li>x</li></ol>")[0]).toHaveProperty("ol");
+    expect(htmlToPdfmake("<ol><li>x</li></ol>")).toEqual([
+      expect.objectContaining({ ol: expect.anything() }),
+    ]);
   });
 
   it("rend un lien en texte souligné sans lien cliquable", () => {
@@ -70,10 +72,9 @@ describe("htmlToPdfmake", () => {
       '<p><a href="https://exemple.fr">lien</a></p>',
     );
 
-    expect(inlineSegments(content)[0]).toMatchObject({
-      decoration: "underline",
-      color: "#000091",
-    });
+    expect(inlineSegments(content)).toEqual([
+      expect.objectContaining({ decoration: "underline", color: "#000091" }),
+    ]);
     expect(JSON.stringify(content)).not.toContain("exemple.fr");
   });
 
@@ -115,9 +116,11 @@ describe("htmlToPdfmake", () => {
       "<p>a<br>b</p><blockquote>c</blockquote><hr>",
     );
 
-    expect(plainText(content[0])).toBe("a\nb");
-    expect(content[1]).toMatchObject({ italics: true });
-    expect(content[2]).toHaveProperty("table");
+    expect(content).toEqual([
+      expect.objectContaining({ text: ["a", "\n", "b"] }),
+      expect.objectContaining({ italics: true }),
+      expect.objectContaining({ table: expect.anything() }),
+    ]);
   });
 
   it("rend un encadré callout sur fond bleu clair", () => {

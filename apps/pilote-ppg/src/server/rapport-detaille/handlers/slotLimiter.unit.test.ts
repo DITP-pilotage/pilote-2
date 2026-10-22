@@ -4,9 +4,10 @@ describe("createSlotLimiter", () => {
   it("refuse une place quand toutes sont occupées, puis la rend une fois libérée", () => {
     const slots = createSlotLimiter(2);
 
-    const releases = [slots.tryAcquire(), slots.tryAcquire()];
+    const firstRelease = slots.tryAcquire();
+    slots.tryAcquire();
     const refused = slots.tryAcquire();
-    releases[0]?.();
+    firstRelease?.();
     const afterRelease = slots.tryAcquire();
 
     expect(refused).toBeNull();
