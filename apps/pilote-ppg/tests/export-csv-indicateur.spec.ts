@@ -144,6 +144,9 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
       expect(contents.toString()).toMatch(
         '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Indicateur Id";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre"\n',
       );
+      expect(contents.toString()).toContain(
+        '"Part des déploiement territorial";"IND-838"',
+      );
     });
   });
 

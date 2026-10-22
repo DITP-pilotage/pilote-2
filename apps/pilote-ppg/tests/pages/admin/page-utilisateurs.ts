@@ -7,12 +7,23 @@ import { E2ETestContext } from "../../e2e-test-context";
 export class PageAdminUtilisateurs extends BasePage {
   readonly header: HeaderComponent;
 
+  private pendingListRequests = 0;
+
   constructor(page: Page, e2eContext: E2ETestContext) {
     super(page, e2eContext);
     this.header = new HeaderComponent(page);
+    const isListRequest = (url: string) => url.includes("utilisateur.list");
+    page.on("request", (request) => {
+      if (isListRequest(request.url())) this.pendingListRequests++;
+    });
+    const onRequestDone = (request: { url(): string }) => {
+      if (isListRequest(request.url())) this.pendingListRequests--;
+    };
+    page.on("requestfinished", onRequestDone);
+    page.on("requestfailed", onRequestDone);
   }
 
-  private get tableau() {
+  private get table() {
     return this.page.locator("table", {
       has: this.page.locator("caption", {
         hasText: "Tableau des utilisateurs",
@@ -20,49 +31,45 @@ export class PageAdminUtilisateurs extends BasePage {
     });
   }
 
-  private get titreNombreComptes() {
+  private get utilisateursCountHeading() {
     return this.page
       .getByRole("heading", { level: 2 })
       .filter({ hasText: /\d{1,10} comptes?/ });
   }
 
-  private get barreRecherche() {
+  private get searchBox() {
     return this.page.getByRole("searchbox", { name: "Rechercher" });
   }
 
-  private get tagTous() {
+  private get allTag() {
     return this.page.getByRole("radio", { name: "Tous" });
   }
 
-  private get tagActifs() {
+  private get activeTag() {
     return this.page.getByRole("radio", { name: "Comptes actifs" });
   }
 
-  private get tagDesactives() {
+  private get deactivatedTag() {
     return this.page.getByRole("radio", { name: /Comptes désactivés/ });
   }
 
-  private get boutonCreerCompte() {
+  private get createUtilisateurButton() {
     return this.page.getByRole("link", { name: /Créer un compte/ });
   }
 
-  private get boutonReinitialiser() {
-    return this.page.getByRole("button", { name: /Réinitialiser les filtres/ });
-  }
-
-  private get alerteSucces() {
+  private get successAlert() {
     return this.page
       .locator('[role="status"][data-color="success"]')
       .getByRole("heading");
   }
 
-  private get lienGestionDesComptes() {
+  private get gestionDesComptesLink() {
     return this.page.getByRole("link", { name: /Gestion des comptes/ });
   }
 
   async goto(): Promise<void> {
-    await this.lienGestionDesComptes.click();
-    await this.titreNombreComptes.waitFor({ state: "visible" });
+    await this.gestionDesComptesLink.click();
+    await this.utilisateursCountHeading.waitFor({ state: "visible" });
   }
 
   async exportCsv(timeout = 120_000): Promise<Download> {
@@ -74,132 +81,149 @@ export class PageAdminUtilisateurs extends BasePage {
     return downloadPromise;
   }
 
-  async clickUtilisateurParEmail(
-    email: string,
-  ): Promise<PageUtilisateurDetail> {
-    await this.tableau.getByRole("row").filter({ hasText: email }).click();
+  async clickUtilisateurByEmail(email: string): Promise<PageUtilisateurDetail> {
+    await this.table.getByRole("row").filter({ hasText: email }).click();
     const pageDetail = new PageUtilisateurDetail(this.page, this.e2eContext);
-    await pageDetail.expectPageChargee();
+    await pageDetail.expectPageLoaded();
     return pageDetail;
   }
 
-  async rechercherUtilisateur(texte: string): Promise<void> {
-    await this.barreRecherche.fill(texte);
-    await expect(this.barreRecherche).toHaveValue(texte);
-    await this.page.waitForLoadState("networkidle");
+  async searchUtilisateur(text: string): Promise<void> {
+    await this.waitForListReload(
+      (url) => url.searchParams.get("q") === text,
+      async () => {
+        await this.searchBox.fill(text);
+        await expect(this.searchBox).toHaveValue(text);
+      },
+    );
   }
 
-  async effacerRecherche(): Promise<void> {
+  async clearSearch(): Promise<void> {
     // Le clear peut être écrasé par une synchro URL ↔ state (nuqs) qui
     // réinjecte l'ancienne valeur après coup. On force un blur (Tab) pour
     // commiter immédiatement, puis on vérifie que la valeur reste vide.
-    await expect(async () => {
-      await this.barreRecherche.clear();
-      await this.barreRecherche.press("Tab");
-      await this.page.waitForTimeout(300);
-      await expect(this.barreRecherche).toHaveValue("");
-    }).toPass({ timeout: 10_000 });
-    await this.page.waitForLoadState("networkidle");
+    await this.waitForListReload(
+      (url) => !url.searchParams.get("q"),
+      async () => {
+        await expect(async () => {
+          await this.searchBox.clear();
+          await this.searchBox.press("Tab");
+          await expect(this.searchBox).toHaveValue("", { timeout: 500 });
+        }).toPass({ timeout: 10_000 });
+      },
+    );
   }
 
-  private async ensureRechercheVide(): Promise<void> {
-    const valeurActuelle = await this.barreRecherche.inputValue();
-    if (valeurActuelle !== "") {
-      await this.effacerRecherche();
+  private async ensureSearchEmpty(): Promise<void> {
+    const currentValue = await this.searchBox.inputValue();
+    if (currentValue !== "") {
+      await this.clearSearch();
     }
   }
 
-  async filtrerParStatut(
+  async filterByStatut(
     statut: "tous" | "actifs" | "desactives",
   ): Promise<void> {
     const tags = {
-      tous: this.tagTous,
-      actifs: this.tagActifs,
-      desactives: this.tagDesactives,
+      tous: { tag: this.allTag, typeCompte: null },
+      actifs: { tag: this.activeTag, typeCompte: "actif" },
+      desactives: { tag: this.deactivatedTag, typeCompte: "desactive" },
     };
-    await tags[statut].click();
-    await this.page.waitForLoadState("networkidle");
+    const { tag, typeCompte } = tags[statut];
+    if (await tag.isChecked()) {
+      return;
+    }
+    await this.waitForListReload(
+      (url) => url.searchParams.get("typeCompte") === typeCompte,
+      () => tag.click(),
+    );
   }
 
-  async filtrerParProfil(nomProfil: string): Promise<void> {
-    await this.ensureRechercheVide();
+  async filterByProfil(profilName: string): Promise<void> {
+    await this.ensureSearchEmpty();
 
-    const dropdownProfil = this.page.getByLabel("Profil(s)");
-    const checkbox = this.page.getByRole("checkbox", { name: nomProfil });
-    const label = this.page.locator("label").filter({ hasText: nomProfil });
+    const profilDropdown = this.page.getByLabel("Profil(s)");
+    const checkbox = this.page.getByRole("checkbox", { name: profilName });
+    const label = this.page.locator("label").filter({ hasText: profilName });
 
     await expect(async () => {
-      await dropdownProfil.click();
+      await profilDropdown.click();
       await label.waitFor({ state: "visible", timeout: 2_000 });
     }).toPass({ timeout: 10_000 });
 
-    await label.click();
-    await expect(checkbox).toBeChecked();
-    // fermer le dropdown en cliquant ailleurs
-    await this.page.getByRole("heading", { level: 1 }).click();
-    await this.page.waitForLoadState("networkidle");
+    await this.waitForListReload(
+      (url) => url.searchParams.get("profils") !== null,
+      async () => {
+        await label.click();
+        await expect(checkbox).toBeChecked();
+        // fermer le dropdown en cliquant ailleurs
+        await this.page.getByRole("heading", { level: 1 }).click();
+      },
+    );
   }
 
-  async expectColonneVisible(nomColonne: string): Promise<void> {
+  // La liste suit les paramètres d'URL (nuqs) et se recharge par tRPC, sauf si le
+  // résultat est déjà en cache : on attend l'URL, puis la fin des chargements en cours.
+  private async waitForListReload(
+    matchesUrl: (url: URL) => boolean,
+    action: () => Promise<void>,
+  ): Promise<void> {
+    await action();
+    await this.page.waitForURL(matchesUrl);
+    await expect.poll(() => this.pendingListRequests).toBe(0);
+  }
+
+  async expectColumnVisible(columnName: string): Promise<void> {
     await expect(
-      this.tableau.getByRole("columnheader", { name: nomColonne }),
+      this.table.getByRole("columnheader", { name: columnName }),
     ).toBeVisible();
   }
 
-  async expectColonneNotVisible(nomColonne: string): Promise<void> {
+  async expectColumnNotVisible(columnName: string): Promise<void> {
     await expect(
-      this.tableau.getByRole("columnheader", { name: nomColonne }),
+      this.table.getByRole("columnheader", { name: columnName }),
     ).not.toBeVisible();
   }
 
-  async expectNombreComptes(nombre: number): Promise<void> {
-    const texte = nombre <= 1 ? `${nombre} compte` : `${nombre} comptes`;
-    await expect(this.titreNombreComptes).toHaveText(texte);
-  }
-
-  async expectUtilisateurDansTableau(email: string): Promise<void> {
+  async expectUtilisateurInTable(email: string): Promise<void> {
     await expect(
-      this.tableau.getByRole("row").filter({ hasText: email }),
+      this.table.getByRole("row").filter({ hasText: email }),
     ).toBeVisible({ timeout: 15_000 });
   }
 
-  async expectUtilisateurAbsentDuTableau(email: string): Promise<void> {
+  async expectUtilisateurNotInTable(email: string): Promise<void> {
     await expect(
-      this.tableau.getByRole("row").filter({ hasText: email }),
+      this.table.getByRole("row").filter({ hasText: email }),
     ).not.toBeVisible({ timeout: 15_000 });
   }
 
-  async expectProfilDansFiltre(nomProfil: string): Promise<void> {
+  async expectProfilInFilter(profilName: string): Promise<void> {
     await this.page.getByLabel("Profil(s)").click();
     await expect(
-      this.page.getByRole("checkbox", { name: nomProfil }),
+      this.page.getByRole("checkbox", { name: profilName }),
     ).toBeVisible();
     await this.page.getByLabel("Profil(s)").click();
   }
 
-  async expectProfilAbsentDuFiltre(nomProfil: string): Promise<void> {
+  async expectProfilNotInFilter(profilName: string): Promise<void> {
     await this.page.getByLabel("Profil(s)").click();
     await expect(
-      this.page.getByRole("checkbox", { name: nomProfil }),
+      this.page.getByRole("checkbox", { name: profilName }),
     ).not.toBeVisible();
     await this.page.getByLabel("Profil(s)").click();
   }
 
-  async expectBoutonCreerCompteVers(url: RegExp | string): Promise<void> {
-    await expect(this.boutonCreerCompte).toBeVisible();
-    await expect(this.boutonCreerCompte).toHaveAttribute("href", url);
+  async expectCreateUtilisateurButtonTo(url: RegExp | string): Promise<void> {
+    await expect(this.createUtilisateurButton).toBeVisible();
+    await expect(this.createUtilisateurButton).toHaveAttribute("href", url);
   }
 
-  async expectAlerte(titre: string | RegExp): Promise<void> {
-    await expect(this.alerteSucces).toBeVisible();
-    await expect(this.alerteSucces).toHaveText(titre);
-  }
-
-  async expectGestionDesComptesVisible(): Promise<void> {
-    await expect(this.lienGestionDesComptes).toBeVisible();
+  async expectAlert(title: string | RegExp): Promise<void> {
+    await expect(this.successAlert).toBeVisible();
+    await expect(this.successAlert).toHaveText(title);
   }
 
   async expectGestionDesComptesNotVisible(): Promise<void> {
-    await expect(this.lienGestionDesComptes).not.toBeVisible();
+    await expect(this.gestionDesComptesLink).not.toBeVisible();
   }
 }

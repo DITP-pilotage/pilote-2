@@ -31,6 +31,7 @@ test("doit pouvoir exporter les données des utilisateurs sous format CSV", asyn
       expect(contents.toString()).toMatch(
         '"Prénom";"Nom";"Email";"Fonction";"Profil";"Périmètre ministériel";"Service";"Territoire";"Périmètre";"Droit de lecture";"Responsabilité";"Droits de saisie des données quantitatives";"Droits de saisie des commentaires";"Droits de gestion des utilisateurs";"Statut";"Date de création";"Auteur création";"Date de dernière modification";"Auteur dernière modification"\n',
       );
+      expect(contents.toString()).toContain('"ditp.admin@example.com"');
     });
   });
 });

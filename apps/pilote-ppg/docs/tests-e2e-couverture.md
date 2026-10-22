@@ -1,993 +1,912 @@
 # Couverture des tests E2E
 
-Ce document recense l'ensemble des scénarios couverts par les tests end-to-end (Playwright) du projet PILOTE.
+Ce document recense les scénarios couverts par les tests end-to-end (Playwright) de pilote-ppg (`apps/pilote-ppg/tests`). Il décrit ce que les specs vérifient réellement : en cas de doute, le code du spec fait foi.
+
+## Données et outillage
+
+**Seed :** `tests/seed/seed.sh` est lancé par le `globalSetup` (`tests/global-setup.ts`) avant chaque exécution. Il vide les schémas `public` et `raw_data`, rejoue les migrations (`prisma migrate deploy`) puis `prisma db seed`, et charge les comptes de test (`utilisateurs-test.sql`), les métadonnées d'indicateurs et les CSV de `raw_data/` et `public/`. Garde-fous : il refuse de tourner sans `E2E_SEED_AUTORISE=true` dans `.env.e2e`, ou si `DATABASE_URL` ne pointe pas sur une base locale.
+
+**Entités dédiées :** `tests/seed/seed-dedicated-entities.sql` (constantes dans `tests/seed/dedicated-entities.ts`) crée, en dernier, des copies réservées aux tests qui écrivent, pour ne jamais modifier les données partagées :
+
+| Entité  | Origine            | Usage                                                                                     |
+|---------|--------------------|-------------------------------------------------------------------------------------------|
+| CH-901  | copie de CH-070    | chantier en `BROUILLON` (« Chantier brouillon e2e »)                                      |
+| CH-902  | copie de CH-054    | chantier d'écriture « Chantier e2e » : open-api, import, indicateurs, paramétrage chantier (métadonnées copiées de CH-129, maille DEPT) |
+| CH-903  | copie de CH-129    | chantier de la saisie des publications par l'IHM (« Chantier e2e saisie »)                |
+| IND-901 | copie d'IND-021    | import de données par l'IHM (rattaché à CH-902)                                            |
+| IND-902 | copie d'IND-021    | formulaire indicateur du panel administrateur (rattaché à CH-902)                          |
+| IND-903 | copie d'IND-021    | import open-api et pondérations du paramétrage chantier (rattaché à CH-902)               |
+
+Habilitations ajoutées : `equipe.dir.projet@example.com` reçoit CH-901, CH-902 et CH-903 ; `services.deconcentres.region@example.com` reçoit CH-901 (sans accès aux brouillons). Deux comptes sont créés pour la saisie sur CH-903 / DEPT-56 : `saisie.coordinateur.dept@example.com` (COORDINATEUR_DEPARTEMENT) et `saisie.prefet.dept@example.com` (PREFET_DEPARTEMENT), tous deux avec lecture et saisie des commentaires sur CH-903 / DEPT-56. Le chantier hors périmètre de l'équipe direction de projet est CH-070.
+
+**Nettoyage :** la fixture `e2eContext` (`tests/e2e-test-context.ts`) enregistre chaque écriture (`track`) et la défait en fin de test : suppression des commentaires, synthèses, objectifs, décisions, événements PVA, rapports d'import et mesures, comptes et tokens créés, accès à l'assistant ; restauration des métadonnées d'indicateur et de chantier, des profils modifiés et des comptes désactivés.
+
+**Connexion :** `AppActions.loginAs` (`tests/actions/app.actions.ts`) se connecte par l'API NextAuth (provider credentials), sans passer par les écrans ; le parcours complet par formulaire est couvert par `loginViaFormulaire`. Sans email, le compte utilisé est `E2E_USERNAME` (`ditp.admin@example.com`).
+
+**Client tRPC direct :** `tests/api-client/trpc.client.ts` appelle `/api/trpc/*` sans passer par l'IHM, avec la session du navigateur. Les mutations envoient le jeton CSRF lu dans le cookie `csrf` (ou aucun / un jeton forcé). Le résultat expose le statut HTTP, le code d'erreur tRPC et l'en-tête `location`.
+
+**Fixtures open-api** (`tests/fixtures.ts`) :
+- `openApi(profil)` forge un JWT pour `DITP_ADMIN` (`ditp.admin`), `EQUIPE_DIR_PROJET` (`equipe.dir.projet`) ou `PM_ET_CABINET` (`premiere.ministre`), et crée si besoin la ligne `token_api_information` correspondante ;
+- `openApiUnauthenticated(header)` crée un client sans en-tête `Authorization`, ou avec l'en-tête fourni.
+
+## Navigateurs et lancement
+
+- **Chromium** exécute tous les specs.
+- **Firefox** puis **WebKit** exécutent les specs IHM, à la suite de Chromium (dépendances de projets : les trois partagent la même base seedée et n'écrivent jamais en parallèle).
+- Les specs sans IHM ne tournent que sur Chromium (`NON_UI_SPECS` dans `apps/pilote-ppg/playwright.config.ts`) : `api-autorisation.spec.ts`, `open-api/**`, `export-csv-cloisonnement.spec.ts`, `gardes-panel-admin.spec.ts`.
+- Lancement : `pnpm test:e2e` (vidéo désactivée ; `E2E_VIDEO=on` l'active).
 
 ---
 
-## 1. Authentification et connexion
+## 1. Connexion
+
+### 1.1 Landing page et connexion par formulaire
 
 **Fichier :** `tests/login.spec.ts`
 
-- Accès à la page d'accueil (landing page) sans authentification
-- Connexion avec les identifiants de test : vérification que l'utilisateur est bien connecté (bouton "Mon espace" visible dans le header)
+- **Landing page** (sans session) : `/` affiche le lien « Se connecter » dans l'en-tête.
+- **Connexion par formulaire** (`ditp.admin@example.com`) : landing → « Se connecter » → écran de choix → bouton « identifiants PILOTE » → saisie identifiant / mot de passe → le bouton « Mon espace » est visible dans l'en-tête.
+
+### 1.2 Écran de choix du mode de connexion
+
+**Fichier :** `tests/connexion.spec.ts`
+
+Tous les tests sont sans session.
+
+- Le lien « Se connecter » de la landing mène à `/connexion`, qui affiche le titre « Connexion à PILOTE ».
+- `/connexion` propose le bouton « identifiants PILOTE ».
+- `/connexion?motif=compte_desactive` affiche une alerte d'erreur contenant « désactivé », le lien `pilote.ditp@modernisation.gouv.fr` et toujours le bouton « identifiants PILOTE ».
+- `/accueil/chantier/NAT-FR` redirige vers `/connexion?callbackUrl=%2Faccueil%2Fchantier%2FNAT-FR`.
 
 ---
 
-## 2. Consultation des données d'un chantier — Isolation par profil
+## 2. Cloisonnement des accès
 
-**Fichier :** `tests/information-chantier.spec.ts`
+### 2.1 Accès hors périmètre par URL
 
-7 scénarios couvrant la page chantier avec différents profils pour vérifier l'isolation des droits de lecture, d'écriture et d'accès territorial. Chantier de référence : CH-129.
+**Fichier :** `tests/acces-hors-perimetre.spec.ts`
 
-### Test 1 : DITP Admin — Accès complet en lecture et écriture
+- **Chantier sur un département hors périmètre** (`coordinateur.departement`, départements 56/29/35/22) : `GET /chantier/CH-129/DEPT-13` répond 404 et la page affiche le titre « Page non trouvée » / 404.
+- **Accueil d'un département hors périmètre** (`coordinateur.departement`) : `/accueil/chantier/DEPT-13` redirige vers `/accueil/chantier/DEPT-56|29|35|22`.
+- **Gestion des comptes sans droit** (`prefet.departement`) : `GET /admin/utilisateurs` et `GET /admin/utilisateur/creer` répondent 307 avec `location: /`.
 
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
+### 2.2 Gardes du panel administrateur
 
-**Navigation et structure :**
+**Fichier :** `tests/gardes-panel-admin.spec.ts`
 
-- Navigation vers CH-129 au niveau national (NAT-FR)
-- Vérification de la structure complète de la page chantier :
-  - Avancement du chantier, Responsables, Min/Médiane/Max
-  - Météo et synthèse des résultats, Répartition géographique
-  - Objectifs (Notre ambition, Ce qui a déjà été fait, Ce qui reste à faire)
-  - Indicateurs, Décisions stratégiques, Suivi des décisions stratégiques
-  - Commentaires : Autres résultats obtenus, Risques et freins, Solutions et actions, Exemples de réussite
+**Pages réservées à l'administrateur DITP** (`ditp.pilotage`, `coordinateur.region`, `equipe.dir.projet`, un test par profil) : chacune des 21 pages suivantes répond 307 avec `location: /` :
 
-**Éléments spécifiques au profil :**
+- `/panel-administrateur/albert`, `/chantiers`, `/chantiers/CH-902`, `/gestion-token-api`, `/habilitations-coordinateur`, `/indicateurs`, `/indicateurs/IND-902`, `/message-information`, `/parametrage-metadata-indicateur` ;
+- `/panel-administrateur/referentiels/perimetres` (+ `/PER-001`), `/porteurs` (+ `/1`), `/zonegroups` (+ `/ZG-REF`) ;
+- `/panel-administrateur/referentiels-deprecies/axes` (+ `/EMPLOI`), `/engagements` (+ `/1`), `/ppgs` (+ `/PPG-1`).
 
-- Vérification que le sélecteur de maille est visible
-- Vérification que le lien "Mettre à jour les données" est visible
-- Vérification que les boutons de nouveau commentaire sont visibles pour chaque type de commentaire
-- Vérification que le bouton d'édition de la synthèse/météo est visible
+**Procédures tRPC gardées par la seule session** (`coordinateur.region`, client tRPC direct) :
+
+- Lectures `applicationLog.lister` et `gestionContenu.recupererFeatureFlips` : 401 `UnauthorizedError`.
+- Mutations `applicationLog.purger`, `gestionContenu.modifierFeatureFlips`, `parametrageNouveautes.creer`, `parametrageCentreAide.creer` : 401 (statut seul, sans vérification en base).
+
+### 2.3 Appels directs à l'API (tRPC et exports)
+
+**Fichier :** `tests/api-autorisation.spec.ts`
+
+**Sans session :**
+
+- Mutation `utilisateur.desactiver` sans jeton CSRF : 303 vers `/connexion?callbackUrl=…`.
+- `GET /api/trpc/chantier.recupererTousSynthetisesAccessiblesEnLecture`, `/api/export/chantiers-v2`, `/api/export/utilisateurs` : 303 vers `/connexion?callbackUrl=…` (un test par route).
+- `POST /api/albert/chat` : 303 vers `/connexion?callbackUrl=…`.
+
+**Avec session :**
+
+- `ditp.pilotage` lit `chantier.recupererTousSynthetisesAccessiblesEnLecture` : 200, pas d'erreur, liste non vide.
+
+**Gestion des comptes :**
+
+- `coordinateur.departement` crée (`utilisateur.creer`) un compte PREFET_DEPARTEMENT sur DEPT-56 puis le désactive : 200 et 200 ; en base, `date_desactivation` est renseignée.
+- `coordinateur.departement` crée un compte sur DEPT-13 : 403 `ForbiddenError` ; le compte n'existe pas en base.
+- `prefet.departement` (sans gestion des comptes) crée un compte : 403 `ForbiddenError` ; le compte n'existe pas en base.
+- `coordinateur.departement` désactive `premiere.ministre` : 403 `ForbiddenError` ; `date_desactivation` reste nulle.
+- `coordinateur.departement` réactive `premiere.ministre` : 403 `ForbiddenError`.
+- `ditp.admin` désactive `premiere.ministre` sans jeton CSRF : 400 ; `date_desactivation` reste nulle.
+- `ditp.admin` désactive `premiere.ministre` avec un jeton CSRF invalide : 403 `FORBIDDEN` ; `date_desactivation` reste nulle.
+
+**Tokens API :**
+
+- `equipe.dir.projet` appelle `gestionTokenAPI.creerTokenAPI` puis `gestionTokenAPI.supprimerTokenAPI` (un test chacun) pour `ditp.pilotage` : 401 `UnauthorizedError` ; aucun token en base pour `ditp.pilotage`.
+
+**Paramétrage des chantiers** (`coordinateur.region`) :
+
+- Lectures `parametrageChantier.list`, `parametrageChantier.get` et `parametrageChantier.getIndicateursPonderations` (CH-902) : 403 `ForbiddenError` (un test chacune).
+- `parametrageChantier.save` sur CH-902 : 403 `ForbiddenError` ; `metadata_chantiers.ch_nom` de CH-902 reste « Chantier e2e » (état restauré par `e2eContext` si la garde régressait).
+- `parametrageChantier.savePonderationsIndicateurs` : 403 `ForbiddenError`.
+
+---
+
+## 3. Page d'accueil
+
+**Fichier :** `tests/accueil.spec.ts`
+
+La liste est lue dans les liens d'en-tête de ligne du tableau des chantiers.
+
+- **Directeur de projet** (`equipe.dir.projet`) : la liste vaut exactement CH-051, CH-054, CH-058, CH-062, CH-129, CH-902, CH-903.
+- **Profil national** (`premiere.ministre`) : la liste vaut exactement les 15 chantiers publiés (CH-050, 051, 054, 058, 062, 067, 070, 071, 107, 108, 129, 145, 155, 902, 903) ; le titre « 15 chantiers » est visible ; CH-901 (brouillon) n'apparaît pas.
+- **Filtre ministère** (`premiere.ministre`) : après le filtre « Intérieur et Outre-mer », le tag de filtre est visible et la liste vaut exactement CH-129, CH-903.
+
+---
+
+## 4. Consultation d'un chantier — Isolation par profil
+
+**Fichier :** `tests/information-chantier.spec.ts` (bloc « Consultation des données d'un chantier — Isolation par profil »)
+
+7 scénarios en lecture seule, exécutés en parallèle. Chantier de référence : CH-129.
+
+**Structure nationale** (vérifiée par `expectStructureNationale`) : titres « Avancement du chantier », « Responsables », « Météo et synthèse des résultats », « Répartition géographique », « Objectifs », « Indicateurs (… », « Décisions stratégiques », « Suivi des décisions stratégiques », « Commentaires du chantier », « Autres résultats obtenus (non corrélés aux indicateurs) », « Risques et freins à lever », « Solutions et actions à venir », « Exemples concrets de réussite » ; textes « Taux d'avancement du chantier » et « Evolution temporelle ».
+
+**Structure territoriale** (vérifiée par `expectStructureTerritoriale`) : titres « Avancement du chantier », « Responsables », « Météo et synthèse des résultats », « Indicateurs (… », « Commentaires du chantier » visibles ; « Décisions stratégiques » et « Suivi des décisions stratégiques » absents.
+
+**Sélecteur de maille** : boutons radio « Régions » et « Départements ». **Boutons de nouveau commentaire** : nationaux (autres résultats, risques et freins, solutions et actions, exemples de réussite) ou territoriaux (commentaires sur les données, autres résultats obtenus).
+
+### Test 1 : DITP Admin — Accès complet en lecture et boutons d'écriture visibles
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN), CH-129 / NAT-FR
+
+- Structure nationale complète
+- Sélecteur de maille visible
+- Lien « Mettre à jour les données » visible
+- Boutons de nouveau commentaire nationaux visibles
 
 ### Test 2 : Premier Ministre — Lecture seule, tous territoires
 
-Profil : `premiere.ministre@example.com` (PM_ET_CABINET)
+Profil : `premiere.ministre@example.com` (PM_ET_CABINET), CH-129 / NAT-FR
 
-**Navigation et structure :**
-
-- Navigation vers CH-129 au niveau national (NAT-FR)
-- Vérification de la structure complète de la page chantier (mêmes sections que Test 1)
-
-**Éléments de lecture seule :**
-
-- Vérification que le sélecteur de maille est visible
-- Vérification que le lien "Mettre à jour les données" n'est PAS visible
-- Vérification que les boutons de nouveau commentaire ne sont PAS visibles
-- Vérification que le bouton d'édition de la synthèse/météo n'est PAS visible
+- Structure nationale complète
+- Sélecteur de maille visible
+- Lien « Mettre à jour les données » absent
+- Boutons de nouveau commentaire nationaux absents
 
 ### Test 3 : Équipe Direction de Projet — Périmètre chantier limité, écriture nationale
 
-Profil : `equipe.dir.projet@example.com` (EQUIPE_DIR_PROJET, chantiers : CH-054, CH-058, CH-062, CH-051, CH-129)
+Profil : `equipe.dir.projet@example.com` (EQUIPE_DIR_PROJET), CH-129 / NAT-FR
 
-**Navigation vers un chantier autorisé :**
+- Structure nationale complète
+- Sélecteur de maille visible
+- Lien « Mettre à jour les données » visible
+- Boutons de nouveau commentaire nationaux visibles
+- `/chantier/CH-070/NAT-FR` (chantier non attribué) : page 404
 
-- Navigation vers CH-129 au niveau national (NAT-FR)
-- Vérification de la structure complète
-- Vérification que le sélecteur de maille est visible
-- Vérification que le lien "Mettre à jour les données" est visible
+### Test 4 : Coordinateur Département — Territoire restreint, sélecteur de maille masqué
 
-**Écriture à la maille nationale :**
+Profil : `pva.coordinateur.dept@example.com` (COORDINATEUR_DEPARTEMENT, DEPT-56, saisie des commentaires sur CH-129), CH-129 / DEPT-56
 
-- Vérification que les boutons de nouveau commentaire sont visibles
-- Vérification que le bouton d'édition de la synthèse/météo est visible
-- Vérification que les objectifs sont en mode écriture
-
-**Isolation par chantier — accès refusé :**
-
-- Navigation vers un chantier non autorisé → vérification de la page 404
-
-### Test 4 : Coordinateur Département — Territoire restreint, sélecteur de maille masqué, écriture ATE
-
-Profil : `pva.coordinateur.dept@example.com` (COORDINATEUR_DEPARTEMENT, territoires : DEPT-56, saisieCommentaire chantiers : CH-129)
-
-**Navigation vers le territoire autorisé :**
-
-- Navigation vers CH-129 au niveau DEPT-56
-- Vérification de la structure de la page chantier (sans section Décisions stratégiques ni Suivi des décisions stratégiques — maille non nationale)
-
-**Éléments spécifiques au profil :**
-
-- Vérification que le sélecteur de maille n'est PAS visible
-- Vérification que le lien "Mettre à jour les données" n'est PAS visible
-- Vérification que les boutons de nouveau commentaire sont visibles (saisieCommentaire inclut CH-129)
+- Structure territoriale
+- Sélecteur de maille absent
+- Lien « Mettre à jour les données » absent
+- Boutons de nouveau commentaire territoriaux visibles
 
 ### Test 5 : Préfet Région — Territoire régional, écriture commentaires ATE
 
-Profil : `chantier.prefet.reg@example.com` (PREFET_REGION, territoires : REG-53 + départements, saisieCommentaire chantiers : CH-129)
+Profil : `chantier.prefet.reg@example.com` (PREFET_REGION, REG-53, saisie des commentaires sur CH-129), CH-129 / REG-53
 
-**Navigation vers le territoire régional :**
+- Structure territoriale
+- Sélecteur de maille visible
+- Lien « Mettre à jour les données » absent
+- Boutons de nouveau commentaire territoriaux visibles
 
-- Navigation vers CH-129 au niveau REG-53
-- Vérification de la structure de la page chantier (sans section Décisions stratégiques ni Suivi des décisions stratégiques — maille non nationale)
+### Test 6 : Coordinateur Département sans habilitation chantier — pas de boutons d'écriture
 
-**Éléments spécifiques au profil :**
+Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT, sans saisie des commentaires sur CH-129), CH-129 / DEPT-56
 
-- Vérification que le sélecteur de maille est visible
-- Vérification que le lien "Mettre à jour les données" n'est PAS visible
-- Vérification que les boutons de nouveau commentaire sont visibles (saisieCommentaire inclut CH-129)
+- Structure territoriale
+- Sélecteur de maille absent
+- Boutons de nouveau commentaire territoriaux absents
 
-### Test 6 : Coordinateur Département sans habilitation chantier — lecture seule sur le territoire
+### Test 7 : Préfet Région sans habilitation chantier — pas de boutons d'écriture
 
-Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT, territoires : DEPT-56, saisieCommentaire chantiers : aucun)
+Profil : `prefet.region@example.com` (PREFET_REGION, sans saisie des commentaires sur CH-129), CH-129 / REG-53
 
-- Navigation vers CH-129 au niveau DEPT-56
-- Vérification de la structure territoriale
-- Vérification que le sélecteur de maille n'est PAS visible
-- Vérification que les boutons de nouveau commentaire ne sont PAS visibles (saisieCommentaire.chantiers ne contient pas CH-129)
-
-### Test 7 : Préfet Région sans habilitation chantier — lecture seule sur le territoire
-
-Profil : `prefet.region@example.com` (PREFET_REGION, territoires : REG-53, saisieCommentaire chantiers : aucun)
-
-- Navigation vers CH-129 au niveau REG-53
-- Vérification de la structure territoriale
-- Vérification du sélecteur de maille visible
-- Vérification que les boutons de nouveau commentaire ne sont PAS visibles (saisieCommentaire.chantiers ne contient pas CH-129)
+- Structure territoriale
+- Sélecteur de maille visible
+- Boutons de nouveau commentaire territoriaux absents
 
 ### Matrice de visibilité sur la page chantier par profil
 
-| Élément                        | DITP Admin | PM Cabinet | Éq. Dir. Projet | Coord. Dept (avec hab.) | Préfet Rég. (avec hab.) | Coord. Dept (sans hab.) | Préfet Rég. (sans hab.) |
-|--------------------------------|:----------:|:----------:|:----------------:|:-----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
-| **Territoire testé**           |   NAT-FR   |   NAT-FR   |      NAT-FR      |         DEPT-56         |         REG-53          |         DEPT-56         |         REG-53          |
-| Structure complète             |     ✓      |     ✓      |        ✓         |            ✓            |            ✓            |            ✓            |            ✓            |
-| Décisions stratégiques         |     ✓      |     ✓      |        ✓         |            ✗            |            ✗            |            ✗            |            ✗            |
-| Sélecteur de maille            |     ✓      |     ✓      |        ✓         |            ✗            |            ✓            |            ✗            |            ✓            |
-| Mettre à jour les données      |     ✓      |     ✗      |        ✓         |            ✗            |            ✗            |            ✗            |            ✗            |
-| Boutons nouveau commentaire    |     ✓      |     ✗      |        ✓         |            ✓            |            ✓            |            ✗            |            ✗            |
-| Accès chantier non autorisé    |     —      |     —      |       404        |            —            |            —            |            —            |            —            |
+Légende : ✓ visible | ✗ absent | — non vérifié
+
+| Élément                     | DITP Admin | PM Cabinet | Éq. Dir. Projet | Coord. Dept (avec hab.) | Préfet Rég. (avec hab.) | Coord. Dept (sans hab.) | Préfet Rég. (sans hab.) |
+|-----------------------------|:----------:|:----------:|:---------------:|:-----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
+| **Territoire testé**        |   NAT-FR   |   NAT-FR   |     NAT-FR      |         DEPT-56         |         REG-53          |         DEPT-56         |         REG-53          |
+| Structure                   | nationale  | nationale  |    nationale    |       territoriale      |       territoriale      |       territoriale      |       territoriale      |
+| Décisions stratégiques      |     ✓      |     ✓      |        ✓        |            ✗            |            ✗            |            ✗            |            ✗            |
+| Sélecteur de maille         |     ✓      |     ✓      |        ✓        |            ✗            |            ✓            |            ✗            |            ✓            |
+| Mettre à jour les données   |     ✓      |     ✗      |        ✓        |            ✗            |            ✗            |            —            |            —            |
+| Boutons nouveau commentaire |     ✓      |     ✗      |        ✓        |            ✓            |            ✓            |            ✗            |            ✗            |
+| Chantier non attribué       |     —      |     —      |       404       |            —            |            —            |            —            |            —            |
 
 ---
 
-## 3. Import de données indicateur
+## 5. Cartographie PVA — Comparaison territoriale
+
+**Fichier :** `tests/information-chantier.spec.ts` (bloc « Cartographie PVA — Comparaison territoriale »)
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN), CH-129 / NAT-FR. Le sélecteur de la section « Comparaison territoriale et évolution » est positionné sur « Carte des propositions de valeur d'avancement ». Données seedées : NAT-FR 3 propositions, Paris 2, Morbihan 0.
+
+### Test 1 : Affichage du widget PVA
+
+- « Comparaison territoriale et évolution » et le sous-titre « Nombres de propositions de valeur d'avancement » sont visibles
+- Le texte « 3 propositions » est visible (France)
+- Le lien « + ajouter un territoire » est visible dans le widget
+
+### Test 2 : Ajout et suppression d'un territoire
+
+- Ajout de « Paris » par le picker : « 2 propositions » visible
+- Ajout de « Morbihan » : « pas de proposition » visible
+- Retrait de Paris (bouton « Retirer … Paris ») : le bouton de retrait de Paris disparaît et « 2 propositions » n'est plus visible
+
+---
+
+## 6. Saisie des publications d'un chantier
+
+**Fichier :** `tests/saisie-commentaire.spec.ts`
+
+Chantier dédié : CH-903.
+
+### Test 1 : Un directeur de projet publie un commentaire national retrouvé dans l'historique
+
+Profil : `equipe.dir.projet@example.com`, CH-903 / NAT-FR
+
+- Publication d'un commentaire « Risques et freins à lever » au contenu unique
+- Message « Votre nouveau commentaire a bien été publié » visible
+- La modale d'historique du type contient « Historique - Commentaires » et le contenu publié
+
+### Test 2 : Un brouillon territorial n'est visible que de son auteur
+
+Profils : `saisie.coordinateur.dept@example.com` puis `saisie.prefet.dept@example.com`, CH-903 / DEPT-56
+
+- Le coordinateur enregistre un commentaire « Commentaires sur les données » en brouillon : message « Vous avez enregistré un nouveau commentaire en tant que brouillon » et bouton « Editer un brouillon » visibles
+- Le préfet, habilité à la saisie sur le même territoire : le bouton de nouveau commentaire est visible, mais ni le message de brouillon, ni « Editer un brouillon », ni le contenu du brouillon n'apparaissent
+
+### Test 3 : La météo publiée s'affiche sur la page du chantier et sur l'accueil
+
+Profil : `equipe.dir.projet@example.com`, CH-903 / NAT-FR
+
+- Nouvelle synthèse dans la section synthèse, météo « Objectifs sécurisés », contenu unique, « Publier »
+- Le contenu est visible dans la section synthèse
+- En base, la synthèse de CH-903 / NAT-FR a la météo `SOLEIL`
+- Sur `/accueil/chantier/NAT-FR`, la cellule météo de la ligne « Chantier e2e saisie » contient une icône et n'affiche pas « Non renseignée »
+
+---
+
+## 7. Import de données indicateur par l'IHM
 
 **Fichier :** `tests/import-donnee.spec.ts`
 
-- Navigation depuis la page d'accueil vers la page chantier puis vers "Mise à jour des données"
-- Sélection d'un indicateur (IND-021) dans l'assistant d'import
-- Upload d'un fichier CSV invalide contenant un identifiant indicateur incorrect (IND-97 au lieu de IND-021) :
-  - Vérification que le fichier est rejeté
-  - Vérification des messages d'erreur ("ne respecte pas le motif imposé", "ne correspond pas à l'indicateur choisi")
-- Upload d'un fichier CSV valide avec les bonnes données :
-  - Vérification que le fichier est conforme
-  - Transmission des données
-  - Vérification du succès de l'import
+Profil : `ditp.admin@example.com`. Indicateur dédié : IND-901 « Indicateur e2e import » sur CH-902. Accès direct à `/chantier/CH-902/indicateurs` (titre « Mettre à jour les données - Chantier 902 - PILOTE »).
+
+### Test 1 : Import CSV
+
+- Sélection de « IND-901 : Indicateur e2e import », passage à l'étape 2 sur 3
+- CSV invalide (première ligne avec l'identifiant `IND-97`) : « Le fichier ne peut pas être importé » et le message « 'IND-97' n'est pas un identifiant d'indicateur valide : il doit être composé de 'IND-' suivi de 3 ou 4 chiffres. […] »
+- CSV valide (3 lignes D12, D13, D14) : « Bravo, le fichier est conforme ! »
+- Étape 3 sur 3, « Transmettre les données » : « Les données ont été importées avec succès pour l'indicateur IND-901 »
+
+### Test 2 : Import Excel avec des dates au format date
+
+- Fichier `.xlsx` dont la colonne `date_valeur` est typée date (D15, D16)
+- Fichier conforme, transmission, message de succès pour IND-901
 
 ---
 
-## 4. Export CSV
-
-### 4.1 Export des chantiers
-
-**Fichier :** `tests/export-csv-chantier.spec.ts`
-
-- Ouverture de la modale d'export CSV depuis la page d'accueil
-- Sélection du type d'export "les chantiers"
-- Choix du périmètre "exporter tous les éléments" (sans filtres)
-- Vérification de la disponibilité de chaque option de données à collecter :
-  - Identifiants du chantier et du territoire (pré-coché)
-  - Gouvernance du chantier
-  - Responsabilité du chantier
-  - Objectifs du chantier
-  - Données descriptives du chantier sur le territoire
-  - Données de comparaison du chantier
-  - Valeurs de référence
-  - Météo et synthèse des résultats
-  - Commentaires du chantier
-  - Suivi des décisions stratégiques
-- Téléchargement du fichier avec options "identifiant + gouvernance" : vérification du nom de fichier (`PILOTE-Chantiers-*.csv`) et des colonnes CSV (Maille, Région, Département, Code INSEE, Chantier Id, Chantier, Ministère, Axe, Statut, etc.)
-- Téléchargement avec option "valeurs de référence" (jalon 2025) : vérification des colonnes maximum régional, médiane régionale, minimum régional, maximum départemental, médiane départementale, minimum départemental
-- Téléchargement avec options supplémentaires (responsabilité, objectifs) : vérification des colonnes additionnelles (Directeur projet, Contact, Responsable local, Notre ambition, etc.)
-
-### 4.2 Export des indicateurs
-
-**Fichier :** `tests/export-csv-indicateur.spec.ts`
-
-- Sélection du type d'export "les indicateurs des chantiers"
-- Choix du périmètre sans filtres
-- Vérification des options de données à collecter :
-  - Identifiants de l'indicateur, du chantier associé et du territoire (pré-coché)
-  - Cadrage de l'indicateur
-  - Gouvernance de l'indicateur et du chantier associé
-  - Données de l'indicateur sur le territoire
-  - Données du chantier associé sur le territoire
-  - Météo et synthèse des résultats du chantier associé
-- Téléchargement et vérification des colonnes CSV (Maille, Région, Département, Chantier, Indicateur, etc.)
-- Téléchargement avec colonnes étendues : vérification des données descriptives (Valeur initiale, Date valeur initiale, Valeur avancement, Taux d'avancement, etc.)
-
-### 4.3 Export de l'historique des indicateurs
-
-**Fichier :** `tests/export-csv-historique-indicateur.spec.ts`
-
-- Application préalable d'un filtre ministère ("Intérieur et Outre-mer") pour réduire le périmètre
-- Sélection du type d'export "l'historique des indicateurs"
-- Choix du périmètre avec filtres actifs
-- Vérification des options de données :
-  - Identifiants de l'indicateur et du territoire (pré-coché)
-  - Valeur initiale et valeurs cibles (pré-coché)
-  - Valeurs d'avancement mois par mois (pré-coché)
-- Téléchargement et vérification du fichier (`PILOTE-Historique-Indicateurs-*.csv`) avec les colonnes attendues (Valeur initiale, Valeur cible année 2025, Valeur cible année 2026, Valeur avancement, etc.)
-
-### 4.4 Export des utilisateurs
-
-**Fichier :** `tests/export-csv-utilisateur.spec.ts`
-
-- Navigation vers la page d'administration des utilisateurs
-- Téléchargement du fichier CSV des utilisateurs (`PILOTE-Utilisateurs-*.csv`)
-- Vérification des 19 colonnes du fichier : Prénom, Nom, Email, Fonction, Profil, Périmètre ministériel, Service, Territoire, Périmètre, Droit de lecture, Responsabilité, Droits de saisie des données quantitatives, Droits de saisie des commentaires, Droits de gestion des utilisateurs, Statut, Date de création, Auteur création, Date de dernière modification, Auteur dernière modification
-
----
-
-## 5. Proposition de Valeur d'Avancement (PVA)
+## 8. Proposition de Valeur d'Avancement (PVA)
 
 **Fichier :** `tests/proposition-valeur-avancement.spec.ts`
 
-5 scénarios couvrant le cycle de vie complet des propositions de valeur d'avancement, testés avec plusieurs profils utilisateurs (coordinateur départemental, préfet départemental, coordinateur régional, équipe direction de projet).
+5 scénarios exécutés en parallèle, chacun sur son propre indicateur de CH-129 / DEPT-56 (IND-021 à IND-024). Comptes : `pva.coordinateur.dept` (COORDINATEUR_DEPARTEMENT), `pva.prefet.dept` (PREFET_DEPARTEMENT), `pva.coordinateur.reg` (COORDINATEUR_REGION), `pva.dir.projet` (EQUIPE_DIR_PROJET). Les événements PVA créés sont supprimés en fin de test.
 
-### Test 1 : Parcours complet de création et acceptation d'une proposition
+### Test 1 : Coordinateur département propose, Direction accuse réception puis accepte (IND-021)
 
-- Le coordinateur départemental crée une proposition de valeur d'avancement (valeur, motif, source de données), passe par l'écran de récapitulatif puis publie
-- Vérification côté territoire : la proposition apparaît avec le statut "en attente de lecture par la direction de projet", les boutons modifier/supprimer sont disponibles
-- La direction de projet accuse réception de la proposition avec un commentaire
-- Vérification côté territoire : après accusé de réception, le statut passe à "lue par la direction de projet" et les boutons modifier/supprimer disparaissent
-- La direction de projet accepte la proposition
-- Vérification du statut "acceptée" sur la page du chantier
-- Vérification de l'historique : les 3 événements (nouvelle proposition, accusé de réception, acceptation) apparaissent dans la modale d'historique
+- Le coordinateur propose 42.5 (motif, source) ; le récapitulatif affiche la valeur et le motif ; publication : « correctement été prise en compte »
+- Côté territoire : statut « Proposition de nouvelle valeur d'avancement en cours » / « en attente de lecture par la direction de projet » ; boutons modifier et supprimer visibles
+- La direction accuse réception avec un commentaire, repris dans le récapitulatif : « a bien été enregistré »
+- Côté territoire : statut « lue par la direction de projet » ; boutons modifier et supprimer absents
+- La direction accepte ; récapitulatif « la proposition est acceptée » ; « a bien été acceptée »
+- Statut « acceptée »
+- Historique : « Historique des actions sur les valeurs d'avancement », IND-021, nouvelle proposition, accusé de réception, acceptation par la direction de projet
 
-### Test 2 : Refus d'une proposition et possibilité de re-proposer
+### Test 2 : Préfet département propose, Direction refuse, Territoire peut re-proposer (IND-022)
 
-- Le préfet départemental crée une proposition de valeur d'avancement
-- La direction de projet refuse la proposition avec un motif
-- Vérification côté direction : le statut affiche "dernière proposition en date refusée"
-- Vérification côté territoire : le statut "refusée" est visible et le bouton "Proposer une autre valeur d'avancement" est de nouveau accessible
-- Vérification de l'historique : les 2 événements (nouvelle proposition, refus) apparaissent
+- Le préfet propose 85 et publie
+- La direction refuse avec un motif ; récapitulatif « la proposition est refusée » ; « a bien été refusée »
+- Côté direction et côté territoire : statut « dernière proposition en date refusée » ; côté territoire, le bouton « Proposer une autre valeur d'avancement » est visible
+- Historique : nouvelle proposition, refus par la direction de projet
 
-### Test 3 : Acceptation avec modification de la valeur proposée
+### Test 3 : Territoire propose, Direction accepte avec modification (IND-023)
 
-- Le coordinateur départemental crée une proposition avec une valeur de 75
-- La direction de projet accepte avec modification en ajustant la valeur à 60, avec un motif explicatif
-- Vérification du statut "acceptée avec modification" sur la page du chantier
-- Vérification de l'historique : les 2 événements (nouvelle proposition, acceptation avec modification) apparaissent
+- Le coordinateur propose 75
+- La direction accepte avec modification à 60 ; récapitulatif « la proposition est modifiée » et « 60 ( » ; « a bien été acceptée avec modification »
+- Statut « acceptée avec modification »
+- Historique : nouvelle proposition, acceptation avec modification
 
-### Test 4 : Modification puis suppression d'une proposition par le territoire
+### Test 4 : Territoire modifie puis supprime sa proposition (IND-024)
 
-- Le coordinateur départemental crée une proposition avec une valeur de 30
-- Le même coordinateur modifie sa proposition en corrigeant la valeur à 35 et en mettant à jour le motif
-- Vérification du statut "modifiée par le territoire"
-- Le coordinateur supprime la proposition en indiquant un motif de suppression
-- Vérification du statut "dernière proposition en date supprimée" et du bouton de re-proposition accessible
-- Vérification de l'historique complet : les 3 événements (nouvelle proposition, modification, suppression) apparaissent
+- Le coordinateur propose 30, puis modifie à 35 (récapitulatif « Valeur d'avancement proposée »)
+- Statut « en cours » / « modifiée par le territoire »
+- Suppression avec motif (repris dans le récapitulatif) : « correctement été supprimée »
+- Statut « dernière proposition en date supprimée » et bouton de re-proposition visible
+- Historique : nouvelle proposition, modification, suppression
 
-### Test 5 : Blocage de proposition sur maille région agrégée
+### Test 5 : Maille région agrégée — blocage de la proposition (IND-021)
 
-- Le coordinateur régional navigue vers le chantier au niveau régional (REG-53)
-- Vérification que l'indicateur IND-021 (maille régionale agrégée) affiche un message de blocage "Impossible de proposer une autre valeur d'avancement"
-- Le bouton "Proposer une autre valeur d'avancement" n'est pas visible
+- `pva.coordinateur.reg` sur CH-129 / REG-53 : IND-021 affiche « Impossible de proposer une autre valeur d'avancement » et le bouton « Proposer une autre valeur d'avancement » est absent
 
 ---
 
-## 6. API Open API
+## 9. Export CSV
 
-### 6.1 Authentification API
+Les tests 9.1 à 9.3 passent par la modale d'export de l'accueil (« Exporter les données - Étape N sur 5 »), avec `ditp.admin@example.com`. Le jalon des colonnes cibles et des valeurs de référence est l'année calculée par `getAnneeDateDeBascule` (date du jour et `NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE`), pas une année figée.
+
+### 9.1 Export des chantiers
+
+**Fichier :** `tests/export-csv-chantier.spec.ts`
+
+- Type « les chantiers », périmètre « exporter tous les éléments »
+- Étape 3 : « identifiants du chantier et du territoire » visible et pré-coché ; chacune des options suivantes est visible et se coche : gouvernance, responsabilité, objectifs, données descriptives sur le territoire, données de comparaison, valeurs de référence, météo et synthèse des résultats, commentaires, suivi des décisions stratégiques
+- Étape 4 atteinte
+- Téléchargement « identifiant, gouvernance » (étape 4 ouverte par URL) : fichier `PILOTE-Chantiers-*.csv`, en-tête exact (Maille, Région, Département, Code INSEE - Nom du département, Chantier Id, Chantier, Ministère, Axe, Statut, Chantier territorialisé, Chantier du baromètre) et ligne `"CH-058";"Accélérer la transition numérique"`
+- Téléchargement « identifiant, valeurs de référence » : en-tête exact avec maximum / médiane / minimum régional et départemental du jalon
+- Téléchargement « identifiant, gouvernance, responsabilité, objectif » : en-tête exact ajoutant Directeur projet, Contact directeur projet, Responsable local, Contact responsable local, Coordinateur territorial, Contact coordinateur territorial, Notre ambition, Ce qui a déjà été fait, Ce qui reste à faire
+
+### 9.2 Export des indicateurs
+
+**Fichier :** `tests/export-csv-indicateur.spec.ts`
+
+- Type « les indicateurs des chantiers », périmètre sans filtres
+- Étape 3 : « identifiants de l'indicateur, du chantier associé et du territoire » visible et pré-coché ; chacune des options suivantes est visible et se coche : cadrage de l'indicateur, gouvernance de l'indicateur et du chantier associé, données de l'indicateur sur le territoire, données du chantier associé sur le territoire, météo et synthèse des résultats du chantier associé
+- Téléchargement « identifiant, gouvernance » : fichier `PILOTE-Indicateurs-*.csv`, en-tête exact (Maille, Région, Département, Code INSEE - Nom du département, Chantier, Chantier Id, Indicateur, Indicateur Id, Ministère, Axe, Chantier statut, Chantier du baromètre) et ligne `"Part des déploiement territorial";"IND-838"`
+- Téléchargement « identifiant, gouvernance, description » : en-tête exact ajoutant Valeur initiale, Date valeur initiale, Valeur avancement, Date valeur avancement, Valeur cible à fin d'échéance, Date valeur cible à fin d'échéance et Taux d'avancement à fin d'échéance (indicateur) du jalon
+
+### 9.3 Export de l'historique des indicateurs
+
+**Fichier :** `tests/export-csv-historique-indicateur.spec.ts`
+
+- Filtre ministère « Intérieur et Outre-mer » sur l'accueil
+- Type « l'historique des indicateurs », périmètre « sélection présentement active »
+- Étape 3 : les trois options (identifiants de l'indicateur et du territoire, valeur initiale et valeurs cibles, valeurs d'avancement mois par mois) sont visibles et pré-cochées
+- Téléchargement : fichier `PILOTE-Historique-Indicateurs-*.csv`, en-tête exact (Maille, Région, Département, Code INSEE - Nom du département, Chantier, Chantier Id, Indicateur, Indicateur Id, Valeur initiale, Date valeur initiale, Valeur cible année et Date valeur cible année du jalon, Valeur avancement, Date valeur avancement) et au moins une ligne de données
+
+### 9.4 Export des utilisateurs
+
+**Fichier :** `tests/export-csv-utilisateur.spec.ts`
+
+Profil : `ditp.admin@example.com`
+
+- Accès par le lien « Gestion des comptes », bouton d'export
+- Fichier `PILOTE-Utilisateurs-*.csv`, en-tête exact des 19 colonnes : Prénom, Nom, Email, Fonction, Profil, Périmètre ministériel, Service, Territoire, Périmètre, Droit de lecture, Responsabilité, Droits de saisie des données quantitatives, Droits de saisie des commentaires, Droits de gestion des utilisateurs, Statut, Date de création, Auteur création, Date de dernière modification, Auteur dernière modification
+- Le fichier contient `"ditp.admin@example.com"`
+
+### 9.5 Cloisonnement des exports
+
+**Fichier :** `tests/export-csv-cloisonnement.spec.ts`
+
+Appels directs aux routes d'export avec la session ; chaque appel doit répondre 200 et le CSV est analysé.
+
+- **Chantiers, profil régional** (`services.deconcentres.region`) : `/api/export/chantiers-v2` non vide ; seule région « Bretagne » ; chaque Chantier Id appartient à CH-051, CH-054, CH-058, CH-062, CH-070.
+- **Brouillons refusés** (`services.deconcentres.region`, habilité sur CH-901 sans accès aux brouillons) : l'export par défaut ne contient pas CH-901 ; `?statut=BROUILLON` renvoie un CSV sans ligne.
+- **Brouillons autorisés** (`equipe.dir.projet`) : `?statut=BROUILLON` contient uniquement CH-901.
+- **Indicateurs, profil régional** (`services.deconcentres.region`) : `/api/export/indicateurs-v2` non vide ; seule région « Bretagne » ; chantiers limités à la même liste.
+- **Indicateurs, directeur de projet** (`equipe.dir.projet`) : contient IND-901, IND-902 et IND-903 ; ne contient pas CH-070.
+- **Historique, coordinateur régional** (`coordinateur.region`) : `/api/export/historique-indicateurs` non vide ; seule région « Bretagne ».
+- **Utilisateurs, coordinateur départemental** (`coordinateur.departement`) : `/api/export/utilisateurs?typeCompte=actif` contient `prefet.departement`, pas `ditp.admin` ni `premiere.ministre`.
+
+---
+
+## 10. Open API
+
+Specs sans IHM (Chromium uniquement). Les écritures portent sur CH-902 ; le chantier non autorisé est CH-070.
+
+### 10.1 Authentification
 
 **Fichier :** `tests/open-api/authentification.spec.ts`
 
-- Requête sans header Authorization : réponse 401 Unauthorized
-- Requête avec header Authorization invalide : réponse 400 Bad Request
-- Requête avec un JWT valide mais non forgé par l'API : réponse 400 Bad Request
-- Requête avec un JWT valide forgé par l'API (profil DITP_ADMIN) : réponse 200 OK avec message de bienvenue
+Route : `GET /api/open-api/healthcheck`
 
-### 6.2 Gestion des erreurs API
+- Sans en-tête `Authorization` : 401
+- En-tête `Authorization: invalid` : 400
+- JWT bien formé mais non forgé par l'API : 400
+- JWT forgé par l'API (`ditp.admin`) : 200 et corps exact `{ resultat: "Bonjour ditp.admin@example.com, vous pouvez utiliser l'API." }`
+
+### 10.2 Gestion des erreurs
 
 **Fichier :** `tests/open-api/error-management.spec.ts`
 
-- Accès aux données d'un chantier non autorisé (CH-039 avec profil EQUIPE_DIR_PROJET limité à CH-129) : réponse 403 Forbidden
-- Accès aux données d'un indicateur non autorisé (IND-718 sur CH-039) : réponse 403 Forbidden
+Profil : EQUIPE_DIR_PROJET
 
-### 6.3 Export des données d'un chantier via API
+- `GET /chantier/CH-070/donnees` : 403, corps exact `{ message: "Vous n'êtes pas autorisé à accéder au chantier CH-070", success: false }`
+- `GET /chantier/CH-070/indicateur/IND-105/donnees` : 403, corps exact `{ message: "Vous n'êtes pas autorisé à accéder à l'indicateur IND-105", success: false }`
+
+### 10.3 Export des données d'un chantier
 
 **Fichier :** `tests/open-api/export-donnee-chantier.spec.ts`
 
-- Récupération des données du chantier CH-129 (profil EQUIPE_DIR_PROJET) : réponse 200 OK
-- Vérification de la structure des données retournées : identifiant chantier, nom
-- Vérification de la présence de données territoriales par maille (DEPT > 0, REG > 0, NAT = 1)
-- Vérification des champs de taux d'avancement (département, région, national, annuel)
-- Vérification de la présence de toutes les publications (synthèse des résultats, objectifs, commentaires, risques, solutions, exemples de réussite, décisions stratégiques)
+Profil : EQUIPE_DIR_PROJET
 
-### 6.4 Export des données d'un indicateur via API
+- `GET /chantier/CH-129/donnees` : 200
+- Champs : `chantier_id` CH-129, `nom` « Moderniser la gestion des ressources », `ministere` MI, `statut` PUBLIE, `est_barometre` false, `est_territorialise` true
+- Territoires : 1 NAT, 18 REG, 101 DEPT
+- L'entrée DEPT-13 vaut exactement : météo nulle, responsables et taux d'avancement « Non applicable », toutes les publications nulles
+
+### 10.4 Export des données d'un indicateur
 
 **Fichier :** `tests/open-api/export-donnee-indic-quanti.spec.ts`
 
-- Récupération des données de l'indicateur IND-021 sur le chantier CH-129 : réponse 200 OK
-- Vérification du nombre de territoires : 101 départements, 18 régions, 1 national
-- Vérification de la structure complète d'un enregistrement territorial : maille, code INSEE, territoire, dates et valeurs (actuelle, cible, cible annuelle, initiale), taux d'avancement
+Profil : EQUIPE_DIR_PROJET
 
-### 6.5 Import de commentaires via API
+- `GET /chantier/CH-129/indicateur/IND-021/donnees` : 200, `chantier_id` CH-129, `indic_id` IND-021
+- Territoires : 1 NAT, 18 REG, 101 DEPT
+- L'entrée NAT-FR vaut exactement : code INSEE FR, zone FRANCE, valeur actuelle et d'avancement 0 au 2025-06-01, valeurs initiale / cible / cible annuelle et taux d'avancement nuls
+
+### 10.5 Import de commentaires
 
 **Fichier :** `tests/open-api/import-chantier-commentaire.spec.ts`
 
-- Import d'un commentaire valide sans date : réponse 200 OK
-- Import d'un commentaire avec une date antérieure : réponse 200 OK
-- Import de plusieurs commentaires valides en une seule requête (3 types différents) : réponse 200 OK
-- Import avec une date dans le futur : réponse 400 Bad Request
-- Import d'un type national sur une maille régionale : réponse 400 (type non autorisé pour la maille)
-- Import d'un type régional sur une maille nationale : réponse 400 (type non autorisé pour la maille)
-- Import avec un type invalide : réponse 400 Bad Request
-- Import sur un chantier non autorisé (CH-999) : réponse 403 Forbidden
+Profil : EQUIPE_DIR_PROJET, `POST /chantier/CH-902/commentaires`. Hors import multiple, les vérifications portent sur la réponse HTTP ; l'import de plusieurs commentaires est relu en base (un enregistrement par contenu sur CH-902).
 
-### 6.6 Import de décisions stratégiques via API
+- Commentaire valide sans date : 200, message « Les commentaires ont correctement été importés »
+- Commentaire avec une date antérieure : 200, même message
+- Trois commentaires de types différents en une requête : 200, même message
+- Date dans le futur : 400, au moins une erreur
+- Type national (`risques_et_freins_a_lever`) sur REG-84 : 400, une erreur contenant « n'est pas autorisé pour la maille régionale »
+- Type territorial (`commentaires_sur_les_donnees`) sur NAT-FR : 400, une erreur contenant « n'est pas autorisé pour la maille nationale »
+- Type inexistant : 400, au moins une erreur
+- CH-070 : 403
+
+### 10.6 Import de décisions stratégiques
 
 **Fichier :** `tests/open-api/import-chantier-decision-strategique.spec.ts`
 
-- Import d'une décision stratégique valide sans date : réponse 200 OK
-- Import d'une décision stratégique avec une date antérieure : réponse 200 OK
-- Import avec une date dans le futur : réponse 400 Bad Request
-- Import avec un type invalide : réponse 400 Bad Request
-- Import sur un chantier non autorisé (CH-999) : réponse 403 Forbidden
+Profil : EQUIPE_DIR_PROJET, `POST /chantier/CH-902/decisions-strategiques` (réponse HTTP uniquement).
 
-### 6.7 Import d'objectifs via API
+- Décision valide sans date : 200, message « Les décisions stratégiques ont correctement été importées »
+- Décision avec une date antérieure : 200, même message
+- Date dans le futur : 400, au moins une erreur
+- Type inexistant : 400, au moins une erreur
+- CH-070 : 403
+
+### 10.7 Import d'objectifs
 
 **Fichier :** `tests/open-api/import-chantier-objectif.spec.ts`
 
-- Import d'un objectif valide sans date (type "notre_ambition") : réponse 200 OK
-- Import d'un objectif avec une date antérieure (type "deja_fait") : réponse 200 OK
-- Import de plusieurs objectifs valides en une seule requête (3 types : notre_ambition, deja_fait, a_faire) : réponse 200 OK
-- Import avec une date dans le futur : réponse 400 Bad Request
-- Import avec un type invalide : réponse 400 Bad Request
-- Import sur un chantier non autorisé (CH-999) : réponse 403 Forbidden
+Profil : EQUIPE_DIR_PROJET, `POST /chantier/CH-902/objectifs` (réponse HTTP ; l'import de plusieurs objectifs est relu en base).
 
-### 6.8 Import de synthèses des résultats via API
+- Objectif `notre_ambition` sans date : 200, message « Les objectifs ont correctement été importés »
+- Objectif `deja_fait` avec une date antérieure : 200, même message
+- Trois objectifs (`notre_ambition`, `deja_fait`, `a_faire`) en une requête : 200, même message
+- Date dans le futur : 400, au moins une erreur
+- Type inexistant : 400, au moins une erreur
+- CH-070 : 403
+
+### 10.8 Import de synthèses des résultats
 
 **Fichier :** `tests/open-api/import-chantier-synthese-des-resultats.spec.ts`
 
-- Import d'une synthèse valide sans date (territoire NAT-FR, météo SOLEIL) : réponse 200 OK
-- Import d'une synthèse avec une date antérieure (météo NUAGE) : réponse 200 OK
-- Import de plusieurs synthèses valides en une seule requête (météos SOLEIL et ORAGE) : réponse 200 OK
-- Import avec une date dans le futur : réponse 400 Bad Request
-- Import avec une météo invalide : réponse 400 Bad Request
-- Import sur un chantier non autorisé (CH-999) : réponse 403 Forbidden
+Profil : EQUIPE_DIR_PROJET, `POST /chantier/CH-902/syntheses-des-resultats`, territoire NAT-FR (réponse HTTP ; l'import de plusieurs synthèses est relu en base). Météos de l'API : `OBJECTIF_SECURISE` (SOLEIL, « Objectifs sécurisés »), `APPUIS_NECESSAIRE` (NUAGE, « Appuis nécessaires »), `OBJECTIF_COMPROMIS` (ORAGE, « Objectifs compromis »).
+
+- Synthèse « Objectifs sécurisés » sans date : 200, message « Les synthèses des résultats ont correctement été importées »
+- Synthèse « Appuis nécessaires » avec une date antérieure : 200, même message
+- Deux synthèses (« Objectifs sécurisés » et « Objectifs compromis ») en une requête : 200, même message
+- Date dans le futur : 400, au moins une erreur
+- Météo inexistante : 400, au moins une erreur
+- CH-070 : 403
+
+### 10.9 Import des données d'un indicateur
+
+**Fichier :** `tests/open-api/import-donnee-indicateur.spec.ts`
+
+`POST /chantier/CH-902/indicateur/IND-903/donnees`
+
+- **Import valide** (EQUIPE_DIR_PROJET) : deux valeurs (D56 = 42, D29 = 17) : 200, corps exact `{ message: "Les données ont correctement été importés" }` ; en base, `mesure_indicateur` d'IND-903 contient exactement ces deux mesures (`va`, date 2023-03-01)
+- **Valeur invalide** (EQUIPE_DIR_PROJET, `zone_id` inconnu) : 400, message « Une erreur est survenue lors de l'import des données », une erreur sur le champ `zone_id` ; aucune mesure en base pour IND-903
+- **Profil en lecture seule** (PM_ET_CABINET) : 403 ; aucune mesure en base pour IND-903
+- **Chantier non attribué** (EQUIPE_DIR_PROJET, CH-070 / IND-105) : 403 ; le nombre de mesures d'IND-105 est inchangé
 
 ---
 
-## 7. Gestion des comptes utilisateurs
+## 11. Gestion des comptes utilisateurs
 
 **Fichier :** `tests/admin-gestion-utilisateurs.spec.ts`
 
-8 scénarios couvrant la page listing des utilisateurs (`/admin/utilisateurs`) et la fiche détail (`/admin/utilisateur/[id]`), testés avec plusieurs profils pour vérifier les différences de visibilité, d'actions autorisées et de restrictions.
+8 scénarios sur le listing (`/admin/utilisateurs`, atteint par le lien « Gestion des comptes ») et la fiche détail (« Fiche du compte »).
 
-### Test 1 : DITP Admin — Vue administrateur complète et génération de token API
-
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
-
-**Page listing :**
-
-- Accès via le lien "Gestion des comptes" dans la navigation
-- Vérification de la structure du tableau : présence de toutes les colonnes (Adresse électronique, Nom, Prénom, Profil, Fonction, Dernière modification, Territoire, Actif)
-- Vérification que la colonne "Territoire" est visible (spécifique aux profils DITP)
-- Vérification que tous les profils sont disponibles dans le filtre "Profil" de la barre latérale
-- Vérification du bouton "Créer un compte" menant vers `/admin/utilisateur/creer` (accès direct, pas la page d'aide)
-- Vérification que des utilisateurs de profils variés sont visibles dans le tableau (DITP_ADMIN voit tous les utilisateurs)
-
-**Fiche détail :**
-
-- Navigation vers la fiche d'un utilisateur depuis le tableau (clic sur la ligne de `coordinateur.region@example.com`)
-- Vérification des informations affichées dans le tableau de la fiche : email, nom, prénom, profil
-- Vérification que le bouton "Modifier" est visible
-- Vérification que le lien "Désactiver le compte" est visible
-- Vérification qu'aucun bandeau de restriction n'est affiché (DITP_ADMIN peut tout modifier)
-
-**Génération de token API :**
-
-- Navigation vers la fiche d'un utilisateur éligible au token API (profil parmi : DITP_ADMIN, DIR_PROJET, EQUIPE_DIR_PROJET, SECRETARIAT_GENERAL, COORDINATEUR_REGION, COORDINATEUR_DEPARTEMENT)
-- Vérification que le bouton "Générer un token d'authentification" est visible
-- Clic sur le bouton et vérification que la génération fonctionne
-
-**Vérification négative token API :**
-
-- Navigation vers la fiche d'un utilisateur avec un profil NON éligible au token API (ex : PREFET_REGION, PREFET_DEPARTEMENT, CABINET_MINISTERIEL)
-- Vérification que le bouton "Générer un token d'authentification" n'est PAS visible
-
-### Test 2 : Coordinateur Région — Visibilité limitée et restrictions sur les coordinateurs
-
-Profil : `coordinateur.region@example.com` (COORDINATEUR_REGION, territoires : REG-53, DEPT-56, DEPT-29, DEPT-35, DEPT-22)
-
-**Page listing — vérification de la visibilité :**
-
-- Accès à la page listing
-- Vérification que la colonne "Territoire" n'est PAS visible
-- Vérification que seuls les profils autorisés en lecture apparaissent dans le filtre "Profil" : Préfet de région, Préfet de département, Services déconcentrés régionaux, Services déconcentrés départementaux, Coordinateur PILOTE départemental, Coordinateur PILOTE régional
-- Vérification que les utilisateurs affichés dans le tableau ont uniquement des profils parmi ceux autorisés
-- Vérification du nombre d'utilisateurs visibles (doit correspondre aux utilisateurs dont les territoires sont inclus dans le périmètre Bretagne)
-- Vérification que le bouton "Créer un compte" mène vers `/admin/utilisateur/creer/aide` (page d'aide, pas l'accès direct)
-
-**Fiche détail — utilisateur modifiable (PREFET_DEPARTEMENT) :**
-
-- Navigation vers `prefet.departement@example.com` (PREFET_DEPARTEMENT, territoires dans le périmètre)
-- Vérification que le bouton "Modifier" est visible
-- Vérification que le lien "Désactiver le compte" est visible
-- Vérification qu'aucun bandeau de restriction n'est affiché
-- Vérification que le bouton "Générer un token" n'est PAS visible
-
-**Fiche détail — utilisateur modifiable (SERVICES_DECONCENTRES_REGION) :**
-
-- Navigation vers `services.deconcentres.region@example.com`
-- Vérification que le bouton "Modifier" est visible
-- Vérification que le lien "Désactiver le compte" est visible
-- Vérification qu'aucun bandeau de restriction n'est affiché
-- Vérification que le bouton "Générer un token" n'est PAS visible
-
-**Fiche détail — restriction : profil coordinateur non modifiable :**
-
-- Navigation vers `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT)
-- Vérification du bandeau de restriction : "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le désactiver."
-- Vérification que le bouton "Modifier" est absent
-- Vérification que le lien "Désactiver le compte" est absent
-
-**Fiche détail — utilisateur avec chantier hors ATE : le coordinateur peut quand même modifier :**
-
-- Navigation vers `services.deconcentres.hors-ate@example.com` (SERVICES_DECONCENTRES_REGION avec CH-108 `hors_ate_deconcentre`)
-- CH-108 est présent dans les `lecture.chantiers` de cet utilisateur, mais absent des `gestionUtilisateur.chantiers` du coordinateur (qui ne contient que les chantiers `ate`)
-- Malgré cet écart, le coordinateur n'est pas bloqué : la vérification de couverture des chantiers dans `modificationEstImpossible` ne s'applique qu'au profil Secrétariat Général, pas aux coordinateurs
-- Vérification que le bouton "Modifier" EST visible (le coordinateur peut modifier)
-- Vérification qu'aucun bandeau de restriction n'est affiché
-
-### Test 3 : Coordinateur Département — Périmètre le plus restreint
-
-Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT, territoires: DEPT-56, DEPT-29, DEPT-35, DEPT-22)
-
-**Page listing — vérification du périmètre réduit :**
-
-- Accès à la page listing
-- Vérification que la colonne "Territoire" n'est PAS visible
-- Vérification que seuls 3 profils apparaissent dans le filtre "Profil" : Préfet de département, Services déconcentrés départementaux, Coordinateur PILOTE départemental
-- Vérification que les profils régionaux (Préfet de région, Services déconcentrés régionaux, Coordinateur PILOTE régional) ne sont PAS dans le filtre
-- Vérification du nombre d'utilisateurs visibles (restreint aux utilisateurs départementaux du périmètre)
-
-**Fiche détail — utilisateur modifiable (PREFET_DEPARTEMENT) :**
-
-- Navigation vers `prefet.departement@example.com`
-- Vérification que le bouton "Modifier" est visible
-- Vérification que le lien "Désactiver le compte" est visible
-
-**Fiche détail — utilisateur modifiable (SERVICES_DECONCENTRES_DEPARTEMENT) :**
-
-- Navigation vers `services.deconcentres.departement@example.com`
-- Vérification que le bouton "Modifier" est visible
-- Vérification que le lien "Désactiver le compte" est visible
-
-**Fiche détail — restriction : profil coordinateur non modifiable (soi-même) :**
-
-- Navigation vers sa propre fiche (`coordinateur.departement@example.com`)
-- Le coordinateur département ne peut pas modifier un autre coordinateur (même soi-même)
-- Vérification du bandeau de restriction : "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le désactiver."
-- Vérification que le bouton "Modifier" est absent
-- Vérification que le lien "Désactiver le compte" est absent
-
-### Test 4 : Secrétariat Général — Gestion par périmètre de chantiers
-
-Profil : `secretariat.general@example.com` (SECRETARIAT_GENERAL, chantiers: CH-070, CH-071, CH-067)
-
-**Page listing :**
-
-- Accès à la page listing
-- Vérification que la colonne "Territoire" n'est PAS visible
-- Vérification que le bouton "Créer un compte" mène vers `/admin/utilisateur/creer/aide` (page d'aide, pas l'accès direct)
-- Vérification que seuls 2 profils apparaissent dans le filtre "Profil" : Services déconcentrés régionaux, Services déconcentrés départementaux
-- Vérification que les profils Préfet, Coordinateur, DITP, etc. ne sont PAS dans le filtre
-- Vérification que les utilisateurs affichés correspondent au périmètre de chantiers du secrétariat général
-
-**Listing — utilisateurs visibles :**
-
-- Vérification que `services.deconcentres.region@example.com` et `services.deconcentres.departement@example.com` sont visibles
-- Vérification que `ditp.admin@example.com` et `prefet.region@example.com` ne sont PAS visibles
-
-**Fiche détail — restriction chantiers (toujours présente pour SG) :**
-
-- Les profils SD ont `a_acces_tous_chantiers_territorialises=true` → leur `lecture.chantiers` inclut TOUS les chantiers territorialisés par défaut
-- Le SG ne couvre qu'un sous-ensemble de chantiers (`gestionUtilisateur.chantiers` = CH-070, CH-071, CH-067) → la vérification `every()` échoue systématiquement
-- Navigation vers `services.deconcentres.region@example.com`
-- Vérification du bandeau de restriction : "Ce compte a des droits d'accès sur plusieurs chantiers. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur."
-- Vérification que le bouton "Modifier" est absent
-- Vérification que le lien "Désactiver le compte" est absent
-- Vérification que le bouton "Générer un token" n'est PAS visible
-
-### Test 5 : Profils sans droit de gestion — Accès refusé
-
-**5a. Préfet de région :**
-Profil : `prefet.region@example.com` (PREFET_REGION)
-
-- Vérification que le lien "Gestion des comptes" n'est PAS visible dans la navigation
-- Tentative d'accès direct à `/admin/utilisateurs` : vérification de la redirection vers la page d'accueil
-
-**5b. Équipe direction de projet :**
-Profil : `equipe.dir.projet@example.com` (EQUIPE_DIR_PROJET)
-
-- Vérification que le lien "Gestion des comptes" n'est PAS visible dans la navigation
-- Tentative d'accès direct à `/admin/utilisateurs` : vérification de la redirection vers la page d'accueil
-
-**5c. Préfet de département :**
-Profil : `prefet.departement@example.com` (PREFET_DEPARTEMENT)
-
-- Vérification que le lien "Gestion des comptes" n'est PAS visible dans la navigation
-- Tentative d'accès direct à `/admin/utilisateurs` : vérification de la redirection vers la page d'accueil
-
-### Test 6 : Désactivation et réactivation d'un compte
+### Test 1 : DITP Admin — Vue admin complète et bouton de token API visible
 
 Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
-- Navigation vers la fiche d'un utilisateur actif
-- Vérification que l'utilisateur est affiché comme actif (pas de badge "Désactivé")
-- Clic sur "Désactiver le compte" : ouverture de la modale de confirmation "Désactivation de compte"
-- Vérification du message de la modale : "Vous êtes sur le point de désactiver le compte de [PRÉNOM] [NOM]."
-- Confirmation de la désactivation
-- Vérification du retour sur la page listing avec le message de succès "Le compte a bien été désactivé."
-- Retour sur la fiche de l'utilisateur : vérification du badge "Désactivé depuis le [DATE]"
-- Vérification que le bouton "Modifier" est absent (compte désactivé)
-- Vérification que le bouton "Réactiver le compte" est visible
-- Clic sur "Réactiver le compte" : ouverture de la modale "Réactivation de compte"
-- Vérification du message : "Vous êtes sur le point de réactiver le compte de [PRÉNOM] [NOM]. Un message de réinitialisation de mot de passe lui sera transmis automatiquement."
-- Confirmation de la réactivation
-- Vérification du retour sur la page listing avec le message "Bravo, le compte a bien été réactivé !"
-- Retour sur la fiche : vérification que l'utilisateur est de nouveau actif, bouton "Modifier" visible
+- Colonne « Territoire » visible ; « Créer un compte » pointe vers `/admin/utilisateur/creer`
+- Le filtre « Profil(s) » propose les 12 profils : DITP - Admin, DITP - Pilotage, Coordinateur PILOTE régional, Coordinateur PILOTE départemental, Préfet de région et collaborateurs, Préfet de département et collaborateurs, Services déconcentrés régionaux, Services déconcentrés départementaux, Secrétariat général de ministère (cormod), Équipe de Directeur de projet, Cabinets ministériels, Direction d'administration centrale
+- Fiche de `coordinateur.region` : email, nom, prénom et code profil `COORDINATEUR_REGION` affichés ; « Modifier » et « Désactiver le compte » visibles ; pas de bandeau de restriction
+- Fiche de `equipe.dir.projet` (profil éligible) : bouton « Générer un token » visible (il n'est pas cliqué)
+- Fiche de `prefet.region` (profil non éligible) : bouton « Générer un token » absent
 
-### Test 7 : Filtres de la page listing
+### Test 2 : Coordinateur Région — Visibilité et restrictions
 
-Profil : `ditp.admin@example.com` (DITP_ADMIN) — pour avoir la visibilité complète sur tous les utilisateurs
+Profil : `coordinateur.region@example.com` (COORDINATEUR_REGION, REG-53 et ses départements)
 
-**Filtre par statut — comptes actifs :**
+- Colonne « Territoire » absente ; « Créer un compte » pointe vers la page d'aide (`…/aide`)
+- Filtre : les 6 profils territoriaux (coordinateurs, préfets, services déconcentrés régionaux et départementaux) présents ; « DITP - Admin » absent
+- Visibles : `coordinateur.region`, `coordinateur.departement`, `prefet.region`, `prefet.departement`, `services.deconcentres.region`, `services.deconcentres.departement` ; absents : `ditp.admin`, `equipe.dir.projet`
+- Fiches `prefet.departement` et `services.deconcentres.region` : « Modifier » et « Désactiver le compte » visibles, pas de bandeau, pas de bouton de token
+- Fiche `coordinateur.departement` : bandeau « coordinateur PILOTE », « Modifier » et « Désactiver le compte » absents
+- Fiche `services.deconcentres.hors-ate` (chantier CH-108 hors ATE) : « Modifier » visible, pas de bandeau
 
-- Clic sur le tag "Comptes actifs" : vérification que `ditp.admin@example.com` est visible
-- Retour au filtre "Tous"
+### Test 3 : Coordinateur Département — Périmètre restreint
 
-**Filtre par statut — comptes désactivés :**
+Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT)
 
-- Clic sur le tag "Comptes désactivés" : vérification que `ditp.admin@example.com` n'est PAS visible (aucun compte désactivé)
-- Retour au filtre "Tous"
+- Colonne « Territoire » absente
+- Filtre : Coordinateur PILOTE départemental, Préfet de département et collaborateurs, Services déconcentrés départementaux présents ; leurs équivalents régionaux absents
+- Visibles : `prefet.departement`, `coordinateur.departement`, `services.deconcentres.departement` ; absents : `coordinateur.region`, `prefet.region`, `services.deconcentres.region`
+- Fiches `prefet.departement` et `services.deconcentres.departement` : « Modifier » et « Désactiver le compte » visibles
+- Sa propre fiche : bandeau « coordinateur PILOTE », « Modifier » et « Désactiver le compte » absents
 
-**Recherche textuelle :**
+### Test 4 : Secrétariat Général — Par chantiers
 
-- Saisie de "coordinateur" dans la barre de recherche
-- Vérification que `coordinateur.region@example.com` et `coordinateur.departement@example.com` sont visibles
-- Vérification que `ditp.admin@example.com` n'est PAS visible (ne correspond pas à la recherche)
-- Effacement de la recherche
+Profil : `secretariat.general@example.com` (SECRETARIAT_GENERAL, CH-070, CH-071, CH-067)
 
-**Filtre par profil :**
+- Colonne « Territoire » absente ; « Créer un compte » pointe vers la page d'aide
+- Filtre : Services déconcentrés régionaux et départementaux présents ; « Préfet de région et collaborateurs » et « DITP - Admin » absents
+- Visibles : `services.deconcentres.region`, `services.deconcentres.departement` ; absents : `ditp.admin`, `prefet.region`
+- Fiche `services.deconcentres.region` : bandeau « plusieurs chantiers », « Modifier », « Désactiver le compte » et bouton de token absents
 
-- Sélection de "Préfet de département et collaborateurs" dans le filtre profil
-- Vérification que `prefet.departement@example.com` est visible
-- Vérification que `ditp.admin@example.com` et `coordinateur.region@example.com` ne sont PAS visibles
-- Réinitialisation des filtres
+### Test 5 : Profils sans accès — Redirection
 
-**Réinitialisation avec filtres combinés :**
+Profils : `prefet.region`, `equipe.dir.projet`, `prefet.departement`
 
-- Application simultanée d'un filtre profil ("Coordinateur PILOTE régional") et d'une recherche textuelle ("coordinateur")
-- Clic sur "Réinitialiser les filtres"
-- Vérification que tous les filtres sont effacés et la liste complète est restaurée (`ditp.admin@example.com` visible)
+- Pour chacun : lien « Gestion des comptes » absent ; `/admin/utilisateurs` ne reste pas sur `/admin/utilisateurs`
 
-### Test 8 : Restriction multi-territoires — Coordinateur face à un utilisateur hors périmètre
+### Test 6 : Désactivation et réactivation
 
-Profil connecté : `coordinateur.region@example.com` (COORDINATEUR_REGION, territoires : REG-53, DEPT-56, DEPT-29, DEPT-35, DEPT-22)
+Profil : `ditp.admin@example.com`, compte cible `services.deconcentres.departement`
 
-Utilisateur cible : `prefet.multi.territoires@example.com` (PREFET_DEPARTEMENT, territoires : DEPT-56, DEPT-75)
+- « Désactiver le compte » puis « Confirmer la désactivation » : alerte de succès contenant « désactivé » sur le listing
+- Fiche : badge « Désactivé depuis le … », « Modifier » absent, « Réactiver le compte » visible
+- « Réactiver le compte » puis « Confirmer la réactivation » : alerte contenant « réactivé »
+- Fiche : plus de badge, « Modifier » visible
 
-- DEPT-56 est dans le périmètre Bretagne du coordinateur → l'utilisateur apparaît dans le listing
-- DEPT-75 (Paris) est hors périmètre → l'utilisateur n'est PAS modifiable
+### Test 7 : Filtres et recherche
 
-**Listing :**
+Profil : `ditp.admin@example.com`
 
-- Vérification que `prefet.multi.territoires@example.com` est visible dans le tableau (au moins un territoire en commun)
+- « Comptes actifs » : `ditp.admin` visible ; « Comptes désactivés » : `ditp.admin` absent
+- Recherche « coordinateur » : `coordinateur.region` et `coordinateur.departement` visibles, `ditp.admin` absent
+- Filtre « Préfet de département et collaborateurs » : `prefet.departement` visible, `ditp.admin` et `coordinateur.region` absents ; « Réinitialiser les filtres » : `ditp.admin` revient
+- Filtre « Coordinateur PILOTE régional » + recherche « coordinateur », réinitialisation puis effacement de la recherche (le bouton ne vide pas la recherche) : `ditp.admin` visible
 
-**Fiche détail — restriction multi-territoires :**
+### Test 8 : Restriction multi-territoires
 
-- Navigation vers la fiche de `prefet.multi.territoires@example.com`
-- Vérification du bandeau de restriction : "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur."
-- Vérification que le bouton "Modifier" est absent
-- Vérification que le lien "Désactiver le compte" est absent
+Profil : `coordinateur.region@example.com`, compte cible `prefet.multi.territoires` (PREFET_DEPARTEMENT, DEPT-56 et DEPT-75)
 
----
+- Le compte est visible dans le listing
+- Fiche : bandeau « plusieurs territoires », « Modifier » et « Désactiver le compte » absents
 
-### Matrice de visibilité et droits dans le listing par profil connecté
+### Matrice de ce qui est vérifié dans le listing et les fiches
 
-Légende : ✓ modifiable | 🔒 bandeau restriction | — non visible | ✗ pas d'accès à la page
+Légende : **modifiable** = fiche ouverte, « Modifier » visible sans bandeau | **visible** / **absent** = présence dans le tableau | **bandeau …** = bandeau de restriction | — non vérifié
 
-| Utilisateur dans le listing       |      DITP Admin       |   Coord. Région   |    Coord. Dept    |   Sec. Général    | Préfet Région |
-|-----------------------------------|:---------------------:|:-----------------:|:-----------------:|:-----------------:|:-------------:|
-| **Accès au listing**              |           ✓           |         ✓         |         ✓         |         ✓         |       ✗       |
-| **Colonne Territoire**            |        visible        |      masquée      |      masquée      |      masquée      |       —       |
-| **Bouton Créer un compte**        |       `/creer`        |   `/creer/aide`   |   `/creer/aide`   |   `/creer/aide`   |       —       |
-| prefet.region                     |           ✓           |         ✓         |         —         |         —         |       —       |
-| prefet.departement                |           ✓           |         ✓         |         ✓         |         —         |       —       |
-| services.deconcentres.region      |           ✓           |         ✓         |         —         | 🔒 bandeau chant. |       —       |
-| services.deconcentres.departement |           ✓           |         ✓         |         ✓         | 🔒 bandeau chant. |       —       |
-| coordinateur.departement          |           ✓           | 🔒 bandeau coord. | 🔒 bandeau coord. |         —         |       —       |
-| coordinateur.region               |           ✓           | 🔒 bandeau coord. |         —         |         —         |       —       |
-| prefet.multi.territoires          |           ✓           | 🔒 bandeau terr.  |         —         |         —         |       —       |
-| services.dec.hors-ate             |           ✓           |         ✓         |         —         |         —         |       —       |
-| ditp.admin                        |           ✓           |         —         |         —         |         —         |       —       |
-| ditp.pilotage                     |           ✓           |         —         |         —         |         —         |       —       |
-| equipe.dir.projet                 |           ✓           |         —         |         —         |         —         |       —       |
-| secretariat.general               |           ✓           |         —         |         —         |         —         |       —       |
-| **Token API (bouton visible)**    | ✓ (profils éligibles) |         ✗         |         ✗         |         ✗         |       —       |
+| Compte / élément                  |                DITP Admin                |  Coord. Région   |    Coord. Dept    |   Sec. Général    |
+|-----------------------------------|:----------------------------------------:|:----------------:|:-----------------:|:-----------------:|
+| **Accès au listing**              |                    ✓                     |        ✓         |         ✓         |         ✓         |
+| **Colonne Territoire**            |                 visible                  |     masquée      |      masquée      |      masquée      |
+| **Bouton Créer un compte**        |        `/admin/utilisateur/creer`        |     `…/aide`     |         —         |     `…/aide`      |
+| coordinateur.region               |                modifiable                |     visible      |      absent       |         —         |
+| coordinateur.departement          |                    —                     | bandeau coord.   | bandeau coord. (soi-même) |  —        |
+| prefet.region                     |       fiche ouverte (token absent)       |     visible      |      absent       |      absent       |
+| prefet.departement                |                    —                     |    modifiable    |    modifiable     |         —         |
+| services.deconcentres.region      |                    —                     |    modifiable    |      absent       | bandeau chantiers |
+| services.deconcentres.departement |          désactivé puis réactivé         |     visible      |    modifiable     |      visible      |
+| services.deconcentres.hors-ate    |                    —                     |    modifiable    |         —         |         —         |
+| prefet.multi.territoires          |                    —                     | bandeau terr.    |         —         |         —         |
+| equipe.dir.projet                 |       fiche ouverte (token visible)      |      absent      |         —         |         —         |
+| ditp.admin                        |                    —                     |      absent      |         —         |      absent       |
+| **Bouton Générer un token**       | visible (EDP), absent (préfet région)    | absent           |         —         |      absent       |
+
+Préfet de région, équipe direction de projet et préfet de département n'ont pas accès au listing (test 5).
 
 ---
 
-## 8. Création / modification des comptes utilisateurs
+## 12. Création / modification des comptes utilisateurs
 
 **Fichier :** `tests/admin-gestion-utilisateurs-formulaire.spec.ts`
 
-### Test 1 : Validation des champs obligatoires Service et Fonction
+### Test 1 : Champs obligatoires Service et Fonction à la création
 
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
+Profil : `ditp.admin@example.com`
 
-**Création — champs manquants :**
+- `/admin/utilisateur/creer` : email, nom, prénom et profil « DITP - Admin » renseignés, sans service ni fonction
+- « Suivant » : Fonction et Service passent en `aria-invalid="true"`
+- Après saisie de la fonction et du service « Préfecture de région » : plus aucun des deux champs en erreur (« Suivant » n'est pas recliqué)
 
-- Navigation vers la page de création d'un compte (`/admin/utilisateur/creer`)
-- Remplissage des champs email, nom, prénom, profil mais sans service ni fonction
-- Clic sur "Suivant" : vérification que la soumission est bloquée avec les erreurs de validation sur Service et Fonction
+### Test 2 : Création d'un compte puis refus d'un doublon d'adresse
 
-**Création — champs remplis :**
+Profil : `ditp.admin@example.com`, adresse unique `e2e.creation.<uuid>@example.com`
 
-- Remplissage du champ Fonction et sélection d'un Service
-- Clic sur "Suivant" : vérification que la soumission passe (pas d'erreur de validation)
+- Formulaire complet (profil « DITP - Pilotage », fonction « Testeur E2E », service « Préfecture de région »), « Suivant » puis « Confirmer » : alerte de succès ; en base, le compte a le profil `DITP_PILOTAGE` et la fonction « Testeur E2E »
+- Même formulaire avec la même adresse : alerte « Un compte a déjà été créé avec cette adresse électronique. » ; un seul compte en base pour cette adresse
 
-### Test 2 : Validation à la modification et modale "Complétez votre profil"
+### Test 3 : Champs obligatoires à la modification et modale « Complétez votre profil »
 
-Profils : `coordinateur.region@example.com` (COORDINATEUR_REGION) et `ditp.admin@example.com` (DITP_ADMIN)
+Profils : `modale.profil@example.com` (COORDINATEUR_REGION, seedé sans service ni fonction) et `ditp.admin@example.com`
 
-**Modale présente avant complétion :**
-
-- Connexion en tant que coordinateur régional (sans service ni fonction)
-- Vérification que la modale "Complétez votre profil" apparaît
-
-**Modification via l'admin :**
-
-- Switch vers DITP Admin
-- Navigation vers la fiche du coordinateur et clic sur "Modifier"
-- Clic sur "Suivant" : vérification que les erreurs de validation apparaissent sur Service et Fonction
-- Remplissage du champ Fonction et sélection d'un Service
-- Clic sur "Suivant" : vérification que les erreurs disparaissent
-
-**Modale absente après complétion :**
-
-- Re-connexion en tant que coordinateur régional
-- Vérification que la modale "Complétez votre profil" ne réapparaît plus
+- Connexion de `modale.profil` : la modale (bouton « Plus tard ») apparaît
+- `ditp.admin` ouvre la fiche de `modale.profil` puis « Modifier » ; « Suivant » : Fonction et Service en erreur
+- Saisie de la fonction et du service, « Suivant » : plus d'erreur ; « Confirmer » : alerte de succès
+- Reconnexion de `modale.profil` : « Mon espace » visible et la modale n'apparaît plus
 
 ---
 
-## 9. Gestion des paramètres des indicateurs — Listing
+## 13. Gestion des paramètres des indicateurs — Listing
 
 **Fichier :** `tests/admin-indicateurs-listing.spec.ts`
-
-Page accessible uniquement aux profils DITP_ADMIN. Affiche un tableau paginé des metadata indicateurs avec des filtres dans une barre latérale.
 
 ### Test 1 : Structure de la page et fonctionnalités principales
 
 Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
-**Accès et structure :**
-
-- Connexion en tant que DITP Admin et navigation vers `/admin/indicateurs`
-- Vérification du titre de la page : "Gestion des paramètres des indicateurs"
-- Vérification de la structure du tableau : présence des 6 colonnes (Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Dernière modification, Actif / Inactif)
-- Vérification de la présence du bouton "Créer un indicateur"
-- Vérification de la présence du bouton d'export
-
-**Pagination :**
-
-- Vérification que la pagination est visible (plus de 20 indicateurs)
-- Vérification que la première page affiche 20 lignes
-- Navigation vers la page suivante : vérification que le nombre de lignes correspond au reste des indicateurs
-- Retour à la page 1
-
-**Recherche textuelle :**
-
-- Saisie de "IND-021" dans la barre de recherche
-- Vérification que IND-021 apparaît dans le tableau
-- Vérification que la pagination disparaît (résultat unique)
-- Effacement de la recherche : retour au nombre initial d'indicateurs avec pagination
-
-**Filtre par indicateurs territorialisés :**
-
-- Activation du toggle "Indicateurs territorialisés" dans la barre latérale
-- Vérification que le nombre d'indicateurs est inférieur ou égal au total
-- Vérification que le tag de filtre actif "Indicateurs territorialisés" est visible
-- Réinitialisation des filtres : retour au nombre initial
-
-**Filtre par indicateurs du baromètre :**
-
-- Activation du toggle "Indicateurs du baromètre" dans la barre latérale
-- Vérification que le nombre d'indicateurs est inférieur ou égal au total
-- Vérification que le tag de filtre actif "Indicateurs du baromètre" est visible
-- Réinitialisation des filtres : retour au nombre initial
-
-**Navigation vers le détail :**
-
-- Clic sur un indicateur (IND-021) dans le tableau
-- Vérification de la redirection vers `/admin/indicateurs/IND-021`
+- `/panel-administrateur/indicateurs` : titre « Gestion des paramètres des indicateurs »
+- Colonnes : Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Dernière modification, Actif / Inactif
+- Boutons « Créer un indicateur » et « Exporter » visibles ; compteur d'indicateurs supérieur à 0
+- Pagination visible, 20 lignes sur la première page
+- Recherche « IND-021 » : IND-021 dans le tableau, pagination masquée ; effacement : compteur initial et pagination de retour
+- Toggle « Indicateurs territorialisés » : compteur inférieur ou égal au total, bouton de filtre actif visible ; réinitialisation : compteur initial
+- Toggle « Indicateurs du baromètre » : mêmes vérifications ; réinitialisation : compteur initial
+- Page suivante : nombre de lignes = total − 20
+- Retour page 1, recherche et clic sur IND-021 : URL `/panel-administrateur/indicateurs/IND-021`
 
 ### Test 2 : Accès refusé aux profils non DITP_ADMIN
 
-**Coordinateur région** (`coordinateur.region@example.com`) :
+Profils : `coordinateur.region`, `equipe.dir.projet`
 
-- Vérification que le lien "Indicateurs des chantiers" n'est PAS visible dans la navigation
-- Tentative d'accès direct à `/admin/indicateurs` : vérification que l'URL ne reste pas sur `/admin/indicateurs`
-
-**Équipe direction de projet** (`equipe.dir.projet@example.com`) :
-
-- Vérification que le lien "Indicateurs des chantiers" n'est PAS visible dans la navigation
-- Tentative d'accès direct à `/admin/indicateurs` : vérification que l'URL ne reste pas sur `/admin/indicateurs`
+- Lien « Indicateurs des chantiers » absent de la navigation
+- `/panel-administrateur/indicateurs` ne reste pas sur cette URL
 
 ---
 
-## 10. Gestion des paramètres des indicateurs — Formulaire
+## 14. Gestion des paramètres des indicateurs — Formulaire
 
 **Fichier :** `tests/admin-indicateurs-formulaire.spec.ts`
 
-Page accessible uniquement aux profils DITP_ADMIN. Affiche la fiche détaillée d'un indicateur avec 3 modes : consultation (lecture seule), modification et création.
+Profil : `ditp.admin@example.com` (DITP_ADMIN) sauf test 7. Fiche : `/panel-administrateur/indicateurs/<id>`.
 
-### Test 1 : Consultation et modification d'un indicateur existant
+### Test 1 : Consultation et modification d'un indicateur (IND-902)
 
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
+Les métadonnées d'IND-902 sont restaurées en fin de test.
 
-**Accès et structure :**
+- Titre « Fiche de l'indicateur IND-902 », lien « Retour », sélecteur Actif / Inactif
+- Carte récapitulative : Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Création de l'indicateur, Dernière modification
+- Accordéon « Identité indicateur » ouvert, « Paramétrages » et « Autres informations » fermés
+- Mode consultation : « Modifier » visible, « Confirmer les changements » et « Annuler » absents ; CH-902 et IND-902 affichés
+- « Paramétrages » : sections Maille départementale, Maille régionale, Maille nationale, « Pondération de l'indicateur dans le calcul du taux d'avancement global »
+- « Modifier » : mode modification ; « Annuler » : retour en consultation
+- Modification de l'unité (« kg/m² »), de la description, de la périodicité (« Mensuelle ») et de l'interrupteur « Phare »
+- « Confirmer les changements » : alerte « Bravo, l'indicateur a bien été modifié ! », retour en consultation ; « kg/m² », la description, « Mensuelle » et « Oui » sont affichés après rechargement de la page
+- « Retour » : URL `/panel-administrateur/indicateurs`
 
-- Connexion en tant que DITP Admin et navigation vers `/admin/indicateurs/IND-021`
-- Vérification du titre : "Fiche de l'indicateur IND-021"
-- Vérification du lien "Retour" vers le listing
-- Vérification du sélecteur Actif/Inactif
-- Vérification de la carte récapitulative avec les 6 champs (Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Création de l'indicateur, Dernière modification)
+### Test 2 : Activation des champs d'agrégation selon l'origine des valeurs (IND-021)
 
-**Structure des accordéons :**
+Mode modification, annulé en fin de test (rien n'est enregistré).
 
-- Vérification que l'accordéon "Identité indicateur" est ouvert par défaut
-- Vérification que l'accordéon "Paramétrages" est fermé par défaut
-- Vérification que l'accordéon "Autres informations" est fermé par défaut
+- Départementale : `viDeptFrom` = `user_input` → `viDeptOp` désactivé ; `sub_indic` → activé ; retour à `user_input` → désactivé ; `vaDeptFrom` = `user_input` → `vaDeptOp` désactivé
+- Régionale : `viRegFrom` = `DEPT` → `viRegOp` activé et vaut `sum` ; `user_input` → désactivé ; retour à `DEPT` → activé
+- Nationale : `viNatFrom` = `DEPT` → `viNatOp` activé ; `_` → désactivé
 
-**Mode consultation :**
+### Test 3 : Règles du calcul de la valeur d'avancement (IND-021)
 
-- Vérification que le bouton "Modifier" est visible
-- Vérification que les boutons "Confirmer les changements" et "Annuler" ne sont pas visibles
-- Vérification que les données de l'indicateur sont affichées (CH-129, IND-021)
+Mode modification, annulé en fin de test.
 
-**Section Paramétrages :**
+- `paramVacaOp` et `paramVacgOp` toujours désactivés
+- Valeurs initiales : partition `from_year_start` et opération `sum` pour le TA annuel et le TA global
+- Partition du TA annuel à `_` : opération `current_value`, et le TA global se synchronise (`_`, `current_value`)
+- Partition du TA global à `from_year_start` : opération `sum`, et le TA annuel se synchronise
+- `paramVacgDecumulFrom` a la même valeur que `paramVacaDecumulFrom`
 
-- Ouverture de l'accordéon Paramétrages
-- Vérification des sections : Maille départementale, Maille régionale, Maille nationale, Pondération
+### Test 4 : Pondérations désactivées sans territorialisation (IND-021)
 
-**Mode modification :**
+Mode modification, annulé en fin de test.
 
-- Clic sur "Modifier" : passage en mode modification
-- Vérification que "Confirmer les changements" et "Annuler" sont visibles, "Modifier" masqué
-- Clic sur "Annuler" : retour au mode consultation
+- `poidsPourcentDept` et `poidsPourcentReg` actifs
+- Interrupteur « Territorialisation » désactivé : les deux champs deviennent inactifs
 
-**Soumission des modifications :**
+### Test 5 : Création d'un indicateur (IND-990)
 
-- Passage en mode modification et soumission via "Confirmer les changements"
-- Vérification de l'alerte de succès : "Bravo, l'indicateur a bien été modifié !"
-- Vérification du retour au mode consultation
+L'indicateur créé est supprimé en fin de test.
 
-**Retour au listing :**
+- `/panel-administrateur/indicateurs/IND-990?_action=creer-indicateur` : titre « Fiche de l'indicateur IND-990 »
+- Mode création : « Créer l'indicateur » visible, « Modifier » et « Confirmer les changements » absents ; sélecteur Actif / Inactif ; accordéons comme en consultation
+- Saisie du nom, du chantier parent CH-902, de la description, du type `IMPACT`, du schéma `sans-contraintes.json` et de la périodicité « Trimestrielle », puis « Créer l'indicateur » : alerte « Bravo, l'indicateur a bien été crée ! »
+- En base, `metadata_indicateurs_hidden` contient IND-990 avec le nom saisi
 
-- Clic sur le lien "Retour" : vérification de la redirection vers `/admin/indicateurs`
+### Test 6 : Navigation listing → fiche → listing
 
-### Test 2 : Règles d'activation/désactivation — Mailles départementale, régionale et nationale
+- Recherche et clic sur IND-021 depuis le listing : titre « Fiche de l'indicateur IND-021 »
+- « Retour » : titre du listing visible
 
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
+### Test 7 : Accès refusé à la fiche
 
-Indicateur cible : IND-021 (seed : vi_dept_from=user_input, vi_reg_from=DEPT, vi_nat_from=DEPT)
+Profils : `coordinateur.region`, `equipe.dir.projet`
 
-**Maille départementale :**
+- `/panel-administrateur/indicateurs/IND-021` ne reste pas sur cette URL
 
-- vi_dept_from=user_input → vi_dept_op est désactivé (règle : `_` ou `user_input` désactive l'op)
-- Changement de vi_dept_from en `sub_indic` → vi_dept_op devient activé
-- Retour de vi_dept_from en `user_input` → vi_dept_op redevient désactivé
-- va_dept_from=user_input → va_dept_op est désactivé
+### Test 8 : Restriction géographique (IND-021)
 
-**Maille régionale :**
-
-- vi_reg_from=DEPT → vi_reg_op=sum est activé
-- Changement de vi_reg_from en `user_input` → vi_reg_op se désactive
-- Retour de vi_reg_from en `DEPT` → vi_reg_op se réactive
-
-**Maille nationale :**
-
-- vi_nat_from=DEPT → vi_nat_op est activé
-- Changement de vi_nat_from en `_` → vi_nat_op se désactive
-
-### Test 3 : Règles du calcul de la valeur d'avancement
-
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
-
-Indicateur cible : IND-021 (seed : param_vaca_partition_date=from_year_start, param_vaca_op=sum)
-
-- param_vaca_op et param_vacg_op sont toujours désactivés (non éditables)
-- Valeurs initiales : partition_date=from_year_start, op=sum (TA annuel et TA global synchronisés)
-- Changement partition_date TA annuel en `_` → op passe à `current_value`, et les champs TA global se synchronisent
-- Changement partition_date TA global en `from_year_start` → op revient à `sum`, TA annuel se synchronise
-- Synchronisation des décumul_from entre TA annuel et TA global
-
-### Test 4 : Pondération — Désactivation quand non territorialisé
-
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
-
-Indicateur cible : IND-021 (territorialisé=true)
-
-- poidsPourcentDept et poidsPourcentReg sont activés quand l'indicateur est territorialisé
-- Désactivation du switch "Territorialisation" → poidsPourcentDept et poidsPourcentReg se désactivent
-
-### Test 5 : Formulaire en mode création
-
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
-
-- Navigation vers `/admin/indicateurs/IND-999?_action=creer-indicateur`
-- Vérification du titre : "Fiche de l'indicateur IND-999"
-- Vérification du mode création : bouton "Créer l'indicateur" visible, "Modifier" et "Confirmer les changements" absents
-- Vérification de la structure : sélecteur Actif/Inactif, accordéons avec l'identité ouvert
-
-### Test 6 : Navigation listing vers fiche et retour
-
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
-
-- Connexion et accès au listing des indicateurs
-- Recherche et navigation vers IND-021
-- Vérification de la fiche affichée
-- Retour au listing via le lien "Retour"
-
-### Test 7 : Accès refusé à la fiche indicateur pour les profils non DITP_ADMIN
-
-**Coordinateur région** (`coordinateur.region@example.com`) :
-
-- Tentative d'accès direct à `/admin/indicateurs/IND-021` : vérification que l'URL ne reste pas sur la fiche
-
-**Équipe direction de projet** (`equipe.dir.projet@example.com`) :
-
-- Tentative d'accès direct à `/admin/indicateurs/IND-021` : vérification que l'URL ne reste pas sur la fiche
+- En mode modification, le sélecteur de zone-groupe propose une seule option « Groupement 1 »
 
 ---
 
-## 11. Mon profil utilisateur
+## 15. Paramétrage d'un chantier
+
+**Fichier :** `tests/parametrage-chantier.spec.ts`
+
+Profil : `ditp.admin@example.com`. Page : `/panel-administrateur/chantiers/CH-902`. Les données modifiées sont restaurées en fin de test.
+
+- **Métadonnées** : description « Description modifiée par un test e2e », « Sauvegarder » : en base, `metadata_chantiers.ch_descr` de CH-902 vaut ce texte ; après rechargement, le champ « Description » l'affiche
+- **Pondérations** : onglet « Pondérations », première pondération de la ligne IND-903 à 100, « Enregistrer » : en base, `poids_pourcent_nat_declaree` d'IND-903 vaut 100 ; après rechargement, le champ vaut 100
+
+---
+
+## 16. Tokens API
+
+**Fichier :** `tests/gestion-token-api.spec.ts`
+
+Profil : `ditp.admin@example.com`. Compte cible réservé à ce spec : `cabinet.mtfp@example.com`. Le token est supprimé en fin de test.
+
+- Sur `/panel-administrateur/gestion-token-api`, l'administrateur crée un token pour `cabinet.mtfp` (l'email n'était pas listé avant) : token non vide
+- Avec ce token, `GET /api/open-api/chantier/CH-129/donnees` : 200 et `chantier_id` CH-129
+- Après suppression depuis la même page, la ligne disparaît et la même requête répond 403
+
+---
+
+## 17. Mon profil utilisateur
 
 **Fichier :** `tests/mon-profil-utilisateur.spec.ts`
 
-**Structure de la page :**
+Profils : `ditp.admin@example.com` puis `coordinateur.region@example.com`. Le profil de `ditp.admin` est restauré en fin de test.
 
-- Connexion et navigation vers la page "Mon profil utilisateur"
-- Vérification du titre "Mon profil utilisateur"
-- Vérification de la section "Identification" avec la mention "Tous les champs sont obligatoires."
-- Vérification de la présence des champs du formulaire : Adresse électronique, Prénom, Nom, Service, Fonction
-- Vérification que le champ "Adresse électronique" est désactivé (lecture seule)
-- Vérification que les champs Prénom, Nom et Fonction sont pré-remplis avec les données de l'utilisateur connecté
-- Vérification de la présence du bouton "Enregistrer"
-- Vérification que la mention "Modifié le JJ/MM/AAAA à HH:MM" est affichée sous le bouton "Enregistrer"
+- `/mon-profil-utilisateur` : titre, section « Identification », mention « Tous les champs sont obligatoires. », champs Adresse électronique, Prénom, Nom, Fonction, bouton « Enregistrer » et mention « Modifié le JJ/MM/AAAA à HH:MM »
+- Adresse électronique désactivée ; email, prénom (« Admin ») et nom (« DITP ») pré-remplis
+- Service « Autre » : champ « Précisez votre service » et message d'aide visibles ; service « Préfecture de région » : le champ disparaît
+- Fonction « Testeur E2E » et « Enregistrer » : « Vos informations ont été modifiées avec succès »
+- En base : fonction « Testeur E2E », service `prefecture-de-region`, `date_modification` postérieure à la précédente ; la mention affiche « Modifié le … » avec cette date (heure de Paris)
+- `coordinateur.region` : son propre email, prénom et nom pré-remplis
 
-**Sélection du service "Autre" :**
+---
 
-- Sélection de "Autre" dans le champ "Service"
-- Vérification que le champ "Précisez votre service" apparaît
-- Vérification du message d'aide : "Afin de nous aider à compléter cette liste, merci de nous indiquer votre rattachement. Cette information ne sera pas publiée dans un premier temps."
-
-**Modification du profil :**
-
-- Modification du champ "Fonction" et soumission du formulaire
-- Vérification de l'alerte de succès : "Vos informations ont été modifiées avec succès"
-- Vérification que la date de modification est mise à jour après l'enregistrement
-
-**Isolation entre utilisateurs :**
-
-- Connexion avec un autre profil et navigation vers "Mon profil utilisateur"
-- Vérification que les informations affichées correspondent bien à ce second utilisateur et n'ont pas été impactées par la modification précédente
-
-## 12. Cartographie PVA — Comparaison territoriale
-
-**Fichier :** `tests/information-chantier.spec.ts`
-
-2 scénarios couvrant le widget de cartographie PVA dans la section "Comparaison territoriale et évolution". Chantier de référence : CH-129, profil DITP Admin. Données seedées : NAT-FR (3 propositions), DEPT-75 (2 propositions), REG-11 (1 proposition), DEPT-56 (0), REG-53 (0).
-
-### Test 1 : Affichage du widget PVA avec les données de propositions
-
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
-
-- Navigation vers CH-129 au niveau national (NAT-FR)
-- Sélection de "Carte des propositions des valeurs d'avancement" via le sélecteur de type de carte dans la section "Comparaison territoriale et évolution"
-- Vérification que le widget "Comparaison territoriale et évolution" s'affiche
-- Vérification du sous-titre "Nombres de propositions de valeur d'avancement"
-- Vérification que le territoire initial (France) affiche "3 propositions"
-- Vérification de la présence du lien "+ ajouter un territoire"
-
-### Test 2 : Ajout et suppression d'un territoire dans le widget PVA
-
-Profil : `ditp.admin@example.com` (DITP_ADMIN)
-
-- Navigation vers CH-129 au niveau national (NAT-FR) avec sélection carte PVA via le sélecteur dans "Comparaison territoriale et évolution"
-- Ajout du territoire "Paris" via le picker
-- Vérification que "Paris" apparaît avec "2 propositions"
-- Ajout du territoire "Morbihan"
-- Vérification que "Morbihan" affiche "pas de proposition"
-- Suppression de "Paris" (clic sur le bouton ✕)
-- Vérification que "Paris" n'est plus affiché
-
-## 13. Accès à l'assistant IA
+## 18. Accès à l'assistant IA
 
 **Fichier :** `tests/acces-assistant-ia.spec.ts`
 
-Accès gérés par le DITP Admin dans `/panel-administrateur/albert`, onglets « Permissions profils » et « Permissions emails » (PIL-1871). L'accès est vérifié par la présence du bouton « Ouvrir l'Assistant IA PILOTE » sur la page d'accueil de l'utilisateur. Les accès créés pendant le test sont supprimés à la fin (`E2ETestContext`).
-
 ### Test 1 : Accès par profil et par utilisateur
 
-Profils : `ditp.admin@example.com` (DITP_ADMIN), `services.deconcentres.region@example.com` (SERVICES_DECONCENTRES_REGION), `prefet.departement@example.com` (PREFET_DEPARTEMENT)
+Profils : `ditp.admin@example.com`, `services.deconcentres.region@example.com`, `prefet.departement@example.com`. Les accès sont gérés dans `/panel-administrateur/albert` (onglets « Permissions profils » et « Permissions emails ») et supprimés en fin de test.
 
-- Le DITP Admin a accès à l'assistant IA
-- Un utilisateur Services déconcentrés régionaux n'a pas accès
-- Le DITP Admin active le profil Services déconcentrés régionaux
-- L'utilisateur Services déconcentrés régionaux a maintenant accès
-- Un préfet de département n'a pas accès
-- Le DITP Admin ajoute le préfet de département par recherche « prénom nom »
-- Le préfet de département a maintenant accès
-- Le DITP Admin active aussi le profil Préfet de département : la liste le signale
-- Le préfet de département a toujours accès via son profil
-- Le DITP Admin désactive le profil Préfet de département
-- Le préfet de département garde l'accès grâce à son autorisation individuelle
+L'accès est vérifié sur l'accueil par la présence du bouton « Ouvrir l'Assistant IA PILOTE » ; l'absence, par le titre « N chantiers » visible et aucun bouton.
+
+- Le DITP Admin a accès ; l'utilisateur Services déconcentrés régionaux n'a pas accès
+- Le DITP Admin active le profil Services déconcentrés régionaux : l'utilisateur a accès
+- Le préfet de département n'a pas accès ; le DITP Admin l'ajoute par la recherche « departement prefet » (sans mention de profil dans la liste) : il a accès
+- Le DITP Admin active aussi le profil Préfet de département : la liste des emails mentionne ce profil pour le préfet ; il a toujours accès
+- Le DITP Admin désactive le profil Préfet de département : le préfet garde l'accès par son autorisation individuelle
+
+### Test 2 : Appels directs à l'assistant
+
+- `premiere.ministre` (sans accès) : `POST /api/albert/chat` répond 403
+- `ditp.admin` : le rapport d'un autre compte (`/api/albert/rapports/<id ditp.pilotage>/rapport-….pdf`) répond 403 ; un nom de fichier `..%2Fsecret.pdf` répond 400 ; un rapport absent de son propre dossier répond 404
+
+---
+
+## 19. Non couvert
+
+Les failles d'autorisation connues ne sont pas encore testées : leurs tests seront écrits avec les corrections.
+
+**PIL-1921 — failles d'autorisation API, tRPC, SSR :**
+
+- C1 : vérification et publication d'un import par l'IHM
+- C2 : POST open-api sur un indicateur non rattaché au chantier, Content-Type non supporté
+- C3 : import / export des métadonnées des indicateurs
+- C4 : `propositionValeurAvancement.supprimer`
+- C5 : fiche conducteur hors périmètre
+- C6 : `/admin/utilisateur/[id]` d'un autre compte
+- C7 : procédures tRPC de lecture
+- H4 : GET open-api filtré par territoire, indicateur non rattaché
+- H5 : `territoireCode` des PVA
+- N1 : modification d'un compte hors périmètre
+- N2 : vidéo d'accueil et popup infolettre désactivées pour un autre compte (`utilisateur.desactiverVideoAccueil`, `desactiverPopupInfolettre`)
+- N3 : mail d'inscription à l'infolettre (`envoyerMailInscriptionInfolettre`)
+- N4 : CSRF des tokens API (`gestionTokenAPI.creerTokenAPI` / `supprimerTokenAPI`)
+- N5 : mutations admin sans CSRF
+- N6 : export des utilisateurs refusé en 500
+
+**PIL-1922 — habilitations de l'assistant IA :**
+
+- Outils Albert hors périmètre
+- `albert.evaluer` sur la conversation d'un autre compte
+
+**Hors périmètre :** PagePilotage (déprécié), Pilote Eval (décommissionné), Keycloak.
 
 ---
 
 ## Matrice profils × tests
 
-Légende : ✓ = profil utilisé dans ce test
+Légende : ✓ = profil utilisé dans le test. Les colonnes sont des profils ; le compte exact est donné dans chaque section (par exemple les comptes `pva.*` pour les PVA, `saisie.*` pour la saisie, `modale.profil` pour la modale de profil).
 
-| Test                                    | DITP Admin | PM Cabinet | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet |
-|-----------------------------------------|:----------:|:----------:|:-----------:|:-----------:|:---------:|:-----------:|:-----------:|:---------------:|
-| 1. Login                                |     ✓      |            |             |             |           |             |             |                 |
-| 2. Chantier - Accès complet             |     ✓      |            |             |             |           |             |             |                 |
-| 2. Chantier - Lecture seule             |            |     ✓      |             |             |           |             |             |                 |
-| 2. Chantier - Périmètre chantier        |            |            |             |             |           |             |             |        ✓        |
-| 2. Chantier - Territoire dept (écriture)|            |            |             |      ✓      |           |             |             |                 |
-| 2. Chantier - Territoire rég. (écriture)|            |            |             |             |           |      ✓      |             |                 |
-| 2. Chantier - Dept sans hab. chantier   |            |            |             |      ✓      |           |             |             |                 |
-| 2. Chantier - Rég. sans hab. chantier   |            |            |             |             |           |      ✓      |             |                 |
-| 3. Import données                       |     ✓      |            |             |             |           |             |             |                 |
-| 4.1 Export CSV chantiers                |     ✓      |            |             |             |           |             |             |                 |
-| 4.2 Export CSV indicateurs              |     ✓      |            |             |             |           |             |             |                 |
-| 4.3 Export CSV historique               |     ✓      |            |             |             |           |             |             |                 |
-| 4.4 Export CSV utilisateurs             |     ✓      |            |             |             |           |             |             |                 |
-| 5. PVA - Création/acceptation           |            |            |             |      ✓      |           |             |             |        ✓        |
-| 5. PVA - Refus                          |            |            |             |             |           |             |      ✓      |        ✓        |
-| 5. PVA - Acceptation modifiée           |            |            |             |      ✓      |           |             |             |        ✓        |
-| 5. PVA - Modif/suppression              |            |            |             |      ✓      |           |             |             |                 |
-| 5. PVA - Blocage maille                 |            |            |      ✓      |             |           |             |             |                 |
-| 5. PVA - Dir. projet (décisions)        |            |            |             |             |           |             |             |        ✓        |
-| 6. API                                  |     ✓      |            |             |             |           |             |             |        ✓        |
-| 7.1 Gestion - Vue admin + token         |     ✓      |            |             |             |           |             |             |                 |
-| 7.2 Gestion - Visibilité + restrictions |            |            |      ✓      |             |           |             |             |                 |
-| 7.3 Gestion - Périmètre restreint       |            |            |             |      ✓      |           |             |             |                 |
-| 7.4 Gestion - Par chantiers             |            |            |             |             |     ✓     |             |             |                 |
-| 7.5 Gestion - Accès refusé              |            |            |             |             |           |      ✓      |      ✓      |        ✓        |
-| 7.6 Gestion - Désactiver/réactiver      |     ✓      |            |             |             |           |             |             |                 |
-| 7.7 Gestion - Filtres                   |     ✓      |            |             |             |           |             |             |                 |
-| 7.8 Gestion - Multi-territoires         |            |            |      ✓      |             |           |             |             |                 |
-| 8. Création/modif - Validation          |     ✓      |            |             |             |           |             |             |                 |
-| 9. Indicateurs - Listing                |     ✓      |            |      ✓      |             |           |             |             |        ✓        |
-| 10. Indicateurs - Formulaire            |     ✓      |            |      ✓      |             |           |             |             |        ✓        |
-| 11. Mon profil utilisateur              |     ✓      |            |      ✓      |             |           |             |             |                 |
-| 12. Carto PVA - Affichage widget        |     ✓      |            |             |             |           |             |             |                 |
-| 12. Carto PVA - Ajout/suppression terr. |     ✓      |            |             |             |           |             |             |                 |
-| 13. Accès assistant IA (+ SD Rég.)      |     ✓      |            |             |             |           |             |      ✓      |                 |
+| Test                                        | Sans session | DITP Admin | DITP Pilot. | PM Cabinet | Cab. MTFP | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet | SD Rég. | SD Dept |
+|---------------------------------------------|:------------:|:----------:|:-----------:|:----------:|:---------:|:-----------:|:-----------:|:---------:|:-----------:|:-----------:|:---------------:|:-------:|:-------:|
+| 1.1 Landing page                            |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
+| 1.1 Connexion par formulaire                |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 1.2 Écran de choix de connexion             |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
+| 2.1 Accès hors périmètre par URL            |              |            |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
+| 2.2 Gardes du panel (pages)                 |              |            |      ✓      |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
+| 2.2 Gardes du panel (tRPC)                  |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 2.3 Appels directs sans session             |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
+| 2.3 Lecture avec session                    |              |            |      ✓      |            |           |             |             |           |             |             |                 |         |         |
+| 2.3 Gestion des comptes (tRPC)              |              |     ✓      |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
+| 2.3 Tokens API (tRPC)                       |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 2.3 Paramétrage des chantiers (tRPC)        |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 3. Accueil                                  |              |            |             |     ✓      |           |             |             |           |             |             |        ✓        |         |         |
+| 4. Chantier - Accès complet                 |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 4. Chantier - Lecture seule                 |              |            |             |     ✓      |           |             |             |           |             |             |                 |         |         |
+| 4. Chantier - Périmètre chantier            |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 4. Chantier - Dept avec hab.                |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 4. Chantier - Rég. avec hab.                |              |            |             |            |           |             |             |           |      ✓      |             |                 |         |         |
+| 4. Chantier - Dept sans hab.                |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 4. Chantier - Rég. sans hab.                |              |            |             |            |           |             |             |           |      ✓      |             |                 |         |         |
+| 5. Cartographie PVA                         |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 6. Saisie - Commentaire national            |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 6. Saisie - Brouillon territorial           |              |            |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
+| 6. Saisie - Météo                           |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 7. Import de données (IHM)                  |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 8. PVA - Création / accusé / acceptation    |              |            |             |            |           |             |      ✓      |           |             |             |        ✓        |         |         |
+| 8. PVA - Refus                              |              |            |             |            |           |             |             |           |             |      ✓      |        ✓        |         |         |
+| 8. PVA - Acceptation avec modification      |              |            |             |            |           |             |      ✓      |           |             |             |        ✓        |         |         |
+| 8. PVA - Modification / suppression         |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 8. PVA - Blocage maille région              |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 9.1 à 9.4 Export CSV (modale, utilisateurs) |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 9.5 Cloisonnement des exports               |              |            |             |            |           |      ✓      |      ✓      |           |             |             |        ✓        |    ✓    |         |
+| 10.1 Open API - Authentification            |      ✓       |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 10.2 à 10.8 Open API - Erreurs, exports, imports |         |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 10.9 Open API - Données indicateur          |              |            |             |     ✓      |           |             |             |           |             |             |        ✓        |         |         |
+| 11.1 Gestion - Vue admin + token            |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 11.2 Gestion - Coord. région                |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 11.3 Gestion - Coord. département           |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 11.4 Gestion - Secrétariat général          |              |            |             |            |           |             |             |     ✓     |             |             |                 |         |         |
+| 11.5 Gestion - Accès refusé                 |              |            |             |            |           |             |             |           |      ✓      |      ✓      |        ✓        |         |         |
+| 11.6 Gestion - Désactiver / réactiver       |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 11.7 Gestion - Filtres                      |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 11.8 Gestion - Multi-territoires            |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 12. Comptes - Validation à la création      |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 12. Comptes - Création et doublon           |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 12. Comptes - Modification et modale        |              |     ✓      |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 13. Indicateurs - Listing                   |              |     ✓      |             |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
+| 14. Indicateurs - Formulaire                |              |     ✓      |             |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
+| 15. Paramétrage d'un chantier               |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 16. Tokens API                              |              |     ✓      |             |            |     ✓     |             |             |           |             |             |                 |         |         |
+| 17. Mon profil utilisateur                  |              |     ✓      |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 18. Assistant IA - Accès                    |              |     ✓      |             |            |           |             |             |           |             |      ✓      |                 |    ✓    |         |
+| 18. Assistant IA - Appels directs           |              |     ✓      |             |     ✓      |           |             |             |           |             |             |                 |         |         |
+
+En 11.6, le compte Services déconcentrés départementaux est la cible de la désactivation, pas le profil connecté. En 16, le compte Cabinet MTFP n'est pas connecté : il reçoit le token utilisé pour l'open-api.
 
 **Identifiants des profils :**
 
-| Abréviation       | Email                                                                     |
-|-------------------|---------------------------------------------------------------------------|
-| DITP Admin        | `ditp.admin@example.com`                                                  |
-| PM Cabinet        | `premiere.ministre@example.com`                                           |
-| Coord. Rég.       | `coordinateur.region@example.com`                                         |
-| Coord. Dept       | `coordinateur.departement@example.com`                                    |
-| Sec. Gén.         | `secretariat.general@example.com`                                         |
-| Préfet Rég.       | `prefet.region@example.com`                                               |
-| Préfet Dept       | `prefet.departement@example.com`                                          |
-| Préfet Multi-terr | `prefet.multi.territoires@example.com`                                    |
-| SD Hors ATE       | `services.deconcentres.hors-ate@example.com`                              |
-| SD Rég.           | `services.deconcentres.region@example.com`                                |
-| Éq. Dir. Projet   | `equipe.dir.projet@example.com` (API) / `pva.dir.projet@example.com` (UI) |
-| Coord. Rég. (PVA) | `pva.coordinateur.reg@example.com`                                        |
-| Coord. Dept (PVA) | `pva.coordinateur.dept@example.com`                                       |
-| Préfet Dept (PVA) | `pva.prefet.dept@example.com`                                             |
-| Préfet Rég. (CH)  | `chantier.prefet.reg@example.com`                                         |
+| Abréviation              | Email                                                                                              |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| DITP Admin               | `ditp.admin@example.com` (aussi `E2E_USERNAME`)                                                    |
+| DITP Pilot.              | `ditp.pilotage@example.com`                                                                        |
+| PM Cabinet               | `premiere.ministre@example.com`                                                                    |
+| Cab. MTFP                | `cabinet.mtfp@example.com`                                                                         |
+| Coord. Rég.              | `coordinateur.region@example.com` ; `pva.coordinateur.reg@example.com` (PVA) ; `modale.profil@example.com` (modale de profil) |
+| Coord. Dept              | `coordinateur.departement@example.com` ; `pva.coordinateur.dept@example.com` (PVA, chantier avec hab.) ; `saisie.coordinateur.dept@example.com` (saisie) |
+| Sec. Gén.                | `secretariat.general@example.com`                                                                  |
+| Préfet Rég.              | `prefet.region@example.com` ; `chantier.prefet.reg@example.com` (chantier avec hab.)               |
+| Préfet Dept              | `prefet.departement@example.com` ; `pva.prefet.dept@example.com` (PVA) ; `saisie.prefet.dept@example.com` (saisie) |
+| Préfet Dept multi-terr.  | `prefet.multi.territoires@example.com` (cible, jamais connecté)                                    |
+| Éq. Dir. Projet          | `equipe.dir.projet@example.com` ; `pva.dir.projet@example.com` (PVA)                               |
+| SD Rég.                  | `services.deconcentres.region@example.com`                                                         |
+| SD Dept                  | `services.deconcentres.departement@example.com` (cible, jamais connecté)                           |
+| SD hors ATE              | `services.deconcentres.hors-ate@example.com` (cible, jamais connecté)                              |

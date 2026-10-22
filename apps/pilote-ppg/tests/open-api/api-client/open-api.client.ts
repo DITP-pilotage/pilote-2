@@ -1,4 +1,5 @@
 import { APIRequestContext, APIResponse } from "@playwright/test";
+import { ImportDonneeIndicateurAPIContrat } from "@/server/import-indicateur/app/contrats/DataImportDonneeIndicateurAPIContrat";
 import { ImportCommentaireInput } from "@/validation/import-commentaire";
 import { ImportDecisionStrategiqueInput } from "@/validation/import-decision-strategique";
 import { ImportObjectifInput } from "@/validation/import-objectif";
@@ -8,6 +9,7 @@ export type CommentaireInput = ImportCommentaireInput;
 export type DecisionStrategiqueInput = ImportDecisionStrategiqueInput;
 export type ObjectifInput = ImportObjectifInput;
 export type SyntheseDesResultatsInput = ImportSyntheseDesResultatsOpenAPIInput;
+export type DonneeIndicateurInput = ImportDonneeIndicateurAPIContrat;
 
 export class OpenApiClient {
   constructor(private readonly apiContext: APIRequestContext) {}
@@ -26,6 +28,17 @@ export class OpenApiClient {
   ): Promise<APIResponse> {
     return this.apiContext.get(
       `/api/open-api/chantier/${chantierId}/indicateur/${indicateurId}/donnees`,
+    );
+  }
+
+  async importDonneesIndicateur(
+    chantierId: string,
+    indicateurId: string,
+    donnees: DonneeIndicateurInput[],
+  ): Promise<APIResponse> {
+    return this.apiContext.post(
+      `/api/open-api/chantier/${chantierId}/indicateur/${indicateurId}/donnees`,
+      { data: { donnees } },
     );
   }
 

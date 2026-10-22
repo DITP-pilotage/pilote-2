@@ -1,4 +1,4 @@
-import { Page, expect } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 import { BasePage } from "../base.page";
 import { E2ETestContext } from "../../e2e-test-context";
 
@@ -7,199 +7,205 @@ export class PageAdminIndicateurForm extends BasePage {
     super(page, e2eContext);
   }
 
-  private get titreFiche() {
+  private get ficheHeading() {
     return this.page.getByRole("heading", { level: 1 });
   }
 
-  private get boutonModifier() {
+  private get editButton() {
     return this.page.getByRole("button", { name: "Modifier" }).first();
   }
 
-  private get boutonConfirmerChangements() {
+  private get confirmChangesButton() {
     return this.page
       .getByRole("button", { name: "Confirmer les changements" })
       .first();
   }
 
-  private get boutonAnnuler() {
+  private get cancelButton() {
     return this.page.getByRole("button", { name: "Annuler" }).first();
   }
 
-  private get boutonCreerIndicateur() {
+  private get createIndicateurButton() {
     return this.page
       .getByRole("button", { name: "Créer l'indicateur" })
       .first();
   }
 
-  private get lienRetour() {
+  private get backLink() {
     return this.page.getByRole("link", { name: "Retour" });
   }
 
-  private get carteRecapitulative() {
+  private get summaryCard() {
     return this.page.locator(".rounded-lg.bg-blue-50").first();
   }
 
-  private get accordionIdentite() {
+  private get identityAccordion() {
     return this.page.getByRole("button", { name: "Identité indicateur" });
   }
 
-  private get accordionParametrages() {
+  private get settingsAccordion() {
     return this.page.getByRole("button", { name: "Paramétrages" });
   }
 
-  private get accordionAutresInformations() {
+  private get otherInformationAccordion() {
     return this.page.getByRole("button", {
       name: "Autres informations",
     });
   }
 
-  private get selecteurZoneGroupe() {
+  private get zoneGroupeSelect() {
     return this.page.locator('[id="zgApplicable"]');
   }
 
   async goto(indicateurId: string): Promise<void> {
     await this.page.goto(`/panel-administrateur/indicateurs/${indicateurId}`);
-    await this.titreFiche.waitFor({ state: "visible" });
+    await this.ficheHeading.waitFor({ state: "visible" });
   }
 
   async gotoCreation(indicateurId: string): Promise<void> {
     await this.page.goto(
       `/panel-administrateur/indicateurs/${indicateurId}?_action=creer-indicateur`,
     );
-    await this.titreFiche.waitFor({ state: "visible" });
+    await this.ficheHeading.waitFor({ state: "visible" });
   }
 
-  async clickModifier(): Promise<void> {
-    await this.boutonModifier.click();
+  async clickEdit(): Promise<void> {
+    // Un clic avant l'hydratation est perdu (WebKit, Firefox) : on réessaie.
+    await expect(async () => {
+      if (await this.editButton.isVisible()) {
+        await this.editButton.click();
+      }
+      await expect(this.confirmChangesButton).toBeVisible({
+        timeout: 2_000,
+      });
+    }).toPass();
   }
 
-  async clickConfirmerChangements(): Promise<void> {
-    await this.boutonConfirmerChangements.click();
+  async clickConfirmChanges(): Promise<void> {
+    await this.confirmChangesButton.click();
   }
 
-  async clickAnnuler(): Promise<void> {
-    await this.boutonAnnuler.click();
+  async clickCancel(): Promise<void> {
+    await this.cancelButton.click();
   }
 
-  async clickCreerIndicateur(): Promise<void> {
-    await this.boutonCreerIndicateur.click();
+  async clickCreateIndicateur(): Promise<void> {
+    await this.createIndicateurButton.click();
   }
 
-  async clickRetour(): Promise<void> {
-    await this.lienRetour.click();
+  async clickBack(): Promise<void> {
+    await this.backLink.click();
     await this.page.waitForURL("**/panel-administrateur/indicateurs");
   }
 
-  async ouvrirAccordionParametrages(): Promise<void> {
-    const isExpanded =
-      await this.accordionParametrages.getAttribute("aria-expanded");
-    if (isExpanded === "false") {
-      await this.accordionParametrages.click();
-    }
+  async openSettingsAccordion(): Promise<void> {
+    await this.openAccordion(this.settingsAccordion);
   }
 
-  async ouvrirAccordionAutresInformations(): Promise<void> {
-    const isExpanded =
-      await this.accordionAutresInformations.getAttribute("aria-expanded");
-    if (isExpanded === "false") {
-      await this.accordionAutresInformations.click();
-    }
+  async openOtherInformationAccordion(): Promise<void> {
+    await this.openAccordion(this.otherInformationAccordion);
   }
 
-  async remplirChampTexte(label: string, valeur: string): Promise<void> {
-    const champ = this.page.getByLabel(label, { exact: false });
-    await champ.fill(valeur);
+  private async openAccordion(accordion: Locator): Promise<void> {
+    await expect(async () => {
+      if ((await accordion.getAttribute("aria-expanded")) === "false") {
+        await accordion.click();
+      }
+      await expect(accordion).toHaveAttribute("aria-expanded", "true", {
+        timeout: 2_000,
+      });
+    }).toPass();
   }
 
-  async expectTitreFiche(indicateurId: string): Promise<void> {
-    await expect(this.titreFiche).toContainText(
+  async expectFicheTitle(indicateurId: string): Promise<void> {
+    await expect(this.ficheHeading).toContainText(
       `Fiche de l'indicateur ${indicateurId}`,
     );
   }
 
-  async expectModeConsultation(): Promise<void> {
-    await expect(this.boutonModifier).toBeVisible();
-    await expect(this.boutonConfirmerChangements).not.toBeVisible();
-    await expect(this.boutonAnnuler).not.toBeVisible();
+  async expectReadMode(): Promise<void> {
+    await expect(this.editButton).toBeVisible();
+    await expect(this.confirmChangesButton).not.toBeVisible();
+    await expect(this.cancelButton).not.toBeVisible();
   }
 
-  async expectModeModification(): Promise<void> {
-    await expect(this.boutonConfirmerChangements).toBeVisible();
-    await expect(this.boutonAnnuler).toBeVisible();
-    await expect(this.boutonModifier).not.toBeVisible();
+  async expectEditMode(): Promise<void> {
+    await expect(this.confirmChangesButton).toBeVisible();
+    await expect(this.cancelButton).toBeVisible();
+    await expect(this.editButton).not.toBeVisible();
   }
 
-  async expectOptionZoneGroupeVisible(nom: string): Promise<void> {
-    await this.selecteurZoneGroupe.click();
-    await expect(this.page.getByRole("option", { name: nom })).toHaveCount(1);
+  async expectZoneGroupeOptionVisible(name: string): Promise<void> {
+    await this.zoneGroupeSelect.click();
+    await expect(this.page.getByRole("option", { name: name })).toHaveCount(1);
     await this.page.keyboard.press("Escape");
   }
 
-  async expectModeCreation(): Promise<void> {
-    await expect(this.boutonCreerIndicateur).toBeVisible();
-    await expect(this.boutonModifier).not.toBeVisible();
-    await expect(this.boutonConfirmerChangements).not.toBeVisible();
+  async expectCreationMode(): Promise<void> {
+    await expect(this.createIndicateurButton).toBeVisible();
+    await expect(this.editButton).not.toBeVisible();
+    await expect(this.confirmChangesButton).not.toBeVisible();
   }
 
-  async expectAlerteSuccesModification(): Promise<void> {
+  async expectUpdateSuccessAlert(): Promise<void> {
     await expect(
       this.page.getByText("Bravo, l'indicateur a bien été modifié !"),
     ).toBeVisible();
   }
 
-  async expectAlerteSuccesCreation(): Promise<void> {
+  async expectCreationSuccessAlert(): Promise<void> {
     await expect(
       this.page.getByText("Bravo, l'indicateur a bien été crée !"),
     ).toBeVisible();
   }
 
-  async expectCarteRecapitulativeVisible(): Promise<void> {
-    await expect(this.carteRecapitulative).toBeVisible();
+  async expectSummaryCardVisible(): Promise<void> {
+    await expect(this.summaryCard).toBeVisible();
   }
 
-  async expectChampRecapitulatif(label: string): Promise<void> {
-    await expect(this.carteRecapitulative.getByText(label)).toBeVisible();
+  async expectSummaryField(label: string): Promise<void> {
+    await expect(this.summaryCard.getByText(label)).toBeVisible();
   }
 
-  async expectAccordionIdentiteOuvert(): Promise<void> {
-    await expect(this.accordionIdentite).toHaveAttribute(
+  async expectIdentityAccordionOpen(): Promise<void> {
+    await expect(this.identityAccordion).toHaveAttribute(
       "aria-expanded",
       "true",
     );
   }
 
-  async expectAccordionParametragesFerme(): Promise<void> {
-    await expect(this.accordionParametrages).toHaveAttribute(
+  async expectSettingsAccordionClosed(): Promise<void> {
+    await expect(this.settingsAccordion).toHaveAttribute(
       "aria-expanded",
       "false",
     );
   }
 
-  async expectAccordionAutresInformationsFerme(): Promise<void> {
-    await expect(this.accordionAutresInformations).toHaveAttribute(
+  async expectOtherInformationAccordionClosed(): Promise<void> {
+    await expect(this.otherInformationAccordion).toHaveAttribute(
       "aria-expanded",
       "false",
     );
   }
 
-  async expectSectionVisible(titre: string): Promise<void> {
+  async expectSectionVisible(title: string): Promise<void> {
     await expect(
-      this.page.getByRole("heading", { name: titre, exact: true }),
+      this.page.getByRole("heading", { name: title, exact: true }),
     ).toBeVisible();
   }
 
-  async expectLienRetourVisible(): Promise<void> {
-    await expect(this.lienRetour).toBeVisible();
+  async expectBackLinkVisible(): Promise<void> {
+    await expect(this.backLink).toBeVisible();
   }
 
-  async expectSelecteurActifInactifVisible(): Promise<void> {
+  async expectActiveInactiveSelectorVisible(): Promise<void> {
     await expect(this.page.getByText("Actif", { exact: true })).toBeVisible();
     await expect(this.page.getByText("Inactif", { exact: true })).toBeVisible();
   }
 
-  async expectDonneeAffichee(texte: string): Promise<void> {
+  async expectValueDisplayed(text: string): Promise<void> {
     await expect(
-      this.page.getByText(texte, { exact: false }).first(),
+      this.page.getByText(text, { exact: false }).first(),
     ).toBeVisible();
   }
 
@@ -209,24 +215,24 @@ export class PageAdminIndicateurForm extends BasePage {
     return this.page.locator(`[id="${name}"]`);
   }
 
-  async changerSelecteur(name: string, valeur: string): Promise<void> {
+  async changeSelect(name: string, value: string): Promise<void> {
     await this.selectByName(name).click();
     await this.page
       .getByRole("option")
-      .and(this.page.locator(`[data-value="${valeur}"]`))
+      .and(this.page.locator(`[data-value="${value}"]`))
       .click();
   }
 
-  async expectSelecteurDesactive(name: string): Promise<void> {
+  async expectSelectDisabled(name: string): Promise<void> {
     await expect(this.selectByName(name)).toBeDisabled();
   }
 
-  async expectSelecteurActive(name: string): Promise<void> {
+  async expectSelectEnabled(name: string): Promise<void> {
     await expect(this.selectByName(name)).toBeEnabled();
   }
 
-  async expectSelecteurValeur(name: string, valeur: string): Promise<void> {
-    await expect(this.selectByName(name)).toHaveAttribute("data-value", valeur);
+  async expectSelectValue(name: string, value: string): Promise<void> {
+    await expect(this.selectByName(name)).toHaveAttribute("data-value", value);
   }
 
   // --- Interactions avec les champs input de paramétrage ---
@@ -235,20 +241,20 @@ export class PageAdminIndicateurForm extends BasePage {
     return this.page.locator(`input#${name}`);
   }
 
-  async expectInputDesactive(name: string): Promise<void> {
+  async expectInputDisabled(name: string): Promise<void> {
     await expect(this.inputById(name)).toBeDisabled();
   }
 
-  async expectInputActive(name: string): Promise<void> {
+  async expectInputEnabled(name: string): Promise<void> {
     await expect(this.inputById(name)).toBeEnabled();
   }
 
-  async expectInputValeur(name: string, valeur: string): Promise<void> {
-    await expect(this.inputById(name)).toHaveValue(valeur);
+  async expectInputValue(name: string, value: string): Promise<void> {
+    await expect(this.inputById(name)).toHaveValue(value);
   }
 
-  async remplirInput(name: string, valeur: string): Promise<void> {
-    await this.inputById(name).fill(valeur);
+  async fillInput(name: string, value: string): Promise<void> {
+    await this.inputById(name).fill(value);
   }
 
   // --- Interactions avec les textareas ---
@@ -257,26 +263,26 @@ export class PageAdminIndicateurForm extends BasePage {
     return this.page.locator(`textarea#${name}`);
   }
 
-  async remplirTextArea(name: string, valeur: string): Promise<void> {
-    await this.textareaById(name).fill(valeur);
+  async fillTextArea(name: string, value: string): Promise<void> {
+    await this.textareaById(name).fill(value);
   }
 
-  async expectTextAreaValeur(name: string, valeur: string): Promise<void> {
-    await expect(this.textareaById(name)).toHaveValue(valeur);
+  async expectTextAreaValue(name: string, value: string): Promise<void> {
+    await expect(this.textareaById(name)).toHaveValue(value);
   }
 
   // --- Interaction avec les switches (Radix Switch) ---
 
-  private switchParTitre(titre: string) {
+  private switchByTitle(title: string) {
     return this.page
       .locator("div")
-      .filter({ hasText: new RegExp(`^${titre}$`) })
+      .filter({ hasText: new RegExp(`^${title}$`) })
       .locator("..")
       .getByRole("switch");
   }
 
-  async clickSwitch(titre: string): Promise<void> {
-    const switchElement = this.switchParTitre(titre);
+  async clickSwitch(title: string): Promise<void> {
+    const switchElement = this.switchByTitle(title);
     await switchElement.scrollIntoViewIfNeeded();
     await switchElement.click();
   }

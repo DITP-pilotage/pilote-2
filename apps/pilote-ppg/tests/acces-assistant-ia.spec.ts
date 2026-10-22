@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminAlbertPermissions } from "./pages/admin/page-admin-albert-permissions";
@@ -24,14 +26,14 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
 
   await step("Le DITP Admin a accès à l'assistant IA", async () => {
     const pageAccueil = await appActions.loginAs(ADMIN);
-    await pageAccueil.expectAccesAssistantIA();
+    await pageAccueil.expectAssistantIAAccess();
   });
 
   await step(
     "Un utilisateur Services déconcentrés régionaux n'a pas accès",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_PROFIL);
-      await pageAccueil.expectPasAccesAssistantIA();
+      await pageAccueil.expectNoAssistantIAAccess();
     },
   );
 
@@ -40,7 +42,7 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoProfils();
-      await pagePermissions.activerProfil(
+      await pagePermissions.enableProfil(
         PROFIL_SERVICES_DECONCENTRES_REGION.code,
         PROFIL_SERVICES_DECONCENTRES_REGION.nom,
       );
@@ -51,13 +53,13 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     "L'utilisateur Services déconcentrés régionaux a maintenant accès",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_PROFIL);
-      await pageAccueil.expectAccesAssistantIA();
+      await pageAccueil.expectAssistantIAAccess();
     },
   );
 
   await step("Un préfet de département n'a pas accès", async () => {
     const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-    await pageAccueil.expectPasAccesAssistantIA();
+    await pageAccueil.expectNoAssistantIAAccess();
   });
 
   await step(
@@ -65,17 +67,17 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoEmails();
-      await pagePermissions.ajouterUtilisateur(
+      await pagePermissions.addUtilisateur(
         "departement prefet",
         UTILISATEUR_VIA_EMAIL,
       );
-      await pagePermissions.expectSansMentionProfil(UTILISATEUR_VIA_EMAIL);
+      await pagePermissions.expectNoProfilMention(UTILISATEUR_VIA_EMAIL);
     },
   );
 
   await step("Le préfet de département a maintenant accès", async () => {
     const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-    await pageAccueil.expectAccesAssistantIA();
+    await pageAccueil.expectAssistantIAAccess();
   });
 
   await step(
@@ -83,12 +85,12 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoProfils();
-      await pagePermissions.activerProfil(
+      await pagePermissions.enableProfil(
         PROFIL_PREFET_DEPARTEMENT.code,
         PROFIL_PREFET_DEPARTEMENT.nom,
       );
       await pagePermissions.gotoEmails();
-      await pagePermissions.expectMentionProfil(
+      await pagePermissions.expectProfilMention(
         UTILISATEUR_VIA_EMAIL,
         PROFIL_PREFET_DEPARTEMENT.nom,
       );
@@ -99,7 +101,7 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     "Le préfet de département a toujours accès via son profil",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-      await pageAccueil.expectAccesAssistantIA();
+      await pageAccueil.expectAssistantIAAccess();
     },
   );
 
@@ -108,7 +110,7 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     async () => {
       await appActions.switchUser(ADMIN);
       await pagePermissions.gotoProfils();
-      await pagePermissions.desactiverProfil(PROFIL_PREFET_DEPARTEMENT.nom);
+      await pagePermissions.disableProfil(PROFIL_PREFET_DEPARTEMENT.nom);
     },
   );
 
@@ -116,7 +118,53 @@ test("gère les accès à l'assistant IA par profil et par utilisateur", async (
     "Le préfet de département garde l'accès grâce à son autorisation individuelle",
     async () => {
       const pageAccueil = await appActions.switchUser(UTILISATEUR_VIA_EMAIL);
-      await pageAccueil.expectAccesAssistantIA();
+      await pageAccueil.expectAssistantIAAccess();
     },
   );
+});
+
+test.describe("Appels directs à l'assistant IA", () => {
+  test("un compte sans accès à l'assistant ne peut pas lui écrire", async ({
+    page,
+    e2eContext,
+  }) => {
+    await new AppActions(page, e2eContext).loginAs(
+      "premiere.ministre@example.com",
+    );
+
+    const response = await page.request.post("/api/albert/chat", {
+      data: { messages: [] },
+    });
+
+    expect(response.status()).toBe(403);
+  });
+
+  test("un compte ne télécharge que ses propres rapports", async ({
+    page,
+    e2eContext,
+  }) => {
+    await new AppActions(page, e2eContext).loginAs(ADMIN);
+    const otherUtilisateur = await prisma.utilisateur.findUniqueOrThrow({
+      where: { email: "ditp.pilotage@example.com" },
+      select: { id: true },
+    });
+    const currentUtilisateur = await prisma.utilisateur.findUniqueOrThrow({
+      where: { email: ADMIN },
+      select: { id: true },
+    });
+
+    const otherUtilisateurRapport = await page.request.get(
+      `/api/albert/rapports/${otherUtilisateur.id}/rapport-0123abcd.pdf`,
+    );
+    const invalidFilename = await page.request.get(
+      `/api/albert/rapports/${currentUtilisateur.id}/..%2Fsecret.pdf`,
+    );
+    const missingRapport = await page.request.get(
+      `/api/albert/rapports/${currentUtilisateur.id}/rapport-0123abcd.pdf`,
+    );
+
+    expect(otherUtilisateurRapport.status()).toBe(403);
+    expect(invalidFilename.status()).toBe(400);
+    expect(missingRapport.status()).toBe(404);
+  });
 });

@@ -18,80 +18,80 @@ test.describe("Listing des indicateurs — Admin", () => {
     await test.step("Connexion en tant que DITP Admin et accès à la page", async () => {
       await appActions.loginAs(DITP_ADMIN);
       await pageIndicateurs.goto();
-      await pageIndicateurs.expectTitrePage();
+      await pageIndicateurs.expectPageTitle();
     });
 
     await test.step("Vérification de la structure du tableau", async () => {
-      await pageIndicateurs.expectColonneVisible("Chantier associé");
-      await pageIndicateurs.expectColonneVisible("Nom du chantier");
-      await pageIndicateurs.expectColonneVisible("Identifiant indicateur");
-      await pageIndicateurs.expectColonneVisible("Nom de l'indicateur");
-      await pageIndicateurs.expectColonneVisible("Dernière modification");
-      await pageIndicateurs.expectColonneVisible("Actif / Inactif");
+      await pageIndicateurs.expectColumnVisible("Chantier associé");
+      await pageIndicateurs.expectColumnVisible("Nom du chantier");
+      await pageIndicateurs.expectColumnVisible("Identifiant indicateur");
+      await pageIndicateurs.expectColumnVisible("Nom de l'indicateur");
+      await pageIndicateurs.expectColumnVisible("Dernière modification");
+      await pageIndicateurs.expectColumnVisible("Actif / Inactif");
     });
 
     await test.step("Vérification de la présence des éléments de la page", async () => {
-      await pageIndicateurs.expectBoutonCreerIndicateurVisible();
-      await pageIndicateurs.expectBoutonExporterVisible();
-      await pageIndicateurs.expectNombreIndicateursSuperieurA(0);
+      await pageIndicateurs.expectCreateIndicateurButtonVisible();
+      await pageIndicateurs.expectExportButtonVisible();
+      await pageIndicateurs.expectIndicateursCountGreaterThan(0);
     });
 
-    const nombreInitial = await pageIndicateurs.getNombreIndicateursAffiches();
+    const nombreInitial = await pageIndicateurs.getDisplayedIndicateursCount();
 
     await test.step("Vérification de la pagination", async () => {
       await pageIndicateurs.expectPaginationVisible();
-      await pageIndicateurs.expectNombreLignesTableau(20);
+      await pageIndicateurs.expectTableRowCount(20);
     });
 
     await test.step("Recherche d'un indicateur par texte", async () => {
-      await pageIndicateurs.rechercherIndicateur("IND-021");
-      await pageIndicateurs.expectIndicateurDansTableau("IND-021");
-      await pageIndicateurs.expectPaginationNonVisible();
+      await pageIndicateurs.searchIndicateur("IND-021");
+      await pageIndicateurs.expectIndicateurInTable("IND-021");
+      await pageIndicateurs.expectPaginationNotVisible();
     });
 
     await test.step("Effacement de la recherche — retour à l'état initial", async () => {
-      await pageIndicateurs.effacerRecherche();
-      await pageIndicateurs.expectNombreIndicateurs(nombreInitial);
+      await pageIndicateurs.clearSearch();
+      await pageIndicateurs.expectIndicateursCount(nombreInitial);
       await pageIndicateurs.expectPaginationVisible();
     });
 
     await test.step("Filtre par indicateurs territorialisés", async () => {
-      await pageIndicateurs.filtrerParTerritorialise();
-      const nombreFiltré = await pageIndicateurs.getNombreIndicateursAffiches();
+      await pageIndicateurs.filterByTerritorialise();
+      const nombreFiltré = await pageIndicateurs.getDisplayedIndicateursCount();
       expect(nombreFiltré).toBeLessThanOrEqual(nombreInitial);
-      await pageIndicateurs.expectFiltreActifVisible(
+      await pageIndicateurs.expectActiveFilterVisible(
         "Indicateurs territorialisés",
       );
     });
 
     await test.step("Réinitialisation des filtres", async () => {
-      await pageIndicateurs.reinitialiserFiltres();
-      await pageIndicateurs.expectNombreIndicateurs(nombreInitial);
+      await pageIndicateurs.resetFilters();
+      await pageIndicateurs.expectIndicateursCount(nombreInitial);
     });
 
     await test.step("Filtre par indicateurs du baromètre", async () => {
-      await pageIndicateurs.filtrerParBarometre();
-      const nombreFiltré = await pageIndicateurs.getNombreIndicateursAffiches();
+      await pageIndicateurs.filterByBarometre();
+      const nombreFiltré = await pageIndicateurs.getDisplayedIndicateursCount();
       expect(nombreFiltré).toBeLessThanOrEqual(nombreInitial);
-      await pageIndicateurs.expectFiltreActifVisible(
+      await pageIndicateurs.expectActiveFilterVisible(
         "Indicateurs du baromètre",
       );
     });
 
     await test.step("Réinitialisation des filtres après baromètre", async () => {
-      await pageIndicateurs.reinitialiserFiltres();
-      await pageIndicateurs.expectNombreIndicateurs(nombreInitial);
+      await pageIndicateurs.resetFilters();
+      await pageIndicateurs.expectIndicateursCount(nombreInitial);
     });
 
     await test.step("Navigation via la pagination", async () => {
-      await pageIndicateurs.allerPageSuivante();
-      await pageIndicateurs.expectNombreLignesTableau(nombreInitial - 20);
+      await pageIndicateurs.goToNextPage();
+      await pageIndicateurs.expectTableRowCount(nombreInitial - 20);
     });
 
     await test.step("Navigation vers le détail d'un indicateur", async () => {
-      await pageIndicateurs.allerPage(1);
-      await pageIndicateurs.rechercherIndicateur("IND-021");
-      await pageIndicateurs.clickIndicateurParId("IND-021");
+      await pageIndicateurs.goToPage(1);
+      await pageIndicateurs.searchIndicateur("IND-021");
+      await pageIndicateurs.clickIndicateurById("IND-021");
       await expect(page).toHaveURL(
         /\/panel-administrateur\/indicateurs\/IND-021/,
       );
@@ -107,14 +107,14 @@ test.describe("Listing des indicateurs — Admin", () => {
 
     await test.step("Coordinateur région — pas de lien navbar ni d'accès par URL", async () => {
       await appActions.loginAs(COORDINATEUR_REGION);
-      await pageIndicateurs.expectLienIndicateursDesChantiersNonVisible();
+      await pageIndicateurs.expectIndicateursDesChantiersLinkNotVisible();
       await page.goto("/panel-administrateur/indicateurs");
       await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs/);
     });
 
     await test.step("Équipe direction de projet — pas de lien navbar ni d'accès par URL", async () => {
       await appActions.switchUser(EQUIPE_DIR_PROJET);
-      await pageIndicateurs.expectLienIndicateursDesChantiersNonVisible();
+      await pageIndicateurs.expectIndicateursDesChantiersLinkNotVisible();
       await page.goto("/panel-administrateur/indicateurs");
       await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs/);
     });

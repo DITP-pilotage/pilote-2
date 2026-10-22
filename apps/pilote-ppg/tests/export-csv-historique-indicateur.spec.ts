@@ -10,7 +10,7 @@ const jalonParDefaut = getAnneeDateDeBascule(
     "2000-03-31",
 );
 
-test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
+test("doit pouvoir exporter l'historique des indicateurs sous format CSV", async ({
   page,
   e2eContext,
 }) => {
@@ -99,6 +99,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
       expect(contents.toString()).toMatch(
         `"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Indicateur Id";"Valeur initiale";"Date valeur initiale";"Valeur cible année ${jalonParDefaut}";"Date valeur cible année ${jalonParDefaut}";"Valeur avancement";"Date valeur avancement"\n`,
       );
+      expect(contents.toString().trim().split("\n").length).toBeGreaterThan(1);
     });
   });
 });
