@@ -36,11 +36,13 @@ const MAX_PDF_REQUESTS_IN_FLIGHT = 20;
 const SEND_IDLE_TIMEOUT_MS = 60_000;
 const SEND_DEADLINE_MS = 600_000;
 const LOADING_TIMEOUT_MS = 60_000;
+const MAX_ABANDONED_LOADS = 2;
 
 class ClientGoneError extends Error {}
 
 const generationQueue = createSerialQueue(MAX_PENDING_GENERATIONS);
 const pdfRequestSlots = createSlotLimiter(MAX_PDF_REQUESTS_IN_FLIGHT);
+const abandonedLoadSlots = createSlotLimiter(MAX_ABANDONED_LOADS);
 
 export type RapportDetaillePdfDependencies = {
   loadVueDEnsemble: (
@@ -57,6 +59,7 @@ export type RapportDetaillePdfDependencies = {
   slots: SlotLimiter;
   sendDeadlineMs: number;
   loadingTimeoutMs: number;
+  abandonedLoads: SlotLimiter;
   now: () => Date;
 };
 
@@ -78,6 +81,7 @@ export function defaultRapportDetaillePdfDependencies(): RapportDetaillePdfDepen
     slots: pdfRequestSlots,
     sendDeadlineMs: SEND_DEADLINE_MS,
     loadingTimeoutMs: LOADING_TIMEOUT_MS,
+    abandonedLoads: abandonedLoadSlots,
     now: () => new Date(),
   };
 }
@@ -151,6 +155,10 @@ export async function handleRapportDetaillePdf(
     sendError(response, 403, "Territoire non autorisé");
     return;
   }
+  if (dependencies.abandonedLoads.isFull()) {
+    sendBusy(response);
+    return;
+  }
   const releaseSlot = dependencies.slots.tryAcquire();
   if (!releaseSlot) {
     sendBusy(response);
@@ -200,15 +208,16 @@ export async function handleRapportDetaillePdf(
 function withTimeout<Result>(
   promise: Promise<Result>,
   timeoutMs: number,
+  onTimeout: () => void,
 ): Promise<Result> {
   let timeout: NodeJS.Timeout | undefined;
   return Promise.race([
     promise,
     new Promise<never>((_, reject) => {
-      timeout = setTimeout(
-        () => reject(new Error(`Chargement interrompu après ${timeoutMs} ms`)),
-        timeoutMs,
-      );
+      timeout = setTimeout(() => {
+        onTimeout();
+        reject(new Error(`Chargement interrompu après ${timeoutMs} ms`));
+      }, timeoutMs);
     }),
   ]).finally(() => clearTimeout(timeout));
 }
@@ -234,9 +243,14 @@ async function generate(
   dependencies: RapportDetaillePdfDependencies,
 ): Promise<Uint8Array> {
   const context = buildRapportDetailleContext(query, territoireCode, session);
+  const loading = loadData(context, dependencies);
   const { vue, details, hideNonApplicable } = await withTimeout(
-    loadData(context, dependencies),
+    loading,
     dependencies.loadingTimeoutMs,
+    () => {
+      const release = dependencies.abandonedLoads.tryAcquire();
+      if (release) loading.then(release, release);
+    },
   );
   return dependencies.renderPdf({
     vue,

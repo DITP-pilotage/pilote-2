@@ -24,4 +24,15 @@ describe("createSlotLimiter", () => {
 
     expect(attempts.map((attempt) => attempt !== null)).toEqual([true, false]);
   });
+
+  it("indique quand toutes les places sont occupées", () => {
+    const slots = createSlotLimiter(1);
+
+    const before = slots.isFull();
+    const release = slots.tryAcquire();
+    const whileUsed = slots.isFull();
+    release?.();
+
+    expect([before, whileUsed, slots.isFull()]).toEqual([false, true, false]);
+  });
 });

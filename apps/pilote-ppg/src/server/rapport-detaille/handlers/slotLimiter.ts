@@ -1,5 +1,6 @@
 export type SlotLimiter = {
   tryAcquire: () => (() => void) | null;
+  isFull: () => boolean;
 };
 
 export function createSlotLimiter(maxSlots: number): SlotLimiter {
@@ -15,5 +16,6 @@ export function createSlotLimiter(maxSlots: number): SlotLimiter {
         used -= 1;
       };
     },
+    isFull: () => used >= maxSlots,
   };
 }
