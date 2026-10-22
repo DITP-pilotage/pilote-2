@@ -99,7 +99,17 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async clickSuivant(): Promise<void> {
-    await this.boutonSuivant.click();
+    // Un clic avant l'hydratation est perdu (WebKit) : on réessaie jusqu'à voir
+    // l'étape suivante ou les erreurs de validation.
+    const clickHandled = this.page
+      .getByRole("heading", { name: /Étape 2 sur 2/ })
+      .or(this.page.locator('[aria-invalid="true"]').first());
+    await expect(async () => {
+      if (!(await clickHandled.isVisible())) {
+        await this.boutonSuivant.click();
+      }
+      await expect(clickHandled).toBeVisible({ timeout: 2_000 });
+    }).toPass();
   }
 
   async expectErreurFonction(): Promise<void> {

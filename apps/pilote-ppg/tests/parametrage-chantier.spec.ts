@@ -18,6 +18,19 @@ async function openChantierSettings(page: Page): Promise<void> {
   await listsLoaded;
 }
 
+// Une saisie ou un clic avant l'hydratation est perdu (WebKit) : on rejoue la sauvegarde,
+// idempotente, jusqu'à la voir en base.
+async function saveUntilPersisted(
+  save: () => Promise<void>,
+  readPersisted: () => Promise<unknown>,
+  expected: unknown,
+): Promise<void> {
+  await expect(async () => {
+    await save();
+    await expect.poll(readPersisted, { timeout: 3_000 }).toEqual(expected);
+  }).toPass();
+}
+
 test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
   test("les métadonnées enregistrées sont relues après rechargement", async ({
     page,
@@ -32,19 +45,20 @@ test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
     await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
     await openChantierSettings(page);
 
-    await page
-      .getByRole("textbox", { name: "Description" })
-      .fill("Description modifiée par un test e2e");
-    await page.getByRole("button", { name: "Sauvegarder" }).first().click();
-
-    await expect
-      .poll(async () =>
+    await saveUntilPersisted(
+      async () => {
+        await page
+          .getByRole("textbox", { name: "Description" })
+          .fill("Description modifiée par un test e2e");
+        await page.getByRole("button", { name: "Sauvegarder" }).first().click();
+      },
+      () =>
         prisma.metadata_chantiers.findUniqueOrThrow({
           where: { chantier_id: CHANTIER_FOR_WRITES },
           select: { ch_descr: true },
         }),
-      )
-      .toEqual({ ch_descr: "Description modifiée par un test e2e" });
+      { ch_descr: "Description modifiée par un test e2e" },
+    );
     await page.reload();
     await expect(
       page.getByRole("textbox", { name: "Description" }),
@@ -68,17 +82,18 @@ test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
       .filter({ hasText: INDICATEUR_FOR_OPEN_API })
       .getByRole("spinbutton")
       .first();
-    await nationalPonderationInput.fill("100");
-    await page.getByRole("button", { name: "Enregistrer" }).first().click();
-
-    await expect
-      .poll(async () =>
+    await saveUntilPersisted(
+      async () => {
+        await nationalPonderationInput.fill("100");
+        await page.getByRole("button", { name: "Enregistrer" }).first().click();
+      },
+      () =>
         prisma.metadata_parametrage_indicateurs.findUniqueOrThrow({
           where: { indic_id: INDICATEUR_FOR_OPEN_API },
           select: { poids_pourcent_nat_declaree: true },
         }),
-      )
-      .toEqual({ poids_pourcent_nat_declaree: 100 });
+      { poids_pourcent_nat_declaree: 100 },
+    );
     await page.reload();
     await page.getByRole("tab", { name: "Pondérations" }).click();
     await expect(nationalPonderationInput).toHaveValue("100");

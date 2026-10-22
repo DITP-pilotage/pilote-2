@@ -7,9 +7,20 @@ import { E2ETestContext } from "../../e2e-test-context";
 export class PageAdminUtilisateurs extends BasePage {
   readonly header: HeaderComponent;
 
+  private pendingListRequests = 0;
+
   constructor(page: Page, e2eContext: E2ETestContext) {
     super(page, e2eContext);
     this.header = new HeaderComponent(page);
+    const isListRequest = (url: string) => url.includes("utilisateur.list");
+    page.on("request", (request) => {
+      if (isListRequest(request.url())) this.pendingListRequests++;
+    });
+    const onRequestDone = (request: { url(): string }) => {
+      if (isListRequest(request.url())) this.pendingListRequests--;
+    };
+    page.on("requestfinished", onRequestDone);
+    page.on("requestfailed", onRequestDone);
   }
 
   private get tableau() {
@@ -153,19 +164,15 @@ export class PageAdminUtilisateurs extends BasePage {
     );
   }
 
-  // Les filtres et la recherche rechargent la liste côté serveur (nuqs, shallow: false).
+  // La liste suit les paramètres d'URL (nuqs) et se recharge par tRPC, sauf si le
+  // résultat est déjà en cache : on attend l'URL, puis la fin des chargements en cours.
   private async waitForListReload(
-    matchesRequest: (url: URL) => boolean,
+    matchesUrl: (url: URL) => boolean,
     action: () => Promise<void>,
   ): Promise<void> {
-    const listReloaded = this.page.waitForResponse((response) => {
-      const url = new URL(response.url());
-      return (
-        url.pathname.endsWith("/admin/utilisateurs.json") && matchesRequest(url)
-      );
-    });
     await action();
-    await listReloaded;
+    await this.page.waitForURL(matchesUrl);
+    await expect.poll(() => this.pendingListRequests).toBe(0);
   }
 
   async expectColonneVisible(nomColonne: string): Promise<void> {
