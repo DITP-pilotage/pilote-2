@@ -8,12 +8,29 @@ import {
   buildTestVueDEnsemble,
 } from "@/server/rapport-detaille/pdf/testHelpers";
 import { buildTestChantier } from "@/server/rapport-detaille/testData";
+import { ChantierDetail } from "@/server/rapport-detaille/rapportDetaille.interface";
 
 function countPages(buffer: Buffer): number {
   return buffer.toString("latin1").match(/\/Type \/Page\b/g)?.length ?? 0;
 }
 
 const now = new Date("2026-10-01T07:05:00Z");
+
+const SENTENCE =
+  "Le chantier progresse sur l'ensemble des territoires, avec des écarts marqués entre les régions les plus avancées et celles qui démarrent seulement leur déploiement. ";
+
+function longHtml(paragraphs: number): string {
+  return Array.from({ length: paragraphs }, () => `<p>${SENTENCE}</p>`).join(
+    "",
+  );
+}
+
+const publication = (contenu: string) => ({
+  id: "P-1",
+  contenu,
+  date: "2026-09-15T00:00:00Z",
+  auteur: "Jeanne Martin",
+});
 
 describe("generateRapportDetaillePdf", () => {
   it("génère la page de garde et la vue d'ensemble sans le détail des chantiers", async () => {
@@ -51,4 +68,52 @@ describe("generateRapportDetaillePdf", () => {
 
     expect(countPages(buffer)).toBeGreaterThanOrEqual(5);
   });
+
+  it.each([
+    [
+      "de la synthèse des résultats",
+      (html: string): Partial<ChantierDetail> => ({
+        synthèseDesRésultats: { ...publication(html), météo: "SOLEIL" },
+      }),
+    ],
+    [
+      "des objectifs",
+      (html: string): Partial<ChantierDetail> => ({
+        objectifs: [{ ...publication(html), type: "notreAmbition" }],
+      }),
+    ],
+    [
+      "de la décision stratégique",
+      (html: string): Partial<ChantierDetail> => ({
+        décisionStratégique: {
+          ...publication(html),
+          type: "suiviDesDecisionsStrategiques",
+        },
+      }),
+    ],
+  ])(
+    "garde tout le texte %s quand il dépasse une page",
+    async (_, withLongText) => {
+      const render = (paragraphs: number) =>
+        generateRapportDetaillePdf({
+          vue: buildTestVueDEnsemble({
+            chantiers: [buildTestChantier({ id: "A" })],
+          }),
+          details: [
+            buildTestChantierDetail({
+              chantierId: "A",
+              ...withLongText(longHtml(paragraphs)),
+            }),
+          ],
+          context: buildTestContext({ detail: "true" }),
+          hideNonApplicable: false,
+          now,
+        }).getBuffer();
+
+      const pagesWithLongText = countPages(await render(40));
+      const pagesWithTripleText = countPages(await render(120));
+
+      expect(pagesWithTripleText).toBeGreaterThanOrEqual(pagesWithLongText + 2);
+    },
+  );
 });

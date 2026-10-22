@@ -10,6 +10,7 @@ import { withoutMailles } from "@/server/rapport-detaille/withoutMailles";
 import { pageDeGardePdf } from "@/server/rapport-detaille/pdf/pageDeGarde";
 import { vueDEnsemblePdf } from "@/server/rapport-detaille/pdf/vueDEnsemble";
 import { chantierPdf } from "@/server/rapport-detaille/pdf/chantier";
+import { keepHeadlineWithNext } from "@/server/rapport-detaille/pdf/section";
 import {
   BODY_FONT_SIZE,
   PAGE_HEIGHT,
@@ -49,6 +50,7 @@ export function buildRapportDetailleDocument(
   });
   return {
     info: { title: "Rapport détaillé - PILOTE" },
+    pageBreakBefore: keepHeadlineWithNext,
     pageSize: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
     pageMargins: [PAGE_MARGIN_X, PAGE_MARGIN_Y, PAGE_MARGIN_X, PAGE_MARGIN_Y],
     defaultStyle: {

@@ -292,5 +292,5 @@ export function indicateursPdf(params: {
       };
     });
 
-  return section("Indicateurs", { stack: rubriques }, { breakable: true });
+  return section("Indicateurs", { stack: rubriques });
 }

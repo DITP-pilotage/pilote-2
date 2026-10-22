@@ -302,6 +302,7 @@ export function sectionTitlePdf(
     lineHeight: size === "h4" ? cssLineHeight(2, 1.5) : cssLineHeight(28, 18),
     color: options.color ?? PRIMARY_COLOR,
     margin: options.margin ?? [0, 0, 0, px(16)],
+    headlineLevel: 1,
   };
 }
 
