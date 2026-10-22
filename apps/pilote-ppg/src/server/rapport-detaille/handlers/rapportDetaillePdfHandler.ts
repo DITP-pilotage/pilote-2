@@ -35,6 +35,7 @@ const MAX_PENDING_GENERATIONS = 10;
 const MAX_PDF_REQUESTS_IN_FLIGHT = 20;
 const SEND_IDLE_TIMEOUT_MS = 60_000;
 const SEND_DEADLINE_MS = 600_000;
+const LOADING_TIMEOUT_MS = 60_000;
 
 class ClientGoneError extends Error {}
 
@@ -55,6 +56,7 @@ export type RapportDetaillePdfDependencies = {
   enqueue: typeof generationQueue;
   slots: SlotLimiter;
   sendDeadlineMs: number;
+  loadingTimeoutMs: number;
   now: () => Date;
 };
 
@@ -75,6 +77,7 @@ export function defaultRapportDetaillePdfDependencies(): RapportDetaillePdfDepen
     enqueue: generationQueue,
     slots: pdfRequestSlots,
     sendDeadlineMs: SEND_DEADLINE_MS,
+    loadingTimeoutMs: LOADING_TIMEOUT_MS,
     now: () => new Date(),
   };
 }
@@ -194,13 +197,26 @@ export async function handleRapportDetaillePdf(
   response.end(pdf);
 }
 
-async function generate(
-  query: RapportDetailleQuery,
-  territoireCode: string,
-  session: Session,
+function withTimeout<Result>(
+  promise: Promise<Result>,
+  timeoutMs: number,
+): Promise<Result> {
+  let timeout: NodeJS.Timeout | undefined;
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) => {
+      timeout = setTimeout(
+        () => reject(new Error(`Chargement interrompu après ${timeoutMs} ms`)),
+        timeoutMs,
+      );
+    }),
+  ]).finally(() => clearTimeout(timeout));
+}
+
+async function loadData(
+  context: RapportDetailleContext,
   dependencies: RapportDetaillePdfDependencies,
-): Promise<Uint8Array> {
-  const context = buildRapportDetailleContext(query, territoireCode, session);
+) {
   const vue = await dependencies.loadVueDEnsemble(context);
   const [details, hideNonApplicable] = await Promise.all([
     context.showDetail
@@ -208,6 +224,20 @@ async function generate(
       : Promise.resolve([]),
     dependencies.getHideNonApplicable(),
   ]);
+  return { vue, details, hideNonApplicable };
+}
+
+async function generate(
+  query: RapportDetailleQuery,
+  territoireCode: string,
+  session: Session,
+  dependencies: RapportDetaillePdfDependencies,
+): Promise<Uint8Array> {
+  const context = buildRapportDetailleContext(query, territoireCode, session);
+  const { vue, details, hideNonApplicable } = await withTimeout(
+    loadData(context, dependencies),
+    dependencies.loadingTimeoutMs,
+  );
   return dependencies.renderPdf({
     vue,
     details,
