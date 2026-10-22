@@ -14,4 +14,6 @@ export const keepHeadlineWithNext: TDocumentDefinitions["pageBreakBefore"] = (
   nodeQueries,
 ) =>
   currentNode.headlineLevel === 1 &&
-  nodeQueries.getFollowingNodesOnPage().length === 0;
+  nodeQueries
+    .getFollowingNodesOnPage()
+    .every((node) => node.stack || node.headlineLevel === 1);

@@ -279,6 +279,7 @@ export function indicateursPdf(params: {
             lineHeight: cssLineHeight(28, 18),
             color: TITLE_COLOR,
             margin: [0, 0, 0, px(8)],
+            headlineLevel: 1,
           },
           ...indicateursRubrique.map((indicateur) =>
             indicateurBloc(

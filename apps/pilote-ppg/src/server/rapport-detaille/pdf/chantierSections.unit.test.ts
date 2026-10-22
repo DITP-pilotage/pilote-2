@@ -161,6 +161,18 @@ describe("publications", () => {
   });
 });
 
+function headlinesOf(value: unknown): string[] {
+  if (Array.isArray(value)) return value.flatMap(headlinesOf);
+  if (typeof value !== "object" || value === null) return [];
+  const own =
+    "headlineLevel" in value &&
+    "text" in value &&
+    typeof value.text === "string"
+      ? [value.text]
+      : [];
+  return [...own, ...Object.values(value).flatMap(headlinesOf)];
+}
+
 describe("indicateursPdf", () => {
   it("répartit les indicateurs par rubrique et détaille chacun", async () => {
     const indicateurs = [
@@ -222,6 +234,23 @@ describe("indicateursPdf", () => {
     expect(text).toContain("(06/2026)");
     expect(text).toContain("42 %");
     expect(await renderPdf(content ?? "")).toBe("%PDF");
+  });
+
+  it("marque les titres de rubrique comme titres à garder avec leur contenu", () => {
+    const content = indicateursPdf({
+      indicateurs: [buildIndicateur({ id: "C", nom: "Nombre de sites" })],
+      détailsIndicateurs: {
+        C: { "NAT-FR": buildDétails({ ponderation: null }) },
+      },
+      listeIndicateursPrisEnCompteAvancement: [],
+      context: buildTestContext(),
+      hideNonApplicable: false,
+    });
+
+    expect(headlinesOf(content)).toEqual([
+      "Indicateurs",
+      "Autres indicateurs (1)",
+    ]);
   });
 
   it("affiche une alerte quand aucun indicateur n'est applicable", () => {
