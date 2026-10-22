@@ -31,15 +31,35 @@ function classToAttributes(token: string): [string, string] | null {
   return null;
 }
 
+function styleToAttributes(style: string): [string, string][] {
+  return style
+    .split(";")
+    .map((declaration): [string, string] => {
+      const separator = declaration.indexOf(":");
+      return [
+        declaration.slice(0, separator).trim(),
+        declaration.slice(separator + 1).trim(),
+      ];
+    })
+    .filter(([name, value]) => name.length > 0 && value.length > 0);
+}
+
 function flattenTag(attributes: string): string {
   const classMatch = /\sclass="([^"]*)"/.exec(attributes);
-  if (!classMatch) return attributes;
-  const replacements = classMatch[1]
+  const styleMatch = /\sstyle="([^"]*)"/.exec(attributes);
+  if (!classMatch && !styleMatch) return attributes;
+  const fromStyle = styleMatch ? styleToAttributes(styleMatch[1]) : [];
+  const fromClasses = (classMatch?.[1] ?? "")
     .split(/\s+/)
     .filter(Boolean)
     .map(classToAttributes)
-    .filter((attribute): attribute is [string, string] => attribute !== null);
-  let flattened = attributes.replace(classMatch[0], "");
+    .filter((attribute): attribute is [string, string] => attribute !== null)
+    .filter(([name]) => !fromStyle.some(([styleName]) => styleName === name));
+  const replacements = [...fromClasses, ...fromStyle];
+  let flattened = attributes;
+  for (const match of [classMatch, styleMatch]) {
+    if (match) flattened = flattened.replace(match[0], "");
+  }
   for (const [name] of replacements) {
     flattened = flattened.replace(new RegExp(`\\s${name}="[^"]*"`), "");
   }
