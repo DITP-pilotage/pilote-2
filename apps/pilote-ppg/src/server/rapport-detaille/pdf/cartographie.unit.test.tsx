@@ -121,7 +121,7 @@ describe("cartes SVG", () => {
 
     expect(svg.match(/<path/g)?.length ?? 0).toBeGreaterThan(100);
     expect(svg).toContain('fill="#000091"');
-    expect(svg).toContain('stroke-width="0.4"');
+    expect(svg).toContain("stroke-width:0.4");
     expect(svg).not.toContain("class=");
     const buffer = await withMarianne()
       .createPdf({ content: [{ svg, width: 300 }] })
