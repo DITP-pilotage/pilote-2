@@ -36,10 +36,11 @@ export const DownloadRapportDetaillePdfButton = ({
         );
         return;
       }
-      if (!response.ok) throw new Error(String(response.status));
       if (
+        response.status === 401 ||
         response.redirected ||
-        !response.headers.get("Content-Type")?.startsWith("application/pdf")
+        (response.ok &&
+          !response.headers.get("Content-Type")?.startsWith("application/pdf"))
       ) {
         toast.error(
           "Votre session a expiré, rechargez la page pour vous reconnecter.",
@@ -47,6 +48,7 @@ export const DownloadRapportDetaillePdfButton = ({
         );
         return;
       }
+      if (!response.ok) throw new Error(String(response.status));
       const url = URL.createObjectURL(await response.blob());
       const link = document.createElement("a");
       link.href = url;
