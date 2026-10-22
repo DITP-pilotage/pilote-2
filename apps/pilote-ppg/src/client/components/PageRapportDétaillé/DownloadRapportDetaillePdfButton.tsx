@@ -31,7 +31,7 @@ export const DownloadRapportDetaillePdfButton = ({
       const response = await fetch(`/api/rapport-detaille/pdf?${params}`);
       if (response.status === 503) {
         toast.info(
-          "Un PDF est déjà en cours de génération, réessayez dans quelques secondes.",
+          "Trop de PDF sont en cours de génération, réessayez dans quelques secondes.",
           { position: "top-right", richColors: true },
         );
         return;

@@ -20,7 +20,7 @@ import {
 } from "@/server/rapport-detaille/pdf/layout";
 import { TEXT_COLOR } from "@/server/pdf/primitives";
 
-type GenerateParams = {
+export type GenerateParams = {
   vue: VueDEnsembleRapportDetaille;
   details: ChantierDetail[];
   context: RapportDetailleContext;
@@ -76,4 +76,10 @@ export function buildRapportDetailleDocument(
 
 export function generateRapportDetaillePdf(params: GenerateParams) {
   return withMarianne().createPdf(buildRapportDetailleDocument(params));
+}
+
+export async function renderRapportDetaillePdf(
+  params: GenerateParams,
+): Promise<Uint8Array<ArrayBuffer>> {
+  return new Uint8Array(await generateRapportDetaillePdf(params).getBuffer());
 }

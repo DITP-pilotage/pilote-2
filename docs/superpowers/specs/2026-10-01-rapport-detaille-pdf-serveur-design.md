@@ -53,7 +53,7 @@ Filet de sécurité du découpage : pour un même jeu de filtres, l'union de `ch
 
 1. **Page (SSR)** : `getServerSideProps` n'appelle plus que `chargerVueDEnsemble`.
 2. **Page (client)** : procédure tRPC `rapportDetaille.detailsChantiers({ filtres, territoireCode, chantierIds })`, protégée comme la page, qui recharge les contrats de ces seuls chantiers puis appelle `chargerDetailsChantiers`. Le nombre d'ids par appel est borné (5).
-3. **PDF** : route API Pages `GET /api/rapport-detaille/pdf` avec les mêmes query params que la page, plus `territoireCode` et `detail=true|false`. Elle refait l'authentification et les contrôles d'habilitation de la page, appelle `chargerVueDEnsemble`, puis `chargerDetailsChantiers` par lots sur les chantiers déjà chargés si `detail=true`, construit le document et l'envoie en streaming (`Content-Type: application/pdf`, `Content-Disposition: attachment; filename="rapport-detaille-<territoire>-<date>.pdf"`).
+3. **PDF** : route API Pages `GET /api/rapport-detaille/pdf` avec les mêmes query params que la page, plus `territoireCode` et `detail=true|false`. Elle refait l'authentification et les contrôles d'habilitation de la page, appelle `chargerVueDEnsemble`, puis `chargerDetailsChantiers` par lots sur les chantiers déjà chargés si `detail=true`, génère le PDF dans un `worker_thread` puis l'envoie d'un bloc avec sa taille (`Content-Type: application/pdf`, `Content-Length`, `Content-Disposition: attachment; filename="rapport-detaille-<territoire>-<date>.pdf"`).
 
 ### Côté client
 
@@ -104,7 +104,7 @@ Comparaison visuelle manuelle de l'impression actuelle (depuis `dev`) et du PDF,
 
 ## Gestion des erreurs
 
-- Route PDF : 401 sans session, 403 si l'utilisateur n'a pas accès au territoire, 400 si les filtres sont invalides (même loader nuqs). Erreur avant le premier octet : 500. Erreur pendant l'envoi : connexion coupée et journalisée. Fermeture par le client ignorée, comme `ecrireCsvEnStreaming`.
+- Route PDF : 401 sans session, 403 si l'utilisateur n'a pas accès au territoire, 400 si les filtres sont invalides (même loader nuqs). Erreur de chargement ou de génération : 500 journalisé. File d'attente pleine : 503 avec `Retry-After: 10`.
 - Bouton : toast d'erreur, bouton réactivé.
 - tRPC : une fiche dont le lot échoue affiche un message et un bouton « Réessayer ».
 
@@ -126,7 +126,8 @@ Mesure : script jetable qui chronomètre la génération et relève `process.mem
 ## Points de vigilance
 
 1. **Bundle** : pdfmake, les polices et `svgDepuisComposant` ne sont importés que côté serveur. ppg est construit en `output: "standalone"` : les `.woff2` lus par `fs` ne sont pas forcément tracés, donc `outputFileTracingIncludes` les déclare pour la route PDF, et on vérifie après `next build` qu'ils sont présents dans `.next/standalone`.
-2. **Mémoire** : pdfmake construit tout le document avant l'envoi ; le streaming réduit le pic sans le supprimer. Si le national dépasse ce que le conteneur Scalingo supporte, repli : génération par chantier et fusion avec `pdf-lib`.
+2. **Mémoire** : pdfmake construit tout le document avant l'envoi. La génération tourne dans un `worker_thread` neuf à chaque PDF, tas limité à 256 Mo, dont la mémoire est rendue à la fin. Si le national dépasse ce plafond, repli : génération par chantier et fusion avec `pdf-lib`.
+5. **Charge** : la génération (construction du document, rendu React des SVG, mise en page pdfmake) est synchrone et dure plusieurs secondes sur le national. Dans le thread principal, elle bloquerait toutes les autres requêtes du conteneur ; d'où le `worker_thread`, interrompu après 90 s (boucle infinie de pdfmake). Une file sérielle commune au conteneur sert une génération à la fois, avec jusqu'à 10 demandes en attente ; au-delà, 503. La file est libérée avant l'envoi : un client lent ne bloque pas les autres.
 3. **Moteur SVG de pdfmake** : ignore les classes CSS (pas de feuille de style) ; d'où la mise à plat des classes Tailwind en attributs dans `svgDepuisComposant`.
 4. **Sécurité** : `setUrlAccessPolicy(() => false)` conservé ; aucun contenu distant, les liens du HTML riche ne sont que du texte.
 

@@ -1,6 +1,7 @@
 import {
   buildRapportDetailleDocument,
   generateRapportDetaillePdf,
+  renderRapportDetaillePdf,
 } from "@/server/rapport-detaille/pdf/generateRapportDetaillePdf";
 import {
   buildTestChantierDetail,
@@ -116,4 +117,19 @@ describe("generateRapportDetaillePdf", () => {
       expect(pagesWithTripleText).toBeGreaterThanOrEqual(pagesWithLongText + 2);
     },
   );
+
+  it("renderRapportDetaillePdf renvoie un PDF complet", async () => {
+    const pdf = await renderRapportDetaillePdf({
+      vue: buildTestVueDEnsemble({ chantiers: [buildTestChantier()] }),
+      details: [],
+      context: buildTestContext(),
+      hideNonApplicable: false,
+      now,
+    });
+    const text = Buffer.from(pdf).toString("latin1");
+
+    expect(pdf).toBeInstanceOf(Uint8Array);
+    expect(text.startsWith("%PDF")).toBe(true);
+    expect(text.trimEnd().endsWith("%%EOF")).toBe(true);
+  });
 });
