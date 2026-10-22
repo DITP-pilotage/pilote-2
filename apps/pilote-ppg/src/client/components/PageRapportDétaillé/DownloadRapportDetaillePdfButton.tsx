@@ -37,6 +37,16 @@ export const DownloadRapportDetaillePdfButton = ({
         return;
       }
       if (!response.ok) throw new Error(String(response.status));
+      if (
+        response.redirected ||
+        !response.headers.get("Content-Type")?.startsWith("application/pdf")
+      ) {
+        toast.error(
+          "Votre session a expiré, rechargez la page pour vous reconnecter.",
+          { position: "top-right", richColors: true },
+        );
+        return;
+      }
       const url = URL.createObjectURL(await response.blob());
       const link = document.createElement("a");
       link.href = url;
