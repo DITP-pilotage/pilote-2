@@ -1,10 +1,8 @@
 import { ServerResponse } from "node:http";
-import { pipeline } from "node:stream/promises";
 import { Session } from "next-auth";
 import { logger } from "@/server/framework/logger";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
-import { isClientDisconnection } from "@/server/framework/csv/ecrireCsvEnStreaming";
 import {
   buildRapportDetailleContext,
   RapportDetailleContext,
@@ -18,13 +16,19 @@ import {
 } from "@/server/rapport-detaille/rapportDetaille.interface";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
-import { generateRapportDetaillePdf } from "@/server/rapport-detaille/pdf/generateRapportDetaillePdf";
+import { GenerateParams } from "@/server/rapport-detaille/pdf/generateRapportDetaillePdf";
+import { renderRapportDetaillePdfInWorker } from "@/server/rapport-detaille/pdf/renderRapportDetaillePdfInWorker";
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
+import {
+  createSerialQueue,
+  QueueFullError,
+} from "@/server/rapport-detaille/handlers/serialQueue";
 
 const DETAILS_BATCH_SIZE = 10;
 const RETRY_AFTER_SECONDS = 10;
+const MAX_PENDING_GENERATIONS = 10;
 
-let generationInProgress = false;
+const generationQueue = createSerialQueue(MAX_PENDING_GENERATIONS);
 
 export type RapportDetaillePdfDependencies = {
   loadVueDEnsemble: (
@@ -36,6 +40,8 @@ export type RapportDetaillePdfDependencies = {
     selectedTerritoire: Territoire,
   ) => Promise<ChantierDetail[]>;
   getHideNonApplicable: () => Promise<boolean>;
+  renderPdf: (params: GenerateParams) => Promise<Uint8Array>;
+  enqueue: typeof generationQueue;
   now: () => Date;
 };
 
@@ -52,6 +58,8 @@ export function defaultRapportDetaillePdfDependencies(): RapportDetaillePdfDepen
         variables.NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES === true
       );
     },
+    renderPdf: renderRapportDetaillePdfInWorker,
+    enqueue: generationQueue,
     now: () => new Date(),
   };
 }
@@ -67,21 +75,20 @@ async function loadAllDetails(
   context: RapportDetailleContext,
   dependencies: RapportDetaillePdfDependencies,
 ): Promise<ChantierDetail[]> {
-  const details: ChantierDetail[] = [];
+  const batches: ChantierRapportDetailleContrat[][] = [];
   for (
     let index = 0;
     index < vue.chantiers.length;
     index += DETAILS_BATCH_SIZE
   ) {
-    details.push(
-      ...(await dependencies.loadChantierDetails(
-        vue.chantiers.slice(index, index + DETAILS_BATCH_SIZE),
-        context,
-        vue.selectedTerritoire,
-      )),
-    );
+    batches.push(vue.chantiers.slice(index, index + DETAILS_BATCH_SIZE));
   }
-  return details;
+  const details = await Promise.all(
+    batches.map((batch) =>
+      dependencies.loadChantierDetails(batch, context, vue.selectedTerritoire),
+    ),
+  );
+  return details.flat();
 }
 
 export async function handleRapportDetaillePdf(
@@ -108,50 +115,17 @@ export async function handleRapportDetaillePdf(
     return;
   }
 
-  if (generationInProgress) {
-    response.setHeader("Retry-After", String(RETRY_AFTER_SECONDS));
-    sendError(response, 503, "Un PDF est déjà en cours de génération");
-    return;
-  }
-  generationInProgress = true;
+  let pdf: Uint8Array;
   try {
-    await generateAndSend(
-      request.query,
-      territoireCode,
-      response,
-      session,
-      dependencies,
+    pdf = await dependencies.enqueue(() =>
+      generate(request.query, territoireCode, session, dependencies),
     );
-  } finally {
-    generationInProgress = false;
-  }
-}
-
-async function generateAndSend(
-  query: RapportDetailleQuery,
-  territoireCode: string,
-  response: ServerResponse,
-  session: Session,
-  dependencies: RapportDetaillePdfDependencies,
-): Promise<void> {
-  let pdf: PDFKit.PDFDocument;
-  try {
-    const context = buildRapportDetailleContext(query, territoireCode, session);
-    const vue = await dependencies.loadVueDEnsemble(context);
-    const [details, hideNonApplicable] = await Promise.all([
-      context.showDetail
-        ? loadAllDetails(vue, context, dependencies)
-        : Promise.resolve([]),
-      dependencies.getHideNonApplicable(),
-    ]);
-    pdf = await generateRapportDetaillePdf({
-      vue,
-      details,
-      context,
-      hideNonApplicable,
-      now: dependencies.now(),
-    }).getStream();
   } catch (error) {
+    if (error instanceof QueueFullError) {
+      response.setHeader("Retry-After", String(RETRY_AFTER_SECONDS));
+      sendError(response, 503, "Trop de PDF sont en cours de génération");
+      return;
+    }
     logger.error({ error }, "Génération du PDF du rapport détaillé impossible");
     sendError(response, 500, "Erreur lors de la génération du PDF");
     return;
@@ -164,13 +138,29 @@ async function generateAndSend(
     "Content-Disposition",
     `attachment; filename="rapport-detaille-${territoireCode}-${date}.pdf"`,
   );
-  try {
-    const sending = pipeline(pdf, response);
-    pdf.end();
-    await sending;
-  } catch (error) {
-    if (isClientDisconnection(error) || response.destroyed) return;
-    logger.error({ error }, "Envoi du PDF du rapport détaillé interrompu");
-    response.destroy();
-  }
+  response.setHeader("Content-Length", String(pdf.byteLength));
+  response.end(pdf);
+}
+
+async function generate(
+  query: RapportDetailleQuery,
+  territoireCode: string,
+  session: Session,
+  dependencies: RapportDetaillePdfDependencies,
+): Promise<Uint8Array> {
+  const context = buildRapportDetailleContext(query, territoireCode, session);
+  const vue = await dependencies.loadVueDEnsemble(context);
+  const [details, hideNonApplicable] = await Promise.all([
+    context.showDetail
+      ? loadAllDetails(vue, context, dependencies)
+      : Promise.resolve([]),
+    dependencies.getHideNonApplicable(),
+  ]);
+  return dependencies.renderPdf({
+    vue,
+    details,
+    context,
+    hideNonApplicable,
+    now: dependencies.now(),
+  });
 }
