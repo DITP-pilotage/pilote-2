@@ -87,7 +87,6 @@ export function commentairesPdf(
         rubrique(libellesTypesCommentaire[type], byType.get(type) ?? null),
       ),
     ),
-    { breakable: true },
   );
 }
 
