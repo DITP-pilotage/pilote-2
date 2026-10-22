@@ -23,12 +23,19 @@ import {
   createSerialQueue,
   QueueFullError,
 } from "@/server/rapport-detaille/handlers/serialQueue";
+import {
+  createSlotLimiter,
+  SlotLimiter,
+} from "@/server/rapport-detaille/handlers/slotLimiter";
 
 const DETAILS_BATCH_SIZE = 10;
 const RETRY_AFTER_SECONDS = 10;
 const MAX_PENDING_GENERATIONS = 10;
+const MAX_PDF_REQUESTS_IN_FLIGHT = 20;
+const SEND_IDLE_TIMEOUT_MS = 60_000;
 
 const generationQueue = createSerialQueue(MAX_PENDING_GENERATIONS);
+const pdfRequestSlots = createSlotLimiter(MAX_PDF_REQUESTS_IN_FLIGHT);
 
 export type RapportDetaillePdfDependencies = {
   loadVueDEnsemble: (
@@ -42,6 +49,7 @@ export type RapportDetaillePdfDependencies = {
   getHideNonApplicable: () => Promise<boolean>;
   renderPdf: (params: GenerateParams) => Promise<Uint8Array>;
   enqueue: typeof generationQueue;
+  slots: SlotLimiter;
   now: () => Date;
 };
 
@@ -60,8 +68,14 @@ export function defaultRapportDetaillePdfDependencies(): RapportDetaillePdfDepen
     },
     renderPdf: renderRapportDetaillePdfInWorker,
     enqueue: generationQueue,
+    slots: pdfRequestSlots,
     now: () => new Date(),
   };
+}
+
+function sendBusy(response: ServerResponse) {
+  response.setHeader("Retry-After", String(RETRY_AFTER_SECONDS));
+  sendError(response, 503, "Trop de PDF sont en cours de génération");
 }
 
 function sendError(response: ServerResponse, status: number, message: string) {
@@ -114,6 +128,11 @@ export async function handleRapportDetaillePdf(
     sendError(response, 403, "Territoire non autorisé");
     return;
   }
+  if (!dependencies.slots.tryAcquire()) {
+    sendBusy(response);
+    return;
+  }
+  response.once("close", dependencies.slots.release);
 
   let pdf: Uint8Array;
   try {
@@ -122,8 +141,7 @@ export async function handleRapportDetaillePdf(
     );
   } catch (error) {
     if (error instanceof QueueFullError) {
-      response.setHeader("Retry-After", String(RETRY_AFTER_SECONDS));
-      sendError(response, 503, "Trop de PDF sont en cours de génération");
+      sendBusy(response);
       return;
     }
     logger.error({ error }, "Génération du PDF du rapport détaillé impossible");
@@ -139,6 +157,7 @@ export async function handleRapportDetaillePdf(
     `attachment; filename="rapport-detaille-${territoireCode}-${date}.pdf"`,
   );
   response.setHeader("Content-Length", String(pdf.byteLength));
+  response.setTimeout(SEND_IDLE_TIMEOUT_MS, () => response.destroy());
   response.end(pdf);
 }
 

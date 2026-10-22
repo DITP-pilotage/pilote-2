@@ -8,6 +8,7 @@ import {
   RapportDetaillePdfDependencies,
 } from "@/server/rapport-detaille/handlers/rapportDetaillePdfHandler";
 import { createSerialQueue } from "@/server/rapport-detaille/handlers/serialQueue";
+import { createSlotLimiter } from "@/server/rapport-detaille/handlers/slotLimiter";
 import { renderRapportDetaillePdf } from "@/server/rapport-detaille/pdf/generateRapportDetaillePdf";
 import { buildTestSession } from "@/server/rapport-detaille/testSession";
 import { buildTestChantier } from "@/server/rapport-detaille/testData";
@@ -43,6 +44,7 @@ function buildDependencies(
     getHideNonApplicable: vi.fn(async () => false),
     renderPdf: vi.fn(renderRapportDetaillePdf),
     enqueue: createSerialQueue(10),
+    slots: createSlotLimiter(20),
     now: () => new Date("2026-10-01T07:05:00Z"),
     ...overrides,
   };
@@ -304,5 +306,27 @@ describe("handleRapportDetaillePdf", () => {
     gate.resolve();
 
     expect((await response).status).toBe(200);
+  });
+
+  it("répond 503 tant que les PDF en cours d'envoi occupent toutes les places", async () => {
+    const largePdf = new Uint8Array(64 * 1024 * 1024);
+    const renderPdf = vi
+      .fn<RapportDetaillePdfDependencies["renderPdf"]>()
+      .mockResolvedValueOnce(largePdf)
+      .mockResolvedValue(PDF_BYTES);
+    const baseUrl = await startServer(
+      nationalSession,
+      buildDependencies({ renderPdf, slots: createSlotLimiter(1) }),
+    );
+
+    const unread = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    const refused = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    await unread.arrayBuffer();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+
+    expect(refused.status).toBe(503);
+    expect(refused.headers.get("retry-after")).toBe("10");
+    expect(next.status).toBe(200);
   });
 });
