@@ -37,6 +37,7 @@ const SEND_IDLE_TIMEOUT_MS = 60_000;
 const SEND_DEADLINE_MS = 600_000;
 const LOADING_TIMEOUT_MS = 60_000;
 const MAX_ABANDONED_LOADS = 2;
+const ABANDONED_LOAD_MAX_MS = 300_000;
 
 class ClientGoneError extends Error {}
 class TooManyAbandonedLoadsError extends Error {}
@@ -61,6 +62,7 @@ export type RapportDetaillePdfDependencies = {
   sendDeadlineMs: number;
   loadingTimeoutMs: number;
   abandonedLoads: SlotLimiter;
+  abandonedLoadMaxMs: number;
   now: () => Date;
 };
 
@@ -83,6 +85,7 @@ export function defaultRapportDetaillePdfDependencies(): RapportDetaillePdfDepen
     sendDeadlineMs: SEND_DEADLINE_MS,
     loadingTimeoutMs: LOADING_TIMEOUT_MS,
     abandonedLoads: abandonedLoadSlots,
+    abandonedLoadMaxMs: ABANDONED_LOAD_MAX_MS,
     now: () => new Date(),
   };
 }
@@ -102,6 +105,7 @@ async function loadAllDetails(
   vue: VueDEnsembleRapportDetaille,
   context: RapportDetailleContext,
   dependencies: RapportDetaillePdfDependencies,
+  signal: AbortSignal,
 ): Promise<ChantierDetail[]> {
   const batches: ChantierRapportDetailleContrat[][] = [];
   for (
@@ -116,7 +120,7 @@ async function loadAllDetails(
   const details: ChantierDetail[][] = [];
   let nextBatch = 0;
   const loadRemainingBatches = async () => {
-    while (nextBatch < batches.length) {
+    while (nextBatch < batches.length && !signal.aborted) {
       const batchIndex = nextBatch;
       nextBatch += 1;
       details[batchIndex] = await dependencies.loadChantierDetails(
@@ -191,7 +195,10 @@ export async function handleRapportDetaillePdf(
       sendBusy(response);
       return;
     }
-    logger.error({ error }, "Génération du PDF du rapport détaillé impossible");
+    logger.error(
+      { categorie: "rapport", source: "rapportDetaillePdfHandler" },
+      `Génération du PDF du rapport détaillé impossible : ${error instanceof Error ? error.message : String(error)}`,
+    );
     sendError(response, 500, "Erreur lors de la génération du PDF");
     return;
   }
@@ -233,15 +240,41 @@ function withTimeout<Result>(
 async function loadData(
   context: RapportDetailleContext,
   dependencies: RapportDetaillePdfDependencies,
+  stopLoading: AbortController,
 ) {
-  const vue = await dependencies.loadVueDEnsemble(context);
-  const [details, hideNonApplicable] = await Promise.all([
-    context.showDetail
-      ? loadAllDetails(vue, context, dependencies)
-      : Promise.resolve([]),
-    dependencies.getHideNonApplicable(),
-  ]);
-  return { vue, details, hideNonApplicable };
+  try {
+    const vue = await dependencies.loadVueDEnsemble(context);
+    const [details, hideNonApplicable] = await Promise.all([
+      context.showDetail
+        ? loadAllDetails(vue, context, dependencies, stopLoading.signal)
+        : Promise.resolve([]),
+      dependencies.getHideNonApplicable(),
+    ]);
+    return { vue, details, hideNonApplicable };
+  } catch (error) {
+    stopLoading.abort();
+    throw error;
+  }
+}
+
+function holdAbandonedLoadSlot(
+  loading: Promise<unknown>,
+  dependencies: RapportDetaillePdfDependencies,
+) {
+  const release = dependencies.abandonedLoads.tryAcquire();
+  if (!release) return;
+  const forcedRelease = setTimeout(() => {
+    logger.warn(
+      { categorie: "rapport", source: "rapportDetaillePdfHandler" },
+      `Chargement abandonné du PDF du rapport détaillé toujours en cours après ${dependencies.abandonedLoadMaxMs} ms : sa place est rendue`,
+    );
+    release();
+  }, dependencies.abandonedLoadMaxMs);
+  const settle = () => {
+    clearTimeout(forcedRelease);
+    release();
+  };
+  loading.then(settle, settle);
 }
 
 async function generate(
@@ -251,13 +284,14 @@ async function generate(
   dependencies: RapportDetaillePdfDependencies,
 ): Promise<Uint8Array> {
   const context = buildRapportDetailleContext(query, territoireCode, session);
-  const loading = loadData(context, dependencies);
+  const stopLoading = new AbortController();
+  const loading = loadData(context, dependencies, stopLoading);
   const { vue, details, hideNonApplicable } = await withTimeout(
     loading,
     dependencies.loadingTimeoutMs,
     () => {
-      const release = dependencies.abandonedLoads.tryAcquire();
-      if (release) loading.then(release, release);
+      stopLoading.abort();
+      holdAbandonedLoadSlot(loading, dependencies);
     },
   );
   return dependencies.renderPdf({
