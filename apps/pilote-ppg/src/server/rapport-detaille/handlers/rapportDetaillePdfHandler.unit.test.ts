@@ -72,28 +72,33 @@ async function startServer(
   return `http://localhost:${port}`;
 }
 
-async function startDelayedServer(
-  delayMs: number,
-  dependencies: RapportDetaillePdfDependencies,
-) {
+async function startGatedServer(dependencies: RapportDetaillePdfDependencies) {
+  const gate = deferred<void>();
+  const firstRequestReceived = deferred<void>();
+  const firstRequestClosed = deferred<void>();
   server = createServer((incoming, response) => {
     const url = new URL(incoming.url ?? "", "http://localhost");
     const query = Object.fromEntries(url.searchParams.entries());
-    setTimeout(
-      () =>
-        void handleRapportDetaillePdf(
-          { query },
-          response,
-          nationalSession,
-          dependencies,
-        ),
-      delayMs,
+    firstRequestReceived.resolve();
+    response.once("close", () => firstRequestClosed.resolve());
+    void gate.promise.then(() =>
+      handleRapportDetaillePdf(
+        { query },
+        response,
+        nationalSession,
+        dependencies,
+      ),
     );
   });
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const address = server.address();
   const port = typeof address === "object" && address ? address.port : 0;
-  return `http://localhost:${port}`;
+  return {
+    baseUrl: `http://localhost:${port}`,
+    openGate: () => gate.resolve(),
+    firstRequestReceived: firstRequestReceived.promise,
+    firstRequestClosed: firstRequestClosed.promise,
+  };
 }
 
 async function request(
@@ -111,6 +116,52 @@ function deferred<Value>() {
   });
   return { promise, resolve };
 }
+
+function trackedQueue(maxPending: number) {
+  const queue = createSerialQueue(maxPending);
+  const runs: Promise<unknown>[] = [];
+  const enqueue: RapportDetaillePdfDependencies["enqueue"] = (job) => {
+    const run = queue(job);
+    runs.push(run.catch(() => undefined));
+    return run;
+  };
+  return {
+    enqueue,
+    enqueuedCount: () => runs.length,
+    idle: () => Promise.all(runs),
+  };
+}
+
+function gatedDetails(options: { failFirst: boolean }) {
+  const gate = deferred<void>();
+  const calls: Promise<unknown>[] = [];
+  const loadChantierDetails = vi.fn<
+    RapportDetaillePdfDependencies["loadChantierDetails"]
+  >((lot) => {
+    const call =
+      options.failFirst && calls.length === 0
+        ? Promise.reject(new Error("base indisponible"))
+        : gate.promise.then(() =>
+            lot.map((chantier) =>
+              buildTestChantierDetail({ chantierId: chantier.id }),
+            ),
+          );
+    calls.push(call.catch(() => undefined));
+    return call;
+  });
+  return {
+    loadChantierDetails,
+    openGate: () => gate.resolve(),
+    settled: async () => {
+      await Promise.all(calls);
+      await new Promise((resolve) => setImmediate(resolve));
+    },
+  };
+}
+
+const sixtyChantiers = Array.from({ length: 60 }, (_, index) =>
+  buildTestChantier({ id: `C${index}` }),
+);
 
 const PDF_BYTES = new TextEncoder().encode("%PDF-1.3 test %%EOF");
 
@@ -209,19 +260,21 @@ describe("handleRapportDetaillePdf", () => {
       .fn<RapportDetaillePdfDependencies["renderPdf"]>()
       .mockReturnValueOnce(firstRender.promise)
       .mockResolvedValueOnce(PDF_BYTES);
+    const queue = trackedQueue(10);
     const baseUrl = await startServer(
       nationalSession,
-      buildDependencies({ renderPdf }),
+      buildDependencies({ renderPdf, enqueue: queue.enqueue }),
     );
 
     const first = fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     await vi.waitFor(() => expect(renderPdf).toHaveBeenCalledTimes(1));
     const second = fetch(`${baseUrl}/?territoireCode=NAT-FR`);
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    expect(renderPdf).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(queue.enqueuedCount()).toBe(2));
+    const rendersWhileFirstIsRunning = renderPdf.mock.calls.length;
     firstRender.resolve(PDF_BYTES);
     const responses = await Promise.all([first, second]);
 
+    expect(rendersWhileFirstIsRunning).toBe(1);
     expect(responses.map((response) => response.status)).toEqual([200, 200]);
     expect(
       responses.map((response) => response.headers.get("content-type")),
@@ -314,7 +367,7 @@ describe("handleRapportDetaillePdf", () => {
       async (lot: ChantierRapportDetailleContrat[]) => {
         inFlight += 1;
         maxInFlight = Math.max(maxInFlight, inFlight);
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise((resolve) => setImmediate(resolve));
         inFlight -= 1;
         return lot.map((chantier) =>
           buildTestChantierDetail({ chantierId: chantier.id }),
@@ -345,15 +398,16 @@ describe("handleRapportDetaillePdf", () => {
       .fn<RapportDetaillePdfDependencies["renderPdf"]>()
       .mockResolvedValueOnce(largePdf)
       .mockResolvedValue(PDF_BYTES);
+    const slots = createSlotLimiter(1);
     const baseUrl = await startServer(
       nationalSession,
-      buildDependencies({ renderPdf, slots: createSlotLimiter(1) }),
+      buildDependencies({ renderPdf, slots }),
     );
 
     const unread = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     const refused = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     await unread.arrayBuffer();
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await vi.waitFor(() => expect(slots.isFull()).toBe(false));
     const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
 
     expect(refused.status).toBe(503);
@@ -362,22 +416,22 @@ describe("handleRapportDetaillePdf", () => {
   });
 
   it("rend la place d'un client parti avant que sa demande soit traitée", async () => {
-    const baseUrl = await startDelayedServer(
-      100,
-      buildDependencies({
-        renderPdf: vi.fn(async () => PDF_BYTES),
-        slots: createSlotLimiter(1),
-      }),
-    );
+    const slots = createSlotLimiter(1);
+    const { baseUrl, openGate, firstRequestReceived, firstRequestClosed } =
+      await startGatedServer(
+        buildDependencies({ renderPdf: vi.fn(async () => PDF_BYTES), slots }),
+      );
 
     const abandoned = new AbortController();
     const gone = fetch(`${baseUrl}/?territoireCode=NAT-FR`, {
       signal: abandoned.signal,
     }).catch(() => null);
-    await new Promise((resolve) => setTimeout(resolve, 20));
+    await firstRequestReceived;
     abandoned.abort();
     await gone;
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await firstRequestClosed;
+    openGate();
+    await vi.waitFor(() => expect(slots.isFull()).toBe(false));
     const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
 
     expect(next.status).toBe(200);
@@ -390,9 +444,16 @@ describe("handleRapportDetaillePdf", () => {
       .fn<RapportDetaillePdfDependencies["renderPdf"]>()
       .mockReturnValueOnce(firstRender.promise)
       .mockResolvedValue(PDF_BYTES);
+    const queue = trackedQueue(10);
+    const slots = createSlotLimiter(2);
     const baseUrl = await startServer(
       nationalSession,
-      buildDependencies({ loadVueDEnsemble, renderPdf }),
+      buildDependencies({
+        loadVueDEnsemble,
+        renderPdf,
+        enqueue: queue.enqueue,
+        slots,
+      }),
     );
 
     const first = fetch(`${baseUrl}/?territoireCode=NAT-FR`);
@@ -401,13 +462,13 @@ describe("handleRapportDetaillePdf", () => {
     const gone = fetch(`${baseUrl}/?territoireCode=NAT-FR`, {
       signal: abandoned.signal,
     }).catch(() => null);
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await vi.waitFor(() => expect(queue.enqueuedCount()).toBe(2));
     abandoned.abort();
     await gone;
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await vi.waitFor(() => expect(slots.isFull()).toBe(false));
     firstRender.resolve(PDF_BYTES);
     await first;
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await queue.idle();
 
     expect(loadVueDEnsemble).toHaveBeenCalledTimes(1);
   });
@@ -418,17 +479,16 @@ describe("handleRapportDetaillePdf", () => {
       .fn<RapportDetaillePdfDependencies["renderPdf"]>()
       .mockResolvedValueOnce(largePdf)
       .mockResolvedValue(PDF_BYTES);
+    const slots = createSlotLimiter(1);
     const baseUrl = await startServer(
       nationalSession,
-      buildDependencies({
-        renderPdf,
-        slots: createSlotLimiter(1),
-        sendDeadlineMs: 100,
-      }),
+      buildDependencies({ renderPdf, slots, sendDeadlineMs: 50 }),
     );
 
     const unread = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await vi.waitFor(() => expect(slots.isFull()).toBe(false), {
+      timeout: 5_000,
+    });
     const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     await unread.body?.cancel().catch(() => undefined);
 
@@ -462,25 +522,26 @@ describe("handleRapportDetaillePdf", () => {
       .fn<RapportDetaillePdfDependencies["loadVueDEnsemble"]>()
       .mockReturnValueOnce(stuckLoad.promise)
       .mockResolvedValue(buildTestVueDEnsemble());
+    const abandonedLoads = createSlotLimiter(1);
     const baseUrl = await startServer(
       nationalSession,
       buildDependencies({
         loadVueDEnsemble,
         renderPdf: vi.fn(async () => PDF_BYTES),
-        loadingTimeoutMs: 50,
-        abandonedLoads: createSlotLimiter(1),
+        loadingTimeoutMs: 20,
+        abandonedLoads,
       }),
     );
 
     const timedOut = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     const refused = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     stuckLoad.resolve(buildTestVueDEnsemble());
-    await new Promise((resolve) => setTimeout(resolve, 20));
+    await vi.waitFor(() => expect(abandonedLoads.isFull()).toBe(false));
     const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
 
-    expect(timedOut.status).toBe(500);
-    expect(refused.status).toBe(503);
-    expect(next.status).toBe(200);
+    expect([timedOut.status, refused.status, next.status]).toEqual([
+      500, 503, 200,
+    ]);
   });
 
   it("refuse une demande en file dont le tour arrive alors que les chargements abandonnés sont au plafond", async () => {
@@ -514,20 +575,23 @@ describe("handleRapportDetaillePdf", () => {
       .fn<RapportDetaillePdfDependencies["loadVueDEnsemble"]>()
       .mockReturnValueOnce(new Promise(() => {}))
       .mockResolvedValue(buildTestVueDEnsemble());
+    const abandonedLoads = createSlotLimiter(1);
     const baseUrl = await startServer(
       nationalSession,
       buildDependencies({
         loadVueDEnsemble,
         renderPdf: vi.fn(async () => PDF_BYTES),
         loadingTimeoutMs: 20,
-        abandonedLoads: createSlotLimiter(1),
-        abandonedLoadMaxMs: 100,
+        abandonedLoads,
+        abandonedLoadMaxMs: 50,
       }),
     );
 
     const timedOut = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     const refused = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    await vi.waitFor(() => expect(abandonedLoads.isFull()).toBe(false), {
+      timeout: 5_000,
+    });
     const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
 
     expect([timedOut.status, refused.status, next.status]).toEqual([
@@ -536,62 +600,43 @@ describe("handleRapportDetaillePdf", () => {
   });
 
   it("ne lance plus de lot de détails après l'échec d'un lot", async () => {
-    const chantiers = Array.from({ length: 60 }, (_, index) =>
-      buildTestChantier({ id: `C${index}` }),
-    );
-    const loadChantierDetails = vi
-      .fn<RapportDetaillePdfDependencies["loadChantierDetails"]>()
-      .mockRejectedValueOnce(new Error("base indisponible"))
-      .mockImplementation(async (lot) => {
-        await new Promise((resolve) => setTimeout(resolve, 20));
-        return lot.map((chantier) =>
-          buildTestChantierDetail({ chantierId: chantier.id }),
-        );
-      });
+    const details = gatedDetails({ failFirst: true });
 
     const response = await request(
       "/?territoireCode=NAT-FR&detail=true",
       nationalSession,
       buildDependencies({
         loadVueDEnsemble: vi.fn(async () =>
-          buildTestVueDEnsemble({ chantiers }),
+          buildTestVueDEnsemble({ chantiers: sixtyChantiers }),
         ),
-        loadChantierDetails,
+        loadChantierDetails: details.loadChantierDetails,
       }),
     );
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    details.openGate();
+    await details.settled();
 
     expect(response.status).toBe(500);
-    expect(loadChantierDetails).toHaveBeenCalledTimes(3);
+    expect(details.loadChantierDetails).toHaveBeenCalledTimes(3);
   });
 
   it("ne lance plus de lot de détails après le délai de chargement", async () => {
-    const chantiers = Array.from({ length: 60 }, (_, index) =>
-      buildTestChantier({ id: `C${index}` }),
-    );
-    const loadChantierDetails = vi.fn(
-      async (lot: ChantierRapportDetailleContrat[]) => {
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        return lot.map((chantier) =>
-          buildTestChantierDetail({ chantierId: chantier.id }),
-        );
-      },
-    );
+    const details = gatedDetails({ failFirst: false });
 
     const response = await request(
       "/?territoireCode=NAT-FR&detail=true",
       nationalSession,
       buildDependencies({
         loadVueDEnsemble: vi.fn(async () =>
-          buildTestVueDEnsemble({ chantiers }),
+          buildTestVueDEnsemble({ chantiers: sixtyChantiers }),
         ),
-        loadChantierDetails,
-        loadingTimeoutMs: 30,
+        loadChantierDetails: details.loadChantierDetails,
+        loadingTimeoutMs: 20,
       }),
     );
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    details.openGate();
+    await details.settled();
 
     expect(response.status).toBe(500);
-    expect(loadChantierDetails).toHaveBeenCalledTimes(3);
+    expect(details.loadChantierDetails).toHaveBeenCalledTimes(3);
   });
 });
