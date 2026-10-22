@@ -61,6 +61,9 @@ export class AppActions {
     username: string,
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
+    // NextAuth réémet le cookie de session à chaque réponse : une requête encore en vol
+    // de la page précédente réécrirait la session de l'ancien compte après le nettoyage.
+    await this.page.goto("about:blank");
     await this.page.context().clearCookies();
     return this.loginAs(username, password);
   }

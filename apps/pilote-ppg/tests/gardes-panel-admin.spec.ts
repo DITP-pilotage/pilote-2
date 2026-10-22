@@ -61,7 +61,7 @@ test.describe("Pages du panel gardées par la seule session", () => {
     await new AppActions(page, e2eContext).loginAs(
       "coordinateur.region@example.com",
     );
-    const trpc = new TrpcClient(page);
+    const trpc = await TrpcClient.horsApplication(page);
 
     const logs = await trpc.query("applicationLog.lister", {});
     const featureFlips = await trpc.query(
@@ -81,7 +81,7 @@ test.describe("Pages du panel gardées par la seule session", () => {
     await new AppActions(page, e2eContext).loginAs(
       "coordinateur.region@example.com",
     );
-    const trpc = new TrpcClient(page);
+    const trpc = await TrpcClient.horsApplication(page);
 
     const purgeLogs = await trpc.mutation("applicationLog.purger", {
       anterieurA: new Date().toISOString(),

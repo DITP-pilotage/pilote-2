@@ -13,7 +13,7 @@ async function trpcPour(
   email: string,
 ): Promise<TrpcClient> {
   await new AppActions(page, e2eContext).loginAs(email);
-  return new TrpcClient(page);
+  return TrpcClient.horsApplication(page);
 }
 
 function nouveauCompte(email: string, territoire: string) {

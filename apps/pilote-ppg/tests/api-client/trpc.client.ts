@@ -18,6 +18,13 @@ type TrpcErrorShape = { data?: { code?: string } };
 export class TrpcClient {
   constructor(private readonly page: Page) {}
 
+  // Chaque réponse renouvelle le cookie csrf : on quitte l'application pour qu'aucune
+  // requête de fond ne le change entre sa lecture et l'envoi d'une mutation.
+  static async horsApplication(page: Page): Promise<TrpcClient> {
+    await page.goto("about:blank");
+    return new TrpcClient(page);
+  }
+
   async query<T>(path: string, input?: unknown): Promise<TrpcResult<T>> {
     const query =
       input === undefined
