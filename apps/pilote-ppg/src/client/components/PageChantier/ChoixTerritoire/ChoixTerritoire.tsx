@@ -5,7 +5,7 @@ import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLat�
 import { SélecteursMaillesEtTerritoires } from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import PageChantierEnTête from "@/components/PageChantier/EnTête/EnTête";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
-import useCartographie from "@/components/_commons/Cartographie/useCartographie";
+import { useCartographie } from "@/components/_commons/Cartographie/useCartographie";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -23,7 +23,7 @@ const ChoixTerritoire = () => {
   const { donnéesCartographie, territoiresSelectionnables } =
     useChoixTerritoire(mailleSelectionnee);
 
-  const { auClicTerritoireCallback } = useCartographie(
+  const { onTerritoireClick } = useCartographie(
     territoireCode,
     "/chantier/[id]/[territoireCode]",
   );
@@ -72,9 +72,7 @@ const ChoixTerritoire = () => {
                   <CartographieV2
                     donnees={donnéesCartographie}
                     maille={mailleQuery}
-                    onTerritoireSelect={(code) =>
-                      auClicTerritoireCallback(code, true)
-                    }
+                    onTerritoireSelect={(code) => onTerritoireClick(code, true)}
                     territoiresSelectionnables={territoiresSelectionnables}
                     territoiresSelectionnes={
                       territoireCode === "NAT-FR" ? [] : [territoireCode]
