@@ -89,17 +89,37 @@ export function renderSvg(
   return flattenSvgClasses(svg[0], options);
 }
 
+function cached<Value>(
+  cache: Map<string, Value>,
+  key: string,
+  render: () => Value,
+): Value {
+  const existing = cache.get(key);
+  if (existing !== undefined) return existing;
+  const value = render();
+  cache.set(key, value);
+  return value;
+}
+
+type IconComponent = ComponentType<{ className: string; fill: string }>;
+
+const jaugeCache = new Map<string, string>();
+const meteoPictoCache = new Map<string, string | null>();
+const iconCache = new WeakMap<IconComponent, Map<string, string>>();
+
 export function jaugeSvg(
   pourcentage: number | null,
   couleur: JaugeDeProgressionCouleur,
   taille: JaugeDeProgressionTaille,
 ): string {
-  return renderSvg(
-    <JaugeDeProgressionSVG
-      couleur={couleur}
-      pourcentage={pourcentage}
-      taille={taille}
-    />,
+  return cached(jaugeCache, `normal|${pourcentage}|${couleur}|${taille}`, () =>
+    renderSvg(
+      <JaugeDeProgressionSVG
+        couleur={couleur}
+        pourcentage={pourcentage}
+        taille={taille}
+      />,
+    ),
   );
 }
 
@@ -107,21 +127,29 @@ export function jaugeSmallSvg(
   pourcentage: number | null,
   couleur: JaugeDeProgressionCouleur,
 ): string {
-  return renderSvg(
-    <JaugeDeProgressionSVGSmall couleur={couleur} pourcentage={pourcentage} />,
+  return cached(jaugeCache, `small|${pourcentage}|${couleur}`, () =>
+    renderSvg(
+      <JaugeDeProgressionSVGSmall
+        couleur={couleur}
+        pourcentage={pourcentage}
+      />,
+    ),
   );
 }
 
 export function meteoPictoSvg(meteo: Meteo): string | null {
-  const Picto = MeteoComponentMap[meteo];
-  return Picto ? renderSvg(<Picto />) : null;
+  return cached(meteoPictoCache, String(meteo), () => {
+    const Picto = MeteoComponentMap[meteo];
+    return Picto ? renderSvg(<Picto />) : null;
+  });
 }
 
-export function iconSvg(
-  Icon: ComponentType<{ className: string; fill: string }>,
-  iconColor: string,
-): string {
-  return renderSvg(<Icon className="" fill="currentColor" />, {
-    currentColor: iconColor,
-  });
+export function iconSvg(Icon: IconComponent, iconColor: string): string {
+  const byColor = iconCache.get(Icon) ?? new Map<string, string>();
+  iconCache.set(Icon, byColor);
+  return cached(byColor, iconColor, () =>
+    renderSvg(<Icon className="" fill="currentColor" />, {
+      currentColor: iconColor,
+    }),
+  );
 }

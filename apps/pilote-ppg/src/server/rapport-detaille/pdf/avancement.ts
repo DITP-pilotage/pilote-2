@@ -39,8 +39,13 @@ const TENDANCE_TERRITOIRE: Record<Maille, string> = {
   regionale: "la région",
 };
 
+const territoiresByCode = new Map(
+  allTerritoires.map((territoire) => [territoire.code, territoire]),
+);
+
 export function findTerritoire(code: string | null) {
-  return allTerritoires.find((territoire) => territoire.code === code) ?? null;
+  if (!code) return null;
+  return territoiresByCode.get(code) ?? null;
 }
 
 function centered(
