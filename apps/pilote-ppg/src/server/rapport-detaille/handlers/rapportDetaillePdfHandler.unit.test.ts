@@ -49,6 +49,7 @@ function buildDependencies(
     sendDeadlineMs: 600_000,
     loadingTimeoutMs: 60_000,
     abandonedLoads: createSlotLimiter(2),
+    abandonedLoadMaxMs: 300_000,
     now: () => new Date("2026-10-01T07:05:00Z"),
     ...overrides,
   };
@@ -506,5 +507,91 @@ describe("handleRapportDetaillePdf", () => {
 
     expect(statuses.map((response) => response.status)).toEqual([500, 503]);
     expect(loadVueDEnsemble).toHaveBeenCalledTimes(1);
+  });
+
+  it("rend la place d'un chargement abandonné qui ne se termine jamais", async () => {
+    const loadVueDEnsemble = vi
+      .fn<RapportDetaillePdfDependencies["loadVueDEnsemble"]>()
+      .mockReturnValueOnce(new Promise(() => {}))
+      .mockResolvedValue(buildTestVueDEnsemble());
+    const baseUrl = await startServer(
+      nationalSession,
+      buildDependencies({
+        loadVueDEnsemble,
+        renderPdf: vi.fn(async () => PDF_BYTES),
+        loadingTimeoutMs: 20,
+        abandonedLoads: createSlotLimiter(1),
+        abandonedLoadMaxMs: 100,
+      }),
+    );
+
+    const timedOut = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    const refused = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+
+    expect([timedOut.status, refused.status, next.status]).toEqual([
+      500, 503, 200,
+    ]);
+  });
+
+  it("ne lance plus de lot de détails après l'échec d'un lot", async () => {
+    const chantiers = Array.from({ length: 60 }, (_, index) =>
+      buildTestChantier({ id: `C${index}` }),
+    );
+    const loadChantierDetails = vi
+      .fn<RapportDetaillePdfDependencies["loadChantierDetails"]>()
+      .mockRejectedValueOnce(new Error("base indisponible"))
+      .mockImplementation(async (lot) => {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        return lot.map((chantier) =>
+          buildTestChantierDetail({ chantierId: chantier.id }),
+        );
+      });
+
+    const response = await request(
+      "/?territoireCode=NAT-FR&detail=true",
+      nationalSession,
+      buildDependencies({
+        loadVueDEnsemble: vi.fn(async () =>
+          buildTestVueDEnsemble({ chantiers }),
+        ),
+        loadChantierDetails,
+      }),
+    );
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(response.status).toBe(500);
+    expect(loadChantierDetails).toHaveBeenCalledTimes(3);
+  });
+
+  it("ne lance plus de lot de détails après le délai de chargement", async () => {
+    const chantiers = Array.from({ length: 60 }, (_, index) =>
+      buildTestChantier({ id: `C${index}` }),
+    );
+    const loadChantierDetails = vi.fn(
+      async (lot: ChantierRapportDetailleContrat[]) => {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        return lot.map((chantier) =>
+          buildTestChantierDetail({ chantierId: chantier.id }),
+        );
+      },
+    );
+
+    const response = await request(
+      "/?territoireCode=NAT-FR&detail=true",
+      nationalSession,
+      buildDependencies({
+        loadVueDEnsemble: vi.fn(async () =>
+          buildTestVueDEnsemble({ chantiers }),
+        ),
+        loadChantierDetails,
+        loadingTimeoutMs: 30,
+      }),
+    );
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    expect(response.status).toBe(500);
+    expect(loadChantierDetails).toHaveBeenCalledTimes(3);
   });
 });
