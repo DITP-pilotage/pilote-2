@@ -46,6 +46,7 @@ function buildDependencies(
     enqueue: createSerialQueue(10),
     slots: createSlotLimiter(20),
     sendDeadlineMs: 600_000,
+    loadingTimeoutMs: 60_000,
     now: () => new Date("2026-10-01T07:05:00Z"),
     ...overrides,
   };
@@ -428,6 +429,27 @@ describe("handleRapportDetaillePdf", () => {
     const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
     await unread.body?.cancel().catch(() => undefined);
 
+    expect(next.status).toBe(200);
+  });
+
+  it("répond 500 et libère la file quand le chargement en base reste bloqué", async () => {
+    const loadVueDEnsemble = vi
+      .fn<RapportDetaillePdfDependencies["loadVueDEnsemble"]>()
+      .mockReturnValueOnce(new Promise(() => {}))
+      .mockResolvedValue(buildTestVueDEnsemble());
+    const baseUrl = await startServer(
+      nationalSession,
+      buildDependencies({
+        loadVueDEnsemble,
+        renderPdf: vi.fn(async () => PDF_BYTES),
+        loadingTimeoutMs: 50,
+      }),
+    );
+
+    const stuck = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+
+    expect(stuck.status).toBe(500);
     expect(next.status).toBe(200);
   });
 });
