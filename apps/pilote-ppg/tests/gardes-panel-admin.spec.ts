@@ -3,16 +3,19 @@ import { expect } from "@playwright/test";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { TrpcClient } from "./api-client/trpc.client";
-import { CHANTIER_E2E, INDICATEUR_FORMULAIRE } from "./seed/entites-dediees";
+import {
+  CHANTIER_FOR_WRITES,
+  INDICATEUR_FOR_FORM,
+} from "./seed/dedicated-entities";
 
-const PAGES_RESERVEES_ADMIN = [
+const ADMIN_ONLY_PAGES = [
   "/panel-administrateur/albert",
   "/panel-administrateur/chantiers",
-  `/panel-administrateur/chantiers/${CHANTIER_E2E}`,
+  `/panel-administrateur/chantiers/${CHANTIER_FOR_WRITES}`,
   "/panel-administrateur/gestion-token-api",
   "/panel-administrateur/habilitations-coordinateur",
   "/panel-administrateur/indicateurs",
-  `/panel-administrateur/indicateurs/${INDICATEUR_FORMULAIRE}`,
+  `/panel-administrateur/indicateurs/${INDICATEUR_FOR_FORM}`,
   "/panel-administrateur/message-information",
   "/panel-administrateur/parametrage-metadata-indicateur",
   "/panel-administrateur/referentiels/perimetres",
@@ -29,13 +32,13 @@ const PAGES_RESERVEES_ADMIN = [
   "/panel-administrateur/referentiels-deprecies/ppgs/PPG-1",
 ];
 
-const PROFILS_NON_ADMIN = [
+const NON_ADMIN_EMAILS = [
   "ditp.pilotage@example.com",
   "coordinateur.region@example.com",
   "equipe.dir.projet@example.com",
 ];
 
-for (const email of PROFILS_NON_ADMIN) {
+for (const email of NON_ADMIN_EMAILS) {
   test.describe(`Panel administrateur pour ${email}`, () => {
     test("chaque page réservée à l'administrateur redirige vers l'accueil", async ({
       page,
@@ -43,11 +46,11 @@ for (const email of PROFILS_NON_ADMIN) {
     }) => {
       await new AppActions(page, e2eContext).loginAs(email);
 
-      for (const chemin of PAGES_RESERVEES_ADMIN) {
-        const reponse = await page.request.get(chemin, { maxRedirects: 0 });
+      for (const path of ADMIN_ONLY_PAGES) {
+        const response = await page.request.get(path, { maxRedirects: 0 });
 
-        expect(reponse.status(), chemin).toBe(307);
-        expect(reponse.headers().location, chemin).toBe("/");
+        expect(response.status(), path).toBe(307);
+        expect(response.headers().location, path).toBe("/");
       }
     });
   });
@@ -61,7 +64,7 @@ test.describe("Pages du panel gardées par la seule session", () => {
     await new AppActions(page, e2eContext).loginAs(
       "coordinateur.region@example.com",
     );
-    const trpc = await TrpcClient.horsApplication(page);
+    const trpc = await TrpcClient.outsideApp(page);
 
     const logs = await trpc.query("applicationLog.lister", {});
     const featureFlips = await trpc.query(
@@ -81,9 +84,9 @@ test.describe("Pages du panel gardées par la seule session", () => {
     await new AppActions(page, e2eContext).loginAs(
       "coordinateur.region@example.com",
     );
-    const trpc = await TrpcClient.horsApplication(page);
+    const trpc = await TrpcClient.outsideApp(page);
 
-    const purgeLogs = await trpc.mutation("applicationLog.purger", {
+    const purgeLogsResult = await trpc.mutation("applicationLog.purger", {
       anterieurA: new Date().toISOString(),
     });
     const featureFlips = await trpc.mutation(
@@ -105,7 +108,7 @@ test.describe("Pages du panel gardées par la seule session", () => {
       parentId: null,
     });
 
-    expect(purgeLogs.status).toBe(401);
+    expect(purgeLogsResult.status).toBe(401);
     expect(featureFlips.status).toBe(401);
     expect(nouveaute.status).toBe(401);
     expect(article.status).toBe(401);

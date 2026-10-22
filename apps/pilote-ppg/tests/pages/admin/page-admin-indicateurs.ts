@@ -107,8 +107,8 @@ export class PageAdminIndicateurs extends BasePage {
   private async attendreRechargementDuListing(
     action: () => Promise<void>,
   ): Promise<void> {
-    const rechargement = this.page.waitForResponse((reponse) =>
-      decodeURIComponent(reponse.url()).includes(
+    const rechargement = this.page.waitForResponse((response) =>
+      decodeURIComponent(response.url()).includes(
         "listerMetadataIndicateurFiltres",
       ),
     );

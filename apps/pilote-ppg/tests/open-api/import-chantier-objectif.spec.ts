@@ -2,9 +2,9 @@ import { expect } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "../fixtures";
 import {
-  CHANTIER_E2E,
-  CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
-} from "../seed/entites-dediees";
+  CHANTIER_FOR_WRITES,
+  CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
+} from "../seed/dedicated-entities";
 import {
   ImportObjectifErrorResponse,
   ImportObjectifSuccessResponse,
@@ -15,10 +15,10 @@ test("Import d'objectifs via l'API open-api", async ({
   openApi,
   e2eContext,
 }) => {
-  e2eContext.track("OBJECTIF_CREE", { chantier_id: CHANTIER_E2E });
+  e2eContext.track("OBJECTIF_CREATED", { chantier_id: CHANTIER_FOR_WRITES });
   const apiContext = await openApi("EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
-  const chantierId = CHANTIER_E2E;
+  const chantierId = CHANTIER_FOR_WRITES;
 
   await test.step("Import d'un objectif valide sans date - doit retourner 200 OK", async () => {
     const objectifs: ObjectifInput[] = [
@@ -82,7 +82,11 @@ test("Import d'objectifs via l'API open-api", async ({
     expect(responseBody.message).toEqual(
       "Les objectifs ont correctement été importés",
     );
-    for (const content of ["Premier objectif", "Deuxième objectif", "Troisième objectif"]) {
+    for (const content of [
+      "Premier objectif",
+      "Deuxième objectif",
+      "Troisième objectif",
+    ]) {
       expect(
         await prisma.objectif.count({
           where: { chantier_id: chantierId, contenu: { contains: content } },
@@ -130,7 +134,7 @@ test("Import d'objectifs via l'API open-api", async ({
   });
 
   await test.step("Import sur un chantier non autorisé - doit retourner 403", async () => {
-    const chantierNonAutorise = CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET;
+    const chantierNonAutorise = CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET;
     const objectifs: ObjectifInput[] = [
       {
         type: "notre_ambition",

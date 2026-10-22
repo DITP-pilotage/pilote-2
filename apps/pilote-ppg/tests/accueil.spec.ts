@@ -2,10 +2,10 @@ import { expect, Page } from "@playwright/test";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
-async function chantiersAffiches(page: Page): Promise<string[]> {
-  const liens = page.getByRole("rowheader").getByRole("link");
-  await expect(liens.first()).toBeVisible();
-  const urls = await liens.evaluateAll((elements) =>
+async function getDisplayedChantiers(page: Page): Promise<string[]> {
+  const links = page.getByRole("rowheader").getByRole("link");
+  await expect(links.first()).toBeVisible();
+  const urls = await links.evaluateAll((elements) =>
     elements.map((element) => element.getAttribute("href") ?? ""),
   );
   return urls
@@ -23,7 +23,7 @@ test.describe("Page d'accueil", () => {
     );
 
     await expect
-      .poll(() => chantiersAffiches(page))
+      .poll(() => getDisplayedChantiers(page))
       .toEqual([
         "CH-051",
         "CH-054",
@@ -44,7 +44,7 @@ test.describe("Page d'accueil", () => {
     );
 
     await expect
-      .poll(() => chantiersAffiches(page))
+      .poll(() => getDisplayedChantiers(page))
       .toEqual([
         "CH-050",
         "CH-051",
@@ -79,7 +79,7 @@ test.describe("Page d'accueil", () => {
 
     await pageAccueil.expectFilterTag("Intérieur et Outre-mer");
     await expect
-      .poll(() => chantiersAffiches(page))
+      .poll(() => getDisplayedChantiers(page))
       .toEqual(["CH-129", "CH-903"]);
   });
 });

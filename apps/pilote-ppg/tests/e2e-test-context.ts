@@ -24,22 +24,22 @@ const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
 ];
 
 type ActionType =
-  | "EVENEMENT_PROPOSITION_VALEUR_CREE"
-  | "COMMENTAIRE_CREE"
-  | "SYNTHESE_CREEE"
-  | "OBJECTIF_CREE"
-  | "DECISION_STRATEGIQUE_CREEE"
-  | "MESURE_INDICATEUR_IMPORTEE"
-  | "RAPPORT_IMPORT_CREE"
-  | "UTILISATEUR_CREE"
-  | "UTILISATEUR_DESACTIVE"
-  | "PROFIL_UTILISATEUR_MODIFIE"
-  | "TOKEN_API_CREE"
-  | "INDICATEUR_CREE"
-  | "INDICATEUR_MODIFIE"
-  | "CHANTIER_PARAMETRAGE_MODIFIE"
-  | "ACCES_ALBERT_PROFIL_ACTIVE"
-  | "ACCES_ALBERT_UTILISATEUR_AJOUTE";
+  | "PROPOSITION_VALEUR_EVENEMENT_CREATED"
+  | "COMMENTAIRE_CREATED"
+  | "SYNTHESE_CREATED"
+  | "OBJECTIF_CREATED"
+  | "DECISION_STRATEGIQUE_CREATED"
+  | "MESURE_INDICATEUR_IMPORTED"
+  | "RAPPORT_IMPORT_CREATED"
+  | "UTILISATEUR_CREATED"
+  | "UTILISATEUR_DEACTIVATED"
+  | "PROFIL_UTILISATEUR_UPDATED"
+  | "TOKEN_API_CREATED"
+  | "INDICATEUR_CREATED"
+  | "INDICATEUR_UPDATED"
+  | "CHANTIER_PARAMETRAGE_UPDATED"
+  | "ALBERT_ACCESS_PROFIL_ENABLED"
+  | "ALBERT_ACCESS_UTILISATEUR_ADDED";
 
 type MetadataIndicateur = {
   hidden: metadata_indicateurs_hidden;
@@ -47,7 +47,7 @@ type MetadataIndicateur = {
   complementaire: metadata_indicateurs_complementaire;
 };
 
-export async function lireMetadataIndicateur(
+export async function readMetadataIndicateur(
   indicId: string,
 ): Promise<MetadataIndicateur> {
   const where = { indic_id: indicId };
@@ -81,7 +81,7 @@ export class E2ETestContext {
   async cleanup(): Promise<void> {
     for (const action of this.actions) {
       switch (action.type) {
-        case "EVENEMENT_PROPOSITION_VALEUR_CREE":
+        case "PROPOSITION_VALEUR_EVENEMENT_CREATED":
           await prisma.indicateur_territoire_valeur_evenement.deleteMany({
             where: {
               ...action.filters,
@@ -89,32 +89,32 @@ export class E2ETestContext {
             },
           });
           break;
-        case "COMMENTAIRE_CREE":
+        case "COMMENTAIRE_CREATED":
           await prisma.commentaire.deleteMany({
             where: action.filters,
           });
           break;
-        case "SYNTHESE_CREEE":
+        case "SYNTHESE_CREATED":
           await prisma.synthese_des_resultats.deleteMany({
             where: action.filters,
           });
           break;
-        case "OBJECTIF_CREE":
+        case "OBJECTIF_CREATED":
           await prisma.objectif.deleteMany({
             where: action.filters,
           });
           break;
-        case "DECISION_STRATEGIQUE_CREEE":
+        case "DECISION_STRATEGIQUE_CREATED":
           await prisma.decision_strategique.deleteMany({
             where: action.filters,
           });
           break;
-        case "MESURE_INDICATEUR_IMPORTEE":
+        case "MESURE_INDICATEUR_IMPORTED":
           await prisma.mesure_indicateur.deleteMany({
             where: action.filters,
           });
           break;
-        case "RAPPORT_IMPORT_CREE": {
+        case "RAPPORT_IMPORT_CREATED": {
           const rapports =
             await prisma.rapport_import_mesure_indicateur.findMany({
               where: action.filters,
@@ -137,12 +137,12 @@ export class E2ETestContext {
           }
           break;
         }
-        case "UTILISATEUR_CREE":
+        case "UTILISATEUR_CREATED":
           await prisma.utilisateur.deleteMany({
             where: { email: action.filters.email as string },
           });
           break;
-        case "INDICATEUR_CREE": {
+        case "INDICATEUR_CREATED": {
           const where = { indic_id: action.filters.indicId as string };
           await prisma.metadata_indicateurs_complementaire.deleteMany({
             where,
@@ -151,7 +151,7 @@ export class E2ETestContext {
           await prisma.metadata_indicateurs_hidden.deleteMany({ where });
           break;
         }
-        case "INDICATEUR_MODIFIE": {
+        case "INDICATEUR_UPDATED": {
           const original = action.filters as MetadataIndicateur;
           const where = { indic_id: original.hidden.indic_id };
           await prisma.metadata_indicateurs_hidden.update({
@@ -168,7 +168,7 @@ export class E2ETestContext {
           });
           break;
         }
-        case "CHANTIER_PARAMETRAGE_MODIFIE": {
+        case "CHANTIER_PARAMETRAGE_UPDATED": {
           const original = action.filters as metadata_chantiers;
           await prisma.metadata_chantiers.update({
             where: { chantier_id: original.chantier_id },
@@ -176,29 +176,29 @@ export class E2ETestContext {
           });
           break;
         }
-        case "TOKEN_API_CREE":
+        case "TOKEN_API_CREATED":
           await prisma.token_api_information.deleteMany({
             where: { email: action.filters.email as string },
           });
           break;
-        case "UTILISATEUR_DESACTIVE":
+        case "UTILISATEUR_DEACTIVATED":
           await prisma.utilisateur.updateMany({
             where: action.filters,
             data: { date_desactivation: null },
           });
           break;
-        case "PROFIL_UTILISATEUR_MODIFIE":
+        case "PROFIL_UTILISATEUR_UPDATED":
           await prisma.utilisateur.updateMany({
             where: { email: action.filters.email as string },
             data: action.filters.originalData as Record<string, unknown>,
           });
           break;
-        case "ACCES_ALBERT_PROFIL_ACTIVE":
+        case "ALBERT_ACCESS_PROFIL_ENABLED":
           await prisma.albert_access_profil.deleteMany({
             where: { profil_code: action.filters.profilCode as string },
           });
           break;
-        case "ACCES_ALBERT_UTILISATEUR_AJOUTE":
+        case "ALBERT_ACCESS_UTILISATEUR_ADDED":
           await prisma.albert_access_utilisateur.deleteMany({
             where: { utilisateur: { email: action.filters.email as string } },
           });

@@ -17,7 +17,7 @@ export class PvaIndicateurComponent {
   }
 
   private trackPva(): void {
-    this.e2eContext.track("EVENEMENT_PROPOSITION_VALEUR_CREE", {
+    this.e2eContext.track("PROPOSITION_VALEUR_EVENEMENT_CREATED", {
       indic_id: this.indicateurId,
       territoire_code: this.territoireCode,
     });

@@ -427,9 +427,9 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     await step(
       "Vérification que 'Paris' n'est plus affiché dans le widget PVA",
       async () => {
-        await expect(
-          widgetPVA(page).getByTitle(/Retirer.*Paris/),
-        ).toHaveCount(0);
+        await expect(widgetPVA(page).getByTitle(/Retirer.*Paris/)).toHaveCount(
+          0,
+        );
         await expect(
           page.getByText("2 propositions", { exact: true }),
         ).not.toBeVisible();

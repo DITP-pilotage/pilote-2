@@ -40,7 +40,7 @@ export class PageAdminAlbertPermissions extends BasePage {
   async activerProfil(profilCode: string, profilNom: string): Promise<void> {
     const interrupteur = this.switchProfil(profilNom);
     await expect(interrupteur).not.toBeChecked();
-    this.e2eContext.track("ACCES_ALBERT_PROFIL_ACTIVE", { profilCode });
+    this.e2eContext.track("ALBERT_ACCESS_PROFIL_ENABLED", { profilCode });
     await interrupteur.click();
     await expect(interrupteur).toBeChecked();
     await expect(interrupteur).toBeEnabled();
@@ -61,7 +61,7 @@ export class PageAdminAlbertPermissions extends BasePage {
     await this.page
       .getByPlaceholder("Rechercher par nom, prénom ou email")
       .fill(recherche);
-    this.e2eContext.track("ACCES_ALBERT_UTILISATEUR_AJOUTE", { email });
+    this.e2eContext.track("ALBERT_ACCESS_UTILISATEUR_ADDED", { email });
     await this.page.getByRole("option").filter({ hasText: email }).click();
     await expect(this.ligneUtilisateur(email)).toBeVisible();
   }

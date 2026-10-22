@@ -9,7 +9,7 @@ require("dotenv").config({ path: ".env.e2e" });
 const videoEnabled = process.env.E2E_VIDEO === "on";
 
 /* Specs d'appels directs (API, tRPC, open-api) : le navigateur n'y change rien. */
-const SPECS_SANS_IHM = [
+const NON_UI_SPECS = [
   "**/api-autorisation.spec.ts",
   "**/open-api/**",
   "**/export-csv-cloisonnement.spec.ts",
@@ -96,13 +96,13 @@ export default defineConfig({
     {
       name: "firefox",
       dependencies: ["chromium"],
-      testIgnore: SPECS_SANS_IHM,
+      testIgnore: NON_UI_SPECS,
       use: { ...devices["Desktop Firefox"] },
     },
     {
       name: "webkit",
       dependencies: ["firefox"],
-      testIgnore: SPECS_SANS_IHM,
+      testIgnore: NON_UI_SPECS,
       use: { ...devices["Desktop Safari"] },
     },
   ],

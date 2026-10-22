@@ -49,11 +49,11 @@ export class PageMiseAJourDonnees extends BasePage {
   }
 
   async verifyFile(utilisateurEmail: string): Promise<void> {
-    const verification = this.page.waitForResponse(/\/verifier/);
+    const verificationResponse = this.page.waitForResponse(/\/verifier/);
     await this.page
       .getByRole("button", { name: /Vérifier le fichier/ })
       .click();
-    const rapport = (await (await verification).json()) as {
+    const rapport = (await (await verificationResponse).json()) as {
       id: string;
       estValide: boolean;
       listeErreursValidation: { message: string }[];
@@ -61,7 +61,7 @@ export class PageMiseAJourDonnees extends BasePage {
     // Pour un fichier invalide, l'identifiant renvoyé n'est pas celui du rapport
     // enregistré : on le retrouve par ses erreurs.
     this.e2eContext.track(
-      "RAPPORT_IMPORT_CREE",
+      "RAPPORT_IMPORT_CREATED",
       rapport.estValide
         ? { id: rapport.id }
         : {

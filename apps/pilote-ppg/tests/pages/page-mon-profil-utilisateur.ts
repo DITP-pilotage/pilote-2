@@ -100,7 +100,7 @@ export class PageMonProfilUtilisateur extends BasePage {
     email: string,
     nouvelleFonction: string,
   ): Promise<void> {
-    this.e2eContext.track("PROFIL_UTILISATEUR_MODIFIE", {
+    this.e2eContext.track("PROFIL_UTILISATEUR_UPDATED", {
       email,
       originalData: await prisma.utilisateur.findUniqueOrThrow({
         where: { email },

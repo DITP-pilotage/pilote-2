@@ -4,10 +4,10 @@ import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import {
   CHANTIER_BROUILLON,
-  INDICATEUR_FORMULAIRE,
-  INDICATEUR_IMPORT,
-  INDICATEUR_OPEN_API,
-} from "./seed/entites-dediees";
+  INDICATEUR_FOR_FORM,
+  INDICATEUR_FOR_IMPORT,
+  INDICATEUR_FOR_OPEN_API,
+} from "./seed/dedicated-entities";
 
 const CHANTIERS_SERVICES_DECONCENTRES_REGION = [
   "CH-051",
@@ -17,20 +17,20 @@ const CHANTIERS_SERVICES_DECONCENTRES_REGION = [
   "CH-070",
 ];
 
-type LigneCsv = Record<string, string>;
+type CsvRow = Record<string, string>;
 
-function lireCsv(texte: string): LigneCsv[] {
-  return parse(texte, { columns: true, delimiter: ";", bom: true });
+function parseCsv(text: string): CsvRow[] {
+  return parse(text, { columns: true, delimiter: ";", bom: true });
 }
 
-async function exporter(page: Page, url: string): Promise<LigneCsv[]> {
-  const reponse = await page.request.get(url);
-  expect(reponse.status(), url).toBe(200);
-  return lireCsv(await reponse.text());
+async function fetchExport(page: Page, url: string): Promise<CsvRow[]> {
+  const response = await page.request.get(url);
+  expect(response.status(), url).toBe(200);
+  return parseCsv(await response.text());
 }
 
-function valeursDistinctes(lignes: LigneCsv[], colonne: string): string[] {
-  return [...new Set(lignes.map((ligne) => ligne[colonne]))].sort();
+function distinctValues(rows: CsvRow[], column: string): string[] {
+  return [...new Set(rows.map((row) => row[column]))].sort();
 }
 
 test.describe("Export des chantiers", () => {
@@ -42,11 +42,11 @@ test.describe("Export des chantiers", () => {
       "services.deconcentres.region@example.com",
     );
 
-    const lignes = await exporter(page, "/api/export/chantiers-v2");
+    const rows = await fetchExport(page, "/api/export/chantiers-v2");
 
-    expect(lignes.length).toBeGreaterThan(0);
-    expect(valeursDistinctes(lignes, "Région")).toEqual(["Bretagne"]);
-    for (const chantierId of valeursDistinctes(lignes, "Chantier Id")) {
+    expect(rows.length).toBeGreaterThan(0);
+    expect(distinctValues(rows, "Région")).toEqual(["Bretagne"]);
+    for (const chantierId of distinctValues(rows, "Chantier Id")) {
       expect(CHANTIERS_SERVICES_DECONCENTRES_REGION).toContain(chantierId);
     }
   });
@@ -59,16 +59,16 @@ test.describe("Export des chantiers", () => {
       "services.deconcentres.region@example.com",
     );
 
-    const parDefaut = await exporter(page, "/api/export/chantiers-v2");
-    const brouillonsDemandes = await exporter(
+    const defaultRows = await fetchExport(page, "/api/export/chantiers-v2");
+    const draftRows = await fetchExport(
       page,
       "/api/export/chantiers-v2?statut=BROUILLON",
     );
 
-    expect(valeursDistinctes(parDefaut, "Chantier Id")).not.toContain(
+    expect(distinctValues(defaultRows, "Chantier Id")).not.toContain(
       CHANTIER_BROUILLON,
     );
-    expect(brouillonsDemandes).toEqual([]);
+    expect(draftRows).toEqual([]);
   });
 
   test("un profil avec accès aux brouillons exporte ses chantiers en brouillon", async ({
@@ -79,14 +79,12 @@ test.describe("Export des chantiers", () => {
       "equipe.dir.projet@example.com",
     );
 
-    const lignes = await exporter(
+    const rows = await fetchExport(
       page,
       "/api/export/chantiers-v2?statut=BROUILLON",
     );
 
-    expect(valeursDistinctes(lignes, "Chantier Id")).toEqual([
-      CHANTIER_BROUILLON,
-    ]);
+    expect(distinctValues(rows, "Chantier Id")).toEqual([CHANTIER_BROUILLON]);
   });
 });
 
@@ -99,11 +97,11 @@ test.describe("Export des indicateurs", () => {
       "services.deconcentres.region@example.com",
     );
 
-    const lignes = await exporter(page, "/api/export/indicateurs-v2");
+    const rows = await fetchExport(page, "/api/export/indicateurs-v2");
 
-    expect(lignes.length).toBeGreaterThan(0);
-    expect(valeursDistinctes(lignes, "Région")).toEqual(["Bretagne"]);
-    for (const chantierId of valeursDistinctes(lignes, "Chantier Id")) {
+    expect(rows.length).toBeGreaterThan(0);
+    expect(distinctValues(rows, "Région")).toEqual(["Bretagne"]);
+    for (const chantierId of distinctValues(rows, "Chantier Id")) {
       expect(CHANTIERS_SERVICES_DECONCENTRES_REGION).toContain(chantierId);
     }
   });
@@ -116,17 +114,17 @@ test.describe("Export des indicateurs", () => {
       "equipe.dir.projet@example.com",
     );
 
-    const lignes = await exporter(page, "/api/export/indicateurs-v2");
+    const rows = await fetchExport(page, "/api/export/indicateurs-v2");
 
-    const indicateurs = valeursDistinctes(lignes, "Indicateur Id");
+    const indicateurs = distinctValues(rows, "Indicateur Id");
     expect(indicateurs).toEqual(
       expect.arrayContaining([
-        INDICATEUR_IMPORT,
-        INDICATEUR_FORMULAIRE,
-        INDICATEUR_OPEN_API,
+        INDICATEUR_FOR_IMPORT,
+        INDICATEUR_FOR_FORM,
+        INDICATEUR_FOR_OPEN_API,
       ]),
     );
-    expect(valeursDistinctes(lignes, "Chantier Id")).not.toContain("CH-070");
+    expect(distinctValues(rows, "Chantier Id")).not.toContain("CH-070");
   });
 });
 
@@ -139,10 +137,10 @@ test.describe("Export de l'historique des indicateurs", () => {
       "coordinateur.region@example.com",
     );
 
-    const lignes = await exporter(page, "/api/export/historique-indicateurs");
+    const rows = await fetchExport(page, "/api/export/historique-indicateurs");
 
-    expect(lignes.length).toBeGreaterThan(0);
-    expect(valeursDistinctes(lignes, "Région")).toEqual(["Bretagne"]);
+    expect(rows.length).toBeGreaterThan(0);
+    expect(distinctValues(rows, "Région")).toEqual(["Bretagne"]);
   });
 });
 
@@ -155,12 +153,12 @@ test.describe("Export des utilisateurs", () => {
       "coordinateur.departement@example.com",
     );
 
-    const lignes = await exporter(
+    const rows = await fetchExport(
       page,
       "/api/export/utilisateurs?typeCompte=actif",
     );
 
-    const emails = lignes.map((ligne) => ligne["Email"]);
+    const emails = rows.map((row) => row["Email"]);
     expect(emails).toContain("prefet.departement@example.com");
     expect(emails).not.toContain("ditp.admin@example.com");
     expect(emails).not.toContain("premiere.ministre@example.com");

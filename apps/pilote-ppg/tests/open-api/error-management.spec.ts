@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "../fixtures";
-import { CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET } from "../seed/entites-dediees";
+import { CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET } from "../seed/dedicated-entities";
 
 test.describe("Error - endpoint chantier", () => {
   test("quand on a pas accès au chantier, doit remonter une erreur 403 ForbiddenError", async ({
@@ -9,12 +9,12 @@ test.describe("Error - endpoint chantier", () => {
     const client = (await openApi("EQUIPE_DIR_PROJET")).getClient();
 
     const result = await client.getChantierDonnees(
-      CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
+      CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
     );
 
     expect(result.status()).toEqual(403);
     expect(await result.json()).toEqual({
-      message: `Vous n'êtes pas autorisé à accéder au chantier ${CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET}`,
+      message: `Vous n'êtes pas autorisé à accéder au chantier ${CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET}`,
       success: false,
     });
   });
@@ -27,7 +27,7 @@ test.describe("Error - endpoint indicateur", () => {
     const client = (await openApi("EQUIPE_DIR_PROJET")).getClient();
 
     const result = await client.getIndicateurDonnees(
-      CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
+      CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
       "IND-105",
     );
 

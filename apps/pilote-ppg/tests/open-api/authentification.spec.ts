@@ -3,9 +3,9 @@ import { test } from "../fixtures";
 
 test.describe("Authentification", () => {
   test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({
-    openApiSansAuthentification,
+    openApiUnauthenticated,
   }) => {
-    const client = await openApiSansAuthentification({
+    const client = await openApiUnauthenticated({
       skip: true,
     });
 
@@ -15,9 +15,9 @@ test.describe("Authentification", () => {
   });
 
   test("quand on dispose d'un header Authorization invalide, doit remonter une erreur 400 Bad Request", async ({
-    openApiSansAuthentification,
+    openApiUnauthenticated,
   }) => {
-    const client = await openApiSansAuthentification({
+    const client = await openApiUnauthenticated({
       value: "invalid",
     });
 
@@ -27,12 +27,12 @@ test.describe("Authentification", () => {
   });
 
   test("quand on dispose d'un header Authorization valide mais que le token n'a pas été forgé par notre API, doit remonter une erreur 400 Request", async ({
-    openApiSansAuthentification,
+    openApiUnauthenticated,
   }) => {
     const fakeJwt =
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-    const client = await openApiSansAuthentification({
+    const client = await openApiUnauthenticated({
       value: fakeJwt,
     });
 

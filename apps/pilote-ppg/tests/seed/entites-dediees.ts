@@ -1,7 +1,0 @@
-export const CHANTIER_BROUILLON = "CH-901";
-export const CHANTIER_E2E = "CH-902";
-export const CHANTIER_SAISIE = "CH-903";
-export const INDICATEUR_IMPORT = "IND-901";
-export const INDICATEUR_FORMULAIRE = "IND-902";
-export const INDICATEUR_OPEN_API = "IND-903";
-export const CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET = "CH-070";

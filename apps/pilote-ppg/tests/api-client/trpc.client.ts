@@ -20,7 +20,7 @@ export class TrpcClient {
 
   // Chaque réponse renouvelle le cookie csrf : on quitte l'application pour qu'aucune
   // requête de fond ne le change entre sa lecture et l'envoi d'une mutation.
-  static async horsApplication(page: Page): Promise<TrpcClient> {
+  static async outsideApp(page: Page): Promise<TrpcClient> {
     await page.goto("about:blank");
     return new TrpcClient(page);
   }
@@ -42,16 +42,16 @@ export class TrpcClient {
     options: { csrf?: string | null } = {},
   ): Promise<TrpcResult<T>> {
     const csrf =
-      options.csrf === undefined ? await this.csrfDuCookie() : options.csrf;
-    const corps = csrf === null ? input : { ...input, csrf };
+      options.csrf === undefined ? await this.csrfFromCookie() : options.csrf;
+    const body = csrf === null ? input : { ...input, csrf };
     const response = await this.page.request.post(`/api/trpc/${path}`, {
-      data: superjson.serialize(corps),
+      data: superjson.serialize(body),
       maxRedirects: 0,
     });
     return this.toResult<T>(response);
   }
 
-  private async csrfDuCookie(): Promise<string> {
+  private async csrfFromCookie(): Promise<string> {
     const cookies = await this.page.context().cookies();
     const csrf = cookies.find((cookie) => cookie.name === "csrf")?.value;
     if (!csrf) {

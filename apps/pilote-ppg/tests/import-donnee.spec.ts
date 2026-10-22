@@ -4,12 +4,15 @@ import { test } from "./fixtures";
 import { construireXlsx } from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import { AppActions } from "./actions/app.actions";
 import { PageMiseAJourDonnees } from "./pages/page-mise-a-jour-donnees";
-import { CHANTIER_E2E, INDICATEUR_IMPORT } from "./seed/entites-dediees";
+import {
+  CHANTIER_FOR_WRITES,
+  INDICATEUR_FOR_IMPORT,
+} from "./seed/dedicated-entities";
 
 test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
   const chantier = {
     id: "902",
-    indicateurId: INDICATEUR_IMPORT,
+    indicateurId: INDICATEUR_FOR_IMPORT,
     indicateurNom: "Indicateur e2e import",
   };
 
@@ -17,7 +20,7 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
   const pageMaj = new PageMiseAJourDonnees(page, e2eContext);
 
   await test.step('Navigation vers la page "Mise à jour des données"', async () => {
-    await pageMaj.goto(CHANTIER_E2E);
+    await pageMaj.goto(CHANTIER_FOR_WRITES);
 
     await test.step(`Sélection de l'indicateur ${chantier.indicateurId}`, async () => {
       await pageMaj.expectTitle(chantier.id);
@@ -139,13 +142,13 @@ test("doit pouvoir importer un fichier Excel dont les dates sont au format date"
 }) => {
   const chantier = {
     id: "902",
-    indicateurId: INDICATEUR_IMPORT,
+    indicateurId: INDICATEUR_FOR_IMPORT,
     indicateurNom: "Indicateur e2e import",
   };
 
   await new AppActions(page, e2eContext).loginAs();
   const pageMaj = new PageMiseAJourDonnees(page, e2eContext);
-  await pageMaj.goto(CHANTIER_E2E);
+  await pageMaj.goto(CHANTIER_FOR_WRITES);
   await pageMaj.expectTitle(chantier.id);
   await pageMaj.selectIndicateur(chantier.indicateurId, chantier.indicateurNom);
   await pageMaj.nextStep();

@@ -1,9 +1,9 @@
 import { expect } from "@playwright/test";
 import { test } from "../fixtures";
 import {
-  CHANTIER_E2E,
-  CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
-} from "../seed/entites-dediees";
+  CHANTIER_FOR_WRITES,
+  CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
+} from "../seed/dedicated-entities";
 import {
   ImportDecisionStrategiqueErrorResponse,
   ImportDecisionStrategiqueSuccessResponse,
@@ -14,10 +14,12 @@ test("Import de décisions stratégiques via l'API open-api", async ({
   openApi,
   e2eContext,
 }) => {
-  e2eContext.track("DECISION_STRATEGIQUE_CREEE", { chantier_id: CHANTIER_E2E });
+  e2eContext.track("DECISION_STRATEGIQUE_CREATED", {
+    chantier_id: CHANTIER_FOR_WRITES,
+  });
   const apiContext = await openApi("EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
-  const chantierId = CHANTIER_E2E;
+  const chantierId = CHANTIER_FOR_WRITES;
 
   await test.step("Import d'une décision stratégique valide sans date - doit retourner 200 OK", async () => {
     const decisions: DecisionStrategiqueInput[] = [
@@ -111,7 +113,7 @@ test("Import de décisions stratégiques via l'API open-api", async ({
   });
 
   await test.step("Import sur un chantier non autorisé - doit retourner 403", async () => {
-    const chantierNonAutorise = CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET;
+    const chantierNonAutorise = CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET;
     const decisions: DecisionStrategiqueInput[] = [
       {
         type: "suivi_des_decisions",

@@ -4,22 +4,22 @@ import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageMonProfilUtilisateur } from "./pages/page-mon-profil-utilisateur";
 
-async function dateDeModification(email: string): Promise<Date> {
-  const compte = await prisma.utilisateur.findUniqueOrThrow({
+async function getModificationDate(email: string): Promise<Date> {
+  const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
     where: { email },
     select: { date_modification: true },
   });
-  return compte.date_modification;
+  return utilisateur.date_modification;
 }
 
-function formatParis(date: Date): string {
-  const jour = date.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
-  const heure = date.toLocaleTimeString("fr-FR", {
+function formatParisDateTime(date: Date): string {
+  const day = date.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
+  const time = date.toLocaleTimeString("fr-FR", {
     timeZone: "Europe/Paris",
     hour: "2-digit",
     minute: "2-digit",
   });
-  return `${jour} à ${heure}`;
+  return `${day} à ${time}`;
 }
 
 test("doit afficher et modifier le profil utilisateur", async ({
@@ -70,10 +70,12 @@ test("doit afficher et modifier le profil utilisateur", async ({
     },
   );
 
-  let dateAvantModification: Date;
+  let modificationDateBefore: Date;
 
   await step("Modification du profil et vérification du succès", async () => {
-    dateAvantModification = await dateDeModification("ditp.admin@example.com");
+    modificationDateBefore = await getModificationDate(
+      "ditp.admin@example.com",
+    );
     await pageMonProfil.modifierFonctionEtEnregistrer(
       "ditp.admin@example.com",
       "Testeur E2E",
@@ -84,17 +86,17 @@ test("doit afficher et modifier le profil utilisateur", async ({
   await step(
     "Vérification que la modification est enregistrée et datée",
     async () => {
-      const compte = await prisma.utilisateur.findUniqueOrThrow({
+      const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
         where: { email: "ditp.admin@example.com" },
         select: { fonction: true, service: true, date_modification: true },
       });
-      expect(compte.fonction).toBe("Testeur E2E");
-      expect(compte.service).toBe("prefecture-de-region");
-      expect(compte.date_modification.getTime()).toBeGreaterThan(
-        dateAvantModification.getTime(),
+      expect(utilisateur.fonction).toBe("Testeur E2E");
+      expect(utilisateur.service).toBe("prefecture-de-region");
+      expect(utilisateur.date_modification.getTime()).toBeGreaterThan(
+        modificationDateBefore.getTime(),
       );
       await expect(pageMonProfil.dateModification).toHaveText(
-        `Modifié le ${formatParis(compte.date_modification)}`,
+        `Modifié le ${formatParisDateTime(utilisateur.date_modification)}`,
       );
     },
   );

@@ -2,9 +2,9 @@ import { expect } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "../fixtures";
 import {
-  CHANTIER_E2E,
-  CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
-} from "../seed/entites-dediees";
+  CHANTIER_FOR_WRITES,
+  CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
+} from "../seed/dedicated-entities";
 import {
   ImportSyntheseDesResultatsErrorResponse,
   ImportSyntheseDesResultatsSuccessResponse,
@@ -15,10 +15,10 @@ test("Import de synthèses des résultats via l'API open-api", async ({
   openApi,
   e2eContext,
 }) => {
-  e2eContext.track("SYNTHESE_CREEE", { chantier_id: CHANTIER_E2E });
+  e2eContext.track("SYNTHESE_CREATED", { chantier_id: CHANTIER_FOR_WRITES });
   const apiContext = await openApi("EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
-  const chantierId = CHANTIER_E2E;
+  const chantierId = CHANTIER_FOR_WRITES;
 
   await test.step("Import d'une synthèse valide sans date - doit retourner 200 OK", async () => {
     const syntheses: SyntheseDesResultatsInput[] = [
@@ -97,7 +97,10 @@ test("Import de synthèses des résultats via l'API open-api", async ({
     for (const content of ["Première synthèse", "Deuxième synthèse"]) {
       expect(
         await prisma.synthese_des_resultats.count({
-          where: { chantier_id: chantierId, commentaire: { contains: content } },
+          where: {
+            chantier_id: chantierId,
+            commentaire: { contains: content },
+          },
         }),
       ).toBe(1);
     }
@@ -152,7 +155,7 @@ test("Import de synthèses des résultats via l'API open-api", async ({
   });
 
   await test.step("Import sur un chantier non autorisé - doit retourner 403", async () => {
-    const chantierNonAutorise = CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET;
+    const chantierNonAutorise = CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET;
     const syntheses: SyntheseDesResultatsInput[] = [
       {
         territoire: "NAT-FR",

@@ -60,11 +60,11 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
   step,
 }) => {
   const email = `e2e.creation.${randomUUID().slice(0, 8)}@example.com`;
-  e2eContext.track("UTILISATEUR_CREE", { email });
+  e2eContext.track("UTILISATEUR_CREATED", { email });
   const appActions = new AppActions(page, e2eContext);
   const pageFormulaire = new PageUtilisateurFormulaire(page, e2eContext);
 
-  async function soumettreLeFormulaire(): Promise<void> {
+  async function submitForm(): Promise<void> {
     await pageFormulaire.gotoCreer();
     await pageFormulaire.remplirIdentification({
       email,
@@ -74,7 +74,7 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
     await pageFormulaire.selectProfil("DITP - Pilotage");
     await pageFormulaire.remplirFonction("Testeur E2E");
     await pageFormulaire.selectService("Préfecture de région");
-    await pageFormulaire.clickSuivantVersLaVerification();
+    await pageFormulaire.clickNextToReview();
     await pageFormulaire.confirmer();
   }
 
@@ -83,13 +83,13 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
   });
 
   await step("Création du compte", async () => {
-    await soumettreLeFormulaire();
+    await submitForm();
     await pageFormulaire.expectSuccesModification();
-    const compte = await prisma.utilisateur.findUniqueOrThrow({
+    const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
       where: { email },
       select: { profilCode: true, fonction: true },
     });
-    expect(compte).toEqual({
+    expect(utilisateur).toEqual({
       profilCode: "DITP_PILOTAGE",
       fonction: "Testeur E2E",
     });
@@ -98,8 +98,8 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
   await step(
     "Une seconde création avec la même adresse est refusée",
     async () => {
-      await soumettreLeFormulaire();
-      await pageFormulaire.expectErreurEmailDejaUtilise();
+      await submitForm();
+      await pageFormulaire.expectEmailAlreadyUsedError();
       expect(await prisma.utilisateur.count({ where: { email } })).toBe(1);
     },
   );
@@ -157,7 +157,7 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
   await step(
     "Remplissage de Fonction et Service — passage à l'étape 2",
     async () => {
-      e2eContext.track("PROFIL_UTILISATEUR_MODIFIE", {
+      e2eContext.track("PROFIL_UTILISATEUR_UPDATED", {
         email: MODALE_PROFIL,
         originalData: {
           fonction: null,

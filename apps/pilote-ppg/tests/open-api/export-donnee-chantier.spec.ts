@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { DonneeChantierContrat } from "@/server/chantiers/app/contrats/DonneeChantierContrat";
 import { test } from "../fixtures";
 
-const PUBLICATION_VIDE = {
+const EMPTY_PUBLICATION = {
   synthese_des_resultats: null,
   notre_ambition: null,
   ce_qui_a_deja_ete_fait: null,
@@ -55,6 +55,6 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
     taux_avancement_region: "Non applicable",
     taux_avancement_nat: "Non applicable",
     taux_avancement_annuel: "Non applicable",
-    publication: PUBLICATION_VIDE,
+    publication: EMPTY_PUBLICATION,
   });
 });

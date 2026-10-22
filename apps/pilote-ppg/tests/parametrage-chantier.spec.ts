@@ -2,17 +2,20 @@ import { expect, Page } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
-import { lireMetadataIndicateur } from "./e2e-test-context";
-import { CHANTIER_E2E, INDICATEUR_OPEN_API } from "./seed/entites-dediees";
+import { readMetadataIndicateur } from "./e2e-test-context";
+import {
+  CHANTIER_FOR_WRITES,
+  INDICATEUR_FOR_OPEN_API,
+} from "./seed/dedicated-entities";
 
 // Chaque réponse renouvelle le cookie csrf que le formulaire lit au rendu :
 // on attend la fin du chargement de la page avant d'enregistrer.
-async function ouvrirLeParametrage(page: Page): Promise<void> {
-  const listesChargees = page.waitForResponse(
+async function openChantierSettings(page: Page): Promise<void> {
+  const listsLoaded = page.waitForResponse(
     /parametrageChantier\.listZonegroups/,
   );
-  await page.goto(`/panel-administrateur/chantiers/${CHANTIER_E2E}`);
-  await listesChargees;
+  await page.goto(`/panel-administrateur/chantiers/${CHANTIER_FOR_WRITES}`);
+  await listsLoaded;
 }
 
 test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
@@ -21,13 +24,13 @@ test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
     e2eContext,
   }) => {
     e2eContext.track(
-      "CHANTIER_PARAMETRAGE_MODIFIE",
+      "CHANTIER_PARAMETRAGE_UPDATED",
       await prisma.metadata_chantiers.findUniqueOrThrow({
-        where: { chantier_id: CHANTIER_E2E },
+        where: { chantier_id: CHANTIER_FOR_WRITES },
       }),
     );
     await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
-    await ouvrirLeParametrage(page);
+    await openChantierSettings(page);
 
     await page
       .getByRole("textbox", { name: "Description" })
@@ -37,7 +40,7 @@ test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
     await expect
       .poll(async () =>
         prisma.metadata_chantiers.findUniqueOrThrow({
-          where: { chantier_id: CHANTIER_E2E },
+          where: { chantier_id: CHANTIER_FOR_WRITES },
           select: { ch_descr: true },
         }),
       )
@@ -53,31 +56,31 @@ test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
     e2eContext,
   }) => {
     e2eContext.track(
-      "INDICATEUR_MODIFIE",
-      await lireMetadataIndicateur(INDICATEUR_OPEN_API),
+      "INDICATEUR_UPDATED",
+      await readMetadataIndicateur(INDICATEUR_FOR_OPEN_API),
     );
     await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
-    await ouvrirLeParametrage(page);
+    await openChantierSettings(page);
     await page.getByRole("tab", { name: "Pondérations" }).click();
 
-    const ponderationNationale = page
+    const nationalPonderationInput = page
       .getByRole("row")
-      .filter({ hasText: INDICATEUR_OPEN_API })
+      .filter({ hasText: INDICATEUR_FOR_OPEN_API })
       .getByRole("spinbutton")
       .first();
-    await ponderationNationale.fill("100");
+    await nationalPonderationInput.fill("100");
     await page.getByRole("button", { name: "Enregistrer" }).first().click();
 
     await expect
       .poll(async () =>
         prisma.metadata_parametrage_indicateurs.findUniqueOrThrow({
-          where: { indic_id: INDICATEUR_OPEN_API },
+          where: { indic_id: INDICATEUR_FOR_OPEN_API },
           select: { poids_pourcent_nat_declaree: true },
         }),
       )
       .toEqual({ poids_pourcent_nat_declaree: 100 });
     await page.reload();
     await page.getByRole("tab", { name: "Pondérations" }).click();
-    await expect(ponderationNationale).toHaveValue("100");
+    await expect(nationalPonderationInput).toHaveValue("100");
   });
 });

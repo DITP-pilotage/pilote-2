@@ -80,7 +80,7 @@ export class PageAdminUtilisateurs extends BasePage {
   }
 
   async rechercherUtilisateur(texte: string): Promise<void> {
-    await this.attendreLaListe(
+    await this.waitForListReload(
       (url) => url.searchParams.get("q") === texte,
       async () => {
         await this.barreRecherche.fill(texte);
@@ -93,7 +93,7 @@ export class PageAdminUtilisateurs extends BasePage {
     // Le clear peut être écrasé par une synchro URL ↔ state (nuqs) qui
     // réinjecte l'ancienne valeur après coup. On force un blur (Tab) pour
     // commiter immédiatement, puis on vérifie que la valeur reste vide.
-    await this.attendreLaListe(
+    await this.waitForListReload(
       (url) => !url.searchParams.get("q"),
       async () => {
         await expect(async () => {
@@ -124,7 +124,7 @@ export class PageAdminUtilisateurs extends BasePage {
     if (await tag.isChecked()) {
       return;
     }
-    await this.attendreLaListe(
+    await this.waitForListReload(
       (url) => url.searchParams.get("typeCompte") === typeCompte,
       () => tag.click(),
     );
@@ -142,7 +142,7 @@ export class PageAdminUtilisateurs extends BasePage {
       await label.waitFor({ state: "visible", timeout: 2_000 });
     }).toPass({ timeout: 10_000 });
 
-    await this.attendreLaListe(
+    await this.waitForListReload(
       (url) => url.searchParams.get("profils") !== null,
       async () => {
         await label.click();
@@ -154,19 +154,18 @@ export class PageAdminUtilisateurs extends BasePage {
   }
 
   // Les filtres et la recherche rechargent la liste côté serveur (nuqs, shallow: false).
-  private async attendreLaListe(
-    correspondALaRequete: (url: URL) => boolean,
+  private async waitForListReload(
+    matchesRequest: (url: URL) => boolean,
     action: () => Promise<void>,
   ): Promise<void> {
-    const listeRechargee = this.page.waitForResponse((reponse) => {
-      const url = new URL(reponse.url());
+    const listReloaded = this.page.waitForResponse((response) => {
+      const url = new URL(response.url());
       return (
-        url.pathname.endsWith("/admin/utilisateurs.json") &&
-        correspondALaRequete(url)
+        url.pathname.endsWith("/admin/utilisateurs.json") && matchesRequest(url)
       );
     });
     await action();
-    await listeRechargee;
+    await listReloaded;
   }
 
   async expectColonneVisible(nomColonne: string): Promise<void> {

@@ -5,18 +5,18 @@ import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { TrpcClient } from "./api-client/trpc.client";
 import { E2ETestContext } from "./e2e-test-context";
-import { CHANTIER_E2E } from "./seed/entites-dediees";
+import { CHANTIER_FOR_WRITES } from "./seed/dedicated-entities";
 
-async function trpcPour(
+async function trpcAs(
   page: Page,
   e2eContext: E2ETestContext,
   email: string,
 ): Promise<TrpcClient> {
   await new AppActions(page, e2eContext).loginAs(email);
-  return TrpcClient.horsApplication(page);
+  return TrpcClient.outsideApp(page);
 }
 
-function nouveauCompte(email: string, territoire: string) {
+function buildUtilisateurInput(email: string, territoire: string) {
   return {
     email,
     nom: "Compte",
@@ -37,15 +37,15 @@ function nouveauCompte(email: string, territoire: string) {
   };
 }
 
-function emailUnique(prefixe: string): string {
+function uniqueEmail(prefixe: string): string {
   return `${prefixe}.${randomUUID().slice(0, 8)}@example.com`;
 }
 
-async function compteExiste(email: string): Promise<boolean> {
+async function utilisateurExists(email: string): Promise<boolean> {
   return (await prisma.utilisateur.count({ where: { email } })) > 0;
 }
 
-async function dateDesactivation(email: string): Promise<Date | null> {
+async function getDateDesactivation(email: string): Promise<Date | null> {
   const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
     where: { email },
     select: { date_desactivation: true },
@@ -59,39 +59,39 @@ test.describe("Appels directs sans session", () => {
   }) => {
     const trpc = new TrpcClient(page);
 
-    const resultat = await trpc.mutation(
+    const result = await trpc.mutation(
       "utilisateur.desactiver",
       { email: "prefet.region@example.com" },
       { csrf: null },
     );
 
-    expect(resultat.status).toBe(303);
-    expect(resultat.location).toContain("/connexion?callbackUrl=");
+    expect(result.status).toBe(303);
+    expect(result.location).toContain("/connexion?callbackUrl=");
   });
 
-  for (const chemin of [
+  for (const path of [
     "/api/trpc/chantier.recupererTousSynthetisesAccessiblesEnLecture",
     "/api/export/chantiers-v2",
     "/api/export/utilisateurs",
   ]) {
-    test(`${chemin} est redirigé vers la connexion`, async ({ page }) => {
-      const reponse = await page.request.get(chemin, { maxRedirects: 0 });
+    test(`${path} est redirigé vers la connexion`, async ({ page }) => {
+      const response = await page.request.get(path, { maxRedirects: 0 });
 
-      expect(reponse.status()).toBe(303);
-      expect(reponse.headers().location).toContain("/connexion?callbackUrl=");
+      expect(response.status()).toBe(303);
+      expect(response.headers().location).toContain("/connexion?callbackUrl=");
     });
   }
 
   test("le chat de l'assistant est redirigé vers la connexion", async ({
     page,
   }) => {
-    const reponse = await page.request.post("/api/albert/chat", {
+    const response = await page.request.post("/api/albert/chat", {
       data: {},
       maxRedirects: 0,
     });
 
-    expect(reponse.status()).toBe(303);
-    expect(reponse.headers().location).toContain("/connexion?callbackUrl=");
+    expect(response.status()).toBe(303);
+    expect(response.headers().location).toContain("/connexion?callbackUrl=");
   });
 });
 
@@ -100,15 +100,15 @@ test.describe("Appels directs avec session", () => {
     page,
     e2eContext,
   }) => {
-    const trpc = await trpcPour(page, e2eContext, "ditp.pilotage@example.com");
+    const trpc = await trpcAs(page, e2eContext, "ditp.pilotage@example.com");
 
-    const resultat = await trpc.query<unknown[]>(
+    const result = await trpc.query<unknown[]>(
       "chantier.recupererTousSynthetisesAccessiblesEnLecture",
     );
 
-    expect(resultat.status).toBe(200);
-    expect(resultat.errorCode).toBeNull();
-    expect(resultat.data?.length).toBeGreaterThan(0);
+    expect(result.status).toBe(200);
+    expect(result.errorCode).toBeNull();
+    expect(result.data?.length).toBeGreaterThan(0);
   });
 });
 
@@ -117,139 +117,145 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
-    const email = emailUnique("e2e.autorise");
-    e2eContext.track("UTILISATEUR_CREE", { email });
-    const trpc = await trpcPour(
+    const email = uniqueEmail("e2e.autorise");
+    e2eContext.track("UTILISATEUR_CREATED", { email });
+    const trpc = await trpcAs(
       page,
       e2eContext,
       "coordinateur.departement@example.com",
     );
 
-    const creation = await trpc.mutation(
+    const creationResult = await trpc.mutation(
       "utilisateur.creer",
-      nouveauCompte(email, "DEPT-56"),
+      buildUtilisateurInput(email, "DEPT-56"),
     );
-    const desactivation = await trpc.mutation("utilisateur.desactiver", {
+    const deactivationResult = await trpc.mutation("utilisateur.desactiver", {
       email,
     });
 
-    expect(creation.status).toBe(200);
-    expect(desactivation.status).toBe(200);
-    expect(await dateDesactivation(email)).not.toBeNull();
+    expect(creationResult.status).toBe(200);
+    expect(deactivationResult.status).toBe(200);
+    expect(await getDateDesactivation(email)).not.toBeNull();
   });
 
   test("un coordinateur ne crée pas de compte hors de ses départements", async ({
     page,
     e2eContext,
   }) => {
-    const email = emailUnique("e2e.hors.perimetre");
-    e2eContext.track("UTILISATEUR_CREE", { email });
-    const trpc = await trpcPour(
+    const email = uniqueEmail("e2e.hors.perimetre");
+    e2eContext.track("UTILISATEUR_CREATED", { email });
+    const trpc = await trpcAs(
       page,
       e2eContext,
       "coordinateur.departement@example.com",
     );
 
-    const resultat = await trpc.mutation(
+    const result = await trpc.mutation(
       "utilisateur.creer",
-      nouveauCompte(email, "DEPT-13"),
+      buildUtilisateurInput(email, "DEPT-13"),
     );
 
-    expect(resultat.status).toBe(403);
-    expect(resultat.errorCode).toBe("ForbiddenError");
-    expect(await compteExiste(email)).toBe(false);
+    expect(result.status).toBe(403);
+    expect(result.errorCode).toBe("ForbiddenError");
+    expect(await utilisateurExists(email)).toBe(false);
   });
 
   test("un profil sans gestion des comptes ne crée pas de compte", async ({
     page,
     e2eContext,
   }) => {
-    const email = emailUnique("e2e.sans.gestion");
-    e2eContext.track("UTILISATEUR_CREE", { email });
-    const trpc = await trpcPour(
+    const email = uniqueEmail("e2e.sans.gestion");
+    e2eContext.track("UTILISATEUR_CREATED", { email });
+    const trpc = await trpcAs(
       page,
       e2eContext,
       "prefet.departement@example.com",
     );
 
-    const resultat = await trpc.mutation(
+    const result = await trpc.mutation(
       "utilisateur.creer",
-      nouveauCompte(email, "DEPT-56"),
+      buildUtilisateurInput(email, "DEPT-56"),
     );
 
-    expect(resultat.status).toBe(403);
-    expect(resultat.errorCode).toBe("ForbiddenError");
-    expect(await compteExiste(email)).toBe(false);
+    expect(result.status).toBe(403);
+    expect(result.errorCode).toBe("ForbiddenError");
+    expect(await utilisateurExists(email)).toBe(false);
   });
 
   test("un coordinateur ne désactive pas un compte hors de son périmètre", async ({
     page,
     e2eContext,
   }) => {
-    const trpc = await trpcPour(
+    const trpc = await trpcAs(
       page,
       e2eContext,
       "coordinateur.departement@example.com",
     );
 
-    const resultat = await trpc.mutation("utilisateur.desactiver", {
+    const result = await trpc.mutation("utilisateur.desactiver", {
       email: "premiere.ministre@example.com",
     });
 
-    expect(resultat.status).toBe(403);
-    expect(resultat.errorCode).toBe("ForbiddenError");
-    expect(await dateDesactivation("premiere.ministre@example.com")).toBeNull();
+    expect(result.status).toBe(403);
+    expect(result.errorCode).toBe("ForbiddenError");
+    expect(
+      await getDateDesactivation("premiere.ministre@example.com"),
+    ).toBeNull();
   });
 
   test("un coordinateur ne réactive pas un compte hors de son périmètre", async ({
     page,
     e2eContext,
   }) => {
-    const trpc = await trpcPour(
+    const trpc = await trpcAs(
       page,
       e2eContext,
       "coordinateur.departement@example.com",
     );
 
-    const resultat = await trpc.mutation("utilisateur.reactiver", {
+    const result = await trpc.mutation("utilisateur.reactiver", {
       email: "premiere.ministre@example.com",
     });
 
-    expect(resultat.status).toBe(403);
-    expect(resultat.errorCode).toBe("ForbiddenError");
+    expect(result.status).toBe(403);
+    expect(result.errorCode).toBe("ForbiddenError");
   });
 
   test("une mutation sans jeton CSRF est refusée", async ({
     page,
     e2eContext,
   }) => {
-    const trpc = await trpcPour(page, e2eContext, "ditp.admin@example.com");
+    const trpc = await trpcAs(page, e2eContext, "ditp.admin@example.com");
 
-    const resultat = await trpc.mutation(
+    const result = await trpc.mutation(
       "utilisateur.desactiver",
       { email: "premiere.ministre@example.com" },
       { csrf: null },
     );
 
-    expect(resultat.status).toBe(400);
-    expect(await dateDesactivation("premiere.ministre@example.com")).toBeNull();
+    expect(result.status).toBe(400);
+    expect(
+      await getDateDesactivation("premiere.ministre@example.com"),
+    ).toBeNull();
   });
 
   test("une mutation avec un jeton CSRF invalide est refusée", async ({
     page,
     e2eContext,
   }) => {
-    const trpc = await trpcPour(page, e2eContext, "ditp.admin@example.com");
+    const trpc = await trpcAs(page, e2eContext, "ditp.admin@example.com");
 
-    const resultat = await trpc.mutation(
+    const result = await trpc.mutation(
       "utilisateur.desactiver",
       { email: "premiere.ministre@example.com" },
       { csrf: "jeton-invalide" },
     );
 
-    expect(resultat.status).toBe(403);
-    expect(resultat.errorCode).toBe("FORBIDDEN");
-    expect(await dateDesactivation("premiere.ministre@example.com")).toBeNull();
+    expect(result.status).toBe(403);
+    expect(result.errorCode).toBe("FORBIDDEN");
+    expect(
+      await getDateDesactivation("premiere.ministre@example.com"),
+    ).toBeNull();
   });
 });
 
@@ -262,21 +268,21 @@ test.describe("Tokens API", () => {
       page,
       e2eContext,
     }) => {
-      e2eContext.track("TOKEN_API_CREE", {
+      e2eContext.track("TOKEN_API_CREATED", {
         email: "ditp.pilotage@example.com",
       });
-      const trpc = await trpcPour(
+      const trpc = await trpcAs(
         page,
         e2eContext,
         "equipe.dir.projet@example.com",
       );
 
-      const resultat = await trpc.mutation(procedure, {
+      const result = await trpc.mutation(procedure, {
         email: "ditp.pilotage@example.com",
       });
 
-      expect(resultat.status).toBe(401);
-      expect(resultat.errorCode).toBe("UnauthorizedError");
+      expect(result.status).toBe(401);
+      expect(result.errorCode).toBe("UnauthorizedError");
       expect(
         await prisma.token_api_information.count({
           where: { email: "ditp.pilotage@example.com" },
@@ -289,26 +295,26 @@ test.describe("Tokens API", () => {
 test.describe("Paramétrage des chantiers", () => {
   for (const [procedure, input] of [
     ["parametrageChantier.list", undefined],
-    ["parametrageChantier.get", { chantierId: CHANTIER_E2E }],
+    ["parametrageChantier.get", { chantierId: CHANTIER_FOR_WRITES }],
     [
       "parametrageChantier.getIndicateursPonderations",
-      { chantierId: CHANTIER_E2E },
+      { chantierId: CHANTIER_FOR_WRITES },
     ],
   ] as const) {
     test(`${procedure} est réservé à l'administrateur DITP`, async ({
       page,
       e2eContext,
     }) => {
-      const trpc = await trpcPour(
+      const trpc = await trpcAs(
         page,
         e2eContext,
         "coordinateur.region@example.com",
       );
 
-      const resultat = await trpc.query(procedure, input);
+      const result = await trpc.query(procedure, input);
 
-      expect(resultat.status).toBe(403);
-      expect(resultat.errorCode).toBe("ForbiddenError");
+      expect(result.status).toBe(403);
+      expect(result.errorCode).toBe("ForbiddenError");
     });
   }
 
@@ -316,14 +322,14 @@ test.describe("Paramétrage des chantiers", () => {
     page,
     e2eContext,
   }) => {
-    const trpc = await trpcPour(
+    const trpc = await trpcAs(
       page,
       e2eContext,
       "coordinateur.region@example.com",
     );
 
-    const resultat = await trpc.mutation("parametrageChantier.save", {
-      chantierId: CHANTIER_E2E,
+    const result = await trpc.mutation("parametrageChantier.save", {
+      chantierId: CHANTIER_FOR_WRITES,
       chNom: "Nom modifié par un coordinateur",
       chDescr: null,
       chPpg: "PPG-001",
@@ -340,10 +346,10 @@ test.describe("Paramétrage des chantiers", () => {
       conseillerMail: null,
     });
 
-    expect(resultat.status).toBe(403);
-    expect(resultat.errorCode).toBe("ForbiddenError");
+    expect(result.status).toBe(403);
+    expect(result.errorCode).toBe("ForbiddenError");
     const chantier = await prisma.chantier_identite.findUniqueOrThrow({
-      where: { id: CHANTIER_E2E },
+      where: { id: CHANTIER_FOR_WRITES },
       select: { nom: true },
     });
     expect(chantier.nom).toBe("Chantier e2e");
@@ -353,18 +359,18 @@ test.describe("Paramétrage des chantiers", () => {
     page,
     e2eContext,
   }) => {
-    const trpc = await trpcPour(
+    const trpc = await trpcAs(
       page,
       e2eContext,
       "coordinateur.region@example.com",
     );
 
-    const resultat = await trpc.mutation(
+    const result = await trpc.mutation(
       "parametrageChantier.savePonderationsIndicateurs",
       { lignes: [] },
     );
 
-    expect(resultat.status).toBe(403);
-    expect(resultat.errorCode).toBe("ForbiddenError");
+    expect(result.status).toBe(403);
+    expect(result.errorCode).toBe("ForbiddenError");
   });
 });

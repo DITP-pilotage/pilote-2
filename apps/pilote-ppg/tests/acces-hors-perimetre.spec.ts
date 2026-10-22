@@ -12,9 +12,9 @@ test.describe("Accès hors périmètre par URL", () => {
       "coordinateur.departement@example.com",
     );
 
-    const reponse = await page.goto("/chantier/CH-129/DEPT-13");
+    const response = await page.goto("/chantier/CH-129/DEPT-13");
 
-    expect(reponse?.status()).toBe(404);
+    expect(response?.status()).toBe(404);
     await new PageChantier(page, e2eContext).expectPageNotFound();
   });
 
@@ -40,11 +40,11 @@ test.describe("Accès hors périmètre par URL", () => {
       "prefet.departement@example.com",
     );
 
-    for (const chemin of ["/admin/utilisateurs", "/admin/utilisateur/creer"]) {
-      const reponse = await page.request.get(chemin, { maxRedirects: 0 });
+    for (const path of ["/admin/utilisateurs", "/admin/utilisateur/creer"]) {
+      const response = await page.request.get(path, { maxRedirects: 0 });
 
-      expect(reponse.status(), chemin).toBe(307);
-      expect(reponse.headers().location, chemin).toBe("/");
+      expect(response.status(), path).toBe(307);
+      expect(response.headers().location, path).toBe("/");
     }
   });
 });

@@ -65,21 +65,21 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async selectService(serviceName: string): Promise<void> {
-    await this.choisirOption(
+    await this.selectOption(
       this.page.getByLabel(/^Service/),
       this.page.getByRole("option", { name: serviceName }),
     );
   }
 
   async selectProfil(profilName: string): Promise<void> {
-    await this.choisirOption(
+    await this.selectOption(
       this.page.getByLabel("Profil", { exact: true }),
       this.page.getByRole("option", { name: profilName, exact: true }),
     );
   }
 
   // Un clic sur la liste avant l'hydratation ne l'ouvre pas : on réessaie l'ouverture.
-  private async choisirOption(liste: Locator, option: Locator): Promise<void> {
+  private async selectOption(liste: Locator, option: Locator): Promise<void> {
     await expect(async () => {
       if (!(await option.isVisible())) {
         await liste.click();
@@ -88,14 +88,14 @@ export class PageUtilisateurFormulaire extends BasePage {
     }).toPass();
   }
 
-  async clickSuivantVersLaVerification(): Promise<void> {
+  async clickNextToReview(): Promise<void> {
     // Chaque réponse renouvelle le cookie csrf : confirmer avant la fin du chargement
     // de l'étape 2 enverrait un jeton périmé.
-    const etapeVerificationChargee = this.page.waitForResponse(
+    const reviewStepLoaded = this.page.waitForResponse(
       /chantier\.recupererTousLesInformationsChantiers/,
     );
     await this.clickSuivant();
-    await etapeVerificationChargee;
+    await reviewStepLoaded;
   }
 
   async clickSuivant(): Promise<void> {
@@ -134,7 +134,7 @@ export class PageUtilisateurFormulaire extends BasePage {
     });
   }
 
-  async expectErreurEmailDejaUtilise(): Promise<void> {
+  async expectEmailAlreadyUsedError(): Promise<void> {
     await expect(
       this.page.getByRole("alert").getByRole("heading", {
         name: "Un compte a déjà été créé avec cette adresse électronique.",

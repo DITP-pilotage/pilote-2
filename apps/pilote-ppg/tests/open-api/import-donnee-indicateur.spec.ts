@@ -2,28 +2,28 @@ import { expect } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "../fixtures";
 import {
-  CHANTIER_E2E,
-  CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
-  INDICATEUR_OPEN_API,
-} from "../seed/entites-dediees";
+  CHANTIER_FOR_WRITES,
+  CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
+  INDICATEUR_FOR_OPEN_API,
+} from "../seed/dedicated-entities";
 import { DonneeIndicateurInput } from "./api-client/open-api.client";
 
 // Seul ce spec importe des données avec ce compte : ses rapports, valides ou non, sont tous à nettoyer.
-const RAPPORTS_DE_L_INDICATEUR = {
+const RAPPORTS_TO_CLEAN = {
   utilisateurEmail: "equipe.dir.projet@example.com",
 };
 
-function donnee(
-  valeur: Partial<DonneeIndicateurInput> = {},
+function buildDonneeIndicateur(
+  overrides: Partial<DonneeIndicateurInput> = {},
 ): DonneeIndicateurInput {
   return {
-    identifiant_indic: INDICATEUR_OPEN_API,
+    identifiant_indic: INDICATEUR_FOR_OPEN_API,
     zone_id: "D56",
     zone_nom: "Morbihan",
     date_valeur: "2023-03-31",
     type_valeur: "va",
     valeur: "42",
-    ...valeur,
+    ...overrides,
   };
 }
 
@@ -32,24 +32,28 @@ test.describe("Import des données d'un indicateur par l'open-api", () => {
     openApi,
     e2eContext,
   }) => {
-    e2eContext.track("RAPPORT_IMPORT_CREE", RAPPORTS_DE_L_INDICATEUR);
+    e2eContext.track("RAPPORT_IMPORT_CREATED", RAPPORTS_TO_CLEAN);
     const client = (await openApi("EQUIPE_DIR_PROJET")).getClient();
 
-    const reponse = await client.importDonneesIndicateur(
-      CHANTIER_E2E,
-      INDICATEUR_OPEN_API,
+    const response = await client.importDonneesIndicateur(
+      CHANTIER_FOR_WRITES,
+      INDICATEUR_FOR_OPEN_API,
       [
-        donnee({ valeur: "42" }),
-        donnee({ zone_id: "D29", zone_nom: "Finistère", valeur: "17" }),
+        buildDonneeIndicateur({ valeur: "42" }),
+        buildDonneeIndicateur({
+          zone_id: "D29",
+          zone_nom: "Finistère",
+          valeur: "17",
+        }),
       ],
     );
 
-    expect(reponse.status()).toBe(200);
-    expect(await reponse.json()).toEqual({
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toEqual({
       message: "Les données ont correctement été importés",
     });
     const mesures = await prisma.mesure_indicateur.findMany({
-      where: { indic_id: INDICATEUR_OPEN_API },
+      where: { indic_id: INDICATEUR_FOR_OPEN_API },
       select: {
         zone_id: true,
         metric_type: true,
@@ -78,29 +82,29 @@ test.describe("Import des données d'un indicateur par l'open-api", () => {
     openApi,
     e2eContext,
   }) => {
-    e2eContext.track("RAPPORT_IMPORT_CREE", RAPPORTS_DE_L_INDICATEUR);
+    e2eContext.track("RAPPORT_IMPORT_CREATED", RAPPORTS_TO_CLEAN);
     const client = (await openApi("EQUIPE_DIR_PROJET")).getClient();
 
-    const reponse = await client.importDonneesIndicateur(
-      CHANTIER_E2E,
-      INDICATEUR_OPEN_API,
-      [donnee({ zone_id: "ZONE-INCONNUE" })],
+    const response = await client.importDonneesIndicateur(
+      CHANTIER_FOR_WRITES,
+      INDICATEUR_FOR_OPEN_API,
+      [buildDonneeIndicateur({ zone_id: "ZONE-INCONNUE" })],
     );
 
-    expect(reponse.status()).toBe(400);
-    const corps = (await reponse.json()) as {
+    expect(response.status()).toBe(400);
+    const body = (await response.json()) as {
       message: string;
       erreurs: { nomDuChamp: string }[];
     };
-    expect(corps.message).toBe(
+    expect(body.message).toBe(
       "Une erreur est survenue lors de l'import des données",
     );
-    expect(corps.erreurs.map((erreur) => erreur.nomDuChamp)).toContain(
+    expect(body.erreurs.map((erreur) => erreur.nomDuChamp)).toContain(
       "zone_id",
     );
     expect(
       await prisma.mesure_indicateur.count({
-        where: { indic_id: INDICATEUR_OPEN_API },
+        where: { indic_id: INDICATEUR_FOR_OPEN_API },
       }),
     ).toBe(0);
   });
@@ -110,16 +114,16 @@ test.describe("Import des données d'un indicateur par l'open-api", () => {
   }) => {
     const client = (await openApi("PM_ET_CABINET")).getClient();
 
-    const reponse = await client.importDonneesIndicateur(
-      CHANTIER_E2E,
-      INDICATEUR_OPEN_API,
-      [donnee()],
+    const response = await client.importDonneesIndicateur(
+      CHANTIER_FOR_WRITES,
+      INDICATEUR_FOR_OPEN_API,
+      [buildDonneeIndicateur()],
     );
 
-    expect(reponse.status()).toBe(403);
+    expect(response.status()).toBe(403);
     expect(
       await prisma.mesure_indicateur.count({
-        where: { indic_id: INDICATEUR_OPEN_API },
+        where: { indic_id: INDICATEUR_FOR_OPEN_API },
       }),
     ).toBe(0);
   });
@@ -128,19 +132,19 @@ test.describe("Import des données d'un indicateur par l'open-api", () => {
     openApi,
   }) => {
     const client = (await openApi("EQUIPE_DIR_PROJET")).getClient();
-    const mesuresAvant = await prisma.mesure_indicateur.count({
+    const mesuresCountBefore = await prisma.mesure_indicateur.count({
       where: { indic_id: "IND-105" },
     });
 
-    const reponse = await client.importDonneesIndicateur(
-      CHANTIER_HORS_PERIMETRE_EQUIPE_DIR_PROJET,
+    const response = await client.importDonneesIndicateur(
+      CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
       "IND-105",
-      [donnee({ identifiant_indic: "IND-105" })],
+      [buildDonneeIndicateur({ identifiant_indic: "IND-105" })],
     );
 
-    expect(reponse.status()).toBe(403);
+    expect(response.status()).toBe(403);
     expect(
       await prisma.mesure_indicateur.count({ where: { indic_id: "IND-105" } }),
-    ).toBe(mesuresAvant);
+    ).toBe(mesuresCountBefore);
   });
 });

@@ -63,7 +63,7 @@ export const test = base.extend<{
   e2eContext: E2ETestContext;
   step: StepWithBanner;
   openApi: (profile: UserProfile) => Promise<ApiTestContext>;
-  openApiSansAuthentification: (
+  openApiUnauthenticated: (
     authorization?: AuthorizationHeader,
   ) => Promise<OpenApiClient>;
 }>({
@@ -79,16 +79,16 @@ export const test = base.extend<{
     await use(createStepWithBanner(page));
   },
   openApi: async ({ playwright }, use) => {
-    const contextes: ApiTestContext[] = [];
+    const contexts: ApiTestContext[] = [];
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(async (profile) => {
-      const contexte = await ApiTestContext.create(playwright, profile);
-      contextes.push(contexte);
-      return contexte;
+      const context = await ApiTestContext.create(playwright, profile);
+      contexts.push(context);
+      return context;
     });
-    await Promise.all(contextes.map((contexte) => contexte.dispose()));
+    await Promise.all(contexts.map((context) => context.dispose()));
   },
-  openApiSansAuthentification: async ({ playwright }, use) => {
+  openApiUnauthenticated: async ({ playwright }, use) => {
     const clients: OpenApiClient[] = [];
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(async (authorization) => {

@@ -1,8 +1,11 @@
 import { expect } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
-import { lireMetadataIndicateur } from "./e2e-test-context";
-import { CHANTIER_E2E, INDICATEUR_FORMULAIRE } from "./seed/entites-dediees";
+import { readMetadataIndicateur } from "./e2e-test-context";
+import {
+  CHANTIER_FOR_WRITES,
+  INDICATEUR_FOR_FORM,
+} from "./seed/dedicated-entities";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminIndicateurForm } from "./pages/admin/page-admin-indicateur-form";
 import { PageAdminIndicateurs } from "./pages/admin/page-admin-indicateurs";
@@ -18,16 +21,16 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
     e2eContext.track(
-      "INDICATEUR_MODIFIE",
-      await lireMetadataIndicateur(INDICATEUR_FORMULAIRE),
+      "INDICATEUR_UPDATED",
+      await readMetadataIndicateur(INDICATEUR_FOR_FORM),
     );
 
     await step(
-      `Connexion et accès à la fiche indicateur ${INDICATEUR_FORMULAIRE}`,
+      `Connexion et accès à la fiche indicateur ${INDICATEUR_FOR_FORM}`,
       async () => {
         await appActions.loginAs(DITP_ADMIN);
-        await pageForm.goto(INDICATEUR_FORMULAIRE);
-        await pageForm.expectTitreFiche(INDICATEUR_FORMULAIRE);
+        await pageForm.goto(INDICATEUR_FOR_FORM);
+        await pageForm.expectTitreFiche(INDICATEUR_FOR_FORM);
       },
     );
 
@@ -63,10 +66,10 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
     );
 
     await step(
-      `Vérification des données de l'indicateur ${INDICATEUR_FORMULAIRE} dans la section identité`,
+      `Vérification des données de l'indicateur ${INDICATEUR_FOR_FORM} dans la section identité`,
       async () => {
-        await pageForm.expectDonneeAffichee(CHANTIER_E2E);
-        await pageForm.expectDonneeAffichee(INDICATEUR_FORMULAIRE);
+        await pageForm.expectDonneeAffichee(CHANTIER_FOR_WRITES);
+        await pageForm.expectDonneeAffichee(INDICATEUR_FOR_FORM);
       },
     );
 
@@ -421,7 +424,7 @@ test.describe("Formulaire indicateur — Création", () => {
 
     // IND-990 n'existe pas en base, il sera initialisé comme nouvel indicateur
     const nouvelIndicateurId = "IND-990";
-    e2eContext.track("INDICATEUR_CREE", { indicId: nouvelIndicateurId });
+    e2eContext.track("INDICATEUR_CREATED", { indicId: nouvelIndicateurId });
 
     await step("Connexion et accès au formulaire de création", async () => {
       await appActions.loginAs(DITP_ADMIN);

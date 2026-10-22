@@ -14,7 +14,7 @@ export class AppActions {
   /**
    * Connexion par l'API NextAuth plutôt que par le formulaire : le provider
    * credentials est appelé directement, ce qui pose le cookie de session dans le
-   * contexte sans traverser les quatre pages du parcours de connexion. Le parcours
+   * context sans traverser les quatre pages du parcours de connexion. Le parcours
    * complet reste couvert par `loginViaFormulaire`.
    */
   async loginAs(
@@ -78,21 +78,21 @@ export class AppActions {
       (await this.page.request.get("/api/auth/csrf")).json(),
     )) as { csrfToken: string };
 
-    const reponse = await this.retry(() =>
+    const response = await this.retry(() =>
       this.page.request.post("/api/auth/callback/credentials", {
         form: { csrfToken, username, password, callbackUrl: "/" },
         maxRedirects: 0,
       }),
     );
 
-    const redirection = reponse.headers().location ?? "";
+    const redirection = response.headers().location ?? "";
     const cookies = await this.page.context().cookies();
     const sessionPosee = cookies.some((cookie) =>
       cookie.name.includes("session-token"),
     );
     if (!sessionPosee || /error=/.test(redirection)) {
       throw new Error(
-        `Connexion refusée pour ${username} (statut ${reponse.status()}, redirection vers ${redirection})`,
+        `Connexion refusée pour ${username} (statut ${response.status()}, redirection vers ${redirection})`,
       );
     }
   }

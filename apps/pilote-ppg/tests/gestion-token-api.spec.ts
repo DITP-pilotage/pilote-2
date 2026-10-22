@@ -9,37 +9,37 @@ const EMAIL = "cabinet.mtfp@example.com";
 test("un token API créé par l'administrateur donne accès aux données de l'open-api jusqu'à sa suppression", async ({
   page,
   e2eContext,
-  openApiSansAuthentification,
+  openApiUnauthenticated,
   step,
 }) => {
-  e2eContext.track("TOKEN_API_CREE", { email: EMAIL });
-  const pageTokens = new PageGestionTokenApi(page, e2eContext);
+  e2eContext.track("TOKEN_API_CREATED", { email: EMAIL });
+  const tokensPage = new PageGestionTokenApi(page, e2eContext);
   let token = "";
 
   await step("Création du token par l'administrateur DITP", async () => {
     await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
-    await pageTokens.goto();
-    token = await pageTokens.createToken(EMAIL);
+    await tokensPage.goto();
+    token = await tokensPage.createToken(EMAIL);
     expect(token).not.toBe("");
   });
 
   await step("Le token ouvre l'open-api", async () => {
-    const client = await openApiSansAuthentification({
+    const client = await openApiUnauthenticated({
       value: `Bearer ${token}`,
     });
-    const reponse = await client.getChantierDonnees("CH-129");
-    expect(reponse.status()).toBe(200);
-    expect(await reponse.json()).toMatchObject({ chantier_id: "CH-129" });
+    const response = await client.getChantierDonnees("CH-129");
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toMatchObject({ chantier_id: "CH-129" });
   });
 
   await step("Après suppression, le token est refusé", async () => {
-    await pageTokens.goto();
-    await pageTokens.deleteToken(EMAIL);
+    await tokensPage.goto();
+    await tokensPage.deleteToken(EMAIL);
     await expect(page.getByRole("cell", { name: EMAIL })).toHaveCount(0);
-    const client = await openApiSansAuthentification({
+    const client = await openApiUnauthenticated({
       value: `Bearer ${token}`,
     });
-    const reponse = await client.getChantierDonnees("CH-129");
-    expect(reponse.status()).toBe(403);
+    const response = await client.getChantierDonnees("CH-129");
+    expect(response.status()).toBe(403);
   });
 });
