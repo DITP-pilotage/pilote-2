@@ -9,6 +9,7 @@ import {
 import { Meteo, libellesMeteos } from "@/shared/meteo/Meteo.interface";
 import { badgePdf, BadgeVariant } from "@/server/pdf/primitives";
 import { iconSvg } from "@/server/pdf/svgFromComponent";
+import { color } from "@/server/pdf/colors";
 
 type Tendance = "HAUSSE" | "BAISSE" | "STAGNATION" | null;
 
@@ -17,19 +18,19 @@ const TENDANCES = {
     variant: "success",
     icon: ArrowRightUp1Icon,
     label: "En hausse",
-    color: "#18753C",
+    color: color("dsfr-success-425"),
   },
   BAISSE: {
     variant: "error",
     icon: ArrowRightDown1Icon,
     label: "En baisse",
-    color: "#CE0500",
+    color: color("dsfr-error-425"),
   },
   STAGNATION: {
     variant: "info",
     icon: ArrowLine1Icon,
     label: "Stable",
-    color: "#0063CB",
+    color: color("dsfr-info-425"),
   },
 } as const;
 
@@ -38,9 +39,9 @@ export function tendanceBadgePdf(
   estArchive = false,
 ): Content | null {
   if (!tendance) return null;
-  const { variant, icon, label, color } = TENDANCES[tendance];
+  const { variant, icon, label, color: tendanceColor } = TENDANCES[tendance];
   return badgePdf(label, estArchive ? "default" : variant, {
-    iconSvg: iconSvg(icon, estArchive ? "#3A3A3A" : color),
+    iconSvg: iconSvg(icon, estArchive ? color("dsfr-grey-200") : tendanceColor),
   });
 }
 

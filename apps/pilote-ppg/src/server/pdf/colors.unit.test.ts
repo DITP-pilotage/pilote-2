@@ -7,6 +7,11 @@ describe("couleur", () => {
     expect(color("dsfr-blue-france-925")).toBe("#E3E3FD");
   });
 
+  it("renvoie toujours un code hexadécimal à 6 chiffres en majuscules", () => {
+    expect(color("dsfr-mention-grey")).toBe("#666666");
+    expect(color("pilote-gris-moyen")).toBe("#BABABA");
+  });
+
   it("connaît le blanc et le noir", () => {
     expect(color("white")).toBe("#FFFFFF");
     expect(color("black")).toBe("#000000");

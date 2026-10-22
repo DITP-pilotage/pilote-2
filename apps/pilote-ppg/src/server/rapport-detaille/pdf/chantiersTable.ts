@@ -21,9 +21,10 @@ import {
   tendanceBadgePdf,
 } from "@/server/rapport-detaille/pdf/badges";
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
+import { color } from "@/server/pdf/colors";
 
-const EMPTY_BACKGROUND = "#E8EDFF";
-const EMPTY_COLOR = "#0063CB";
+const EMPTY_BACKGROUND = color("dsfr-info-950");
+const EMPTY_COLOR = color("dsfr-info-425");
 const ICON_SIZE = px(24);
 
 function dateCell(date: string | null): ContentText[] {
@@ -97,7 +98,9 @@ function avancementCell(
             valeur: chantier.avancement,
             size: "sm",
             background: "blanc",
-            fill: chantiersSontArchives ? "#666666" : PRIMARY_COLOR,
+            fill: chantiersSontArchives
+              ? color("dsfr-mention-grey")
+              : PRIMARY_COLOR,
             label: "side",
             width: rem(11) - 2 * px(16) - rem(3) - px(8),
           }),

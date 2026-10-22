@@ -14,13 +14,14 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/lé
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { flattenSvgClasses, renderSvg } from "@/server/pdf/svgFromComponent";
+import { color } from "@/server/pdf/colors";
 
 type Fills = Record<
   string,
   { remplissage: Remplissage; estApplicable: boolean | null }
 >;
 
-const DEFAULT_FILL = "#bababa";
+const DEFAULT_FILL = color("pilote-gris-moyen");
 const SELECTED_TERRITOIRE_CLASSES =
   "fill-none stroke-dsfr-moutarde-main-850 [stroke-width:0.5]";
 
@@ -149,8 +150,8 @@ export function meteoCarteSvg(params: {
   });
 }
 
-const LEGEND_SWATCH_BORDER = "#161616";
-const HATCH_COLOR = "#666666";
+const LEGEND_SWATCH_BORDER = color("dsfr-grey-50");
+const HATCH_COLOR = color("dsfr-mention-grey");
 
 function swatchSvg(remplissage: Remplissage): string {
   if (remplissage === "hachures") {
@@ -202,7 +203,7 @@ export function cartographieLegendPdf(
           width: "auto",
           text: entry.libellé,
           fontSize: px(12),
-          color: "#666666",
+          color: color("dsfr-mention-grey"),
         },
         ...(entry.pictoSvg ? [{ svg: entry.pictoSvg, width: px(24) }] : []),
       ],

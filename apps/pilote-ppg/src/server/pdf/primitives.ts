@@ -11,29 +11,44 @@ import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { htmlToPdfmake } from "@/server/pdf/htmlToPdfmake";
 import { iconSvg } from "@/server/pdf/svgFromComponent";
 import { px, rem, cssLineHeight } from "@/server/pdf/units";
+import { color } from "@/server/pdf/colors";
 
-export const TEXT_COLOR = "#3A3A3A";
-export const TITLE_COLOR = "#161616";
-export const MENTION_COLOR = "#666666";
-export const PRIMARY_COLOR = "#000091";
-const BLOC_BORDER_COLOR = "#7B7B7B";
-const BLOC_TITLE_BORDER_COLOR = "#3A3A3A";
-export const BLOC_TITLE_BACKGROUND = "#E3E3FD";
-const SEPARATOR_COLOR = "#DDDDDD";
-const TABLE_HEADER_BORDER_COLOR = "#3A3A3A";
-const ZEBRA_BACKGROUND = "#F6F6F6";
+export const TEXT_COLOR = color("dsfr-grey-200");
+export const TITLE_COLOR = color("dsfr-grey-50");
+export const MENTION_COLOR = color("dsfr-mention-grey");
+export const PRIMARY_COLOR = color("primary");
+const BLOC_BORDER_COLOR = color("pilote-grey-border-print");
+const BLOC_TITLE_BORDER_COLOR = color("dsfr-grey-200");
+export const BLOC_TITLE_BACKGROUND = color("dsfr-blue-france-925");
+const TABLE_HEADER_BORDER_COLOR = color("dsfr-grey-200");
+const ZEBRA_BACKGROUND = color("dsfr-grey-975");
 
 export type BadgeVariant =
   "default" | "success" | "error" | "info" | "warning" | "green-tilleul";
 
 const BADGE_COLORS: Record<BadgeVariant, { background: string; text: string }> =
   {
-    default: { background: "#EEEEEE", text: "#3A3A3A" },
-    success: { background: "#B8FEC9", text: "#18753C" },
-    error: { background: "#FFE9E9", text: "#CE0500" },
-    info: { background: "#E8EDFF", text: "#0063CB" },
-    warning: { background: "#FFE9E6", text: "#B34000" },
-    "green-tilleul": { background: "#FCEEAC", text: "#695240" },
+    default: {
+      background: color("dsfr-grey-950"),
+      text: color("dsfr-grey-200"),
+    },
+    success: {
+      background: color("dsfr-success-950"),
+      text: color("dsfr-success-425"),
+    },
+    error: {
+      background: color("dsfr-error-950"),
+      text: color("dsfr-error-425"),
+    },
+    info: { background: color("dsfr-info-950"), text: color("dsfr-info-425") },
+    warning: {
+      background: color("dsfr-warning-950"),
+      text: color("dsfr-warning-425"),
+    },
+    "green-tilleul": {
+      background: color("dsfr-green-tilleul-verveine-950"),
+      text: color("dsfr-green-tilleul-verveine-sun"),
+    },
   };
 
 const BADGE_SIZES = {
@@ -91,10 +106,10 @@ export function badgePdf(
 
 const PROGRESS_BAR_HEIGHTS = { sm: px(12), md: px(12) };
 const PROGRESS_BAR_BACKGROUNDS = {
-  blanc: "#FFFFFF",
-  "gris-clair": "#E5E5E5",
-  "gris-moyen": "#BABABA",
-  bleu: "#BFCCFB",
+  blanc: color("white"),
+  "gris-clair": color("dsfr-grey-925"),
+  "gris-moyen": color("pilote-gris-moyen"),
+  bleu: color("dsfr-blue-ecume-850"),
 };
 
 export function barreDeProgressionPdf(params: {
@@ -124,7 +139,7 @@ export function barreDeProgressionPdf(params: {
         h: height,
         r: radius,
         color: PROGRESS_BAR_BACKGROUNDS[params.background],
-        lineColor: "#BABABA",
+        lineColor: color("pilote-gris-moyen"),
         lineWidth: px(1),
       },
       ...(params.valeur
@@ -306,27 +321,13 @@ export function sectionTitlePdf(
   };
 }
 
-export function separatorPdf(
-  margin: [number, number, number, number] = [0, px(8), 0, px(8)],
-): Content {
-  return {
-    table: { widths: ["*"], body: [[""]] },
-    layout: {
-      hLineWidth: (index: number) => (index === 0 ? px(1) : 0),
-      vLineWidth: () => 0,
-      hLineColor: () => SEPARATOR_COLOR,
-      paddingTop: () => 0,
-      paddingBottom: () => 0,
-    },
-    margin,
-  };
-}
+export { separatorPdf } from "@/server/pdf/separator";
 
 const ALERTE_TYPES = {
-  info: { color: "#0063CB", icon: InformationPleineIcon },
-  succes: { color: "#18753C", icon: CheckboxCircleFillIcon },
-  warning: { color: "#B34000", icon: WarningIcon },
-  erreur: { color: "#CE0500", icon: CloseCircleIcon },
+  info: { color: color("dsfr-info-425"), icon: InformationPleineIcon },
+  succes: { color: color("dsfr-success-425"), icon: CheckboxCircleFillIcon },
+  warning: { color: color("dsfr-warning-425"), icon: WarningIcon },
+  erreur: { color: color("dsfr-error-425"), icon: CloseCircleIcon },
 };
 
 export function alertePdf(params: {
@@ -334,7 +335,7 @@ export function alertePdf(params: {
   titre?: string;
   message?: string;
 }): Content {
-  const { color, icon } = ALERTE_TYPES[params.type];
+  const { color: alerteColor, icon } = ALERTE_TYPES[params.type];
   const body: Content[] = [];
   if (params.titre) {
     body.push({
@@ -355,9 +356,9 @@ export function alertePdf(params: {
       body: [
         [
           {
-            svg: iconSvg(icon, "#FFFFFF"),
+            svg: iconSvg(icon, color("white")),
             width: px(24),
-            fillColor: color,
+            fillColor: alerteColor,
             margin: [px(8), px(16), px(8), 0],
           },
           { stack: body, margin: [px(16), px(16), px(36), px(12)] },
@@ -367,8 +368,8 @@ export function alertePdf(params: {
     layout: {
       hLineWidth: () => px(1),
       vLineWidth: () => px(1),
-      hLineColor: () => color,
-      vLineColor: () => color,
+      hLineColor: () => alerteColor,
+      vLineColor: () => alerteColor,
       paddingLeft: () => 0,
       paddingRight: () => 0,
       paddingTop: () => 0,

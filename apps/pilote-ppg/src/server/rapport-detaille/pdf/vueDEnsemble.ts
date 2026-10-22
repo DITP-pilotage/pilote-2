@@ -25,11 +25,12 @@ import { chantiersTablePdf } from "@/server/rapport-detaille/pdf/chantiersTable"
 import { jaugePdf } from "@/server/rapport-detaille/pdf/jauges";
 import { withoutMailles } from "@/server/rapport-detaille/withoutMailles";
 import { CONTENT_WIDTH, GRID_GAP } from "@/server/rapport-detaille/pdf/layout";
+import { color } from "@/server/pdf/colors";
 
-const WARNING_COLOR = "#B34000";
-const WARNING_BACKGROUND = "#FFE9E6";
-const CARD_BORDER = "#E5E5E5";
-const ALERTE_BORDER = "#DDDDDD";
+const WARNING_COLOR = color("dsfr-warning-425");
+const WARNING_BACKGROUND = color("dsfr-warning-950");
+const CARD_BORDER = color("dsfr-grey-925");
+const ALERTE_BORDER = color("dsfr-grey-900");
 const METEOS = ["ORAGE", "NUAGE", "COUVERT", "SOLEIL"] as const;
 
 export function titleWithInfoPdf(

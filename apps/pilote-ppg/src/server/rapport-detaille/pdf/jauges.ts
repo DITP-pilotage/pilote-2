@@ -3,15 +3,16 @@ import { JaugeDeProgressionCouleur } from "@/components/_commons/JaugeDeProgress
 import { jaugeSmallSvg, jaugeSvg } from "@/server/pdf/svgFromComponent";
 import { px, rem, cssLineHeight } from "@/server/pdf/units";
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
+import { color } from "@/server/pdf/colors";
 
 export const JAUGE_COLORS: Record<JaugeDeProgressionCouleur, string> = {
-  bleu: "#000091",
-  "bleu-clair": "#0078F3",
-  violet: "#8585F6",
-  orange: "#FC5D00",
-  vert: "#27A658",
-  rose: "#CE614A",
-  gris: "#929292",
+  bleu: color("primary"),
+  "bleu-clair": color("dsfr-info-main-525"),
+  violet: color("pilote-ecart-blue"),
+  orange: color("pilote-orange"),
+  vert: color("pilote-vert"),
+  rose: color("dsfr-pink-tuile-main-556"),
+  gris: color("dsfr-grey-625"),
 };
 
 const JAUGE_SIZES = {
@@ -44,7 +45,7 @@ function caption(text: string): Content {
     fontSize: px(16),
     lineHeight: cssLineHeight(1.5, 1),
     alignment: "center",
-    color: "#161616",
+    color: color("dsfr-grey-50"),
   };
 }
 
@@ -109,7 +110,11 @@ export function jaugeSmallPdf(params: {
             fontSize: rem(1.375),
             color: JAUGE_COLORS[params.couleur],
           },
-          { text: params.libellé, fontSize: px(16), color: "#161616" },
+          {
+            text: params.libellé,
+            fontSize: px(16),
+            color: color("dsfr-grey-50"),
+          },
         ],
       },
     ],

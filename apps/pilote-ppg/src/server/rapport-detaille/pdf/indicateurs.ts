@@ -29,6 +29,7 @@ import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetaill
 import { section } from "@/server/rapport-detaille/pdf/section";
 import { findTerritoire } from "@/server/rapport-detaille/pdf/avancement";
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
+import { color } from "@/server/pdf/colors";
 
 const MAILLE_ADJECTIVES = {
   NAT: "national",
@@ -192,7 +193,7 @@ function indicateurBloc(
                     valeur: détails?.avancement.annuel ?? null,
                     size: "md",
                     background: "gris-clair",
-                    fill: "#666666",
+                    fill: color("dsfr-mention-grey"),
                     label: "top",
                     width: AVANCEMENT_COLUMN_WIDTH - 2 * CELL_PADDING[1],
                   }),

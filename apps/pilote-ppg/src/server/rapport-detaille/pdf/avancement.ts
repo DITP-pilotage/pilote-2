@@ -23,6 +23,7 @@ import {
   CONTENT_WIDTH,
   formatParisDate,
 } from "@/server/rapport-detaille/pdf/layout";
+import { color } from "@/server/pdf/colors";
 
 const BLOC_GAP = rem(0.7);
 const COMPARAISON_YEAR = 2026;
@@ -171,7 +172,7 @@ function comparaisonBloc(
           {
             text: médiane ? `${médiane.toFixed(0)}%` : "Non défini",
             bold: true,
-            color: "#8585F6",
+            color: color("pilote-ecart-blue"),
           },
           ")",
         ],
@@ -204,7 +205,7 @@ function comparaisonBloc(
             color: PRIMARY_COLOR,
           },
           ", ",
-          { text: date, color: "#666666" },
+          { text: date, color: color("dsfr-mention-grey") },
           " )",
         ])
       : centered("(Non défini)", { bold: true, color: PRIMARY_COLOR }),
