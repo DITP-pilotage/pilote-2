@@ -43,6 +43,17 @@ describe("flattenSvgClasses", () => {
     ).toBe('<path d="M0 0"/>');
   });
 
+  it("convertit les styles en ligne en attributs, prioritaires sur les classes", () => {
+    expect(
+      flattenSvgClasses('<path style="stroke-width:0.15" d="M0 0"/>'),
+    ).toBe('<path d="M0 0" stroke-width="0.15"/>');
+    expect(
+      flattenSvgClasses(
+        '<path class="stroke-white" style="fill:none;stroke:#666666;stroke-width:0.375"/>',
+      ),
+    ).toBe('<path fill="none" stroke="#666666" stroke-width="0.375"/>');
+  });
+
   it("remplace currentColor par la couleur demandée", () => {
     expect(
       flattenSvgClasses('<path fill="currentColor"/>', {
