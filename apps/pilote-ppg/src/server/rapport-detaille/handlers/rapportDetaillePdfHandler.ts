@@ -33,6 +33,9 @@ const RETRY_AFTER_SECONDS = 10;
 const MAX_PENDING_GENERATIONS = 10;
 const MAX_PDF_REQUESTS_IN_FLIGHT = 20;
 const SEND_IDLE_TIMEOUT_MS = 60_000;
+const SEND_DEADLINE_MS = 600_000;
+
+class ClientGoneError extends Error {}
 
 const generationQueue = createSerialQueue(MAX_PENDING_GENERATIONS);
 const pdfRequestSlots = createSlotLimiter(MAX_PDF_REQUESTS_IN_FLIGHT);
@@ -50,6 +53,7 @@ export type RapportDetaillePdfDependencies = {
   renderPdf: (params: GenerateParams) => Promise<Uint8Array>;
   enqueue: typeof generationQueue;
   slots: SlotLimiter;
+  sendDeadlineMs: number;
   now: () => Date;
 };
 
@@ -69,6 +73,7 @@ export function defaultRapportDetaillePdfDependencies(): RapportDetaillePdfDepen
     renderPdf: renderRapportDetaillePdfInWorker,
     enqueue: generationQueue,
     slots: pdfRequestSlots,
+    sendDeadlineMs: SEND_DEADLINE_MS,
     now: () => new Date(),
   };
 }
@@ -128,18 +133,26 @@ export async function handleRapportDetaillePdf(
     sendError(response, 403, "Territoire non autorisé");
     return;
   }
-  if (!dependencies.slots.tryAcquire()) {
+  const releaseSlot = dependencies.slots.tryAcquire();
+  if (!releaseSlot) {
     sendBusy(response);
     return;
   }
-  response.once("close", dependencies.slots.release);
+  if (response.closed) {
+    releaseSlot();
+    return;
+  }
+  response.once("close", releaseSlot);
 
   let pdf: Uint8Array;
   try {
     pdf = await dependencies.enqueue(() =>
-      generate(request.query, territoireCode, session, dependencies),
+      response.closed
+        ? Promise.reject(new ClientGoneError())
+        : generate(request.query, territoireCode, session, dependencies),
     );
   } catch (error) {
+    if (error instanceof ClientGoneError) return;
     if (error instanceof QueueFullError) {
       sendBusy(response);
       return;
@@ -158,6 +171,11 @@ export async function handleRapportDetaillePdf(
   );
   response.setHeader("Content-Length", String(pdf.byteLength));
   response.setTimeout(SEND_IDLE_TIMEOUT_MS, () => response.destroy());
+  const deadline = setTimeout(
+    () => response.destroy(),
+    dependencies.sendDeadlineMs,
+  );
+  response.once("close", () => clearTimeout(deadline));
   response.end(pdf);
 }
 

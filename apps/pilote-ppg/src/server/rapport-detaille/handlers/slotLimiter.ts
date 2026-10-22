@@ -1,18 +1,19 @@
 export type SlotLimiter = {
-  tryAcquire: () => boolean;
-  release: () => void;
+  tryAcquire: () => (() => void) | null;
 };
 
 export function createSlotLimiter(maxSlots: number): SlotLimiter {
   let used = 0;
   return {
     tryAcquire: () => {
-      if (used >= maxSlots) return false;
+      if (used >= maxSlots) return null;
       used += 1;
-      return true;
-    },
-    release: () => {
-      used = Math.max(0, used - 1);
+      let released = false;
+      return () => {
+        if (released) return;
+        released = true;
+        used -= 1;
+      };
     },
   };
 }
