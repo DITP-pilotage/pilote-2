@@ -75,14 +75,21 @@ describe("loadChantierDetails", () => {
       buildTestDependencies(),
     );
 
-    expect(details.map((detail) => detail.chantierId)).toEqual(["B", "A"]);
-    expect(details[0].avancement.nationale.global).toMatchObject({
-      médiane: 40,
-      minimum: 10,
-      maximum: 90,
-    });
-    expect(details[0].listeIndicateursPrisEnCompteAvancement).toEqual([
-      "IND-1",
+    expect(details).toEqual([
+      expect.objectContaining({
+        chantierId: "B",
+        avancement: expect.objectContaining({
+          nationale: expect.objectContaining({
+            global: expect.objectContaining({
+              médiane: 40,
+              minimum: 10,
+              maximum: 90,
+            }),
+          }),
+        }),
+        listeIndicateursPrisEnCompteAvancement: ["IND-1"],
+      }),
+      expect.objectContaining({ chantierId: "A" }),
     ]);
   });
 

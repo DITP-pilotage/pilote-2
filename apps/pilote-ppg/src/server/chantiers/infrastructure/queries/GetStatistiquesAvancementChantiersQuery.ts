@@ -18,7 +18,7 @@ export function computeAvancementStatistiques(
 ): AvancementsStatistiques {
   const sortedValues = territoireAverages
     .map((territoireAverage) => territoireAverage._avg.taux_avancement)
-    .toSorted((a, b) => (a ?? 0) - (b ?? 0));
+    .toSorted((value, otherValue) => (value ?? 0) - (otherValue ?? 0));
   return {
     médiane: calculerMediane(sortedValues),
     minimum: verifyValeurIsNotNullOrUndefined(sortedValues.at(0)),
