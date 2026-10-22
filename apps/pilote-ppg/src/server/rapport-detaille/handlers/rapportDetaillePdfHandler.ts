@@ -29,6 +29,7 @@ import {
 } from "@/server/rapport-detaille/handlers/slotLimiter";
 
 const DETAILS_BATCH_SIZE = 10;
+const MAX_CONCURRENT_DETAILS_BATCHES = 3;
 const RETRY_AFTER_SECONDS = 10;
 const MAX_PENDING_GENERATIONS = 10;
 const MAX_PDF_REQUESTS_IN_FLIGHT = 20;
@@ -102,9 +103,23 @@ async function loadAllDetails(
   ) {
     batches.push(vue.chantiers.slice(index, index + DETAILS_BATCH_SIZE));
   }
-  const details = await Promise.all(
-    batches.map((batch) =>
-      dependencies.loadChantierDetails(batch, context, vue.selectedTerritoire),
+  const details: ChantierDetail[][] = [];
+  let nextBatch = 0;
+  const loadRemainingBatches = async () => {
+    while (nextBatch < batches.length) {
+      const batchIndex = nextBatch;
+      nextBatch += 1;
+      details[batchIndex] = await dependencies.loadChantierDetails(
+        batches[batchIndex],
+        context,
+        vue.selectedTerritoire,
+      );
+    }
+  };
+  await Promise.all(
+    Array.from(
+      { length: Math.min(MAX_CONCURRENT_DETAILS_BATCHES, batches.length) },
+      loadRemainingBatches,
     ),
   );
   return details.flat();

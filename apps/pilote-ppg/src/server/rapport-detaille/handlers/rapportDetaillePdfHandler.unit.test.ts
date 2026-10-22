@@ -300,20 +300,26 @@ describe("handleRapportDetaillePdf", () => {
     expect(next.status).toBe(200);
   });
 
-  it("charge les lots de détails en parallèle", async () => {
-    const chantiers = Array.from({ length: 25 }, (_, index) =>
+  it("charge au plus 3 lots de détails à la fois", async () => {
+    const chantiers = Array.from({ length: 60 }, (_, index) =>
       buildTestChantier({ id: `C${index}` }),
     );
-    const gate = deferred<void>();
+    let inFlight = 0;
+    let maxInFlight = 0;
     const loadChantierDetails = vi.fn(
       async (lot: ChantierRapportDetailleContrat[]) => {
-        await gate.promise;
+        inFlight += 1;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        inFlight -= 1;
         return lot.map((chantier) =>
           buildTestChantierDetail({ chantierId: chantier.id }),
         );
       },
     );
-    const baseUrl = await startServer(
+
+    const response = await request(
+      "/?territoireCode=NAT-FR&detail=true",
       nationalSession,
       buildDependencies({
         loadVueDEnsemble: vi.fn(async () =>
@@ -324,13 +330,9 @@ describe("handleRapportDetaillePdf", () => {
       }),
     );
 
-    const response = fetch(`${baseUrl}/?territoireCode=NAT-FR&detail=true`);
-    await vi.waitFor(() =>
-      expect(loadChantierDetails).toHaveBeenCalledTimes(3),
-    );
-    gate.resolve();
-
-    expect((await response).status).toBe(200);
+    expect(response.status).toBe(200);
+    expect(loadChantierDetails).toHaveBeenCalledTimes(6);
+    expect(maxInFlight).toBe(3);
   });
 
   it("répond 503 tant que les PDF en cours d'envoi occupent toutes les places", async () => {
