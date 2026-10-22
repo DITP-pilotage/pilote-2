@@ -4,6 +4,7 @@ import { MailleInterne } from "@/shared/maille/Maille.interface";
 import { ChantierRapportDetailleWithoutMailles } from "@/server/rapport-detaille/rapportDetaille.interface";
 import { RapportDétailléChantier } from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier";
 import { ChantierDetailState } from "@/components/PageRapportDétaillé/useChantierDetailsBatches";
+import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 
 const PRELOAD_MARGIN = "1500px 0px";
 
@@ -59,6 +60,7 @@ export const DeferredRapportDétailléChantier = ({
     <section
       aria-busy={state?.status !== "error"}
       className="mt-8 rounded-lg border border-dsfr-grey-925 p-6"
+      id={htmlId.chantier(chantier.id)}
       ref={placeholderRef}
     >
       <h2 className="mb-4 text-2xl font-bold text-dsfr-grey-50">
