@@ -1,6 +1,8 @@
 import { Content, ContentText } from "pdfmake/interfaces";
 import { parseDocument } from "htmlparser2";
 import { px, rem } from "@/server/pdf/units";
+import { color } from "@/server/pdf/colors";
+import { separatorPdf } from "@/server/pdf/separator";
 
 type DomNode = ReturnType<typeof parseDocument>["children"][number];
 type DomElement = Extract<DomNode, { attribs: Record<string, string> }>;
@@ -10,10 +12,9 @@ type Segment = string | ContentText;
 const isElement = (node: DomNode): node is DomElement => "attribs" in node;
 const isText = (node: DomNode): node is DomText => node.type === "text";
 
-const TEXT_COLOR = "#161616";
-const LINK_COLOR = "#000091";
-const SEPARATOR_COLOR = "#DDDDDD";
-const CALLOUT_BACKGROUND = "#F5F5FE";
+const TEXT_COLOR = color("dsfr-grey-50");
+const LINK_COLOR = color("primary");
+const CALLOUT_BACKGROUND = color("dsfr-alt-blue-france");
 
 const HEADING_SIZES: Record<string, number> = {
   h1: rem(2.5),
@@ -133,20 +134,6 @@ function paragraph(segments: Segment[], options: Options): Content[] {
   ];
 }
 
-function separator(): Content {
-  return {
-    table: { widths: ["*"], body: [[""]] },
-    layout: {
-      hLineWidth: (index: number) => (index === 0 ? px(1) : 0),
-      vLineWidth: () => 0,
-      hLineColor: () => SEPARATOR_COLOR,
-      paddingTop: () => 0,
-      paddingBottom: () => 0,
-    },
-    margin: [0, px(8), 0, px(8)],
-  };
-}
-
 function tableRows(node: DomNode, options: Options): Content[] {
   if (!isElement(node)) return [];
   if (node.name === "tr") {
@@ -232,7 +219,7 @@ function convertBlocks(nodes: DomNode[], options: Options): Content[] {
       content.push(...tableRows(node, options));
     } else if (name === "hr") {
       flushInline();
-      content.push(separator());
+      content.push(separatorPdf());
     } else if (node.attribs["data-type"] === "callout") {
       flushInline();
       content.push({

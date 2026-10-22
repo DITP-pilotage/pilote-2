@@ -10,8 +10,9 @@ import {
   DRAPEAU_SVG,
 } from "@/server/rapport-detaille/pdf/blocMarque";
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
+import { color } from "@/server/pdf/colors";
 
-const TITLE_BAND_BACKGROUND = "#F5F5FE";
+const TITLE_BAND_BACKGROUND = color("dsfr-alt-blue-france");
 const FILTERS_COLUMN_MAX_HEIGHT = 567;
 const FILTER_LINE_HEIGHT = px(24);
 
