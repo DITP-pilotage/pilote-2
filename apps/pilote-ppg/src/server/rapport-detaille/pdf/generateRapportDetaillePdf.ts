@@ -1,6 +1,7 @@
 import { cssLineHeight } from "@/server/pdf/units";
-import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { Content, TDocumentDefinitions } from "pdfmake/interfaces";
 import { withMarianne } from "@/server/pdf/pdfmake";
+import { replaceGlyphsMissingFromMarianne } from "@/server/pdf/marianne";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import {
   ChantierDetail,
@@ -48,6 +49,19 @@ export function buildRapportDetailleDocument(
         ]
       : [];
   });
+  const content: Content[] = [
+    pageDeGardePdf({
+      territoire: vue.selectedTerritoire,
+      context,
+      ministères: vue.ministères,
+      axes: vue.axes,
+      estAutoriseAVoirLesBrouillons: vue.estAutoriseAVoirLesBrouillons,
+      now: params.now,
+    }),
+    vueDEnsemblePdf(vue, context),
+    ...fiches,
+  ];
+  replaceGlyphsMissingFromMarianne(content);
   return {
     info: { title: "Rapport détaillé - PILOTE" },
     pageBreakBefore: keepHeadlineWithNext,
@@ -59,18 +73,7 @@ export function buildRapportDetailleDocument(
       lineHeight: cssLineHeight(24, 16),
       color: TEXT_COLOR,
     },
-    content: [
-      pageDeGardePdf({
-        territoire: vue.selectedTerritoire,
-        context,
-        ministères: vue.ministères,
-        axes: vue.axes,
-        estAutoriseAVoirLesBrouillons: vue.estAutoriseAVoirLesBrouillons,
-        now: params.now,
-      }),
-      vueDEnsemblePdf(vue, context),
-      ...fiches,
-    ],
+    content,
   };
 }
 
