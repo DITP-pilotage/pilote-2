@@ -9,6 +9,7 @@ import {
 } from "@/server/rapport-detaille/handlers/rapportDetaillePdfHandler";
 import { createSerialQueue } from "@/server/rapport-detaille/handlers/serialQueue";
 import { createSlotLimiter } from "@/server/rapport-detaille/handlers/slotLimiter";
+import { VueDEnsembleRapportDetaille } from "@/server/rapport-detaille/rapportDetaille.interface";
 import { renderRapportDetaillePdf } from "@/server/rapport-detaille/pdf/generateRapportDetaillePdf";
 import { buildTestSession } from "@/server/rapport-detaille/testSession";
 import { buildTestChantier } from "@/server/rapport-detaille/testData";
@@ -47,6 +48,7 @@ function buildDependencies(
     slots: createSlotLimiter(20),
     sendDeadlineMs: 600_000,
     loadingTimeoutMs: 60_000,
+    abandonedLoads: createSlotLimiter(2),
     now: () => new Date("2026-10-01T07:05:00Z"),
     ...overrides,
   };
@@ -450,6 +452,33 @@ describe("handleRapportDetaillePdf", () => {
     const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
 
     expect(stuck.status).toBe(500);
+    expect(next.status).toBe(200);
+  });
+
+  it("refuse de nouvelles générations tant que des chargements abandonnés tournent encore", async () => {
+    const stuckLoad = deferred<VueDEnsembleRapportDetaille>();
+    const loadVueDEnsemble = vi
+      .fn<RapportDetaillePdfDependencies["loadVueDEnsemble"]>()
+      .mockReturnValueOnce(stuckLoad.promise)
+      .mockResolvedValue(buildTestVueDEnsemble());
+    const baseUrl = await startServer(
+      nationalSession,
+      buildDependencies({
+        loadVueDEnsemble,
+        renderPdf: vi.fn(async () => PDF_BYTES),
+        loadingTimeoutMs: 50,
+        abandonedLoads: createSlotLimiter(1),
+      }),
+    );
+
+    const timedOut = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    const refused = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    stuckLoad.resolve(buildTestVueDEnsemble());
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+
+    expect(timedOut.status).toBe(500);
+    expect(refused.status).toBe(503);
     expect(next.status).toBe(200);
   });
 });
