@@ -45,6 +45,7 @@ function buildDependencies(
     renderPdf: vi.fn(renderRapportDetaillePdf),
     enqueue: createSerialQueue(10),
     slots: createSlotLimiter(20),
+    sendDeadlineMs: 600_000,
     now: () => new Date("2026-10-01T07:05:00Z"),
     ...overrides,
   };
@@ -60,6 +61,30 @@ async function startServer(
     const url = new URL(incoming.url ?? "", "http://localhost");
     const query = Object.fromEntries(url.searchParams.entries());
     void handleRapportDetaillePdf({ query }, response, session, dependencies);
+  });
+  await new Promise<void>((resolve) => server.listen(0, resolve));
+  const address = server.address();
+  const port = typeof address === "object" && address ? address.port : 0;
+  return `http://localhost:${port}`;
+}
+
+async function startDelayedServer(
+  delayMs: number,
+  dependencies: RapportDetaillePdfDependencies,
+) {
+  server = createServer((incoming, response) => {
+    const url = new URL(incoming.url ?? "", "http://localhost");
+    const query = Object.fromEntries(url.searchParams.entries());
+    setTimeout(
+      () =>
+        void handleRapportDetaillePdf(
+          { query },
+          response,
+          nationalSession,
+          dependencies,
+        ),
+      delayMs,
+    );
   });
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const address = server.address();
@@ -327,6 +352,80 @@ describe("handleRapportDetaillePdf", () => {
 
     expect(refused.status).toBe(503);
     expect(refused.headers.get("retry-after")).toBe("10");
+    expect(next.status).toBe(200);
+  });
+
+  it("rend la place d'un client parti avant que sa demande soit traitée", async () => {
+    const baseUrl = await startDelayedServer(
+      100,
+      buildDependencies({
+        renderPdf: vi.fn(async () => PDF_BYTES),
+        slots: createSlotLimiter(1),
+      }),
+    );
+
+    const abandoned = new AbortController();
+    const gone = fetch(`${baseUrl}/?territoireCode=NAT-FR`, {
+      signal: abandoned.signal,
+    }).catch(() => null);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    abandoned.abort();
+    await gone;
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+
+    expect(next.status).toBe(200);
+  });
+
+  it("ne génère pas le PDF d'un client parti pendant son attente dans la file", async () => {
+    const firstRender = deferred<Uint8Array>();
+    const loadVueDEnsemble = vi.fn(async () => buildTestVueDEnsemble());
+    const renderPdf = vi
+      .fn<RapportDetaillePdfDependencies["renderPdf"]>()
+      .mockReturnValueOnce(firstRender.promise)
+      .mockResolvedValue(PDF_BYTES);
+    const baseUrl = await startServer(
+      nationalSession,
+      buildDependencies({ loadVueDEnsemble, renderPdf }),
+    );
+
+    const first = fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    await vi.waitFor(() => expect(renderPdf).toHaveBeenCalledTimes(1));
+    const abandoned = new AbortController();
+    const gone = fetch(`${baseUrl}/?territoireCode=NAT-FR`, {
+      signal: abandoned.signal,
+    }).catch(() => null);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    abandoned.abort();
+    await gone;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    firstRender.resolve(PDF_BYTES);
+    await first;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(loadVueDEnsemble).toHaveBeenCalledTimes(1);
+  });
+
+  it("coupe l'envoi d'un PDF qui dépasse le délai total et rend sa place", async () => {
+    const largePdf = new Uint8Array(64 * 1024 * 1024);
+    const renderPdf = vi
+      .fn<RapportDetaillePdfDependencies["renderPdf"]>()
+      .mockResolvedValueOnce(largePdf)
+      .mockResolvedValue(PDF_BYTES);
+    const baseUrl = await startServer(
+      nationalSession,
+      buildDependencies({
+        renderPdf,
+        slots: createSlotLimiter(1),
+        sendDeadlineMs: 100,
+      }),
+    );
+
+    const unread = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const next = await fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    await unread.body?.cancel().catch(() => undefined);
+
     expect(next.status).toBe(200);
   });
 });
