@@ -31,6 +31,16 @@ describe("getAvancementFill", () => {
     expect(fill(null)).toBe("#bababa");
     expect(fill(50, false)).toBe("hachures");
   });
+
+  it("renvoie le remplissage par défaut pour une valeur non numérique", () => {
+    expect(
+      getAvancementFill(
+        Number.NaN,
+        ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
+        true,
+      ),
+    ).toBe(ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT.remplissage);
+  });
 });
 
 describe("getAvancementLegend", () => {

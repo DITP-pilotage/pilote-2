@@ -26,7 +26,8 @@ export function getAvancementFill(
   if (estApplicable === false) {
     return élémentsDeLégende.NON_APPLICABLE.remplissage;
   }
-  if (valeur === null) return élémentsDeLégende.DÉFAUT.remplissage;
+  if (valeur === null || Number.isNaN(valeur))
+    return élémentsDeLégende.DÉFAUT.remplissage;
 
   const roundedValue = Number(valeur.toFixed(0));
   if (roundedValue < 0) return élémentsDeLégende.DÉFAUT.remplissage;
