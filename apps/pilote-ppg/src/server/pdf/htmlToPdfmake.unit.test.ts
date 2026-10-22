@@ -83,6 +83,20 @@ describe("htmlToPdfmake", () => {
     ).toBe("a &<é' b");
   });
 
+  it("fusionne les espaces, tabulations et retours à la ligne comme le navigateur", () => {
+    const content = htmlToPdfmake(
+      "<p>Première phrase\n  seconde\tphrase <strong>en\n gras</strong></p>",
+    );
+
+    expect(plainText(content)).toBe("Première phrase seconde phrase en gras");
+  });
+
+  it("garde les espaces insécables consécutifs", () => {
+    const content = htmlToPdfmake("<p>42&nbsp;&nbsp;%</p>");
+
+    expect(plainText(content)).toBe("42  %");
+  });
+
   it("ignore scripts, images, vidéos et iframes", () => {
     const content = htmlToPdfmake(
       '<script>alert(1)</script><p>ok</p><img src="http://evil"><iframe src="http://x"></iframe><video src="v"></video>',
