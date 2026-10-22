@@ -56,3 +56,28 @@ export const MARIANNE_FONTS = {
     bolditalics: "Marianne-Regular_Italic.woff2",
   },
 };
+
+const GLYPHS_MISSING_FROM_MARIANNE = /\u202f/g;
+
+function withAvailableGlyphs(text: string): string {
+  return text.replace(GLYPHS_MISSING_FROM_MARIANNE, "\u00a0");
+}
+
+export function replaceGlyphsMissingFromMarianne(node: unknown): void {
+  if (Array.isArray(node)) {
+    node.forEach((item, index) => {
+      if (typeof item === "string") node[index] = withAvailableGlyphs(item);
+      else replaceGlyphsMissingFromMarianne(item);
+    });
+    return;
+  }
+  if (typeof node !== "object" || node === null) return;
+  for (const [key, value] of Object.entries(node)) {
+    if (key === "svg") continue;
+    if (typeof value === "string") {
+      Reflect.set(node, key, withAvailableGlyphs(value));
+    } else {
+      replaceGlyphsMissingFromMarianne(value);
+    }
+  }
+}
