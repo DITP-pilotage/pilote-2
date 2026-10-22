@@ -101,3 +101,25 @@ describe("iconSvg", () => {
     expect((await renderInPdf(svg)).subarray(0, 4).toString()).toBe("%PDF");
   });
 });
+
+describe("iconSvg", () => {
+  it("ne rend qu'une fois une même icône dans une même couleur", () => {
+    const drawIcon = vi.fn((fill: string) => (
+      <svg viewBox="0 0 1 1">
+        <rect fill={fill} height="1" width="1" />
+      </svg>
+    ));
+    const CountingIcon = ({ fill }: { className: string; fill: string }) =>
+      drawIcon(fill);
+
+    const [first, again, otherColor] = [
+      iconSvg(CountingIcon, "#000091"),
+      iconSvg(CountingIcon, "#000091"),
+      iconSvg(CountingIcon, "#CE0500"),
+    ];
+
+    expect(drawIcon).toHaveBeenCalledTimes(2);
+    expect(again).toBe(first);
+    expect(otherColor).toContain("#CE0500");
+  });
+});
