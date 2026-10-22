@@ -481,4 +481,30 @@ describe("handleRapportDetaillePdf", () => {
     expect(refused.status).toBe(503);
     expect(next.status).toBe(200);
   });
+
+  it("refuse une demande en file dont le tour arrive alors que les chargements abandonnés sont au plafond", async () => {
+    const stuckLoad = deferred<VueDEnsembleRapportDetaille>();
+    const loadVueDEnsemble = vi
+      .fn<RapportDetaillePdfDependencies["loadVueDEnsemble"]>()
+      .mockReturnValueOnce(stuckLoad.promise)
+      .mockResolvedValue(buildTestVueDEnsemble());
+    const baseUrl = await startServer(
+      nationalSession,
+      buildDependencies({
+        loadVueDEnsemble,
+        renderPdf: vi.fn(async () => PDF_BYTES),
+        loadingTimeoutMs: 100,
+        abandonedLoads: createSlotLimiter(1),
+      }),
+    );
+
+    const timedOut = fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    await vi.waitFor(() => expect(loadVueDEnsemble).toHaveBeenCalledTimes(1));
+    const queued = fetch(`${baseUrl}/?territoireCode=NAT-FR`);
+    const statuses = await Promise.all([timedOut, queued]);
+    stuckLoad.resolve(buildTestVueDEnsemble());
+
+    expect(statuses.map((response) => response.status)).toEqual([500, 503]);
+    expect(loadVueDEnsemble).toHaveBeenCalledTimes(1);
+  });
 });
