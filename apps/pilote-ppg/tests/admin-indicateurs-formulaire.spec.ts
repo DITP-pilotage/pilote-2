@@ -150,8 +150,10 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
     });
 
     await step(
-      "Vérification de la persistance des valeurs modifiées après soumission",
+      "Vérification de la persistance des valeurs modifiées après rechargement",
       async () => {
+        await page.reload();
+        await pageForm.expectModeConsultation();
         await pageForm.expectDonneeAffichee("kg/m²");
         await pageForm.expectDonneeAffichee(
           "Description modifiée pour test E2E",

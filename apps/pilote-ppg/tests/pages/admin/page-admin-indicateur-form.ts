@@ -1,4 +1,4 @@
-import { Page, expect } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 import { BasePage } from "../base.page";
 import { E2ETestContext } from "../../e2e-test-context";
 
@@ -70,7 +70,15 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   async clickModifier(): Promise<void> {
-    await this.boutonModifier.click();
+    // Un clic avant l'hydratation est perdu (WebKit, Firefox) : on réessaie.
+    await expect(async () => {
+      if (await this.boutonModifier.isVisible()) {
+        await this.boutonModifier.click();
+      }
+      await expect(this.boutonConfirmerChangements).toBeVisible({
+        timeout: 2_000,
+      });
+    }).toPass();
   }
 
   async clickConfirmerChangements(): Promise<void> {
@@ -91,19 +99,22 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   async ouvrirAccordionParametrages(): Promise<void> {
-    const isExpanded =
-      await this.accordionParametrages.getAttribute("aria-expanded");
-    if (isExpanded === "false") {
-      await this.accordionParametrages.click();
-    }
+    await this.openAccordion(this.accordionParametrages);
   }
 
   async ouvrirAccordionAutresInformations(): Promise<void> {
-    const isExpanded =
-      await this.accordionAutresInformations.getAttribute("aria-expanded");
-    if (isExpanded === "false") {
-      await this.accordionAutresInformations.click();
-    }
+    await this.openAccordion(this.accordionAutresInformations);
+  }
+
+  private async openAccordion(accordion: Locator): Promise<void> {
+    await expect(async () => {
+      if ((await accordion.getAttribute("aria-expanded")) === "false") {
+        await accordion.click();
+      }
+      await expect(accordion).toHaveAttribute("aria-expanded", "true", {
+        timeout: 2_000,
+      });
+    }).toPass();
   }
 
   async expectTitreFiche(indicateurId: string): Promise<void> {

@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "../fixtures";
 import {
   CHANTIER_E2E,
@@ -89,6 +90,13 @@ test("Import de commentaires via l'API open-api", async ({
     expect(responseBody.message).toEqual(
       "Les commentaires ont correctement été importés",
     );
+    for (const content of ["Premier commentaire", "Deuxième commentaire", "Troisième commentaire"]) {
+      expect(
+        await prisma.commentaire.count({
+          where: { chantier_id: chantierId, contenu: { contains: content } },
+        }),
+      ).toBe(1);
+    }
   });
 
   await test.step("Import avec une date dans le futur - doit retourner 400", async () => {

@@ -16,7 +16,7 @@ const SERVICES_DECONCENTRES_DEPARTEMENT =
   "services.deconcentres.departement@example.com";
 
 test.describe("Gestion des comptes utilisateurs", () => {
-  test("DITP Admin — Vue admin complète et token API", async ({
+  test("DITP Admin — Vue admin complète et bouton de token API visible", async ({
     page,
     e2eContext,
   }) => {

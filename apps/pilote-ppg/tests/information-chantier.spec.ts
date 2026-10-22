@@ -9,7 +9,7 @@ test.describe.configure({ mode: "parallel" });
 test.describe("Consultation des données d'un chantier — Isolation par profil", () => {
   const chantierId = "129";
 
-  test("DITP Admin — Accès complet en lecture et écriture", async ({
+  test("DITP Admin — Accès complet en lecture et boutons d'écriture visibles", async ({
     page,
     e2eContext,
     step,
@@ -427,6 +427,9 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     await step(
       "Vérification que 'Paris' n'est plus affiché dans le widget PVA",
       async () => {
+        await expect(
+          widgetPVA(page).getByTitle(/Retirer.*Paris/),
+        ).toHaveCount(0);
         await expect(
           page.getByText("2 propositions", { exact: true }),
         ).not.toBeVisible();

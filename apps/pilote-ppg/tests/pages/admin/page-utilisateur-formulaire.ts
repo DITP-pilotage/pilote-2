@@ -10,10 +10,16 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async gotoModifierDepuisFiche(): Promise<void> {
-    await this.page.getByRole("link", { name: "Modifier" }).click();
-    await expect(
-      this.page.getByRole("heading", { name: "Identification" }),
-    ).toBeVisible({ timeout: 30_000 });
+    const identificationHeading = this.page.getByRole("heading", {
+      name: "Identification",
+    });
+    // Un clic avant l'hydratation de la fiche est perdu (Firefox) : on réessaie.
+    await expect(async () => {
+      if (!(await identificationHeading.isVisible())) {
+        await this.page.getByRole("link", { name: "Modifier" }).click();
+      }
+      await expect(identificationHeading).toBeVisible({ timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
   }
 
   private get emailInput() {

@@ -109,7 +109,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       await modal.expectConfirmationEtFermer(/a bien été enregistré/);
     });
 
-    await test.step("Vérification côté territoire : boutons désactivés après accusé réception", async () => {
+    await test.step("Vérification côté territoire : boutons de modification absents après accusé réception", async () => {
       await appActions.switchUser(COORDINATEUR_DEPT);
       await pageChantier.selectChantierAvecTerritoire(
         CHANTIER_ID,

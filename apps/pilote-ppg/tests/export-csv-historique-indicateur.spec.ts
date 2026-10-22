@@ -10,7 +10,7 @@ const jalonParDefaut = getAnneeDateDeBascule(
     "2000-03-31",
 );
 
-test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
+test("doit pouvoir exporter l'historique des indicateurs sous format CSV", async ({
   page,
   e2eContext,
 }) => {
