@@ -136,4 +136,12 @@ BEGIN
   INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
     (v_user_id, 'lecture', ARRAY['DEPT-56'], ARRAY[]::text[], ARRAY['CH-903']),
     (v_user_id, 'saisieCommentaire', ARRAY['DEPT-56'], ARRAY[]::text[], ARRAY['CH-903']);
+
+  -- Compte désactivé hors du périmètre de coordinateur.departement : sa réactivation doit être refusée.
+  INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, fonction, service, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre, date_desactivation)
+  VALUES (gen_random_uuid(), 'compte.desactive@example.com', 'Desactive', 'Compte', 'PREFET_DEPARTEMENT', 'Préfet de département', 'Préfecture de département', NOW(), NOW(), NOW(), NOW(), NOW())
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
+    (v_user_id, 'lecture', ARRAY['DEPT-13'], ARRAY[]::text[], ARRAY[]::text[]);
 END $$;

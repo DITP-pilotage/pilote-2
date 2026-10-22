@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { BasePage } from "./base.page";
 
 const XLSX_MIME_TYPE =
@@ -49,29 +50,19 @@ export class PageMiseAJourDonnees extends BasePage {
   }
 
   async verifyFile(utilisateurEmail: string): Promise<void> {
-    const verificationResponse = this.page.waitForResponse(/\/verifier/);
+    // Suivi posé avant le clic, sur l'horloge de la base (marge d'une minute pour un décalage
+    // avec le serveur) : le rapport est nettoyé même si la vérification échoue côté test.
+    // Seul ce spec importe avec ce compte ; les rapports du seed datent de 2025.
+    const [{ since }] = await prisma.$queryRaw<
+      { since: Date }[]
+    >`SELECT now() - interval '1 minute' AS since`;
+    this.e2eContext.track("RAPPORT_IMPORT_CREATED", {
+      utilisateurEmail,
+      date_creation: { gte: since },
+    });
     await this.page
       .getByRole("button", { name: /Vérifier le fichier/ })
       .click();
-    const rapport = (await (await verificationResponse).json()) as {
-      id: string;
-      estValide: boolean;
-      listeErreursValidation: { message: string }[];
-    };
-    // Pour un fichier invalide, l'identifiant renvoyé n'est pas celui du rapport
-    // enregistré : on le retrouve par ses erreurs.
-    this.e2eContext.track(
-      "RAPPORT_IMPORT_CREATED",
-      rapport.estValide
-        ? { id: rapport.id }
-        : {
-            utilisateurEmail,
-            est_valide: false,
-            erreur_validation_fichier: {
-              some: { message: rapport.listeErreursValidation[0].message },
-            },
-          },
-    );
   }
 
   async submitData(): Promise<void> {

@@ -47,6 +47,7 @@ type FiltersByAction = {
   RAPPORT_IMPORT_CREATED: Prisma.rapport_import_mesure_indicateurWhereInput;
   UTILISATEUR_CREATED: { email: string };
   UTILISATEUR_DEACTIVATED: { email: string };
+  UTILISATEUR_REACTIVATED: { email: string };
   PROFIL_UTILISATEUR_UPDATED: {
     email: string;
     originalData: Prisma.utilisateurUpdateManyMutationInput;
@@ -67,6 +68,35 @@ type ActionType = keyof FiltersByAction;
 type TrackedAction = {
   [Type in ActionType]: { type: Type; filters: FiltersByAction[Type] };
 }[ActionType];
+
+const INDICATEUR_HISTORISATION_TABLES = [
+  "metadata_indicateurs",
+  "metadata_parametrages_indicateurs",
+  "metadata_indicateurs_complementaire",
+];
+
+// Le seed ne contient aucune historisation : celle d'un objet écrit par un test est à supprimer.
+async function deleteHistorisation(
+  tables: string[],
+  idObjetModifie: string,
+): Promise<void> {
+  await prisma.historisation_modification.deleteMany({
+    where: {
+      table_modifie_id: { in: tables },
+      id_objet_modifie: idObjetModifie,
+    },
+  });
+}
+
+async function deleteUtilisateurHistorisation(email: string): Promise<void> {
+  const utilisateur = await prisma.utilisateur.findUnique({
+    where: { email },
+    select: { id: true },
+  });
+  if (utilisateur) {
+    await deleteHistorisation(["utilisateur"], utilisateur.id);
+  }
+}
 
 // Un filtre vide ou une clé undefined ferait porter un deleteMany/updateMany sur toute la table.
 function requireFilter<Filter extends object>(filter: Filter): Filter {
@@ -185,6 +215,7 @@ export class E2ETestContext {
         break;
       }
       case "UTILISATEUR_CREATED":
+        await deleteUtilisateurHistorisation(action.filters.email);
         await prisma.utilisateur.deleteMany({
           where: requireFilter({ email: action.filters.email }),
         });
@@ -195,7 +226,14 @@ export class E2ETestContext {
           data: { date_desactivation: null },
         });
         break;
+      case "UTILISATEUR_REACTIVATED":
+        await prisma.utilisateur.updateMany({
+          where: requireFilter({ email: action.filters.email }),
+          data: { date_desactivation: new Date() },
+        });
+        break;
       case "PROFIL_UTILISATEUR_UPDATED":
+        await deleteUtilisateurHistorisation(action.filters.email);
         await prisma.utilisateur.updateMany({
           where: requireFilter({ email: action.filters.email }),
           data: action.filters.originalData,
@@ -213,6 +251,10 @@ export class E2ETestContext {
         });
         await prisma.metadata_parametrage_indicateurs.deleteMany({ where });
         await prisma.metadata_indicateurs_hidden.deleteMany({ where });
+        await deleteHistorisation(
+          INDICATEUR_HISTORISATION_TABLES,
+          action.filters.indicId,
+        );
         break;
       }
       case "INDICATEUR_UPDATED": {
@@ -230,6 +272,10 @@ export class E2ETestContext {
           where,
           data: original.complementaire,
         });
+        await deleteHistorisation(
+          INDICATEUR_HISTORISATION_TABLES,
+          original.hidden.indic_id,
+        );
         break;
       }
       case "CHANTIER_PARAMETRAGE_UPDATED":

@@ -211,6 +211,10 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
+    // Si la garde régresse, le compte serait réactivé : on prévoit de le redésactiver.
+    e2eContext.track("UTILISATEUR_REACTIVATED", {
+      email: "compte.desactive@example.com",
+    });
     const trpc = await trpcAs(
       page,
       e2eContext,
@@ -218,11 +222,14 @@ test.describe("Gestion des comptes utilisateurs", () => {
     );
 
     const result = await trpc.mutation("utilisateur.reactiver", {
-      email: "premiere.ministre@example.com",
+      email: "compte.desactive@example.com",
     });
 
     expect(result.status).toBe(403);
     expect(result.errorCode).toBe("ForbiddenError");
+    expect(
+      await getDateDesactivation("compte.desactive@example.com"),
+    ).not.toBeNull();
   });
 
   test("une mutation sans jeton CSRF est refusée", async ({
