@@ -44,7 +44,7 @@ const MAX_INLINE_DEPTH = 50;
 type Options = { fontSize: number; color: string };
 
 function normalizeSpaces(text: string): string {
-  return text.replace(/[  ]/g, " ");
+  return text.replace(/[ \t\n\r\f]+/g, " ").replace(/[  ]/g, " ");
 }
 
 function flattenText(nodes: DomNode[]): string {
