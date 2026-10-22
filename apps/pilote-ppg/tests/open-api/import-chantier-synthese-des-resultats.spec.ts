@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "../fixtures";
+import { readChantierMeteos } from "../e2e-test-context";
 import {
   CHANTIER_FOR_WRITES,
   CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
@@ -16,6 +17,10 @@ test("Import de synthèses des résultats via l'API open-api", async ({
   e2eContext,
 }) => {
   e2eContext.track("SYNTHESE_CREATED", { chantier_id: CHANTIER_FOR_WRITES });
+  e2eContext.track(
+    "CHANTIER_METEOS_UPDATED",
+    await readChantierMeteos(CHANTIER_FOR_WRITES),
+  );
   const apiContext = await openApi("EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
   const chantierId = CHANTIER_FOR_WRITES;

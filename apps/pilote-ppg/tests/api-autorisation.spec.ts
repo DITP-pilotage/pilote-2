@@ -37,8 +37,8 @@ function buildUtilisateurInput(email: string, territoire: string) {
   };
 }
 
-function uniqueEmail(prefixe: string): string {
-  return `${prefixe}.${randomUUID().slice(0, 8)}@example.com`;
+function uniqueEmail(prefix: string): string {
+  return `${prefix}.${randomUUID().slice(0, 8)}@example.com`;
 }
 
 async function utilisateurExists(email: string): Promise<boolean> {
@@ -186,6 +186,10 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
+    // Si la garde régresse, le compte serait désactivé : on prévoit sa réactivation.
+    e2eContext.track("UTILISATEUR_DEACTIVATED", {
+      email: "premiere.ministre@example.com",
+    });
     const trpc = await trpcAs(
       page,
       e2eContext,
@@ -225,6 +229,10 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
+    // Si la garde régresse, le compte serait désactivé : on prévoit sa réactivation.
+    e2eContext.track("UTILISATEUR_DEACTIVATED", {
+      email: "premiere.ministre@example.com",
+    });
     const trpc = await trpcAs(page, e2eContext, "ditp.admin@example.com");
 
     const result = await trpc.mutation(
@@ -243,6 +251,10 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
+    // Si la garde régresse, le compte serait désactivé : on prévoit sa réactivation.
+    e2eContext.track("UTILISATEUR_DEACTIVATED", {
+      email: "premiere.ministre@example.com",
+    });
     const trpc = await trpcAs(page, e2eContext, "ditp.admin@example.com");
 
     const result = await trpc.mutation(
@@ -328,6 +340,13 @@ test.describe("Paramétrage des chantiers", () => {
       "coordinateur.region@example.com",
     );
 
+    e2eContext.track(
+      "CHANTIER_PARAMETRAGE_UPDATED",
+      await prisma.metadata_chantiers.findUniqueOrThrow({
+        where: { chantier_id: CHANTIER_FOR_WRITES },
+      }),
+    );
+
     const result = await trpc.mutation("parametrageChantier.save", {
       chantierId: CHANTIER_FOR_WRITES,
       chNom: "Nom modifié par un coordinateur",
@@ -348,11 +367,11 @@ test.describe("Paramétrage des chantiers", () => {
 
     expect(result.status).toBe(403);
     expect(result.errorCode).toBe("ForbiddenError");
-    const chantier = await prisma.chantier_identite.findUniqueOrThrow({
-      where: { id: CHANTIER_FOR_WRITES },
-      select: { nom: true },
+    const metadata = await prisma.metadata_chantiers.findUniqueOrThrow({
+      where: { chantier_id: CHANTIER_FOR_WRITES },
+      select: { ch_nom: true },
     });
-    expect(chantier.nom).toBe("Chantier e2e");
+    expect(metadata.ch_nom).toBe("Chantier e2e");
   });
 
   test("l'enregistrement des pondérations est réservé à l'administrateur DITP", async ({

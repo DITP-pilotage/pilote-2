@@ -3,6 +3,7 @@ import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { readMetadataIndicateur } from "./e2e-test-context";
 import {
+  CHANTIER_BROUILLON,
   CHANTIER_FOR_WRITES,
   INDICATEUR_FOR_FORM,
 } from "./seed/dedicated-entities";
@@ -423,13 +424,13 @@ test.describe("Formulaire indicateur — Création", () => {
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
     // IND-990 n'existe pas en base, il sera initialisé comme nouvel indicateur
-    const nouvelIndicateurId = "IND-990";
-    e2eContext.track("INDICATEUR_CREATED", { indicId: nouvelIndicateurId });
+    const newIndicateurId = "IND-990";
+    e2eContext.track("INDICATEUR_CREATED", { indicId: newIndicateurId });
 
     await step("Connexion et accès au formulaire de création", async () => {
       await appActions.loginAs(DITP_ADMIN);
-      await pageForm.gotoCreation(nouvelIndicateurId);
-      await pageForm.expectTitreFiche(nouvelIndicateurId);
+      await pageForm.gotoCreation(newIndicateurId);
+      await pageForm.expectTitreFiche(newIndicateurId);
     });
 
     await step("Vérification du mode création", async () => {
@@ -445,7 +446,7 @@ test.describe("Formulaire indicateur — Création", () => {
         "indicNom",
         "Indicateur créé par un test e2e",
       );
-      await pageForm.changerSelecteur("indicParentCh", "CH-902");
+      await pageForm.changerSelecteur("indicParentCh", CHANTIER_BROUILLON);
       await pageForm.remplirTextArea(
         "indicDescr",
         "Description de l'indicateur créé par un test e2e",
@@ -460,7 +461,7 @@ test.describe("Formulaire indicateur — Création", () => {
     await step("L'indicateur créé est enregistré", async () => {
       const indicateur =
         await prisma.metadata_indicateurs_hidden.findUniqueOrThrow({
-          where: { indic_id: nouvelIndicateurId },
+          where: { indic_id: newIndicateurId },
           select: { indic_nom: true },
         });
       expect(indicateur.indic_nom).toBe("Indicateur créé par un test e2e");

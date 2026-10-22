@@ -116,7 +116,7 @@ Tous les tests sont sans session.
 **Paramétrage des chantiers** (`coordinateur.region`) :
 
 - Lectures `parametrageChantier.list`, `parametrageChantier.get` et `parametrageChantier.getIndicateursPonderations` (CH-902) : 403 `ForbiddenError` (un test chacune).
-- `parametrageChantier.save` sur CH-902 : 403 `ForbiddenError` ; le nom du chantier reste « Chantier e2e » en base.
+- `parametrageChantier.save` sur CH-902 : 403 `ForbiddenError` ; `metadata_chantiers.ch_nom` de CH-902 reste « Chantier e2e » (état restauré par `e2eContext` si la garde régressait).
 - `parametrageChantier.savePonderationsIndicateurs` : 403 `ForbiddenError`.
 
 ---

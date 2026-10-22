@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { expect } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
+import { readChantierMeteos } from "./e2e-test-context";
 import { AppActions } from "./actions/app.actions";
 import { PageChantier } from "./pages/page-chantier";
 import { CHANTIER_FOR_PUBLICATIONS } from "./seed/dedicated-entities";
@@ -73,9 +74,20 @@ test.describe("Saisie des publications d'un chantier", () => {
     e2eContext.track("SYNTHESE_CREATED", {
       chantier_id: CHANTIER_FOR_PUBLICATIONS,
     });
+    e2eContext.track(
+      "CHANTIER_METEOS_UPDATED",
+      await readChantierMeteos(CHANTIER_FOR_PUBLICATIONS),
+    );
     await new AppActions(page, e2eContext).loginAs(
       "equipe.dir.projet@example.com",
     );
+    const meteoCell = page
+      .getByRole("row")
+      .filter({ hasText: "Chantier e2e saisie" })
+      .getByRole("cell")
+      .nth(1);
+    await page.goto("/accueil/chantier/NAT-FR");
+    await expect(meteoCell).toHaveText("Non renseignée");
     await page.goto(`/chantier/${CHANTIER_FOR_PUBLICATIONS}/NAT-FR`);
 
     const syntheseSection = page.locator("#synthèse");
@@ -98,10 +110,6 @@ test.describe("Saisie des publications d'un chantier", () => {
     expect(synthese.meteo).toBe("SOLEIL");
 
     await page.goto("/accueil/chantier/NAT-FR");
-    const chantierRow = page
-      .getByRole("row")
-      .filter({ hasText: "Chantier e2e saisie" });
-    const meteoCell = chantierRow.getByRole("cell").nth(1);
     await expect(meteoCell.locator("svg, img")).toBeVisible();
     await expect(meteoCell).not.toHaveText("Non renseignée");
   });

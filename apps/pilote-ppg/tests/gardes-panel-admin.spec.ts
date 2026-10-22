@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { TrpcClient } from "./api-client/trpc.client";
@@ -85,6 +86,10 @@ test.describe("Pages du panel gardées par la seule session", () => {
       "coordinateur.region@example.com",
     );
     const trpc = await TrpcClient.outsideApp(page);
+    const nouveauteId = randomUUID();
+    const articleId = randomUUID();
+    e2eContext.track("NOUVEAUTE_CREATED", { id: nouveauteId });
+    e2eContext.track("ARTICLE_CENTRE_AIDE_CREATED", { id: articleId });
 
     const purgeLogsResult = await trpc.mutation("applicationLog.purger", {
       anterieurA: new Date().toISOString(),
@@ -94,13 +99,13 @@ test.describe("Pages du panel gardées par la seule session", () => {
       { featureFlips: {} },
     );
     const nouveaute = await trpc.mutation("parametrageNouveautes.creer", {
-      id: randomUUID(),
+      id: nouveauteId,
       contenu: "Nouveauté créée par un coordinateur",
       version: "0.0.0",
       date: new Date().toISOString(),
     });
     const article = await trpc.mutation("parametrageCentreAide.creer", {
-      id: randomUUID(),
+      id: articleId,
       titre: "Article créé par un coordinateur",
       contenu: null,
       type: "PAGE",
@@ -108,9 +113,15 @@ test.describe("Pages du panel gardées par la seule session", () => {
       parentId: null,
     });
 
-    expect(purgeLogsResult.status).toBe(401);
-    expect(featureFlips.status).toBe(401);
-    expect(nouveaute.status).toBe(401);
-    expect(article.status).toBe(401);
+    for (const refusal of [purgeLogsResult, featureFlips, nouveaute, article]) {
+      expect(refusal.status).toBe(401);
+      expect(refusal.errorCode).toBe("UnauthorizedError");
+    }
+    expect(await prisma.nouveaute.count({ where: { id: nouveauteId } })).toBe(
+      0,
+    );
+    expect(
+      await prisma.article_centre_aide.count({ where: { id: articleId } }),
+    ).toBe(0);
   });
 });
