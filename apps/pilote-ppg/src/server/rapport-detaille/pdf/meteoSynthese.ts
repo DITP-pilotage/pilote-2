@@ -42,6 +42,7 @@ export function meteoSynthesePdf(
         },
       ];
   return blocPdf({
+    breakable: true,
     titre: nomTerritoire,
     content: {
       columns: [meteoColumn, { width: "*", stack: détails }],
