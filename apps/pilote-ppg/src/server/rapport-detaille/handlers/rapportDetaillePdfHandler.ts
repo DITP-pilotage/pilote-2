@@ -17,6 +17,7 @@ import {
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { GenerateParams } from "@/server/rapport-detaille/pdf/generateRapportDetaillePdf";
+import { PDF_CHANTIER_DETAILS_BATCH_SIZE } from "@/server/rapport-detaille/batchSize";
 import { renderRapportDetaillePdfInWorker } from "@/server/rapport-detaille/pdf/renderRapportDetaillePdfInWorker";
 import { formatParisDate } from "@/server/rapport-detaille/pdf/layout";
 import {
@@ -28,7 +29,6 @@ import {
   SlotLimiter,
 } from "@/server/rapport-detaille/handlers/slotLimiter";
 
-const DETAILS_BATCH_SIZE = 10;
 const MAX_CONCURRENT_DETAILS_BATCHES = 3;
 const RETRY_AFTER_SECONDS = 10;
 const MAX_PENDING_GENERATIONS = 10;
@@ -107,9 +107,11 @@ async function loadAllDetails(
   for (
     let index = 0;
     index < vue.chantiers.length;
-    index += DETAILS_BATCH_SIZE
+    index += PDF_CHANTIER_DETAILS_BATCH_SIZE
   ) {
-    batches.push(vue.chantiers.slice(index, index + DETAILS_BATCH_SIZE));
+    batches.push(
+      vue.chantiers.slice(index, index + PDF_CHANTIER_DETAILS_BATCH_SIZE),
+    );
   }
   const details: ChantierDetail[][] = [];
   let nextBatch = 0;

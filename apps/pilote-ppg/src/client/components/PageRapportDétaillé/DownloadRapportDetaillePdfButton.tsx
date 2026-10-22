@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/shared/Button";
+import { downloadBlob } from "@/client/utils/downloadBlob";
 import { Icone } from "@/components/_commons/Icone";
 import { DownloadIcon } from "@/components/_commons/Icones/DownloadIcon";
 
@@ -49,12 +50,7 @@ export const DownloadRapportDetaillePdfButton = ({
         return;
       }
       if (!response.ok) throw new Error(String(response.status));
-      const url = URL.createObjectURL(await response.blob());
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filenameFrom(response);
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 0);
+      downloadBlob(await response.blob(), filenameFrom(response));
     } catch {
       toast.error("Erreur lors de la génération du PDF", {
         position: "top-right",
