@@ -1,9 +1,11 @@
+import { slugify } from '@pilote/kpilote-shared/slug'
 import { describe, expect, it } from 'vitest'
 
 import { createCollection } from '@/collection/commands/createCollection'
+import { ValidationError } from '@/framework/errors/AppError'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testCollectionNumericId } from '@/test/randomIds'
+import { testCollectionId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 const body = { nom: 'Santé de proximité', description: null, visibilite: 'PUBLIC' as const }
@@ -12,18 +14,16 @@ const body = { nom: 'Santé de proximité', description: null, visibilite: 'PUBL
 // simultanés s'attendraient mutuellement.
 describe('createCollection', () => {
   it(
-    'attribue l’identifiant suivant le plus grand identifiant numérique existant',
+    'dérive l’identifiant public du nom',
     integrationTest(async () => {
-      const existant = testCollectionNumericId()
-      await fixtures.collection({ publicId: existant })
+      const nom = `Santé de proximité ${testCollectionId()}`
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
-      const suivant = `COL-${Number(existant.slice(4)) + 1}`
 
-      const result = await runAsAdmin(apiKey.id, () => createCollection(body))
+      const result = await runAsAdmin(apiKey.id, () => createCollection({ ...body, nom }))
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        id: suivant,
-        nom: 'Santé de proximité',
+        id: slugify(nom),
+        nom,
         description: null,
         visibilite: 'PUBLIC',
         indicateurs: [],
@@ -33,28 +33,26 @@ describe('createCollection', () => {
   )
 
   it(
-    'ignore les trous dans la suite et repart du maximum',
+    'suffixe l’identifiant quand le slug dérivé est déjà pris',
     integrationTest(async () => {
-      const base = Number(testCollectionNumericId().slice(4))
-      await fixtures.collection({ publicId: `COL-${base}` }, { publicId: `COL-${base + 5}` })
+      const nom = `Santé de proximité ${testCollectionId()}`
+      await fixtures.collection({ publicId: slugify(nom) })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
-      const result = await runAsAdmin(apiKey.id, () => createCollection(body))
+      const result = await runAsAdmin(apiKey.id, () => createCollection({ ...body, nom }))
 
-      expect(result._unsafeUnwrap().id).toBe(`COL-${base + 6}`)
+      expect(result._unsafeUnwrap().id).toBe(`${slugify(nom)}-2`)
     }),
   )
 
   it(
-    'ignore les identifiants non numériques',
+    'refuse un nom dont aucun caractère ne peut composer un slug',
     integrationTest(async () => {
-      const numerique = testCollectionNumericId()
-      await fixtures.collection({ publicId: numerique }, { publicId: `COL-zzzz${Date.now()}` })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
-      const result = await runAsAdmin(apiKey.id, () => createCollection(body))
-
-      expect(result._unsafeUnwrap().id).toBe(`COL-${Number(numerique.slice(4)) + 1}`)
+      await expect(
+        runAsAdmin(apiKey.id, () => createCollection({ ...body, nom: '??? !!!' })),
+      ).rejects.toBeInstanceOf(ValidationError)
     }),
   )
 
