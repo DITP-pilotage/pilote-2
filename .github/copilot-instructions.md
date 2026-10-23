@@ -1,7 +1,7 @@
 # Instructions du dépôt — Pilote
 
 Outil de pilotage territorial de la DITP pour le suivi des politiques publiques.
-Monorepo pnpm 10, Node 24.20.0, TypeScript. Branche de base : `dev`.
+Monorepo pnpm 10, Node 24.22.1, TypeScript. Branche de base : `dev`.
 
 ## Langue
 
