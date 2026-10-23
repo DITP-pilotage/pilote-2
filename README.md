@@ -56,7 +56,7 @@ kpilote-admin  ──(BFF + clé API, par env)────▶ kpilote-api
 
 ## Prérequis
 
-- **Node.js** 24.20.0
+- **Node.js** 24.22.1
 - **pnpm** 10 (`npm install -g pnpm@10`)
 - **PostgreSQL** 16+ (pilote-ppg) ; kpilote-api fournit un `docker-compose.yml` (PostgreSQL 17)
 - **Authentification** : **ProConnect** et **Keycloak** (fournisseurs OIDC utilisés par pilote-ppg et kpilote)
