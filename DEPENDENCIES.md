@@ -44,10 +44,13 @@ Depuis avril 2026, le projet utilise **pnpm 10** (lockfile : `pnpm-lock.yaml`).
 ## `engines` Node
 
 ```json
-"engines": { "node": "24.20.0" }
+"engines": { "node": "24.22.1" }
 ```
 
-Tous les environnements (dev, CI, prod) tournent sur Node 24.20.0. Pas de fallback 18/20.
+Tous les environnements (dev, CI, prod) tournent sur Node 24.22.1. Pas de fallback 18/20.
+
+**Passé de 24.20.0 à 24.22.1 le 2026-10-22** (release de sécurité du 2026-10-21 : 10 CVE dont
+CVE-2026-111497, écriture hors limites dans le décodeur Brotli, High).
 
 **Passé de 24.9.0 à 24.20.0 le 2026-09-10.** Le pin reste **exact**, conformément à la convention
 existante — avec pour contrepartie qu'un poste sur un autre patch de la ligne 24 déclenche le
@@ -1091,7 +1094,7 @@ Tant que cette commande rend une `7.x` ou une version contenant un tiret, **on n
 | `count` passe de `number` à `bigint` | annoncé dans la RC. **33 sites d'appel** `count`/`aggregate`/`groupBy`/`_count` dans `apps/kpilote-api/src`. Toute comparaison d'égalité ou arithmétique sur un agrégat casse silencieusement (`count === 2` est faux quand `count` vaut `2n`) |
 | `sum()` et `avg()` sous PostgreSQL | `sum()` sur entiers s'élargit en `bigint`, `avg()` rend des chaînes décimales exactes |
 | CLI ré-architecturée | `@prisma/cli-engine`, `@prisma/orm-toolchain`, `@prisma/compute-sdk` remplacent la structure actuelle |
-| `engines.node` | la RC exige `>=22.18.0` — compatible avec le 24.20.0 du projet, mais c'est un changement de socle |
+| `engines.node` | la RC exige `>=22.18.0` — compatible avec le 24.22.1 du projet, mais c'est un changement de socle |
 | Guide de migration | **inexistant au 2026-09-10** (404 sur la page d'upgrade 7 → 8). Attendre qu'il soit publié |
 | `prisma-client-js` | annoncé pour **disparaître** en 8.x. `ppg` l'utilise encore (306 imports `@prisma/client`). La bascule vers le generator `prisma-client`, déjà en place sur `kpilote-api`, doit être faite **avant** ce major |
 | `mysql2` | Prisma l'épingle à l'exact et traîne 2 advisories inatteignables. Vérifier si la 8 relève ce pin |
