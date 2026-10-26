@@ -52,7 +52,13 @@ export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery: GetChantierCommentairesQuery;
   territoireResolver: TerritoireResolver;
 }) {
-  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
+  return ({
+    territoiresAccessibles,
+    chantiersAccessibles,
+  }: {
+    territoiresAccessibles: string[];
+    chantiersAccessibles: string[];
+  }) => {
     return tool({
       description: `Récupère les contenus textuels publiés rattachés à un chantier sur un territoire donné (uniquement les contenus publiés — les brouillons sont exclus).
 Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire.
@@ -77,6 +83,12 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
         if (!territoiresAccessibles.includes(input.territoire_code)) {
           throw new Error(
             `Accès non autorisé au territoire ${input.territoire_code}`,
+          );
+        }
+
+        if (!chantiersAccessibles.includes(input.chantier_id)) {
+          throw new Error(
+            `Accès non autorisé au chantier ${input.chantier_id}`,
           );
         }
 

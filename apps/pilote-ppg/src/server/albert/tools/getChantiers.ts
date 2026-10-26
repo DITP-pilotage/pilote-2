@@ -187,20 +187,23 @@ plusieurs territoires parents sont comparés, fais un appel par parent et par ja
           };
         }
 
-        const filteredChantierIds = input.chantier_ids?.filter((id) =>
-          chantiersAccessibles.includes(id),
-        );
+        const chantiersDemandes =
+          input.chantier_ids && input.chantier_ids.length > 0
+            ? input.chantier_ids
+            : undefined;
 
-        if (
-          filteredChantierIds &&
-          filteredChantierIds.length === 0 &&
-          input.chantier_ids &&
-          input.chantier_ids.length > 0
-        ) {
+        // Une liste vide n'est pas filtrée par la query : le cas sans aucun
+        // chantier accessible doit donc s'arrêter ici.
+        const filteredChantierIds = (
+          chantiersDemandes ?? chantiersAccessibles
+        ).filter((id) => chantiersAccessibles.includes(id));
+
+        if (filteredChantierIds.length === 0) {
           return {
             resultats: [],
-            _output_instructions:
-              "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+            _output_instructions: chantiersDemandes
+              ? "Aucun des chantiers demandés n'est accessible pour cet utilisateur."
+              : "L'utilisateur n'a accès à aucun chantier : aucune donnée ne peut être restituée.",
           };
         }
 
