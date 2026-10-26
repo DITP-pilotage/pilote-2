@@ -13,6 +13,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * Les négatifs portent sur les deux autres taux d'avancement, qui partagent le
  * vocabulaire : celui d'un chantier (`get_chantiers`) et celui de ses
  * indicateurs (`get_indicateurs`).
+ *
+ * Les deux premiers cas interdisent `synthese_territoire` : le seul taux d'un
+ * territoire ne justifie pas une synthèse complète.
  */
 
 const CASES: ToolCase[] = [
@@ -20,11 +23,13 @@ const CASES: ToolCase[] = [
     question: "Quel est le taux d'avancement de la Bretagne ?",
     reason: "taux global d'un territoire",
     expected: [{ toolName: "get_taux_avancement_territoire" }],
+    forbidden: ["synthese_territoire"],
   },
   {
     question: "Quel est le TA de la Normandie ?",
     reason: "acronyme « TA »",
     expected: [{ toolName: "get_taux_avancement_territoire" }],
+    forbidden: ["synthese_territoire"],
   },
   {
     question: "Où en est la France sur l'ensemble des chantiers ?",

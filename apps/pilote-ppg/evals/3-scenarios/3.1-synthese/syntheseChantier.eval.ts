@@ -26,6 +26,9 @@ import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
  * Second run du 2026-09-30 : outils 50 %, forme 75 %, fond 100 %.
  * Run du 2026-10-14, juge mistral-medium-3-5 : outils 42 %, forme 50 %, fond
  * 100 % ; échecs : Libellés météo 0/6, Format des chantiers 3/6.
+ * Run du 2026-10-26, après le passage à `synthese_territoire` : score 83 % ;
+ * le livrable n'est jamais appelé ; échecs : Outils attendus 3/6, Libellés
+ * météo 3/6, Format des chantiers 4/6.
  */
 
 const MESSAGE = (territoire: string) =>

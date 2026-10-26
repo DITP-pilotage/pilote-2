@@ -19,6 +19,9 @@ import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria"
  * Second run du 2026-09-30 : outils 100 %, forme 100 %, fond 50 %.
  * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 100 %, fond
  * 73 % ; échecs : Analyse des écarts 0/3, Tableau comparatif 2/3.
+ * Run du 2026-10-26, après le passage à `synthese_territoire` : score 89 %,
+ * identique au run précédent ; le livrable n'est jamais appelé ; échec :
+ * Analyse des écarts 0/3.
  */
 
 scenarioEval({

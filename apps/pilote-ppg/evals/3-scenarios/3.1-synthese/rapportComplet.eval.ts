@@ -14,6 +14,10 @@ import { RAPPORT_COMPLET_CRITERIA } from "./rapportComplet.criteria";
  * Second run du 2026-09-30 : outils 83 %, forme 60 %, fond 33 % ; export
  * toujours 0/3.
  *
+ * Le premier cas attend `synthese_territoire` à la place des trois lectures,
+ * sans interdire les primitives : le détour par `get_indicateurs` et
+ * `export_rapport` rend une interdiction trop sévère.
+ *
  * Le second cas exporte une synthèse déjà faite dans la conversation : c'est
  * l'usage visé par l'export, et le rapport se juge alors contre ce qui a été
  * dit (« Fidèle à la conversation »). Les sections du rapport ne sont plus
@@ -21,6 +25,9 @@ import { RAPPORT_COMPLET_CRITERIA } from "./rapportComplet.criteria";
  * Run du 2026-10-14, juge mistral-medium-3-5 : outils 92 %, forme 80 %, fond
  * 53 % ; échecs : Fidèle à la conversation 0/3, Export appelé 3/6, Réponse du
  * chat 3/6, Chiffres exacts 4/6, Pas d'opinion 4/6.
+ * Run du 2026-10-26, après le passage à `synthese_territoire` : score 80 % ;
+ * export appelé 6/6 (le cas 1 n'est plus écrasé par la synthèse) ; échecs :
+ * Réponse du chat 1/6, Chiffres exacts 2/6, Fidèle à la conversation 3/6.
  */
 
 const territoire = { territoire_code: "REG-53" };
@@ -37,15 +44,7 @@ scenarioEval({
       reason: "Message envoyé tel quel",
       truthScope: { territoires: ["REG-53"], indicateurs: true },
       expected: [
-        { toolName: "get_taux_avancement_territoire", input: territoire },
-        {
-          toolName: "get_chantiers",
-          input: { ...territoire, view: "en_retard" },
-        },
-        {
-          toolName: "get_chantiers",
-          input: { ...territoire, view: "en_difficulte" },
-        },
+        { toolName: "synthese_territoire", input: territoire },
         { toolName: "get_indicateurs", input: { chantier_id: "CH-005" } },
         { toolName: "get_indicateurs", input: { chantier_id: "CH-006" } },
         { toolName: "export_rapport", input: { format: "markdown" } },

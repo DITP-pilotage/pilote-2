@@ -1,4 +1,4 @@
-import type { Evidence } from "../evidence";
+import { resultatsTerritoriaux, type Evidence } from "../evidence";
 import { judged, mechanical } from "../criterion";
 import { synthesesDesChantiers } from "../truth";
 import { checkAbsenceSignalee, checkNoVerbatim } from "../mechanicalChecks";
@@ -32,7 +32,8 @@ type ResultatChantiers = {
 /**
  * Tous les commentaires que l'agent a reçus, quel que soit l'outil : ceux de
  * `get_chantier_commentaires`, mais aussi le commentaire de synthèse et les
- * commentaires territoriaux que porte `get_chantiers`. Revue du 30/09 : Albert
+ * commentaires territoriaux que portent `get_chantiers` et
+ * `synthese_territoire`. Revue du 30/09 : Albert
  * lit les commentaires par `get_chantiers`, et une recopie depuis cette
  * source passait inaperçue.
  */
@@ -48,15 +49,19 @@ function contenusDesCommentairesRecus(evidence: Evidence): string[] {
       );
     }
 
-    if (result.toolName === "get_chantiers") {
-      return (resultats as ResultatChantiers[]).flatMap((resultat) =>
-        (resultat.chantiers ?? []).flatMap((chantier) =>
-          [
-            chantier.synthese?.commentaire,
-            chantier.commentaires?.donnees?.contenu,
-            chantier.commentaires?.autresResultats?.contenu,
-          ].filter((contenu): contenu is string => Boolean(contenu)),
-        ),
+    if (
+      result.toolName === "get_chantiers" ||
+      result.toolName === "synthese_territoire"
+    ) {
+      return (resultatsTerritoriaux(result) as ResultatChantiers[]).flatMap(
+        (resultat) =>
+          (resultat.chantiers ?? []).flatMap((chantier) =>
+            [
+              chantier.synthese?.commentaire,
+              chantier.commentaires?.donnees?.contenu,
+              chantier.commentaires?.autresResultats?.contenu,
+            ].filter((contenu): contenu is string => Boolean(contenu)),
+          ),
       );
     }
 

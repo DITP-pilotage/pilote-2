@@ -7,7 +7,6 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
       territoiresAccessibles: ["NAT-FR"],
       agentContext: null,
       capacities: {
-        synthese: false,
         dashboard: false,
         exportRapport: false,
         inclureSousTerritoires: true,
@@ -25,7 +24,6 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
       territoiresAccessibles: ["NAT-FR"],
       agentContext: null,
       capacities: {
-        synthese: false,
         dashboard: false,
         exportRapport: false,
         inclureSousTerritoires: false,
@@ -34,5 +32,27 @@ describe("buildChatSystemPrompt — inclureSousTerritoires", () => {
 
     // then
     expect(prompt).not.toContain("Sous-territoires détectés dans la demande");
+  });
+});
+
+describe("buildChatSystemPrompt — synthèse territoriale", () => {
+  it("route la synthèse vers synthese_territoire sans gabarit dans le prompt", () => {
+    // when
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: ["NAT-FR"],
+      agentContext: null,
+      capacities: {
+        dashboard: false,
+        exportRapport: false,
+        inclureSousTerritoires: false,
+      },
+    });
+
+    // then
+    expect(prompt).toContain("synthese_territoire");
+    expect(prompt).not.toContain("Gabarit de synthèse territoriale");
+    expect(prompt).not.toContain(
+      "get_chantiers(view='en_retard'), get_chantiers(view='en_difficulte')",
+    );
   });
 });

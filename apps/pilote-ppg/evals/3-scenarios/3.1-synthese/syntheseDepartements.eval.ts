@@ -5,8 +5,8 @@ import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "./syntheseDepartements.criteria"
  * Scénario « Synthèse de Bretagne et ses départements » (DITP, envoyé,
  * territoire courant régional).
  *
- * Avec cinq territoires dans les résultats, le prompt impose le gabarit
- * COMPARAISON : la grille le suit. Que ce soit le bon rendu pour une
+ * Avec cinq territoires dans les résultats, `synthese_territoire` renvoie le
+ * gabarit COMPARAISON : la grille le suit. Que ce soit le bon rendu pour une
  * « synthèse de X et ses départements » est une question pour le produit.
  *
  * Référence observée le 2026-09-30 : outils 100 %, forme 93 %, fond 100 %.
@@ -16,6 +16,9 @@ import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "./syntheseDepartements.criteria"
  * 0/3.
  * Run du 2026-10-14, juge mistral-medium-3-5 : outils 100 %, forme 80 %, fond
  * 87 % ; échecs : Pas de recopie 0/3, Chiffres exacts 2/3, Résumés fidèles 2/3.
+ * Run du 2026-10-26, après le passage à `synthese_territoire` : score 75 % ;
+ * outils 3/3 ; échecs : Pas de recopie 0/3, Absence de commentaire signalée
+ * 1/3, Analyse des écarts 1/3, Chiffres exacts 2/3, Pas d'opinion 2/3.
  */
 
 const avecSousTerritoires = {
@@ -33,19 +36,9 @@ scenarioEval({
       reason: "Message envoyé tel quel",
       truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
       expected: [
-        {
-          toolName: "get_taux_avancement_territoire",
-          input: avecSousTerritoires,
-        },
-        {
-          toolName: "get_chantiers",
-          input: { ...avecSousTerritoires, view: "en_retard" },
-        },
-        {
-          toolName: "get_chantiers",
-          input: { ...avecSousTerritoires, view: "en_difficulte" },
-        },
+        { toolName: "synthese_territoire", input: avecSousTerritoires },
       ],
+      forbidden: ["get_chantiers", "get_taux_avancement_territoire"],
       tableTerritories: ["REG-53", "DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],
     },
   ],

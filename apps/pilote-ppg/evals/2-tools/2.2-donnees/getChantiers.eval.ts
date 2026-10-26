@@ -15,6 +15,10 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * utilisateur » du prompt système : « en retard » → en_retard seul, « où ça
  * coince » → les deux.
  *
+ * Les cas ciblés (une catégorie, un chantier) interdisent
+ * `synthese_territoire` : le livrable de synthèse ne doit pas capter une
+ * question à laquelle la primitive répond directement.
+ *
  * Les négatifs portent sur les deux outils voisins : le taux global d'un
  * territoire (`get_taux_avancement_territoire`), et les chantiers signalés sans
  * catégorie, que le prompt système réserve à `get_chantiers_signales`, et le
@@ -30,7 +34,8 @@ const CASES: ToolCase[] = [
   },
   {
     question: "Récap des chantiers sur l'Auvergne",
-    reason: "« récap » n'est pas un mot-clé de synthèse : pas de gabarit",
+    reason:
+      "« récap des chantiers » est une liste ; le livrable de synthèse n'est pas interdit",
     expected: [{ toolName: "get_chantiers" }],
   },
   {
@@ -44,11 +49,13 @@ const CASES: ToolCase[] = [
     question: "Quels chantiers en retard sur la Corse ?",
     reason: "« en retard » → view en_retard",
     expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
+    forbidden: ["synthese_territoire"],
   },
   {
     question: "Quels PPG en retard en Corse ?",
     reason: "vocabulaire « PPG », synonyme de chantier",
     expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
+    forbidden: ["synthese_territoire"],
   },
   {
     question: "En Bretagne, où ça coince ?",
@@ -62,6 +69,7 @@ const CASES: ToolCase[] = [
     question: "Quels chantiers sont en baisse en Bretagne ?",
     reason: "« en baisse » → filtre tendance BAISSE",
     expected: [{ toolName: "get_chantiers", input: { tendance: "BAISSE" } }],
+    forbidden: ["synthese_territoire"],
   },
   {
     question: "Où en est le CH-005 en Bretagne ?",
@@ -69,6 +77,7 @@ const CASES: ToolCase[] = [
     expected: [
       { toolName: "get_chantiers", input: { chantier_ids: ["CH-005"] } },
     ],
+    forbidden: ["synthese_territoire"],
   },
   {
     question: "Quel est le taux d'avancement de la Bretagne ?",

@@ -107,10 +107,35 @@ export function extractMatter({
 
 /**
  * `get_taux_avancement_territoire` ne masque rien : le taux est toujours
- * visible. Seuls ces deux outils rendent des champs qualitatifs à `null` hors
- * du périmètre de l'utilisateur.
+ * visible. Seuls ces outils rendent des champs qualitatifs à `null` hors du
+ * périmètre de l'utilisateur ; `synthese_territoire` les porte dans ses deux
+ * listes de chantiers.
  */
-const OUTILS_QUI_MASQUENT = ["get_chantiers", "get_chantier_commentaires"];
+const OUTILS_QUI_MASQUENT = [
+  "get_chantiers",
+  "get_chantier_commentaires",
+  "synthese_territoire",
+];
+
+type ResultatTerritorial = { territoire_code: string };
+
+export function resultatsTerritoriaux(
+  result: Pick<ToolResult, "toolName" | "output">,
+): ResultatTerritorial[] {
+  if (result.toolName === "synthese_territoire") {
+    const output = result.output as {
+      chantiers_en_retard?: ResultatTerritorial[];
+      chantiers_en_difficulte?: ResultatTerritorial[];
+    };
+    return [
+      ...(output.chantiers_en_retard ?? []),
+      ...(output.chantiers_en_difficulte ?? []),
+    ];
+  }
+  return (
+    (result.output as { resultats?: ResultatTerritorial[] }).resultats ?? []
+  );
+}
 
 export function maskedTerritories({
   toolResults,
@@ -122,10 +147,7 @@ export function maskedTerritories({
   const codes = toolResults
     .filter((result) => OUTILS_QUI_MASQUENT.includes(result.toolName))
     .flatMap((result) =>
-      (
-        (result.output as { resultats?: { territoire_code: string }[] })
-          .resultats ?? []
-      ).map((resultat) => resultat.territoire_code),
+      resultatsTerritoriaux(result).map((resultat) => resultat.territoire_code),
     )
     .filter((code) => !userTerritories.includes(code));
   return [...new Set(codes)].sort();

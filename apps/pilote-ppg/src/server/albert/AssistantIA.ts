@@ -59,6 +59,9 @@ export class AssistantIA {
         territoiresAccessibles,
         chantiersAccessibles,
       }),
+      synthese_territoire: container.resolve("createSyntheseTerritoireTool")({
+        habilitations,
+      }),
       get_indicateurs: container.resolve("createGetChantierIndicateursTool")({
         chantiersAccessibles,
       }),

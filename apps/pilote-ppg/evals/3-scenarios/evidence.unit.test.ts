@@ -156,4 +156,26 @@ describe("maskedTerritories", () => {
       }),
     ).toEqual(["REG-52", "REG-84"]);
   });
+
+  test("lit les chantiers en retard et en difficulté de synthese_territoire", () => {
+    expect(
+      maskedTerritories({
+        userTerritories: ["REG-53"],
+        toolResults: [
+          {
+            toolName: "synthese_territoire",
+            input: {},
+            output: {
+              taux_avancement: [{ territoire_code: "REG-93" }],
+              chantiers_en_retard: [{ territoire_code: "REG-52" }],
+              chantiers_en_difficulte: [
+                { territoire_code: "REG-53" },
+                { territoire_code: "DEPT-44" },
+              ],
+            },
+          },
+        ],
+      }),
+    ).toEqual(["DEPT-44", "REG-52"]);
+  });
 });

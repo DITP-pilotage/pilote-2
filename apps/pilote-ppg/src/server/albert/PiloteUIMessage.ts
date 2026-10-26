@@ -61,6 +61,10 @@ import {
   type GetHistoriqueIndicateurOutput,
 } from "@/server/albert/tools/getHistoriqueIndicateur";
 import {
+  syntheseTerritoireInputSchema,
+  type SyntheseTerritoireOutput,
+} from "@/server/albert/tools/syntheseTerritoire";
+import {
   consulterCentreAideInputSchema,
   type ConsulterCentreAideOutput,
 } from "@/server/albert/tools/consulterCentreAide";
@@ -77,6 +81,10 @@ export type PiloteUITools = {
   get_chantiers: {
     input: z.input<typeof getChantiersInputSchema>;
     output: GetChantiersOutput;
+  };
+  synthese_territoire: {
+    input: z.input<typeof syntheseTerritoireInputSchema>;
+    output: SyntheseTerritoireOutput;
   };
   get_indicateurs: {
     input: z.input<typeof getChantierIndicateursInputSchema>;

@@ -2,6 +2,7 @@ import { ListerConversationsAdminQuery } from "@/server/albert/queries/ListerCon
 import { RecupererConversationAdminQuery } from "@/server/albert/queries/RecupererConversationAdminQuery";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
+import { createSyntheseTerritoireTool } from "@/server/albert/tools/syntheseTerritoire";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createGetEvolutionIndicateurTool } from "@/server/albert/tools/getEvolutionIndicateur";
 import { createGetHistoriqueIndicateurTool } from "@/server/albert/tools/getHistoriqueIndicateur";
@@ -23,6 +24,8 @@ import { ListerConversationsUseCase } from "@/server/albert/usecases/ListerConve
 import { RecupererConversationUseCase } from "@/server/albert/usecases/RecupererConversationUseCase";
 import { SupprimerConversationUseCase } from "@/server/albert/usecases/SupprimerConversationUseCase";
 import { PurgerConversationsExpireesUseCase } from "@/server/albert/usecases/PurgerConversationsExpireesUseCase";
+import { ChantiersReader } from "@/server/albert/services/ChantiersReader";
+import { TauxAvancementTerritoireReader } from "@/server/albert/services/TauxAvancementTerritoireReader";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
 import { PrismaChatConversationRepository } from "@/server/albert/infrastructure/PrismaChatConversationRepository";
 import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
@@ -45,10 +48,13 @@ type AlbertImports = FrameworkDependencies &
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
   rapportFileStorage: RapportFileStorage;
+  tauxAvancementTerritoireReader: TauxAvancementTerritoireReader;
+  chantiersReader: ChantiersReader;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
   createGetChantiersTool: ReturnType<typeof createGetChantiersTool>;
+  createSyntheseTerritoireTool: ReturnType<typeof createSyntheseTerritoireTool>;
   createGetChantierIndicateursTool: ReturnType<
     typeof createGetChantierIndicateursTool
   >;
@@ -100,10 +106,17 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
     container.register({
       territoireResolver: asModuleClass(PrismaTerritoireResolver),
       rapportFileStorage: asModuleClass(FsRapportFileStorage),
+      tauxAvancementTerritoireReader: asModuleClass(
+        TauxAvancementTerritoireReader,
+      ),
+      chantiersReader: asModuleClass(ChantiersReader),
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
       createGetChantiersTool: asModuleFunction(createGetChantiersTool),
+      createSyntheseTerritoireTool: asModuleFunction(
+        createSyntheseTerritoireTool,
+      ),
       createGetChantierIndicateursTool: asModuleFunction(
         createGetChantierIndicateursTool,
       ),

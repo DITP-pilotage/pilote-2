@@ -15,6 +15,7 @@ export type SourceToolPart = Extract<
     type:
       | "tool-get_taux_avancement_territoire"
       | "tool-get_chantiers"
+      | "tool-synthese_territoire"
       | "tool-get_chantiers_signales"
       | "tool-get_indicateurs_non_a_jour"
       | "tool-get_indicateurs"
@@ -32,6 +33,7 @@ export type SourceToolPart = Extract<
 const LIBELLES: Record<SourceToolPart["type"], string> = {
   "tool-get_taux_avancement_territoire": "Taux d'avancement",
   "tool-get_chantiers": "Chantiers",
+  "tool-synthese_territoire": "Synthèse territoriale",
   "tool-get_chantiers_signales": "Chantiers signalés",
   "tool-get_indicateurs_non_a_jour": "Indicateurs non à jour",
   "tool-get_indicateurs": "Indicateurs",

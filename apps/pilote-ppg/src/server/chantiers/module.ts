@@ -108,6 +108,8 @@ type ChantierExports = {
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
   getIndicateursNonAJourQuery: GetIndicateursNonAJourQuery;
+  récupérerStatistiquesAvancementChantiersUseCase: RecupererStatistiquesAvancementChantiersUseCase;
+  recupererTauxAvancementTerritoireQuery: RecupererTauxAvancementTerritoireQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -135,7 +137,6 @@ type ChantierOwnCradle = ChantierExports & {
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
-  récupérerStatistiquesAvancementChantiersUseCase: RecupererStatistiquesAvancementChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
   recupererDetailsIndicateursUseCase: RecupererDetailsIndicateursUseCase;
@@ -167,7 +168,6 @@ type ChantierOwnCradle = ChantierExports & {
   recupererEvolutionTauxAvancementTerritoiresQuery: RecupererEvolutionTauxAvancementTerritoiresQuery;
   getAvancementChantierQuery: GetAvancementChantierQuery;
   getSituationChantierQuery: GetSituationChantierQuery;
-  recupererTauxAvancementTerritoireQuery: RecupererTauxAvancementTerritoireQuery;
   recupererStatistiquesAvancementTousChantiersPubliesQuery: RecupererStatistiquesAvancementTousChantiersPubliesQuery;
   getChantiersHabilitesQuery: GetChantiersHabilitesQuery;
 };
@@ -196,6 +196,8 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
     "getIndicateursNonAJourQuery",
+    "récupérerStatistiquesAvancementChantiersUseCase",
+    "recupererTauxAvancementTerritoireQuery",
   ],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({

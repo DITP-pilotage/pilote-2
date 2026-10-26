@@ -1,11 +1,11 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQuery";
+import type { GetChantiersResult } from "@/server/chantiers/query/GetChantiersQuery";
 import type {
-  GetChantiersResult,
-  GetChantiersParams,
-} from "@/server/chantiers/query/GetChantiersQuery";
-import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+  AccessScope,
+  ChantiersReader,
+} from "@/server/albert/services/ChantiersReader";
+import { buildRestrictionWarning } from "@/server/albert/tools/restrictionWarning";
 
 export const getChantiersInputSchema = z.object({
   territoire_code: z
@@ -51,107 +51,30 @@ export const getChantiersInputSchema = z.object({
     .describe("Filtre optionnel sur la météo"),
 });
 
-type GetChantiersInput = z.infer<typeof getChantiersInputSchema>;
-
 export type GetChantiersOutput = {
   resultats: GetChantiersResult[];
   non_applicable?: { raison: string };
   _output_instructions: string;
 };
 
-const NON_APPLICABLE_EN_RETARD_NAT_FR =
-  "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
+const OUTPUT_INSTRUCTIONS =
+  "Présente les chantiers retournés avec leurs données clés (taux d'avancement, écart à la médiane, météo, tendance) et la synthèse si disponible. Les flags `est_en_retard` et `est_en_difficulte` indiquent la catégorie de chaque chantier ; utilise les libellés utilisateur de la météo, jamais les codes internes.";
 
-function getOutputInstructions(
-  input: GetChantiersInput,
-  resultats: GetChantiersResult[],
-  territoiresAccessibles: string[],
-): string {
-  let base: string;
+const NON_APPLICABLE_INSTRUCTIONS =
+  "L'analyse demandée n'est pas applicable au périmètre interrogé. Explique-le clairement à l'utilisateur en reprenant fidèlement la raison fournie dans non_applicable.raison. Ne présente pas de liste vide ni ne conclus 'aucun chantier en retard'.";
 
-  if (input.view === "en_retard") {
-    base =
-      "Pour chaque chantier en retard, indique l'écart par rapport à la médiane (en points) et la météo de la synthèse si disponible.";
-  } else if (input.view === "en_difficulte") {
-    base =
-      "Pour chaque chantier en difficulté, indique la météo avec son libellé utilisateur (Objectifs compromis, Appuis nécessaires), sans afficher les codes internes.";
-  } else if (input.chantier_ids && input.chantier_ids.length > 0) {
-    base =
-      "Présente les données détaillées de chaque chantier demandé : taux d'avancement, écart, météo, tendance, et synthèse si disponible.";
-  } else {
-    base =
-      "Présente la liste des chantiers correspondant aux critères avec leurs données clés (taux d'avancement, météo, tendance).";
-  }
+const REQUESTED_CHANTIERS_NOT_ACCESSIBLE_INSTRUCTIONS =
+  "Aucun des chantiers demandés n'est accessible pour cet utilisateur.";
 
-  const codesRestreints = resultats
-    .map((r) => r.territoire_code)
-    .filter((code) => !territoiresAccessibles.includes(code));
-
-  if (codesRestreints.length === 0) return base;
-
-  return (
-    `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : seuls le taux d'avancement, la météo et l'écart à la médiane sont disponibles. Les champs tendance et synthèse (commentaire) sont null par restriction d'accès, et non par absence de données. Tu DOIS le mentionner explicitement dans ta réponse quand ces champs sont retournés.\n\n` +
-    base
-  );
-}
-
-function toQueryParams(
-  input: GetChantiersInput,
-  territoireCode: string,
-): GetChantiersParams {
-  return {
-    territoireCode,
-    jalon: input.jalon,
-    chantierIds: input.chantier_ids,
-    view: input.view,
-    tendance: input.tendance,
-    meteo: input.meteo,
-  };
-}
-
-function masquerDonneesNonAccessibles(
-  resultats: GetChantiersResult[],
-  territoiresAccessibles: string[],
-): GetChantiersResult[] {
-  return resultats.map((resultat) => {
-    if (territoiresAccessibles.includes(resultat.territoire_code)) {
-      return resultat;
-    }
-    return {
-      ...resultat,
-      chantiers: resultat.chantiers.map((chantier) => ({
-        ...chantier,
-        tendance: null,
-        est_en_retard: false,
-        est_en_difficulte: false,
-        synthese: chantier.synthese
-          ? {
-              meteo: chantier.synthese.meteo,
-              commentaire: null,
-              date_meteo: chantier.synthese.date_meteo,
-              date_commentaire: null,
-            }
-          : null,
-        commentaires: { donnees: null, autresResultats: null },
-      })),
-    };
-  });
-}
+export const NO_CHANTIER_ACCESSIBLE_INSTRUCTIONS =
+  "L'utilisateur n'a accès à aucun chantier : aucune donnée ne peut être restituée.";
 
 export function createGetChantiersTool({
-  getChantiersQuery,
-  territoireResolver,
+  chantiersReader,
 }: {
-  getChantiersQuery: GetChantiersQuery;
-  territoireResolver: TerritoireResolver;
+  chantiersReader: ChantiersReader;
 }) {
-  return ({
-    territoiresAccessibles,
-    chantiersAccessibles,
-  }: {
-    territoiresAccessibles: string[];
-    chantiersAccessibles: string[];
-  }) => {
+  return (access: AccessScope) => {
     return tool({
       description: `Outil principal pour obtenir des données sur les chantiers (PPG). C'est l'outil à utiliser dès qu'un utilisateur mentionne un chantier (CH-XXX) ou demande des informations sur des chantiers.
 
@@ -168,69 +91,48 @@ Quand include_sous_territoires=true, retourne aussi les chantiers de chaque sous
 
 ⚠️ Si la demande couvre un territoire ET ses sous-territoires (ex: « région X et ses départements »),
 fais UN SEUL appel sur le territoire parent avec include_sous_territoires=true, plutôt que N appels
-individuels sur chaque sous-territoire.
-Cette règle s'applique aussi pour les comparaisons entre jalons : un appel par territoire parent ET
-par jalon (avec include_sous_territoires=true), pas un appel par (sous-territoire × jalon). Si
-plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.`,
+individuels sur chaque sous-territoire.`,
       inputSchema: getChantiersInputSchema,
       execute: async (input): Promise<GetChantiersOutput> => {
-        if (
-          input.territoire_code === "NAT-FR" &&
-          input.view === "en_retard" &&
-          !input.include_sous_territoires
-        ) {
-          return {
-            resultats: [],
-            non_applicable: { raison: NON_APPLICABLE_EN_RETARD_NAT_FR },
-            _output_instructions:
-              "L'analyse demandée n'est pas applicable au périmètre interrogé. Explique-le clairement à l'utilisateur en reprenant fidèlement la raison fournie dans non_applicable.raison. Ne présente pas de liste vide ni ne conclus 'aucun chantier en retard'.",
-          };
-        }
-
-        const chantiersDemandes =
-          input.chantier_ids && input.chantier_ids.length > 0
-            ? input.chantier_ids
-            : undefined;
-
-        // Une liste vide n'est pas filtrée par la query : le cas sans aucun
-        // chantier accessible doit donc s'arrêter ici.
-        const filteredChantierIds = (
-          chantiersDemandes ?? chantiersAccessibles
-        ).filter((id) => chantiersAccessibles.includes(id));
-
-        if (filteredChantierIds.length === 0) {
-          return {
-            resultats: [],
-            _output_instructions: chantiersDemandes
-              ? "Aucun des chantiers demandés n'est accessible pour cet utilisateur."
-              : "L'utilisateur n'a accès à aucun chantier : aucune donnée ne peut être restituée.",
-          };
-        }
-
-        const effectiveInput = { ...input, chantier_ids: filteredChantierIds };
-
-        const codes = await territoireResolver.resoudre(
-          input.territoire_code,
-          input.include_sous_territoires,
+        const result = await chantiersReader.execute(
+          {
+            territoireCode: input.territoire_code,
+            jalon: input.jalon,
+            includeSousTerritoires: input.include_sous_territoires,
+            chantierIds: input.chantier_ids,
+            view: input.view,
+            tendance: input.tendance,
+            meteo: input.meteo,
+          },
+          access,
         );
 
-        const resultats = await Promise.all(
-          codes.map((code) =>
-            getChantiersQuery.execute(toQueryParams(effectiveInput, code)),
-          ),
-        );
-
-        return {
-          resultats: masquerDonneesNonAccessibles(
-            resultats,
-            territoiresAccessibles,
-          ),
-          _output_instructions: getOutputInstructions(
-            input,
-            resultats,
-            territoiresAccessibles,
-          ),
-        };
+        switch (result.kind) {
+          case "notApplicable":
+            return {
+              resultats: [],
+              non_applicable: { raison: result.raison },
+              _output_instructions: NON_APPLICABLE_INSTRUCTIONS,
+            };
+          case "requestedChantiersNotAccessible":
+            return {
+              resultats: [],
+              _output_instructions:
+                REQUESTED_CHANTIERS_NOT_ACCESSIBLE_INSTRUCTIONS,
+            };
+          case "noChantierAccessible":
+            return {
+              resultats: [],
+              _output_instructions: NO_CHANTIER_ACCESSIBLE_INSTRUCTIONS,
+            };
+          case "resultats":
+            return {
+              resultats: result.resultats,
+              _output_instructions:
+                buildRestrictionWarning(result.restrictedTerritoires) +
+                OUTPUT_INSTRUCTIONS,
+            };
+        }
       },
     });
   };
