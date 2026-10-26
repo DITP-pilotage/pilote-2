@@ -59,7 +59,9 @@ export class AssistantIA {
         territoiresAccessibles,
         chantiersAccessibles,
       }),
-      get_indicateurs: container.resolve("createGetChantierIndicateursTool")(),
+      get_indicateurs: container.resolve("createGetChantierIndicateursTool")({
+        chantiersAccessibles,
+      }),
       get_evolution_indicateur: container.resolve(
         "createGetEvolutionIndicateurTool",
       )({ territoiresAccessibles, chantiersAccessibles }),
@@ -68,7 +70,7 @@ export class AssistantIA {
       )({ territoiresAccessibles, chantiersAccessibles }),
       get_chantier_commentaires: container.resolve(
         "createGetChantierCommentairesTool",
-      )({ territoiresAccessibles }),
+      )({ territoiresAccessibles, chantiersAccessibles }),
       get_chantier_objectifs: container.resolve(
         "createGetChantierObjectifsTool",
       )({ chantiersAccessibles }),
