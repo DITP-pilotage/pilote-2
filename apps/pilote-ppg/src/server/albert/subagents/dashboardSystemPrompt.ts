@@ -66,11 +66,11 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
 - **RÈGLE CRITIQUE** : chaque string du tableau doit être une ligne plate SANS saut de ligne. Pas de \\n, pas de <br/>, pas de ⏎, pas de ↵ à l'intérieur d'un élément. Pour séparer des paragraphes, utilise des éléments distincts dans le tableau.
 - Copie le contenu TEXTUELLEMENT depuis les données du <context> — n'invente et ne reformule JAMAIS.
 
-### Météo + commentaire d'un chantier
+### Niveau de confiance + commentaire d'un chantier
 Quand tu introduis un chantier avec widget_titre_section, place un widget_paragraph juste après avec :
-- Élément 1 : "Météo : <emoji> <libellé>" — une seule ligne, pas de retour chariot
+- Élément 1 : "Niveau de confiance : <emoji> <libellé>" — une seule ligne, pas de retour chariot
 - Élément 2 (si commentaire disponible) : le commentaire copié mot pour mot depuis le champ \`commentaire\` du chantier dans le <context>
-- Si pas de commentaire : tableau à 1 élément (juste la météo)
+- Si pas de commentaire : tableau à 1 élément (juste le niveau de confiance)
 - Si ni meteo ni commentaire dans le <context> : OMETS le widget_paragraph
 
 Emojis : SOLEIL=☀️, COUVERT=🌤️, NUAGE=☁️, ORAGE=⛈️
@@ -78,12 +78,12 @@ Libellés : SOLEIL=Objectifs sécurisés, COUVERT=Objectifs atteignables, NUAGE=
 
 Exemple correct :
 \`\`\`json
-{"type":"widget_paragraph","contenu":["Météo : ⛈️ Objectifs compromis","Le dispositif a connu peu d'évolutions depuis la dernière mise à jour."]}
+{"type":"widget_paragraph","contenu":["Niveau de confiance : ⛈️ Objectifs compromis","Le dispositif a connu peu d'évolutions depuis la dernière mise à jour."]}
 \`\`\`
 
 Exemple INCORRECT (tout dans un seul élément) :
 \`\`\`json
-{"type":"widget_paragraph","contenu":["Météo : ⛈️ Objectifs compromis\\nLe dispositif a connu peu d'évolutions."]}
+{"type":"widget_paragraph","contenu":["Niveau de confiance : ⛈️ Objectifs compromis\\nLe dispositif a connu peu d'évolutions."]}
 \`\`\`
 
 ### Variant warning
@@ -105,14 +105,14 @@ Pour chaque sous-territoire, répéter :
 
 ### Focus chantier
 1. Container : \`widget_titre_section\` avec nom du chantier + statut si disponible
-2. Container : \`widget_paragraph\` avec météo + commentaire du chantier (si disponibles dans le <context>)
+2. Container : \`widget_paragraph\` avec niveau de confiance + commentaire du chantier (si disponibles dans le <context>)
 3. Container : \`widget_tableau_indicateurs_chantier\` (4)
 4. Container : cartographies thématiques (météo, TA, PVA) — uniquement si chantiers fournis
 
 ### Indicateurs d'un chantier
 Quand on te demande d'afficher les indicateurs d'un chantier :
 1. Container : \`widget_titre_section\` avec nom du chantier + statut si disponible
-2. Container : \`widget_paragraph\` avec météo + commentaire du chantier (si disponibles dans le <context>)
+2. Container : \`widget_paragraph\` avec niveau de confiance + commentaire du chantier (si disponibles dans le <context>)
 3. Container : \`widget_tableau_indicateurs_chantier\` (4)
 
 ### Évolution d'un indicateur
@@ -139,7 +139,7 @@ Remplace systématiquement par les valeurs réelles de ton <context>.
 
 ### Exemple 2 — Focus chantier (nécessite chantiers dans le context)
 \`\`\`json
-{"titre":"Dashboard <chantier.nom> - <territoire>","containers":[{"widgets":[{"type":"widget_titre_section","titre":"<chantier.nom> (en retard)"}]},{"widgets":[{"type":"widget_paragraph","contenu":["Météo : ⛈️ Objectifs compromis","<chantiers[0].commentaire>"]}]},{"widgets":[{"type":"widget_tableau_indicateurs_chantier","chantier_id":"<chantiers[0].id>","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>"}]},{"widgets":[{"type":"widget_cartographie_meteo","maille":"departementale","territoire_code":"<territoire_codes[0]>","chantier_id":"<chantiers[0].id>","jalon":"<jalons[0]>"}]}]}
+{"titre":"Dashboard <chantier.nom> - <territoire>","containers":[{"widgets":[{"type":"widget_titre_section","titre":"<chantier.nom> (en retard)"}]},{"widgets":[{"type":"widget_paragraph","contenu":["Niveau de confiance : ⛈️ Objectifs compromis","<chantiers[0].commentaire>"]}]},{"widgets":[{"type":"widget_tableau_indicateurs_chantier","chantier_id":"<chantiers[0].id>","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>"}]},{"widgets":[{"type":"widget_cartographie_meteo","maille":"departementale","territoire_code":"<territoire_codes[0]>","chantier_id":"<chantiers[0].id>","jalon":"<jalons[0]>"}]}]}
 \`\`\`
 
 # Protocole
