@@ -1,8 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { $Enums } from "@prisma/client";
 import { MailleNonAutoriséeErreur } from "@/shared/errors/authorization-errors";
-import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/shared/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
@@ -54,10 +52,8 @@ function getOutputInstructions(): string {
 }
 
 export function createGetTauxAvancementTerritoireTool({
-  prisma,
   territoireResolver,
 }: {
-  prisma: PrismaPilote;
   territoireResolver: TerritoireResolver;
 }) {
   return ({ habilitations }: { habilitations: Habilitations }) => {
@@ -83,16 +79,10 @@ Utilise cet outil quand l'utilisateur demande :
           input.include_sous_territoires,
         );
 
-        const db = prisma.getInstance();
-
-        const publishedChantiers = await db.chantier_identite.findMany({
-          where: { statut: $Enums.type_statut.PUBLIE },
-          select: { id: true },
-        });
-
-        const chantierIds = publishedChantiers.map((c) => c.id);
-
         const chantiersContainer = getContainer("chantiers");
+        const chantierIds = await chantiersContainer
+          .resolve("getChantiersHabilitesQuery")
+          .execute(habilitations);
         const récupérerStatistiquesUseCase = chantiersContainer.resolve(
           "récupérerStatistiquesAvancementChantiersUseCase",
         );
@@ -103,6 +93,7 @@ Utilise cet outil quand l'utilisateur demande :
               .executePourTerritoires({
                 territoireCodes: codes,
                 jalon: input.jalon,
+                habilitations,
               })
           ).map((resultat) => [
             resultat.territoire_code,
