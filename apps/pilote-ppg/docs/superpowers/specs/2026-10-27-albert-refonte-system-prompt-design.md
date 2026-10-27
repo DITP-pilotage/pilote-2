@@ -349,6 +349,7 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 | 4 – encart de synthèse et de comparaison | `2b09817` | 88 % | 93 % | 3 055 | déclencheurs à resserrer |
 | 4 bis – evals assainies, code de l'étape 4 | `d8469e2` | 90 % | 94 % | – | nouvelle base |
 | 5 – données de l'encart, déclencheurs | `feb9b4d` | 91 % | 96 % | 3 274 | base de l'étape 6 |
+| 6 – rapport = encart téléchargé, commentaires à un seul endroit | `a0631a5` | 92 % | 98 % | 3 312 | état actuel |
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
@@ -774,3 +775,42 @@ la cartographie par région.
 2. La synthèse d'un chantier qui ne lit pas ses commentaires.
 3. La comparaison de taux Bretagne / Pays de la Loire : critères de fond.
 4. La résolution des numéros de territoire (cas en attente).
+
+### Étape 6 : le rapport devient l'encart téléchargé (`a0631a5`)
+
+Décisions d'Antoine (27/10) :
+
+- l'export de rapport est supprimé (outil `export_rapport`, PDF, markdown,
+  stockage, route de téléchargement, cron de nettoyage, suites d'eval) ; un
+  rapport est l'encart, qui se télécharge en markdown par un bouton, sans
+  appel au modèle ;
+- `get_chantiers` ne renvoie plus les commentaires territoriaux :
+  `get_chantier_commentaires` les porte seul (décidé avec Tristan) ;
+- pour une même demande, l'encart ou les outils de données, jamais les deux.
+
+Mesure (`evals/resultats-etape-6.json`, aucune limite de débit) :
+
+- Niveau 2 : 91,2 % → 91,7 %. Niveau 3 : 95,9 % → 98,1 %. Sur les 165 cas
+  communs aux deux runs : niveau 2 92,5 % → 91,7 %, niveau 3 96,3 % → 98,0 %.
+- Contrôles de l'encart : 100 %.
+- Tokens du premier appel : 3 312.
+- Échecs répétés : 35 → 16. 6 disparaissent avec les suites d'export
+  supprimées ; sur les 29 restants, 19 résolus, et 6 nouveaux.
+
+Résolus : la comparaison de taux Bretagne / Pays de la Loire (l'encart n'est
+plus appelé en plus du taux, 5 critères), la synthèse des difficultés du
+Finistère, « où en sont l'Occitanie et ses départements », la cartographie par
+région, une partie de la synthèse des commentaires. La synthèse d'un chantier
+lit maintenant ses commentaires 3 fois sur 6 (0 à l'étape 5).
+
+Toujours en échec : la synthèse d'un chantier (commentaires lus une fois sur
+deux, nom du chantier oublié), « Format des chantiers » et « Actions
+identifiées » de la synthèse des commentaires, six cas de choix d'outil déjà
+en échec à la ligne de base (Vaucluse, CH-018, politique prioritaire sur
+l'écologie, médiane des régions, « synthèse non renseignée », commentaires du
+CH-005).
+
+Nouveaux, à confirmer au prochain run (déjà instables aux étapes
+précédentes) : « Trace la courbe d'évolution » (dashboard), le graphique de
+répartition (clarification), « Pas de recopie » sur deux synthèses de
+commentaires, « Pas d'opinion », du LaTeX dans une réponse du centre d'aide.
