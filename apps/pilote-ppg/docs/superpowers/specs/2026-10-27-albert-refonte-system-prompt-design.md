@@ -346,6 +346,7 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 | 1 – réécriture minimale | `5ae608e` | 88 % | 92 % | 2 290 | base de l'étape 2 |
 | 2 – résolution, sous-territoires, exemples | `9805829` | 90 % | 93 % | 2 853 | base de l'étape 3 |
 | 3 – régressions, courbe iso prod, restriction | `dead2dc` | 91 % | 94 % | 2 928 | base de l'étape 4 |
+| 4 – encart de synthèse et de comparaison | `2b09817` | 88 % | 93 % | 3 055 | déclencheurs à resserrer |
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
@@ -636,3 +637,60 @@ ou instables d'un run à l'autre (« Pas d'opinion », « Format des chantiers �
 2. Outil composite « situation d'un territoire » : mis de côté le 27/10, la
    synthèse du territoire courant et « où ça coince » le justifient toujours.
 
+### Étape 4 : encart de synthèse et de comparaison (`2b09817`)
+
+Design : [2026-10-27-albert-encart-synthese-design.md](2026-10-27-albert-encart-synthese-design.md).
+Deux outils, `rediger_synthese_territoire` et `rediger_comparaison_territoires`,
+collectent eux-mêmes taux et chantiers, font rédiger l'ancien gabarit par un
+sous-agent et le streament dans un encart. Le prompt principal oriente les
+synthèses et comparaisons génériques vers ces outils.
+
+Mesure (`evals/resultats-etape-4.json`, aucun délai de l'API Albert) :
+
+- Niveau 2 : 90,5 % → 88,3 %. Niveau 3 : 93,6 % → 92,5 % ; 92,9 % à grille
+  constante (sans les contrôles « Encart — »).
+- Groupe `encart`, rapporté à part : 90,2 %, 4 échecs répétés.
+- Tokens du premier appel : 2 928 → 3 055.
+- Météo citée sans être demandée : 0 ; balise HTML : 0 ; langue : 0 échec.
+- Échecs répétés (grilles existantes) : 36 → 55, dont 13 résolus et 32
+  nouveaux.
+
+Résolus par l'encart : la synthèse d'un territoire (3), la synthèse des
+difficultés en Bretagne et dans le Finistère (4), la synthèse de la Bretagne
+et ses départements (2), la comparaison Bretagne / Pays de la Loire, « où ça
+coince ».
+
+Nouveaux échecs, presque tous des déclencheurs trop larges :
+
+- « Compare les taux d'avancement de X avec Y » (21 échecs sur 3 cas) et
+  « Compare le taux d'avancement de la Bretagne et de la Normandie » : le
+  critère est précis, l'agent ouvre quand même l'encart de comparaison.
+- « Compare 35 avec les autres départements de Bretagne » (4) : encart au lieu
+  du taux.
+- « Fais-moi un rapport sur la Bretagne », « Je voudrais télécharger la
+  situation de la Bretagne », « Crée un rapport de synthèse… » : encart de
+  synthèse au lieu de l'export.
+- Les autres (synthèse des commentaires, Vaucluse, récap Auvergne) portent sur
+  des critères déjà instables aux étapes précédentes.
+
+Contrôles de l'encart :
+
+- **Signe de l'écart** : le sous-agent écrit « Écart : 22 points » pour −22
+  (CH-005 en Bretagne, dans le Finistère et en Ille-et-Vilaine, 7 essais). Le
+  seuil de bascule de la spec de l'encart est atteint : un échec répété du
+  contrôle des écarts.
+- **Accès restreint** : en Pays de la Loire, l'encart conclut « aucun chantier
+  en retard » alors que la vue en contient un. Le masquage force
+  `est_en_retard` à faux, et le sous-agent s'y fie plutôt qu'à la vue.
+
+### Entrées de l'étape 5
+
+1. Resserrer les déclencheurs : « le taux d'avancement » dans une comparaison
+   reste un critère précis ; « rapport », « télécharger » restent l'export ;
+   « X avec les autres départements » reste le taux.
+2. Bascule vers le squelette posé par le code (option écartée de la spec de
+   l'encart), ou au minimum l'écart écrit avec son signe : décision à prendre.
+3. Encart en accès restreint : dire au sous-agent qu'un chantier de la vue en
+   retard est en retard, quels que soient les drapeaux masqués.
+4. Résolution des territoires dans le code (entrée 1 de l'étape 4, toujours
+   ouverte).
