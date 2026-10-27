@@ -81,7 +81,6 @@ describe("createGetChantierObjectifsTool execute", () => {
           contenu: "<p>À faire</p>",
         },
       },
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -116,7 +115,6 @@ describe("createGetChantierObjectifsTool execute", () => {
         deja_fait: null,
         a_faire: null,
       },
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -137,7 +135,6 @@ describe("createGetChantierObjectifsTool execute", () => {
     expect(result).toEqual({
       chantier_id: "CH-001",
       objectifs: { notre_ambition: null, deja_fait: null, a_faire: null },
-      _output_instructions: expect.any(String),
     });
   });
 

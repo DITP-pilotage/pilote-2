@@ -63,18 +63,6 @@ Règles :
 - Un défaut qui relève d'un autre critère ne rend pas celui-ci non conforme.
 - Rends un verdict pour chaque critère listé, et seulement pour eux, en recopiant son identifiant.`;
 
-function sansInstructions(output: unknown): unknown {
-  if (Array.isArray(output)) return output.map(sansInstructions);
-  if (output && typeof output === "object") {
-    return Object.fromEntries(
-      Object.entries(output)
-        .filter(([key]) => key !== "_output_instructions")
-        .map(([key, value]) => [key, sansInstructions(value)]),
-    );
-  }
-  return output;
-}
-
 export function buildJudgePrompt({
   evidence,
   criteria,
@@ -121,7 +109,7 @@ export function buildJudgePrompt({
     JSON.stringify(
       evidence.toolResults.map((result) => ({
         toolName: result.toolName,
-        output: sansInstructions(result.output),
+        output: result.output,
       })),
       null,
       2,
@@ -131,7 +119,7 @@ export function buildJudgePrompt({
     ``,
     ...tableau,
     `FICHE DE VÉRITÉ (ce que la réponse doit couvrir) :`,
-    JSON.stringify(sansInstructions(evidence.truth), null, 2),
+    JSON.stringify(evidence.truth, null, 2),
     ``,
     `MATIÈRE À JUGER :`,
     `=== DÉBUT DE LA MATIÈRE ===`,

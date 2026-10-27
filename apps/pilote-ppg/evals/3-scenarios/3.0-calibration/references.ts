@@ -662,7 +662,6 @@ function dashboardAvec(
   return {
     titre: "Tableau de bord Bretagne",
     containers: [{ widgets: premiereSection }, ...SECTIONS_CHANTIERS],
-    _output_instructions: "",
   };
 }
 

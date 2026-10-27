@@ -86,7 +86,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
     expect(result).toEqual({
       indicateur: null,
       introuvable: true,
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -125,7 +124,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         },
         territoire_code: territoireCode,
         agrege_bloque: true,
-        _output_instructions: expect.any(String),
       });
       expect(
         getHistoriqueIndicateurTerritoireQuery.execute,
@@ -170,7 +168,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         date_evenement_la_plus_ancienne: "2020-01-01",
         date_evenement_la_plus_recente: "2020-02-10",
       },
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -213,7 +210,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         date_evenement_la_plus_ancienne: "2024-01-01",
         date_evenement_la_plus_recente: "2024-02-10",
       },
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -278,7 +274,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
           ],
         },
       ],
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -334,9 +329,6 @@ describe("createGetHistoriqueIndicateurTool execute", () => {
         { date_valeur: "02/2024", evenements: [evenementImport] },
         { date_valeur: "03/2024", evenements: [evenementImport] },
       ],
-      _output_instructions: expect.stringContaining(
-        "construction_valeur_affichee",
-      ),
     });
   });
 

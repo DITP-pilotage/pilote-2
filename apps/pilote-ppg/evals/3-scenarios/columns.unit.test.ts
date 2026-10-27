@@ -57,7 +57,6 @@ describe("scenarioColumns", () => {
                 ],
               },
             ],
-            _output_instructions: "",
           },
         },
       ],

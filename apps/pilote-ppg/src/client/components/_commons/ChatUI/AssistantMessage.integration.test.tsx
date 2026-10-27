@@ -26,7 +26,7 @@ const reponseAvecDashboard: PiloteUIMessage = {
       toolCallId: "call-dashboard",
       state: "output-available",
       input: { task: "Synthèse", territoire_codes: ["NAT-FR"], jalons: [2026] },
-      output: { titre: "Synthèse", containers: [], _output_instructions: "" },
+      output: { titre: "Synthèse", containers: [] },
     },
   ],
 };

@@ -46,15 +46,7 @@ export type SearchIndicateursOutput = {
     chantier: { id: string; nom: string };
   }[];
   reasoning: string;
-  _output_instructions: string;
 };
-
-const OUTPUT_INSTRUCTIONS = `Présente à l'utilisateur la liste des indicateurs identifiés avec leur id, leur nom, et leur chantier de rattachement au format **CH-XXX — Nom du chantier**.
-Si un seul indicateur correspond clairement, tu peux directement enchaîner sans demander confirmation, avec l'outil adapté à la demande de l'utilisateur : get_indicateurs (valeurs VI/VA/VC/TA), get_evolution_indicateur (tendance/courbe dans le temps) ou get_historique_indicateur (détail des actions), en passant l'\`id\` résolu comme indicateur_id.
-Si plusieurs indicateurs correspondent, fais choisir l'utilisateur via clarify_with_choices (une option par indicateur) avant d'enchaîner.
-Si la liste est vide, indique-le et invite l'utilisateur à reformuler. Ne reproduis pas le champ \`reasoning\` mot pour mot.`;
-
-const OUTPUT_INSTRUCTIONS_VIDE = `Aucun indicateur ne correspond à la requête. Indique-le clairement à l'utilisateur et propose-lui de reformuler ou de cibler d'abord un chantier via search_chantiers. Ne reproduis pas \`reasoning\` mot pour mot.`;
 
 function buildSubagentPrompt(
   query: string,
@@ -74,15 +66,9 @@ export function createSearchIndicateursTool({
 }) {
   return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) => {
     return tool({
-      description: `Identifie des indicateurs PILOTE à partir d'une requête en langage naturel quand l'utilisateur ne donne pas leur identifiant.
-
-Utilise ce tool quand :
-- l'utilisateur mentionne un indicateur par thématique, libellé approximatif ou métrique (ex: « le taux d'équipement », « combien de femmes formées », « les délais »)
-- tu as besoin de résoudre un nom d'indicateur vers un identifiant avant d'appeler get_indicateurs, get_evolution_indicateur ou get_historique_indicateur
-
-Si tu as déjà ciblé un ou plusieurs chantiers (via search_chantiers ou un CH-XXX explicite), passe leurs identifiants dans \`chantier_ids\` pour scoper la recherche et améliorer la pertinence.
-
-Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id (format IND-XXX), leur nom et leur chantier de rattachement. Aucune donnée chiffrée — utilise get_indicateurs (valeurs VI/VA/VC/TA), get_evolution_indicateur (tendance) ou get_historique_indicateur (détail des actions) pour ça.`,
+      description: `Renvoie au plus 10 indicateurs (identifiant IND-XXX, nom et chantier de rattachement), triés par pertinence, pour une description en langage naturel. \`chantier_ids\` restreint la recherche aux chantiers déjà identifiés.
+Utilise-le pour : « le taux d'équipement », « combien de femmes formées », résoudre un indicateur avant get_indicateurs, get_evolution_indicateur, get_historique_indicateur ou get_indicateurs_non_a_jour.
+Ne l'utilise pas pour : un indicateur déjà désigné par son identifiant (IND-XXX, ou un numéro seul à compléter en IND-<numéro>) → l'outil de données directement.`,
       inputSchema: searchIndicateursInputSchema,
       execute: async (
         { query, chantier_ids },
@@ -102,7 +88,6 @@ Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id (
             indicateurs: [],
             reasoning:
               "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
-            _output_instructions: OUTPUT_INSTRUCTIONS_VIDE,
           };
         }
 
@@ -114,7 +99,6 @@ Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id (
           return {
             indicateurs: [],
             reasoning: "Aucun indicateur accessible dans le périmètre demandé.",
-            _output_instructions: OUTPUT_INSTRUCTIONS_VIDE,
           };
         }
 
@@ -143,10 +127,6 @@ Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id (
         return {
           indicateurs: resultats,
           reasoning: output.reasoning,
-          _output_instructions:
-            resultats.length === 0
-              ? OUTPUT_INSTRUCTIONS_VIDE
-              : OUTPUT_INSTRUCTIONS,
         };
       },
     });

@@ -84,7 +84,6 @@ describe("extractMatter", () => {
           ],
         },
       ],
-      _output_instructions: "",
     };
 
     const result = extractMatter({

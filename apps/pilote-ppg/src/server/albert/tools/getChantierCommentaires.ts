@@ -26,7 +26,7 @@ export const getChantierCommentairesInputSchema = z.object({
     .optional()
     .default(false)
     .describe(
-      "Si true, inclut les commentaires des sous-territoires (ex: départements d'une région, ou toutes les régions depuis NAT-FR). Les objectifs du chantier ne sont retournés que pour le territoire principal puisqu'ils ne sont pas territorialisés.",
+      "`true` pour un territoire ET ses sous-territoires : un seul appel sur le parent, jamais un appel par sous-territoire.",
     ),
   types: z
     .array(z.enum(typesContenuChantier))
@@ -39,11 +39,7 @@ export const getChantierCommentairesInputSchema = z.object({
 export type GetChantierCommentairesOutput = {
   resultats: GetChantierCommentairesResult[];
   types_non_accessibles: GetChantierCommentairesQueryResult["types_non_accessibles"];
-  _output_instructions: string;
 };
-
-const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date, son contenu verbatim et la mention "Rédigé pour <territoire_nom>", sans reformulation ni interprétation. Les contenus sont en HTML : extrais uniquement le texte (sans les balises) tout en conservant la formulation d'origine. Regroupe par type ou trie par date selon la demande de l'utilisateur. N'affiche pas territoire_code : ce code est technique et ne doit pas apparaître dans la réponse finale. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.
-Si types_non_accessibles n'est pas vide, ces types sont hors du périmètre d'accès de l'utilisateur : ne dis JAMAIS qu'il n'existe pas de contenu pour ces types — indique que l'utilisateur n'a pas accès à ces informations (elles relèvent de la vue nationale).`;
 
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
@@ -60,12 +56,9 @@ export function createGetChantierCommentairesTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Récupère les contenus textuels publiés rattachés à un chantier sur un territoire donné (uniquement les contenus publiés — les brouillons sont exclus).
-Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire.
+      description: `Renvoie les commentaires publiés d'un chantier sur un territoire, chacun avec son type et sa date, regroupés par territoire (\`territoire_nom\` : le territoire pour lequel ils sont rédigés).
 
-Chaque bloc de résultat porte \`territoire_nom\` : utilise ce nom lisible pour afficher "Rédigé pour <territoire_nom>" et n'affiche jamais \`territoire_code\` à l'utilisateur.
-
-Chaque commentaire porte un champ \`type\` permettant de distinguer la nature du contenu et sa maille :
+Types de commentaires :
 - \`freins_a_lever\` (maille nationale uniquement) : risques et freins à lever, notamment ceux nécessitant un soutien ou un arbitrage
 - \`actions_a_venir\` (maille nationale uniquement) : solutions envisagées et actions initiées ou prévues
 - \`actions_a_valoriser\` (maille nationale uniquement) : exemples concrets de réussite à partager
@@ -73,11 +66,12 @@ Chaque commentaire porte un champ \`type\` permettant de distinguer la nature du
 - \`decision_strategique\` (maille nationale uniquement) : décisions prises lors des réunions Élysée-Matignon et actions envisagées ou réalisées
 - \`commentaires_sur_les_donnees\` (mailles régionale et départementale) : explication des résultats du territoire et des écarts avec les autres territoires
 - \`autres_resultats_obtenus\` (mailles régionale et départementale) : résultats locaux qui ne transparaissent pas dans les chiffres
-- \`synthese_des_resultats\` (toutes mailles) : commentaire d'analyse accompagnant la météo du chantier sur le territoire
+- \`synthese_des_resultats\` (toutes mailles) : commentaire d'analyse qui accompagne le niveau de confiance du chantier sur le territoire
 
-Les types nationaux sont automatiquement recherchés sur NAT-FR quand l'utilisateur y a accès, même si territoire_code est régional ou départemental : inutile de faire un second appel sur NAT-FR pour les obtenir. Les types listés dans types_non_accessibles sont hors du périmètre d'accès de l'utilisateur.
-
-Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextuelle d'un chantier sur un territoire : freins, actions, réussites, décisions stratégiques ou commentaires explicatifs. Pour les objectifs stratégiques du chantier (ambition, ce qui a été fait, ce qu'il reste à faire), utilise \`get_chantier_objectifs\`.`,
+- Les types nationaux sont cherchés sur NAT-FR quand l'utilisateur y a accès, même pour un territoire régional ou départemental : inutile de rappeler l'outil sur NAT-FR.
+- \`types_non_accessibles\` : ces types relèvent de la vue nationale, hors du périmètre de l'utilisateur ; ce n'est pas une absence de contenu.
+Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire.
+Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
       inputSchema: getChantierCommentairesInputSchema,
       execute: async (input): Promise<GetChantierCommentairesOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
@@ -128,7 +122,6 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
               results.flatMap((result) => result.types_non_accessibles),
             ),
           ],
-          _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },
     });

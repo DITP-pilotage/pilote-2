@@ -66,7 +66,6 @@ describe("createGetEvolutionIndicateurTool execute", () => {
         { date: "01/2024", valeur: 10, taux_avancement_jalon: null },
         { date: "06/2024", valeur: 20, taux_avancement_jalon: 45 },
       ],
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -117,9 +116,6 @@ describe("createGetEvolutionIndicateurTool execute", () => {
       territoire_code: "DEPT-75",
       construction_valeur_affichee: explicationValeurAffichee,
       points: [{ date: "01/2024", valeur: 10, taux_avancement_jalon: null }],
-      _output_instructions: expect.stringContaining(
-        "construction_valeur_affichee",
-      ),
     });
   });
 
@@ -148,7 +144,6 @@ describe("createGetEvolutionIndicateurTool execute", () => {
     expect(result).toEqual({
       indicateur: null,
       introuvable: true,
-      _output_instructions: expect.any(String),
     });
     expect(
       getEvolutionIndicateurTerritoireQuery.execute,

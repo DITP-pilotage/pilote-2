@@ -15,8 +15,13 @@ export function createExportRapportTool({
 }) {
   return ({ userId }: { userId: string }) => {
     return tool({
-      description:
-        "Génère un rapport structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
+      description: `Génère un rapport téléchargeable à partir des données de la conversation : un titre, une date, un résumé et des sections (markdown par défaut, PDF si l'utilisateur le demande).
+- Si la conversation ne contient pas les données du rapport, appelle d'abord les outils nécessaires.
+- Inclus sous forme de tableau les valeurs des indicateurs de chaque chantier cité (get_indicateurs si besoin).
+- Dans un paragraphe, sépare les paragraphes par une ligne vide.
+- Après l'appel, réponds seulement « Votre rapport est disponible au téléchargement. », sans lien : l'interface affiche le fichier.
+Utilise-le pour : exporter, télécharger ou générer un rapport.
+Ne l'utilise pas pour : une question sur l'export des données dans PILOTE → consulter_centre_aide.`,
       inputSchema: exportRapportInputSchema,
       execute: async (input): Promise<ExportRapportOutput> => {
         const shortId = randomUUID().slice(0, 8);

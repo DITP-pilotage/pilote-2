@@ -58,11 +58,10 @@ describe("createGetChantiersSignalesTool execute", () => {
       resultats: [],
       categories_non_applicables: [],
       acces_refuse: true,
-      _output_instructions: expect.any(String),
     });
   });
 
-  test("retourne un message dédié quand aucun chantier_ids demandé n'est accessible", async () => {
+  test("signale un accès refusé quand aucun chantier_ids demandé n'est accessible", async () => {
     // Given
     const tool = buildTool({
       queryResult: [],
@@ -80,8 +79,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: [],
-      _output_instructions:
-        "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+      acces_refuse: true,
     });
   });
 
@@ -119,7 +117,6 @@ describe("createGetChantiersSignalesTool execute", () => {
         },
       ],
       categories_non_applicables: ["Retard par rapport à la médiane"],
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -141,7 +138,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: ["Taux d'avancement non calculé"],
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -168,7 +164,6 @@ describe("createGetChantiersSignalesTool execute", () => {
       categories_non_applicables: [
         "Absence de taux d'avancement départemental",
       ],
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -189,7 +184,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: [],
-      _output_instructions: expect.any(String),
     });
   });
 });

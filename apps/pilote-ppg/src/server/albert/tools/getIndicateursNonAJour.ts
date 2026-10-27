@@ -39,54 +39,9 @@ type GetIndicateursNonAJourInput = z.infer<
 export type GetIndicateursNonAJourOutput = {
   resultats: ChantierIndicateursNonAJour[];
   acces_refuse?: boolean;
-  _output_instructions: string;
+  chantiers_non_accessibles?: string[];
+  indicateurs_non_accessibles?: string[];
 };
-
-function buildInaccessiblesInstruction(
-  libelle: "chantiers" | "indicateurs",
-  idsInaccessibles: string[],
-): string[] {
-  return idsInaccessibles.length > 0
-    ? [
-        `Ces ${libelle} demandés ne sont pas accessibles à l'utilisateur : ${idsInaccessibles.join(", ")}. Dis-le sans rien affirmer d'autre à leur sujet, et ne les présente jamais comme à jour.`,
-      ]
-    : [];
-}
-
-const AUCUN_RESULTAT_INSTRUCTION =
-  "Aucun indicateur non à jour n'a été trouvé sur le périmètre demandé. Dis-le en ces termes, sans conclure que les données sont à jour : l'indicateur peut ne pas être suivi sur ce territoire, ne pas appartenir au chantier demandé, ou son identifiant peut être erroné. Propose d'élargir le périmètre, ou de vérifier l'identifiant de l'indicateur avec search_indicateurs.";
-
-function buildOutputInstructions({
-  isDetailed,
-  aucunResultat,
-  chantierIdsInaccessibles,
-  indicateurIdsInaccessibles,
-}: {
-  isDetailed: boolean;
-  aucunResultat: boolean;
-  chantierIdsInaccessibles: string[];
-  indicateurIdsInaccessibles: string[];
-}): string {
-  const inaccessibles = [
-    ...buildInaccessiblesInstruction("chantiers", chantierIdsInaccessibles),
-    ...buildInaccessiblesInstruction("indicateurs", indicateurIdsInaccessibles),
-  ];
-
-  if (aucunResultat) {
-    return [AUCUN_RESULTAT_INSTRUCTION, ...inaccessibles].join("\n\n");
-  }
-
-  return [
-    'Présente chaque chantier au format "CH-XXX — Nom du chantier" et chaque indicateur au format "IND-XXX — Nom de l\'indicateur".',
-    "Si la question porte sur les chantiers (« sur quels chantiers… »), liste les chantiers avec leur nombre d'indicateurs non à jour, sans détailler les indicateurs, puis propose le détail d'un chantier.",
-    "Sinon, regroupe par chantier puis par indicateur, avec une ligne par maille au format « Départements : 12 / 101 territoires en retard » (« Régions » pour REG, « National » pour NAT).",
-    "Si l'utilisateur demande pourquoi une donnée n'est pas à jour, explique que la date théorique de mise à jour (date de la dernière valeur + periodicite + delaiDisponibiliteMois déclarés pour l'indicateur) est dépassée.",
-    isDetailed
-      ? "Liste les territoires en retard avec la date à laquelle la mise à jour était attendue (miseAJourAttendueDepuis). Un territoire dont dateDerniereValeur est null n'a jamais eu de valeur renseignée : présente-le comme « aucune valeur renseignée ». Si miseAJourAttendueDepuis est null alors que dateDerniereValeur est renseignée, la date théorique de mise à jour n'a pas pu être calculée : dis-le au lieu d'afficher une date."
-      : "Le détail par territoire n'est pas inclus. Propose à l'utilisateur de cibler un indicateur ou un territoire pour obtenir la liste des territoires en retard. Ne classe pas les territoires entre eux : cette information n'est pas disponible.",
-    ...inaccessibles,
-  ].join("\n\n");
-}
 
 function indicateursInaccessibles(
   contextes: (IndicateurContexteResult | null)[],
@@ -114,15 +69,15 @@ export function createGetIndicateursNonAJourTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Liste les indicateurs dont les données ne sont pas à jour (retard de mise à jour), par chantier, indicateur et maille, avec le nombre de territoires en retard.
-
-Une donnée est non à jour quand sa date théorique de mise à jour (dernière valeur + périodicité + délai de disponibilité déclarés) est dépassée, ou quand aucune valeur n'a jamais été renseignée sur un territoire où l'indicateur est applicable.
-
-Utilise cet outil pour : « indicateurs non à jour », « retard de mise à jour », « données pas à jour », « données périmées », « mise à jour attendue », « territoires qui n'ont pas mis à jour l'indicateur X ».
-
-⚠️ N'utilise PAS cet outil pour les chantiers « en retard » au sens de l'avancement (écart à la médiane) : c'est get_chantiers(view='en_retard').
-
-Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_ids ou territoire_code est fourni ; sinon seuls les compteurs par maille sont renvoyés.`,
+      description: `Renvoie les indicateurs dont les données ne sont pas à jour, par chantier, indicateur et maille, avec le nombre de territoires en retard de mise à jour. Une donnée n'est pas à jour quand sa date théorique de mise à jour (date de la dernière valeur + périodicité + délai de disponibilité déclarés) est dépassée, ou quand aucune valeur n'a jamais été renseignée sur un territoire où l'indicateur s'applique.
+- Le détail par territoire n'est renvoyé qu'avec \`indicateur_ids\` ou \`territoire_code\` ; sinon, seulement les compteurs par maille.
+- Liste vide : aucun indicateur non à jour trouvé sur ce périmètre, ce qui ne prouve pas que les données sont à jour (l'indicateur peut ne pas être suivi ici, ou son identifiant être erroné).
+- \`dateDerniereValeur\` null : aucune valeur n'a jamais été renseignée sur ce territoire.
+- \`miseAJourAttendueDepuis\` null alors que \`dateDerniereValeur\` est renseignée : la date théorique n'a pas pu être calculée.
+- \`acces_refuse\` : l'utilisateur n'a accès ni à ce territoire, ni à aucun des chantiers ou indicateurs demandés.
+- \`chantiers_non_accessibles\`, \`indicateurs_non_accessibles\` : demandés mais hors du périmètre de l'utilisateur ; n'en dis rien d'autre, et ne les présente jamais comme à jour.
+Utilise-le pour : « indicateurs non à jour », « retard de mise à jour », « données périmées », « territoires qui n'ont pas mis à jour l'indicateur X ».
+Ne l'utilise pas pour : les chantiers en retard au sens de l'avancement (écart à la médiane) → get_chantiers (view "en_retard").`,
       inputSchema: getIndicateursNonAJourInputSchema,
       execute: async (
         input: GetIndicateursNonAJourInput,
@@ -131,20 +86,11 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           input.territoire_code &&
           !territoiresAccessibles.includes(input.territoire_code)
         ) {
-          return {
-            resultats: [],
-            acces_refuse: true,
-            _output_instructions:
-              "L'utilisateur n'a pas accès à ce territoire. Explique-le poliment sans donner de détail sur les données du territoire.",
-          };
+          return { resultats: [], acces_refuse: true };
         }
 
         if (!input.territoire_code && territoiresAccessibles.length === 0) {
-          return {
-            resultats: [],
-            _output_instructions:
-              "L'utilisateur n'a accès à aucun territoire : aucune donnée de mise à jour ne peut être consultée.",
-          };
+          return { resultats: [], acces_refuse: true };
         }
 
         const chantiersDemandes = input.chantier_ids.length > 0;
@@ -158,12 +104,7 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
           : chantiersAccessibles;
 
         if (chantierIds.length === 0) {
-          return {
-            resultats: [],
-            _output_instructions: chantiersDemandes
-              ? "Aucun des chantiers demandés n'est accessible pour cet utilisateur."
-              : "L'utilisateur n'a accès à aucun chantier : aucune donnée de mise à jour ne peut être consultée.",
-          };
+          return { resultats: [], acces_refuse: true };
         }
 
         const indicateursDemandes = input.indicateur_ids.length > 0;
@@ -181,11 +122,7 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
         );
 
         if (indicateursDemandes && indicateurIds.length === 0) {
-          return {
-            resultats: [],
-            _output_instructions:
-              "Aucun des indicateurs demandés n'est accessible pour cet utilisateur.",
-          };
+          return { resultats: [], acces_refuse: true };
         }
 
         const isDetailed =
@@ -201,11 +138,11 @@ Le détail nominatif des territoires en retard n'est renvoyé que si indicateur_
 
         return {
           resultats,
-          _output_instructions: buildOutputInstructions({
-            isDetailed,
-            aucunResultat: resultats.length === 0,
-            chantierIdsInaccessibles,
-            indicateurIdsInaccessibles,
+          ...(chantierIdsInaccessibles.length > 0 && {
+            chantiers_non_accessibles: chantierIdsInaccessibles,
+          }),
+          ...(indicateurIdsInaccessibles.length > 0 && {
+            indicateurs_non_accessibles: indicateurIdsInaccessibles,
           }),
         };
       },

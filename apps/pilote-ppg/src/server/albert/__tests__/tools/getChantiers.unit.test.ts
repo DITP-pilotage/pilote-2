@@ -168,7 +168,7 @@ describe("createGetChantiersTool execute", () => {
     ]);
   });
 
-  test("retourne un message dédié quand aucun chantier_ids demandé n'est accessible", async () => {
+  test("signale un accès refusé quand aucun chantier_ids demandé n'est accessible", async () => {
     // Given
     const query = buildQuery(["CH-062", "CH-084"]);
     const tool = buildTool({
@@ -186,13 +186,12 @@ describe("createGetChantiersTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      _output_instructions:
-        "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+      acces_refuse: true,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("ne retourne aucun chantier quand l'utilisateur n'a accès à aucun chantier", async () => {
+  test("signale un accès refusé quand l'utilisateur n'a accès à aucun chantier", async () => {
     // Given
     const query = buildQuery(["CH-062", "CH-084"]);
     const tool = buildTool({
@@ -207,8 +206,7 @@ describe("createGetChantiersTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      _output_instructions:
-        "L'utilisateur n'a accès à aucun chantier : aucune donnée ne peut être restituée.",
+      acces_refuse: true,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });

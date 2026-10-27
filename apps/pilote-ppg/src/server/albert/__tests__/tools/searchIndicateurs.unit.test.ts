@@ -74,7 +74,6 @@ describe("createSearchIndicateursTool execute", () => {
       indicateurs: [],
       reasoning:
         "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -114,7 +113,6 @@ describe("createSearchIndicateursTool execute", () => {
         },
       ],
       reasoning: "test",
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -153,7 +151,6 @@ describe("createSearchIndicateursTool execute", () => {
         },
       ],
       reasoning: "test",
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -171,7 +168,6 @@ describe("createSearchIndicateursTool execute", () => {
     expect(result).toEqual({
       indicateurs: [],
       reasoning: "Aucun indicateur accessible dans le périmètre demandé.",
-      _output_instructions: expect.any(String),
     });
   });
 });

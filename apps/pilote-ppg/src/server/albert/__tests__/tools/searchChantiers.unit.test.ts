@@ -59,7 +59,6 @@ describe("createSearchChantiersTool execute", () => {
     expect(result).toEqual({
       chantiers: [],
       reasoning: "Aucun chantier accessible pour cet utilisateur.",
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -84,7 +83,6 @@ describe("createSearchChantiersTool execute", () => {
     expect(result).toEqual({
       chantiers: [{ id: "CH-001", nom: "Réel" }],
       reasoning: "test",
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -106,7 +104,6 @@ describe("createSearchChantiersTool execute", () => {
     expect(result).toEqual({
       chantiers: [],
       reasoning: "Aucune correspondance",
-      _output_instructions: expect.any(String),
     });
   });
 });

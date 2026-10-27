@@ -61,7 +61,6 @@ const NON_TROUVE = {
   trouve: false,
   reponse: "",
   sources: [],
-  _output_instructions: expect.any(String),
 };
 
 describe("createConsulterCentreAideTool execute", () => {
@@ -104,7 +103,6 @@ describe("createConsulterCentreAideTool execute", () => {
           url: "/centre-aide-pilote?article=taux",
         },
       ],
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -232,7 +230,6 @@ describe("createConsulterCentreAideTool execute", () => {
           url: "/centre-aide-pilote?article=taux",
         },
       ],
-      _output_instructions: expect.any(String),
     });
   });
 });

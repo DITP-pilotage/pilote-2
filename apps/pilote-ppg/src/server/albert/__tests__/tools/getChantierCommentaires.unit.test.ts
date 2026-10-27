@@ -77,7 +77,6 @@ describe("createGetChantierCommentairesTool execute", () => {
     expect(result).toEqual({
       resultats: queryResult.resultats,
       types_non_accessibles: [],
-      _output_instructions: expect.any(String),
     });
   });
 

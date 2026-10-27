@@ -75,7 +75,6 @@ export type GetChantiersSignalesOutput = {
   resultats: ChantierSignaleRenvoye[];
   acces_refuse?: boolean;
   categories_non_applicables: string[];
-  _output_instructions: string;
 };
 
 function renvoyerChantierSignale({
@@ -96,26 +95,6 @@ function renvoyerChantierSignale({
   };
 }
 
-function buildOutputInstructions(
-  typesAlerteNonApplicables: TypeAlerteChantier[],
-): string {
-  const base =
-    "Utilise toujours les libellés officiels des catégories de signalement (jamais les codes internes), " +
-    'et présente chaque chantier au format "CH-XXX — Nom du chantier".\n\n' +
-    "Présente par défaut par catégorie (une section par catégorie avec la liste des chantiers concernés). " +
-    "Bascule vers une présentation par chantier (un chantier avec la liste de ses catégories) uniquement si la demande porte sur un chantier précis (ex: « quels sont les signalements du chantier CH-042 ? »).\n\n" +
-    "Un chantier concerné par plusieurs catégories ne doit JAMAIS être présenté comme deux chantiers distincts dans des sections séparées sans qu'un lien explicite soit fait entre les deux occurrences.\n\n" +
-    'Les champs "ecart" et "meteo" sont présents sur chaque chantier mais ne doivent être mentionnés que s\'ils sont pertinents pour au moins une des catégories matchées par ce chantier ("ecart" pour la catégorie "Retard par rapport à la médiane", "meteo" pour "Météo et synthèse non renseignées").';
-
-  if (typesAlerteNonApplicables.length === 0) return base;
-
-  return (
-    `${base}\n\n` +
-    "Certaines catégories demandées ne sont pas applicables au territoire interrogé. " +
-    "Mentionne-le explicitement à l'utilisateur en reprenant ces raisons, sans jamais présenter cela comme une absence de résultats silencieuse."
-  );
-}
-
 export function createGetChantiersSignalesTool({
   getChantiersSignalesDetailQuery,
 }: {
@@ -129,27 +108,21 @@ export function createGetChantiersSignalesTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Outil pour obtenir la liste des chantiers signalés (chantiers avec une alerte) sur un territoire donné, catégorie par catégorie.
-
-Catégories disponibles :
-- "estEnAlerteÉcart" : Retard par rapport à la médiane
-- "estEnAlerteBaisse" : Tendance en baisse
-- "estEnAlerteTauxAvancementNonCalculé" : Taux d'avancement non calculé
-- "estEnAlerteAbscenceTauxAvancementDepartemental" : Absence de taux d'avancement départemental
-- "estEnAlerteMétéoNonRenseignée" : Météo et synthèse non renseignées
-- "estEnAlertePossedePropositionsValeurAvancement" : Proposition de valeur d'avancement
-
-Catégories applicables selon la maille du territoire :
-- National (NAT-FR) : estEnAlerteTauxAvancementNonCalculé, estEnAlerteAbscenceTauxAvancementDepartemental, estEnAlerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurAvancement
-- Régional/départemental (REG-XX, DEPT-XX) : estEnAlerteÉcart, estEnAlerteBaisse, estEnAlerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurAvancement
-
-⚠️ N'utilise PAS cet outil si la demande porte sur UNE SEULE catégorie qui a un équivalent exact dans get_chantiers :
-- "estEnAlerteÉcart" seul → get_chantiers(view='en_retard')
-- "estEnAlerteBaisse" seul → get_chantiers(tendance='BAISSE')
-
-Utilise get_chantiers_signales dans tous les autres cas : une seule catégorie sans équivalent dans get_chantiers, plusieurs catégories demandées ensemble (y compris si estEnAlerteÉcart et/ou estEnAlerteBaisse en font partie), ou aucune catégorie précisée ("chantiers signalés", "signalements" sans détail → toutes les catégories applicables à la maille).
-
-Un seul territoire par appel, pas de sous-territoires.`,
+      description: `Renvoie les chantiers signalés d'un territoire, au jalon en cours seulement, avec leurs catégories d'alerte (en libellés), leur écart et leur niveau de confiance.
+Catégories (code à passer en entrée → libellé renvoyé) :
+- "estEnAlerteÉcart" → Retard par rapport à la médiane
+- "estEnAlerteBaisse" → Tendance en baisse
+- "estEnAlerteTauxAvancementNonCalculé" → Taux d'avancement non calculé
+- "estEnAlerteAbscenceTauxAvancementDepartemental" → Absence de taux d'avancement départemental
+- "estEnAlerteMétéoNonRenseignée" → Météo et synthèse non renseignées
+- "estEnAlertePossedePropositionsValeurAvancement" → Proposition de valeur d'avancement
+Catégories applicables : au national, les quatre dernières ; en région et en département, toutes sauf les deux catégories sur le taux d'avancement.
+- Sans \`categories\` : toutes les catégories applicables à la maille.
+- \`acces_refuse\` : l'utilisateur n'a pas accès à ce territoire ou à aucun des chantiers demandés.
+- \`categories_non_applicables\` : catégories demandées qui ne s'appliquent pas à la maille du territoire ; ce n'est pas une absence de résultat.
+Un seul territoire par appel, sans ses sous-territoires.
+Utilise-le pour : « quels chantiers sont signalés ? », « en alerte », plusieurs catégories à la fois, une catégorie sans équivalent dans get_chantiers.
+Ne l'utilise pas pour : une seule catégorie, « retard par rapport à la médiane » ou « tendance en baisse » → get_chantiers (view "en_retard" ou tendance "BAISSE").`,
       inputSchema: getChantiersSignalesInputSchema,
       execute: async (
         input: GetChantiersSignalesInput,
@@ -159,8 +132,6 @@ Un seul territoire par appel, pas de sous-territoires.`,
             resultats: [],
             categories_non_applicables: [],
             acces_refuse: true,
-            _output_instructions:
-              "L'utilisateur n'a pas accès à ce territoire pour les chantiers signalés. Explique-le poliment sans donner de détail sur les données du territoire.",
           };
         }
 
@@ -177,8 +148,7 @@ Un seul territoire par appel, pas de sous-territoires.`,
           return {
             resultats: [],
             categories_non_applicables: [],
-            _output_instructions:
-              "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+            acces_refuse: true,
           };
         }
 
@@ -214,9 +184,6 @@ Un seul territoire par appel, pas de sous-territoires.`,
           resultats: resultats.map(renvoyerChantierSignale),
           categories_non_applicables: typesAlerteNonApplicables.map(
             (categorie) => libelleCategorieSignalement({ categorie }),
-          ),
-          _output_instructions: buildOutputInstructions(
-            typesAlerteNonApplicables,
           ),
         };
       },

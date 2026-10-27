@@ -188,7 +188,6 @@ describe("choicesPresentedEvent", () => {
             { label: "Lyon", value: "lyon" },
             { label: "Lille", value: "lille" },
           ],
-          _output_instructions: "",
         },
       },
     ],
@@ -234,7 +233,7 @@ const dashboardPart: PiloteUIMessage["parts"][number] = {
   toolCallId: "call-dashboard",
   state: "output-available",
   input: { task: "Synthèse", territoire_codes: ["NAT-FR"], jalons: [2026] },
-  output: { titre: "Synthèse", containers: [], _output_instructions: "" },
+  output: { titre: "Synthèse", containers: [] },
 };
 
 const rapportPart = (

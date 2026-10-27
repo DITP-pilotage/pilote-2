@@ -18,11 +18,7 @@ export const getChantierIndicateursInputSchema = z.object({
 
 export type GetChantierIndicateursOutput = {
   resultats: GetChantierIndicateursResult;
-  _output_instructions: string;
 };
-
-const OUTPUT_INSTRUCTIONS = `Les données des indicateurs ont été récupérées. Utilise-les pour la suite du traitement (ex: génération de rapport, composition de dashboard).
-Pour afficher les indicateurs à l'utilisateur, utilise create_dashboard avec un widget_tableau_indicateurs_chantier.`;
 
 export function createGetChantierIndicateursTool({
   getChantierIndicateursQuery,
@@ -31,14 +27,12 @@ export function createGetChantierIndicateursTool({
 }) {
   return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) => {
     return tool({
-      description: `Récupère les valeurs des indicateurs de suivi (VI, VA, VC, TA) d'un chantier sur un territoire donné.
-
-⚠️ Cet outil ne sert PAS à obtenir les informations générales d'un chantier (météo, écart, tendance, synthèse). Pour cela, utilise get_chantiers avec chantier_ids.
-
-Utilise cet outil UNIQUEMENT quand l'utilisateur demande explicitement :
-- Les indicateurs de suivi d'un chantier
-- Les valeurs VI, VA, VC ou le détail des mesures
-- Pour alimenter un export de rapport (étape indicateurs)`,
+      description: `Renvoie les indicateurs d'un chantier sur un territoire à un jalon, avec leurs valeurs initiale (VI), actuelle (VA), cible (VC) et leur taux d'avancement (TA).
+Utilise-le pour : les indicateurs d'un chantier et leurs valeurs, les données d'un rapport.
+Ne l'utilise pas pour :
+- la situation générale d'un chantier (écart, tendance, niveau de confiance) → get_chantiers ;
+- l'évolution d'un indicateur dans le temps → get_evolution_indicateur ;
+- l'historique des actions sur un indicateur → get_historique_indicateur.`,
       inputSchema: getChantierIndicateursInputSchema,
       execute: async (input): Promise<GetChantierIndicateursOutput> => {
         if (!chantiersAccessibles.includes(input.chantier_id)) {
@@ -53,10 +47,7 @@ Utilise cet outil UNIQUEMENT quand l'utilisateur demande explicitement :
           jalon: input.jalon,
         });
 
-        return {
-          resultats: result,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
-        };
+        return { resultats: result };
       },
     });
   };

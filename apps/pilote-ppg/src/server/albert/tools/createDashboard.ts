@@ -63,7 +63,7 @@ export const createDashboardInputSchema = z.object({
     .array(chantierContextSchema)
     .optional()
     .describe(
-      "Chantiers ciblés avec leur nom et statut. Uniquement si l'utilisateur cible des chantiers précis ou obtenus via un outil de données.",
+      "Chantiers ciblés, avec leur nom et leur statut. Seulement des chantiers que l'utilisateur cite ou que tes outils ont renvoyés.",
     ),
   indicateur_ids: z
     .array(z.string())
@@ -74,11 +74,6 @@ export const createDashboardInputSchema = z.object({
 });
 
 export type CreateDashboardOutput = ComposeDashboardOutput;
-
-const OUTPUT_INSTRUCTIONS = `Le dashboard a été composé et sera affiché visuellement sous forme de widgets dans l'interface.
-Ne reproduis JAMAIS de valeurs chiffrées dans ta réponse textuelle (les chiffres sont résolus au rendu côté client).
-Tu peux ajouter une phrase courte d'introduction ("Voici le dashboard demandé.") mais pas de commentaire sur les chiffres.
-Si l'utilisateur demande à modifier le dashboard, rappelle create_dashboard avec une nouvelle description.`;
 
 export function validateDashboardIdentifiers(
   output: ComposeDashboardInput,
@@ -233,10 +228,16 @@ export function createCreateDashboardTool({
 }) {
   return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) =>
     tool({
-      description: `Délègue la composition d'un dashboard à un agent spécialisé.
-Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
-un tableau de bord visuel, d'afficher les indicateurs d'un chantier, ou une courbe/un graphique d'évolution d'indicateur.
-Fournis la description de ce que l'utilisateur veut visualiser ainsi que les identifiants résolus (territoire_codes, jalons, chantiers, indicateur_ids).`,
+      description: `Compose un dashboard, affiché sous ta réponse, à partir d'une description (task) et d'identifiants résolus par tes outils. Les valeurs sont lues au rendu : tu ne fournis aucun chiffre. Pour modifier un dashboard, rappelle l'outil avec une nouvelle description.
+Ce qu'un dashboard sait afficher, et rien d'autre :
+- le taux d'avancement d'un territoire, la médiane et les valeurs remarquables (min, médiane, max) de ses sous-territoires ;
+- le nombre et la liste des chantiers en retard ou en difficulté d'un territoire ;
+- le tableau des indicateurs d'un chantier précis (VI, VA, VC, TA) ;
+- des cartes de France pour des chantiers précis : taux d'avancement, niveau de confiance ou propositions de valeur d'avancement par territoire ;
+- des courbes d'évolution dans le temps d'un indicateur précis (taux ou valeur d'avancement).
+Les cartes et le tableau des indicateurs exigent des chantiers identifiés, passés dans \`chantiers\` : il n'existe pas de carte « de tous les chantiers » d'un territoire.
+Utilise-le pour : un dashboard, un cockpit, un tableau de bord, une cartographie, une courbe ou un graphique d'évolution.
+Ne l'utilise pas pour : un rendu absent de cette liste (répartition, histogramme, camembert, classement…) → clarify_with_choices, avec des alternatives réalisables.`,
       inputSchema: createDashboardInputSchema,
       execute: async (
         { task, territoire_codes, jalons, chantiers, indicateur_ids },
@@ -274,7 +275,6 @@ Fournis la description de ce que l'utilisateur veut visualiser ainsi que les ide
         return {
           titre: output.titre,
           containers: output.containers,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },
     });

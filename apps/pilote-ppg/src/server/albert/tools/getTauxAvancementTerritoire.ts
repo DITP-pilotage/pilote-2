@@ -22,11 +22,7 @@ export const getTauxAvancementTerritoireInputSchema = z.object({
     .optional()
     .default(false)
     .describe(
-      "Mets `true` quand la demande couvre un territoire ET ses sous-territoires " +
-        "(ex: « la région X et ses départements », « la région X et les départements qui la composent », " +
-        "« détaille par département », « décomposé par sous-territoire »). " +
-        "Dans ce cas, fais UN SEUL appel sur le territoire parent avec ce flag à true, " +
-        "plutôt que d'énumérer chaque sous-territoire avec des appels séparés.",
+      "`true` pour un territoire ET ses sous-territoires : un seul appel sur le parent, jamais un appel par sous-territoire.",
     ),
 });
 
@@ -44,12 +40,7 @@ function formatPourcentage(value: number | null | undefined): string {
 
 export type GetTauxAvancementTerritoireOutput = {
   resultats: GetTauxAvancementTerritoireResult[];
-  _output_instructions: string;
 };
-
-function getOutputInstructions(): string {
-  return `Présente le TA, la médiane et la position pour chaque territoire. Un seul territoire → paragraphe factuel. Plusieurs territoires → tableau comparatif.`;
-}
 
 export function createGetTauxAvancementTerritoireTool({
   territoireResolver,
@@ -58,20 +49,11 @@ export function createGetTauxAvancementTerritoireTool({
 }) {
   return ({ habilitations }: { habilitations: Habilitations }) => {
     return tool({
-      description: `Récupère le taux d'avancement global d'un territoire, la médiane de répartition et la position du territoire par rapport à la médiane.
-Quand include_sous_territoires=true, retourne aussi les données de chaque sous-territoire.
-
-⚠️ Si la demande couvre un territoire ET ses sous-territoires (ex: « région X et ses départements »),
-fais UN SEUL appel sur le territoire parent avec include_sous_territoires=true, plutôt que N appels
-individuels sur chaque sous-territoire.
-Cette règle s'applique aussi pour les comparaisons entre jalons : un appel par territoire parent ET
-par jalon (avec include_sous_territoires=true), pas un appel par (sous-territoire × jalon). Si
-plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.
-
-Utilise cet outil quand l'utilisateur demande :
-- Le taux d'avancement d'un territoire
-- La position d'un territoire par rapport à la médiane
-- Une vue d'ensemble rapide d'un territoire`,
+      description: `Renvoie le taux d'avancement global d'un territoire à un jalon, la médiane des territoires de sa maille et sa position face à cette médiane.
+- Pour NAT-FR, la médiane est celle des départements.
+- « - % » : pas de donnée à ce jalon.
+Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons.
+Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
       execute: async (input): Promise<GetTauxAvancementTerritoireOutput> => {
         const codes = await territoireResolver.resoudre(
@@ -152,10 +134,7 @@ Utilise cet outil quand l'utilisateur demande :
           };
         });
 
-        return {
-          resultats,
-          _output_instructions: getOutputInstructions(),
-        };
+        return { resultats };
       },
     });
   };
