@@ -1,0 +1,62 @@
+import { tool } from "ai";
+import { z } from "zod";
+import { buildSyntheseTerritoireSystemPrompt } from "@/server/albert/subagents/encartSystemPrompts";
+import {
+  collecterDonneesEncart,
+  type DependancesEncart,
+  encartVersModele,
+  type EncartOutput,
+  jalonEncartSchema,
+  redigerEncart,
+} from "@/server/albert/tools/encart";
+import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+
+export const redigerSyntheseTerritoireInputSchema = z.object({
+  territoire_code: z
+    .string()
+    .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
+  jalon: jalonEncartSchema,
+});
+
+export type RedigerSyntheseTerritoireInput = z.infer<
+  typeof redigerSyntheseTerritoireInputSchema
+>;
+
+// Les génériques explicites : TypeScript n'infère pas la sortie d'un `execute`
+// en générateur combiné à `toModelOutput`.
+export function createRedigerSyntheseTerritoireTool(
+  dependances: DependancesEncart,
+) {
+  return ({ habilitations }: { habilitations: Habilitations }) =>
+    tool<RedigerSyntheseTerritoireInput, EncartOutput, Record<string, never>>({
+      description: `Rédige la synthèse d'un territoire dans un encart affiché à l'utilisateur : son taux d'avancement face à la médiane, ses chantiers en retard et ses chantiers en difficulté, avec un résumé de leur synthèse. L'outil collecte lui-même ces données.
+Utilise-le pour : une synthèse ou un état des lieux générique d'un territoire. Par exemple « Fais-moi la synthèse du Nord », « Où en est la Gironde ? », « La situation en Bretagne », « Fais-moi la synthèse des difficultés de la Bretagne », « Où en est la France sur l'ensemble des chantiers ? ».
+Ne l'utilise pas pour :
+- un critère précis (« les chantiers en retard du Nord », « le taux d'avancement de la Gironde », « les difficultés en Hauts-de-France ») → get_chantiers ou get_taux_avancement_territoire ;
+- un chantier ou un indicateur précis → les outils de données ;
+- plusieurs territoires → rediger_comparaison_territoires ;
+- un rapport à télécharger → export_rapport ; un graphique → create_dashboard.
+L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu.`,
+      inputSchema: redigerSyntheseTerritoireInputSchema,
+      execute: async function* (
+        { territoire_code, jalon },
+        { abortSignal },
+      ): AsyncGenerator<EncartOutput> {
+        const donnees = await collecterDonneesEncart({
+          ...dependances,
+          territoireCodes: [territoire_code],
+          includeSousTerritoires: false,
+          jalon,
+          habilitations,
+        });
+        yield* redigerEncart({
+          type: "synthese",
+          jalon,
+          systemPrompt: buildSyntheseTerritoireSystemPrompt(),
+          donnees,
+          abortSignal,
+        });
+      },
+      toModelOutput: encartVersModele,
+    });
+}
