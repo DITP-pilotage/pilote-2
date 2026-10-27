@@ -94,6 +94,35 @@ describe("deriverEtatAssistant", () => {
     expect(etat).toBe("redige-l-encart");
   });
 
+  test("rédige la synthèse pendant que l'encart se remplit", () => {
+    // Given
+    const enCours = message([
+      {
+        type: "tool-rediger_synthese_territoire",
+        toolCallId: "appel-1",
+        state: "output-available",
+        preliminary: true,
+        input: { territoire_code: "DEPT-59", jalon: 2025 },
+        output: {
+          type: "synthese",
+          jalon: 2025,
+          date_redaction: "2026-10-27",
+          markdown: "# Synthèse",
+          termine: false,
+        },
+      },
+    ]);
+
+    // When
+    const etat = deriverEtatAssistant({
+      message: enCours,
+      status: "streaming",
+    });
+
+    // Then
+    expect(etat).toBe("redige-l-encart");
+  });
+
   test("rédige quand du texte arrive", () => {
     // Given
     const dernier = message([{ type: "text", text: "Au jalon 3," }]);

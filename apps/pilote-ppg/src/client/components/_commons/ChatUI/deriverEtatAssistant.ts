@@ -52,6 +52,16 @@ export const deriverEtatAssistant = ({
     return "reflechit";
   }
 
+  // Les résultats intermédiaires de l'encart arrivent pendant sa rédaction
+  if (
+    OUTILS_ENCART.has(derniere.type) &&
+    derniere.state === "output-available" &&
+    "preliminary" in derniere &&
+    derniere.preliminary
+  ) {
+    return "redige-l-encart";
+  }
+
   const enCours =
     derniere.state === "input-streaming" ||
     derniere.state === "input-available";

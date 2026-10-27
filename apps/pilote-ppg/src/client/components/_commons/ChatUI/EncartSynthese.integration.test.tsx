@@ -13,12 +13,12 @@ const encart = (surcharge: Partial<EncartOutput>): EncartOutput => ({
   ...surcharge,
 });
 
-const renderEncart = (output: EncartOutput) =>
+const renderEncart = (output: EncartOutput, isStreaming = true) =>
   render(
     <ChantierLinksProvider
       options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
     >
-      <EncartSynthese output={output} />
+      <EncartSynthese isStreaming={isStreaming} output={output} />
     </ChantierLinksProvider>,
   );
 
@@ -41,6 +41,15 @@ describe("EncartSynthese", () => {
   test("une fois rédigé, n'affiche plus l'état de rédaction", () => {
     // When
     renderEncart(encart({ termine: true }));
+
+    // Then
+    expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
+    expect(screen.getByText("Synthèse pour le Nord")).toBeInTheDocument();
+  });
+
+  test("une rédaction interrompue n'affiche pas d'état de rédaction", () => {
+    // When
+    renderEncart(encart({ termine: false }), false);
 
     // Then
     expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();

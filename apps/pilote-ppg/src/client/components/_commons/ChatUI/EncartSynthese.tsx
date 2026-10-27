@@ -19,8 +19,16 @@ const formaterDate = (dateRedaction: string): string =>
  * page comme une note : elle se remplit au fil de la rédaction et déborde de
  * la colonne de discussion sur grand écran.
  */
-export const EncartSynthese = ({ output }: { output: EncartOutput }) => {
+export const EncartSynthese = ({
+  output,
+  isStreaming,
+}: {
+  output: EncartOutput;
+  /** Une rédaction interrompue (arrêt, rechargement) ne reste pas « en cours ». */
+  isStreaming: boolean;
+}) => {
   if (output.acces_refuse) return null;
+  const enCours = isStreaming && !output.termine;
 
   return (
     <article className="albert-encart border border-dsfr-grey-925 border-t-[5px] border-t-dsfr-blue-france-sun-113 bg-white px-8 py-8 shadow-md lg:-mx-16 lg:px-16">
@@ -36,15 +44,12 @@ export const EncartSynthese = ({ output }: { output: EncartOutput }) => {
           <p className="mb-0">À partir des données publiées dans PILOTE</p>
         </div>
       </header>
-      {!output.termine && (
+      {enCours && (
         <p className="mb-2 text-sm text-dsfr-mention-grey">
           Rédaction en cours…
         </p>
       )}
-      <AssistantMessageText
-        streaming={!output.termine}
-        text={output.markdown}
-      />
+      <AssistantMessageText streaming={enCours} text={output.markdown} />
     </article>
   );
 };

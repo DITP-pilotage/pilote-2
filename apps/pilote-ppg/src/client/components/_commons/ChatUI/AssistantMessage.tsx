@@ -206,6 +206,7 @@ export const AssistantMessage = memo(function AssistantMessage({
           if (part.state === "output-error") return null;
           return (
             <EncartSynthese
+              isStreaming={isStreaming}
               key={index}
               output={
                 part.state === "output-available"
