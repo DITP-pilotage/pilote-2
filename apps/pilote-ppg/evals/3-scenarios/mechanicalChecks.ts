@@ -166,49 +166,6 @@ export function checkNoVerbatim({
   return { ok: true, detail: "aucun commentaire recopié" };
 }
 
-const MENTION_ABSENCE = "pas de commentaire disponible";
-
-/**
- * La mention doit figurer SOUS chaque chantier sans commentaire : entre sa
- * citation et celle du chantier suivant. Présente ailleurs dans la réponse,
- * elle ne dit rien de ce chantier-là.
- */
-export function checkAbsenceSignalee({
-  text,
-  chantierIds,
-}: {
-  text: string;
-  chantierIds: string[];
-}): CheckResult {
-  const texte = typographie(text);
-  const citations = [...texte.matchAll(/CH-\d{3}/g)].map((match) => ({
-    id: match[0],
-    index: match.index ?? 0,
-  }));
-
-  const sansMention = chantierIds.filter((chantierId) => {
-    const sections = citations
-      .map((citation, position) => ({ citation, position }))
-      .filter(({ citation }) => citation.id === chantierId)
-      .map(({ citation, position }) => {
-        const suivante = citations
-          .slice(position + 1)
-          .find((autre) => autre.id !== chantierId);
-        return texte.slice(citation.index, suivante?.index ?? texte.length);
-      });
-    return !sections.some((section) =>
-      normalize(section).includes(MENTION_ABSENCE),
-    );
-  });
-
-  return sansMention.length === 0
-    ? { ok: true, detail: "absence de commentaire signalée" }
-    : {
-        ok: false,
-        detail: `« Pas de commentaire disponible » absent sous : ${sansMention.join(", ")}`,
-      };
-}
-
 function tableRows(text: string) {
   return typographie(text)
     .split("\n")

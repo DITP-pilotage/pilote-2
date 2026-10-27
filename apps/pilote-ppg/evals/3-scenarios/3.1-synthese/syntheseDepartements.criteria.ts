@@ -1,5 +1,5 @@
 import { withBase } from "../criterion";
-import { COMMENTAIRES_DU_GABARIT } from "../criteria/commentaires";
+import { COMMENTAIRES_FIDELES } from "../criteria/commentaires";
 import {
   TABLEAU_COMPARATIF_JUGE,
   ANALYSE_DES_ECARTS,
@@ -10,6 +10,6 @@ export const SYNTHESE_DEPARTEMENTS_CRITERIA = withBase({
   criteria: [
     TABLEAU_COMPARATIF_JUGE,
     ANALYSE_DES_ECARTS,
-    ...COMMENTAIRES_DU_GABARIT,
+    COMMENTAIRES_FIDELES,
   ],
 });

@@ -1,5 +1,4 @@
 import {
-  checkAbsenceSignalee,
   checkChantierFormat,
   checkChantiersCited,
   checkExactAnswer,
@@ -111,15 +110,6 @@ describe("typographie d'Albert", () => {
       }).ok,
     ).toBe(true);
   });
-
-  test("délimite la section d'un chantier cité avec un trait d'union insécable", () => {
-    expect(
-      checkAbsenceSignalee({
-        text: "**CH‑005 — Urgences**\n> Deux postes.\n**CH‑006 — Prévention**\n> Pas de commentaire disponible",
-        chantierIds: ["CH-006"],
-      }).ok,
-    ).toBe(true);
-  });
 });
 
 describe("checkNoVerbatim", () => {
@@ -160,28 +150,6 @@ describe("checkNoVerbatim", () => {
         sources: [commentaire],
       }).ok,
     ).toBe(true);
-  });
-});
-
-describe("checkAbsenceSignalee", () => {
-  const text = [
-    "**CH-005 — Réduire les délais de passage aux urgences**",
-    "> Deux postes restent vacants.",
-    "**CH-006 — Développer la prévention en santé**",
-    "> Pas de commentaire disponible",
-  ].join("\n");
-
-  test("accepte la mention sous le chantier sans commentaire", () => {
-    expect(checkAbsenceSignalee({ text, chantierIds: ["CH-006"] }).ok).toBe(
-      true,
-    );
-  });
-
-  test("signale un chantier dont la mention manque sous lui, même présente ailleurs", () => {
-    expect(checkAbsenceSignalee({ text, chantierIds: ["CH-005"] })).toEqual({
-      ok: false,
-      detail: "« Pas de commentaire disponible » absent sous : CH-005",
-    });
   });
 });
 

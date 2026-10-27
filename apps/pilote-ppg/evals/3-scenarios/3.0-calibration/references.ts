@@ -315,7 +315,7 @@ const SYNTHESE: CalibrationCase[] = [
   {
     suite: SUITES.syntheseTerritoire,
     label: "Cause inventée dans un résumé",
-    broken: "Résumés fidèles",
+    broken: "Commentaires fidèles",
     evidence: synthese({
       from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
       to: "> Deux postes d'urgentistes sont vacants à Brest et Quimper à la suite d'un conflit social avec l'agence régionale de santé, et le délai médian de passage a remonté au premier semestre.",
@@ -328,25 +328,6 @@ const SYNTHESE: CalibrationCase[] = [
     evidence: synthese({
       from: "avec un écart de 15 points.",
       to: "avec un écart de 15 points. Il conviendrait de renforcer en priorité les recrutements d'urgentistes.",
-    }),
-  },
-  {
-    suite: SUITES.syntheseTerritoire,
-    label: "Écart omis",
-    broken: "Écart et météo",
-    // L'écart disparaît aussi de la synthèse de tendance : sinon le juge le
-    // retrouve là et note, à raison, que le chiffre est donné.
-    evidence: evidence({
-      question: SYNTHESE_QUESTION,
-      matter: muter({
-        reference: muter({
-          reference: SYNTHESE_REFERENCE,
-          from: "**Écart** : -15 points\\\n",
-          to: "",
-        }),
-        from: "le retard porte sur un chantier de santé, avec un écart de 15 points.",
-        to: "le retard porte sur un chantier de santé.",
-      }),
     }),
   },
 ];
@@ -1355,15 +1336,6 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
     }),
   },
   {
-    suite: SUITES.syntheseTerritoire,
-    label: "Commentaire de synthèse recopié",
-    broken: "Pas de recopie",
-    evidence: synthese({
-      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
-    }),
-  },
-  {
     suite: SUITES.syntheseCommentaires,
     label: "Commentaire reçu recopié",
     broken: "Pas de recopie",
@@ -1374,24 +1346,6 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
         to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
       }),
     ),
-  },
-  {
-    suite: SUITES.syntheseDepartements,
-    label: "Commentaire de synthèse recopié",
-    broken: "Pas de recopie",
-    evidence: sousTerritoires(
-      muter({
-        reference: SOUS_TERRITOIRES_REFERENCE,
-        from: "> Des postes d'urgentistes restent vacants et le délai de passage dépasse la cible.",
-        to: "> Le délai de passage aux urgences reste au-dessus de la cible faute de médecins régulateurs.",
-      }),
-    ),
-  },
-  {
-    suite: SUITES.syntheseTerritoire,
-    label: "Commentaire manquant non signalé",
-    broken: "Absence de commentaire signalée",
-    evidence: synthese({ from: "> Pas de commentaire disponible\n\n", to: "" }),
   },
   {
     suite: SUITES.comparerTerritoires,

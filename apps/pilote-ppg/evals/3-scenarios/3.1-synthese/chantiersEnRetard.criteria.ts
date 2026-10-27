@@ -19,9 +19,9 @@ export const CHANTIERS_EN_RETARD_CRITERIA = withBase({
     }),
     judged({
       id: "Écart par chantier",
-      rule: "get_chantiers en_retard : indique l'écart par rapport à la médiane (en points) et la météo",
+      rule: "Chantiers en retard : l'écart à la médiane en points, qui fait le retard (D1 : sans météo)",
       instruction:
-        "Chaque chantier en retard porte son écart à la médiane en points et le libellé de sa météo. L'exactitude des chiffres relève de « Chiffres exacts ».",
+        "Chaque chantier en retard porte son écart à la médiane en points. L'exactitude des chiffres relève de « Chiffres exacts ».",
     }),
     judged({
       id: "Valeurs des indicateurs",
