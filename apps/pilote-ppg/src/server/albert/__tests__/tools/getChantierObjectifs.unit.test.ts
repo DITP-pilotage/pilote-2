@@ -54,7 +54,7 @@ const resultWith3Objectifs = {
 };
 
 describe("createGetChantierObjectifsTool execute", () => {
-  test("retourne les 3 objectifs quand tous sont publiés", async () => {
+  test("retourne les 3 objectifs quand tous sont publiés, en texte", async () => {
     // Given
     const tool = buildTool({
       queryResult: resultWith3Objectifs,
@@ -70,15 +70,15 @@ describe("createGetChantierObjectifsTool execute", () => {
       objectifs: {
         notre_ambition: {
           date_publication: "2025-01-01T00:00:00.000Z",
-          contenu: "<p>Ambition</p>",
+          contenu: "Ambition",
         },
         deja_fait: {
           date_publication: "2025-01-02T00:00:00.000Z",
-          contenu: "<p>Fait</p>",
+          contenu: "Fait",
         },
         a_faire: {
           date_publication: "2025-01-03T00:00:00.000Z",
-          contenu: "<p>À faire</p>",
+          contenu: "À faire",
         },
       },
     });
@@ -110,7 +110,7 @@ describe("createGetChantierObjectifsTool execute", () => {
       objectifs: {
         notre_ambition: {
           date_publication: "2025-01-01T00:00:00.000Z",
-          contenu: "<p>Ambition</p>",
+          contenu: "Ambition",
         },
         deja_fait: null,
         a_faire: null,

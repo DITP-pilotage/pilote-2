@@ -15,7 +15,10 @@ export const DashboardWidgetParagraph = ({
   >
     <div className="space-y-2">
       {contenu.map((part, index) => (
-        <p key={index} className="text-sm text-gray-700 last:mb-0">
+        <p
+          key={index}
+          className="whitespace-pre-line text-sm text-gray-700 last:mb-0"
+        >
           {part}
         </p>
       ))}

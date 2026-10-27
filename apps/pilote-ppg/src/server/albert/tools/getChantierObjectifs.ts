@@ -1,4 +1,5 @@
 import { tool } from "ai";
+import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import { z } from "zod";
 import { GetChantierObjectifsQuery } from "@/server/chantiers/query/GetChantierObjectifsQuery";
 import type { GetChantierObjectifsResult } from "@/server/chantiers/query/GetChantierObjectifsQuery";
@@ -35,7 +36,20 @@ Ne l'utilise pas pour : les commentaires d'un territoire (freins, actions, résu
           input.chantier_id,
         );
 
-        return result;
+        const enTexte = (objectif: (typeof result.objectifs)["a_faire"]) =>
+          objectif && {
+            ...objectif,
+            contenu: texteDepuisHtml({ html: objectif.contenu }),
+          };
+
+        return {
+          ...result,
+          objectifs: {
+            notre_ambition: enTexte(result.objectifs.notre_ambition),
+            deja_fait: enTexte(result.objectifs.deja_fait),
+            a_faire: enTexte(result.objectifs.a_faire),
+          },
+        };
       },
     });
   };

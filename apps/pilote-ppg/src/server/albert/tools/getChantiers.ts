@@ -6,6 +6,7 @@ import type {
   GetChantiersResult,
   GetChantiersParams,
 } from "@/server/chantiers/query/GetChantiersQuery";
+import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
   libelleNiveauDeConfiance,
@@ -117,7 +118,10 @@ function renvoyerChantier(chantierResult: ChantierResult): ChantierRenvoye {
     est_en_difficulte: chantierResult.est_en_difficulte,
     synthese: chantierResult.synthese
       ? {
-          commentaire: chantierResult.synthese.commentaire,
+          commentaire:
+            chantierResult.synthese.commentaire === null
+              ? null
+              : texteDepuisHtml({ html: chantierResult.synthese.commentaire }),
           date_commentaire: chantierResult.synthese.date_commentaire,
         }
       : null,

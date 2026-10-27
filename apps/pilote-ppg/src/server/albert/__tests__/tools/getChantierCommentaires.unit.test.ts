@@ -17,7 +17,14 @@ const queryResult: GetChantierCommentairesQueryResult = {
       territoire_code: "REG-75",
       territoire_nom: "Île-de-France",
       chantier_id: "CH-084",
-      commentaires: [],
+      commentaires: [
+        {
+          id: "commentaire-1",
+          date_publication: "2026-01-12",
+          contenu: "<p>Deux postes vacants.<br>Recrutement engagé.</p>",
+          type: "freins_a_lever",
+        },
+      ],
     },
   ],
   types_non_accessibles: [],
@@ -71,7 +78,7 @@ const executeTool = async (
   ) as Promise<GetChantierCommentairesOutput>;
 
 describe("createGetChantierCommentairesTool execute", () => {
-  test("retourne les commentaires d'un chantier accessible, avec le nom du chantier", async () => {
+  test("retourne les commentaires d'un chantier accessible en texte, avec le nom du chantier", async () => {
     // Given
     const query = mock<GetChantierCommentairesQuery>({
       execute: vi.fn(async () => queryResult),
@@ -88,7 +95,21 @@ describe("createGetChantierCommentairesTool execute", () => {
     // Then
     expect(result).toEqual({
       chantier_nom: "Accélérer la rénovation énergétique",
-      resultats: queryResult.resultats,
+      resultats: [
+        {
+          territoire_code: "REG-75",
+          territoire_nom: "Île-de-France",
+          chantier_id: "CH-084",
+          commentaires: [
+            {
+              id: "commentaire-1",
+              date_publication: "2026-01-12",
+              contenu: "Deux postes vacants.\nRecrutement engagé.",
+              type: "freins_a_lever",
+            },
+          ],
+        },
+      ],
       types_non_accessibles: [],
     });
   });

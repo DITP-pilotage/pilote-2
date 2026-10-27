@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
+import { remarkSautsDeLigne } from "@/components/_commons/ChatUI/remarkSautsDeLigne";
 import {
   isInternalHref,
   linkEvent,
@@ -198,7 +199,11 @@ export const AssistantMessageText = memo(function AssistantMessageText({
   const chantierLinkOptions = useChantierLinks();
   const sanitized = stripParagraphesVides(stripPseudoToolCalls(text));
   const remarkPlugins = useMemo<Options["remarkPlugins"]>(
-    () => [remarkGfm, [remarkChantierLinks, chantierLinkOptions]],
+    () => [
+      remarkGfm,
+      remarkSautsDeLigne,
+      [remarkChantierLinks, chantierLinkOptions],
+    ],
     [chantierLinkOptions],
   );
 

@@ -28,7 +28,7 @@ const buildChantier = (id: string): ChantierResult => ({
   est_en_difficulte: true,
   synthese: {
     meteo: "ORAGE",
-    commentaire: "Deux postes restent vacants.",
+    commentaire: "<p>Deux postes restent vacants.</p>",
     date_meteo: "2026-01-10",
     date_commentaire: "2026-01-12",
   },
@@ -211,7 +211,7 @@ describe("createGetChantiersTool execute", () => {
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("renvoie les libellés de la tendance, du niveau de confiance et de la maille de pilotage (D1)", async () => {
+  test("renvoie les libellés de la tendance, du niveau de confiance et de la maille de pilotage (D1), et la synthèse en texte", async () => {
     // Given
     const tool = buildTool({
       query: buildQuery(["CH-084"]),

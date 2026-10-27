@@ -11,6 +11,7 @@ import type {
   TypeContenuChantier,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
+import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
 export type { TypeContenuChantier };
@@ -127,7 +128,15 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
 
         return {
           chantier_nom: chantier?.nom ?? null,
-          resultats: results.flatMap((result) => result.resultats),
+          resultats: results
+            .flatMap((result) => result.resultats)
+            .map((resultat) => ({
+              ...resultat,
+              commentaires: resultat.commentaires.map((commentaire) => ({
+                ...commentaire,
+                contenu: texteDepuisHtml({ html: commentaire.contenu }),
+              })),
+            })),
           types_non_accessibles: [
             ...new Set(
               results.flatMap((result) => result.types_non_accessibles),
