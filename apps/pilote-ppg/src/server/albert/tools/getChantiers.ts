@@ -165,7 +165,7 @@ export function createGetChantiersTool({
 - \`non_applicable.raison\` : l'analyse demandée n'a pas de sens sur ce périmètre (pas de chantiers en retard au niveau national) ; ce n'est pas une absence de résultat.
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.
 - \`maille_de_pilotage\` null : la maille de pilotage du chantier n'est pas connue.
-Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? ».
+Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? » ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
 Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;

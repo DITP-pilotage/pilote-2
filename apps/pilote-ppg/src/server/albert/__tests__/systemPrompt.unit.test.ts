@@ -23,7 +23,7 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).not.toMatch(/m[ée]t[ée]o|SOLEIL|COUVERT|NUAGE|ORAGE/i);
   });
 
-  it("ne documente pas les outils", () => {
+  it("ne renvoie pas à des consignes dans les résultats d'outils", () => {
     // When
     const prompt = buildChatSystemPrompt({
       territoiresAccessibles: [],
@@ -31,8 +31,31 @@ describe("buildChatSystemPrompt", () => {
     });
 
     // Then
-    expect(prompt).not.toContain("include_sous_territoires");
     expect(prompt).not.toContain("_output_instructions");
+  });
+
+  it("garde la règle des sous-territoires, que le seul paramètre ne suffisait pas à faire respecter", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "un seul appel sur le territoire parent avec include_sous_territoires",
+    );
+  });
+
+  it("impose la recherche pour un territoire désigné par son nom", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain("passe toujours par search_territoires");
   });
 
   it("donne le jalon du contexte d'accueil", () => {

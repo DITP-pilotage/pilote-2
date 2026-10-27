@@ -129,6 +129,7 @@ const FICHE_BRETAGNE: GroundTruth = {
   tauxAvancement: [
     {
       territoire_code: "REG-53",
+      territoire_nom: "Bretagne",
       jalon: 2025,
       taux_avancement_global: "51%",
       mediane_repartition: "65%",
@@ -397,6 +398,7 @@ const FICHE_COMPARAISON: GroundTruth = {
     ...FICHE_BRETAGNE.tauxAvancement,
     {
       territoire_code: "REG-52",
+      territoire_nom: "Pays de la Loire",
       jalon: 2025,
       taux_avancement_global: "70%",
       mediane_repartition: "65%",
@@ -808,6 +810,7 @@ const FICHE_PAYS_DE_LA_LOIRE: GroundTruth = {
   tauxAvancement: [
     {
       territoire_code: "REG-52",
+      territoire_nom: "Pays de la Loire",
       jalon: 2025,
       taux_avancement_global: "70%",
       mediane_repartition: "65%",
@@ -1046,6 +1049,7 @@ const FICHE_SOUS_TERRITOIRES: GroundTruth = {
     ...FICHE_BRETAGNE.tauxAvancement,
     {
       territoire_code: "DEPT-35",
+      territoire_nom: "Ille-et-Vilaine",
       jalon: 2025,
       taux_avancement_global: "46%",
       mediane_repartition: "57%",
@@ -1181,6 +1185,7 @@ const SOUS_TERRITOIRES: CalibrationCase[] = [
 
 const tauxBretagne = (jalon: number, taux: string) => ({
   territoire_code: "REG-53",
+  territoire_nom: "Bretagne",
   jalon,
   taux_avancement_global: taux,
   mediane_repartition: taux === "- %" ? "- %" : "65%",

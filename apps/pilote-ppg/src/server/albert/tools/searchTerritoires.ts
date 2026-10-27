@@ -54,7 +54,9 @@ export function createSearchTerritoiresTool({
   return () =>
     tool({
       description: `Renvoie au plus 10 territoires (code, nom et maille), triés par pertinence, pour une description en langage naturel : nom, numéro de département, ancienne région, gentilé ou regroupement géographique.
-Utilise-le pour : « la Normandie », « le 75 », « les départements bretons », « les DOM ».
+- Plusieurs territoires dans une demande : une seule recherche qui les nomme tous.
+- « La région X et ses départements » : cherche la région seule, puis un seul appel sur elle avec les sous-territoires.
+Utilise-le pour : tout territoire désigné autrement que par son code, même s'il te semble connu (« la Normandie », « le 75 », « les DOM »).
 Ne l'utilise pas pour : un territoire déjà désigné par son code (NAT-FR, REG-XX, DEPT-XX) → l'outil de données directement.`,
       inputSchema: searchTerritoiresInputSchema,
       execute: async (

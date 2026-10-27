@@ -70,7 +70,7 @@ Types de commentaires :
 
 - Les types nationaux sont cherchés sur NAT-FR quand l'utilisateur y a accès, même pour un territoire régional ou départemental : inutile de rappeler l'outil sur NAT-FR.
 - \`types_non_accessibles\` : ces types relèvent de la vue nationale, hors du périmètre de l'utilisateur ; ce n'est pas une absence de contenu.
-Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire.
+Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
 Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
       inputSchema: getChantierCommentairesInputSchema,
       execute: async (input): Promise<GetChantierCommentairesOutput> => {

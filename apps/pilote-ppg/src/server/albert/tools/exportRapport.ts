@@ -20,7 +20,7 @@ export function createExportRapportTool({
 - Inclus sous forme de tableau les valeurs des indicateurs de chaque chantier cité (get_indicateurs si besoin).
 - Dans un paragraphe, sépare les paragraphes par une ligne vide.
 - Après l'appel, réponds seulement « Votre rapport est disponible au téléchargement. », sans lien : l'interface affiche le fichier.
-Utilise-le pour : exporter, télécharger ou générer un rapport.
+Utilise-le pour : un rapport, même si l'utilisateur ne dit pas « exporter » : un rapport est toujours un fichier ; exporter, télécharger.
 Ne l'utilise pas pour : une question sur l'export des données dans PILOTE → consulter_centre_aide.`,
       inputSchema: exportRapportInputSchema,
       execute: async (input): Promise<ExportRapportOutput> => {

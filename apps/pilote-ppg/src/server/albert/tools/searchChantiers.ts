@@ -52,7 +52,8 @@ export function createSearchChantiersTool({
 }) {
   return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) => {
     return tool({
-      description: `Renvoie au plus 10 chantiers (identifiant et nom), triés par pertinence, pour une description en langage naturel : thème, acronyme, mot-clé, politique publique ou ministère.
+      description: `Renvoie au plus 10 chantiers (identifiant et nom), triés par pertinence, pour une description en langage naturel : thème, acronyme, mot-clé, politique prioritaire, PPG ou ministère.
+- Plusieurs résultats plausibles : fais choisir avec clarify_with_choices avant tout appel de données ; un seul résultat clair : enchaîne.
 Utilise-le pour : « les chantiers sur les VSS », « le chantier handicap », résoudre un chantier avant un outil de données.
 Ne l'utilise pas pour : un chantier déjà désigné par son identifiant CH-XXX → l'outil de données directement.`,
       inputSchema: searchChantiersInputSchema,

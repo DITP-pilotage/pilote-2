@@ -6,6 +6,7 @@ import { Maille } from "@/shared/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import { determineMaille } from "@/shared/maille/determineMaille";
+import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 
 export const getTauxAvancementTerritoireInputSchema = z.object({
   territoire_code: z
@@ -28,6 +29,8 @@ export const getTauxAvancementTerritoireInputSchema = z.object({
 
 export type GetTauxAvancementTerritoireResult = {
   territoire_code: string;
+  /** Le nom à écrire dans la réponse : sans lui, Albert désignait le territoire par son code. */
+  territoire_nom: string | null;
   jalon: number;
   taux_avancement_global: string;
   mediane_repartition: string;
@@ -44,15 +47,18 @@ export type GetTauxAvancementTerritoireOutput = {
 
 export function createGetTauxAvancementTerritoireTool({
   territoireResolver,
+  getTerritoiresIdentiteQuery,
 }: {
   territoireResolver: TerritoireResolver;
+  getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
 }) {
   return ({ habilitations }: { habilitations: Habilitations }) => {
     return tool({
       description: `Renvoie le taux d'avancement global d'un territoire à un jalon, la médiane des territoires de sa maille et sa position face à cette médiane.
 - Pour NAT-FR, la médiane est celle des départements.
 - « - % » : pas de donnée à ce jalon.
-Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons.
+- \`territoire_nom\` : le nom à écrire dans la réponse, plutôt que le code.
+Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
 Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
       execute: async (input): Promise<GetTauxAvancementTerritoireOutput> => {
@@ -80,6 +86,13 @@ Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
           ).map((resultat) => [
             resultat.territoire_code,
             resultat.taux_avancement,
+          ]),
+        );
+
+        const nomParTerritoire = new Map(
+          (await getTerritoiresIdentiteQuery.execute()).map((territoire) => [
+            territoire.code,
+            territoire.nom,
           ]),
         );
 
@@ -127,6 +140,7 @@ Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
 
           return {
             territoire_code: code,
+            territoire_nom: nomParTerritoire.get(code) ?? null,
             jalon: input.jalon,
             taux_avancement_global: formatPourcentage(taux_avancement_global),
             mediane_repartition: formatPourcentage(mediane_repartition),

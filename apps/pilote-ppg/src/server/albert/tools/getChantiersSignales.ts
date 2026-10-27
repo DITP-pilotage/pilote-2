@@ -122,6 +122,7 @@ Catégories applicables : au national, les quatre dernières ; en région et en 
 - \`categories_non_applicables\` : catégories demandées qui ne s'appliquent pas à la maille du territoire ; ce n'est pas une absence de résultat.
 Un seul territoire par appel, sans ses sous-territoires.
 Utilise-le pour : « quels chantiers sont signalés ? », « en alerte », plusieurs catégories à la fois, une catégorie sans équivalent dans get_chantiers.
+Exemple : « en retard ou sans synthèse renseignée » → cet outil avec "estEnAlerteÉcart" et "estEnAlerteMétéoNonRenseignée", sans appeler get_chantiers en plus.
 Ne l'utilise pas pour : une seule catégorie, « retard par rapport à la médiane » ou « tendance en baisse » → get_chantiers (view "en_retard" ou tendance "BAISSE").`,
       inputSchema: getChantiersSignalesInputSchema,
       execute: async (

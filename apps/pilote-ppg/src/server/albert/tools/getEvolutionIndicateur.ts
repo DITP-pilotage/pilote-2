@@ -45,8 +45,10 @@ export function createGetEvolutionIndicateurTool({
       description: `Renvoie l'évolution dans le temps de la valeur d'avancement d'un indicateur sur un territoire, et du taux d'avancement quand il est disponible : une série de points datés (mois/année).
 - \`introuvable\` : aucun indicateur ne porte cet identifiant.
 - \`construction_valeur_affichee\` : comment PILOTE construit la valeur affichée à partir des valeurs importées (un cumul, par exemple). Ne recalcule jamais les valeurs toi-même.
-Utilise-le pour : « comment évolue l'IND-894 ? », la tendance ou la courbe d'un indicateur.
-Ne l'utilise pas pour : le détail des actions sur la valeur (import, proposition, validation) → get_historique_indicateur.`,
+Utilise-le pour : décrire l'évolution d'un indicateur dans le temps (« comment évolue l'IND-894 ? »).
+Ne l'utilise pas pour :
+- afficher une courbe ou un graphique → create_dashboard ;
+- le détail des actions sur la valeur (import, proposition, validation) → get_historique_indicateur.`,
       inputSchema: getEvolutionIndicateurInputSchema,
       execute: async (input): Promise<GetEvolutionIndicateurOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
