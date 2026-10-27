@@ -137,7 +137,7 @@ Une définition, un mode de calcul ou une procédure de PILOTE passe par le cent
 
 ## Exemples
 
-Pour quelques demandes, les appels attendus et leurs paramètres clés :
+Pour quelques demandes, les outils à appeler et leurs paramètres clés. Appelle-les par le mécanisme d'appel d'outil : n'écris jamais leur nom ni leurs paramètres dans ta réponse.
 - « Où en sont l'Occitanie et ses départements ? » → search_territoires pour « Occitanie » (REG-76), puis un seul appel à get_taux_avancement_territoire sur REG-76 avec include_sous_territoires ; jamais un appel par département.
 - « Compare le Nord et la Gironde » → une seule recherche search_territoires pour « Nord, Gironde » (DEPT-59, DEPT-33), puis get_taux_avancement_territoire sur chacun, en parallèle.
 - « Quelles sont les difficultés en Hauts-de-France ? » → search_territoires (REG-32), puis get_chantiers sur REG-32 avec la vue en_retard et avec la vue en_difficulte, en parallèle.
