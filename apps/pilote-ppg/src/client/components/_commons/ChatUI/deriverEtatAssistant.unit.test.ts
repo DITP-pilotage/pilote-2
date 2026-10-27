@@ -1,4 +1,7 @@
-import { deriverEtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
+import {
+  afficherAttenteReponse,
+  deriverEtatAssistant,
+} from "@/components/_commons/ChatUI/deriverEtatAssistant";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
 const message = (parts: PiloteUIMessage["parts"]): PiloteUIMessage => ({
@@ -191,5 +194,53 @@ describe("deriverEtatAssistant", () => {
 
     // Then
     expect(etat).toBe("consulte-le-centre-d-aide");
+  });
+});
+
+describe("afficherAttenteReponse", () => {
+  const question: PiloteUIMessage = {
+    id: "question-1",
+    role: "user",
+    parts: [{ type: "text", text: "Fais-moi la synthèse du Nord" }],
+  };
+
+  test("affiche l'attente tant que la question est la dernière du fil", () => {
+    // When
+    const affichee = afficherAttenteReponse({
+      status: "submitted",
+      messages: [question],
+    });
+
+    // Then
+    expect(affichee).toBe(true);
+  });
+
+  test("s'efface dès que le message de la réponse, encore vide, porte sa propre signature", () => {
+    // Given — le SDK ajoute la réponse vide sans quitter le statut « submitted »
+    const reponseVide: PiloteUIMessage = {
+      id: "reponse-1",
+      role: "assistant",
+      parts: [],
+    };
+
+    // When
+    const affichee = afficherAttenteReponse({
+      status: "submitted",
+      messages: [question, reponseVide],
+    });
+
+    // Then
+    expect(affichee).toBe(false);
+  });
+
+  test("ne s'affiche pas hors de l'attente", () => {
+    // When
+    const affichee = afficherAttenteReponse({
+      status: "streaming",
+      messages: [question],
+    });
+
+    // Then
+    expect(affichee).toBe(false);
   });
 });

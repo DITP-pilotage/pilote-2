@@ -74,3 +74,17 @@ export const deriverEtatAssistant = ({
   }
   return "consulte-les-sources";
 };
+
+/**
+ * L'indicateur d'attente affiché sous la question, avant toute réponse. Dès
+ * son premier morceau, le SDK ajoute la réponse, vide, sans quitter le statut
+ * « submitted » : sa signature dit alors « réfléchit », et l'indicateur à part
+ * ferait doublon.
+ */
+export const afficherAttenteReponse = ({
+  status,
+  messages,
+}: {
+  status: ChatStatus;
+  messages: PiloteUIMessage[];
+}): boolean => status === "submitted" && messages.at(-1)?.role === "user";

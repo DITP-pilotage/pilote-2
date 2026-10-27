@@ -13,7 +13,10 @@ import { EvaluationReponse } from "@/components/_commons/ChatUI/EvaluationRepons
 import { ErreurReponse } from "@/components/_commons/ChatUI/ErreurReponse";
 import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
-import { deriverEtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
+import {
+  afficherAttenteReponse,
+  deriverEtatAssistant,
+} from "@/components/_commons/ChatUI/deriverEtatAssistant";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ChatEmptyState } from "@/components/_commons/ChatUI/ChatEmptyState";
 import type {
@@ -263,7 +266,7 @@ export const ChatUI = ({
                     );
                   })}
 
-                  {status === "submitted" && (
+                  {afficherAttenteReponse({ status, messages }) && (
                     <SignatureAssistant etat="reflechit" />
                   )}
 
