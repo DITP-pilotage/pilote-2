@@ -35,7 +35,8 @@ const buildChantier = (id: string): ChantierResult => ({
   commentaires: { donnees: null, autresResultats: null },
 });
 
-// Le même chantier, tel que l'outil le renvoie : des libellés, pas des codes
+// Le même chantier, tel que l'outil le renvoie : des libellés, pas des codes,
+// et sans commentaires territoriaux (get_chantier_commentaires les porte)
 const chantierRenvoye = (id: string) => ({
   chantier: {
     id,
@@ -55,7 +56,6 @@ const chantierRenvoye = (id: string) => ({
     commentaire: "Deux postes restent vacants.",
     date_commentaire: "2026-01-12",
   },
-  commentaires: { donnees: null, autresResultats: null },
 });
 
 // La query ne filtre sur chantierIds que si la liste est non vide, comme GetChantiersQuery

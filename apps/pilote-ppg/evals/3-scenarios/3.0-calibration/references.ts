@@ -115,7 +115,6 @@ const chantier = ({
   est_en_retard: ecart <= -10,
   est_en_difficulte: ecart > -10,
   synthese: { commentaire, date_commentaire: null },
-  commentaires: { donnees: null, autresResultats: null },
 });
 
 /** Une fiche figée pour la Bretagne, calquée sur le monde territorial. */
@@ -1227,52 +1226,6 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
  * juge : un test unitaire vérifie que chacun échoue son critère, et lui seul.
  */
 export const MECHANICAL_MUTANTS: CalibrationCase[] = [
-  {
-    // Revue du 30/09 : Albert peut lire les commentaires par `get_chantiers`
-    // plutôt que par `get_chantier_commentaires`. La recopie doit se voir
-    // quel que soit l'outil qui a fourni le commentaire.
-    suite: SUITES.syntheseCommentaires,
-    label: "Commentaire lu par get_chantiers et recopié",
-    broken: "Pas de recopie",
-    evidence: evidence({
-      question: COMMENTAIRES_QUESTION,
-      matter: `**CH-005 — Réduire les délais de passage aux urgences**
-Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.`,
-      profile: "coordinateur",
-      toolResults: [
-        {
-          toolName: "get_chantiers",
-          output: {
-            resultats: [
-              {
-                territoire_code: "REG-53",
-                territoire_nom: "Bretagne",
-                jalon: 2025,
-                chantiers: [
-                  {
-                    ...chantier({
-                      ...CH_005,
-                      ecart: -15,
-                      meteo: "NUAGE",
-                      commentaire: null,
-                    }),
-                    commentaires: {
-                      donnees: null,
-                      autresResultats: {
-                        contenu:
-                          "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
-                        date: "2026-09-15",
-                      },
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      ],
-    }),
-  },
   {
     suite: SUITES.syntheseCommentaires,
     label: "Commentaire reçu recopié",

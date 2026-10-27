@@ -70,11 +70,10 @@ export type ChantierRenvoye = {
     commentaire: string | null;
     date_commentaire: string | null;
   } | null;
-  commentaires: ChantierResult["commentaires"];
 };
 
 export type ResultatChantiers = Omit<GetChantiersResult, "chantiers"> & {
-  /** Territoire hors de l'accès complet : tendance et commentaires y sont masqués. */
+  /** Territoire hors de l'accès complet : tendance et commentaire de synthèse y sont masqués. */
   acces_restreint?: true;
   chantiers: ChantierRenvoye[];
 };
@@ -122,7 +121,6 @@ function renvoyerChantier(chantierResult: ChantierResult): ChantierRenvoye {
           date_commentaire: chantierResult.synthese.date_commentaire,
         }
       : null,
-    commentaires: chantierResult.commentaires,
   };
 }
 
@@ -145,7 +143,6 @@ function masquerDonneesNonAccessibles(
         synthese: chantier.synthese
           ? { commentaire: null, date_commentaire: null }
           : null,
-        commentaires: { donnees: null, autresResultats: null },
       })),
     };
   });
@@ -233,17 +230,18 @@ export function createGetChantiersTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Renvoie les chantiers d'un territoire à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, maille de pilotage, commentaire de synthèse et commentaires du territoire.
+      description: `Renvoie les chantiers d'un territoire à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, maille de pilotage, et le commentaire de la synthèse des résultats.
 - \`view\`, \`tendance\` et \`chantier_ids\` se combinent.
 - \`non_applicable.raison\` : l'analyse demandée n'a pas de sens sur ce périmètre (pas de chantiers en retard au niveau national) ; ce n'est pas une absence de résultat.
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.
-- \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance et les commentaires y sont masqués, ce n'est pas une absence de données.
+- \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance et le commentaire de synthèse y sont masqués, ce n'est pas une absence de données.
 - \`maille_de_pilotage\` null : la maille de pilotage du chantier n'est pas connue.
 Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? » ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
 Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
-- la fraîcheur des données → get_indicateurs_non_a_jour.`,
+- la fraîcheur des données → get_indicateurs_non_a_jour ;
+- les commentaires d'un chantier (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
       inputSchema: getChantiersInputSchema,
       execute: (input): Promise<GetChantiersOutput> =>
         collecterChantiers({

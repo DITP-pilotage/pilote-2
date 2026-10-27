@@ -17,15 +17,9 @@ export const COMMENTAIRES_FIDELES = judged({
     "Tout ce que la réponse rapporte des commentaires de synthèse (résumé, citation ou reprise) ne contient que des idées présentes dans ces commentaires. Une cause, un chiffre, une action ou une conséquence qui n'y figure pas est non conforme. Une réponse qui ne rapporte aucun commentaire est conforme : la couverture relève d'autres critères.",
 });
 
-type CommentaireRecu = { contenu: string } | null | undefined;
-
 type ResultatChantiers = {
   chantiers?: {
     synthese?: { commentaire: string | null } | null;
-    commentaires?: {
-      donnees: CommentaireRecu;
-      autresResultats: CommentaireRecu;
-    };
   }[];
 };
 
@@ -45,11 +39,9 @@ function contenusDeGetChantierCommentaires(evidence: Evidence): string[] {
 }
 
 /**
- * Tous les commentaires que l'agent a reçus, quel que soit l'outil : ceux de
- * `get_chantier_commentaires`, mais aussi le commentaire de synthèse et les
- * commentaires territoriaux que porte `get_chantiers`. Revue du 30/09 : Albert
- * lit les commentaires par `get_chantiers`, et une recopie depuis cette
- * source passait inaperçue.
+ * Tous les commentaires que l'agent a reçus : ceux de
+ * `get_chantier_commentaires`, et le commentaire de synthèse que porte
+ * `get_chantiers` (depuis l'étape 6, il ne porte plus les autres).
  */
 function contenusDesCommentairesRecus(evidence: Evidence): string[] {
   return [
@@ -60,11 +52,9 @@ function contenusDesCommentairesRecus(evidence: Evidence): string[] {
         (result.output as { resultats?: unknown[] }).resultats ?? [];
       return (resultats as ResultatChantiers[]).flatMap((resultat) =>
         (resultat.chantiers ?? []).flatMap((chantier) =>
-          [
-            chantier.synthese?.commentaire,
-            chantier.commentaires?.donnees?.contenu,
-            chantier.commentaires?.autresResultats?.contenu,
-          ].filter((contenu): contenu is string => Boolean(contenu)),
+          [chantier.synthese?.commentaire].filter(
+            (contenu): contenu is string => Boolean(contenu),
+          ),
         ),
       );
     }),

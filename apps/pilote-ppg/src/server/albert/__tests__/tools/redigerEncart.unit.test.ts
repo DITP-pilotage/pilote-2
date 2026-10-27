@@ -101,7 +101,6 @@ const chantierRenvoye = (id: string): ChantierRenvoye => ({
     commentaire: "Deux postes restent vacants.",
     date_commentaire: "2026-01-12",
   },
-  commentaires: { donnees: null, autresResultats: null },
 });
 
 const getChantiersQuery = () =>
