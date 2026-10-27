@@ -1,7 +1,7 @@
 import {
   answerOutcomeEvent,
   choicesPresentedEvent,
-  copyExportName,
+  copyExportNames,
   exportsAvailableEvents,
   linkEvent,
   lastLlmCallId,
@@ -254,31 +254,47 @@ const rapportPart = (
   output: { url: "https://pilote.example.org/rapport", format },
 });
 
-describe("copyExportName", () => {
+describe("copyExportNames", () => {
   it("copie le texte d'une réponse sans dashboard", () => {
-    expect(copyExportName(assistantMessage)).toBe("export.text");
+    expect(copyExportNames(assistantMessage)).toEqual(["export.text"]);
   });
 
-  it("copie l'image dès qu'un dashboard est affiché", () => {
+  it("copie séparément le texte et l'image quand un dashboard est affiché", () => {
     expect(
-      copyExportName({
+      copyExportNames({
         ...assistantMessage,
         parts: [...assistantMessage.parts, dashboardPart],
       }),
-    ).toBe("export.dashboard_image");
+    ).toEqual(["export.text", "export.dashboard_image"]);
   });
 
   it("ne propose rien sans texte ni dashboard", () => {
     expect(
-      copyExportName({
+      copyExportNames({
         ...assistantMessage,
         parts: [{ type: "text", text: "  " }],
       }),
-    ).toBeNull();
+    ).toEqual([]);
   });
 });
 
 describe("exportsAvailableEvents", () => {
+  it("compte chaque copie possible d'une réponse avec dashboard", () => {
+    const events = exportsAvailableEvents({
+      conversationId: "conv-1",
+      message: {
+        ...assistantMessage,
+        parts: [...assistantMessage.parts, dashboardPart],
+      },
+    });
+
+    const dimensions = { conversation_id: "conv-1", llm_call_id: "llm-1" };
+    expect(events).toEqual([
+      { action: "view", name: "export.text", dimensions },
+      { action: "view", name: "export.dashboard_image", dimensions },
+    ]);
+  });
+
   it("compte chaque export prêt dans la réponse", () => {
     const events = exportsAvailableEvents({
       conversationId: "conv-1",

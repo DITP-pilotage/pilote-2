@@ -8,8 +8,8 @@ import {
   derniereConsultationCentreAide,
 } from "@/components/_commons/ChatUI/CentreAideEncart";
 import {
-  copyResponse,
-  markCopyableBlock,
+  copyDashboardImage,
+  copyText,
 } from "@/components/_commons/ChatUI/copyResponse";
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
@@ -25,7 +25,7 @@ import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import {
-  copyExportName,
+  copyExportNames,
   llmCallIdOf,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
@@ -45,7 +45,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   etat?: EtatAssistant | null;
   /** Rend la question à choix (clarify_with_choices) dans le fil. */
   afficherChoix?: boolean;
-  /** Boutons d'évaluation à afficher à côté de « Copier ». */
+  /** Boutons d'évaluation à afficher à côté des boutons de copie. */
   evaluation?: ReactNode;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -67,8 +67,9 @@ export const AssistantMessage = memo(function AssistantMessage({
     (part) => part.type === "text" && part.text.trim().length > 0,
   );
 
-  const copyExport = copyExportName(message);
-  const canCopy = copyExport !== null;
+  const copyExports = copyExportNames(message);
+  const canCopyText = copyExports.includes("export.text");
+  const canCopyImage = copyExports.includes("export.dashboard_image");
   const track = useChatTracking();
 
   const lastTextIndex = parts.reduce<number>(
@@ -78,17 +79,37 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   const showSkeleton = isStreaming && !hasText && sources.length > 0;
 
-  const copier = () => {
-    const root = rootRef.current;
-    if (root == null || copyExport === null) return;
-
+  const trackedCopy = ({
+    name,
+    copy,
+    success,
+    error,
+  }: {
+    name: (typeof copyExports)[number];
+    copy: () => Promise<void>;
+    success: string;
+    error: string;
+  }) => {
     const trackCopy = (action: "select" | "success" | "error") =>
       track({
         action,
-        name: copyExport,
+        name,
         dimensions: { llm_call_id: llmCallIdOf(message) },
       });
 
+    trackCopy("select");
+    copy()
+      .then(() => {
+        trackCopy("success");
+        toast.success(success, { duration: 3000 });
+      })
+      .catch(() => {
+        trackCopy("error");
+        toast.error(error);
+      });
+  };
+
+  const copierTexte = () => {
     const texte = [
       extractMessageText(message),
       ...(consultationCentreAide
@@ -101,18 +122,24 @@ export const AssistantMessage = memo(function AssistantMessage({
         : []),
     ].join("\n\n");
 
-    trackCopy("select");
-    copyResponse({ root, text: texte })
-      .then(() => {
-        trackCopy("success");
-        toast.success("Réponse copiée dans le presse-papiers", {
-          duration: 3000,
-        });
-      })
-      .catch(() => {
-        trackCopy("error");
-        toast.error("La réponse n'a pas pu être copiée");
-      });
+    trackedCopy({
+      name: "export.text",
+      copy: () => copyText({ text: texte }),
+      success: "Texte copié dans le presse-papiers",
+      error: "Le texte n'a pas pu être copié",
+    });
+  };
+
+  const copierImage = () => {
+    const root = rootRef.current;
+    if (root == null) return;
+
+    trackedCopy({
+      name: "export.dashboard_image",
+      copy: () => copyDashboardImage({ root }),
+      success: "Image copiée dans le presse-papiers",
+      error: "L'image n'a pas pu être copiée",
+    });
   };
 
   return (
@@ -130,12 +157,11 @@ export const AssistantMessage = memo(function AssistantMessage({
         if (part.type === "text") {
           if (shouldHideText || part.text.length === 0) return null;
           return (
-            <div key={index} {...markCopyableBlock("text")}>
-              <AssistantMessageText
-                streaming={isStreaming && index === lastTextIndex}
-                text={part.text}
-              />
-            </div>
+            <AssistantMessageText
+              key={index}
+              streaming={isStreaming && index === lastTextIndex}
+              text={part.text}
+            />
           );
         }
 
@@ -182,14 +208,22 @@ export const AssistantMessage = memo(function AssistantMessage({
           ) : null,
         )}
 
-      {!isStreaming && (canCopy || evaluation) && (
+      {!isStreaming && (canCopyText || canCopyImage || evaluation) && (
         <div className="flex flex-wrap items-center gap-1">
-          {canCopy && (
+          {canCopyText && (
             <BoutonCopier
               className="h-7 px-2 text-xs font-medium"
-              libelle="Copier la réponse dans le presse-papiers"
-              onClick={copier}
-              texte="Copier"
+              libelle="Copier le texte de la réponse dans le presse-papiers"
+              onClick={copierTexte}
+              texte="Copier le texte"
+            />
+          )}
+          {canCopyImage && (
+            <BoutonCopier
+              className="h-7 px-2 text-xs font-medium"
+              libelle="Copier l'image du tableau de bord dans le presse-papiers"
+              onClick={copierImage}
+              texte="Copier l'image"
             />
           )}
           {evaluation}

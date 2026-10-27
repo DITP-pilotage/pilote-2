@@ -132,18 +132,20 @@ export const helpCenterContactEvent: AssistantEvent = {
 
 type ExportName = Extract<AnalyticsEventName, `export.${string}`>;
 
-export const copyExportName = (message: PiloteUIMessage): ExportName | null => {
+export const copyExportNames = (message: PiloteUIMessage): ExportName[] => {
   const parts = message.parts ?? [];
+  const hasText = parts.some(
+    (part) => part.type === "text" && part.text.trim().length > 0,
+  );
   const hasDashboard = parts.some(
     (part) =>
       part.type === "tool-create_dashboard" &&
       part.state === "output-available",
   );
-  if (hasDashboard) return "export.dashboard_image";
-  const hasText = parts.some(
-    (part) => part.type === "text" && part.text.trim().length > 0,
-  );
-  return hasText ? "export.text" : null;
+  return [
+    ...(hasText ? (["export.text"] as const) : []),
+    ...(hasDashboard ? (["export.dashboard_image"] as const) : []),
+  ];
 };
 
 export const reportExportName = (format: string | undefined): ExportName =>
@@ -161,8 +163,7 @@ export const exportsAvailableEvents = ({
       ? [reportExportName(part.output.format)]
       : [],
   );
-  const copy = copyExportName(message);
-  return [...(copy ? [copy] : []), ...reports].map((name) => ({
+  return [...copyExportNames(message), ...reports].map((name) => ({
     action: "view",
     name,
     dimensions: {
