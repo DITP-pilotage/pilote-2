@@ -1,0 +1,50 @@
+import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
+import type { EncartOutput } from "@/server/albert/tools/encart";
+
+const TYPES: Record<EncartOutput["type"], string> = {
+  synthese: "Synthèse territoriale",
+  comparaison: "Comparaison territoriale",
+};
+
+const formaterDate = (dateRedaction: string): string =>
+  new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${dateRedaction}T00:00:00Z`));
+
+/**
+ * La synthèse ou la comparaison rédigée par le sous-agent (PIL-1900), mise en
+ * page comme une note : elle se remplit au fil de la rédaction et déborde de
+ * la colonne de discussion sur grand écran.
+ */
+export const EncartSynthese = ({ output }: { output: EncartOutput }) => {
+  if (output.acces_refuse) return null;
+
+  return (
+    <article className="albert-encart border border-dsfr-grey-925 border-t-[5px] border-t-dsfr-blue-france-sun-113 bg-white px-8 py-8 shadow-md lg:-mx-16 lg:px-16">
+      <header className="mb-5 flex items-start justify-between gap-4 border-b border-dsfr-grey-925 pb-3.5 text-[12.5px] leading-5 text-dsfr-mention-grey">
+        <div>
+          <p className="mb-0 text-[13px] font-bold uppercase tracking-wide text-dsfr-blue-france-sun-113">
+            {TYPES[output.type]}
+          </p>
+          <p className="mb-0">Jalon {output.jalon}</p>
+        </div>
+        <div className="text-right">
+          <p className="mb-0">{formaterDate(output.date_redaction)}</p>
+          <p className="mb-0">À partir des données publiées dans PILOTE</p>
+        </div>
+      </header>
+      {!output.termine && (
+        <p className="mb-2 text-sm text-dsfr-mention-grey">
+          Rédaction en cours…
+        </p>
+      )}
+      <AssistantMessageText
+        streaming={!output.termine}
+        text={output.markdown}
+      />
+    </article>
+  );
+};

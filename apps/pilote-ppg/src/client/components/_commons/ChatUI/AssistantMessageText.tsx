@@ -22,6 +22,8 @@ const TOOL_NAMES = [
   "create_dashboard",
   "compose_dashboard",
   "export_rapport",
+  "rediger_synthese_territoire",
+  "rediger_comparaison_territoires",
   "get_taux_avancement_territoire",
   "get_chantiers",
   "get_indicateurs",

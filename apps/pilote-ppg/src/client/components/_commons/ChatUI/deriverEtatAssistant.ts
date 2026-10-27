@@ -1,5 +1,6 @@
 import type { ChatStatus } from "ai";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
+import { OUTILS_ENCART } from "@/components/_commons/ChatUI/texteEncarts";
 
 export type EtatAssistant =
   | "reflechit"
@@ -7,6 +8,7 @@ export type EtatAssistant =
   | "consulte-le-centre-d-aide"
   | "redige"
   | "compose-le-tableau-de-bord"
+  | "redige-l-encart"
   | "genere-le-rapport";
 
 export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
@@ -15,6 +17,7 @@ export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
   "consulte-le-centre-d-aide": "consulte le centre d'aide",
   redige: "rédige",
   "compose-le-tableau-de-bord": "compose le tableau de bord",
+  "redige-l-encart": "rédige la synthèse",
   "genere-le-rapport": "génère le rapport",
 };
 
@@ -55,6 +58,7 @@ export const deriverEtatAssistant = ({
   if (!enCours) return "reflechit";
 
   if (derniere.type === "tool-export_rapport") return "genere-le-rapport";
+  if (OUTILS_ENCART.has(derniere.type)) return "redige-l-encart";
   if (derniere.type === "tool-consulter_centre_aide") {
     return "consulte-le-centre-d-aide";
   }

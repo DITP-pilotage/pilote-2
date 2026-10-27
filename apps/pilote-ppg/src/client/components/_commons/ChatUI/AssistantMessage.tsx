@@ -23,12 +23,33 @@ import {
 import { texteCopieCentreAide } from "@/components/_commons/ChatUI/texteCopieCentreAide";
 import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
+import { EncartSynthese } from "@/components/_commons/ChatUI/EncartSynthese";
+import { texteEncarts } from "@/components/_commons/ChatUI/texteEncarts";
+import type { EncartOutput } from "@/server/albert/tools/encart";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import {
   copyExportNames,
   llmCallIdOf,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
+
+// Avant le premier résultat de l'outil : l'en-tête de l'encart, sans texte.
+const encartEnAttente = ({
+  type,
+  input,
+}: {
+  type: string;
+  input: { jalon?: number } | undefined;
+}): EncartOutput => ({
+  type:
+    type === "tool-rediger_comparaison_territoires"
+      ? "comparaison"
+      : "synthese",
+  jalon: input?.jalon ?? new Date().getFullYear(),
+  date_redaction: new Date().toISOString().slice(0, 10),
+  markdown: "",
+  termine: false,
+});
 
 const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
 
@@ -111,6 +132,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   const copierTexte = () => {
     const texte = [
+      ...texteEncarts({ message }),
       extractMessageText(message),
       ...(consultationCentreAide
         ? [
@@ -173,6 +195,23 @@ export const AssistantMessage = memo(function AssistantMessage({
               key={index}
               llmCallId={llmCallIdOf(message)}
               part={part}
+            />
+          );
+        }
+
+        if (
+          part.type === "tool-rediger_synthese_territoire" ||
+          part.type === "tool-rediger_comparaison_territoires"
+        ) {
+          if (part.state === "output-error") return null;
+          return (
+            <EncartSynthese
+              key={index}
+              output={
+                part.state === "output-available"
+                  ? part.output
+                  : encartEnAttente({ type: part.type, input: part.input })
+              }
             />
           );
         }

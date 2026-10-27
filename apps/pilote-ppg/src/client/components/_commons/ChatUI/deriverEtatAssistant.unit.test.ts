@@ -73,6 +73,27 @@ describe("deriverEtatAssistant", () => {
     expect(etat).toBe("reflechit");
   });
 
+  test("rédige la synthèse quand un encart est en cours", () => {
+    // Given
+    const enCours = message([
+      {
+        type: "tool-rediger_synthese_territoire",
+        toolCallId: "appel-1",
+        state: "input-available",
+        input: { territoire_code: "DEPT-59", jalon: 2025 },
+      },
+    ]);
+
+    // When
+    const etat = deriverEtatAssistant({
+      message: enCours,
+      status: "streaming",
+    });
+
+    // Then
+    expect(etat).toBe("redige-l-encart");
+  });
+
   test("rédige quand du texte arrive", () => {
     // Given
     const dernier = message([{ type: "text", text: "Au jalon 3," }]);
