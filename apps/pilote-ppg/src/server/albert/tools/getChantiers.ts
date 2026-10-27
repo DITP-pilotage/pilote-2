@@ -49,7 +49,7 @@ export const getChantiersInputSchema = z.object({
     .describe("Filtre optionnel sur la tendance"),
 });
 
-type GetChantiersInput = z.infer<typeof getChantiersInputSchema>;
+export type GetChantiersInput = z.infer<typeof getChantiersInputSchema>;
 
 /**
  * Un chantier tel que l'outil le renvoie : des libellés, pas des codes
@@ -151,6 +151,73 @@ function masquerDonneesNonAccessibles(
   });
 }
 
+/**
+ * La collecte de `get_chantiers`, partagée avec les outils d'encart : mêmes
+ * règles d'accès, mêmes libellés.
+ */
+export async function collecterChantiers({
+  input,
+  getChantiersQuery,
+  territoireResolver,
+  territoiresAccessibles,
+  chantiersAccessibles,
+}: {
+  input: GetChantiersInput;
+  getChantiersQuery: GetChantiersQuery;
+  territoireResolver: TerritoireResolver;
+  territoiresAccessibles: string[];
+  chantiersAccessibles: string[];
+}): Promise<GetChantiersOutput> {
+  if (
+    input.territoire_code === "NAT-FR" &&
+    input.view === "en_retard" &&
+    !input.include_sous_territoires
+  ) {
+    return {
+      resultats: [],
+      non_applicable: { raison: NON_APPLICABLE_EN_RETARD_NAT_FR },
+    };
+  }
+
+  const chantiersDemandes =
+    input.chantier_ids && input.chantier_ids.length > 0
+      ? input.chantier_ids
+      : undefined;
+
+  // Une liste vide n'est pas filtrée par la query : le cas sans aucun
+  // chantier accessible doit donc s'arrêter ici.
+  const filteredChantierIds = (
+    chantiersDemandes ?? chantiersAccessibles
+  ).filter((id) => chantiersAccessibles.includes(id));
+
+  if (filteredChantierIds.length === 0) {
+    return { resultats: [], acces_refuse: true };
+  }
+
+  const effectiveInput = { ...input, chantier_ids: filteredChantierIds };
+
+  const codes = await territoireResolver.resoudre(
+    input.territoire_code,
+    input.include_sous_territoires,
+  );
+
+  const resultats = await Promise.all(
+    codes.map((code) =>
+      getChantiersQuery.execute(toQueryParams(effectiveInput, code)),
+    ),
+  );
+
+  return {
+    resultats: masquerDonneesNonAccessibles(
+      resultats.map((resultat) => ({
+        ...resultat,
+        chantiers: resultat.chantiers.map(renvoyerChantier),
+      })),
+      territoiresAccessibles,
+    ),
+  };
+}
+
 export function createGetChantiersTool({
   getChantiersQuery,
   territoireResolver,
@@ -178,56 +245,14 @@ Ne l'utilise pas pour :
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
 - la fraîcheur des données → get_indicateurs_non_a_jour.`,
       inputSchema: getChantiersInputSchema,
-      execute: async (input): Promise<GetChantiersOutput> => {
-        if (
-          input.territoire_code === "NAT-FR" &&
-          input.view === "en_retard" &&
-          !input.include_sous_territoires
-        ) {
-          return {
-            resultats: [],
-            non_applicable: { raison: NON_APPLICABLE_EN_RETARD_NAT_FR },
-          };
-        }
-
-        const chantiersDemandes =
-          input.chantier_ids && input.chantier_ids.length > 0
-            ? input.chantier_ids
-            : undefined;
-
-        // Une liste vide n'est pas filtrée par la query : le cas sans aucun
-        // chantier accessible doit donc s'arrêter ici.
-        const filteredChantierIds = (
-          chantiersDemandes ?? chantiersAccessibles
-        ).filter((id) => chantiersAccessibles.includes(id));
-
-        if (filteredChantierIds.length === 0) {
-          return { resultats: [], acces_refuse: true };
-        }
-
-        const effectiveInput = { ...input, chantier_ids: filteredChantierIds };
-
-        const codes = await territoireResolver.resoudre(
-          input.territoire_code,
-          input.include_sous_territoires,
-        );
-
-        const resultats = await Promise.all(
-          codes.map((code) =>
-            getChantiersQuery.execute(toQueryParams(effectiveInput, code)),
-          ),
-        );
-
-        return {
-          resultats: masquerDonneesNonAccessibles(
-            resultats.map((resultat) => ({
-              ...resultat,
-              chantiers: resultat.chantiers.map(renvoyerChantier),
-            })),
-            territoiresAccessibles,
-          ),
-        };
-      },
+      execute: (input): Promise<GetChantiersOutput> =>
+        collecterChantiers({
+          input,
+          getChantiersQuery,
+          territoireResolver,
+          territoiresAccessibles,
+          chantiersAccessibles,
+        }),
     });
   };
 }

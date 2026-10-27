@@ -45,6 +45,111 @@ export type GetTauxAvancementTerritoireOutput = {
   resultats: GetTauxAvancementTerritoireResult[];
 };
 
+/**
+ * La collecte de `get_taux_avancement_territoire`, partagée avec les outils
+ * d'encart.
+ */
+export async function collecterTauxAvancement({
+  input,
+  territoireResolver,
+  getTerritoiresIdentiteQuery,
+  habilitations,
+}: {
+  input: {
+    territoire_code: string;
+    jalon: number;
+    include_sous_territoires?: boolean;
+  };
+  territoireResolver: TerritoireResolver;
+  getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
+  habilitations: Habilitations;
+}): Promise<GetTauxAvancementTerritoireOutput> {
+  const codes = await territoireResolver.resoudre(
+    input.territoire_code,
+    input.include_sous_territoires,
+  );
+
+  const chantiersContainer = getContainer("chantiers");
+  const chantierIds = await chantiersContainer
+    .resolve("getChantiersHabilitesQuery")
+    .execute(habilitations);
+  const récupérerStatistiquesUseCase = chantiersContainer.resolve(
+    "récupérerStatistiquesAvancementChantiersUseCase",
+  );
+  const tauxParTerritoire = new Map(
+    (
+      await chantiersContainer
+        .resolve("recupererTauxAvancementTerritoireQuery")
+        .executePourTerritoires({
+          territoireCodes: codes,
+          jalon: input.jalon,
+          habilitations,
+        })
+    ).map((resultat) => [resultat.territoire_code, resultat.taux_avancement]),
+  );
+
+  const nomParTerritoire = new Map(
+    (await getTerritoiresIdentiteQuery.execute()).map((territoire) => [
+      territoire.code,
+      territoire.nom,
+    ]),
+  );
+
+  const mailles = new Set(codes.map(determineMaille));
+  const statsByMaille = new Map<Maille, number | null>();
+
+  for (const maille of mailles) {
+    const repartitionMaille: Maille =
+      maille === "nationale" ? "departementale" : maille;
+
+    try {
+      const stats = await récupérerStatistiquesUseCase.run(
+        chantierIds,
+        repartitionMaille,
+        habilitations,
+        input.jalon,
+      );
+      statsByMaille.set(maille, stats?.médiane ?? null);
+    } catch (error) {
+      if (!(error instanceof MailleNonAutoriséeErreur)) {
+        throw error;
+      }
+      statsByMaille.set(maille, null);
+    }
+  }
+
+  const resultats = codes.map((code) => {
+    const maille = determineMaille(code);
+    const taux_avancement_global = tauxParTerritoire.get(code) ?? null;
+
+    const mediane_repartition = statsByMaille.get(maille) ?? null;
+
+    let position_mediane: "EN_RETARD" | "EN_AVANCE" | "DANS_LA_MEDIANE" | null =
+      null;
+    if (taux_avancement_global !== null && mediane_repartition !== null) {
+      const ecart = taux_avancement_global - mediane_repartition;
+      if (ecart <= -10) {
+        position_mediane = "EN_RETARD";
+      } else if (ecart >= 10) {
+        position_mediane = "EN_AVANCE";
+      } else {
+        position_mediane = "DANS_LA_MEDIANE";
+      }
+    }
+
+    return {
+      territoire_code: code,
+      territoire_nom: nomParTerritoire.get(code) ?? null,
+      jalon: input.jalon,
+      taux_avancement_global: formatPourcentage(taux_avancement_global),
+      mediane_repartition: formatPourcentage(mediane_repartition),
+      position_mediane,
+    };
+  });
+
+  return { resultats };
+}
+
 export function createGetTauxAvancementTerritoireTool({
   territoireResolver,
   getTerritoiresIdentiteQuery,
@@ -61,95 +166,13 @@ export function createGetTauxAvancementTerritoireTool({
 Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
 Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
-      execute: async (input): Promise<GetTauxAvancementTerritoireOutput> => {
-        const codes = await territoireResolver.resoudre(
-          input.territoire_code,
-          input.include_sous_territoires,
-        );
-
-        const chantiersContainer = getContainer("chantiers");
-        const chantierIds = await chantiersContainer
-          .resolve("getChantiersHabilitesQuery")
-          .execute(habilitations);
-        const récupérerStatistiquesUseCase = chantiersContainer.resolve(
-          "récupérerStatistiquesAvancementChantiersUseCase",
-        );
-        const tauxParTerritoire = new Map(
-          (
-            await chantiersContainer
-              .resolve("recupererTauxAvancementTerritoireQuery")
-              .executePourTerritoires({
-                territoireCodes: codes,
-                jalon: input.jalon,
-                habilitations,
-              })
-          ).map((resultat) => [
-            resultat.territoire_code,
-            resultat.taux_avancement,
-          ]),
-        );
-
-        const nomParTerritoire = new Map(
-          (await getTerritoiresIdentiteQuery.execute()).map((territoire) => [
-            territoire.code,
-            territoire.nom,
-          ]),
-        );
-
-        const mailles = new Set(codes.map(determineMaille));
-        const statsByMaille = new Map<Maille, number | null>();
-
-        for (const maille of mailles) {
-          const repartitionMaille: Maille =
-            maille === "nationale" ? "departementale" : maille;
-
-          try {
-            const stats = await récupérerStatistiquesUseCase.run(
-              chantierIds,
-              repartitionMaille,
-              habilitations,
-              input.jalon,
-            );
-            statsByMaille.set(maille, stats?.médiane ?? null);
-          } catch (error) {
-            if (!(error instanceof MailleNonAutoriséeErreur)) {
-              throw error;
-            }
-            statsByMaille.set(maille, null);
-          }
-        }
-
-        const resultats = codes.map((code) => {
-          const maille = determineMaille(code);
-          const taux_avancement_global = tauxParTerritoire.get(code) ?? null;
-
-          const mediane_repartition = statsByMaille.get(maille) ?? null;
-
-          let position_mediane:
-            "EN_RETARD" | "EN_AVANCE" | "DANS_LA_MEDIANE" | null = null;
-          if (taux_avancement_global !== null && mediane_repartition !== null) {
-            const ecart = taux_avancement_global - mediane_repartition;
-            if (ecart <= -10) {
-              position_mediane = "EN_RETARD";
-            } else if (ecart >= 10) {
-              position_mediane = "EN_AVANCE";
-            } else {
-              position_mediane = "DANS_LA_MEDIANE";
-            }
-          }
-
-          return {
-            territoire_code: code,
-            territoire_nom: nomParTerritoire.get(code) ?? null,
-            jalon: input.jalon,
-            taux_avancement_global: formatPourcentage(taux_avancement_global),
-            mediane_repartition: formatPourcentage(mediane_repartition),
-            position_mediane,
-          };
-        });
-
-        return { resultats };
-      },
+      execute: (input): Promise<GetTauxAvancementTerritoireOutput> =>
+        collecterTauxAvancement({
+          input,
+          territoireResolver,
+          getTerritoiresIdentiteQuery,
+          habilitations,
+        }),
     });
   };
 }
