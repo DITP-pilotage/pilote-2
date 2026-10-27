@@ -24,9 +24,11 @@ export type RedigerSyntheseTerritoireInput = z.infer<
 
 // Les génériques explicites : TypeScript n'infère pas la sortie d'un `execute`
 // en générateur combiné à `toModelOutput`.
-export function createRedigerSyntheseTerritoireTool(
-  dependances: DependancesEncart,
-) {
+export function createRedigerSyntheseTerritoireTool({
+  getChantiersQuery,
+  territoireResolver,
+  getTerritoiresIdentiteQuery,
+}: DependancesEncart) {
   return ({ habilitations }: { habilitations: Habilitations }) =>
     tool<RedigerSyntheseTerritoireInput, EncartOutput, Record<string, never>>({
       description: `Rédige la synthèse d'un territoire dans un encart affiché à l'utilisateur : son taux d'avancement face à la médiane, ses chantiers en retard et ses chantiers en difficulté, avec un résumé de leur synthèse. L'outil collecte lui-même ces données.
@@ -43,7 +45,9 @@ L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter s
         { abortSignal },
       ): AsyncGenerator<EncartOutput> {
         const donnees = await collecterDonneesEncart({
-          ...dependances,
+          getChantiersQuery,
+          territoireResolver,
+          getTerritoiresIdentiteQuery,
           territoireCodes: [territoire_code],
           includeSousTerritoires: false,
           jalon,

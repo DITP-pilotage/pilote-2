@@ -58,6 +58,29 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).toContain("passe toujours par search_territoires");
   });
 
+  it("oriente une synthèse ou une comparaison générique vers l'encart", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain("rediger_synthese_territoire");
+    expect(prompt).toContain("rediger_comparaison_territoires");
+  });
+
+  it("ne décrit plus la composition d'une synthèse, l'outil s'en charge", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).not.toContain("Une synthèse de territoire couvre");
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({

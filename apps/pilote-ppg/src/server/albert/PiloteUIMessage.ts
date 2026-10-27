@@ -1,3 +1,6 @@
+import type { EncartOutput } from "@/server/albert/tools/encart";
+import { redigerSyntheseTerritoireInputSchema } from "@/server/albert/tools/redigerSyntheseTerritoire";
+import { redigerComparaisonTerritoiresInputSchema } from "@/server/albert/tools/redigerComparaisonTerritoires";
 import type { UIDataTypes, UIMessage } from "ai";
 import type { z } from "zod";
 import {
@@ -125,6 +128,14 @@ export type PiloteUITools = {
   create_dashboard: {
     input: z.input<typeof createDashboardInputSchema>;
     output: CreateDashboardOutput;
+  };
+  rediger_synthese_territoire: {
+    input: z.input<typeof redigerSyntheseTerritoireInputSchema>;
+    output: EncartOutput;
+  };
+  rediger_comparaison_territoires: {
+    input: z.input<typeof redigerComparaisonTerritoiresInputSchema>;
+    output: EncartOutput;
   };
   export_rapport: {
     input: z.input<typeof exportRapportInputSchema>;

@@ -52,9 +52,11 @@ export type RedigerComparaisonTerritoiresInput = z.infer<
 
 // Les génériques explicites : TypeScript n'infère pas la sortie d'un `execute`
 // en générateur combiné à `toModelOutput`.
-export function createRedigerComparaisonTerritoiresTool(
-  dependances: DependancesEncart,
-) {
+export function createRedigerComparaisonTerritoiresTool({
+  getChantiersQuery,
+  territoireResolver,
+  getTerritoiresIdentiteQuery,
+}: DependancesEncart) {
   return ({ habilitations }: { habilitations: Habilitations }) =>
     tool<
       RedigerComparaisonTerritoiresInput,
@@ -75,7 +77,9 @@ L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter s
         { abortSignal },
       ): AsyncGenerator<EncartOutput> {
         const donnees = await collecterDonneesEncart({
-          ...dependances,
+          getChantiersQuery,
+          territoireResolver,
+          getTerritoiresIdentiteQuery,
           territoireCodes: territoire_codes ?? [territoire_code as string],
           includeSousTerritoires: territoire_codes === undefined,
           jalon,
