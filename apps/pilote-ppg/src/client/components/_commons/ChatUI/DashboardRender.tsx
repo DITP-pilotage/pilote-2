@@ -5,7 +5,7 @@ import type {
 } from "@/server/albert/tools/composeDashboard";
 import { DEFAULT_WIDTHS } from "@/server/albert/tools/composeDashboardLayout";
 import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
-import { markCopyableBlock } from "@/components/_commons/ChatUI/copyResponse";
+import { markCopyableDashboard } from "@/components/_commons/ChatUI/copyResponse";
 import { clsxm } from "@/utils/clsxm";
 import { DashboardWidgetRegistry } from "./DashboardWidgets/DashboardWidgetRegistry";
 import { DashboardWidgetErrorBoundary } from "./DashboardWidgets/DashboardWidgetErrorBoundary";
@@ -33,7 +33,7 @@ export const DashboardRender = ({
   return (
     <div
       className="border border-dsfr-grey-900 bg-white"
-      {...markCopyableBlock("dashboard")}
+      {...markCopyableDashboard()}
     >
       <div className="flex h-11 items-center border-b border-dsfr-grey-900 bg-dsfr-grey-1000 pl-4 pr-2">
         <h3 className="truncate text-sm font-bold leading-5 text-dsfr-grey-50 mb-0">

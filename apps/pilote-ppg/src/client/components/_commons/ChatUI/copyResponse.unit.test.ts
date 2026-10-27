@@ -1,73 +1,59 @@
-import { buildContentCopy } from "@/components/_commons/ChatUI/copyResponse";
+import { copyDashboardImage } from "@/components/_commons/ChatUI/copyResponse";
 
 vi.mock("html-to-image", () => ({
   toBlob: async () => new Blob(["png"], { type: "image/png" }),
 }));
 
-describe("buildContentCopy", () => {
-  test("assemble le texte et l'image du dashboard dans l'ordre du message", async () => {
+class FakeClipboardItem {
+  readonly items: Record<string, Promise<Blob>>;
+
+  constructor(items: Record<string, Promise<Blob>>) {
+    this.items = items;
+  }
+}
+
+describe("copyDashboardImage", () => {
+  const write = vi.fn<(items: FakeClipboardItem[]) => Promise<void>>();
+
+  beforeEach(() => {
+    write.mockReset().mockResolvedValue();
+    vi.stubGlobal("ClipboardItem", FakeClipboardItem);
+    vi.stubGlobal("navigator", { clipboard: { write } });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  test("copie seulement l'image du dashboard, sans le texte de la réponse", async () => {
     // Given
     const root = document.createElement("div");
     root.innerHTML = [
-      `<div data-copyable-block="text"><p class="albert-markdown">Introduction</p></div>`,
-      `<div data-copyable-block="dashboard"><h3>Dashboard Sarthe</h3></div>`,
-      `<div data-copyable-block="text"><p>Conclusion</p></div>`,
-      `<span>Albert</span>`,
+      `<p>Voici le tableau de bord demandé.</p>`,
+      `<div data-copyable-dashboard=""><h3>Dashboard Sarthe</h3></div>`,
     ].join("");
 
     // When
-    const copy = buildContentCopy({ root });
+    await copyDashboardImage({ root });
 
     // Then
-    expect(await copy?.html).toStrictEqual(
-      `<meta charset="utf-8"><p>Introduction</p><p><img src="data:image/png;base64,cG5n" alt="Tableau de bord"></p><p>Conclusion</p>`,
+    const [[[item]]] = write.mock.calls;
+    expect(Object.keys(item.items)).toEqual(["image/png"]);
+    expect((await item.items["image/png"]).type).toStrictEqual("image/png");
+  });
+
+  test("échoue quand la réponse n'a pas de dashboard", async () => {
+    // Given
+    const root = document.createElement("div");
+    root.innerHTML = `<p>Réponse</p>`;
+
+    // When
+    const copy = copyDashboardImage({ root });
+
+    // Then
+    await expect(copy).rejects.toThrow(
+      "La réponse ne contient pas de dashboard",
     );
-  });
-
-  test("rend absolus les liens internes pour qu'ils restent valides une fois collés", async () => {
-    // Given
-    const root = document.createElement("div");
-    root.innerHTML = [
-      `<div data-copyable-block="text"><p><a href="/chantier/CH-050/NAT-FR">CH-050</a></p></div>`,
-      `<div data-copyable-block="dashboard"><h3>Dashboard Sarthe</h3></div>`,
-    ].join("");
-
-    // When
-    const copy = buildContentCopy({ root });
-
-    // Then
-    expect(await copy?.html).toStrictEqual(
-      `<meta charset="utf-8"><p><a href="${window.location.origin}/chantier/CH-050/NAT-FR">CH-050</a></p><p><img src="data:image/png;base64,cG5n" alt="Tableau de bord"></p>`,
-    );
-  });
-
-  test("fournit l'image du dashboard pour les applications qui ne lisent pas le HTML", async () => {
-    // Given
-    const root = document.createElement("div");
-    root.innerHTML = [
-      `<div data-copyable-block="dashboard"><h3>Dashboard Sarthe</h3></div>`,
-      `<div data-copyable-block="text"><p>Voici le tableau de bord demandé.</p></div>`,
-    ].join("");
-
-    // When
-    const copy = buildContentCopy({ root });
-    // La conversion HTML lit la capture avec un FileReader : sans l'attendre, la
-    // lecture peut se terminer après le démontage de jsdom et faire échouer le run.
-    await copy?.html;
-
-    // Then
-    expect((await copy?.image)?.type).toStrictEqual("image/png");
-  });
-
-  test("ne prépare pas de copie riche quand la réponse n'a pas de dashboard", () => {
-    // Given
-    const root = document.createElement("div");
-    root.innerHTML = `<div data-copyable-block="text"><p>Réponse</p></div>`;
-
-    // When
-    const copy = buildContentCopy({ root });
-
-    // Then
-    expect(copy).toBeNull();
+    expect(write).not.toHaveBeenCalled();
   });
 });

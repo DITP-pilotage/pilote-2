@@ -9,7 +9,6 @@ import {
   helpCenterLinkEvent,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
-import { markCopyableBlock } from "@/components/_commons/ChatUI/copyResponse";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import type { ConsulterCentreAideOutput } from "@/server/albert/tools/consulterCentreAide";
 
@@ -39,10 +38,7 @@ export const CentreAideEncart = ({
 
   if (!output.trouve || output.sources.length === 0) {
     return (
-      <div
-        className="flex flex-col items-start gap-2.5 border border-dsfr-grey-925 bg-dsfr-grey-1000 px-3.5 py-3"
-        {...markCopyableBlock("text")}
-      >
+      <div className="flex flex-col items-start gap-2.5 border border-dsfr-grey-925 bg-dsfr-grey-1000 px-3.5 py-3">
         <p className="mb-0 text-[13px] leading-5 text-dsfr-mention-grey">
           Une question sur PILOTE que le centre d&apos;aide ne couvre pas ?
           L&apos;équipe PILOTE vous répond par mail.
@@ -56,7 +52,7 @@ export const CentreAideEncart = ({
   }
 
   return (
-    <div className="flex flex-col gap-2" {...markCopyableBlock("text")}>
+    <div className="flex flex-col gap-2">
       <p
         className="mb-0 flex items-center gap-1.5 text-[13px] font-bold leading-5 text-dsfr-grey-200"
         id={idTitre}
