@@ -7,6 +7,7 @@ import { DEMANDES_PRECISES } from "./demandesPrecises";
  *
  * Une synthèse ou un état des lieux générique d'un territoire ouvre l'encart ;
  * une demande précise reste une réponse dans le fil (`DEMANDES_PRECISES`).
+ * Depuis l'étape 6, un rapport est l'encart, téléchargé depuis l'interface.
  */
 
 const CASES: ToolCase[] = [
@@ -43,6 +44,18 @@ const CASES: ToolCase[] = [
   {
     question: "Récap des chantiers sur l'Auvergne",
     reason: "« récap » d'un territoire : une synthèse générique (étape 5)",
+    expected: [{ toolName: "rediger_synthese_territoire" }],
+  },
+  {
+    question: "Fais-moi un rapport sur la Bretagne",
+    reason:
+      "« rapport » d'un territoire : l'encart, qui se télécharge (étape 6)",
+    expected: [{ toolName: "rediger_synthese_territoire" }],
+  },
+  {
+    question: "Je voudrais télécharger la situation de la Bretagne",
+    reason:
+      "« télécharger » une synthèse : l'encart, qui se télécharge (étape 6)",
     expected: [{ toolName: "rediger_synthese_territoire" }],
   },
   ...DEMANDES_PRECISES,

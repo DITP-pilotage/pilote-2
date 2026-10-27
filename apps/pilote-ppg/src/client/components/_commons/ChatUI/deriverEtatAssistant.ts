@@ -8,8 +8,7 @@ export type EtatAssistant =
   | "consulte-le-centre-d-aide"
   | "redige"
   | "compose-le-tableau-de-bord"
-  | "redige-l-encart"
-  | "genere-le-rapport";
+  | "redige-l-encart";
 
 export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
   reflechit: "réfléchit",
@@ -18,7 +17,6 @@ export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
   redige: "rédige",
   "compose-le-tableau-de-bord": "compose le tableau de bord",
   "redige-l-encart": "rédige la synthèse",
-  "genere-le-rapport": "génère le rapport",
 };
 
 const OUTILS_TABLEAU_DE_BORD = new Set([
@@ -67,7 +65,6 @@ export const deriverEtatAssistant = ({
     derniere.state === "input-available";
   if (!enCours) return "reflechit";
 
-  if (derniere.type === "tool-export_rapport") return "genere-le-rapport";
   if (OUTILS_ENCART.has(derniere.type)) return "redige-l-encart";
   if (derniere.type === "tool-consulter_centre_aide") {
     return "consulte-le-centre-d-aide";

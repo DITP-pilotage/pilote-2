@@ -8,10 +8,6 @@ import {
   type ClarifyWithChoicesOutput,
 } from "@/server/albert/tools/clarifyWithChoices";
 import {
-  exportRapportInputSchema,
-  type ExportRapportOutput,
-} from "@/server/albert/exportRapportSchema";
-import {
   createDashboardInputSchema,
   type CreateDashboardOutput,
 } from "@/server/albert/tools/createDashboard";
@@ -136,10 +132,6 @@ export type PiloteUITools = {
   rediger_comparaison_territoires: {
     input: z.input<typeof redigerComparaisonTerritoiresInputSchema>;
     output: EncartOutput;
-  };
-  export_rapport: {
-    input: z.input<typeof exportRapportInputSchema>;
-    output: ExportRapportOutput;
   };
 };
 

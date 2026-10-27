@@ -148,9 +148,6 @@ export const copyExportNames = (message: PiloteUIMessage): ExportName[] => {
   ];
 };
 
-export const reportExportName = (format: string | undefined): ExportName =>
-  format === "markdown" ? "export.report_markdown" : "export.report_pdf";
-
 export const exportsAvailableEvents = ({
   conversationId,
   message,
@@ -158,9 +155,14 @@ export const exportsAvailableEvents = ({
   conversationId: string;
   message: PiloteUIMessage;
 }): AssistantEvent[] => {
+  // Un encart rédigé se télécharge en markdown : c'est le rapport (PIL-1900)
   const reports = (message.parts ?? []).flatMap((part) =>
-    part.type === "tool-export_rapport" && part.state === "output-available"
-      ? [reportExportName(part.output.format)]
+    (part.type === "tool-rediger_synthese_territoire" ||
+      part.type === "tool-rediger_comparaison_territoires") &&
+    part.state === "output-available" &&
+    part.output.termine &&
+    !part.output.acces_refuse
+      ? (["export.report_markdown"] as const)
       : [],
   );
   return [...copyExportNames(message), ...reports].map((name) => ({

@@ -395,7 +395,7 @@ describe("outils de rédaction d'encart", () => {
     ).toEqual(["REG-76", "DEPT-31"]);
   });
 
-  test("oriente un rapport ou un graphique vers leurs outils, pas vers la comparaison", () => {
+  test("prend en charge le rapport, et oriente un graphique vers le dashboard", () => {
     // When
     const outil = createRedigerComparaisonTerritoiresTool({
       getChantiersQuery: getChantiersQuery(),
@@ -406,7 +406,7 @@ describe("outils de rédaction d'encart", () => {
     });
 
     // Then
-    expect(outil.description).toContain("export_rapport");
+    expect(outil.description).toContain("l'encart se télécharge");
     expect(outil.description).toContain("create_dashboard");
   });
 

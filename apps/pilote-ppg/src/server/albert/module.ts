@@ -27,11 +27,8 @@ import { SupprimerConversationUseCase } from "@/server/albert/usecases/Supprimer
 import { PurgerConversationsExpireesUseCase } from "@/server/albert/usecases/PurgerConversationsExpireesUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
 import { PrismaChatConversationRepository } from "@/server/albert/infrastructure/PrismaChatConversationRepository";
-import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
-import { createExportRapportTool } from "@/server/albert/tools/exportRapport";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { ChatConversationRepository } from "@/server/albert/domain/ChatConversationRepository";
-import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
 import {
   defineModule,
   type ExtractScope,
@@ -46,7 +43,6 @@ type AlbertImports = FrameworkDependencies &
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
-  rapportFileStorage: RapportFileStorage;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
@@ -83,7 +79,6 @@ type AlbertOwnCradle = {
   createSearchTerritoiresTool: ReturnType<typeof createSearchTerritoiresTool>;
   createComposeDashboardTool: ReturnType<typeof createComposeDashboardTool>;
   createCreateDashboardTool: ReturnType<typeof createCreateDashboardTool>;
-  createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   createConsulterCentreAideTool: ReturnType<
     typeof createConsulterCentreAideTool
   >;
@@ -107,7 +102,6 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
       territoireResolver: asModuleClass(PrismaTerritoireResolver),
-      rapportFileStorage: asModuleClass(FsRapportFileStorage),
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
@@ -148,7 +142,6 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       ),
       createComposeDashboardTool: asModuleFunction(createComposeDashboardTool),
       createCreateDashboardTool: asModuleFunction(createCreateDashboardTool),
-      createExportRapportTool: asModuleFunction(createExportRapportTool),
       createConsulterCentreAideTool: asModuleFunction(
         createConsulterCentreAideTool,
       ),

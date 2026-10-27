@@ -35,12 +35,12 @@ export function createRedigerSyntheseTerritoireTool({
 Utilise-le pour : une synthèse ou un état des lieux générique d'un territoire. Par exemple « Fais-moi la synthèse du Nord », « Où en est la Gironde ? », « La situation en Bretagne », « Fais-moi la synthèse des difficultés de la Bretagne », « Où en est la France sur l'ensemble des chantiers ? ».
 Ne l'utilise pas pour :
 - une demande qui nomme son critère (« compare les taux d'avancement », « les chantiers en retard ») → les outils de données ;
-- un rapport ou un téléchargement, même « de synthèse » → export_rapport ;
 - un critère précis (« les chantiers en retard du Nord », « le taux d'avancement de la Gironde », « les difficultés en Hauts-de-France ») → get_chantiers ou get_taux_avancement_territoire ;
 - un chantier ou un indicateur précis → les outils de données ;
 - plusieurs territoires → rediger_comparaison_territoires ;
-- un rapport à télécharger → export_rapport ; un graphique → create_dashboard.
-L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu.`,
+- un graphique → create_dashboard.
+Un rapport ou un téléchargement de la synthèse passe aussi par cet outil : l'encart se télécharge depuis l'interface. Il collecte ses données lui-même : n'appelle pas en plus les outils de données pour la même demande.
+L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu ; elle peut rappeler que l'encart se télécharge.`,
       inputSchema: redigerSyntheseTerritoireInputSchema,
       execute: async function* (
         { territoire_code, jalon },

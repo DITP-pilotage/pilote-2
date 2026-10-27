@@ -34,11 +34,6 @@ export const DEMANDES_PRECISES: ToolCase[] = [
     forbidden: OUTILS_ENCART,
   },
   {
-    question: "Fais-moi un rapport sur la Gironde",
-    reason: "« rapport » : un fichier, pas un encart",
-    forbidden: OUTILS_ENCART,
-  },
-  {
     question: "Trace la courbe de l'indicateur 1023 dans le Nord",
     reason: "une courbe : un dashboard",
     forbidden: OUTILS_ENCART,

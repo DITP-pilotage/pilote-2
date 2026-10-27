@@ -36,8 +36,7 @@ export class AssistantIA {
    */
   private static construireTools({
     habilitations,
-    userId,
-  }: Omit<ParamètresSetup, "agentContext">): ToolSet {
+  }: Pick<ParamètresSetup, "habilitations">): ToolSet {
     const container = getContainer("albert");
 
     const chantiersAccessibles = habilitations.lecture.chantiers;
@@ -92,19 +91,15 @@ export class AssistantIA {
       create_dashboard: container.resolve("createCreateDashboardTool")({
         chantiersAccessibles,
       }),
-      export_rapport: container.resolve("createExportRapportTool")({
-        userId,
-      }),
     };
   }
 
   private static construireSetup({
     habilitations,
     agentContext,
-    userId,
   }: ParamètresSetup) {
     return {
-      tools: this.construireTools({ habilitations, userId }),
+      tools: this.construireTools({ habilitations }),
       systemPrompt: buildChatSystemPrompt({
         territoiresAccessibles: habilitations.lecture.territoires,
         agentContext,

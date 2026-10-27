@@ -8,7 +8,6 @@ import { SYNTHESE_TERRITOIRE_CRITERIA } from "../3.1-synthese/syntheseTerritoire
 import { SYNTHESE_CHANTIER_CRITERIA } from "../3.1-synthese/syntheseChantier.criteria";
 import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "../3.1-synthese/syntheseDepartements.criteria";
 import { CHANTIERS_EN_RETARD_CRITERIA } from "../3.1-synthese/chantiersEnRetard.criteria";
-import { RAPPORT_COMPLET_CRITERIA } from "../3.1-synthese/rapportComplet.criteria";
 import { TABLEAU_DE_BORD_CRITERIA } from "../3.1-synthese/tableauDeBord.criteria";
 import { SYNTHESE_COMMENTAIRES_CRITERIA } from "../3.1-synthese/syntheseCommentaires.criteria";
 import { COMPARER_TERRITOIRES_CRITERIA } from "../3.2-comparaison/comparerTerritoires.criteria";
@@ -54,10 +53,6 @@ const SUITES = {
   chantiersEnRetard: {
     name: "Chantiers en retard et leurs indicateurs",
     criteria: CHANTIERS_EN_RETARD_CRITERIA,
-  },
-  rapportComplet: {
-    name: "Rapport complet",
-    criteria: RAPPORT_COMPLET_CRITERIA,
   },
   tableauDeBord: {
     name: "Tableau de bord du territoire",
@@ -735,69 +730,6 @@ const DASHBOARD: CalibrationCase[] = [
   },
 ];
 
-// --- Rapport complet ----------------------------------------------------
-
-// L'export d'une synthèse faite au tour précédent : le rapport se juge contre
-// la conversation qu'il reprend.
-const RAPPORT_QUESTION = "Exporte cette synthèse en rapport au format Markdown";
-
-const RAPPORT_REPONSE = "Votre rapport est disponible au téléchargement.";
-
-const RAPPORT_REFERENCE = `RAPPORT EXPORTÉ :
-# Synthèse Bretagne
-
-*01/10/2026*
-
-> Le TA 2025 de la Bretagne est de 51%, sous la médiane des régions (65%). Un chantier est en retard, un autre a des objectifs compromis.
-
-## Chantiers en retard
-CH-005 — Réduire les délais de passage aux urgences : écart de -15 points, niveau de confiance « Appuis nécessaires ». Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
-
-## Chantiers en difficulté
-CH-006 — Développer la prévention en santé : écart de 2 points, niveau de confiance « Objectifs compromis ». Pas de commentaire disponible.
-
-RÉPONSE DU CHAT :
-${RAPPORT_REPONSE}`;
-
-const rapport = (matter: string) =>
-  evidence({
-    question: RAPPORT_QUESTION,
-    matter,
-    answer: RAPPORT_REPONSE,
-    toolCalls: [{ toolName: "export_rapport", input: { format: "markdown" } }],
-    conversation: [
-      {
-        question: SYNTHESE_QUESTION,
-        answer: SYNTHESE_REFERENCE,
-      },
-    ],
-  });
-
-const RAPPORT: CalibrationCase[] = [
-  {
-    suite: SUITES.rapportComplet,
-    label: "Référence",
-    broken: null,
-    evidence: rapport(RAPPORT_REFERENCE),
-  },
-  {
-    suite: SUITES.rapportComplet,
-    label: "Chantier en retard de la synthèse omis",
-    broken: "Fidèle à la conversation",
-    evidence: rapport(
-      muter({
-        reference: muter({
-          reference: RAPPORT_REFERENCE,
-          from: /## Chantiers en retard\n[^\n]+\n\n/,
-          to: "",
-        }),
-        from: " Un chantier est en retard, un autre a des objectifs compromis.",
-        to: " Un chantier a des objectifs compromis.",
-      }),
-    ),
-  },
-];
-
 // --- Synthèse hors périmètre : la restriction d'accès -------------------
 
 const CH_007 = {
@@ -1288,7 +1220,6 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
   ...JALONS,
   ...COMMENTAIRES,
   ...DASHBOARD,
-  ...RAPPORT,
 ];
 
 /**

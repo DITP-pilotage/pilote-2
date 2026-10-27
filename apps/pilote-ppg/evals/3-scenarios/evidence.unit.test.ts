@@ -44,54 +44,6 @@ describe("extractMatter", () => {
     ).toEqual({ matter: "Voici la synthèse.", dashboard: null });
   });
 
-  test("rapport absent : le dit au juge au lieu de juger le chat", () => {
-    const { matter } = extractMatter({
-      kind: "rapport",
-      text: "Voici la synthèse de la Bretagne…",
-      toolCalls: [{ toolName: "get_chantiers", input: {} }],
-      toolResults: [],
-    });
-
-    expect(matter).toBe(
-      "AUCUN RAPPORT EXPORTÉ : l'assistant n'a pas appelé l'outil d'export.\n\nRÉPONSE DU CHAT :\nVoici la synthèse de la Bretagne…",
-    );
-  });
-
-  test("rapport exporté : rend le contenu passé à l'outil, puis la réponse du chat", () => {
-    const { matter } = extractMatter({
-      kind: "rapport",
-      text: "Votre rapport est disponible au téléchargement.",
-      toolCalls: [
-        {
-          toolName: "export_rapport",
-          input: {
-            nom_fichier: "synthese-bretagne",
-            titre: "Synthèse Bretagne",
-            date: "30/09/2026",
-            resume: "Résumé.",
-            format: "markdown",
-            sections: [
-              {
-                titre: "Chantiers en retard",
-                parties: [{ type: "paragraphe", contenu: "CH-005" }],
-              },
-            ],
-          },
-        },
-      ],
-      toolResults: [],
-    });
-
-    // Sans cet en-tête, le juge prenait le rapport pour une réponse de chat
-    // et concluait qu'aucun rapport n'était fourni (calibration du 30/09).
-    expect(matter.startsWith("RAPPORT EXPORTÉ :\n")).toBe(true);
-    expect(matter).toContain("Synthèse Bretagne");
-    expect(matter).toContain("Chantiers en retard");
-    expect(matter).toContain(
-      "RÉPONSE DU CHAT :\nVotre rapport est disponible au téléchargement.",
-    );
-  });
-
   test("dashboard : décrit chaque section et ses widgets, puis le texte", () => {
     const dashboard = {
       titre: "Bretagne",

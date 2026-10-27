@@ -21,6 +21,7 @@ const TOOL_NAMES = [
   "display_choices",
   "create_dashboard",
   "compose_dashboard",
+  // Outil supprimé (PIL-1900), encore présent dans les conversations antérieures.
   "export_rapport",
   "rediger_synthese_territoire",
   "rediger_comparaison_territoires",

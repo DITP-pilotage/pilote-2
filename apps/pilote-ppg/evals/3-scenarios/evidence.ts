@@ -1,5 +1,4 @@
 import type { ComposeDashboardOutput } from "@/server/albert/tools/composeDashboard";
-import { buildRapportMarkdown } from "@/server/albert/markdown/buildRapportMarkdown";
 import type { ObservedToolCall } from "../types";
 import type { EvalProfile } from "../world";
 import type { GroundTruth } from "./truth";
@@ -16,7 +15,7 @@ export type Evidence = {
   currentTerritory: string;
   /** Texte de la réponse dans le chat. */
   answer: string;
-  /** Ce que lit le juge : texte, rapport rendu, ou dashboard décrit + texte. */
+  /** Ce que lit le juge : texte, encart rédigé + texte, ou dashboard décrit + texte. */
   matter: string;
   dashboard: ComposeDashboardOutput | null;
   toolCalls: ObservedToolCall[];
@@ -28,17 +27,17 @@ export type Evidence = {
   /** Codes des territoires que le tableau doit contenir, pour les comparaisons. */
   tableTerritories: string[];
   /**
-   * Les tours qui précèdent la demande, dans l'ordre : un rapport se juge
-   * contre la conversation qu'il reprend. Vide pour un tour isolé.
+   * Les tours qui précèdent la demande, dans l'ordre : une question de suivi
+   * se juge contre la conversation qu'elle reprend. Vide pour un tour isolé.
    */
   conversation: { question: string; answer: string }[];
 };
 
 /**
- * Ce que le scénario livre : une réponse dans le chat, un rapport exporté, ou
+ * Ce que le scénario livre : une réponse dans le chat, un encart rédigé, ou
  * un tableau de bord composé.
  */
-export type MatterKind = "text" | "dashboard" | "rapport" | "encart";
+export type MatterKind = "text" | "dashboard" | "encart";
 
 export const OUTILS_ENCART = [
   "rediger_synthese_territoire",
@@ -86,21 +85,6 @@ export function extractMatter({
   toolCalls: ObservedToolCall[];
   toolResults: ToolResult[];
 }): { matter: string; dashboard: ComposeDashboardOutput | null } {
-  if (kind === "rapport") {
-    const exportCall = toolCalls.find(
-      (call) => call.toolName === "export_rapport",
-    );
-    const rapport = exportCall
-      ? `RAPPORT EXPORTÉ :\n${buildRapportMarkdown(
-          exportCall.input as Parameters<typeof buildRapportMarkdown>[0],
-        )}`
-      : "AUCUN RAPPORT EXPORTÉ : l'assistant n'a pas appelé l'outil d'export.";
-    return {
-      matter: `${rapport}\n\nRÉPONSE DU CHAT :\n${text}`,
-      dashboard: null,
-    };
-  }
-
   if (kind === "dashboard") {
     const result = toolResults.find(
       (toolResult) => toolResult.toolName === "create_dashboard",

@@ -172,27 +172,6 @@ describe("deriverEtatAssistant", () => {
     expect(etat).toBe("compose-le-tableau-de-bord");
   });
 
-  test("génère le rapport pendant export_rapport", () => {
-    // Given
-    const dernier = message([
-      {
-        type: "tool-export_rapport",
-        toolCallId: "appel-3",
-        state: "input-available",
-        input: { format: "pdf" },
-      },
-    ] as PiloteUIMessage["parts"]);
-
-    // When
-    const etat = deriverEtatAssistant({
-      message: dernier,
-      status: "streaming",
-    });
-
-    // Then
-    expect(etat).toBe("genere-le-rapport");
-  });
-
   test("consulte le centre d'aide quand l'outil du centre d'aide est en cours", () => {
     // Given
     const dernier = message([

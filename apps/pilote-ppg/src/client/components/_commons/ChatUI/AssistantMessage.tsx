@@ -14,7 +14,6 @@ import {
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
 import type { EtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
-import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { SignatureAssistant } from "@/components/_commons/ChatUI/SignatureAssistant";
 import {
   estSourcePart,
@@ -51,8 +50,6 @@ const encartEnAttente = ({
   termine: false,
 });
 
-const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
-
 export const AssistantMessage = memo(function AssistantMessage({
   message,
   isStreaming,
@@ -73,16 +70,6 @@ export const AssistantMessage = memo(function AssistantMessage({
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
   const consultationCentreAide = derniereConsultationCentreAide(parts);
-
-  const shouldHideText = parts.some((part) => {
-    const toolName = part.type.startsWith("tool-") ? part.type.slice(5) : null;
-    return (
-      toolName !== null &&
-      TOOLS_HIDING_TEXT.has(toolName) &&
-      "state" in part &&
-      part.state === "output-available"
-    );
-  });
 
   const hasText = parts.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
@@ -177,24 +164,12 @@ export const AssistantMessage = memo(function AssistantMessage({
 
       {parts.map((part, index) => {
         if (part.type === "text") {
-          if (shouldHideText || part.text.length === 0) return null;
+          if (part.text.length === 0) return null;
           return (
             <AssistantMessageText
               key={index}
               streaming={isStreaming && index === lastTextIndex}
               text={part.text}
-            />
-          );
-        }
-
-        if (part.type === "tool-export_rapport") {
-          if (part.state === "output-error") return null;
-          return (
-            <ExportRapportDownload
-              isStreaming={isStreaming}
-              key={index}
-              llmCallId={llmCallIdOf(message)}
-              part={part}
             />
           );
         }

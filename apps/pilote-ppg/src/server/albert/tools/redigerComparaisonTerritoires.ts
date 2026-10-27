@@ -67,13 +67,13 @@ export function createRedigerComparaisonTerritoiresTool({
 Utilise-le pour : une comparaison générique de territoires. Par exemple « Compare le Nord et la Gironde », « Bretagne ou Normandie, qui avance le mieux ? » (territoire_codes) ; « Compare la Bretagne avec ses départements », « Fais-moi la synthèse de la Bretagne et ses départements » (territoire_code et include_sous_territoires).
 Ne l'utilise pas pour :
 - une demande qui nomme son critère (« compare les taux d'avancement », « les chantiers en retard ») → les outils de données ;
-- un rapport ou un téléchargement, même « de synthèse » → export_rapport ;
 - un critère précis (« compare le taux d'avancement de la Bretagne et de la Normandie ») ou une comparaison de jalons → get_taux_avancement_territoire ;
 - « Où en sont l'Occitanie et ses départements ? » → get_taux_avancement_territoire avec include_sous_territoires ;
 - un chantier ou un indicateur précis → les outils de données ;
 - un seul territoire → rediger_synthese_territoire ;
-- un rapport à télécharger → export_rapport ; un graphique → create_dashboard.
-L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu.`,
+- un graphique → create_dashboard.
+Un rapport ou un téléchargement de la synthèse passe aussi par cet outil : l'encart se télécharge depuis l'interface. Il collecte ses données lui-même : n'appelle pas en plus les outils de données pour la même demande.
+L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu ; elle peut rappeler que l'encart se télécharge.`,
       inputSchema: redigerComparaisonTerritoiresInputSchema,
       execute: async function* (
         { territoire_codes, territoire_code, jalon },

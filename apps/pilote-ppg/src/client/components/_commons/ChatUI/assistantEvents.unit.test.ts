@@ -236,21 +236,18 @@ const dashboardPart: PiloteUIMessage["parts"][number] = {
   output: { titre: "Synthèse", containers: [] },
 };
 
-const rapportPart = (
-  format: "markdown" | "pdf",
-): PiloteUIMessage["parts"][number] => ({
-  type: "tool-export_rapport",
-  toolCallId: `call-${format}`,
+const encartPart = (termine: boolean): PiloteUIMessage["parts"][number] => ({
+  type: "tool-rediger_synthese_territoire",
+  toolCallId: `call-encart-${termine}`,
   state: "output-available",
-  input: {
-    nom_fichier: "synthese",
-    titre: "Synthèse",
-    date: "20/10/2026",
-    resume: "Résumé",
-    format,
-    sections: [],
+  input: { territoire_code: "DEPT-59", jalon: 2025 },
+  output: {
+    type: "synthese",
+    jalon: 2025,
+    date_redaction: "2026-10-27",
+    markdown: "# Synthèse pour le Nord",
+    termine,
   },
-  output: { url: "https://pilote.example.org/rapport", format },
 });
 
 describe("copyExportNames", () => {
@@ -294,16 +291,12 @@ describe("exportsAvailableEvents", () => {
     ]);
   });
 
-  it("compte chaque export prêt dans la réponse", () => {
+  it("compte le téléchargement d'un encart rédigé, pas d'un encart en cours", () => {
     const events = exportsAvailableEvents({
       conversationId: "conv-1",
       message: {
         ...assistantMessage,
-        parts: [
-          ...assistantMessage.parts,
-          rapportPart("markdown"),
-          rapportPart("pdf"),
-        ],
+        parts: [...assistantMessage.parts, encartPart(true), encartPart(false)],
       },
     });
 
@@ -311,7 +304,6 @@ describe("exportsAvailableEvents", () => {
     expect(events).toEqual([
       { action: "view", name: "export.text", dimensions },
       { action: "view", name: "export.report_markdown", dimensions },
-      { action: "view", name: "export.report_pdf", dimensions },
     ]);
   });
 });

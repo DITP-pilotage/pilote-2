@@ -92,7 +92,7 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).toContain("« Compare les taux d'avancement");
   });
 
-  it("garde le rapport et le téléchargement sur l'export, même avec « synthèse »", () => {
+  it("fait d'un rapport un encart, que l'utilisateur télécharge", () => {
     // When
     const prompt = buildChatSystemPrompt({
       territoiresAccessibles: [],
@@ -101,7 +101,21 @@ describe("buildChatSystemPrompt", () => {
 
     // Then
     expect(prompt).toContain(
-      "« rapport », « télécharger », « exporter » : toujours un fichier à exporter, jamais un encart",
+      "« rapport », « télécharger », « exporter » une synthèse ou une comparaison : l'encart",
+    );
+    expect(prompt).not.toContain("export_rapport");
+  });
+
+  it("n'emprunte qu'un chemin par demande : l'encart ou les outils de données", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "soit l'encart, soit les outils de données, jamais les deux",
     );
   });
 
