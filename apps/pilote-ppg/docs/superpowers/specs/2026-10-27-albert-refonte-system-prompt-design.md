@@ -725,7 +725,7 @@ Changements :
 - `get_chantier_commentaires` renvoie `chantier_nom` : la réponse citait le
   chantier par son seul code (« Format des chantiers ») ;
 - le sous-agent reçoit l'écart déjà écrit (« −15 points ») à recopier tel quel,
-  plus les drapeaux `est_en_retard` et `est_en_difficulte` (forcés à faux hors
+  sans les drapeaux `est_en_retard` et `est_en_difficulte` (forcés à faux hors
   accès complet) ni les commentaires détaillés ;
 - lexique : « rapport », « télécharger », « exporter » mènent toujours à
   l'export ; une comparaison qui nomme son critère reste hors encart ; « à
