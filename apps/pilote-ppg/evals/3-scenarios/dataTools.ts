@@ -20,10 +20,12 @@ export function createDataTools({ user }: { user: EvalUser }) {
       territoiresAccessibles,
       chantiersAccessibles,
     }),
-    getIndicateurs: container.resolve("createGetChantierIndicateursTool")(),
+    getIndicateurs: container.resolve("createGetChantierIndicateursTool")({
+      chantiersAccessibles,
+    }),
     getChantierCommentaires: container.resolve(
       "createGetChantierCommentairesTool",
-    )({ territoiresAccessibles }),
+    )({ territoiresAccessibles, chantiersAccessibles }),
   };
 }
 
