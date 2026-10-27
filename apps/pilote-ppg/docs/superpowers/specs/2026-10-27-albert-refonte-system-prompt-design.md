@@ -347,6 +347,8 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 | 2 – résolution, sous-territoires, exemples | `9805829` | 90 % | 93 % | 2 853 | base de l'étape 3 |
 | 3 – régressions, courbe iso prod, restriction | `dead2dc` | 91 % | 94 % | 2 928 | base de l'étape 4 |
 | 4 – encart de synthèse et de comparaison | `2b09817` | 88 % | 93 % | 3 055 | déclencheurs à resserrer |
+| 4 bis – evals assainies, code de l'étape 4 | `d8469e2` | 90 % | 94 % | – | nouvelle base |
+| 5 – données de l'encart, déclencheurs | `feb9b4d` | 91 % | 96 % | 3 274 | base de l'étape 6 |
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
@@ -694,3 +696,81 @@ Contrôles de l'encart :
    retard est en retard, quels que soient les drapeaux masqués.
 4. Résolution des territoires dans le code (entrée 1 de l'étape 4, toujours
    ouverte).
+
+### Étape 4 bis : evals assainies (`d8469e2`)
+
+Même code que l'étape 4 ; seules les evals changent, pour que l'étape 5 se
+compare à des attendus justes :
+
+- les trois cas de numéros de territoire (« le 84 », « la région 84 », « le
+  département 84 ») sortent de la suite `search_territoires`, gardés non joués
+  dans `numerosTerritoires.enAttente.ts` jusqu'à la décision sur la résolution ;
+- les questions des chantiers signalés ne parlent plus de météo (D1) ;
+- « Récap des chantiers sur l'Auvergne » et « Compare 35 avec les autres
+  départements de Bretagne » attendent l'encart (synthèse ou comparaison
+  générique) ; « à surveiller » reste les chantiers signalés.
+
+Mesure (`evals/resultats-etape-4-bis-complet.json`) : niveau 2 89,8 %, niveau 3
+93,8 % (94,0 % à grille constante), contrôles de l'encart 93,8 %, 41 échecs
+répétés. 3 essais du centre d'aide perdus sur la limite de débit de l'API
+Albert (200 requêtes par minute) : suite rejouée seule.
+
+À code égal, une dizaine de couples cas-critère basculent d'un run à l'autre :
+un écart de ±5 échecs répétés n'est pas significatif.
+
+### Étape 5 : données de l'encart, déclencheurs (`feb9b4d`)
+
+Changements :
+
+- `get_chantier_commentaires` renvoie `chantier_nom` : la réponse citait le
+  chantier par son seul code (« Format des chantiers ») ;
+- le sous-agent reçoit l'écart déjà écrit (« −15 points ») à recopier tel quel,
+  plus les drapeaux `est_en_retard` et `est_en_difficulte` (forcés à faux hors
+  accès complet) ni les commentaires détaillés ;
+- lexique : « rapport », « télécharger », « exporter » mènent toujours à
+  l'export ; une comparaison qui nomme son critère reste hors encart ; « à
+  surveiller » désigne les chantiers signalés ; « récap » ouvre l'encart ;
+- trois exemples (taux comparés, « à surveiller », synthèse d'un chantier avec
+  ses commentaires) et les mêmes exclusions dans les descriptions des outils
+  d'encart.
+
+Mesure (`evals/resultats-etape-5-complet.json`, 2 essais de `search_chantiers`
+rejoués après la limite de débit), comparée à l'étape 4 bis :
+
+- Niveau 2 : 89,8 % → 91,2 %. Niveau 3 : 93,8 % → 95,9 % (95,8 % à grille
+  constante).
+- Contrôles de l'encart : 93,8 % → 99,3 %, plus aucun échec répété : le signe
+  de l'écart et l'accès restreint sont réglés sans basculer vers le squelette.
+- Tokens du premier appel : 3 274.
+- Échecs répétés : 41 → 35, dont 21 résolus et 15 nouveaux.
+
+Résolus : la comparaison des taux d'avancement (Finistère, département 84 :
+12), « Compare le taux d'avancement de la Bretagne et de la Normandie », « à
+surveiller », « Fais-moi un rapport sur la Gironde », « Format des chantiers »
+des commentaires restitués, « Chiffres exacts » des rapports.
+
+Toujours en échec :
+
+- « Compare les taux d'avancement de Bretagne avec Pays de la Loire » : le bon
+  outil, mais 5 critères de fond (tableau, territoires, position, écarts,
+  chiffres) ;
+- « Crée un rapport de synthèse du territoire Bretagne… », « Fais-moi un
+  rapport sur la Bretagne », « Je voudrais télécharger la situation » : l'export
+  n'est toujours pas systématique ;
+- la synthèse d'un chantier (CH-005) ne lit pas ses commentaires malgré
+  l'exemple ;
+- la synthèse des commentaires : « Format des chantiers » et « Actions
+  identifiées » (critère jugé instable depuis le 14/10).
+
+Nouveaux, à confirmer au prochain run (critères instables à code égal) :
+« Pas d'opinion » sur deux synthèses, la synthèse des difficultés du
+Finistère, « Où en sont l'Occitanie et ses départements ? » qui ouvre l'encart,
+la cartographie par région.
+
+### Entrées de l'étape 6
+
+1. L'export d'un rapport : trois cas échouent encore ; regarder ce que
+   l'agent appelle à la place (encart, ou données sans export).
+2. La synthèse d'un chantier qui ne lit pas ses commentaires.
+3. La comparaison de taux Bretagne / Pays de la Loire : critères de fond.
+4. La résolution des numéros de territoire (cas en attente).
