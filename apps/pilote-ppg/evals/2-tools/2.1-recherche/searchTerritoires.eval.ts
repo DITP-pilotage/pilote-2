@@ -8,33 +8,16 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * l'utilisateur désigne par son nom (« le Vaucluse » plutôt que DEPT-84) ou par
  * un numéro, le plus souvent avant de le passer à un autre outil.
  *
- * Tout code de région est aussi un numéro de département : REG-84 est
- * Auvergne-Rhône-Alpes, DEPT-84 le Vaucluse. Un numéro seul désigne le
- * département (D3) ; il passe quand même par la recherche pour obtenir le
- * code. Les cas « région 84 »
- * et « département 84 » vérifient que la précision de maille ne dispense pas
- * l'agent de la recherche. Le code finalement transmis relève du niveau 3.
+ * Les territoires désignés par un numéro (« le 84 ») sont mis de côté dans
+ * `numerosTerritoires.enAttente.ts` (PIL-1900, étape 5) : leur traitement
+ * attend la décision sur la résolution des territoires dans le code. Le code
+ * finalement transmis relève du niveau 3.
  */
 
 const CASES: ToolCase[] = [
   {
     question: "Quel est le taux d'avancement du Vaucluse ?",
     reason: "territoire désigné par son nom : le code est à résoudre",
-    expected: [{ toolName: "search_territoires" }],
-  },
-  {
-    question: "Quel est le taux d'avancement dans le 84 ?",
-    reason: "numéro seul : le département 84 (D3), code à résoudre",
-    expected: [{ toolName: "search_territoires" }],
-  },
-  {
-    question: "Quel est le taux d'avancement de la région 84 ?",
-    reason: "numéro précisé « région » : la recherche reste nécessaire",
-    expected: [{ toolName: "search_territoires" }],
-  },
-  {
-    question: "Quel est le taux d'avancement du département 84 ?",
-    reason: "numéro précisé « département » : la recherche reste nécessaire",
     expected: [{ toolName: "search_territoires" }],
   },
   {

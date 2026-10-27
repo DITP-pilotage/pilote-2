@@ -29,11 +29,6 @@ const CASES: ToolCase[] = [
     expected: [{ toolName: "get_chantiers" }],
   },
   {
-    question: "Récap des chantiers sur l'Auvergne",
-    reason: "« récap » n'est pas un mot-clé de synthèse : pas de gabarit",
-    expected: [{ toolName: "get_chantiers" }],
-  },
-  {
     question: "Quels chantiers en retard sur la Corse ?",
     reason: "« en retard » → view en_retard",
     expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],

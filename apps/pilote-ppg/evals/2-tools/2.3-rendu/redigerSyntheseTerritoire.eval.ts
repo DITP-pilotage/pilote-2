@@ -40,6 +40,11 @@ const CASES: ToolCase[] = [
       },
     ],
   },
+  {
+    question: "Récap des chantiers sur l'Auvergne",
+    reason: "« récap » d'un territoire : une synthèse générique (étape 5)",
+    expected: [{ toolName: "rediger_synthese_territoire" }],
+  },
   ...DEMANDES_PRECISES,
 ];
 
