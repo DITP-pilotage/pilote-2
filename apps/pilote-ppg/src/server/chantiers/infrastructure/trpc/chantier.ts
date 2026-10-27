@@ -199,7 +199,7 @@ export const chantierRouter = createTRPCRouter({
       }
       return getContainer("chantiers")
         .resolve("recupererTauxAvancementTerritoireQuery")
-        .execute(input);
+        .execute({ ...input, habilitations: ctx.session.habilitations });
     }),
   recupererStatistiquesAvancementTousChantiersPublies: protectedProcedure
     .input(

@@ -1,4 +1,4 @@
-import { $Enums } from "@prisma/client";
+import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { Inject } from "@/server/chantiers/module";
 import { determineMaille } from "@/shared/maille/determineMaille";
 import { AgregatParTerritoire } from "@/server/chantiers/domain/agregateurListeChantiers/agregateur.interface";
@@ -19,15 +19,19 @@ export const extraireTauxAvancementTerritoire = (
 export class RecupererTauxAvancementTerritoireQuery {
   constructor(
     private readonly deps: Inject<
-      "prisma" | "agregerAvancementsChantiersUseCase"
+      "getChantiersHabilitesQuery" | "agregerAvancementsChantiersUseCase"
     >,
   ) {}
 
   async execute(params: {
     territoireCode: string;
     jalon: number;
+    habilitations: Habilitations;
   }): Promise<RecupererTauxAvancementTerritoireResult> {
-    const agregat = await this.agregerChantiersPublies(params.jalon);
+    const agregat = await this.agregerChantiersHabilites(
+      params.habilitations,
+      params.jalon,
+    );
     return this.construireResultat(
       agregat,
       params.territoireCode,
@@ -38,23 +42,23 @@ export class RecupererTauxAvancementTerritoireQuery {
   async executePourTerritoires(params: {
     territoireCodes: string[];
     jalon: number;
+    habilitations: Habilitations;
   }): Promise<RecupererTauxAvancementTerritoireResult[]> {
-    const agregat = await this.agregerChantiersPublies(params.jalon);
+    const agregat = await this.agregerChantiersHabilites(
+      params.habilitations,
+      params.jalon,
+    );
     return params.territoireCodes.map((territoireCode) =>
       this.construireResultat(agregat, territoireCode, params.jalon),
     );
   }
 
-  private async agregerChantiersPublies(
+  private async agregerChantiersHabilites(
+    habilitations: Habilitations,
     jalon: number,
   ): Promise<AgregatParTerritoire> {
-    const prisma = this.deps.prisma.getInstance();
-
-    const publishedChantiers = await prisma.chantier_identite.findMany({
-      where: { statut: $Enums.type_statut.PUBLIE },
-      select: { id: true },
-    });
-    const chantierIds = publishedChantiers.map((chantier) => chantier.id);
+    const chantierIds =
+      await this.deps.getChantiersHabilitesQuery.execute(habilitations);
 
     const { agregat } = await this.deps.agregerAvancementsChantiersUseCase.run(
       chantierIds,

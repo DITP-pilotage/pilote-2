@@ -1,4 +1,3 @@
-import { $Enums } from "@prisma/client";
 import { AvancementsStatistiques } from "@/client/components/_commons/Avancements/Avancements.interface";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/shared/maille/Maille.interface";
@@ -19,7 +18,8 @@ function determineMailleRepartition(territoireCode: string): Maille {
 export class RecupererStatistiquesAvancementTousChantiersPubliesQuery {
   constructor(
     private readonly deps: Inject<
-      "prisma" | "récupérerStatistiquesAvancementChantiersUseCase"
+      | "getChantiersHabilitesQuery"
+      | "récupérerStatistiquesAvancementChantiersUseCase"
     >,
   ) {}
 
@@ -28,13 +28,9 @@ export class RecupererStatistiquesAvancementTousChantiersPubliesQuery {
     jalon: number;
     habilitations: Habilitations;
   }): Promise<RecupererStatistiquesAvancementTousChantiersPubliesResult> {
-    const prisma = this.deps.prisma.getInstance();
-
-    const publishedChantiers = await prisma.chantier_identite.findMany({
-      where: { statut: $Enums.type_statut.PUBLIE },
-      select: { id: true },
-    });
-    const chantierIds = publishedChantiers.map((chantier) => chantier.id);
+    const chantierIds = await this.deps.getChantiersHabilitesQuery.execute(
+      params.habilitations,
+    );
 
     const mailleRepartition = determineMailleRepartition(params.territoireCode);
 
