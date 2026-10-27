@@ -68,52 +68,115 @@ function habilitationsSur({
  * Identifiants stables et lisibles : un cas d'eval qui échoue doit pouvoir se
  * rejouer à la main. Pas d'aléatoire : le monde est vidé puis resemé à chaque
  * fichier (`seedWorldPerFile`).
+ *
+ * Chaque chantier a un ministère porteur : l'application écarte les chantiers
+ * sans ministère (`GetChantiersHabilitesQuery`), comme en production.
  */
 const CHANTIERS = [
-  { id: "CH-001", nom: "Lutter contre les violences sexistes et sexuelles" },
+  {
+    id: "CH-001",
+    nom: "Lutter contre les violences sexistes et sexuelles",
+    ministeres: [
+      "Ministère chargé de l'Égalité entre les femmes et les hommes",
+    ],
+  },
   {
     id: "CH-002",
     nom: "Protéger les femmes victimes de violences conjugales",
+    ministeres: [
+      "Ministère chargé de l'Égalité entre les femmes et les hommes",
+    ],
   },
   {
     id: "CH-003",
     nom: "Renforcer l'égalité professionnelle entre les femmes et les hommes",
+    ministeres: ["Ministère du Travail"],
   },
   {
     id: "CH-004",
     nom: "Améliorer l'accès aux soins dans les déserts médicaux",
+    ministeres: ["Ministère de la Santé"],
   },
-  { id: "CH-005", nom: "Réduire les délais de passage aux urgences" },
-  { id: "CH-006", nom: "Développer la prévention en santé" },
-  { id: "CH-007", nom: "Rénover énergétiquement les logements privés" },
-  { id: "CH-008", nom: "Lutter contre l'habitat indigne" },
-  { id: "CH-009", nom: "Produire davantage de logements sociaux" },
+  {
+    id: "CH-005",
+    nom: "Réduire les délais de passage aux urgences",
+    ministeres: ["Ministère de la Santé"],
+  },
+  {
+    id: "CH-006",
+    nom: "Développer la prévention en santé",
+    ministeres: ["Ministère de la Santé"],
+  },
+  {
+    id: "CH-007",
+    nom: "Rénover énergétiquement les logements privés",
+    ministeres: ["Ministère du Logement"],
+  },
+  {
+    id: "CH-008",
+    nom: "Lutter contre l'habitat indigne",
+    ministeres: ["Ministère du Logement"],
+  },
+  {
+    id: "CH-009",
+    nom: "Produire davantage de logements sociaux",
+    ministeres: ["Ministère du Logement"],
+  },
   {
     id: "CH-010",
     nom: "Améliorer l'accessibilité des lieux publics aux personnes handicapées",
+    ministeres: ["Ministère chargé des Personnes handicapées"],
   },
   {
     id: "CH-011",
     nom: "Faciliter l'accès à l'emploi des personnes en situation de handicap",
+    ministeres: ["Ministère du Travail"],
   },
-  { id: "CH-012", nom: "Développer l'apprentissage" },
+  {
+    id: "CH-012",
+    nom: "Développer l'apprentissage",
+    ministeres: ["Ministère du Travail"],
+  },
   {
     id: "CH-013",
     nom: "Accompagner les demandeurs d'emploi de longue durée",
+    ministeres: ["Ministère du Travail"],
   },
-  { id: "CH-014", nom: "Réduire la mortalité sur les routes" },
-  { id: "CH-015", nom: "Développer les énergies renouvelables" },
+  {
+    id: "CH-014",
+    nom: "Réduire la mortalité sur les routes",
+    ministeres: ["Ministère de l'Intérieur"],
+  },
+  {
+    id: "CH-015",
+    nom: "Développer les énergies renouvelables",
+    ministeres: ["Ministère de la Transition écologique"],
+  },
   {
     id: "CH-016",
     nom: "Réduire les émissions de gaz à effet de serre des transports",
+    ministeres: ["Ministère de la Transition écologique"],
   },
-  { id: "CH-017", nom: "Dédoubler les classes en éducation prioritaire" },
+  {
+    id: "CH-017",
+    nom: "Dédoubler les classes en éducation prioritaire",
+    ministeres: ["Ministère de l'Éducation nationale"],
+  },
   {
     id: "CH-018",
     nom: "Améliorer la maîtrise des savoirs fondamentaux à l'école",
+    ministeres: ["Ministère de l'Éducation nationale"],
   },
-  { id: "CH-019", nom: "Déployer le très haut débit sur tout le territoire" },
-  { id: "CH-020", nom: "Lutter contre l'illectronisme" },
+  {
+    id: "CH-019",
+    nom: "Déployer le très haut débit sur tout le territoire",
+    ministeres: ["Ministère chargé du Numérique"],
+  },
+  {
+    id: "CH-020",
+    nom: "Lutter contre l'illectronisme",
+    ministeres: ["Ministère chargé du Numérique"],
+  },
 ];
 
 /**
