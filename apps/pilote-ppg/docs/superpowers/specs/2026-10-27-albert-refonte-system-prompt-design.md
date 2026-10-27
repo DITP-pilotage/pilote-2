@@ -652,7 +652,7 @@ Mesure (`evals/resultats-etape-4.json`, aucun délai de l'API Albert) :
 - Groupe `encart`, rapporté à part : 90,2 %, 4 échecs répétés.
 - Tokens du premier appel : 2 928 → 3 055.
 - Météo citée sans être demandée : 0 ; balise HTML : 0 ; langue : 0 échec.
-- Échecs répétés (grilles existantes) : 36 → 55, dont 13 résolus et 32
+- Échecs répétés (grilles existantes) : 36 → 55, dont 15 résolus et 34
   nouveaux.
 
 Résolus par l'encart : la synthèse d'un territoire (3), la synthèse des
