@@ -489,15 +489,34 @@ Suite · cas · critère · essais en échec, sur le prompt d'origine
 
 ### Entrées de l'étape 2
 
-Par ordre d'effet mesuré, avec le levier le plus local :
+Décision d'Antoine (27/10) : la règle des sous-territoires est essentielle, on
+la remet. Le `.describe` du paramètre seul ne suffit pas.
 
-1. Sous-territoires (4 nouveaux) : `.describe` d'`include_sous_territoires`.
-2. Choix d'outil (6 nouveaux) : la description du tool concerné, à commencer
-   par `get_chantiers_signales` (plusieurs catégories) et `create_dashboard`
-   (courbe).
-3. Restriction d'accès (1 nouveau) : un champ de restriction dans le résultat
-   de `get_chantiers`, puis le statut commun si d'autres tools sont touchés.
-4. À surveiller sans levier pour l'instant : les `<br>` dans les tableaux (2
-   essais, aucun cas en échec répété) ; `search_territoires`, en échec depuis
-   la ligne de base.
+Ce que l'agent fait réellement sur les cas en échec, et le levier retenu, par
+effet attendu sur les scores :
 
+| # | Échec mesuré | Ce que fait l'agent | Levier |
+|---|---|---|---|
+| 1 | Sous-territoires : `get_taux_avancement_territoire` « un seul appel sur le parent » (2/3), synthèse de Bretagne et ses départements (outils, tableau comparatif, analyse des écarts) | Interroge REG-94 puis DEPT-2A et DEPT-2B un par un | Une règle dans la méthode du prompt (« un territoire et ses sous-territoires : un seul appel sur le parent, par jalon ») et une ligne « Utilise-le pour » dans les trois tools. Le test du prompt qui interdit `include_sous_territoires` change avec |
+| 2 | Analyse des écarts : 8 cas de comparaison (Bretagne et ses départements, deux régions, région face à un département, comparaison quantitative) | Donne les taux et la position face à la médiane, sans dire qui est devant et de combien de points | Une ligne dans « Rédiger » : une comparaison donne un tableau, puis qui est devant, qui est derrière et de combien de points |
+| 3 | Territoires du tableau : « piège du 84 » (Vaucluse), comparaison quantitative | Écrit « département 84 » ou le code : `get_taux_avancement_territoire` ne renvoie pas le nom du territoire | La donnée : ajouter `territoire_nom` au résultat |
+| 4 | `create_dashboard` « courbe » (3/3) | Appelle `get_evolution_indicateur` : sa description revendique « la courbe d'un indicateur » | La description : la courbe affichée relève de `create_dashboard`, `get_evolution_indicateur` donne les valeurs |
+| 5 | Synthèse des difficultés : chantiers attendus (3 cas) | N'appelle pas la vue `en_retard` (A5) | Une ligne de lexique : « les difficultés d'un territoire » = chantiers en retard et en difficulté ; si ça ne suffit pas, le tool composite (D5) |
+| 6 | Rapport complet : export appelé, réponse du chat (inchangés) | Rédige le rapport dans le chat sans appeler `export_rapport` | Lexique ou description : « rapport » désigne toujours un fichier exporté |
+| 7 | Clarification « trois chantiers logement » (2/3), signalés « plusieurs catégories, retard compris » (3/3) | Choisit un chantier sans demander ; appelle `get_chantiers` avant `get_chantiers_signales` | Les descriptions : `search_*` « plusieurs candidats plausibles → clarify_with_choices » (consigne perdue avec les `_output_instructions`) ; un exemple « en retard ou sans … renseignée → cet outil » dans les signalés |
+| 8 | `search_chantiers` « politique prioritaire » (3/3) | N'appelle aucun outil | Lexique : « politique prioritaire » = chantier |
+| 9 | Format des chantiers (4 cas) | Cite « CH-005 » sans son nom | À mesurer après les leviers 1 à 8 ; candidat : un champ « CH-XXX — Nom » dans les résultats |
+| 10 | Restriction d'accès : synthèse des difficultés hors périmètre | Rien ne signale les territoires restreints ; drapeaux forcés à faux | La donnée : un champ de restriction dans le résultat de `get_chantiers` (revue, Important 1) |
+
+À corriger côté evals plutôt que côté agent :
+
+- `search_territoires` (4 cas, en échec depuis la ligne de base) : l'agent
+  résout seul « le Vaucluse » et « le 84 » en DEPT-84, ce qui est juste (D3).
+  L'attente « doit passer par la recherche » est à revoir.
+- `search_indicateurs` « chantier connu » : l'agent lit directement les
+  indicateurs du chantier. C'est défendable ; à trancher avant d'y toucher.
+
+À ne pas poursuivre : les critères que la calibration juge peu fiables
+(« Actions identifiées », « Une synthèse par chantier », « Trois volets »).
+
+À surveiller sans levier : les `<br>` dans les tableaux (2 essais).
