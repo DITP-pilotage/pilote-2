@@ -245,10 +245,11 @@ objectifs, « non à jour » et « en retard ».
 ### Règles du jeu
 
 - **Mesure** : un run complet des niveaux 2 et 3 (3 essais par cas, cache
-  coupé, environ un quart d'heure), comparé au run précédent grâce à
-  l'historique d'`eval:rapport`. S'y ajoute la taille du contexte : les tokens
-  d'entrée du premier appel sur une question simple, soit le prompt et les
-  schémas des tools.
+  coupé, environ un quart d'heure), comparé au run précédent par les moyennes
+  de chaque niveau et la liste des échecs répétés, relevées avec jq et
+  consignées dans le journal. S'y ajoute la taille du contexte : les tokens
+  d'entrée du premier appel du cas « Bonjour, tu peux m'aider ? », soit le
+  prompt et les schémas des tools.
 - **Échec qui compte** : un cas en échec sur au moins 2 essais sur 3. Un échec
   sur un seul essai reste du bruit tant qu'il ne se répète pas.
 - **Pas de cas en échec, pas de règle.** Une complexité n'entre que pour
@@ -267,17 +268,20 @@ objectifs, « non à jour » et « en retard ».
 ### Étape 0 : ligne de base
 
 But : savoir d'où on part, avec des critères qui décrivent la cible et non
-l'ancien prompt.
+l'ancien prompt. Plan détaillé des étapes 0 et 1 :
+`../plans/2026-10-27-albert-refonte-etapes-0-1.md`.
 
 - **0.a** Aligner les critères existants sur les décisions : plus de gabarit
   (« Écart et météo », `COMMENTAIRES_DU_GABARIT`), plus de météo (D1),
   commentaires fidèles (D2), « le 84 » compris comme le département (D3).
   Sans cet alignement, l'étape 1 paraîtrait régresser par construction.
 - **0.b** Ajouter le minimum de cas pour ce que rien ne couvre aujourd'hui :
-  - le cloisonnement : un tableau demandé sur une liste de chantiers, un résumé
-    demandé des commentaires ;
-  - le critère d'acceptation du ticket : un dashboard sans chantier présenté
-    comme un succès.
+  - le cloisonnement : un tableau demandé sur une liste de chantiers, et des
+    commentaires demandés sans demande de synthèse (D2). Le résumé demandé est
+    déjà couvert par le scénario « Synthèse des commentaires » ;
+  - deux critères d'acceptation du ticket : un dashboard sans chantier
+    présenté comme un succès, et des réponses en français (un critère du
+    socle).
 - **0.c** Un run sur le prompt actuel, qui sert de ligne de base.
 
 ### Étape 1 : réécriture minimale
