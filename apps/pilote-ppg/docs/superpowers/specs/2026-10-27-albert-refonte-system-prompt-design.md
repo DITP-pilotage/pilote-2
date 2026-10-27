@@ -342,4 +342,71 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 
 | Étape | Commit | Niveau 2 | Niveau 3 | Contexte (tokens) | Décision |
 |---|---|---|---|---|---|
-| 0 – ligne de base | | | | | |
+| 0 – ligne de base | `edc45d4` | 91 % | 91 % | 9 265 | référence |
+
+Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
+`3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
+« Bonjour, tu peux m'aider ? », identiques sur les trois essais ; ce cas
+n'expose pas encore `create_dashboard` ni `export_rapport`.
+
+### Échecs répétés de la ligne de base
+
+Suite · cas · critère · essais en échec, sur le prompt d'origine
+(44 lignes) :
+
+```
+3.4 · Forme de la réponse · Tableau demandé · Tableau demandé sur une liste de chantiers : le prompt actuel l'interdit · Chantiers en retard dans le tableau · 3/3
+3.4 · Forme de la réponse · Tableau demandé · Tableau demandé sur une liste de chantiers : le prompt actuel l'interdit · Outils attendus · 2/3
+3.4 · Forme de la réponse · Tableau demandé · Tableau demandé sur une liste de chantiers : le prompt actuel l'interdit · Tableau · 3/3
+3.2 · Comparaison · Comparer avec les autres départements de Bretagne · Message envoyé tel quel · Analyse des écarts · 2/3
+3.2 · Comparaison · Comparer Bretagne avec ses départements · Message envoyé tel quel · Analyse des écarts · 3/3
+3.1 · Synthèse · Chantiers en retard et leurs indicateurs · Coordinateur · Libellés météo · 2/3
+2.1 · Recherche · search_territoires · numéro seul : le département 84 (D3), code à résoudre · Outils attendus · 3/3
+2.1 · Recherche · search_territoires · numéro précisé « région » : la recherche reste nécessaire · Outils attendus · 3/3
+2.1 · Recherche · search_territoires · territoire désigné par son nom : le code est à résoudre · Outils attendus · 3/3
+2.1 · Recherche · search_territoires · numéro précisé « département » : la recherche reste nécessaire · Outils attendus · 3/3
+3.2 · Comparaison · Comparaison quantitative des territoires · Département du périmètre · Analyse des écarts · 3/3
+3.2 · Comparaison · Comparaison quantitative des territoires · Région hors périmètre : le taux reste visible · Analyse des écarts · 3/3
+3.2 · Comparaison · Comparaison quantitative des territoires · Piège du 84 : DEPT-84, Vaucluse · Analyse des écarts · 3/3
+3.2 · Comparaison · Comparaison quantitative des territoires · Piège du 84 : DEPT-84, Vaucluse · Territoires du tableau · 3/3
+2.1 · Recherche · search_chantiers · thématique d'indicateur : search_chantiers toléré pour scoper la recherche · Outils attendus · 3/3
+2.3 · Rendu · export_rapport · scénario de l'écran d'accueil, format Markdown demandé · Outils attendus · 2/3
+3.2 · Comparaison · Comparer avec un autre territoire · Une région face à son département : deux médianes de mailles différentes · Analyse des écarts · 3/3
+3.2 · Comparaison · Comparer avec un autre territoire · Deux régions · Analyse des écarts · 3/3
+3.2 · Comparaison · Comparer avec un autre territoire · Piège du 84 : REG-84, Auvergne-Rhône-Alpes · Analyse des écarts · 3/3
+3.1 · Synthèse · Synthèse des difficultés d'un territoire · Trou complété par le territoire courant · Chantiers attendus · 2/3
+3.1 · Synthèse · Synthèse des difficultés d'un territoire · Un département du périmètre · Chantiers attendus · 3/3
+3.1 · Synthèse · Synthèse des difficultés d'un territoire · Un département du périmètre · Outils attendus · 3/3
+3.1 · Synthèse · Synthèse des difficultés d'un territoire · Hors périmètre : commentaires masqués, restriction à signaler · Chantiers attendus · 3/3
+3.1 · Synthèse · Synthèse des difficultés d'un territoire · Hors périmètre : commentaires masqués, restriction à signaler · Outils attendus · 2/3
+3.1 · Synthèse · Rapport complet (Markdown) · Message envoyé tel quel · Export appelé · 2/3
+3.1 · Synthèse · Rapport complet (Markdown) · Message envoyé tel quel · Outils attendus · 2/3
+3.1 · Synthèse · Rapport complet (Markdown) · Message envoyé tel quel · Réponse du chat · 3/3
+3.1 · Synthèse · Rapport complet (Markdown) · Export d'une synthèse faite au tour précédent : le rapport doit la reprendre · Chiffres exacts · 2/3
+3.1 · Synthèse · Rapport complet (Markdown) · Export d'une synthèse faite au tour précédent : le rapport doit la reprendre · Fidèle à la conversation · 3/3
+3.1 · Synthèse · Synthèse d'un chantier sur un territoire · Coordinateur : CH-XXX complété, territoire pré-rempli · Format des chantiers · 2/3
+3.1 · Synthèse · Synthèse d'un chantier sur un territoire · Coordinateur : CH-XXX complété, territoire pré-rempli · Libellés météo · 3/3
+3.1 · Synthèse · Synthèse d'un chantier sur un territoire · Coordinateur : CH-XXX complété, territoire pré-rempli · Outils attendus · 3/3
+3.1 · Synthèse · Synthèse d'un chantier sur un territoire · Coordinateur : CH-XXX complété, territoire pré-rempli · Restriction signalée · 2/3
+3.1 · Synthèse · Synthèse d'un chantier sur un territoire · DITP : CH-XXX et NOM_TERRITOIRE complétés · Format des chantiers · 3/3
+3.1 · Synthèse · Synthèse d'un chantier sur un territoire · DITP : CH-XXX et NOM_TERRITOIRE complétés · Libellés météo · 3/3
+3.1 · Synthèse · Synthèse d'un chantier sur un territoire · DITP : CH-XXX et NOM_TERRITOIRE complétés · Outils attendus · 3/3
+3.1 · Synthèse · Synthèse des commentaires d'un/de plusieurs chantiers · Un seul chantier · Format des chantiers · 2/3
+3.1 · Synthèse · Synthèse des commentaires d'un/de plusieurs chantiers · Un seul chantier · Pas de recopie · 3/3
+3.1 · Synthèse · Synthèse des commentaires d'un/de plusieurs chantiers · Deux chantiers commentés · Format des chantiers · 2/3
+3.1 · Synthèse · Synthèse des commentaires d'un/de plusieurs chantiers · Deux chantiers commentés · Pas de recopie · 3/3
+3.1 · Synthèse · Synthèse des commentaires d'un/de plusieurs chantiers · CH-012 n'a aucun commentaire en Bretagne : à dire, sans inventer · Pas de recopie · 3/3
+2.2 · Données · get_historique_indicateur · PVA : filtre PROPOSITIONS · Outils attendus · 2/3
+2.2 · Données · get_chantier_commentaires · type territorial commentaires_sur_les_donnees · Outils attendus · 3/3
+2.2 · Données · get_chantiers_signales · « à surveiller », absent du prompt système · Outils attendus · 3/3
+```
+
+### Fiabilité du juge (calibration de la ligne de base)
+
+- « Commentaires fidèles », réécrit à l'étape 0 : fiable (mutant détecté et
+  références admises sur 3 essais sur 3).
+- Faux signalements sur des mutants d'autres critères, à garder en tête en
+  lisant leurs scores : « Actions identifiées » (2/3 détecté seulement),
+  « Une synthèse par chantier » (3/3 faux signalements), « Évolution entre
+  jalons » (3/3), « Trois volets » (3/3), « Données indisponibles dites »
+  (2/3).

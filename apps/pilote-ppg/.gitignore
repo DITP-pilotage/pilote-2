@@ -30,3 +30,7 @@ evals/evalite.db*
 
 # Données de la page publique des evals, générées par `pnpm eval:rapport`
 evals/rapport/site/data/
+
+# Résultats de run et listes d'échecs, comparés en local (PIL-1900)
+evals/resultats*.json
+evals/echecs-*.txt
