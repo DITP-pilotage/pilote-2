@@ -346,3 +346,28 @@ export function checkSectionsDashboard({
         detail: `sections chantier : ${obtenus.join(", ") || "aucune"}, attendu ${attendus.join(", ")}`,
       };
 }
+
+const WIDGETS_SANS_DONNEES = ["widget_titre_section", "widget_paragraph"];
+
+/**
+ * PIL-1900 : une carte qui exige un chantier, demandée sans chantier, donnait
+ * un dashboard fait d'un titre et d'un paragraphe « Aucune donnée », annoncé
+ * par « Voici le tableau de bord demandé ». Ne pas composer de dashboard est
+ * conforme ; en composer un sans aucun widget de données ne l'est pas.
+ */
+export function checkDashboardNonVide({
+  dashboard,
+}: {
+  dashboard: { containers: DashboardContainer[] } | null;
+}): CheckResult {
+  if (!dashboard) return { ok: true, detail: "aucun dashboard composé" };
+
+  const afficheUneDonnee = dashboard.containers.some((container) =>
+    container.widgets.some(
+      (widget) => !WIDGETS_SANS_DONNEES.includes(widget.type),
+    ),
+  );
+  return afficheUneDonnee
+    ? { ok: true, detail: "dashboard avec des données" }
+    : { ok: false, detail: "dashboard sans widget de données" };
+}

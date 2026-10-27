@@ -1,6 +1,7 @@
 import {
   checkChantierFormat,
   checkChantiersCited,
+  checkDashboardNonVide,
   checkExactAnswer,
   checkFrench,
   checkHasTable,
@@ -349,5 +350,40 @@ describe("checkVerbatim", () => {
         sources: [source],
       }).ok,
     ).toBe(false);
+  });
+});
+
+describe("checkDashboardNonVide", () => {
+  const titre = { type: "widget_titre_section" };
+  const paragraphe = { type: "widget_paragraph" };
+
+  test("laisse passer l'absence de dashboard", () => {
+    expect(checkDashboardNonVide({ dashboard: null })).toEqual({
+      ok: true,
+      detail: "aucun dashboard composé",
+    });
+  });
+
+  test("signale un dashboard fait seulement de titres et de paragraphes", () => {
+    expect(
+      checkDashboardNonVide({
+        dashboard: {
+          containers: [{ widgets: [titre] }, { widgets: [paragraphe] }],
+        },
+      }),
+    ).toEqual({ ok: false, detail: "dashboard sans widget de données" });
+  });
+
+  test("laisse passer un dashboard qui affiche une donnée", () => {
+    expect(
+      checkDashboardNonVide({
+        dashboard: {
+          containers: [
+            { widgets: [titre] },
+            { widgets: [{ type: "widget_taux_avancement_territoire" }] },
+          ],
+        },
+      }).ok,
+    ).toBe(true);
   });
 });
