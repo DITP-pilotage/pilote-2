@@ -191,7 +191,10 @@ async function resolveIndicateurs(
  * choisir l'emoji et le libellé : on lui reconvertit le libellé reçu. Un
  * libellé hors des quatre niveaux ne lui transmet pas de météo.
  */
-function pourLeSousAgent({ niveau_de_confiance, ...chantier }: ChantierContext) {
+function pourLeSousAgent({
+  niveau_de_confiance,
+  ...chantier
+}: ChantierContext) {
   const meteo = niveau_de_confiance
     ? codeMeteoDepuisLibelle({ libelle: niveau_de_confiance })
     : null;

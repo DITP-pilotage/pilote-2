@@ -66,7 +66,10 @@ export type ChantierRenvoye = {
   niveau_de_confiance: string | null;
   est_en_retard: boolean;
   est_en_difficulte: boolean;
-  synthese: { commentaire: string | null; date_commentaire: string | null } | null;
+  synthese: {
+    commentaire: string | null;
+    date_commentaire: string | null;
+  } | null;
   commentaires: ChantierResult["commentaires"];
 };
 

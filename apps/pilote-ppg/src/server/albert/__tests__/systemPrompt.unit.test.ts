@@ -89,9 +89,7 @@ describe("buildChatSystemPrompt", () => {
     });
 
     // Then
-    expect(prompt).toContain(
-      "- Territoires à accès complet : REG-53, DEPT-35",
-    );
+    expect(prompt).toContain("- Territoires à accès complet : REG-53, DEPT-35");
   });
 
   it("termine par les instructions du contexte utilisateur", () => {
