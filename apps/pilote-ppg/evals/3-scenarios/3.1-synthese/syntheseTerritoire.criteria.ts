@@ -8,7 +8,7 @@ export const SYNTHESE_TERRITOIRE_CRITERIA = withBase({
   criteria: [
     mechanical({
       id: "Chantiers attendus",
-      rule: "Workflow a : les chantiers en retard et en difficulté du territoire",
+      rule: "Méthode, collecter : une synthèse de territoire couvre ses chantiers en retard et en difficulté",
       check: (evidence) =>
         checkChantiersCited({
           text: evidence.matter,

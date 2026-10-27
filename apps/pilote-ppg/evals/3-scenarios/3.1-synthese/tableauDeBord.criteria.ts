@@ -24,7 +24,7 @@ export const TABLEAU_DE_BORD_CRITERIA = withBase({
     }),
     judged({
       id: "Pas de chiffre dans le texte",
-      rule: "create_dashboard : ne reproduis JAMAIS de valeurs chiffrées dans ta réponse textuelle",
+      rule: "Rédiger : après un dashboard, une seule phrase, aucun chiffre du dashboard",
       instruction:
         "Le TEXTE D'ACCOMPAGNEMENT ne reproduit aucune valeur chiffrée (taux, écart, médiane, nombre de chantiers, valeur d'indicateur) : les widgets les affichent. Un code de chantier ou de territoire, une année de jalon ne sont pas des valeurs. Ne juge que le texte d'accompagnement, pas les widgets.",
     }),

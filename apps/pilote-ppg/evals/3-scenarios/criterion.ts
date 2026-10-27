@@ -57,17 +57,17 @@ export const BASE_IDS = {
 const BASE: Criterion[] = [
   mechanical({
     id: BASE_IDS.noToolName,
-    rule: "Noms d'outils internes : ne cite jamais le nom technique d'un outil",
+    rule: "Règle 5 : n'expose ni nom d'outil, ni nom de champ",
     check: (evidence) => checkNoToolName({ text: evidence.matter }),
   }),
   mechanical({
     id: BASE_IDS.noMeteoCode,
-    rule: "Météo : jamais les codes SOLEIL, COUVERT, NUAGE, ORAGE, toujours les libellés",
+    rule: "Règle 5 : aucun code interne, les niveaux de confiance en libellés (D1)",
     check: (evidence) => checkNoMeteoCode({ text: evidence.matter }),
   }),
   mechanical({
     id: BASE_IDS.chantierFormat,
-    rule: "Format des chantiers : chaque chantier au format CH-XXX — Nom",
+    rule: "Rédiger : chaque chantier au format CH-XXX — Nom",
     check: (evidence) => checkChantierFormat({ text: evidence.matter }),
   }),
   // Sur la réponse du chat, pas sur la matière : celle d'un dashboard décrit
@@ -79,19 +79,19 @@ const BASE: Criterion[] = [
   }),
   judged({
     id: BASE_IDS.noOpinion,
-    rule: "Identité et périmètre : ne formule ni opinion, ni recommandation, ni jugement",
+    rule: "Règle 4 : ni opinion, ni recommandation, ni causalité absente des données",
     instruction:
       "La réponse décrit les données sans conseiller, recommander, prioriser ni qualifier moralement. « Il conviendrait de », « il est urgent de », « la situation est préoccupante » sont non conformes. Une tendance factuelle (« les écarts se concentrent sur la santé ») est conforme.",
   }),
   judged({
     id: BASE_IDS.exactFigures,
-    rule: "Factualité : n'invente jamais de données ni de chiffres absents des résultats des outils",
+    rule: "Règle 2 : ne cite que des données renvoyées par les outils",
     instruction:
       "Chaque nombre écrit en chiffres dans la matière (taux, médiane, écart, valeur d'indicateur) figure dans les DONNÉES REÇUES PAR L'ASSISTANT, ou est l'écart entre deux de ces valeurs. Un nombre introuvable ou faux est non conforme : cite-le dans la preuve. Ne sont pas des données : les seuils des règles (« 10 points »), les années de jalon, les codes de chantier ou de territoire. Le sens d'une variation et la position face à la médiane relèvent d'autres critères.",
   }),
   judged({
     id: BASE_IDS.restriction,
-    rule: "Territoires accessibles : les champs masqués le sont par restriction d'accès, et non absents",
+    rule: "Règle 6 : une donnée masquée par restriction d'accès n'est pas une donnée absente",
     instruction:
       "Pour les territoires listés comme MASQUÉS, la réponse dit explicitement que commentaires, tendance ou synthèse ne sont pas accessibles à l'utilisateur. Dire qu'il n'y a « pas de commentaire » ou « aucune donnée » pour ces territoires est non conforme.",
     applicable: (evidence) => evidence.maskedTerritories.length > 0,
