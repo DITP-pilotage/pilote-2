@@ -345,6 +345,7 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 | 0 – ligne de base | `edc45d4` | 91 % | 91 % | 9 265 | référence |
 | 1 – réécriture minimale | `5ae608e` | 88 % | 92 % | 2 290 | base de l'étape 2 |
 | 2 – résolution, sous-territoires, exemples | `9805829` | 90 % | 93 % | 2 853 | base de l'étape 3 |
+| 3 – régressions, courbe iso prod, restriction | `dead2dc` | 91 % | 94 % | 2 928 | base de l'étape 4 |
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
@@ -585,4 +586,53 @@ coordinateur).
    toute courbe, soit `get_evolution_indicateur` qui donne les valeurs, et le
    graphique proposé ensuite.
 5. Restriction d'accès : le champ de restriction dans `get_chantiers`.
+
+### Étape 3 : régressions, courbe alignée sur la prod, restriction (`dead2dc`)
+
+Changements :
+
+- `get_evolution_indicateur` retrouve « la tendance, la progression » ;
+- les exemples rappellent que les outils s'appellent et ne s'écrivent pas ;
+- l'entrée de lexique « courbe, graphique, cartographie, tableau de bord →
+  dashboard ; comment évolue, tendance → les valeurs » ;
+- après une évolution, la proposition du graphique et du détail des actions,
+  comme en prod (vérifié par Antoine sur la prod) ;
+- `acces_restreint: true` sur les territoires hors de l'accès complet dans
+  `get_chantiers`.
+
+Mesure : 15 essais ont échoué sur des délais de connexion à l'API Albert (4
+cas de `get_taux_avancement_territoire` et le « Cas frontière » du centre
+d'aide). Ces deux suites ont été rejouées seules, et leurs résultats
+remplacent ceux du run (`evals/resultats-etape-3-complet.json`).
+
+- Niveau 2 : 89,6 % → 90,5 %. Niveau 3 : 93,4 % → 93,6 %.
+- Tokens du premier appel : 2 853 → 2 928.
+- Météo citée sans être demandée : 0 ; balise HTML : 1 ; langue : 0 échec.
+- Échecs répétés : 43 → 36, dont 18 résolus, 11 nouveaux et 25 inchangés.
+
+Résolus par les changements : l'évolution « progresse » et « tendance », la
+clarification hors catalogue (plus d'appel écrit en JSON), la restriction
+d'accès signalée (2 cas), un territoire désigné par son nom qui passe par la
+recherche (2 essais sur 3, la première fois que la règle est suivie).
+
+Toujours en échec :
+
+- « le 84 », « la région 84 », « le département 84 » : jamais de recherche
+  (0/9) ; l'agent traite le numéro comme un code connu.
+- « Trace la courbe d'évolution » : dashboard 1 fois sur 3.
+- Sous-territoires sur le taux d'avancement : un appel par département 1 fois
+  sur 3 ; le cas, résolu à l'étape 2, est instable.
+
+Nouveaux échecs à surveiller : « où ça coince » appelle la vue `all` au lieu
+des vues `en_retard` et `en_difficulte` ; la synthèse du territoire courant
+oublie des chantiers attendus ; les autres portent sur des critères fragiles
+ou instables d'un run à l'autre (« Pas d'opinion », « Format des chantiers »,
+« Analyse des écarts » de deux régions, « Données indisponibles dites »).
+
+### Entrées de l'étape 4
+
+1. Résolution des territoires dans le code : les numéros ne passent jamais par
+   la recherche malgré la règle.
+2. Outil composite « situation d'un territoire » : mis de côté le 27/10, la
+   synthèse du territoire courant et « où ça coince » le justifient toujours.
 
