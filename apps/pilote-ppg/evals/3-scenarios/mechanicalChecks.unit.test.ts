@@ -2,6 +2,7 @@ import {
   checkChantierFormat,
   checkChantiersCited,
   checkExactAnswer,
+  checkFrench,
   checkHasTable,
   checkNoLink,
   checkNoMeteoCode,
@@ -278,5 +279,30 @@ describe("checkNoLink et checkExactAnswer", () => {
         expected: "Votre rapport est disponible au téléchargement.",
       }).ok,
     ).toBe(true);
+  });
+});
+
+describe("checkFrench", () => {
+  test("signale la phrase anglaise observée après une clarification (PIL-1900, F2)", () => {
+    expect(
+      checkFrench({
+        text: "I'm waiting for your choice. Please select one of the options above.",
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "mots anglais : i'm, waiting, your, please, select, the, above",
+    });
+  });
+
+  test("laisse passer la phrase de clôture française", () => {
+    expect(checkFrench({ text: "Choisissez une option pour continuer." })).toEqual(
+      { ok: true, detail: "réponse en français" },
+    );
+  });
+
+  test("ne confond pas un mot anglais avec un mot français qui le contient", () => {
+    expect(checkFrench({ text: "Un thème, un thé et une option." }).ok).toBe(
+      true,
+    );
   });
 });

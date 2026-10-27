@@ -1,6 +1,7 @@
 import type { Evidence } from "./evidence";
 import {
   checkChantierFormat,
+  checkFrench,
   checkNoMeteoCode,
   checkNoToolName,
   type CheckResult,
@@ -45,6 +46,7 @@ export const BASE_IDS = {
   noOpinion: "Pas d'opinion",
   exactFigures: "Chiffres exacts",
   restriction: "Restriction signalée",
+  french: "Réponse en français",
 } as const;
 
 /**
@@ -67,6 +69,13 @@ const BASE: Criterion[] = [
     id: BASE_IDS.chantierFormat,
     rule: "Format des chantiers : chaque chantier au format CH-XXX — Nom",
     check: (evidence) => checkChantierFormat({ text: evidence.matter }),
+  }),
+  // Sur la réponse du chat, pas sur la matière : celle d'un dashboard décrit
+  // des widgets, pas du texte rédigé.
+  mechanical({
+    id: BASE_IDS.french,
+    rule: "Langue : réponds toujours en français, y compris après un appel d'outil (PIL-1900)",
+    check: (evidence) => checkFrench({ text: evidence.answer }),
   }),
   judged({
     id: BASE_IDS.noOpinion,

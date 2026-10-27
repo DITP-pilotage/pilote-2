@@ -62,6 +62,26 @@ export function checkNoMeteoCode({ text }: { text: string }): CheckResult {
 }
 
 /**
+ * Des mots anglais courants qu'aucune réponse française n'emploie. Bornés par
+ * des lettres Unicode, et non par `\b` : « thé » ne doit pas se lire « the ».
+ * PIL-1900 : après une clarification, Albert écrivait « I'm waiting for your
+ * choice. Please select one of the options above. »
+ */
+const MOTS_ANGLAIS =
+  /(?<!\p{L})(?:the|please|your|you|i'm|waiting|select|choose|above)(?!\p{L})/giu;
+
+export function checkFrench({ text }: { text: string }): CheckResult {
+  const trouves = unique(
+    (typographie(text).match(MOTS_ANGLAIS) ?? []).map((mot) =>
+      mot.toLowerCase(),
+    ),
+  );
+  return trouves.length === 0
+    ? { ok: true, detail: "réponse en français" }
+    : { ok: false, detail: `mots anglais : ${trouves.join(", ")}` };
+}
+
+/**
  * Le format CH-XXX — Nom, pour tout chantier cité : il suffit qu'une
  * mention porte le nom, les suivantes peuvent s'en tenir au code. Le nom
  * exact des chantiers attendus relève de `checkChantiersCited`.
