@@ -404,9 +404,29 @@ type ChantierDeLEncart = {
   niveau_de_confiance: string | null;
 };
 
+/** Les passages qui suivent chaque mention du chantier, jusqu'au suivant. */
+function passagesDuChantier({ texte, id }: { texte: string; id: string }) {
+  const passages: string[] = [];
+  let debut = texte.indexOf(id);
+  while (debut !== -1) {
+    const suite = texte.slice(debut + id.length);
+    const suivant = suite.search(/CH-\d+/);
+    passages.push(
+      texte.slice(
+        debut,
+        suivant === -1 ? undefined : debut + id.length + suivant,
+      ),
+    );
+    debut = texte.indexOf(id, debut + id.length);
+  }
+  return passages;
+}
+
 /**
  * Chaque chantier des données de l'encart y figure, avec son niveau de
- * confiance et, si demandé, son écart arrondi, dans le passage qui le suit.
+ * confiance et, si demandé, son écart arrondi. En comparaison, un chantier
+ * revient par territoire : on cherche dans toutes ses mentions, le bloc des
+ * chantiers communs ne donnant pas tout.
  */
 export function checkEncartChantiers({
   text,
@@ -417,39 +437,37 @@ export function checkEncartChantiers({
   chantiers: ChantierDeLEncart[];
   avecEcart: boolean;
 }): CheckResult {
-  const lisible = typographie(text);
-  const parId = new Map(
-    chantiers.map((chantier) => [chantier.chantier.id, chantier]),
-  );
-  const erreurs = [...parId.values()].flatMap((chantier) => {
-    const id = chantier.chantier.id;
-    const debut = lisible.indexOf(id);
-    if (debut === -1) return [`${id} : absent`];
-    const suivant = lisible.slice(debut + id.length).search(/CH-\d+/);
-    const passage = lisible.slice(
-      debut,
-      suivant === -1 ? undefined : debut + id.length + suivant,
-    );
-    const manques: string[] = [];
-    if (avecEcart && chantier.ecart !== null) {
-      const ecart = String(Math.round(chantier.ecart));
-      if (!new RegExp(`(?<!\\d)${escapeRegExp(ecart)}(?!\\d)`).test(passage)) {
-        manques.push(`${id} : écart ${ecart} absent`);
-      }
-    }
-    if (
-      chantier.niveau_de_confiance !== null &&
-      !normalize(passage).includes(normalize(chantier.niveau_de_confiance))
-    ) {
-      manques.push(
-        `${id} : niveau de confiance ${chantier.niveau_de_confiance} absent`,
-      );
-    }
-    return manques;
+  const texte = typographie(text);
+  const ids = unique(chantiers.map((chantier) => chantier.chantier.id));
+  const erreurs = ids.flatMap((id) => {
+    const passages = passagesDuChantier({ texte, id });
+    if (passages.length === 0) return [`${id} : absent`];
+    return chantiers
+      .filter((chantier) => chantier.chantier.id === id)
+      .flatMap((chantier) => {
+        const manques: string[] = [];
+        if (avecEcart && chantier.ecart !== null) {
+          const ecart = String(Math.round(chantier.ecart));
+          const motif = new RegExp(`(?<!\\d)${escapeRegExp(ecart)}(?!\\d)`);
+          if (!passages.some((passage) => motif.test(passage))) {
+            manques.push(`${id} : écart ${ecart} absent`);
+          }
+        }
+        const niveau = chantier.niveau_de_confiance;
+        if (
+          niveau !== null &&
+          !passages.some((passage) =>
+            normalize(passage).includes(normalize(niveau)),
+          )
+        ) {
+          manques.push(`${id} : niveau de confiance ${niveau} absent`);
+        }
+        return manques;
+      });
   });
   return erreurs.length === 0
-    ? { ok: true, detail: `${parId.size} chantier(s) conforme(s)` }
-    : { ok: false, detail: erreurs.join(" ; ") };
+    ? { ok: true, detail: `${ids.length} chantier(s) conforme(s)` }
+    : { ok: false, detail: unique(erreurs).join(" ; ") };
 }
 
 const MAILLE_ATTENDUE: Record<string, string> = {

@@ -481,6 +481,29 @@ describe("checkEncartChantiers", () => {
   });
 });
 
+describe("checkEncartChantiers en comparaison", () => {
+  test("retrouve le niveau de confiance de chaque territoire, même après un bloc commun qui ne le donne pas", () => {
+    expect(
+      checkEncartChantiers({
+        text: "### Communs à plusieurs territoires\n**CH-071 — Rénover**\n**Territoires concernés** : Nord, Gironde\n### Spécifiques au Nord\n**CH-071 — Rénover**\n**Niveau de confiance** : Appuis nécessaires\n### Spécifiques à la Gironde\n**CH-071 — Rénover**\n**Niveau de confiance** : Objectifs compromis",
+        chantiers: [
+          chantierDonne({
+            id: "CH-071",
+            ecart: -14,
+            niveau: "Appuis nécessaires",
+          }),
+          chantierDonne({
+            id: "CH-071",
+            ecart: -12,
+            niveau: "Objectifs compromis",
+          }),
+        ],
+        avecEcart: false,
+      }),
+    ).toEqual({ ok: true, detail: "1 chantier(s) conforme(s)" });
+  });
+});
+
 describe("checkMailleNommee", () => {
   test("un département n'est pas nommé « la région »", () => {
     expect(
