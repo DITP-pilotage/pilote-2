@@ -91,9 +91,11 @@ jobs:
             apps/pilote-ppg/evals/resultats.json
           retention-days: 30
 
-      # Même mécanique que la doc dbt (pr-merged-dev.yml) : on bascule le checkout
-      # sur gh-pages, servie telle quelle par GitHub Pages, et on ne touche qu'à
-      # docs/evals.
+      # gh-pages est servie telle quelle par GitHub Pages ; on ne touche qu'à
+      # docs/evals. Contrairement à la doc dbt (pr-merged-dev.yml), on ne bascule
+      # pas le checkout : gh-pages est extraite dans un worktree à part, sinon
+      # .github/actions/setupNodeAndPackages disparaît et son post-step (cache
+      # pnpm) fait échouer le job.
       - name: Publish report on GitHub Pages
         if: github.ref == 'refs/heads/dev' && hashFiles('apps/pilote-ppg/evals/rapport/site/data/rapport.json') != ''
         run: |
@@ -101,29 +103,28 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-          # Le site sort du checkout de dev avant la bascule sur gh-pages.
-          SITE="$RUNNER_TEMP/site-evals"
-          rm -rf "$SITE"
-          cp -R apps/pilote-ppg/evals/rapport/site "$SITE"
+          SITE="$PWD/apps/pilote-ppg/evals/rapport/site"
+          PAGES="$RUNNER_TEMP/gh-pages"
 
           # La doc dbt peut pousser sur gh-pages pendant ce temps : le push est
           # alors refusé, et on repart du nouvel état. Les deux ne touchent pas
           # les mêmes dossiers.
           for tentative in 1 2 3; do
+            git worktree remove --force "$PAGES" 2>/dev/null || true
             git fetch origin gh-pages --depth=1
-            git checkout -f -B gh-pages FETCH_HEAD
+            git worktree add --detach "$PAGES" FETCH_HEAD
 
-            rm -rf docs/evals
-            mkdir -p docs
-            cp -R "$SITE" docs/evals
-            git add docs/evals
+            rm -rf "$PAGES/docs/evals"
+            mkdir -p "$PAGES/docs"
+            cp -R "$SITE" "$PAGES/docs/evals"
+            git -C "$PAGES" add docs/evals
 
-            if git diff --cached --quiet; then
+            if git -C "$PAGES" diff --cached --quiet; then
               echo "Aucun changement à publier."
               exit 0
             fi
-            git commit -m "Mise à jour du rapport des evals (${GITHUB_SHA::7})"
-            if git push origin gh-pages; then
+            git -C "$PAGES" commit -m "Mise à jour du rapport des evals (${GITHUB_SHA::7})"
+            if git -C "$PAGES" push origin HEAD:gh-pages; then
               exit 0
             fi
             echo "gh-pages a bougé pendant la publication, nouvelle tentative ($tentative/3)."
