@@ -594,7 +594,10 @@ const sectionChantier = ({
 }): { widgets: WidgetDefinition[] } => ({
   widgets: [
     { type: "widget_titre_section", titre: `${id} — ${nom}` },
-    { type: "widget_paragraph", contenu: [`Niveau de confiance : ${meteo}`, commentaire] },
+    {
+      type: "widget_paragraph",
+      contenu: [`Niveau de confiance : ${meteo}`, commentaire],
+    },
     {
       type: "widget_cartographie_meteo",
       chantier_id: id,
