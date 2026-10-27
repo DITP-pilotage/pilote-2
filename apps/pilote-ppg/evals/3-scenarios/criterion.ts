@@ -2,6 +2,8 @@ import type { Evidence } from "./evidence";
 import {
   checkChantierFormat,
   checkFrench,
+  checkNoHtml,
+  checkNoMeteo,
   checkNoMeteoCode,
   checkNoToolName,
   type CheckResult,
@@ -47,6 +49,8 @@ export const BASE_IDS = {
   exactFigures: "Chiffres exacts",
   restriction: "Restriction signalée",
   french: "Réponse en français",
+  noMeteo: "Pas de météo",
+  noHtml: "Pas de HTML",
 } as const;
 
 /**
@@ -76,6 +80,19 @@ const BASE: Criterion[] = [
     id: BASE_IDS.french,
     rule: "Langue : réponds toujours en français, y compris après un appel d'outil (PIL-1900)",
     check: (evidence) => checkFrench({ text: evidence.answer }),
+  }),
+  // Sans objet quand l'utilisateur parle lui-même de météo : la réponse peut
+  // alors reprendre son mot.
+  mechanical({
+    id: BASE_IDS.noMeteo,
+    rule: "PIL-1900, D1 : aucune réponse ne mentionne la météo, seulement le niveau de confiance",
+    check: (evidence) => checkNoMeteo({ text: evidence.answer }),
+    applicable: (evidence) => !/m[ée]t[ée]o/i.test(evidence.question),
+  }),
+  mechanical({
+    id: BASE_IDS.noHtml,
+    rule: "Le chat n'affiche pas le HTML : aucune balise dans la réponse (revue PIL-1900)",
+    check: (evidence) => checkNoHtml({ text: evidence.answer }),
   }),
   judged({
     id: BASE_IDS.noOpinion,

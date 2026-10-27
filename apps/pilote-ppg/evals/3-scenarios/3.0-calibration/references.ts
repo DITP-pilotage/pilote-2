@@ -262,7 +262,7 @@ Dans Pilote, le TA 2025 de la région s'établit à 51%, pour une médiane des r
 
 **CH-005 — Réduire les délais de passage aux urgences**\\
 **Écart** : -15 points\\
-**Météo** : Appuis nécessaires
+**Niveau de confiance** : Appuis nécessaires
 
 > Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
 
@@ -278,7 +278,7 @@ Dans Pilote, le TA 2025 de la région s'établit à 51%, pour une médiane des r
 
 **CH-006 — Développer la prévention en santé**\\
 **Écart** : 2 points\\
-**Météo** : Objectifs compromis
+**Niveau de confiance** : Objectifs compromis
 
 > Pas de commentaire disponible
 
@@ -342,7 +342,7 @@ const RETARD_QUESTION =
 
 const RETARD_REFERENCE = `**CH-005 — Réduire les délais de passage aux urgences**
 - Écart à la médiane : -15 points
-- Météo : Appuis nécessaires
+- Niveau de confiance : Appuis nécessaires
 
 Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur actuelle 250, valeur cible 180, taux d'avancement 30 %.`;
 
@@ -749,10 +749,10 @@ const RAPPORT_REFERENCE = `RAPPORT EXPORTÉ :
 > Le TA 2025 de la Bretagne est de 51%, sous la médiane des régions (65%). Un chantier est en retard, un autre a des objectifs compromis.
 
 ## Chantiers en retard
-CH-005 — Réduire les délais de passage aux urgences : écart de -15 points, météo Appuis nécessaires. Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
+CH-005 — Réduire les délais de passage aux urgences : écart de -15 points, niveau de confiance « Appuis nécessaires ». Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
 
 ## Chantiers en difficulté
-CH-006 — Développer la prévention en santé : écart de 2 points, météo Objectifs compromis. Pas de commentaire disponible.
+CH-006 — Développer la prévention en santé : écart de 2 points, niveau de confiance « Objectifs compromis ». Pas de commentaire disponible.
 
 RÉPONSE DU CHAT :
 ${RAPPORT_REPONSE}`;
@@ -848,7 +848,7 @@ Dans Pilote, le TA 2025 de la région s'établit à 70%, pour une médiane des r
 
 **CH-007 — Rénover énergétiquement les logements privés**\\
 **Écart** : -20 points\\
-**Météo** : Appuis nécessaires
+**Niveau de confiance** : Appuis nécessaires
 
 > Le commentaire de synthèse n'est pas accessible : ce territoire est hors de votre périmètre.
 
@@ -973,7 +973,7 @@ const CHANTIER_RESULTS = [
 
 const CHANTIER_REFERENCE = `## CH-005 — Réduire les délais de passage aux urgences, en Bretagne
 
-Le chantier est en retard de 15 points sur la médiane, avec une météo « Appuis nécessaires ».
+Le chantier est en retard de 15 points sur la médiane, avec un niveau de confiance « Appuis nécessaires ».
 
 ## Position face aux autres territoires
 
@@ -1122,7 +1122,7 @@ La Bretagne devance l'Ille-et-Vilaine de 5 points de taux d'avancement. Les deux
 
 **CH-006 — Développer la prévention en santé**\\
 **Territoires concernés** : Bretagne, Ille-et-Vilaine\\
-**Météo** : Objectifs compromis
+**Niveau de confiance** : Objectifs compromis
 
 > Pas de commentaire disponible
 

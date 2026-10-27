@@ -371,3 +371,29 @@ export function checkDashboardNonVide({
     ? { ok: true, detail: "dashboard avec des données" }
     : { ok: false, detail: "dashboard sans widget de données" };
 }
+
+/**
+ * PIL-1900, D1 : les réponses ne parlent plus de météo, seulement des
+ * libellés du niveau de confiance. Avec ou sans accents.
+ */
+export function checkNoMeteo({ text }: { text: string }): CheckResult {
+  return /m[ée]t[ée]o/i.test(typographie(text))
+    ? { ok: false, detail: "météo citée" }
+    : { ok: true, detail: "aucune mention de la météo" };
+}
+
+/**
+ * Le chat rend du markdown sans HTML : une balise s'afficherait en texte
+ * brut. Une balise est un nom suivi d'attributs, de `/` ou de `>` : un lien
+ * automatique (`<https://…>`) ou une comparaison (`< -10`) n'en est pas une.
+ */
+const BALISE_HTML = /<\/?[a-z][a-z0-9]*(?:\s[^<>]*)?\/?>/gi;
+
+export function checkNoHtml({ text }: { text: string }): CheckResult {
+  const balises = unique(
+    (text.match(BALISE_HTML) ?? []).map((balise) => balise.toLowerCase()),
+  );
+  return balises.length === 0
+    ? { ok: true, detail: "aucune balise HTML" }
+    : { ok: false, detail: `balises HTML : ${balises.join(", ")}` };
+}

@@ -6,6 +6,8 @@ import {
   checkFrench,
   checkHasTable,
   checkNoLink,
+  checkNoHtml,
+  checkNoMeteo,
   checkNoMeteoCode,
   checkNoVerbatim,
   checkNoToolName,
@@ -385,5 +387,42 @@ describe("checkDashboardNonVide", () => {
         },
       }).ok,
     ).toBe(true);
+  });
+});
+
+describe("checkNoMeteo", () => {
+  test("signale la météo citée, avec ou sans accents (PIL-1900, D1)", () => {
+    expect(
+      checkNoMeteo({ text: "CH-005 — Urgences : météo Appuis nécessaires." }),
+    ).toEqual({ ok: false, detail: "météo citée" });
+    expect(checkNoMeteo({ text: "**Meteo** : Objectifs compromis" }).ok).toBe(
+      false,
+    );
+  });
+
+  test("laisse passer le niveau de confiance en libellé", () => {
+    expect(
+      checkNoMeteo({
+        text: "CH-005 — Urgences : niveau de confiance « Appuis nécessaires ».",
+      }),
+    ).toEqual({ ok: true, detail: "aucune mention de la météo" });
+  });
+});
+
+describe("checkNoHtml", () => {
+  test("signale une balise que le chat afficherait en texte brut", () => {
+    expect(
+      checkNoHtml({
+        text: "| Freins | • Postes vacants.<br>• Fermeture de lignes. |",
+      }),
+    ).toEqual({ ok: false, detail: "balises HTML : <br>" });
+  });
+
+  test("laisse passer le markdown, les comparaisons et les flèches", () => {
+    expect(
+      checkNoHtml({
+        text: "**CH-005** : écart < -10 points, 34 % -> 40 %. Voir <https://exemple.fr>.",
+      }),
+    ).toEqual({ ok: true, detail: "aucune balise HTML" });
   });
 });
