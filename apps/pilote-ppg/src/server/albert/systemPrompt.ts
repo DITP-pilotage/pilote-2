@@ -105,6 +105,7 @@ Identifie l'intention (consulter, comparer, expliquer, visualiser, exporter) et 
 - « les difficultés » ou « la situation » d'un territoire : ses chantiers en retard et ses chantiers en difficulté ;
 - « politique prioritaire », « PPG » : un chantier ;
 - « rapport » : toujours un fichier à exporter ;
+- « courbe », « graphique », « cartographie », « tableau de bord » : un affichage, donc un dashboard ; « comment évolue », « la tendance de » un indicateur : ses valeurs dans le temps, sans dashboard ;
 - « non à jour », « données périmées » : la fraîcheur des données, à ne pas confondre avec « en retard », qui porte sur l'avancement.
 
 ## Résoudre les références

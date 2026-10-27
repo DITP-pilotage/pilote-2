@@ -233,7 +233,7 @@ describe("createGetChantiersTool execute", () => {
     ]);
   });
 
-  test("hors périmètre, garde le niveau de confiance et masque la tendance et les commentaires", async () => {
+  test("hors périmètre, signale la restriction d'accès, garde le niveau de confiance et masque la tendance et les commentaires", async () => {
     // Given
     const tool = buildTool({
       query: buildQuery(["CH-084"]),
@@ -250,6 +250,7 @@ describe("createGetChantiersTool execute", () => {
         territoire_code: "REG-75",
         territoire_nom: "Île-de-France",
         jalon: 2026,
+        acces_restreint: true,
         chantiers: [
           {
             ...chantierRenvoye("CH-084"),
