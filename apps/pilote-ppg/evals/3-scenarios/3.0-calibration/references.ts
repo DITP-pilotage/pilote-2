@@ -14,6 +14,8 @@ import { SYNTHESE_COMMENTAIRES_CRITERIA } from "../3.1-synthese/syntheseCommenta
 import { COMPARER_TERRITOIRES_CRITERIA } from "../3.2-comparaison/comparerTerritoires.criteria";
 import { COMPARER_JALONS_CRITERIA } from "../3.2-comparaison/comparerJalons.criteria";
 import type { GroundTruth } from "../truth";
+import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
+import { libelleNiveauDeConfiance } from "@/server/albert/tools/libelles";
 
 /**
  * Les cas de la calibration du juge : pour chaque scénario calibré, une
@@ -89,6 +91,7 @@ const CH_005 = {
 };
 const CH_006 = { id: "CH-006", nom: "Développer la prévention en santé" };
 
+/** Un chantier tel que `get_chantiers` le renvoie : des libellés (PIL-1900). */
 const chantier = ({
   id,
   nom,
@@ -101,22 +104,22 @@ const chantier = ({
   ecart: number;
   meteo: string;
   commentaire: string | null;
-}) => ({
+}): ChantierRenvoye => ({
   chantier: {
     id,
     nom,
     axe: "non renseigné",
     ppg: "non renseignée",
     ministeres: [],
-    mailles_applicables: ["NAT", "REG", "DEPT"],
+    maille_de_pilotage: "départementale",
   },
-  meteo,
   tendance: null,
+  niveau_de_confiance: libelleNiveauDeConfiance({ meteo }),
   ecart,
   taux_avancement: null,
   est_en_retard: ecart <= -10,
   est_en_difficulte: ecart > -10,
-  synthese: { meteo, commentaire, date_meteo: null, date_commentaire: null },
+  synthese: { commentaire, date_commentaire: null },
   commentaires: { donnees: null, autresResultats: null },
 });
 

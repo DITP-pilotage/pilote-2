@@ -12,6 +12,10 @@ import {
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { configuration } from "@/config";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import {
+  libelleCategorieSignalement,
+  libelleNiveauDeConfiance,
+} from "@/server/albert/tools/libelles";
 
 const TYPES_ALERTE_PAR_MAILLE: Record<$Enums.Maille, TypeAlerteChantier[]> = {
   NAT: [
@@ -58,12 +62,39 @@ type GetChantiersSignalesInput = z.infer<
   typeof getChantiersSignalesInputSchema
 >;
 
+/** Un chantier signalé tel que l'outil le renvoie : des libellés (PIL-1900, D1). */
+export type ChantierSignaleRenvoye = {
+  id: string;
+  nom: string;
+  ecart: number | null;
+  niveau_de_confiance: string | null;
+  categories: string[];
+};
+
 export type GetChantiersSignalesOutput = {
-  resultats: ChantierSignale[];
+  resultats: ChantierSignaleRenvoye[];
   acces_refuse?: boolean;
-  categories_non_applicables: TypeAlerteChantier[];
+  categories_non_applicables: string[];
   _output_instructions: string;
 };
+
+function renvoyerChantierSignale({
+  id,
+  nom,
+  ecart,
+  meteo,
+  typesAlerte,
+}: ChantierSignale): ChantierSignaleRenvoye {
+  return {
+    id,
+    nom,
+    ecart,
+    niveau_de_confiance: libelleNiveauDeConfiance({ meteo }),
+    categories: typesAlerte.map((categorie) =>
+      libelleCategorieSignalement({ categorie }),
+    ),
+  };
+}
 
 function buildOutputInstructions(
   typesAlerteNonApplicables: TypeAlerteChantier[],
@@ -180,8 +211,10 @@ Un seul territoire par appel, pas de sous-territoires.`,
               });
 
         return {
-          resultats,
-          categories_non_applicables: typesAlerteNonApplicables,
+          resultats: resultats.map(renvoyerChantierSignale),
+          categories_non_applicables: typesAlerteNonApplicables.map(
+            (categorie) => libelleCategorieSignalement({ categorie }),
+          ),
           _output_instructions: buildOutputInstructions(
             typesAlerteNonApplicables,
           ),

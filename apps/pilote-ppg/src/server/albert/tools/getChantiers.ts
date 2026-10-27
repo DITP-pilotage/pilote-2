@@ -2,10 +2,16 @@ import { tool } from "ai";
 import { z } from "zod";
 import { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQuery";
 import type {
+  ChantierResult,
   GetChantiersResult,
   GetChantiersParams,
 } from "@/server/chantiers/query/GetChantiersQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import {
+  libelleNiveauDeConfiance,
+  libelleTendance,
+  mailleDePilotage,
+} from "@/server/albert/tools/libelles";
 
 export const getChantiersInputSchema = z.object({
   territoire_code: z
@@ -45,16 +51,35 @@ export const getChantiersInputSchema = z.object({
     .enum(["HAUSSE", "BAISSE", "STAGNATION"])
     .optional()
     .describe("Filtre optionnel sur la tendance"),
-  meteo: z
-    .enum(["SOLEIL", "COUVERT", "NUAGE", "ORAGE"])
-    .optional()
-    .describe("Filtre optionnel sur la météo"),
 });
 
 type GetChantiersInput = z.infer<typeof getChantiersInputSchema>;
 
+/**
+ * Un chantier tel que l'outil le renvoie : des libellés, pas des codes
+ * (PIL-1900, D1). Le niveau de confiance est le libellé de la météo du
+ * chantier sur le territoire.
+ */
+export type ChantierRenvoye = {
+  chantier: Omit<ChantierResult["chantier"], "mailles_applicables"> & {
+    maille_de_pilotage: ReturnType<typeof mailleDePilotage>;
+  };
+  taux_avancement: number | null;
+  ecart: number | null;
+  tendance: string | null;
+  niveau_de_confiance: string | null;
+  est_en_retard: boolean;
+  est_en_difficulte: boolean;
+  synthese: { commentaire: string | null; date_commentaire: string | null } | null;
+  commentaires: ChantierResult["commentaires"];
+};
+
+export type ResultatChantiers = Omit<GetChantiersResult, "chantiers"> & {
+  chantiers: ChantierRenvoye[];
+};
+
 export type GetChantiersOutput = {
-  resultats: GetChantiersResult[];
+  resultats: ResultatChantiers[];
   non_applicable?: { raison: string };
   _output_instructions: string;
 };
@@ -105,14 +130,38 @@ function toQueryParams(
     chantierIds: input.chantier_ids,
     view: input.view,
     tendance: input.tendance,
-    meteo: input.meteo,
+  };
+}
+
+function renvoyerChantier(chantierResult: ChantierResult): ChantierRenvoye {
+  const { mailles_applicables, ...chantier } = chantierResult.chantier;
+  return {
+    chantier: {
+      ...chantier,
+      maille_de_pilotage: mailleDePilotage({ mailles: mailles_applicables }),
+    },
+    taux_avancement: chantierResult.taux_avancement,
+    ecart: chantierResult.ecart,
+    tendance: libelleTendance({ tendance: chantierResult.tendance }),
+    niveau_de_confiance: libelleNiveauDeConfiance({
+      meteo: chantierResult.meteo,
+    }),
+    est_en_retard: chantierResult.est_en_retard,
+    est_en_difficulte: chantierResult.est_en_difficulte,
+    synthese: chantierResult.synthese
+      ? {
+          commentaire: chantierResult.synthese.commentaire,
+          date_commentaire: chantierResult.synthese.date_commentaire,
+        }
+      : null,
+    commentaires: chantierResult.commentaires,
   };
 }
 
 function masquerDonneesNonAccessibles(
-  resultats: GetChantiersResult[],
+  resultats: ResultatChantiers[],
   territoiresAccessibles: string[],
-): GetChantiersResult[] {
+): ResultatChantiers[] {
   return resultats.map((resultat) => {
     if (territoiresAccessibles.includes(resultat.territoire_code)) {
       return resultat;
@@ -125,12 +174,7 @@ function masquerDonneesNonAccessibles(
         est_en_retard: false,
         est_en_difficulte: false,
         synthese: chantier.synthese
-          ? {
-              meteo: chantier.synthese.meteo,
-              commentaire: null,
-              date_meteo: chantier.synthese.date_meteo,
-              date_commentaire: null,
-            }
+          ? { commentaire: null, date_commentaire: null }
           : null,
         commentaires: { donnees: null, autresResultats: null },
       })),
@@ -159,7 +203,6 @@ Tous les filtres sont combinables :
 - chantier_ids : restreint à des chantiers spécifiques (ex: ['CH-001', 'CH-042'])
 - view : "all" (tous), "en_retard" (écart <= -10 pts vs médiane), "en_difficulte" (météo ORAGE/NUAGE, hors retard)
 - tendance : HAUSSE, BAISSE, STAGNATION
-- meteo : SOLEIL, COUVERT, NUAGE, ORAGE
 
 Exemples : récupérer CH-001 et CH-042, chercher tous les chantiers en retard, ou encore filtrer parmi CH-001/CH-002/CH-003 ceux en baisse.
 
@@ -222,7 +265,10 @@ plusieurs territoires parents sont comparés, fais un appel par parent et par ja
 
         return {
           resultats: masquerDonneesNonAccessibles(
-            resultats,
+            resultats.map((resultat) => ({
+              ...resultat,
+              chantiers: resultat.chantiers.map(renvoyerChantier),
+            })),
             territoiresAccessibles,
           ),
           _output_instructions: getOutputInstructions(

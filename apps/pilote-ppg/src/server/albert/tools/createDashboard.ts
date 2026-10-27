@@ -8,6 +8,7 @@ import {
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
 import { Albert } from "@/server/albert/Albert";
 import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
+import { codeMeteoDepuisLibelle } from "@/server/albert/tools/libelles";
 
 const chantierContextSchema = z.object({
   id: z.string().describe("Identifiant du chantier (ex: CH-064)"),
@@ -16,10 +17,12 @@ const chantierContextSchema = z.object({
     .enum(["en_retard", "en_difficulte"])
     .optional()
     .describe("Statut du chantier si connu (en_retard ou en_difficulte)"),
-  meteo: z
+  niveau_de_confiance: z
     .string()
     .optional()
-    .describe("Météo du chantier (SOLEIL, COUVERT, NUAGE, ORAGE)"),
+    .describe(
+      "Libellé renvoyé par get_chantiers (ex. « Objectifs compromis »)",
+    ),
   commentaire: z
     .string()
     .optional()
@@ -188,6 +191,18 @@ async function resolveIndicateurs(
   );
 }
 
+/**
+ * Le sous-agent du dashboard attend encore des codes météo (SOLEIL…) pour
+ * choisir l'emoji et le libellé : on lui reconvertit le libellé reçu. Un
+ * libellé hors des quatre niveaux ne lui transmet pas de météo.
+ */
+function pourLeSousAgent({ niveau_de_confiance, ...chantier }: ChantierContext) {
+  const meteo = niveau_de_confiance
+    ? codeMeteoDepuisLibelle({ libelle: niveau_de_confiance })
+    : null;
+  return meteo ? { ...chantier, meteo } : chantier;
+}
+
 function buildSubagentPrompt(
   task: string,
   territoireCodes: string[],
@@ -199,7 +214,9 @@ function buildSubagentPrompt(
     "<context>",
     `territoire_codes: ${JSON.stringify(territoireCodes)}`,
     `jalons: ${JSON.stringify(jalons)}`,
-    ...(chantiers?.length ? [`chantiers: ${JSON.stringify(chantiers)}`] : []),
+    ...(chantiers?.length
+      ? [`chantiers: ${JSON.stringify(chantiers.map(pourLeSousAgent))}`]
+      : []),
     ...(indicateurs?.length
       ? [`indicateurs: ${JSON.stringify(indicateurs)}`]
       : []),

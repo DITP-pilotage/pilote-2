@@ -113,12 +113,12 @@ describe("createGetChantiersSignalesTool execute", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier test",
-          meteo: "NON_RENSEIGNEE",
           ecart: null,
-          typesAlerte: ["estEnAlerteMétéoNonRenseignée"],
+          niveau_de_confiance: "Non renseignée",
+          categories: ["Météo et synthèse non renseignées"],
         },
       ],
-      categories_non_applicables: ["estEnAlerteÉcart"],
+      categories_non_applicables: ["Retard par rapport à la médiane"],
       _output_instructions: expect.any(String),
     });
   });
@@ -140,7 +140,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      categories_non_applicables: ["estEnAlerteTauxAvancementNonCalculé"],
+      categories_non_applicables: ["Taux d'avancement non calculé"],
       _output_instructions: expect.any(String),
     });
   });
@@ -166,7 +166,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: [
-        "estEnAlerteAbscenceTauxAvancementDepartemental",
+        "Absence de taux d'avancement départemental",
       ],
       _output_instructions: expect.any(String),
     });
