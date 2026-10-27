@@ -343,6 +343,7 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 | Étape | Commit | Niveau 2 | Niveau 3 | Contexte (tokens) | Décision |
 |---|---|---|---|---|---|
 | 0 – ligne de base | `edc45d4` | 91 % | 91 % | 9 265 | référence |
+| 1 – réécriture minimale | `5ae608e` | 88 % | 92 % | 2 290 | base de l'étape 2 |
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
@@ -410,3 +411,93 @@ Suite · cas · critère · essais en échec, sur le prompt d'origine
   « Une synthèse par chantier » (3/3 faux signalements), « Évolution entre
   jalons » (3/3), « Trois volets » (3/3), « Données indisponibles dites »
   (2/3).
+
+### Étape 1 : réécriture minimale (`5ae608e`)
+
+- Niveau 2 : 90,7 % → 88,1 %. Niveau 3 : 91,3 % → 92,5 %.
+- Tokens du premier appel « Bonjour » : 9 265 → 2 290. Le compteur de l'API
+  Albert semble ne compter que les messages : avec 16 outils toujours exposés,
+  leurs schémas ne tiendraient pas dans 2 290 tokens avec le prompt. La taille
+  des schémas d'outils n'est donc pas mesurée.
+- Durée moyenne d'un essai : 9 s → 12 s.
+- Mesuré hors ligne sur les réponses des deux runs, avec les critères ajoutés
+  après la revue de la branche :
+  - météo citée sans que la question en parle : 85 → 1 essai sur 495 (niveau
+    3 : 35 → 0 sur 105) ;
+  - balise HTML dans la réponse : 0 → 2 essais, des `<br>` écrits par le
+    modèle dans des cellules de tableau (les commentaires n'en contiennent
+    pas) ;
+  - réponse en français : aucun échec dans les deux runs.
+- Échecs répétés : 44 → 43, dont 18 résolus, 17 nouveaux et 26 inchangés.
+- Calibration du juge, refaite après la réécriture des références (« Météo »
+  devenu « Niveau de confiance ») : aucune nouvelle fragilité. Restent fragiles
+  « Une synthèse par chantier », « Trois volets » (3/3 faux signalements),
+  « Données indisponibles dites » (2/3), « Évolution entre jalons » et
+  « Actions identifiées » (1/3).
+
+### Échecs répétés de l'étape 1, par famille
+
+| Famille | Résolus | Nouveaux | Inchangés |
+|---|---|---|---|
+| Choix d'outil | 3 | 6 | 13 |
+| Sous-territoires | 0 | 4 | 0 |
+| Forme | 9 | 4 | 5 |
+| Contenu et factualité | 5 | 2 | 8 |
+| Restriction d'accès | 1 | 1 | 0 |
+| Langue | 0 | 0 | 0 |
+
+- **Choix d'outil.**
+  - Résolus : `search_chantiers` « thématique d'indicateur » ;
+    `get_historique_indicateur` « filtre PROPOSITIONS » ; « Tableau demandé »,
+    outils attendus.
+  - Nouveaux : `get_chantiers_signales` « plusieurs catégories, retard
+    compris » part vers `get_chantiers` ; `create_dashboard` « courbe » ;
+    `clarify_with_choices` « trois chantiers logement » ; `search_chantiers`
+    « politique prioritaire » ; `search_indicateurs` « recherche restreinte au
+    chantier » ; synthèse des difficultés, « trou complété par le territoire
+    courant ».
+  - Inchangés : `search_territoires` (4 cas, déjà à 20 % sur la ligne de
+    base) ; `get_chantier_commentaires` « commentaires_sur_les_donnees » ;
+    signalés « à surveiller » ; `export_rapport` « scénario de l'écran
+    d'accueil » ; rapport complet (export appelé, outils attendus) ; synthèse
+    d'un chantier (2 cas) ; synthèse des difficultés (2 cas).
+- **Sous-territoires.** Nouveaux : `get_taux_avancement_territoire` « un seul
+  appel sur le parent » ; synthèse de Bretagne et ses départements (outils
+  attendus, tableau comparatif, analyse des écarts). La règle ne vit plus que
+  dans le `.describe` du paramètre.
+- **Forme.**
+  - Résolus : « Tableau demandé » (tableau, chantiers dans le tableau) ;
+    libellés météo (3 cas) ; pas de recopie (3 cas) ; format des chantiers
+    (synthèse des commentaires, deux chantiers).
+  - Nouveaux : comparaison quantitative « région hors périmètre » (tableau
+    comparatif, territoires du tableau) ; « piège du 84 », REG-84 (territoires
+    du tableau) ; commentaires restitués (format des chantiers).
+  - Inchangés : format des chantiers (3 cas) ; rapport complet (réponse du
+    chat) ; « piège du 84 », DEPT-84 (territoires du tableau).
+- **Contenu et factualité.**
+  - Résolus : analyse des écarts (4 cas) ; rapport complet (chiffres exacts).
+  - Nouveaux : synthèse des commentaires, un seul chantier : « Actions
+    identifiées » et « Une synthèse par chantier », deux critères que la
+    calibration signale comme peu fiables.
+  - Inchangés : analyse des écarts (4 cas) ; chantiers attendus de la synthèse
+    des difficultés (3 cas) ; rapport complet (fidèle à la conversation).
+- **Restriction d'accès.** Résolu : synthèse d'un chantier, coordinateur.
+  Nouveau : synthèse des difficultés, hors périmètre. Plus rien ne signale
+  les territoires restreints dans les résultats de `get_chantiers`, et les
+  drapeaux « en retard » et « en difficulté » y sont forcés à faux (revue de
+  la branche).
+
+### Entrées de l'étape 2
+
+Par ordre d'effet mesuré, avec le levier le plus local :
+
+1. Sous-territoires (4 nouveaux) : `.describe` d'`include_sous_territoires`.
+2. Choix d'outil (6 nouveaux) : la description du tool concerné, à commencer
+   par `get_chantiers_signales` (plusieurs catégories) et `create_dashboard`
+   (courbe).
+3. Restriction d'accès (1 nouveau) : un champ de restriction dans le résultat
+   de `get_chantiers`, puis le statut commun si d'autres tools sont touchés.
+4. À surveiller sans levier pour l'instant : les `<br>` dans les tableaux (2
+   essais, aucun cas en échec répété) ; `search_territoires`, en échec depuis
+   la ligne de base.
+
