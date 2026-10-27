@@ -66,7 +66,7 @@ export async function collecterTauxAvancement({
 }): Promise<GetTauxAvancementTerritoireOutput> {
   const codes = await territoireResolver.resoudre(
     input.territoire_code,
-    input.include_sous_territoires,
+    input.include_sous_territoires ?? false,
   );
 
   const chantiersContainer = getContainer("chantiers");

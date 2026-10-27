@@ -133,6 +133,28 @@ export class Albert {
   }
 
   /**
+   * Le texte d'un sous-agent, au fil de sa rédaction : pour un outil qui le
+   * renvoie en résultats intermédiaires. Sans outils ni persistance.
+   */
+  static streamSubagentText({
+    systemPrompt,
+    prompt,
+    abortSignal,
+  }: {
+    systemPrompt: string;
+    prompt: string;
+    abortSignal?: AbortSignal;
+  }): AsyncIterable<string> {
+    return aiStreamText({
+      model: createModel(DEFAULT_MODEL),
+      system: systemPrompt,
+      prompt,
+      temperature: TEMPERATURE_STREAM_TEXT,
+      abortSignal,
+    }).textStream;
+  }
+
+  /**
    * Pendant non streamé de `streamText` : mêmes modèle, température et
    * `stopWhen`, même écriture dans `llm_calls`. Renvoie le résultat complet,
    * `steps` compris — ce que le flux ne permet pas d'inspecter.
@@ -192,7 +214,8 @@ export class Albert {
     tools?: ToolSet;
     model?: string;
   }) {
-    const modelMessages = await convertToModelMessages(messages);
+    // Les outils appliquent leur `toModelOutput` aux résultats de l'historique.
+    const modelMessages = await convertToModelMessages(messages, { tools });
 
     return aiStreamText({
       model: createModel(model),
