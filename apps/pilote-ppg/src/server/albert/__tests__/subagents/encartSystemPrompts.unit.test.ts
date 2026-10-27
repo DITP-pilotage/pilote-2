@@ -25,6 +25,15 @@ describe.each([
     expect(prompt).not.toMatch(/\\$/m);
   });
 
+  it("fait recopier l'écart tel quel, signe compris", () => {
+    // When
+    const prompt = build();
+
+    // Then
+    expect(prompt).toContain("recopie-le tel quel, signe compris");
+    expect(prompt).toContain("commentaire_de_synthese");
+  });
+
   it("distingue un commentaire masqué d'un commentaire absent", () => {
     // When
     const prompt = build();

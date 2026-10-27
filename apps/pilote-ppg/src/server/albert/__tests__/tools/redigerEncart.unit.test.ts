@@ -3,7 +3,11 @@ import { mock } from "vitest-mock-extended";
 import { convertToModelMessages, generateText, type UIMessage } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
 import { Albert } from "@/server/albert/Albert";
-import type { DonneesEncart, EncartOutput } from "@/server/albert/tools/encart";
+import {
+  type DonneesEncart,
+  type EncartOutput,
+  ecartPourLeSousAgent,
+} from "@/server/albert/tools/encart";
 import { createRedigerSyntheseTerritoireTool } from "@/server/albert/tools/redigerSyntheseTerritoire";
 import {
   createRedigerComparaisonTerritoiresTool,
@@ -268,9 +272,17 @@ describe("outils de rédaction d'encart", () => {
     ]);
   });
 
-  test("passe au sous-agent les données collectées", async () => {
+  test("passe au sous-agent des données prêtes à recopier, sans les drapeaux ni les commentaires détaillés", async () => {
     // Given
     subagentRedige(["# Synthèse"]);
+    const chantierPourLeSousAgent = (id: string) => ({
+      id,
+      nom: `Chantier ${id}`,
+      ecart: "−14 points",
+      niveau_de_confiance: "Objectifs compromis",
+      tendance: "En baisse",
+      commentaire_de_synthese: "Deux postes restent vacants.",
+    });
 
     // When
     await collecter(
@@ -282,8 +294,28 @@ describe("outils de rédaction d'encart", () => {
 
     // Then
     expect(
-      vi.mocked(Albert.streamSubagentText).mock.calls[0][0].prompt,
-    ).toEqual(JSON.stringify(DONNEES_DU_NORD));
+      JSON.parse(vi.mocked(Albert.streamSubagentText).mock.calls[0][0].prompt),
+    ).toEqual({
+      taux: DONNEES_DU_NORD.taux,
+      chantiers_en_retard: {
+        resultats: [
+          {
+            territoire_code: "DEPT-59",
+            territoire_nom: "Nord",
+            chantiers: [chantierPourLeSousAgent("CH-071")],
+          },
+        ],
+      },
+      chantiers_en_difficulte: {
+        resultats: [
+          {
+            territoire_code: "DEPT-59",
+            territoire_nom: "Nord",
+            chantiers: [chantierPourLeSousAgent("CH-045")],
+          },
+        ],
+      },
+    });
   });
 
   test("sans aucun chantier accessible, ne lance pas le sous-agent", async () => {
@@ -551,5 +583,21 @@ describe("outils de rédaction d'encart", () => {
     expect(enRetard?.non_applicable).toEqual([
       { territoire_code: "NAT-FR", raison: expect.any(String) },
     ]);
+  });
+});
+
+describe("ecartPourLeSousAgent", () => {
+  test.each([
+    [-14.4, "−14 points"],
+    [3, "+3 points"],
+    [-1, "−1 point"],
+    [0, "0 point"],
+    [null, "écart non calculé"],
+  ])("écrit %s comme « %s »", (ecart, attendu) => {
+    // When
+    const ecrit = ecartPourLeSousAgent({ ecart });
+
+    // Then
+    expect(ecrit).toEqual(attendu);
   });
 });

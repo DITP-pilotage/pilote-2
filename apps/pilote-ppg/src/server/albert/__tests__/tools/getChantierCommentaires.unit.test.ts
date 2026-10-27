@@ -9,6 +9,7 @@ import type {
   GetChantierCommentairesQueryResult,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 
 const queryResult: GetChantierCommentairesQueryResult = {
   resultats: [
@@ -37,6 +38,17 @@ const buildTool = ({
   return createGetChantierCommentairesTool({
     getChantierCommentairesQuery: query,
     territoireResolver,
+    getChantiersIdentiteQuery: mock<GetChantiersIdentiteQuery>({
+      execute: async () => [
+        {
+          id: "CH-084",
+          nom: "Accélérer la rénovation énergétique",
+          axe: "Axe",
+          ppg: "PPG",
+          ministeres: [],
+        },
+      ],
+    }),
   })({ territoiresAccessibles, chantiersAccessibles });
 };
 
@@ -59,7 +71,7 @@ const executeTool = async (
   ) as Promise<GetChantierCommentairesOutput>;
 
 describe("createGetChantierCommentairesTool execute", () => {
-  test("retourne les commentaires d'un chantier accessible", async () => {
+  test("retourne les commentaires d'un chantier accessible, avec le nom du chantier", async () => {
     // Given
     const query = mock<GetChantierCommentairesQuery>({
       execute: vi.fn(async () => queryResult),
@@ -75,6 +87,7 @@ describe("createGetChantierCommentairesTool execute", () => {
 
     // Then
     expect(result).toEqual({
+      chantier_nom: "Accélérer la rénovation énergétique",
       resultats: queryResult.resultats,
       types_non_accessibles: [],
     });

@@ -10,6 +10,7 @@ import type {
   GetChantierCommentairesResult,
   TypeContenuChantier,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
 export type { TypeContenuChantier };
@@ -37,6 +38,8 @@ export const getChantierCommentairesInputSchema = z.object({
 });
 
 export type GetChantierCommentairesOutput = {
+  /** Le nom à écrire avec l'identifiant (« CH-XXX — Nom ») : sans lui, la réponse citait le chantier par son seul code. */
+  chantier_nom: string | null;
   resultats: GetChantierCommentairesResult[];
   types_non_accessibles: GetChantierCommentairesQueryResult["types_non_accessibles"];
 };
@@ -44,9 +47,11 @@ export type GetChantierCommentairesOutput = {
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
   territoireResolver,
+  getChantiersIdentiteQuery,
 }: {
   getChantierCommentairesQuery: GetChantierCommentairesQuery;
   territoireResolver: TerritoireResolver;
+  getChantiersIdentiteQuery: GetChantiersIdentiteQuery;
 }) {
   return ({
     territoiresAccessibles,
@@ -57,6 +62,7 @@ export function createGetChantierCommentairesTool({
   }) => {
     return tool({
       description: `Renvoie les commentaires publiés d'un chantier sur un territoire, chacun avec son type et sa date, regroupés par territoire (\`territoire_nom\` : le territoire pour lequel ils sont rédigés).
+- \`chantier_nom\` : le nom du chantier, à écrire avec son identifiant (« CH-XXX — Nom »).
 
 Types de commentaires :
 - \`freins_a_lever\` (maille nationale uniquement) : risques et freins à lever, notamment ceux nécessitant un soutien ou un arbitrage
@@ -103,6 +109,10 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
           territoiresAccessibles.includes(TERRITOIRE_NATIONAL) &&
           !codesAccessibles.includes(TERRITOIRE_NATIONAL);
 
+        const [chantier] = await getChantiersIdentiteQuery.execute({
+          chantierIds: [input.chantier_id],
+        });
+
         const results = await Promise.all(
           codesAccessibles.map((code, index) =>
             getChantierCommentairesQuery.execute({
@@ -116,6 +126,7 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
         );
 
         return {
+          chantier_nom: chantier?.nom ?? null,
           resultats: results.flatMap((result) => result.resultats),
           types_non_accessibles: [
             ...new Set(

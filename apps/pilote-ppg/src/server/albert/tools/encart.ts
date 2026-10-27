@@ -50,6 +50,50 @@ export type EncartOutput = {
 };
 
 /**
+ * L'écart tel que l'encart l'écrit, signe compris : le sous-agent recopie une
+ * chaîne mieux qu'il ne reformate un nombre (il écrivait « 22 points » pour
+ * −22, mesure de l'étape 4).
+ */
+export function ecartPourLeSousAgent({
+  ecart,
+}: {
+  ecart: number | null;
+}): string {
+  if (ecart === null) return "écart non calculé";
+  const arrondi = Math.round(ecart);
+  const signe = arrondi < 0 ? "−" : arrondi > 0 ? "+" : "";
+  const points = Math.abs(arrondi) > 1 ? "points" : "point";
+  return `${signe}${Math.abs(arrondi)} ${points}`;
+}
+
+const vuePourLeSousAgent = (vue: ChantiersEncart) => ({
+  resultats: vue.resultats.map((resultat) => ({
+    territoire_code: resultat.territoire_code,
+    territoire_nom: resultat.territoire_nom,
+    ...(resultat.acces_restreint && { acces_restreint: true }),
+    // Un chantier de la vue en fait partie : les drapeaux est_en_retard et
+    // est_en_difficulte, forcés à faux hors de l'accès complet, l'induisaient
+    // en erreur.
+    chantiers: resultat.chantiers.map((chantier) => ({
+      id: chantier.chantier.id,
+      nom: chantier.chantier.nom,
+      ecart: ecartPourLeSousAgent({ ecart: chantier.ecart }),
+      niveau_de_confiance: chantier.niveau_de_confiance,
+      tendance: chantier.tendance,
+      commentaire_de_synthese: chantier.synthese?.commentaire ?? null,
+    })),
+  })),
+  ...(vue.non_applicable && { non_applicable: vue.non_applicable }),
+});
+
+/** Ce que le sous-agent lit : seulement ce que le gabarit écrit. */
+const donneesPourLeSousAgent = (donnees: DonneesEncart) => ({
+  taux: donnees.taux,
+  chantiers_en_retard: vuePourLeSousAgent(donnees.chantiers_en_retard),
+  chantiers_en_difficulte: vuePourLeSousAgent(donnees.chantiers_en_difficulte),
+});
+
+/**
  * Chaque état renvoie tout le texte rédigé : un état par morceau ferait
  * transiter un volume quadratique. On en envoie au plus un par intervalle.
  */
@@ -94,7 +138,7 @@ export async function* redigerEncart({
   let dernierEnvoi = Date.now();
   for await (const morceau of Albert.streamSubagentText({
     systemPrompt,
-    prompt: JSON.stringify(donnees),
+    prompt: JSON.stringify(donneesPourLeSousAgent(donnees)),
     abortSignal,
   })) {
     markdown += morceau;
