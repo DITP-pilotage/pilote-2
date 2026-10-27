@@ -81,6 +81,30 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).not.toContain("Une synthèse de territoire couvre");
   });
 
+  it("garde une comparaison qui nomme son critère hors de l'encart", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain("« Compare les taux d'avancement");
+  });
+
+  it("garde le rapport et le téléchargement sur l'export, même avec « synthèse »", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "« rapport », « télécharger », « exporter » : toujours un fichier à exporter, jamais un encart",
+    );
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({

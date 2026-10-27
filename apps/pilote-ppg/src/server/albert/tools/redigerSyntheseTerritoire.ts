@@ -34,6 +34,8 @@ export function createRedigerSyntheseTerritoireTool({
       description: `Rédige la synthèse d'un territoire dans un encart affiché à l'utilisateur : son taux d'avancement face à la médiane, ses chantiers en retard et ses chantiers en difficulté, avec un résumé de leur synthèse. L'outil collecte lui-même ces données.
 Utilise-le pour : une synthèse ou un état des lieux générique d'un territoire. Par exemple « Fais-moi la synthèse du Nord », « Où en est la Gironde ? », « La situation en Bretagne », « Fais-moi la synthèse des difficultés de la Bretagne », « Où en est la France sur l'ensemble des chantiers ? ».
 Ne l'utilise pas pour :
+- une demande qui nomme son critère (« compare les taux d'avancement », « les chantiers en retard ») → les outils de données ;
+- un rapport ou un téléchargement, même « de synthèse » → export_rapport ;
 - un critère précis (« les chantiers en retard du Nord », « le taux d'avancement de la Gironde », « les difficultés en Hauts-de-France ») → get_chantiers ou get_taux_avancement_territoire ;
 - un chantier ou un indicateur précis → les outils de données ;
 - plusieurs territoires → rediger_comparaison_territoires ;
