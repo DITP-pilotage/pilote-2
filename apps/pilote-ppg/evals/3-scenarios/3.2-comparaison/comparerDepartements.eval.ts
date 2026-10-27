@@ -1,4 +1,5 @@
 import { scenarioEval } from "../scenarioEval";
+import { ENCART_CRITERIA } from "../criteria/encart";
 import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria";
 
 /**
@@ -24,7 +25,8 @@ import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria"
 scenarioEval({
   suite: "Comparer Bretagne avec ses départements",
   group: "comparaison",
-  criteria: COMPARER_DEPARTEMENTS_CRITERIA,
+  criteria: [...COMPARER_DEPARTEMENTS_CRITERIA, ...ENCART_CRITERIA],
+  matter: "encart",
   cases: [
     {
       question: "Compare Bretagne avec ses départements",
@@ -32,7 +34,7 @@ scenarioEval({
       truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
       expected: [
         {
-          toolName: "get_taux_avancement_territoire",
+          toolName: "rediger_comparaison_territoires",
           input: { territoire_code: "REG-53", include_sous_territoires: true },
         },
       ],

@@ -1,6 +1,38 @@
 import { extractMatter, maskedTerritories } from "./evidence";
 
 describe("extractMatter", () => {
+  test("encart rédigé : rend son texte, puis la phrase d'accompagnement", () => {
+    expect(
+      extractMatter({
+        kind: "encart",
+        text: "Voici la synthèse.",
+        toolCalls: [],
+        toolResults: [
+          {
+            toolName: "rediger_synthese_territoire",
+            input: {},
+            output: { markdown: "# Synthèse pour le Nord", termine: true },
+          },
+        ],
+      }).matter,
+    ).toBe(
+      "ENCART RÉDIGÉ :\n# Synthèse pour le Nord\n\nTEXTE D'ACCOMPAGNEMENT :\nVoici la synthèse.",
+    );
+  });
+
+  test("encart absent : le dit au juge, puis rend la réponse du chat", () => {
+    expect(
+      extractMatter({
+        kind: "encart",
+        text: "Voici la synthèse du Nord…",
+        toolCalls: [],
+        toolResults: [],
+      }).matter,
+    ).toBe(
+      "AUCUN ENCART RÉDIGÉ : l'assistant n'a pas appelé l'outil d'encart.\n\nTEXTE D'ACCOMPAGNEMENT :\nVoici la synthèse du Nord…",
+    );
+  });
+
   test("texte : la réponse telle quelle", () => {
     expect(
       extractMatter({
@@ -126,6 +158,34 @@ describe("extractMatter", () => {
 });
 
 describe("maskedTerritories", () => {
+  test("retient les territoires hors périmètre lus par un outil d'encart", () => {
+    expect(
+      maskedTerritories({
+        userTerritories: ["REG-53"],
+        toolResults: [
+          {
+            toolName: "rediger_comparaison_territoires",
+            input: {},
+            output: {
+              markdown: "# Comparaison",
+              termine: true,
+              donnees: {
+                taux: [],
+                chantiers_en_retard: {
+                  resultats: [
+                    { territoire_code: "REG-53" },
+                    { territoire_code: "REG-52" },
+                  ],
+                },
+                chantiers_en_difficulte: { resultats: [] },
+              },
+            },
+          },
+        ],
+      }),
+    ).toEqual(["REG-52"]);
+  });
+
   test("retient les territoires hors périmètre rendus par un outil qui masque", () => {
     expect(
       maskedTerritories({

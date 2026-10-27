@@ -397,3 +397,120 @@ export function checkNoHtml({ text }: { text: string }): CheckResult {
     ? { ok: true, detail: "aucune balise HTML" }
     : { ok: false, detail: `balises HTML : ${balises.join(", ")}` };
 }
+
+type ChantierDeLEncart = {
+  chantier: { id: string };
+  ecart: number | null;
+  niveau_de_confiance: string | null;
+};
+
+/**
+ * Chaque chantier des données de l'encart y figure, avec son niveau de
+ * confiance et, si demandé, son écart arrondi, dans le passage qui le suit.
+ */
+export function checkEncartChantiers({
+  text,
+  chantiers,
+  avecEcart,
+}: {
+  text: string;
+  chantiers: ChantierDeLEncart[];
+  avecEcart: boolean;
+}): CheckResult {
+  const lisible = typographie(text);
+  const parId = new Map(
+    chantiers.map((chantier) => [chantier.chantier.id, chantier]),
+  );
+  const erreurs = [...parId.values()].flatMap((chantier) => {
+    const id = chantier.chantier.id;
+    const debut = lisible.indexOf(id);
+    if (debut === -1) return [`${id} : absent`];
+    const suivant = lisible.slice(debut + id.length).search(/CH-\d+/);
+    const passage = lisible.slice(
+      debut,
+      suivant === -1 ? undefined : debut + id.length + suivant,
+    );
+    const manques: string[] = [];
+    if (avecEcart && chantier.ecart !== null) {
+      const ecart = String(Math.round(chantier.ecart));
+      if (!new RegExp(`(?<!\\d)${escapeRegExp(ecart)}(?!\\d)`).test(passage)) {
+        manques.push(`${id} : écart ${ecart} absent`);
+      }
+    }
+    if (
+      chantier.niveau_de_confiance !== null &&
+      !normalize(passage).includes(normalize(chantier.niveau_de_confiance))
+    ) {
+      manques.push(
+        `${id} : niveau de confiance ${chantier.niveau_de_confiance} absent`,
+      );
+    }
+    return manques;
+  });
+  return erreurs.length === 0
+    ? { ok: true, detail: `${parId.size} chantier(s) conforme(s)` }
+    : { ok: false, detail: erreurs.join(" ; ") };
+}
+
+const MAILLE_ATTENDUE: Record<string, string> = {
+  NAT: "national",
+  REG: "de la region",
+  DEPT: "du departement",
+};
+
+/** La phrase du taux d'avancement nomme la maille du territoire. */
+export function checkMailleNommee({
+  text,
+  territoireCode,
+}: {
+  text: string;
+  territoireCode: string;
+}): CheckResult {
+  const attendue = MAILLE_ATTENDUE[territoireCode.split("-")[0]];
+  const ecrite = normalize(text).match(
+    /taux d'avancement (?:\d{4} )?(du departement|de la region|national)/,
+  )?.[1];
+  if (!ecrite) {
+    return {
+      ok: false,
+      detail: "maille non nommée dans la phrase du taux d'avancement",
+    };
+  }
+  return ecrite === attendue
+    ? { ok: true, detail: `maille « ${ecrite} »` }
+    : {
+        ok: false,
+        detail: `maille écrite « ${ecrite} », attendue « ${attendue} »`,
+      };
+}
+
+/**
+ * Un commentaire masqué par restriction d'accès est dit tel quel, pas comme
+ * absent (règle 6).
+ */
+export function checkRestrictionEncart({
+  text,
+  resultats,
+}: {
+  text: string;
+  resultats: {
+    acces_restreint?: boolean;
+    chantiers: { synthese: unknown }[];
+  }[];
+}): CheckResult {
+  const masques = resultats.some(
+    (resultat) =>
+      resultat.acces_restreint &&
+      resultat.chantiers.some((chantier) => chantier.synthese !== null),
+  );
+  if (!masques) return { ok: true, detail: "aucun commentaire masqué" };
+  return normalize(text).includes(
+    normalize("Commentaire non accessible (restriction d'accès)"),
+  )
+    ? { ok: true, detail: "restriction d'accès mentionnée" }
+    : {
+        ok: false,
+        detail:
+          "commentaires masqués sans la mention de la restriction d'accès",
+      };
+}

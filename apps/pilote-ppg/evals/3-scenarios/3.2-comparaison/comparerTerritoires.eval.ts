@@ -1,4 +1,5 @@
 import { scenarioEval } from "../scenarioEval";
+import { ENCART_CRITERIA } from "../criteria/encart";
 import { COMPARER_TERRITOIRES_CRITERIA } from "./comparerTerritoires.criteria";
 
 /**
@@ -24,28 +25,29 @@ import { COMPARER_TERRITOIRES_CRITERIA } from "./comparerTerritoires.criteria";
  * 75 % ; échecs : Analyse des écarts 0/9, Territoires du tableau 7/9.
  */
 
-const tauxDe = (territoire_code: string) => ({
-  toolName: "get_taux_avancement_territoire",
-  input: { territoire_code },
+const comparaisonDe = (territoire_codes: string[]) => ({
+  toolName: "rediger_comparaison_territoires",
+  input: { territoire_codes },
 });
 
 scenarioEval({
   suite: "Comparer avec un autre territoire",
   group: "comparaison",
-  criteria: COMPARER_TERRITOIRES_CRITERIA,
+  criteria: [...COMPARER_TERRITOIRES_CRITERIA, ...ENCART_CRITERIA],
+  matter: "encart",
   cases: [
     {
       question: "Compare Bretagne avec Pays de la Loire",
       reason: "Deux régions",
       truthScope: { territoires: ["REG-53", "REG-52"] },
-      expected: [tauxDe("REG-53"), tauxDe("REG-52")],
+      expected: [comparaisonDe(["REG-53", "REG-52"])],
       tableTerritories: ["REG-53", "REG-52"],
     },
     {
       question: "Compare Bretagne avec la région 84",
       reason: "Piège du 84 : REG-84, Auvergne-Rhône-Alpes",
       truthScope: { territoires: ["REG-53", "REG-84"] },
-      expected: [tauxDe("REG-53"), tauxDe("REG-84")],
+      expected: [comparaisonDe(["REG-53", "REG-84"])],
       tableTerritories: ["REG-53", "REG-84"],
     },
     {
@@ -53,7 +55,7 @@ scenarioEval({
       reason:
         "Une région face à son département : deux médianes de mailles différentes",
       truthScope: { territoires: ["REG-53", "DEPT-35"] },
-      expected: [tauxDe("REG-53"), tauxDe("DEPT-35")],
+      expected: [comparaisonDe(["REG-53", "DEPT-35"])],
       tableTerritories: ["REG-53", "DEPT-35"],
     },
   ],

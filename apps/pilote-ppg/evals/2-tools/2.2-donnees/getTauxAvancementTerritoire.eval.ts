@@ -27,11 +27,6 @@ const CASES: ToolCase[] = [
     expected: [{ toolName: "get_taux_avancement_territoire" }],
   },
   {
-    question: "Où en est la France sur l'ensemble des chantiers ?",
-    reason: "avancement global sans le mot « taux »",
-    expected: [{ toolName: "get_taux_avancement_territoire" }],
-  },
-  {
     question:
       "Comment se situe la Bretagne par rapport à la médiane des régions ?",
     reason: "vocabulaire « médiane » et « position »",

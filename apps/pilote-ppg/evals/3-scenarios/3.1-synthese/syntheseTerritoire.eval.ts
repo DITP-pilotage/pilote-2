@@ -1,4 +1,5 @@
 import { scenarioEval } from "../scenarioEval";
+import { ENCART_CRITERIA } from "../criteria/encart";
 import { SYNTHESE_TERRITOIRE_CRITERIA } from "./syntheseTerritoire.criteria";
 
 /**
@@ -21,18 +22,14 @@ import { SYNTHESE_TERRITOIRE_CRITERIA } from "./syntheseTerritoire.criteria";
  */
 
 const workflowSynthese = (territoire_code: string) => [
-  { toolName: "get_taux_avancement_territoire", input: { territoire_code } },
-  { toolName: "get_chantiers", input: { territoire_code, view: "en_retard" } },
-  {
-    toolName: "get_chantiers",
-    input: { territoire_code, view: "en_difficulte" },
-  },
+  { toolName: "rediger_synthese_territoire", input: { territoire_code } },
 ];
 
 scenarioEval({
   suite: "Synthèse d'un territoire",
   group: "synthese",
-  criteria: SYNTHESE_TERRITOIRE_CRITERIA,
+  criteria: [...SYNTHESE_TERRITOIRE_CRITERIA, ...ENCART_CRITERIA],
+  matter: "encart",
   cases: [
     {
       question: "Fais moi la synthèse du territoire Bretagne",

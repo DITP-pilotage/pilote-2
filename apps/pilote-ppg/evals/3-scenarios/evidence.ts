@@ -38,7 +38,21 @@ export type Evidence = {
  * Ce que le scénario livre : une réponse dans le chat, un rapport exporté, ou
  * un tableau de bord composé.
  */
-export type MatterKind = "text" | "dashboard" | "rapport";
+export type MatterKind = "text" | "dashboard" | "rapport" | "encart";
+
+export const OUTILS_ENCART = [
+  "rediger_synthese_territoire",
+  "rediger_comparaison_territoires",
+];
+
+type SortieEncart = {
+  markdown: string;
+  acces_refuse?: true;
+  donnees?: {
+    chantiers_en_retard: { resultats: { territoire_code: string }[] };
+    chantiers_en_difficulte: { resultats: { territoire_code: string }[] };
+  };
+};
 
 type ToolResult = { toolName: string; input: unknown; output: unknown };
 
@@ -102,6 +116,21 @@ export function extractMatter({
     };
   }
 
+  if (kind === "encart") {
+    const encarts = toolResults
+      .filter((toolResult) => OUTILS_ENCART.includes(toolResult.toolName))
+      .map((toolResult) => toolResult.output as SortieEncart)
+      .filter((sortie) => !sortie.acces_refuse);
+    const contenu =
+      encarts.length > 0
+        ? `ENCART RÉDIGÉ :\n${encarts.map((sortie) => sortie.markdown).join("\n\n")}`
+        : "AUCUN ENCART RÉDIGÉ : l'assistant n'a pas appelé l'outil d'encart.";
+    return {
+      matter: `${contenu}\n\nTEXTE D'ACCOMPAGNEMENT :\n${text}`,
+      dashboard: null,
+    };
+  }
+
   return { matter: text, dashboard: null };
 }
 
@@ -120,13 +149,24 @@ export function maskedTerritories({
   userTerritories: string[];
 }): string[] {
   const codes = toolResults
-    .filter((result) => OUTILS_QUI_MASQUENT.includes(result.toolName))
-    .flatMap((result) =>
-      (
-        (result.output as { resultats?: { territoire_code: string }[] })
-          .resultats ?? []
-      ).map((resultat) => resultat.territoire_code),
-    )
+    .flatMap((result) => {
+      if (OUTILS_QUI_MASQUENT.includes(result.toolName)) {
+        return (
+          (result.output as { resultats?: { territoire_code: string }[] })
+            .resultats ?? []
+        ).map((resultat) => resultat.territoire_code);
+      }
+      // Les outils d'encart lisent les chantiers comme get_chantiers
+      const donnees = OUTILS_ENCART.includes(result.toolName)
+        ? (result.output as SortieEncart).donnees
+        : undefined;
+      return donnees
+        ? [
+            ...donnees.chantiers_en_retard.resultats,
+            ...donnees.chantiers_en_difficulte.resultats,
+          ].map((resultat) => resultat.territoire_code)
+        : [];
+    })
     .filter((code) => !userTerritories.includes(code));
   return [...new Set(codes)].sort();
 }

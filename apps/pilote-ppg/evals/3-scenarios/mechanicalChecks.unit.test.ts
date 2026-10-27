@@ -1,4 +1,7 @@
 import {
+  checkEncartChantiers,
+  checkMailleNommee,
+  checkRestrictionEncart,
   checkChantierFormat,
   checkChantiersCited,
   checkDashboardNonVide,
@@ -300,9 +303,9 @@ describe("checkFrench", () => {
   });
 
   test("laisse passer la phrase de clôture française", () => {
-    expect(checkFrench({ text: "Choisissez une option pour continuer." })).toEqual(
-      { ok: true, detail: "réponse en français" },
-    );
+    expect(
+      checkFrench({ text: "Choisissez une option pour continuer." }),
+    ).toEqual({ ok: true, detail: "réponse en français" });
   });
 
   test("ne confond pas un mot anglais avec un mot français qui le contient", () => {
@@ -424,5 +427,112 @@ describe("checkNoHtml", () => {
         text: "**CH-005** : écart < -10 points, 34 % -> 40 %. Voir <https://exemple.fr>.",
       }),
     ).toEqual({ ok: true, detail: "aucune balise HTML" });
+  });
+});
+
+const chantierDonne = ({
+  id,
+  ecart,
+  niveau,
+}: {
+  id: string;
+  ecart: number;
+  niveau: string;
+}) => ({
+  chantier: { id },
+  ecart,
+  niveau_de_confiance: niveau,
+  synthese: { commentaire: null },
+});
+
+describe("checkEncartChantiers", () => {
+  const chantiers = [
+    chantierDonne({ id: "CH-071", ecart: -14.4, niveau: "Appuis nécessaires" }),
+  ];
+
+  test("retrouve chaque chantier avec son écart arrondi et son niveau de confiance", () => {
+    expect(
+      checkEncartChantiers({
+        text: "**CH-071 — Rénover**\n**Écart** : −14 points · **Niveau de confiance** : Appuis nécessaires",
+        chantiers,
+        avecEcart: true,
+      }),
+    ).toEqual({ ok: true, detail: "1 chantier(s) conforme(s)" });
+  });
+
+  test("signale un écart faux ou un chantier absent", () => {
+    expect(
+      checkEncartChantiers({
+        text: "**CH-071 — Rénover**\n**Écart** : −12 points · **Niveau de confiance** : Appuis nécessaires",
+        chantiers: [
+          ...chantiers,
+          chantierDonne({
+            id: "CH-045",
+            ecart: 2,
+            niveau: "Objectifs compromis",
+          }),
+        ],
+        avecEcart: true,
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "CH-071 : écart -14 absent ; CH-045 : absent",
+    });
+  });
+});
+
+describe("checkMailleNommee", () => {
+  test("un département n'est pas nommé « la région »", () => {
+    expect(
+      checkMailleNommee({
+        text: "Dans PILOTE, le taux d'avancement 2025 de la région s'établit à 54 %.",
+        territoireCode: "DEPT-59",
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "maille écrite « de la region », attendue « du departement »",
+    });
+  });
+
+  test("une région est nommée « la région »", () => {
+    expect(
+      checkMailleNommee({
+        text: "Dans PILOTE, le taux d'avancement 2025 de la région s'établit à 54 %.",
+        territoireCode: "REG-53",
+      }),
+    ).toEqual({ ok: true, detail: "maille « de la region »" });
+  });
+});
+
+describe("checkRestrictionEncart", () => {
+  const resultats = [
+    {
+      territoire_code: "REG-52",
+      acces_restreint: true,
+      chantiers: [
+        { chantier: { id: "CH-071" }, synthese: { commentaire: null } },
+      ],
+    },
+  ];
+
+  test("exige la mention de la restriction quand des commentaires sont masqués", () => {
+    expect(
+      checkRestrictionEncart({
+        text: "> Pas de commentaire disponible",
+        resultats,
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "commentaires masqués sans la mention de la restriction d'accès",
+    });
+  });
+
+  test("accepte la mention de la restriction", () => {
+    expect(
+      checkRestrictionEncart({
+        text: "> Commentaire non accessible (restriction d'accès)",
+        resultats,
+      }),
+    ).toEqual({ ok: true, detail: "restriction d'accès mentionnée" });
   });
 });
