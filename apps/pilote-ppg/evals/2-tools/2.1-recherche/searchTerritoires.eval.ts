@@ -9,9 +9,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * un numéro, le plus souvent avant de le passer à un autre outil.
  *
  * Tout code de région est aussi un numéro de département : REG-84 est
- * Auvergne-Rhône-Alpes, DEPT-84 le Vaucluse. Un numéro doit donc passer par la
- * recherche, qui renvoie tout ce qui correspond ; choisir entre les candidats
- * relève de la suite de la conversation, pas de ce niveau. Les cas « région 84 »
+ * Auvergne-Rhône-Alpes, DEPT-84 le Vaucluse. Un numéro seul désigne le
+ * département (D3) ; il passe quand même par la recherche pour obtenir le
+ * code. Les cas « région 84 »
  * et « département 84 » vérifient que la précision de maille ne dispense pas
  * l'agent de la recherche. Le code finalement transmis relève du niveau 3.
  */
@@ -24,7 +24,7 @@ const CASES: ToolCase[] = [
   },
   {
     question: "Quel est le taux d'avancement dans le 84 ?",
-    reason: "numéro seul : 84 est à la fois une région et un département",
+    reason: "numéro seul : le département 84 (D3), code à résoudre",
     expected: [{ toolName: "search_territoires" }],
   },
   {
