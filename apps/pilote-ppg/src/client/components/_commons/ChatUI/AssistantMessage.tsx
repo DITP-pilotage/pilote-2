@@ -208,6 +208,7 @@ export const AssistantMessage = memo(function AssistantMessage({
             <EncartSynthese
               isStreaming={isStreaming}
               key={index}
+              llmCallId={llmCallIdOf(message)}
               output={
                 part.state === "output-available"
                   ? part.output

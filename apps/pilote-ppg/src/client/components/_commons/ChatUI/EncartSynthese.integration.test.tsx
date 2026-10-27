@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { EncartSynthese } from "@/components/_commons/ChatUI/EncartSynthese";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
@@ -54,6 +54,34 @@ describe("EncartSynthese", () => {
     // Then
     expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
     expect(screen.getByText("Synthèse pour le Nord")).toBeInTheDocument();
+  });
+
+  test("une fois rédigé, se télécharge en markdown avec le contenu affiché", async () => {
+    // Given
+    const fichiers: Blob[] = [];
+    URL.createObjectURL = vi.fn((fichier: Blob) => {
+      fichiers.push(fichier);
+      return "blob:encart";
+    });
+    URL.revokeObjectURL = vi.fn();
+    renderEncart(encart({ termine: true }), false);
+
+    // When
+    fireEvent.click(screen.getByRole("button", { name: /Télécharger/ }));
+
+    // Then
+    await waitFor(() => expect(fichiers).toHaveLength(1));
+    expect(await fichiers[0].text()).toEqual("# Synthèse pour le Nord");
+  });
+
+  test("ne se télécharge pas pendant la rédaction", () => {
+    // When
+    renderEncart(encart({ termine: false }));
+
+    // Then
+    expect(
+      screen.queryByRole("button", { name: /Télécharger/ }),
+    ).not.toBeInTheDocument();
   });
 
   test("nomme la comparaison", () => {
