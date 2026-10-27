@@ -344,6 +344,7 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 |---|---|---|---|---|---|
 | 0 – ligne de base | `edc45d4` | 91 % | 91 % | 9 265 | référence |
 | 1 – réécriture minimale | `5ae608e` | 88 % | 92 % | 2 290 | base de l'étape 2 |
+| 2 – résolution, sous-territoires, exemples | `9805829` | 90 % | 93 % | 2 853 | base de l'étape 3 |
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
@@ -520,3 +521,68 @@ effet attendu sur les scores :
 (« Actions identifiées », « Une synthèse par chantier », « Trois volets »).
 
 À surveiller sans levier : les `<br>` dans les tableaux (2 essais).
+
+### Étape 2 : résolution, sous-territoires, exemples (`9805829`)
+
+Changements : recherche imposée pour tout territoire nommé, règle des
+sous-territoires remise dans le prompt, six exemples « demande → appels »,
+trois entrées de lexique, comparaison qui dit qui est devant, descriptions de
+neuf tools ajustées, `territoire_nom` dans `get_taux_avancement_territoire`.
+
+- Niveau 2 : 88,1 % → 89,6 %. Niveau 3 : 92,5 % → 93,4 %.
+- Tokens du premier appel : 2 290 → 2 853. Durée moyenne d'un essai : 12 s → 11 s.
+- Météo citée sans être demandée : 2 essais ; balise HTML : 0 ; langue : 0 échec.
+- Échecs répétés : 43 → 43, dont 14 résolus, 14 nouveaux et 29 inchangés.
+
+Ce qui a marché :
+
+- Analyse des écarts : toutes les comparaisons du niveau 3 passent.
+- Sous-territoires : plus d'appel par département ; `get_taux_avancement_territoire`
+  « un seul appel sur le parent » est résolu.
+- Noms des territoires dans les tableaux, résolus dans les cas concernés.
+- Routage : signalés à plusieurs catégories, clarification des trois chantiers
+  logement, export du scénario de l'écran d'accueil, « politique
+  prioritaire », recherche d'indicateurs restreinte au chantier.
+
+Ce qui n'a pas marché :
+
+- Recherche imposée de territoire : 0 essai sur 12 passe par
+  `search_territoires`. Malgré la règle, l'exemple et la description,
+  l'agent appelle directement les données avec DEPT-84 ou REG-84. Une
+  consigne ne suffit pas : il faut un levier dans le code.
+- « Trace la courbe d'évolution de l'IND-004 » : toujours
+  `get_evolution_indicateur` (3/3), malgré l'exemple et les deux descriptions.
+- Synthèse d'une région et de ses départements : plus d'énumération, mais
+  l'agent ne collecte que le taux d'avancement, sans les chantiers en retard
+  et en difficulté (outils attendus 33 %).
+
+Régressions causées par l'étape 2 :
+
+- `get_evolution_indicateur` « progresse » (3/3) et « tendance » (2/3) : la
+  nouvelle description a perdu « la tendance ». L'agent passe par
+  `search_indicateurs` puis `get_indicateurs`, ou n'appelle aucun outil.
+- Clarification « graphique de répartition hors catalogue » : 2 essais sur 3
+  répondent sans outil.
+
+Autres nouveaux échecs, sur des critères que la calibration juge fragiles ou
+déjà instables d'un run à l'autre : « Pas d'opinion », « Actions
+identifiées », « Chiffres exacts », « Position face à la médiane »,
+« Tableau comparatif », « Restriction signalée » (synthèse d'un chantier,
+coordinateur).
+
+### Entrées de l'étape 3
+
+1. Corriger la régression de `get_evolution_indicateur` : remettre « la
+   tendance, la progression » dans sa description.
+2. Recherche de territoire : la consigne échoue, le levier est dans le code.
+   À décider avec Antoine avant d'écrire quoi que ce soit, par exemple : les
+   outils de données acceptent un nom de territoire et le résolvent
+   eux-mêmes, ou refusent un code qui ne vient pas d'une recherche.
+3. Synthèse d'une région et de ses départements, et chantiers attendus de la
+   synthèse des difficultés : le tool composite « situation d'un territoire »
+   (D5), désormais justifié par la mesure.
+4. Courbe d'évolution : une décision produit. Soit `create_dashboard` pour
+   toute courbe, soit `get_evolution_indicateur` qui donne les valeurs, et le
+   graphique proposé ensuite.
+5. Restriction d'accès : le champ de restriction dans `get_chantiers`.
+
