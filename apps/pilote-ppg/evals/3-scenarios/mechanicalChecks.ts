@@ -186,6 +186,36 @@ export function checkNoVerbatim({
   return { ok: true, detail: "aucun commentaire recopié" };
 }
 
+/**
+ * L'inverse de `checkNoVerbatim` : chaque commentaire doit être restitué
+ * (D2). La comparaison porte sur toute la réponse, pas paragraphe par
+ * paragraphe : une restitution peut répartir un commentaire sur plusieurs
+ * paragraphes.
+ */
+export function checkVerbatim({
+  text,
+  sources,
+}: {
+  text: string;
+  sources: string[];
+}): CheckResult {
+  const motsDuTexte = mots(text);
+
+  for (const source of sources) {
+    const motsSource = mots(source);
+    if (motsSource.length === 0) continue;
+    const repris = motsCommunsDansLOrdre(motsSource, motsDuTexte);
+    if (repris / motsSource.length < SEUIL_RECOPIE) {
+      return {
+        ok: false,
+        detail: `commentaire restitué à ${Math.round((100 * repris) / motsSource.length)} % : « ${source.replace(/<[^>]+>/g, "").slice(0, 80)}… »`,
+      };
+    }
+  }
+
+  return { ok: true, detail: "commentaires restitués" };
+}
+
 function tableRows(text: string) {
   return typographie(text)
     .split("\n")
@@ -214,6 +244,25 @@ export function checkTableTerritories({
     : {
         ok: false,
         detail: `territoires absents du tableau : ${absents.join(", ")}`,
+      };
+}
+
+export function checkTableChantiers({
+  text,
+  chantierIds,
+}: {
+  text: string;
+  chantierIds: string[];
+}): CheckResult {
+  const rows = tableRows(text);
+  const absents = chantierIds.filter(
+    (chantierId) => !rows.some((row) => row.includes(chantierId)),
+  );
+  return absents.length === 0
+    ? { ok: true, detail: "chantiers dans le tableau" }
+    : {
+        ok: false,
+        detail: `chantiers absents du tableau : ${absents.join(", ")}`,
       };
 }
 export function checkNoLink({ text }: { text: string }): CheckResult {

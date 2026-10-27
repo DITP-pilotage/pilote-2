@@ -9,7 +9,9 @@ import {
   checkNoVerbatim,
   checkNoToolName,
   checkSectionsDashboard,
+  checkTableChantiers,
   checkTableTerritories,
+  checkVerbatim,
 } from "./mechanicalChecks";
 
 describe("checkSectionsDashboard", () => {
@@ -304,5 +306,48 @@ describe("checkFrench", () => {
     expect(checkFrench({ text: "Un thème, un thé et une option." }).ok).toBe(
       true,
     );
+  });
+});
+
+describe("checkTableChantiers", () => {
+  const tableau =
+    "| Chantier | Écart |\n|---|---|\n| CH‑005 — Urgences | -14 |";
+
+  test("trouve un chantier dans une ligne du tableau, quel que soit le tiret", () => {
+    expect(
+      checkTableChantiers({ text: tableau, chantierIds: ["CH-005"] }),
+    ).toEqual({ ok: true, detail: "chantiers dans le tableau" });
+  });
+
+  test("signale un chantier cité hors du tableau", () => {
+    expect(
+      checkTableChantiers({
+        text: `${tableau}\n\nCH-006 est aussi concerné.`,
+        chantierIds: ["CH-005", "CH-006"],
+      }),
+    ).toEqual({ ok: false, detail: "chantiers absents du tableau : CH-006" });
+  });
+});
+
+describe("checkVerbatim", () => {
+  const source =
+    "<p>Deux postes d'urgentistes sont vacants à Brest et Quimper.</p><p>Le délai médian de passage a remonté au premier semestre.</p>";
+
+  test("reconnaît un commentaire restitué sur deux paragraphes", () => {
+    expect(
+      checkVerbatim({
+        text: "Deux postes d'urgentistes sont vacants à Brest et Quimper.\n\nLe délai médian de passage a remonté au premier semestre.",
+        sources: [source],
+      }),
+    ).toEqual({ ok: true, detail: "commentaires restitués" });
+  });
+
+  test("signale un commentaire résumé", () => {
+    expect(
+      checkVerbatim({
+        text: "Des postes vacants et des délais en hausse.",
+        sources: [source],
+      }).ok,
+    ).toBe(false);
   });
 });

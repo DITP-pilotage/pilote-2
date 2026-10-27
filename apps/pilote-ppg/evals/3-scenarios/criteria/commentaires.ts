@@ -1,7 +1,7 @@
 import type { Evidence } from "../evidence";
 import { judged, mechanical } from "../criterion";
 import { synthesesDesChantiers } from "../truth";
-import { checkNoVerbatim } from "../mechanicalChecks";
+import { checkNoVerbatim, checkVerbatim } from "../mechanicalChecks";
 
 /**
  * Les critères sur les commentaires. La fidélité demande de lire : elle est
@@ -29,6 +29,21 @@ type ResultatChantiers = {
   }[];
 };
 
+/** Les commentaires que l'agent a reçus de `get_chantier_commentaires`. */
+function contenusDeGetChantierCommentaires(evidence: Evidence): string[] {
+  return evidence.toolResults
+    .filter((result) => result.toolName === "get_chantier_commentaires")
+    .flatMap((result) =>
+      (
+        ((result.output as { resultats?: unknown[] }).resultats ?? []) as {
+          commentaires: { contenu: string }[];
+        }[]
+      ).flatMap((resultat) =>
+        resultat.commentaires.map((commentaire) => commentaire.contenu),
+      ),
+    );
+}
+
 /**
  * Tous les commentaires que l'agent a reçus, quel que soit l'outil : ceux de
  * `get_chantier_commentaires`, mais aussi le commentaire de synthèse et les
@@ -37,18 +52,12 @@ type ResultatChantiers = {
  * source passait inaperçue.
  */
 function contenusDesCommentairesRecus(evidence: Evidence): string[] {
-  return evidence.toolResults.flatMap((result) => {
-    const resultats =
-      (result.output as { resultats?: unknown[] }).resultats ?? [];
-
-    if (result.toolName === "get_chantier_commentaires") {
-      return (resultats as { commentaires: { contenu: string }[] }[]).flatMap(
-        (resultat) =>
-          resultat.commentaires.map((commentaire) => commentaire.contenu),
-      );
-    }
-
-    if (result.toolName === "get_chantiers") {
+  return [
+    ...contenusDeGetChantierCommentaires(evidence),
+    ...evidence.toolResults.flatMap((result) => {
+      if (result.toolName !== "get_chantiers") return [];
+      const resultats =
+        (result.output as { resultats?: unknown[] }).resultats ?? [];
       return (resultats as ResultatChantiers[]).flatMap((resultat) =>
         (resultat.chantiers ?? []).flatMap((chantier) =>
           [
@@ -58,10 +67,8 @@ function contenusDesCommentairesRecus(evidence: Evidence): string[] {
           ].filter((contenu): contenu is string => Boolean(contenu)),
         ),
       );
-    }
-
-    return [];
-  });
+    }),
+  ];
 }
 
 /** Les commentaires de synthèse de la fiche, et tous ceux que l'agent a reçus. */
@@ -80,4 +87,16 @@ export const PAS_DE_RECOPIE = mechanical({
       text: evidence.matter,
       sources: commentairesSources(evidence),
     }),
+});
+
+export const COMMENTAIRES_RESTITUES = mechanical({
+  id: "Commentaires restitués",
+  rule: "Commentaires : restitués fidèlement par défaut, résumés seulement sur demande (D2)",
+  check: (evidence) =>
+    checkVerbatim({
+      text: evidence.matter,
+      sources: contenusDeGetChantierCommentaires(evidence),
+    }),
+  applicable: (evidence) =>
+    contenusDeGetChantierCommentaires(evidence).length > 0,
 });
