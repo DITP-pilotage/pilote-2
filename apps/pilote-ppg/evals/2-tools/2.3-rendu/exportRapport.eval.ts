@@ -4,17 +4,15 @@ import { toolSelectionEval } from "../toolSelectionEval";
 /**
  * Niveau 2 — `export_rapport`.
  *
- * L'outil n'est exposé que si le détecteur d'intention repère un mot-clé
- * (export, rapport, télécharger, pdf, markdown). Côté produit, « rapport »
- * désigne un fichier : l'agent doit l'exporter, et respecter le format quand
- * il est demandé.
+ * Côté produit, « rapport » désigne un fichier : l'agent doit l'exporter, et
+ * respecter le format quand il est demandé.
  *
- * Les négatifs contiennent un mot-clé sans intention d'export : « par
- * rapport à », ou « télécharger » dans une question hors périmètre.
+ * Les négatifs contiennent un mot proche sans intention d'export : « par
+ * rapport à », ou « télécharger » dans une question sur PILOTE.
  *
- * Sur une demande directe, le prompt système prévoit un workflow complet
- * (synthèse, indicateurs, export) : seul l'appel à `export_rapport` est vérifié
- * ici ; l'enchaînement relève du niveau 3.
+ * Sur une demande directe, l'agent collecte les données puis exporte : seul
+ * l'appel à `export_rapport` est vérifié ici ; l'enchaînement relève du
+ * niveau 3.
  */
 
 const CASES: ToolCase[] = [

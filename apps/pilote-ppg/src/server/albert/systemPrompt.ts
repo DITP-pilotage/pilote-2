@@ -1,170 +1,13 @@
-import type { Capacities } from "./detecteurIntention";
-
 const JALON_PAR_DEFAUT = 2025;
 
 interface BuildChatSystemPromptParams {
   territoiresAccessibles: string[];
   agentContext?: Record<string, unknown> | null;
-  capacities: Capacities;
 }
-
-const GABARIT_SYNTHESE_TERRITORIALE = `# Gabarit de synthèse territoriale
-
-Ce gabarit s'applique UNIQUEMENT quand tu appelles les 3 outils ensemble (get_taux_avancement_territoire + get_chantiers(view='en_retard') + get_chantiers(view='en_difficulte')).
-
-<selection>
-IMPORTANT : Choisis le bon template en fonction du nombre de territoires dans les résultats des outils.
-- Si les résultats contiennent UN SEUL territoire → utilise le template "mono_territoire"
-- Si les résultats contiennent PLUSIEURS territoires → utilise le template "comparaison"
-</selection>
-
-<mono_territoire>
-<instructions>
-Ce template s'applique quand les résultats des outils contiennent UN SEUL territoire.
-Remplace les variables entre {{ }} par les données réelles issues des résultats des outils.
-Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
-</instructions>
-
-<template>
-# Synthèse pour {{territoire_nom}}
-
-Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_global}}%, pour une médiane des <if territoire is DEPT>départements</if><else>régions</else> à {{mediane_repartition}}%.
-
----
-
-## Chantiers en retard
-
-{{X}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale :
-
-(pour chaque chantier_en_retard, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Écart** : {{ecart}} points\\
-**Météo** : {{synthese.meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-NOTE FORMAT :
-- la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
-- entre deux chantiers, insère un paragraphe contenant uniquement \`&nbsp;\` pour créer une séparation visuelle.
-
-**Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
-
----
-
-## Chantiers en difficulté
-
-{{Y}} chantiers sont compromis ou nécessitent un appui :
-
-(pour chaque chantier_en_difficulte, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Écart** : {{ecart}} points\\
-**Météo** : {{synthese.meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-**Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
-
----
-
-Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
-</template>
-</mono_territoire>
-
-<comparaison>
-<instructions>
-Ce template s'applique quand les résultats des outils contiennent PLUSIEURS territoires.
-Remplace les variables entre {{ }} par les données réelles issues des résultats des outils.
-Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
-</instructions>
-
-<template>
-# Comparaison : {{territoire_1_nom}} vs {{territoire_2_nom}} [vs ...]
-
-| Territoire | TA {{JALON}} | Médiane | Position |
-|---|---|---|---|
-(pour chaque territoire)
-| {{territoire.nom}} | {{taux_avancement_global}} | {{mediane_repartition}} | {{position_mediane}} |
-
-## Analyse des écarts
-
-Décris factuellement les écarts de taux d'avancement entre les territoires comparés : qui est en avance, qui est en retard, de combien de points.
-
----
-
-## Chantiers en retard
-
-{{X_total}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale.
-
-### Communs à plusieurs territoires
-
-(pour chaque chantier en retard présent dans au moins 2 territoires, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Territoires concernés** : {{liste_territoires}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-### Spécifiques à {{territoire.nom}}
-
-(pour chaque territoire, lister les chantiers en retard qui lui sont propres, séparés par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Écart** : {{ecart}} points\\
-**Météo** : {{synthese.meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-NOTE FORMAT :
-- la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
-- entre deux chantiers, insère un paragraphe contenant uniquement \`&nbsp;\` pour créer une séparation visuelle.
-
-**Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
-
----
-
-## Chantiers en difficulté
-
-{{Y_total}} chantiers sont compromis ou nécessitent un appui.
-
-### Communs à plusieurs territoires
-
-(pour chaque chantier en difficulté présent dans au moins 2 territoires, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Territoires concernés** : {{liste_territoires}}\\
-**Météo** : {{meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-### Spécifiques à {{territoire.nom}}
-
-(pour chaque territoire, lister les chantiers en difficulté qui lui sont propres, séparés par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\\
-**Météo** : {{meteo}}
-
-> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
-
-&nbsp;
-
-**Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
-
----
-
-Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
-</template>
-</comparaison>`;
 
 export function buildChatSystemPrompt({
   territoiresAccessibles,
   agentContext,
-  capacities,
 }: BuildChatSystemPromptParams): string {
   const territoiresList = territoiresAccessibles
     .map((code) => `- ${code}`)
@@ -188,28 +31,6 @@ Les règles fondamentales ci-dessus s'appliquent toujours, quel que soit le cont
 Si le contexte définit un territoire par défaut, utilise-le quand l'utilisateur ne précise pas de territoire.
 `
       : "";
-
-  const consigneSyntheseWorkflow = capacities.synthese
-    ? "Utilise le gabarit de synthèse territoriale (section en fin de prompt) à la place des `_output_instructions` individuelles."
-    : "Produis une synthèse factuelle structurée à partir des résultats des 3 outils, sans interpréter ni recommander.";
-
-  const gabaritSection = capacities.synthese
-    ? `\n${GABARIT_SYNTHESE_TERRITORIALE}\n`
-    : "";
-
-  const consigneSousTerritoires = capacities.inclureSousTerritoires
-    ? `
-## ⚠️ Sous-territoires détectés dans la demande
-
-L'utilisateur a explicitement demandé un territoire **et ses sous-territoires**.
-
-**Règle impérative** : pour CHAQUE appel à \`get_taux_avancement_territoire\` ou \`get_chantiers\`, passe \`include_sous_territoires=true\` sur le territoire parent.
-
-N'énumère **JAMAIS** les sous-territoires manuellement (pas d'appel séparé pour chaque département/région). Un seul appel sur le parent avec le flag suffit.
-
-Cette règle prime sur tout autre protocole : même en comparaison entre jalons, tu fais **un seul appel par territoire parent et par jalon** avec le flag, pas un appel par couple (sous-territoire × jalon). Si plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.
-`
-    : "";
 
   return `Reasoning: high
 
@@ -401,7 +222,7 @@ Les 4 autres catégories (\`estEnAlerteTauxAvancementNonCalculé\`, \`estEnAlert
 Catégories applicables selon la maille du territoire interrogé :
 - **National (NAT-FR)** : \`estEnAlerteTauxAvancementNonCalculé\`, \`estEnAlerteAbscenceTauxAvancementDepartemental\`, \`estEnAlerteMétéoNonRenseignée\`, \`estEnAlertePossedePropositionsValeurAvancement\`
 - **Régional/départemental (REG-XX, DEPT-XX)** : \`estEnAlerteÉcart\`, \`estEnAlerteBaisse\`, \`estEnAlerteMétéoNonRenseignée\`, \`estEnAlertePossedePropositionsValeurAvancement\`
-${agentContextSection}${consigneSousTerritoires}
+${agentContextSection}
 # Territoires accessibles
 
 Les territoires sont divisés en deux niveaux d'accès :
@@ -455,7 +276,7 @@ Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la 
 **Protocole** :
 1. Appelle les 3 outils en parallèle : get_taux_avancement_territoire, get_chantiers(view='en_retard'), get_chantiers(view='en_difficulte')
 2. **Ignore** les _output_instructions individuelles de chaque outil
-3. ${consigneSyntheseWorkflow}
+3. Produis une synthèse factuelle structurée à partir des résultats des 3 outils, sans interpréter ni recommander.
 4. Si l'utilisateur demande la synthèse avec les sous-territoires (ex: "et ses départements"), passe include_sous_territoires=true aux 3 outils
 
 ### b. Comparaison temporelle entre jalons
@@ -627,5 +448,5 @@ Quand l'utilisateur demande d'exporter ou télécharger un rapport :
 2. **Indicateurs** : pour chaque chantier mentionné dans le rapport, appelle get_indicateurs si ce n'est pas déjà fait. Tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport.
 3. Dans les contenus de type "paragraphe", utilise toujours \\n\\n (double saut de ligne) pour séparer les paragraphes. Un simple \\n ne crée pas de saut de paragraphe en markdown.
 4. Réponds "Votre rapport est disponible au téléchargement." IMPORTANT : n'invente et ne donne JAMAIS de lien.
-${gabaritSection}`;
+`;
 }
