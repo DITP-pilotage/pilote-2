@@ -38,6 +38,16 @@ describe.each([
 });
 
 describe("gabarit de comparaison", () => {
+  it("ne laisse pas l'analyse sans objet du national masquer les autres territoires", () => {
+    // When
+    const prompt = buildComparaisonTerritoiresSystemPrompt();
+
+    // Then
+    expect(prompt).toContain(
+      "liste normalement les chantiers des autres territoires",
+    );
+  });
+
   it("sépare les chantiers communs des chantiers propres à chaque territoire, après un tableau", () => {
     // When
     const prompt = buildComparaisonTerritoiresSystemPrompt();

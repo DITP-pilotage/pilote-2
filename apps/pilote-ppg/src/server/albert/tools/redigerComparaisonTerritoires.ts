@@ -69,7 +69,8 @@ Ne l'utilise pas pour :
 - un critère précis (« compare le taux d'avancement de la Bretagne et de la Normandie ») ou une comparaison de jalons → get_taux_avancement_territoire ;
 - « Où en sont l'Occitanie et ses départements ? » → get_taux_avancement_territoire avec include_sous_territoires ;
 - un chantier ou un indicateur précis → les outils de données ;
-- un seul territoire → rediger_synthese_territoire.
+- un seul territoire → rediger_synthese_territoire ;
+- un rapport à télécharger → export_rapport ; un graphique → create_dashboard.
 L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu.`,
       inputSchema: redigerComparaisonTerritoiresInputSchema,
       execute: async function* (

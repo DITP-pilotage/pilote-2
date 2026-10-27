@@ -12,7 +12,7 @@ Le message contient les données, en JSON :
 - \`taux\` : pour chaque territoire, son nom (\`territoire_nom\`), son taux d'avancement global au jalon, la médiane des territoires de sa maille et sa position face à cette médiane (EN_RETARD, EN_AVANCE, DANS_LA_MEDIANE). « - % » : pas de donnée.
 - \`chantiers_en_retard\` et \`chantiers_en_difficulte\` : par territoire (\`resultats\`), les chantiers de la vue. Pour chaque chantier : identifiant, nom, écart à la médiane en points, niveau de confiance, et le commentaire de la synthèse des résultats (\`synthese.commentaire\`).
 - \`acces_restreint: true\` sur un territoire : l'utilisateur n'a pas accès à ses commentaires, ils sont masqués.
-- \`non_applicable\` : l'analyse n'a pas de sens sur ce périmètre (pas de chantiers en retard au niveau national). Écris-le en une phrase au lieu de lister.
+- \`non_applicable\` : la liste des territoires où l'analyse n'a pas de sens (pas de chantiers en retard au niveau national). Pour ces territoires, écris-le en une phrase, et liste normalement les chantiers des autres territoires.
 
 # Les règles
 
@@ -103,7 +103,7 @@ Suis ce gabarit. Les accolades sont à remplacer par les données.
 Pour chaque chantier en retard dans au moins 2 territoires :
 
 **{identifiant} — {nom du chantier}**
-**Territoires concernés** : {noms des territoires}
+**Territoires concernés** : {noms des territoires} · **Niveau de confiance** : {niveau de confiance par territoire}
 
 > {résumé des commentaires de synthèse}
 

@@ -152,9 +152,13 @@ const collecter = async (sorties: unknown): Promise<EncartOutput[]> => {
   return resultat;
 };
 
-const subagentRedige = (morceaux: string[]) =>
+// Chaque morceau arrive `intervalleMs` après le précédent
+const subagentRedige = (morceaux: string[], intervalleMs = 200) =>
   vi.mocked(Albert.streamSubagentText).mockImplementation(async function* () {
-    yield* morceaux;
+    for (const morceau of morceaux) {
+      vi.setSystemTime(Date.now() + intervalleMs);
+      yield morceau;
+    }
   });
 
 const syntheseDuNord = ({
@@ -242,6 +246,25 @@ describe("outils de rédaction d'encart", () => {
         termine: true,
         donnees: DONNEES_DU_NORD,
       }),
+    ]);
+  });
+
+  test("regroupe les morceaux rédigés trop rapprochés", async () => {
+    // Given
+    subagentRedige(["# Synthèse", " pour", " le Nord"], 10);
+
+    // When
+    const sorties = await collecter(
+      syntheseDuNord().execute!(
+        { territoire_code: "DEPT-59", jalon: 2025 },
+        OPTIONS,
+      ),
+    );
+
+    // Then
+    expect(sorties.map((sortie) => sortie.markdown)).toEqual([
+      "",
+      "# Synthèse pour le Nord",
     ]);
   });
 
@@ -338,6 +361,21 @@ describe("outils de rédaction d'encart", () => {
     expect(
       sorties.at(-1)?.donnees?.taux.map((taux) => taux.territoire_code),
     ).toEqual(["REG-76", "DEPT-31"]);
+  });
+
+  test("oriente un rapport ou un graphique vers leurs outils, pas vers la comparaison", () => {
+    // When
+    const outil = createRedigerComparaisonTerritoiresTool({
+      getChantiersQuery: getChantiersQuery(),
+      territoireResolver: territoireResolver(),
+      getTerritoiresIdentiteQuery,
+    })({
+      habilitations: habilitations({ chantiers: [], territoires: [] }),
+    });
+
+    // Then
+    expect(outil.description).toContain("export_rapport");
+    expect(outil.description).toContain("create_dashboard");
   });
 
   test("refuse une entrée qui mélange les deux formes", () => {
@@ -447,5 +485,71 @@ describe("outils de rédaction d'encart", () => {
     expect(
       (resultat.steps[0].toolResults[0].output as EncartOutput).termine,
     ).toEqual(true);
+  });
+  test("au national sans aucun chantier accessible, ne lance pas le sous-agent", async () => {
+    // When
+    const sorties = await collecter(
+      syntheseDuNord({ chantiers: [] }).execute!(
+        { territoire_code: "NAT-FR", jalon: 2025 },
+        OPTIONS,
+      ),
+    );
+
+    // Then
+    expect(sorties).toEqual([encart({ termine: true, acces_refuse: true })]);
+    expect(Albert.streamSubagentText).not.toHaveBeenCalled();
+  });
+
+  test("au national, passe au sous-agent que l'analyse en retard est sans objet", async () => {
+    // Given
+    subagentRedige(["# Synthèse"]);
+
+    // When
+    const sorties = await collecter(
+      syntheseDuNord().execute!(
+        { territoire_code: "NAT-FR", jalon: 2025 },
+        OPTIONS,
+      ),
+    );
+
+    // Then
+    expect(sorties.at(-1)?.donnees?.chantiers_en_retard).toEqual({
+      resultats: [],
+      non_applicable: [
+        { territoire_code: "NAT-FR", raison: expect.any(String) },
+      ],
+    });
+  });
+
+  test("en comparaison, rattache l'analyse sans objet au seul territoire national", async () => {
+    // Given
+    subagentRedige(["# Comparaison"]);
+    const outil = createRedigerComparaisonTerritoiresTool({
+      getChantiersQuery: getChantiersQuery(),
+      territoireResolver: territoireResolver(),
+      getTerritoiresIdentiteQuery,
+    })({
+      habilitations: habilitations({
+        chantiers: ["CH-071", "CH-045"],
+        territoires: ["DEPT-59"],
+      }),
+    });
+
+    // When
+    const sorties = await collecter(
+      outil.execute!(
+        { territoire_codes: ["NAT-FR", "DEPT-59"], jalon: 2025 },
+        OPTIONS,
+      ),
+    );
+
+    // Then
+    const enRetard = sorties.at(-1)?.donnees?.chantiers_en_retard;
+    expect(
+      enRetard?.resultats.map((resultat) => resultat.territoire_code),
+    ).toEqual(["DEPT-59"]);
+    expect(enRetard?.non_applicable).toEqual([
+      { territoire_code: "NAT-FR", raison: expect.any(String) },
+    ]);
   });
 });

@@ -4,6 +4,7 @@ import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolv
 import {
   collecterChantiers,
   type GetChantiersOutput,
+  type ResultatChantiers,
 } from "@/server/albert/tools/getChantiers";
 import {
   collecterTauxAvancement,
@@ -13,11 +14,22 @@ import type { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQue
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
+/**
+ * Une vue de chantiers sur plusieurs territoires. L'analyse sans objet est
+ * rattachée à son territoire : au national, elle ne doit pas masquer les
+ * chantiers en retard des autres territoires comparés.
+ */
+export type ChantiersEncart = {
+  resultats: ResultatChantiers[];
+  non_applicable?: { territoire_code: string; raison: string }[];
+  acces_refuse?: true;
+};
+
 /** Ce que l'outil a collecté et passé au sous-agent de rédaction. */
 export type DonneesEncart = {
   taux: GetTauxAvancementTerritoireResult[];
-  chantiers_en_retard: GetChantiersOutput;
-  chantiers_en_difficulte: GetChantiersOutput;
+  chantiers_en_retard: ChantiersEncart;
+  chantiers_en_difficulte: ChantiersEncart;
 };
 
 /**
@@ -36,6 +48,12 @@ export type EncartOutput = {
   /** Seulement dans le dernier état : les données lues par le juge des evals. */
   donnees?: DonneesEncart;
 };
+
+/**
+ * Chaque état renvoie tout le texte rédigé : un état par morceau ferait
+ * transiter un volume quadratique. On en envoie au plus un par intervalle.
+ */
+const INTERVALLE_ENVOI_MS = 150;
 
 export async function* redigerEncart({
   type,
@@ -60,8 +78,10 @@ export async function* redigerEncart({
     termine,
   });
 
+  // Les deux vues dépendent des mêmes chantiers accessibles ; au national, la
+  // vue en retard s'arrête avant le contrôle d'accès.
   if (
-    donnees.chantiers_en_retard.acces_refuse &&
+    donnees.chantiers_en_retard.acces_refuse ||
     donnees.chantiers_en_difficulte.acces_refuse
   ) {
     yield { ...etat("", true), acces_refuse: true };
@@ -71,13 +91,17 @@ export async function* redigerEncart({
   yield etat("", false);
 
   let markdown = "";
+  let dernierEnvoi = Date.now();
   for await (const morceau of Albert.streamSubagentText({
     systemPrompt,
     prompt: JSON.stringify(donnees),
     abortSignal,
   })) {
     markdown += morceau;
-    yield etat(markdown, false);
+    if (Date.now() - dernierEnvoi >= INTERVALLE_ENVOI_MS) {
+      dernierEnvoi = Date.now();
+      yield etat(markdown, false);
+    }
   }
 
   yield { ...etat(markdown, true), donnees };
@@ -111,14 +135,18 @@ export type DependancesEncart = {
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
 };
 
-function fusionnerChantiers(sorties: GetChantiersOutput[]): GetChantiersOutput {
-  const nonApplicable = sorties.find((sortie) => sortie.non_applicable);
+function fusionnerChantiers(
+  sorties: { territoire_code: string; sortie: GetChantiersOutput }[],
+): ChantiersEncart {
+  const nonApplicables = sorties.flatMap(({ territoire_code, sortie }) =>
+    sortie.non_applicable
+      ? [{ territoire_code, raison: sortie.non_applicable.raison }]
+      : [],
+  );
   return {
-    resultats: sorties.flatMap((sortie) => sortie.resultats),
-    ...(nonApplicable?.non_applicable && {
-      non_applicable: nonApplicable.non_applicable,
-    }),
-    ...(sorties.every((sortie) => sortie.acces_refuse) && {
+    resultats: sorties.flatMap(({ sortie }) => sortie.resultats),
+    ...(nonApplicables.length > 0 && { non_applicable: nonApplicables }),
+    ...(sorties.some(({ sortie }) => sortie.acces_refuse) && {
       acces_refuse: true as const,
     }),
   };
@@ -143,8 +171,12 @@ export async function collecterDonneesEncart({
   jalon: number;
   habilitations: Habilitations;
 }): Promise<DonneesEncart> {
-  const vue = (territoire_code: string, view: "en_retard" | "en_difficulte") =>
-    collecterChantiers({
+  const vue = async (
+    territoire_code: string,
+    view: "en_retard" | "en_difficulte",
+  ) => ({
+    territoire_code,
+    sortie: await collecterChantiers({
       input: {
         territoire_code,
         jalon,
@@ -155,7 +187,8 @@ export async function collecterDonneesEncart({
       territoireResolver,
       territoiresAccessibles: habilitations.lecture.territoires,
       chantiersAccessibles: habilitations.lecture.chantiers,
-    });
+    }),
+  });
 
   const [taux, enRetard, enDifficulte] = await Promise.all([
     Promise.all(
