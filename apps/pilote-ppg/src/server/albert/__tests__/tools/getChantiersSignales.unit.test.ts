@@ -39,6 +39,20 @@ const executeTool = async (
     context: {},
   }) as Promise<GetChantiersSignalesOutput>;
 
+describe("createGetChantiersSignalesTool description", () => {
+  test("oriente une synthèse non renseignée vers les chantiers signalés", () => {
+    // When
+    const tool = buildTool({
+      queryResult: [],
+      territoiresAccessibles: [],
+      chantiersAccessibles: [],
+    });
+
+    // Then
+    expect(tool.description).toContain("« sans synthèse renseignée »");
+  });
+});
+
 describe("createGetChantiersSignalesTool execute", () => {
   test("refuse l'accès à un territoire non accessible sans appeler la query", async () => {
     // Given

@@ -149,6 +149,43 @@ describe("buildChatSystemPrompt", () => {
     );
   });
 
+  it("cherche un chantier avant de refuser une question sur une politique ou un thème", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "Avant de refuser, vérifie si la demande peut désigner un chantier",
+    );
+  });
+
+  it("garde la position face à la médiane hors de l'encart", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain("« se situe par rapport à la médiane »");
+  });
+
+  it("fait de la recherche d'un territoire nommé une règle", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "8. Un territoire désigné par son nom passe toujours par search_territoires",
+    );
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({

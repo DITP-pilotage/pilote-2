@@ -121,9 +121,9 @@ Catégories applicables : au national, les quatre dernières ; en région et en 
 - \`acces_refuse\` : l'utilisateur n'a pas accès à ce territoire ou à aucun des chantiers demandés.
 - \`categories_non_applicables\` : catégories demandées qui ne s'appliquent pas à la maille du territoire ; ce n'est pas une absence de résultat.
 Un seul territoire par appel, sans ses sous-territoires.
-Utilise-le pour : « quels chantiers sont signalés ? », « en alerte », plusieurs catégories à la fois, une catégorie sans équivalent dans get_chantiers.
+Utilise-le pour : « quels chantiers sont signalés ? », « en alerte », plusieurs catégories à la fois, une catégorie sans équivalent dans get_chantiers, dont « sans synthèse renseignée » ou « niveau de confiance non renseigné » ("estEnAlerteMétéoNonRenseignée") : PILOTE calcule ce signalement, ne le déduis pas de get_chantiers.
 Exemple : « en retard ou sans synthèse renseignée » → cet outil avec "estEnAlerteÉcart" et "estEnAlerteMétéoNonRenseignée", sans appeler get_chantiers en plus.
-Ne l'utilise pas pour : une seule catégorie, « retard par rapport à la médiane » ou « tendance en baisse » → get_chantiers (view "en_retard" ou tendance "BAISSE").`,
+Ne l'utilise pas pour : le seul retard par rapport à la médiane ou la seule tendance en baisse → get_chantiers (view "en_retard" ou tendance "BAISSE").`,
       inputSchema: getChantiersSignalesInputSchema,
       execute: async (
         input: GetChantiersSignalesInput,
