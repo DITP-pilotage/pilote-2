@@ -109,16 +109,16 @@ Changements faits sur retour d'usage, non mesurés par un run complet :
 
 ### D'étape en étape
 
-|                                | Base   | 1      | 2      | 3      | 4      | 4 bis  | 5      | 6          | 7          |
-| ------------------------------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ---------- | ---------- |
-| Niveau 2 (choix des outils)    | 90,7 % | 88,1 % | 89,6 % | 90,5 % | 88,3 % | 89,8 % | 91,2 % | 91,7 %     | **94,2 %** |
-| Niveau 3 (réponses complètes)  | 91,3 % | 92,5 % | 93,4 % | 93,6 % | 92,5 % | 93,8 % | 95,9 % | **98,1 %** | 97,1 %     |
-| Échecs répétés                 | 44     | 43     | 43     | 36     | 55     | 41     | 35     | **16**     | 17         |
-| Météo citée sans être demandée | 85     | 1      | 2      | 0      | 0      | 0      | 0      | 0          | 0          |
-| Tokens du premier appel        | 9 265  | 2 290  | 2 853  | 2 928  | 3 055  | –      | 3 274  | 3 312      | –          |
-| Contrôles de l'encart          | –      | –      | –      | –      | 90,2 % | 93,8 % | 99,3 % | **100 %**  | 99,3 %     |
+|                                | Base   | 1      | 2      | 3      | 4      | 4 bis  | 5      | 6          | 7          | 8      |
+| ------------------------------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ---------- | ---------- | ------ |
+| Niveau 2 (choix des outils)    | 90,7 % | 88,1 % | 89,6 % | 90,5 % | 88,3 % | 89,8 % | 91,2 % | 91,7 %     | **94,2 %** | 94,7 % |
+| Niveau 3 (réponses complètes)  | 91,3 % | 92,5 % | 93,4 % | 93,6 % | 92,5 % | 93,8 % | 95,9 % | **98,1 %** | 97,1 %     | 96,6 % |
+| Échecs répétés                 | 44     | 43     | 43     | 36     | 55     | 41     | 35     | **16**     | 17         | 19     |
+| Météo citée sans être demandée | 85     | 1      | 2      | 0      | 0      | 0      | 0      | 0          | 0          | 0      |
+| Tokens du premier appel        | 9 265  | 2 290  | 2 853  | 2 928  | 3 055  | –      | 3 274  | 3 312      | –          | –      |
+| Contrôles de l'encart          | –      | –      | –      | –      | 90,2 % | 93,8 % | 99,3 % | **100 %**  | 99,3 %     | 97,9 % |
 
-L'étape 7 mesure les changements faits après l'étape 6 (HTML, indicateurs, date, « le 84 »).
+L'étape 7 mesure les changements faits après l'étape 6 (HTML, indicateurs, date, « le 84 ») ; l'étape 8, les corrections des cas de choix d'outil (thème, médiane, synthèse non renseignée, recherche des noms, acronymes). À l'étape 8, 53 essais perdus sur la limite de débit ont été rejoués.
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Un échec répété est un couple (cas, critère) qui
@@ -128,9 +128,9 @@ Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 
 |                  | Avant  | Après  | Écart        |
 | ---------------- | ------ | ------ | ------------ |
-| Niveau 2         | 90,7 % | 94,2 % | +3,5 pts     |
-| Niveau 3         | 91,3 % | 97,1 % | **+5,8 pts** |
-| Échecs répétés   | 44     | 17     | −27          |
+| Niveau 2         | 90,7 % | 94,7 % | +4,0 pts     |
+| Niveau 3         | 91,3 % | 96,6 % | **+5,3 pts** |
+| Échecs répétés   | 44     | 19     | −25          |
 | Tokens du prompt | 9 265  | 3 312  | ÷ 2,8        |
 
 ### Comment lire ces chiffres
