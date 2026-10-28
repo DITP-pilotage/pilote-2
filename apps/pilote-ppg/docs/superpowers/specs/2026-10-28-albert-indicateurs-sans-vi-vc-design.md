@@ -215,4 +215,21 @@ Le niveau 2 ne joue qu'un tour de conversation.
 
 ## Journal des mesures
 
-_À remplir._
+Evals niveaux 2 et 3, 3 essais par cas. Niveau 3 hors calibration du juge.
+
+| | Avant (`bebe972`) | Après |
+|---|---|---|
+| Niveau 2 | 88,6 % | |
+| Niveau 2 hors nouvelle suite | 91,9 % | |
+| Suite `get_indicateurs_sans_vi_vc` | 33,3 % | |
+| Suite `get_indicateurs_non_a_jour` | 90,9 % | |
+| Niveau 3 | 97,1 % | |
+| Échecs répétés | 35 (dont 8 de la nouvelle suite) | |
+| Tokens du prompt | 3 312 | |
+
+Avant : la nouvelle suite n'a que ses trois négatifs qui passent, et la demande
+des deux besoins à 50 % (seul `get_indicateurs_non_a_jour` est appelé) ;
+attendu, l'outil n'existe pas. Six suites de niveau 3 perdues sur des 503 et
+un 429 de l'API Albert, rejouées seules et fusionnées ; trois essais restent
+perdus (« Comparer Bretagne avec ses départements » 2, « Tableau de bord du
+territoire » 1), leurs suites sont notées sur les essais restants.

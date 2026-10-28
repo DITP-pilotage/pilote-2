@@ -13,7 +13,8 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * « la Bretagne » relève du niveau 3).
  *
  * Les négatifs portent sur le mot « retard », qui désigne aussi l'avancement
- * (`get_chantiers`), et sur les valeurs des indicateurs (`get_indicateurs`).
+ * (`get_chantiers`), sur les valeurs des indicateurs (`get_indicateurs`), et
+ * sur les valeurs initiales ou cibles manquantes (`get_indicateurs_sans_vi_vc`).
  */
 
 const CASES: ToolCase[] = [
@@ -102,6 +103,17 @@ const CASES: ToolCase[] = [
     question:
       "Quelles sont les valeurs des indicateurs du CH-004 au national ?",
     reason: "CAS NÉGATIF : valeurs des indicateurs → get_indicateurs",
+    forbidden: ["get_indicateurs_non_a_jour"],
+  },
+  {
+    question: "Quels indicateurs n'ont pas de valeur cible sur le CH-018 ?",
+    reason: "CAS NÉGATIF : VC manquante → get_indicateurs_sans_vi_vc",
+    forbidden: ["get_indicateurs_non_a_jour"],
+  },
+  {
+    question:
+      "Quels indicateurs ont un taux d'avancement qui ne peut pas être calculé ?",
+    reason: "CAS NÉGATIF : taux non calculable → get_indicateurs_sans_vi_vc",
     forbidden: ["get_indicateurs_non_a_jour"],
   },
 ];
