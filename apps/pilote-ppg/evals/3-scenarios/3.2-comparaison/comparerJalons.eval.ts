@@ -20,7 +20,10 @@ import { COMPARER_JALONS_CRITERIA } from "./comparerJalons.criteria";
 
 const tauxBretagne = (jalon: number) => ({
   toolName: "get_taux_avancement_territoire",
-  input: { territoire_code: "REG-53", jalon },
+  input: {
+    perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+    jalon,
+  },
 });
 
 const MESSAGE = (autre: string) =>

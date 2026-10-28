@@ -38,7 +38,13 @@ describe("readGroundTruth", () => {
 
       // When
       const truth = await readGroundTruth({
-        scope: { territoires: ["REG-53"], includeSousTerritoires: true },
+        scope: {
+          territoires: ["REG-53"],
+          perimetre: {
+            type: "REGION_ET_SES_DEPARTEMENTS",
+            region_code: "REG-53",
+          },
+        },
         user: world.users.ditp,
       });
 

@@ -36,11 +36,17 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`;
 const OUTILS = [
   {
     toolName: "get_chantiers",
-    input: { territoire_code: "REG-53", chantier_ids: ["CH-005"] },
+    input: {
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+      chantier_ids: ["CH-005"],
+    },
   },
   {
     toolName: "get_chantier_commentaires",
-    input: { chantier_id: "CH-005", territoire_code: "REG-53" },
+    input: {
+      chantier_id: "CH-005",
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+    },
   },
 ];
 

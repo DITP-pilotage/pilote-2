@@ -21,9 +21,12 @@ import { COMPARAISON_QUANTITATIVE_CRITERIA } from "./comparaisonQuantitative.cri
  * comparatif 6/9.
  */
 
+// Un appel qui sélectionne les deux territoires satisfait les deux attentes.
 const tauxDe = (territoire_code: string) => ({
   toolName: "get_taux_avancement_territoire",
-  input: { territoire_code },
+  input: {
+    perimetre: { type: "SELECTION", territoire_codes: [territoire_code] },
+  },
 });
 
 const MESSAGE = (autre: string) =>

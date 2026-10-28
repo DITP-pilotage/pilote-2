@@ -29,7 +29,10 @@ import { SYNTHESE_COMMENTAIRES_CRITERIA } from "./syntheseCommentaires.criteria"
 
 const commentairesDe = (chantier_id: string) => ({
   toolName: "get_chantier_commentaires",
-  input: { chantier_id, territoire_code: "REG-53" },
+  input: {
+    chantier_id,
+    perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+  },
 });
 
 const MESSAGE = (chantiers: string) =>

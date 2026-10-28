@@ -1,3 +1,4 @@
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetTauxAvancementTerritoireResult } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
 import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
@@ -14,7 +15,8 @@ export type TruthScope = {
   territoires: string[];
   /** Défaut : le jalon courant. */
   jalons?: number[];
-  includeSousTerritoires?: boolean;
+  /** Défaut : la sélection des `territoires`. */
+  perimetre?: Perimetre;
   /** Chantiers dont la fiche lit les commentaires, sur le premier territoire. */
   chantiersCommentes?: string[];
   /** Lit les indicateurs des chantiers en retard et en difficulté. */

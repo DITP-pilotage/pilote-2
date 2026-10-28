@@ -19,9 +19,8 @@ import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "./syntheseDepartements.criteria"
  * 87 % ; échecs : Pas de recopie 0/3, Chiffres exacts 2/3, Résumés fidèles 2/3.
  */
 
-const avecSousTerritoires = {
-  territoire_code: "REG-53",
-  include_sous_territoires: true,
+const bretagneEtSesDepartements = {
+  perimetre: { type: "REGION_ET_SES_DEPARTEMENTS", region_code: "REG-53" },
 };
 
 scenarioEval({
@@ -33,11 +32,17 @@ scenarioEval({
     {
       question: "Fais moi la synthèse de Bretagne et ses départements",
       reason: "Message envoyé tel quel",
-      truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
+      truthScope: {
+        territoires: ["REG-53"],
+        perimetre: {
+          type: "REGION_ET_SES_DEPARTEMENTS",
+          region_code: "REG-53",
+        },
+      },
       expected: [
         {
           toolName: "rediger_comparaison_territoires",
-          input: avecSousTerritoires,
+          input: bretagneEtSesDepartements,
         },
       ],
       tableTerritories: ["REG-53", "DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],

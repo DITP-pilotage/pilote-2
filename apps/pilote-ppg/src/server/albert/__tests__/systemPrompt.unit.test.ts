@@ -34,7 +34,7 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).not.toContain("_output_instructions");
   });
 
-  it("garde la règle des sous-territoires, que le seul paramètre ne suffisait pas à faire respecter", () => {
+  it("garde la règle du périmètre, que le seul paramètre ne suffisait pas à faire respecter", () => {
     // When
     const prompt = buildChatSystemPrompt({
       territoiresAccessibles: [],
@@ -43,8 +43,9 @@ describe("buildChatSystemPrompt", () => {
 
     // Then
     expect(prompt).toContain(
-      "un seul appel sur le territoire parent avec include_sous_territoires",
+      "un seul appel par jalon et par outil, avec le `perimetre` qui les désigne, jamais un appel par territoire",
     );
+    expect(prompt).toContain("n'énumère jamais ses territoires");
   });
 
   it("impose la recherche pour un territoire désigné par son nom", () => {

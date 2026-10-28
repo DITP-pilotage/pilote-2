@@ -6,9 +6,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
  *
  * L'agent appelle l'outil pour le taux d'avancement global d'un territoire, sa
  * médiane de répartition et sa position, seul ou en comparaison entre
- * territoires ou entre jalons. Les arguments vérifiés portent l'intention :
- * `include_sous_territoires` et le `jalon`. Le `territoire_code` ne l'est pas :
- * sa résolution relève du niveau 3.
+ * territoires ou entre jalons. Les arguments vérifiés portent l'intention : le
+ * type de `perimetre` et le `jalon`. Les codes des territoires ne le sont
+ * pas : leur résolution relève du niveau 3.
  *
  * Les négatifs portent sur les deux autres taux d'avancement, qui partagent le
  * vocabulaire : celui d'un chantier (`get_chantiers`) et celui de ses
@@ -34,16 +34,71 @@ const CASES: ToolCase[] = [
   },
   {
     question: "Compare le taux d'avancement de la Bretagne et de la Normandie",
-    reason: "comparaison entre territoires",
-    expected: [{ toolName: "get_taux_avancement_territoire" }],
-  },
-  {
-    question: "Taux d'avancement de la Corse et de ses départements",
-    reason: "sous-territoires : un seul appel sur le parent avec le flag",
+    reason: "comparaison entre territoires : une sélection",
     expected: [
       {
         toolName: "get_taux_avancement_territoire",
-        input: { include_sous_territoires: true },
+        input: { perimetre: { type: "SELECTION" } },
+      },
+    ],
+  },
+  {
+    question: "Taux d'avancement de la Corse et de ses départements",
+    reason: "une région et ses départements : un seul appel sur la région",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: {
+          perimetre: {
+            type: "REGION_ET_SES_DEPARTEMENTS",
+            region_code: "REG-94",
+          },
+        },
+      },
+    ],
+  },
+  {
+    question: "Quel est le taux d'avancement des départements bretons ?",
+    reason: "« les départements de X » : la région et ses départements",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: {
+          perimetre: {
+            type: "REGION_ET_SES_DEPARTEMENTS",
+            region_code: "REG-53",
+          },
+        },
+      },
+    ],
+  },
+  {
+    question: "Quel département a le meilleur taux d'avancement ?",
+    reason: "tous les départements, sans les énumérer",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { perimetre: { type: "TOUS_DEPARTEMENTS" } },
+      },
+    ],
+  },
+  {
+    question: "Classe les régions selon leur taux d'avancement",
+    reason: "toutes les régions, sans les énumérer",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { perimetre: { type: "TOUTES_REGIONS" } },
+      },
+    ],
+  },
+  {
+    question: "Où en sont la France et ses régions en taux d'avancement ?",
+    reason: "le national et ses régions",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { perimetre: { type: "FRANCE_ET_SES_REGIONS" } },
       },
     ],
   },
