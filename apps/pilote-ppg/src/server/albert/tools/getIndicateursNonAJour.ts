@@ -4,10 +4,11 @@ import type {
   ChantierIndicateursNonAJour,
   GetIndicateursNonAJourQuery,
 } from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
-import type {
-  GetIndicateurContexteQuery,
-  IndicateurContexteResult,
-} from "@/server/chantiers/query/GetIndicateurContexteQuery";
+import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
+import {
+  resolveIndicateursScope,
+  scopeAccessFields,
+} from "@/server/albert/tools/indicateursScope";
 
 export const getIndicateursNonAJourInputSchema = z.object({
   chantier_ids: z
@@ -43,17 +44,6 @@ export type GetIndicateursNonAJourOutput = {
   indicateurs_non_accessibles?: string[];
 };
 
-function indicateursInaccessibles(
-  contextes: (IndicateurContexteResult | null)[],
-  chantiersAccessibles: string[],
-): string[] {
-  return contextes.flatMap((contexte) =>
-    contexte && !chantiersAccessibles.includes(contexte.chantier.id)
-      ? [contexte.id]
-      : [],
-  );
-}
-
 export function createGetIndicateursNonAJourTool({
   getIndicateursNonAJourQuery,
   getIndicateurContexteQuery,
@@ -82,69 +72,25 @@ Ne l'utilise pas pour : les chantiers en retard au sens de l'avancement (écart 
       execute: async (
         input: GetIndicateursNonAJourInput,
       ): Promise<GetIndicateursNonAJourOutput> => {
-        if (
-          input.territoire_code &&
-          !territoiresAccessibles.includes(input.territoire_code)
-        ) {
-          return { resultats: [], acces_refuse: true };
-        }
-
-        if (!input.territoire_code && territoiresAccessibles.length === 0) {
-          return { resultats: [], acces_refuse: true };
-        }
-
-        const chantiersDemandes = input.chantier_ids.length > 0;
-        const chantierIdsInaccessibles = input.chantier_ids.filter(
-          (chantierId) => !chantiersAccessibles.includes(chantierId),
-        );
-        const chantierIds = chantiersDemandes
-          ? input.chantier_ids.filter(
-              (chantierId) => !chantierIdsInaccessibles.includes(chantierId),
-            )
-          : chantiersAccessibles;
-
-        if (chantierIds.length === 0) {
-          return { resultats: [], acces_refuse: true };
-        }
-
-        const indicateursDemandes = input.indicateur_ids.length > 0;
-        const contextesIndicateurs = await Promise.all(
-          input.indicateur_ids.map((indicateurId) =>
-            getIndicateurContexteQuery.execute({ indicateurId }),
-          ),
-        );
-        const indicateurIdsInaccessibles = indicateursInaccessibles(
-          contextesIndicateurs,
+        const scope = await resolveIndicateursScope({
+          input,
+          territoiresAccessibles,
           chantiersAccessibles,
-        );
-        const indicateurIds = input.indicateur_ids.filter(
-          (indicateurId) => !indicateurIdsInaccessibles.includes(indicateurId),
-        );
-
-        if (indicateursDemandes && indicateurIds.length === 0) {
-          return { resultats: [], acces_refuse: true };
-        }
-
-        const isDetailed =
-          indicateursDemandes || Boolean(input.territoire_code);
-        const resultats = await getIndicateursNonAJourQuery.execute({
-          chantierIds,
-          territoireCodes: input.territoire_code
-            ? [input.territoire_code]
-            : territoiresAccessibles,
-          indicateurIds: indicateursDemandes ? indicateurIds : undefined,
-          avecDetailTerritoires: isDetailed,
+          getIndicateurContexteQuery,
         });
 
-        return {
-          resultats,
-          ...(chantierIdsInaccessibles.length > 0 && {
-            chantiers_non_accessibles: chantierIdsInaccessibles,
-          }),
-          ...(indicateurIdsInaccessibles.length > 0 && {
-            indicateurs_non_accessibles: indicateurIdsInaccessibles,
-          }),
-        };
+        if (scope.accesRefuse) {
+          return { resultats: [], acces_refuse: true };
+        }
+
+        const resultats = await getIndicateursNonAJourQuery.execute({
+          chantierIds: scope.chantierIds,
+          territoireCodes: scope.territoireCodes,
+          indicateurIds: scope.indicateurIds,
+          avecDetailTerritoires: scope.withTerritoiresDetail,
+        });
+
+        return { resultats, ...scopeAccessFields(scope) };
       },
     });
   };
