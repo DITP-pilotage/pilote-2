@@ -5,27 +5,30 @@ import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.in
 import { Maille } from "@/shared/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
-import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
+import {
+  DESCRIPTION_PERIMETRE,
+  variantesPerimetre,
+} from "@/server/albert/tools/perimetre";
 import { determineMaille } from "@/shared/maille/determineMaille";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 
 export const getTauxAvancementTerritoireInputSchema = z.object({
-  territoire_code: z
-    .string()
-    .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
+  perimetre: z
+    .discriminatedUnion("type", [
+      variantesPerimetre.SELECTION,
+      variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
+      variantesPerimetre.FRANCE_ET_SES_REGIONS,
+      variantesPerimetre.TOUTES_REGIONS,
+      variantesPerimetre.TOUS_DEPARTEMENTS,
+    ])
+    .describe(DESCRIPTION_PERIMETRE),
   jalon: z
     .number()
     .int()
     .min(2022)
     .max(new Date().getFullYear())
     .describe("Année du jalon (ex: 2024, 2025)"),
-  include_sous_territoires: z
-    .boolean()
-    .optional()
-    .default(false)
-    .describe(
-      "`true` pour un territoire ET ses sous-territoires : un seul appel sur le parent, jamais un appel par sous-territoire.",
-    ),
 });
 
 export type GetTauxAvancementTerritoireResult = {
@@ -57,20 +60,14 @@ export async function collecterTauxAvancement({
   habilitations,
 }: {
   input: {
-    territoire_code: string;
+    perimetre: Perimetre;
     jalon: number;
-    include_sous_territoires?: boolean;
   };
   territoireResolver: TerritoireResolver;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   habilitations: Habilitations;
 }): Promise<GetTauxAvancementTerritoireOutput> {
-  const codes = await territoireResolver.resoudre(
-    perimetreDepuisTerritoire({
-      territoireCode: input.territoire_code,
-      includeSousTerritoires: input.include_sous_territoires ?? false,
-    }),
-  );
+  const codes = await territoireResolver.resoudre(input.perimetre);
 
   const chantiersContainer = getContainer("chantiers");
   const chantierIds = await chantiersContainer
@@ -162,11 +159,11 @@ export function createGetTauxAvancementTerritoireTool({
 }) {
   return ({ habilitations }: { habilitations: Habilitations }) => {
     return tool({
-      description: `Renvoie le taux d'avancement global d'un territoire à un jalon, la médiane des territoires de sa maille et sa position face à cette médiane.
+      description: `Renvoie, pour chaque territoire du périmètre, son taux d'avancement global à un jalon, la médiane des territoires de sa maille et sa position face à cette médiane.
 - Pour NAT-FR, la médiane est celle des départements.
 - « - % » : pas de donnée à ce jalon.
 - \`territoire_nom\` : le nom à écrire dans la réponse, plutôt que le code.
-Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
+Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons, le classement des régions ou des départements ; un ensemble de territoires (« la Bretagne et ses départements », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
       execute: (input): Promise<GetTauxAvancementTerritoireOutput> =>

@@ -8,7 +8,11 @@ import type {
 } from "@/server/chantiers/query/GetChantiersQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
-import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
+import {
+  DESCRIPTION_PERIMETRE,
+  variantesPerimetre,
+} from "@/server/albert/tools/perimetre";
 import {
   libelleNiveauDeConfiance,
   libelleTendance,
@@ -16,22 +20,20 @@ import {
 } from "@/server/albert/tools/libelles";
 
 export const getChantiersInputSchema = z.object({
-  territoire_code: z
-    .string()
-    .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
+  perimetre: z
+    .discriminatedUnion("type", [
+      variantesPerimetre.SELECTION,
+      variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
+      variantesPerimetre.FRANCE_ET_SES_REGIONS,
+      variantesPerimetre.TOUTES_REGIONS,
+    ])
+    .describe(DESCRIPTION_PERIMETRE),
   jalon: z
     .number()
     .int()
     .min(2022)
     .max(new Date().getFullYear())
     .describe("Année du jalon (ex: 2024, 2025)"),
-  include_sous_territoires: z
-    .boolean()
-    .optional()
-    .default(false)
-    .describe(
-      "`true` pour un territoire ET ses sous-territoires : un seul appel sur le parent, jamais un appel par sous-territoire.",
-    ),
   chantier_ids: z
     .array(z.string())
     .optional()
@@ -52,6 +54,11 @@ export const getChantiersInputSchema = z.object({
 });
 
 export type GetChantiersInput = z.infer<typeof getChantiersInputSchema>;
+
+/** L'entrée de la collecte : l'encart lui passe des périmètres que l'outil n'expose pas. */
+export type CollecteChantiersInput = Omit<GetChantiersInput, "perimetre"> & {
+  perimetre: Perimetre;
+};
 
 /**
  * Un chantier tel que l'outil le renvoie : des libellés, pas des codes
@@ -82,15 +89,18 @@ export type ResultatChantiers = Omit<GetChantiersResult, "chantiers"> & {
 
 export type GetChantiersOutput = {
   resultats: ResultatChantiers[];
-  non_applicable?: { raison: string };
+  /** L'analyse sans objet est rattachée à son territoire : au national, elle ne masque pas les chantiers en retard des autres territoires. */
+  non_applicable?: { territoire_code: string; raison: string }[];
   acces_refuse?: true;
 };
+
+const TERRITOIRE_NATIONAL = "NAT-FR";
 
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
   "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
 
 function toQueryParams(
-  input: GetChantiersInput,
+  input: CollecteChantiersInput,
   territoireCode: string,
 ): GetChantiersParams {
   return {
@@ -164,21 +174,32 @@ export async function collecterChantiers({
   territoiresAccessibles,
   chantiersAccessibles,
 }: {
-  input: GetChantiersInput;
+  input: CollecteChantiersInput;
   getChantiersQuery: GetChantiersQuery;
   territoireResolver: TerritoireResolver;
   territoiresAccessibles: string[];
   chantiersAccessibles: string[];
 }): Promise<GetChantiersOutput> {
-  if (
-    input.territoire_code === "NAT-FR" &&
+  const codesDuPerimetre = await territoireResolver.resoudre(input.perimetre);
+  const sansObjet =
     input.view === "en_retard" &&
-    !input.include_sous_territoires
-  ) {
-    return {
-      resultats: [],
-      non_applicable: { raison: NON_APPLICABLE_EN_RETARD_NAT_FR },
-    };
+    codesDuPerimetre.includes(TERRITOIRE_NATIONAL);
+  const codes = sansObjet
+    ? codesDuPerimetre.filter((code) => code !== TERRITOIRE_NATIONAL)
+    : codesDuPerimetre;
+  const nonApplicable = sansObjet
+    ? {
+        non_applicable: [
+          {
+            territoire_code: TERRITOIRE_NATIONAL,
+            raison: NON_APPLICABLE_EN_RETARD_NAT_FR,
+          },
+        ],
+      }
+    : {};
+
+  if (codes.length === 0) {
+    return { resultats: [], ...nonApplicable };
   }
 
   const chantiersDemandes =
@@ -193,17 +214,10 @@ export async function collecterChantiers({
   ).filter((id) => chantiersAccessibles.includes(id));
 
   if (filteredChantierIds.length === 0) {
-    return { resultats: [], acces_refuse: true };
+    return { resultats: [], acces_refuse: true, ...nonApplicable };
   }
 
   const effectiveInput = { ...input, chantier_ids: filteredChantierIds };
-
-  const codes = await territoireResolver.resoudre(
-    perimetreDepuisTerritoire({
-      territoireCode: input.territoire_code,
-      includeSousTerritoires: input.include_sous_territoires,
-    }),
-  );
 
   const resultats = await Promise.all(
     codes.map((code) =>
@@ -219,6 +233,7 @@ export async function collecterChantiers({
       })),
       territoiresAccessibles,
     ),
+    ...nonApplicable,
   };
 }
 
@@ -237,13 +252,13 @@ export function createGetChantiersTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Renvoie les chantiers d'un territoire à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, maille de pilotage, et le commentaire de la synthèse des résultats.
+      description: `Renvoie les chantiers de chaque territoire du périmètre à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, maille de pilotage, et le commentaire de la synthèse des résultats.
 - \`view\`, \`tendance\` et \`chantier_ids\` se combinent.
-- \`non_applicable.raison\` : l'analyse demandée n'a pas de sens sur ce périmètre (pas de chantiers en retard au niveau national) ; ce n'est pas une absence de résultat.
+- \`non_applicable\` : les territoires où l'analyse demandée n'a pas de sens (pas de chantiers en retard au niveau national), avec la raison ; ce n'est pas une absence de résultat.
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.
 - \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance et le commentaire de synthèse y sont masqués, ce n'est pas une absence de données.
 - \`maille_de_pilotage\` null : la maille de pilotage du chantier n'est pas connue.
-Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? » ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
+Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? » ; un ensemble de territoires (« la Bretagne et ses départements », « toutes les régions ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;

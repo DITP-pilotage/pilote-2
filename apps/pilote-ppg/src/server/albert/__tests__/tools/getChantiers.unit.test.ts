@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
   createGetChantiersTool,
+  type GetChantiersInput,
   type GetChantiersOutput,
 } from "@/server/albert/tools/getChantiers";
 import type {
@@ -88,7 +89,9 @@ const buildTool = ({
 }) => {
   const territoireResolver = mock<TerritoireResolver>({
     resoudre: async (perimetre: Perimetre) =>
-      perimetre.type === "SELECTION" ? perimetre.territoire_codes : [],
+      perimetre.type === "SELECTION"
+        ? perimetre.territoire_codes
+        : ["NAT-FR", "REG-75"],
   });
   return createGetChantiersTool({
     getChantiersQuery: query,
@@ -99,7 +102,7 @@ const buildTool = ({
 const executeTool = async (
   tool: ReturnType<ReturnType<typeof createGetChantiersTool>>,
   input: {
-    territoire_code: string;
+    perimetre: GetChantiersInput["perimetre"];
     chantier_ids?: string[];
     view?: "all" | "en_retard" | "en_difficulte";
   },
@@ -107,7 +110,6 @@ const executeTool = async (
   tool.execute!(
     {
       jalon: 2026,
-      include_sous_territoires: false,
       ...input,
       view: input.view ?? "all",
     },
@@ -130,7 +132,7 @@ describe("createGetChantiersTool execute", () => {
 
     // When
     const result = await executeTool(tool, {
-      territoire_code: "REG-75",
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
       view: "en_difficulte",
     });
 
@@ -155,7 +157,7 @@ describe("createGetChantiersTool execute", () => {
 
     // When
     const result = await executeTool(tool, {
-      territoire_code: "REG-75",
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
       chantier_ids: ["CH-062", "CH-084"],
     });
 
@@ -181,7 +183,7 @@ describe("createGetChantiersTool execute", () => {
 
     // When
     const result = await executeTool(tool, {
-      territoire_code: "REG-75",
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
       chantier_ids: ["CH-062"],
     });
 
@@ -203,7 +205,9 @@ describe("createGetChantiersTool execute", () => {
     });
 
     // When
-    const result = await executeTool(tool, { territoire_code: "REG-75" });
+    const result = await executeTool(tool, {
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
+    });
 
     // Then
     expect(result).toEqual({
@@ -222,7 +226,9 @@ describe("createGetChantiersTool execute", () => {
     });
 
     // When
-    const result = await executeTool(tool, { territoire_code: "REG-75" });
+    const result = await executeTool(tool, {
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
+    });
 
     // Then
     expect(result.resultats).toEqual([
@@ -244,7 +250,9 @@ describe("createGetChantiersTool execute", () => {
     });
 
     // When
-    const result = await executeTool(tool, { territoire_code: "REG-75" });
+    const result = await executeTool(tool, {
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
+    });
 
     // Then
     expect(result.resultats).toEqual([
@@ -263,5 +271,60 @@ describe("createGetChantiersTool execute", () => {
         ],
       },
     ]);
+  });
+
+  test("au national, signale l'analyse en retard sans objet, sans rien demander à la query", async () => {
+    // Given
+    const query = buildQuery(["CH-084"]);
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["NAT-FR"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, {
+      perimetre: { type: "SELECTION", territoire_codes: ["NAT-FR"] },
+      view: "en_retard",
+    });
+
+    // Then
+    expect(result).toEqual({
+      resultats: [],
+      non_applicable: [
+        { territoire_code: "NAT-FR", raison: expect.any(String) },
+      ],
+    });
+    expect(query.execute).not.toHaveBeenCalled();
+  });
+
+  test("la France et ses régions en retard : renvoie les régions et rattache l'analyse sans objet au national", async () => {
+    // Given
+    const tool = buildTool({
+      query: buildQuery(["CH-084"]),
+      territoiresAccessibles: ["NAT-FR", "REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, {
+      perimetre: { type: "FRANCE_ET_SES_REGIONS" },
+      view: "en_retard",
+    });
+
+    // Then
+    expect(result).toEqual({
+      resultats: [
+        {
+          territoire_code: "REG-75",
+          territoire_nom: "Île-de-France",
+          jalon: 2026,
+          chantiers: [chantierRenvoye("CH-084")],
+        },
+      ],
+      non_applicable: [
+        { territoire_code: "NAT-FR", raison: expect.any(String) },
+      ],
+    });
   });
 });

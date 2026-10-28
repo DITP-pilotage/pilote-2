@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
 import {
   collecterChantiers,
   type GetChantiersOutput,
@@ -250,10 +251,8 @@ export type DependancesEncart = {
 function fusionnerChantiers(
   sorties: { territoire_code: string; sortie: GetChantiersOutput }[],
 ): ChantiersEncart {
-  const nonApplicables = sorties.flatMap(({ territoire_code, sortie }) =>
-    sortie.non_applicable
-      ? [{ territoire_code, raison: sortie.non_applicable.raison }]
-      : [],
+  const nonApplicables = sorties.flatMap(
+    ({ sortie }) => sortie.non_applicable ?? [],
   );
   return {
     resultats: sorties.flatMap(({ sortie }) => sortie.resultats),
@@ -293,10 +292,12 @@ export async function collecterDonneesEncart({
     territoire_code,
     sortie: await collecterChantiers({
       input: {
-        territoire_code,
+        perimetre: perimetreDepuisTerritoire({
+          territoireCode: territoire_code,
+          includeSousTerritoires,
+        }),
         jalon,
         view,
-        include_sous_territoires: includeSousTerritoires,
       },
       getChantiersQuery,
       territoireResolver,
@@ -310,9 +311,11 @@ export async function collecterDonneesEncart({
       territoireCodes.map((territoire_code) =>
         collecterTauxAvancement({
           input: {
-            territoire_code,
+            perimetre: perimetreDepuisTerritoire({
+              territoireCode: territoire_code,
+              includeSousTerritoires,
+            }),
             jalon,
-            include_sous_territoires: includeSousTerritoires,
           },
           territoireResolver,
           getTerritoiresIdentiteQuery,

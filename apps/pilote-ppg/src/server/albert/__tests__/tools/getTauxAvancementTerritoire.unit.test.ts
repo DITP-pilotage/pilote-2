@@ -58,9 +58,11 @@ describe("createGetTauxAvancementTerritoireTool execute", () => {
     // When
     const result = (await tool.execute!(
       {
-        territoire_code: "REG-76",
+        perimetre: {
+          type: "REGION_ET_SES_DEPARTEMENTS",
+          region_code: "REG-76",
+        },
         jalon: 2025,
-        include_sous_territoires: true,
       },
       { toolCallId: "test", messages: [], abortSignal: undefined, context: {} },
     )) as GetTauxAvancementTerritoireOutput;
