@@ -136,4 +136,14 @@ describe("createGetIndicateursSansViVcTool execute", () => {
       acces_refuse: true,
     });
   });
+
+  test("décrit qu'une liste vide ne porte que sur la valeur manquante recherchée", () => {
+    // Given
+    const { tool } = buildTool();
+
+    // Then
+    expect(tool.description).toContain(
+      "Liste vide : aucune des valeurs recherchées ne manque sur ce périmètre",
+    );
+  });
 });
