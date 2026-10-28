@@ -23,8 +23,8 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Bretagne ou Normandie, qui avance le mieux ?",
-    reason: "comparaison sans le mot « compare »",
+    question: "Fais-moi la comparaison de la Bretagne et de la Normandie",
+    reason: "comparaison générique sans le verbe « compare »",
     expected: [{ toolName: "rediger_comparaison_territoires" }],
   },
   {

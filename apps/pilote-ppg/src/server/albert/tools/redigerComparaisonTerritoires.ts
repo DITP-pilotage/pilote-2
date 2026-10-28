@@ -59,11 +59,10 @@ export function createRedigerComparaisonTerritoiresTool({
       Record<string, never>
     >({
       description: `Rédige la comparaison de plusieurs territoires dans un encart affiché à l'utilisateur : un tableau des taux d'avancement face à la médiane, l'analyse des écarts, puis les chantiers en retard et en difficulté, communs ou propres à chaque territoire. L'outil collecte lui-même ces données.
-Utilise-le pour : une comparaison générique de territoires. Par exemple « Compare le Nord et la Gironde », « Bretagne ou Normandie, qui avance le mieux ? » (SELECTION) ; « Compare la Bretagne avec ses départements », « Fais-moi la synthèse de la Bretagne et ses départements » (REGION_ET_SES_DEPARTEMENTS) ; « Compare la France et ses régions » (FRANCE_ET_SES_REGIONS).
+Utilise-le pour : une comparaison générique de territoires. Par exemple « Compare le Nord et la Gironde », « Compare la Bretagne et la Normandie » (SELECTION) ; « Compare la Bretagne avec ses départements », « Fais-moi la synthèse de la Bretagne et ses départements » (REGION_ET_SES_DEPARTEMENTS) ; « Compare la France et ses régions » (FRANCE_ET_SES_REGIONS).
 Ne l'utilise pas pour :
 - une demande qui nomme son critère (« compare les taux d'avancement », « les chantiers en retard ») → les outils de données ;
-- un critère précis (« compare le taux d'avancement de la Bretagne et de la Normandie ») ou une comparaison de jalons → get_taux_avancement_territoire ;
-- un classement de territoires (« classe les régions », « quel département avance le mieux ? ») → get_taux_avancement_territoire ;
+- le taux d'avancement nommé, un classement ou « qui avance le mieux » (« compare le taux d'avancement de la Bretagne et de la Normandie », « classe les régions », « Bretagne ou Normandie, qui avance le mieux ? ») ou une comparaison de jalons → get_taux_avancement_territoire ;
 - « Où en sont l'Occitanie et ses départements ? » → get_taux_avancement_territoire avec REGION_ET_SES_DEPARTEMENTS ;
 - un chantier ou un indicateur précis → les outils de données ;
 - un seul territoire → rediger_synthese_territoire ;

@@ -43,6 +43,18 @@ const CASES: ToolCase[] = [
     ],
   },
   {
+    question: "Bretagne ou Normandie, qui avance le mieux ?",
+    reason:
+      "« qui avance le mieux » nomme le taux : une sélection, sans encart",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { perimetre: { type: "SELECTION" } },
+      },
+    ],
+    forbidden: ["rediger_comparaison_territoires"],
+  },
+  {
     question: "Taux d'avancement de la Corse et de ses départements",
     reason: "une région et ses départements : un seul appel sur la région",
     expected: [

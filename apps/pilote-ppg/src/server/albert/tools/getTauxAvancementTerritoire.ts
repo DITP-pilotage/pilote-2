@@ -173,8 +173,10 @@ export function createGetTauxAvancementTerritoireTool({
 - Pour NAT-FR, la médiane est celle des départements.
 - « - % » : pas de donnée à ce jalon.
 - \`territoire_nom\` : le nom à écrire dans la réponse, plutôt que le code.
-Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons, le classement des régions ou des départements ; un ensemble de territoires (« la Bretagne et ses départements », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
-Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
+Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre jalons, le taux de plusieurs territoires quand la demande nomme le taux ou un classement (« compare les taux d'avancement de X et Y », « classe les régions », « qui avance le mieux ? ») ; un ensemble de territoires (« la Bretagne et ses départements », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
+Ne l'utilise pas pour :
+- le taux d'avancement d'un chantier → get_chantiers ;
+- une comparaison générique de territoires (« compare le Nord et la Gironde », « compare la Bretagne avec ses départements ») → rediger_comparaison_territoires.`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
       execute: (input): Promise<GetTauxAvancementTerritoireOutput> =>
         collecterTauxAvancement({

@@ -103,8 +103,9 @@ Un jalon est l'année de référence des cibles. Sans précision de l'utilisateu
 Identifie l'intention (consulter, comparer, expliquer, visualiser, exporter) et les objets : chantiers, indicateurs, territoires, jalons. Vocabulaire courant :
 - « où ça coince », « les chantiers qui vont mal », « à risque » : les chantiers en retard et les chantiers en difficulté ;
 - « compromis » : les deux également ;
-- une synthèse ou une comparaison sur des critères génériques (« la synthèse du Nord », « où en est la Gironde », « la situation en Bretagne », « un récap de la Normandie », « la synthèse des difficultés de la Bretagne », « compare le Nord et la Gironde », « compare la Bretagne avec ses départements ») : un encart, rédigé par rediger_synthese_territoire ou rediger_comparaison_territoires ;
-- une demande précise (« les difficultés en Hauts-de-France », un taux, la position face à la médiane (« se situe par rapport à la médiane »), un chantier, un indicateur, « où en sont l'Occitanie et ses départements »), y compris une comparaison qui nomme son critère (« compare les taux d'avancement ») : les outils de données, sans encart ;
+- une synthèse générique d'un territoire (« la synthèse du Nord », « où en est la Gironde », « la situation en Bretagne », « un récap de la Normandie », « la synthèse des difficultés de la Bretagne ») : un encart, rédigé par rediger_synthese_territoire ;
+- comparer des territoires : si la demande nomme le taux d'avancement ou un classement (« compare les taux d'avancement de X et Y », « classe les régions », « qui avance le mieux ? »), get_taux_avancement_territoire avec une sélection, sans encart ; sinon (« compare le Nord et la Gironde », « compare la Bretagne avec ses départements »), un encart, rédigé par rediger_comparaison_territoires ;
+- une demande précise (« les difficultés en Hauts-de-France », un taux, la position face à la médiane (« se situe par rapport à la médiane »), un chantier, un indicateur, « où en sont l'Occitanie et ses départements ») : les outils de données, sans encart ;
 - « à surveiller » : les chantiers signalés ;
 - « politique prioritaire », « PPG » : un chantier ;
 - un acronyme de région (« PACA », « AURA », « IDF », « BFC », « HDF »…) : un territoire, à résoudre avec search_territoires, jamais un chantier ;
