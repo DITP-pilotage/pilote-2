@@ -5,7 +5,7 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * Niveau 2 — `search_territoires`.
  *
  * L'agent appelle l'outil pour résoudre le code métier d'un territoire que
- * l'utilisateur désigne par son nom (« le Vaucluse » plutôt que DEPT-84), le
+ * l'utilisateur désigne par son nom ou un acronyme (« PACA » plutôt que REG-93), le
  * plus souvent avant de le passer à un autre outil.
  *
  * Un numéro de département (« le 84 ») ou de région explicite (« la région
@@ -17,8 +17,13 @@ import { toolSelectionEval } from "../toolSelectionEval";
 
 const CASES: ToolCase[] = [
   {
-    question: "Quel est le taux d'avancement du Vaucluse ?",
-    reason: "territoire désigné par son nom : le code est à résoudre",
+    question: "Quel est le taux d'avancement de PACA ?",
+    reason: "acronyme de région : le code est à résoudre",
+    expected: [{ toolName: "search_territoires" }],
+  },
+  {
+    question: "Où en est AURA sur le taux d'avancement ?",
+    reason: "acronyme de région : le code est à résoudre",
     expected: [{ toolName: "search_territoires" }],
   },
   {
