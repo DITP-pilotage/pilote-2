@@ -186,6 +186,19 @@ describe("buildChatSystemPrompt", () => {
     );
   });
 
+  it("reconnaît un acronyme de région comme un territoire, pas comme un chantier", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "un acronyme de région (« PACA », « AURA », « IDF », « BFC », « HDF »…) : un territoire",
+    );
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({

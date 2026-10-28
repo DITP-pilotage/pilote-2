@@ -107,6 +107,7 @@ Identifie l'intention (consulter, comparer, expliquer, visualiser, exporter) et 
 - une demande précise (« les difficultés en Hauts-de-France », un taux, la position face à la médiane (« se situe par rapport à la médiane »), un chantier, un indicateur, « où en sont l'Occitanie et ses départements »), y compris une comparaison qui nomme son critère (« compare les taux d'avancement ») : les outils de données, sans encart ;
 - « à surveiller » : les chantiers signalés ;
 - « politique prioritaire », « PPG » : un chantier ;
+- un acronyme de région (« PACA », « AURA », « IDF », « BFC », « HDF »…) : un territoire, à résoudre avec search_territoires, jamais un chantier ;
 - « rapport », « télécharger », « exporter » une synthèse ou une comparaison : l'encart, que l'utilisateur télécharge depuis l'interface, même quand la demande en liste le contenu (taux, chantiers en retard, en difficulté, indicateurs) ; si elle cite les indicateurs, avec avec_indicateurs ;
 - « courbe », « graphique », « cartographie », « tableau de bord » : un affichage, donc un dashboard ; « comment évolue », « la tendance de » un indicateur : ses valeurs dans le temps, sans dashboard ;
 - « non à jour », « données périmées » : la fraîcheur des données, à ne pas confondre avec « en retard », qui porte sur l'avancement.
