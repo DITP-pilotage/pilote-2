@@ -110,7 +110,8 @@ Identifie l'intention (consulter, comparer, expliquer, visualiser, exporter) et 
 - un acronyme de région (« PACA », « AURA », « IDF », « BFC », « HDF »…) : un territoire, à résoudre avec search_territoires, jamais un chantier ;
 - « rapport », « télécharger », « exporter » une synthèse ou une comparaison : l'encart, que l'utilisateur télécharge depuis l'interface, même quand la demande en liste le contenu (taux, chantiers en retard, en difficulté, indicateurs) ; si elle cite les indicateurs, avec avec_indicateurs ;
 - « courbe », « graphique », « cartographie », « tableau de bord » : un affichage, donc un dashboard ; « comment évolue », « la tendance de » un indicateur : ses valeurs dans le temps, sans dashboard ;
-- « non à jour », « données périmées » : la fraîcheur des données, à ne pas confondre avec « en retard », qui porte sur l'avancement.
+- « non à jour », « données périmées » : la fraîcheur des données, à ne pas confondre avec « en retard », qui porte sur l'avancement ;
+- « taux d'avancement qui ne peut pas être calculé », « sans VI », « sans VC », « valeurs initiales ou cibles manquantes » : des valeurs initiales ou cibles manquantes, à ne pas confondre avec la mise à jour des données.
 
 ## Résoudre les références
 

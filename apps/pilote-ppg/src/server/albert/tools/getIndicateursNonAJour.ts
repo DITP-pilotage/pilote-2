@@ -67,7 +67,7 @@ export function createGetIndicateursNonAJourTool({
 - \`acces_refuse\` : l'utilisateur n'a accès ni à ce territoire, ni à aucun des chantiers ou indicateurs demandés.
 - \`chantiers_non_accessibles\`, \`indicateurs_non_accessibles\` : demandés mais hors du périmètre de l'utilisateur ; n'en dis rien d'autre, et ne les présente jamais comme à jour.
 Utilise-le pour : « indicateurs non à jour », « retard de mise à jour », « données périmées », « territoires qui n'ont pas mis à jour l'indicateur X ».
-Ne l'utilise pas pour : les chantiers en retard au sens de l'avancement (écart à la médiane) → get_chantiers (view "en_retard").`,
+Ne l'utilise pas pour : les chantiers en retard au sens de l'avancement (écart à la médiane) → get_chantiers (view "en_retard") ; les valeurs initiales ou cibles manquantes, ou un taux d'avancement non calculable → get_indicateurs_sans_vi_vc.`,
       inputSchema: getIndicateursNonAJourInputSchema,
       execute: async (
         input: GetIndicateursNonAJourInput,

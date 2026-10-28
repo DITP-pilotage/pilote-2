@@ -68,7 +68,7 @@ export function createSearchIndicateursTool({
     return tool({
       description: `Renvoie au plus 10 indicateurs (identifiant IND-XXX, nom et chantier de rattachement), triés par pertinence, pour une description en langage naturel. \`chantier_ids\` restreint la recherche aux chantiers déjà identifiés.
 - Plusieurs résultats plausibles : fais choisir avec clarify_with_choices avant tout appel de données ; un seul résultat clair : enchaîne.
-Utilise-le pour : « le taux d'équipement », « combien de femmes formées », résoudre un indicateur avant get_indicateurs, get_evolution_indicateur, get_historique_indicateur ou get_indicateurs_non_a_jour.
+Utilise-le pour : « le taux d'équipement », « combien de femmes formées », résoudre un indicateur avant get_indicateurs, get_evolution_indicateur, get_historique_indicateur, get_indicateurs_non_a_jour ou get_indicateurs_sans_vi_vc.
 Ne l'utilise pas pour : un indicateur déjà désigné par son identifiant (IND-XXX, ou un numéro seul à compléter en IND-<numéro>) → l'outil de données directement.`,
       inputSchema: searchIndicateursInputSchema,
       execute: async (

@@ -245,6 +245,7 @@ Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
 - la fraîcheur des données → get_indicateurs_non_a_jour ;
+- les valeurs initiales ou cibles manquantes → get_indicateurs_sans_vi_vc ;
 - les commentaires d'un chantier (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
       inputSchema: getChantiersInputSchema,
       execute: (input): Promise<GetChantiersOutput> =>

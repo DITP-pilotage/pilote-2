@@ -217,15 +217,15 @@ Le niveau 2 ne joue qu'un tour de conversation.
 
 Evals niveaux 2 et 3, 3 essais par cas. Niveau 3 hors calibration du juge.
 
-| | Avant (`bebe972`) | Après |
+| | Avant (`bebe972`) | Après (`ae2ad04` + prompt) |
 |---|---|---|
-| Niveau 2 | 88,6 % | |
-| Niveau 2 hors nouvelle suite | 91,9 % | |
-| Suite `get_indicateurs_sans_vi_vc` | 33,3 % | |
-| Suite `get_indicateurs_non_a_jour` | 90,9 % | |
-| Niveau 3 | 97,1 % | |
-| Échecs répétés | 35 (dont 8 de la nouvelle suite) | |
-| Tokens du prompt | 3 312 | |
+| Niveau 2 | 88,6 % | 92,4 % |
+| Niveau 2 hors nouvelle suite | 91,9 % | 92,1 % |
+| Suite `get_indicateurs_sans_vi_vc` | 33,3 % | 97,0 % |
+| Suite `get_indicateurs_non_a_jour` | 90,9 % | 100 % |
+| Niveau 3 | 97,1 % | 96,4 % |
+| Échecs répétés | 35 (dont 8 de la nouvelle suite) | 22 |
+| Tokens du prompt | 3 312 | 3 371 |
 
 Avant : la nouvelle suite n'a que ses trois négatifs qui passent, et la demande
 des deux besoins à 50 % (seul `get_indicateurs_non_a_jour` est appelé) ;
@@ -233,3 +233,23 @@ attendu, l'outil n'existe pas. Six suites de niveau 3 perdues sur des 503 et
 un 429 de l'API Albert, rejouées seules et fusionnées ; trois essais restent
 perdus (« Comparer Bretagne avec ses départements » 2, « Tableau de bord du
 territoire » 1), leurs suites sont notées sur les essais restants.
+
+Après : les huit échecs répétés de la nouvelle suite sont résolus (un essai
+manqué sur onze cas × trois), les deux négatifs ajoutés à
+`get_indicateurs_non_a_jour` passent, et le cas « explication du retard » de
+cette suite, en échec répété avant, passe. 75 essais de niveau 2 perdus sur
+des 429 de l'API Albert, sept suites rejouées seules et fusionnées ; plus
+aucun essai perdu.
+
+17 échecs répétés résolus, 4 nouveaux, tous au niveau 3 sur des critères
+jugés : rejouées seules à code égal, trois suites ne les reproduisent pas
+(« Pas de recopie » des commentaires, « Pas d'opinion » des difficultés,
+« Chiffres exacts » de la comparaison Bretagne). Le quatrième, « Synthèse d'un
+territoire · DEPT-35 · Pas d'opinion », se reproduit (2/3) : le texte jugé
+(« retard important », « situation précaire ») est rédigé par le sous-agent de
+l'encart, dont le prompt n'a pas changé, et le juge accepte et refuse la même
+formulation d'un essai à l'autre. Non attribué au changement.
+
+Seuil atteint : aucun nouvel échec répété attribuable, chaque nouveau cas à au
+moins 2 essais sur 3. Pas d'itération sur le prompt.
+
