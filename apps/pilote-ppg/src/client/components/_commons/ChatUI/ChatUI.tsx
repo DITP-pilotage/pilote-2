@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
 import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
@@ -186,13 +185,6 @@ export const ChatUI = ({
     [],
   );
 
-  const handleModelChange = useCallback(
-    (model: AlbertModel) => {
-      conversation.requestBody.model = model;
-    },
-    [conversation],
-  );
-
   const chantierLinkOptions = useMemo(() => {
     const context = {
       territoireCode: conversation.requestBody.agentContext?.territoireCode,
@@ -299,7 +291,6 @@ export const ChatUI = ({
 
           <ChatInputForm
             fillInputRef={fillInputRef}
-            onModelChange={handleModelChange}
             placeholder={placeholder}
           />
         </div>

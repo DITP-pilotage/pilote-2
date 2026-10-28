@@ -13,7 +13,6 @@ import { StopIcon } from "@/components/_commons/Icones/StopIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
 import { libelleActiviteAssistant } from "@/components/_commons/ChatUI/libellesAssistant";
-import { Select } from "@/components/shared/Select";
 import { ChatAssistantDisclaimer } from "@/components/_commons/ChatUI/ChatAssistantDisclaimer";
 import {
   prefilledPropositionAfterEdit,
@@ -22,28 +21,19 @@ import {
 
 export type AlbertModel = "openweight-medium" | "openweight-large";
 
-const MODEL_OPTIONS: { libelle: string; valeur: AlbertModel }[] = [
-  { libelle: "GPT-OSS 120B", valeur: "openweight-large" },
-  { libelle: "Mistral Small 24B", valeur: "openweight-medium" },
-];
-
 const HAUTEUR_MAX_SAISIE_PX = 200;
 
 export const ChatInputForm = ({
   placeholder,
   fillInputRef,
-  onModelChange,
 }: {
   placeholder: string;
   fillInputRef: MutableRefObject<
     ((text: string, proposition?: PropositionOrigin) => void) | null
   >;
-  onModelChange: (model: AlbertModel) => void;
 }) => {
   const [input, setInput] = useState("");
   const prefilledProposition = useRef<PropositionOrigin | undefined>(undefined);
-  const [selectedModel, setSelectedModel] =
-    useState<AlbertModel>("openweight-large");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, status, stop, track } = useChatContext();
   const isBusy = status === "submitted" || status === "streaming";
@@ -141,53 +131,32 @@ export const ChatInputForm = ({
           rows={1}
           value={input}
         />
-        <div className="flex items-center justify-between px-1.5 pb-1.5 pt-1">
-          <div className="flex items-center gap-0.5">
-            <Select.Root
+        <div className="flex items-center justify-end gap-1 px-1.5 pb-1.5 pt-1">
+          {isSupported && (
+            <button
+              aria-label={
+                micState === "listening"
+                  ? "Arrêter l'écoute"
+                  : "Dicter un message"
+              }
+              className={clsxm(
+                "flex h-7 w-7 items-center justify-center transition-colors",
+                {
+                  "text-dsfr-mention-grey hover:bg-dsfr-grey-1000 hover:text-dsfr-grey-50":
+                    !isBusy && micState === "inactive",
+                  "bg-error text-white animate-pulse-recording":
+                    micState === "listening",
+                  "cursor-not-allowed text-dsfr-grey-625": isBusy,
+                },
+              )}
               disabled={isBusy}
-              onValueChange={(model) => {
-                setSelectedModel(model as AlbertModel);
-                onModelChange(model as AlbertModel);
-              }}
-              value={selectedModel}
+              onClick={toggleMic}
+              title="Dicter"
+              type="button"
             >
-              <Select.GhostButtonTrigger className="h-7 rounded-none px-2 text-xs font-medium text-dsfr-mention-grey hover:bg-dsfr-grey-1000 hover:text-dsfr-grey-50 data-[state=open]:bg-dsfr-grey-1000">
-                <Select.Value />
-              </Select.GhostButtonTrigger>
-              <Select.Content>
-                {MODEL_OPTIONS.map((option) => (
-                  <Select.Item key={option.valeur} value={option.valeur}>
-                    {option.libelle}
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Root>
-            {isSupported && (
-              <button
-                aria-label={
-                  micState === "listening"
-                    ? "Arrêter l'écoute"
-                    : "Dicter un message"
-                }
-                className={clsxm(
-                  "flex h-7 w-7 items-center justify-center transition-colors",
-                  {
-                    "text-dsfr-mention-grey hover:bg-dsfr-grey-1000 hover:text-dsfr-grey-50":
-                      !isBusy && micState === "inactive",
-                    "bg-error text-white animate-pulse-recording":
-                      micState === "listening",
-                    "cursor-not-allowed text-dsfr-grey-625": isBusy,
-                  },
-                )}
-                disabled={isBusy}
-                onClick={toggleMic}
-                title="Dicter"
-                type="button"
-              >
-                <MicrophoneIcon className="h-4 w-4" />
-              </button>
-            )}
-          </div>
+              <MicrophoneIcon className="h-4 w-4" />
+            </button>
+          )}
           {isBusy ? (
             <button
               aria-label="Arrêter la génération"
