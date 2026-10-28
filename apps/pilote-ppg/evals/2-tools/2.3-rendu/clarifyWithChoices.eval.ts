@@ -7,9 +7,8 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * L'agent doit appeler l'outil dans chaque situation où il a un doute et fait
  * choisir l'utilisateur parmi une liste finie d'options qu'il a identifiées.
  * Les cas ambigus s'appuient sur le monde de base : trois chantiers logement,
- * deux handicap, deux sur les violences faites aux femmes. « Le 84 » est à la
- * fois REG-84 (Auvergne-Rhône-Alpes) et DEPT-84 (Vaucluse) ; précisé
- * « région » ou « département », il ne l'est plus.
+ * deux handicap, deux sur les violences faites aux femmes. « Le 84 » désigne
+ * le département DEPT-84 (D3) : ce n'est pas une ambiguïté.
  *
  * Une demande que le dashboard ne sait pas rendre telle quelle (graphique de
  * répartition, PIL-1855) doit aussi passer par l'outil, avec des alternatives
@@ -39,11 +38,6 @@ const CASES: ToolCase[] = [
     expected: [{ toolName: "clarify_with_choices" }],
   },
   {
-    question: "Quel est le taux d'avancement dans le 84 ?",
-    reason: "« le 84 » : région ou département",
-    expected: [{ toolName: "clarify_with_choices" }],
-  },
-  {
     question:
       "Peux tu me faire un graphique avec la répartition des chantiers par taux d'avancement pour l'ensemble des chantiers du département de la Sarthe",
     reason: "graphique de répartition hors catalogue : alternatives à proposer",
@@ -53,6 +47,11 @@ const CASES: ToolCase[] = [
   {
     question: "Quelle est l'ambition du chantier sur l'habitat indigne ?",
     reason: "CAS NÉGATIF : un seul chantier correspond",
+    forbidden: ["clarify_with_choices"],
+  },
+  {
+    question: "Quel est le taux d'avancement dans le 84 ?",
+    reason: "CAS NÉGATIF : « le 84 » désigne le département (D3)",
     forbidden: ["clarify_with_choices"],
   },
   {

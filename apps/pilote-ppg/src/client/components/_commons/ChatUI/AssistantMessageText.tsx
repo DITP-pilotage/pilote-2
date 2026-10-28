@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
+import { remarkSautsDeLigne } from "@/components/_commons/ChatUI/remarkSautsDeLigne";
 import {
   isInternalHref,
   linkEvent,
@@ -21,7 +22,10 @@ const TOOL_NAMES = [
   "display_choices",
   "create_dashboard",
   "compose_dashboard",
+  // Outil supprimé (PIL-1900), encore présent dans les conversations antérieures.
   "export_rapport",
+  "rediger_synthese_territoire",
+  "rediger_comparaison_territoires",
   "get_taux_avancement_territoire",
   "get_chantiers",
   "get_indicateurs",
@@ -195,7 +199,11 @@ export const AssistantMessageText = memo(function AssistantMessageText({
   const chantierLinkOptions = useChantierLinks();
   const sanitized = stripParagraphesVides(stripPseudoToolCalls(text));
   const remarkPlugins = useMemo<Options["remarkPlugins"]>(
-    () => [remarkGfm, [remarkChantierLinks, chantierLinkOptions]],
+    () => [
+      remarkGfm,
+      remarkSautsDeLigne,
+      [remarkChantierLinks, chantierLinkOptions],
+    ],
     [chantierLinkOptions],
   );
 

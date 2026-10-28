@@ -2,6 +2,8 @@ import { ListerConversationsAdminQuery } from "@/server/albert/queries/ListerCon
 import { RecupererConversationAdminQuery } from "@/server/albert/queries/RecupererConversationAdminQuery";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
+import { createRedigerSyntheseTerritoireTool } from "@/server/albert/tools/redigerSyntheseTerritoire";
+import { createRedigerComparaisonTerritoiresTool } from "@/server/albert/tools/redigerComparaisonTerritoires";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createGetEvolutionIndicateurTool } from "@/server/albert/tools/getEvolutionIndicateur";
 import { createGetHistoriqueIndicateurTool } from "@/server/albert/tools/getHistoriqueIndicateur";
@@ -25,11 +27,8 @@ import { SupprimerConversationUseCase } from "@/server/albert/usecases/Supprimer
 import { PurgerConversationsExpireesUseCase } from "@/server/albert/usecases/PurgerConversationsExpireesUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
 import { PrismaChatConversationRepository } from "@/server/albert/infrastructure/PrismaChatConversationRepository";
-import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
-import { createExportRapportTool } from "@/server/albert/tools/exportRapport";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { ChatConversationRepository } from "@/server/albert/domain/ChatConversationRepository";
-import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
 import {
   defineModule,
   type ExtractScope,
@@ -44,11 +43,16 @@ type AlbertImports = FrameworkDependencies &
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
-  rapportFileStorage: RapportFileStorage;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
   createGetChantiersTool: ReturnType<typeof createGetChantiersTool>;
+  createRedigerSyntheseTerritoireTool: ReturnType<
+    typeof createRedigerSyntheseTerritoireTool
+  >;
+  createRedigerComparaisonTerritoiresTool: ReturnType<
+    typeof createRedigerComparaisonTerritoiresTool
+  >;
   createGetChantierIndicateursTool: ReturnType<
     typeof createGetChantierIndicateursTool
   >;
@@ -75,7 +79,6 @@ type AlbertOwnCradle = {
   createSearchTerritoiresTool: ReturnType<typeof createSearchTerritoiresTool>;
   createComposeDashboardTool: ReturnType<typeof createComposeDashboardTool>;
   createCreateDashboardTool: ReturnType<typeof createCreateDashboardTool>;
-  createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   createConsulterCentreAideTool: ReturnType<
     typeof createConsulterCentreAideTool
   >;
@@ -99,11 +102,16 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
       territoireResolver: asModuleClass(PrismaTerritoireResolver),
-      rapportFileStorage: asModuleClass(FsRapportFileStorage),
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
       createGetChantiersTool: asModuleFunction(createGetChantiersTool),
+      createRedigerSyntheseTerritoireTool: asModuleFunction(
+        createRedigerSyntheseTerritoireTool,
+      ),
+      createRedigerComparaisonTerritoiresTool: asModuleFunction(
+        createRedigerComparaisonTerritoiresTool,
+      ),
       createGetChantierIndicateursTool: asModuleFunction(
         createGetChantierIndicateursTool,
       ),
@@ -134,7 +142,6 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       ),
       createComposeDashboardTool: asModuleFunction(createComposeDashboardTool),
       createCreateDashboardTool: asModuleFunction(createCreateDashboardTool),
-      createExportRapportTool: asModuleFunction(createExportRapportTool),
       createConsulterCentreAideTool: asModuleFunction(
         createConsulterCentreAideTool,
       ),

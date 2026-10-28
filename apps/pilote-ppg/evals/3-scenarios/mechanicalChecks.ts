@@ -62,6 +62,26 @@ export function checkNoMeteoCode({ text }: { text: string }): CheckResult {
 }
 
 /**
+ * Des mots anglais courants qu'aucune réponse française n'emploie. Bornés par
+ * des lettres Unicode, et non par `\b` : « thé » ne doit pas se lire « the ».
+ * PIL-1900 : après une clarification, Albert écrivait « I'm waiting for your
+ * choice. Please select one of the options above. »
+ */
+const MOTS_ANGLAIS =
+  /(?<!\p{L})(?:the|please|your|you|i'm|waiting|select|choose|above)(?!\p{L})/giu;
+
+export function checkFrench({ text }: { text: string }): CheckResult {
+  const trouves = unique(
+    (typographie(text).match(MOTS_ANGLAIS) ?? []).map((mot) =>
+      mot.toLowerCase(),
+    ),
+  );
+  return trouves.length === 0
+    ? { ok: true, detail: "réponse en français" }
+    : { ok: false, detail: `mots anglais : ${trouves.join(", ")}` };
+}
+
+/**
  * Le format CH-XXX — Nom, pour tout chantier cité : il suffit qu'une
  * mention porte le nom, les suivantes peuvent s'en tenir au code. Le nom
  * exact des chantiers attendus relève de `checkChantiersCited`.
@@ -166,47 +186,34 @@ export function checkNoVerbatim({
   return { ok: true, detail: "aucun commentaire recopié" };
 }
 
-const MENTION_ABSENCE = "pas de commentaire disponible";
-
 /**
- * La mention doit figurer SOUS chaque chantier sans commentaire : entre sa
- * citation et celle du chantier suivant. Présente ailleurs dans la réponse,
- * elle ne dit rien de ce chantier-là.
+ * L'inverse de `checkNoVerbatim` : chaque commentaire doit être restitué
+ * (D2). La comparaison porte sur toute la réponse, pas paragraphe par
+ * paragraphe : une restitution peut répartir un commentaire sur plusieurs
+ * paragraphes.
  */
-export function checkAbsenceSignalee({
+export function checkVerbatim({
   text,
-  chantierIds,
+  sources,
 }: {
   text: string;
-  chantierIds: string[];
+  sources: string[];
 }): CheckResult {
-  const texte = typographie(text);
-  const citations = [...texte.matchAll(/CH-\d{3}/g)].map((match) => ({
-    id: match[0],
-    index: match.index ?? 0,
-  }));
+  const motsDuTexte = mots(text);
 
-  const sansMention = chantierIds.filter((chantierId) => {
-    const sections = citations
-      .map((citation, position) => ({ citation, position }))
-      .filter(({ citation }) => citation.id === chantierId)
-      .map(({ citation, position }) => {
-        const suivante = citations
-          .slice(position + 1)
-          .find((autre) => autre.id !== chantierId);
-        return texte.slice(citation.index, suivante?.index ?? texte.length);
-      });
-    return !sections.some((section) =>
-      normalize(section).includes(MENTION_ABSENCE),
-    );
-  });
-
-  return sansMention.length === 0
-    ? { ok: true, detail: "absence de commentaire signalée" }
-    : {
+  for (const source of sources) {
+    const motsSource = mots(source);
+    if (motsSource.length === 0) continue;
+    const repris = motsCommunsDansLOrdre(motsSource, motsDuTexte);
+    if (repris / motsSource.length < SEUIL_RECOPIE) {
+      return {
         ok: false,
-        detail: `« Pas de commentaire disponible » absent sous : ${sansMention.join(", ")}`,
+        detail: `commentaire restitué à ${Math.round((100 * repris) / motsSource.length)} % : « ${source.replace(/<[^>]+>/g, "").slice(0, 80)}… »`,
       };
+    }
+  }
+
+  return { ok: true, detail: "commentaires restitués" };
 }
 
 function tableRows(text: string) {
@@ -237,6 +244,25 @@ export function checkTableTerritories({
     : {
         ok: false,
         detail: `territoires absents du tableau : ${absents.join(", ")}`,
+      };
+}
+
+export function checkTableChantiers({
+  text,
+  chantierIds,
+}: {
+  text: string;
+  chantierIds: string[];
+}): CheckResult {
+  const rows = tableRows(text);
+  const absents = chantierIds.filter(
+    (chantierId) => !rows.some((row) => row.includes(chantierId)),
+  );
+  return absents.length === 0
+    ? { ok: true, detail: "chantiers dans le tableau" }
+    : {
+        ok: false,
+        detail: `chantiers absents du tableau : ${absents.join(", ")}`,
       };
 }
 export function checkNoLink({ text }: { text: string }): CheckResult {
@@ -318,5 +344,191 @@ export function checkSectionsDashboard({
     : {
         ok: false,
         detail: `sections chantier : ${obtenus.join(", ") || "aucune"}, attendu ${attendus.join(", ")}`,
+      };
+}
+
+const WIDGETS_SANS_DONNEES = ["widget_titre_section", "widget_paragraph"];
+
+/**
+ * PIL-1900 : une carte qui exige un chantier, demandée sans chantier, donnait
+ * un dashboard fait d'un titre et d'un paragraphe « Aucune donnée », annoncé
+ * par « Voici le tableau de bord demandé ». Ne pas composer de dashboard est
+ * conforme ; en composer un sans aucun widget de données ne l'est pas.
+ */
+export function checkDashboardNonVide({
+  dashboard,
+}: {
+  dashboard: { containers: DashboardContainer[] } | null;
+}): CheckResult {
+  if (!dashboard) return { ok: true, detail: "aucun dashboard composé" };
+
+  const afficheUneDonnee = dashboard.containers.some((container) =>
+    container.widgets.some(
+      (widget) => !WIDGETS_SANS_DONNEES.includes(widget.type),
+    ),
+  );
+  return afficheUneDonnee
+    ? { ok: true, detail: "dashboard avec des données" }
+    : { ok: false, detail: "dashboard sans widget de données" };
+}
+
+/**
+ * PIL-1900, D1 : les réponses ne parlent plus de météo, seulement des
+ * libellés du niveau de confiance. Avec ou sans accents.
+ */
+export function checkNoMeteo({ text }: { text: string }): CheckResult {
+  return /m[ée]t[ée]o/i.test(typographie(text))
+    ? { ok: false, detail: "météo citée" }
+    : { ok: true, detail: "aucune mention de la météo" };
+}
+
+/**
+ * Le chat rend du markdown sans HTML : une balise s'afficherait en texte
+ * brut. Une balise est un nom suivi d'attributs, de `/` ou de `>` : un lien
+ * automatique (`<https://…>`) ou une comparaison (`< -10`) n'en est pas une.
+ */
+const BALISE_HTML = /<\/?[a-z][a-z0-9]*(?:\s[^<>]*)?\/?>/gi;
+
+export function checkNoHtml({ text }: { text: string }): CheckResult {
+  const balises = unique(
+    (text.match(BALISE_HTML) ?? []).map((balise) => balise.toLowerCase()),
+  );
+  return balises.length === 0
+    ? { ok: true, detail: "aucune balise HTML" }
+    : { ok: false, detail: `balises HTML : ${balises.join(", ")}` };
+}
+
+type ChantierDeLEncart = {
+  chantier: { id: string };
+  ecart: number | null;
+  niveau_de_confiance: string | null;
+};
+
+/** Les passages qui suivent chaque mention du chantier, jusqu'au suivant. */
+function passagesDuChantier({ texte, id }: { texte: string; id: string }) {
+  const passages: string[] = [];
+  let debut = texte.indexOf(id);
+  while (debut !== -1) {
+    const suite = texte.slice(debut + id.length);
+    const suivant = suite.search(/CH-\d+/);
+    passages.push(
+      texte.slice(
+        debut,
+        suivant === -1 ? undefined : debut + id.length + suivant,
+      ),
+    );
+    debut = texte.indexOf(id, debut + id.length);
+  }
+  return passages;
+}
+
+/**
+ * Chaque chantier des données de l'encart y figure, avec son niveau de
+ * confiance et, si demandé, son écart arrondi. En comparaison, un chantier
+ * revient par territoire : on cherche dans toutes ses mentions, le bloc des
+ * chantiers communs ne donnant pas tout.
+ */
+export function checkEncartChantiers({
+  text,
+  chantiers,
+  avecEcart,
+}: {
+  text: string;
+  chantiers: ChantierDeLEncart[];
+  avecEcart: boolean;
+}): CheckResult {
+  const texte = typographie(text);
+  const ids = unique(chantiers.map((chantier) => chantier.chantier.id));
+  const erreurs = ids.flatMap((id) => {
+    const passages = passagesDuChantier({ texte, id });
+    if (passages.length === 0) return [`${id} : absent`];
+    return chantiers
+      .filter((chantier) => chantier.chantier.id === id)
+      .flatMap((chantier) => {
+        const manques: string[] = [];
+        if (avecEcart && chantier.ecart !== null) {
+          const ecart = String(Math.round(chantier.ecart));
+          const motif = new RegExp(`(?<!\\d)${escapeRegExp(ecart)}(?!\\d)`);
+          if (!passages.some((passage) => motif.test(passage))) {
+            manques.push(`${id} : écart ${ecart} absent`);
+          }
+        }
+        const niveau = chantier.niveau_de_confiance;
+        if (
+          niveau !== null &&
+          !passages.some((passage) =>
+            normalize(passage).includes(normalize(niveau)),
+          )
+        ) {
+          manques.push(`${id} : niveau de confiance ${niveau} absent`);
+        }
+        return manques;
+      });
+  });
+  return erreurs.length === 0
+    ? { ok: true, detail: `${ids.length} chantier(s) conforme(s)` }
+    : { ok: false, detail: unique(erreurs).join(" ; ") };
+}
+
+const MAILLE_ATTENDUE: Record<string, string> = {
+  NAT: "national",
+  REG: "de la region",
+  DEPT: "du departement",
+};
+
+/** La phrase du taux d'avancement nomme la maille du territoire. */
+export function checkMailleNommee({
+  text,
+  territoireCode,
+}: {
+  text: string;
+  territoireCode: string;
+}): CheckResult {
+  const attendue = MAILLE_ATTENDUE[territoireCode.split("-")[0]];
+  const ecrite = normalize(text).match(
+    /taux d'avancement (?:\d{4} )?(du departement|de la region|national)/,
+  )?.[1];
+  if (!ecrite) {
+    return {
+      ok: false,
+      detail: "maille non nommée dans la phrase du taux d'avancement",
+    };
+  }
+  return ecrite === attendue
+    ? { ok: true, detail: `maille « ${ecrite} »` }
+    : {
+        ok: false,
+        detail: `maille écrite « ${ecrite} », attendue « ${attendue} »`,
+      };
+}
+
+/**
+ * Un commentaire masqué par restriction d'accès est dit tel quel, pas comme
+ * absent (règle 6).
+ */
+export function checkRestrictionEncart({
+  text,
+  resultats,
+}: {
+  text: string;
+  resultats: {
+    acces_restreint?: boolean;
+    chantiers: { synthese: unknown }[];
+  }[];
+}): CheckResult {
+  const masques = resultats.some(
+    (resultat) =>
+      resultat.acces_restreint &&
+      resultat.chantiers.some((chantier) => chantier.synthese !== null),
+  );
+  if (!masques) return { ok: true, detail: "aucun commentaire masqué" };
+  return normalize(text).includes(
+    normalize("Commentaire non accessible (restriction d'accès)"),
+  )
+    ? { ok: true, detail: "restriction d'accès mentionnée" }
+    : {
+        ok: false,
+        detail:
+          "commentaires masqués sans la mention de la restriction d'accès",
       };
 }

@@ -2,18 +2,23 @@ import { buildEvidence, type ScenarioTurn } from "./turn";
 
 const TOUR: ScenarioTurn = {
   turnId: "tour",
-  question: "Exporte cette synthèse en rapport",
+  question: "Compare la Bretagne et la Normandie",
   profile: "ditp",
   currentTerritory: "REG-53",
-  toolCalls: [{ toolName: "export_rapport", input: { format: "markdown" } }],
-  toolResults: [
+  toolCalls: [
     {
-      toolName: "export_rapport",
-      input: { format: "markdown" },
-      output: { url: "/rapport.md", format: "markdown" },
+      toolName: "rediger_comparaison_territoires",
+      input: { territoire_codes: ["REG-53", "REG-28"] },
     },
   ],
-  text: "Votre rapport est disponible au téléchargement.",
+  toolResults: [
+    {
+      toolName: "rediger_comparaison_territoires",
+      input: { territoire_codes: ["REG-53", "REG-28"] },
+      output: { markdown: "# Comparaison", termine: true },
+    },
+  ],
+  text: "Voici la comparaison de la Bretagne et de la Normandie.",
   stepCount: 2,
   userTerritories: ["REG-53"],
   truth: {
@@ -68,7 +73,7 @@ describe("buildEvidence", () => {
     ]);
     expect(evidence.toolResults.map((result) => result.toolName)).toEqual([
       "get_taux_avancement_territoire",
-      "export_rapport",
+      "rediger_comparaison_territoires",
     ]);
   });
 });

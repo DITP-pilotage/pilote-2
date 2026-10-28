@@ -9,7 +9,7 @@ const consultations = (evidence: Evidence) =>
 
 const consulte = mechanical({
   id: "Centre d'aide consulté",
-  rule: "consulter_centre_aide : appelle-le dès qu'une question porte sur une définition, un calcul ou une procédure",
+  rule: "Méthode, expliquer PILOTE : une définition, un calcul ou une procédure passe par le centre d'aide",
   check: (evidence) => {
     const passed = evidence.toolCalls.some(
       (call) => call.toolName === "consulter_centre_aide",
@@ -20,7 +20,7 @@ const consulte = mechanical({
 
 const pasDeLatex = mechanical({
   id: "Pas de LaTeX",
-  rule: "Formules : n'écris jamais de LaTeX, le chat ne l'affiche pas",
+  rule: "Règle 7 : pas de LaTeX, les formules en texte",
   check: (evidence) => {
     const latex = /\\(frac|text|times|cdot)\b|\\\[|\\\(/.exec(evidence.answer);
     return {
@@ -32,7 +32,7 @@ const pasDeLatex = mechanical({
 
 const pasDeLien = mechanical({
   id: "Pas de lien dans le texte",
-  rule: "N'écris jamais de lien vers le centre d'aide : les pages sont affichées sous ta réponse",
+  rule: "Règle 5 : aucun lien, les pages du centre d'aide s'affichent sous la réponse",
   check: (evidence) => {
     const passed = !/centre-aide-pilote|https?:\/\//.test(evidence.answer);
     return {
@@ -44,7 +44,7 @@ const pasDeLien = mechanical({
 
 const fidele = judged({
   id: "Fidèle au centre d'aide",
-  rule: "_output_instructions : restitue fidèlement `reponse`, sans la compléter avec le glossaire ni d'autres connaissances",
+  rule: "consulter_centre_aide : restitue `reponse` sans la compléter",
   instruction:
     "Compare la réponse au champ `reponse` du résultat de consulter_centre_aide. Chaque affirmation sur une notion ou une procédure de PILOTE doit s'y trouver. Une définition, une règle ou une étape absente de `reponse` est non conforme.",
   applicable: (evidence) =>
@@ -106,13 +106,13 @@ export const criteresHorsCorpus = withBase({
     }),
     judged({
       id: "Limite signalée",
-      rule: "_output_instructions (non trouvé) : dis que le centre d'aide ne couvre pas la question, sans affirmer de réponse",
+      rule: "consulter_centre_aide (trouve false) : dis que le centre d'aide ne couvre pas la question, sans répondre de mémoire",
       instruction:
         "La réponse dit que l'information n'est pas disponible dans le centre d'aide et n'affirme aucune réponse à la question, même partielle ou présentée comme probable. Une réponse tirée de connaissances générales est non conforme.",
     }),
     judged({
       id: "Renvoi vers l'équipe PILOTE",
-      rule: "_output_instructions (non trouvé) : indique que l'équipe PILOTE peut répondre",
+      rule: "consulter_centre_aide (trouve false) : un bouton pour contacter l'équipe PILOTE s'affiche sous la réponse",
       instruction:
         "La réponse oriente l'utilisateur vers l'équipe PILOTE (ou le support). Elle n'écrit pas d'adresse mail.",
     }),
@@ -127,7 +127,7 @@ export const criteresCasFrontiere = withBase({
     fidele,
     judged({
       id: "Définition sans calcul",
-      rule: "Cas frontière : réponds avec la définition du centre d'aide, sans poser de calcul sur les valeurs de la conversation",
+      rule: "Méthode, expliquer PILOTE : même juste après l'affichage d'une donnée, la définition du centre d'aide, sans calcul",
       instruction:
         "La réponse donne la définition ou la formule du taux d'avancement tirée du centre d'aide. Elle ne pose aucun calcul sur des valeurs (VI, VA, VC ou autres) et ne pose pas de question de clarification à la place de la réponse.",
     }),

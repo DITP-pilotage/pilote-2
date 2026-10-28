@@ -1,5 +1,6 @@
 import type { ChatStatus } from "ai";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
+import { OUTILS_ENCART } from "@/components/_commons/ChatUI/texteEncarts";
 
 export type EtatAssistant =
   | "reflechit"
@@ -7,7 +8,7 @@ export type EtatAssistant =
   | "consulte-le-centre-d-aide"
   | "redige"
   | "compose-le-tableau-de-bord"
-  | "genere-le-rapport";
+  | "redige-l-encart";
 
 export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
   reflechit: "réfléchit",
@@ -15,7 +16,7 @@ export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
   "consulte-le-centre-d-aide": "consulte le centre d'aide",
   redige: "rédige",
   "compose-le-tableau-de-bord": "compose le tableau de bord",
-  "genere-le-rapport": "génère le rapport",
+  "redige-l-encart": "rédige la synthèse",
 };
 
 const OUTILS_TABLEAU_DE_BORD = new Set([
@@ -49,12 +50,22 @@ export const deriverEtatAssistant = ({
     return "reflechit";
   }
 
+  // Les résultats intermédiaires de l'encart arrivent pendant sa rédaction
+  if (
+    OUTILS_ENCART.has(derniere.type) &&
+    derniere.state === "output-available" &&
+    "preliminary" in derniere &&
+    derniere.preliminary
+  ) {
+    return "redige-l-encart";
+  }
+
   const enCours =
     derniere.state === "input-streaming" ||
     derniere.state === "input-available";
   if (!enCours) return "reflechit";
 
-  if (derniere.type === "tool-export_rapport") return "genere-le-rapport";
+  if (OUTILS_ENCART.has(derniere.type)) return "redige-l-encart";
   if (derniere.type === "tool-consulter_centre_aide") {
     return "consulte-le-centre-d-aide";
   }
@@ -63,3 +74,17 @@ export const deriverEtatAssistant = ({
   }
   return "consulte-les-sources";
 };
+
+/**
+ * L'indicateur d'attente affiché sous la question, avant toute réponse. Dès
+ * son premier morceau, le SDK ajoute la réponse, vide, sans quitter le statut
+ * « submitted » : sa signature dit alors « réfléchit », et l'indicateur à part
+ * ferait doublon.
+ */
+export const afficherAttenteReponse = ({
+  status,
+  messages,
+}: {
+  status: ChatStatus;
+  messages: PiloteUIMessage[];
+}): boolean => status === "submitted" && messages.at(-1)?.role === "user";

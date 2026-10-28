@@ -4,11 +4,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
 /**
  * Niveau 2 — `create_dashboard`.
  *
- * L'outil n'est exposé que si le détecteur d'intention repère un mot-clé :
- * un négatif sans mot-clé ne testerait rien, l'agent ne verrait même pas
- * l'outil. Les négatifs contiennent donc un mot-clé du détecteur (« montre »,
- * « affiche », « visualise ») sans demande de dashboard : côté produit, il faut
- * le demander explicitement (tableau de bord, dashboard, cartographie, courbe,
+ * Les négatifs emploient un verbe d'affichage (« montre », « affiche »,
+ * « visualise ») sans demande de dashboard : côté produit, il faut le
+ * demander explicitement (tableau de bord, dashboard, cartographie, courbe,
  * graphique).
  *
  * L'agent récupère souvent des données avant l'appel, pour résoudre les

@@ -48,21 +48,12 @@ export type ConsulterCentreAideOutput = {
   trouve: boolean;
   reponse: string;
   sources: SourceCentreAide[];
-  _output_instructions: string;
 };
-
-const OUTPUT_INSTRUCTIONS_TROUVE = `Restitue fidèlement \`reponse\` à l'utilisateur : ne la complète pas avec le glossaire ni avec d'autres connaissances, et n'en retire rien d'important.
-Ne pose aucun calcul sur des valeurs de la conversation, même si la question porte sur une donnée affichée plus tôt (« ce taux ») : donne la définition ou la procédure du centre d'aide.
-N'écris aucun lien ni URL : les pages du centre d'aide sont affichées sous ta réponse.`;
-
-const OUTPUT_INSTRUCTIONS_NON_TROUVE = `Le centre d'aide ne couvre pas cette question. Dis-le à l'utilisateur en une phrase, sans affirmer de réponse, même partielle, et sans t'appuyer sur tes connaissances générales.
-Indique que l'équipe PILOTE peut lui répondre : un bouton pour la contacter est affiché sous ta réponse. N'écris pas d'adresse mail.`;
 
 const nonTrouve = (): ConsulterCentreAideOutput => ({
   trouve: false,
   reponse: "",
   sources: [],
-  _output_instructions: OUTPUT_INSTRUCTIONS_NON_TROUVE,
 });
 
 const sansDoublon = (ids: string[]) => [...new Set(ids)];
@@ -109,17 +100,13 @@ export function createConsulterCentreAideTool({
 }) {
   return () =>
     tool({
-      description: `Répond à une question sur le fonctionnement de PILOTE à partir du centre d'aide (les pages publiées de l'aide en ligne).
-
-Utilise ce tool quand l'utilisateur demande :
-- la définition d'une notion de PILOTE (taux d'avancement, météo, jalon, maille, PPG…) ;
-- comment une valeur est calculée ;
-- comment faire quelque chose dans PILOTE : saisir ou importer des données, exporter, gérer les propositions de valeur d'avancement (PVA), gérer les utilisateurs ;
-- comment fonctionne une page ou une fonctionnalité de PILOTE.
-
-N'utilise PAS ce tool pour une question sur les valeurs d'un chantier, d'un indicateur ou d'un territoire : utilise les tools de données.
-
-\`question\` doit être autonome, compréhensible sans la conversation : remplace « ce taux », « cette page » par ce qu'ils désignent (ex : « comment est calculé le taux d'avancement d'un indicateur »). N'y mets pas de valeurs chiffrées.`,
+      description: `Répond à une question sur le fonctionnement de PILOTE à partir des pages publiées du centre d'aide.
+- \`reponse\` : la réponse du centre d'aide, à restituer sans la compléter ni poser de calcul sur les valeurs de la conversation.
+- \`trouve\` false : le centre d'aide ne couvre pas la question. Dis-le en une phrase, sans répondre de mémoire ; un bouton pour contacter l'équipe PILOTE s'affiche sous ta réponse.
+- Les pages utilisées s'affichent sous ta réponse.
+- \`question\` doit être autonome et sans valeur chiffrée : remplace « ce taux », « cette page » par ce qu'ils désignent.
+Utilise-le pour : la définition d'une notion de PILOTE (taux d'avancement, maille, PPG…), un mode de calcul, une procédure (saisie, import, export, propositions de valeur d'avancement, gestion des utilisateurs), le fonctionnement d'une page.
+Ne l'utilise pas pour : les valeurs d'un chantier, d'un indicateur ou d'un territoire → les outils de données.`,
       inputSchema: consulterCentreAideInputSchema,
       execute: async (
         { question },
@@ -168,7 +155,6 @@ N'utilise PAS ce tool pour une question sur les valeurs d'un chantier, d'un indi
           trouve: true,
           reponse: reponse.reponse,
           sources,
-          _output_instructions: OUTPUT_INSTRUCTIONS_TROUVE,
         };
       },
     });

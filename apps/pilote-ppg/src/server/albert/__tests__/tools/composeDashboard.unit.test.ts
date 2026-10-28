@@ -510,7 +510,6 @@ describe("createComposeDashboardTool execute", () => {
       expect(result).toEqual({
         titre: "Cockpit",
         containers: input.containers,
-        _output_instructions: expect.any(String),
       });
     });
 
@@ -610,7 +609,6 @@ describe("createComposeDashboardTool execute", () => {
       expect(result).toEqual({
         titre: "Cockpit",
         containers: input.containers,
-        _output_instructions: expect.any(String),
       });
     });
   });
@@ -669,7 +667,6 @@ describe("createComposeDashboardTool execute", () => {
       expect(result).toEqual({
         titre: "Cockpit Bretagne",
         containers: input.containers,
-        _output_instructions: expect.any(String),
       });
     });
   });

@@ -6,7 +6,7 @@ import type {
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
-import type { GetChantiersResult } from "@/server/chantiers/query/GetChantiersQuery";
+import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
 import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { EvalUser } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
@@ -31,8 +31,8 @@ export async function readGroundTruth({
   const includeSousTerritoires = scope.includeSousTerritoires ?? false;
 
   const tauxAvancement: GetTauxAvancementTerritoireResult[] = [];
-  const chantiersEnRetard: GetChantiersResult[] = [];
-  const chantiersEnDifficulte: GetChantiersResult[] = [];
+  const chantiersEnRetard: ResultatChantiers[] = [];
+  const chantiersEnDifficulte: ResultatChantiers[] = [];
 
   for (const territoireCode of scope.territoires) {
     for (const jalon of jalons) {

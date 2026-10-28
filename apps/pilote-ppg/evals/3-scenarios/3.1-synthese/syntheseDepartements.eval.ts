@@ -1,4 +1,5 @@
 import { scenarioEval } from "../scenarioEval";
+import { ENCART_CRITERIA } from "../criteria/encart";
 import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "./syntheseDepartements.criteria";
 
 /**
@@ -26,7 +27,8 @@ const avecSousTerritoires = {
 scenarioEval({
   suite: "Synthèse de Bretagne et ses départements",
   group: "synthese",
-  criteria: SYNTHESE_DEPARTEMENTS_CRITERIA,
+  criteria: [...SYNTHESE_DEPARTEMENTS_CRITERIA, ...ENCART_CRITERIA],
+  matter: "encart",
   cases: [
     {
       question: "Fais moi la synthèse de Bretagne et ses départements",
@@ -34,16 +36,8 @@ scenarioEval({
       truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
       expected: [
         {
-          toolName: "get_taux_avancement_territoire",
+          toolName: "rediger_comparaison_territoires",
           input: avecSousTerritoires,
-        },
-        {
-          toolName: "get_chantiers",
-          input: { ...avecSousTerritoires, view: "en_retard" },
-        },
-        {
-          toolName: "get_chantiers",
-          input: { ...avecSousTerritoires, view: "en_difficulte" },
         },
       ],
       tableTerritories: ["REG-53", "DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],

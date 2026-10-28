@@ -32,6 +32,7 @@ export const GROUPS = {
   synthese: "3.1 · Synthèse",
   comparaison: "3.2 · Comparaison",
   aide: "3.3 · Centre d'aide",
+  forme: "3.4 · Forme de la réponse",
 };
 
 export type ScenarioCase = {

@@ -9,6 +9,7 @@ import type {
   GetChantierCommentairesQueryResult,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 
 const queryResult: GetChantierCommentairesQueryResult = {
   resultats: [
@@ -16,7 +17,14 @@ const queryResult: GetChantierCommentairesQueryResult = {
       territoire_code: "REG-75",
       territoire_nom: "Île-de-France",
       chantier_id: "CH-084",
-      commentaires: [],
+      commentaires: [
+        {
+          id: "commentaire-1",
+          date_publication: "2026-01-12",
+          contenu: "<p>Deux postes vacants.<br>Recrutement engagé.</p>",
+          type: "freins_a_lever",
+        },
+      ],
     },
   ],
   types_non_accessibles: [],
@@ -37,6 +45,17 @@ const buildTool = ({
   return createGetChantierCommentairesTool({
     getChantierCommentairesQuery: query,
     territoireResolver,
+    getChantiersIdentiteQuery: mock<GetChantiersIdentiteQuery>({
+      execute: async () => [
+        {
+          id: "CH-084",
+          nom: "Accélérer la rénovation énergétique",
+          axe: "Axe",
+          ppg: "PPG",
+          ministeres: [],
+        },
+      ],
+    }),
   })({ territoiresAccessibles, chantiersAccessibles });
 };
 
@@ -59,7 +78,7 @@ const executeTool = async (
   ) as Promise<GetChantierCommentairesOutput>;
 
 describe("createGetChantierCommentairesTool execute", () => {
-  test("retourne les commentaires d'un chantier accessible", async () => {
+  test("retourne les commentaires d'un chantier accessible en texte, avec le nom du chantier", async () => {
     // Given
     const query = mock<GetChantierCommentairesQuery>({
       execute: vi.fn(async () => queryResult),
@@ -75,9 +94,23 @@ describe("createGetChantierCommentairesTool execute", () => {
 
     // Then
     expect(result).toEqual({
-      resultats: queryResult.resultats,
+      chantier_nom: "Accélérer la rénovation énergétique",
+      resultats: [
+        {
+          territoire_code: "REG-75",
+          territoire_nom: "Île-de-France",
+          chantier_id: "CH-084",
+          commentaires: [
+            {
+              id: "commentaire-1",
+              date_publication: "2026-01-12",
+              contenu: "Deux postes vacants.\nRecrutement engagé.",
+              type: "freins_a_lever",
+            },
+          ],
+        },
+      ],
       types_non_accessibles: [],
-      _output_instructions: expect.any(String),
     });
   });
 

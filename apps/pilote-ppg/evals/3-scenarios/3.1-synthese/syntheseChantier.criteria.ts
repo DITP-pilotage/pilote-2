@@ -17,7 +17,7 @@ export const SYNTHESE_CHANTIER_CRITERIA = withBase({
     }),
     judged({
       id: "Difficultés tirées des commentaires",
-      rule: "Commentaires : extrais les idées clés sans interprétation",
+      rule: "Règle 2 : ne cite que des données reçues, commentaires compris",
       instruction:
         "Chaque difficulté citée provient des commentaires reçus (délais, postes vacants, fermetures de lignes…). Une difficulté qui n'y figure pas est non conforme. Ce critère ne juge que l'invention : l'absence de difficultés relève de « Trois volets », et reste conforme ici.",
     }),

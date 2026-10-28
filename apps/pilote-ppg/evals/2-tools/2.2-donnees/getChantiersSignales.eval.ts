@@ -48,9 +48,10 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "En Bretagne, quels chantiers n'ont pas de météo renseignée ?",
+    question:
+      "En Bretagne, quels chantiers n'ont pas de synthèse des résultats renseignée ?",
     reason:
-      "météo non renseignée : un signalement, à distinguer d'en difficulté",
+      "synthèse non renseignée : un signalement, à distinguer d'en difficulté (D1 : la question ne parle plus de météo)",
     expected: [
       {
         toolName: "get_chantiers_signales",
@@ -73,7 +74,7 @@ const CASES: ToolCase[] = [
   },
   {
     question:
-      "En Bretagne, quels chantiers sont en retard ou n'ont pas de météo renseignée ?",
+      "En Bretagne, quels chantiers sont en retard ou n'ont pas de synthèse des résultats renseignée ?",
     reason:
       "plusieurs catégories, retard compris : cet outil, pas get_chantiers",
     expected: [

@@ -92,4 +92,15 @@ export const chatMarkdownStyles = `
   @keyframes md-blink-caret {
     50% { opacity: 0; }
   }
+  .albert-encart .albert-markdown h1 { font-size: 22px; margin-top: 0; line-height: 1.3; }
+  .albert-encart .albert-markdown h2 { font-size: 17px; margin-top: 1.3em; }
+  .albert-encart .albert-markdown hr { border: 0; border-top: 1px solid #dddddd; margin: 1.4em 0; }
+  .albert-encart .albert-markdown blockquote {
+    margin: 0.9em 0 1.6em;
+    padding: 0.5em 0.75em;
+    border-left: 3px solid #000091;
+    background: #f5f5fe;
+    color: #3a3a3a;
+  }
+  .albert-encart .albert-markdown th { background: #f5f5fe; }
 `;

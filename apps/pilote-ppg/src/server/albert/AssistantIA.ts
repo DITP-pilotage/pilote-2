@@ -1,20 +1,13 @@
 import type { ModelMessage, ToolSet, UIMessage } from "ai";
 import { Albert } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
-import {
-  type Capacities,
-  dashboardDejaCompose,
-  detecterCapacities,
-  extraireTexteDernierMessageUtilisateur,
-} from "@/server/albert/detecteurIntention";
-import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { getContainer } from "@/server/dependances";
 import { clarifyWithChoicesTool } from "@/server/albert/tools/clarifyWithChoices";
 
 /**
- * Câblage de l'agent : quels outils, quel prompt système, pour quelles
- * habilitations et quelle intention.
+ * Câblage de l'agent : quels outils et quel prompt système, pour quelles
+ * habilitations.
  *
  * La distinction avec `Albert` : `Albert` est la plomberie LLM — provider,
  * température, persistance dans `llm_calls`. `AssistantIA` est la
@@ -32,20 +25,18 @@ type AgentContext = Record<string, unknown> | undefined;
 type ParamètresSetup = {
   habilitations: Habilitations;
   agentContext: AgentContext;
-  capacities: Capacities;
   userId: string;
 };
 
 export class AssistantIA {
   /**
-   * `create_dashboard` et `export_rapport` ne sont exposés que si l'intention
-   * est détectée : la liste d'outils fait partie de ce qu'on évalue.
+   * Tous les outils sont toujours exposés (PIL-1900) : les exposer selon des
+   * mots-clés du dernier message privait l'agent de `create_dashboard` après
+   * une clarification, et il rédigeait alors un faux dashboard en texte.
    */
   private static construireTools({
     habilitations,
-    capacities,
-    userId,
-  }: Omit<ParamètresSetup, "agentContext">): ToolSet {
+  }: Pick<ParamètresSetup, "habilitations">): ToolSet {
     const container = getContainer("albert");
 
     const chantiersAccessibles = habilitations.lecture.chantiers;
@@ -59,6 +50,12 @@ export class AssistantIA {
         territoiresAccessibles,
         chantiersAccessibles,
       }),
+      rediger_synthese_territoire: container.resolve(
+        "createRedigerSyntheseTerritoireTool",
+      )({ habilitations }),
+      rediger_comparaison_territoires: container.resolve(
+        "createRedigerComparaisonTerritoiresTool",
+      )({ habilitations }),
       get_indicateurs: container.resolve("createGetChantierIndicateursTool")({
         chantiersAccessibles,
       }),
@@ -91,76 +88,23 @@ export class AssistantIA {
         "createConsulterCentreAideTool",
       )(),
       clarify_with_choices: clarifyWithChoicesTool,
-      ...(capacities.dashboard
-        ? {
-            create_dashboard: container.resolve("createCreateDashboardTool")({
-              chantiersAccessibles,
-            }),
-          }
-        : {}),
-      ...(capacities.exportRapport
-        ? {
-            export_rapport: container.resolve("createExportRapportTool")({
-              userId,
-            }),
-          }
-        : {}),
+      create_dashboard: container.resolve("createCreateDashboardTool")({
+        chantiersAccessibles,
+      }),
     };
   }
 
   private static construireSetup({
     habilitations,
     agentContext,
-    capacities,
-    userId,
   }: ParamètresSetup) {
     return {
-      tools: this.construireTools({ habilitations, capacities, userId }),
+      tools: this.construireTools({ habilitations }),
       systemPrompt: buildChatSystemPrompt({
         territoiresAccessibles: habilitations.lecture.territoires,
         agentContext,
-        capacities,
       }),
     };
-  }
-
-  /**
-   * `dashboardDejaCompose` regarde l'historique : une fois un dashboard
-   * composé, l'outil reste exposé pour que l'agent puisse le retoucher, même
-   * si le dernier message ne le redemande pas.
-   */
-  private static detecterCapacitiesDepuisMessages(
-    messages: PiloteUIMessage[],
-  ): Capacities {
-    const capacitiesDetectees = detecterCapacities(
-      extraireTexteDernierMessageUtilisateur(messages),
-    );
-
-    return {
-      ...capacitiesDetectees,
-      dashboard:
-        capacitiesDetectees.dashboard || dashboardDejaCompose(messages),
-    };
-  }
-
-  /**
-   * Les noms des outils que verrait l'agent pour cette conversation, sans
-   * appeler le modèle : la liste est arrêtée avant l'appel LLM.
-   */
-  static outilsCharges({
-    messages,
-    habilitations,
-    userId,
-  }: {
-    messages: PiloteUIMessage[];
-    habilitations: Habilitations;
-    userId: string;
-  }): string[] {
-    const capacities = this.detecterCapacitiesDepuisMessages(messages);
-
-    return Object.keys(
-      this.construireTools({ habilitations, capacities, userId }),
-    );
   }
 
   static async streamText({
@@ -180,13 +124,9 @@ export class AssistantIA {
     userId: string;
     model?: string;
   }) {
-    const capacities = this.detecterCapacitiesDepuisMessages(
-      messages as PiloteUIMessage[],
-    );
     const { tools, systemPrompt } = this.construireSetup({
       habilitations,
       agentContext,
-      capacities,
       userId,
     });
 
@@ -201,12 +141,7 @@ export class AssistantIA {
     });
   }
 
-  /**
-   * Un tour d'agent, `steps` inclus, après un éventuel `history` de messages.
-   * Les capacities viennent de la seule question, comme en production où
-   * elles viennent du dernier message ; `dashboardDejaCompose` n'est pas
-   * rejoué.
-   */
+  /** Un tour d'agent, `steps` inclus, après un éventuel `history` de messages. */
   static async generateText({
     chatId,
     question,
@@ -224,11 +159,9 @@ export class AssistantIA {
     userId: string;
     model?: string;
   }) {
-    const capacities = detecterCapacities(question);
     const { tools, systemPrompt } = this.construireSetup({
       habilitations,
       agentContext,
-      capacities,
       userId,
     });
 

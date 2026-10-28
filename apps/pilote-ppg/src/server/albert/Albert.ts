@@ -133,6 +133,39 @@ export class Albert {
   }
 
   /**
+   * Le texte d'un sous-agent, au fil de sa rédaction : pour un outil qui le
+   * renvoie en résultats intermédiaires. Sans outils ni persistance.
+   *
+   * `textStream` avale les erreurs de l'API et les interruptions : le texte
+   * finirait tronqué sans que l'outil le sache. On lit donc le flux complet et
+   * on lève l'erreur, pour que la part d'outil passe en erreur.
+   */
+  static async *streamSubagentText({
+    systemPrompt,
+    prompt,
+    abortSignal,
+  }: {
+    systemPrompt: string;
+    prompt: string;
+    abortSignal?: AbortSignal;
+  }): AsyncGenerator<string> {
+    const result = aiStreamText({
+      model: createModel(DEFAULT_MODEL),
+      system: systemPrompt,
+      prompt,
+      temperature: TEMPERATURE_STREAM_TEXT,
+      abortSignal,
+    });
+    for await (const part of result.fullStream) {
+      if (part.type === "text-delta") yield part.text;
+      if (part.type === "error") throw part.error;
+      if (part.type === "abort") {
+        throw new Error("La rédaction du sous-agent a été interrompue");
+      }
+    }
+  }
+
+  /**
    * Pendant non streamé de `streamText` : mêmes modèle, température et
    * `stopWhen`, même écriture dans `llm_calls`. Renvoie le résultat complet,
    * `steps` compris — ce que le flux ne permet pas d'inspecter.
@@ -192,7 +225,8 @@ export class Albert {
     tools?: ToolSet;
     model?: string;
   }) {
-    const modelMessages = await convertToModelMessages(messages);
+    // Les outils appliquent leur `toModelOutput` aux résultats de l'historique.
+    const modelMessages = await convertToModelMessages(messages, { tools });
 
     return aiStreamText({
       model: createModel(model),

@@ -47,26 +47,7 @@ export type GetHistoriqueIndicateurOutput = {
   construction_valeur_affichee?: string;
   groupes?: GroupeHistoriqueIndicateur[];
   introuvable?: true;
-  _output_instructions: string;
 };
-
-const OUTPUT_INSTRUCTIONS =
-  "Ces données représentent un HISTORIQUE : les actions qui ont eu lieu sur la valeur de cet indicateur (import, modification, proposition, acceptation, refus...), groupées par date et dans l'ordre chronologique. Deux dates distinctes apparaissent, ne les confonds pas : `date_valeur` (par groupe) est le mois auquel s'applique la valeur d'avancement, déjà au format MM/AAAA — reprends-le tel quel ; `date_creation` (par événement) est la date et l'heure réelles auxquelles l'action a eu lieu, déjà formatée en entier — reprends-la telle quelle aussi. Chaque événement porte `description` (ce qui s'est passé et son effet éventuel sur la valeur importée dans PILOTE) et `categorie` (IMPORT : import direct par la direction de projet ; PROPOSITION : étape du cycle de vie d'une proposition du territoire) — appuie-toi dessus pour comprendre et décrire l'enchaînement. Les valeurs citées sont les valeurs brutes importées : selon le paramétrage de l'indicateur (cumul des valeurs par exemple), la valeur d'avancement affichée sur la courbe et dans le tableau de PILOTE peut en différer. Présente-les donc comme des valeurs importées, jamais comme la valeur affichée, et ne les compare pas telles quelles aux valeurs d'une évolution.Si l'utilisateur veut plutôt la tendance/courbe de la valeur dans le temps, indique-lui simplement que c'est possible, sans citer de nom d'outil technique.";
-
-const VALEUR_AFFICHEE_INSTRUCTIONS =
-  "Pour cet indicateur, la valeur d'avancement affichée dans PILOTE n'est pas la valeur importée : `construction_valeur_affichee` explique comment elle est construite. Appuie-toi dessus pour expliquer un écart entre les valeurs importées et la courbe ou le tableau de PILOTE, et ne recalcule jamais toi-même un cumul. Présente ce calcul avec tes mots, comme le fonctionnement de PILOTE (par exemple « dans PILOTE, la valeur affichée est la somme des valeurs importées depuis janvier »), sans jamais évoquer le champ `construction_valeur_affichee`, ni une « description » ou une « explication » qui t'aurait été fournie.";
-
-const INDICATEUR_INTROUVABLE_INSTRUCTIONS =
-  "Cet indicateur est introuvable. Informe l'utilisateur qu'aucun indicateur ne correspond à cet identifiant.";
-
-const AGREGE_BLOQUE_INSTRUCTIONS =
-  "Les résultats de cet indicateur à ce niveau sont agrégés depuis la maille inférieure : aucune action (import, proposition...) n'y est directement enregistrée, donc pas d'historique disponible à cette maille. Explique-le à l'utilisateur plutôt que de renvoyer une liste vide.";
-
-function construireInstructionsBesoinPrecision(
-  nombreEvenements: number,
-): string {
-  return `Il y a ${nombreEvenements} événements pour cet indicateur sur ce territoire, trop pour être tous présentés d'un coup. Propose à l'utilisateur une période en t'appuyant sur les bornes fournies (date_evenement_la_plus_ancienne / date_evenement_la_plus_recente, au format ISO) — dans ta réponse à l'utilisateur, exprime cette période au format MM/AAAA, mais réutilise les bornes ISO telles quelles comme date_debut / date_fin quand tu rappelles cet outil.`;
-}
 
 export function createGetHistoriqueIndicateurTool({
   getIndicateurContexteQuery,
@@ -83,11 +64,15 @@ export function createGetHistoriqueIndicateurTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Récupère l'historique des actions (import, modification, proposition, acceptation, refus...) sur la valeur d'un indicateur pour un territoire donné.
-
-Utilise cet outil quand l'utilisateur demande l'historique, le détail des actions, ou pose une question sur une proposition de valeur d'avancement (PVA) — mets alors type_filtre à "PROPOSITIONS".
-
-⚠️ Ne renvoie PAS la tendance/courbe de la valeur dans le temps — pour ça, utilise get_evolution_indicateur.`,
+      description: `Renvoie l'historique des actions sur la valeur d'un indicateur pour un territoire (import, modification, proposition, acceptation, refus…), groupées par mois de valeur, dans l'ordre chronologique.
+- \`date_valeur\` : le mois auquel s'applique la valeur ; \`date_creation\` : le moment où l'action a eu lieu.
+- \`categorie\` : IMPORT (import direct par la direction de projet) ou PROPOSITION (étape d'une proposition du territoire).
+- Les valeurs citées sont les valeurs importées : la valeur affichée dans PILOTE peut en différer (\`construction_valeur_affichee\` explique comment). Ne les compare pas telles quelles aux valeurs d'une évolution.
+- \`introuvable\` : aucun indicateur ne porte cet identifiant.
+- \`agrege_bloque\` : à cette maille, les valeurs sont agrégées depuis la maille inférieure ; il n'y a pas d'historique à cette maille.
+- \`besoin_precision\` : trop d'événements pour les présenter d'un coup. Propose une période entre les bornes fournies, puis rappelle l'outil avec \`date_debut\` et \`date_fin\` au format ISO.
+Utilise-le pour : l'historique d'un indicateur, « qui a modifié cette valeur ? », une question sur les propositions de valeur d'avancement (PVA) : mets alors \`type_filtre\` à "PROPOSITIONS".
+Ne l'utilise pas pour : la courbe ou la tendance de la valeur → get_evolution_indicateur.`,
       inputSchema: getHistoriqueIndicateurInputSchema,
       execute: async (input): Promise<GetHistoriqueIndicateurOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
@@ -104,7 +89,6 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
           return {
             indicateur: null,
             introuvable: true,
-            _output_instructions: INDICATEUR_INTROUVABLE_INSTRUCTIONS,
           };
         }
 
@@ -133,7 +117,6 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
             indicateur: indicateurResume,
             territoire_code: input.territoire_code,
             agrege_bloque: true,
-            _output_instructions: AGREGE_BLOQUE_INSTRUCTIONS,
           };
         }
 
@@ -160,9 +143,6 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
               date_evenement_la_plus_ancienne: resultat.dateMin ?? undefined,
               date_evenement_la_plus_recente: resultat.dateMax ?? undefined,
             },
-            _output_instructions: construireInstructionsBesoinPrecision(
-              resultat.nombreEvenements,
-            ),
           };
         }
 
@@ -176,9 +156,6 @@ Utilise cet outil quand l'utilisateur demande l'historique, le détail des actio
             construction_valeur_affichee: explicationValeurAffichee,
           }),
           groupes: resultat.groupes,
-          _output_instructions: explicationValeurAffichee
-            ? `${OUTPUT_INSTRUCTIONS} ${VALEUR_AFFICHEE_INSTRUCTIONS}`
-            : OUTPUT_INSTRUCTIONS,
         };
       },
     });

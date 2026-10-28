@@ -8,12 +8,13 @@ import { SYNTHESE_TERRITOIRE_CRITERIA } from "../3.1-synthese/syntheseTerritoire
 import { SYNTHESE_CHANTIER_CRITERIA } from "../3.1-synthese/syntheseChantier.criteria";
 import { SYNTHESE_DEPARTEMENTS_CRITERIA } from "../3.1-synthese/syntheseDepartements.criteria";
 import { CHANTIERS_EN_RETARD_CRITERIA } from "../3.1-synthese/chantiersEnRetard.criteria";
-import { RAPPORT_COMPLET_CRITERIA } from "../3.1-synthese/rapportComplet.criteria";
 import { TABLEAU_DE_BORD_CRITERIA } from "../3.1-synthese/tableauDeBord.criteria";
 import { SYNTHESE_COMMENTAIRES_CRITERIA } from "../3.1-synthese/syntheseCommentaires.criteria";
 import { COMPARER_TERRITOIRES_CRITERIA } from "../3.2-comparaison/comparerTerritoires.criteria";
 import { COMPARER_JALONS_CRITERIA } from "../3.2-comparaison/comparerJalons.criteria";
 import type { GroundTruth } from "../truth";
+import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
+import { libelleNiveauDeConfiance } from "@/server/albert/tools/libelles";
 
 /**
  * Les cas de la calibration du juge : pour chaque scénario calibré, une
@@ -53,10 +54,6 @@ const SUITES = {
     name: "Chantiers en retard et leurs indicateurs",
     criteria: CHANTIERS_EN_RETARD_CRITERIA,
   },
-  rapportComplet: {
-    name: "Rapport complet",
-    criteria: RAPPORT_COMPLET_CRITERIA,
-  },
   tableauDeBord: {
     name: "Tableau de bord du territoire",
     criteria: TABLEAU_DE_BORD_CRITERIA,
@@ -89,6 +86,7 @@ const CH_005 = {
 };
 const CH_006 = { id: "CH-006", nom: "Développer la prévention en santé" };
 
+/** Un chantier tel que `get_chantiers` le renvoie : des libellés (PIL-1900). */
 const chantier = ({
   id,
   nom,
@@ -101,23 +99,22 @@ const chantier = ({
   ecart: number;
   meteo: string;
   commentaire: string | null;
-}) => ({
+}): ChantierRenvoye => ({
   chantier: {
     id,
     nom,
     axe: "non renseigné",
     ppg: "non renseignée",
     ministeres: [],
-    mailles_applicables: ["NAT", "REG", "DEPT"],
+    maille_de_pilotage: "départementale",
   },
-  meteo,
   tendance: null,
+  niveau_de_confiance: libelleNiveauDeConfiance({ meteo }),
   ecart,
   taux_avancement: null,
   est_en_retard: ecart <= -10,
   est_en_difficulte: ecart > -10,
-  synthese: { meteo, commentaire, date_meteo: null, date_commentaire: null },
-  commentaires: { donnees: null, autresResultats: null },
+  synthese: { commentaire, date_commentaire: null },
 });
 
 /** Une fiche figée pour la Bretagne, calquée sur le monde territorial. */
@@ -126,6 +123,7 @@ const FICHE_BRETAGNE: GroundTruth = {
   tauxAvancement: [
     {
       territoire_code: "REG-53",
+      territoire_nom: "Bretagne",
       jalon: 2025,
       taux_avancement_global: "51%",
       mediane_repartition: "65%",
@@ -259,7 +257,7 @@ Dans Pilote, le TA 2025 de la région s'établit à 51%, pour une médiane des r
 
 **CH-005 — Réduire les délais de passage aux urgences**\\
 **Écart** : -15 points\\
-**Météo** : Appuis nécessaires
+**Niveau de confiance** : Appuis nécessaires
 
 > Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
 
@@ -275,7 +273,7 @@ Dans Pilote, le TA 2025 de la région s'établit à 51%, pour une médiane des r
 
 **CH-006 — Développer la prévention en santé**\\
 **Écart** : 2 points\\
-**Météo** : Objectifs compromis
+**Niveau de confiance** : Objectifs compromis
 
 > Pas de commentaire disponible
 
@@ -315,7 +313,7 @@ const SYNTHESE: CalibrationCase[] = [
   {
     suite: SUITES.syntheseTerritoire,
     label: "Cause inventée dans un résumé",
-    broken: "Résumés fidèles",
+    broken: "Commentaires fidèles",
     evidence: synthese({
       from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
       to: "> Deux postes d'urgentistes sont vacants à Brest et Quimper à la suite d'un conflit social avec l'agence régionale de santé, et le délai médian de passage a remonté au premier semestre.",
@@ -330,25 +328,6 @@ const SYNTHESE: CalibrationCase[] = [
       to: "avec un écart de 15 points. Il conviendrait de renforcer en priorité les recrutements d'urgentistes.",
     }),
   },
-  {
-    suite: SUITES.syntheseTerritoire,
-    label: "Écart omis",
-    broken: "Écart et météo",
-    // L'écart disparaît aussi de la synthèse de tendance : sinon le juge le
-    // retrouve là et note, à raison, que le chiffre est donné.
-    evidence: evidence({
-      question: SYNTHESE_QUESTION,
-      matter: muter({
-        reference: muter({
-          reference: SYNTHESE_REFERENCE,
-          from: "**Écart** : -15 points\\\n",
-          to: "",
-        }),
-        from: "le retard porte sur un chantier de santé, avec un écart de 15 points.",
-        to: "le retard porte sur un chantier de santé.",
-      }),
-    }),
-  },
 ];
 
 // --- Chantiers en retard et leurs indicateurs ---------------------------
@@ -358,7 +337,7 @@ const RETARD_QUESTION =
 
 const RETARD_REFERENCE = `**CH-005 — Réduire les délais de passage aux urgences**
 - Écart à la médiane : -15 points
-- Météo : Appuis nécessaires
+- Niveau de confiance : Appuis nécessaires
 
 Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur actuelle 250, valeur cible 180, taux d'avancement 30 %.`;
 
@@ -413,6 +392,7 @@ const FICHE_COMPARAISON: GroundTruth = {
     ...FICHE_BRETAGNE.tauxAvancement,
     {
       territoire_code: "REG-52",
+      territoire_nom: "Pays de la Loire",
       jalon: 2025,
       taux_avancement_global: "70%",
       mediane_repartition: "65%",
@@ -614,7 +594,10 @@ const sectionChantier = ({
 }): { widgets: WidgetDefinition[] } => ({
   widgets: [
     { type: "widget_titre_section", titre: `${id} — ${nom}` },
-    { type: "widget_paragraph", contenu: [`Météo : ${meteo}`, commentaire] },
+    {
+      type: "widget_paragraph",
+      contenu: [`Niveau de confiance : ${meteo}`, commentaire],
+    },
     {
       type: "widget_cartographie_meteo",
       chantier_id: id,
@@ -678,7 +661,6 @@ function dashboardAvec(
   return {
     titre: "Tableau de bord Bretagne",
     containers: [{ widgets: premiereSection }, ...SECTIONS_CHANTIERS],
-    _output_instructions: "",
   };
 }
 
@@ -750,69 +732,6 @@ const DASHBOARD: CalibrationCase[] = [
   },
 ];
 
-// --- Rapport complet ----------------------------------------------------
-
-// L'export d'une synthèse faite au tour précédent : le rapport se juge contre
-// la conversation qu'il reprend.
-const RAPPORT_QUESTION = "Exporte cette synthèse en rapport au format Markdown";
-
-const RAPPORT_REPONSE = "Votre rapport est disponible au téléchargement.";
-
-const RAPPORT_REFERENCE = `RAPPORT EXPORTÉ :
-# Synthèse Bretagne
-
-*01/10/2026*
-
-> Le TA 2025 de la Bretagne est de 51%, sous la médiane des régions (65%). Un chantier est en retard, un autre a des objectifs compromis.
-
-## Chantiers en retard
-CH-005 — Réduire les délais de passage aux urgences : écart de -15 points, météo Appuis nécessaires. Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
-
-## Chantiers en difficulté
-CH-006 — Développer la prévention en santé : écart de 2 points, météo Objectifs compromis. Pas de commentaire disponible.
-
-RÉPONSE DU CHAT :
-${RAPPORT_REPONSE}`;
-
-const rapport = (matter: string) =>
-  evidence({
-    question: RAPPORT_QUESTION,
-    matter,
-    answer: RAPPORT_REPONSE,
-    toolCalls: [{ toolName: "export_rapport", input: { format: "markdown" } }],
-    conversation: [
-      {
-        question: SYNTHESE_QUESTION,
-        answer: SYNTHESE_REFERENCE,
-      },
-    ],
-  });
-
-const RAPPORT: CalibrationCase[] = [
-  {
-    suite: SUITES.rapportComplet,
-    label: "Référence",
-    broken: null,
-    evidence: rapport(RAPPORT_REFERENCE),
-  },
-  {
-    suite: SUITES.rapportComplet,
-    label: "Chantier en retard de la synthèse omis",
-    broken: "Fidèle à la conversation",
-    evidence: rapport(
-      muter({
-        reference: muter({
-          reference: RAPPORT_REFERENCE,
-          from: /## Chantiers en retard\n[^\n]+\n\n/,
-          to: "",
-        }),
-        from: " Un chantier est en retard, un autre a des objectifs compromis.",
-        to: " Un chantier a des objectifs compromis.",
-      }),
-    ),
-  },
-];
-
 // --- Synthèse hors périmètre : la restriction d'accès -------------------
 
 const CH_007 = {
@@ -825,6 +744,7 @@ const FICHE_PAYS_DE_LA_LOIRE: GroundTruth = {
   tauxAvancement: [
     {
       territoire_code: "REG-52",
+      territoire_nom: "Pays de la Loire",
       jalon: 2025,
       taux_avancement_global: "70%",
       mediane_repartition: "65%",
@@ -865,7 +785,7 @@ Dans Pilote, le TA 2025 de la région s'établit à 70%, pour une médiane des r
 
 **CH-007 — Rénover énergétiquement les logements privés**\\
 **Écart** : -20 points\\
-**Météo** : Appuis nécessaires
+**Niveau de confiance** : Appuis nécessaires
 
 > Le commentaire de synthèse n'est pas accessible : ce territoire est hors de votre périmètre.
 
@@ -990,7 +910,7 @@ const CHANTIER_RESULTS = [
 
 const CHANTIER_REFERENCE = `## CH-005 — Réduire les délais de passage aux urgences, en Bretagne
 
-Le chantier est en retard de 15 points sur la médiane, avec une météo « Appuis nécessaires ».
+Le chantier est en retard de 15 points sur la médiane, avec un niveau de confiance « Appuis nécessaires ».
 
 ## Position face aux autres territoires
 
@@ -1063,6 +983,7 @@ const FICHE_SOUS_TERRITOIRES: GroundTruth = {
     ...FICHE_BRETAGNE.tauxAvancement,
     {
       territoire_code: "DEPT-35",
+      territoire_nom: "Ille-et-Vilaine",
       jalon: 2025,
       taux_avancement_global: "46%",
       mediane_repartition: "57%",
@@ -1139,7 +1060,7 @@ La Bretagne devance l'Ille-et-Vilaine de 5 points de taux d'avancement. Les deux
 
 **CH-006 — Développer la prévention en santé**\\
 **Territoires concernés** : Bretagne, Ille-et-Vilaine\\
-**Météo** : Objectifs compromis
+**Niveau de confiance** : Objectifs compromis
 
 > Pas de commentaire disponible
 
@@ -1198,6 +1119,7 @@ const SOUS_TERRITOIRES: CalibrationCase[] = [
 
 const tauxBretagne = (jalon: number, taux: string) => ({
   territoire_code: "REG-53",
+  territoire_nom: "Bretagne",
   jalon,
   taux_avancement_global: taux,
   mediane_repartition: taux === "- %" ? "- %" : "65%",
@@ -1300,7 +1222,6 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
   ...JALONS,
   ...COMMENTAIRES,
   ...DASHBOARD,
-  ...RAPPORT,
 ];
 
 /**
@@ -1308,61 +1229,6 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
  * juge : un test unitaire vérifie que chacun échoue son critère, et lui seul.
  */
 export const MECHANICAL_MUTANTS: CalibrationCase[] = [
-  {
-    // Revue du 30/09 : Albert peut lire les commentaires par `get_chantiers`
-    // plutôt que par `get_chantier_commentaires`. La recopie doit se voir
-    // quel que soit l'outil qui a fourni le commentaire.
-    suite: SUITES.syntheseCommentaires,
-    label: "Commentaire lu par get_chantiers et recopié",
-    broken: "Pas de recopie",
-    evidence: evidence({
-      question: COMMENTAIRES_QUESTION,
-      matter: `**CH-005 — Réduire les délais de passage aux urgences**
-Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.`,
-      profile: "coordinateur",
-      toolResults: [
-        {
-          toolName: "get_chantiers",
-          output: {
-            resultats: [
-              {
-                territoire_code: "REG-53",
-                territoire_nom: "Bretagne",
-                jalon: 2025,
-                chantiers: [
-                  {
-                    ...chantier({
-                      ...CH_005,
-                      ecart: -15,
-                      meteo: "NUAGE",
-                      commentaire: null,
-                    }),
-                    commentaires: {
-                      donnees: null,
-                      autresResultats: {
-                        contenu:
-                          "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
-                        date: "2026-09-15",
-                      },
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      ],
-    }),
-  },
-  {
-    suite: SUITES.syntheseTerritoire,
-    label: "Commentaire de synthèse recopié",
-    broken: "Pas de recopie",
-    evidence: synthese({
-      from: "> Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.",
-      to: "> Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
-    }),
-  },
   {
     suite: SUITES.syntheseCommentaires,
     label: "Commentaire reçu recopié",
@@ -1374,24 +1240,6 @@ Mise en place d'un numéro de régulation départemental unique en mars. Action 
         to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
       }),
     ),
-  },
-  {
-    suite: SUITES.syntheseDepartements,
-    label: "Commentaire de synthèse recopié",
-    broken: "Pas de recopie",
-    evidence: sousTerritoires(
-      muter({
-        reference: SOUS_TERRITOIRES_REFERENCE,
-        from: "> Des postes d'urgentistes restent vacants et le délai de passage dépasse la cible.",
-        to: "> Le délai de passage aux urgences reste au-dessus de la cible faute de médecins régulateurs.",
-      }),
-    ),
-  },
-  {
-    suite: SUITES.syntheseTerritoire,
-    label: "Commentaire manquant non signalé",
-    broken: "Absence de commentaire signalée",
-    evidence: synthese({ from: "> Pas de commentaire disponible\n\n", to: "" }),
   },
   {
     suite: SUITES.comparerTerritoires,

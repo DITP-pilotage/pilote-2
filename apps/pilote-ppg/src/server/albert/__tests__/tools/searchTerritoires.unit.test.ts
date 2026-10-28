@@ -64,7 +64,6 @@ describe("createSearchTerritoiresTool execute", () => {
     expect(result).toEqual({
       territoires: [{ code: "REG-53", nom: "Bretagne", maille: "regionale" }],
       reasoning: "test",
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -85,7 +84,6 @@ describe("createSearchTerritoiresTool execute", () => {
     expect(result).toEqual({
       territoires: [],
       reasoning: "Aucune correspondance",
-      _output_instructions: expect.any(String),
     });
   });
 });

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { AlbertConversation } from "@/components/_commons/ChatUI/createAlbertConversation";
 import { buildChantierUrl } from "@/components/_commons/ChatUI/buildChantierUrl";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
@@ -13,7 +12,10 @@ import { EvaluationReponse } from "@/components/_commons/ChatUI/EvaluationRepons
 import { ErreurReponse } from "@/components/_commons/ChatUI/ErreurReponse";
 import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
-import { deriverEtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
+import {
+  afficherAttenteReponse,
+  deriverEtatAssistant,
+} from "@/components/_commons/ChatUI/deriverEtatAssistant";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ChatEmptyState } from "@/components/_commons/ChatUI/ChatEmptyState";
 import type {
@@ -183,13 +185,6 @@ export const ChatUI = ({
     [],
   );
 
-  const handleModelChange = useCallback(
-    (model: AlbertModel) => {
-      conversation.requestBody.model = model;
-    },
-    [conversation],
-  );
-
   const chantierLinkOptions = useMemo(() => {
     const context = {
       territoireCode: conversation.requestBody.agentContext?.territoireCode,
@@ -263,7 +258,7 @@ export const ChatUI = ({
                     );
                   })}
 
-                  {status === "submitted" && (
+                  {afficherAttenteReponse({ status, messages }) && (
                     <SignatureAssistant etat="reflechit" />
                   )}
 
@@ -296,7 +291,6 @@ export const ChatUI = ({
 
           <ChatInputForm
             fillInputRef={fillInputRef}
-            onModelChange={handleModelChange}
             placeholder={placeholder}
           />
         </div>

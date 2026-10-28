@@ -105,12 +105,11 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       acces_refuse: true,
-      _output_instructions: expect.any(String),
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("répond explicitement quand aucun chantier demandé n'est accessible", async () => {
+  test("signale un accès refusé quand aucun chantier demandé n'est accessible", async () => {
     // Given
     const { tool, query } = buildTool();
 
@@ -120,13 +119,12 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      _output_instructions:
-        "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+      acces_refuse: true,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("répond explicitement quand l'utilisateur n'a accès à aucun chantier", async () => {
+  test("signale un accès refusé quand l'utilisateur n'a accès à aucun chantier", async () => {
     // Given
     const { tool, query } = buildTool({ chantiersAccessibles: [] });
 
@@ -136,8 +134,7 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      _output_instructions:
-        "L'utilisateur n'a accès à aucun chantier : aucune donnée de mise à jour ne peut être consultée.",
+      acces_refuse: true,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
@@ -156,12 +153,7 @@ describe("createGetIndicateursNonAJourTool execute", () => {
       indicateurIds: undefined,
       avecDetailTerritoires: false,
     });
-    expect(result).toEqual({
-      resultats: QUERY_RESULT,
-      _output_instructions: expect.stringContaining(
-        "Le détail par territoire n'est pas inclus",
-      ),
-    });
+    expect(result).toEqual({ resultats: QUERY_RESULT });
   });
 
   test("ne transmet que les chantiers demandés accessibles", async () => {
@@ -194,15 +186,10 @@ describe("createGetIndicateursNonAJourTool execute", () => {
       indicateurIds: ["IND-001"],
       avecDetailTerritoires: true,
     });
-    expect(result).toEqual({
-      resultats: QUERY_RESULT,
-      _output_instructions: expect.stringContaining(
-        "Liste les territoires en retard",
-      ),
-    });
+    expect(result).toEqual({ resultats: QUERY_RESULT });
   });
 
-  test("répond explicitement quand aucun indicateur demandé n'est accessible, sans révéler leur chantier ni appeler la query", async () => {
+  test("signale un accès refusé quand aucun indicateur demandé n'est accessible, sans révéler leur chantier ni appeler la query", async () => {
     // Given
     const { tool, query } = buildTool({
       chantierParIndicateur: { "IND-003": "CH-003" },
@@ -214,8 +201,7 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      _output_instructions:
-        "Aucun des indicateurs demandés n'est accessible pour cet utilisateur.",
+      acces_refuse: true,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
@@ -238,9 +224,10 @@ describe("createGetIndicateursNonAJourTool execute", () => {
       indicateurIds: ["IND-001"],
       avecDetailTerritoires: true,
     });
-    expect(result._output_instructions).toContain(
-      "Ces indicateurs demandés ne sont pas accessibles à l'utilisateur : IND-003.",
-    );
+    expect(result).toEqual({
+      resultats: QUERY_RESULT,
+      indicateurs_non_accessibles: ["IND-003"],
+    });
     expect(JSON.stringify(result)).not.toContain("CH-003");
   });
 
@@ -266,7 +253,7 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     const { tool, query } = buildTool();
 
     // When
-    const result = await executeTool(tool, { territoire_code: "DEPT-29" });
+    await executeTool(tool, { territoire_code: "DEPT-29" });
 
     // Then
     expect(query.execute).toHaveBeenCalledWith({
@@ -275,28 +262,15 @@ describe("createGetIndicateursNonAJourTool execute", () => {
       indicateurIds: undefined,
       avecDetailTerritoires: true,
     });
-    expect(result._output_instructions).toContain(
-      "Liste les territoires en retard",
-    );
   });
 
-  test("sur un résultat vide, ne conclut pas que les données sont à jour", async () => {
+  test("décrit qu'une liste vide ne prouve pas que les données sont à jour", () => {
     // Given
     const { tool } = buildTool({ queryResult: [] });
 
-    // When
-    const result = await executeTool(tool, {
-      indicateur_ids: ["IND-404"],
-      territoire_code: "DEPT-29",
-    });
-
     // Then
-    expect(result.resultats).toEqual([]);
-    expect(result._output_instructions).toContain(
-      "Aucun indicateur non à jour n'a été trouvé sur le périmètre demandé.",
-    );
-    expect(result._output_instructions).not.toContain(
-      "toutes les données interrogées sont à jour",
+    expect(tool.description).toContain(
+      "ce qui ne prouve pas que les données sont à jour",
     );
   });
 
@@ -310,12 +284,13 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     });
 
     // Then
-    expect(result._output_instructions).toContain(
-      "Ces chantiers demandés ne sont pas accessibles à l'utilisateur : CH-999.",
-    );
+    expect(result).toEqual({
+      resultats: [],
+      chantiers_non_accessibles: ["CH-999"],
+    });
   });
 
-  test("répond explicitement quand l'utilisateur n'a accès à aucun territoire", async () => {
+  test("signale un accès refusé quand l'utilisateur n'a accès à aucun territoire", async () => {
     // Given
     const { tool, query } = buildTool({ territoiresAccessibles: [] });
 
@@ -325,23 +300,19 @@ describe("createGetIndicateursNonAJourTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      _output_instructions:
-        "L'utilisateur n'a accès à aucun territoire : aucune donnée de mise à jour ne peut être consultée.",
+      acces_refuse: true,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("explique un territoire en retard sans date attendue par une date théorique non calculable, sans en supposer la cause", async () => {
+  test("décrit un territoire en retard sans date attendue par une date théorique non calculable, sans en supposer la cause", () => {
     // Given
     const { tool } = buildTool();
 
-    // When
-    const result = await executeTool(tool, { indicateur_ids: ["IND-001"] });
-
     // Then
-    expect(result._output_instructions).toContain(
-      "Si miseAJourAttendueDepuis est null alors que dateDerniereValeur est renseignée, la date théorique de mise à jour n'a pas pu être calculée : dis-le au lieu d'afficher une date.",
+    expect(tool.description).toContain(
+      "la date théorique n'a pas pu être calculée",
     );
-    expect(result._output_instructions).not.toContain("n'est pas déclaré");
+    expect(tool.description).not.toContain("n'est pas déclaré");
   });
 });

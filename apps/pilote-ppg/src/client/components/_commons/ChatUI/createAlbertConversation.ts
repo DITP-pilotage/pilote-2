@@ -34,8 +34,8 @@ export const createAlbertConversation = ({
   messages?: PiloteUIMessage[];
   onFinish?: ChatOnFinishCallback<PiloteUIMessage>;
 }): AlbertConversation => {
-  // Mutated in place and referenced by the transport: the model selector in
-  // ChatInputForm must be able to switch models mid-conversation.
+  // Referenced by the transport. The model stays a request parameter, but the
+  // UI no longer offers a model selector (PIL-1900).
   const requestBody: AlbertRequestBody = {
     ...(agentContext ? { agentContext } : {}),
     model: "openweight-large",

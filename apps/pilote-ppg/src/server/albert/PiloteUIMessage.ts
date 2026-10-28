@@ -1,13 +1,12 @@
+import type { EncartOutput } from "@/server/albert/tools/encart";
+import { redigerSyntheseTerritoireInputSchema } from "@/server/albert/tools/redigerSyntheseTerritoire";
+import { redigerComparaisonTerritoiresInputSchema } from "@/server/albert/tools/redigerComparaisonTerritoires";
 import type { UIDataTypes, UIMessage } from "ai";
 import type { z } from "zod";
 import {
   clarifyWithChoicesInputSchema,
   type ClarifyWithChoicesOutput,
 } from "@/server/albert/tools/clarifyWithChoices";
-import {
-  exportRapportInputSchema,
-  type ExportRapportOutput,
-} from "@/server/albert/exportRapportSchema";
 import {
   createDashboardInputSchema,
   type CreateDashboardOutput,
@@ -126,9 +125,13 @@ export type PiloteUITools = {
     input: z.input<typeof createDashboardInputSchema>;
     output: CreateDashboardOutput;
   };
-  export_rapport: {
-    input: z.input<typeof exportRapportInputSchema>;
-    output: ExportRapportOutput;
+  rediger_synthese_territoire: {
+    input: z.input<typeof redigerSyntheseTerritoireInputSchema>;
+    output: EncartOutput;
+  };
+  rediger_comparaison_territoires: {
+    input: z.input<typeof redigerComparaisonTerritoiresInputSchema>;
+    output: EncartOutput;
   };
 };
 

@@ -16,7 +16,7 @@ export const clarifyWithChoicesInputSchema = z.object({
     )
     .min(2)
     .describe(
-      "Options concrètes et réalisables entre lesquelles l'utilisateur doit trancher (au moins 2)",
+      "Options concrètes et réalisables entre lesquelles l'utilisateur doit trancher (2 à 4)",
     ),
 });
 
@@ -24,18 +24,15 @@ export type ClarifyChoice = z.infer<
   typeof clarifyWithChoicesInputSchema
 >["choices"][number];
 
-const OUTPUT_INSTRUCTIONS =
-  "La question et les options sont affichées à l'utilisateur dans un encart. Termine ta réponse par cette seule phrase, sans rien ajouter : « Choisissez une option pour continuer. »";
-
 export type ClarifyWithChoicesOutput = {
   question: string;
   choices: ClarifyChoice[];
-  _output_instructions: string;
 };
 
 export const clarifyWithChoicesTool = tool({
-  description:
-    "Demande à l'utilisateur de lever un doute en choisissant parmi des options que tu as identifiées. Appelle cet outil AVANT de produire une réponse dès que : plusieurs candidats correspondent (chantiers, indicateurs, territoires) ; la demande admet plusieurs interprétations qui mènent à des réponses différentes ; ou la demande ne peut pas être satisfaite telle quelle (ex. un type de graphique que le dashboard ne sait pas produire) et que tu peux proposer des alternatives réalisables. Mieux vaut demander que deviner. Le paramètre 'question' porte toute l'explication affichée à l'utilisateur : n'écris pas de texte avant l'appel.",
+  description: `Affiche à l'utilisateur un encart de choix : une question et 2 à 4 options concrètes, réalisables telles quelles, chacune formulée comme la demande qu'il aurait pu écrire.
+- \`question\` porte toute l'explication : n'écris pas de texte avant l'appel.
+- Après l'appel, termine ta réponse par cette seule phrase : « Choisissez une option pour continuer. »`,
   inputSchema: clarifyWithChoicesInputSchema,
   execute: async ({
     question,
@@ -43,6 +40,5 @@ export const clarifyWithChoicesTool = tool({
   }): Promise<ClarifyWithChoicesOutput> => ({
     question,
     choices,
-    _output_instructions: OUTPUT_INSTRUCTIONS,
   }),
 });

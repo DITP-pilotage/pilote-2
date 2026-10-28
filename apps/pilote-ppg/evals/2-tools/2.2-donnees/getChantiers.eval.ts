@@ -29,18 +29,6 @@ const CASES: ToolCase[] = [
     expected: [{ toolName: "get_chantiers" }],
   },
   {
-    question: "Récap des chantiers sur l'Auvergne",
-    reason: "« récap » n'est pas un mot-clé de synthèse : pas de gabarit",
-    expected: [{ toolName: "get_chantiers" }],
-  },
-  {
-    question: "Compare les chantiers de la Corse et ses départements",
-    reason: "sous-territoires : un seul appel sur le parent avec le flag",
-    expected: [
-      { toolName: "get_chantiers", input: { include_sous_territoires: true } },
-    ],
-  },
-  {
     question: "Quels chantiers en retard sur la Corse ?",
     reason: "« en retard » → view en_retard",
     expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],

@@ -311,13 +311,7 @@ export type ContainerDefinition = z.infer<typeof containerInputSchema>;
 export type ComposeDashboardOutput = {
   titre: string;
   containers: ContainerDefinition[];
-  _output_instructions: string;
 };
-
-const OUTPUT_INSTRUCTIONS = `Le dashboard a été composé et sera affiché visuellement sous forme de widgets dans l'interface.
-Ne reproduis JAMAIS de valeurs chiffrées dans ta réponse textuelle (les chiffres sont résolus au rendu côté client).
-Tu peux ajouter une phrase courte d'introduction ("Voici le dashboard demandé.") mais pas de commentaire sur les chiffres.
-Si l'utilisateur demande à modifier le dashboard, rappelle compose_dashboard avec une nouvelle définition complète qui reprend les containers à conserver et applique les changements.`;
 
 // Quantificateurs bornes : `\d+\s*` suivi d'une alternation retrogradait en
 // O(n2) sur une longue suite de chiffres. Applique a du texte produit par le LLM.
@@ -374,7 +368,6 @@ export function createComposeDashboardTool() {
         return {
           titre: input.titre,
           containers: input.containers,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },
     });

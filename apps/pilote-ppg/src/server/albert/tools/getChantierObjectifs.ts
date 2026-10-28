@@ -1,4 +1,5 @@
 import { tool } from "ai";
+import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import { z } from "zod";
 import { GetChantierObjectifsQuery } from "@/server/chantiers/query/GetChantierObjectifsQuery";
 import type { GetChantierObjectifsResult } from "@/server/chantiers/query/GetChantierObjectifsQuery";
@@ -7,11 +8,7 @@ export const getChantierObjectifsInputSchema = z.object({
   chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
 });
 
-export type GetChantierObjectifsOutput = GetChantierObjectifsResult & {
-  _output_instructions: string;
-};
-
-const OUTPUT_INSTRUCTIONS = `Restitue chaque objectif avec sa date et son contenu verbatim, sans reformulation ni interprétation. Le contenu est en HTML : extrais uniquement le texte (sans les balises) tout en conservant la formulation d'origine. Ces objectifs représentent la vision nationale du chantier — ils ne sont pas spécifiques à un territoire donné. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.`;
+export type GetChantierObjectifsOutput = GetChantierObjectifsResult;
 
 export function createGetChantierObjectifsTool({
   getChantierObjectifsQuery,
@@ -20,14 +17,13 @@ export function createGetChantierObjectifsTool({
 }) {
   return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) => {
     return tool({
-      description: `Récupère les objectifs publiés d'un chantier (uniquement les objectifs publiés — les brouillons sont exclus) :
-- \`notre_ambition\` : ambition politique du chantier, objectifs, indicateurs et leviers
-- \`deja_fait\` : principales avancées déjà réalisées
-- \`a_faire\` : objectifs prioritaires et principales actions restant à mener
-
-Ces objectifs sont rattachés au chantier au niveau national et ne sont pas territorialisés. Un champ \`null\` signifie qu'aucun objectif publié n'existe pour ce type.
-
-Utilise cet outil quand l'utilisateur demande l'ambition, les objectifs stratégiques, ce qui a été fait ou ce qu'il reste à faire sur un chantier — indépendamment d'un territoire.`,
+      description: `Renvoie les objectifs publiés d'un chantier, définis au niveau national et non par territoire :
+- \`notre_ambition\` : l'ambition du chantier, ses objectifs, indicateurs et leviers ;
+- \`deja_fait\` : les principales avancées réalisées ;
+- \`a_faire\` : les objectifs prioritaires et les actions restant à mener.
+Un champ \`null\` : aucun objectif publié de ce type.
+Utilise-le pour : l'ambition d'un chantier, ses objectifs, ce qui a été fait, ce qu'il reste à faire, sa feuille de route.
+Ne l'utilise pas pour : les commentaires d'un territoire (freins, actions, résultats) → get_chantier_commentaires.`,
       inputSchema: getChantierObjectifsInputSchema,
       execute: async (input): Promise<GetChantierObjectifsOutput> => {
         if (!chantiersAccessibles.includes(input.chantier_id)) {
@@ -40,9 +36,19 @@ Utilise cet outil quand l'utilisateur demande l'ambition, les objectifs stratég
           input.chantier_id,
         );
 
+        const enTexte = (objectif: (typeof result.objectifs)["a_faire"]) =>
+          objectif && {
+            ...objectif,
+            contenu: texteDepuisHtml({ html: objectif.contenu }),
+          };
+
         return {
           ...result,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
+          objectifs: {
+            notre_ambition: enTexte(result.objectifs.notre_ambition),
+            deja_fait: enTexte(result.objectifs.deja_fait),
+            a_faire: enTexte(result.objectifs.a_faire),
+          },
         };
       },
     });

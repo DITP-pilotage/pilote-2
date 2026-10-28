@@ -57,7 +57,6 @@ describe("createGetChantierIndicateursTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: queryResult,
-      _output_instructions: expect.any(String),
     });
   });
 

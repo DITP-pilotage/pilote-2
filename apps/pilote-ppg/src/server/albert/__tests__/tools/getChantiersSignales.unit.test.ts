@@ -39,6 +39,20 @@ const executeTool = async (
     context: {},
   }) as Promise<GetChantiersSignalesOutput>;
 
+describe("createGetChantiersSignalesTool description", () => {
+  test("oriente une synthèse non renseignée vers les chantiers signalés", () => {
+    // When
+    const tool = buildTool({
+      queryResult: [],
+      territoiresAccessibles: [],
+      chantiersAccessibles: [],
+    });
+
+    // Then
+    expect(tool.description).toContain("« sans synthèse renseignée »");
+  });
+});
+
 describe("createGetChantiersSignalesTool execute", () => {
   test("refuse l'accès à un territoire non accessible sans appeler la query", async () => {
     // Given
@@ -58,11 +72,10 @@ describe("createGetChantiersSignalesTool execute", () => {
       resultats: [],
       categories_non_applicables: [],
       acces_refuse: true,
-      _output_instructions: expect.any(String),
     });
   });
 
-  test("retourne un message dédié quand aucun chantier_ids demandé n'est accessible", async () => {
+  test("signale un accès refusé quand aucun chantier_ids demandé n'est accessible", async () => {
     // Given
     const tool = buildTool({
       queryResult: [],
@@ -80,8 +93,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: [],
-      _output_instructions:
-        "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+      acces_refuse: true,
     });
   });
 
@@ -113,13 +125,12 @@ describe("createGetChantiersSignalesTool execute", () => {
         {
           id: "CH-001",
           nom: "CH-001 — Chantier test",
-          meteo: "NON_RENSEIGNEE",
           ecart: null,
-          typesAlerte: ["estEnAlerteMétéoNonRenseignée"],
+          niveau_de_confiance: "Non renseignée",
+          categories: ["Météo et synthèse non renseignées"],
         },
       ],
-      categories_non_applicables: ["estEnAlerteÉcart"],
-      _output_instructions: expect.any(String),
+      categories_non_applicables: ["Retard par rapport à la médiane"],
     });
   });
 
@@ -140,8 +151,7 @@ describe("createGetChantiersSignalesTool execute", () => {
     // Then
     expect(result).toEqual({
       resultats: [],
-      categories_non_applicables: ["estEnAlerteTauxAvancementNonCalculé"],
-      _output_instructions: expect.any(String),
+      categories_non_applicables: ["Taux d'avancement non calculé"],
     });
   });
 
@@ -166,9 +176,8 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: [
-        "estEnAlerteAbscenceTauxAvancementDepartemental",
+        "Absence de taux d'avancement départemental",
       ],
-      _output_instructions: expect.any(String),
     });
   });
 
@@ -189,7 +198,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       categories_non_applicables: [],
-      _output_instructions: expect.any(String),
     });
   });
 });

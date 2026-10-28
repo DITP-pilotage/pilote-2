@@ -14,7 +14,6 @@ describe("texteCopieCentreAide", () => {
           url: "/centre-aide-pilote?article=taux",
         },
       ],
-      _output_instructions: "",
     };
 
     // When
@@ -35,7 +34,6 @@ describe("texteCopieCentreAide", () => {
       trouve: false,
       reponse: "",
       sources: [],
-      _output_instructions: "",
     };
 
     // When

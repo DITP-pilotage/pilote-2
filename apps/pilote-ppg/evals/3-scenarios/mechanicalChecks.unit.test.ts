@@ -1,15 +1,23 @@
 import {
-  checkAbsenceSignalee,
+  checkEncartChantiers,
+  checkMailleNommee,
+  checkRestrictionEncart,
   checkChantierFormat,
   checkChantiersCited,
+  checkDashboardNonVide,
   checkExactAnswer,
+  checkFrench,
   checkHasTable,
   checkNoLink,
+  checkNoHtml,
+  checkNoMeteo,
   checkNoMeteoCode,
   checkNoVerbatim,
   checkNoToolName,
   checkSectionsDashboard,
+  checkTableChantiers,
   checkTableTerritories,
+  checkVerbatim,
 } from "./mechanicalChecks";
 
 describe("checkSectionsDashboard", () => {
@@ -111,15 +119,6 @@ describe("typographie d'Albert", () => {
       }).ok,
     ).toBe(true);
   });
-
-  test("délimite la section d'un chantier cité avec un trait d'union insécable", () => {
-    expect(
-      checkAbsenceSignalee({
-        text: "**CH‑005 — Urgences**\n> Deux postes.\n**CH‑006 — Prévention**\n> Pas de commentaire disponible",
-        chantierIds: ["CH-006"],
-      }).ok,
-    ).toBe(true);
-  });
 });
 
 describe("checkNoVerbatim", () => {
@@ -160,28 +159,6 @@ describe("checkNoVerbatim", () => {
         sources: [commentaire],
       }).ok,
     ).toBe(true);
-  });
-});
-
-describe("checkAbsenceSignalee", () => {
-  const text = [
-    "**CH-005 — Réduire les délais de passage aux urgences**",
-    "> Deux postes restent vacants.",
-    "**CH-006 — Développer la prévention en santé**",
-    "> Pas de commentaire disponible",
-  ].join("\n");
-
-  test("accepte la mention sous le chantier sans commentaire", () => {
-    expect(checkAbsenceSignalee({ text, chantierIds: ["CH-006"] }).ok).toBe(
-      true,
-    );
-  });
-
-  test("signale un chantier dont la mention manque sous lui, même présente ailleurs", () => {
-    expect(checkAbsenceSignalee({ text, chantierIds: ["CH-005"] })).toEqual({
-      ok: false,
-      detail: "« Pas de commentaire disponible » absent sous : CH-005",
-    });
   });
 });
 
@@ -310,5 +287,275 @@ describe("checkNoLink et checkExactAnswer", () => {
         expected: "Votre rapport est disponible au téléchargement.",
       }).ok,
     ).toBe(true);
+  });
+});
+
+describe("checkFrench", () => {
+  test("signale la phrase anglaise observée après une clarification (PIL-1900, F2)", () => {
+    expect(
+      checkFrench({
+        text: "I'm waiting for your choice. Please select one of the options above.",
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "mots anglais : i'm, waiting, your, please, select, the, above",
+    });
+  });
+
+  test("laisse passer la phrase de clôture française", () => {
+    expect(
+      checkFrench({ text: "Choisissez une option pour continuer." }),
+    ).toEqual({ ok: true, detail: "réponse en français" });
+  });
+
+  test("ne confond pas un mot anglais avec un mot français qui le contient", () => {
+    expect(checkFrench({ text: "Un thème, un thé et une option." }).ok).toBe(
+      true,
+    );
+  });
+});
+
+describe("checkTableChantiers", () => {
+  const tableau =
+    "| Chantier | Écart |\n|---|---|\n| CH‑005 — Urgences | -14 |";
+
+  test("trouve un chantier dans une ligne du tableau, quel que soit le tiret", () => {
+    expect(
+      checkTableChantiers({ text: tableau, chantierIds: ["CH-005"] }),
+    ).toEqual({ ok: true, detail: "chantiers dans le tableau" });
+  });
+
+  test("signale un chantier cité hors du tableau", () => {
+    expect(
+      checkTableChantiers({
+        text: `${tableau}\n\nCH-006 est aussi concerné.`,
+        chantierIds: ["CH-005", "CH-006"],
+      }),
+    ).toEqual({ ok: false, detail: "chantiers absents du tableau : CH-006" });
+  });
+});
+
+describe("checkVerbatim", () => {
+  const source =
+    "<p>Deux postes d'urgentistes sont vacants à Brest et Quimper.</p><p>Le délai médian de passage a remonté au premier semestre.</p>";
+
+  test("reconnaît un commentaire restitué sur deux paragraphes", () => {
+    expect(
+      checkVerbatim({
+        text: "Deux postes d'urgentistes sont vacants à Brest et Quimper.\n\nLe délai médian de passage a remonté au premier semestre.",
+        sources: [source],
+      }),
+    ).toEqual({ ok: true, detail: "commentaires restitués" });
+  });
+
+  test("signale un commentaire résumé", () => {
+    expect(
+      checkVerbatim({
+        text: "Des postes vacants et des délais en hausse.",
+        sources: [source],
+      }).ok,
+    ).toBe(false);
+  });
+});
+
+describe("checkDashboardNonVide", () => {
+  const titre = { type: "widget_titre_section" };
+  const paragraphe = { type: "widget_paragraph" };
+
+  test("laisse passer l'absence de dashboard", () => {
+    expect(checkDashboardNonVide({ dashboard: null })).toEqual({
+      ok: true,
+      detail: "aucun dashboard composé",
+    });
+  });
+
+  test("signale un dashboard fait seulement de titres et de paragraphes", () => {
+    expect(
+      checkDashboardNonVide({
+        dashboard: {
+          containers: [{ widgets: [titre] }, { widgets: [paragraphe] }],
+        },
+      }),
+    ).toEqual({ ok: false, detail: "dashboard sans widget de données" });
+  });
+
+  test("laisse passer un dashboard qui affiche une donnée", () => {
+    expect(
+      checkDashboardNonVide({
+        dashboard: {
+          containers: [
+            { widgets: [titre] },
+            { widgets: [{ type: "widget_taux_avancement_territoire" }] },
+          ],
+        },
+      }).ok,
+    ).toBe(true);
+  });
+});
+
+describe("checkNoMeteo", () => {
+  test("signale la météo citée, avec ou sans accents (PIL-1900, D1)", () => {
+    expect(
+      checkNoMeteo({ text: "CH-005 — Urgences : météo Appuis nécessaires." }),
+    ).toEqual({ ok: false, detail: "météo citée" });
+    expect(checkNoMeteo({ text: "**Meteo** : Objectifs compromis" }).ok).toBe(
+      false,
+    );
+  });
+
+  test("laisse passer le niveau de confiance en libellé", () => {
+    expect(
+      checkNoMeteo({
+        text: "CH-005 — Urgences : niveau de confiance « Appuis nécessaires ».",
+      }),
+    ).toEqual({ ok: true, detail: "aucune mention de la météo" });
+  });
+});
+
+describe("checkNoHtml", () => {
+  test("signale une balise que le chat afficherait en texte brut", () => {
+    expect(
+      checkNoHtml({
+        text: "| Freins | • Postes vacants.<br>• Fermeture de lignes. |",
+      }),
+    ).toEqual({ ok: false, detail: "balises HTML : <br>" });
+  });
+
+  test("laisse passer le markdown, les comparaisons et les flèches", () => {
+    expect(
+      checkNoHtml({
+        text: "**CH-005** : écart < -10 points, 34 % -> 40 %. Voir <https://exemple.fr>.",
+      }),
+    ).toEqual({ ok: true, detail: "aucune balise HTML" });
+  });
+});
+
+const chantierDonne = ({
+  id,
+  ecart,
+  niveau,
+}: {
+  id: string;
+  ecart: number;
+  niveau: string;
+}) => ({
+  chantier: { id },
+  ecart,
+  niveau_de_confiance: niveau,
+  synthese: { commentaire: null },
+});
+
+describe("checkEncartChantiers", () => {
+  const chantiers = [
+    chantierDonne({ id: "CH-071", ecart: -14.4, niveau: "Appuis nécessaires" }),
+  ];
+
+  test("retrouve chaque chantier avec son écart arrondi et son niveau de confiance", () => {
+    expect(
+      checkEncartChantiers({
+        text: "**CH-071 — Rénover**\n**Écart** : −14 points · **Niveau de confiance** : Appuis nécessaires",
+        chantiers,
+        avecEcart: true,
+      }),
+    ).toEqual({ ok: true, detail: "1 chantier(s) conforme(s)" });
+  });
+
+  test("signale un écart faux ou un chantier absent", () => {
+    expect(
+      checkEncartChantiers({
+        text: "**CH-071 — Rénover**\n**Écart** : −12 points · **Niveau de confiance** : Appuis nécessaires",
+        chantiers: [
+          ...chantiers,
+          chantierDonne({
+            id: "CH-045",
+            ecart: 2,
+            niveau: "Objectifs compromis",
+          }),
+        ],
+        avecEcart: true,
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "CH-071 : écart -14 absent ; CH-045 : absent",
+    });
+  });
+});
+
+describe("checkEncartChantiers en comparaison", () => {
+  test("retrouve le niveau de confiance de chaque territoire, même après un bloc commun qui ne le donne pas", () => {
+    expect(
+      checkEncartChantiers({
+        text: "### Communs à plusieurs territoires\n**CH-071 — Rénover**\n**Territoires concernés** : Nord, Gironde\n### Spécifiques au Nord\n**CH-071 — Rénover**\n**Niveau de confiance** : Appuis nécessaires\n### Spécifiques à la Gironde\n**CH-071 — Rénover**\n**Niveau de confiance** : Objectifs compromis",
+        chantiers: [
+          chantierDonne({
+            id: "CH-071",
+            ecart: -14,
+            niveau: "Appuis nécessaires",
+          }),
+          chantierDonne({
+            id: "CH-071",
+            ecart: -12,
+            niveau: "Objectifs compromis",
+          }),
+        ],
+        avecEcart: false,
+      }),
+    ).toEqual({ ok: true, detail: "1 chantier(s) conforme(s)" });
+  });
+});
+
+describe("checkMailleNommee", () => {
+  test("un département n'est pas nommé « la région »", () => {
+    expect(
+      checkMailleNommee({
+        text: "Dans PILOTE, le taux d'avancement 2025 de la région s'établit à 54 %.",
+        territoireCode: "DEPT-59",
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "maille écrite « de la region », attendue « du departement »",
+    });
+  });
+
+  test("une région est nommée « la région »", () => {
+    expect(
+      checkMailleNommee({
+        text: "Dans PILOTE, le taux d'avancement 2025 de la région s'établit à 54 %.",
+        territoireCode: "REG-53",
+      }),
+    ).toEqual({ ok: true, detail: "maille « de la region »" });
+  });
+});
+
+describe("checkRestrictionEncart", () => {
+  const resultats = [
+    {
+      territoire_code: "REG-52",
+      acces_restreint: true,
+      chantiers: [
+        { chantier: { id: "CH-071" }, synthese: { commentaire: null } },
+      ],
+    },
+  ];
+
+  test("exige la mention de la restriction quand des commentaires sont masqués", () => {
+    expect(
+      checkRestrictionEncart({
+        text: "> Pas de commentaire disponible",
+        resultats,
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "commentaires masqués sans la mention de la restriction d'accès",
+    });
+  });
+
+  test("accepte la mention de la restriction", () => {
+    expect(
+      checkRestrictionEncart({
+        text: "> Commentaire non accessible (restriction d'accès)",
+        resultats,
+      }),
+    ).toEqual({ ok: true, detail: "restriction d'accès mentionnée" });
   });
 });

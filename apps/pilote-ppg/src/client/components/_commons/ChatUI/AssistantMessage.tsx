@@ -14,7 +14,6 @@ import {
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
 import type { EtatAssistant } from "@/components/_commons/ChatUI/deriverEtatAssistant";
-import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { SignatureAssistant } from "@/components/_commons/ChatUI/SignatureAssistant";
 import {
   estSourcePart,
@@ -23,6 +22,9 @@ import {
 import { texteCopieCentreAide } from "@/components/_commons/ChatUI/texteCopieCentreAide";
 import { SkeletonText } from "@/components/shared/Skeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
+import { EncartSynthese } from "@/components/_commons/ChatUI/EncartSynthese";
+import { texteEncarts } from "@/components/_commons/ChatUI/texteEncarts";
+import type { EncartOutput } from "@/server/albert/tools/encart";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import {
   copyExportNames,
@@ -30,7 +32,23 @@ import {
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
 
-const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
+// Avant le premier résultat de l'outil : l'en-tête de l'encart, sans texte.
+const encartEnAttente = ({
+  type,
+  input,
+}: {
+  type: string;
+  input: { jalon?: number } | undefined;
+}): EncartOutput => ({
+  type:
+    type === "tool-rediger_comparaison_territoires"
+      ? "comparaison"
+      : "synthese",
+  jalon: input?.jalon ?? new Date().getFullYear(),
+  date_redaction: new Date().toISOString(),
+  markdown: "",
+  termine: false,
+});
 
 export const AssistantMessage = memo(function AssistantMessage({
   message,
@@ -52,16 +70,6 @@ export const AssistantMessage = memo(function AssistantMessage({
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
   const consultationCentreAide = derniereConsultationCentreAide(parts);
-
-  const shouldHideText = parts.some((part) => {
-    const toolName = part.type.startsWith("tool-") ? part.type.slice(5) : null;
-    return (
-      toolName !== null &&
-      TOOLS_HIDING_TEXT.has(toolName) &&
-      "state" in part &&
-      part.state === "output-available"
-    );
-  });
 
   const hasText = parts.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
@@ -111,6 +119,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   const copierTexte = () => {
     const texte = [
+      ...texteEncarts({ message }),
       extractMessageText(message),
       ...(consultationCentreAide
         ? [
@@ -155,7 +164,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
       {parts.map((part, index) => {
         if (part.type === "text") {
-          if (shouldHideText || part.text.length === 0) return null;
+          if (part.text.length === 0) return null;
           return (
             <AssistantMessageText
               key={index}
@@ -165,14 +174,21 @@ export const AssistantMessage = memo(function AssistantMessage({
           );
         }
 
-        if (part.type === "tool-export_rapport") {
+        if (
+          part.type === "tool-rediger_synthese_territoire" ||
+          part.type === "tool-rediger_comparaison_territoires"
+        ) {
           if (part.state === "output-error") return null;
           return (
-            <ExportRapportDownload
+            <EncartSynthese
               isStreaming={isStreaming}
               key={index}
               llmCallId={llmCallIdOf(message)}
-              part={part}
+              output={
+                part.state === "output-available"
+                  ? part.output
+                  : encartEnAttente({ type: part.type, input: part.input })
+              }
             />
           );
         }

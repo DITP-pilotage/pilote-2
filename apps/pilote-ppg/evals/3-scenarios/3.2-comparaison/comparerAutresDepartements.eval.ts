@@ -1,4 +1,5 @@
 import { scenarioEval } from "../scenarioEval";
+import { ENCART_CRITERIA } from "../criteria/encart";
 import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria";
 
 /**
@@ -22,7 +23,8 @@ import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria"
 scenarioEval({
   suite: "Comparer avec les autres départements de Bretagne",
   group: "comparaison",
-  criteria: COMPARER_DEPARTEMENTS_CRITERIA,
+  criteria: [...COMPARER_DEPARTEMENTS_CRITERIA, ...ENCART_CRITERIA],
+  matter: "encart",
   currentTerritory: "DEPT-35",
   cases: [
     {
@@ -30,7 +32,7 @@ scenarioEval({
         "Compare 35 - Ille-et-Vilaine avec les autres départements de Bretagne",
       reason: "Message envoyé tel quel",
       truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
-      expected: [{ toolName: "get_taux_avancement_territoire" }],
+      expected: [{ toolName: "rediger_comparaison_territoires" }],
       tableTerritories: ["DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],
     },
   ],
