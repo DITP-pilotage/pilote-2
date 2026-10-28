@@ -52,6 +52,10 @@ import {
   type GetIndicateursNonAJourOutput,
 } from "@/server/albert/tools/getIndicateursNonAJour";
 import {
+  getIndicateursSansViVcInputSchema,
+  type GetIndicateursSansViVcOutput,
+} from "@/server/albert/tools/getIndicateursSansViVc";
+import {
   getEvolutionIndicateurInputSchema,
   type GetEvolutionIndicateurOutput,
 } from "@/server/albert/tools/getEvolutionIndicateur";
@@ -96,6 +100,10 @@ export type PiloteUITools = {
   get_indicateurs_non_a_jour: {
     input: z.input<typeof getIndicateursNonAJourInputSchema>;
     output: GetIndicateursNonAJourOutput;
+  };
+  get_indicateurs_sans_vi_vc: {
+    input: z.input<typeof getIndicateursSansViVcInputSchema>;
+    output: GetIndicateursSansViVcOutput;
   };
   get_evolution_indicateur: {
     input: z.input<typeof getEvolutionIndicateurInputSchema>;
