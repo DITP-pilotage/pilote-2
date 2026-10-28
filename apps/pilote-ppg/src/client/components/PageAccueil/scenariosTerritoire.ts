@@ -6,7 +6,6 @@ import { Chat2Icon } from "@/components/_commons/Icones/Chat2Icon";
 import { Community1Icon } from "@/components/_commons/Icones/Community1Icon";
 import { Dashboard3Icon } from "@/components/_commons/Icones/Dashboard3Icon";
 import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
-import { FileTextIcon } from "@/components/_commons/Icones/FileTextIcon";
 import { LineChartIcon } from "@/components/_commons/Icones/LineChartIcon";
 import { MapPin2Icon } from "@/components/_commons/Icones/MapPin2Icon";
 import { PieChartIcon } from "@/components/_commons/Icones/PieChartIcon";
@@ -71,13 +70,6 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
           },
           ...(estDITPAdmin
             ? [
-                {
-                  id: "rapport_markdown",
-                  label: "Rapport complet (Markdown)",
-                  icone: FileTextIcon,
-                  message: `Crée un rapport de synthèse du territoire ${territoire.nomAffiché} incluant le taux d'avancement, les chantiers en retard, les chantiers en difficulté et leurs indicateurs. Format Markdown`,
-                  mode: "send" as const,
-                },
                 {
                   id: "tableau_de_bord_territoire",
                   label: "Tableau de bord du territoire",
