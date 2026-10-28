@@ -10,6 +10,10 @@ import {
   collecterTauxAvancement,
   type GetTauxAvancementTerritoireResult,
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
+import type {
+  GetChantierIndicateursQuery,
+  GetChantierIndicateursResult,
+} from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQuery";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
@@ -30,6 +34,8 @@ export type DonneesEncart = {
   taux: GetTauxAvancementTerritoireResult[];
   chantiers_en_retard: ChantiersEncart;
   chantiers_en_difficulte: ChantiersEncart;
+  /** Les indicateurs des chantiers des deux vues, quand la demande les cite. */
+  indicateurs?: GetChantierIndicateursResult[];
 };
 
 /**
@@ -66,7 +72,47 @@ export function ecartPourLeSousAgent({
   return `${signe}${Math.abs(arrondi)} ${points}`;
 }
 
-const vuePourLeSousAgent = (vue: ChantiersEncart) => ({
+const nombre = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
+
+const valeurPourLeSousAgent = ({
+  valeur,
+  unite,
+}: {
+  valeur: number | null;
+  unite: string | null;
+}): string =>
+  valeur === null
+    ? "non renseignée"
+    : `${nombre.format(valeur)}${unite ? ` ${unite}` : ""}`;
+
+const indicateursPourLeSousAgent = (
+  indicateurs: GetChantierIndicateursResult["indicateurs"],
+) =>
+  indicateurs.map((indicateur) => ({
+    id: indicateur.indicateur_id,
+    nom: indicateur.nom,
+    valeur_initiale: valeurPourLeSousAgent({
+      valeur: indicateur.valeur_initiale,
+      unite: indicateur.unite_mesure,
+    }),
+    valeur_actuelle: valeurPourLeSousAgent({
+      valeur: indicateur.valeur_actuelle,
+      unite: indicateur.unite_mesure,
+    }),
+    valeur_cible: valeurPourLeSousAgent({
+      valeur: indicateur.valeur_cible,
+      unite: indicateur.unite_mesure,
+    }),
+    taux_avancement:
+      indicateur.taux_avancement === null
+        ? "non calculé"
+        : `${Math.round(indicateur.taux_avancement)} %`,
+  }));
+
+const vuePourLeSousAgent = (
+  vue: ChantiersEncart,
+  indicateurs?: GetChantierIndicateursResult[],
+) => ({
   resultats: vue.resultats.map((resultat) => ({
     territoire_code: resultat.territoire_code,
     territoire_nom: resultat.territoire_nom,
@@ -81,6 +127,16 @@ const vuePourLeSousAgent = (vue: ChantiersEncart) => ({
       niveau_de_confiance: chantier.niveau_de_confiance,
       tendance: chantier.tendance,
       commentaire_de_synthese: chantier.synthese?.commentaire ?? null,
+      ...(indicateurs && {
+        indicateurs: indicateursPourLeSousAgent(
+          indicateurs.find(
+            (indicateursDuChantier) =>
+              indicateursDuChantier.territoire_code ===
+                resultat.territoire_code &&
+              indicateursDuChantier.chantier_id === chantier.chantier.id,
+          )?.indicateurs ?? [],
+        ),
+      }),
     })),
   })),
   ...(vue.non_applicable && { non_applicable: vue.non_applicable }),
@@ -89,8 +145,14 @@ const vuePourLeSousAgent = (vue: ChantiersEncart) => ({
 /** Ce que le sous-agent lit : seulement ce que le gabarit écrit. */
 const donneesPourLeSousAgent = (donnees: DonneesEncart) => ({
   taux: donnees.taux,
-  chantiers_en_retard: vuePourLeSousAgent(donnees.chantiers_en_retard),
-  chantiers_en_difficulte: vuePourLeSousAgent(donnees.chantiers_en_difficulte),
+  chantiers_en_retard: vuePourLeSousAgent(
+    donnees.chantiers_en_retard,
+    donnees.indicateurs,
+  ),
+  chantiers_en_difficulte: vuePourLeSousAgent(
+    donnees.chantiers_en_difficulte,
+    donnees.indicateurs,
+  ),
 });
 
 /**
@@ -177,6 +239,7 @@ export type DependancesEncart = {
   getChantiersQuery: GetChantiersQuery;
   territoireResolver: TerritoireResolver;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
+  getChantierIndicateursQuery?: GetChantierIndicateursQuery;
 };
 
 function fusionnerChantiers(
@@ -209,11 +272,14 @@ export async function collecterDonneesEncart({
   getChantiersQuery,
   territoireResolver,
   getTerritoiresIdentiteQuery,
+  getChantierIndicateursQuery,
+  avecIndicateurs = false,
 }: DependancesEncart & {
   territoireCodes: string[];
   includeSousTerritoires: boolean;
   jalon: number;
   habilitations: Habilitations;
+  avecIndicateurs?: boolean;
 }): Promise<DonneesEncart> {
   const vue = async (
     territoire_code: string,
@@ -253,9 +319,30 @@ export async function collecterDonneesEncart({
     Promise.all(territoireCodes.map((code) => vue(code, "en_difficulte"))),
   ]);
 
-  return {
+  const donnees: DonneesEncart = {
     taux: taux.flatMap((sortie) => sortie.resultats),
     chantiers_en_retard: fusionnerChantiers(enRetard),
     chantiers_en_difficulte: fusionnerChantiers(enDifficulte),
   };
+  if (!avecIndicateurs || !getChantierIndicateursQuery) return donnees;
+
+  const chantiersDesVues = [
+    ...donnees.chantiers_en_retard.resultats,
+    ...donnees.chantiers_en_difficulte.resultats,
+  ].flatMap((resultat) =>
+    resultat.chantiers.map((chantier) => ({
+      territoireCode: resultat.territoire_code,
+      chantierId: chantier.chantier.id,
+    })),
+  );
+  const indicateurs = await Promise.all(
+    chantiersDesVues.map(({ territoireCode, chantierId }) =>
+      getChantierIndicateursQuery.execute({
+        territoireCode,
+        chantierId,
+        jalon,
+      }),
+    ),
+  );
+  return { ...donnees, indicateurs };
 }

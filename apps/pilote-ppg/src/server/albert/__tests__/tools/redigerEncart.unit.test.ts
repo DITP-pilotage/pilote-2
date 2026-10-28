@@ -20,6 +20,7 @@ import type {
   GetChantiersParams,
   GetChantiersQuery,
 } from "@/server/chantiers/query/GetChantiersQuery";
+import type { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
@@ -164,14 +165,42 @@ const subagentRedige = (morceaux: string[], intervalleMs = 200) =>
     }
   });
 
+const indicateursQuery = () =>
+  mock<GetChantierIndicateursQuery>({
+    execute: vi.fn(async ({ chantierId, territoireCode }) => ({
+      territoire_code: territoireCode,
+      chantier_id: chantierId,
+      indicateurs: [
+        {
+          indicateur_id: `IND-${chantierId.slice(3)}`,
+          nom: `Indicateur de ${chantierId}`,
+          unite_mesure: "%",
+          valeur_initiale: 40,
+          date_valeur_initiale: "2023-01-01",
+          valeur_actuelle: 53.25,
+          date_valeur_actuelle: "2026-06-30",
+          valeur_cible: 60,
+          date_valeur_cible: "2026-12-31",
+          taux_avancement: 66.25,
+        },
+      ],
+    })),
+  });
+
 const syntheseDuNord = ({
   query = getChantiersQuery(),
   chantiers = ["CH-071", "CH-045"],
-}: { query?: GetChantiersQuery; chantiers?: string[] } = {}) =>
+  getChantierIndicateursQuery = indicateursQuery(),
+}: {
+  query?: GetChantiersQuery;
+  chantiers?: string[];
+  getChantierIndicateursQuery?: GetChantierIndicateursQuery;
+} = {}) =>
   createRedigerSyntheseTerritoireTool({
     getChantiersQuery: query,
     territoireResolver: territoireResolver(),
     getTerritoiresIdentiteQuery,
+    getChantierIndicateursQuery,
   })({ habilitations: habilitations({ chantiers, territoires: ["DEPT-59"] }) });
 
 const DONNEES_DU_NORD: DonneesEncart = {
@@ -315,6 +344,64 @@ describe("outils de rédaction d'encart", () => {
         ],
       },
     });
+  });
+
+  test("à la demande, ajoute les indicateurs de chaque chantier, prêts à recopier", async () => {
+    // Given
+    subagentRedige(["# Synthèse"]);
+    const getChantierIndicateursQuery = indicateursQuery();
+
+    // When
+    const sorties = await collecter(
+      syntheseDuNord({ getChantierIndicateursQuery }).execute!(
+        { territoire_code: "DEPT-59", jalon: 2025, avec_indicateurs: true },
+        OPTIONS,
+      ),
+    );
+
+    // Then
+    expect(getChantierIndicateursQuery.execute).toHaveBeenCalledWith({
+      territoireCode: "DEPT-59",
+      chantierId: "CH-071",
+      jalon: 2025,
+    });
+    const prompt = JSON.parse(
+      vi.mocked(Albert.streamSubagentText).mock.calls[0][0].prompt,
+    ) as {
+      chantiers_en_retard: {
+        resultats: { chantiers: { indicateurs: unknown }[] }[];
+      };
+    };
+    expect(
+      prompt.chantiers_en_retard.resultats[0].chantiers[0].indicateurs,
+    ).toEqual([
+      {
+        id: "IND-071",
+        nom: "Indicateur de CH-071",
+        valeur_initiale: "40 %",
+        valeur_actuelle: "53,25 %",
+        valeur_cible: "60 %",
+        taux_avancement: "66 %",
+      },
+    ]);
+    expect(sorties.at(-1)?.donnees?.indicateurs).toHaveLength(2);
+  });
+
+  test("sans demande, ne lit pas les indicateurs", async () => {
+    // Given
+    subagentRedige(["# Synthèse"]);
+    const getChantierIndicateursQuery = indicateursQuery();
+
+    // When
+    await collecter(
+      syntheseDuNord({ getChantierIndicateursQuery }).execute!(
+        { territoire_code: "DEPT-59", jalon: 2025 },
+        OPTIONS,
+      ),
+    );
+
+    // Then
+    expect(getChantierIndicateursQuery.execute).not.toHaveBeenCalled();
   });
 
   test("sans aucun chantier accessible, ne lance pas le sous-agent", async () => {

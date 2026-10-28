@@ -46,6 +46,18 @@ describe.each([
   });
 });
 
+describe("gabarit de synthèse", () => {
+  it("prévoit le tableau des indicateurs d'un chantier quand ils sont fournis", () => {
+    // When
+    const prompt = buildSyntheseTerritoireSystemPrompt();
+
+    // Then
+    expect(prompt).toContain(
+      "| Indicateur | Valeur initiale | Valeur actuelle | Cible | Taux d'avancement |",
+    );
+  });
+});
+
 describe("gabarit de comparaison", () => {
   it("ne laisse pas l'analyse sans objet du national masquer les autres territoires", () => {
     // When

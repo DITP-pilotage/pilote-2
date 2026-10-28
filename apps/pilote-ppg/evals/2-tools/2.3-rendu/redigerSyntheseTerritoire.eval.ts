@@ -58,6 +58,17 @@ const CASES: ToolCase[] = [
       "« télécharger » une synthèse : l'encart, qui se télécharge (étape 6)",
     expected: [{ toolName: "rediger_synthese_territoire" }],
   },
+  {
+    question:
+      "Crée un rapport de synthèse de la Bretagne avec les indicateurs des chantiers",
+    reason: "synthèse avec les indicateurs : l'encart les ajoute",
+    expected: [
+      {
+        toolName: "rediger_synthese_territoire",
+        input: { avec_indicateurs: true },
+      },
+    ],
+  },
   ...DEMANDES_PRECISES,
 ];
 

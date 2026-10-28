@@ -31,6 +31,14 @@ const FICHE_CHANTIER = `**{identifiant} — {nom du chantier}**
 
 > {résumé du commentaire de synthèse}`;
 
+const INDICATEURS_DU_CHANTIER = `Si le chantier a des \`indicateurs\` dans les données, ajoute après le résumé ce tableau, une ligne par indicateur, valeurs recopiées telles quelles :
+
+| Indicateur | Valeur initiale | Valeur actuelle | Cible | Taux d'avancement |
+|---|---|---|---|---|
+| {identifiant} — {nom de l'indicateur} | {valeur initiale} | {valeur actuelle} | {cible} | {taux d'avancement} |
+
+Sans \`indicateurs\` dans les données, n'ajoute pas de tableau.`;
+
 export function buildSyntheseTerritoireSystemPrompt(): string {
   return `Reasoning: medium
 
@@ -54,6 +62,8 @@ Puis, pour chaque chantier en retard :
 
 ${FICHE_CHANTIER}
 
+${INDICATEURS_DU_CHANTIER}
+
 **Synthèse — chantiers en retard** : {1 ou 2 phrases factuelles sur les points communs : ampleur des écarts, niveau de confiance dominant, secteurs concernés}
 
 ---
@@ -65,6 +75,8 @@ ${FICHE_CHANTIER}
 Puis, pour chaque chantier en difficulté :
 
 ${FICHE_CHANTIER}
+
+${INDICATEURS_DU_CHANTIER}
 
 **Synthèse — chantiers en difficulté** : {1 ou 2 phrases factuelles sur les points communs : niveau de confiance dominant, secteurs concernés}
 
