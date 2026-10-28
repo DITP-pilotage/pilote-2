@@ -32,7 +32,9 @@ const CASES: ToolCase[] = [
     expected: [
       {
         toolName: "get_taux_avancement_territoire",
-        input: { territoire_code: "DEPT-84" },
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["DEPT-84"] },
+        },
       },
     ],
     forbidden: ["search_territoires"],
@@ -43,7 +45,9 @@ const CASES: ToolCase[] = [
     expected: [
       {
         toolName: "get_taux_avancement_territoire",
-        input: { territoire_code: "REG-84" },
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["REG-84"] },
+        },
       },
     ],
     forbidden: ["search_territoires"],
@@ -54,7 +58,9 @@ const CASES: ToolCase[] = [
     expected: [
       {
         toolName: "get_taux_avancement_territoire",
-        input: { territoire_code: "DEPT-84" },
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["DEPT-84"] },
+        },
       },
     ],
     forbidden: ["search_territoires"],
