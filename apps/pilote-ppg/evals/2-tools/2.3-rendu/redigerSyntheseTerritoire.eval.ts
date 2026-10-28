@@ -69,6 +69,18 @@ const CASES: ToolCase[] = [
       },
     ],
   },
+  {
+    question:
+      "Crée un rapport de synthèse du territoire Bretagne incluant le taux d'avancement, les chantiers en retard, les chantiers en difficulté et leurs indicateurs.",
+    reason:
+      "un rapport qui liste son contenu reste l'encart, indicateurs compris (conversation du 28/10)",
+    expected: [
+      {
+        toolName: "rediger_synthese_territoire",
+        input: { avec_indicateurs: true },
+      },
+    ],
+  },
   ...DEMANDES_PRECISES,
 ];
 

@@ -119,6 +119,20 @@ describe("buildChatSystemPrompt", () => {
     );
   });
 
+  it("garde un rapport qui liste son contenu sur l'encart, indicateurs compris", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "même quand la demande en liste le contenu (taux, chantiers en retard, en difficulté, indicateurs)",
+    );
+    expect(prompt).toContain("avec_indicateurs");
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({
