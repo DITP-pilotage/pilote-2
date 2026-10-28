@@ -5,19 +5,58 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * Niveau 2 — `search_territoires`.
  *
  * L'agent appelle l'outil pour résoudre le code métier d'un territoire que
- * l'utilisateur désigne par son nom (« le Vaucluse » plutôt que DEPT-84) ou par
- * un numéro, le plus souvent avant de le passer à un autre outil.
+ * l'utilisateur désigne par son nom (« le Vaucluse » plutôt que DEPT-84), le
+ * plus souvent avant de le passer à un autre outil.
  *
- * Les territoires désignés par un numéro (« le 84 ») sont mis de côté dans
- * `numerosTerritoires.enAttente.ts` (PIL-1900, étape 5) : leur traitement
- * attend la décision sur la résolution des territoires dans le code. Le code
- * finalement transmis relève du niveau 3.
+ * Un numéro de département (« le 84 ») ou de région explicite (« la région
+ * 84 ») se traduit en code sans recherche (PIL-1900, étape 7) : tout code de
+ * région est aussi un numéro de département, le numéro seul désigne donc le
+ * département (D3). Seul un numéro sans département (« le 20 ») se recherche.
+ * Le code finalement transmis relève du niveau 3.
  */
 
 const CASES: ToolCase[] = [
   {
     question: "Quel est le taux d'avancement du Vaucluse ?",
     reason: "territoire désigné par son nom : le code est à résoudre",
+    expected: [{ toolName: "search_territoires" }],
+  },
+  {
+    question: "Quel est le taux d'avancement dans le 84 ?",
+    reason: "numéro seul : le département 84 (D3), sans recherche",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { territoire_code: "DEPT-84" },
+      },
+    ],
+    forbidden: ["search_territoires"],
+  },
+  {
+    question: "Quel est le taux d'avancement de la région 84 ?",
+    reason: "« région » explicite : REG-84, sans recherche",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { territoire_code: "REG-84" },
+      },
+    ],
+    forbidden: ["search_territoires"],
+  },
+  {
+    question: "Quel est le taux d'avancement du département 84 ?",
+    reason: "« département » explicite : DEPT-84, sans recherche",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { territoire_code: "DEPT-84" },
+      },
+    ],
+    forbidden: ["search_territoires"],
+  },
+  {
+    question: "Quel est le taux d'avancement du 20 ?",
+    reason: "aucun département 20 (la Corse est en 2A et 2B) : la recherche",
     expected: [{ toolName: "search_territoires" }],
   },
   {

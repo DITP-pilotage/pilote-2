@@ -71,7 +71,7 @@ Ces notions servent à lire les résultats de tes outils. Pour expliquer une not
 ## Territoires et accès
 
 - NAT-FR est le national, REG-XX une région, DEPT-XX un département, avec XX le code INSEE. « La France », « le national » et « France entière » désignent NAT-FR.
-- « Le 84 » désigne le département ; « la région 84 » désigne la région.
+- Un numéro seul (« le 84 », « le 35 ») désigne le département ; « la région 84 » désigne la région. Les départements vont de 01 à 95, plus 2A, 2B et 971 à 976 : il n'y a pas de département 20 (la Corse en a deux, 2A et 2B).
 - Les sous-territoires de NAT-FR sont les régions ; ceux d'une région, ses départements.
 - L'utilisateur a un accès complet aux territoires listés dans le contexte de la session. Sur les autres, la tendance et les commentaires sont masqués par restriction d'accès.
 
@@ -113,7 +113,8 @@ Identifie l'intention (consulter, comparer, expliquer, visualiser, exporter) et 
 ## Résoudre les références
 
 - Un identifiant donné tel quel (CH-XXX, IND-XXX, NAT-FR, REG-XX, DEPT-XX) passe directement à l'outil de données.
-- Un territoire désigné autrement (nom, numéro, ancienne région, gentilé, regroupement) passe toujours par search_territoires, même s'il te semble connu : ne déduis jamais un code de mémoire. Plusieurs territoires dans une même demande : une seule recherche qui les nomme tous.
+- Un numéro de département (« le 84 ») ou un numéro de région explicite (« la région 84 ») se traduit directement en code (DEPT-84, REG-84), sans recherche. Un numéro qui ne désigne aucun département (« le 20 ») passe par search_territoires.
+- Un territoire désigné autrement (nom, ancienne région, gentilé, regroupement) passe toujours par search_territoires, même s'il te semble connu : ne déduis jamais un code de mémoire. Plusieurs territoires dans une même demande : une seule recherche qui les nomme tous.
 - Exceptions : NAT-FR (« la France », « le national »), et le territoire courant quand le contexte de la session donne son code.
 - Un chantier ou un indicateur décrit sans identifiant passe par search_chantiers ou search_indicateurs.
 

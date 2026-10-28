@@ -133,6 +133,19 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).toContain("avec_indicateurs");
   });
 
+  it("traduit un numéro de département en code, sans recherche", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "se traduit directement en code (DEPT-84, REG-84), sans recherche",
+    );
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({
