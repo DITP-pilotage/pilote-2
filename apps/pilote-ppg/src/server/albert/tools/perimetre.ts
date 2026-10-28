@@ -45,22 +45,3 @@ export const variantesPerimetre = {
 
 export const DESCRIPTION_PERIMETRE =
   "Les territoires visés, en un seul appel : jamais un appel par territoire.";
-
-/**
- * Transitoire : traduit l'ancien couple `territoire_code` /
- * `include_sous_territoires` le temps que tous les outils prennent un
- * `perimetre`.
- */
-export function perimetreDepuisTerritoire({
-  territoireCode,
-  includeSousTerritoires,
-}: {
-  territoireCode: string;
-  includeSousTerritoires: boolean;
-}): Perimetre {
-  if (!includeSousTerritoires || territoireCode.startsWith("DEPT-")) {
-    return { type: "SELECTION", territoire_codes: [territoireCode] };
-  }
-  if (territoireCode === "NAT-FR") return { type: "FRANCE_ET_SES_REGIONS" };
-  return { type: "REGION_ET_SES_DEPARTEMENTS", region_code: territoireCode };
-}

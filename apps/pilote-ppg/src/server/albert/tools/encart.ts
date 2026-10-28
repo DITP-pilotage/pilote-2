@@ -1,11 +1,10 @@
 import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
-import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import {
   collecterChantiers,
   type GetChantiersOutput,
-  type ResultatChantiers,
 } from "@/server/albert/tools/getChantiers";
 import {
   collecterTauxAvancement,
@@ -19,22 +18,11 @@ import type { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQue
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
-/**
- * Une vue de chantiers sur plusieurs territoires. L'analyse sans objet est
- * rattachée à son territoire : au national, elle ne doit pas masquer les
- * chantiers en retard des autres territoires comparés.
- */
-export type ChantiersEncart = {
-  resultats: ResultatChantiers[];
-  non_applicable?: { territoire_code: string; raison: string }[];
-  acces_refuse?: true;
-};
-
 /** Ce que l'outil a collecté et passé au sous-agent de rédaction. */
 export type DonneesEncart = {
   taux: GetTauxAvancementTerritoireResult[];
-  chantiers_en_retard: ChantiersEncart;
-  chantiers_en_difficulte: ChantiersEncart;
+  chantiers_en_retard: GetChantiersOutput;
+  chantiers_en_difficulte: GetChantiersOutput;
   /** Les indicateurs des chantiers des deux vues, quand la demande les cite. */
   indicateurs?: GetChantierIndicateursResult[];
 };
@@ -116,7 +104,7 @@ const indicateursPourLeSousAgent = (
   }));
 
 const vuePourLeSousAgent = (
-  vue: ChantiersEncart,
+  vue: GetChantiersOutput,
   indicateurs?: GetChantierIndicateursResult[],
 ) => ({
   resultats: vue.resultats.map((resultat) => ({
@@ -248,29 +236,13 @@ export type DependancesEncart = {
   getChantierIndicateursQuery?: GetChantierIndicateursQuery;
 };
 
-function fusionnerChantiers(
-  sorties: { territoire_code: string; sortie: GetChantiersOutput }[],
-): ChantiersEncart {
-  const nonApplicables = sorties.flatMap(
-    ({ sortie }) => sortie.non_applicable ?? [],
-  );
-  return {
-    resultats: sorties.flatMap(({ sortie }) => sortie.resultats),
-    ...(nonApplicables.length > 0 && { non_applicable: nonApplicables }),
-    ...(sorties.some(({ sortie }) => sortie.acces_refuse) && {
-      acces_refuse: true as const,
-    }),
-  };
-}
-
 /**
  * Les données d'un encart, collectées comme le feraient
  * `get_taux_avancement_territoire` et `get_chantiers` (vues en retard et en
  * difficulté) : mêmes règles d'accès, mêmes libellés.
  */
 export async function collecterDonneesEncart({
-  territoireCodes,
-  includeSousTerritoires,
+  perimetre,
   jalon,
   habilitations,
   getChantiersQuery,
@@ -279,58 +251,35 @@ export async function collecterDonneesEncart({
   getChantierIndicateursQuery,
   avecIndicateurs = false,
 }: DependancesEncart & {
-  territoireCodes: string[];
-  includeSousTerritoires: boolean;
+  perimetre: Perimetre;
   jalon: number;
   habilitations: Habilitations;
   avecIndicateurs?: boolean;
 }): Promise<DonneesEncart> {
-  const vue = async (
-    territoire_code: string,
-    view: "en_retard" | "en_difficulte",
-  ) => ({
-    territoire_code,
-    sortie: await collecterChantiers({
-      input: {
-        perimetre: perimetreDepuisTerritoire({
-          territoireCode: territoire_code,
-          includeSousTerritoires,
-        }),
-        jalon,
-        view,
-      },
+  const vue = (view: "en_retard" | "en_difficulte") =>
+    collecterChantiers({
+      input: { perimetre, jalon, view },
       getChantiersQuery,
       territoireResolver,
       territoiresAccessibles: habilitations.lecture.territoires,
       chantiersAccessibles: habilitations.lecture.chantiers,
-    }),
-  });
+    });
 
-  const [taux, enRetard, enDifficulte] = await Promise.all([
-    Promise.all(
-      territoireCodes.map((territoire_code) =>
-        collecterTauxAvancement({
-          input: {
-            perimetre: perimetreDepuisTerritoire({
-              territoireCode: territoire_code,
-              includeSousTerritoires,
-            }),
-            jalon,
-          },
-          territoireResolver,
-          getTerritoiresIdentiteQuery,
-          habilitations,
-        }),
-      ),
-    ),
-    Promise.all(territoireCodes.map((code) => vue(code, "en_retard"))),
-    Promise.all(territoireCodes.map((code) => vue(code, "en_difficulte"))),
+  const [taux, chantiersEnRetard, chantiersEnDifficulte] = await Promise.all([
+    collecterTauxAvancement({
+      input: { perimetre, jalon },
+      territoireResolver,
+      getTerritoiresIdentiteQuery,
+      habilitations,
+    }),
+    vue("en_retard"),
+    vue("en_difficulte"),
   ]);
 
   const donnees: DonneesEncart = {
-    taux: taux.flatMap((sortie) => sortie.resultats),
-    chantiers_en_retard: fusionnerChantiers(enRetard),
-    chantiers_en_difficulte: fusionnerChantiers(enDifficulte),
+    taux: taux.resultats,
+    chantiers_en_retard: chantiersEnRetard,
+    chantiers_en_difficulte: chantiersEnDifficulte,
   };
   if (!avecIndicateurs || !getChantierIndicateursQuery) return donnees;
 

@@ -13,7 +13,10 @@ import type {
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
-import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
+import {
+  DESCRIPTION_PERIMETRE,
+  variantesPerimetre,
+} from "@/server/albert/tools/perimetre";
 
 export type { TypeContenuChantier };
 
@@ -21,21 +24,18 @@ const TERRITOIRE_NATIONAL = "NAT-FR";
 
 export const getChantierCommentairesInputSchema = z.object({
   chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
-  territoire_code: z
-    .string()
-    .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
-  include_sous_territoires: z
-    .boolean()
-    .optional()
-    .default(false)
-    .describe(
-      "`true` pour un territoire ET ses sous-territoires : un seul appel sur le parent, jamais un appel par sous-territoire.",
-    ),
+  perimetre: z
+    .discriminatedUnion("type", [
+      variantesPerimetre.SELECTION,
+      variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
+      variantesPerimetre.FRANCE_ET_SES_REGIONS,
+    ])
+    .describe(DESCRIPTION_PERIMETRE),
   types: z
     .array(z.enum(typesContenuChantier))
     .optional()
     .describe(
-      "Types de contenus à récupérer. Omettre pour tout récupérer. Les types nationaux sont automatiquement recherchés au niveau national (NAT-FR) si l'utilisateur y a accès, même quand territoire_code est régional ou départemental.",
+      "Types de contenus à récupérer. Omettre pour tout récupérer. Les types nationaux sont automatiquement recherchés au niveau national (NAT-FR) si l'utilisateur y a accès, même quand le périmètre est régional ou départemental.",
     ),
 });
 
@@ -55,6 +55,26 @@ type ResultatCommentaires = Omit<
 > & {
   commentaires: CommentaireAvecVersions[];
 };
+
+export type GetChantierCommentairesInput = z.infer<
+  typeof getChantierCommentairesInputSchema
+>;
+
+/** Les territoires que l'utilisateur désigne : ils doivent lui être accessibles, contrairement aux départements ou régions résolus ensuite. */
+function territoiresDesignes({
+  perimetre,
+}: {
+  perimetre: GetChantierCommentairesInput["perimetre"];
+}): string[] {
+  switch (perimetre.type) {
+    case "SELECTION":
+      return perimetre.territoire_codes;
+    case "REGION_ET_SES_DEPARTEMENTS":
+      return [perimetre.region_code];
+    case "FRANCE_ET_SES_REGIONS":
+      return [TERRITOIRE_NATIONAL];
+  }
+}
 
 export type GetChantierCommentairesOutput = {
   /** Le nom à écrire avec l'identifiant (« CH-XXX — Nom ») : sans lui, la réponse citait le chantier par son seul code. */
@@ -122,7 +142,7 @@ export function createGetChantierCommentairesTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Renvoie les commentaires publiés d'un chantier sur un territoire, un par type, regroupés par territoire (\`territoire_nom\` : le territoire pour lequel ils sont rédigés).
+      description: `Renvoie les commentaires publiés d'un chantier sur les territoires du périmètre, un par type, regroupés par territoire (\`territoire_nom\` : le territoire pour lequel ils sont rédigés).
 - \`chantier_nom\` : le nom du chantier, à écrire avec son identifiant (« CH-XXX — Nom »).
 - \`versions\` : l'historique des publications d'un même commentaire, de la plus récente à la plus ancienne ; la première est celle en vigueur. Pour une analyse, décris l'évolution plutôt que de restituer chaque version.
 
@@ -138,13 +158,16 @@ Types de commentaires :
 
 - Les types nationaux sont cherchés sur NAT-FR quand l'utilisateur y a accès, même pour un territoire régional ou départemental : inutile de rappeler l'outil sur NAT-FR.
 - \`types_non_accessibles\` : ces types relèvent de la vue nationale, hors du périmètre de l'utilisateur ; ce n'est pas une absence de contenu.
-Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
+Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire ; plusieurs territoires (« la Bretagne et ses départements ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
       inputSchema: getChantierCommentairesInputSchema,
       execute: async (input): Promise<GetChantierCommentairesOutput> => {
-        if (!territoiresAccessibles.includes(input.territoire_code)) {
+        const territoireInaccessible = territoiresDesignes({
+          perimetre: input.perimetre,
+        }).find((code) => !territoiresAccessibles.includes(code));
+        if (territoireInaccessible) {
           throw new Error(
-            `Accès non autorisé au territoire ${input.territoire_code}`,
+            `Accès non autorisé au territoire ${territoireInaccessible}`,
           );
         }
 
@@ -156,12 +179,7 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
 
         const typesDemandes = input.types ?? [...typesContenuChantier];
 
-        const codes = await territoireResolver.resoudre(
-          perimetreDepuisTerritoire({
-            territoireCode: input.territoire_code,
-            includeSousTerritoires: input.include_sous_territoires,
-          }),
-        );
+        const codes = await territoireResolver.resoudre(input.perimetre);
         const codesAccessibles = codes.filter((code) =>
           territoiresAccessibles.includes(code),
         );

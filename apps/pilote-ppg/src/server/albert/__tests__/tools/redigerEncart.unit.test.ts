@@ -440,7 +440,13 @@ describe("outils de rédaction d'encart", () => {
     // When
     const sorties = await collecter(
       outil.execute!(
-        { territoire_codes: ["DEPT-59", "DEPT-33"], jalon: 2025 },
+        {
+          perimetre: {
+            type: "SELECTION",
+            territoire_codes: ["DEPT-59", "DEPT-33"],
+          },
+          jalon: 2025,
+        },
         OPTIONS,
       ),
     );
@@ -471,8 +477,10 @@ describe("outils de rédaction d'encart", () => {
     const sorties = await collecter(
       outil.execute!(
         {
-          territoire_code: "REG-76",
-          include_sous_territoires: true,
+          perimetre: {
+            type: "REGION_ET_SES_DEPARTEMENTS",
+            region_code: "REG-76",
+          },
           jalon: 2025,
         },
         OPTIONS,
@@ -504,11 +512,10 @@ describe("outils de rédaction d'encart", () => {
     expect(outil.description).toContain("create_dashboard");
   });
 
-  test("refuse une entrée qui mélange les deux formes", () => {
+  test("refuse une sélection d'un seul territoire", () => {
     // When
     const resultat = redigerComparaisonTerritoiresInputSchema.safeParse({
-      territoire_codes: ["DEPT-59", "DEPT-33"],
-      territoire_code: "REG-76",
+      perimetre: { type: "SELECTION", territoire_codes: ["DEPT-59"] },
       jalon: 2025,
     });
 
@@ -664,7 +671,13 @@ describe("outils de rédaction d'encart", () => {
     // When
     const sorties = await collecter(
       outil.execute!(
-        { territoire_codes: ["NAT-FR", "DEPT-59"], jalon: 2025 },
+        {
+          perimetre: {
+            type: "SELECTION",
+            territoire_codes: ["NAT-FR", "DEPT-59"],
+          },
+          jalon: 2025,
+        },
         OPTIONS,
       ),
     );
