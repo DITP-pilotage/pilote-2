@@ -50,37 +50,37 @@ ajoutée doit être justifiée par un échec mesuré à l'étape précédente.
 
 ## 2. Les décisions
 
-| Décision | Contenu |
-|---|---|
-| D1 | La météo disparaît : les outils renvoient les libellés du niveau de confiance (« Objectifs atteignables »…). |
-| D2 | Commentaires et objectifs restitués fidèlement par défaut, résumés seulement sur demande. |
-| D3 | « Le 84 » désigne le département, « la région 84 » la région. |
-| D4 | Tous les outils sont toujours exposés (fin du détecteur d'intention). |
-| D5 | Un outil composite « situation d'un territoire » si la mesure le justifie : réalisé à l'étape 4 sous forme d'encart. |
-| D6 | La liste des territoires accessibles dans le prompt : jamais en cause dans un échec mesuré, close. |
-| 27/10 | La règle des sous-territoires (« un seul appel sur le parent ») revient dans le prompt : le paramètre seul ne suffisait pas. |
-| 27/10 | Tout territoire désigné par un nom passe par `search_territoires` : on ne fait pas confiance au modèle pour déduire les codes. |
-| 27/10 | Des exemples « demande → appels » en prose sont acceptés dans le prompt. |
-| 27/10 | Courbe et évolution d'un indicateur alignées sur la prod. |
-| 27/10 | La synthèse et la comparaison passent par un sous-agent de rédaction qui reprend l'ancien gabarit, dans un encart « note administrative ». |
-| 28/10 | L'export de rapport (PDF et markdown) est supprimé : un rapport est l'encart, téléchargé en markdown sans appel au modèle. |
-| 28/10 | `get_chantiers` ne renvoie plus les commentaires : `get_chantier_commentaires` les porte seul (avec Tristan). |
-| 28/10 | Les cas d'eval de numéros de territoire (« le 84 ») sont mis de côté jusqu'à la décision sur la résolution. |
+| Décision | Contenu                                                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| D1       | La météo disparaît : les outils renvoient les libellés du niveau de confiance (« Objectifs atteignables »…).                               |
+| D2       | Commentaires et objectifs restitués fidèlement par défaut, résumés seulement sur demande.                                                  |
+| D3       | « Le 84 » désigne le département, « la région 84 » la région.                                                                              |
+| D4       | Tous les outils sont toujours exposés (fin du détecteur d'intention).                                                                      |
+| D5       | Un outil composite « situation d'un territoire » si la mesure le justifie : réalisé à l'étape 4 sous forme d'encart.                       |
+| D6       | La liste des territoires accessibles dans le prompt : jamais en cause dans un échec mesuré, close.                                         |
+| 27/10    | La règle des sous-territoires (« un seul appel sur le parent ») revient dans le prompt : le paramètre seul ne suffisait pas.               |
+| 27/10    | Tout territoire désigné par un nom passe par `search_territoires` : on ne fait pas confiance au modèle pour déduire les codes.             |
+| 27/10    | Des exemples « demande → appels » en prose sont acceptés dans le prompt.                                                                   |
+| 27/10    | Courbe et évolution d'un indicateur alignées sur la prod.                                                                                  |
+| 27/10    | La synthèse et la comparaison passent par un sous-agent de rédaction qui reprend l'ancien gabarit, dans un encart « note administrative ». |
+| 28/10    | L'export de rapport (PDF et markdown) est supprimé : un rapport est l'encart, téléchargé en markdown sans appel au modèle.                 |
+| 28/10    | `get_chantiers` ne renvoie plus les commentaires : `get_chantier_commentaires` les porte seul (avec Tristan).                              |
+| 28/10    | Les cas d'eval de numéros de territoire (« le 84 ») sont mis de côté jusqu'à la décision sur la résolution.                                |
 
 ## 3. Ce qui a été fait
 
 ### Le prompt et les outils
 
-| Étape | Changements |
-|---|---|
-| 0 – ligne de base | Evals alignées sur les décisions (plus de gabarit, plus de météo), nouveaux critères au socle (français, pas de météo, pas de HTML). |
-| 1 – réécriture minimale | Prompt réécrit de 631 à environ 130 lignes : rôle, règles numérotées, métier, méthode, formats par défaut, contexte de session en fin de prompt. Outils toujours exposés, libellés au lieu des codes, plus aucun `_output_instructions`, descriptions sur un modèle commun (ce qu'il renvoie, quand l'utiliser, quand ne pas l'utiliser). |
-| 2 – résolution, sous-territoires, exemples | Règle des sous-territoires remise, recherche imposée pour un territoire nommé, six exemples en prose, lexique. |
-| 3 – régressions, courbe, restriction | Courbe et évolution comme en prod, `acces_restreint` signalé sur les territoires hors accès. |
-| 4 – encart de synthèse | Deux outils, `rediger_synthese_territoire` et `rediger_comparaison_territoires`, qui collectent eux-mêmes leurs données. Un sous-agent rédige l'ancien gabarit, streamé dans un encart plus large que la discussion. |
-| 4 bis – evals assainies | Numéros de territoire mis de côté, questions sans « météo », attendus de l'encart pour « récap » et « les autres départements ». |
-| 5 – données et déclencheurs | Nom du chantier dans `get_chantier_commentaires`, écart envoyé au sous-agent déjà écrit (« −15 points »), drapeaux masqués retirés, déclencheurs resserrés (un critère nommé reste hors encart). |
-| 6 – le rapport devient l'encart | Export de rapport supprimé, bouton « Télécharger » sur l'encart, commentaires retirés de `get_chantiers`, un seul chemin par demande (l'encart ou les outils de données). |
+| Étape                                      | Changements                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 – ligne de base                          | Evals alignées sur les décisions (plus de gabarit, plus de météo), nouveaux critères au socle (français, pas de météo, pas de HTML).                                                                                                                                                                                                      |
+| 1 – réécriture minimale                    | Prompt réécrit de 631 à environ 130 lignes : rôle, règles numérotées, métier, méthode, formats par défaut, contexte de session en fin de prompt. Outils toujours exposés, libellés au lieu des codes, plus aucun `_output_instructions`, descriptions sur un modèle commun (ce qu'il renvoie, quand l'utiliser, quand ne pas l'utiliser). |
+| 2 – résolution, sous-territoires, exemples | Règle des sous-territoires remise, recherche imposée pour un territoire nommé, six exemples en prose, lexique.                                                                                                                                                                                                                            |
+| 3 – régressions, courbe, restriction       | Courbe et évolution comme en prod, `acces_restreint` signalé sur les territoires hors accès.                                                                                                                                                                                                                                              |
+| 4 – encart de synthèse                     | Deux outils, `rediger_synthese_territoire` et `rediger_comparaison_territoires`, qui collectent eux-mêmes leurs données. Un sous-agent rédige l'ancien gabarit, streamé dans un encart plus large que la discussion.                                                                                                                      |
+| 4 bis – evals assainies                    | Numéros de territoire mis de côté, questions sans « météo », attendus de l'encart pour « récap » et « les autres départements ».                                                                                                                                                                                                          |
+| 5 – données et déclencheurs                | Nom du chantier dans `get_chantier_commentaires`, écart envoyé au sous-agent déjà écrit (« −15 points »), drapeaux masqués retirés, déclencheurs resserrés (un critère nommé reste hors encart).                                                                                                                                          |
+| 6 – le rapport devient l'encart            | Export de rapport supprimé, bouton « Télécharger » sur l'encart, commentaires retirés de `get_chantiers`, un seul chemin par demande (l'encart ou les outils de données).                                                                                                                                                                 |
 
 ### Après la mesure de l'étape 6
 
@@ -109,14 +109,14 @@ Changements faits sur retour d'usage, non mesurés par un run complet :
 
 ### D'étape en étape
 
-| | Base | 1 | 2 | 3 | 4 | 4 bis | 5 | 6 | 7 |
-|---|---|---|---|---|---|---|---|---|---|
-| Niveau 2 (choix des outils) | 90,7 % | 88,1 % | 89,6 % | 90,5 % | 88,3 % | 89,8 % | 91,2 % | 91,7 % | **94,2 %** |
-| Niveau 3 (réponses complètes) | 91,3 % | 92,5 % | 93,4 % | 93,6 % | 92,5 % | 93,8 % | 95,9 % | **98,1 %** | 97,1 % |
-| Échecs répétés | 44 | 43 | 43 | 36 | 55 | 41 | 35 | **16** | 17 |
-| Météo citée sans être demandée | 85 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Tokens du premier appel | 9 265 | 2 290 | 2 853 | 2 928 | 3 055 | – | 3 274 | 3 312 | – |
-| Contrôles de l'encart | – | – | – | – | 90,2 % | 93,8 % | 99,3 % | **100 %** | 99,3 % |
+|                                | Base   | 1      | 2      | 3      | 4      | 4 bis  | 5      | 6          | 7          |
+| ------------------------------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ---------- | ---------- |
+| Niveau 2 (choix des outils)    | 90,7 % | 88,1 % | 89,6 % | 90,5 % | 88,3 % | 89,8 % | 91,2 % | 91,7 %     | **94,2 %** |
+| Niveau 3 (réponses complètes)  | 91,3 % | 92,5 % | 93,4 % | 93,6 % | 92,5 % | 93,8 % | 95,9 % | **98,1 %** | 97,1 %     |
+| Échecs répétés                 | 44     | 43     | 43     | 36     | 55     | 41     | 35     | **16**     | 17         |
+| Météo citée sans être demandée | 85     | 1      | 2      | 0      | 0      | 0      | 0      | 0          | 0          |
+| Tokens du premier appel        | 9 265  | 2 290  | 2 853  | 2 928  | 3 055  | –      | 3 274  | 3 312      | –          |
+| Contrôles de l'encart          | –      | –      | –      | –      | 90,2 % | 93,8 % | 99,3 % | **100 %**  | 99,3 %     |
 
 L'étape 7 mesure les changements faits après l'étape 6 (HTML, indicateurs, date, « le 84 »).
 
@@ -126,12 +126,12 @@ Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 
 ### Par rapport à la ligne de base
 
-| | Avant | Après | Écart |
-|---|---|---|---|
-| Niveau 2 | 90,7 % | 94,2 % | +3,5 pts |
-| Niveau 3 | 91,3 % | 97,1 % | **+5,8 pts** |
-| Échecs répétés | 44 | 17 | −27 |
-| Tokens du prompt | 9 265 | 3 312 | ÷ 2,8 |
+|                  | Avant  | Après  | Écart        |
+| ---------------- | ------ | ------ | ------------ |
+| Niveau 2         | 90,7 % | 94,2 % | +3,5 pts     |
+| Niveau 3         | 91,3 % | 97,1 % | **+5,8 pts** |
+| Échecs répétés   | 44     | 17     | −27          |
+| Tokens du prompt | 9 265  | 3 312  | ÷ 2,8        |
 
 ### Comment lire ces chiffres
 
@@ -173,10 +173,10 @@ Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 
 ## 6. Ce qui reste
 
-| Sujet | État |
-|---|---|
-| « Le 84 » | Décidé le 28/10 : un numéro est un département (DEPT-84) sans recherche, « la région 84 » une région, « le 20 » se recherche. « Dans le 84 » donne DEPT-84 deux fois sur trois. |
-| Synthèse d'un chantier | Lit ses commentaires une fois sur deux, oublie le nom du chantier. |
+| Sujet                      | État                                                                                                                                                                                                                        |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| « Le 84 »                  | Décidé le 28/10 : un numéro est un département (DEPT-84) sans recherche, « la région 84 » une région, « le 20 » se recherche. « Dans le 84 » donne DEPT-84 deux fois sur trois.                                             |
+| Synthèse d'un chantier     | Lit ses commentaires une fois sur deux, oublie le nom du chantier.                                                                                                                                                          |
 | Trois cas de choix d'outil | Vrais échecs : « politique prioritaire sur l'écologie » (aucun outil appelé), « comment se situe la Bretagne par rapport à la médiane » (encart au lieu du taux), « synthèse non renseignée » (pas les chantiers signalés). |
-| Trois evals trop strictes | Vaucluse (le bon code sans recherche : garder la règle « toujours chercher un nom » ?), indicateur du CH-018, commentaires du CH-005 sans filtre. |
-| Forme | Comparaison de taux Bretagne / Pays de la Loire : les bons outils, mais pas toujours de tableau. |
+| Trois evals trop strictes  | Vaucluse (le bon code sans recherche : garder la règle « toujours chercher un nom » ?), indicateur du CH-018, commentaires du CH-005 sans filtre.                                                                           |
+| Forme                      | Comparaison de taux Bretagne / Pays de la Loire : les bons outils, mais pas toujours de tableau.                                                                                                                            |
