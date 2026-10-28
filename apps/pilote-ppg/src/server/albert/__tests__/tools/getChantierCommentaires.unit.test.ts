@@ -295,6 +295,60 @@ describe("createGetChantierCommentairesTool execute", () => {
     ]);
   });
 
+  test("trie les versions du plus récent au plus ancien, quel que soit l'ordre de la query", async () => {
+    // Given — la query renvoie les commentaires dans le désordre, et les deux
+    // versions identiques ne se suivent pas
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () =>
+        resultatAvecCommentaires([
+          commentaire({
+            date_publication: "2024-11-12",
+            type: "synthese_des_resultats",
+            contenu: "<p>Enjeux importants.</p>",
+          }),
+          commentaire({
+            date_publication: "2026-02-26",
+            type: "commentaires_sur_les_donnees",
+            contenu: "<p>Données v2</p>",
+          }),
+          commentaire({
+            date_publication: "2025-03-07",
+            type: "synthese_des_resultats",
+            contenu: "<p>Enjeux majeurs.</p>",
+          }),
+          commentaire({
+            date_publication: "2024-12-26",
+            type: "synthese_des_resultats",
+            contenu: "<p>Enjeux importants.</p>",
+          }),
+        ]),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect(result.resultats[0].commentaires).toEqual([
+      {
+        type: "commentaires_sur_les_donnees",
+        versions: [{ date_publication: "2026-02-26", contenu: "Données v2" }],
+      },
+      {
+        type: "synthese_des_resultats",
+        versions: [
+          { date_publication: "2025-03-07", contenu: "Enjeux majeurs." },
+          { date_publication: "2024-12-26", contenu: "Enjeux importants." },
+        ],
+      },
+    ]);
+  });
+
   test("refuse un chantier non accessible sans appeler la query", async () => {
     // Given — le territoire est accessible, mais pas le chantier
     const query = mock<GetChantierCommentairesQuery>({

@@ -77,18 +77,21 @@ function regrouperParType({
   commentaires: GetChantierCommentairesResult["commentaires"];
 }): CommentaireAvecVersions[] {
   const versionsParType = new Map<string, VersionCommentaire[]>();
+  const duPlusRecentAuPlusAncien = commentaires.toSorted((left, right) =>
+    right.date_publication.localeCompare(left.date_publication),
+  );
 
-  // La query trie du plus récent au plus ancien : le premier type rencontré est
-  // le dernier mis à jour, et une version identique à celle déjà retenue est
-  // plus ancienne, on garde donc la date la plus récente.
-  for (const commentaire of commentaires) {
+  // Du plus récent au plus ancien : le premier type rencontré est le dernier mis
+  // à jour, et une version identique à la dernière retenue est plus ancienne, on
+  // garde donc la date la plus récente.
+  for (const commentaire of duPlusRecentAuPlusAncien) {
     const contenu = texteDepuisHtml({ html: commentaire.contenu });
     const versions = versionsParType.get(commentaire.type) ?? [];
-    const versionPlusRecente = versions.at(-1);
+    const derniereVersionRetenue = versions.at(-1);
 
     if (
-      versionPlusRecente &&
-      normaliserEspaces(versionPlusRecente.contenu) ===
+      derniereVersionRetenue &&
+      normaliserEspaces(derniereVersionRetenue.contenu) ===
         normaliserEspaces(contenu)
     ) {
       continue;
