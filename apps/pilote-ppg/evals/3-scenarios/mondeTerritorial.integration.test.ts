@@ -137,7 +137,11 @@ describe("seedMondeTerritorial", () => {
       expect(
         commentaires.resultats
           .flatMap((resultat) => resultat.commentaires)
-          .filter((commentaire) => commentaire.contenu.includes("antigrippale"))
+          .filter((commentaire) =>
+            commentaire.versions.some((version) =>
+              version.contenu.includes("antigrippale"),
+            ),
+          )
           .map((commentaire) => commentaire.type)
           .sort(),
       ).toEqual(["autres_resultats_obtenus", "commentaires_sur_les_donnees"]);

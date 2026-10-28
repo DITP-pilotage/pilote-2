@@ -38,12 +38,68 @@ export const getChantierCommentairesInputSchema = z.object({
     ),
 });
 
+type VersionCommentaire = {
+  date_publication: string;
+  contenu: string;
+};
+
+type CommentaireAvecVersions = {
+  type: string;
+  versions: VersionCommentaire[];
+};
+
+type ResultatCommentaires = Omit<
+  GetChantierCommentairesResult,
+  "commentaires"
+> & {
+  commentaires: CommentaireAvecVersions[];
+};
+
 export type GetChantierCommentairesOutput = {
   /** Le nom à écrire avec l'identifiant (« CH-XXX — Nom ») : sans lui, la réponse citait le chantier par son seul code. */
   chantier_nom: string | null;
-  resultats: GetChantierCommentairesResult[];
+  resultats: ResultatCommentaires[];
   types_non_accessibles: GetChantierCommentairesQueryResult["types_non_accessibles"];
 };
+
+const normaliserEspaces = (texte: string) => texte.replace(/\s+/g, " ");
+
+/**
+ * Chaque enregistrement d'un commentaire en publie une nouvelle version. Rendues
+ * à plat, les 34 versions des 3 commentaires de CH-062 en Bretagne passaient
+ * pour des doublons, que le modèle restituait en « (idem) » (PIL-1900). On garde
+ * l'historique pour l'analyse, groupé par type et sans les versions identiques
+ * à la précédente.
+ */
+function regrouperParType({
+  commentaires,
+}: {
+  commentaires: GetChantierCommentairesResult["commentaires"];
+}): CommentaireAvecVersions[] {
+  const versionsParType = new Map<string, VersionCommentaire[]>();
+
+  // La query trie du plus récent au plus ancien : le premier type rencontré est
+  // le dernier mis à jour, et une version identique à celle déjà retenue est
+  // plus ancienne, on garde donc la date la plus récente.
+  for (const commentaire of commentaires) {
+    const contenu = texteDepuisHtml({ html: commentaire.contenu });
+    const versions = versionsParType.get(commentaire.type) ?? [];
+    const versionPlusRecente = versions.at(-1);
+
+    if (
+      versionPlusRecente &&
+      normaliserEspaces(versionPlusRecente.contenu) ===
+        normaliserEspaces(contenu)
+    ) {
+      continue;
+    }
+
+    versions.push({ date_publication: commentaire.date_publication, contenu });
+    versionsParType.set(commentaire.type, versions);
+  }
+
+  return [...versionsParType].map(([type, versions]) => ({ type, versions }));
+}
 
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
@@ -62,8 +118,9 @@ export function createGetChantierCommentairesTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Renvoie les commentaires publiés d'un chantier sur un territoire, chacun avec son type et sa date, regroupés par territoire (\`territoire_nom\` : le territoire pour lequel ils sont rédigés).
+      description: `Renvoie les commentaires publiés d'un chantier sur un territoire, un par type, regroupés par territoire (\`territoire_nom\` : le territoire pour lequel ils sont rédigés).
 - \`chantier_nom\` : le nom du chantier, à écrire avec son identifiant (« CH-XXX — Nom »).
+- \`versions\` : l'historique des publications d'un même commentaire, de la plus récente à la plus ancienne ; la première est celle en vigueur. Pour une analyse, décris l'évolution plutôt que de restituer chaque version.
 
 Types de commentaires :
 - \`freins_a_lever\` (maille nationale uniquement) : risques et freins à lever, notamment ceux nécessitant un soutien ou un arbitrage
@@ -132,10 +189,9 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
             .flatMap((result) => result.resultats)
             .map((resultat) => ({
               ...resultat,
-              commentaires: resultat.commentaires.map((commentaire) => ({
-                ...commentaire,
-                contenu: texteDepuisHtml({ html: commentaire.contenu }),
-              })),
+              commentaires: regrouperParType({
+                commentaires: resultat.commentaires,
+              }),
             })),
           types_non_accessibles: [
             ...new Set(

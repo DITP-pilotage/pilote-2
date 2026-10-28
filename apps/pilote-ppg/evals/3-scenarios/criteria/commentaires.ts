@@ -30,10 +30,12 @@ function contenusDeGetChantierCommentaires(evidence: Evidence): string[] {
     .flatMap((result) =>
       (
         ((result.output as { resultats?: unknown[] }).resultats ?? []) as {
-          commentaires: { contenu: string }[];
+          commentaires: { versions: { contenu: string }[] }[];
         }[]
       ).flatMap((resultat) =>
-        resultat.commentaires.map((commentaire) => commentaire.contenu),
+        resultat.commentaires.flatMap((commentaire) =>
+          commentaire.versions.map((version) => version.contenu),
+        ),
       ),
     );
 }

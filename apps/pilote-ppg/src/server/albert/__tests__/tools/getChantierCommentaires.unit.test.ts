@@ -30,6 +30,27 @@ const queryResult: GetChantierCommentairesQueryResult = {
   types_non_accessibles: [],
 };
 
+type CommentaireDeLaQuery =
+  GetChantierCommentairesQueryResult["resultats"][number]["commentaires"][number];
+
+const commentaire = ({
+  date_publication,
+  type,
+  contenu,
+}: Omit<CommentaireDeLaQuery, "id">): CommentaireDeLaQuery => ({
+  id: `${type}-${date_publication}`,
+  date_publication,
+  type,
+  contenu,
+});
+
+const resultatAvecCommentaires = (
+  commentaires: CommentaireDeLaQuery[],
+): GetChantierCommentairesQueryResult => ({
+  resultats: [{ ...queryResult.resultats[0], commentaires }],
+  types_non_accessibles: [],
+});
+
 const buildTool = ({
   query,
   territoiresAccessibles,
@@ -102,16 +123,176 @@ describe("createGetChantierCommentairesTool execute", () => {
           chantier_id: "CH-084",
           commentaires: [
             {
-              id: "commentaire-1",
-              date_publication: "2026-01-12",
-              contenu: "Deux postes vacants.\nRecrutement engagé.",
               type: "freins_a_lever",
+              versions: [
+                {
+                  date_publication: "2026-01-12",
+                  contenu: "Deux postes vacants.\nRecrutement engagé.",
+                },
+              ],
             },
           ],
         },
       ],
       types_non_accessibles: [],
     });
+  });
+
+  test("regroupe les versions par type, du type mis à jour le plus récemment au plus ancien", async () => {
+    // Given — la query renvoie les commentaires du plus récent au plus ancien
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () =>
+        resultatAvecCommentaires([
+          commentaire({
+            date_publication: "2026-02-26",
+            type: "commentaires_sur_les_donnees",
+            contenu: "<p>Données v2</p>",
+          }),
+          commentaire({
+            date_publication: "2026-02-20",
+            type: "synthese_des_resultats",
+            contenu: "<p>Synthèse v2</p>",
+          }),
+          commentaire({
+            date_publication: "2025-03-07",
+            type: "commentaires_sur_les_donnees",
+            contenu: "<p>Données v1</p>",
+          }),
+          commentaire({
+            date_publication: "2024-12-26",
+            type: "synthese_des_resultats",
+            contenu: "<p>Synthèse v1</p>",
+          }),
+        ]),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect(result.resultats[0].commentaires).toEqual([
+      {
+        type: "commentaires_sur_les_donnees",
+        versions: [
+          { date_publication: "2026-02-26", contenu: "Données v2" },
+          { date_publication: "2025-03-07", contenu: "Données v1" },
+        ],
+      },
+      {
+        type: "synthese_des_resultats",
+        versions: [
+          { date_publication: "2026-02-20", contenu: "Synthèse v2" },
+          { date_publication: "2024-12-26", contenu: "Synthèse v1" },
+        ],
+      },
+    ]);
+  });
+
+  test("fusionne les versions consécutives au texte identique en gardant la date la plus récente", async () => {
+    // Given — la synthèse est réenregistrée à l'identique (au HTML et aux
+    // espaces près), puis réécrite, puis revient à son texte d'origine
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () =>
+        resultatAvecCommentaires([
+          commentaire({
+            date_publication: "2026-02-26",
+            type: "synthese_des_resultats",
+            contenu: "<p>Enjeux importants.</p>",
+          }),
+          commentaire({
+            date_publication: "2025-03-07",
+            type: "synthese_des_resultats",
+            contenu: "<p>Enjeux majeurs.</p>",
+          }),
+          commentaire({
+            date_publication: "2024-12-26",
+            type: "synthese_des_resultats",
+            contenu: "<p>Enjeux  importants.</p>",
+          }),
+          commentaire({
+            date_publication: "2024-11-12",
+            type: "synthese_des_resultats",
+            contenu: "<div>Enjeux importants.</div>",
+          }),
+        ]),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect(result.resultats[0].commentaires).toEqual([
+      {
+        type: "synthese_des_resultats",
+        versions: [
+          { date_publication: "2026-02-26", contenu: "Enjeux importants." },
+          { date_publication: "2025-03-07", contenu: "Enjeux majeurs." },
+          { date_publication: "2024-12-26", contenu: "Enjeux  importants." },
+        ],
+      },
+    ]);
+  });
+
+  test("garde un même texte publié sous deux types différents", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () =>
+        resultatAvecCommentaires([
+          commentaire({
+            date_publication: "2026-02-26",
+            type: "autres_resultats_obtenus",
+            contenu: "<p>Campagne de vaccination lancée.</p>",
+          }),
+          commentaire({
+            date_publication: "2026-02-25",
+            type: "commentaires_sur_les_donnees",
+            contenu: "<p>Campagne de vaccination lancée.</p>",
+          }),
+        ]),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect(result.resultats[0].commentaires).toEqual([
+      {
+        type: "autres_resultats_obtenus",
+        versions: [
+          {
+            date_publication: "2026-02-26",
+            contenu: "Campagne de vaccination lancée.",
+          },
+        ],
+      },
+      {
+        type: "commentaires_sur_les_donnees",
+        versions: [
+          {
+            date_publication: "2026-02-25",
+            contenu: "Campagne de vaccination lancée.",
+          },
+        ],
+      },
+    ]);
   });
 
   test("refuse un chantier non accessible sans appeler la query", async () => {

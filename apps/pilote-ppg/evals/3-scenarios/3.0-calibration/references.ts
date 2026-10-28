@@ -474,18 +474,24 @@ const COMMENTAIRES_RESULTS = [
           chantier_id: "CH-005",
           commentaires: [
             {
-              id: "commentaire-ch-005",
-              date_publication: "2026-09-15",
               type: "autres_resultats_obtenus",
-              contenu:
-                "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
+              versions: [
+                {
+                  date_publication: "2026-09-15",
+                  contenu:
+                    "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
+                },
+              ],
             },
             {
-              id: "commentaire-donnees-ch-005",
-              date_publication: "2026-09-15",
               type: "commentaires_sur_les_donnees",
-              contenu:
-                "<p>Depuis mars, la régulation passe par un numéro unique pour tout le département.</p>",
+              versions: [
+                {
+                  date_publication: "2026-09-15",
+                  contenu:
+                    "<p>Depuis mars, la régulation passe par un numéro unique pour tout le département.</p>",
+                },
+              ],
             },
           ],
         },
@@ -894,11 +900,14 @@ const CHANTIER_RESULTS = [
           chantier_id: "CH-005",
           commentaires: [
             {
-              id: "commentaire-donnees-ch-005",
-              date_publication: "2026-09-15",
               type: "commentaires_sur_les_donnees",
-              contenu:
-                "<p>La hausse du délai au premier semestre s'explique par la fermeture estivale de deux lignes de SMUR. La donnée de juin est provisoire.</p>",
+              versions: [
+                {
+                  date_publication: "2026-09-15",
+                  contenu:
+                    "<p>La hausse du délai au premier semestre s'explique par la fermeture estivale de deux lignes de SMUR. La donnée de juin est provisoire.</p>",
+                },
+              ],
             },
           ],
         },
