@@ -56,9 +56,9 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question:
-      "Sur quels territoires l'IND-894 n'a-t-il pas de valeur cible ?",
-    reason: "indicateur cité : filtre sur cet indicateur, détail par territoire",
+    question: "Sur quels territoires l'IND-894 n'a-t-il pas de valeur cible ?",
+    reason:
+      "indicateur cité : filtre sur cet indicateur, détail par territoire",
     expected: [
       {
         toolName: "get_indicateurs_sans_vi_vc",
