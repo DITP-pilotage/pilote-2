@@ -174,7 +174,7 @@ const indicateursQuery = () =>
         {
           indicateur_id: `IND-${chantierId.slice(3)}`,
           nom: `Indicateur de ${chantierId}`,
-          unite_mesure: "%",
+          unite_mesure: "pourcentage",
           valeur_initiale: 40,
           date_valeur_initiale: "2023-01-01",
           valeur_actuelle: 53.25,
@@ -346,7 +346,7 @@ describe("outils de rédaction d'encart", () => {
     });
   });
 
-  test("à la demande, ajoute les indicateurs de chaque chantier, prêts à recopier", async () => {
+  test("à la demande, ajoute les indicateurs de chaque chantier, prêts à recopier, le pourcentage en %", async () => {
     // Given
     subagentRedige(["# Synthèse"]);
     const getChantierIndicateursQuery = indicateursQuery();

@@ -74,16 +74,21 @@ export function ecartPourLeSousAgent({
 
 const nombre = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 
+// L'unité « pourcentage » s'écrit « % », comme dans les fiches indicateurs de PILOTE
+const uniteAffichee = (unite: string | null): string | null =>
+  unite?.toLocaleLowerCase() === "pourcentage" ? "%" : unite;
+
 const valeurPourLeSousAgent = ({
   valeur,
   unite,
 }: {
   valeur: number | null;
   unite: string | null;
-}): string =>
-  valeur === null
-    ? "non renseignée"
-    : `${nombre.format(valeur)}${unite ? ` ${unite}` : ""}`;
+}): string => {
+  if (valeur === null) return "non renseignée";
+  const affichee = uniteAffichee(unite);
+  return `${nombre.format(valeur)}${affichee ? ` ${affichee}` : ""}`;
+};
 
 const indicateursPourLeSousAgent = (
   indicateurs: GetChantierIndicateursResult["indicateurs"],
