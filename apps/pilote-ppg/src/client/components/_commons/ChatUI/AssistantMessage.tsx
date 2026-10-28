@@ -45,7 +45,7 @@ const encartEnAttente = ({
       ? "comparaison"
       : "synthese",
   jalon: input?.jalon ?? new Date().getFullYear(),
-  date_redaction: new Date().toISOString().slice(0, 10),
+  date_redaction: new Date().toISOString(),
   markdown: "",
   termine: false,
 });

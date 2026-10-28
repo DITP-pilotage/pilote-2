@@ -46,7 +46,7 @@ export type DonneesEncart = {
 export type EncartOutput = {
   type: "synthese" | "comparaison";
   jalon: number;
-  /** AAAA-MM-JJ */
+  /** L'instant de rédaction (ISO 8601) : le navigateur l'affiche dans son fuseau. */
   date_redaction: string;
   markdown: string;
   termine: boolean;
@@ -179,7 +179,7 @@ export async function* redigerEncart({
   const etat = (markdown: string, termine: boolean): EncartOutput => ({
     type,
     jalon,
-    date_redaction: maintenant.toISOString().slice(0, 10),
+    date_redaction: maintenant.toISOString(),
     markdown,
     termine,
   });

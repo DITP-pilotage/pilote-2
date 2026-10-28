@@ -7,7 +7,7 @@ import type { EncartOutput } from "@/server/albert/tools/encart";
 const encart = (surcharge: Partial<EncartOutput>): EncartOutput => ({
   type: "synthese",
   jalon: 2025,
-  date_redaction: "2026-10-27",
+  date_redaction: "2026-10-27T10:00:00.000Z",
   markdown: "# Synthèse pour le Nord",
   termine: false,
   ...surcharge,

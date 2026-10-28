@@ -24,7 +24,7 @@ export const nomFichierEncart = ({
   dateRedaction: string;
 }): string => {
   const titre = markdown.match(/^#\s+(.+)$/m)?.[1];
-  return `${titre ? slug(titre) : `${TYPES[type]}-${dateRedaction}`}.md`;
+  return `${titre ? slug(titre) : `${TYPES[type]}-${dateRedaction.slice(0, 10)}`}.md`;
 };
 
 /**

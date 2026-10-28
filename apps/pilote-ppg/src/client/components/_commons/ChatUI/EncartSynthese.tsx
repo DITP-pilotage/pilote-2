@@ -1,5 +1,6 @@
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
+import { formaterDateRedaction } from "@/components/_commons/ChatUI/dateRedaction";
 import {
   nomFichierEncart,
   telechargerEncart,
@@ -13,14 +14,6 @@ const TYPES: Record<EncartOutput["type"], string> = {
   synthese: "Synthèse territoriale",
   comparaison: "Comparaison territoriale",
 };
-
-const formaterDate = (dateRedaction: string): string =>
-  new Intl.DateTimeFormat("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${dateRedaction}T00:00:00Z`));
 
 /**
  * La synthèse ou la comparaison rédigée par le sous-agent (PIL-1900), mise en
@@ -68,7 +61,9 @@ export const EncartSynthese = ({
           <p className="mb-0">Jalon {output.jalon}</p>
         </div>
         <div className="text-right">
-          <p className="mb-0">{formaterDate(output.date_redaction)}</p>
+          <p className="mb-0">
+            {formaterDateRedaction({ dateRedaction: output.date_redaction })}
+          </p>
           <p className="mb-0">À partir des données publiées dans PILOTE</p>
         </div>
       </header>
