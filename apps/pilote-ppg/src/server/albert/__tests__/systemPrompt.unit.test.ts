@@ -144,6 +144,9 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).toContain(
       "se traduit directement en code (DEPT-84, REG-84), sans recherche",
     );
+    expect(prompt).toContain(
+      "« Le taux d'avancement dans le 35 » → get_taux_avancement_territoire sur DEPT-35",
+    );
   });
 
   it("donne le jalon du contexte d'accueil", () => {

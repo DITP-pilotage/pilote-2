@@ -109,14 +109,16 @@ Changements faits sur retour d'usage, non mesurés par un run complet :
 
 ### D'étape en étape
 
-| | Base | 1 | 2 | 3 | 4 | 4 bis | 5 | 6 |
-|---|---|---|---|---|---|---|---|---|
-| Niveau 2 (choix des outils) | 90,7 % | 88,1 % | 89,6 % | 90,5 % | 88,3 % | 89,8 % | 91,2 % | **91,7 %** |
-| Niveau 3 (réponses complètes) | 91,3 % | 92,5 % | 93,4 % | 93,6 % | 92,5 % | 93,8 % | 95,9 % | **98,1 %** |
-| Échecs répétés | 44 | 43 | 43 | 36 | 55 | 41 | 35 | **16** |
-| Météo citée sans être demandée | 85 | 1 | 2 | 0 | 0 | 0 | 0 | 0 |
-| Tokens du premier appel | 9 265 | 2 290 | 2 853 | 2 928 | 3 055 | – | 3 274 | 3 312 |
-| Contrôles de l'encart | – | – | – | – | 90,2 % | 93,8 % | 99,3 % | **100 %** |
+| | Base | 1 | 2 | 3 | 4 | 4 bis | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|---|---|
+| Niveau 2 (choix des outils) | 90,7 % | 88,1 % | 89,6 % | 90,5 % | 88,3 % | 89,8 % | 91,2 % | 91,7 % | **94,2 %** |
+| Niveau 3 (réponses complètes) | 91,3 % | 92,5 % | 93,4 % | 93,6 % | 92,5 % | 93,8 % | 95,9 % | **98,1 %** | 97,1 % |
+| Échecs répétés | 44 | 43 | 43 | 36 | 55 | 41 | 35 | **16** | 17 |
+| Météo citée sans être demandée | 85 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Tokens du premier appel | 9 265 | 2 290 | 2 853 | 2 928 | 3 055 | – | 3 274 | 3 312 | – |
+| Contrôles de l'encart | – | – | – | – | 90,2 % | 93,8 % | 99,3 % | **100 %** | 99,3 % |
+
+L'étape 7 mesure les changements faits après l'étape 6 (HTML, indicateurs, date, « le 84 »).
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Un échec répété est un couple (cas, critère) qui
@@ -126,9 +128,9 @@ Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 
 | | Avant | Après | Écart |
 |---|---|---|---|
-| Niveau 2 | 90,7 % | 91,7 % | +1,0 pt |
-| Niveau 3 | 91,3 % | 98,1 % | **+6,8 pts** |
-| Échecs répétés | 44 | 16 | −28 |
+| Niveau 2 | 90,7 % | 94,2 % | +3,5 pts |
+| Niveau 3 | 91,3 % | 97,1 % | **+5,8 pts** |
+| Échecs répétés | 44 | 17 | −27 |
 | Tokens du prompt | 9 265 | 3 312 | ÷ 2,8 |
 
 ### Comment lire ces chiffres
@@ -173,9 +175,8 @@ Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 
 | Sujet | État |
 |---|---|
-| Résolution des territoires désignés par un numéro (« le 84 ») | À décider : recherche ou résolution dans le code. Cas d'eval dans `evals/2-tools/2.1-recherche/numerosTerritoires.enAttente.ts`. |
+| « Le 84 » | Décidé le 28/10 : un numéro est un département (DEPT-84) sans recherche, « la région 84 » une région, « le 20 » se recherche. « Dans le 84 » donne DEPT-84 deux fois sur trois. |
 | Synthèse d'un chantier | Lit ses commentaires une fois sur deux, oublie le nom du chantier. |
-| Six cas de choix d'outil | En échec depuis la ligne de base : Vaucluse, CH-018, politique prioritaire sur l'écologie, médiane des régions, synthèse non renseignée, commentaires du CH-005. |
-| Mesure complète après les derniers changements | Les changements postérieurs à l'étape 6 ne sont mesurés que sur la suite de déclenchement de la synthèse. |
-| Anciennes conversations | Celles qui contiennent un export de rapport ou un dashboard en HTML gardent l'ancien affichage. |
-| Mineurs différés | Date de l'encart en UTC (la veille entre minuit et 1 h, heure de Paris). |
+| Trois cas de choix d'outil | Vrais échecs : « politique prioritaire sur l'écologie » (aucun outil appelé), « comment se situe la Bretagne par rapport à la médiane » (encart au lieu du taux), « synthèse non renseignée » (pas les chantiers signalés). |
+| Trois evals trop strictes | Vaucluse (le bon code sans recherche : garder la règle « toujours chercher un nom » ?), indicateur du CH-018, commentaires du CH-005 sans filtre. |
+| Forme | Comparaison de taux Bretagne / Pays de la Loire : les bons outils, mais pas toujours de tableau. |
