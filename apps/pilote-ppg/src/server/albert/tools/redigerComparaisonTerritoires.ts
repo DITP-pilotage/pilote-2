@@ -10,7 +10,10 @@ import {
   redigerEncart,
 } from "@/server/albert/tools/encart";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
-import { variantesPerimetre } from "@/server/albert/tools/perimetre";
+import {
+  descriptionPerimetre,
+  variantesPerimetre,
+} from "@/server/albert/tools/perimetre";
 
 export const redigerComparaisonTerritoiresInputSchema = z.object({
   perimetre: z
@@ -26,7 +29,15 @@ export const redigerComparaisonTerritoiresInputSchema = z.object({
       variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
       variantesPerimetre.FRANCE_ET_SES_REGIONS,
     ])
-    .describe("Les territoires comparés, résolus par l'outil."),
+    .describe(
+      descriptionPerimetre({
+        types: [
+          "SELECTION",
+          "REGION_ET_SES_DEPARTEMENTS",
+          "FRANCE_ET_SES_REGIONS",
+        ],
+      }),
+    ),
   jalon: jalonEncartSchema,
 });
 
@@ -52,6 +63,7 @@ Utilise-le pour : une comparaison générique de territoires. Par exemple « Com
 Ne l'utilise pas pour :
 - une demande qui nomme son critère (« compare les taux d'avancement », « les chantiers en retard ») → les outils de données ;
 - un critère précis (« compare le taux d'avancement de la Bretagne et de la Normandie ») ou une comparaison de jalons → get_taux_avancement_territoire ;
+- un classement de territoires (« classe les régions », « quel département avance le mieux ? ») → get_taux_avancement_territoire ;
 - « Où en sont l'Occitanie et ses départements ? » → get_taux_avancement_territoire avec REGION_ET_SES_DEPARTEMENTS ;
 - un chantier ou un indicateur précis → les outils de données ;
 - un seul territoire → rediger_synthese_territoire ;

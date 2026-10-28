@@ -10,7 +10,7 @@ import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import {
-  DESCRIPTION_PERIMETRE,
+  descriptionPerimetre,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
 import {
@@ -27,7 +27,16 @@ export const getChantiersInputSchema = z.object({
       variantesPerimetre.FRANCE_ET_SES_REGIONS,
       variantesPerimetre.TOUTES_REGIONS,
     ])
-    .describe(DESCRIPTION_PERIMETRE),
+    .describe(
+      descriptionPerimetre({
+        types: [
+          "SELECTION",
+          "REGION_ET_SES_DEPARTEMENTS",
+          "FRANCE_ET_SES_REGIONS",
+          "TOUTES_REGIONS",
+        ],
+      }),
+    ),
   jalon: z
     .number()
     .int()

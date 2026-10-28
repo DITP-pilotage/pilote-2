@@ -14,7 +14,7 @@ import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChan
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
-  DESCRIPTION_PERIMETRE,
+  descriptionPerimetre,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
 
@@ -30,7 +30,15 @@ export const getChantierCommentairesInputSchema = z.object({
       variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
       variantesPerimetre.FRANCE_ET_SES_REGIONS,
     ])
-    .describe(DESCRIPTION_PERIMETRE),
+    .describe(
+      descriptionPerimetre({
+        types: [
+          "SELECTION",
+          "REGION_ET_SES_DEPARTEMENTS",
+          "FRANCE_ET_SES_REGIONS",
+        ],
+      }),
+    ),
   types: z
     .array(z.enum(typesContenuChantier))
     .optional()
