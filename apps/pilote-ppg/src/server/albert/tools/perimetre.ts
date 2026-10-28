@@ -39,9 +39,9 @@ export const variantesPerimetre = {
 
 const SENS_DES_TYPES: Record<Perimetre["type"], string> = {
   SELECTION:
-    "SELECTION, avec territoire_codes : des territoires précis, désignés par leurs codes",
+    "SELECTION, avec territoire_codes : des territoires précis, désignés par leurs codes. Un territoire seul, région comprise (« en Bretagne », « la Normandie »), est une SELECTION de son seul code : ses départements n'en font pas partie",
   REGION_ET_SES_DEPARTEMENTS:
-    "REGION_ET_SES_DEPARTEMENTS, avec region_code : une région et tous ses départements (« la Bretagne et ses départements », « les départements bretons »)",
+    "REGION_ET_SES_DEPARTEMENTS, avec region_code : une région et tous ses départements, seulement quand la demande cite les départements (« la Bretagne et ses départements », « les départements bretons », « détaille par département ») ; jamais pour une région seule",
   FRANCE_ET_SES_REGIONS:
     "FRANCE_ET_SES_REGIONS, sans autre champ : la France (NAT-FR) et toutes ses régions",
   TOUTES_REGIONS:

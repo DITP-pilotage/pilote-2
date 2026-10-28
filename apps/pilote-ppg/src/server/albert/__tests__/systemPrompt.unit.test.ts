@@ -46,6 +46,9 @@ describe("buildChatSystemPrompt", () => {
       "un seul appel par jalon et par outil, avec le `perimetre` qui les désigne, jamais un appel par territoire",
     );
     expect(prompt).toContain("n'énumère jamais ses territoires");
+    expect(prompt).toContain(
+      "Un territoire seul, région comprise (« en Bretagne »), est une sélection de son seul code",
+    );
   });
 
   it("impose la recherche pour un territoire désigné par son nom", () => {
