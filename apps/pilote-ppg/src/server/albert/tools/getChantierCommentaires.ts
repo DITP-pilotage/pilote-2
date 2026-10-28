@@ -13,6 +13,7 @@ import type {
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
 
 export type { TypeContenuChantier };
 
@@ -156,8 +157,10 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
         const typesDemandes = input.types ?? [...typesContenuChantier];
 
         const codes = await territoireResolver.resoudre(
-          input.territoire_code,
-          input.include_sous_territoires,
+          perimetreDepuisTerritoire({
+            territoireCode: input.territoire_code,
+            includeSousTerritoires: input.include_sous_territoires,
+          }),
         );
         const codesAccessibles = codes.filter((code) =>
           territoiresAccessibles.includes(code),

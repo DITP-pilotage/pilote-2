@@ -15,6 +15,7 @@ import {
 } from "@/server/albert/tools/redigerComparaisonTerritoires";
 import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type {
   ChantierResult,
   GetChantiersParams,
@@ -118,8 +119,12 @@ const getChantiersQuery = () =>
 
 const territoireResolver = () =>
   mock<TerritoireResolver>({
-    resoudre: vi.fn(async (code: string, avecSousTerritoires?: boolean) =>
-      avecSousTerritoires ? [code, "DEPT-31"] : [code],
+    resoudre: vi.fn(async (perimetre: Perimetre) =>
+      perimetre.type === "SELECTION"
+        ? perimetre.territoire_codes
+        : perimetre.type === "REGION_ET_SES_DEPARTEMENTS"
+          ? [perimetre.region_code, "DEPT-31"]
+          : [],
     ),
   });
 
@@ -475,7 +480,10 @@ describe("outils de rédaction d'encart", () => {
     );
 
     // Then
-    expect(resolver.resoudre).toHaveBeenCalledWith("REG-76", true);
+    expect(resolver.resoudre).toHaveBeenCalledWith({
+      type: "REGION_ET_SES_DEPARTEMENTS",
+      region_code: "REG-76",
+    });
     expect(
       sorties.at(-1)?.donnees?.taux.map((taux) => taux.territoire_code),
     ).toEqual(["REG-76", "DEPT-31"]);

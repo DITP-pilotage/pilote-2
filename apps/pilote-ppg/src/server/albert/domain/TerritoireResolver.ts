@@ -1,6 +1,5 @@
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
+
 export interface TerritoireResolver {
-  resoudre(
-    territoireCode: string,
-    includeSousTerritoires: boolean,
-  ): Promise<string[]>;
+  resoudre(perimetre: Perimetre): Promise<string[]>;
 }

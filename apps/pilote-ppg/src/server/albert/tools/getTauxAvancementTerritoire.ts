@@ -5,6 +5,7 @@ import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.in
 import { Maille } from "@/shared/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
 import { determineMaille } from "@/shared/maille/determineMaille";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 
@@ -65,8 +66,10 @@ export async function collecterTauxAvancement({
   habilitations: Habilitations;
 }): Promise<GetTauxAvancementTerritoireOutput> {
   const codes = await territoireResolver.resoudre(
-    input.territoire_code,
-    input.include_sous_territoires ?? false,
+    perimetreDepuisTerritoire({
+      territoireCode: input.territoire_code,
+      includeSousTerritoires: input.include_sous_territoires ?? false,
+    }),
   );
 
   const chantiersContainer = getContainer("chantiers");

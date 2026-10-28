@@ -8,6 +8,7 @@ import type {
 } from "@/server/chantiers/query/GetChantiersQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import { perimetreDepuisTerritoire } from "@/server/albert/tools/perimetre";
 import {
   libelleNiveauDeConfiance,
   libelleTendance,
@@ -198,8 +199,10 @@ export async function collecterChantiers({
   const effectiveInput = { ...input, chantier_ids: filteredChantierIds };
 
   const codes = await territoireResolver.resoudre(
-    input.territoire_code,
-    input.include_sous_territoires,
+    perimetreDepuisTerritoire({
+      territoireCode: input.territoire_code,
+      includeSousTerritoires: input.include_sous_territoires,
+    }),
   );
 
   const resultats = await Promise.all(

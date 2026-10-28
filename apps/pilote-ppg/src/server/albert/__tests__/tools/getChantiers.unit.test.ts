@@ -10,6 +10,7 @@ import type {
   GetChantiersQuery,
 } from "@/server/chantiers/query/GetChantiersQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
 
 const buildChantier = (id: string): ChantierResult => ({
   chantier: {
@@ -86,7 +87,8 @@ const buildTool = ({
   chantiersAccessibles: string[];
 }) => {
   const territoireResolver = mock<TerritoireResolver>({
-    resoudre: async (territoireCode: string) => [territoireCode],
+    resoudre: async (perimetre: Perimetre) =>
+      perimetre.type === "SELECTION" ? perimetre.territoire_codes : [],
   });
   return createGetChantiersTool({
     getChantiersQuery: query,

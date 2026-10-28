@@ -9,6 +9,7 @@ import type {
   GetChantierCommentairesQueryResult,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 
 const queryResult: GetChantierCommentairesQueryResult = {
@@ -61,7 +62,8 @@ const buildTool = ({
   chantiersAccessibles: string[];
 }) => {
   const territoireResolver = mock<TerritoireResolver>({
-    resoudre: async (territoireCode: string) => [territoireCode],
+    resoudre: async (perimetre: Perimetre) =>
+      perimetre.type === "SELECTION" ? perimetre.territoire_codes : [],
   });
   return createGetChantierCommentairesTool({
     getChantierCommentairesQuery: query,
