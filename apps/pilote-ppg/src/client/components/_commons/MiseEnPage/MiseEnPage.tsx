@@ -8,6 +8,7 @@ import { usePrefetchUtilisateurConnecte } from "@/client/hooks/usePrefetchUtilis
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 import { AlbertConversationProvider } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { AlbertOverlay } from "@/components/_commons/ChatUI/AlbertOverlay";
+import { AlbertPanneauLateral } from "@/components/_commons/ChatUI/AlbertPanneauLateral";
 import { EnTete } from "./EnTete/EnTete";
 import PiedDePage from "./PiedDePage/PiedDePage";
 
@@ -48,8 +49,11 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
           ) : (
             <ClientOnly>
               <AlbertConversationProvider>
-                <div className="flex grow flex-col" id="main">
-                  {children}
+                <div className="flex grow">
+                  <div className="flex min-w-0 grow flex-col" id="main">
+                    {children}
+                  </div>
+                  <AlbertPanneauLateral />
                 </div>
                 <AlbertOverlay />
               </AlbertConversationProvider>

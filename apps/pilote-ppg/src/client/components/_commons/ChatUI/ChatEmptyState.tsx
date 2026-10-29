@@ -38,7 +38,9 @@ export const ChatEmptyState = ({
   contexte?: ContexteAccueil;
 }) => {
   const { sendMessage, fillInput, track } = useChatContext();
-  const shownEvent = useRef(propositionsShownEvent(scenarios));
+  const shownEvent = useRef(
+    scenarios ? propositionsShownEvent(scenarios) : null,
+  );
   const trackRef = useRef(track);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export const ChatEmptyState = ({
   }, [track]);
 
   useEffect(() => {
-    trackRef.current(shownEvent.current);
+    if (shownEvent.current) trackRef.current(shownEvent.current);
   }, []);
 
   const handleClick = (scenario: ChatScenario) => {
