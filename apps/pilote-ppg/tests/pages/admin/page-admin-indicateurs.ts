@@ -68,12 +68,9 @@ export class PageAdminIndicateurs extends BasePage {
       .waitFor({ state: "visible" });
   }
 
-  // Une saisie avant l'hydratation est effacée au rendu (WebKit) : on la rejoue jusqu'à ce qu'elle tienne.
   async searchIndicateur(text: string): Promise<void> {
-    await expect(async () => {
-      await this.searchBox.fill(text);
-      await expect(this.searchBox).toHaveValue(text, { timeout: 1_000 });
-    }).toPass();
+    await this.searchBox.fill(text);
+    await expect(this.searchBox).toHaveValue(text);
   }
 
   async clearSearch(): Promise<void> {

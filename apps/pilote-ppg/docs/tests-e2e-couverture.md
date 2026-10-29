@@ -13,9 +13,11 @@ Ce document recense les scénarios couverts par les tests end-to-end (Playwright
 | CH-901  | copie de CH-070    | chantier en `BROUILLON` (« Chantier brouillon e2e »)                                      |
 | CH-902  | copie de CH-054    | chantier d'écriture « Chantier e2e » : open-api, import, indicateurs, paramétrage chantier (métadonnées copiées de CH-129, maille DEPT) |
 | CH-903  | copie de CH-129    | chantier de la saisie des publications par l'IHM (« Chantier e2e saisie »)                |
+| CH-904  | copie de CH-054    | chantier des pondérations « Chantier e2e pondérations » (métadonnées copiées de CH-129, maille DEPT) : l'enregistrement des pondérations écrit tous les indicateurs du chantier, il ne porte donc qu'IND-904 |
 | IND-901 | copie d'IND-021    | import de données par l'IHM (rattaché à CH-902)                                            |
 | IND-902 | copie d'IND-021    | formulaire indicateur du panel administrateur (rattaché à CH-902)                          |
-| IND-903 | copie d'IND-021    | import open-api et pondérations du paramétrage chantier (rattaché à CH-902)               |
+| IND-903 | copie d'IND-021    | import open-api (rattaché à CH-902)                                                        |
+| IND-904 | copie d'IND-021    | pondérations du paramétrage chantier (rattaché à CH-904)                                   |
 
 Habilitations ajoutées : `equipe.dir.projet@example.com` reçoit CH-901, CH-902 et CH-903 ; `services.deconcentres.region@example.com` reçoit CH-901 (sans accès aux brouillons). Deux comptes sont créés pour la saisie sur CH-903 / DEPT-56 : `saisie.coordinateur.dept@example.com` (COORDINATEUR_DEPARTEMENT) et `saisie.prefet.dept@example.com` (PREFET_DEPARTEMENT), tous deux avec lecture et saisie des commentaires sur CH-903 / DEPT-56. Le chantier hors périmètre de l'équipe direction de projet est CH-070.
 
@@ -128,7 +130,7 @@ Tous les tests sont sans session.
 La liste est lue dans les liens d'en-tête de ligne du tableau des chantiers.
 
 - **Directeur de projet** (`equipe.dir.projet`) : la liste vaut exactement CH-051, CH-054, CH-058, CH-062, CH-129, CH-902, CH-903.
-- **Profil national** (`premiere.ministre`) : la liste vaut exactement les 15 chantiers publiés (CH-050, 051, 054, 058, 062, 067, 070, 071, 107, 108, 129, 145, 155, 902, 903) ; le titre « 15 chantiers » est visible ; CH-901 (brouillon) n'apparaît pas.
+- **Profil national** (`premiere.ministre`) : la liste vaut exactement les 16 chantiers publiés (CH-050, 051, 054, 058, 062, 067, 070, 071, 107, 108, 129, 145, 155, 902, 903, 904) ; le titre « 16 chantiers » est visible ; CH-901 (brouillon) n'apparaît pas.
 - **Filtre ministère** (`premiere.ministre`) : après le filtre « Intérieur et Outre-mer », le tag de filtre est visible et la liste vaut exactement CH-129, CH-903.
 
 ---
@@ -743,10 +745,10 @@ Profils : `coordinateur.region`, `equipe.dir.projet`
 
 **Fichier :** `tests/parametrage-chantier.spec.ts`
 
-Profil : `ditp.admin@example.com`. Page : `/panel-administrateur/chantiers/CH-902`. Les données modifiées sont restaurées en fin de test.
+Profil : `ditp.admin@example.com`. Pages : `/panel-administrateur/chantiers/CH-902` (métadonnées) et `/panel-administrateur/chantiers/CH-904` (pondérations). Les données modifiées sont restaurées en fin de test.
 
 - **Métadonnées** : description « Description modifiée par un test e2e », « Sauvegarder » : en base, `metadata_chantiers.ch_descr` de CH-902 vaut ce texte ; après rechargement, le champ « Description » l'affiche
-- **Pondérations** : onglet « Pondérations », première pondération de la ligne IND-903 à 100, « Enregistrer » : en base, `poids_pourcent_nat_declaree` d'IND-903 vaut 100 ; après rechargement, le champ vaut 100
+- **Pondérations** : onglet « Pondérations », première pondération de la ligne IND-904 à 100, « Enregistrer » : en base, `poids_pourcent_nat_declaree` d'IND-904 vaut 100 ; après rechargement, le champ vaut 100
 
 ---
 

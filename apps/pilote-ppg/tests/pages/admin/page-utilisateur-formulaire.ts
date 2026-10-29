@@ -1,4 +1,4 @@
-import { expect, Locator } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { BasePage } from "../base.page";
 
 export class PageUtilisateurFormulaire extends BasePage {
@@ -10,16 +10,10 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async gotoEditFromFiche(): Promise<void> {
-    const identificationHeading = this.page.getByRole("heading", {
-      name: "Identification",
-    });
-    // Un clic avant l'hydratation de la fiche est perdu (Firefox) : on réessaie.
-    await expect(async () => {
-      if (!(await identificationHeading.isVisible())) {
-        await this.page.getByRole("link", { name: "Modifier" }).click();
-      }
-      await expect(identificationHeading).toBeVisible({ timeout: 5_000 });
-    }).toPass({ timeout: 30_000 });
+    await this.page.getByRole("link", { name: "Modifier" }).click();
+    await expect(
+      this.page.getByRole("heading", { name: "Identification" }),
+    ).toBeVisible({ timeout: 30_000 });
   }
 
   private get emailInput() {
@@ -65,27 +59,15 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async selectService(serviceName: string): Promise<void> {
-    await this.selectOption(
-      this.page.getByLabel(/^Service/),
-      this.page.getByRole("option", { name: serviceName }),
-    );
+    await this.page.getByLabel(/^Service/).click();
+    await this.page.getByRole("option", { name: serviceName }).click();
   }
 
   async selectProfil(profilName: string): Promise<void> {
-    await this.selectOption(
-      this.page.getByLabel("Profil", { exact: true }),
-      this.page.getByRole("option", { name: profilName, exact: true }),
-    );
-  }
-
-  // Un clic sur la liste avant l'hydratation ne l'ouvre pas : on réessaie l'ouverture.
-  private async selectOption(trigger: Locator, option: Locator): Promise<void> {
-    await expect(async () => {
-      if (!(await option.isVisible())) {
-        await trigger.click();
-      }
-      await option.click({ timeout: 2_000 });
-    }).toPass();
+    await this.page.getByLabel("Profil", { exact: true }).click();
+    await this.page
+      .getByRole("option", { name: profilName, exact: true })
+      .click();
   }
 
   async clickNextToReview(): Promise<void> {
@@ -99,17 +81,7 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async clickNext(): Promise<void> {
-    // Un clic avant l'hydratation est perdu (WebKit) : on réessaie jusqu'à voir
-    // l'étape suivante ou les erreurs de validation.
-    const clickHandled = this.page
-      .getByRole("heading", { name: /Étape 2 sur 2/ })
-      .or(this.page.locator('[aria-invalid="true"]').first());
-    await expect(async () => {
-      if (!(await clickHandled.isVisible())) {
-        await this.nextButton.click();
-      }
-      await expect(clickHandled).toBeVisible({ timeout: 2_000 });
-    }).toPass();
+    await this.nextButton.click();
   }
 
   async expectFonctionError(): Promise<void> {

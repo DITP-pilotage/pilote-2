@@ -50,15 +50,10 @@ export class PageChantier extends BasePage {
     const accordionButton = this.page.getByRole("button", {
       name: /Autres indicateurs/,
     });
-    // Un clic avant l'hydratation est perdu (Firefox, WebKit) : on réessaie.
-    await expect(async () => {
-      if ((await accordionButton.getAttribute("aria-expanded")) !== "true") {
-        await accordionButton.click();
-      }
-      await expect(accordionButton).toHaveAttribute("aria-expanded", "true", {
-        timeout: 2_000,
-      });
-    }).toPass();
+    if ((await accordionButton.getAttribute("aria-expanded")) !== "true") {
+      await accordionButton.click();
+    }
+    await expect(accordionButton).toHaveAttribute("aria-expanded", "true");
   }
 
   getIndicateurPva(

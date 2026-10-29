@@ -66,7 +66,7 @@ type FiltersByAction = {
 type ActionType = keyof FiltersByAction;
 
 type TrackedAction = {
-  [Type in ActionType]: { type: Type; filters: FiltersByAction[Type] };
+  [Type in ActionType]: [type: Type, filters: FiltersByAction[Type]];
 }[ActionType];
 
 const INDICATEUR_HISTORISATION_TABLES = [
@@ -113,19 +113,12 @@ export async function readMetadataIndicateur(
   indicId: string,
 ): Promise<MetadataIndicateur> {
   const where = { indic_id: indicId };
-  return {
-    hidden: await prisma.metadata_indicateurs_hidden.findUniqueOrThrow({
-      where,
-    }),
-    parametrage:
-      await prisma.metadata_parametrage_indicateurs.findUniqueOrThrow({
-        where,
-      }),
-    complementaire:
-      await prisma.metadata_indicateurs_complementaire.findUniqueOrThrow({
-        where,
-      }),
-  };
+  const [hidden, parametrage, complementaire] = await Promise.all([
+    prisma.metadata_indicateurs_hidden.findUniqueOrThrow({ where }),
+    prisma.metadata_parametrage_indicateurs.findUniqueOrThrow({ where }),
+    prisma.metadata_indicateurs_complementaire.findUniqueOrThrow({ where }),
+  ]);
+  return { hidden, parametrage, complementaire };
 }
 
 export async function readChantierMeteos(
@@ -138,21 +131,23 @@ export async function readChantierMeteos(
   return { chantierId, meteos };
 }
 
+export async function disconnectE2EPrisma(): Promise<void> {
+  await prisma.$disconnect();
+}
+
 export class E2ETestContext {
   private readonly actions: TrackedAction[] = [];
 
-  track<Type extends ActionType>(
-    type: Type,
-    filters: FiltersByAction[Type],
-  ): void {
-    requireFilter(filters);
-    this.actions.push({ type, filters } as TrackedAction);
+  track(...action: TrackedAction): void {
+    requireFilter(action[1]);
+    this.actions.push(action);
   }
 
+  // Ordre inverse : deux actions opposées sur une même entité doivent revenir à l'état initial.
   async cleanup(): Promise<void> {
     const errors: unknown[] = [];
     try {
-      for (const action of this.actions) {
+      for (const action of [...this.actions].reverse()) {
         try {
           await this.undo(action);
         } catch (error) {
@@ -161,46 +156,45 @@ export class E2ETestContext {
       }
     } finally {
       this.actions.length = 0;
-      await prisma.$disconnect();
     }
     if (errors.length > 0) {
       throw new AggregateError(errors, "Nettoyage e2e incomplet");
     }
   }
 
-  private async undo(action: TrackedAction): Promise<void> {
-    switch (action.type) {
+  private async undo([type, filters]: TrackedAction): Promise<void> {
+    switch (type) {
       case "PROPOSITION_VALEUR_EVENEMENT_CREATED":
         await prisma.indicateur_territoire_valeur_evenement.deleteMany({
           where: {
-            ...requireFilter(action.filters),
+            ...filters,
             type_evenement: { in: PROPOSITION_VALEUR_EVENEMENTS },
           },
         });
         break;
       case "COMMENTAIRE_CREATED":
         await prisma.commentaire.deleteMany({
-          where: requireFilter(action.filters),
+          where: filters,
         });
         break;
       case "SYNTHESE_CREATED":
         await prisma.synthese_des_resultats.deleteMany({
-          where: requireFilter(action.filters),
+          where: filters,
         });
         break;
       case "OBJECTIF_CREATED":
         await prisma.objectif.deleteMany({
-          where: requireFilter(action.filters),
+          where: filters,
         });
         break;
       case "DECISION_STRATEGIQUE_CREATED":
         await prisma.decision_strategique.deleteMany({
-          where: requireFilter(action.filters),
+          where: filters,
         });
         break;
       case "RAPPORT_IMPORT_CREATED": {
         const rapports = await prisma.rapport_import_mesure_indicateur.findMany(
-          { where: requireFilter(action.filters), select: { id: true } },
+          { where: filters, select: { id: true } },
         );
         const rapportIds = rapports.map((rapport) => rapport.id);
         if (rapportIds.length > 0) {
@@ -215,37 +209,37 @@ export class E2ETestContext {
         break;
       }
       case "UTILISATEUR_CREATED":
-        await deleteUtilisateurHistorisation(action.filters.email);
+        await deleteUtilisateurHistorisation(filters.email);
         await prisma.utilisateur.deleteMany({
-          where: requireFilter({ email: action.filters.email }),
+          where: { email: filters.email },
         });
         break;
       case "UTILISATEUR_DEACTIVATED":
         await prisma.utilisateur.updateMany({
-          where: requireFilter({ email: action.filters.email }),
+          where: { email: filters.email },
           data: { date_desactivation: null },
         });
         break;
       case "UTILISATEUR_REACTIVATED":
         await prisma.utilisateur.updateMany({
-          where: requireFilter({ email: action.filters.email }),
+          where: { email: filters.email },
           data: { date_desactivation: new Date() },
         });
         break;
       case "PROFIL_UTILISATEUR_UPDATED":
-        await deleteUtilisateurHistorisation(action.filters.email);
+        await deleteUtilisateurHistorisation(filters.email);
         await prisma.utilisateur.updateMany({
-          where: requireFilter({ email: action.filters.email }),
-          data: action.filters.originalData,
+          where: { email: filters.email },
+          data: filters.originalData,
         });
         break;
       case "TOKEN_API_CREATED":
         await prisma.token_api_information.deleteMany({
-          where: requireFilter({ email: action.filters.email }),
+          where: { email: filters.email },
         });
         break;
       case "INDICATEUR_CREATED": {
-        const where = requireFilter({ indic_id: action.filters.indicId });
+        const where = { indic_id: filters.indicId };
         await prisma.metadata_indicateurs_complementaire.deleteMany({
           where,
         });
@@ -253,43 +247,42 @@ export class E2ETestContext {
         await prisma.metadata_indicateurs_hidden.deleteMany({ where });
         await deleteHistorisation(
           INDICATEUR_HISTORISATION_TABLES,
-          action.filters.indicId,
+          filters.indicId,
         );
         break;
       }
       case "INDICATEUR_UPDATED": {
-        const original = action.filters;
-        const where = { indic_id: original.hidden.indic_id };
+        const where = { indic_id: filters.hidden.indic_id };
         await prisma.metadata_indicateurs_hidden.update({
           where,
-          data: original.hidden,
+          data: filters.hidden,
         });
         await prisma.metadata_parametrage_indicateurs.update({
           where,
-          data: original.parametrage,
+          data: filters.parametrage,
         });
         await prisma.metadata_indicateurs_complementaire.update({
           where,
-          data: original.complementaire,
+          data: filters.complementaire,
         });
         await deleteHistorisation(
           INDICATEUR_HISTORISATION_TABLES,
-          original.hidden.indic_id,
+          filters.hidden.indic_id,
         );
         break;
       }
       case "CHANTIER_PARAMETRAGE_UPDATED":
         await prisma.metadata_chantiers.update({
-          where: { chantier_id: action.filters.chantier_id },
-          data: action.filters,
+          where: { chantier_id: filters.chantier_id },
+          data: filters,
         });
         break;
       case "CHANTIER_METEOS_UPDATED":
-        for (const { territoire_code, meteo } of action.filters.meteos) {
+        for (const { territoire_code, meteo } of filters.meteos) {
           await prisma.chantier_territoire.update({
             where: {
               id_territoire_code: {
-                id: action.filters.chantierId,
+                id: filters.chantierId,
                 territoire_code,
               },
             },
@@ -299,23 +292,23 @@ export class E2ETestContext {
         break;
       case "NOUVEAUTE_CREATED":
         await prisma.nouveaute.deleteMany({
-          where: requireFilter({ id: action.filters.id }),
+          where: { id: filters.id },
         });
         break;
       case "ARTICLE_CENTRE_AIDE_CREATED":
         await prisma.article_centre_aide.deleteMany({
-          where: requireFilter({ id: action.filters.id }),
+          where: { id: filters.id },
         });
         break;
       case "ALBERT_ACCESS_PROFIL_ENABLED":
         await prisma.albert_access_profil.deleteMany({
-          where: requireFilter({ profil_code: action.filters.profilCode }),
+          where: { profil_code: filters.profilCode },
         });
         break;
       case "ALBERT_ACCESS_UTILISATEUR_ADDED":
         await prisma.albert_access_utilisateur.deleteMany({
           where: {
-            utilisateur: requireFilter({ email: action.filters.email }),
+            utilisateur: { email: filters.email },
           },
         });
         break;

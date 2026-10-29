@@ -70,15 +70,8 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   async clickEdit(): Promise<void> {
-    // Un clic avant l'hydratation est perdu (WebKit, Firefox) : on réessaie.
-    await expect(async () => {
-      if (await this.editButton.isVisible()) {
-        await this.editButton.click();
-      }
-      await expect(this.confirmChangesButton).toBeVisible({
-        timeout: 2_000,
-      });
-    }).toPass();
+    await this.editButton.click();
+    await expect(this.confirmChangesButton).toBeVisible();
   }
 
   async clickConfirmChanges(): Promise<void> {
@@ -107,14 +100,10 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   private async openAccordion(accordion: Locator): Promise<void> {
-    await expect(async () => {
-      if ((await accordion.getAttribute("aria-expanded")) === "false") {
-        await accordion.click();
-      }
-      await expect(accordion).toHaveAttribute("aria-expanded", "true", {
-        timeout: 2_000,
-      });
-    }).toPass();
+    if ((await accordion.getAttribute("aria-expanded")) === "false") {
+      await accordion.click();
+    }
+    await expect(accordion).toHaveAttribute("aria-expanded", "true");
   }
 
   async expectFicheTitle(indicateurId: string): Promise<void> {

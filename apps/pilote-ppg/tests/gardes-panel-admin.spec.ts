@@ -95,6 +95,7 @@ test.describe("Pages du panel gardées par la seule session", () => {
     const purgeLogsResult = await trpc.mutation("applicationLog.purger", {
       anterieurA: new Date("2000-01-01").toISOString(),
     });
+    // Aucune clé : la mutation n'écrirait rien si la garde régressait.
     const featureFlips = await trpc.mutation(
       "gestionContenu.modifierFeatureFlips",
       { featureFlips: {} },

@@ -61,9 +61,10 @@ test.describe("Page d'accueil", () => {
         "CH-155",
         "CH-902",
         "CH-903",
+        "CH-904",
       ]);
     await expect(
-      page.getByRole("heading", { name: "15 chantiers" }),
+      page.getByRole("heading", { name: "16 chantiers" }),
     ).toBeVisible();
   });
 

@@ -30,6 +30,23 @@ UPDATE copied_rows SET chantier_id = 'CH-902', ch_nom = 'Chantier e2e', maille_a
 INSERT INTO raw_data.metadata_chantiers SELECT * FROM copied_rows;
 DROP TABLE copied_rows;
 
+-- CH-904 : chantier publié des pondérations, copie de CH-054 : l'enregistrement des pondérations
+-- écrit tous les indicateurs du chantier, il ne doit donc porter qu'IND-904
+CREATE TEMP TABLE copied_rows AS SELECT * FROM public.chantier_identite WHERE id = 'CH-054';
+UPDATE copied_rows SET id = 'CH-904', nom = 'Chantier e2e pondérations';
+INSERT INTO public.chantier_identite SELECT * FROM copied_rows;
+DROP TABLE copied_rows;
+
+CREATE TEMP TABLE copied_rows AS SELECT * FROM public.chantier_territoire WHERE id = 'CH-054';
+UPDATE copied_rows SET id = 'CH-904';
+INSERT INTO public.chantier_territoire SELECT * FROM copied_rows;
+DROP TABLE copied_rows;
+
+CREATE TEMP TABLE copied_rows AS SELECT * FROM raw_data.metadata_chantiers WHERE chantier_id = 'CH-129';
+UPDATE copied_rows SET chantier_id = 'CH-904', ch_nom = 'Chantier e2e pondérations', maille_applicable = ARRAY['DEPT'];
+INSERT INTO raw_data.metadata_chantiers SELECT * FROM copied_rows;
+DROP TABLE copied_rows;
+
 -- CH-903 : chantier publié de la saisie des publications par l'IHM, copie de CH-129
 CREATE TEMP TABLE copied_rows AS SELECT * FROM public.chantier_identite WHERE id = 'CH-129';
 UPDATE copied_rows SET id = 'CH-903', nom = 'Chantier e2e saisie';
@@ -41,26 +58,28 @@ UPDATE copied_rows SET id = 'CH-903';
 INSERT INTO public.chantier_territoire SELECT * FROM copied_rows;
 DROP TABLE copied_rows;
 
--- IND-901 (import de données), IND-902 (formulaire indicateur), IND-903 (open-api) : copies d'IND-021 rattachées à CH-902
-CREATE TEMP TABLE mapping (id text, nom text);
+-- IND-901 (import de données), IND-902 (formulaire indicateur), IND-903 (open-api) : copies d'IND-021 rattachées à CH-902 ;
+-- IND-904 (pondérations) : copie d'IND-021 rattachée à CH-904
+CREATE TEMP TABLE mapping (id text, nom text, chantier_id text);
 INSERT INTO mapping VALUES
-  ('IND-901', 'Indicateur e2e import'),
-  ('IND-902', 'Indicateur e2e formulaire'),
-  ('IND-903', 'Indicateur e2e open-api');
+  ('IND-901', 'Indicateur e2e import', 'CH-902'),
+  ('IND-902', 'Indicateur e2e formulaire', 'CH-902'),
+  ('IND-903', 'Indicateur e2e open-api', 'CH-902'),
+  ('IND-904', 'Indicateur e2e pondérations', 'CH-904');
 
 CREATE TEMP TABLE copied_rows AS
-  SELECT source.*, mapping.id AS new_id, mapping.nom AS new_nom
+  SELECT source.*, mapping.id AS new_id, mapping.nom AS new_nom, mapping.chantier_id AS new_chantier_id
   FROM raw_data.metadata_indicateurs source, mapping WHERE source.indic_id = 'IND-021';
-UPDATE copied_rows SET indic_id = new_id, indic_nom = new_nom, indic_parent_ch = 'CH-902';
-ALTER TABLE copied_rows DROP COLUMN new_id, DROP COLUMN new_nom;
+UPDATE copied_rows SET indic_id = new_id, indic_nom = new_nom, indic_parent_ch = new_chantier_id;
+ALTER TABLE copied_rows DROP COLUMN new_id, DROP COLUMN new_nom, DROP COLUMN new_chantier_id;
 INSERT INTO raw_data.metadata_indicateurs SELECT * FROM copied_rows;
 DROP TABLE copied_rows;
 
 CREATE TEMP TABLE copied_rows AS
-  SELECT source.*, mapping.id AS new_id, mapping.nom AS new_nom
+  SELECT source.*, mapping.id AS new_id, mapping.nom AS new_nom, mapping.chantier_id AS new_chantier_id
   FROM raw_data.metadata_indicateurs_hidden source, mapping WHERE source.indic_id = 'IND-021';
-UPDATE copied_rows SET indic_id = new_id, indic_nom = new_nom, indic_parent_ch = 'CH-902';
-ALTER TABLE copied_rows DROP COLUMN new_id, DROP COLUMN new_nom;
+UPDATE copied_rows SET indic_id = new_id, indic_nom = new_nom, indic_parent_ch = new_chantier_id;
+ALTER TABLE copied_rows DROP COLUMN new_id, DROP COLUMN new_nom, DROP COLUMN new_chantier_id;
 INSERT INTO raw_data.metadata_indicateurs_hidden SELECT * FROM copied_rows;
 DROP TABLE copied_rows;
 
@@ -81,18 +100,18 @@ INSERT INTO raw_data.metadata_indicateurs_complementaire SELECT * FROM copied_ro
 DROP TABLE copied_rows;
 
 CREATE TEMP TABLE copied_rows AS
-  SELECT source.*, mapping.id AS new_id, mapping.nom AS new_nom
+  SELECT source.*, mapping.id AS new_id, mapping.nom AS new_nom, mapping.chantier_id AS new_chantier_id
   FROM public.indicateur_identite source, mapping WHERE source.id = 'IND-021';
-UPDATE copied_rows SET id = new_id, nom = new_nom, chantier_id = 'CH-902';
-ALTER TABLE copied_rows DROP COLUMN new_id, DROP COLUMN new_nom;
+UPDATE copied_rows SET id = new_id, nom = new_nom, chantier_id = new_chantier_id;
+ALTER TABLE copied_rows DROP COLUMN new_id, DROP COLUMN new_nom, DROP COLUMN new_chantier_id;
 INSERT INTO public.indicateur_identite SELECT * FROM copied_rows;
 DROP TABLE copied_rows;
 
 CREATE TEMP TABLE copied_rows AS
-  SELECT source.*, mapping.id AS new_id
+  SELECT source.*, mapping.id AS new_id, mapping.chantier_id AS new_chantier_id
   FROM public.indicateur_territoire source, mapping WHERE source.id = 'IND-021';
-UPDATE copied_rows SET id = new_id, chantier_id = 'CH-902';
-ALTER TABLE copied_rows DROP COLUMN new_id;
+UPDATE copied_rows SET id = new_id, chantier_id = new_chantier_id;
+ALTER TABLE copied_rows DROP COLUMN new_id, DROP COLUMN new_chantier_id;
 INSERT INTO public.indicateur_territoire SELECT * FROM copied_rows;
 DROP TABLE copied_rows;
 

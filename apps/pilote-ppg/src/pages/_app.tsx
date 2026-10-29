@@ -29,6 +29,11 @@ function MonApplication({ Component, pageProps }: AppProps) {
     setPageEnCoursDeChargement(false);
   };
 
+  // Les e2e attendent ce marqueur avant d'interagir : un clic avant l'hydratation est perdu.
+  useEffect(() => {
+    document.body.dataset.hydrated = "true";
+  }, []);
+
   useEffect(() => {
     Router.events.on("routeChangeStart", débutChargement);
     Router.events.on("routeChangeComplete", finChargement);
