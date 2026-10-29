@@ -16,13 +16,11 @@ const estMac = () => /Mac|iPhone|iPad/.test(navigator.userAgent);
 // Un rond aux étoiles, qui s'étire pour dire quoi faire : au survol, au focus
 // clavier, et tant que l'assistant rédige une réponse.
 const Pastille = ({
-  libelle,
   etiree,
   avecPoint,
   onClick,
   children,
 }: {
-  libelle: string;
   etiree: boolean;
   avecPoint: boolean;
   onClick: () => void;
@@ -35,7 +33,6 @@ const Pastille = ({
       aria-keyshortcuts={mac ? "Meta+K" : "Control+K"}
       className="group fixed bottom-6 right-6 z-[1750] flex h-12 min-w-12 items-center rounded-full bg-primary px-[13px] text-left text-white shadow-lg transition-colors hover:bg-dsfr-blue-france-sun-113-hover print:hidden"
       onClick={onClick}
-      title={libelle}
       type="button"
     >
       <span className="relative flex shrink-0">
@@ -61,6 +58,18 @@ const Pastille = ({
   );
 };
 
+const PastilleDemander = ({ onClick }: { onClick: () => void }) => (
+  <Pastille avecPoint={false} etiree={false} onClick={onClick}>
+    <span className="text-sm font-medium">Demander à l&apos;assistant</span>
+    <kbd
+      aria-hidden="true"
+      className="rounded border border-white/50 px-1.5 py-px font-[inherit] text-[11px] leading-4"
+    >
+      {estMac() ? "⌘K" : "Ctrl K"}
+    </kbd>
+  </Pastille>
+);
+
 const PastilleConversation = ({
   conversation,
 }: {
@@ -75,25 +84,19 @@ const PastilleConversation = ({
 
   if (enCours) {
     return (
-      <Pastille
-        avecPoint={false}
-        etiree
-        libelle="L'assistant rédige sa réponse"
-        onClick={restore}
-      >
+      <Pastille avecPoint={false} etiree onClick={restore}>
         <span className="text-sm font-medium">L&apos;assistant rédige</span>
         <LoadingDots className="[&>span]:h-1 [&>span]:w-1 [&>span]:bg-white" />
       </Pastille>
     );
   }
 
+  // Une conversation encore vide n'a rien à reprendre : la pastille garde son
+  // état de départ, et rouvre l'assistant dans sa vue.
+  if (messages.length === 0) return <PastilleDemander onClick={restore} />;
+
   return (
-    <Pastille
-      avecPoint
-      etiree={false}
-      libelle={`Reprendre la conversation : ${titre}`}
-      onClick={restore}
-    >
+    <Pastille avecPoint etiree={false} onClick={restore}>
       <span className="flex min-w-0 flex-col">
         <span className="text-[11px] leading-[14px] opacity-80">Reprendre</span>
         <span className="truncate text-[13px] font-medium leading-[17px]">
@@ -113,20 +116,5 @@ export const AlbertPastille = ({
 }) => {
   if (conversation) return <PastilleConversation conversation={conversation} />;
 
-  return (
-    <Pastille
-      avecPoint={false}
-      etiree={false}
-      libelle="Demander à l'Assistant IA PILOTE"
-      onClick={onOuvrir}
-    >
-      <span className="text-sm font-medium">Demander à l&apos;assistant</span>
-      <kbd
-        aria-hidden="true"
-        className="rounded border border-white/50 px-1.5 py-px font-[inherit] text-[11px] leading-4"
-      >
-        {estMac() ? "⌘K" : "Ctrl K"}
-      </kbd>
-    </Pastille>
-  );
+  return <PastilleDemander onClick={onOuvrir} />;
 };

@@ -66,12 +66,15 @@ test("ouvre l'assistant IA depuis n'importe quelle page et retient la vue choisi
     },
   );
 
-  await step("Masquer l'assistant le garde en bas à droite", async () => {
-    await assistant.masquer();
-    await assistant.expectMasquee();
-    await assistant.reprendreLaConversation();
-    await assistant.expectPanneau();
-  });
+  await step(
+    "Masquer une conversation vide laisse la pastille de départ, qui rouvre la même vue",
+    async () => {
+      await assistant.masquer();
+      await assistant.expectFerme();
+      await assistant.ouvrir();
+      await assistant.expectPanneau();
+    },
+  );
 
   await step("L'historique s'ouvre depuis le titre", async () => {
     await assistant.ouvrirHistorique();
@@ -90,7 +93,7 @@ test("ouvre l'assistant IA depuis n'importe quelle page et retient la vue choisi
       await assistant.choisirVue("Fenêtre flottante");
       await assistant.expectFenetre();
       await assistant.masquer();
-      await assistant.reprendreLaConversation();
+      await assistant.ouvrir();
       await assistant.expectFenetre();
     },
   );
