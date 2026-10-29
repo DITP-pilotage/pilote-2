@@ -14,6 +14,7 @@ import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
 import { libelleActiviteAssistant } from "@/components/_commons/ChatUI/libellesAssistant";
 import { ChatAssistantDisclaimer } from "@/components/_commons/ChatUI/ChatAssistantDisclaimer";
+import type { AlbertDraft } from "@/components/_commons/ChatUI/createAlbertConversation";
 import {
   prefilledPropositionAfterEdit,
   type PropositionOrigin,
@@ -26,13 +27,15 @@ const HAUTEUR_MAX_SAISIE_PX = 200;
 export const ChatInputForm = ({
   placeholder,
   fillInputRef,
+  draft,
 }: {
   placeholder: string;
+  draft?: AlbertDraft;
   fillInputRef: MutableRefObject<
     ((text: string, proposition?: PropositionOrigin) => void) | null
   >;
 }) => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(draft?.text ?? "");
   const prefilledProposition = useRef<PropositionOrigin | undefined>(undefined);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, status, stop, track } = useChatContext();
@@ -55,6 +58,10 @@ export const ChatInputForm = ({
   useEffect(() => {
     if (status === "submitted") prefilledProposition.current = undefined;
   }, [status]);
+
+  useEffect(() => {
+    if (draft) draft.text = input;
+  }, [draft, input]);
 
   // La zone de saisie grandit avec le texte, jusqu'à une hauteur plafond.
   useEffect(() => {

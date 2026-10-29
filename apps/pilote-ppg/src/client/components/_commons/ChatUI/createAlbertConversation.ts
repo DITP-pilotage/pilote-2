@@ -14,9 +14,14 @@ export type AlbertRequestBody = {
   model: AlbertModel;
 };
 
+export type AlbertDraft = { text: string };
+
 export type AlbertConversation = {
   chat: Chat<PiloteUIMessage>;
   requestBody: AlbertRequestBody;
+  /** Mutated in place: the text being typed survives a remount of the input
+   * when the assistant switches between views. */
+  draft: AlbertDraft;
 };
 
 export const ALBERT_ENDPOINT = "/api/albert/chat";
@@ -51,5 +56,5 @@ export const createAlbertConversation = ({
     onFinish,
   });
 
-  return { chat, requestBody };
+  return { chat, requestBody, draft: { text: "" } };
 };

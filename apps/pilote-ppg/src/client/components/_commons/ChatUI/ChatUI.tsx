@@ -290,6 +290,7 @@ export const ChatUI = ({
           </div>
 
           <ChatInputForm
+            draft={conversation.draft}
             fillInputRef={fillInputRef}
             placeholder={placeholder}
           />
