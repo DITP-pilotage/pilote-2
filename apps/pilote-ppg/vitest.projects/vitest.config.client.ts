@@ -4,7 +4,7 @@ export default defineProject({
   resolve: { tsconfigPaths: true },
   test: {
     name: "client",
-    root: "./",
+    root: "../",
     environment: "jsdom",
     include: [
       "src/client/**/*.unit.test.{ts,tsx}",

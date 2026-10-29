@@ -1,5 +1,6 @@
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { formaterDate } from "@/client/utils/date/date";
+import { useNow } from "@/client/hooks/useNow";
 import { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { Table } from "@/components/shared/Table";
 import { clsxm } from "@/utils/clsxm";
@@ -15,6 +16,7 @@ export const TableauValeursIndicateur = ({
   territoireNom: string;
   modeImpression?: boolean;
 }) => {
+  const now = useNow();
   const alignementImpression = modeImpression && "min-h-8 align-top";
   const classeEnTeteLigne = clsxm(
     CELLULE,
@@ -104,7 +106,7 @@ export const TableauValeursIndicateur = ({
           </Table.Row>
           <Table.Row>
             <Table.RowHeaderCell className={classeEnTeteLigne}>
-              {"Cible " + new Date().getFullYear().toString()}
+              {"Cible " + now.getFullYear().toString()}
             </Table.RowHeaderCell>
             <Table.Cell className={classeCelluleValeur}>
               <span>
@@ -122,7 +124,7 @@ export const TableauValeursIndicateur = ({
           </Table.Row>
           <Table.Row>
             <Table.RowHeaderCell className={classeEnTeteLigne}>
-              {"Avancement " + new Date().getFullYear().toString()}
+              {"Avancement " + now.getFullYear().toString()}
             </Table.RowHeaderCell>
             <Table.Cell className={classeCellule}>
               <ProgressBar

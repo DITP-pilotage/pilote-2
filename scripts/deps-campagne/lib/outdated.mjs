@@ -33,6 +33,11 @@ export function parseOutdated(raw) {
         current: info.current,
         latest: info.latest,
         isMajor: semver.major(latest) !== semver.major(current),
+        // `latest` de pnpm outdated est le plus grand numéro publié, sans filtre de
+        // préversion : c'est ainsi que deux campagnes ont visé prisma 8.1.0-dev.N, un build
+        // sans dist-tag. Un paquet déjà en préversion suit sa lignée, il n'est pas concerné.
+        estPreversion:
+          semver.prerelease(info.latest) !== null && semver.prerelease(info.current) === null,
         // Indispensable : `pnpm add` écrit dans `dependencies` par défaut. Sans savoir
         // qu'un paquet est une devDependency, on le déplacerait silencieusement de section.
         estDevDependency: info.dependencyType === 'devDependencies',

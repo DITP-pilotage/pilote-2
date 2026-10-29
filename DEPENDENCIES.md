@@ -1251,6 +1251,86 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 
 ## Historique des campagnes
 
+### Octobre 2026 (2026-10-29) — Campagne centrée sécu
+
+Branche `deps/campagne-2026-10-29`. Départ : **85 deps périmées, 3 majors, 54 advisories**
+(3 critical, 17 high, 25 moderate, 9 low). Objectif fixé : fermer les vulnérabilités, l'upgrade
+général passe au second plan.
+
+| Étape | Advisories |
+|---|---|
+| départ, sur `dev` | 54 (3 critical, 17 high) |
+| lot in-range (63 paquets) | 27 (0 critical, 8 high) |
+| pin-minor `@hono/node-server` → 2.1.5 | 27 (une moderate de moins) |
+| `fast-uri` 3.1.9 / 4.2.3 et `seroval` 1.6.11, sous exclusion de quarantaine | 17 |
+| planchers `undici` 7.30.1 / 8.12.2 | **1** |
+
+**Le lot in-range porte tout l'effort** : `next` 16.4.3 et `dompurify` 3.4.17 ferment les trois
+critical, avec `vite`, `zod`, `follow-redirects`, `sanitize-html`, `seroval` (1.6.6 → 1.6.9),
+`@vitest/mocker` et `hono`. **Les trois majors (`dotenv` 18, `msw` 3, `prisma` 8.1.0-dev.9) ne
+fermaient aucune advisory** et ont été retirés de la branche sur décision explicite : `msw` 3 casse
+le `tsc` de kpilote-webapp (`onUnhandledRequest` disparu de `SharedOptions`), et `prisma` visait de
+nouveau un build `-dev` sans dist-tag (`latest` = `8.0.0-rc.28`), comme le 2026-09-10.
+
+**Le run du moteur était aveugle de bout en bout.** L'oracle rapide a échoué dès le premier commit
+sur le `tsc` de ppg : `.next/dev/types/validator.ts` référençait des routes supprimées depuis. Cache
+local, pas régression — mais l'oracle complet ne tourne que si le rapide passe, donc ni lint ni tests
+n'ont tourné sur aucun commit. Rejoué à la main sur la tête de branche, il a révélé deux vraies
+régressions du lot in-range, toutes deux corrigées dans la branche :
+
+- **`vitest` 5.0.0 → 5.0.4 fait découvrir 0 fichier de test à ppg sur 420.** Le `root` d'un projet
+  (`vitest.projects/*.ts`, `root: "./"`) se résout désormais depuis le dossier du fichier de config.
+  Le bump est nécessaire (`@vitest/mocker` corrigé en 5.0.3) : les projets pointent maintenant
+  `root: "../"`. 2436 tests verts sur 2437, l'échec restant étant un deadlock Prisma entre fichiers
+  parallèles qui passe 3 fois sur 3 isolé.
+- **`oxlint` 1.82 → 1.88 active `react/purity`** : 13 `new Date()` pendant le rendu dans ppg. Corrigé
+  par un hook `useNow` (initialiseur paresseux de `useState`) plutôt que par désactivation de la règle.
+
+**Quarantaine.** `dompurify@3.4.16` et `source-map-js@1.2.2`, échus, sont retirés.
+`fast-uri` et `seroval` entrent en exclusion jusqu'au 2026-11-02 et 2026-11-01. **pnpm 10.28 ignore
+la forme `paquet@version` pour une dépendance transitive** (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`
+malgré `fast-uri@4.2.3` dans la liste) : l'exclusion est donc par nom, et les overrides **épinglent
+les versions exactes** pour qu'elle ne laisse passer qu'elles. Sans ce verrou, `seroval` montait en
+1.7.3, publiée la veille. À l'échéance : retirer l'exclusion **et** repasser les trois overrides en
+plancher (`>=3.1.9 <4`, `>=4.2.3 <5`, `>=1.6.11 <2`). Exposition réelle nulle en production :
+`fast-uri` n'est tiré que par l'outillage de build (`webpack>schema-utils>ajv`) et par `evalite`,
+`seroval` par la sérialisation SSR de TanStack Router, que kpilote-admin (SPA) n'utilise pas.
+
+**`undici`** : deux planchers, `undici@>=7 <8: >=7.30.1 <8` (relevé) et `undici@>=8 <9: >=8.12.2 <9`
+(nouveau, la ligne 8 de kpilote-admin et kpilote-webapp n'était couverte par rien). Correctifs publiés
+le 2026-10-15, posés le jour de leur sortie de quarantaine, sans exclusion.
+
+**Résiduel (1)** : `@hono/node-server` 1.19.17 (`serveStatic`, moderate), tiré uniquement par
+`@hono/vite-dev-server` 0.26.1 (serveur de dev Vite) qui exige `^1.19.11` ; correctif seulement en
+2.1.3+. Condition de sortie : une version de `@hono/vite-dev-server` qui accepte la v2.
+
+**`@types/mime` supprimé** de ppg : le pin-minor l'avait monté en 4.0.0, un stub déprécié (`mime` 4
+livre ses types).
+
+**Overrides au banc d'essai : 20, tous inertes.** À ne pas lire comme « tous supprimables » : ce sont
+des planchers CVE, inertes parce que la résolution est passée au-dessus. Trois sélecteurs ne
+s'appliquent plus à rien (`brace-expansion@<2`, `immutable@>=4 <5`, `js-yaml@>=4 <5`), et `tar@>=7 <8`
+n'a plus de paquet dans l'arbre : candidats au nettoyage, à proposer hors campagne sécu. **Les verdicts
+« absent » sur les trois `evalite>…` étaient faux** : le banc lisait `evalite>fastify` comme un nom de
+paquet. Corrigé ; les trois sont bien présents (`fastify` 5.12.7, `@fastify/static` 10.1.6,
+`file-type` 21.3.4 sous `evalite`).
+
+**Suivi de la campagne du 2026-09-10** : `prisma` ramené à 7.10.0 ✔ ; `typescript` 7 conservé, la
+raison du pin 5.9.3 (typescript-eslint) étant tombée avec le passage à oxlint ✔. Restés lettre morte :
+`@types/node` 26 conservé malgré la recommandation (aucune API v25/v26 appelée à ce jour, risque
+inchangé) ; `@hono/node-server` passé en v2 **sans** le test qui démarre `serve()` qui la
+conditionnait — **ajouté dans cette campagne** pour le proxy `/api` de kpilote-admin (vrai `serve()`
+devant un faux amont servi par `serve()` : corps JSON de 1000 lignes relayé à l'octet près, DELETE sans
+corps relayé vide). Côté kpilote-api, une route servie par `serve()` ne voit pas les fixtures de
+`integrationTest` (transaction portée par le contexte asynchrone du test) : le même adaptateur 2.1.5
+y reste couvert par le test de l'admin, pas par un test propre ; `"types": ["node"]` (kpilote-api)
+et `vite/client` (kpilote-ui) non ajoutés.
+
+**Défauts du moteur corrigés dans la branche** : clés `parent>enfant` au banc d'essai ; exclusions
+`paquet@version` toujours « version publiée inconnue » et section `overrides:` du lockfile lue comme
+une version ; types `.next` de ppg purgés avant `tsc` ; cibles en préversion écartées et portées au
+rapport (`preversionsEcartees`) au lieu d'être bumpées.
+
 ### Septembre 2026 (2026-09-10) — Campagne d'upgrade
 
 Branche `deps/campagne-2026-09-10`. Départ : **40 deps périmées, 4 majors, 28 advisories**

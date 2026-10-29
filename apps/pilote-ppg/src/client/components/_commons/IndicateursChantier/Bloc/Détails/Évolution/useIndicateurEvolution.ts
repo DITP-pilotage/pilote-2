@@ -3,6 +3,7 @@ import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formaterDate } from "@/client/utils/date/date";
+import { useNow } from "@/client/hooks/useNow";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import type { ChartDisplayMode, TerritoireEvolutionDonnees } from "./types";
@@ -134,8 +135,9 @@ export default function useIndicateurEvolution({
     setTerritoiresAAfficher,
   ]);
 
+  const now = useNow();
   const [minDate, maxDate] = useMemo(() => {
-    let min = new Date();
+    let min = now;
     let max = new Date(0);
     tousLesIndicateursDetails.forEach((indicateur) => {
       indicateur.données.historiquesValeurs.forEach((valeur) => {
@@ -145,7 +147,7 @@ export default function useIndicateurEvolution({
       });
     });
     if (max < min) {
-      const annee = jalon ?? new Date().getFullYear();
+      const annee = jalon ?? now.getFullYear();
       min = new Date(`${annee}-01-01`);
       max = new Date(`${annee}-01-31`);
       setMasquerSlider(true);
@@ -157,7 +159,7 @@ export default function useIndicateurEvolution({
     const maxAreturn = new Date(max);
     maxAreturn.setMonth(maxAreturn.getMonth() + 1);
     return [min, maxAreturn];
-  }, [jalon, tousLesIndicateursDetails]);
+  }, [jalon, now, tousLesIndicateursDetails]);
 
   const [minYear, maxYear] = useMemo(() => {
     return [new Date(minDate).getFullYear(), maxDate.getFullYear()];

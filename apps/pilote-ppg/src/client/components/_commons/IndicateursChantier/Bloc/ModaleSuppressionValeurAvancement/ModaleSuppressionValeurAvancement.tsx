@@ -12,6 +12,7 @@ import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.i
 import { formaterDate } from "@/client/utils/date/date";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { useNow } from "@/client/hooks/useNow";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import useModaleSuppressionValeurAvancement, {
@@ -51,6 +52,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
   const utilisateur = useProfilUtilisateurConnecte();
   const auteurModification = `${utilisateur.prenom} ${utilisateur.nom}`;
   const refreshRouter = useRefreshRouter();
+  const now = useNow();
 
   return (
     <Modale
@@ -217,7 +219,7 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<
                       <p className="text-sm print:text-base mb-0">
                         <span className="font-bold">
                           La proposition est supprimée le{" "}
-                          {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
+                          {`${formaterDate(now.toISOString(), "DD/MM/YYYY")}`}{" "}
                           par {auteurModification}
                         </span>
                       </p>

@@ -68,10 +68,14 @@ const APPS_TYPEES = [
   // invoquer le binaire tsc par node, pas par le shim pnpm.
   // Son tsconfig a `incremental: true` : sans purge du .tsbuildinfo entre deux commits,
   // tsc réutilise le cache et rend un VERT FAUX. Mesuré le 2026-09-10.
+  // Il inclut aussi les types générés par `next dev` sous .next/ : un cache laissé par une
+  // branche où existaient d'autres routes rend un ROUGE FAUX (TS2307 sur des routes
+  // supprimées), et l'oracle rapide aveugle alors toute la campagne. Mesuré le 2026-10-29.
+  // tsc passe sans eux, comme en CI où .next n'existe pas.
   {
     pkg: '@pilote/ppg',
     prepare: ['prisma', 'generate'],
-    purger: 'tsconfig.tsbuildinfo',
+    purger: ['tsconfig.tsbuildinfo', '.next/types', '.next/dev/types'],
     tsc: ['node', '--stack-size=8000', './node_modules/typescript/bin/tsc'],
   },
   { pkg: 'pilote-ppg-auth' },
@@ -203,7 +207,7 @@ export function oracleRapide() {
     }
     // Un cache incrémental survivant d'un commit à l'autre rend un vert faux.
     if (app.purger) {
-      run(['pnpm', '-F', app.pkg, 'exec', 'rm', '-f', app.purger])
+      run(['pnpm', '-F', app.pkg, 'exec', 'rm', '-rf', ...app.purger])
     }
     const tsc = run(['pnpm', '-F', app.pkg, 'exec', ...(app.tsc ?? ['tsc', '--noEmit'])])
     if (tsc.code !== 0) {

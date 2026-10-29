@@ -10,7 +10,7 @@ import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import HabilitationGestionUtilisateur from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { useEnv } from "@/client/hooks/useEnv";
-import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { BaseNavigation, LienNavigation } from "./BaseNavigation";
 
 const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
@@ -49,20 +49,13 @@ export const NavigationPilote = () => {
 
   const filtresActifs = getFiltresActifs();
 
-  const dateBasculeValeurAnneePrecedente = useEnv(
-    "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
-  );
-
   const territoireCodeURL = router.query.territoireCode as string | undefined;
   const jalonUrl = router.query.jalon as string | undefined;
 
-  const jalonParDefaut = getAnneeDateDeBascule(
-    new Date(),
-    dateBasculeValeurAnneePrecedente,
-  ).toString();
+  const { jalonAAfficherParDefaut } = useSelecteurJalon();
 
   const init: Partial<FiltreAccueil> = {
-    jalon: jalonUrl || filtresActifs.jalon || jalonParDefaut,
+    jalon: jalonUrl || filtresActifs.jalon || jalonAAfficherParDefaut,
   };
 
   const territoireCodeStore = Boolean(filtresActifs?.territoireCode)

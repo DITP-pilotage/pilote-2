@@ -56,7 +56,9 @@ export const useEditionNouveaute = () => {
   );
   const [contenu, setContenu] = useState(templateInitial);
   const [version, setVersion] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(
+    () => new Date().toISOString().split("T")[0],
+  );
   const [estCreation, setEstCreation] = useState(true);
 
   const prochaineVersion = calculerProchaineVersion(
