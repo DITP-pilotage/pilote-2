@@ -99,7 +99,7 @@ export const EncartSynthese = ({
 
   return (
     <article
-      className="albert-encart border border-dsfr-grey-925 border-t-[5px] border-t-dsfr-blue-france-sun-113 bg-white px-8 py-8 shadow-md lg:-mx-16 lg:px-16"
+      className="albert-encart border border-dsfr-grey-925 border-t-[5px] border-t-dsfr-blue-france-sun-113 bg-white px-8 py-8 shadow-md @5xl:-mx-16 @5xl:px-16"
       ref={encartRef}
     >
       <header className="mb-5 flex items-start justify-between gap-4 border-b border-dsfr-grey-925 pb-3.5 text-[12.5px] leading-5 text-dsfr-mention-grey">
