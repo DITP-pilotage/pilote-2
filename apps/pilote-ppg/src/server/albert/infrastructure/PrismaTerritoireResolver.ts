@@ -1,3 +1,4 @@
+import type { Maille } from "@prisma/client";
 import type { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
@@ -18,35 +19,35 @@ export class PrismaTerritoireResolver implements TerritoireResolver {
       case "REGION_ET_SES_DEPARTEMENTS":
         return [
           perimetre.region_code,
-          ...(await this.codesCommencantPar({
-            prefixe: "DEPT-",
+          ...(await this.codesDeMaille({
+            maille: "DEPT",
             codeParent: perimetre.region_code,
           })),
         ];
       // Les territoires REG-xxx n'ont pas NAT-FR comme parent en base ;
-      // on remonte donc toutes les régions par leur préfixe.
+      // on remonte donc toutes les régions par leur maille.
       case "FRANCE_ET_SES_REGIONS":
         return [
           TERRITOIRE_NATIONAL,
-          ...(await this.codesCommencantPar({ prefixe: "REG-" })),
+          ...(await this.codesDeMaille({ maille: "REG" })),
         ];
       case "TOUTES_REGIONS":
-        return this.codesCommencantPar({ prefixe: "REG-" });
+        return this.codesDeMaille({ maille: "REG" });
       case "TOUS_DEPARTEMENTS":
-        return this.codesCommencantPar({ prefixe: "DEPT-" });
+        return this.codesDeMaille({ maille: "DEPT" });
     }
   }
 
-  private async codesCommencantPar({
-    prefixe,
+  private async codesDeMaille({
+    maille,
     codeParent,
   }: {
-    prefixe: string;
+    maille: Maille;
     codeParent?: string;
   }): Promise<string[]> {
     const territoires = await this.prisma.getInstance().territoire.findMany({
       where: {
-        code: { startsWith: prefixe },
+        maille,
         ...(codeParent && { code_parent: codeParent }),
       },
       orderBy: { code: "asc" },
