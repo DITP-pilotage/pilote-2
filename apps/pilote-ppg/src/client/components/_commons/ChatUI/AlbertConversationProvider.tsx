@@ -25,12 +25,26 @@ import {
   readMinimizedConversation,
   writeMinimizedConversation,
 } from "@/components/_commons/ChatUI/minimizedConversationStorage";
+import {
+  affichageEffectif,
+  vuesDisponibles,
+  type AffichageAssistant,
+  type VueAssistant,
+} from "@/components/_commons/ChatUI/affichageAssistant";
+import {
+  readPreferenceVue,
+  writePreferenceVue,
+} from "@/components/_commons/ChatUI/preferenceVueStorage";
+import { useTailleEcran } from "@/components/_commons/ChatUI/useTailleEcran";
+import type { AnalyticsEventName } from "@/client/analytics/schema";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { api } from "@/server/framework/trpc/api";
 
-export type AlbertDisplay = "floating" | "fullscreen" | "minimized";
-
-type AlbertDisplayOuvert = Exclude<AlbertDisplay, "minimized">;
+const EVENEMENT_VUE: Record<VueAssistant, AnalyticsEventName> = {
+  modal: "assistant.view.modal",
+  sidePanel: "assistant.view.side_panel",
+  floating: "assistant.view.floating",
+};
 
 export type CurrentConversation = AlbertConversation & {
   agentContext?: AlbertAgentContext;
@@ -46,12 +60,15 @@ export type AlbertPageContext = {
 
 type AlbertConversationContextValue = {
   conversation: CurrentConversation | null;
-  display: AlbertDisplay;
+  /** Ce qui est réellement affiché, compte tenu de la largeur de l'écran. */
+  display: AffichageAssistant;
+  /** Les vues qui tiennent sur l'écran, proposées par le sélecteur de vue. */
+  vuesDisponibles: readonly VueAssistant[];
   pageContext: AlbertPageContext | null;
   setPageContext: (pageContext: AlbertPageContext | null) => void;
   open: () => void;
-  expand: () => void;
-  contract: () => void;
+  changerVue: (vue: VueAssistant) => void;
+  ouvrirHistorique: () => void;
   minimize: () => void;
   restore: () => void;
   close: () => void;
@@ -84,10 +101,12 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   const [conversation, setConversation] = useState<CurrentConversation | null>(
     null,
   );
-  const [display, setDisplay] = useState<AlbertDisplay>("floating");
-  // Ce que « Reprendre » rouvre depuis le dock : la fenêtre ou le plein écran.
-  const [displayAvantReduction, setDisplayAvantReduction] =
-    useState<AlbertDisplayOuvert>("floating");
+  const [affichage, setAffichage] = useState<AffichageAssistant>("modal");
+  // Ce que « Reprendre » rouvre depuis le dock.
+  const [vueAvantReduction, setVueAvantReduction] =
+    useState<VueAssistant>("modal");
+  const tailleEcran = useTailleEcran();
+  const display = affichageEffectif({ affichage, tailleEcran });
   const [pageContext, setPageContext] = useState<AlbertPageContext | null>(
     null,
   );
@@ -149,7 +168,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     }: {
       id: string;
       agentContext?: AlbertAgentContext;
-      targetDisplay: AlbertDisplay;
+      targetDisplay: AffichageAssistant;
     }) => {
       try {
         const stored = await trpcUtils.albert.conversations.recuperer.fetch({
@@ -161,7 +180,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
           return;
         }
         setConversation(build({ id, agentContext, messages: stored.messages }));
-        setDisplay(targetDisplay);
+        setAffichage(targetDisplay);
       } catch {
         // Never persisted (no turn completed yet) or already purged: the
         // fallback is simply not to show it.
@@ -207,12 +226,27 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         dimensions: { conversation_id: created.chat.id },
       });
     }
-    setDisplay("floating");
+    // La modale tient sur tous les écrans : c'est elle qu'on découvre, tant
+    // qu'aucune autre vue n'a été choisie sur cet appareil.
+    setAffichage(readPreferenceVue() ?? "modal");
   }, [build, conversation, pageContext, track]);
 
-  const expand = useCallback(() => setDisplay("fullscreen"), []);
+  const changerVue = useCallback(
+    (vue: VueAssistant) => {
+      track({
+        action: "select",
+        name: EVENEMENT_VUE[vue],
+        dimensions: { conversation_id: conversation?.chat.id },
+      });
+      writePreferenceVue(vue);
+      setAffichage(vue);
+    },
+    [conversation, track],
+  );
 
-  const contract = useCallback(() => setDisplay("floating"), []);
+  // L'historique n'a la place de s'afficher que dans la modale. Y passer pour
+  // le consulter ne change pas la vue préférée.
+  const ouvrirHistorique = useCallback(() => setAffichage("modal"), []);
 
   const minimize = useCallback(() => {
     if (conversation) {
@@ -226,9 +260,9 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
         agentContext: conversation.agentContext,
       });
     }
-    if (display !== "minimized") setDisplayAvantReduction(display);
-    setDisplay("minimized");
-  }, [conversation, display, track]);
+    if (affichage !== "minimized") setVueAvantReduction(affichage);
+    setAffichage("minimized");
+  }, [affichage, conversation, track]);
 
   const restore = useCallback(() => {
     track({
@@ -236,8 +270,8 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       name: "assistant.resume",
       dimensions: { conversation_id: conversation?.chat.id },
     });
-    setDisplay(displayAvantReduction);
-  }, [conversation, displayAvantReduction, track]);
+    setAffichage(vueAvantReduction);
+  }, [conversation, track, vueAvantReduction]);
 
   const close = useCallback(() => {
     track({
@@ -248,8 +282,6 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     conversation?.chat.stop();
     clearMinimizedConversation();
     setConversation(null);
-    setDisplay("floating");
-    setDisplayAvantReduction("floating");
   }, [conversation, track]);
 
   const startNewConversation = useCallback(() => {
@@ -278,7 +310,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       load({
         id,
         agentContext: conversation.agentContext,
-        targetDisplay: "fullscreen",
+        targetDisplay: "modal",
       });
     },
     [conversation, load, track],
@@ -288,11 +320,12 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     () => ({
       conversation,
       display,
+      vuesDisponibles: vuesDisponibles(tailleEcran),
       pageContext,
       setPageContext,
       open,
-      expand,
-      contract,
+      changerVue,
+      ouvrirHistorique,
       minimize,
       restore,
       close,
@@ -302,10 +335,11 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     [
       conversation,
       display,
+      tailleEcran,
       pageContext,
       open,
-      expand,
-      contract,
+      changerVue,
+      ouvrirHistorique,
       minimize,
       restore,
       close,
