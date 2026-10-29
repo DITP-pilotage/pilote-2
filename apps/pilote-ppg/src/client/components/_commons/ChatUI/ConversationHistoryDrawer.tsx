@@ -9,6 +9,7 @@ import {
   grouperConversationsParPeriode,
 } from "@/components/_commons/ChatUI/grouperConversationsParPeriode";
 import { clsxm } from "@/utils/clsxm";
+import { useNow } from "@/client/hooks/useNow";
 
 type Props = {
   chatIdCourant: string | null;
@@ -27,13 +28,14 @@ export const ConversationHistoryDrawer = ({
     onSuccess: () => refetch(),
   });
 
+  const now = useNow();
   const groupes = useMemo(
     () =>
       grouperConversationsParPeriode({
         conversations,
-        maintenant: new Date(),
+        maintenant: now,
       }),
-    [conversations],
+    [conversations, now],
   );
 
   const handleSupprimer = (id: string) => {
@@ -109,7 +111,7 @@ export const ConversationHistoryDrawer = ({
                     >
                       {formaterDateConversation({
                         date: conversation.updatedAt,
-                        maintenant: new Date(),
+                        maintenant: now,
                       })}
                     </span>
                   </button>

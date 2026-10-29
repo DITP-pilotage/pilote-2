@@ -19,6 +19,7 @@ import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampOb
 import { Infobulle } from "@/components/shared/Infobulle";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { useNow } from "@/client/hooks/useNow";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useEnv } from "@/client/hooks/useEnv";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
@@ -44,6 +45,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
   } = useModalePropositionValeurAvancement();
 
   const refreshRouter = useRefreshRouter();
+  const now = useNow();
   const {
     indicateur,
     detailIndicateurDuTerritoire,
@@ -364,7 +366,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<
                       <p className="text-sm print:text-base mb-0">
                         <span className="font-bold">
                           Valeur d'avancement proposée le{" "}
-                          {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
+                          {`${formaterDate(now.toISOString(), "DD/MM/YYYY")}`}{" "}
                           par {auteurModification} :{" "}
                           {reactHookForm.getValues("valeurAvancement")} (
                           {formaterDate(

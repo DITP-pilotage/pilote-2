@@ -1,5 +1,6 @@
 import { getAnneeDateDeBascule } from "@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { useEnv } from "@/client/hooks/useEnv";
+import { useNow } from "@/client/hooks/useNow";
 import { buildJalons } from "@/client/utils/jalons";
 
 const listeJalonAAfficher = buildJalons().map(String);
@@ -9,8 +10,9 @@ export const useSelecteurJalon = () => {
   const dateBasculeValeurAnneePrecedente = useEnv(
     "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
   );
+  const now = useNow();
   const jalonAAfficherParDefaut: JalonsAAfficherType = getAnneeDateDeBascule(
-    new Date(),
+    now,
     dateBasculeValeurAnneePrecedente,
   ).toString();
   const listeOptionsJalon: {

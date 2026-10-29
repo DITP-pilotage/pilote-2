@@ -7,6 +7,7 @@ import {
 } from "nuqs";
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
+import { useNow } from "@/client/hooks/useNow";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
 import { Axe } from "@/shared/axe/Axe.interface";
@@ -28,6 +29,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
   ministères,
   axes,
 }) => {
+  const now = useNow();
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(""),
     axes: parseAsString.withDefault(""),
@@ -154,7 +156,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
           du Gouvernement
         </div>
         <div className="px-24">
-          {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), "DD/MM/YYYY [à] H[h]mm")}`}
+          {`Rapport détaillé généré le ${formaterDate(now.toISOString(), "DD/MM/YYYY [à] H[h]mm")}`}
         </div>
       </div>
       <div className="px-24 py-8 max-h-[20cm]">

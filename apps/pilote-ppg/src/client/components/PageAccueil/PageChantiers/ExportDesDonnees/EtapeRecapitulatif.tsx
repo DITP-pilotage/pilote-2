@@ -6,8 +6,6 @@ import {
 } from "nuqs";
 import { Modale } from "@/components/shared/Modale";
 import { horodatage } from "@/client/utils/date/date";
-import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import { useEnv } from "@/client/hooks/useEnv";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
@@ -76,11 +74,7 @@ export const EtapeRecapitulatif = ({
 }) => {
   const { goToStep } = useExportStep();
 
-  const dataBasculeValeurAnneePrecedente = useEnv(
-    "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
-  );
-
-  const { listeJalonAAfficher } = useSelecteurJalon();
+  const { listeJalonAAfficher, jalonAAfficherParDefaut } = useSelecteurJalon();
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(""),
     meteos: parseAsString.withDefault(""),
@@ -93,10 +87,7 @@ export const EtapeRecapitulatif = ({
       "ARCHIVE",
     ]).withDefault("PUBLIE"),
     jalon: parseAsStringLiteral(listeJalonAAfficher).withDefault(
-      getAnneeDateDeBascule(
-        new Date(),
-        dataBasculeValeurAnneePrecedente,
-      ).toString(),
+      jalonAAfficherParDefaut,
     ),
     optionsExport: parseAsString.withDefault("identifiant"),
     isAvecFiltre: parseAsBoolean.withDefault(false),

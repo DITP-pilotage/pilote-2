@@ -14,6 +14,7 @@ import { TableauFicheTerritoriale } from "@/components/PageFicheTerritoriale/Tab
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { FicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
+import { useNow } from "@/client/hooks/useNow";
 
 export const PageFicheTerritoriale: FunctionComponent<
   FicheTerritorialeContrat
@@ -26,7 +27,7 @@ export const PageFicheTerritoriale: FunctionComponent<
 }) => {
   usePrintPageStyle("margin: 0.5cm 0 1.5cm");
 
-  const now = new Date();
+  const now = useNow();
 
   return (
     <div className="print:[&_.text-lead]:text-[0.8rem] print:[&_.text-lg]:text-[0.9rem] print:[&_.text-base]:text-[0.8rem] print:[&_.text-base]:leading-[1.1rem] print:[&_.text-sm:not([data-badge])]:text-[0.6rem] print:[&_.text-sm:not([data-badge])]:leading-4 print:[&_.text-xs:not([data-badge])]:text-[0.6rem] print:[&_.text-xs:not([data-badge])]:leading-4 print:[&_.bloc\_\_contenu]:pt-2 print:[&_.marianne-logo]:text-[0.8rem] print:[&_.marianne-logo]:after:bg-[position:0_calc(100%+0.875rem)] print:[&_.marianne-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.marianne-logo]:before:mb-0 print:[&_.marianne-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.marianne-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
