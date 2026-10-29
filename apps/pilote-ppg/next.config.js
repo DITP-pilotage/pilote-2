@@ -10,6 +10,11 @@ const nextConfig = {
   },
   experimental: {
     turbopackFileSystemCacheForBuild: process.env.CI !== "true",
+    // Activé par défaut depuis Next 16.4 : le bootstrap Turbopack est inliné dans le HTML.
+    // Les pages pré-rendues au build n'ont pas de nonce, la CSP de `proxy.ts` le bloque et
+    // la page ne s'hydrate pas. https://github.com/vercel/next.js/issues/99800 est close,
+    // mais ne couvre que l'App Router : toujours cassé en Pages Router en 16.4.3.
+    turbopackSharedRuntime: false,
   },
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, '../..'),
