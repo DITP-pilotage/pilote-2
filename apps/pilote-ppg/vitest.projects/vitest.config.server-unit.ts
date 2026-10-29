@@ -4,7 +4,7 @@ export default defineProject({
   resolve: { tsconfigPaths: true },
   test: {
     name: "server-unit",
-    root: "./",
+    root: "../",
     environment: "node",
     include: [
       "src/server/**/*.unit.test.{ts,tsx}",

@@ -4,7 +4,7 @@ export default defineProject({
   resolve: { tsconfigPaths: true },
   test: {
     name: "server-integration",
-    root: "./",
+    root: "../",
     environment: "node",
     // Les helpers d'eval qui sèment la base sont testés à côté, comme leurs
     // tests unitaires dans le projet server-unit.
