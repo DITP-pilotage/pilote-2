@@ -16,3 +16,14 @@ minimumReleaseAgeExclude:
   # next et @next/* relèvent d'une politique permanente, pas d'un contournement daté.
   - next
   - "@next/*"
+  # expire: 2026-11-02
+  # Correctif d'advisories fast-uri (scheme spoofing, host confusion) : 3.1.9 et 4.2.3, publiés
+  # le 2026-10-19. Exclusion par nom car pnpm 10.28 ignore la forme `fast-uri@4.2.3` pour une
+  # dépendance transitive ; les overrides épinglent les versions exactes pour que l'exclusion ne
+  # laisse passer qu'elles. À l'échéance : retirer l'exclusion et repasser les overrides en plancher.
+  - fast-uri
+  # expire: 2026-11-01
+  # Correctif d'advisories seroval (injection via typed array et RegExp) : 1.6.11, publié le
+  # 2026-10-18. Même mécanisme : l'override épingle 1.6.11, sans lui la résolution prend 1.7.3
+  # publiée la veille.
+  - seroval
