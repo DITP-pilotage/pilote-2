@@ -62,6 +62,10 @@ export class KeycloakBrevoProfilModifieSideEffects implements ProfilModifieSideE
   }
 
   private async updateKeycloakUser(profil: ProfilUtilisateur): Promise<void> {
+    if (!this.keycloakUrl.startsWith("http")) {
+      return;
+    }
+
     const kcAdminClient = new KcAdminClient({
       baseUrl: this.keycloakUrl,
       realmName: KEYCLOAK_REALM,
