@@ -2,13 +2,17 @@ import { Page, expect } from "@playwright/test";
 
 const NOM_ASSISTANT = "Assistant IA PILOTE";
 
+type Vue = "Panneau latéral" | "Fenêtre flottante" | "Plein écran";
+
 export class AssistantIAComponent {
   constructor(private readonly page: Page) {}
 
   get lanceur() {
-    return this.page.getByRole("button", {
-      name: new RegExp(`Demander à l'${NOM_ASSISTANT}`),
-    });
+    return this.page.getByRole("button", { name: /Demander à l'assistant/ });
+  }
+
+  private get reprendre() {
+    return this.page.getByRole("button", { name: /^Reprendre/ });
   }
 
   private get modale() {
@@ -23,8 +27,14 @@ export class AssistantIAComponent {
     return this.page.getByRole("region", { name: NOM_ASSISTANT });
   }
 
-  private get selecteurVue() {
-    return this.page.getByRole("group", { name: "Affichage de l'assistant" });
+  private get boutonVue() {
+    return this.page.getByRole("button", { name: /^Affichage/ });
+  }
+
+  private get poigneePanneau() {
+    return this.page.getByRole("separator", {
+      name: "Largeur du panneau de l'assistant",
+    });
   }
 
   private get saisie() {
@@ -35,20 +45,38 @@ export class AssistantIAComponent {
     await this.lanceur.click();
   }
 
-  async choisirVue(
-    libelle: "Fenêtre flottante" | "Panneau latéral" | "Plein écran",
-  ): Promise<void> {
-    await this.selecteurVue.getByRole("button", { name: libelle }).click();
+  async masquer(): Promise<void> {
+    await this.page
+      .getByRole("button", { name: "Masquer l'assistant" })
+      .click();
+  }
+
+  async reprendreLaConversation(): Promise<void> {
+    await this.reprendre.click();
+  }
+
+  async choisirVue(vue: Vue): Promise<void> {
+    await this.boutonVue.click();
+    await this.page.getByRole("menuitemradio", { name: vue }).click();
+  }
+
+  async nouvelleConversation(): Promise<void> {
+    await this.page
+      .getByRole("button", { name: "Nouvelle conversation" })
+      .click();
+  }
+
+  async ouvrirHistorique(): Promise<void> {
+    await this.page.getByTitle("Historique des conversations").click();
+  }
+
+  async elargirPanneauAuClavier(): Promise<void> {
+    await this.poigneePanneau.focus();
+    await this.page.keyboard.press("ArrowLeft");
   }
 
   async saisir(texte: string): Promise<void> {
     await this.saisie.fill(texte);
-  }
-
-  async fermer(): Promise<void> {
-    await this.page
-      .getByRole("button", { name: `Fermer l'${NOM_ASSISTANT}` })
-      .click();
   }
 
   async expectModale(): Promise<void> {
@@ -65,12 +93,30 @@ export class AssistantIAComponent {
     await expect(this.panneau).toHaveCount(0);
   }
 
+  async expectLargeurPanneau(largeur: number): Promise<void> {
+    await expect(this.poigneePanneau).toHaveAttribute(
+      "aria-valuenow",
+      String(largeur),
+    );
+  }
+
+  async expectHistorique(): Promise<void> {
+    await expect(
+      this.page.getByRole("dialog", { name: "Historique des conversations" }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("searchbox", {
+        name: "Rechercher une conversation",
+      }),
+    ).toBeVisible();
+  }
+
   async expectSelecteurVue(): Promise<void> {
-    await expect(this.selecteurVue).toBeVisible();
+    await expect(this.boutonVue).toBeVisible();
   }
 
   async expectSansSelecteurVue(): Promise<void> {
-    await expect(this.selecteurVue).toHaveCount(0);
+    await expect(this.boutonVue).toHaveCount(0);
   }
 
   async expectSaisie(texte: string): Promise<void> {
@@ -79,5 +125,9 @@ export class AssistantIAComponent {
 
   async expectFerme(): Promise<void> {
     await expect(this.lanceur).toBeVisible();
+  }
+
+  async expectMasquee(): Promise<void> {
+    await expect(this.reprendre).toBeVisible();
   }
 }
