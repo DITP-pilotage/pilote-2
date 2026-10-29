@@ -136,7 +136,7 @@ export const BasePageChantierLayout = ({
         />
       </BarreLatérale>
       <main
-        className={clsx("pb-10 w-full print:mx-[12mm]", {
+        className={clsx("pb-10 w-full min-w-0 print:mx-[12mm]", {
           "bg-dsfr-grey-1000": estChantierArchive,
         })}
       >
