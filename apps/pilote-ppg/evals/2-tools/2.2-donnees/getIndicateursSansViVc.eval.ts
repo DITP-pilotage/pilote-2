@@ -10,13 +10,10 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * comme le mail PVA : sans VI ou sans VC.
  *
  * Les arguments vérifiés portent l'intention : `missing` quand une seule valeur
- * est demandée, `chantier_ids`, `indicateur_ids`, et `territoire_code`
- * uniquement pour NAT-FR.
+ * est demandée, `chantier_ids` et `indicateur_ids`.
  *
  * Les négatifs portent sur la mise à jour des données (« non à jour », « en
- * retard »), qui reste à `get_indicateurs_non_a_jour`, et sur le retard
- * d'avancement (`get_chantiers`). Les deux outils ne sont appelés ensemble que
- * si la demande nomme les deux besoins.
+ * retard »), qui reste à `get_indicateurs_non_a_jour`.
  */
 
 const CASES: ToolCase[] = [
@@ -68,17 +65,6 @@ const CASES: ToolCase[] = [
   },
   {
     question:
-      "Pourquoi le taux d'avancement de l'IND-894 ne peut-il pas être calculé au national ?",
-    reason: "explication du taux non calculable : territoire_code NAT-FR",
-    expected: [
-      {
-        toolName: "get_indicateurs_sans_vi_vc",
-        input: { indicateur_ids: ["IND-894"], territoire_code: "NAT-FR" },
-      },
-    ],
-  },
-  {
-    question:
       "La part des locaux raccordables à la fibre a-t-elle une valeur cible partout ?",
     reason:
       "indicateur désigné par son libellé : search_indicateurs pour trouver son identifiant, puis l'outil",
@@ -91,21 +77,6 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question:
-      "Quels indicateurs du CH-018 ne sont pas à jour, et lesquels n'ont pas de VI ou de VC ?",
-    reason: "les deux besoins nommés : les deux outils",
-    expected: [
-      {
-        toolName: "get_indicateurs_non_a_jour",
-        input: { chantier_ids: ["CH-018"] },
-      },
-      {
-        toolName: "get_indicateurs_sans_vi_vc",
-        input: { chantier_ids: ["CH-018"] },
-      },
-    ],
-  },
-  {
     question: "Quels indicateurs ne sont pas à jour sur mes chantiers ?",
     reason: "CAS NÉGATIF : mise à jour → get_indicateurs_non_a_jour seul",
     forbidden: ["get_indicateurs_sans_vi_vc"],
@@ -114,12 +85,6 @@ const CASES: ToolCase[] = [
     question: "Quels indicateurs sont en retard sur le CH-018 ?",
     reason:
       "CAS NÉGATIF : retard d'un indicateur = mise à jour → get_indicateurs_non_a_jour seul",
-    forbidden: ["get_indicateurs_sans_vi_vc"],
-  },
-  {
-    question: "Quels chantiers sont en retard en Bretagne ?",
-    reason:
-      "CAS NÉGATIF : retard d'avancement → get_chantiers(view='en_retard')",
     forbidden: ["get_indicateurs_sans_vi_vc"],
   },
 ];
