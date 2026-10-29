@@ -62,3 +62,39 @@ export const bornerLargeurPanneau = ({
   );
   return Math.round(Math.min(max, Math.max(LARGEUR_PANNEAU.min, largeur)));
 };
+
+export const TAILLE_FENETRE = {
+  largeur: { min: 360, max: 720, parDefaut: 440 },
+  hauteur: { min: 400, parDefaut: 896 },
+} as const;
+
+// Marge entre la fenêtre et les bords de l'écran (bottom-4 / right-4).
+const MARGE_FENETRE = 16;
+
+export type TailleFenetre = { largeur: number; hauteur: number };
+
+const borner = (valeur: number, min: number, max: number) =>
+  Math.round(Math.min(Math.max(min, max), Math.max(min, valeur)));
+
+// La fenêtre est ancrée en bas à droite : elle grandit vers le haut et vers
+// la gauche, sans jamais sortir de l'écran.
+export const bornerTailleFenetre = ({
+  taille,
+  largeurEcran,
+  hauteurEcran,
+}: {
+  taille: TailleFenetre;
+  largeurEcran: number;
+  hauteurEcran: number;
+}): TailleFenetre => ({
+  largeur: borner(
+    taille.largeur,
+    TAILLE_FENETRE.largeur.min,
+    Math.min(TAILLE_FENETRE.largeur.max, largeurEcran - 2 * MARGE_FENETRE),
+  ),
+  hauteur: borner(
+    taille.hauteur,
+    TAILLE_FENETRE.hauteur.min,
+    hauteurEcran - 2 * MARGE_FENETRE,
+  ),
+});
