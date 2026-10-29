@@ -1,10 +1,8 @@
 import {
   useEffect,
-  useRef,
   useState,
   type KeyboardEvent,
   type PointerEvent,
-  type RefObject,
 } from "react";
 import {
   useAlbertConversation,
@@ -22,39 +20,6 @@ import {
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 
 const PAS_CLAVIER_PX = 20;
-
-// Tant que l'en-tête de la page est visible, le panneau commence sous lui :
-// sa hauteur s'arrête au bas de l'écran pour que la saisie reste visible.
-const useHauteurJusquAuBasDeLEcran = (
-  ref: RefObject<HTMLElement | null>,
-): number | undefined => {
-  const [hauteur, setHauteur] = useState<number>();
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    let frame = 0;
-    const mesurer = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const haut = Math.max(element.getBoundingClientRect().top, 0);
-        setHauteur(window.innerHeight - haut);
-      });
-    };
-
-    mesurer();
-    window.addEventListener("scroll", mesurer, { passive: true });
-    window.addEventListener("resize", mesurer);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", mesurer);
-      window.removeEventListener("resize", mesurer);
-    };
-  }, [ref]);
-
-  return hauteur;
-};
 
 // La largeur se règle en tirant le bord gauche, ou aux flèches du clavier
 // sur la poignée ; elle est retenue au relâchement.
@@ -91,8 +56,6 @@ const useLargeurPanneau = () => {
 };
 
 const Panneau = ({ conversation }: { conversation: CurrentConversation }) => {
-  const ref = useRef<HTMLElement>(null);
-  const hauteur = useHauteurJusquAuBasDeLEcran(ref);
   const { largeur, changer } = useLargeurPanneau();
   const [redimensionne, setRedimensionne] = useState(false);
 
@@ -119,11 +82,10 @@ const Panneau = ({ conversation }: { conversation: CurrentConversation }) => {
   return (
     <aside
       aria-label={NOM_ASSISTANT}
-      className="sticky top-0 z-[2] flex shrink-0 flex-col border-l border-dsfr-grey-900 bg-white print:hidden"
-      ref={ref}
+      className="sticky top-0 z-[2] flex h-screen shrink-0 flex-col border-l border-dsfr-grey-900 bg-white print:hidden"
       // En style et pas en classe : Tailwind est configuré en important et
-      // l'emporterait sur les dimensions calculées.
-      style={{ width: largeur, height: hauteur ?? "100vh" }}
+      // l'emporterait sur la largeur choisie.
+      style={{ width: largeur }}
     >
       <div
         aria-label="Largeur du panneau de l'assistant"
@@ -161,8 +123,9 @@ const Panneau = ({ conversation }: { conversation: CurrentConversation }) => {
   );
 };
 
-// Colonne de la mise en page, à côté du contenu : le panneau pousse la page
-// au lieu de la recouvrir, et reste visible pendant qu'elle défile.
+// Colonne de droite de la mise en page, du haut au bas de l'écran : le
+// panneau pousse toute la page au lieu de la recouvrir, et reste visible
+// pendant qu'elle défile.
 export const AlbertPanneauLateral = () => {
   const { conversation, display } = useAlbertConversation();
 

@@ -95,7 +95,12 @@ export const useAlbertPageContext = (pageContext: AlbertPageContext) => {
   }, [pageContext, setPageContext]);
 };
 
-export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
+// Monté au-dessus de toute la page (le panneau latéral en est la colonne de
+// droite) : il n'agit qu'une fois l'utilisateur connecté.
+export const AlbertConversationProvider = ({
+  actif,
+  children,
+}: PropsWithChildren<{ actif: boolean }>) => {
   const [conversation, setConversation] = useState<CurrentConversation | null>(
     null,
   );
@@ -191,7 +196,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
   const restoredFromStorage = useRef(false);
 
   useEffect(() => {
-    if (restoredFromStorage.current) return;
+    if (!actif || restoredFromStorage.current) return;
     restoredFromStorage.current = true;
 
     const stored = readMinimizedConversation();
@@ -202,7 +207,7 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       agentContext: stored.agentContext,
       targetDisplay: "minimized",
     });
-  }, [load]);
+  }, [actif, load]);
 
   const open = useCallback(() => {
     if (conversation) {
