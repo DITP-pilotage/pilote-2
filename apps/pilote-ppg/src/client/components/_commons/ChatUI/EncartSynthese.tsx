@@ -155,7 +155,7 @@ export const EncartSynthese = ({
                     className="h-4 w-4 text-dsfr-blue-france-sun-113"
                     icone={ClipboardIcon}
                   />
-                  Copier le texte (markdown)
+                  Copier l'encart (markdown)
                 </Dropdown.Item>
                 <Dropdown.Item
                   className="m-0 px-2 py-2"

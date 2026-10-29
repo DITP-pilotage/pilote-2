@@ -132,22 +132,6 @@ export const helpCenterContactEvent: AssistantEvent = {
 
 type ExportName = Extract<AnalyticsEventName, `export.${string}`>;
 
-// Un encart rédigé s'exporte depuis son bouton « Exporter » (PIL-1900)
-const encartsExportables = (message: PiloteUIMessage) =>
-  (message.parts ?? []).filter(
-    (part) =>
-      (part.type === "tool-rediger_synthese_territoire" ||
-        part.type === "tool-rediger_comparaison_territoires") &&
-      part.state === "output-available" &&
-      part.output.termine &&
-      !part.output.acces_refuse,
-  );
-
-/**
- * Les copies de la barre d'actions. Une réponse qui porte un encart rédigé
- * n'a pas « Copier le texte » : l'encart, qui est le contenu de la réponse,
- * se copie depuis son propre bouton.
- */
 export const copyExportNames = (message: PiloteUIMessage): ExportName[] => {
   const parts = message.parts ?? [];
   const hasText = parts.some(
@@ -158,9 +142,8 @@ export const copyExportNames = (message: PiloteUIMessage): ExportName[] => {
       part.type === "tool-create_dashboard" &&
       part.state === "output-available",
   );
-  const hasEncart = encartsExportables(message).length > 0;
   return [
-    ...(hasText && !hasEncart ? (["export.text"] as const) : []),
+    ...(hasText ? (["export.text"] as const) : []),
     ...(hasDashboard ? (["export.dashboard_image"] as const) : []),
   ];
 };
@@ -172,8 +155,15 @@ export const exportsAvailableEvents = ({
   conversationId: string;
   message: PiloteUIMessage;
 }): AssistantEvent[] => {
-  const reports = encartsExportables(message).flatMap(
-    () => ["export.report_copy", "export.report_pdf"] as const,
+  // Un encart rédigé se copie ou se télécharge en PDF : c'est le rapport (PIL-1900)
+  const reports = (message.parts ?? []).flatMap((part) =>
+    (part.type === "tool-rediger_synthese_territoire" ||
+      part.type === "tool-rediger_comparaison_territoires") &&
+    part.state === "output-available" &&
+    part.output.termine &&
+    !part.output.acces_refuse
+      ? (["export.report_copy", "export.report_pdf"] as const)
+      : [],
   );
   return [...copyExportNames(message), ...reports].map((name) => ({
     action: "view",
