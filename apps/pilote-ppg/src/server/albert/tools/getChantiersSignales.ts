@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdsSchema } from "@/server/albert/tools/chantierId";
 import { $Enums } from "@prisma/client";
 import type {
   GetChantiersSignalesDetailQuery,
@@ -50,8 +51,7 @@ export const getChantiersSignalesInputSchema = z.object({
     .describe(
       "Catégories de signalement demandées. Absent = toutes les catégories applicables à la maille du territoire interrogé.",
     ),
-  chantier_ids: z
-    .array(z.string())
+  chantier_ids: chantierIdsSchema
     .optional()
     .describe(
       "Identifiants de chantiers (ex: ['CH-001', 'CH-042']). Si fourni, restreint la recherche à ces chantiers.",

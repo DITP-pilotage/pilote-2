@@ -1,10 +1,11 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdSchema } from "@/server/albert/tools/chantierId";
 import { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 
 export const getChantierIndicateursInputSchema = z.object({
-  chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
+  chantier_id: chantierIdSchema,
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),

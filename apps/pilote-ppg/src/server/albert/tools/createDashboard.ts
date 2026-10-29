@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdSchema } from "@/server/albert/tools/chantierId";
 import {
   composeDashboardInputSchema,
   type ComposeDashboardInput,
@@ -11,7 +12,7 @@ import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetInd
 import { codeMeteoDepuisLibelle } from "@/server/albert/tools/libelles";
 
 const chantierContextSchema = z.object({
-  id: z.string().describe("Identifiant du chantier (ex: CH-064)"),
+  id: chantierIdSchema,
   nom: z.string().describe("Nom complet du chantier"),
   statut: z
     .enum(["en_retard", "en_difficulte"])

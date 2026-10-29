@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdsSchema } from "@/server/albert/tools/chantierId";
 import type {
   ChantierIndicateursNonAJour,
   GetIndicateursNonAJourQuery,
@@ -10,8 +11,7 @@ import type {
 } from "@/server/chantiers/query/GetIndicateurContexteQuery";
 
 export const getIndicateursNonAJourInputSchema = z.object({
-  chantier_ids: z
-    .array(z.string())
+  chantier_ids: chantierIdsSchema
     .optional()
     .default([])
     .describe(

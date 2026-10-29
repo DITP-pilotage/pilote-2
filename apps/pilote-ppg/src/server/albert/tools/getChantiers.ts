@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdsSchema } from "@/server/albert/tools/chantierId";
 import { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQuery";
 import type {
   ChantierResult,
@@ -45,8 +46,7 @@ export const getChantiersInputSchema = z.object({
     .min(2022)
     .max(new Date().getFullYear())
     .describe("Année du jalon (ex: 2024, 2025)"),
-  chantier_ids: z
-    .array(z.string())
+  chantier_ids: chantierIdsSchema
     .optional()
     .describe(
       "Identifiants de chantiers (ex: ['CH-001', 'CH-042']). Si fourni, restreint la recherche à ces chantiers. Combinable avec les autres filtres.",
