@@ -574,8 +574,8 @@ importers:
         specifier: ^5.9.1
         version: 5.9.1(@sinclair/typebox@0.34.52)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.20.0)(react-hook-form@7.90.0(@types/react@19.3.0)(react@19.3.1))(valibot@1.4.2(typescript@7.0.2))(zod@4.6.7)
       '@keycloak/keycloak-admin-client':
-        specifier: 26.7.3
-        version: 26.7.3
+        specifier: 26.8.1
+        version: 26.8.1
       '@next/env':
         specifier: 16.3.8
         version: 16.3.8
@@ -1950,8 +1950,8 @@ packages:
     resolution: {integrity: sha512-hloP58zRVCRSpgDxmqCWJNlizAlUgJFqG2ypq79DCvyv9tHjRYMDOcPFjzfl/A1/YxDvRCZz8wvZvmapQnKwFQ==}
     engines: {node: '>=12'}
 
-  '@keycloak/keycloak-admin-client@26.7.3':
-    resolution: {integrity: sha512-y9wbqcaoRjCvTF+XKaCDTBbHjuFZPbDKS/BRUzIwEBG/prHJ7YuCIsN61FzWzAVAQpvjed5YZ8x9C1/ijGV3mw==}
+  '@keycloak/keycloak-admin-client@26.8.1':
+    resolution: {integrity: sha512-1l69rXFuMOw0nQ98u2sZLrVqrSugb0QSx+Pan9cqL0b1xfWBWfVt9MjXqCSpv0BEBvig/NUz7TJm6/ugiW3r4A==}
     engines: {node: '>=18'}
 
   '@kobalte/core@0.13.14':
@@ -7978,7 +7978,7 @@ snapshots:
     dependencies:
       jsbi: 4.3.2
 
-  '@keycloak/keycloak-admin-client@26.7.3':
+  '@keycloak/keycloak-admin-client@26.8.1':
     dependencies:
       '@microsoft/kiota-abstractions': 1.0.0-preview.103
       '@microsoft/kiota-http-fetchlibrary': 1.0.0-preview.103
