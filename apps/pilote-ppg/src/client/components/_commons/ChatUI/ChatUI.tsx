@@ -25,6 +25,7 @@ import type {
   ContexteAccueil,
 } from "@/components/_commons/ChatUI/ChatEmptyState";
 import { Icone } from "@/components/_commons/Icone";
+import { MapPin2Icon } from "@/components/_commons/Icones/MapPin2Icon";
 import { ArrowDownCircleIcon } from "@/components/_commons/Icones/ArrowDownCircleIcon";
 import {
   lastLlmCallId,
@@ -224,6 +225,13 @@ export const ChatUI = ({
                 )}
 
                 <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+                  {contexteAccueil && messages.length > 0 ? (
+                    <span className="inline-flex h-6 items-center gap-1.5 self-start border border-dsfr-blue-france-925 bg-dsfr-blue-france-950 px-2 text-xs font-medium leading-4 text-primary">
+                      <Icone className="h-3.5 w-3.5" icone={MapPin2Icon} />
+                      {contexteAccueil.territoireNom} · Jalon{" "}
+                      {contexteAccueil.jalon}
+                    </span>
+                  ) : null}
                   {messages.map((message, index) => {
                     const estDernier = index === messages.length - 1;
 

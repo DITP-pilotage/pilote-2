@@ -33,6 +33,7 @@ export const ANALYTICS_EVENT_NAMES = [
   "assistant.view.side_panel",
   "assistant.view.floating",
   "conversation.history.open",
+  "conversation.new",
   "prompt_proposition.view",
   "prompt_proposition.click",
   "prompt_proposition.send",
