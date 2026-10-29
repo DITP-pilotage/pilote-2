@@ -61,8 +61,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@19.3.1)
       '@hono/node-server':
-        specifier: 2.1.1
-        version: 2.1.1(hono@4.13.13)
+        specifier: 2.1.5
+        version: 2.1.5(hono@4.13.13)
       '@hono/zod-validator':
         specifier: ^0.9.1
         version: 0.9.1(hono@4.13.13)(zod@4.6.7)
@@ -239,8 +239,8 @@ importers:
         specifier: ^4.0.94
         version: 4.0.94(zod@4.6.7)
       '@hono/node-server':
-        specifier: 2.1.1
-        version: 2.1.1(hono@4.13.13)
+        specifier: 2.1.5
+        version: 2.1.5(hono@4.13.13)
       '@hono/swagger-ui':
         specifier: ^0.6.1
         version: 0.6.1(hono@4.13.13)
@@ -348,8 +348,8 @@ importers:
   apps/kpilote-webapp:
     dependencies:
       '@hono/node-server':
-        specifier: 2.1.1
-        version: 2.1.1(hono@4.13.13)
+        specifier: 2.1.5
+        version: 2.1.5(hono@4.13.13)
       '@hookform/resolvers':
         specifier: ^5.9.1
         version: 5.9.1(@sinclair/typebox@0.34.52)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.20.0)(react-hook-form@7.90.0(@types/react@19.3.0)(react@19.3.1))(valibot@1.4.2(typescript@7.0.2))(zod@4.6.7)
@@ -1591,12 +1591,6 @@ packages:
   '@hono/node-server@1.19.17':
     resolution: {integrity: sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ==}
     engines: {node: '>=18.14.1'}
-    peerDependencies:
-      hono: '>=4.13.5 <5'
-
-  '@hono/node-server@2.1.1':
-    resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
-    engines: {node: '>=20'}
     peerDependencies:
       hono: '>=4.13.5 <5'
 
@@ -7769,10 +7763,6 @@ snapshots:
   '@getbrevo/brevo@6.1.0': {}
 
   '@hono/node-server@1.19.17(hono@4.13.13)':
-    dependencies:
-      hono: 4.13.13
-
-  '@hono/node-server@2.1.1(hono@4.13.13)':
     dependencies:
       hono: 4.13.13
 
