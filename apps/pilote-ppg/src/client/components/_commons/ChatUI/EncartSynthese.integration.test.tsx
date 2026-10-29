@@ -31,7 +31,27 @@ const renderEncart = (output: EncartOutput, isStreaming = true) =>
     </ChantierLinksProvider>,
   );
 
+// Le menu « Exporter » (radix) se positionne avec ResizeObserver, absent de jsdom.
+class FakeResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+const ouvrirExporter = () =>
+  fireEvent.keyDown(screen.getByRole("button", { name: /Exporter/ }), {
+    key: "Enter",
+  });
+
 describe("EncartSynthese", () => {
+  beforeEach(() => {
+    vi.stubGlobal("ResizeObserver", FakeResizeObserver);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   test("avant l'arrivée du texte, affiche l'en-tête et l'état de rédaction", () => {
     // When
     renderEncart(encart({ markdown: "", termine: false }));
@@ -72,14 +92,17 @@ describe("EncartSynthese", () => {
     expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
   });
 
-  test("une fois rédigé, copie son markdown dans le presse-papiers", async () => {
+  test("une fois rédigé, s'exporte en markdown dans le presse-papiers", async () => {
     // Given
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.assign(navigator, { clipboard: { writeText } });
     renderEncart(encart({ termine: true }), false);
 
     // When
-    fireEvent.click(screen.getByRole("button", { name: /Copier/ }));
+    ouvrirExporter();
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /Copier le texte/ }),
+    );
 
     // Then
     await waitFor(() =>
@@ -90,7 +113,10 @@ describe("EncartSynthese", () => {
   test("une fois rédigé, se télécharge en PDF sous le nom de son titre", async () => {
     // When
     renderEncart(encart({ termine: true }), false);
-    fireEvent.click(screen.getByRole("button", { name: /Télécharger en PDF/ }));
+    ouvrirExporter();
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /Télécharger en PDF/ }),
+    );
 
     // Then
     await waitFor(() =>
@@ -107,10 +133,7 @@ describe("EncartSynthese", () => {
 
     // Then
     expect(
-      screen.queryByRole("button", { name: /Copier/ }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /Télécharger en PDF/ }),
+      screen.queryByRole("button", { name: /Exporter/ }),
     ).not.toBeInTheDocument();
   });
 

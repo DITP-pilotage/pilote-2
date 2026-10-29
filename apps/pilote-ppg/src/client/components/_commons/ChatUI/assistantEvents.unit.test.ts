@@ -255,6 +255,15 @@ describe("copyExportNames", () => {
     expect(copyExportNames(assistantMessage)).toEqual(["export.text"]);
   });
 
+  it("ne copie pas le texte d'une réponse qui porte un encart rédigé", () => {
+    expect(
+      copyExportNames({
+        ...assistantMessage,
+        parts: [...assistantMessage.parts, encartPart(true)],
+      }),
+    ).toEqual([]);
+  });
+
   it("copie séparément le texte et l'image quand un dashboard est affiché", () => {
     expect(
       copyExportNames({
@@ -291,7 +300,7 @@ describe("exportsAvailableEvents", () => {
     ]);
   });
 
-  it("compte les exports d'un encart rédigé, pas d'un encart en cours", () => {
+  it("remplace « Copier le texte » par les exports d'un encart rédigé", () => {
     const events = exportsAvailableEvents({
       conversationId: "conv-1",
       message: {
@@ -302,9 +311,23 @@ describe("exportsAvailableEvents", () => {
 
     const dimensions = { conversation_id: "conv-1", llm_call_id: "llm-1" };
     expect(events).toEqual([
-      { action: "view", name: "export.text", dimensions },
       { action: "view", name: "export.report_copy", dimensions },
       { action: "view", name: "export.report_pdf", dimensions },
+    ]);
+  });
+
+  it("garde « Copier le texte » quand l'encart n'est pas rédigé", () => {
+    const events = exportsAvailableEvents({
+      conversationId: "conv-1",
+      message: {
+        ...assistantMessage,
+        parts: [...assistantMessage.parts, encartPart(false)],
+      },
+    });
+
+    const dimensions = { conversation_id: "conv-1", llm_call_id: "llm-1" };
+    expect(events).toEqual([
+      { action: "view", name: "export.text", dimensions },
     ]);
   });
 });

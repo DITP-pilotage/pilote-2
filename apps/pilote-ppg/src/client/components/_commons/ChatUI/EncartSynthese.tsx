@@ -10,9 +10,12 @@ import {
   nomEncart,
 } from "@/components/_commons/ChatUI/exporterEncart";
 import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { DownloadIcon } from "@/components/_commons/Icones/DownloadIcon";
+import { FileTextIcon } from "@/components/_commons/Icones/FileTextIcon";
 import { Button } from "@/components/shared/Button";
+import { Dropdown } from "@/components/shared/Dropdown";
 import type { EncartOutput } from "@/server/albert/tools/encart";
 
 const TYPES: Record<EncartOutput["type"], string> = {
@@ -23,8 +26,9 @@ const TYPES: Record<EncartOutput["type"], string> = {
 /**
  * La synthèse ou la comparaison rédigée par le sous-agent (PIL-1900), mise en
  * page comme une note : elle se remplit au fil de la rédaction et déborde de
- * la colonne de discussion sur grand écran. Une fois rédigée, elle se copie
- * en markdown ou se télécharge en PDF : c'est le rapport de la synthèse.
+ * la colonne de discussion sur grand écran. Une fois rédigée, son bouton
+ * « Exporter » la copie en markdown ou la télécharge en PDF : c'est le rapport
+ * de la synthèse.
  */
 export const EncartSynthese = ({
   output,
@@ -120,30 +124,52 @@ export const EncartSynthese = ({
       <AssistantMessageText streaming={enCours} text={output.markdown} />
       {output.termine && (
         <footer
-          className="mt-6 flex flex-wrap justify-end gap-3 border-t border-dsfr-grey-925 pt-4"
+          className="mt-6 flex justify-end border-t border-dsfr-grey-925 pt-4"
           {...horsImpression()}
         >
-          <Button
-            iconLeft={
-              <Icone className="h-4 w-4 text-current" icone={ClipboardIcon} />
-            }
-            onClick={copier}
-            size="sm"
-            title="Copier le texte de l'encart, en markdown, dans le presse-papiers"
-            variant="tertiary"
-          >
-            Copier
-          </Button>
-          <Button
-            iconLeft={
-              <Icone className="h-4 w-4 text-current" icone={DownloadIcon} />
-            }
-            onClick={telechargerPdf}
-            size="sm"
-            variant="secondary"
-          >
-            Télécharger en PDF
-          </Button>
+          <Dropdown.Root>
+            <Dropdown.Trigger asChild>
+              <Button
+                iconLeft={
+                  <Icone
+                    className="h-4 w-4 text-current"
+                    icone={DownloadIcon}
+                  />
+                }
+                iconRight={
+                  <Icone
+                    className="h-4 w-4 text-current"
+                    icone={ArrowSLine2Icon}
+                  />
+                }
+                size="sm"
+                variant="secondary"
+              >
+                Exporter
+              </Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content align="end" className="w-64">
+              <div className="-mx-2 flex flex-col">
+                <Dropdown.Item className="m-0 px-2 py-2" onSelect={copier}>
+                  <Dropdown.Icone
+                    className="h-4 w-4 text-dsfr-blue-france-sun-113"
+                    icone={ClipboardIcon}
+                  />
+                  Copier le texte (markdown)
+                </Dropdown.Item>
+                <Dropdown.Item
+                  className="m-0 px-2 py-2"
+                  onSelect={telechargerPdf}
+                >
+                  <Dropdown.Icone
+                    className="h-4 w-4 text-dsfr-blue-france-sun-113"
+                    icone={FileTextIcon}
+                  />
+                  Télécharger en PDF
+                </Dropdown.Item>
+              </div>
+            </Dropdown.Content>
+          </Dropdown.Root>
         </footer>
       )}
     </article>

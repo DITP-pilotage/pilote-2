@@ -67,8 +67,8 @@ Ne l'utilise pas pour :
 - un chantier ou un indicateur précis → les outils de données ;
 - un seul territoire → rediger_synthese_territoire ;
 - un graphique → create_dashboard.
-Un rapport ou un téléchargement de la synthèse passe aussi par cet outil : l'encart se copie ou se télécharge en PDF depuis ses boutons. Il collecte ses données lui-même : n'appelle pas en plus les outils de données pour la même demande.
-L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu ; elle peut indiquer que ses boutons le copient ou le téléchargent en PDF.`,
+Un rapport ou un téléchargement de la synthèse passe aussi par cet outil : l'encart se copie ou se télécharge en PDF depuis son bouton « Exporter ». Il collecte ses données lui-même : n'appelle pas en plus les outils de données pour la même demande.
+L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu ni décrire ses boutons.`,
       inputSchema: redigerComparaisonTerritoiresInputSchema,
       execute: async function* (
         { perimetre, jalon },

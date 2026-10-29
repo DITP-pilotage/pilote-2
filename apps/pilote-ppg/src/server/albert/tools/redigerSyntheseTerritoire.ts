@@ -46,8 +46,8 @@ Ne l'utilise pas pour :
 - un chantier ou un indicateur précis → les outils de données ;
 - plusieurs territoires → rediger_comparaison_territoires ;
 - un graphique → create_dashboard.
-Un rapport ou un téléchargement de la synthèse passe aussi par cet outil, même quand la demande liste son contenu (taux, chantiers en retard, en difficulté) ; si elle cite les indicateurs, passe avec_indicateurs à true. Ne dis jamais que l'encart contient les indicateurs si tu ne les as pas demandés. L'encart se copie ou se télécharge en PDF depuis ses boutons. Il collecte ses données lui-même : n'appelle pas en plus les outils de données pour la même demande.
-L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu ; elle peut indiquer que ses boutons le copient ou le téléchargent en PDF.`,
+Un rapport ou un téléchargement de la synthèse passe aussi par cet outil, même quand la demande liste son contenu (taux, chantiers en retard, en difficulté) ; si elle cite les indicateurs, passe avec_indicateurs à true. Ne dis jamais que l'encart contient les indicateurs si tu ne les as pas demandés. L'encart se copie ou se télécharge en PDF depuis son bouton « Exporter ». Il collecte ses données lui-même : n'appelle pas en plus les outils de données pour la même demande.
+L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu ni décrire ses boutons.`,
       inputSchema: redigerSyntheseTerritoireInputSchema,
       execute: async function* (
         { territoire_code, jalon, avec_indicateurs },
