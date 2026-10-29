@@ -3,6 +3,7 @@ import { BasePage } from "./base.page";
 import { PageChantier } from "./page-chantier";
 import { HeaderComponent } from "../components/header.component";
 import { ExportCsvModal } from "../components/export-csv.modal";
+import { AssistantIAComponent } from "../components/assistant-ia.component";
 import { E2ETestContext } from "../e2e-test-context";
 
 export class PageAccueil extends BasePage {
@@ -10,10 +11,13 @@ export class PageAccueil extends BasePage {
 
   readonly exportModal: ExportCsvModal;
 
+  readonly assistantIA: AssistantIAComponent;
+
   constructor(page: Page, e2eContext: E2ETestContext) {
     super(page, e2eContext);
     this.header = new HeaderComponent(page);
     this.exportModal = new ExportCsvModal(page);
+    this.assistantIA = new AssistantIAComponent(page);
   }
 
   async expectStructure(): Promise<void> {
@@ -60,21 +64,15 @@ export class PageAccueil extends BasePage {
     return new PageChantier(this.page, this.e2eContext);
   }
 
-  private get boutonAssistantIA() {
-    return this.page.getByRole("button", {
-      name: "Ouvrir l'Assistant IA PILOTE",
-    });
-  }
-
   async expectAccesAssistantIA(): Promise<void> {
-    await expect(this.boutonAssistantIA).toBeVisible();
+    await expect(this.assistantIA.lanceur).toBeVisible();
   }
 
   async expectPasAccesAssistantIA(): Promise<void> {
     await expect(
       this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
     ).toBeVisible();
-    await expect(this.boutonAssistantIA).toHaveCount(0);
+    await expect(this.assistantIA.lanceur).toHaveCount(0);
   }
 
   async openExportModal(): Promise<void> {

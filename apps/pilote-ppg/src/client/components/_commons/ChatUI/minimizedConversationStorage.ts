@@ -4,11 +4,13 @@ const CLE = "albert:conversation";
 
 const conversationMinimiseeSchema = z.object({
   id: z.string().uuid(),
-  agentContext: z.object({
-    territoireCode: z.string(),
-    jalon: z.number(),
-    instructions: z.string(),
-  }),
+  agentContext: z
+    .object({
+      territoireCode: z.string(),
+      jalon: z.number(),
+      instructions: z.string(),
+    })
+    .optional(),
 });
 
 export type MinimizedConversation = z.infer<typeof conversationMinimiseeSchema>;

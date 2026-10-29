@@ -29,6 +29,18 @@ describe("minimizedConversationStorage", () => {
     expect(readBack).toStrictEqual(conversation);
   });
 
+  test("relit une conversation ouverte sans contexte", () => {
+    // Given
+    const sansContexte = { id: conversation.id };
+    writeMinimizedConversation(sansContexte);
+
+    // When
+    const readBack = readMinimizedConversation();
+
+    // Then
+    expect(readBack).toStrictEqual(sansContexte);
+  });
+
   test("retourne null quand rien n'a été écrit", () => {
     // When
     const readBack = readMinimizedConversation();

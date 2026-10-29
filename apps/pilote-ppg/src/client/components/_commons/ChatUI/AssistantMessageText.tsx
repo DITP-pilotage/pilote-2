@@ -135,7 +135,7 @@ export const LienInterneAssistant = ({
   children?: ReactNode;
 }) => {
   const router = useRouter();
-  const { minimize } = useAlbertConversation();
+  const { display, minimize } = useAlbertConversation();
   const { trackLink, trackMiddleClick } = useLinkTracking(
     event ?? linkEvent(href),
   );
@@ -151,7 +151,9 @@ export const LienInterneAssistant = ({
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
         if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
         event.preventDefault();
-        minimize();
+        // Le panneau et la fenêtre laissent voir la page vers laquelle on
+        // navigue ; la modale la masque.
+        if (display === "modal") minimize();
         router.push(href);
       }}
     >

@@ -7,7 +7,11 @@ const CHARTE_IA_URL =
 
 const LIEN = "whitespace-nowrap font-medium text-primary hover:underline";
 
-export const ChatExperimentationBanner = () => {
+export const ChatExperimentationBanner = ({
+  compact = false,
+}: {
+  compact?: boolean;
+}) => {
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;
@@ -17,25 +21,41 @@ export const ChatExperimentationBanner = () => {
       <span className="shrink-0 font-bold uppercase tracking-wide text-dsfr-flat-info">
         Expérimentation
       </span>
-      <span>
-        Ce chatbot est une expérimentation. Vos interactions sont analysées pour
-        évaluer sa qualité et sont pseudonymisées.
-      </span>
-      <a
-        className={LIEN}
-        href={CHARTE_IA_URL}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        Charte d&apos;utilisation de l&apos;IA dans PILOTE
-      </a>
-      <Link
-        className={LIEN}
-        href="/donnees-personnelles-cookies"
-        target="_blank"
-      >
-        Données personnelles et cookies
-      </Link>
+      {compact ? (
+        <span>
+          Interactions analysées et pseudonymisées.{" "}
+          <a
+            className={LIEN}
+            href={CHARTE_IA_URL}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Charte IA
+          </a>
+        </span>
+      ) : (
+        <>
+          <span>
+            Ce chatbot est une expérimentation. Vos interactions sont analysées
+            pour évaluer sa qualité et sont pseudonymisées.
+          </span>
+          <a
+            className={LIEN}
+            href={CHARTE_IA_URL}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Charte d&apos;utilisation de l&apos;IA dans PILOTE
+          </a>
+          <Link
+            className={LIEN}
+            href="/donnees-personnelles-cookies"
+            target="_blank"
+          >
+            Données personnelles et cookies
+          </Link>
+        </>
+      )}
       <span className="flex-1" />
       <button
         aria-label="Masquer le bandeau"
