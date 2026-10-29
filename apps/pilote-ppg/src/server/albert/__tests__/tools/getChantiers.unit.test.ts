@@ -1,7 +1,9 @@
 import { describe, expect, test, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
+  classerChantiers,
   createGetChantiersTool,
+  getChantiersInputSchema,
   type GetChantiersInput,
   type GetChantiersOutput,
 } from "@/server/albert/tools/getChantiers";
@@ -46,7 +48,7 @@ const chantierRenvoye = (id: string) => ({
     axe: "Axe",
     ppg: "PPG",
     ministeres: [],
-    maille_de_pilotage: "régionale",
+    maille_de_pilotage: "régionale" as const,
   },
   taux_avancement: 40,
   ecart: -5,
@@ -107,11 +109,14 @@ const executeTool = async (
     perimetre: GetChantiersInput["perimetre"];
     chantier_ids?: string[];
     view?: "all" | "en_retard" | "en_difficulte";
+    tri?: GetChantiersInput["tri"];
+    limite?: number;
   },
 ): Promise<GetChantiersOutput> =>
   tool.execute!(
     {
       jalon: 2026,
+      limite: 20,
       ...input,
       view: input.view ?? "all",
     },
@@ -193,6 +198,7 @@ describe("createGetChantiersTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       acces_refuse: true,
+      total: 0,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
@@ -215,6 +221,7 @@ describe("createGetChantiersTool execute", () => {
     expect(result).toEqual({
       resultats: [],
       acces_refuse: true,
+      total: 0,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
@@ -296,6 +303,7 @@ describe("createGetChantiersTool execute", () => {
       non_applicable: [
         { territoire_code: "NAT-FR", raison: expect.any(String) },
       ],
+      total: 0,
     });
     expect(query.execute).not.toHaveBeenCalled();
   });
@@ -327,6 +335,100 @@ describe("createGetChantiersTool execute", () => {
       non_applicable: [
         { territoire_code: "NAT-FR", raison: expect.any(String) },
       ],
+      total: 1,
+    });
+  });
+});
+
+describe("classerChantiers", () => {
+  const ligne = (id: string, ecart: number | null) => ({
+    ...chantierRenvoye(id),
+    ecart,
+  });
+  const territoire = (
+    territoire_code: string,
+    chantiers: ReturnType<typeof ligne>[],
+  ) => ({
+    territoire_code,
+    territoire_nom: territoire_code,
+    jalon: 2026,
+    chantiers,
+  });
+  const sortie: GetChantiersOutput = {
+    resultats: [
+      territoire("DEPT-22", [ligne("CH-001", -12), ligne("CH-002", null)]),
+      territoire("DEPT-29", [ligne("CH-003", -30)]),
+      territoire("DEPT-35", []),
+    ],
+  };
+  const vue = (resultat: GetChantiersOutput) =>
+    resultat.resultats.map((territoireRenvoye) => ({
+      territoire_code: territoireRenvoye.territoire_code,
+      chantiers: territoireRenvoye.chantiers.map(
+        (chantier) => chantier.chantier.id,
+      ),
+    }));
+
+  test("trie tous territoires confondus, les valeurs manquantes en dernier", () => {
+    // When
+    const resultat = classerChantiers({
+      sortie,
+      tri: "ecart_croissant",
+      limite: 20,
+    });
+
+    // Then
+    expect(vue(resultat)).toEqual([
+      { territoire_code: "DEPT-29", chantiers: ["CH-003"] },
+      { territoire_code: "DEPT-22", chantiers: ["CH-001", "CH-002"] },
+      { territoire_code: "DEPT-35", chantiers: [] },
+    ]);
+    expect(resultat.total).toEqual(3);
+    expect(resultat.tronque).toBeUndefined();
+  });
+
+  test("limite sur l'ensemble des territoires et signale la coupure", () => {
+    // When
+    const resultat = classerChantiers({
+      sortie,
+      tri: "ecart_croissant",
+      limite: 2,
+    });
+
+    // Then
+    expect(vue(resultat)).toEqual([
+      { territoire_code: "DEPT-29", chantiers: ["CH-003"] },
+      { territoire_code: "DEPT-22", chantiers: ["CH-001"] },
+    ]);
+    expect({ total: resultat.total, tronque: resultat.tronque }).toEqual({
+      total: 3,
+      tronque: true,
+    });
+  });
+
+  test("sans tri, garde l'ordre de la vue territoire par territoire", () => {
+    // When
+    const resultat = classerChantiers({ sortie, limite: 20 });
+
+    // Then
+    expect(vue(resultat)).toEqual([
+      { territoire_code: "DEPT-22", chantiers: ["CH-001", "CH-002"] },
+      { territoire_code: "DEPT-29", chantiers: ["CH-003"] },
+      { territoire_code: "DEPT-35", chantiers: [] },
+    ]);
+  });
+
+  test("accepte TOUS_DEPARTEMENTS et limite à 20 chantiers par défaut", () => {
+    // When
+    const input = getChantiersInputSchema.parse({
+      perimetre: { type: "TOUS_DEPARTEMENTS" },
+      jalon: 2025,
+    });
+
+    // Then
+    expect({ perimetre: input.perimetre, limite: input.limite }).toEqual({
+      perimetre: { type: "TOUS_DEPARTEMENTS" },
+      limite: 20,
     });
   });
 });

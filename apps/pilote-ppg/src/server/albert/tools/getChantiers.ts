@@ -26,6 +26,7 @@ export const getChantiersInputSchema = z.object({
       variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
       variantesPerimetre.FRANCE_ET_SES_REGIONS,
       variantesPerimetre.TOUTES_REGIONS,
+      variantesPerimetre.TOUS_DEPARTEMENTS,
     ])
     .describe(
       descriptionPerimetre({
@@ -34,6 +35,7 @@ export const getChantiersInputSchema = z.object({
           "REGION_ET_SES_DEPARTEMENTS",
           "FRANCE_ET_SES_REGIONS",
           "TOUTES_REGIONS",
+          "TOUS_DEPARTEMENTS",
         ],
       }),
     ),
@@ -60,12 +62,40 @@ export const getChantiersInputSchema = z.object({
     .enum(["HAUSSE", "BAISSE", "STAGNATION"])
     .optional()
     .describe("Filtre optionnel sur la tendance"),
+  tri: z
+    .enum([
+      "ecart_croissant",
+      "ecart_decroissant",
+      "taux_croissant",
+      "taux_decroissant",
+    ])
+    .optional()
+    .describe(
+      "Ordre des chantiers, tous territoires confondus : ecart_croissant (les plus en retard d'abord), ecart_decroissant, taux_croissant, taux_decroissant ; les valeurs manquantes en dernier. Sans tri, l'ordre de la vue, territoire par territoire.",
+    ),
+  limite: z
+    .number()
+    .int()
+    .min(1)
+    .max(50)
+    .default(20)
+    .describe(
+      "Nombre maximal de chantiers renvoyés, tous territoires confondus, après le tri (20 par défaut, 50 au plus).",
+    ),
 });
 
 export type GetChantiersInput = z.infer<typeof getChantiersInputSchema>;
 
-/** L'entrée de la collecte : l'encart lui passe des périmètres que l'outil n'expose pas. */
-export type CollecteChantiersInput = Omit<GetChantiersInput, "perimetre"> & {
+type TriChantiers = NonNullable<GetChantiersInput["tri"]>;
+
+/**
+ * L'entrée de la collecte, sans tri ni limite : l'encart lui passe des
+ * périmètres que l'outil n'expose pas, et ne doit pas être tronqué.
+ */
+export type CollecteChantiersInput = Omit<
+  GetChantiersInput,
+  "perimetre" | "tri" | "limite"
+> & {
   perimetre: Perimetre;
 };
 
@@ -98,6 +128,9 @@ export type ResultatChantiers = Omit<GetChantiersResult, "chantiers"> & {
 
 export type GetChantiersOutput = {
   resultats: ResultatChantiers[];
+  /** Le nombre de chantiers, tous territoires confondus, avant la limite. Seulement en sortie de l'outil. */
+  total?: number;
+  tronque?: true;
   /** L'analyse sans objet est rattachée à son territoire : au national, elle ne masque pas les chantiers en retard des autres territoires. */
   non_applicable?: { territoire_code: string; raison: string }[];
   acces_refuse?: true;
@@ -244,6 +277,89 @@ export async function collecterChantiers({
   };
 }
 
+const CRITERES_DE_TRI: Record<
+  TriChantiers,
+  { valeur: (chantier: ChantierRenvoye) => number | null; sens: 1 | -1 }
+> = {
+  ecart_croissant: { valeur: (chantier) => chantier.ecart, sens: 1 },
+  ecart_decroissant: { valeur: (chantier) => chantier.ecart, sens: -1 },
+  taux_croissant: { valeur: (chantier) => chantier.taux_avancement, sens: 1 },
+  taux_decroissant: {
+    valeur: (chantier) => chantier.taux_avancement,
+    sens: -1,
+  },
+};
+
+/**
+ * Le tri et la limite de l'outil, appliqués en mémoire après la requête, sur
+ * les couples (territoire, chantier) tous territoires confondus : « les plus
+ * en retard de tous les départements » est un classement global.
+ *
+ * En mémoire parce que l'encart partage `collecterChantiers` et ne doit être
+ * ni trié ni tronqué. Le coût : TOUS_DEPARTEMENTS en vue `all` charge les
+ * chantiers des 101 départements avant d'en garder `limite`. Si c'est trop
+ * lent, trier et limiter en SQL : une première requête sur
+ * `chantier_territoire_jalon` (qui porte l'écart et le taux), triée et
+ * limitée, puis le détail des seuls chantiers retenus — les chantiers sans
+ * ligne de jalon sortiraient alors de la vue `all`.
+ */
+export function classerChantiers({
+  sortie,
+  tri,
+  limite,
+}: {
+  sortie: GetChantiersOutput;
+  tri?: TriChantiers;
+  limite?: number;
+}): GetChantiersOutput {
+  const lignes = sortie.resultats.flatMap((resultat) =>
+    resultat.chantiers.map((chantier) => ({ resultat, chantier })),
+  );
+  const critere = tri ? CRITERES_DE_TRI[tri] : undefined;
+  const triees = critere
+    ? [...lignes].sort((ligneA, ligneB) => {
+        const valeurA = critere.valeur(ligneA.chantier);
+        const valeurB = critere.valeur(ligneB.chantier);
+        if (valeurA === null) return valeurB === null ? 0 : 1;
+        if (valeurB === null) return -1;
+        return critere.sens * (valeurA - valeurB);
+      })
+    : lignes;
+  const retenues = triees.slice(0, limite);
+  const tronque = retenues.length < lignes.length;
+
+  // Les territoires dans l'ordre de leur premier chantier retenu. Sans
+  // coupure, ceux qui n'en ont pas restent à la suite : « aucun chantier en
+  // retard en Bretagne » est une réponse.
+  const chantiersParTerritoire = new Map<
+    ResultatChantiers,
+    ChantierRenvoye[]
+  >();
+  for (const { resultat, chantier } of retenues) {
+    chantiersParTerritoire.set(resultat, [
+      ...(chantiersParTerritoire.get(resultat) ?? []),
+      chantier,
+    ]);
+  }
+  if (!tronque) {
+    for (const resultat of sortie.resultats) {
+      if (!chantiersParTerritoire.has(resultat)) {
+        chantiersParTerritoire.set(resultat, []);
+      }
+    }
+  }
+
+  return {
+    ...sortie,
+    resultats: [...chantiersParTerritoire].map(([resultat, chantiers]) => ({
+      ...resultat,
+      chantiers,
+    })),
+    total: lignes.length,
+    ...(tronque && { tronque: true as const }),
+  };
+}
+
 export function createGetChantiersTool({
   getChantiersQuery,
   territoireResolver,
@@ -265,20 +381,26 @@ export function createGetChantiersTool({
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.
 - \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance et le commentaire de synthèse y sont masqués, ce n'est pas une absence de données.
 - \`maille_de_pilotage\` null : la maille de pilotage du chantier n'est pas connue.
-Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? » ; un ensemble de territoires (« la Bretagne et ses départements », « toutes les régions ») : un seul appel avec le \`perimetre\` adapté.
+- \`tri\` classe les chantiers tous territoires confondus ; \`limite\` (20 par défaut) garde les premiers.
+- \`total\` : le nombre de chantiers avant la limite. \`tronque\` : la liste est coupée ; dis-le (« les 20 plus en retard, sur 340 ») ou resserre la demande (vue, tendance, périmètre).
+Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? », « les chantiers les plus en retard » (tri) ; un ensemble de territoires (« la Bretagne et ses départements », « toutes les régions », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
 - la fraîcheur des données → get_indicateurs_non_a_jour ;
 - les commentaires d'un chantier (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
       inputSchema: getChantiersInputSchema,
-      execute: (input): Promise<GetChantiersOutput> =>
-        collecterChantiers({
-          input,
-          getChantiersQuery,
-          territoireResolver,
-          territoiresAccessibles,
-          chantiersAccessibles,
+      execute: async (input): Promise<GetChantiersOutput> =>
+        classerChantiers({
+          sortie: await collecterChantiers({
+            input,
+            getChantiersQuery,
+            territoireResolver,
+            territoiresAccessibles,
+            chantiersAccessibles,
+          }),
+          tri: input.tri,
+          limite: input.limite,
         }),
     });
   };
