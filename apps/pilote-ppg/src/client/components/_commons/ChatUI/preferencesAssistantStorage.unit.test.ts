@@ -1,8 +1,10 @@
 import {
   readLargeurPanneau,
   readPreferenceVue,
+  readTailleFenetre,
   writeLargeurPanneau,
   writePreferenceVue,
+  writeTailleFenetre,
 } from "@/components/_commons/ChatUI/preferencesAssistantStorage";
 
 describe("preferencesAssistantStorage", () => {
@@ -71,6 +73,30 @@ describe("preferencesAssistantStorage", () => {
 
       // Then
       expect(largeur).toBeNull();
+    });
+  });
+
+  describe("taille de la fenêtre", () => {
+    test("relit la taille écrite", () => {
+      // Given
+      writeTailleFenetre({ largeur: 500, hauteur: 700 });
+
+      // When
+      const taille = readTailleFenetre();
+
+      // Then
+      expect(taille).toEqual({ largeur: 500, hauteur: 700 });
+    });
+
+    test("retourne null quand le contenu stocké est illisible", () => {
+      // Given
+      localStorage.setItem("albert:tailleFenetre", "{pas du json");
+
+      // When
+      const taille = readTailleFenetre();
+
+      // Then
+      expect(taille).toBeNull();
     });
   });
 });

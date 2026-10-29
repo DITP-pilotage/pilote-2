@@ -1,6 +1,7 @@
 import {
   affichageEffectif,
   bornerLargeurPanneau,
+  bornerTailleFenetre,
 } from "@/components/_commons/ChatUI/affichageAssistant";
 
 describe("affichageEffectif", () => {
@@ -94,5 +95,43 @@ describe("bornerLargeurPanneau", () => {
 
     // Then
     expect(largeur).toBe(540);
+  });
+});
+
+describe("bornerTailleFenetre", () => {
+  test("garde une taille qui tient dans l'écran", () => {
+    // When
+    const taille = bornerTailleFenetre({
+      taille: { largeur: 500, hauteur: 700 },
+      largeurEcran: 1440,
+      hauteurEcran: 900,
+    });
+
+    // Then
+    expect(taille).toEqual({ largeur: 500, hauteur: 700 });
+  });
+
+  test("ne descend pas sous 360 × 400 px", () => {
+    // When
+    const taille = bornerTailleFenetre({
+      taille: { largeur: 200, hauteur: 100 },
+      largeurEcran: 1440,
+      hauteurEcran: 900,
+    });
+
+    // Then
+    expect(taille).toEqual({ largeur: 360, hauteur: 400 });
+  });
+
+  test("ne dépasse ni 720 px de large ni le haut de l'écran", () => {
+    // When
+    const taille = bornerTailleFenetre({
+      taille: { largeur: 1200, hauteur: 1500 },
+      largeurEcran: 1440,
+      hauteurEcran: 900,
+    });
+
+    // Then
+    expect(taille).toEqual({ largeur: 720, hauteur: 868 });
   });
 });
