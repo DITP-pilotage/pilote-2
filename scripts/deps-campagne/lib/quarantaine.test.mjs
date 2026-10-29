@@ -6,6 +6,7 @@ import {
   readMinimumReleaseAge,
   getQuarantineVerdict,
   findLockedVersions,
+  splitExclusion,
 } from './quarantaine.mjs'
 
 const YAML = `packages:
@@ -153,4 +154,31 @@ test('ne confond pas un paquet avec un autre dont il est le préfixe', () => {
 test('lit minimumReleaseAge', () => {
   assert.equal(readMinimumReleaseAge(YAML), 20160)
   assert.equal(readMinimumReleaseAge('packages:\n  - "apps/*"\n'), 0)
+})
+
+test('ignore les clés de la section overrides du lockfile', () => {
+  // Constaté le 2026-10-29 : la clé "fast-uri@>=4 <5" était lue comme la version ">=4".
+  const lockfile = `overrides:
+  fast-uri@>=4 <5: 4.2.3
+  seroval: 1.6.11
+
+packages:
+
+  fast-uri@4.2.3:
+    resolution: {integrity: sha512-x}
+`
+  assert.deepEqual(findLockedVersions('fast-uri', lockfile), ['4.2.3'])
+  assert.deepEqual(findLockedVersions('seroval', lockfile), [])
+})
+
+test('splitExclusion sépare une exclusion épinglée à une version exacte', () => {
+  // Constaté le 2026-10-29 : "dompurify@3.4.16" était cherché tel quel dans le lockfile,
+  // donc toujours « version publiée inconnue », alors que c'est la forme recommandée.
+  assert.deepEqual(splitExclusion('dompurify@3.4.16'), { nom: 'dompurify', version: '3.4.16' })
+  assert.deepEqual(splitExclusion('@scope/paquet@1.2.3'), { nom: '@scope/paquet', version: '1.2.3' })
+})
+
+test('splitExclusion laisse un nom seul ou un motif glob sans version', () => {
+  assert.deepEqual(splitExclusion('next'), { nom: 'next', version: null })
+  assert.deepEqual(splitExclusion('@next/*'), { nom: '@next/*', version: null })
 })

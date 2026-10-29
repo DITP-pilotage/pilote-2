@@ -36,8 +36,26 @@ export function readMinimumReleaseAge(texteYaml) {
 export function findLockedVersions(paquet, lockfile) {
   if (paquet.includes('*')) return []
   const echappe = paquet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const motif = new RegExp(`^ {2}'?${echappe}@([^'(:\\s]+)`, 'gm')
+  // Une version commence par un chiffre : ça écarte les clés de la section `overrides:`
+  // ("fast-uri@>=4 <5"), lues comme la version ">=4" jusqu'au 2026-10-29.
+  const motif = new RegExp(`^ {2}'?${echappe}@(\\d[^'(:\\s]*)`, 'gm')
   return [...new Set([...lockfile.matchAll(motif)].map((m) => m[1]))]
+}
+
+/**
+ * Sépare une exclusion épinglée ("dompurify@3.4.16") en nom et version. Jusqu'au
+ * 2026-10-29, elle était cherchée telle quelle dans le lockfile et finissait toujours en
+ * « version publiée inconnue », alors que c'est la forme la plus étroite donc recommandée.
+ */
+export function splitExclusion(entree) {
+  const scope = entree.startsWith('@')
+  const reste = scope ? entree.slice(1) : entree
+  const separateur = reste.indexOf('@')
+  if (separateur === -1) return { nom: entree, version: null }
+  return {
+    nom: (scope ? '@' : '') + reste.slice(0, separateur),
+    version: reste.slice(separateur + 1),
+  }
 }
 
 const MARQUEUR = /^#\s*expire\s*:\s*(\S+)/i

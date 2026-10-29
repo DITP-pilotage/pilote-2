@@ -12,11 +12,14 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
+import semver from 'semver'
+
 import {
   readExclusions,
   readMinimumReleaseAge,
   getQuarantineVerdict,
   findLockedVersions,
+  splitExclusion,
   STATUTS_EN_DEFAUT,
 } from './lib/quarantaine.mjs'
 import { run } from './lib/shell.mjs'
@@ -50,14 +53,16 @@ function main() {
   }
 
   const verdicts = exclusions.map((exclusion) => {
-    const versions = findLockedVersions(exclusion.paquet, lockfile)
-    // La plus récente : c'est elle qui décide si l'exclusion est encore nécessaire.
-    const version = versions.sort().at(-1) ?? null
+    const { nom, version: epinglee } = splitExclusion(exclusion.paquet)
+    // Une exclusion épinglée se juge sur sa version ; sinon sur la plus récente verrouillée,
+    // celle qui décide si l'exclusion est encore nécessaire.
+    const version =
+      epinglee ?? findLockedVersions(nom, lockfile).sort(semver.compare).at(-1) ?? null
     return {
       ...getQuarantineVerdict({
         paquet: exclusion.paquet,
         expire: exclusion.expire,
-        publieeLe: version ? publieeLe(exclusion.paquet, version) : null,
+        publieeLe: version ? publieeLe(nom, version) : null,
         aujourdhui,
         minimumReleaseAgeMinutes,
       }),

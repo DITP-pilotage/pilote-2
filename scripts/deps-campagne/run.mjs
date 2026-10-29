@@ -2,7 +2,12 @@
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs'
 import { run } from './lib/shell.mjs'
 import { interpreterOutdated, grouperCouples } from './lib/outdated.mjs'
-import { verdictOverride, nomPaquetDepuisCle, versionsResoluesDepuisWhy } from './lib/overrides.mjs'
+import {
+  verdictOverride,
+  nomPaquetDepuisCle,
+  parentDepuisCle,
+  versionsResoluesDepuisWhy,
+} from './lib/overrides.mjs'
 import {
   creerReport,
   ajouterCommit,
@@ -145,7 +150,7 @@ function versionsResoluesDe(cle) {
   const { stdout } = run(['pnpm', 'why', nom, '-r', '--json', '--depth', 'Infinity'])
   if (!stdout.trim()) return []
   try {
-    return versionsResoluesDepuisWhy(JSON.parse(stdout), nom)
+    return versionsResoluesDepuisWhy(JSON.parse(stdout), nom, parentDepuisCle(cle))
   } catch {
     return []
   }
@@ -309,8 +314,19 @@ function main() {
     journal('  rien à bumper dans les ranges')
   }
 
+  // Une cible en préversion n'est jamais bumpée d'office : elle est portée au rapport, pour
+  // qu'un humain décide, plutôt que de disparaître.
+  const preversions = apres.filter((d) => d.estPreversion)
+  for (const dep of preversions) {
+    journal(`préversion écartée : ${dep.name} ${dep.current} -> ${dep.latest}`)
+  }
+  report = {
+    ...report,
+    preversionsEcartees: preversions.map((d) => ({ name: d.name, de: d.current, vers: d.latest })),
+  }
+
   // --- Ce qui reste : pins et majors, groupés par couplage.
-  for (const groupe of grouperCouples(apres)) {
+  for (const groupe of grouperCouples(apres.filter((d) => !d.estPreversion))) {
     const categorie = groupe.deps.some((d) => d.isMajor) ? 'major' : 'pin-minor'
     const cible = libelleCible(groupe)
     journal(`${categorie} : ${groupe.nom} ${cible}`)

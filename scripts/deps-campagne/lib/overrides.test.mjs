@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   nomPaquetDepuisCle,
+  parentDepuisCle,
   selecteurDepuisCle,
   verdictOverride,
   versionsResoluesDepuisWhy,
@@ -188,4 +189,53 @@ test('versionsResoluesDepuisWhy ignore un noeud sans version', () => {
   const arbre = [{ name: 'x', dependencies: { terser: { from: 'terser' } } }]
 
   assert.deepEqual(versionsResoluesDepuisWhy(arbre, 'terser'), [])
+})
+
+test('nomPaquetDepuisCle vise l enfant d une clé parent>enfant', () => {
+  // Constaté le 2026-10-29 : "evalite>fastify" était cherché tel quel dans l'arbre, donc
+  // déclaré absent, alors que pilote-ppg tire bien evalite > fastify.
+  assert.equal(nomPaquetDepuisCle('evalite>fastify'), 'fastify')
+  assert.equal(nomPaquetDepuisCle('evalite>@fastify/static'), '@fastify/static')
+  assert.equal(nomPaquetDepuisCle('@scope/parent@^2>enfant@<3'), 'enfant')
+})
+
+test('selecteurDepuisCle lit le sélecteur de l enfant, pas celui du parent', () => {
+  assert.equal(selecteurDepuisCle('evalite>fastify'), '*')
+  assert.equal(selecteurDepuisCle('parent@^2>enfant@>=3 <4'), '>=3 <4')
+})
+
+test('parentDepuisCle distingue le séparateur parent>enfant d un > de range', () => {
+  assert.equal(parentDepuisCle('evalite>fastify'), 'evalite')
+  assert.equal(parentDepuisCle('@scope/parent@^2>enfant'), '@scope/parent')
+  assert.equal(parentDepuisCle('brace-expansion@>=2 <3'), null)
+  assert.equal(parentDepuisCle('uuid@>11.0.0'), null)
+  assert.equal(parentDepuisCle('hono'), null)
+})
+
+test('versionsResoluesDepuisWhy ne compte que les enfants directs du parent demandé', () => {
+  const arbre = [
+    {
+      name: '@pilote/ppg',
+      devDependencies: {
+        evalite: { version: '1.0.0', dependencies: { fastify: { version: '5.12.7' } } },
+        autre: { version: '1.0.0', dependencies: { fastify: { version: '4.0.0' } } },
+      },
+    },
+  ]
+
+  assert.deepEqual(versionsResoluesDepuisWhy(arbre, 'fastify', 'evalite'), ['5.12.7'])
+  assert.deepEqual(versionsResoluesDepuisWhy(arbre, 'fastify').sort(), ['4.0.0', '5.12.7'])
+})
+
+test('un override parent>enfant présent sous son parent n est pas déclaré absent', () => {
+  const v = verdictOverride({
+    cle: 'evalite>fastify',
+    range: '>=5.12.5 <6',
+    versionsResolues: ['5.12.7'],
+  })
+
+  assert.equal(v.nom, 'fastify')
+  assert.equal(v.parent, 'evalite')
+  assert.equal(v.porteur, false)
+  assert.match(v.preuve, /fastify \(sous evalite\) se résout en 5\.12\.7 — déjà conforme/)
 })

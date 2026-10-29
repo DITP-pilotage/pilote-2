@@ -153,3 +153,18 @@ test('grouperCouples laisse les paquets non couplés seuls dans leur groupe', ()
   assert.ok(oxlint)
   assert.equal(oxlint.deps.length, 1)
 })
+
+test('parseOutdated marque une cible en préversion quand la version courante est stable', () => {
+  // Deux campagnes de suite (2026-09-10, 2026-10-29) ont visé prisma 8.1.0-dev.N : le plus
+  // grand numéro publié, référencé par aucun dist-tag, et pas sur la lignée de Prisma 8.
+  const deps = parseOutdated({
+    prisma: { current: '7.10.0', latest: '8.1.0-dev.9', dependencyType: 'devDependencies' },
+    hono: { current: '4.13.7', latest: '4.13.13', dependencyType: 'dependencies' },
+    'next-auth': { current: '5.0.0-beta.31', latest: '5.0.0-beta.32', dependencyType: 'dependencies' },
+  })
+  const parNom = Object.fromEntries(deps.map((d) => [d.name, d]))
+
+  assert.equal(parNom['prisma'].estPreversion, true)
+  assert.equal(parNom['hono'].estPreversion, false)
+  assert.equal(parNom['next-auth'].estPreversion, false, 'déjà en préversion : on suit sa lignée')
+})
