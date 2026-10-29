@@ -1209,6 +1209,16 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 - **`@keycloak/keycloak-admin-client 26.6.0`** : prepare script cassé (`pnpm wireit` non disponible). Rester en `26.5.6` (à re-tester maintenant qu'on est sur pnpm).
 - **`swagger-ui-react`** pull un `react-inspector` qui a un peer dep `react ^16 || ^17 || ^18`. On est en React 19 → warnings peer tolérables (`strict-peer-dependencies=false` dans `.npmrc`), à surveiller.
 
+## Verrous de configuration à revoir à chaque bump
+
+| Verrou | Raison | Condition de sortie |
+|---|---|---|
+| `experimental.turbopackSharedRuntime: false` (`apps/pilote-ppg/next.config.js`), posé le 2026-10-29 | Next 16.4 inline par défaut un bootstrap Turbopack dans le HTML. Les 7 pages pré-rendues au build (403, 404, 500, 503, accessibilité, mentions légales, données personnelles) le portent avec `nonce=""` : aucune requête n'existe au build, donc aucun nonce. La CSP de `proxy.ts` le bloque, la page ne s'hydrate pas — et sur les pages rendues à la requête aussi, le nonce n'étant passé qu'à `<NextScript>`. Constaté après la campagne du 2026-10-29 : env de dev figé après login. | Une version de Next qui pose le nonce de la requête sur le bootstrap des pages pré-rendues en Pages Router. L'issue amont [#99800](https://github.com/vercel/next.js/issues/99800) est close mais ne couvre que l'App Router (`cacheComponents`) : **toujours cassé en 16.4.3**. Vérifier par `next build` puis lecture de `.next/server/pages/404.html` : aucun `globalThis["TURBOPACK"]` inline sans nonce. L'option étant `experimental`, elle peut aussi disparaître : la vérifier à chaque bump de `next`. |
+
+**Ni la CI ni les E2E ne voient ce type de régression** : ils tournent sur `next dev`, où `proxy.ts`
+sert une CSP permissive (`'unsafe-inline'`). Après tout bump de `next` ou `react`, rejouer en local
+`next build` + serveur standalone, et vérifier qu'aucun `<script>` inline n'est servi sans nonce.
+
 ## Packages à surveiller pour les prochaines itérations
 
 > **Ce tableau a dérivé.** Trois de ses lignes ont été démenties par la campagne du 2026-07-17, qui les a mesurées au lieu de les estimer. Une ligne « à surveiller » que personne ne réévalue devient une superstition — c'est exactement ce que `pnpm deps:campagne` sert à éviter. Les verdicts mesurés sont notés en regard.
