@@ -1,11 +1,12 @@
 import { tool } from "ai";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import { z } from "zod";
+import { chantierIdSchema } from "@/server/albert/tools/chantierId";
 import { GetChantierObjectifsQuery } from "@/server/chantiers/query/GetChantierObjectifsQuery";
 import type { GetChantierObjectifsResult } from "@/server/chantiers/query/GetChantierObjectifsQuery";
 
 export const getChantierObjectifsInputSchema = z.object({
-  chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
+  chantier_id: chantierIdSchema,
 });
 
 export type GetChantierObjectifsOutput = GetChantierObjectifsResult;

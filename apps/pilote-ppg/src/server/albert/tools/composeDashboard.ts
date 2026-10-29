@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdSchema } from "@/server/albert/tools/chantierId";
 import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import {
   DEFAULT_WIDTHS,
@@ -18,10 +19,6 @@ const jalonSchema = z
 const territoireCodeSchema = z
   .string()
   .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)");
-
-const chantierIdSchema = z
-  .string()
-  .describe("Identifiant du chantier (ex: CH-001)");
 
 const mailleSchema = z
   .enum(["regionale", "departementale"])

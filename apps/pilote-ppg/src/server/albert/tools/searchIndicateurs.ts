@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdsSchema } from "@/server/albert/tools/chantierId";
 import { Albert } from "@/server/albert/Albert";
 import { filtrerHallucinations } from "@/server/albert/subagents/filtrerHallucinations";
 import { buildSearchIndicateursSystemPrompt } from "@/server/albert/subagents/searchIndicateursSystemPrompt";
@@ -15,8 +16,7 @@ export const searchIndicateursInputSchema = z.object({
     .describe(
       "Requête utilisateur en langage naturel pour identifier des indicateurs (ex: « le taux d'équipement », « combien de femmes formées », « les délais »).",
     ),
-  chantier_ids: z
-    .array(z.string())
+  chantier_ids: chantierIdsSchema
     .optional()
     .describe(
       "Restreint la recherche aux indicateurs des chantiers spécifiés (ex: ['CH-064']). À utiliser quand l'utilisateur a déjà ciblé un ou plusieurs chantiers (via search_chantiers ou un CH-XXX explicite). Réduit le contexte et améliore la pertinence.",

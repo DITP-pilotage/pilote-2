@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { chantierIdSchema } from "@/server/albert/tools/chantierId";
 import {
   GetChantierCommentairesQuery,
   typesContenuChantierNationaux,
@@ -23,7 +24,7 @@ export type { TypeContenuChantier };
 const TERRITOIRE_NATIONAL = "NAT-FR";
 
 export const getChantierCommentairesInputSchema = z.object({
-  chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
+  chantier_id: chantierIdSchema,
   perimetre: z
     .discriminatedUnion("type", [
       variantesPerimetre.SELECTION,
