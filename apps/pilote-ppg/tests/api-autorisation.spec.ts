@@ -347,13 +347,6 @@ test.describe("Paramétrage des chantiers", () => {
       "coordinateur.region@example.com",
     );
 
-    e2eContext.track(
-      "CHANTIER_PARAMETRAGE_UPDATED",
-      await prisma.metadata_chantiers.findUniqueOrThrow({
-        where: { chantier_id: CHANTIER_FOR_WRITES },
-      }),
-    );
-
     const result = await trpc.mutation("parametrageChantier.save", {
       chantierId: CHANTIER_FOR_WRITES,
       chNom: "Nom modifié par un coordinateur",

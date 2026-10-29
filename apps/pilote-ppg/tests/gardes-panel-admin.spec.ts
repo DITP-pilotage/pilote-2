@@ -91,8 +91,9 @@ test.describe("Pages du panel gardées par la seule session", () => {
     e2eContext.track("NOUVEAUTE_CREATED", { id: nouveauteId });
     e2eContext.track("ARTICLE_CENTRE_AIDE_CREATED", { id: articleId });
 
+    // Aucun log n'est antérieur à cette date : la purge ne supprimerait rien si la garde régressait.
     const purgeLogsResult = await trpc.mutation("applicationLog.purger", {
-      anterieurA: new Date().toISOString(),
+      anterieurA: new Date("2000-01-01").toISOString(),
     });
     const featureFlips = await trpc.mutation(
       "gestionContenu.modifierFeatureFlips",
