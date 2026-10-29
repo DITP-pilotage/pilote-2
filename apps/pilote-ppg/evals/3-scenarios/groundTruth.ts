@@ -28,38 +28,30 @@ export async function readGroundTruth({
 }): Promise<GroundTruth> {
   const tools = createDataTools({ user });
   const jalons = scope.jalons ?? [JALON_COURANT];
-  const includeSousTerritoires = scope.includeSousTerritoires ?? false;
+  const perimetre = scope.perimetre ?? {
+    type: "SELECTION",
+    territoire_codes: scope.territoires,
+  };
 
   const tauxAvancement: GetTauxAvancementTerritoireResult[] = [];
   const chantiersEnRetard: ResultatChantiers[] = [];
   const chantiersEnDifficulte: ResultatChantiers[] = [];
 
-  for (const territoireCode of scope.territoires) {
-    for (const jalon of jalons) {
-      const taux = await executeTool<GetTauxAvancementTerritoireOutput>({
-        tool: tools.getTauxAvancementTerritoire,
-        input: {
-          territoire_code: territoireCode,
-          jalon,
-          include_sous_territoires: includeSousTerritoires,
-        },
+  for (const jalon of jalons) {
+    const taux = await executeTool<GetTauxAvancementTerritoireOutput>({
+      tool: tools.getTauxAvancementTerritoire,
+      input: { perimetre, jalon, tri: "taux_decroissant" },
+    });
+    tauxAvancement.push(...taux.resultats);
+
+    const lireVue = (view: "en_retard" | "en_difficulte") =>
+      executeTool<GetChantiersOutput>({
+        tool: tools.getChantiers,
+        input: { perimetre, jalon, view },
       });
-      tauxAvancement.push(...taux.resultats);
 
-      const lireVue = (view: "en_retard" | "en_difficulte") =>
-        executeTool<GetChantiersOutput>({
-          tool: tools.getChantiers,
-          input: {
-            territoire_code: territoireCode,
-            jalon,
-            view,
-            include_sous_territoires: includeSousTerritoires,
-          },
-        });
-
-      chantiersEnRetard.push(...(await lireVue("en_retard")).resultats);
-      chantiersEnDifficulte.push(...(await lireVue("en_difficulte")).resultats);
-    }
+    chantiersEnRetard.push(...(await lireVue("en_retard")).resultats);
+    chantiersEnDifficulte.push(...(await lireVue("en_difficulte")).resultats);
   }
 
   const territoirePrincipal = scope.territoires[0];
@@ -90,7 +82,10 @@ export async function readGroundTruth({
         tool: tools.getChantierCommentaires,
         input: {
           chantier_id: chantierId,
-          territoire_code: territoirePrincipal,
+          perimetre: {
+            type: "SELECTION",
+            territoire_codes: [territoirePrincipal],
+          },
         },
       }),
     );

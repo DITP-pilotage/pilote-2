@@ -5,27 +5,61 @@ import { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.in
 import { Maille } from "@/shared/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
+import {
+  descriptionPerimetre,
+  variantesPerimetre,
+} from "@/server/albert/tools/perimetre";
 import { determineMaille } from "@/shared/maille/determineMaille";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 
 export const getTauxAvancementTerritoireInputSchema = z.object({
-  territoire_code: z
-    .string()
-    .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
+  perimetre: z
+    .discriminatedUnion("type", [
+      variantesPerimetre.SELECTION,
+      variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
+      variantesPerimetre.FRANCE_ET_SES_REGIONS,
+      variantesPerimetre.TOUTES_REGIONS,
+      variantesPerimetre.TOUS_DEPARTEMENTS,
+    ])
+    .describe(
+      descriptionPerimetre({
+        types: [
+          "SELECTION",
+          "REGION_ET_SES_DEPARTEMENTS",
+          "FRANCE_ET_SES_REGIONS",
+          "TOUTES_REGIONS",
+          "TOUS_DEPARTEMENTS",
+        ],
+      }),
+    ),
   jalon: z
     .number()
     .int()
     .min(2022)
     .max(new Date().getFullYear())
     .describe("Année du jalon (ex: 2024, 2025)"),
-  include_sous_territoires: z
-    .boolean()
-    .optional()
-    .default(false)
+  tri: z
+    .enum(["taux_decroissant", "taux_croissant"])
+    .default("taux_decroissant")
     .describe(
-      "`true` pour un territoire ET ses sous-territoires : un seul appel sur le parent, jamais un appel par sous-territoire.",
+      "Ordre des territoires selon leur taux d'avancement ; les territoires sans donnée viennent en dernier.",
+    ),
+  limite: z
+    .number()
+    .int()
+    .min(1)
+    .max(101)
+    .optional()
+    .describe(
+      "Nombre maximal de territoires renvoyés, après le tri (ex: 5 pour « les 5 départements qui avancent le mieux »). Omettre pour tous.",
     ),
 });
+
+type ClassementTaux = {
+  tri: "taux_decroissant" | "taux_croissant";
+  limite?: number;
+};
 
 export type GetTauxAvancementTerritoireResult = {
   territoire_code: string;
@@ -43,31 +77,56 @@ function formatPourcentage(value: number | null | undefined): string {
 
 export type GetTauxAvancementTerritoireOutput = {
   resultats: GetTauxAvancementTerritoireResult[];
+  /** Le nombre de territoires du périmètre, avant la limite. Seulement avec un classement. */
+  total?: number;
+  tronque?: true;
 };
+
+/** Trie sur la valeur numérique, avant le formatage en « 46 % » ; sans donnée en dernier. */
+function classerCodes({
+  codes,
+  tauxParTerritoire,
+  classement,
+}: {
+  codes: string[];
+  tauxParTerritoire: Map<string, number | null>;
+  classement: ClassementTaux;
+}): string[] {
+  const sens = classement.tri === "taux_decroissant" ? -1 : 1;
+  const classes = [...codes].sort((codeA, codeB) => {
+    const tauxA = tauxParTerritoire.get(codeA) ?? null;
+    const tauxB = tauxParTerritoire.get(codeB) ?? null;
+    if (tauxA === null) return tauxB === null ? 0 : 1;
+    if (tauxB === null) return -1;
+    return sens * (tauxA - tauxB);
+  });
+  return classement.limite === undefined
+    ? classes
+    : classes.slice(0, classement.limite);
+}
 
 /**
  * La collecte de `get_taux_avancement_territoire`, partagée avec les outils
- * d'encart.
+ * d'encart. Seul l'outil passe un `classement` : l'encart garde l'ordre du
+ * resolver, la région avant ses départements.
  */
 export async function collecterTauxAvancement({
   input,
+  classement,
   territoireResolver,
   getTerritoiresIdentiteQuery,
   habilitations,
 }: {
   input: {
-    territoire_code: string;
+    perimetre: Perimetre;
     jalon: number;
-    include_sous_territoires?: boolean;
   };
+  classement?: ClassementTaux;
   territoireResolver: TerritoireResolver;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   habilitations: Habilitations;
 }): Promise<GetTauxAvancementTerritoireOutput> {
-  const codes = await territoireResolver.resoudre(
-    input.territoire_code,
-    input.include_sous_territoires ?? false,
-  );
+  const codesDuPerimetre = await territoireResolver.resoudre(input.perimetre);
 
   const chantiersContainer = getContainer("chantiers");
   const chantierIds = await chantiersContainer
@@ -81,7 +140,7 @@ export async function collecterTauxAvancement({
       await chantiersContainer
         .resolve("recupererTauxAvancementTerritoireQuery")
         .executePourTerritoires({
-          territoireCodes: codes,
+          territoireCodes: codesDuPerimetre,
           jalon: input.jalon,
           habilitations,
         })
@@ -94,6 +153,10 @@ export async function collecterTauxAvancement({
       territoire.nom,
     ]),
   );
+
+  const codes = classement
+    ? classerCodes({ codes: codesDuPerimetre, tauxParTerritoire, classement })
+    : codesDuPerimetre;
 
   const mailles = new Set(codes.map(determineMaille));
   const statsByMaille = new Map<Maille, number | null>();
@@ -147,7 +210,12 @@ export async function collecterTauxAvancement({
     };
   });
 
-  return { resultats };
+  if (!classement) return { resultats };
+  return {
+    resultats,
+    total: codesDuPerimetre.length,
+    ...(codes.length < codesDuPerimetre.length && { tronque: true as const }),
+  };
 }
 
 export function createGetTauxAvancementTerritoireTool({
@@ -159,16 +227,21 @@ export function createGetTauxAvancementTerritoireTool({
 }) {
   return ({ habilitations }: { habilitations: Habilitations }) => {
     return tool({
-      description: `Renvoie le taux d'avancement global d'un territoire à un jalon, la médiane des territoires de sa maille et sa position face à cette médiane.
+      description: `Renvoie, pour chaque territoire du périmètre, son taux d'avancement global à un jalon, la médiane des territoires de sa maille et sa position face à cette médiane.
 - Pour NAT-FR, la médiane est celle des départements.
 - « - % » : pas de donnée à ce jalon.
 - \`territoire_nom\` : le nom à écrire dans la réponse, plutôt que le code.
-Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre territoires ou entre jalons ; un territoire et ses sous-territoires : un seul appel sur le parent avec \`include_sous_territoires\`.
-Ne l'utilise pas pour : le taux d'avancement d'un chantier → get_chantiers.`,
+- Les territoires sont triés par taux d'avancement (\`tri\`, décroissant par défaut) ; \`limite\` garde les premiers.
+- \`total\` : le nombre de territoires du périmètre. \`tronque\` : la liste est coupée par \`limite\` ; dis-le (« les 5 premiers des 101 départements »).
+Utilise-le pour : « quel est le taux d'avancement de la Bretagne ? », la position d'un territoire face à la médiane, une comparaison entre jalons, le taux de plusieurs territoires quand la demande nomme le taux ou un classement (« compare les taux d'avancement de X et Y », « classe les régions », « qui avance le mieux ? ») ; un ensemble de territoires (« la Bretagne et ses départements », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
+Ne l'utilise pas pour :
+- le taux d'avancement d'un chantier → get_chantiers ;
+- une comparaison générique de territoires (« compare le Nord et la Gironde », « compare la Bretagne avec ses départements ») → rediger_comparaison_territoires.`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
       execute: (input): Promise<GetTauxAvancementTerritoireOutput> =>
         collecterTauxAvancement({
           input,
+          classement: { tri: input.tri, limite: input.limite },
           territoireResolver,
           getTerritoiresIdentiteQuery,
           habilitations,

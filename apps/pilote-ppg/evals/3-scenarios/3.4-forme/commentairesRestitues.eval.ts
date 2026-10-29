@@ -24,7 +24,10 @@ scenarioEval({
       expected: [
         {
           toolName: "get_chantier_commentaires",
-          input: { chantier_id: "CH-001", territoire_code: "REG-53" },
+          input: {
+            chantier_id: "CH-001",
+            perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+          },
         },
       ],
     },

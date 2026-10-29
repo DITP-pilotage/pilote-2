@@ -8,8 +8,8 @@ import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria"
  * départemental). Le message porte le libellé affiché : « 35 -
  * Ille-et-Vilaine ».
  *
- * Deux chemins légitimes : un appel sur REG-53 avec les sous-territoires, ou
- * quatre appels départementaux. Le scorer d'outils ne sait pas exprimer
+ * Deux chemins légitimes : le périmètre REGION_ET_SES_DEPARTEMENTS de REG-53,
+ * ou une sélection des quatre départements. Le scorer d'outils ne sait pas exprimer
  * « l'un ou l'autre » : il n'exige que l'outil, et « Territoires du tableau »
  * vérifie le résultat. La ligne de la région n'est pas pénalisée.
  *
@@ -31,7 +31,13 @@ scenarioEval({
       question:
         "Compare 35 - Ille-et-Vilaine avec les autres départements de Bretagne",
       reason: "Message envoyé tel quel",
-      truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
+      truthScope: {
+        territoires: ["REG-53"],
+        perimetre: {
+          type: "REGION_ET_SES_DEPARTEMENTS",
+          region_code: "REG-53",
+        },
+      },
       expected: [{ toolName: "rediger_comparaison_territoires" }],
       tableTerritories: ["DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],
     },

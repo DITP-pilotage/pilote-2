@@ -6,9 +6,9 @@ import { COMPARER_DEPARTEMENTS_CRITERIA } from "./comparerDepartements.criteria"
  * Scénario « Comparer Bretagne avec ses départements » (DITP, envoyé,
  * territoire courant régional).
  *
- * Attente stricte, décidée en revue : UN SEUL appel sur REG-53 avec
- * `include_sous_territoires`. Le prompt interdit d'énumérer les
- * sous-territoires ; une énumération échoue « Outils attendus ».
+ * Attente stricte, décidée en revue : UN SEUL appel avec le périmètre
+ * REGION_ET_SES_DEPARTEMENTS de REG-53. Le prompt interdit d'énumérer les
+ * départements ; une énumération échoue « Outils attendus ».
  *
  * « avec ses départements » ne déclenche pas le mot-clé du détecteur, qui
  * attend « et ses départements » : la consigne impérative sur les
@@ -31,11 +31,22 @@ scenarioEval({
     {
       question: "Compare Bretagne avec ses départements",
       reason: "Message envoyé tel quel",
-      truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
+      truthScope: {
+        territoires: ["REG-53"],
+        perimetre: {
+          type: "REGION_ET_SES_DEPARTEMENTS",
+          region_code: "REG-53",
+        },
+      },
       expected: [
         {
           toolName: "rediger_comparaison_territoires",
-          input: { territoire_code: "REG-53", include_sous_territoires: true },
+          input: {
+            perimetre: {
+              type: "REGION_ET_SES_DEPARTEMENTS",
+              region_code: "REG-53",
+            },
+          },
         },
       ],
       tableTerritories: ["REG-53", "DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],

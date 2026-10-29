@@ -10,41 +10,36 @@ import {
   redigerEncart,
 } from "@/server/albert/tools/encart";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import {
+  descriptionPerimetre,
+  variantesPerimetre,
+} from "@/server/albert/tools/perimetre";
 
-export const redigerComparaisonTerritoiresInputSchema = z
-  .object({
-    territoire_codes: z
-      .array(z.string())
-      .min(2)
-      .max(5)
-      .optional()
-      .describe(
-        "Les territoires comparés, de 2 à 5 (ex: ['DEPT-59', 'DEPT-33']). Sans territoire_code.",
-      ),
-    territoire_code: z
-      .string()
-      .optional()
-      .describe(
-        "Un territoire comparé à ses sous-territoires, avec include_sous_territoires. Sans territoire_codes.",
-      ),
-    include_sous_territoires: z
-      .boolean()
-      .optional()
-      .describe(
-        "`true` avec territoire_code : le territoire et ses sous-territoires, résolus par l'outil.",
-      ),
-    jalon: jalonEncartSchema,
-  })
-  .refine(
-    ({ territoire_codes, territoire_code, include_sous_territoires }) =>
-      territoire_codes
-        ? territoire_code === undefined && !include_sous_territoires
-        : territoire_code !== undefined && include_sous_territoires === true,
-    {
-      message:
-        "Donne soit territoire_codes (2 à 5 territoires), soit territoire_code avec include_sous_territoires.",
-    },
-  );
+export const redigerComparaisonTerritoiresInputSchema = z.object({
+  perimetre: z
+    .discriminatedUnion("type", [
+      variantesPerimetre.SELECTION.extend({
+        territoire_codes: z
+          .array(z.string())
+          .min(2)
+          .describe(
+            "Les territoires comparés, au moins 2 (ex: ['DEPT-59', 'DEPT-33'])",
+          ),
+      }),
+      variantesPerimetre.REGION_ET_SES_DEPARTEMENTS,
+      variantesPerimetre.FRANCE_ET_SES_REGIONS,
+    ])
+    .describe(
+      descriptionPerimetre({
+        types: [
+          "SELECTION",
+          "REGION_ET_SES_DEPARTEMENTS",
+          "FRANCE_ET_SES_REGIONS",
+        ],
+      }),
+    ),
+  jalon: jalonEncartSchema,
+});
 
 export type RedigerComparaisonTerritoiresInput = z.infer<
   typeof redigerComparaisonTerritoiresInputSchema
@@ -64,11 +59,11 @@ export function createRedigerComparaisonTerritoiresTool({
       Record<string, never>
     >({
       description: `Rédige la comparaison de plusieurs territoires dans un encart affiché à l'utilisateur : un tableau des taux d'avancement face à la médiane, l'analyse des écarts, puis les chantiers en retard et en difficulté, communs ou propres à chaque territoire. L'outil collecte lui-même ces données.
-Utilise-le pour : une comparaison générique de territoires. Par exemple « Compare le Nord et la Gironde », « Bretagne ou Normandie, qui avance le mieux ? » (territoire_codes) ; « Compare la Bretagne avec ses départements », « Fais-moi la synthèse de la Bretagne et ses départements » (territoire_code et include_sous_territoires).
+Utilise-le pour : une comparaison générique de territoires. Par exemple « Compare le Nord et la Gironde », « Compare la Bretagne et la Normandie » (SELECTION) ; « Compare la Bretagne avec ses départements », « Fais-moi la synthèse de la Bretagne et ses départements » (REGION_ET_SES_DEPARTEMENTS) ; « Compare la France et ses régions » (FRANCE_ET_SES_REGIONS).
 Ne l'utilise pas pour :
 - une demande qui nomme son critère (« compare les taux d'avancement », « les chantiers en retard ») → les outils de données ;
-- un critère précis (« compare le taux d'avancement de la Bretagne et de la Normandie ») ou une comparaison de jalons → get_taux_avancement_territoire ;
-- « Où en sont l'Occitanie et ses départements ? » → get_taux_avancement_territoire avec include_sous_territoires ;
+- le taux d'avancement nommé, un classement ou « qui avance le mieux » (« compare le taux d'avancement de la Bretagne et de la Normandie », « classe les régions », « Bretagne ou Normandie, qui avance le mieux ? ») ou une comparaison de jalons → get_taux_avancement_territoire ;
+- « Où en sont l'Occitanie et ses départements ? » → get_taux_avancement_territoire avec REGION_ET_SES_DEPARTEMENTS ;
 - un chantier ou un indicateur précis → les outils de données ;
 - un seul territoire → rediger_synthese_territoire ;
 - un graphique → create_dashboard.
@@ -76,15 +71,14 @@ Un rapport ou un téléchargement de la synthèse passe aussi par cet outil : l'
 L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter son contenu ; elle peut rappeler que l'encart se télécharge.`,
       inputSchema: redigerComparaisonTerritoiresInputSchema,
       execute: async function* (
-        { territoire_codes, territoire_code, jalon },
+        { perimetre, jalon },
         { abortSignal },
       ): AsyncGenerator<EncartOutput> {
         const donnees = await collecterDonneesEncart({
           getChantiersQuery,
           territoireResolver,
           getTerritoiresIdentiteQuery,
-          territoireCodes: territoire_codes ?? [territoire_code as string],
-          includeSousTerritoires: territoire_codes === undefined,
+          perimetre,
           jalon,
           habilitations,
         });

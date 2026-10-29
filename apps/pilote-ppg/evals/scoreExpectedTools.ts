@@ -7,13 +7,15 @@ import type { AgentTurn, ObservedToolCall } from "./types";
  * Écrit à la main plutôt qu'en réutilisant `toolCallAccuracy` d'Evalite :
  * celui-ci compare les arguments par `deepEqual` sur l'objet ENTIER. Une
  * attente partielle comme `{ view: "en_retard" }` ne matcherait jamais l'appel
- * réel, qui porte aussi `territoire_code`, `jalon` et
- * `include_sous_territoires` — elle plafonnerait à 0,5 à vie, ce qui se lirait
- * comme une régression alors que c'est l'attente qui est mal écrite.
+ * réel, qui porte aussi `perimetre` et `jalon` — elle plafonnerait à 0,5 à
+ * vie, ce qui se lirait comme une régression alors que c'est l'attente qui est
+ * mal écrite.
  *
  * Ici, un appel correspond s'il porte AU MOINS les arguments attendus, comparés
- * par valeur. Un argument tableau doit contenir AU MOINS les valeurs attendues :
- * `types: ["freins_a_lever"]` accepte un appel qui demande aussi d'autres types.
+ * par valeur, à toute profondeur : `perimetre: { type: "SELECTION" }` accepte
+ * n'importe quelle sélection. Un argument tableau doit contenir AU MOINS les
+ * valeurs attendues : `types: ["freins_a_lever"]` accepte un appel qui demande
+ * aussi d'autres types.
  *
  * La sélection en sous-ensemble tolère les appels en trop : sans `forbidden`,
  * un cas négatif passerait même si l'agent appelle aussi l'outil qu'il ne
@@ -106,17 +108,22 @@ function matches(call: ObservedToolCall, expectedCall: ObservedToolCall) {
   if (call.toolName !== expectedCall.toolName) return false;
   if (expectedCall.input === undefined) return true;
 
-  const actualInput = (call.input ?? {}) as Record<string, unknown>;
-
-  return Object.entries(expectedCall.input as Record<string, unknown>).every(
-    ([key, value]) => matchesValue(actualInput[key], value),
-  );
+  return matchesValue(call.input ?? {}, expectedCall.input);
 }
 
-function matchesValue(actual: unknown, expected: unknown) {
+const estUnObjet = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+function matchesValue(actual: unknown, expected: unknown): boolean {
   if (Array.isArray(expected) && Array.isArray(actual)) {
     return expected.every((expectedItem) =>
-      actual.some((actualItem) => isDeepStrictEqual(actualItem, expectedItem)),
+      actual.some((actualItem) => matchesValue(actualItem, expectedItem)),
+    );
+  }
+
+  if (estUnObjet(expected) && estUnObjet(actual)) {
+    return Object.entries(expected).every(([key, value]) =>
+      matchesValue(actual[key], value),
     );
   }
 

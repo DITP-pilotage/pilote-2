@@ -27,7 +27,7 @@ import { COMPARER_TERRITOIRES_CRITERIA } from "./comparerTerritoires.criteria";
 
 const comparaisonDe = (territoire_codes: string[]) => ({
   toolName: "rediger_comparaison_territoires",
-  input: { territoire_codes },
+  input: { perimetre: { type: "SELECTION", territoire_codes } },
 });
 
 scenarioEval({

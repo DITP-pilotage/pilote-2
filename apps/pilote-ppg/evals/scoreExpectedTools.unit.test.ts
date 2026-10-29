@@ -154,6 +154,59 @@ describe("scoreExpectedTools", () => {
     expect(result.score).toBe(0);
   });
 
+  it("matche un argument objet en sous-ensemble, à toute profondeur", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "get_taux_avancement_territoire",
+          input: {
+            perimetre: {
+              type: "SELECTION",
+              territoire_codes: ["DEPT-33", "DEPT-59"],
+            },
+            jalon: 2026,
+          },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "get_taux_avancement_territoire",
+          input: {
+            perimetre: { type: "SELECTION", territoire_codes: ["DEPT-59"] },
+          },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(1);
+  });
+
+  it("note 0 quand le type de périmètre attendu diffère", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "get_taux_avancement_territoire",
+          input: {
+            perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+          },
+        },
+      ]),
+      expected: [
+        {
+          toolName: "get_taux_avancement_territoire",
+          input: {
+            perimetre: {
+              type: "REGION_ET_SES_DEPARTEMENTS",
+              region_code: "REG-53",
+            },
+          },
+        },
+      ],
+    });
+
+    expect(result.score).toBe(0);
+  });
+
   it("décrit les appels attendus avec leurs arguments", () => {
     const result = scoreExpectedTools({
       output: turn([

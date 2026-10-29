@@ -15,6 +15,7 @@ import {
 } from "@/server/albert/tools/redigerComparaisonTerritoires";
 import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type {
   ChantierResult,
   GetChantiersParams,
@@ -106,20 +107,26 @@ const chantierRenvoye = (id: string): ChantierRenvoye => ({
 
 const getChantiersQuery = () =>
   mock<GetChantiersQuery>({
-    execute: vi.fn(async (params: GetChantiersParams) => ({
-      territoire_code: params.territoireCode,
-      territoire_nom: NOMS[params.territoireCode] ?? null,
-      jalon: params.jalon,
-      chantiers: [params.view === "en_retard" ? "CH-071" : "CH-045"]
-        .filter((id) => params.chantierIds?.includes(id))
-        .map(chantier),
-    })),
+    execute: vi.fn(async (params: GetChantiersParams) =>
+      params.territoireCodes.map((territoireCode) => ({
+        territoire_code: territoireCode,
+        territoire_nom: NOMS[territoireCode] ?? null,
+        jalon: params.jalon,
+        chantiers: [params.view === "en_retard" ? "CH-071" : "CH-045"]
+          .filter((id) => params.chantierIds?.includes(id))
+          .map(chantier),
+      })),
+    ),
   });
 
 const territoireResolver = () =>
   mock<TerritoireResolver>({
-    resoudre: vi.fn(async (code: string, avecSousTerritoires?: boolean) =>
-      avecSousTerritoires ? [code, "DEPT-31"] : [code],
+    resoudre: vi.fn(async (perimetre: Perimetre) =>
+      perimetre.type === "SELECTION"
+        ? perimetre.territoire_codes
+        : perimetre.type === "REGION_ET_SES_DEPARTEMENTS"
+          ? [perimetre.region_code, "DEPT-31"]
+          : [],
     ),
   });
 
@@ -435,7 +442,13 @@ describe("outils de rédaction d'encart", () => {
     // When
     const sorties = await collecter(
       outil.execute!(
-        { territoire_codes: ["DEPT-59", "DEPT-33"], jalon: 2025 },
+        {
+          perimetre: {
+            type: "SELECTION",
+            territoire_codes: ["DEPT-59", "DEPT-33"],
+          },
+          jalon: 2025,
+        },
         OPTIONS,
       ),
     );
@@ -466,8 +479,10 @@ describe("outils de rédaction d'encart", () => {
     const sorties = await collecter(
       outil.execute!(
         {
-          territoire_code: "REG-76",
-          include_sous_territoires: true,
+          perimetre: {
+            type: "REGION_ET_SES_DEPARTEMENTS",
+            region_code: "REG-76",
+          },
           jalon: 2025,
         },
         OPTIONS,
@@ -475,7 +490,10 @@ describe("outils de rédaction d'encart", () => {
     );
 
     // Then
-    expect(resolver.resoudre).toHaveBeenCalledWith("REG-76", true);
+    expect(resolver.resoudre).toHaveBeenCalledWith({
+      type: "REGION_ET_SES_DEPARTEMENTS",
+      region_code: "REG-76",
+    });
     expect(
       sorties.at(-1)?.donnees?.taux.map((taux) => taux.territoire_code),
     ).toEqual(["REG-76", "DEPT-31"]);
@@ -496,11 +514,10 @@ describe("outils de rédaction d'encart", () => {
     expect(outil.description).toContain("create_dashboard");
   });
 
-  test("refuse une entrée qui mélange les deux formes", () => {
+  test("refuse une sélection d'un seul territoire", () => {
     // When
     const resultat = redigerComparaisonTerritoiresInputSchema.safeParse({
-      territoire_codes: ["DEPT-59", "DEPT-33"],
-      territoire_code: "REG-76",
+      perimetre: { type: "SELECTION", territoire_codes: ["DEPT-59"] },
       jalon: 2025,
     });
 
@@ -656,7 +673,13 @@ describe("outils de rédaction d'encart", () => {
     // When
     const sorties = await collecter(
       outil.execute!(
-        { territoire_codes: ["NAT-FR", "DEPT-59"], jalon: 2025 },
+        {
+          perimetre: {
+            type: "SELECTION",
+            territoire_codes: ["NAT-FR", "DEPT-59"],
+          },
+          jalon: 2025,
+        },
         OPTIONS,
       ),
     );

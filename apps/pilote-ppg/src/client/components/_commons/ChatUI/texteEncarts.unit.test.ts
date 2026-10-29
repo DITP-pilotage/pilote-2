@@ -25,7 +25,13 @@ describe("texteEncarts", () => {
           type: "tool-rediger_comparaison_territoires",
           toolCallId: "appel-2",
           state: "output-available",
-          input: { territoire_codes: ["DEPT-59", "DEPT-33"], jalon: 2025 },
+          input: {
+            perimetre: {
+              type: "SELECTION",
+              territoire_codes: ["DEPT-59", "DEPT-33"],
+            },
+            jalon: 2025,
+          },
           output: {
             type: "comparaison",
             jalon: 2025,

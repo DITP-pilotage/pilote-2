@@ -8,6 +8,13 @@ import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolv
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 
+const TAUX: Record<string, number | null> = {
+  "REG-76": 62,
+  "DEPT-31": 40,
+  "DEPT-09": null,
+  "DEPT-32": 71,
+};
+
 // L'outil lit les taux et la médiane dans le container du module chantiers
 vi.mock("@/server/dependances", () => ({
   getContainer: () => ({
@@ -18,19 +25,24 @@ vi.mock("@/server/dependances", () => ({
           run: async () => ({ médiane: 50 }),
         },
         recupererTauxAvancementTerritoireQuery: {
-          executePourTerritoires: async () => [
-            { territoire_code: "REG-76", taux_avancement: 62 },
-            { territoire_code: "DEPT-31", taux_avancement: 40 },
-          ],
+          executePourTerritoires: async ({
+            territoireCodes,
+          }: {
+            territoireCodes: string[];
+          }) =>
+            territoireCodes.map((code) => ({
+              territoire_code: code,
+              taux_avancement: TAUX[code],
+            })),
         },
       })[nom],
   }),
 }));
 
-const buildTool = () =>
+const buildTool = (codes: string[] = ["REG-76", "DEPT-31"]) =>
   createGetTauxAvancementTerritoireTool({
     territoireResolver: mock<TerritoireResolver>({
-      resoudre: async () => ["REG-76", "DEPT-31"],
+      resoudre: async () => codes,
     }),
     getTerritoiresIdentiteQuery: mock<GetTerritoiresIdentiteQuery>({
       execute: async () => [
@@ -58,9 +70,12 @@ describe("createGetTauxAvancementTerritoireTool execute", () => {
     // When
     const result = (await tool.execute!(
       {
-        territoire_code: "REG-76",
+        perimetre: {
+          type: "REGION_ET_SES_DEPARTEMENTS",
+          region_code: "REG-76",
+        },
         jalon: 2025,
-        include_sous_territoires: true,
+        tri: "taux_decroissant",
       },
       { toolCallId: "test", messages: [], abortSignal: undefined, context: {} },
     )) as GetTauxAvancementTerritoireOutput;
@@ -85,6 +100,57 @@ describe("createGetTauxAvancementTerritoireTool execute", () => {
           position_mediane: "EN_RETARD",
         },
       ],
+      total: 2,
     });
+  });
+
+  test.each([
+    ["taux_decroissant", ["DEPT-32", "REG-76", "DEPT-31", "DEPT-09"]],
+    ["taux_croissant", ["DEPT-31", "REG-76", "DEPT-32", "DEPT-09"]],
+  ] as const)(
+    "trie par %s, les territoires sans donnée en dernier",
+    async (tri, ordre) => {
+      // Given
+      const tool = buildTool(["REG-76", "DEPT-31", "DEPT-09", "DEPT-32"]);
+
+      // When
+      const result = (await tool.execute!(
+        { perimetre: { type: "TOUS_DEPARTEMENTS" }, jalon: 2025, tri },
+        {
+          toolCallId: "test",
+          messages: [],
+          abortSignal: undefined,
+          context: {},
+        },
+      )) as GetTauxAvancementTerritoireOutput;
+
+      // Then
+      expect(
+        result.resultats.map((resultat) => resultat.territoire_code),
+      ).toEqual(ordre);
+    },
+  );
+
+  test("garde les premiers territoires après le tri, et signale la liste tronquée", async () => {
+    // Given
+    const tool = buildTool(["REG-76", "DEPT-31", "DEPT-09", "DEPT-32"]);
+
+    // When
+    const result = (await tool.execute!(
+      {
+        perimetre: { type: "TOUS_DEPARTEMENTS" },
+        jalon: 2025,
+        tri: "taux_decroissant",
+        limite: 2,
+      },
+      { toolCallId: "test", messages: [], abortSignal: undefined, context: {} },
+    )) as GetTauxAvancementTerritoireOutput;
+
+    // Then
+    expect({
+      codes: result.resultats.map((resultat) => resultat.territoire_code),
+      total: result.total,
+      tronque: result.tronque,
+    }).toEqual({ codes: ["DEPT-32", "REG-76"], total: 4, tronque: true });
   });
 });

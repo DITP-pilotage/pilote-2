@@ -23,7 +23,10 @@ scenarioEval({
       expected: [
         {
           toolName: "get_chantiers",
-          input: { territoire_code: "REG-53", view: "en_retard" },
+          input: {
+            perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+            view: "en_retard",
+          },
         },
       ],
     },

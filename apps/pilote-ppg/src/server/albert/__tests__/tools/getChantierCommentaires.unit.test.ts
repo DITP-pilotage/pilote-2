@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
   createGetChantierCommentairesTool,
+  type GetChantierCommentairesInput,
   type GetChantierCommentairesOutput,
 } from "@/server/albert/tools/getChantierCommentaires";
 import type {
@@ -9,6 +10,7 @@ import type {
   GetChantierCommentairesQueryResult,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 
 const queryResult: GetChantierCommentairesQueryResult = {
@@ -61,7 +63,10 @@ const buildTool = ({
   chantiersAccessibles: string[];
 }) => {
   const territoireResolver = mock<TerritoireResolver>({
-    resoudre: async (territoireCode: string) => [territoireCode],
+    resoudre: async (perimetre: Perimetre) =>
+      perimetre.type === "SELECTION"
+        ? perimetre.territoire_codes
+        : ["REG-75", "DEPT-75"],
   });
   return createGetChantierCommentairesTool({
     getChantierCommentairesQuery: query,
@@ -83,13 +88,13 @@ const buildTool = ({
 const executeTool = async (
   tool: ReturnType<ReturnType<typeof createGetChantierCommentairesTool>>,
   chantier_id: string,
+  perimetre: GetChantierCommentairesInput["perimetre"] = {
+    type: "SELECTION",
+    territoire_codes: ["REG-75"],
+  },
 ): Promise<GetChantierCommentairesOutput> =>
   tool.execute!(
-    {
-      chantier_id,
-      territoire_code: "REG-75",
-      include_sous_territoires: false,
-    },
+    { chantier_id, perimetre },
     {
       toolCallId: "test",
       messages: [],
@@ -365,5 +370,51 @@ describe("createGetChantierCommentairesTool execute", () => {
       "Accès non autorisé au chantier CH-062",
     );
     expect(query.execute).not.toHaveBeenCalled();
+  });
+
+  test("refuse une sélection dont un territoire n'est pas accessible, sans appeler la query", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () => queryResult),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When / Then
+    await expect(
+      executeTool(tool, "CH-084", {
+        type: "SELECTION",
+        territoire_codes: ["REG-75", "REG-53"],
+      }),
+    ).rejects.toThrow("Accès non autorisé au territoire REG-53");
+    expect(query.execute).not.toHaveBeenCalled();
+  });
+
+  test("une région et ses départements : interroge la région et ses seuls départements accessibles", async () => {
+    // Given — DEPT-75 est résolu mais pas accessible
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () => queryResult),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    await executeTool(tool, "CH-084", {
+      type: "REGION_ET_SES_DEPARTEMENTS",
+      region_code: "REG-75",
+    });
+
+    // Then
+    expect(
+      vi
+        .mocked(query.execute)
+        .mock.calls.map(([params]) => params.territoireCode),
+    ).toEqual(["REG-75"]);
   });
 });

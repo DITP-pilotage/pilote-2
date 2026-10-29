@@ -40,7 +40,7 @@ describe("deriverEtatAssistant", () => {
         type: "tool-get_chantiers",
         toolCallId: "appel-1",
         state: "input-available",
-        input: { territoire_code: "BRE" },
+        input: { perimetre: { type: "TOUTES_REGIONS" } },
       },
     ] as PiloteUIMessage["parts"]);
 

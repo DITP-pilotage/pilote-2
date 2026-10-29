@@ -59,8 +59,7 @@ L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter s
           getTerritoiresIdentiteQuery,
           getChantierIndicateursQuery,
           avecIndicateurs: avec_indicateurs,
-          territoireCodes: [territoire_code],
-          includeSousTerritoires: false,
+          perimetre: { type: "SELECTION", territoire_codes: [territoire_code] },
           jalon,
           habilitations,
         });

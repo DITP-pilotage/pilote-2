@@ -45,7 +45,7 @@ export type GetChantiersResult = {
 };
 
 export type GetChantiersParams = {
-  territoireCode: string;
+  territoireCodes: string[];
   jalon: number;
   chantierIds?: string[];
   view?: "all" | "en_retard" | "en_difficulte";
@@ -56,12 +56,22 @@ export type GetChantiersParams = {
 export class GetChantiersQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
-  async execute(params: GetChantiersParams): Promise<GetChantiersResult> {
+  /** Un résultat par territoire, dans l'ordre des codes demandés. */
+  async execute(params: GetChantiersParams): Promise<GetChantiersResult[]> {
     const prisma = this.deps.prisma.getInstance();
 
-    const territoire = await prisma.territoire.findUniqueOrThrow({
-      where: { code: params.territoireCode },
+    const territoireCodes = [...new Set(params.territoireCodes)];
+    const territoires = await prisma.territoire.findMany({
+      where: { code: { in: territoireCodes } },
     });
+    const territoiresInconnus = territoireCodes.filter(
+      (code) => !territoires.some((territoire) => territoire.code === code),
+    );
+    if (territoiresInconnus.length > 0) {
+      throw new Error(
+        `Territoires inconnus : ${territoiresInconnus.join(", ")}`,
+      );
+    }
 
     const where = this.buildWhere(params);
     const view = params.view;
@@ -89,7 +99,7 @@ export class GetChantiersQuery {
       },
     });
 
-    const chantiers: ChantierResult[] = chantiersTerritoire.map((ct) => {
+    const chantiers = chantiersTerritoire.map((ct) => {
       const jalon = ct.chantier_territoire_jalon[0];
       const ecart = jalon?.ecart ?? null;
       const meteo = ct.meteo;
@@ -105,65 +115,73 @@ export class GetChantiersQuery {
       );
 
       return {
-        chantier: {
-          id: ct.chantier_identite.id,
-          nom: ct.chantier_identite.nom,
-          axe: ct.chantier_identite.axe,
-          ppg: ct.chantier_identite.ppg,
-          ministeres: ct.chantier_identite.ministeres_acronymes,
-          mailles_applicables: ct.chantier_identite.mailles_applicables,
-        },
-        meteo: ct.meteo,
-        tendance: ct.tendance,
-        ecart,
-        taux_avancement: jalon?.taux_avancement ?? ct.taux_avancement_mandat,
-        est_en_retard: estEnRetard,
-        est_en_difficulte: estEnDifficulte,
-        synthese:
-          ct.syntheses_des_resultats.length > 0
-            ? {
-                meteo: ct.syntheses_des_resultats[0].meteo,
-                commentaire: ct.syntheses_des_resultats[0].commentaire,
-                date_meteo:
-                  ct.syntheses_des_resultats[0].date_modification?.toISOString() ??
-                  null,
-                date_commentaire:
-                  ct.syntheses_des_resultats[0].date_modification?.toISOString() ??
-                  null,
-              }
-            : null,
-        commentaires: {
-          donnees: commentaireDonnees
-            ? {
-                contenu: commentaireDonnees.contenu,
-                date: commentaireDonnees.date_modification.toISOString(),
-              }
-            : null,
-          autresResultats: commentaireAutresResultats
-            ? {
-                contenu: commentaireAutresResultats.contenu,
-                date: commentaireAutresResultats.date_modification.toISOString(),
-              }
-            : null,
-        },
+        territoireCode: ct.territoire_code,
+        resultat: {
+          chantier: {
+            id: ct.chantier_identite.id,
+            nom: ct.chantier_identite.nom,
+            axe: ct.chantier_identite.axe,
+            ppg: ct.chantier_identite.ppg,
+            ministeres: ct.chantier_identite.ministeres_acronymes,
+            mailles_applicables: ct.chantier_identite.mailles_applicables,
+          },
+          meteo: ct.meteo,
+          tendance: ct.tendance,
+          ecart,
+          taux_avancement: jalon?.taux_avancement ?? ct.taux_avancement_mandat,
+          est_en_retard: estEnRetard,
+          est_en_difficulte: estEnDifficulte,
+          synthese:
+            ct.syntheses_des_resultats.length > 0
+              ? {
+                  meteo: ct.syntheses_des_resultats[0].meteo,
+                  commentaire: ct.syntheses_des_resultats[0].commentaire,
+                  date_meteo:
+                    ct.syntheses_des_resultats[0].date_modification?.toISOString() ??
+                    null,
+                  date_commentaire:
+                    ct.syntheses_des_resultats[0].date_modification?.toISOString() ??
+                    null,
+                }
+              : null,
+          commentaires: {
+            donnees: commentaireDonnees
+              ? {
+                  contenu: commentaireDonnees.contenu,
+                  date: commentaireDonnees.date_modification.toISOString(),
+                }
+              : null,
+            autresResultats: commentaireAutresResultats
+              ? {
+                  contenu: commentaireAutresResultats.contenu,
+                  date: commentaireAutresResultats.date_modification.toISOString(),
+                }
+              : null,
+          },
+        } satisfies ChantierResult,
       };
     });
 
-    const sorted = this.sort(chantiers, view);
-
-    return {
-      territoire_code: params.territoireCode,
-      territoire_nom: territoire.nom,
+    return territoireCodes.map((territoireCode) => ({
+      territoire_code: territoireCode,
+      territoire_nom:
+        territoires.find((territoire) => territoire.code === territoireCode)
+          ?.nom ?? territoireCode,
       jalon: params.jalon,
-      chantiers: sorted,
-    };
+      chantiers: this.sort(
+        chantiers
+          .filter((chantier) => chantier.territoireCode === territoireCode)
+          .map(({ resultat }) => resultat),
+        view,
+      ),
+    }));
   }
 
   private buildWhere(
     params: GetChantiersParams,
   ): Prisma.chantier_territoireWhereInput {
     const base: Prisma.chantier_territoireWhereInput = {
-      territoire_code: params.territoireCode,
+      territoire_code: { in: params.territoireCodes },
       est_applicable: true,
       chantier_identite: { statut: "PUBLIE" },
     };

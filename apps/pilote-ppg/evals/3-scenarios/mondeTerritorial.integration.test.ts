@@ -24,12 +24,16 @@ describe("seedMondeTerritorial", () => {
       // When
       const enRetard = await executeTool<GetChantiersOutput>({
         tool: tools.getChantiers,
-        input: { territoire_code: "REG-53", jalon: 2025, view: "en_retard" },
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+          jalon: 2025,
+          view: "en_retard",
+        },
       });
       const enDifficulte = await executeTool<GetChantiersOutput>({
         tool: tools.getChantiers,
         input: {
-          territoire_code: "REG-53",
+          perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
           jalon: 2025,
           view: "en_difficulte",
         },
@@ -52,7 +56,10 @@ describe("seedMondeTerritorial", () => {
       // When
       const taux = await executeTool<GetTauxAvancementTerritoireOutput>({
         tool: tools.getTauxAvancementTerritoire,
-        input: { territoire_code: "REG-53", jalon: 2025 },
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+          jalon: 2025,
+        },
       });
 
       // Then
@@ -102,7 +109,10 @@ describe("seedMondeTerritorial", () => {
       // When
       const commentaires = await executeTool<GetChantierCommentairesOutput>({
         tool: tools.getChantierCommentaires,
-        input: { chantier_id: "CH-005", territoire_code: "REG-53" },
+        input: {
+          chantier_id: "CH-005",
+          perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+        },
       });
 
       // Then
@@ -130,7 +140,10 @@ describe("seedMondeTerritorial", () => {
       // When
       const commentaires = await executeTool<GetChantierCommentairesOutput>({
         tool: tools.getChantierCommentaires,
-        input: { chantier_id: "CH-006", territoire_code: "REG-53" },
+        input: {
+          chantier_id: "CH-006",
+          perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+        },
       });
 
       // Then
