@@ -81,6 +81,34 @@ const CASES: ToolCase[] = [
     ],
   },
   {
+    question:
+      "Quels chantiers sont les plus en retard dans tous les départements ?",
+    reason: "classement par écart, tous les départements",
+    expected: [
+      {
+        toolName: "get_chantiers",
+        input: {
+          perimetre: { type: "TOUS_DEPARTEMENTS" },
+          view: "en_retard",
+          tri: "ecart_croissant",
+        },
+      },
+    ],
+  },
+  {
+    question: "Liste les chantiers en difficulté de tous les départements",
+    reason: "tous les départements, sans les énumérer",
+    expected: [
+      {
+        toolName: "get_chantiers",
+        input: {
+          perimetre: { type: "TOUS_DEPARTEMENTS" },
+          view: "en_difficulte",
+        },
+      },
+    ],
+  },
+  {
     question: "Où en est le CH-005 en Bretagne ?",
     reason: "chantier explicite → chantier_ids",
     expected: [

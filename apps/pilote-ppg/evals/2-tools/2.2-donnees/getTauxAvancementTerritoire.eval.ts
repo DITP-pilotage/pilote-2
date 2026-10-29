@@ -105,6 +105,31 @@ const CASES: ToolCase[] = [
     ],
   },
   {
+    question: "Quelles sont les 3 régions qui avancent le moins ?",
+    reason: "classement croissant, limité",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: {
+          perimetre: { type: "TOUTES_REGIONS" },
+          tri: "taux_croissant",
+          limite: 3,
+        },
+      },
+    ],
+  },
+  {
+    question:
+      "Quels sont les 5 départements les mieux placés en taux d'avancement ?",
+    reason: "classement limité, tous les départements",
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: { perimetre: { type: "TOUS_DEPARTEMENTS" }, limite: 5 },
+      },
+    ],
+  },
+  {
     question: "Où en sont la France et ses régions en taux d'avancement ?",
     reason: "le national et ses régions",
     expected: [

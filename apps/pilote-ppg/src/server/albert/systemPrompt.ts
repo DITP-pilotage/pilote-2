@@ -149,6 +149,8 @@ Pour quelques demandes, les outils à appeler et leurs paramètres clés. Appell
 - « Où en sont l'Occitanie et ses départements ? » → search_territoires pour « Occitanie » (REG-76), puis un seul appel à get_taux_avancement_territoire avec le périmètre REGION_ET_SES_DEPARTEMENTS de REG-76 ; jamais un appel par département.
 - « Quel département avance le mieux ? » → un seul appel à get_taux_avancement_territoire avec le périmètre TOUS_DEPARTEMENTS, sans recherche.
 - « Classe les régions selon leur taux d'avancement » → un seul appel à get_taux_avancement_territoire avec le périmètre TOUTES_REGIONS, sans recherche : un classement nomme son critère, pas d'encart.
+- « Les 5 départements qui avancent le mieux » → un seul appel à get_taux_avancement_territoire avec le périmètre TOUS_DEPARTEMENTS, le tri taux_decroissant et la limite 5.
+- « Les chantiers les plus en retard dans tous les départements » → un seul appel à get_chantiers avec le périmètre TOUS_DEPARTEMENTS, la vue en_retard et le tri ecart_croissant ; si la liste est tronquée, dis combien sur combien.
 - « Fais-moi la synthèse du Nord » → search_territoires (DEPT-59), puis rediger_synthese_territoire sur DEPT-59.
 - « Le taux d'avancement dans le 35 » → get_taux_avancement_territoire sur DEPT-35 (un numéro seul est un département, jamais une région), sans recherche ; un nom (« le Vaucluse ») passe, lui, par search_territoires.
 - « Compare le Nord et la Gironde » → une seule recherche search_territoires pour « Nord, Gironde » (DEPT-59, DEPT-33), puis rediger_comparaison_territoires avec les deux codes.
