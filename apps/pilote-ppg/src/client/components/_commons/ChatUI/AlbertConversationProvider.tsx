@@ -34,7 +34,7 @@ import {
 import {
   readPreferenceVue,
   writePreferenceVue,
-} from "@/components/_commons/ChatUI/preferenceVueStorage";
+} from "@/components/_commons/ChatUI/preferencesAssistantStorage";
 import { useTailleEcran } from "@/components/_commons/ChatUI/useTailleEcran";
 import type { AnalyticsEventName } from "@/client/analytics/schema";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
@@ -68,10 +68,8 @@ type AlbertConversationContextValue = {
   setPageContext: (pageContext: AlbertPageContext | null) => void;
   open: () => void;
   changerVue: (vue: VueAssistant) => void;
-  ouvrirHistorique: () => void;
   minimize: () => void;
   restore: () => void;
-  close: () => void;
   startNewConversation: () => void;
   selectConversation: (id: string) => void;
 };
@@ -244,10 +242,6 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     [conversation, track],
   );
 
-  // L'historique n'a la place de s'afficher que dans la modale. Y passer pour
-  // le consulter ne change pas la vue préférée.
-  const ouvrirHistorique = useCallback(() => setAffichage("modal"), []);
-
   const minimize = useCallback(() => {
     if (conversation) {
       track({
@@ -273,29 +267,24 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
     setAffichage(vueAvantReduction);
   }, [conversation, track, vueAvantReduction]);
 
-  const close = useCallback(() => {
-    track({
-      action: "close",
-      name: "assistant.close",
-      dimensions: { conversation_id: conversation?.chat.id },
-    });
-    conversation?.chat.stop();
-    clearMinimizedConversation();
-    setConversation(null);
-  }, [conversation, track]);
-
+  // Il n'y a plus de « Fermer » : repartir de zéro, c'est démarrer une
+  // nouvelle conversation, avec le contexte de la page affichée.
   const startNewConversation = useCallback(() => {
     if (!conversation) return;
     conversation.chat.stop();
     clearMinimizedConversation();
-    setConversation(
-      build({
-        id: crypto.randomUUID(),
-        agentContext: conversation.agentContext,
-        scenarios: conversation.scenarios,
-      }),
-    );
-  }, [conversation, build]);
+    const created = build({
+      id: crypto.randomUUID(),
+      agentContext: pageContext?.agentContext,
+      scenarios: pageContext?.scenarios,
+    });
+    setConversation(created);
+    track({
+      action: "open",
+      name: "conversation.new",
+      dimensions: { conversation_id: created.chat.id },
+    });
+  }, [build, conversation, pageContext, track]);
 
   const selectConversation = useCallback(
     (id: string) => {
@@ -310,10 +299,10 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       load({
         id,
         agentContext: conversation.agentContext,
-        targetDisplay: "modal",
+        targetDisplay: affichage,
       });
     },
-    [conversation, load, track],
+    [affichage, conversation, load, track],
   );
 
   const value = useMemo(
@@ -325,10 +314,8 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       setPageContext,
       open,
       changerVue,
-      ouvrirHistorique,
       minimize,
       restore,
-      close,
       startNewConversation,
       selectConversation,
     }),
@@ -339,10 +326,8 @@ export const AlbertConversationProvider = ({ children }: PropsWithChildren) => {
       pageContext,
       open,
       changerVue,
-      ouvrirHistorique,
       minimize,
       restore,
-      close,
       startNewConversation,
       selectConversation,
     ],

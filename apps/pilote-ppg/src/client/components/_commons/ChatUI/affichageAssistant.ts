@@ -42,3 +42,23 @@ export const affichageEffectif = ({
   }
   return vue ?? "modal";
 };
+
+export const LARGEUR_PANNEAU = { min: 400, max: 720, parDefaut: 520 } as const;
+
+// Ce que le panneau laisse au moins à la page : en dessous, les pages à
+// barre latérale (accueil, chantier) n'ont plus la place de s'afficher.
+const LARGEUR_PAGE_MIN = 900;
+
+export const bornerLargeurPanneau = ({
+  largeur,
+  largeurEcran,
+}: {
+  largeur: number;
+  largeurEcran: number;
+}): number => {
+  const max = Math.max(
+    LARGEUR_PANNEAU.min,
+    Math.min(LARGEUR_PANNEAU.max, largeurEcran - LARGEUR_PAGE_MIN),
+  );
+  return Math.round(Math.min(max, Math.max(LARGEUR_PANNEAU.min, largeur)));
+};

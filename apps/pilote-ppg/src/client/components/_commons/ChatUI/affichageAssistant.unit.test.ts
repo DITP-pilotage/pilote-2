@@ -1,4 +1,7 @@
-import { affichageEffectif } from "@/components/_commons/ChatUI/affichageAssistant";
+import {
+  affichageEffectif,
+  bornerLargeurPanneau,
+} from "@/components/_commons/ChatUI/affichageAssistant";
 
 describe("affichageEffectif", () => {
   test.each(["modal", "sidePanel", "floating", "minimized"] as const)(
@@ -57,5 +60,39 @@ describe("affichageEffectif", () => {
 
     // Then
     expect(effectif).toBe("minimized");
+  });
+});
+
+describe("bornerLargeurPanneau", () => {
+  test("garde une largeur comprise dans les bornes", () => {
+    // When
+    const largeur = bornerLargeurPanneau({ largeur: 600, largeurEcran: 1920 });
+
+    // Then
+    expect(largeur).toBe(600);
+  });
+
+  test("ne descend pas sous 400 px", () => {
+    // When
+    const largeur = bornerLargeurPanneau({ largeur: 250, largeurEcran: 1920 });
+
+    // Then
+    expect(largeur).toBe(400);
+  });
+
+  test("ne dépasse pas 720 px sur un grand écran", () => {
+    // When
+    const largeur = bornerLargeurPanneau({ largeur: 900, largeurEcran: 2560 });
+
+    // Then
+    expect(largeur).toBe(720);
+  });
+
+  test("laisse au moins 900 px à la page", () => {
+    // When
+    const largeur = bornerLargeurPanneau({ largeur: 700, largeurEcran: 1440 });
+
+    // Then
+    expect(largeur).toBe(540);
   });
 });
