@@ -40,7 +40,7 @@ export async function readGroundTruth({
   for (const jalon of jalons) {
     const taux = await executeTool<GetTauxAvancementTerritoireOutput>({
       tool: tools.getTauxAvancementTerritoire,
-      input: { perimetre, jalon },
+      input: { perimetre, jalon, tri: "taux_decroissant" },
     });
     tauxAvancement.push(...taux.resultats);
 
