@@ -30,7 +30,7 @@ export const PanelMenuNavigation = ({
 }: PanelMenuNavigationProps) => {
   return (
     <>
-      <div className="w-full shrink-0 md:w-1/4 pb-4 px-4">
+      <div className="w-full shrink-0 md:w-1/4 md:min-w-60 pb-4 px-4">
         <SélecteursMaillesEtTerritoires
           direction="horizontal"
           pathname={pathname}
@@ -38,7 +38,7 @@ export const PanelMenuNavigation = ({
           territoiresApplicables={territoiresApplicables}
         />
       </div>
-      <div className="w-full shrink-0 md:w-1/4 pb-4 px-4">
+      <div className="w-full shrink-0 md:w-1/4 md:min-w-60 pb-4 px-4">
         <div className="flex items-center">
           <label
             className={`${LABEL_CLASSES} mr-2 whitespace-nowrap`}
@@ -51,7 +51,7 @@ export const PanelMenuNavigation = ({
         </div>
       </div>
       {estAutoriseAVoirLeSelecteurDeMaille ? (
-        <div className="w-full shrink-0 md:w-1/4 pb-4 px-4 flex items-center">
+        <div className="w-full shrink-0 md:w-1/4 md:min-w-60 pb-4 px-4 flex items-center">
           <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
         </div>
       ) : null}
