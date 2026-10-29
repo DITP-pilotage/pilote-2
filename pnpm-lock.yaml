@@ -12,6 +12,7 @@ overrides:
   brace-expansion@>=2 <3: '>=2.1.7 <3'
   brace-expansion@>=5 <6: '>=5.0.12 <6'
   undici@>=7 <8: '>=7.30.1 <8'
+  undici@>=8 <9: '>=8.12.2 <9'
   immutable@>=4 <5: '>=4.3.9 <5'
   immutable@>=5 <6: '>=5.1.8 <6'
   js-yaml@<4: '>=3.15.2 <4'
@@ -6887,8 +6888,8 @@ packages:
     resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
 
-  undici@8.12.1:
-    resolution: {integrity: sha512-usz3OVQBeh1LxNn0DzU0voLXMgn5CU/WUdpBsY6Ti5afNao+vTkmn4H/NxoXolc10cOqe2+YIG0Hspq2rsl64w==}
+  undici@8.12.2:
+    resolution: {integrity: sha512-XtuDWVdqTLr3NAxm2ly9/hU6kUsJOgGh1RASzMBbsw6aWCOaQzHdW+QQDfdERjfJ2V5vL5pRPa4RetO9UfivDg==}
     engines: {node: '>=22.19.0'}
 
   unicode-properties@1.4.1:
@@ -11399,7 +11400,7 @@ snapshots:
       parse5: 8.0.1
       saxes: 6.0.0
       tough-cookie: 6.0.2
-      undici: 8.12.1
+      undici: 8.12.2
       w3c-xmlserializer: 6.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -13118,7 +13119,7 @@ snapshots:
 
   undici@7.30.1: {}
 
-  undici@8.12.1: {}
+  undici@8.12.2: {}
 
   unicode-properties@1.4.1:
     dependencies:
