@@ -155,14 +155,14 @@ export const exportsAvailableEvents = ({
   conversationId: string;
   message: PiloteUIMessage;
 }): AssistantEvent[] => {
-  // Un encart rédigé se télécharge en markdown : c'est le rapport (PIL-1900)
+  // Un encart rédigé se copie ou se télécharge en PDF : c'est le rapport (PIL-1900)
   const reports = (message.parts ?? []).flatMap((part) =>
     (part.type === "tool-rediger_synthese_territoire" ||
       part.type === "tool-rediger_comparaison_territoires") &&
     part.state === "output-available" &&
     part.output.termine &&
     !part.output.acces_refuse
-      ? (["export.report_markdown"] as const)
+      ? (["export.report_copy", "export.report_pdf"] as const)
       : [],
   );
   return [...copyExportNames(message), ...reports].map((name) => ({

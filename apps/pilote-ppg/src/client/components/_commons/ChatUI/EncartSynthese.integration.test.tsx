@@ -2,7 +2,16 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { EncartSynthese } from "@/components/_commons/ChatUI/EncartSynthese";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
+import { imprimerEncart } from "@/components/_commons/ChatUI/exporterEncart";
 import type { EncartOutput } from "@/server/albert/tools/encart";
+
+vi.mock(
+  "@/components/_commons/ChatUI/exporterEncart",
+  async (importOriginal) => ({
+    ...(await importOriginal()),
+    imprimerEncart: vi.fn().mockResolvedValue(undefined),
+  }),
+);
 
 const encart = (surcharge: Partial<EncartOutput>): EncartOutput => ({
   type: "synthese",
@@ -63,31 +72,45 @@ describe("EncartSynthese", () => {
     expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
   });
 
-  test("une fois rédigé, se télécharge en markdown avec le contenu affiché", async () => {
+  test("une fois rédigé, copie son markdown dans le presse-papiers", async () => {
     // Given
-    const fichiers: Blob[] = [];
-    URL.createObjectURL = vi.fn((fichier: Blob) => {
-      fichiers.push(fichier);
-      return "blob:encart";
-    });
-    URL.revokeObjectURL = vi.fn();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
     renderEncart(encart({ termine: true }), false);
 
     // When
-    fireEvent.click(screen.getByRole("button", { name: /Télécharger/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Copier/ }));
 
     // Then
-    await waitFor(() => expect(fichiers).toHaveLength(1));
-    expect(await fichiers[0].text()).toEqual("# Synthèse pour le Nord");
+    await waitFor(() =>
+      expect(writeText).toHaveBeenCalledWith("# Synthèse pour le Nord"),
+    );
   });
 
-  test("ne se télécharge pas pendant la rédaction", () => {
+  test("une fois rédigé, se télécharge en PDF sous le nom de son titre", async () => {
+    // When
+    renderEncart(encart({ termine: true }), false);
+    fireEvent.click(screen.getByRole("button", { name: /Télécharger en PDF/ }));
+
+    // Then
+    await waitFor(() =>
+      expect(imprimerEncart).toHaveBeenCalledWith({
+        encart: screen.getByRole("article"),
+        titre: "synthese-pour-le-nord",
+      }),
+    );
+  });
+
+  test("ne s'exporte pas pendant la rédaction", () => {
     // When
     renderEncart(encart({ termine: false }));
 
     // Then
     expect(
-      screen.queryByRole("button", { name: /Télécharger/ }),
+      screen.queryByRole("button", { name: /Copier/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Télécharger en PDF/ }),
     ).not.toBeInTheDocument();
   });
 

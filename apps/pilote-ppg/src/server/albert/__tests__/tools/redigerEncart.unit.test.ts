@@ -510,7 +510,7 @@ describe("outils de rédaction d'encart", () => {
     });
 
     // Then
-    expect(outil.description).toContain("l'encart se télécharge");
+    expect(outil.description).toContain("l'encart se copie ou se télécharge en PDF");
     expect(outil.description).toContain("create_dashboard");
   });
 
