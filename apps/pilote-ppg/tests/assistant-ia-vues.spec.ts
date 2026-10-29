@@ -15,14 +15,14 @@ test("ouvre l'assistant IA depuis n'importe quelle page et retient la vue choisi
   const appActions = new AppActions(page, e2eContext);
   const assistant = new AssistantIAComponent(page);
 
-  await step("Le lanceur est affiché hors de l'accueil", async () => {
+  await step("La pastille est affichée hors de l'accueil", async () => {
     await page.setViewportSize(ECRAN_LARGE);
     await appActions.loginAs(ADMIN);
     await page.goto("/nouveautes");
     await assistant.expectFerme();
   });
 
-  await step("La première ouverture se fait en modale", async () => {
+  await step("La première ouverture se fait en plein écran", async () => {
     await assistant.ouvrir();
     await assistant.expectModale();
     await assistant.expectSelecteurVue();
@@ -45,30 +45,62 @@ test("ouvre l'assistant IA depuis n'importe quelle page et retient la vue choisi
   });
 
   await step(
+    "Le panneau s'élargit au clavier, sans priver la page de place",
+    async () => {
+      await assistant.expectLargeurPanneau(520);
+      await assistant.elargirPanneauAuClavier();
+      await assistant.expectLargeurPanneau(540);
+      await assistant.elargirPanneauAuClavier();
+      await assistant.expectLargeurPanneau(540);
+    },
+  );
+
+  await step(
     "Sur un écran moyen, le panneau devient une fenêtre flottante",
     async () => {
       await page.setViewportSize(ECRAN_MOYEN);
       await assistant.expectFenetre();
       await page.setViewportSize(ECRAN_LARGE);
       await assistant.expectPanneau();
+      await assistant.expectLargeurPanneau(540);
     },
   );
+
+  await step("Masquer l'assistant le garde en bas à droite", async () => {
+    await assistant.masquer();
+    await assistant.expectMasquee();
+    await assistant.reprendreLaConversation();
+    await assistant.expectPanneau();
+  });
+
+  await step("L'historique s'ouvre depuis le titre", async () => {
+    await assistant.ouvrirHistorique();
+    await assistant.expectHistorique();
+    await page.keyboard.press("Escape");
+  });
+
+  await step("Une nouvelle conversation repart de zéro", async () => {
+    await assistant.nouvelleConversation();
+    await assistant.expectSaisie("");
+  });
 
   await step(
     "Rouvrir l'assistant reprend la dernière vue choisie",
     async () => {
       await assistant.choisirVue("Fenêtre flottante");
       await assistant.expectFenetre();
-      await assistant.fermer();
-      await assistant.expectFerme();
-      await assistant.ouvrir();
+      await assistant.masquer();
+      await assistant.reprendreLaConversation();
       await assistant.expectFenetre();
     },
   );
 
-  await step("Sur un écran étroit, seule la modale est proposée", async () => {
-    await page.setViewportSize(ECRAN_ETROIT);
-    await assistant.expectModale();
-    await assistant.expectSansSelecteurVue();
-  });
+  await step(
+    "Sur un écran étroit, seul le plein écran est proposé",
+    async () => {
+      await page.setViewportSize(ECRAN_ETROIT);
+      await assistant.expectModale();
+      await assistant.expectSansSelecteurVue();
+    },
+  );
 });
