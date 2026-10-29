@@ -44,8 +44,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -103,8 +103,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -144,8 +144,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -197,8 +197,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When — query sur jalon 2025
-      const resultat2025 = await query.execute({
-        territoireCode: "NAT-FR",
+      const [resultat2025] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -207,8 +207,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       expect(resultat2025.chantiers).toEqual([]);
 
       // When — query sur jalon 2024
-      const resultat2024 = await query.execute({
-        territoireCode: "NAT-FR",
+      const [resultat2024] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2024,
         view: "en_retard",
       });
@@ -251,8 +251,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -290,8 +290,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -346,8 +346,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When — on demande uniquement DEPT-75
-      const result = await query.execute({
-        territoireCode: "DEPT-75",
+      const [result] = await query.execute({
+        territoireCodes: ["DEPT-75"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -431,8 +431,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -492,8 +492,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -567,8 +567,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });
@@ -628,8 +628,8 @@ describe("GetChantiersQuery — view en_retard", () => {
       });
 
       // When
-      const result = await query.execute({
-        territoireCode: "NAT-FR",
+      const [result] = await query.execute({
+        territoireCodes: ["NAT-FR"],
         jalon: 2025,
         view: "en_retard",
       });

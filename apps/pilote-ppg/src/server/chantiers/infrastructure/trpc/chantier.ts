@@ -231,7 +231,7 @@ export const chantierRouter = createTRPCRouter({
         jalon: z.number(),
       }),
     )
-    .query(({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       if (
         !new Habilitation(ctx.session.habilitations).peutAccéderAuTerritoire(
           input.territoireCode,
@@ -239,11 +239,14 @@ export const chantierRouter = createTRPCRouter({
       ) {
         throw new TerritoireNonAutoriséErreur();
       }
-      return getContainer("chantiers").resolve("getChantiersQuery").execute({
-        territoireCode: input.territoireCode,
-        jalon: input.jalon,
-        view: "en_retard",
-      });
+      const [resultat] = await getContainer("chantiers")
+        .resolve("getChantiersQuery")
+        .execute({
+          territoireCodes: [input.territoireCode],
+          jalon: input.jalon,
+          view: "en_retard",
+        });
+      return resultat;
     }),
   recupererChantiersEnDifficulte: protectedProcedure
     .input(
@@ -252,7 +255,7 @@ export const chantierRouter = createTRPCRouter({
         jalon: z.number(),
       }),
     )
-    .query(({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       if (
         !new Habilitation(ctx.session.habilitations).peutAccéderAuTerritoire(
           input.territoireCode,
@@ -260,11 +263,14 @@ export const chantierRouter = createTRPCRouter({
       ) {
         throw new TerritoireNonAutoriséErreur();
       }
-      return getContainer("chantiers").resolve("getChantiersQuery").execute({
-        territoireCode: input.territoireCode,
-        jalon: input.jalon,
-        view: "en_difficulte",
-      });
+      const [resultat] = await getContainer("chantiers")
+        .resolve("getChantiersQuery")
+        .execute({
+          territoireCodes: [input.territoireCode],
+          jalon: input.jalon,
+          view: "en_difficulte",
+        });
+      return resultat;
     }),
   recupererIndicateursChantier: protectedProcedure
     .input(

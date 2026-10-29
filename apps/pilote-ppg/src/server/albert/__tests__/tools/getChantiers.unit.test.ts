@@ -63,19 +63,21 @@ const chantierRenvoye = (id: string) => ({
 // La query ne filtre sur chantierIds que si la liste est non vide, comme GetChantiersQuery
 const buildQuery = (chantiersDuTerritoire: string[]) =>
   mock<GetChantiersQuery>({
-    execute: vi.fn(async (params: GetChantiersParams) => ({
-      territoire_code: params.territoireCode,
-      territoire_nom: "Île-de-France",
-      jalon: params.jalon,
-      chantiers: chantiersDuTerritoire
-        .filter(
-          (id) =>
-            !params.chantierIds ||
-            params.chantierIds.length === 0 ||
-            params.chantierIds.includes(id),
-        )
-        .map(buildChantier),
-    })),
+    execute: vi.fn(async (params: GetChantiersParams) =>
+      params.territoireCodes.map((territoireCode) => ({
+        territoire_code: territoireCode,
+        territoire_nom: "Île-de-France",
+        jalon: params.jalon,
+        chantiers: chantiersDuTerritoire
+          .filter(
+            (id) =>
+              !params.chantierIds ||
+              params.chantierIds.length === 0 ||
+              params.chantierIds.includes(id),
+          )
+          .map(buildChantier),
+      })),
+    ),
   });
 
 const buildTool = ({

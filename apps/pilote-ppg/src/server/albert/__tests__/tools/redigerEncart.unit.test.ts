@@ -107,14 +107,16 @@ const chantierRenvoye = (id: string): ChantierRenvoye => ({
 
 const getChantiersQuery = () =>
   mock<GetChantiersQuery>({
-    execute: vi.fn(async (params: GetChantiersParams) => ({
-      territoire_code: params.territoireCode,
-      territoire_nom: NOMS[params.territoireCode] ?? null,
-      jalon: params.jalon,
-      chantiers: [params.view === "en_retard" ? "CH-071" : "CH-045"]
-        .filter((id) => params.chantierIds?.includes(id))
-        .map(chantier),
-    })),
+    execute: vi.fn(async (params: GetChantiersParams) =>
+      params.territoireCodes.map((territoireCode) => ({
+        territoire_code: territoireCode,
+        territoire_nom: NOMS[territoireCode] ?? null,
+        jalon: params.jalon,
+        chantiers: [params.view === "en_retard" ? "CH-071" : "CH-045"]
+          .filter((id) => params.chantierIds?.includes(id))
+          .map(chantier),
+      })),
+    ),
   });
 
 const territoireResolver = () =>

@@ -110,10 +110,10 @@ const NON_APPLICABLE_EN_RETARD_NAT_FR =
 
 function toQueryParams(
   input: CollecteChantiersInput,
-  territoireCode: string,
+  territoireCodes: string[],
 ): GetChantiersParams {
   return {
-    territoireCode,
+    territoireCodes,
     jalon: input.jalon,
     chantierIds: input.chantier_ids,
     view: input.view,
@@ -228,10 +228,8 @@ export async function collecterChantiers({
 
   const effectiveInput = { ...input, chantier_ids: filteredChantierIds };
 
-  const resultats = await Promise.all(
-    codes.map((code) =>
-      getChantiersQuery.execute(toQueryParams(effectiveInput, code)),
-    ),
+  const resultats = await getChantiersQuery.execute(
+    toQueryParams(effectiveInput, codes),
   );
 
   return {
