@@ -1316,7 +1316,12 @@ paquet. Corrigé ; les trois sont bien présents (`fastify` 5.12.7, `@fastify/st
 raison du pin 5.9.3 (typescript-eslint) étant tombée avec le passage à oxlint ✔. Restés lettre morte :
 `@types/node` 26 conservé malgré la recommandation (aucune API v25/v26 appelée à ce jour, risque
 inchangé) ; `@hono/node-server` passé en v2 **sans** le test qui démarre `serve()` qui la
-conditionnait ; `"types": ["node"]` (kpilote-api) et `vite/client` (kpilote-ui) non ajoutés.
+conditionnait — **ajouté dans cette campagne** pour le proxy `/api` de kpilote-admin (vrai `serve()`
+devant un faux amont servi par `serve()` : corps JSON de 1000 lignes relayé à l'octet près, DELETE sans
+corps relayé vide). Côté kpilote-api, une route servie par `serve()` ne voit pas les fixtures de
+`integrationTest` (transaction portée par le contexte asynchrone du test) : le même adaptateur 2.1.5
+y reste couvert par le test de l'admin, pas par un test propre ; `"types": ["node"]` (kpilote-api)
+et `vite/client` (kpilote-ui) non ajoutés.
 
 **Défauts du moteur corrigés dans la branche** : clés `parent>enfant` au banc d'essai ; exclusions
 `paquet@version` toujours « version publiée inconnue » et section `overrides:` du lockfile lue comme
