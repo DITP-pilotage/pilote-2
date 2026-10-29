@@ -23,9 +23,9 @@ const renderEncart = (output: EncartOutput, isStreaming = true) =>
   );
 
 describe("EncartSynthese", () => {
-  test("pendant la rédaction, affiche l'en-tête, l'état et le texte déjà rédigé", () => {
+  test("avant l'arrivée du texte, affiche l'en-tête et l'état de rédaction", () => {
     // When
-    renderEncart(encart({ termine: false }));
+    renderEncart(encart({ markdown: "", termine: false }));
 
     // Then
     expect(screen.getByText("Synthèse territoriale")).toBeInTheDocument();
@@ -35,6 +35,14 @@ describe("EncartSynthese", () => {
       screen.getByText("À partir des données publiées dans PILOTE"),
     ).toBeInTheDocument();
     expect(screen.getByText("Rédaction en cours…")).toBeInTheDocument();
+  });
+
+  test("dès que le texte arrive, affiche le texte sans l'état de rédaction", () => {
+    // When
+    renderEncart(encart({ termine: false }));
+
+    // Then
+    expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
     expect(screen.getByText("Synthèse pour le Nord")).toBeInTheDocument();
   });
 
@@ -49,11 +57,10 @@ describe("EncartSynthese", () => {
 
   test("une rédaction interrompue n'affiche pas d'état de rédaction", () => {
     // When
-    renderEncart(encart({ termine: false }), false);
+    renderEncart(encart({ markdown: "", termine: false }), false);
 
     // Then
     expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
-    expect(screen.getByText("Synthèse pour le Nord")).toBeInTheDocument();
   });
 
   test("une fois rédigé, se télécharge en markdown avec le contenu affiché", async () => {

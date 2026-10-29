@@ -34,6 +34,7 @@ export const EncartSynthese = ({
   const track = useChatTracking();
   if (output.acces_refuse) return null;
   const enCours = isStreaming && !output.termine;
+  const enAttenteDuTexte = enCours && output.markdown.trim() === "";
 
   const telecharger = () => {
     track({
@@ -67,7 +68,7 @@ export const EncartSynthese = ({
           <p className="mb-0">À partir des données publiées dans PILOTE</p>
         </div>
       </header>
-      {enCours && (
+      {enAttenteDuTexte && (
         <p className="mb-2 text-sm text-dsfr-mention-grey">
           Rédaction en cours…
         </p>
