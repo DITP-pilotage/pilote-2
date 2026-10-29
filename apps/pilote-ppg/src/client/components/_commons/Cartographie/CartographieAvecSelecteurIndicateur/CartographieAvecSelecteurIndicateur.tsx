@@ -6,7 +6,7 @@ import {
 } from "@/components/shared/SelectField";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
-import useCartographie from "@/components/_commons/Cartographie/useCartographie";
+import { useCartographie } from "@/components/_commons/Cartographie/useCartographie";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
@@ -71,7 +71,7 @@ export const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   };
 
   const pathname = "/chantier/[id]/[territoireCode]";
-  const { auClicTerritoireMultiSélectionCallback } = useCartographie(
+  const { onTerritoireMultiSelectClick } = useCartographie(
     territoireCode,
     pathname,
   );
@@ -136,9 +136,7 @@ export const CartographieAvecSelecteurIndicateur: FunctionComponent<{
       <CartographieV2
         donnees={donneesV2}
         maille={mailleQuery}
-        onTerritoireSelect={(code) =>
-          auClicTerritoireMultiSélectionCallback(code, true)
-        }
+        onTerritoireSelect={(code) => onTerritoireMultiSelectClick(code, true)}
         territoiresSelectionnables={territoiresSelectionnables}
         territoiresSelectionnes={territoiresSelectionnes}
       >

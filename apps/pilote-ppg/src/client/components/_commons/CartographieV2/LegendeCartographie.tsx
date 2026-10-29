@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
-import { HachuresDiagonales } from "@/client/constants/légendes/hachure/hachures";
-import { estHachure } from "@/client/constants/légendes/hachure/hachure";
 import { Remplissage } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
+import { LegendeCartographieSwatch } from "@/components/_commons/CartographieV2/LegendeCartographieSwatch";
 
 type LegendeCartographieItem = {
   remplissage: Remplissage;
@@ -11,8 +10,6 @@ type LegendeCartographieItem = {
 type LegendeCartographieProps = {
   items: LegendeCartographieItem[];
 };
-
-const MISE_A_LECHELLE = 2.75;
 
 export const LegendeCartographie: FunctionComponent<
   LegendeCartographieProps
@@ -24,24 +21,7 @@ export const LegendeCartographie: FunctionComponent<
           className="pr-3 text-dsfr-mention-grey flex items-center gap-1"
           key={item.libellé}
         >
-          <svg
-            className="min-w-[12px] min-h-[12px] w-3 h-3"
-            version="1.2"
-            viewBox={`0 0 ${MISE_A_LECHELLE} ${MISE_A_LECHELLE}`}
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {estHachure(item.remplissage) ? (
-              <HachuresDiagonales taille={MISE_A_LECHELLE} />
-            ) : (
-              <rect
-                fill={item.remplissage}
-                height={MISE_A_LECHELLE}
-                width={MISE_A_LECHELLE}
-                x={0}
-                y={0}
-              />
-            )}
-          </svg>
+          <LegendeCartographieSwatch remplissage={item.remplissage} />
           <span className="text-xs">{item.libellé}</span>
         </li>
       ))}
