@@ -11,10 +11,6 @@ export class AssistantIAComponent {
     return this.page.getByRole("button", { name: /Demander à l'assistant/ });
   }
 
-  private get reprendre() {
-    return this.page.getByRole("button", { name: /^Reprendre/ });
-  }
-
   private get modale() {
     return this.page.getByRole("dialog", { name: NOM_ASSISTANT });
   }
@@ -49,10 +45,6 @@ export class AssistantIAComponent {
     await this.page
       .getByRole("button", { name: "Masquer l'assistant" })
       .click();
-  }
-
-  async reprendreLaConversation(): Promise<void> {
-    await this.reprendre.click();
   }
 
   async choisirVue(vue: Vue): Promise<void> {
@@ -125,9 +117,5 @@ export class AssistantIAComponent {
 
   async expectFerme(): Promise<void> {
     await expect(this.lanceur).toBeVisible();
-  }
-
-  async expectMasquee(): Promise<void> {
-    await expect(this.reprendre).toBeVisible();
   }
 }
