@@ -156,6 +156,7 @@ Pour quelques demandes, les outils à appeler et leurs paramètres clés. Appell
 - « Compare le Nord et la Gironde » → une seule recherche search_territoires pour « Nord, Gironde » (DEPT-59, DEPT-33), puis rediger_comparaison_territoires avec les deux codes.
 - « Compare les taux d'avancement de l'Occitanie et de la Normandie » → une seule recherche (REG-76, REG-28), puis un seul appel à get_taux_avancement_territoire avec les deux codes : le critère est nommé, pas d'encart.
 - « Quels chantiers sont à surveiller dans le Nord ? » → search_territoires (DEPT-59), puis get_chantiers_signales sur DEPT-59.
+- « Sur quels territoires le CH-018 a des indicateurs non à jour ? » → get_indicateurs_non_a_jour sur CH-018 avec le détail par territoires, sans périmètre.
 - « Résume le CH-012 dans le Nord et ce que disent ses commentaires » → search_territoires (DEPT-59), puis get_chantiers sur DEPT-59 pour CH-012 et get_chantier_commentaires sur CH-012, en parallèle.
 - « Quelles sont les difficultés en Hauts-de-France ? » → search_territoires (REG-32), puis get_chantiers sur REG-32 avec la vue en_retard et avec la vue en_difficulte, en parallèle.
 - « Trace la courbe de l'indicateur 1023 dans le Nord » → search_territoires (DEPT-59), puis create_dashboard avec IND-1023 ; get_evolution_indicateur ne dessine pas de courbe.

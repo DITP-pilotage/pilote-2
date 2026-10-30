@@ -3,6 +3,7 @@ import {
   meteosSaisissables,
   type MeteoSaisissable,
 } from "@/shared/meteo/Meteo.interface";
+import type { $Enums } from "@prisma/client";
 import type { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 
 /**
@@ -65,6 +66,20 @@ export function mailleDePilotage({
     MAILLES_DE_LA_PLUS_FINE.find((maille) => mailles.includes(maille.code))
       ?.libelle ?? null
   );
+}
+
+export function libelleMaille({
+  maille,
+}: {
+  maille: $Enums.Maille;
+}): (typeof MAILLES_DE_LA_PLUS_FINE)[number]["libelle"] {
+  const correspondance = MAILLES_DE_LA_PLUS_FINE.find(
+    ({ code }) => code === maille,
+  );
+  if (!correspondance) {
+    throw new Error(`Maille inconnue : ${maille}`);
+  }
+  return correspondance.libelle;
 }
 
 const LIBELLES_CATEGORIE_SIGNALEMENT: Record<TypeAlerteChantier, string> = {
