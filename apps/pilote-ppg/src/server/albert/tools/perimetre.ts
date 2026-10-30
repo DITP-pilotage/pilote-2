@@ -36,6 +36,7 @@ export const variantesPerimetre = {
   }),
   TOUTES_REGIONS: z.object({ type: z.enum(["TOUTES_REGIONS"]) }),
   TOUS_DEPARTEMENTS: z.object({ type: z.enum(["TOUS_DEPARTEMENTS"]) }),
+  TOUS_TERRITOIRES: z.object({ type: z.enum(["TOUS_TERRITOIRES"]) }),
 } satisfies {
   [Type in Perimetre["type"]]: z.ZodType<Extract<Perimetre, { type: Type }>>;
 };
@@ -51,6 +52,8 @@ const SENS_DES_TYPES: Record<Perimetre["type"], string> = {
     "TOUTES_REGIONS, sans autre champ : toutes les régions, sans la France",
   TOUS_DEPARTEMENTS:
     "TOUS_DEPARTEMENTS, sans autre champ : tous les départements",
+  TOUS_TERRITOIRES:
+    "TOUS_TERRITOIRES, sans autre champ : tous les territoires accessibles à l'utilisateur, France, régions et départements",
 };
 
 /** La description du `perimetre` d'un outil, qui liste les seuls types qu'il accepte. */
@@ -80,6 +83,7 @@ function territoiresDesignes({
       return [TERRITOIRE_NATIONAL];
     case "TOUTES_REGIONS":
     case "TOUS_DEPARTEMENTS":
+    case "TOUS_TERRITOIRES":
       return [];
   }
 }

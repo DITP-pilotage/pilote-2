@@ -1,10 +1,11 @@
 import { tool } from "ai";
+import type { $Enums } from "@prisma/client";
 import { z } from "zod";
 import { chantierIdsSchema } from "@/server/albert/tools/chantierId";
 import { libelleMaille } from "@/server/albert/tools/libelles";
 import type {
-  ChantierIndicateursNonAJour,
   GetIndicateursNonAJourQuery,
+  LigneIndicateurNonAJour,
 } from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 import type { GetIndicateursIdentiteQuery } from "@/server/chantiers/query/GetIndicateursIdentiteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
@@ -13,6 +14,9 @@ import {
   resoudrePerimetreAccessible,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
+
+const SEUIL_LIGNES_TERRITOIRES = 800;
+const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
 
 export const getIndicateursNonAJourInputSchema = z.object({
   chantier_ids: chantierIdsSchema
@@ -35,8 +39,10 @@ export const getIndicateursNonAJourInputSchema = z.object({
       variantesPerimetre.FRANCE_ET_SES_REGIONS,
       variantesPerimetre.TOUTES_REGIONS,
       variantesPerimetre.TOUS_DEPARTEMENTS,
+      variantesPerimetre.TOUS_TERRITOIRES,
     ])
     .optional()
+    .default({ type: "TOUS_TERRITOIRES" })
     .describe(
       `${descriptionPerimetre({
         types: [
@@ -45,9 +51,10 @@ export const getIndicateursNonAJourInputSchema = z.object({
           "FRANCE_ET_SES_REGIONS",
           "TOUTES_REGIONS",
           "TOUS_DEPARTEMENTS",
+          "TOUS_TERRITOIRES",
         ],
       })}
-Absent = tous les territoires accessibles à l'utilisateur. N'y mets pas le territoire courant de la session, sauf si la demande le nomme.`,
+Par défaut, TOUS_TERRITOIRES. N'y mets pas le territoire courant de la session, sauf si la demande le nomme.`,
     ),
   detail: z
     .enum(["compteurs", "territoires"])
@@ -72,7 +79,6 @@ type TerritoireEnRetardRenvoye = {
 type MailleRenvoyee = {
   maille: ReturnType<typeof libelleMaille>;
   nb_territoires_en_retard: number;
-  nb_territoires_applicables: number;
   territoires_en_retard?: TerritoireEnRetardRenvoye[];
 };
 
@@ -91,6 +97,7 @@ export type ChantierNonAJourRenvoye = {
 
 export type GetIndicateursNonAJourOutput = {
   detail: GetIndicateursNonAJourInput["detail"];
+  detail_trop_volumineux?: true;
   resultats: ChantierNonAJourRenvoye[];
   acces_refuse?: true;
   chantiers_non_accessibles?: string[];
@@ -117,34 +124,63 @@ type AccesResolus =
       indicateurIds?: string[];
     };
 
-function renvoyerChantierNonAJour({
-  chantier,
-  indicateurs,
-}: ChantierIndicateursNonAJour): ChantierNonAJourRenvoye {
-  return {
-    chantier,
-    indicateurs: indicateurs.map((indicateur) => ({
-      id: indicateur.id,
-      nom: indicateur.nom,
-      periodicite: indicateur.periodicite,
-      delai_disponibilite_mois: indicateur.delaiDisponibiliteMois,
-      mailles: indicateur.mailles.map((maille) => ({
-        maille: libelleMaille({ maille: maille.maille }),
-        nb_territoires_en_retard: maille.nbTerritoiresEnRetard,
-        nb_territoires_applicables: maille.nbTerritoiresApplicables,
-        ...(maille.territoiresEnRetard && {
-          territoires_en_retard: maille.territoiresEnRetard.map(
-            (territoire) => ({
-              code: territoire.code,
-              nom: territoire.nom,
-              date_derniere_valeur: territoire.dateDerniereValeur,
-              mise_a_jour_attendue_depuis: territoire.miseAJourAttendueDepuis,
-            }),
-          ),
+function renvoyerMailles({
+  lignes,
+  avecTerritoires,
+}: {
+  lignes: LigneIndicateurNonAJour[];
+  avecTerritoires: boolean;
+}): MailleRenvoyee[] {
+  return MAILLES_ORDER.flatMap((maille) => {
+    const lignesDeLaMaille = lignes.filter((ligne) => ligne.maille === maille);
+    if (lignesDeLaMaille.length === 0) return [];
+    return [
+      {
+        maille: libelleMaille({ maille }),
+        nb_territoires_en_retard: lignesDeLaMaille.length,
+        ...(avecTerritoires && {
+          territoires_en_retard: lignesDeLaMaille.map((ligne) => ({
+            code: ligne.territoireCode,
+            nom: ligne.territoireNom,
+            date_derniere_valeur: ligne.dateDerniereValeur,
+            mise_a_jour_attendue_depuis: ligne.miseAJourAttendueDepuis,
+          })),
+        }),
+      },
+    ];
+  });
+}
+
+function renvoyerChantiersNonAJour({
+  lignes,
+  avecTerritoires,
+}: {
+  lignes: LigneIndicateurNonAJour[];
+  avecTerritoires: boolean;
+}): ChantierNonAJourRenvoye[] {
+  return [...Map.groupBy(lignes, (ligne) => ligne.chantierId).values()].map(
+    (lignesDuChantier) => ({
+      chantier: {
+        id: lignesDuChantier[0].chantierId,
+        nom: lignesDuChantier[0].chantierNom,
+      },
+      indicateurs: [
+        ...Map.groupBy(
+          lignesDuChantier,
+          (ligne) => ligne.indicateurId,
+        ).values(),
+      ].map((lignesDeLIndicateur) => ({
+        id: lignesDeLIndicateur[0].indicateurId,
+        nom: lignesDeLIndicateur[0].indicateurNom,
+        periodicite: lignesDeLIndicateur[0].periodicite,
+        delai_disponibilite_mois: lignesDeLIndicateur[0].delaiDisponibiliteMois,
+        mailles: renvoyerMailles({
+          lignes: lignesDeLIndicateur,
+          avecTerritoires,
         }),
       })),
-    })),
-  };
+    }),
+  );
 }
 
 function listesSignalees({
@@ -169,26 +205,6 @@ function listesSignalees({
   };
 }
 
-async function resoudreTerritoires({
-  perimetre,
-  territoiresAccessibles,
-  territoireResolver,
-}: {
-  perimetre: GetIndicateursNonAJourInput["perimetre"];
-  territoiresAccessibles: string[];
-  territoireResolver: TerritoireResolver;
-}): Promise<string[]> {
-  if (!perimetre) {
-    return territoiresAccessibles;
-  }
-  const perimetreAccessible = await resoudrePerimetreAccessible({
-    perimetre,
-    territoiresAccessibles,
-    territoireResolver,
-  });
-  return "codes" in perimetreAccessible ? perimetreAccessible.codes : [];
-}
-
 async function resoudreAcces({
   input,
   territoiresAccessibles,
@@ -202,11 +218,13 @@ async function resoudreAcces({
   territoireResolver: TerritoireResolver;
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
 }): Promise<AccesResolus> {
-  const territoireCodes = await resoudreTerritoires({
+  const perimetreAccessible = await resoudrePerimetreAccessible({
     perimetre: input.perimetre,
     territoiresAccessibles,
     territoireResolver,
   });
+  const territoireCodes =
+    "codes" in perimetreAccessible ? perimetreAccessible.codes : [];
   if (territoireCodes.length === 0) {
     return { statut: "refuse", listes: {} };
   }
@@ -313,6 +331,7 @@ export function createGetIndicateursNonAJourTool({
 - \`perimetre\` restreint les territoires considérés, dans les deux modes ; il ne déclenche pas le détail.
 - Une région seule (« en Bretagne ») est une SELECTION de son seul code ; ses départements n'en font partie que si la demande les cite.
 - Liste vide : aucun indicateur non à jour trouvé sur ce périmètre, ce qui ne prouve pas que les données sont à jour (l'indicateur peut ne pas être suivi ici).
+- \`detail_trop_volumineux\` : le détail par territoire est trop volumineux, les compteurs sont renvoyés à la place. Rédige toujours ta réponse complète à partir de ces compteurs, sans les présenter comme le détail demandé. Termine-la en précisant que ce détail est trop volumineux, sans chiffrer ce volume, et qu'on peut l'obtenir en réduisant la recherche à un chantier, un indicateur ou un territoire. N'appelle pas clarify_with_choices, ne pose aucune question avant d'avoir donné les compteurs, et ne relance pas l'outil d'office.
 - \`date_derniere_valeur\` null : aucune valeur n'a jamais été renseignée sur ce territoire.
 - \`mise_a_jour_attendue_depuis\` null alors que \`date_derniere_valeur\` est renseignée : la date théorique n'a pas pu être calculée.
 - \`acces_refuse\` : l'utilisateur n'a accès ni à ces territoires, ni à aucun des chantiers ou indicateurs demandés.
@@ -345,16 +364,24 @@ Ne l'utilise pas pour : les chantiers en retard au sens de l'avancement (écart 
           return { detail: input.detail, resultats: [], ...acces.listes };
         }
 
-        const resultats = await getIndicateursNonAJourQuery.execute({
+        const lignes = await getIndicateursNonAJourQuery.execute({
           chantierIds: acces.chantierIds,
           territoireCodes: acces.territoireCodes,
           indicateurIds: acces.indicateurIds,
-          avecDetailTerritoires: input.detail === "territoires",
         });
 
+        const detailTropVolumineux =
+          input.detail === "territoires" &&
+          lignes.length > SEUIL_LIGNES_TERRITOIRES;
+        const avecTerritoires =
+          input.detail === "territoires" && !detailTropVolumineux;
+
         return {
-          detail: input.detail,
-          resultats: resultats.map(renvoyerChantierNonAJour),
+          detail: avecTerritoires ? "territoires" : "compteurs",
+          ...(detailTropVolumineux && {
+            detail_trop_volumineux: true as const,
+          }),
+          resultats: renvoyerChantiersNonAJour({ lignes, avecTerritoires }),
           ...acces.listes,
         };
       },
