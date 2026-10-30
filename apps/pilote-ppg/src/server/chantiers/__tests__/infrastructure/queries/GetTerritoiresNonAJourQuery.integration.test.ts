@@ -401,7 +401,6 @@ describe("GetTerritoiresNonAJourQuery", () => {
           chantierIds: ["CH-TNAJ-001"],
           territoireCodes: ["DEPT-29", "DEPT-35", "DEPT-22"],
           indicateurIds: ["IND-TNAJ-001"],
-          avecDetailTerritoires: true,
         });
 
         // then
@@ -412,10 +411,7 @@ describe("GetTerritoiresNonAJourQuery", () => {
           .map((territoire) => territoire.territoireCode)
           .toSorted();
         const assistantCodes = assistantResponse
-          .flatMap((chantier) => chantier.indicateurs)
-          .flatMap((indicateur) => indicateur.mailles)
-          .flatMap((maille) => maille.territoiresEnRetard ?? [])
-          .map((territoire) => territoire.code)
+          .map((ligne) => ligne.territoireCode)
           .toSorted();
         expect(mapCodes).toEqual(["DEPT-22", "DEPT-29"]);
         expect(mapCodes).toEqual(assistantCodes);

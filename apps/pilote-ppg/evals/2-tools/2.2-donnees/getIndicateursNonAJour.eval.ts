@@ -9,8 +9,8 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * indicateur cité, l'appel se fait sans argument (« mes chantiers »).
  *
  * Les arguments vérifiés portent l'intention : `chantier_ids`,
- * `indicateur_ids`, et `territoire_code` uniquement pour NAT-FR (résoudre
- * « la Bretagne » relève du niveau 3).
+ * `indicateur_ids`, `detail`, et `perimetre` pour NAT-FR ou un code cité
+ * (résoudre « la Bretagne » relève du niveau 3).
  *
  * Les négatifs portent sur le mot « retard », qui désigne aussi l'avancement
  * (`get_chantiers`), et sur les valeurs des indicateurs (`get_indicateurs`).
@@ -38,11 +38,14 @@ const CASES: ToolCase[] = [
   {
     question: "Les données du CH-018 sont-elles à jour en Bretagne ?",
     reason:
-      "chantier et territoire cités : le territoire ne retire pas le filtre chantier",
+      "une région seule est une sélection, sans ses départements ; le territoire ne retire pas le filtre chantier",
     expected: [
       {
         toolName: "get_indicateurs_non_a_jour",
-        input: { chantier_ids: ["CH-018"] },
+        input: {
+          chantier_ids: ["CH-018"],
+          perimetre: { type: "SELECTION" },
+        },
       },
     ],
   },
@@ -54,7 +57,7 @@ const CASES: ToolCase[] = [
     expected: [
       {
         toolName: "get_indicateurs_non_a_jour",
-        input: { indicateur_ids: ["IND-894"] },
+        input: { indicateur_ids: ["IND-894"], detail: "territoires" },
       },
     ],
   },
@@ -84,13 +87,73 @@ const CASES: ToolCase[] = [
   },
   {
     question: "L'IND-894 est-il à jour au niveau national ?",
-    reason: "national cité : territoire_code NAT-FR",
+    reason: "national cité : périmètre réduit à NAT-FR",
     expected: [
       {
         toolName: "get_indicateurs_non_a_jour",
-        input: { indicateur_ids: ["IND-894"], territoire_code: "NAT-FR" },
+        input: {
+          indicateur_ids: ["IND-894"],
+          perimetre: { type: "SELECTION", territoire_codes: ["NAT-FR"] },
+        },
       },
     ],
+  },
+  {
+    question: "Sur quels territoires le CH-018 a des indicateurs non à jour ?",
+    reason: "territoires nommés sur un chantier : détail, sans indicateur",
+    expected: [
+      {
+        toolName: "get_indicateurs_non_a_jour",
+        input: { chantier_ids: ["CH-018"], detail: "territoires" },
+      },
+    ],
+  },
+  {
+    question: "Donne les départements non à jour pour l'IND-894",
+    reason: "« les départements » : tous les départements, en détail",
+    expected: [
+      {
+        toolName: "get_indicateurs_non_a_jour",
+        input: {
+          indicateur_ids: ["IND-894"],
+          detail: "territoires",
+          perimetre: { type: "TOUS_DEPARTEMENTS" },
+        },
+      },
+    ],
+  },
+  {
+    question:
+      "Les données du CH-018 sont-elles à jour en REG-53 et ses départements ?",
+    reason: "une région et ses départements, en un seul appel",
+    expected: [
+      {
+        toolName: "get_indicateurs_non_a_jour",
+        input: {
+          chantier_ids: ["CH-018"],
+          perimetre: {
+            type: "REGION_ET_SES_DEPARTEMENTS",
+            region_code: "REG-53",
+          },
+        },
+      },
+    ],
+  },
+  {
+    question:
+      "Quels sont les indicateurs non à jour, avec le détail par territoire ?",
+    reason: "détail demandé explicitement sur tout le périmètre",
+    expected: [
+      {
+        toolName: "get_indicateurs_non_a_jour",
+        input: { detail: "territoires" },
+      },
+    ],
+  },
+  {
+    question: "Quels chantiers ont des indicateurs à mettre à jour ?",
+    reason: "question vague : pas de détail par territoire",
+    expected: [{ toolName: "get_indicateurs_non_a_jour" }],
   },
   {
     question: "Quels chantiers sont en retard en Bretagne ?",

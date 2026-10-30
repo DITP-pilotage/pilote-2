@@ -1,6 +1,7 @@
 import {
   codeMeteoDepuisLibelle,
   libelleCategorieSignalement,
+  libelleMaille,
   libelleNiveauDeConfiance,
   libelleTendance,
   mailleDePilotage,
@@ -62,5 +63,16 @@ describe("libelleCategorieSignalement", () => {
     expect(
       libelleCategorieSignalement({ categorie: "estEnAlerteÉcart" }),
     ).toEqual("Retard par rapport à la médiane");
+  });
+});
+
+describe("libelleMaille", () => {
+  it.each`
+    maille    | libelle
+    ${"NAT"}  | ${"nationale"}
+    ${"REG"}  | ${"régionale"}
+    ${"DEPT"} | ${"départementale"}
+  `("traduit $maille en $libelle", ({ maille, libelle }) => {
+    expect(libelleMaille({ maille })).toEqual(libelle);
   });
 });

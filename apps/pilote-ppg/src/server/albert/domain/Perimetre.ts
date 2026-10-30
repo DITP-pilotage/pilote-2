@@ -10,4 +10,5 @@ export type Perimetre =
   | { type: "REGION_ET_SES_DEPARTEMENTS"; region_code: string }
   | { type: "FRANCE_ET_SES_REGIONS" }
   | { type: "TOUTES_REGIONS" }
-  | { type: "TOUS_DEPARTEMENTS" };
+  | { type: "TOUS_DEPARTEMENTS" }
+  | { type: "TOUS_TERRITOIRES" };
