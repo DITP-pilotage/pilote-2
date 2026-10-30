@@ -3,6 +3,7 @@ import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/por
 import { ProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
 import { EmailManager } from "@/server/framework/email/EmailManager";
 import { logger } from "@/server/framework/logger";
+import { isKeycloakImportEnabled } from "@/server/framework/keycloak/isKeycloakImportEnabled";
 
 const KEYCLOAK_REALM = "DITP";
 
@@ -62,6 +63,10 @@ export class KeycloakBrevoProfilModifieSideEffects implements ProfilModifieSideE
   }
 
   private async updateKeycloakUser(profil: ProfilUtilisateur): Promise<void> {
+    if (!isKeycloakImportEnabled(this.keycloakUrl)) {
+      return;
+    }
+
     const kcAdminClient = new KcAdminClient({
       baseUrl: this.keycloakUrl,
       realmName: KEYCLOAK_REALM,

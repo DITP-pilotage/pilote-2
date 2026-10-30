@@ -25,6 +25,10 @@ export class ExportCsvModal {
       "historique-indicateurs": /l'historique des indicateurs/,
     };
     await this.page.getByLabel(labels[type]).check({ force: true });
+    // Le type d'export vit dans l'URL : passer à l'étape suivante avant sa mise à jour le perd.
+    if (type !== "chantiers") {
+      await this.page.waitForURL(new RegExp(`typeExport=${type}`));
+    }
   }
 
   async selectPerimeter(withFilters: boolean): Promise<void> {

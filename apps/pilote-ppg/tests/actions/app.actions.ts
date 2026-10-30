@@ -14,7 +14,7 @@ export class AppActions {
   /**
    * Connexion par l'API NextAuth plutôt que par le formulaire : le provider
    * credentials est appelé directement, ce qui pose le cookie de session dans le
-   * contexte sans traverser les quatre pages du parcours de connexion. Le parcours
+   * context sans traverser les quatre pages du parcours de connexion. Le parcours
    * complet reste couvert par `loginViaFormulaire`.
    */
   async loginAs(
@@ -44,7 +44,7 @@ export class AppActions {
     // L'écran de choix du mode de connexion s'intercale entre le point d'entrée
     // de l'en-tête et le formulaire.
     const pageConnexion = new PageConnexion(this.page);
-    await pageConnexion.choisirConnexionParIdentifiants();
+    await pageConnexion.chooseCredentialsLogin();
 
     const pageLogin = new PageLogin(this.page, this.e2eContext);
     await pageLogin.fillCredentials(username, password);
@@ -61,6 +61,9 @@ export class AppActions {
     username: string,
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
+    // NextAuth réémet le cookie de session à chaque réponse : une requête encore en vol
+    // de la page précédente réécrirait la session de l'ancien compte après le nettoyage.
+    await this.page.goto("about:blank");
     await this.page.context().clearCookies();
     return this.loginAs(username, password);
   }
@@ -75,21 +78,21 @@ export class AppActions {
       (await this.page.request.get("/api/auth/csrf")).json(),
     )) as { csrfToken: string };
 
-    const reponse = await this.retry(() =>
+    const response = await this.retry(() =>
       this.page.request.post("/api/auth/callback/credentials", {
         form: { csrfToken, username, password, callbackUrl: "/" },
         maxRedirects: 0,
       }),
     );
 
-    const redirection = reponse.headers().location ?? "";
+    const redirection = response.headers().location ?? "";
     const cookies = await this.page.context().cookies();
-    const sessionPosee = cookies.some((cookie) =>
+    const sessionCookieSet = cookies.some((cookie) =>
       cookie.name.includes("session-token"),
     );
-    if (!sessionPosee || /error=/.test(redirection)) {
+    if (!sessionCookieSet || /error=/.test(redirection)) {
       throw new Error(
-        `Connexion refusée pour ${username} (statut ${reponse.status()}, redirection vers ${redirection})`,
+        `Connexion refusée pour ${username} (statut ${response.status()}, redirection vers ${redirection})`,
       );
     }
   }

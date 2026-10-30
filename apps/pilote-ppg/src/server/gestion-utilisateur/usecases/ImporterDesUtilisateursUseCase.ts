@@ -13,6 +13,7 @@ import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/dom
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 import { logger } from "@/server/framework/logger";
+import { isKeycloakImportEnabled } from "@/server/framework/keycloak/isKeycloakImportEnabled";
 
 export default class ImporterDesUtilisateursUseCase {
   private readonly utilisateurRepository: UtilisateurRepository;
@@ -186,7 +187,10 @@ export default class ImporterDesUtilisateursUseCase {
         }
       }
 
-      if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
+      if (
+        isKeycloakImportEnabled(process.env.IMPORT_KEYCLOAK_URL) &&
+        !utilisateurExistant
+      ) {
         const utilisateursPourIAM = [
           {
             nom: utilisateur.nom,

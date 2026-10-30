@@ -1,4 +1,12 @@
-import { $Enums, PrismaClient } from "@prisma/client";
+import {
+  $Enums,
+  metadata_chantiers,
+  metadata_indicateurs_complementaire,
+  metadata_indicateurs_hidden,
+  metadata_parametrage_indicateurs,
+  Prisma,
+  PrismaClient,
+} from "@prisma/client";
 
 import { creerAdapter } from "@/server/framework/persistence/adapter";
 
@@ -16,97 +24,294 @@ const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
   "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
 ];
 
-type ActionType =
-  | "EVENEMENT_PROPOSITION_VALEUR_CREE"
-  | "COMMENTAIRE_CREE"
-  | "MESURE_INDICATEUR_IMPORTEE"
-  | "RAPPORT_IMPORT_CREE"
-  | "UTILISATEUR_DESACTIVE"
-  | "PROFIL_UTILISATEUR_MODIFIE"
-  | "ACCES_ALBERT_PROFIL_ACTIVE"
-  | "ACCES_ALBERT_UTILISATEUR_AJOUTE";
+type MetadataIndicateur = {
+  hidden: metadata_indicateurs_hidden;
+  parametrage: metadata_parametrage_indicateurs;
+  complementaire: metadata_indicateurs_complementaire;
+};
 
-interface TrackedAction {
-  type: ActionType;
-  filters: Record<string, unknown>;
+type ChantierMeteos = {
+  chantierId: string;
+  meteos: { territoire_code: string; meteo: string | null }[];
+};
+
+type FiltersByAction = {
+  PROPOSITION_VALEUR_EVENEMENT_CREATED: {
+    indic_id: string;
+    territoire_code: string;
+  };
+  COMMENTAIRE_CREATED: Prisma.commentaireWhereInput;
+  SYNTHESE_CREATED: Prisma.synthese_des_resultatsWhereInput;
+  OBJECTIF_CREATED: Prisma.objectifWhereInput;
+  DECISION_STRATEGIQUE_CREATED: Prisma.decision_strategiqueWhereInput;
+  RAPPORT_IMPORT_CREATED: Prisma.rapport_import_mesure_indicateurWhereInput;
+  UTILISATEUR_CREATED: { email: string };
+  UTILISATEUR_DEACTIVATED: { email: string };
+  UTILISATEUR_REACTIVATED: { email: string };
+  PROFIL_UTILISATEUR_UPDATED: {
+    email: string;
+    originalData: Prisma.utilisateurUpdateManyMutationInput;
+  };
+  TOKEN_API_CREATED: { email: string };
+  INDICATEUR_CREATED: { indicId: string };
+  INDICATEUR_UPDATED: MetadataIndicateur;
+  CHANTIER_PARAMETRAGE_UPDATED: metadata_chantiers;
+  CHANTIER_METEOS_UPDATED: ChantierMeteos;
+  NOUVEAUTE_CREATED: { id: string };
+  ARTICLE_CENTRE_AIDE_CREATED: { id: string };
+  ALBERT_ACCESS_PROFIL_ENABLED: { profilCode: string };
+  ALBERT_ACCESS_UTILISATEUR_ADDED: { email: string };
+};
+
+type ActionType = keyof FiltersByAction;
+
+type TrackedAction = {
+  [Type in ActionType]: [type: Type, filters: FiltersByAction[Type]];
+}[ActionType];
+
+const INDICATEUR_HISTORISATION_TABLES = [
+  "metadata_indicateurs",
+  "metadata_parametrages_indicateurs",
+  "metadata_indicateurs_complementaire",
+];
+
+// Le seed ne contient aucune historisation : celle d'un objet écrit par un test est à supprimer.
+async function deleteHistorisation(
+  tables: string[],
+  idObjetModifie: string,
+): Promise<void> {
+  await prisma.historisation_modification.deleteMany({
+    where: {
+      table_modifie_id: { in: tables },
+      id_objet_modifie: idObjetModifie,
+    },
+  });
+}
+
+async function deleteUtilisateurHistorisation(email: string): Promise<void> {
+  const utilisateur = await prisma.utilisateur.findUnique({
+    where: { email },
+    select: { id: true },
+  });
+  if (utilisateur) {
+    await deleteHistorisation(["utilisateur"], utilisateur.id);
+  }
+}
+
+// Un filtre vide ou une clé undefined ferait porter un deleteMany/updateMany sur toute la table.
+function requireFilter<Filter extends object>(filter: Filter): Filter {
+  const values = Object.values(filter);
+  if (values.length === 0 || values.some((value) => value === undefined)) {
+    throw new Error(
+      `Filtre de nettoyage e2e vide ou incomplet : ${JSON.stringify(filter)}`,
+    );
+  }
+  return filter;
+}
+
+export async function readMetadataIndicateur(
+  indicId: string,
+): Promise<MetadataIndicateur> {
+  const where = { indic_id: indicId };
+  const [hidden, parametrage, complementaire] = await Promise.all([
+    prisma.metadata_indicateurs_hidden.findUniqueOrThrow({ where }),
+    prisma.metadata_parametrage_indicateurs.findUniqueOrThrow({ where }),
+    prisma.metadata_indicateurs_complementaire.findUniqueOrThrow({ where }),
+  ]);
+  return { hidden, parametrage, complementaire };
+}
+
+export async function readChantierMeteos(
+  chantierId: string,
+): Promise<ChantierMeteos> {
+  const meteos = await prisma.chantier_territoire.findMany({
+    where: { id: chantierId },
+    select: { territoire_code: true, meteo: true },
+  });
+  return { chantierId, meteos };
+}
+
+export async function disconnectE2EPrisma(): Promise<void> {
+  await prisma.$disconnect();
 }
 
 export class E2ETestContext {
   private readonly actions: TrackedAction[] = [];
 
-  track(type: ActionType, filters: Record<string, unknown>): void {
-    this.actions.push({ type, filters });
+  track(...action: TrackedAction): void {
+    requireFilter(action[1]);
+    this.actions.push(action);
   }
 
+  // Ordre inverse : deux actions opposées sur une même entité doivent revenir à l'état initial.
   async cleanup(): Promise<void> {
-    for (const action of this.actions) {
-      switch (action.type) {
-        case "EVENEMENT_PROPOSITION_VALEUR_CREE":
-          await prisma.indicateur_territoire_valeur_evenement.deleteMany({
-            where: {
-              ...action.filters,
-              type_evenement: { in: PROPOSITION_VALEUR_EVENEMENTS },
-            },
-          });
-          break;
-        case "COMMENTAIRE_CREE":
-          await prisma.commentaire.deleteMany({
-            where: action.filters,
-          });
-          break;
-        case "MESURE_INDICATEUR_IMPORTEE":
-          await prisma.mesure_indicateur.deleteMany({
-            where: action.filters,
-          });
-          break;
-        case "RAPPORT_IMPORT_CREE": {
-          const rapports =
-            await prisma.rapport_import_mesure_indicateur.findMany({
-              where: action.filters,
-              select: { id: true },
-            });
-          const rapportIds = rapports.map((rapport) => rapport.id);
-          if (rapportIds.length > 0) {
-            await prisma.mesure_indicateur.deleteMany({
-              where: { rapport_id: { in: rapportIds } },
-            });
-            await prisma.mesure_indicateur_temporaire.deleteMany({
-              where: { rapport_id: { in: rapportIds } },
-            });
-            await prisma.erreur_validation_fichier.deleteMany({
-              where: { rapport_id: { in: rapportIds } },
-            });
-            await prisma.rapport_import_mesure_indicateur.deleteMany({
-              where: { id: { in: rapportIds } },
-            });
-          }
-          break;
+    const errors: unknown[] = [];
+    try {
+      for (const action of [...this.actions].reverse()) {
+        try {
+          await this.undo(action);
+        } catch (error) {
+          errors.push(error);
         }
-        case "UTILISATEUR_DESACTIVE":
-          await prisma.utilisateur.updateMany({
-            where: action.filters,
-            data: { date_desactivation: null },
-          });
-          break;
-        case "PROFIL_UTILISATEUR_MODIFIE":
-          await prisma.utilisateur.updateMany({
-            where: { email: action.filters.email as string },
-            data: action.filters.originalData as Record<string, unknown>,
-          });
-          break;
-        case "ACCES_ALBERT_PROFIL_ACTIVE":
-          await prisma.albert_access_profil.deleteMany({
-            where: { profil_code: action.filters.profilCode as string },
-          });
-          break;
-        case "ACCES_ALBERT_UTILISATEUR_AJOUTE":
-          await prisma.albert_access_utilisateur.deleteMany({
-            where: { utilisateur: { email: action.filters.email as string } },
-          });
-          break;
       }
+    } finally {
+      this.actions.length = 0;
     }
-    this.actions.length = 0;
-    await prisma.$disconnect();
+    if (errors.length > 0) {
+      throw new AggregateError(errors, "Nettoyage e2e incomplet");
+    }
+  }
+
+  private async undo([type, filters]: TrackedAction): Promise<void> {
+    switch (type) {
+      case "PROPOSITION_VALEUR_EVENEMENT_CREATED":
+        await prisma.indicateur_territoire_valeur_evenement.deleteMany({
+          where: {
+            ...filters,
+            type_evenement: { in: PROPOSITION_VALEUR_EVENEMENTS },
+          },
+        });
+        break;
+      case "COMMENTAIRE_CREATED":
+        await prisma.commentaire.deleteMany({
+          where: filters,
+        });
+        break;
+      case "SYNTHESE_CREATED":
+        await prisma.synthese_des_resultats.deleteMany({
+          where: filters,
+        });
+        break;
+      case "OBJECTIF_CREATED":
+        await prisma.objectif.deleteMany({
+          where: filters,
+        });
+        break;
+      case "DECISION_STRATEGIQUE_CREATED":
+        await prisma.decision_strategique.deleteMany({
+          where: filters,
+        });
+        break;
+      case "RAPPORT_IMPORT_CREATED": {
+        const rapports = await prisma.rapport_import_mesure_indicateur.findMany(
+          { where: filters, select: { id: true } },
+        );
+        const rapportIds = rapports.map((rapport) => rapport.id);
+        if (rapportIds.length > 0) {
+          const where = { rapport_id: { in: rapportIds } };
+          await prisma.mesure_indicateur.deleteMany({ where });
+          await prisma.mesure_indicateur_temporaire.deleteMany({ where });
+          await prisma.erreur_validation_fichier.deleteMany({ where });
+          await prisma.rapport_import_mesure_indicateur.deleteMany({
+            where: { id: { in: rapportIds } },
+          });
+        }
+        break;
+      }
+      case "UTILISATEUR_CREATED":
+        await deleteUtilisateurHistorisation(filters.email);
+        await prisma.utilisateur.deleteMany({
+          where: { email: filters.email },
+        });
+        break;
+      case "UTILISATEUR_DEACTIVATED":
+        await prisma.utilisateur.updateMany({
+          where: { email: filters.email },
+          data: { date_desactivation: null },
+        });
+        break;
+      case "UTILISATEUR_REACTIVATED":
+        await prisma.utilisateur.updateMany({
+          where: { email: filters.email },
+          data: { date_desactivation: new Date() },
+        });
+        break;
+      case "PROFIL_UTILISATEUR_UPDATED":
+        await deleteUtilisateurHistorisation(filters.email);
+        await prisma.utilisateur.updateMany({
+          where: { email: filters.email },
+          data: filters.originalData,
+        });
+        break;
+      case "TOKEN_API_CREATED":
+        await prisma.token_api_information.deleteMany({
+          where: { email: filters.email },
+        });
+        break;
+      case "INDICATEUR_CREATED": {
+        const where = { indic_id: filters.indicId };
+        await prisma.metadata_indicateurs_complementaire.deleteMany({
+          where,
+        });
+        await prisma.metadata_parametrage_indicateurs.deleteMany({ where });
+        await prisma.metadata_indicateurs_hidden.deleteMany({ where });
+        await deleteHistorisation(
+          INDICATEUR_HISTORISATION_TABLES,
+          filters.indicId,
+        );
+        break;
+      }
+      case "INDICATEUR_UPDATED": {
+        const where = { indic_id: filters.hidden.indic_id };
+        await prisma.metadata_indicateurs_hidden.update({
+          where,
+          data: filters.hidden,
+        });
+        await prisma.metadata_parametrage_indicateurs.update({
+          where,
+          data: filters.parametrage,
+        });
+        await prisma.metadata_indicateurs_complementaire.update({
+          where,
+          data: filters.complementaire,
+        });
+        await deleteHistorisation(
+          INDICATEUR_HISTORISATION_TABLES,
+          filters.hidden.indic_id,
+        );
+        break;
+      }
+      case "CHANTIER_PARAMETRAGE_UPDATED":
+        await prisma.metadata_chantiers.update({
+          where: { chantier_id: filters.chantier_id },
+          data: filters,
+        });
+        break;
+      case "CHANTIER_METEOS_UPDATED":
+        for (const { territoire_code, meteo } of filters.meteos) {
+          await prisma.chantier_territoire.update({
+            where: {
+              id_territoire_code: {
+                id: filters.chantierId,
+                territoire_code,
+              },
+            },
+            data: { meteo },
+          });
+        }
+        break;
+      case "NOUVEAUTE_CREATED":
+        await prisma.nouveaute.deleteMany({
+          where: { id: filters.id },
+        });
+        break;
+      case "ARTICLE_CENTRE_AIDE_CREATED":
+        await prisma.article_centre_aide.deleteMany({
+          where: { id: filters.id },
+        });
+        break;
+      case "ALBERT_ACCESS_PROFIL_ENABLED":
+        await prisma.albert_access_profil.deleteMany({
+          where: { profil_code: filters.profilCode },
+        });
+        break;
+      case "ALBERT_ACCESS_UTILISATEUR_ADDED":
+        await prisma.albert_access_utilisateur.deleteMany({
+          where: {
+            utilisateur: { email: filters.email },
+          },
+        });
+        break;
+    }
   }
 }

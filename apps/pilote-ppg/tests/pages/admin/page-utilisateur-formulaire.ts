@@ -2,14 +2,14 @@ import { expect } from "@playwright/test";
 import { BasePage } from "../base.page";
 
 export class PageUtilisateurFormulaire extends BasePage {
-  async gotoCreer(): Promise<void> {
+  async gotoCreate(): Promise<void> {
     await this.page.goto("/admin/utilisateur/creer");
     await expect(
       this.page.getByRole("heading", { name: "Identification" }),
     ).toBeVisible({ timeout: 30_000 });
   }
 
-  async gotoModifierDepuisFiche(): Promise<void> {
+  async gotoEditFromFiche(): Promise<void> {
     await this.page.getByRole("link", { name: "Modifier" }).click();
     await expect(
       this.page.getByRole("heading", { name: "Identification" }),
@@ -32,19 +32,19 @@ export class PageUtilisateurFormulaire extends BasePage {
     return this.page.getByRole("textbox", { name: "Fonction" });
   }
 
-  private get boutonSuivant() {
+  private get nextButton() {
     return this.page.getByRole("button", { name: "Suivant" });
   }
 
-  private get champFonction() {
+  private get fonctionField() {
     return this.page.getByLabel("Fonction", { exact: true });
   }
 
-  private get champService() {
+  private get serviceField() {
     return this.page.locator("#service");
   }
 
-  async remplirIdentification(data: {
+  async fillIdentification(data: {
     email: string;
     nom: string;
     prenom: string;
@@ -54,7 +54,7 @@ export class PageUtilisateurFormulaire extends BasePage {
     await this.prenomInput.fill(data.prenom);
   }
 
-  async remplirFonction(fonction: string): Promise<void> {
+  async fillFonction(fonction: string): Promise<void> {
     await this.fonctionInput.fill(fonction);
   }
 
@@ -70,39 +70,57 @@ export class PageUtilisateurFormulaire extends BasePage {
       .click();
   }
 
-  async clickSuivant(): Promise<void> {
-    await this.boutonSuivant.click();
+  async clickNextToReview(): Promise<void> {
+    // Chaque réponse renouvelle le cookie csrf : confirmer avant la fin du chargement
+    // de l'étape 2 enverrait un jeton périmé.
+    const reviewStepLoaded = this.page.waitForResponse(
+      /chantier\.recupererTousLesInformationsChantiers/,
+    );
+    await this.clickNext();
+    await reviewStepLoaded;
   }
 
-  async expectErreurFonction(): Promise<void> {
-    await expect(this.champFonction).toHaveAttribute("aria-invalid", "true");
+  async clickNext(): Promise<void> {
+    await this.nextButton.click();
   }
 
-  async expectErreurService(): Promise<void> {
-    await expect(this.champService).toHaveAttribute("aria-invalid", "true");
+  async expectFonctionError(): Promise<void> {
+    await expect(this.fonctionField).toHaveAttribute("aria-invalid", "true");
   }
 
-  async expectPasErreurFonction(): Promise<void> {
+  async expectServiceError(): Promise<void> {
+    await expect(this.serviceField).toHaveAttribute("aria-invalid", "true");
+  }
+
+  async expectNoFonctionError(): Promise<void> {
     await expect(
-      this.champFonction.and(this.page.locator('[aria-invalid="true"]')),
+      this.fonctionField.and(this.page.locator('[aria-invalid="true"]')),
     ).toHaveCount(0);
   }
 
-  async expectPasErreurService(): Promise<void> {
+  async expectNoServiceError(): Promise<void> {
     await expect(
-      this.champService.and(this.page.locator('[aria-invalid="true"]')),
+      this.serviceField.and(this.page.locator('[aria-invalid="true"]')),
     ).toHaveCount(0);
   }
 
-  async confirmer(): Promise<void> {
+  async confirm(): Promise<void> {
     await this.page.getByRole("button", { name: "Confirmer" }).click();
   }
 
-  async expectSuccesModification(): Promise<void> {
+  async expectUpdateSuccess(): Promise<void> {
     await expect(
       this.page.locator('[role="status"][data-color="success"]'),
     ).toBeVisible({
       timeout: 10_000,
     });
+  }
+
+  async expectEmailAlreadyUsedError(): Promise<void> {
+    await expect(
+      this.page.getByRole("alert").getByRole("heading", {
+        name: "Un compte a déjà été créé avec cette adresse électronique.",
+      }),
+    ).toBeVisible();
   }
 }

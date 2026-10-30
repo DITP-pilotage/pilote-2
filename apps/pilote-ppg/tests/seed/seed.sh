@@ -87,3 +87,6 @@ psql -q -d "$DATABASE_URL" -c "\COPY public.synthese_des_resultats FROM '$SCRIPT
 psql -q -d "$DATABASE_URL" -c "\COPY public.indicateur_territoire_jalon FROM '$SCRIPT_DIR/$PUBLIC_SEED_DIR/indicateur_territoire_jalon.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY public.indicateur_territoire_valeur_evenement FROM '$SCRIPT_DIR/$PUBLIC_SEED_DIR/indicateur_territoire_valeur_evenement.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY public.indicateur_territoire_valeur_evenement_taux_avancement FROM '$SCRIPT_DIR/$PUBLIC_SEED_DIR/indicateur_territoire_valeur_evenement_taux_avancement.csv' WITH (FORMAT csv, HEADER true)"
+
+# Entites dediees aux e2e : en dernier, elles copient des lignes chargees ci-dessus
+psql -q -v ON_ERROR_STOP=1 -d "$DATABASE_URL" -f "$SCRIPT_DIR/seed-dedicated-entities.sql"

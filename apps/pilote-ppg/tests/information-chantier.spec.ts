@@ -9,7 +9,7 @@ test.describe.configure({ mode: "parallel" });
 test.describe("Consultation des données d'un chantier — Isolation par profil", () => {
   const chantierId = "129";
 
-  test("DITP Admin — Accès complet en lecture et écriture", async ({
+  test("DITP Admin — Accès complet en lecture et boutons d'écriture visibles", async ({
     page,
     e2eContext,
     step,
@@ -18,10 +18,10 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await appActions.loginAs("ditp.admin@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "NAT-FR");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "NAT-FR");
 
     await step("Vérification de la structure nationale complète", async () => {
-      await pageChantier.expectStructureNationale();
+      await pageChantier.expectNationalStructure();
     });
 
     await step("Vérification du sélecteur de maille visible", async () => {
@@ -54,10 +54,10 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await appActions.loginAs("premiere.ministre@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "NAT-FR");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "NAT-FR");
 
     await step("Vérification de la structure nationale complète", async () => {
-      await pageChantier.expectStructureNationale();
+      await pageChantier.expectNationalStructure();
     });
 
     await step("Vérification du sélecteur de maille visible", async () => {
@@ -92,11 +92,11 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     const pageChantier = new PageChantier(page, e2eContext);
 
     await step("Navigation vers un chantier autorisé (CH-129)", async () => {
-      await pageChantier.selectChantierAvecTerritoire(chantierId, "NAT-FR");
+      await pageChantier.selectChantierWithTerritoire(chantierId, "NAT-FR");
     });
 
     await step("Vérification de la structure nationale complète", async () => {
-      await pageChantier.expectStructureNationale();
+      await pageChantier.expectNationalStructure();
     });
 
     await step("Vérification du sélecteur de maille visible", async () => {
@@ -122,7 +122,7 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await step(
       "Navigation vers un chantier non autorisé — page 404",
       async () => {
-        await page.goto("/chantier/CH-001/NAT-FR");
+        await page.goto("/chantier/CH-070/NAT-FR");
         await pageChantier.expectPageNotFound();
       },
     );
@@ -137,12 +137,12 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await appActions.loginAs("pva.coordinateur.dept@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "DEPT-56");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "DEPT-56");
 
     await step(
       "Vérification de la structure territoriale (sans décisions stratégiques)",
       async () => {
-        await pageChantier.expectStructureTerritoriale();
+        await pageChantier.expectTerritorialStructure();
       },
     );
 
@@ -179,12 +179,12 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await appActions.loginAs("chantier.prefet.reg@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "REG-53");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "REG-53");
 
     await step(
       "Vérification de la structure territoriale (sans décisions stratégiques)",
       async () => {
-        await pageChantier.expectStructureTerritoriale();
+        await pageChantier.expectTerritorialStructure();
       },
     );
 
@@ -218,10 +218,10 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await appActions.loginAs("coordinateur.departement@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "DEPT-56");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "DEPT-56");
 
     await step("Vérification de la structure territoriale", async () => {
-      await pageChantier.expectStructureTerritoriale();
+      await pageChantier.expectTerritorialStructure();
     });
 
     await step(
@@ -250,10 +250,10 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     await appActions.loginAs("prefet.region@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "REG-53");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "REG-53");
 
     await step("Vérification de la structure territoriale", async () => {
-      await pageChantier.expectStructureTerritoriale();
+      await pageChantier.expectTerritorialStructure();
     });
 
     await step("Vérification du sélecteur de maille visible", async () => {
@@ -310,7 +310,7 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     await appActions.loginAs("ditp.admin@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "NAT-FR");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "NAT-FR");
 
     await step(
       "Sélection de la carte des propositions de valeur d'avancement",
@@ -371,7 +371,7 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     await appActions.loginAs("ditp.admin@example.com");
 
     const pageChantier = new PageChantier(page, e2eContext);
-    await pageChantier.selectChantierAvecTerritoire(chantierId, "NAT-FR");
+    await pageChantier.selectChantierWithTerritoire(chantierId, "NAT-FR");
 
     await step(
       "Sélection de la carte des propositions de valeur d'avancement",
@@ -427,6 +427,9 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     await step(
       "Vérification que 'Paris' n'est plus affiché dans le widget PVA",
       async () => {
+        await expect(widgetPVA(page).getByTitle(/Retirer.*Paris/)).toHaveCount(
+          0,
+        );
         await expect(
           page.getByText("2 propositions", { exact: true }),
         ).not.toBeVisible();

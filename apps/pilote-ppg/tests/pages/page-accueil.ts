@@ -16,25 +16,6 @@ export class PageAccueil extends BasePage {
     this.exportModal = new ExportCsvModal(page);
   }
 
-  async expectStructure(): Promise<void> {
-    await expect(
-      this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
-    ).toBeVisible();
-    await expect(
-      this.page.getByRole("heading", { name: /Taux d'avancement moyen/ }),
-    ).toBeVisible();
-    await expect(
-      this.page.getByRole("heading", {
-        name: /Taux d'avancement des chantiers par territoire/,
-      }),
-    ).toBeVisible();
-    await expect(
-      this.page.getByRole("heading", {
-        name: /Répartition des météos renseignées/,
-      }),
-    ).toBeVisible();
-  }
-
   async expectFilterTag(tagName: string): Promise<void> {
     await expect(
       this.page.locator(`button[aria-label='Retirer le tag ${tagName}']`),
@@ -46,6 +27,7 @@ export class PageAccueil extends BasePage {
       .getByRole("button", { name: /Filtrer par ministères/ })
       .click();
     await this.page.getByRole("button", { name: ministereName }).click();
+    await this.page.waitForURL(/perimetres=/);
   }
 
   async selectChantier(chantierName: string): Promise<PageChantier> {
@@ -60,21 +42,21 @@ export class PageAccueil extends BasePage {
     return new PageChantier(this.page, this.e2eContext);
   }
 
-  private get boutonAssistantIA() {
+  private get assistantIAButton() {
     return this.page.getByRole("button", {
       name: "Ouvrir l'Assistant IA PILOTE",
     });
   }
 
-  async expectAccesAssistantIA(): Promise<void> {
-    await expect(this.boutonAssistantIA).toBeVisible();
+  async expectAssistantIAAccess(): Promise<void> {
+    await expect(this.assistantIAButton).toBeVisible();
   }
 
-  async expectPasAccesAssistantIA(): Promise<void> {
+  async expectNoAssistantIAAccess(): Promise<void> {
     await expect(
       this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
     ).toBeVisible();
-    await expect(this.boutonAssistantIA).toHaveCount(0);
+    await expect(this.assistantIAButton).toHaveCount(0);
   }
 
   async openExportModal(): Promise<void> {

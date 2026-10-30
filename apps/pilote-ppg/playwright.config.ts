@@ -7,6 +7,16 @@ import { defineConfig, devices } from "@playwright/test";
 require("dotenv").config({ path: ".env.e2e" });
 
 const videoEnabled = process.env.E2E_VIDEO === "on";
+/* En CI, chaque navigateur est un run distinct (cf. .github/workflows/e2e.yml). */
+const ciRun = process.env.E2E_PROJECT ?? "all";
+
+/* Specs d'appels directs (API, tRPC, open-api) : le navigateur n'y change rien. */
+const NON_UI_SPECS = [
+  "**/api-autorisation.spec.ts",
+  "**/open-api/**",
+  "**/export-csv-cloisonnement.spec.ts",
+  "**/gardes-panel-admin.spec.ts",
+];
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -22,14 +32,19 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   timeout: 90_000,
-  globalTimeout: 1_400_000,
-  outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
+  globalTimeout: 3_600_000,
+  outputDir: process.env.CI
+    ? `test-results/${ciRun}`
+    : "/tmp/pilote-playwright/results",
   /* Un fichier = un worker ; les tests d'un même fichier restent en série sauf opt-in
      par test.describe.configure. Le runner CI n'a que deux vCPU. */
   workers: process.env.CI ? 2 : 4,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
-    ? [["github"], ["json", { outputFile: "test-results/results.json" }]]
+    ? [
+        ["github"],
+        ["json", { outputFile: `test-results/results-${ciRun}.json` }],
+      ]
     : [
         ["list"],
         [
@@ -65,7 +80,9 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
   },
 
-  /* Configure projects for major browsers */
+  /* Firefox puis WebKit s'enchaînent après Chromium : les trois partagent la même base
+     seedée, ils ne doivent jamais écrire en parallèle sur les mêmes entités. Une dépendance
+     en échec saute les projets suivants : la CI lance donc chaque projet à part (--no-deps). */
   projects: [
     {
       name: "chromium",
@@ -83,6 +100,18 @@ export default defineConfig({
           },
         }),
       },
+    },
+    {
+      name: "firefox",
+      dependencies: ["chromium"],
+      testIgnore: NON_UI_SPECS,
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit",
+      dependencies: ["firefox"],
+      testIgnore: NON_UI_SPECS,
+      use: { ...devices["Desktop Safari"] },
     },
   ],
 });

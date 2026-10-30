@@ -160,6 +160,9 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
       expect(contents.toString()).toMatch(
         '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier Id";"Chantier";"Ministère";"Axe";"Statut";"Chantier territorialisé";"Chantier du baromètre"\n',
       );
+      expect(contents.toString()).toContain(
+        '"CH-058";"Accélérer la transition numérique"',
+      );
     });
   });
 

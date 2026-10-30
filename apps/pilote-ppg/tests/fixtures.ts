@@ -1,5 +1,14 @@
 import { Page, test as base } from "@playwright/test";
-import { E2ETestContext } from "./e2e-test-context";
+import { disconnectE2EPrisma, E2ETestContext } from "./e2e-test-context";
+import {
+  ApiTestContext,
+  UserProfile,
+} from "./open-api/api-client/api-test-context";
+import { OpenApiClient } from "./open-api/api-client/open-api.client";
+import {
+  AuthorizationHeader,
+  createUnauthenticatedClient,
+} from "./open-api/api-client/unauthenticated-api.client";
 
 type StepWithBanner = (
   stepName: string,
@@ -9,6 +18,15 @@ type StepWithBanner = (
 const BANNER_DISPLAY_MS = 1500;
 
 const videoEnabled = process.env.E2E_VIDEO === "on";
+
+// Les pages hors application Next (Keycloak, réponses d'API) n'ont pas de #__next à hydrater.
+async function waitForHydration(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () =>
+      !document.getElementById("__next") ||
+      document.body.dataset.hydrated === "true",
+  );
+}
 
 function createStepWithBanner(page: Page): StepWithBanner {
   return async (stepName, fn) => {
@@ -50,10 +68,42 @@ function createStepWithBanner(page: Page): StepWithBanner {
   };
 }
 
-export const test = base.extend<{
-  e2eContext: E2ETestContext;
-  step: StepWithBanner;
-}>({
+export const test = base.extend<
+  {
+    e2eContext: E2ETestContext;
+    step: StepWithBanner;
+    openApi: (profile: UserProfile) => Promise<ApiTestContext>;
+    openApiUnauthenticated: (
+      authorization?: AuthorizationHeader,
+    ) => Promise<OpenApiClient>;
+  },
+  { e2ePrismaConnection: void }
+>({
+  e2ePrismaConnection: [
+    // eslint-disable-next-line no-empty-pattern
+    async ({}, use) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      await use();
+      await disconnectE2EPrisma();
+    },
+    { scope: "worker", auto: true },
+  ],
+  page: async ({ page }, use) => {
+    const goto = page.goto.bind(page);
+    const reload = page.reload.bind(page);
+    page.goto = async (...args) => {
+      const response = await goto(...args);
+      await waitForHydration(page);
+      return response;
+    };
+    page.reload = async (...args) => {
+      const response = await reload(...args);
+      await waitForHydration(page);
+      return response;
+    };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    await use(page);
+  },
   // eslint-disable-next-line no-empty-pattern
   e2eContext: async ({}, use) => {
     const context = new E2ETestContext();
@@ -64,5 +114,28 @@ export const test = base.extend<{
   step: async ({ page }, use) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(createStepWithBanner(page));
+  },
+  openApi: async ({ playwright }, use) => {
+    const contexts: ApiTestContext[] = [];
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    await use(async (profile) => {
+      const context = await ApiTestContext.create(playwright, profile);
+      contexts.push(context);
+      return context;
+    });
+    await Promise.all(contexts.map((context) => context.dispose()));
+  },
+  openApiUnauthenticated: async ({ playwright }, use) => {
+    const clients: OpenApiClient[] = [];
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    await use(async (authorization) => {
+      const client = await createUnauthenticatedClient(
+        playwright.request,
+        authorization,
+      );
+      clients.push(client);
+      return client;
+    });
+    await Promise.all(clients.map((client) => client.dispose()));
   },
 });

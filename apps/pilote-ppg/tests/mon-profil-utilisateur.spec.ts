@@ -1,6 +1,26 @@
+import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageMonProfilUtilisateur } from "./pages/page-mon-profil-utilisateur";
+
+async function getModificationDate(email: string): Promise<Date> {
+  const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
+    where: { email },
+    select: { date_modification: true },
+  });
+  return utilisateur.date_modification;
+}
+
+function formatParisDateTime(date: Date): string {
+  const day = date.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
+  const time = date.toLocaleTimeString("fr-FR", {
+    timeZone: "Europe/Paris",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return `${day} à ${time}`;
+}
 
 test("doit afficher et modifier le profil utilisateur", async ({
   page,
@@ -27,7 +47,7 @@ test("doit afficher et modifier le profil utilisateur", async ({
   });
 
   await step("Vérification que les champs sont pré-remplis", async () => {
-    await pageMonProfil.expectChampsPreremplis({
+    await pageMonProfil.expectPrefilledFields({
       email: "ditp.admin@example.com",
       prenom: "Admin",
       nom: "DITP",
@@ -38,7 +58,7 @@ test("doit afficher et modifier le profil utilisateur", async ({
     "Sélection du service Autre — champ supplémentaire visible",
     async () => {
       await pageMonProfil.selectService("Autre");
-      await pageMonProfil.expectChampServiceAutreVisible();
+      await pageMonProfil.expectServiceAutreFieldVisible();
     },
   );
 
@@ -46,35 +66,38 @@ test("doit afficher et modifier le profil utilisateur", async ({
     "Sélection d'un service standard — champ Autre disparaît",
     async () => {
       await pageMonProfil.selectService("Préfecture de région");
-      await pageMonProfil.expectChampServiceAutreNonVisible();
+      await pageMonProfil.expectServiceAutreFieldNotVisible();
     },
   );
 
-  let dateAvantModification: string;
+  let modificationDateBefore: Date;
 
   await step("Modification du profil et vérification du succès", async () => {
-    dateAvantModification = await pageMonProfil.getDateModificationText();
-    await pageMonProfil.modifierFonctionEtEnregistrer(
+    modificationDateBefore = await getModificationDate(
       "ditp.admin@example.com",
-      "",
+    );
+    await pageMonProfil.updateFonctionAndSave(
+      "ditp.admin@example.com",
       "Testeur E2E",
     );
-    await pageMonProfil.expectSucces();
+    await pageMonProfil.expectSuccess();
   });
 
   await step(
-    "Vérification que la date de modification est mise à jour",
+    "Vérification que la modification est enregistrée et datée",
     async () => {
-      const dateApresModification =
-        await pageMonProfil.getDateModificationText();
-      if (dateAvantModification === dateApresModification) {
-        const regex = /Modifié le \d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/;
-        if (!regex.test(dateApresModification)) {
-          throw new Error(
-            `Format de date inattendu : ${dateApresModification}`,
-          );
-        }
-      }
+      const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
+        where: { email: "ditp.admin@example.com" },
+        select: { fonction: true, service: true, date_modification: true },
+      });
+      expect(utilisateur.fonction).toBe("Testeur E2E");
+      expect(utilisateur.service).toBe("prefecture-de-region");
+      expect(utilisateur.date_modification.getTime()).toBeGreaterThan(
+        modificationDateBefore.getTime(),
+      );
+      await expect(pageMonProfil.dateModification).toHaveText(
+        `Modifié le ${formatParisDateTime(utilisateur.date_modification)}`,
+      );
     },
   );
 
@@ -83,7 +106,7 @@ test("doit afficher et modifier le profil utilisateur", async ({
     async () => {
       await appActions.switchUser("coordinateur.region@example.com");
       await pageMonProfil.goto();
-      await pageMonProfil.expectChampsPreremplis({
+      await pageMonProfil.expectPrefilledFields({
         email: "coordinateur.region@example.com",
         prenom: "Region",
         nom: "Coordinateur",

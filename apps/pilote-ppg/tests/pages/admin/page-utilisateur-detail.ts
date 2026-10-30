@@ -6,29 +6,29 @@ export class PageUtilisateurDetail extends BasePage {
     return this.page.getByRole("heading", { name: "Fiche du compte" });
   }
 
-  private get bandeauInfo() {
+  private get infoBanner() {
     return this.page.getByRole("main").getByRole("note");
   }
 
-  private get boutonModifier() {
+  private get editButton() {
     return this.page.getByRole("link", { name: "Modifier" });
   }
 
-  private get boutonGenererToken() {
+  private get generateTokenButton() {
     return this.page.getByRole("button", {
       name: /Générer un token/,
     });
   }
 
-  private get boutonDesactiver() {
+  private get deactivateButton() {
     return this.page.getByText("Désactiver le compte");
   }
 
-  private get boutonReactiver() {
+  private get reactivateButton() {
     return this.page.getByRole("button", { name: /Réactiver le compte/ });
   }
 
-  private get badgeDesactive() {
+  private get deactivatedBadge() {
     return this.page.getByText(/^Désactivé depuis le /);
   }
 
@@ -36,91 +36,78 @@ export class PageUtilisateurDetail extends BasePage {
     return this.page.getByRole("dialog");
   }
 
-  async goto(utilisateurId: string): Promise<void> {
-    await this.page.goto(`/admin/utilisateur/${utilisateurId}`);
-    await this.heading.waitFor({ state: "visible" });
-  }
-
-  async confirmerDesactivation(email: string): Promise<void> {
-    this.e2eContext.track("UTILISATEUR_DESACTIVE", { email });
+  async confirmDeactivation(email: string): Promise<void> {
+    this.e2eContext.track("UTILISATEUR_DEACTIVATED", { email });
 
     await this.dialog
       .getByRole("button", { name: "Confirmer la désactivation" })
       .click();
   }
 
-  async confirmerReactivation(): Promise<void> {
+  async confirmReactivation(): Promise<void> {
     await this.dialog
       .getByRole("button", { name: "Confirmer la réactivation" })
       .click();
   }
 
-  async genererToken(): Promise<void> {
-    await this.boutonGenererToken.click();
-  }
-
-  async expectPageChargee(): Promise<void> {
+  async expectPageLoaded(): Promise<void> {
     await expect(this.heading).toBeVisible();
   }
 
-  async expectInfoUtilisateur(
+  async expectUtilisateurInfo(
     email: string,
-    nom: string,
+    name: string,
     prenom: string,
     profil: string,
   ): Promise<void> {
     await expect(this.page.locator("main")).toContainText(email);
-    await expect(this.page.locator("main")).toContainText(nom);
+    await expect(this.page.locator("main")).toContainText(name);
     await expect(this.page.locator("main")).toContainText(prenom);
     await expect(this.page.locator("main")).toContainText(profil);
   }
 
-  async expectModifierVisible(): Promise<void> {
-    await expect(this.boutonModifier).toBeVisible();
+  async expectEditVisible(): Promise<void> {
+    await expect(this.editButton).toBeVisible();
   }
 
-  async expectModifierNotVisible(): Promise<void> {
-    await expect(this.boutonModifier).not.toBeVisible();
+  async expectEditNotVisible(): Promise<void> {
+    await expect(this.editButton).not.toBeVisible();
   }
 
-  async expectDesactiverVisible(): Promise<void> {
-    await expect(this.boutonDesactiver).toBeVisible();
+  async expectDeactivateVisible(): Promise<void> {
+    await expect(this.deactivateButton).toBeVisible();
   }
 
-  async expectDesactiverNotVisible(): Promise<void> {
-    await expect(this.boutonDesactiver).not.toBeVisible();
+  async expectDeactivateNotVisible(): Promise<void> {
+    await expect(this.deactivateButton).not.toBeVisible();
   }
 
-  async expectReactiverVisible(): Promise<void> {
-    await expect(this.boutonReactiver).toBeVisible();
-  }
-
-  async expectReactiverNotVisible(): Promise<void> {
-    await expect(this.boutonReactiver).not.toBeVisible();
+  async expectReactivateVisible(): Promise<void> {
+    await expect(this.reactivateButton).toBeVisible();
   }
 
   async expectTokenVisible(): Promise<void> {
-    await expect(this.boutonGenererToken).toBeVisible();
+    await expect(this.generateTokenButton).toBeVisible();
   }
 
   async expectTokenNotVisible(): Promise<void> {
-    await expect(this.boutonGenererToken).not.toBeVisible();
+    await expect(this.generateTokenButton).not.toBeVisible();
   }
 
-  async expectBandeauRestriction(message: string | RegExp): Promise<void> {
-    await expect(this.bandeauInfo).toBeVisible();
-    await expect(this.bandeauInfo).toHaveText(message);
+  async expectRestrictionBanner(message: string | RegExp): Promise<void> {
+    await expect(this.infoBanner).toBeVisible();
+    await expect(this.infoBanner).toHaveText(message);
   }
 
-  async expectPasDeBandeau(): Promise<void> {
-    await expect(this.bandeauInfo).not.toBeVisible();
+  async expectNoBanner(): Promise<void> {
+    await expect(this.infoBanner).not.toBeVisible();
   }
 
-  async expectDesactive(): Promise<void> {
-    await expect(this.badgeDesactive).toBeVisible();
+  async expectDeactivated(): Promise<void> {
+    await expect(this.deactivatedBadge).toBeVisible();
   }
 
-  async expectActif(): Promise<void> {
-    await expect(this.badgeDesactive).not.toBeVisible();
+  async expectActive(): Promise<void> {
+    await expect(this.deactivatedBadge).not.toBeVisible();
   }
 }

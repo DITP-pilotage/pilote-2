@@ -1,10 +1,15 @@
 import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { BasePage } from "./base.page";
 
 const XLSX_MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export class PageMiseAJourDonnees extends BasePage {
+  async goto(chantierId: string): Promise<void> {
+    await this.page.goto(`/chantier/${chantierId}/indicateurs`);
+  }
+
   async expectTitle(chantierId: string): Promise<void> {
     await expect(this.page).toHaveTitle(
       `Mettre à jour les données - Chantier ${chantierId} - PILOTE`,
@@ -44,18 +49,23 @@ export class PageMiseAJourDonnees extends BasePage {
     });
   }
 
-  async verifyFile(): Promise<void> {
+  async verifyFile(utilisateurEmail: string): Promise<void> {
+    // Suivi posé avant le clic, sur l'horloge de la base (marge d'une minute pour un décalage
+    // avec le serveur) : le rapport est nettoyé même si la vérification échoue côté test.
+    // Seul ce spec importe avec ce compte ; les rapports du seed datent de 2025.
+    const [{ since }] = await prisma.$queryRaw<
+      { since: Date }[]
+    >`SELECT now() - interval '1 minute' AS since`;
+    this.e2eContext.track("RAPPORT_IMPORT_CREATED", {
+      utilisateurEmail,
+      date_creation: { gte: since },
+    });
     await this.page
       .getByRole("button", { name: /Vérifier le fichier/ })
       .click();
   }
 
-  async submitData(utilisateurEmail: string): Promise<void> {
-    this.e2eContext.track("RAPPORT_IMPORT_CREE", {
-      utilisateurEmail,
-      date_creation: { gte: new Date() },
-    });
-
+  async submitData(): Promise<void> {
     await this.page
       .getByRole("button", { name: /Transmettre les données/ })
       .first()

@@ -12,6 +12,7 @@ import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/p
 import { NotFoundError } from "@/shared/errors/not-found-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 import { logger } from "@/server/framework/logger";
+import { isKeycloakImportEnabled } from "@/server/framework/keycloak/isKeycloakImportEnabled";
 
 export default class ReactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;
@@ -102,10 +103,7 @@ export default class ReactiverUnUtilisateurUseCase {
       );
     }
 
-    if (
-      process.env.IMPORT_KEYCLOAK_URL &&
-      process.env.IMPORT_KEYCLOAK_URL.startsWith("http")
-    ) {
+    if (isKeycloakImportEnabled(process.env.IMPORT_KEYCLOAK_URL)) {
       await this.utilisateurIAMRepository.reactive(email);
     }
 

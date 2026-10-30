@@ -1,20 +1,29 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { prisma } from "@/server/framework/persistence/prisma";
+import { test } from "../fixtures";
+import { readChantierMeteos } from "../e2e-test-context";
+import {
+  CHANTIER_FOR_WRITES,
+  CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET,
+} from "../seed/dedicated-entities";
 import {
   ImportSyntheseDesResultatsErrorResponse,
   ImportSyntheseDesResultatsSuccessResponse,
 } from "@/server/syntheses-des-resultats/app/contrats/ImportSyntheseDesResultatsAPIContrat";
-import { ApiTestContext } from "./api-client/api-test-context";
 import { SyntheseDesResultatsInput } from "./api-client/open-api.client";
 
 test("Import de synthèses des résultats via l'API open-api", async ({
-  playwright,
+  openApi,
+  e2eContext,
 }) => {
-  const apiContext = await ApiTestContext.create(
-    playwright,
-    "EQUIPE_DIR_PROJET",
+  e2eContext.track("SYNTHESE_CREATED", { chantier_id: CHANTIER_FOR_WRITES });
+  e2eContext.track(
+    "CHANTIER_METEOS_UPDATED",
+    await readChantierMeteos(CHANTIER_FOR_WRITES),
   );
+  const apiContext = await openApi("EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
-  const chantierId = apiContext.chantierId!;
+  const chantierId = CHANTIER_FOR_WRITES;
 
   await test.step("Import d'une synthèse valide sans date - doit retourner 200 OK", async () => {
     const syntheses: SyntheseDesResultatsInput[] = [
@@ -58,7 +67,9 @@ test("Import de synthèses des résultats via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportSyntheseDesResultatsSuccessResponse;
-    expect(responseBody.message).toBeDefined();
+    expect(responseBody.message).toEqual(
+      "Les synthèses des résultats ont correctement été importées",
+    );
   });
 
   await test.step("Import de plusieurs synthèses valides - doit toutes les créer", async () => {
@@ -85,7 +96,19 @@ test("Import de synthèses des résultats via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportSyntheseDesResultatsSuccessResponse;
-    expect(responseBody.message).toBeDefined();
+    expect(responseBody.message).toEqual(
+      "Les synthèses des résultats ont correctement été importées",
+    );
+    for (const content of ["Première synthèse", "Deuxième synthèse"]) {
+      expect(
+        await prisma.synthese_des_resultats.count({
+          where: {
+            chantier_id: chantierId,
+            commentaire: { contains: content },
+          },
+        }),
+      ).toBe(1);
+    }
   });
 
   await test.step("Import avec une date dans le futur - doit retourner 400", async () => {
@@ -111,7 +134,6 @@ test("Import de synthèses des résultats via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportSyntheseDesResultatsErrorResponse;
-    expect(responseBody.erreurs).toBeDefined();
     expect(responseBody.erreurs.length).toBeGreaterThan(0);
   });
 
@@ -134,11 +156,11 @@ test("Import de synthèses des résultats via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportSyntheseDesResultatsErrorResponse;
-    expect(responseBody.erreurs).toBeDefined();
+    expect(responseBody.erreurs.length).toBeGreaterThan(0);
   });
 
   await test.step("Import sur un chantier non autorisé - doit retourner 403", async () => {
-    const chantierNonAutorise = "CH-999";
+    const chantierNonAutorise = CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET;
     const syntheses: SyntheseDesResultatsInput[] = [
       {
         territoire: "NAT-FR",
@@ -154,6 +176,4 @@ test("Import de synthèses des résultats via l'API open-api", async ({
 
     expect(result.status()).toEqual(403);
   });
-
-  await apiContext.dispose();
 });

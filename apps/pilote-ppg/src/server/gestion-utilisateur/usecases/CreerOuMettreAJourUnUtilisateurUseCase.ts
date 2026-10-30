@@ -28,6 +28,7 @@ import { NotFoundError } from "@/shared/errors/not-found-error";
 import { ConflictError } from "@/shared/errors/conflict-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 import { logger } from "@/server/framework/logger";
+import { isKeycloakImportEnabled } from "@/server/framework/keycloak/isKeycloakImportEnabled";
 
 export default class CreerOuMettreAJourUnUtilisateurUseCase {
   private utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -190,7 +191,10 @@ export default class CreerOuMettreAJourUnUtilisateurUseCase {
       }
     }
 
-    if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
+    if (
+      isKeycloakImportEnabled(process.env.IMPORT_KEYCLOAK_URL) &&
+      !utilisateurExistant
+    ) {
       const utilisateursPourIAM = [
         {
           nom: utilisateur.nom,

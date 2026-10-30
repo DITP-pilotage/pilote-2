@@ -1,64 +1,60 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { DonneeChantierContrat } from "@/server/chantiers/app/contrats/DonneeChantierContrat";
-import { ApiTestContext } from "./api-client/api-test-context";
+import { test } from "../fixtures";
 
-test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({
-  playwright,
+const EMPTY_PUBLICATION = {
+  synthese_des_resultats: null,
+  notre_ambition: null,
+  ce_qui_a_deja_ete_fait: null,
+  ce_qui_reste_a_faire: null,
+  suivi_decisions_strategiques: null,
+  autres_resultats_non_coreeles_aux_indic: null,
+  risques_et_freins_a_lever: null,
+  solutions: null,
+  exemples_reussite: null,
+  commentaires_sur_les_donnees: null,
+  autres_resultats: null,
+};
+
+test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données du chantier", async ({
+  openApi,
 }) => {
-  const apiContext = await ApiTestContext.create(
-    playwright,
-    "EQUIPE_DIR_PROJET",
-  );
-  const client = apiContext.getClient();
-  const chantierId = apiContext.chantierId!;
+  const client = (await openApi("EQUIPE_DIR_PROJET")).getClient();
 
-  const result = await client.getChantierDonnees(chantierId);
+  const result = await client.getChantierDonnees("CH-129");
 
   expect(result.status()).toEqual(200);
-
   const donneeChantier = (await result.json()) as DonneeChantierContrat;
+  expect(donneeChantier).toMatchObject({
+    chantier_id: "CH-129",
+    nom: "Moderniser la gestion des ressources",
+    ministere: "MI",
+    statut: "PUBLIE",
+    est_barometre: false,
+    est_territorialise: true,
+  });
 
-  expect(donneeChantier.chantier_id).toEqual(chantierId);
-  expect(donneeChantier.nom).toBeDefined();
-
-  const donneesDept = donneeChantier.donnees_territoires.filter(
-    (donneeTerritoire) => donneeTerritoire.maille === "DEPT",
+  const mailles = donneeChantier.donnees_territoires.map(
+    (donneeTerritoire) => donneeTerritoire.maille,
   );
-  const donneesReg = donneeChantier.donnees_territoires.filter(
-    (donneeTerritoire) => donneeTerritoire.maille === "REG",
-  );
-  const donneesNat = donneeChantier.donnees_territoires.filter(
-    (donneeTerritoire) => donneeTerritoire.maille === "NAT",
-  );
+  expect(mailles.filter((maille) => maille === "NAT")).toHaveLength(1);
+  expect(mailles.filter((maille) => maille === "REG")).toHaveLength(18);
+  expect(mailles.filter((maille) => maille === "DEPT")).toHaveLength(101);
 
-  expect(donneesDept.length).toBeGreaterThan(0);
-  expect(donneesReg.length).toBeGreaterThan(0);
-  expect(donneesNat).toHaveLength(1);
-
-  const premierTerritoire = donneeChantier.donnees_territoires[0];
-
-  expect(premierTerritoire.taux_avancement_dept).toBeDefined();
-  expect(premierTerritoire.taux_avancement_region).toBeDefined();
-  expect(premierTerritoire.taux_avancement_nat).toBeDefined();
-  expect(premierTerritoire.taux_avancement_annuel).toBeDefined();
-
-  expect(premierTerritoire.publication.synthese_des_resultats).toBeDefined();
-  expect(premierTerritoire.publication.notre_ambition).toBeDefined();
-  expect(premierTerritoire.publication.ce_qui_a_deja_ete_fait).toBeDefined();
-  expect(premierTerritoire.publication.ce_qui_reste_a_faire).toBeDefined();
   expect(
-    premierTerritoire.publication.suivi_decisions_strategiques,
-  ).toBeDefined();
-  expect(
-    premierTerritoire.publication.autres_resultats_non_coreeles_aux_indic,
-  ).toBeDefined();
-  expect(premierTerritoire.publication.risques_et_freins_a_lever).toBeDefined();
-  expect(premierTerritoire.publication.solutions).toBeDefined();
-  expect(premierTerritoire.publication.exemples_reussite).toBeDefined();
-  expect(
-    premierTerritoire.publication.commentaires_sur_les_donnees,
-  ).toBeDefined();
-  expect(premierTerritoire.publication.autres_resultats).toBeDefined();
-
-  await apiContext.dispose();
+    donneeChantier.donnees_territoires.find(
+      (donneeTerritoire) => donneeTerritoire.territoire_code === "DEPT-13",
+    ),
+  ).toEqual({
+    maille: "DEPT",
+    territoire_code: "DEPT-13",
+    meteo: null,
+    responsables_locaux: "Non applicable",
+    responsable_locaux_mails: "Non applicable",
+    taux_avancement_dept: "Non applicable",
+    taux_avancement_region: "Non applicable",
+    taux_avancement_nat: "Non applicable",
+    taux_avancement_annuel: "Non applicable",
+    publication: EMPTY_PUBLICATION,
+  });
 });

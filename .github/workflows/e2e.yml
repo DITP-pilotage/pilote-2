@@ -21,7 +21,7 @@ env:
 jobs:
   e2e-tests:
     runs-on: ubuntu-22.04
-    timeout-minutes: 30
+    timeout-minutes: 60
     services:
       postgres:
         image: postgres:16.6-alpine
@@ -54,13 +54,18 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: pnpm -F @pilote/ppg exec playwright install chromium --with-deps
+        run: pnpm -F @pilote/ppg exec playwright install chromium firefox webkit --with-deps
 
       - name: Run E2E tests
         id: playwright-tests
+        # Un run par navigateur, chacun sur une base re-seedée : un échec Chromium
+        # ne doit pas priver la CI des résultats Firefox et WebKit.
         run: |
-          set -e
-          pnpm -F @pilote/ppg exec playwright test
+          status=0
+          for project in chromium firefox webkit; do
+            E2E_PROJECT=$project pnpm -F @pilote/ppg exec playwright test --project="$project" --no-deps || status=1
+          done
+          exit $status
         env:
           CI: true
           PLAYWRIGHT_HEADLESS: true
@@ -69,18 +74,20 @@ jobs:
         id: test-results
         if: failure()
         run: |
-          RESULTS_FILE="apps/pilote-ppg/test-results/results.json"
-          if [ -f "$RESULTS_FILE" ]; then
-            # Extraire les informations des tests
-            TOTAL_TESTS=$(jq '.stats.expected + .stats.unexpected + .stats.flaky + .stats.skipped' "$RESULTS_FILE" 2>/dev/null || echo "0")
-            PASSED_TESTS=$(jq '.stats.expected' "$RESULTS_FILE" 2>/dev/null || echo "0")
-            FAILED_TESTS=$(jq '.stats.unexpected' "$RESULTS_FILE" 2>/dev/null || echo "0")
-            FLAKY_TESTS=$(jq '.stats.flaky' "$RESULTS_FILE" 2>/dev/null || echo "0")
-            SKIPPED_TESTS=$(jq '.stats.skipped' "$RESULTS_FILE" 2>/dev/null || echo "0")
-            DURATION=$(jq '.stats.duration' "$RESULTS_FILE" 2>/dev/null || echo "0")
+          shopt -s nullglob
+          RESULTS_FILES=(apps/pilote-ppg/test-results/results-*.json)
+          if [ ${#RESULTS_FILES[@]} -gt 0 ]; then
+            # Cumuler les informations des tests des trois navigateurs
+            sum_stat() { jq -s "map(.stats.$1) | add" "${RESULTS_FILES[@]}" 2>/dev/null || echo "0"; }
+            PASSED_TESTS=$(sum_stat expected)
+            FAILED_TESTS=$(sum_stat unexpected)
+            FLAKY_TESTS=$(sum_stat flaky)
+            SKIPPED_TESTS=$(sum_stat skipped)
+            TOTAL_TESTS=$((PASSED_TESTS + FAILED_TESTS + FLAKY_TESTS + SKIPPED_TESTS))
+            DURATION=$(sum_stat duration)
             
             # Extraire les tests échoués
-            FAILED_TEST_NAMES=$(jq -r '.suites[]?.specs[]? | select(.tests[]?.results[]?.status == "failed") | .title' "$RESULTS_FILE" 2>/dev/null | head -5 | sed 's/^/• /' | tr '\n' '|' | sed 's/|$//')
+            FAILED_TEST_NAMES=$(jq -r '.suites[]?.specs[]? | select(.tests[]?.results[]?.status == "failed") | .title' "${RESULTS_FILES[@]}" 2>/dev/null | head -5 | sed 's/^/• /' | tr '\n' '|' | sed 's/|$//')
             
             echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
             echo "passed_tests=$PASSED_TESTS" >> $GITHUB_OUTPUT

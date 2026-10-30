@@ -10,6 +10,7 @@ import {
   marquerCommeSucces,
 } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 import type { Inject } from "@/server/gestion-utilisateur/module";
+import { isKeycloakImportEnabled } from "@/server/framework/keycloak/isKeycloakImportEnabled";
 
 export interface DesactiverLesComptesInactifsResultat {
   comptesDesactives: number;
@@ -83,7 +84,7 @@ export class DesactiverLesComptesInactifsUseCase {
           await this.contactInfoLettresService.supprimerContact(email);
         }
 
-        if (config.import.keycloakUrl) {
+        if (isKeycloakImportEnabled(config.import.keycloakUrl)) {
           await this.utilisateurIAMRepository.desactive(email);
         }
 
