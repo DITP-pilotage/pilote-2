@@ -6,43 +6,30 @@ import {
   type GetIndicateursNonAJourOutput,
 } from "@/server/albert/tools/getIndicateursNonAJour";
 import type {
-  ChantierIndicateursNonAJour,
   GetIndicateursNonAJourQuery,
+  LigneIndicateurNonAJour,
 } from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 import type { GetIndicateursIdentiteQuery } from "@/server/chantiers/query/GetIndicateursIdentiteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 
-const QUERY_RESULT: ChantierIndicateursNonAJour[] = [
-  {
-    chantier: { id: "CH-001", nom: "Chantier bornes" },
-    indicateurs: [
-      {
-        id: "IND-001",
-        nom: "Nombre de bornes",
-        periodicite: "Trimestrielle",
-        delaiDisponibiliteMois: 1,
-        mailles: [
-          {
-            maille: "DEPT",
-            nbTerritoiresEnRetard: 1,
-            nbTerritoiresApplicables: 3,
-            territoiresEnRetard: [
-              {
-                code: "DEPT-29",
-                nom: "Finistère",
-                dateDerniereValeur: "2026-01-01",
-                miseAJourAttendueDepuis: "2026-05-31",
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+const LIGNE_FINISTERE: LigneIndicateurNonAJour = {
+  chantierId: "CH-001",
+  chantierNom: "Chantier bornes",
+  indicateurId: "IND-001",
+  indicateurNom: "Nombre de bornes",
+  periodicite: "Trimestrielle",
+  delaiDisponibiliteMois: 1,
+  maille: "DEPT",
+  territoireCode: "DEPT-29",
+  territoireNom: "Finistère",
+  dateDerniereValeur: "2026-01-01",
+  miseAJourAttendueDepuis: "2026-05-31",
+};
 
-const RESULTATS_RENVOYES = [
+const QUERY_RESULT = [LIGNE_FINISTERE];
+
+const RESULTATS_COMPTEURS = [
   {
     chantier: { id: "CH-001", nom: "Chantier bornes" },
     indicateurs: [
@@ -51,27 +38,27 @@ const RESULTATS_RENVOYES = [
         nom: "Nombre de bornes",
         periodicite: "Trimestrielle",
         delai_disponibilite_mois: 1,
-        mailles: [
-          {
-            maille: "départementale",
-            nb_territoires_en_retard: 1,
-            nb_territoires_applicables: 3,
-            territoires_en_retard: [
-              {
-                code: "DEPT-29",
-                nom: "Finistère",
-                date_derniere_valeur: "2026-01-01",
-                mise_a_jour_attendue_depuis: "2026-05-31",
-              },
-            ],
-          },
-        ],
+        mailles: [{ maille: "départementale", nb_territoires_en_retard: 1 }],
       },
     ],
   },
 ];
 
 const TOUS_LES_DEPARTEMENTS_BRETONS = ["DEPT-29", "DEPT-35", "DEPT-56"];
+
+const TOUS_LES_TERRITOIRES = [
+  "NAT-FR",
+  "REG-53",
+  "DEPT-29",
+  "DEPT-35",
+  "REG-11",
+];
+
+const lignesEnRetard = (nombre: number): LigneIndicateurNonAJour[] =>
+  Array.from({ length: nombre }, (_, index) => ({
+    ...LIGNE_FINISTERE,
+    territoireCode: `DEPT-${index}`,
+  }));
 
 const buildTool = ({
   queryResult = QUERY_RESULT,
@@ -80,7 +67,7 @@ const buildTool = ({
   chantierParIndicateur = { "IND-001": "CH-001", "IND-002": "CH-002" },
   territoiresResolus,
 }: {
-  queryResult?: ChantierIndicateursNonAJour[];
+  queryResult?: LigneIndicateurNonAJour[];
   territoiresAccessibles?: string[];
   chantiersAccessibles?: string[];
   chantierParIndicateur?: Record<string, string>;
@@ -109,10 +96,15 @@ const buildTool = ({
   );
   const territoireResolver = mock<TerritoireResolver>();
   territoireResolver.resoudre.mockImplementation(
-    async (perimetre: Perimetre) =>
-      perimetre.type === "SELECTION"
-        ? perimetre.territoire_codes
-        : (territoiresResolus ?? []),
+    async (perimetre: Perimetre) => {
+      if (perimetre.type === "SELECTION") {
+        return perimetre.territoire_codes;
+      }
+      if (perimetre.type === "TOUS_TERRITOIRES") {
+        return TOUS_LES_TERRITOIRES;
+      }
+      return territoiresResolus ?? [];
+    },
   );
   const tool = createGetIndicateursNonAJourTool({
     getIndicateursNonAJourQuery: query,
@@ -148,7 +140,7 @@ const TERRITOIRES_ACCESSIBLES = ["NAT-FR", "REG-53", "DEPT-29", "DEPT-35"];
 
 describe("createGetIndicateursNonAJourTool execute", () => {
   describe("mode et restitution", () => {
-    test("sans argument, interroge en compteurs tout ce qui est accessible, sans appeler le resolver", async () => {
+    test("sans argument, interroge en compteurs tous les territoires accessibles", async () => {
       // Given
       const { tool, query, territoireResolver, getIndicateursIdentiteQuery } =
         buildTool();
@@ -161,13 +153,14 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: TERRITOIRES_ACCESSIBLES,
         indicateurIds: undefined,
-        avecDetailTerritoires: false,
       });
-      expect(territoireResolver.resoudre).not.toHaveBeenCalled();
+      expect(territoireResolver.resoudre).toHaveBeenCalledWith({
+        type: "TOUS_TERRITOIRES",
+      });
       expect(getIndicateursIdentiteQuery.execute).not.toHaveBeenCalled();
       expect(result).toEqual({
         detail: "compteurs",
-        resultats: RESULTATS_RENVOYES,
+        resultats: RESULTATS_COMPTEURS,
       });
     });
 
@@ -183,7 +176,6 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: TERRITOIRES_ACCESSIBLES,
         indicateurIds: ["IND-001"],
-        avecDetailTerritoires: false,
       });
     });
 
@@ -199,35 +191,71 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: TERRITOIRES_ACCESSIBLES,
         indicateurIds: undefined,
-        avecDetailTerritoires: true,
       });
       expect(result).toEqual({
         detail: "territoires",
-        resultats: RESULTATS_RENVOYES,
-      });
-    });
-
-    test("en compteurs, n'ajoute pas de clé territoires_en_retard", async () => {
-      // Given
-      const { tool } = buildTool({
-        queryResult: [
+        resultats: [
           {
             chantier: { id: "CH-001", nom: "Chantier bornes" },
             indicateurs: [
               {
                 id: "IND-001",
                 nom: "Nombre de bornes",
-                periodicite: null,
-                delaiDisponibiliteMois: null,
+                periodicite: "Trimestrielle",
+                delai_disponibilite_mois: 1,
                 mailles: [
                   {
-                    maille: "NAT",
-                    nbTerritoiresEnRetard: 1,
-                    nbTerritoiresApplicables: 1,
+                    maille: "départementale",
+                    nb_territoires_en_retard: 1,
+                    territoires_en_retard: [
+                      {
+                        code: "DEPT-29",
+                        nom: "Finistère",
+                        date_derniere_valeur: "2026-01-01",
+                        mise_a_jour_attendue_depuis: "2026-05-31",
+                      },
+                    ],
                   },
                 ],
               },
             ],
+          },
+        ],
+      });
+    });
+
+    test("regroupe les lignes par chantier, indicateur et maille, de la nationale à la départementale", async () => {
+      // Given
+      const { tool } = buildTool({
+        queryResult: [
+          LIGNE_FINISTERE,
+          {
+            ...LIGNE_FINISTERE,
+            territoireCode: "DEPT-35",
+            territoireNom: "Ille-et-Vilaine",
+          },
+          {
+            ...LIGNE_FINISTERE,
+            maille: "NAT",
+            territoireCode: "NAT-FR",
+            territoireNom: "France",
+          },
+          {
+            ...LIGNE_FINISTERE,
+            indicateurId: "IND-002",
+            indicateurNom: "Nombre de stations",
+            periodicite: null,
+            delaiDisponibiliteMois: null,
+          },
+          {
+            ...LIGNE_FINISTERE,
+            chantierId: "CH-002",
+            chantierNom: "Chantier stations",
+            indicateurId: "IND-003",
+            indicateurNom: "Nombre de places",
+            maille: "REG",
+            territoireCode: "REG-53",
+            territoireNom: "Bretagne",
           },
         ],
       });
@@ -245,20 +273,107 @@ describe("createGetIndicateursNonAJourTool execute", () => {
               {
                 id: "IND-001",
                 nom: "Nombre de bornes",
+                periodicite: "Trimestrielle",
+                delai_disponibilite_mois: 1,
+                mailles: [
+                  { maille: "nationale", nb_territoires_en_retard: 1 },
+                  { maille: "départementale", nb_territoires_en_retard: 2 },
+                ],
+              },
+              {
+                id: "IND-002",
+                nom: "Nombre de stations",
                 periodicite: null,
                 delai_disponibilite_mois: null,
                 mailles: [
-                  {
-                    maille: "nationale",
-                    nb_territoires_en_retard: 1,
-                    nb_territoires_applicables: 1,
-                  },
+                  { maille: "départementale", nb_territoires_en_retard: 1 },
+                ],
+              },
+            ],
+          },
+          {
+            chantier: { id: "CH-002", nom: "Chantier stations" },
+            indicateurs: [
+              {
+                id: "IND-003",
+                nom: "Nombre de places",
+                periodicite: "Trimestrielle",
+                delai_disponibilite_mois: 1,
+                mailles: [{ maille: "régionale", nb_territoires_en_retard: 1 }],
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
+
+  describe("réduction du détail", () => {
+    test("renvoie le détail jusqu'à 800 lignes territoire", async () => {
+      // Given
+      const { tool } = buildTool({ queryResult: lignesEnRetard(800) });
+
+      // When
+      const result = await executeTool(tool, { detail: "territoires" });
+
+      // Then
+      expect(result.detail).toEqual("territoires");
+      expect(result).not.toHaveProperty("detail_trop_volumineux");
+    });
+
+    test("au-delà de 800 lignes territoire, se replie sur les compteurs", async () => {
+      // Given
+      const { tool } = buildTool({ queryResult: lignesEnRetard(801) });
+
+      // When
+      const result = await executeTool(tool, { detail: "territoires" });
+
+      // Then
+      expect(result).toEqual({
+        detail: "compteurs",
+        detail_trop_volumineux: true,
+        resultats: [
+          {
+            chantier: { id: "CH-001", nom: "Chantier bornes" },
+            indicateurs: [
+              {
+                id: "IND-001",
+                nom: "Nombre de bornes",
+                periodicite: "Trimestrielle",
+                delai_disponibilite_mois: 1,
+                mailles: [
+                  { maille: "départementale", nb_territoires_en_retard: 801 },
                 ],
               },
             ],
           },
         ],
       });
+    });
+
+    test("ne signale rien quand les compteurs sont demandés, quel que soit le volume", async () => {
+      // Given
+      const { tool } = buildTool({ queryResult: lignesEnRetard(801) });
+
+      // When
+      const result = await executeTool(tool, { detail: "compteurs" });
+
+      // Then
+      expect(result).not.toHaveProperty("detail_trop_volumineux");
+    });
+
+    test("conserve les listes signalées quand le détail est réduit", async () => {
+      // Given
+      const { tool } = buildTool({ queryResult: lignesEnRetard(801) });
+
+      // When
+      const result = await executeTool(tool, {
+        chantier_ids: ["CH-001", "CH-999"],
+        detail: "territoires",
+      });
+
+      // Then
+      expect(result.chantiers_non_accessibles).toEqual(["CH-999"]);
     });
   });
 
@@ -350,7 +465,6 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: ["REG-53", "DEPT-29"],
         indicateurIds: undefined,
-        avecDetailTerritoires: false,
       });
     });
 
@@ -369,7 +483,6 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: ["DEPT-29"],
         indicateurIds: undefined,
-        avecDetailTerritoires: false,
       });
     });
 
@@ -445,7 +558,6 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001"],
         territoireCodes: TERRITOIRES_ACCESSIBLES,
         indicateurIds: undefined,
-        avecDetailTerritoires: false,
       });
       expect(result).toEqual({
         detail: "compteurs",
@@ -541,11 +653,10 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: TERRITOIRES_ACCESSIBLES,
         indicateurIds: ["IND-001"],
-        avecDetailTerritoires: false,
       });
       expect(result).toEqual({
         detail: "compteurs",
-        resultats: RESULTATS_RENVOYES,
+        resultats: RESULTATS_COMPTEURS,
         indicateurs_non_accessibles: ["IND-003"],
         indicateurs_introuvables: ["IND-404"],
       });
@@ -566,7 +677,6 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: TERRITOIRES_ACCESSIBLES,
         indicateurIds: ["IND-002"],
-        avecDetailTerritoires: false,
       });
     });
 
@@ -599,7 +709,6 @@ describe("createGetIndicateursNonAJourTool execute", () => {
         chantierIds: ["CH-001", "CH-002"],
         territoireCodes: TERRITOIRES_ACCESSIBLES,
         indicateurIds: ["IND-001"],
-        avecDetailTerritoires: false,
       });
     });
   });

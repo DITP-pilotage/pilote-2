@@ -25,7 +25,8 @@ Quatre gains attendus :
 
 ## Objectifs
 
-- Remplacer `territoire_code` par un `perimetre` optionnel aux cinq variantes.
+- Remplacer `territoire_code` par un `perimetre` aux six variantes, par défaut
+  `TOUS_TERRITOIRES`.
 - Ajouter `detail: "compteurs" | "territoires"`, défaut `compteurs`.
 - Sortir un contrat snake_case avec des libellés, via une couche de
   restitution dans l'outil.
@@ -36,9 +37,8 @@ Quatre gains attendus :
 
 ## Non-objectifs
 
-- **Aucune limite ni tri** : ni en compteurs ni en détail. Le détail sur
-  l'ensemble des indicateurs est permis ; on observera aux evals et dans
-  `llm_calls.transcript` si ça pose problème avant d'ajouter une borne.
+- **Pas de tri ni de pagination.** Le volume est borné par un repli, voir
+  « Repli sur les gros volumes ».
 - **Pas de lecture par territoire** (territoire → nombre d'indicateurs non à
   jour) dans le détail : la matrice indicateur × territoire suffit pour
   l'instant, on verra aux evals.
@@ -71,10 +71,11 @@ chantier_ids: chantierIdsSchema.optional().default([])
 indicateur_ids: z.array(z.string()).optional().default([])
   // inchangé
 perimetre: z.discriminatedUnion("type", [SELECTION, REGION_ET_SES_DEPARTEMENTS,
-    FRANCE_ET_SES_REGIONS, TOUTES_REGIONS, TOUS_DEPARTEMENTS]).optional()
+    FRANCE_ET_SES_REGIONS, TOUTES_REGIONS, TOUS_DEPARTEMENTS, TOUS_TERRITOIRES])
+    .optional().default({ type: "TOUS_TERRITOIRES" })
   // description : descriptionPerimetre({ types }) suivie de :
-  // « Absent = tous les territoires accessibles à l'utilisateur. N'y mets pas
-  //  le territoire courant de la session, sauf si la demande le nomme. »
+  // « Par défaut, TOUS_TERRITOIRES. N'y mets pas le territoire courant de la
+  //  session, sauf si la demande le nomme. »
 detail: z.enum(["compteurs", "territoires"]).optional().default("compteurs")
   // « compteurs : par chantier, indicateur et maille, le nombre de territoires
   //  en retard. territoires : en plus, chaque
@@ -85,8 +86,7 @@ detail: z.enum(["compteurs", "territoires"]).optional().default("compteurs")
 
 `territoire_code` disparaît. Le périmètre est **orthogonal au mode** : il
 restreint les lignes considérées, dans les deux modes, et ne déclenche jamais
-le détail. Les compteurs se lisent alors « 3 départements en retard sur les 4
-du périmètre ».
+le détail.
 
 ### Sortie
 
@@ -106,7 +106,6 @@ du périmètre ».
             {
               "maille": "départementale",       // nationale | régionale | départementale
               "nb_territoires_en_retard": 37,
-              "nb_territoires_applicables": 101,
               "territoires_en_retard": [        // mode territoires seulement
                 {
                   "code": "DEPT-29",
@@ -138,6 +137,18 @@ Sémantique des `null`, à porter dans la description :
 
 Ordre inchangé : chantiers par identifiant, indicateurs par identifiant,
 mailles nationale puis régionale puis départementale, territoires par code.
+
+### Repli sur les gros volumes
+
+Le détail complet d'un périmètre large a produit 572 000 caractères de sortie
+(environ 160 000 tokens estimés) et une réponse vide. Au-delà de 800 lignes
+territoire, l'outil renvoie donc les compteurs avec
+`detail_trop_volumineux: true`. L'assistant rédige toujours sa réponse à partir des compteurs, sans clarifier
+avant, puis termine en disant que le détail est trop volumineux, sans chiffrer
+ce volume, et qu'on peut l'obtenir en réduisant la recherche. Le seuil est calé sur la base de démo.
+
+Les compteurs ne sont pas bornés : la plupart des utilisateurs n'ont pas accès
+à l'ensemble des chantiers.
 
 ### Accès
 
@@ -212,10 +223,13 @@ périmètre. Le vocabulaire (« non à jour », « données périmées ») ne ch
 
 ## Query `GetIndicateursNonAJourQuery`
 
-La query ne change pas : même signature (`chantierIds`, `territoireCodes`,
-`indicateurIds?`, `avecDetailTerritoires`), même type de retour.
-`territoireCodes` reçoit les codes résolus et accessibles, et
-`nbTerritoiresApplicables` reste compté dans le périmètre passé.
+Un seul `findMany` renvoie une liste plate : une ligne par couple indicateur ×
+territoire en retard, triée par chantier, indicateur et territoire. Sa signature
+perd `avecDetailTerritoires`. L'outil se charge du regroupement, des compteurs et
+du seuil.
+
+Le nombre de territoires applicables n'est plus renvoyé : il n'est pas utile à
+l'assistant et imposait de lire toutes les lignes applicables.
 
 ## Query `GetIndicateursIdentiteQuery`
 
@@ -245,8 +259,8 @@ de `mailleDePilotage`.
   soit le nombre d'indicateurs. Les deux tests actuels qui vérifient une phrase de la
   description ne sont pas repris : la description est réécrite et ces tests
   n'exercent aucun comportement.
-- **Intégration de `GetIndicateursNonAJourQuery`** : inchangée, la query ne
-  change pas.
+- **Intégration de `GetIndicateursNonAJourQuery`** : inchangée, elle protège le
+  refactoring.
 - **Intégration de `GetIndicateursIdentiteQuery`** : le filtre `indicateurIds`,
   seul et combiné à `chantierIds` (aucun test n'existe aujourd'hui).
 - **Eval N2** `evals/2-tools/2.2-donnees/getIndicateursNonAJour.eval.ts` :
