@@ -291,7 +291,7 @@ describe("exportsAvailableEvents", () => {
     ]);
   });
 
-  it("compte le téléchargement d'un encart rédigé, pas d'un encart en cours", () => {
+  it("compte les exports d'un encart rédigé, pas d'un encart en cours", () => {
     const events = exportsAvailableEvents({
       conversationId: "conv-1",
       message: {
@@ -303,7 +303,8 @@ describe("exportsAvailableEvents", () => {
     const dimensions = { conversation_id: "conv-1", llm_call_id: "llm-1" };
     expect(events).toEqual([
       { action: "view", name: "export.text", dimensions },
-      { action: "view", name: "export.report_markdown", dimensions },
+      { action: "view", name: "export.report_copy", dimensions },
+      { action: "view", name: "export.report_pdf", dimensions },
     ]);
   });
 });

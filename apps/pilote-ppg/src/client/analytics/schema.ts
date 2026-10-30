@@ -50,7 +50,8 @@ export const ANALYTICS_EVENT_NAMES = [
   "feedback.negative",
   "export.text",
   "export.dashboard_image",
-  "export.report_markdown",
+  "export.report_copy",
+  "export.report_pdf",
   "login.proconnect",
   "login.keycloak",
 ] as const;

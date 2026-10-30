@@ -107,6 +107,7 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).toContain(
       "« rapport », « télécharger », « exporter » une synthèse ou une comparaison : l'encart",
     );
+    expect(prompt).toContain("ne décris ni ses boutons ni son export");
     expect(prompt).not.toContain("export_rapport");
   });
 
