@@ -1,5 +1,8 @@
 import { z } from "zod";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
+import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+
+export const TERRITOIRE_NATIONAL = "NAT-FR";
 
 /**
  * Une variante de périmètre par type. Chaque outil compose sa
@@ -60,4 +63,48 @@ export function descriptionPerimetre({
     "Les territoires visés, en un seul appel : jamais un appel par territoire. `type` vaut exactement l'une de ces valeurs :",
     ...types.map((type) => `- ${SENS_DES_TYPES[type]}`),
   ].join("\n");
+}
+
+/** Les territoires que l'utilisateur désigne : ils doivent lui être accessibles, contrairement à ceux résolus ensuite. */
+function territoiresDesignes({
+  perimetre,
+}: {
+  perimetre: Perimetre;
+}): string[] {
+  switch (perimetre.type) {
+    case "SELECTION":
+      return perimetre.territoire_codes;
+    case "REGION_ET_SES_DEPARTEMENTS":
+      return [perimetre.region_code];
+    case "FRANCE_ET_SES_REGIONS":
+      return [TERRITOIRE_NATIONAL];
+    case "TOUTES_REGIONS":
+    case "TOUS_DEPARTEMENTS":
+      return [];
+  }
+}
+
+/**
+ * Les codes du périmètre accessibles à l'utilisateur, ou le premier territoire
+ * désigné qui ne l'est pas : à chaque outil de décider comment refuser.
+ */
+export async function resoudrePerimetreAccessible({
+  perimetre,
+  territoiresAccessibles,
+  territoireResolver,
+}: {
+  perimetre: Perimetre;
+  territoiresAccessibles: string[];
+  territoireResolver: TerritoireResolver;
+}): Promise<{ territoireInaccessible: string } | { codes: string[] }> {
+  const territoireInaccessible = territoiresDesignes({ perimetre }).find(
+    (code) => !territoiresAccessibles.includes(code),
+  );
+  if (territoireInaccessible) {
+    return { territoireInaccessible };
+  }
+  const codes = await territoireResolver.resoudre(perimetre);
+  return {
+    codes: codes.filter((code) => territoiresAccessibles.includes(code)),
+  };
 }

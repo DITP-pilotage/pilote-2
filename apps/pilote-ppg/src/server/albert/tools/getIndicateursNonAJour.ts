@@ -7,14 +7,12 @@ import type {
   GetIndicateursNonAJourQuery,
 } from "@/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery";
 import type { GetIndicateursIdentiteQuery } from "@/server/chantiers/query/GetIndicateursIdentiteQuery";
-import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
   descriptionPerimetre,
+  resoudrePerimetreAccessible,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
-
-const TERRITOIRE_NATIONAL = "NAT-FR";
 
 export const getIndicateursNonAJourInputSchema = z.object({
   chantier_ids: chantierIdsSchema
@@ -149,25 +147,6 @@ function renvoyerChantierNonAJour({
   };
 }
 
-/** Les territoires que l'utilisateur désigne : ils doivent lui être accessibles, contrairement à ceux résolus ensuite. */
-function territoiresDesignes({
-  perimetre,
-}: {
-  perimetre: Perimetre;
-}): string[] {
-  switch (perimetre.type) {
-    case "SELECTION":
-      return perimetre.territoire_codes;
-    case "REGION_ET_SES_DEPARTEMENTS":
-      return [perimetre.region_code];
-    case "FRANCE_ET_SES_REGIONS":
-      return [TERRITOIRE_NATIONAL];
-    case "TOUTES_REGIONS":
-    case "TOUS_DEPARTEMENTS":
-      return [];
-  }
-}
-
 function listesSignalees({
   chantiersNonAccessibles = [],
   indicateursNonAccessibles = [],
@@ -202,14 +181,12 @@ async function resoudreTerritoires({
   if (!perimetre) {
     return territoiresAccessibles;
   }
-  const designeInaccessible = territoiresDesignes({ perimetre }).some(
-    (code) => !territoiresAccessibles.includes(code),
-  );
-  if (designeInaccessible) {
-    return [];
-  }
-  const codes = await territoireResolver.resoudre(perimetre);
-  return codes.filter((code) => territoiresAccessibles.includes(code));
+  const perimetreAccessible = await resoudrePerimetreAccessible({
+    perimetre,
+    territoiresAccessibles,
+    territoireResolver,
+  });
+  return "codes" in perimetreAccessible ? perimetreAccessible.codes : [];
 }
 
 async function resoudreAcces({
