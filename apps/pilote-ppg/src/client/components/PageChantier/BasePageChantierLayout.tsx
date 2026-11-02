@@ -111,6 +111,7 @@ export const BasePageChantierLayout = ({
   return (
     <div className="flex bg-dsfr-contrast-grey print:bg-white">
       <BarreLatérale
+        collapsesWhenPageNarrow
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >

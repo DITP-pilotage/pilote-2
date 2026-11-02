@@ -142,6 +142,7 @@ export const BasePageAccueilLayout: FunctionComponent<
       </Head>
       <div className="flex">
         <BarreLatérale
+          collapsesWhenPageNarrow
           estOuvert={estOuverteBarreLatérale}
           setEstOuvert={setEstOuverteBarreLatérale}
         >

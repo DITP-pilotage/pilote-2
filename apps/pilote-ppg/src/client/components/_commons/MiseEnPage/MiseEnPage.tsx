@@ -11,6 +11,7 @@ import { AlbertOverlay } from "@/components/_commons/ChatUI/AlbertOverlay";
 import { AlbertPanneauLateral } from "@/components/_commons/ChatUI/AlbertPanneauLateral";
 import { EnTete } from "./EnTete/EnTete";
 import PiedDePage from "./PiedDePage/PiedDePage";
+import { PageColumn } from "./PageColumn";
 
 interface MiseEnPageProps {
   afficherLeLoader: boolean;
@@ -37,7 +38,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
   return (
     <AlbertConversationProvider actif={estConnecte}>
       <div className="flex min-h-screen">
-        <div className="flex min-h-screen min-w-0 flex-1 flex-col break-words [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_*]:scrollbar-none print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:bg-white">
+        <PageColumn className="flex min-h-screen min-w-0 flex-1 flex-col break-words [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_*]:scrollbar-none print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:bg-white">
           <EnTete />
           {status === "loading" ? (
             <PageLoader />
@@ -65,7 +66,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
               </ClientOnly>
             </div>
           )}
-        </div>
+        </PageColumn>
         {estConnecte ? (
           <ClientOnly>
             <AlbertPanneauLateral />
