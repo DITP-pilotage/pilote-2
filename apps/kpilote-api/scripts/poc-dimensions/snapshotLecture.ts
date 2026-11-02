@@ -126,6 +126,33 @@ const buildRequests = (indicateurIds: ReadonlyArray<string>): string[] => {
 
 type Snapshot = Record<string, { status: number; body: unknown }>
 
+type Liste = { status: number; body: { items: unknown[]; total: number } }
+
+const identite = (item: unknown): string | undefined => {
+  const o = item as { id?: string; enfant?: { id?: string } }
+  return o.id ?? o.enfant?.id
+}
+
+// Liste globale (`items` + `total`) : entités créées depuis la référence (nouveaux
+// jeux de données). Une fois ces entités retirées, la page doit être un préfixe de
+// la page de référence (les listes triées par nom décalent la fin de page), chaque
+// entité de référence restant identique (champs ajoutés tolérés), et le total ne
+// peut qu'augmenter.
+const listeAvecSeulementDesEntitesAjoutees = (obtenu: unknown, attendu: unknown): boolean => {
+  const o = obtenu as Liste
+  const a = attendu as Liste
+  if (!Array.isArray(o.body?.items) || !Array.isArray(a.body?.items) || o.status !== a.status) {
+    return false
+  }
+  const connues = new Set(a.body.items.map(identite))
+  const filtres = o.body.items.filter((item) => connues.has(identite(item)))
+  return (
+    o.body.total >= a.body.total &&
+    filtres.length > 0 &&
+    contientStrictement(filtres, a.body.items.slice(0, filtres.length))
+  )
+}
+
 // Vrai si `obtenu` contient `attendu` à l'identique, en n'ajoutant que des clés
 // d'objet (tableaux : même longueur, éléments comparés deux à deux).
 const contientStrictement = (obtenu: unknown, attendu: unknown): boolean => {
@@ -145,7 +172,9 @@ const contientStrictement = (obtenu: unknown, attendu: unknown): boolean => {
   return obtenu === attendu
 }
 
-const capture = async (): Promise<Snapshot> => {
+// `paths` : en comparaison, on rejoue exactement les chemins de la référence (les
+// lots d'identifiants ne dépendent alors pas des entités ajoutées depuis).
+const capture = async (paths?: ReadonlyArray<string>): Promise<Snapshot> => {
   const indicateurs = await db().indicateur.findMany({
     select: { id: true, publicId: true },
     orderBy: { publicId: 'asc' },
@@ -171,7 +200,7 @@ const capture = async (): Promise<Snapshot> => {
   })
   const app = buildApp(SNAPSHOT_USER)
   const snapshot: Snapshot = {}
-  for (const path of buildRequests(indicateurs.map((i) => i.publicId))) {
+  for (const path of paths ?? buildRequests(indicateurs.map((i) => i.publicId))) {
     const response = await app.request(path)
     const text = await response.text()
     let body: unknown = text
@@ -191,12 +220,14 @@ const main = async () => {
     console.error('usage: snapshotLecture.ts capture|compare <fichier.json>')
     process.exit(2)
   }
+  const reference =
+    mode === 'compare' ? (JSON.parse(readFileSync(fichier, 'utf8')) as Snapshot) : null
   let courant: Snapshot = {}
   try {
     await prisma.$transaction(
       async (tx) =>
         runWithDb(tx, async () => {
-          courant = await capture()
+          courant = await capture(reference ? Object.keys(reference) : undefined)
           // eslint-disable-next-line @typescript-eslint/only-throw-error -- sentinelle de rollback
           throw ROLLBACK
         }),
@@ -212,22 +243,28 @@ const main = async () => {
     for (const [path, r] of erreurs) console.log(`  ${r.status} ${path}`)
     return
   }
-  const reference = JSON.parse(readFileSync(fichier, 'utf8')) as Snapshot
+  if (!reference) return
   const differences: string[] = []
   const ajouts: string[] = []
+  const entitesAjoutees: string[] = []
   for (const [path, attendu] of Object.entries(reference)) {
     const obtenu = courant[path]
     if (!obtenu) differences.push(`ABSENT ${path}`)
     else if (JSON.stringify(obtenu) === JSON.stringify(attendu)) continue
     else if (contientStrictement(obtenu, attendu)) ajouts.push(`AJOUT ${path}`)
-    else differences.push(`DIFF ${path}`)
+    else if (listeAvecSeulementDesEntitesAjoutees(obtenu, attendu)) {
+      entitesAjoutees.push(`ENTITES ${path}`)
+    } else differences.push(`DIFF ${path}`)
   }
-  const identiques = Object.keys(reference).length - differences.length - ajouts.length
+  const identiques =
+    Object.keys(reference).length - differences.length - ajouts.length - entitesAjoutees.length
   console.log(
     `${Object.keys(reference).length} requêtes comparées : ${identiques} identiques, ` +
-      `${ajouts.length} avec uniquement des champs ajoutés, ${differences.length} différence(s).`,
+      `${ajouts.length} avec uniquement des champs ajoutés, ` +
+      `${entitesAjoutees.length} listes avec uniquement des entités ajoutées, ` +
+      `${differences.length} différence(s).`,
   )
-  for (const a of ajouts) console.log(`  ${a}`)
+  for (const a of [...ajouts, ...entitesAjoutees]) console.log(`  ${a}`)
   for (const d of differences) console.log(`  ${d}`)
   process.exitCode = differences.length === 0 ? 0 : 1
 }

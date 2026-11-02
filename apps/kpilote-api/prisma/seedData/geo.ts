@@ -1,23 +1,29 @@
+// Chaque référentiel est un niveau d'une dimension (cf. seedData/dimensions.ts
+// pour la déclaration des dimensions elles-mêmes).
 export const referentielsSeed = [
   {
     publicId: 'REF-NAT',
     nom: 'France (national)',
     description: "Référentiel national contenant l'unique individu FR.",
+    dimension: 'DIM-TERRITOIRE',
   },
   {
     publicId: 'REF-REG',
     nom: 'Régions de France',
     description: 'Toutes les régions administratives françaises (métropole + DROM).',
+    dimension: 'DIM-TERRITOIRE',
   },
   {
     publicId: 'REF-DEPT',
     nom: 'Départements de France',
     description: 'Tous les départements français (métropole + DROM).',
+    dimension: 'DIM-TERRITOIRE',
   },
   {
     publicId: 'REF-EMPTY',
     nom: 'Référentiel sans population',
     description: 'Référentiel créé pour exercer le cas "aucun individu disponible".',
+    dimension: 'DIM-EMPTY',
   },
 ] as const
 
