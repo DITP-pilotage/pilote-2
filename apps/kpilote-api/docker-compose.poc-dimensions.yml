@@ -1,0 +1,35 @@
+# Environnement isolé du POC « dimensions » (cf. docs/architecture/dimensions-poc-brief.md §4).
+# Ne touche à aucun conteneur ni volume de dev : project name, container_name et volume dédiés.
+#
+#   docker compose -p kpilote-poc-dimensions -f docker-compose.poc-dimensions.yml up -d
+#   docker compose -p kpilote-poc-dimensions -f docker-compose.poc-dimensions.yml stop
+#   docker compose -p kpilote-poc-dimensions -f docker-compose.poc-dimensions.yml down -v   # supprime le POC uniquement
+name: kpilote-poc-dimensions
+
+services:
+  postgres:
+    image: postgres:17.9-alpine
+    container_name: kpilote_poc_dimensions_postgres
+    ports:
+      - '5444:5432'
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - kpilote_poc_dimensions_db:/var/lib/postgresql/data
+
+  postgres_test:
+    image: postgres:17.9-alpine
+    container_name: kpilote_poc_dimensions_postgres_test
+    ports:
+      - '5445:5432'
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    command: postgres -c max_connections=500 -c shared_buffers=256MB
+
+volumes:
+  kpilote_poc_dimensions_db:
+    driver: local
