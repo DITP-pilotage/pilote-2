@@ -16,6 +16,12 @@ const indicateurPermissionEntrySchema = z.object({
     .array(indicateurPermissionActionSchema)
     .min(1)
     .describe('Actions accordées. Triées `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.'),
+  perimetre: z
+    .array(z.string())
+    .optional()
+    .describe(
+      "Présent ssi `WRITE_DATA` est restreint : membres de dimension autorisés en écriture (descendants inclus). Le client cache l'écriture hors périmètre.",
+    ),
 })
 
 export const mePermissionsApiModelSchema = z.object({

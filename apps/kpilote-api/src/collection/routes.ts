@@ -29,6 +29,7 @@ import {
   NiveauConfianceListApiModelSchema,
   reponseListeNiveauxConfiance,
 } from '@/niveauConfiance/openapi'
+import { DESCRIPTION_CELLULES_LECTURE } from '@/dimension/descriptionsOpenApi'
 import { listerNiveauxParCommentaires } from '@/niveauConfiance/queries/listerNiveauxParCommentaires'
 import {
   BrouillonApiModelSchema,
@@ -154,7 +155,8 @@ const getCollectionTauxProgressionRoute = createRoute({
     'indicateurs bloquants. Granularité de troncature fixée à `month` (cf. ' +
     '`docs/architecture/taux-progression.md`). Le taux est tronqué à 2 décimales (ROUND_DOWN) ' +
     'pour préserver la sémantique « ne jamais afficher 100 % avant atteinte stricte ». ' +
-    "Renvoie 404 (`ENTITY_NOT_FOUND`) si la collection ou l'individu est introuvable.",
+    "Renvoie 404 (`ENTITY_NOT_FOUND`) si la collection ou l'individu est introuvable." +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,

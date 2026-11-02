@@ -4,11 +4,16 @@ import { db } from '@/framework/persistence/dbStore'
 import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { COLLECTION_ACTION_ORDER, INDICATEUR_ACTION_ORDER, sortByOrder } from '@/permission/order'
 
-type IndicateurEntry = { publicId: string; nom: string; actions: Set<IndicateurPermissionAction> }
+type IndicateurEntry = {
+  publicId: string
+  nom: string
+  actions: Set<IndicateurPermissionAction>
+  perimetre?: string[]
+}
 type CollectionEntry = { publicId: string; nom: string; actions: Set<CollectionPermissionAction> }
 
 const serializeMap = <T>(
-  map: Map<string, { publicId: string; nom: string; actions: Set<T> }>,
+  map: Map<string, { publicId: string; nom: string; actions: Set<T>; perimetre?: string[] }>,
   order: readonly T[],
 ) =>
   Array.from(map.values())
@@ -16,6 +21,7 @@ const serializeMap = <T>(
       publicId: e.publicId,
       nom: e.nom,
       actions: sortByOrder([...e.actions], order),
+      ...(e.perimetre ? { perimetre: e.perimetre } : {}),
     }))
     .sort((a, b) => a.publicId.localeCompare(b.publicId))
 
@@ -40,7 +46,10 @@ export const loadPrincipalPermissions = async (
     }),
     db().indicateurPermission.findMany({
       where: { principalId },
-      include: { indicateur: { select: { publicId: true, nom: true } } },
+      include: {
+        indicateur: { select: { publicId: true, nom: true } },
+        perimetres: { select: { individu: { select: { publicId: true } } } },
+      },
     }),
   ])
 
@@ -63,6 +72,9 @@ export const loadPrincipalPermissions = async (
       actions: new Set<IndicateurPermissionAction>(),
     }
     entry.actions.add(i.action)
+    if (i.perimetreRestreint) {
+      entry.perimetre = i.perimetres.map((p) => p.individu.publicId).sort()
+    }
     indicateursMap.set(i.indicateur.publicId, entry)
   }
 

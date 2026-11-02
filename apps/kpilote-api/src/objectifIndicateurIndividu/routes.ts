@@ -9,6 +9,10 @@ import {
 } from '@pilote/kpilote-shared/objectifIndicateurIndividu'
 
 import { erreurCelluleApi } from '@/dimension/erreurCellule'
+import {
+  DESCRIPTION_CELLULES_ECRITURE,
+  DESCRIPTION_CELLULES_LECTURE,
+} from '@/dimension/descriptionsOpenApi'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -45,7 +49,8 @@ const getObjectifsForIndicateurRoute = createRoute({
     'Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). ' +
     'Les individus sans objectif sont absents de la réponse. ' +
     "Les individus inconnus ou non rattachés à un référentiel lié à l'indicateur sont silencieusement ignorés. " +
-    'Triés par `(individu, dateCible ASC)`.',
+    'Triés par `(individu, dateCible ASC)`.' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -69,7 +74,8 @@ const upsertObjectifIndicateurIndividuRoute = createRoute({
   summary: 'Saisir ou mettre à jour un objectif pour un individu',
   description:
     "Upsert d'un objectif sur la clé `(indicateur, individu, dateCible)`. Si le triplet existe, la `valeurCible` est remplacée ; sinon un nouvel objectif est créé. " +
-    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`)." +
+    DESCRIPTION_CELLULES_ECRITURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -97,7 +103,8 @@ const deleteObjectifIndicateurIndividuRoute = createRoute({
   summary: 'Supprimer un objectif pour un individu',
   description:
     "Supprime l'objectif identifié par `(indicateur, individu, dateCible)`. Idempotent : retourne `204` même si l'objectif n'existait pas. " +
-    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`)." +
+    DESCRIPTION_CELLULES_ECRITURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,

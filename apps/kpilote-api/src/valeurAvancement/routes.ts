@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { errorApiModelSchema, validationErrorApiModelSchema } from '@pilote/kpilote-shared/error'
-import { indicateurPublicIdSchema, individuPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
+import { celluleIdSchema } from '@pilote/kpilote-shared/cellule'
+import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { createPaginatedApiListSchema } from '@pilote/kpilote-shared/pagination'
 import {
   batchInvalidErrorDetailsApiModelSchema,
@@ -32,6 +33,10 @@ import {
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 
 import { erreurCelluleApi } from '@/dimension/erreurCellule'
+import {
+  DESCRIPTION_CELLULES_ECRITURE,
+  DESCRIPTION_CELLULES_LECTURE,
+} from '@/dimension/descriptionsOpenApi'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -120,7 +125,8 @@ const getValeursForIndicateurRoute = createRoute({
     "combineLatest permissive : un point dérivé est émis dès qu'au moins un enfant a une valeur " +
     'connue au bucket courant ; les enfants sans valeur sont marqués `manquante`. ' +
     'Profondeur d’agrégation supportée : France → Régions → Départements (~100 feuilles). ' +
-    'Au-delà la requête est acceptée mais peut être lente.',
+    'Au-delà la requête est acceptée mais peut être lente.' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -144,7 +150,8 @@ const upsertValeurAvancementRoute = createRoute({
   summary: 'Saisir ou mettre à jour une valeur ponctuelle pour un individu',
   description:
     "Upsert d'une valeur unique sur la clé `(indicateur, individu, date)`. Si le triplet existe, la `valeur` est remplacée ; sinon une nouvelle valeur est créée. " +
-    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`)." +
+    DESCRIPTION_CELLULES_ECRITURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -172,7 +179,8 @@ const deleteValeurAvancementRoute = createRoute({
   summary: 'Supprimer une valeur ponctuelle pour un individu',
   description:
     "Supprime la valeur identifiée par `(indicateur, individu, date)`. Idempotent : retourne `204` même si la valeur n'existait pas. " +
-    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`)." +
+    DESCRIPTION_CELLULES_ECRITURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -201,7 +209,8 @@ const upsertValeursAvancementBatchRoute = createRoute({
     "Upsert atomique d'un lot de valeurs (1..1000) sur la clé `(indicateur, individu, date)`. " +
     'Tout-ou-rien : si une seule entrée est invalide (individu inconnu/non lié, doublon `(individu, date)` ' +
     'dans le payload), aucune valeur n’est appliquée et la réponse 400 `BATCH_INVALID` liste ' +
-    'exhaustivement les erreurs détectées (agrégées par cause avec leurs `indices` dans `items`).',
+    'exhaustivement les erreurs détectées (agrégées par cause avec leurs `indices` dans `items`).' +
+    DESCRIPTION_CELLULES_ECRITURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -267,7 +276,8 @@ const getValeursRemarquablesForIndicateurRoute = createRoute({
     "Retourne, pour chaque référentiel demandé existant, les stats `min`/`max`/`mediane` calculées sur la valeur la plus récente de chaque individu du référentiel ayant au moins une valeur pour l'indicateur. " +
     'Le paramètre `referentiels` est obligatoire (1..N identifiants séparés par une virgule, ex. `REF-DEPT,REF-REG`). ' +
     'Les référentiels inexistants sont omis de la réponse. ' +
-    "Si un référentiel n'a aucun individu avec valeur pour l'indicateur, les trois champs sont à `null` mais l'item est présent.",
+    "Si un référentiel n'a aucun individu avec valeur pour l'indicateur, les trois champs sont à `null` mais l'item est présent." +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -296,7 +306,8 @@ const getSyntheseIndividusRoute = createRoute({
     'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : null si aucune valeur, ' +
     'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente. ' +
     "L'écart à la médiane est calculé par rapport à la médiane des valeurs récentes des individus du même référentiel " +
-    "ayant au moins une valeur pour l'indicateur ; null si l'individu n'a aucune valeur.",
+    "ayant au moins une valeur pour l'indicateur ; null si l'individu n'a aucune valeur." +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -314,7 +325,7 @@ const getSyntheseIndividusRoute = createRoute({
 // --- GET /individus/:id/dernieres-valeurs ------------------------------------
 
 const individuParamsSchema = z.object({
-  id: individuPublicIdSchema,
+  id: celluleIdSchema,
 })
 
 const getDernieresValeursForIndividuRoute = createRoute({
@@ -328,7 +339,8 @@ const getDernieresValeursForIndividuRoute = createRoute({
     '`indicateurs` est obligatoire (1..N identifiants séparés par une virgule, ex. ' +
     '`IND-A,IND-B`). Les indicateurs sans valeur connue pour cet individu ou non accessibles ' +
     'sont omis de la réponse. Granularité de troncature `month`. Endpoint pensé pour des ' +
-    "appels batch côté client (afficher l'avancement sur une liste de cartes d'indicateurs).",
+    "appels batch côté client (afficher l'avancement sur une liste de cartes d'indicateurs)." +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: individuParamsSchema,
@@ -355,7 +367,8 @@ const getTauxProgressionForIndividuRoute = createRoute({
     "calculé sur la dernière valeur connue de l'individu (`min(100, valeur / valeurCible × 100)`, " +
     'tronqué à 2 décimales). Les indicateurs sans objectif défini ou sans valeur connue sont omis. ' +
     'Les indicateurs dont la valeurCible est zéro sont inclus avec `tauxProgression: null`. ' +
-    'Endpoint pensé pour des appels batch côté client en parallèle de `dernieres-valeurs`.',
+    'Endpoint pensé pour des appels batch côté client en parallèle de `dernieres-valeurs`.' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: individuParamsSchema,
@@ -384,7 +397,8 @@ const getCollectionTauxProgressionForIndividuRoute = createRoute({
     "dernier taux de progression connu de chaque indicateur de la collection pour l'individu. " +
     'Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur de la collection ' +
     "n'est pas calculable. Les collections inaccessibles ou inexistants sont omis. " +
-    'Endpoint pensé pour des appels batch côté client (liste de cartes de collections).',
+    'Endpoint pensé pour des appels batch côté client (liste de cartes de collections).' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: individuParamsSchema,
@@ -419,7 +433,8 @@ const getTauxProgressionRoute = createRoute({
     "L'objectif applicable est le premier objectif dont `dateCible` (bucketisée) est ≥ date " +
     'du bucket de valeur ; si le bucket est postérieur à tous les objectifs, le dernier ' +
     'objectif connu est retenu. Les individus sans aucun objectif applicable sont absents ' +
-    'de la réponse. Triés par `(individu publicId asc, date asc)`.',
+    'de la réponse. Triés par `(individu publicId asc, date asc)`.' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -542,9 +557,9 @@ valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => 
 
 valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { referentiels, dateTrunc } = context.req.valid('query')
+  const { referentiels, dateTrunc, fixe } = context.req.valid('query')
 
-  return listValeursRemarquablesForIndicateur(id, { referentiels, dateTrunc }).match(
+  return listValeursRemarquablesForIndicateur(id, { referentiels, dateTrunc, fixe }).match(
     (data) =>
       jsonResponseOk({
         context,

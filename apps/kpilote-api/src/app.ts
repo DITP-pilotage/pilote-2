@@ -6,6 +6,7 @@ import { acmeRoutes } from '@/acme/routes'
 import { apiKeyRoutes } from '@/apiKey/routes'
 import { centreAideRoutes } from '@/centreAide/routes'
 import { commentaireRoutes } from '@/commentaire/routes'
+import { dimensionRoutes } from '@/dimension/routes'
 import { featureRoutes } from '@/feature/routes'
 import { niveauConfianceRoutes } from '@/niveauConfiance/routes'
 import { env } from '@/env'
@@ -50,6 +51,7 @@ app.route('/', valeurAvancementRoutes)
 app.route('/', valeurImportRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)
+app.route('/', dimensionRoutes)
 app.route('/', individuRoutes)
 app.route('/', relationRoutes)
 app.route('/', collectionRoutes)
