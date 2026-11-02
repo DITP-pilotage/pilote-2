@@ -143,8 +143,8 @@ export function createGetIndicateursNonAJourTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Renvoie les indicateurs dont les données ne sont pas à jour, par chantier, indicateur et maille, avec le nombre de territoires en retard de mise à jour. Une donnée n'est pas à jour quand sa date théorique de mise à jour (date de la dernière valeur + périodicité + délai de disponibilité déclarés) est dépassée, ou quand aucune valeur n'a jamais été renseignée sur un territoire où l'indicateur s'applique.
-- \`detail\` : "compteurs" (défaut) pour une question vague (« quels chantiers ont des indicateurs à mettre à jour ? », « quels sont les indicateurs non à jour ? ») ; "territoires" quand la demande nomme les territoires ou le détail (« sur quels territoires le CH-018 a des indicateurs non à jour ? », « donne les départements non à jour pour l'IND-894 », « … et affiche le détail par territoire »).
+      description: `N'appelle cet outil que si la demande nomme la valeur d'avancement (« VA », « valeur d'avancement », « dernière valeur ») ou que les échanges l'ont établie. Le mot « indicateur » ou « donnée » ne nomme pas ce type de valeurs : « quels indicateurs sont non à jour sur le CH-018 ? », « quels indicateurs ont un retard de mise à jour ? », « données périmées » appellent clarify_with_choices, seul, et pas cet outil. Renvoie les indicateurs dont les valeurs d'avancement ne sont pas à jour, par chantier, indicateur et maille, avec le nombre de territoires concernés. Une valeur d'avancement n'est pas à jour quand sa date théorique de mise à jour (date de la dernière valeur + périodicité + délai de disponibilité déclarés) est dépassée, ou quand aucune valeur n'a jamais été renseignée sur un territoire où l'indicateur s'applique.
+- \`detail\` : "compteurs" (défaut) pour une question vague (« quels chantiers ont des valeurs d'avancement à mettre à jour ? ») ; "territoires" quand la demande nomme les territoires ou le détail (« sur quels territoires le CH-018 a des valeurs d'avancement non à jour ? », « … et affiche le détail par territoire »).
 - Après des compteurs, propose à l'utilisateur le détail territoire par territoire sur un sous-ensemble (un chantier, un indicateur ou un territoire), sans le faire d'office.
 - \`perimetre\` restreint les territoires considérés, dans les deux modes ; il ne déclenche pas le détail.
 - Une région seule (« en Bretagne ») est une SELECTION de son seul code ; ses départements n'en font partie que si la demande les cite.
@@ -155,8 +155,10 @@ export function createGetIndicateursNonAJourTool({
 - \`acces_refuse\` : l'utilisateur n'a accès ni à ces territoires, ni à aucun des chantiers ou indicateurs demandés.
 - \`chantiers_non_accessibles\`, \`indicateurs_non_accessibles\` : demandés mais hors du périmètre de l'utilisateur ; n'en dis rien d'autre, et ne les présente jamais comme à jour.
 - \`indicateurs_introuvables\` : l'identifiant n'existe pas ou n'est pas publié ; dis-le, et ne le présente ni comme à jour ni comme non à jour.
-Utilise-le pour : « indicateurs non à jour », « retard de mise à jour », « données périmées », « territoires qui n'ont pas mis à jour l'indicateur X » ; un ensemble de territoires (« la Bretagne et ses départements », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
-Ne l'utilise pas pour : les chantiers en retard au sens de l'avancement (écart à la médiane) → get_chantiers (view "en_retard").`,
+Un ensemble de territoires (« la Bretagne et ses départements », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
+Ne l'utilise pas pour :
+- les VI ou VC manquantes → get_indicateurs_sans_vi_vc ;
+- les chantiers en retard au sens de l'avancement (écart à la médiane) → get_chantiers (view "en_retard").`,
       inputSchema: getIndicateursNonAJourInputSchema,
       execute: async (
         input: GetIndicateursNonAJourInput,
