@@ -48,7 +48,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       const rows = await db().objectifIndicateurIndividu.findMany({
         where: {
           indicateurId: link.indicateurId,
-          individuId: individu.id,
+          cellule: { coordonnees: { some: { individuId: individu.id } } },
           dateCible: '2025-01-01',
         },
       })
@@ -128,7 +128,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
 
       expect(result.isOk()).toBe(true)
       const rows = await db().objectifIndicateurIndividu.findMany({
-        where: { individuId: individu.id },
+        where: { cellule: { coordonnees: { some: { individuId: individu.id } } } },
         orderBy: { dateCible: 'asc' },
       })
       expect(rows).toHaveLength(1)

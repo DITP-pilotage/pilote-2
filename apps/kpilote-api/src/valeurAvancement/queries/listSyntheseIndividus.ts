@@ -6,6 +6,10 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { unique } from '@/framework/array'
+import { parseCelluleId } from '@pilote/kpilote-shared/cellule'
+
+import { loadContexteSerie } from '@/dimension/queries/loadContexteResolution'
+import { loadIndicateurDimensions } from '@/dimension/queries/loadIndicateurDimensions'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
 import { logger } from '@/framework/logger/logger'
@@ -14,7 +18,6 @@ import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeVariation } from '@/valeurAvancement/computeVariation'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
   type IndividuRef,
   type PointInterne,
@@ -48,6 +51,16 @@ const buildSynthese = async (
     select: { id: true },
   })
 
+  const dimensions = await loadIndicateurDimensions(indicateur.id)
+  if (dimensions.length > 1) {
+    return buildSyntheseMultiDimension({
+      indicateurId: indicateur.id,
+      cellules: params.individus,
+      dateTrunc: params.dateTrunc ?? DEFAULT_DATE_TRUNC,
+      ordreDimensions: dimensions.map((d) => d.dimensionId),
+    })
+  }
+
   const individusDemandes = await loadIndividus({ publicIds: params.individus })
   if (individusDemandes.length === 0) return { items: [] }
 
@@ -59,10 +72,11 @@ const buildSynthese = async (
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { ctx, allNodes } = await loadResolveSerieContext({
+  const { ctx } = await loadContexteSerie({
     indicateurId: indicateur.id,
-    individusCibles: population,
+    cellules: population.map((individu) => individu.publicId),
     dateTrunc,
+    dimensions,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
@@ -88,7 +102,7 @@ const buildSynthese = async (
       dateTrunc,
       nbDemandes: individusDemandes.length,
       nbPopulation: population.length,
-      nbNodes: allNodes.size,
+      nbNodes: ctx.referentielParIndividu.size,
       durationMs: Math.round(performance.now() - startedAt),
     },
     'listSyntheseIndividus computed',
@@ -115,7 +129,7 @@ const computeMedianeParReferentiel = async ({
   cache,
 }: {
   population: ReadonlyArray<IndividuRef>
-  ctx: Awaited<ReturnType<typeof loadResolveSerieContext>>['ctx']
+  ctx: Awaited<ReturnType<typeof loadContexteSerie>>['ctx']
   cache: Map<string, ReadonlyArray<PointInterne>>
 }): Promise<Map<string, number | null>> => {
   const valeursParReferentiel = new Map<string, Decimal[]>()
@@ -156,4 +170,80 @@ const loadPopulation = async ({
     orderBy: { publicId: 'asc' },
   })
   return rows.map(({ id, publicId, referentielId }) => ({ id, publicId, referentielId }))
+}
+
+// Multi-dimension (cf. dimensions-design.md « Tranches ») : les pairs d'une cellule
+// font varier la coordonnée de la **première dimension présente** (dans l'ordre)
+// sur tous les membres de son niveau, les autres coordonnées restant fixées.
+const buildSyntheseMultiDimension = async ({
+  indicateurId,
+  cellules,
+  dateTrunc,
+  ordreDimensions,
+}: {
+  indicateurId: string
+  cellules: ReadonlyArray<string>
+  dateTrunc: DateTrunc
+  ordreDimensions: ReadonlyArray<string>
+}): Promise<SyntheseIndividusListApiModel> => {
+  const membres = await db().individu.findMany({
+    where: { publicId: { in: [...new Set(cellules.flatMap(parseCelluleId))] } },
+    select: { publicId: true, referentielId: true, referentiel: { select: { dimensionId: true } } },
+  })
+  const membreParPublicId = new Map(membres.map((m) => [m.publicId, m]))
+  const groupes: Array<{ cellule: string; pairs: string[] }> = []
+  const populationsParReferentiel = new Map<string, string[]>()
+  for (const cellule of [...cellules].sort()) {
+    const coordonnees = parseCelluleId(cellule)
+      .map((publicId) => membreParPublicId.get(publicId))
+      .filter((m) => m !== undefined)
+    const varie = [...coordonnees].sort(
+      (a, b) =>
+        ordreDimensions.indexOf(a.referentiel.dimensionId) -
+        ordreDimensions.indexOf(b.referentiel.dimensionId),
+    )[0]
+    if (!varie) continue
+    let population = populationsParReferentiel.get(varie.referentielId)
+    if (!population) {
+      const rows = await db().individu.findMany({
+        where: { referentielId: varie.referentielId },
+        orderBy: { publicId: 'asc' },
+        select: { publicId: true },
+      })
+      population = rows.map((row) => row.publicId)
+      populationsParReferentiel.set(varie.referentielId, population)
+    }
+    const autres = coordonnees.filter((m) => m !== varie).map((m) => m.publicId)
+    groupes.push({
+      cellule,
+      pairs: population.map((publicId) => [publicId, ...autres].join('~')),
+    })
+  }
+  if (groupes.length === 0) return { items: [] }
+
+  const { ctx, cibles } = await loadContexteSerie({
+    indicateurId,
+    cellules: [...new Set(groupes.flatMap((g) => [g.cellule, ...g.pairs]))],
+    dateTrunc,
+  })
+  const noeudParCellule = new Map(cibles.map((cible) => [cible.publicId, cible]))
+  const cache = new Map<string, ReadonlyArray<PointInterne>>()
+  const items: SyntheseIndividusListApiModel['items'] = []
+  for (const { cellule, pairs } of groupes) {
+    const noeud = noeudParCellule.get(cellule)
+    if (!noeud) continue
+    const valeursPairs: Decimal[] = []
+    for (const pair of pairs) {
+      const noeudPair = noeudParCellule.get(pair)
+      const dernier = noeudPair && (await resolveSerieIndividu(noeudPair.id, ctx, cache)).at(-1)
+      if (dernier) valeursPairs.push(dernier.valeur)
+    }
+    const serie = await resolveSerieIndividu(noeud.id, ctx, cache)
+    items.push({
+      individu: cellule,
+      variation: computeVariation(extractDeuxDerniers(serie)),
+      ecartMediane: computeEcartMediane(serie.at(-1)?.valeur, computeMediane(valeursPairs)),
+    })
+  }
+  return { items }
 }

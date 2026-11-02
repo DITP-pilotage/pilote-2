@@ -31,6 +31,7 @@ import {
   collectionTauxProgressionSummaryListApiModelSchema,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 
+import { erreurCelluleApi } from '@/dimension/erreurCellule'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -469,18 +470,10 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
         schema: ValeurSaisieApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: {
-          code: error.type,
-          message:
-            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
-          details: { individu: error.individu },
-        },
-        schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+    (error) => {
+      const { status, error: apiError } = erreurCelluleApi(error)
+      return jsonResponseError({ context, error: apiError, schema: ErrorApiModelSchema, status })
+    },
   )
 })
 
@@ -494,18 +487,10 @@ valeurAvancementRoutes.openapi(deleteValeurAvancementRoute, async (context) => {
 
   return result.match(
     () => context.body(null, 204),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: {
-          code: error.type,
-          message:
-            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
-          details: { individu: error.individu },
-        },
-        schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+    (error) => {
+      const { status, error: apiError } = erreurCelluleApi(error)
+      return jsonResponseError({ context, error: apiError, schema: ErrorApiModelSchema, status })
+    },
   )
 })
 

@@ -126,6 +126,25 @@ const buildRequests = (indicateurIds: ReadonlyArray<string>): string[] => {
 
 type Snapshot = Record<string, { status: number; body: unknown }>
 
+// Vrai si `obtenu` contient `attendu` à l'identique, en n'ajoutant que des clés
+// d'objet (tableaux : même longueur, éléments comparés deux à deux).
+const contientStrictement = (obtenu: unknown, attendu: unknown): boolean => {
+  if (Array.isArray(attendu)) {
+    return (
+      Array.isArray(obtenu) &&
+      obtenu.length === attendu.length &&
+      attendu.every((element, index) => contientStrictement(obtenu[index], element))
+    )
+  }
+  if (attendu && typeof attendu === 'object') {
+    if (!obtenu || typeof obtenu !== 'object' || Array.isArray(obtenu)) return false
+    return Object.entries(attendu as Record<string, unknown>).every(([cle, valeur]) =>
+      contientStrictement((obtenu as Record<string, unknown>)[cle], valeur),
+    )
+  }
+  return obtenu === attendu
+}
+
 const capture = async (): Promise<Snapshot> => {
   const indicateurs = await db().indicateur.findMany({
     select: { id: true, publicId: true },
@@ -195,14 +214,20 @@ const main = async () => {
   }
   const reference = JSON.parse(readFileSync(fichier, 'utf8')) as Snapshot
   const differences: string[] = []
+  const ajouts: string[] = []
   for (const [path, attendu] of Object.entries(reference)) {
     const obtenu = courant[path]
     if (!obtenu) differences.push(`ABSENT ${path}`)
-    else if (JSON.stringify(obtenu) !== JSON.stringify(attendu)) differences.push(`DIFF ${path}`)
+    else if (JSON.stringify(obtenu) === JSON.stringify(attendu)) continue
+    else if (contientStrictement(obtenu, attendu)) ajouts.push(`AJOUT ${path}`)
+    else differences.push(`DIFF ${path}`)
   }
+  const identiques = Object.keys(reference).length - differences.length - ajouts.length
   console.log(
-    `${Object.keys(reference).length} requêtes comparées, ${differences.length} différence(s).`,
+    `${Object.keys(reference).length} requêtes comparées : ${identiques} identiques, ` +
+      `${ajouts.length} avec uniquement des champs ajoutés, ${differences.length} différence(s).`,
   )
+  for (const a of ajouts) console.log(`  ${a}`)
   for (const d of differences) console.log(`  ${d}`)
   process.exitCode = differences.length === 0 ? 0 : 1
 }

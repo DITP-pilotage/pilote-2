@@ -17,13 +17,14 @@ model Principal {
   utilisateur                Utilisateur?
   apiKey                     ApiKey?
   indicateurPermissions      IndicateurPermission[]
+  indicateurPerimetres       IndicateurPermissionPerimetre[]
   collectionPermissions      CollectionPermission[]
-  commentairesCrees          Commentaire[]          @relation("commentaireCreatedBy")
-  commentairesModifies       Commentaire[]          @relation("commentaireUpdatedBy")
-  niveauxConfianceCrees      NiveauConfiance[]      @relation("niveauConfianceCreatedBy")
-  niveauxConfianceModifies   NiveauConfiance[]      @relation("niveauConfianceUpdatedBy")
-  articlesCentreAideCrees    ArticleCentreAide[]    @relation("articleCentreAideCreatedBy")
-  articlesCentreAideModifies ArticleCentreAide[]    @relation("articleCentreAideUpdatedBy")
+  commentairesCrees          Commentaire[]                   @relation("commentaireCreatedBy")
+  commentairesModifies       Commentaire[]                   @relation("commentaireUpdatedBy")
+  niveauxConfianceCrees      NiveauConfiance[]               @relation("niveauConfianceCreatedBy")
+  niveauxConfianceModifies   NiveauConfiance[]               @relation("niveauConfianceUpdatedBy")
+  articlesCentreAideCrees    ArticleCentreAide[]             @relation("articleCentreAideCreatedBy")
+  articlesCentreAideModifies ArticleCentreAide[]             @relation("articleCentreAideUpdatedBy")
 
   @@map("principal")
 }
@@ -113,7 +114,10 @@ model Indicateur {
   valeurs              ValeurAvancement[]
   objectifs            ObjectifIndicateurIndividu[]
   referentiels         IndicateurReferentiel[]
+  dimensions           IndicateurDimension[]
+  cellules             Cellule[]
   permissions          IndicateurPermission[]
+  perimetres           IndicateurPermissionPerimetre[]
   collections          CollectionIndicateur[]
   individuCommentaires IndicateurIndividuCommentaire[]
   responsables         IndicateurResponsable[]
@@ -227,13 +231,19 @@ enum CollectionPermissionAction {
 }
 
 model IndicateurPermission {
-  principalId  String                    @map("principal_id") @db.Uuid
-  indicateurId String                    @map("indicateur_id") @db.Uuid
-  action       IndicateurPermissionAction
-  createdAt    DateTime                  @default(now()) @map("created_at")
+  principalId        String                     @map("principal_id") @db.Uuid
+  indicateurId       String                     @map("indicateur_id") @db.Uuid
+  action             IndicateurPermissionAction
+  // Cloisonnement explicite (fail-closed) : si vrai, l'écriture n'est permise que
+  // sur les cellules couvertes par les lignes de périmètre — aucune ligne = aucune
+  // écriture. Posé atomiquement avec le périmètre (cf. dimensions-design.md).
+  perimetreRestreint Boolean                    @default(false) @map("perimetre_restreint")
+  createdAt          DateTime                   @default(now()) @map("created_at")
 
-  principal  Principal  @relation(fields: [principalId], references: [id], onDelete: Cascade)
-  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  principal  Principal                       @relation(fields: [principalId], references: [id], onDelete: Cascade)
+  indicateur Indicateur                      @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  // Membres du périmètre (supprimés avec la permission).
+  perimetres IndicateurPermissionPerimetre[]
 
   @@id([principalId, indicateurId, action])
   @@index([indicateurId])
@@ -245,14 +255,111 @@ model Referentiel {
   publicId    String   @unique @map("public_id")
   nom         String
   description String?
+  // Un référentiel est un niveau d'une dimension (ex. REF-DEPT ∈ Territoire).
+  dimensionId String   @map("dimension_id") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  dimension   Dimension               @relation(fields: [dimensionId], references: [id], onDelete: Restrict)
   individus   Individu[]
   indicateurs IndicateurReferentiel[]
   widgets     ReferentielWidget[]
 
+  @@index([dimensionId])
   @@map("referentiel")
+}
+
+// Axe d'observation (Territoire, Opérateur, Type de fraude…). Ses niveaux sont
+// des référentiels ; ses membres, les individus de ces référentiels.
+model Dimension {
+  id          String   @id @db.Uuid
+  publicId    String   @unique @map("public_id")
+  nom         String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  referentiels Referentiel[]
+  indicateurs  IndicateurDimension[]
+  coordonnees  CelluleCoordonnee[]
+
+  @@map("dimension")
+}
+
+// Configuration d'une dimension pour un indicateur. Les dimensions d'un
+// indicateur se déduisent de ses niveaux (IndicateurReferentiel) ; cette table
+// porte l'ordre de remontée, la fonction de la marginale (« tous ») et le grain
+// des objectifs. Cf. docs/architecture/dimensions-design.md.
+model IndicateurDimension {
+  indicateurId       String             @map("indicateur_id") @db.Uuid
+  dimensionId        String             @map("dimension_id") @db.Uuid
+  ordre              Int
+  fonctionAgregation FonctionAgregation @map("fonction_agregation")
+  porteObjectifs     Boolean            @map("porte_objectifs")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  dimension  Dimension  @relation(fields: [dimensionId], references: [id], onDelete: Restrict)
+
+  @@id([indicateurId, dimensionId])
+  @@unique([indicateurId, ordre])
+  @@index([dimensionId])
+  @@map("indicateur_dimension")
+}
+
+// Point d'observation d'un indicateur : un ensemble de coordonnées, au plus
+// une par dimension. `cle` = uuids des membres triés (ordre ASCII) joints par
+// ',' — calculée côté serveur uniquement (cf. `dimension/cellule.ts`).
+model Cellule {
+  id           String   @id @db.Uuid
+  indicateurId String   @map("indicateur_id") @db.Uuid
+  cle          String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  indicateur   Indicateur                      @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  coordonnees  CelluleCoordonnee[]
+  valeurs      ValeurAvancement[]
+  objectifs    ObjectifIndicateurIndividu[]
+  commentaires IndicateurIndividuCommentaire[]
+
+  @@unique([indicateurId, cle])
+  @@unique([id, indicateurId])
+  @@map("cellule")
+}
+
+model CelluleCoordonnee {
+  celluleId   String @map("cellule_id") @db.Uuid
+  dimensionId String @map("dimension_id") @db.Uuid
+  individuId  String @map("individu_id") @db.Uuid
+
+  cellule   Cellule   @relation(fields: [celluleId], references: [id], onDelete: Cascade)
+  dimension Dimension @relation(fields: [dimensionId], references: [id], onDelete: Restrict)
+  individu  Individu  @relation(fields: [individuId], references: [id], onDelete: Restrict)
+
+  @@id([celluleId, dimensionId])
+  @@index([individuId])
+  @@map("cellule_coordonnee")
+}
+
+// Périmètre d'une permission (cloisonnement) : OU entre membres d'une même
+// dimension, ET entre dimensions ; un membre couvre ses descendants. Sa seule
+// présence restreint la permission ; il disparaît avec elle (FK en cascade).
+model IndicateurPermissionPerimetre {
+  principalId  String                     @map("principal_id") @db.Uuid
+  indicateurId String                     @map("indicateur_id") @db.Uuid
+  action       IndicateurPermissionAction
+  individuId   String                     @map("individu_id") @db.Uuid
+  createdAt    DateTime                   @default(now()) @map("created_at")
+
+  principal  Principal            @relation(fields: [principalId], references: [id], onDelete: Cascade)
+  indicateur Indicateur           @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  permission IndicateurPermission @relation(fields: [principalId, indicateurId, action], references: [principalId, indicateurId, action], onDelete: Cascade)
+  individu   Individu             @relation(fields: [individuId], references: [id], onDelete: Restrict)
+
+  @@id([principalId, indicateurId, action, individuId])
+  @@index([indicateurId])
+  @@map("indicateur_permission_perimetre")
 }
 
 model Individu {
@@ -264,12 +371,11 @@ model Individu {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  referentiel            Referentiel                     @relation(fields: [referentielId], references: [id], onDelete: Restrict)
-  relationsAsParent      Relation[]                      @relation("relationParent")
-  relationsAsChild       Relation[]                      @relation("relationChild")
-  valeurs                ValeurAvancement[]
-  objectifs              ObjectifIndicateurIndividu[]
-  indicateurCommentaires IndicateurIndividuCommentaire[]
+  referentiel       Referentiel                     @relation(fields: [referentielId], references: [id], onDelete: Restrict)
+  relationsAsParent Relation[]                      @relation("relationParent")
+  relationsAsChild  Relation[]                      @relation("relationChild")
+  coordonnees       CelluleCoordonnee[]
+  perimetres        IndicateurPermissionPerimetre[]
 
   @@index([referentielId])
   @@map("individu")
@@ -319,35 +425,35 @@ model Relation {
 model ValeurAvancement {
   id           String   @id @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
-  individuId   String   @map("individu_id") @db.Uuid
+  celluleId    String   @map("cellule_id") @db.Uuid
   date         String
   valeur       Decimal  @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
-  individu   Individu   @relation(fields: [individuId], references: [id], onDelete: Restrict)
+  cellule    Cellule    @relation(fields: [celluleId, indicateurId], references: [id, indicateurId], onDelete: NoAction)
 
-  @@unique([indicateurId, individuId, date], name: "valeur_avancement_unique")
+  @@unique([indicateurId, celluleId, date], name: "valeur_avancement_unique")
   @@index([indicateurId, date])
-  @@index([individuId, date])
+  @@index([celluleId, date])
   @@map("valeur_avancement")
 }
 
 model ObjectifIndicateurIndividu {
   id           String   @id @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
-  individuId   String   @map("individu_id") @db.Uuid
+  celluleId    String   @map("cellule_id") @db.Uuid
   dateCible    String   @map("date_cible")
   valeurCible  Decimal  @map("valeur_cible") @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
-  individu   Individu   @relation(fields: [individuId], references: [id], onDelete: Restrict)
+  cellule    Cellule    @relation(fields: [celluleId, indicateurId], references: [id, indicateurId], onDelete: NoAction)
 
-  @@unique([indicateurId, individuId, dateCible], name: "objectif_indicateur_individu_unique")
-  @@index([indicateurId, individuId])
+  @@unique([indicateurId, celluleId, dateCible], name: "objectif_indicateur_individu_unique")
+  @@index([indicateurId, celluleId])
   @@index([indicateurId, dateCible])
   @@map("objectif_indicateur_individu")
 }
@@ -548,14 +654,14 @@ model Commentaire {
 model IndicateurIndividuCommentaire {
   commentaireId String                            @id @map("commentaire_id") @db.Uuid
   indicateurId  String                            @map("indicateur_id") @db.Uuid
-  individuId    String                            @map("individu_id") @db.Uuid
+  celluleId     String                            @map("cellule_id") @db.Uuid
   type          IndicateurIndividuCommentaireType
 
   commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
   indicateur  Indicateur  @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
-  individu    Individu    @relation(fields: [individuId], references: [id], onDelete: Restrict)
+  cellule     Cellule     @relation(fields: [celluleId, indicateurId], references: [id, indicateurId], onDelete: NoAction)
 
-  @@index([indicateurId, individuId])
+  @@index([indicateurId, celluleId])
   @@map("indicateur_individu_commentaire")
 }
 

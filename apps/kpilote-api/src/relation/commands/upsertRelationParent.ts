@@ -6,7 +6,27 @@ import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredic
 import { db } from '@/framework/persistence/dbStore'
 import { MESSAGE_ADMIN } from '@/relation/utils'
 
-export type UpsertRelationParentError = { type: 'AUTO_PARENT' } | { type: 'CYCLE_DETECTE' }
+export type UpsertRelationParentError =
+  | { type: 'AUTO_PARENT' }
+  | { type: 'CYCLE_DETECTE' }
+  | { type: 'DIMENSIONS_DIFFERENTES' }
+  | { type: 'FAITS_MASQUES' }
+
+// Verrou « feuille à faits » (POC dimensions) : sur un indicateur
+// multi-dimension, donner un enfant à un membre agrégeable (niveau ≠ NONE) qui
+// porte déjà des faits rendrait ses cellules agrégées et masquerait ces faits.
+// Les indicateurs mono-dimension gardent la sémantique historique (D6).
+const masqueraitDesFaits = async (parentId: string, referentielId: string): Promise<boolean> => {
+  const faits = { coordonnees: { some: { individuId: parentId } } }
+  const indicateurs = await db().indicateur.findMany({
+    where: {
+      referentiels: { some: { referentielId, fonctionAgregation: { not: 'NONE' } } },
+      OR: [{ valeurs: { some: { cellule: faits } } }, { objectifs: { some: { cellule: faits } } }],
+    },
+    select: { _count: { select: { dimensions: true } } },
+  })
+  return indicateurs.some((indicateur) => indicateur._count.dimensions > 1)
+}
 
 // Remontée des ancêtres du candidat. Le Set de visités protège des cycles déjà
 // présents en base : les données historiques n'ont pas traversé cette garde.
@@ -37,12 +57,20 @@ const performUpsert = async (
 
   const enfant = await db().individu.findUniqueOrThrow({
     where: { publicId: enfantPublicId },
-    select: { id: true },
+    select: { id: true, referentiel: { select: { dimensionId: true } } },
   })
   const parent = await db().individu.findUniqueOrThrow({
     where: { publicId: body.parent },
-    select: { id: true },
+    select: { id: true, referentielId: true, referentiel: { select: { dimensionId: true } } },
   })
+  // Une hiérarchie vit dans une seule dimension (un opérateur n'est jamais
+  // parent d'un territoire).
+  if (enfant.referentiel.dimensionId !== parent.referentiel.dimensionId) {
+    return err({ type: 'DIMENSIONS_DIFFERENTES' })
+  }
+  if (await masqueraitDesFaits(parent.id, parent.referentielId)) {
+    return err({ type: 'FAITS_MASQUES' })
+  }
 
   // Verrou sur la ligne de l'enfant pour la durée de la transaction. Sans lui,
   // et faute de contrainte d'unicité sur `child_id`, deux écritures concurrentes

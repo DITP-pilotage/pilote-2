@@ -1,5 +1,6 @@
 import { uuidv7 } from 'uuidv7'
 
+import { cleCellule } from '@/dimension/cellule'
 import { env } from '@/env'
 import { hashApiKey } from '@/framework/auth/apiKey'
 import { db } from '@/framework/persistence/dbStore'
@@ -23,6 +24,9 @@ import {
   type ObjectifIndicateurIndividuModel,
   type OrganismeModel,
   type CollectionContactUtileModel,
+  type DimensionModel,
+  type IndicateurDimensionModel,
+  type IndicateurPermissionPerimetreModel,
   type CollectionModel,
   type CollectionPermissionModel,
   type IndicateurResponsableModel,
@@ -42,7 +46,7 @@ import {
   ProviderType,
   Visibilite,
   type FeatureEtat,
-  type FonctionAgregation,
+  FonctionAgregation,
   type PeriodeMiseAJour,
   type UniteDuree,
   type UniteIndicateur,
@@ -102,6 +106,131 @@ async function indicateur(
   return results
 }
 
+// --- Dimension ---------------------------------------------------------------
+
+// Créée hors transaction par `globalSetup` : les tests concurrents la lisent sans
+// se bloquer sur son unicité.
+export const DIMENSION_TEST_PAR_DEFAUT = 'DIM-TEST-DEFAUT'
+
+type DimensionOverrides = Partial<{
+  id: string
+  publicId: string
+  nom: string
+  description: string | null
+}>
+
+const upsertDimension = async (o: DimensionOverrides = {}) => {
+  const publicId = o.publicId ?? DIMENSION_TEST_PAR_DEFAUT
+  const existing = await db().dimension.findUnique({ where: { publicId } })
+  const { id: _id, publicId: _pub, ...update } = o
+  if (existing && Object.keys(update).length === 0) return existing
+  return db().dimension.upsert({
+    where: { publicId },
+    update,
+    create: {
+      id: o.id ?? uuidv7(),
+      publicId,
+      nom: o.nom ?? 'Dimension de test',
+      description: o.description ?? null,
+    },
+  })
+}
+
+function dimension(): Promise<DimensionModel>
+function dimension(override: DimensionOverrides): Promise<DimensionModel>
+function dimension(
+  o1: DimensionOverrides,
+  o2: DimensionOverrides,
+  ...rest: DimensionOverrides[]
+): Promise<DimensionModel[]>
+async function dimension(
+  ...overrides: DimensionOverrides[]
+): Promise<DimensionModel | DimensionModel[]> {
+  if (overrides.length <= 1) return upsertDimension(overrides[0])
+  const results: DimensionModel[] = []
+  for (const o of overrides) results.push(await upsertDimension(o))
+  return results
+}
+
+// --- IndicateurDimension (deps requises) -------------------------------------
+
+type IndicateurDimensionOverrides = {
+  indicateur: IndicateurOverrides
+  dimension: DimensionOverrides
+} & Partial<{ ordre: number; fonctionAgregation: FonctionAgregation; porteObjectifs: boolean }>
+
+const upsertIndicateurDimension = async (o: IndicateurDimensionOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const dimensionRow = await upsertDimension(o.dimension)
+  const data = {
+    ordre: o.ordre ?? 0,
+    fonctionAgregation: o.fonctionAgregation ?? FonctionAgregation.SUM,
+    porteObjectifs: o.porteObjectifs ?? true,
+  }
+  return db().indicateurDimension.upsert({
+    where: {
+      indicateurId_dimensionId: { indicateurId: indicateurRow.id, dimensionId: dimensionRow.id },
+    },
+    update: data,
+    create: { indicateurId: indicateurRow.id, dimensionId: dimensionRow.id, ...data },
+  })
+}
+
+function indicateurDimension(
+  override: IndicateurDimensionOverrides,
+): Promise<IndicateurDimensionModel>
+function indicateurDimension(
+  o1: IndicateurDimensionOverrides,
+  o2: IndicateurDimensionOverrides,
+  ...rest: IndicateurDimensionOverrides[]
+): Promise<IndicateurDimensionModel[]>
+async function indicateurDimension(
+  ...overrides: IndicateurDimensionOverrides[]
+): Promise<IndicateurDimensionModel | IndicateurDimensionModel[]> {
+  if (overrides.length === 1) return upsertIndicateurDimension(overrides[0]!)
+  const results: IndicateurDimensionModel[] = []
+  for (const o of overrides) results.push(await upsertIndicateurDimension(o))
+  return results
+}
+
+// --- Cellule (interne) ---------------------------------------------------------
+
+// Cellule d'un indicateur pour un ensemble de membres (une coordonnée par
+// individu, dimension = celle de son référentiel). Idempotente.
+const upsertCellule = async (indicateurId: string, individus: ReadonlyArray<IndividuModel>) => {
+  const referentiels = await db().referentiel.findMany({
+    where: { id: { in: individus.map((i) => i.referentielId) } },
+    select: { id: true, dimensionId: true },
+  })
+  const dimensionParReferentiel = new Map(referentiels.map((r) => [r.id, r.dimensionId]))
+  const cle = cleCellule(individus.map((i) => i.id))
+  const cellule = await db().cellule.upsert({
+    where: { indicateurId_cle: { indicateurId, cle } },
+    update: {},
+    create: { id: uuidv7(), indicateurId, cle },
+  })
+  await db().celluleCoordonnee.createMany({
+    data: individus.map((i) => ({
+      celluleId: cellule.id,
+      dimensionId: dimensionParReferentiel.get(i.referentielId)!,
+      individuId: i.id,
+    })),
+    skipDuplicates: true,
+  })
+  return cellule
+}
+
+// Cible d'une fixture de fait : `individu` (cellule mono-coordonnée, forme
+// historique) ou `individus` (cellule multi-dimension, un membre par dimension).
+type CibleFixture = { individu: IndividuOverrides } | { individus: IndividuOverrides[] }
+
+const resoudreCibleFixture = async (indicateurId: string, cible: CibleFixture) => {
+  const overrides = 'individus' in cible ? cible.individus : [cible.individu]
+  const rows: IndividuModel[] = []
+  for (const o of overrides) rows.push(await upsertIndividu(o))
+  return upsertCellule(indicateurId, rows)
+}
+
 // --- Référentiel -------------------------------------------------------------
 
 type ReferentielOverrides = Partial<{
@@ -109,17 +238,25 @@ type ReferentielOverrides = Partial<{
   publicId: string
   nom: string
   description: string | null
+  // Dimension dont le référentiel est un niveau. Défaut : la dimension de test
+  // partagée (créée par globalSetup) — les référentiels d'un test sont alors
+  // des niveaux d'une même dimension, comme le cas historique mono-dimension.
+  dimension: DimensionOverrides
 }>
 
 const upsertReferentiel = async (o: ReferentielOverrides = {}) => {
+  const { dimension: dimensionOverrides, ...champs } = o
+  const dimensionRow = await upsertDimension(dimensionOverrides)
   const create = {
     id: uuidv7(),
     publicId: testReferentielId(),
     nom: 'Référentiel de test',
     description: null,
-    ...o,
+    dimensionId: dimensionRow.id,
+    ...champs,
   }
-  const { id: _id, publicId: _pub, ...update } = o
+  const { id: _id, publicId: _pub, ...reste } = champs
+  const update = dimensionOverrides ? { ...reste, dimensionId: dimensionRow.id } : reste
   if (Object.keys(update).length === 0) {
     const existing = await db().referentiel.findUnique({ where: { publicId: create.publicId } })
     if (existing) return existing
@@ -376,22 +513,22 @@ async function relation(
 
 type ValeurAvancementOverrides = {
   indicateur: IndicateurOverrides
-  individu: IndividuOverrides
-} & Partial<{ id: string; date: string; valeur: number }>
+} & CibleFixture &
+  Partial<{ id: string; date: string; valeur: number }>
 
 const DEFAULT_VALEUR_AVANCEMENT_DATE = '2024-01-01'
 const DEFAULT_VALEUR_AVANCEMENT_VALEUR = 10
 
 const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
   const indicateurRow = await upsertIndicateur(o.indicateur)
-  const individuRow = await upsertIndividu(o.individu)
+  const celluleRow = await resoudreCibleFixture(indicateurRow.id, o)
   const date = o.date ?? DEFAULT_VALEUR_AVANCEMENT_DATE
   const valeur = o.valeur ?? DEFAULT_VALEUR_AVANCEMENT_VALEUR
   return db().valeurAvancement.upsert({
     where: {
       valeur_avancement_unique: {
         indicateurId: indicateurRow.id,
-        individuId: individuRow.id,
+        celluleId: celluleRow.id,
         date,
       },
     },
@@ -399,7 +536,7 @@ const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
     create: {
       id: o.id ?? uuidv7(),
       indicateurId: indicateurRow.id,
-      individuId: individuRow.id,
+      celluleId: celluleRow.id,
       date,
       valeur,
     },
@@ -425,22 +562,22 @@ async function valeurAvancement(
 
 type ObjectifIndicateurIndividuOverrides = {
   indicateur: IndicateurOverrides
-  individu: IndividuOverrides
-} & Partial<{ id: string; dateCible: string; valeurCible: number }>
+} & CibleFixture &
+  Partial<{ id: string; dateCible: string; valeurCible: number }>
 
 const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE_CIBLE = '2024-01-01'
 const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR_CIBLE = 100
 
 const upsertObjectifIndicateurIndividu = async (o: ObjectifIndicateurIndividuOverrides) => {
   const indicateurRow = await upsertIndicateur(o.indicateur)
-  const individuRow = await upsertIndividu(o.individu)
+  const celluleRow = await resoudreCibleFixture(indicateurRow.id, o)
   const dateCible = o.dateCible ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE_CIBLE
   const valeurCible = o.valeurCible ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR_CIBLE
   return db().objectifIndicateurIndividu.upsert({
     where: {
       objectif_indicateur_individu_unique: {
         indicateurId: indicateurRow.id,
-        individuId: individuRow.id,
+        celluleId: celluleRow.id,
         dateCible,
       },
     },
@@ -448,7 +585,7 @@ const upsertObjectifIndicateurIndividu = async (o: ObjectifIndicateurIndividuOve
     create: {
       id: o.id ?? uuidv7(),
       indicateurId: indicateurRow.id,
-      individuId: individuRow.id,
+      celluleId: celluleRow.id,
       dateCible,
       valeurCible,
     },
@@ -710,6 +847,47 @@ const upsertIndicateurPermission = async (o: IndicateurPermissionOverrides) => {
   })
 }
 
+// --- IndicateurPermissionPerimetre (deps requises) ---------------------------
+
+// Pose atomiquement une permission WRITE_DATA restreinte et son périmètre
+// (membres de dimension, descendants inclus). `membres: []` = restreinte sans
+// périmètre : aucune écriture (fail-closed).
+type IndicateurPermissionPerimetreOverrides = {
+  principalId: string
+  indicateur: IndicateurOverrides
+  membres: IndividuOverrides[]
+}
+
+async function indicateurPermissionPerimetre(
+  o: IndicateurPermissionPerimetreOverrides,
+): Promise<IndicateurPermissionPerimetreModel[]> {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const cle = {
+    principalId: o.principalId,
+    indicateurId: indicateurRow.id,
+    action: IndicateurPermissionAction.WRITE_DATA,
+  }
+  await db().indicateurPermission.upsert({
+    where: { principalId_indicateurId_action: cle },
+    update: { perimetreRestreint: true },
+    create: { ...cle, perimetreRestreint: true },
+  })
+  const lignes: IndicateurPermissionPerimetreModel[] = []
+  for (const membre of o.membres) {
+    const individuRow = await upsertIndividu(membre)
+    lignes.push(
+      await db().indicateurPermissionPerimetre.upsert({
+        where: {
+          principalId_indicateurId_action_individuId: { ...cle, individuId: individuRow.id },
+        },
+        update: {},
+        create: { ...cle, individuId: individuRow.id },
+      }),
+    )
+  }
+  return lignes
+}
+
 function indicateurPermission(
   override: IndicateurPermissionOverrides,
 ): Promise<IndicateurPermissionModel>
@@ -853,19 +1031,19 @@ async function indicateurResponsable(
 
 type CommentaireOverrides = {
   indicateur: IndicateurOverrides
-  individu: IndividuOverrides
   createdBy: string
-} & Partial<{
-  id: string
-  contenu: string
-  contenuTexte: string
-  statut: 'BROUILLON' | 'PUBLIE'
-  type: 'DEFAUT' | 'CONFIANCE'
-}>
+} & CibleFixture &
+  Partial<{
+    id: string
+    contenu: string
+    contenuTexte: string
+    statut: 'BROUILLON' | 'PUBLIE'
+    type: 'DEFAUT' | 'CONFIANCE'
+  }>
 
 const upsertCommentaire = async (o: CommentaireOverrides) => {
   const indicateurRow = await upsertIndicateur(o.indicateur)
-  const individuRow = await upsertIndividu(o.individu)
+  const celluleRow = await resoudreCibleFixture(indicateurRow.id, o)
   return db().commentaire.create({
     data: {
       id: o.id ?? uuidv7(),
@@ -877,7 +1055,7 @@ const upsertCommentaire = async (o: CommentaireOverrides) => {
       indicateurIndividu: {
         create: {
           indicateurId: indicateurRow.id,
-          individuId: individuRow.id,
+          celluleId: celluleRow.id,
           type: o.type ?? 'DEFAUT',
         },
       },
@@ -1025,6 +1203,9 @@ async function feature(o?: FeatureOverrides): Promise<FeatureModel> {
 
 export const fixtures = {
   indicateur,
+  dimension,
+  indicateurDimension,
+  indicateurPermissionPerimetre,
   feature,
   commentaire,
   referentiel,

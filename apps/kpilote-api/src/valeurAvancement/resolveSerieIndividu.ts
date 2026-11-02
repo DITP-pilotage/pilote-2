@@ -5,6 +5,11 @@ import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
 import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 
+// Nœud du graphe de résolution. En mono-dimension c'est un individu (`id` =
+// uuid de l'individu, qui est aussi la clé de sa cellule). En multi-dimension
+// c'est une cellule (`id` = clé canonique, `publicId` = identifiant de cellule
+// `DEPT-84~OP-ORANGE`) et `referentielId` est une clé synthétique propre au nœud
+// (cf. `dimension/buildGrapheCube.ts`).
 export type IndividuRef = {
   id: string
   publicId: string
@@ -105,7 +110,6 @@ const computeSerieDerivee = async (
   type EnfantState = {
     enfant: IndividuRef
     points: ReadonlyArray<PointInterne>
-    estAgrege: boolean
     pointer: number // index de la dernière valeur ≤ bucket courant (-1 = aucune)
   }
   // Résolution séquentielle des enfants : la mémoïsation garantit que chaque
@@ -116,7 +120,6 @@ const computeSerieDerivee = async (
     states.push({
       enfant,
       points: await resolveSerieIndividu(enfant.id, ctx, cache),
-      estAgrege: getFonctionAgregationActive(enfant.id, ctx) !== null,
       pointer: -1,
     })
   }
@@ -184,7 +187,10 @@ const computeSerieDerivee = async (
         individuPublicId: state.enfant.publicId,
         valeur: courant.valeur,
         dateOrigine,
-        source: state.estAgrege ? 'derivee' : 'saisie',
+        // Source lue sur le point porté : un enfant agrégé n'émet que des points
+        // dérivés, une feuille que des saisies (équivalent à « enfant agrégé ⇒
+        // derivee », sans relire la topologie — vrai aussi pour un nœud cellule).
+        source: courant.type,
       })
       valeursAAgreger.push(courant.valeur)
     }

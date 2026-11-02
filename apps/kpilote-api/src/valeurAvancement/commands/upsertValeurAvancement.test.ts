@@ -49,7 +49,7 @@ describe.concurrent('upsertValeurAvancement', () => {
       const row = await db().valeurAvancement.findFirstOrThrow({
         where: {
           indicateurId: link.indicateurId,
-          individuId: individu.id,
+          cellule: { coordonnees: { some: { individuId: individu.id } } },
           date: '2025-03-01',
         },
       })
@@ -95,7 +95,7 @@ describe.concurrent('upsertValeurAvancement', () => {
       const rows = await db().valeurAvancement.findMany({
         where: {
           indicateurId: link.indicateurId,
-          individuId: individu.id,
+          cellule: { coordonnees: { some: { individuId: individu.id } } },
           date: '2025-03-01',
         },
       })

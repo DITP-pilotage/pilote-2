@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { dateSchema, dateTruncSchema, isCoarserOrEqual } from './dates'
 import { indicateurPublicIdSchema } from './publicIds'
-import { individuPublicIdSchema } from './individu'
+import { celluleIdSchema } from './cellule'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 
 export const listTauxProgressionQuerySchema = z
@@ -52,7 +52,7 @@ export type ListTauxProgressionQuery = z.infer<typeof listTauxProgressionQuerySc
 
 export const tauxProgressionPointApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   date: dateSchema.describe(
     'Borne inférieure du bucket de valeur (YYYY-MM-DD), alignée sur `dateTruncValeur` ' +
       '(ex. `month` → 1er du mois, `quarter` → 1er du trimestre, `year` → 1er janvier).',

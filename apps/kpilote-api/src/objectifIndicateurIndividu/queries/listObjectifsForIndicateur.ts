@@ -6,12 +6,11 @@ import {
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 import { ResultAsync } from 'neverthrow'
 
+import { loadContexteObjectif } from '@/dimension/queries/loadContexteResolution'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
 import {
   type PointObjectifInterne,
   resolveObjectifIndividu,
@@ -39,15 +38,13 @@ const buildList = async ({
   indicateur: { id: string; publicId: string }
   params: ListObjectifsForIndicateurQuery
 }): Promise<ObjectifIndicateurIndividuListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(params.individus)
-  if (individusCibles.length === 0) return { items: [] }
-
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
-  const { ctx } = await loadResolveObjectifContext({
+  const { ctx, cibles: individusCibles } = await loadContexteObjectif({
     indicateurId: indicateur.id,
-    individusCibles: individusCibles,
+    cellules: params.individus,
     dateTrunc,
   })
+  if (individusCibles.length === 0) return { items: [] }
 
   const cache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
   // Buckets sortie API : on stocke le `Bucket` (PlainDate) pour le tri puis on

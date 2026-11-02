@@ -151,6 +151,14 @@
     "./meFeature": {
       "types": "./src/meFeature.ts",
       "default": "./src/meFeature.ts"
+    },
+    "./cellule": {
+      "types": "./src/cellule.ts",
+      "default": "./src/cellule.ts"
+    },
+    "./dimension": {
+      "types": "./src/dimension.ts",
+      "default": "./src/dimension.ts"
     }
   },
   "files": [

@@ -8,6 +8,7 @@ import {
   upsertObjectifIndicateurIndividuBodySchema,
 } from '@pilote/kpilote-shared/objectifIndicateurIndividu'
 
+import { erreurCelluleApi } from '@/dimension/erreurCellule'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -150,18 +151,10 @@ objectifIndicateurIndividuRoutes.openapi(upsertObjectifIndicateurIndividuRoute, 
         schema: ObjectifIndicateurIndividuApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: {
-          code: error.type,
-          message:
-            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
-          details: { individu: error.individu },
-        },
-        schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+    (error) => {
+      const { status, error: apiError } = erreurCelluleApi(error)
+      return jsonResponseError({ context, error: apiError, schema: ErrorApiModelSchema, status })
+    },
   )
 })
 
@@ -175,17 +168,9 @@ objectifIndicateurIndividuRoutes.openapi(deleteObjectifIndicateurIndividuRoute, 
 
   return result.match(
     () => context.body(null, 204),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: {
-          code: error.type,
-          message:
-            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
-          details: { individu: error.individu },
-        },
-        schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+    (error) => {
+      const { status, error: apiError } = erreurCelluleApi(error)
+      return jsonResponseError({ context, error: apiError, schema: ErrorApiModelSchema, status })
+    },
   )
 })

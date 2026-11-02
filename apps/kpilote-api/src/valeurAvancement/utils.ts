@@ -6,16 +6,18 @@ import {
 import { type ValeurAvancementModel } from '@/generated/prisma/models'
 import { type IndividuWithReferentiel, toIndividuApiModel } from '@/individu/utils'
 
-export type ValeurAvancementWithRelations = ValeurAvancementModel & {
-  indicateur: { publicId: string }
-  individu: { publicId: string }
-}
-
-export const toValeurSaisieApiModel = (
-  valeur: ValeurAvancementWithRelations,
-): ValeurSaisieApiModel => ({
-  indicateur: valeur.indicateur.publicId,
-  individu: valeur.individu.publicId,
+export const toValeurSaisieApiModel = ({
+  valeur,
+  indicateurPublicId,
+  celluleId,
+}: {
+  valeur: ValeurAvancementModel
+  indicateurPublicId: string
+  // Identifiant public de la cellule (= publicId de l'individu en mono-dimension).
+  celluleId: string
+}): ValeurSaisieApiModel => ({
+  indicateur: indicateurPublicId,
+  individu: celluleId,
   date: valeur.date,
   valeur: valeur.valeur.toNumber(),
   type: 'saisie',

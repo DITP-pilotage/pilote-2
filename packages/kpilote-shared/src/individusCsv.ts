@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { individuPublicIdSchema } from './publicIds'
+import { celluleIdSchema } from './cellule'
 
 export const MAX_INDIVIDUS_PAR_REQUETE = 100
 
@@ -15,7 +15,7 @@ export const individusCsvSchema = z
   )
   .pipe(
     z
-      .array(individuPublicIdSchema)
+      .array(celluleIdSchema)
       .min(1)
       .max(MAX_INDIVIDUS_PAR_REQUETE, `Au plus ${MAX_INDIVIDUS_PAR_REQUETE} individus par requête`),
   )

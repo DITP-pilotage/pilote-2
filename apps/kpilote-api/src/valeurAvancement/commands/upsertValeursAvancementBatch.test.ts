@@ -52,10 +52,12 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       expect(result._unsafeUnwrap()).toEqual({ total: 3, created: 2, updated: 1 })
       const rows = await db().valeurAvancement.findMany({
         where: { indicateur: { publicId: indId } },
-        include: { individu: { select: { publicId: true } } },
+        include: {
+          cellule: { include: { coordonnees: { include: { individu: true } } } },
+        },
       })
       const valeurParPublicId = new Map(
-        rows.map((row) => [row.individu.publicId, row.valeur.toNumber()]),
+        rows.map((row) => [row.cellule.coordonnees[0]!.individu.publicId, row.valeur.toNumber()]),
       )
       expect(valeurParPublicId).toEqual(
         new Map([

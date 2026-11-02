@@ -1,11 +1,11 @@
 import { type DeleteValeurAvancementBody } from '@pilote/kpilote-shared/valeurAvancement'
-import { ResultAsync } from 'neverthrow'
+import { okAsync, ResultAsync } from 'neverthrow'
 
+import { type ErreurCellule, resoudreCelluleEcriture } from '@/dimension/celluleEcriture'
 import { db } from '@/framework/persistence/dbStore'
-import { type IndividuInconnuError } from '@/individu/permission'
-import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
+import { resolveIndicateurForWriteData } from '@/indicateur/resolveIndicateurForWrite'
 
-export type DeleteValeurAvancementError = IndividuInconnuError
+export type DeleteValeurAvancementError = ErreurCellule
 
 type DeleteValeurAvancementParams = {
   indicateurPublicId: string
@@ -16,17 +16,20 @@ export const deleteValeurAvancement = ({
   indicateurPublicId,
   body,
 }: DeleteValeurAvancementParams): ResultAsync<void, DeleteValeurAvancementError> =>
-  resolveIndicateurAndIndividuForWriteData({
-    indicateurPublicId,
-    individuPublicId: body.individu,
-  }).andThen(({ indicateur, individu }) =>
-    ResultAsync.fromSafePromise(
-      db().valeurAvancement.deleteMany({
-        where: {
-          indicateurId: indicateur.id,
-          individuId: individu.id,
-          date: body.date,
-        },
-      }),
-    ).map(() => undefined),
+  resolveIndicateurForWriteData({ indicateurPublicId }).andThen(({ indicateur, principalId }) =>
+    resoudreCelluleEcriture({
+      indicateurId: indicateur.id,
+      principalId,
+      sousCube: 'valeurs',
+      cible: body,
+      creer: false,
+    }).andThen(({ celluleId }) =>
+      celluleId === null
+        ? okAsync(undefined)
+        : ResultAsync.fromSafePromise(
+            db().valeurAvancement.deleteMany({
+              where: { indicateurId: indicateur.id, celluleId, date: body.date },
+            }),
+          ).map(() => undefined),
+    ),
   )

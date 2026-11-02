@@ -48,7 +48,7 @@ describe.concurrent('deleteValeurAvancement', () => {
       const rows = await db().valeurAvancement.findMany({
         where: {
           indicateurId: link.indicateurId,
-          individuId: individu.id,
+          cellule: { coordonnees: { some: { individuId: individu.id } } },
           date: '2025-03-01',
         },
       })
@@ -97,7 +97,7 @@ describe.concurrent('deleteValeurAvancement', () => {
 
       expect(result.isOk()).toBe(true)
       const rows = await db().valeurAvancement.findMany({
-        where: { individuId: individu.id },
+        where: { cellule: { coordonnees: { some: { individuId: individu.id } } } },
         orderBy: { date: 'asc' },
       })
       expect(rows).toHaveLength(1)

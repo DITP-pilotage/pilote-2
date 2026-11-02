@@ -11,6 +11,8 @@ import { computeDatesMiseADisposition } from '@/indicateur/datesMiseADisposition
 
 import { type FonctionAgregation, type UniteIndicateur } from '@/generated/prisma/enums'
 import {
+  type DimensionModel,
+  type IndicateurDimensionModel,
   type IndicateurModel,
   type ReferentielModel,
   type UtilisateurModel,
@@ -19,9 +21,44 @@ import {
 export type IndicateurWithReferentiels = IndicateurModel & {
   referentiels: Array<{
     fonctionAgregation: FonctionAgregation
-    referentiel: ReferentielModel
+    referentiel: ReferentielModel & { dimension: DimensionModel }
   }>
+  dimensions: Array<IndicateurDimensionModel & { dimension: DimensionModel }>
   responsables: Array<{ utilisateur: UtilisateurModel }>
+}
+
+export const indicateurAvecReferentielsInclude = {
+  referentiels: { include: { referentiel: { include: { dimension: true } } } },
+  dimensions: { include: { dimension: true } },
+  responsables: {
+    orderBy: { createdAt: 'asc' },
+    include: { utilisateur: true },
+  },
+} as const
+
+// Dimensions de l'indicateur, déduites de ses niveaux et triées par ordre (cf.
+// `dimension/queries/loadIndicateurDimensions.ts` pour la même règle côté calcul).
+const toDimensionsApiModel = (
+  indicateur: IndicateurWithReferentiels,
+): IndicateurApiModel['dimensions'] => {
+  const configuration = new Map(indicateur.dimensions.map((d) => [d.dimensionId, d]))
+  const parDimension = new Map<string, IndicateurApiModel['dimensions'][number]>()
+  for (const { referentiel } of indicateur.referentiels) {
+    const config = configuration.get(referentiel.dimensionId)
+    const existante = parDimension.get(referentiel.dimensionId) ?? {
+      id: referentiel.dimension.publicId,
+      nom: referentiel.dimension.nom,
+      ordre: config?.ordre ?? Number.MAX_SAFE_INTEGER,
+      fonctionAgregation: config?.fonctionAgregation ?? 'SUM',
+      porteObjectifs: config?.porteObjectifs ?? false,
+      referentiels: [],
+    }
+    existante.referentiels.push(referentiel.publicId)
+    parDimension.set(referentiel.dimensionId, existante)
+  }
+  return [...parDimension.values()]
+    .map((d) => ({ ...d, referentiels: d.referentiels.sort((a, b) => a.localeCompare(b)) }))
+    .sort((a, b) => a.ordre - b.ordre || a.id.localeCompare(b.id))
 }
 
 // Garde compile-time : l'enum Prisma `UniteIndicateur` et le catalogue mb-shared
@@ -101,6 +138,7 @@ export const toIndicateurApiModel = ({
         fonctionAgregation: configuration.fonctionAgregation,
       }))
       .sort((a, b) => a.id.localeCompare(b.id)),
+    dimensions: toDimensionsApiModel(indicateur),
     responsables: indicateur.responsables.map(({ utilisateur }) => ({
       id: utilisateur.id,
       email: utilisateur.email,
