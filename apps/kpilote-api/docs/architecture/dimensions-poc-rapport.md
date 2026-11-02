@@ -1,7 +1,7 @@
 # Rapport final : POC « l'individu devient une dimension comme une autre »
 
 Date : 2026-11-02
-Branche : `claude/individu-dimension-poc-f01d87` (10 commits locaux, **rien de poussé**)
+Branche : `claude/individu-dimension-poc-f01d87` (11 commits locaux, **rien de poussé**)
 
 Documents associés :
 
@@ -165,7 +165,7 @@ Le détail est en `dimensions-design.md` §2, §4 et §6.
 
 ## 4. Conditions de succès (brief §5), avec preuves
 
-Légende : ✅ fait, avec sa preuve · ⏳ en attente d'une action d'Antoine.
+Légende : ✅ fait, avec sa preuve · ⚠️ vérifié par les tests, pas dans le navigateur.
 
 ### Conception
 
@@ -221,7 +221,7 @@ La preuve est la suite de tests : 762 tests verts, dont 101 propres au multi-dim
   - Résultat (`.poc-evidence/snapshot-compare-final.txt`) : 785 requêtes ; 724 identiques ; 50 avec seulement des champs ajoutés ; 5 listes globales avec seulement des entités ajoutées ; 6 avec les mêmes éléments dans un autre ordre (requête historique sans `ORDER BY`) ; **0 différence**.
 - ✅ **URL webapp existantes conservées** (`?individu=…&referentiel=…`, liens profonds).
   - Vérifié par les tests unitaires : `lib/individus/cellule.test.ts` et `pair.test.ts`. En mono, le paramètre `autres` est ignoré et la résolution est inchangée.
-  - ⏳ **Pas encore vérifié dans le navigateur** (voir la section « Webapp et admin »).
+  - Vérifié dans le navigateur : le lien profond `/indicateurs/IND-003?individu=DEPT-84&referentiel=REF-DEPT&sousOnglet=evolution` s'ouvre à l'identique avant et après (captures 01 à 04, voir « Webapp et admin »).
 
 ### Qualité
 
@@ -255,10 +255,70 @@ La preuve est la suite de tests : 762 tests verts, dont 101 propres au multi-dim
   - y cocher « porte les objectifs » sur Opérateur renvoie bien **409** « Changement du grain des objectifs refusé : l'indicateur porte déjà des objectifs. » ;
   - `/relations?dimension=DIM-FRAUDE` : la hiérarchie famille → type est filtrée par dimension.
   - Seules erreurs console : les 403/409 provoqués volontairement par ce test.
-- ⏳ **Fiche mono identique (avant/après)**, **fiche multi** (sélecteurs, « Tous », tranche, carte, décomposition, commentaires), **tableaux de bord mixtes**, **import multi depuis la webapp jusqu'à l'écriture**, **absence d'erreurs console webapp** : **non vérifiés dans le navigateur**.
-  - La webapp n'accepte que ProConnect ou le Keycloak de dev, deux fournisseurs d'identité distants. Je ne suis pas autorisé à y saisir des identifiants, et aucune session n'était ouverte dans le panneau navigateur.
-  - Ce qui est déjà prouvé : tests unitaires webapp (188), contrats et rétrocompatibilité côté API, lint et typecheck.
-  - Il reste : une connexion d'Antoine dans le panneau navigateur, puis le parcours du §6. Pour la capture « avant » de la fiche mono, il faudra servir temporairement le code webapp du commit `eed13bc10` sous le même nom portless (`git checkout eed13bc10 -- apps/kpilote-webapp/src`, capture, puis `git checkout HEAD -- apps/kpilote-webapp/src`), puisque la redirection OIDC impose cet hôte.
+  - Captures : `.poc-evidence/captures/admin-01-dimensions.jpg` à `admin-04-fonctionnalites.jpg`.
+
+Les parcours webapp ont été faits dans le panneau navigateur, après connexion d'Antoine (compte `ditp.admin@example.com`). Captures dans `.poc-evidence/captures/` (hors git).
+
+- ✅ **Fiche mono identique, avant/après.**
+  - La capture « avant » a été prise sur le code webapp de `eed13bc10`, servi sous le même nom portless, puis le code a été restauré à HEAD.
+  - Page : `/indicateurs/IND-003?individu=DEPT-84&referentiel=REF-DEPT&sousOnglet=evolution`.
+  - Le texte est identique : 59,7 %, médiane 66 %, progression 94,31 %, etc. La fenêtre du graphique aussi (déc. 24 → déc. 25).
+  - Avant comme après, la page envoie les 4 mêmes requêtes : `valeurs?individus=DEPT-84`, `valeurs-remarquables?referentiels=REF-DEPT` (sans `fixe`), `synthese-individus`, `taux-progression`.
+  - Captures : `01-avant-ind003-haut.jpg`, `02-avant-ind003-graphique.jpg`, `03-apres-ind003-haut.jpg`, `04-apres-ind003-graphique.jpg`.
+- ✅ **Fiche multi IND-101.**
+  - **Un sélecteur par dimension.** `/indicateurs/IND-101` redirige vers France / REF-NAT et affiche deux sélecteurs, Territoire = France et Opérateur = Tous : 2 750 325, progression 86,07 % (`05-ind101-france-tous.jpg`).
+  - **Cellule et tranche.**
+    - URL : `?individu=DEPT-84&referentiel=REF-DEPT&autres=OP-ORANGE`.
+    - Requêtes : `individus=DEPT-84~OP-ORANGE` et `valeurs-remarquables?referentiels=REF-DEPT&fixe=OP-ORANGE`.
+    - Affichage : « Données de comparaison · Départements de France · Orange », valeur 3 857, max 17 979, médiane 10 013.
+    - Pas de bloc progression : la cellule ne porte pas d'objectif.
+    - Capture : `06-ind101-cellule-dept84-orange.jpg`.
+  - **Marginale « Tous » sur le territoire.**
+    - Territoire = « Tous » mène à `?individu=OP-ORANGE&referentiel=REF-OPERATEUR` : 1 015 654, comparé aux « Opérateurs fibre ».
+    - Recoupé en base : la somme des 101 cellules DEPT × OP-ORANGE de juin 2026 vaut 1 015 654.
+    - Capture : `10-ind101-territoire-tous-orange.jpg`.
+  - **Carte sur la tranche.**
+    - La carte « Carte des départements · Orange » a pour échelle 1 983 → 17 979, alignée sur la tranche Orange.
+    - Un clic sur un département mène à `?individu=DEPT-21&…&autres=OP-ORANGE` : la tranche est conservée.
+    - Capture : `09-ind101-carte-tranche-orange.jpg`.
+  - **Décomposition.**
+    - Le graphique `decomposition=DIM-OPERATEUR` sur DEPT-84 trace 4 séries : Bouygues, Free, Orange, SFR. OP-REGIONAL est absent du 84 et n'apparaît que dans la légende (limite §7).
+    - Capture : `07-ind101-decomposition-operateur.jpg`.
+  - **Confiance et commentaires sur la cellule.**
+    - Un niveau « Objectifs atteignables » puis un commentaire ont été publiés sur DEPT-84~OP-ORANGE. Les requêtes vont sur `/individus/DEPT-84~OP-ORANGE/commentaires?type=…`.
+    - En base, les 2 commentaires (CONFIANCE et DEFAUT) sont rattachés à la cellule DEPT-84~OP-ORANGE (`.poc-evidence/webapp-commentaires-cellule.txt`).
+    - La marginale DEPT-84 (Opérateur = Tous) ne les affiche pas.
+    - Captures : `08-ind101-confiance-cellule.jpg`, `20-ind101-commentaire-cellule.jpg`.
+- ✅ **Fiche multi IND-102, fonctions mixtes.**
+  - France / Tous : 669 884,421 €.
+  - `decomposition=DIM-FRAUDE` trace 3 familles (IR, IS, TVA ; requête `individus=NAT-FR~FRAUDE-IR,NAT-FR~FRAUDE-IS,NAT-FR~FRAUDE-TVA`). Leur somme, ≈ 410 k + 220 k + 37 k, retombe sur la marginale, comme le veut le SUM sur le type.
+  - Capture : `11-ind102-decomposition-fraude.jpg`.
+- ✅ **Tableaux de bord mixtes.**
+  - `/indicateurs` : un seul sélecteur territorial (France).
+    - IND-101 affiche la marginale 2 750 325 / 86,07 %, IND-102 669 884,421 €, et les cartes mono sont inchangées.
+    - La carte de contournement « — Orange » (1 015 654) égale la marginale Orange du cube.
+    - Capture : `12-tableau-de-bord-indicateurs.jpg`.
+  - `/collections` : 7 collections, dont COL-010 et COL-011 (`13-tableau-de-bord-collections.jpg`).
+  - `/collections/COL-011` sur France : la carte IND-101 est en marginale (86,07 %) et IND-003 n'a pas de valeur nationale. L'avancement vaut « — » (« 1/2 indicateur sans taux »), selon la règle tout-ou-rien historique de `resolveCollectionTauxProgression.ts`, inchangée (`14-col011-france.jpg`).
+  - `?individu=OP-ORANGE&referentiel=REF-OPERATEUR` affiche « 1/1 indicateur sans taux (1 non applicable) ».
+    - L'API renvoie `nonApplicable: true` pour IND-003 seulement.
+    - IND-101 n'a pas de taux sur Orange : les objectifs sont portés par le territoire seul, et sont stricts.
+    - Capture : `15-col011-orange-non-applicable.jpg`.
+  - `/collections/COL-010` (contournement, 100 % mono) : la réponse ne contient aucune clé `nonApplicable`, la forme historique est conservée (`16-col010-contournement.jpg`).
+- ✅ **Import multi depuis la webapp, jusqu'à l'écriture.**
+  - Fichier `individu,operateur,date,valeur` sur IND-101 (`.poc-evidence/import-ind101-multi.csv`, 2 lignes DEPT-84 × Orange/SFR).
+  - L'aperçu affiche la colonne OPERATEUR (`17-import-apercu-multi.jpg`).
+  - Résultat : « Import réussi. 2 créée(s) · 0 mise(s) à jour » (`18-import-reussi.jpg`).
+  - En base, les valeurs sont écrites sur les cellules DEPT-84~OP-ORANGE et DEPT-84~OP-SFR. La marginale DEPT-84 passe de 10 462 à 10 499, soit 1 755 + 2 393 + 3 901 + 2 450.
+  - Erreur : un fichier sans colonne opérateur est refusé en entier. Message : « Membre manquant pour la dimension « DIM-OPERATEUR » (ligne 2) » (`19-import-erreur-coordonnee-manquante.jpg`).
+  - Bug préexistant constaté : la date CSV `2026-07-01` est lue `2026-06-30` (voir §7).
+- ✅ **Aucune erreur console ni réseau inattendue.** Des repères `console.info` ont été posés avant chaque parcours. Depuis ces repères, il n'y a que des erreurs que j'ai provoquées :
+  - le 400 de l'import volontairement invalide ;
+  - un `SearchParamError` dû à une faute de frappe de ma part dans l'URL (`sousOnglet=commentaires`), rejeté par la validation historique ;
+  - un échec CORS d'un `fetch` manuel lancé depuis la console avec `credentials: 'include'`, hors code de l'app.
+
+  Les avertissements tiptap (« Duplicate extension names ») viennent d'un éditeur que le POC n'a pas modifié. Les erreurs antérieures aux repères datent du basculement de code entre les captures avant et après (HMR) et des 401 d'avant la connexion.
+- ⚠️ **Non vérifié dans le navigateur : le cloisonnement côté webapp** (« Importer des valeurs » caché hors OP-ORANGE pour `operateur.orange@example.com`). Ce compte n'existe que dans le seed API, pas dans le Keycloak distant. Le cloisonnement est prouvé par les tests API (`perimetre.test.ts`, `me/routes.perimetre.test.ts`) et par les tests webapp.
 
 ## 5. Environnement POC : commandes
 
@@ -310,7 +370,7 @@ Correctif d'outillage au passage : sous le module runner SSR de Vite (dev), `pin
    - `/indicateurs/IND-101` (France, Opérateur = Tous) ;
    - `?individu=DEPT-84&referentiel=REF-DEPT&autres=OP-ORANGE` (cellule ; comparaison « · Orange ») ;
    - choisir Territoire = Tous ;
-   - `&sousOnglet=evolution&decomposition=DIM-OPERATEUR` (5 séries) ;
+   - `&sousOnglet=evolution&decomposition=DIM-OPERATEUR` (une série par opérateur présent : 4 sur DEPT-84) ;
    - clic sur la carte (garde Orange).
 3. **IND-102** : `&decomposition=DIM-FRAUDE` (3 familles). Vérifier la marginale AVG territoire / SUM type.
 4. **Tableaux de bord** : `/indicateurs` et `/collections` (sélecteur territorial seul) ; `/collections/COL-011` (mixte, `?individu=OP-ORANGE&referentiel=REF-OPERATEUR` donne « 1 non applicable ») ; `/collections/COL-010` (contournement).
@@ -350,6 +410,15 @@ Une table de présence déclarée et datée est l'évolution naturelle.
 - `vi.mock(withTransaction)` dupliqué dans 3 tests de route (à factoriser) ;
 - `dimension_id` absent des événements analytics.
 
+**Constaté dans le navigateur (mineur) :**
+
+- la légende de la décomposition liste aussi les membres absents du support de la cellule (OP-REGIONAL sur DEPT-84) ;
+- l'aide de la modale d'import dit encore « colonnes individu, date, valeur », sans mentionner les colonnes de dimension ;
+- le message d'erreur d'import cite le code de la dimension (`DIM-OPERATEUR`) plutôt que son nom ;
+- sur une collection mixte vue par Orange, la carte de l'indicateur non applicable affiche « Pas de valeur », alors que le compteur dit « non applicable ».
+
+**Bug préexistant, hors POC :** sous le fuseau Europe/Paris, une date CSV `AAAA-MM-JJ` est importée avec un jour de moins. SheetJS (`cellDates: true`) la lit à minuit heure locale, et `formatDateCell` la relit en UTC. Les deux fichiers sont inchangés depuis `eed13bc10`, et le comportement a été reproduit sur ce code.
+
 **Questions produit :**
 
 - pondérations par opérateur, et moyenne des taux face au taux de la somme (§10) ;
@@ -363,10 +432,11 @@ Une table de présence déclarée et datée est l'évolution naturelle.
 
 ## 8. État git
 
-Branche `claude/individu-dimension-poc-f01d87`, au-dessus de `eed13bc10` (base `dev`). 10 commits (le dernier ajoute ce rapport), environ 207 fichiers, +14,8k et −1,4k lignes. **Aucun push, aucune PR, `dev` non modifiée.**
+Branche `claude/individu-dimension-poc-f01d87`, au-dessus de `eed13bc10` (base `dev`). 11 commits (les deux derniers ajoutent ce rapport et les vérifications navigateur), environ 207 fichiers, +14,8k et −1,4k lignes. **Aucun push, aucune PR, `dev` non modifiée.**
 
 ```
-(ce commit)  docs(kpilote-api): rapport final du POC dimensions
+(ce commit)  docs(kpilote-api): vérifications webapp dans le navigateur (POC dimensions)
+a9a997523 docs(kpilote-api): rapport final du POC dimensions
 de605c906 fix(kpilote): correctifs de la revue adversariale (POC dimensions)
 efda953b9 test(kpilote-api): couverture multi-dimension et correctifs (POC dimensions)
 261c1fbd6 feat(kpilote-webapp): fiche indicateur multi-dimension (POC dimensions)
