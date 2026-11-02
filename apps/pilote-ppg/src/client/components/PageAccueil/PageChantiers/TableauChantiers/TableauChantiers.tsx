@@ -29,9 +29,9 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     "relative not-first:border-t-primary not-first:border-t-2 font-bold bg-white bg-[image:linear-gradient(0deg,theme(colors.dsfr-grey-900),theme(colors.dsfr-grey-900))] bg-no-repeat bg-bottom bg-[size:100%_1px] [@media(hover:hover)]:hover:bg-dsfr-grey-1000";
 
   return (
-    <section className="m-0 p-0 text-dsfr-grey-50">
-      <div className="flex flex-col justify-between 2xl:flex-row gap-4 2xl:items-end w-full mb-4">
-        <div className="flex flex-col 2xl:flex-row gap-4">
+    <section className="@container m-0 p-0 text-dsfr-grey-50">
+      <div className="flex flex-col justify-between @6xl:flex-row gap-4 @6xl:items-end w-full mb-4">
+        <div className="flex flex-col @6xl:flex-row gap-4">
           <div className="w-80 max-w-full">
             <table.Search />
           </div>
