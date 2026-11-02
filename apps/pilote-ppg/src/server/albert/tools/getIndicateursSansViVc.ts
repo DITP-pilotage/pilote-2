@@ -170,7 +170,7 @@ export function createGetIndicateursSansViVcTool({
     return tool({
       description: `Renvoie les indicateurs dont la valeur initiale (VI) ou la valeur cible (VC) manque, par chantier, indicateur et maille, avec le nombre de territoires concernés parmi les territoires applicables et accessibles. Une valeur à 0 est renseignée.
 - Une VC manquante s'entend toujours sur le jalon renvoyé dans \`jalon\`, le jalon en cours : cite-le dans ta réponse, y compris si la demande vise une autre année, sans clarifier. Ce jalon prime sur celui de la session.
-- \`valeurs\` : "vi", "vc", ou "vi_et_vc" quand la demande vise les deux. Distingue toujours les motifs « VI manquante » et « VC manquante » ; un même territoire peut cumuler les deux.
+- \`valeurs\` : "vi", "vc", ou "vi_et_vc" quand la demande vise les deux. Distingue toujours les motifs « VI manquante » et « VC manquante » ; un même territoire peut cumuler les deux. Si l'outil est appelé avec get_indicateurs_non_a_jour, rédige une seule synthèse par chantier, indicateur et maille, avec le motif « VA non à jour » en plus.
 - \`detail\` : "compteurs" (défaut) pour une question vague ; "territoires" quand la demande nomme les territoires ou le détail. Après des compteurs, propose le détail sur un sous-ensemble, sans le faire d'office.
 - \`derniere_vc_connue\` : écris « Dernière cible connue : 100, jalon 2024 » ; null s'écrit « Aucune valeur cible connue ». Elle contextualise et ne remplace jamais la cible manquante.
 - Liste vide : dis explicitement qu'aucun indicateur ne répond aux critères sur ce périmètre. Cela ne dit rien des taux d'avancement : ne présente pas ce résultat comme la preuve qu'ils sont tous calculables.

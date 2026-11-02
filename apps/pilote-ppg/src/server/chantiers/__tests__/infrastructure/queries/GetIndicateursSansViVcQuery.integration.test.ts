@@ -33,10 +33,10 @@ async function seedIndicateur({
   chantierStatut?: "PUBLIE" | "BROUILLON";
   indicateurStatut?: "PUBLIE" | "SUPPRIME";
 } = {}) {
-  await fixtures.chantierIdentite({ id: "CH-001", statut: chantierStatut });
+  await fixtures.chantierIdentite({ id: "CH-SVV", statut: chantierStatut });
   for (const territoire of [FINISTERE, ILLE_ET_VILAINE]) {
     await fixtures.chantierTerritoire({
-      id: "CH-001",
+      id: "CH-SVV",
       territoire_code: territoire.territoire_code,
       code_insee: territoire.code_insee,
       maille: territoire.maille,
@@ -44,8 +44,8 @@ async function seedIndicateur({
     });
   }
   await fixtures.indicateurIdentite({
-    id: "IND-001",
-    chantier_id: "CH-001",
+    id: "IND-SVV",
+    chantier_id: "CH-SVV",
     nom: "Nombre de bornes",
     statut: indicateurStatut,
   });
@@ -63,15 +63,15 @@ async function seedTerritoire({
   jalons?: Record<number, number | null>;
 } = {}) {
   await fixtures.indicateurTerritoire({
-    id: "IND-001",
-    chantier_id: "CH-001",
+    id: "IND-SVV",
+    chantier_id: "CH-SVV",
     ...territoire,
     est_applicable: estApplicable,
     valeur_initiale: valeurInitiale,
   });
   for (const [jalon, valeurCible] of Object.entries(jalons)) {
     await fixtures.indicateurTerritoireJalon({
-      id: "IND-001",
+      id: "IND-SVV",
       territoire_code: territoire.territoire_code,
       code_insee: territoire.code_insee,
       maille: territoire.maille,
@@ -85,9 +85,9 @@ async function seedTerritoire({
 const ligne = (
   overrides: Partial<LigneIndicateurSansViVc>,
 ): LigneIndicateurSansViVc => ({
-  chantierId: "CH-001",
-  chantierNom: "Chantier CH-001",
-  indicateurId: "IND-001",
+  chantierId: "CH-SVV",
+  chantierNom: "Chantier CH-SVV",
+  indicateurId: "IND-SVV",
   indicateurNom: "Nombre de bornes",
   maille: "DEPT",
   territoireCode: "DEPT-29",
@@ -105,7 +105,7 @@ describe("GetIndicateursSansViVcQuery", () => {
 
   const executer = (valeurs: ValeursRecherchees = "vi_et_vc") =>
     query.execute({
-      chantierIds: ["CH-001"],
+      chantierIds: ["CH-SVV"],
       territoireCodes: ["DEPT-29", "DEPT-35"],
       jalon: JALON,
       valeurs,
@@ -255,7 +255,7 @@ describe("GetIndicateursSansViVcQuery", () => {
 
       // when
       const result = await query.execute({
-        chantierIds: ["CH-001"],
+        chantierIds: ["CH-SVV"],
         territoireCodes: ["DEPT-35"],
         jalon: JALON,
         valeurs: "vi_et_vc",

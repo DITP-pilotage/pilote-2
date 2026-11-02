@@ -26,7 +26,7 @@ export const getIndicateursNonAJourInputSchema = z.object({
     .optional()
     .default("compteurs")
     .describe(
-      "compteurs : par chantier, indicateur et maille, le nombre de territoires en retard. territoires : en plus, chaque territoire en retard avec ses dates. Choisis territoires seulement quand la demande nomme les territoires ou le détail (« sur quels territoires », « les départements non à jour », « le détail par territoire »).",
+      "compteurs : par chantier, indicateur et maille, le nombre de territoires dont la valeur d'avancement est en retard. territoires : en plus, chaque territoire concerné avec ses dates. Choisis territoires seulement quand la demande nomme les territoires ou le détail (« sur quels territoires », « les départements dont la valeur d'avancement n'est pas à jour », « le détail par territoire »).",
     ),
 });
 
@@ -147,6 +147,7 @@ export function createGetIndicateursNonAJourTool({
 - \`detail\` : "compteurs" (défaut) pour une question vague (« quels chantiers ont des valeurs d'avancement à mettre à jour ? ») ; "territoires" quand la demande nomme les territoires ou le détail (« sur quels territoires le CH-018 a des valeurs d'avancement non à jour ? », « … et affiche le détail par territoire »).
 - Après des compteurs, propose à l'utilisateur le détail territoire par territoire sur un sous-ensemble (un chantier, un indicateur ou un territoire), sans le faire d'office.
 - \`perimetre\` restreint les territoires considérés, dans les deux modes ; il ne déclenche pas le détail.
+- Si l'outil est appelé avec get_indicateurs_sans_vi_vc, rédige une seule synthèse par chantier, indicateur et maille, qui distingue les motifs « VA non à jour », « VI manquante » et « VC manquante ».
 - Une région seule (« en Bretagne ») est une SELECTION de son seul code ; ses départements n'en font partie que si la demande les cite.
 - Liste vide : aucun indicateur non à jour trouvé sur ce périmètre, ce qui ne prouve pas que les données sont à jour (l'indicateur peut ne pas être suivi ici).
 - \`detail_trop_volumineux\` : le détail par territoire est trop volumineux, les compteurs sont renvoyés à la place. Rédige toujours ta réponse complète à partir de ces compteurs, sans les présenter comme le détail demandé. Termine-la en précisant que ce détail est trop volumineux, sans chiffrer ce volume, et qu'on peut l'obtenir en réduisant la recherche à un chantier, un indicateur ou un territoire. N'appelle pas clarify_with_choices, ne pose aucune question avant d'avoir donné les compteurs, et ne relance pas l'outil d'office.

@@ -265,3 +265,9 @@ se reproduisent pas de façon stable. « Pas de synthèse des résultats renseig
 (`get_chantiers_signales`) se reproduit, mais échoue aussi à 0/3 au commit `2e2b96e`,
 sans l'outil ni le prompt : non attribué à ce travail. Le recul de 1,7 point du
 niveau 2 hors nouvelles suites reste dans cette variabilité, sans preuve plus forte.
+
+Corrections de texte après relecture, rejouées sur trois suites seulement, sans
+nouveau run complet : `get_indicateurs_sans_vi_vc` 100 %,
+`get_indicateurs_non_a_jour` 95,2 %, `clarify_with_choices` 80,0 %. Les trois cas
+sous le seuil le restent, et « Quels sont les indicateurs à mettre à jour ? » est à
+2/3 sur ce dernier run.

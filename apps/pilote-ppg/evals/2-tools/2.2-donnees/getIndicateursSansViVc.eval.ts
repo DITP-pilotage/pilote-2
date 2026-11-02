@@ -95,6 +95,19 @@ const CASES: ToolCase[] = [
     forbidden: ["clarify_with_choices"],
   },
   {
+    question:
+      "Les trois sur tout mon périmètre : valeurs d'avancement non à jour, valeurs initiales et cibles manquantes",
+    reason: "libellé du bouton « les trois » : les deux outils",
+    expected: [
+      { toolName: "get_indicateurs_non_a_jour" },
+      {
+        toolName: "get_indicateurs_sans_vi_vc",
+        input: { valeurs: "vi_et_vc" },
+      },
+    ],
+    forbidden: ["clarify_with_choices"],
+  },
+  {
     question: "Quels chantiers ont un taux d'avancement non calculé ?",
     reason: "CAS NÉGATIF : catégorie de signalement → get_chantiers_signales",
     forbidden: ["get_indicateurs_sans_vi_vc"],
