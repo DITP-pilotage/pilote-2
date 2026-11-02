@@ -51,7 +51,7 @@ export const PanelMenuNavigation = ({
         </div>
       </div>
       {estAutoriseAVoirLeSelecteurDeMaille ? (
-        <div className="w-full shrink-0 md:w-1/4 md:min-w-60 pb-4 px-4 flex items-center">
+        <div className="w-full shrink-0 md:w-auto md:min-w-60 pb-4 px-4 flex items-center">
           <SélecteurMaille mailleQuery={mailleQuery} pathname={pathname} />
         </div>
       ) : null}
