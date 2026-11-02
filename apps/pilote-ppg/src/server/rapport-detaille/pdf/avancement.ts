@@ -68,7 +68,10 @@ function centered(
 }
 
 function titleWithJalon(titre: string, jalon: number | string): Content {
-  return centered([{ text: titre, bold: true }, ` ${jalon}`]);
+  return {
+    stack: [centered(titre, { bold: true }), centered(String(jalon))],
+    margin: [0, 0, 0, rem(0.75)],
+  };
 }
 
 function centeredBadge(badge: Content | null): Content {
@@ -127,7 +130,7 @@ function répartitionBloc(
           context.jalon,
         ),
         {
-          margin: [rem(1), px(8), 0, 0],
+          margin: [0, px(8), 0, 0],
           stack: [
             jaugeSmallPdf({
               pourcentage: global.maximum,

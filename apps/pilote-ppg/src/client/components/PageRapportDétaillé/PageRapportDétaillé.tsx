@@ -77,9 +77,8 @@ export const PageRapportDétaillé: FunctionComponent<
                   Revenir à l'accueil
                 </Link>
               </Button>
-              <DownloadRapportDetaillePdfButton
-                showDetail={afficherLesChantiers}
-              />
+              <DownloadRapportDetaillePdfButton showDetail={false} />
+              <DownloadRapportDetaillePdfButton showDetail />
             </div>
           </div>
           <FiltresSélectionnés

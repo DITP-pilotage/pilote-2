@@ -71,7 +71,11 @@ export const DownloadRapportDetaillePdfButton = ({
       variant="tertiary-no-outline"
     >
       <Icone className="w-4 h-4" icone={DownloadIcon} />
-      {isGenerating ? "Génération du PDF…" : "Télécharger le PDF"}
+      {isGenerating
+        ? "Génération du PDF…"
+        : showDetail
+          ? "Télécharger le PDF avec le détail"
+          : "Télécharger le PDF sans le détail"}
     </Button>
   );
 };

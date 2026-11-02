@@ -11,7 +11,8 @@ import { withoutMailles } from "@/server/rapport-detaille/withoutMailles";
 import { pageDeGardePdf } from "@/server/rapport-detaille/pdf/pageDeGarde";
 import { vueDEnsemblePdf } from "@/server/rapport-detaille/pdf/vueDEnsemble";
 import { chantierPdf } from "@/server/rapport-detaille/pdf/chantier";
-import { keepHeadlineWithNext } from "@/server/rapport-detaille/pdf/section";
+import { rapportDetaillePageBreakBefore } from "@/server/rapport-detaille/pdf/section";
+import { placePageBreaks } from "@/server/rapport-detaille/pdf/pageBreaks";
 import {
   BODY_FONT_SIZE,
   PAGE_HEIGHT,
@@ -31,7 +32,7 @@ export type GenerateParams = {
 
 export function buildRapportDetailleDocument(
   params: GenerateParams,
-): TDocumentDefinitions {
+): TDocumentDefinitions & { content: Content[] } {
   const { vue, details, context } = params;
   const detailsByChantier = new Map(
     details.map((detail) => [detail.chantierId, detail]),
@@ -64,7 +65,6 @@ export function buildRapportDetailleDocument(
   replaceGlyphsMissingFromMarianne(content);
   return {
     info: { title: "Rapport détaillé - PILOTE" },
-    pageBreakBefore: keepHeadlineWithNext,
     pageSize: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
     pageMargins: [PAGE_MARGIN_X, PAGE_MARGIN_Y, PAGE_MARGIN_X, PAGE_MARGIN_Y],
     defaultStyle: {
@@ -77,12 +77,19 @@ export function buildRapportDetailleDocument(
   };
 }
 
-export function generateRapportDetaillePdf(params: GenerateParams) {
-  return withMarianne().createPdf(buildRapportDetailleDocument(params));
+export async function generateRapportDetaillePdf(params: GenerateParams) {
+  const { content, ...settings } = buildRapportDetailleDocument(params);
+  const [pageDeGarde, vueDEnsemble, ...fiches] = content;
+  await placePageBreaks(settings, rapportDetaillePageBreakBefore, [
+    [pageDeGarde, vueDEnsemble],
+    ...fiches,
+  ]);
+  return withMarianne().createPdf({ ...settings, content });
 }
 
 export async function renderRapportDetaillePdf(
   params: GenerateParams,
 ): Promise<Uint8Array<ArrayBuffer>> {
-  return new Uint8Array(await generateRapportDetaillePdf(params).getBuffer());
+  const pdf = await generateRapportDetaillePdf(params);
+  return new Uint8Array(await pdf.getBuffer());
 }

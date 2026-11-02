@@ -10,6 +10,7 @@ import {
 } from "@/server/rapport-detaille/pdf/testHelpers";
 import { buildTestChantier } from "@/server/rapport-detaille/testData";
 import { ChantierDetail } from "@/server/rapport-detaille/rapportDetaille.interface";
+import { SYMBOLS_FONT } from "@/server/pdf/marianne";
 
 function countPages(buffer: Buffer): number {
   return buffer.toString("latin1").match(/\/Type \/Page\b/g)?.length ?? 0;
@@ -44,7 +45,7 @@ describe("generateRapportDetaillePdf", () => {
     };
 
     const document = buildRapportDetailleDocument(params);
-    const buffer = await generateRapportDetaillePdf(params).getBuffer();
+    const buffer = await (await generateRapportDetaillePdf(params)).getBuffer();
 
     expect(Array.isArray(document.content) && document.content.length).toBe(2);
     expect(document.pageSize).toEqual({
@@ -57,15 +58,17 @@ describe("generateRapportDetaillePdf", () => {
 
   it("ajoute une fiche par chantier détaillé", async () => {
     const chantiers = ["A", "B", "C"].map((id) => buildTestChantier({ id }));
-    const buffer = await generateRapportDetaillePdf({
-      vue: buildTestVueDEnsemble({ chantiers }),
-      details: chantiers.map((chantier) =>
-        buildTestChantierDetail({ chantierId: chantier.id }),
-      ),
-      context: buildTestContext({ detail: "true" }),
-      hideNonApplicable: false,
-      now,
-    }).getBuffer();
+    const buffer = await (
+      await generateRapportDetaillePdf({
+        vue: buildTestVueDEnsemble({ chantiers }),
+        details: chantiers.map((chantier) =>
+          buildTestChantierDetail({ chantierId: chantier.id }),
+        ),
+        context: buildTestContext({ detail: "true" }),
+        hideNonApplicable: false,
+        now,
+      })
+    ).getBuffer();
 
     expect(countPages(buffer)).toBeGreaterThanOrEqual(5);
   });
@@ -95,21 +98,23 @@ describe("generateRapportDetaillePdf", () => {
   ])(
     "garde tout le texte %s quand il dépasse une page",
     async (_, withLongText) => {
-      const render = (paragraphs: number) =>
-        generateRapportDetaillePdf({
-          vue: buildTestVueDEnsemble({
-            chantiers: [buildTestChantier({ id: "A" })],
-          }),
-          details: [
-            buildTestChantierDetail({
-              chantierId: "A",
-              ...withLongText(longHtml(paragraphs)),
+      const render = async (paragraphs: number) =>
+        (
+          await generateRapportDetaillePdf({
+            vue: buildTestVueDEnsemble({
+              chantiers: [buildTestChantier({ id: "A" })],
             }),
-          ],
-          context: buildTestContext({ detail: "true" }),
-          hideNonApplicable: false,
-          now,
-        }).getBuffer();
+            details: [
+              buildTestChantierDetail({
+                chantierId: "A",
+                ...withLongText(longHtml(paragraphs)),
+              }),
+            ],
+            context: buildTestContext({ detail: "true" }),
+            hideNonApplicable: false,
+            now,
+          })
+        ).getBuffer();
 
       const pagesWithLongText = countPages(await render(40));
       const pagesWithTripleText = countPages(await render(120));
@@ -147,5 +152,59 @@ describe("generateRapportDetaillePdf", () => {
 
     expect(serialized).not.toContain("\u202f");
     expect(serialized).toContain("Cible 10\u00a0000");
+  });
+
+  it("remplace le tiret num\u00e9rique, absent de Marianne, par un demi-cadratin", () => {
+    const document = buildRapportDetailleDocument({
+      vue: buildTestVueDEnsemble({
+        chantiers: [buildTestChantier({ id: "A", nom: "\u2012 \u00c9tape 1" })],
+      }),
+      details: [buildTestChantierDetail({ chantierId: "A" })],
+      context: buildTestContext({ detail: "true" }),
+      hideNonApplicable: false,
+      now,
+    });
+    const serialized = JSON.stringify(document.content);
+
+    expect(serialized).not.toContain("\u2012");
+    expect(serialized).toContain("\u2013 \u00c9tape 1");
+  });
+
+  it("\u00e9crit les puces g\u00e9om\u00e9triques, absentes de Marianne, avec la police de symboles", () => {
+    const document = buildRapportDetailleDocument({
+      vue: buildTestVueDEnsemble({
+        chantiers: [
+          buildTestChantier({ id: "A", nom: "\u25fe Efficacit\u00e9" }),
+        ],
+      }),
+      details: [buildTestChantierDetail({ chantierId: "A" })],
+      context: buildTestContext({ detail: "true" }),
+      hideNonApplicable: false,
+      now,
+    });
+    const serialized = JSON.stringify(document.content);
+
+    expect(serialized).toContain(
+      JSON.stringify([
+        { text: "\u25fe", font: SYMBOLS_FONT },
+        " Efficacit\u00e9",
+      ]),
+    );
+  });
+
+  it("embarque la police de symboles dans le PDF", async () => {
+    const pdf = await renderRapportDetaillePdf({
+      vue: buildTestVueDEnsemble({
+        chantiers: [
+          buildTestChantier({ id: "A", nom: "\u25fe Efficacit\u00e9" }),
+        ],
+      }),
+      details: [buildTestChantierDetail({ chantierId: "A" })],
+      context: buildTestContext({ detail: "true" }),
+      hideNonApplicable: false,
+      now,
+    });
+
+    expect(Buffer.from(pdf).toString("latin1")).toContain("NotoSansSymbols2");
   });
 });

@@ -26,6 +26,7 @@ import { jaugePdf } from "@/server/rapport-detaille/pdf/jauges";
 import { withoutMailles } from "@/server/rapport-detaille/withoutMailles";
 import { CONTENT_WIDTH, GRID_GAP } from "@/server/rapport-detaille/pdf/layout";
 import { color } from "@/server/pdf/colors";
+import { avoidBreakInside } from "@/server/rapport-detaille/pdf/section";
 
 const WARNING_COLOR = color("dsfr-warning-425");
 const WARNING_BACKGROUND = color("dsfr-warning-950");
@@ -304,7 +305,7 @@ export function vueDEnsemblePdf(
   return {
     stack: [
       encartPdf("Vue d'ensemble"),
-      {
+      avoidBreakInside({
         stack: [
           blocRowPdf(
             [
@@ -345,11 +346,11 @@ export function vueDEnsemblePdf(
           ),
         ],
         margin: [0, rem(1.5), 0, 0],
-      },
+      }),
       ...(vue.chantiersSontArchives
         ? []
         : [chantiersSignalésPdf(vue, context)]),
-      {
+      avoidBreakInside({
         stack: [
           chantiersTablePdf(
             vue.chantiers.map(withoutMailles),
@@ -358,7 +359,7 @@ export function vueDEnsemblePdf(
           ),
         ],
         margin: [0, rem(1.75), 0, 0],
-      },
+      }),
     ],
   };
 }

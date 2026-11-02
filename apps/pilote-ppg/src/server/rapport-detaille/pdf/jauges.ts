@@ -18,20 +18,23 @@ export const JAUGE_COLORS: Record<JaugeDeProgressionCouleur, string> = {
 const JAUGE_SIZES = {
   sm: {
     width: rem(3.75),
-    fontSize: rem(1.25),
-    lineHeight: cssLineHeight(1.75, 1.25),
+    fontSize: rem(1.125),
+    lineHeight: cssLineHeight(1.5, 1.125),
   },
   md: {
-    width: rem(5.5),
-    fontSize: rem(1.5),
-    lineHeight: cssLineHeight(2, 1.5),
+    width: rem(4),
+    fontSize: rem(1.375),
+    lineHeight: cssLineHeight(2.5, 1.375),
   },
   lg: {
-    width: rem(10.5),
-    fontSize: rem(2.5),
-    lineHeight: cssLineHeight(3, 2.5),
+    width: rem(8.25),
+    fontSize: rem(2),
+    lineHeight: cssLineHeight(2.5, 2),
   },
 };
+
+const VALUE_LINE_HEIGHT = rem(2.5);
+const VALUE_OFFSET_FROM_CENTER = rem(1.4);
 
 export function formatPourcentage(pourcentage: number | null | undefined) {
   return pourcentage === null || pourcentage === undefined
@@ -70,13 +73,13 @@ export function jaugePdf(params: {
     width: size.width,
     alignment: "center",
   };
-  const valueHeight = size.fontSize * 1.5 * size.lineHeight;
+  const valueTop = size.width / 2 - VALUE_OFFSET_FROM_CENTER;
   const gauge: Content[] =
     params.taille === "sm"
       ? [ring, value]
       : [
-          { ...value, margin: [0, size.width / 2 - valueHeight / 2, 0, 0] },
-          { ...ring, margin: [0, -(size.width / 2 + valueHeight / 2), 0, 0] },
+          { ...value, margin: [0, valueTop, 0, 0] },
+          { ...ring, margin: [0, -(valueTop + VALUE_LINE_HEIGHT), 0, 0] },
         ];
   const date = formatParisDate(params.date, "MM/YYYY");
   return {
@@ -96,28 +99,39 @@ export function jaugeSmallPdf(params: {
 }): Content {
   return {
     columns: [
+      { width: "*", text: "" },
       {
-        svg: jaugeSmallSvg(params.pourcentage ?? null, params.couleur),
-        width: rem(3.75),
-      },
-      {
-        width: "*",
-        margin: [px(8), px(10), 0, 0],
-        stack: [
+        width: "auto",
+        columns: [
           {
-            text: formatPourcentage(params.pourcentage),
-            bold: true,
-            fontSize: rem(1.375),
-            color: JAUGE_COLORS[params.couleur],
+            svg: jaugeSmallSvg(params.pourcentage ?? null, params.couleur),
+            width: rem(3.75),
           },
           {
-            text: params.libellé,
-            fontSize: px(16),
-            color: color("dsfr-grey-50"),
+            width: "auto",
+            margin: [px(8), rem(0.25), 0, 0],
+            stack: [
+              {
+                text: formatPourcentage(params.pourcentage),
+                bold: true,
+                fontSize: rem(1.25),
+                lineHeight: cssLineHeight(1.75, 1.25),
+                color: JAUGE_COLORS[params.couleur],
+                alignment: "center",
+              },
+              {
+                text: params.libellé,
+                fontSize: px(16),
+                lineHeight: cssLineHeight(1.5, 1),
+                color: color("dsfr-grey-50"),
+                alignment: "center",
+              },
+            ],
           },
         ],
       },
+      { width: "*", text: "" },
     ],
-    margin: [0, 0, 0, px(16)],
+    margin: [0, 0, 0, rem(1)],
   };
 }

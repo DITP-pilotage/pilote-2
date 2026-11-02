@@ -1,7 +1,10 @@
 import { Content } from "pdfmake/interfaces";
 import { Maille } from "@/shared/maille/Maille.interface";
 import { encartPdf, sectionTitlePdf } from "@/server/pdf/primitives";
-import { section } from "@/server/rapport-detaille/pdf/section";
+import {
+  avoidBreakInside,
+  section,
+} from "@/server/rapport-detaille/pdf/section";
 import { rem } from "@/server/pdf/units";
 import { RapportDetailleContext } from "@/server/rapport-detaille/rapportDetailleContext";
 import {
@@ -37,14 +40,14 @@ export function chantierPdf(params: {
       : "nationale";
   const sections: (Content | null)[] = [
     encartPdf(chantier.nom, "h1"),
-    {
+    avoidBreakInside({
       stack: [
         sectionTitlePdf("Avancement du chantier", {
           margin: [0, rem(1.5), 0, rem(1)],
         }),
         avancementPdf({ chantier, detail, context }),
       ],
-    },
+    }),
     section("Responsables", responsablesPdf(chantier, territoireMaille)),
     section(
       "Météo et synthèse des résultats",
