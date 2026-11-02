@@ -30,9 +30,14 @@ const valeursTrieesDesc = (items: ReadonlyArray<ValeurDate>): ValeurDate[] =>
 type IndicateurSynthesePanelProps = {
   indicateurId: string
   referentielId: string
+  // Identifiant de cellule (un individu seul en mono-dimension).
   individuId: string
   unite: UniteIndicateurApiModel | null
   referentielNom: string | null
+  // Indicateur multi-dimension : coordonnées fixées des autres dimensions — la
+  // comparaison porte sur la tranche (cf. dimensions-design.md §5.7).
+  fixe?: string | undefined
+  libelleFixe?: string | undefined
 }
 
 export function IndicateurSynthesePanel({
@@ -41,11 +46,13 @@ export function IndicateurSynthesePanel({
   individuId,
   unite,
   referentielNom,
+  fixe,
+  libelleFixe,
 }: IndicateurSynthesePanelProps) {
   const [{ data: remarquables }, { data: synthese }, { data: valeurs }, { data: tauxProgression }] =
     useSuspenseQueries({
       queries: [
-        indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
+        indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId, fixe),
         indicateurSyntheseIndividuQueryOptions(indicateurId, individuId),
         indicateurValeursQueryOptions(indicateurId, individuId),
         indicateurTauxProgressionQueryOptions(indicateurId, individuId),
@@ -123,6 +130,7 @@ export function IndicateurSynthesePanel({
           <Text variant="kicker" as="p">
             Données de comparaison
             {referentielNom && <span className="text-primary"> · {referentielNom}</span>}
+            {libelleFixe && <span className="text-primary"> · {libelleFixe}</span>}
           </Text>
           <ul className="mt-3 flex flex-col gap-0.5">
             <ComparaisonRow

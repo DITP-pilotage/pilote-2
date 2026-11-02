@@ -79,15 +79,42 @@ export const indicateurValeursQueryOptions = (indicateurId: string, individuId: 
     staleTime: DEFAULT_STALE_TIME,
   })
 
+// `fixe` (indicateur multi-dimension) : coordonnées fixées des autres
+// dimensions — la population est alors la tranche « membres du référentiel ×
+// fixe ». Absent : clé et requête historiques.
 export const indicateurValeursRemarquablesQueryOptions = (
   indicateurId: string,
   referentielId: string,
+  fixe?: string,
 ) =>
   queryOptions({
-    queryKey: ['indicateur', indicateurId, 'valeurs-remarquables', referentielId],
+    queryKey: [
+      'indicateur',
+      indicateurId,
+      'valeurs-remarquables',
+      referentielId,
+      ...(fixe ? [{ fixe }] : []),
+    ],
     queryFn: () =>
       fetchValeursRemarquablesForIndicateur(indicateurId, {
         referentiels: [referentielId],
+        ...(fixe ? { fixe } : {}),
+        dateTrunc: 'month',
+      }),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+// Séries de plusieurs cellules en une requête (graphique décomposé par
+// dimension) : l'API reprend dans `individu` la cellule envoyée.
+export const indicateurValeursCellulesQueryOptions = (
+  indicateurId: string,
+  cellules: ReadonlyArray<string>,
+) =>
+  queryOptions({
+    queryKey: ['indicateur', indicateurId, 'valeurs-cellules', [...cellules]],
+    queryFn: () =>
+      fetchValeursForIndicateur(indicateurId, {
+        individus: [...cellules],
         dateTrunc: 'month',
       }),
     staleTime: DEFAULT_STALE_TIME,
@@ -113,15 +140,19 @@ export const prefetchIndicateurValeursForIndividu = async ({
   indicateurId,
   individuId,
   referentielId,
+  fixe,
 }: {
   queryClient: QueryClient
   indicateurId: string
   individuId: string
   referentielId: string
+  fixe?: string | undefined
 }): Promise<void> => {
   await Promise.all([
     queryClient.fetchQuery(indicateurValeursQueryOptions(indicateurId, individuId)),
-    queryClient.fetchQuery(indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId)),
+    queryClient.fetchQuery(
+      indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId, fixe),
+    ),
     queryClient.fetchQuery(indicateurSyntheseIndividuQueryOptions(indicateurId, individuId)),
     queryClient.fetchQuery(indicateurTauxProgressionQueryOptions(indicateurId, individuId)),
   ])

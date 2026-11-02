@@ -57,6 +57,7 @@ export const buildReferentiel = (
     id: 'REF-NAT',
     nom: 'National',
     description: null,
+    dimension: 'DIM-TERRITOIRE',
     nombreIndividus: 0,
     widgets: [],
     createdAt: '2026-01-01T00:00:00.000Z',
