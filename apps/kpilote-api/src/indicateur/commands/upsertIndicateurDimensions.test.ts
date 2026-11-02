@@ -7,6 +7,7 @@ import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { DIMENSION_TEST_PAR_DEFAUT, fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { testIndividuId, testReferentielId } from '@/test/randomIds'
 import { runAsAdmin } from '@/test/runAsPrincipal'
 
 // PUT /indicateurs sur les dimensions (cf. dimensions-design.md §5.3) : passage
@@ -307,6 +308,136 @@ describe.concurrent('upsertIndicateur — dimensions', () => {
           ),
         ),
       ).rejects.toThrow(ConflictError)
+    }),
+  )
+
+  it(
+    'verrou feuille-à-faits : ajouter un niveau sous un membre agrégeable à faits (409)',
+    integrationTest(async () => {
+      const cube = await fixtures.cubeTerritoireOperateur()
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: cube.indicateur },
+        individus: [{ publicId: cube.deptA }, { publicId: cube.orange }],
+      })
+      // Niveau commune (même dimension) : une commune sous DEPT-A, une sous DEPT-C.
+      const refCommune = testReferentielId()
+      for (const dept of [cube.deptA, cube.deptC]) {
+        await fixtures.relation({
+          parent: { publicId: dept },
+          child: { publicId: testIndividuId(), referentiel: { publicId: refCommune } },
+        })
+      }
+      const apiKey = await proprietaire(cube)
+
+      const appel = runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(
+          cube.indicateur,
+          body([...territoire(cube), { id: refCommune, fonctionAgregation: 'SUM' }]),
+        ),
+      )
+
+      await expect(appel).rejects.toThrow(ConflictError)
+      await expect(appel).rejects.toThrow(/masquerait des faits/)
+      expect(await niveaux(cube.indicateur)).not.toContainEqual(
+        expect.objectContaining({ id: refCommune }),
+      )
+    }),
+  )
+
+  it(
+    'ajout d’un niveau sous des membres sans fait, ou sous un niveau NONE : permis',
+    integrationTest(async () => {
+      const cube = await fixtures.cubeTerritoireOperateur()
+      // Faits sur DEPT-C uniquement ; le nouveau niveau ne descend que de DEPT-A.
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: cube.indicateur },
+        individus: [{ publicId: cube.deptC }, { publicId: cube.orange }],
+      })
+      const refCommune = testReferentielId()
+      await fixtures.relation({
+        parent: { publicId: cube.deptA },
+        child: { publicId: testIndividuId(), referentiel: { publicId: refCommune } },
+      })
+      const apiKey = await proprietaire(cube)
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(
+          cube.indicateur,
+          body([...territoire(cube), { id: refCommune, fonctionAgregation: 'SUM' }]),
+        ),
+      )
+
+      expect(await niveaux(cube.indicateur)).toContainEqual({
+        id: refCommune,
+        fonctionAgregation: 'SUM',
+      })
+    }),
+  )
+
+  it(
+    'multi-dimension sans aucune dimension `porteObjectifs` : 400',
+    integrationTest(async () => {
+      const cube = await fixtures.cubeTerritoireOperateur()
+      const apiKey = await proprietaire(cube)
+
+      await expect(
+        runAsAdmin(apiKey.id, () =>
+          upsertIndicateur(
+            cube.indicateur,
+            body(territoire(cube), [
+              {
+                id: DIMENSION_TEST_PAR_DEFAUT,
+                ordre: 0,
+                fonctionAgregation: 'SUM',
+                porteObjectifs: false,
+              },
+            ]),
+          ),
+        ),
+      ).rejects.toThrow(ValidationError)
+    }),
+  )
+
+  it(
+    'sous-cube effectif des objectifs : comparé avant/après, pas le drapeau brut',
+    integrationTest(async () => {
+      // Aucun drapeau : le sous-cube se replie sur la première dimension (Territoire).
+      const cube = await fixtures.cubeTerritoireOperateur({ territoire: { porteObjectifs: false } })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: cube.indicateur },
+        individu: { publicId: cube.deptA },
+      })
+      const apiKey = await proprietaire(cube)
+      const configurer = (
+        territoireDimension: { ordre: number; porteObjectifs: boolean },
+        operateur: { ordre: number; porteObjectifs: boolean },
+      ) =>
+        runAsAdmin(apiKey.id, () =>
+          upsertIndicateur(
+            cube.indicateur,
+            body(territoire(cube), [
+              { id: DIMENSION_TEST_PAR_DEFAUT, fonctionAgregation: 'SUM', ...territoireDimension },
+              { id: cube.dimensionOperateur, fonctionAgregation: 'SUM', ...operateur },
+            ]),
+          ),
+        )
+
+      // Inverser les ordres sans drapeau ferait passer le grain sur Opérateur.
+      await expect(
+        configurer({ ordre: 1, porteObjectifs: false }, { ordre: 0, porteObjectifs: false }),
+      ).rejects.toThrow(ValidationError)
+      // Opérateur porte explicitement les objectifs : le sous-cube change.
+      await expect(
+        configurer({ ordre: 0, porteObjectifs: false }, { ordre: 1, porteObjectifs: true }),
+      ).rejects.toThrow(ConflictError)
+      // Expliciter le repli (Territoire) ne change pas le sous-cube effectif.
+      await configurer({ ordre: 0, porteObjectifs: true }, { ordre: 1, porteObjectifs: false })
+      expect(await configurations(cube.indicateur)).toContainEqual({
+        id: DIMENSION_TEST_PAR_DEFAUT,
+        ordre: 0,
+        fonctionAgregation: 'SUM',
+        porteObjectifs: true,
+      })
     }),
   )
 

@@ -4,6 +4,7 @@ import { uuidv7 } from 'uuidv7'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
+import { loadAncetres } from '@/relation/queries/loadAncetres'
 import { MESSAGE_ADMIN } from '@/relation/utils'
 
 export type UpsertRelationParentError =
@@ -15,17 +16,39 @@ export type UpsertRelationParentError =
 // Verrou « feuille à faits » (POC dimensions) : sur un indicateur
 // multi-dimension, donner un enfant à un membre agrégeable (niveau ≠ NONE) qui
 // porte déjà des faits rendrait ses cellules agrégées et masquerait ces faits.
-// Les indicateurs mono-dimension gardent la sémantique historique (D6).
-const masqueraitDesFaits = async (parentId: string, referentielId: string): Promise<boolean> => {
-  const faits = { coordonnees: { some: { individuId: parentId } } }
-  const indicateurs = await db().indicateur.findMany({
-    where: {
-      referentiels: { some: { referentielId, fonctionAgregation: { not: 'NONE' } } },
-      OR: [{ valeurs: { some: { cellule: faits } } }, { objectifs: { some: { cellule: faits } } }],
-    },
-    select: { _count: { select: { dimensions: true } } },
+// Le contrôle porte sur le parent ET ses ancêtres : si le parent est d'un
+// niveau non déclaré par l'indicateur, c'est son plus proche ancêtre déclaré
+// qui gagne l'enfant. Les indicateurs mono-dimension gardent la sémantique
+// historique (D6).
+const masqueraitDesFaits = async ({
+  parentId,
+  dimensionId,
+}: {
+  parentId: string
+  dimensionId: string
+}): Promise<boolean> => {
+  const ancetres = await loadAncetres({ individuIds: [parentId], dimensionId })
+  const membres = await db().individu.findMany({
+    where: { id: { in: [parentId, ...ancetres] } },
+    select: { id: true, referentielId: true },
   })
-  return indicateurs.some((indicateur) => indicateur._count.dimensions > 1)
+  for (const membre of membres) {
+    const faits = { coordonnees: { some: { individuId: membre.id } } }
+    const indicateurs = await db().indicateur.findMany({
+      where: {
+        referentiels: {
+          some: { referentielId: membre.referentielId, fonctionAgregation: { not: 'NONE' } },
+        },
+        OR: [
+          { valeurs: { some: { cellule: faits } } },
+          { objectifs: { some: { cellule: faits } } },
+        ],
+      },
+      select: { _count: { select: { dimensions: true } } },
+    })
+    if (indicateurs.some((indicateur) => indicateur._count.dimensions > 1)) return true
+  }
+  return false
 }
 
 // Remontée des ancêtres du candidat. Le Set de visités protège des cycles déjà
@@ -61,14 +84,19 @@ const performUpsert = async (
   })
   const parent = await db().individu.findUniqueOrThrow({
     where: { publicId: body.parent },
-    select: { id: true, referentielId: true, referentiel: { select: { dimensionId: true } } },
+    select: { id: true, referentiel: { select: { dimensionId: true } } },
   })
   // Une hiérarchie vit dans une seule dimension (un opérateur n'est jamais
   // parent d'un territoire).
   if (enfant.referentiel.dimensionId !== parent.referentiel.dimensionId) {
     return err({ type: 'DIMENSIONS_DIFFERENTES' })
   }
-  if (await masqueraitDesFaits(parent.id, parent.referentielId)) {
+  if (
+    await masqueraitDesFaits({
+      parentId: parent.id,
+      dimensionId: parent.referentiel.dimensionId,
+    })
+  ) {
     return err({ type: 'FAITS_MASQUES' })
   }
 

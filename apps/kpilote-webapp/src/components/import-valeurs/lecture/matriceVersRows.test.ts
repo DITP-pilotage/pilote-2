@@ -105,6 +105,7 @@ describe('matriceVersRows', () => {
         ['DEPT-84', 'OP-ORANGE', '2025-01-01', 10],
         ['DEPT-13', '', '2025-01-01', 11],
       ],
+      multiDimension: true,
     })
     expect(result).toEqual({
       ok: true,
@@ -121,16 +122,34 @@ describe('matriceVersRows', () => {
     })
   })
 
-  it('mono : une colonne libre (commentaire « OK ») n’est pas une colonne d’identité', () => {
+  it('une colonne libre (commentaire « OK ») n’est pas une colonne d’identité', () => {
     const result = matriceVersRows({
       matrice: [
         ['individu', 'date', 'valeur', 'statut', 'source'],
         ['DEPT-84', '2025-01-01', 10, 'OK', 'INSEE'],
       ],
+      multiDimension: true,
     })
     expect(result).toStrictEqual({
       ok: true,
       rows: [{ individu: 'DEPT-84', date: '2025-01-01', valeur: 10 }],
+    })
+  })
+
+  it('mono : une colonne de publicIds (région) n’est pas une colonne d’identité', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['individu', 'date', 'valeur', 'region'],
+        ['DEPT-84', '2025-01-01', 10, 'REG-11'],
+        ['DEPT-13', '2025-01-01', 11, 'REG-93'],
+      ],
+    })
+    expect(result).toStrictEqual({
+      ok: true,
+      rows: [
+        { individu: 'DEPT-84', date: '2025-01-01', valeur: 10 },
+        { individu: 'DEPT-13', date: '2025-01-01', valeur: 11 },
+      ],
     })
   })
 
@@ -141,6 +160,7 @@ describe('matriceVersRows', () => {
         ['DEPT-84', '2025-01-01', 10, 'OP-ORANGE'],
         ['DEPT-13', '2025-01-01', 11, 'à vérifier'],
       ],
+      multiDimension: true,
     })
     expect(result.ok && result.colonnesIdentite).toBe(undefined)
   })

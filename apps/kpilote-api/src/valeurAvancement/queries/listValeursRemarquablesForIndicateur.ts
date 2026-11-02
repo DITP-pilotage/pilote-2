@@ -79,7 +79,12 @@ const buildStats = async ({
     cellules: referentiels.flatMap((r) => r.individus.map((i) => celluleDe(r, i))),
     dateTrunc,
   })
-  const noeudParCellule = new Map(cibles.map((cible) => [cible.publicId, cible]))
+  // Deux référentiels de dimensions différentes avec `fixe` produisent des
+  // chaînes équivalentes dans un ordre différent (`DEPT-84~OP-X` et
+  // `OP-X~DEPT-84`) ; le chargeur n'en garde qu'une : indexer par l'ensemble
+  // des membres, sans ordre.
+  const cleMembres = (cellule: string) => parseCelluleId(cellule).sort().join('~')
+  const noeudParCellule = new Map(cibles.map((cible) => [cleMembres(cible.publicId), cible]))
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const items: ValeursRemarquablesListApiModel['items'] = []
@@ -88,7 +93,7 @@ const buildStats = async ({
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
       const cellule = celluleDe(referentiel, individu)
-      const noeud = noeudParCellule.get(cellule)
+      const noeud = noeudParCellule.get(cleMembres(cellule))
       if (!noeud) continue
       const dernierPoint = (await resolveSerieIndividu(noeud.id, ctx, cache)).at(-1)
       if (!dernierPoint) continue

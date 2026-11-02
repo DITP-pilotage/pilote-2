@@ -153,6 +153,20 @@ const listeAvecSeulementDesEntitesAjoutees = (obtenu: unknown, attendu: unknown)
   )
 }
 
+// Certaines requêtes historiques n'ont pas d'ORDER BY (ex. `indicateur.findMany` de
+// `listDernieresValeursForIndividu`) : l'ordre suit l'ordre physique des lignes en
+// base, que n'importe quel UPDATE peut déplacer. Mêmes éléments, ordre différent.
+const memesItemsDansUnAutreOrdre = (obtenu: unknown, attendu: unknown): boolean => {
+  const o = obtenu as Liste
+  const a = attendu as Liste
+  if (!Array.isArray(o.body?.items) || !Array.isArray(a.body?.items)) return false
+  const trier = (items: unknown[]) => items.map((item) => JSON.stringify(item)).sort()
+  return (
+    o.status === a.status &&
+    JSON.stringify(trier(o.body.items)) === JSON.stringify(trier(a.body.items))
+  )
+}
+
 // Vrai si `obtenu` contient `attendu` à l'identique, en n'ajoutant que des clés
 // d'objet (tableaux : même longueur, éléments comparés deux à deux).
 const contientStrictement = (obtenu: unknown, attendu: unknown): boolean => {
@@ -247,6 +261,7 @@ const main = async () => {
   const differences: string[] = []
   const ajouts: string[] = []
   const entitesAjoutees: string[] = []
+  const ordreSeul: string[] = []
   for (const [path, attendu] of Object.entries(reference)) {
     const obtenu = courant[path]
     if (!obtenu) differences.push(`ABSENT ${path}`)
@@ -254,17 +269,24 @@ const main = async () => {
     else if (contientStrictement(obtenu, attendu)) ajouts.push(`AJOUT ${path}`)
     else if (listeAvecSeulementDesEntitesAjoutees(obtenu, attendu)) {
       entitesAjoutees.push(`ENTITES ${path}`)
+    } else if (memesItemsDansUnAutreOrdre(obtenu, attendu)) {
+      ordreSeul.push(`ORDRE ${path}`)
     } else differences.push(`DIFF ${path}`)
   }
   const identiques =
-    Object.keys(reference).length - differences.length - ajouts.length - entitesAjoutees.length
+    Object.keys(reference).length -
+    differences.length -
+    ajouts.length -
+    entitesAjoutees.length -
+    ordreSeul.length
   console.log(
     `${Object.keys(reference).length} requêtes comparées : ${identiques} identiques, ` +
       `${ajouts.length} avec uniquement des champs ajoutés, ` +
       `${entitesAjoutees.length} listes avec uniquement des entités ajoutées, ` +
+      `${ordreSeul.length} avec les mêmes éléments dans un autre ordre (liste sans ORDER BY), ` +
       `${differences.length} différence(s).`,
   )
-  for (const a of [...ajouts, ...entitesAjoutees]) console.log(`  ${a}`)
+  for (const a of [...ajouts, ...entitesAjoutees, ...ordreSeul]) console.log(`  ${a}`)
   for (const d of differences) console.log(`  ${d}`)
   process.exitCode = differences.length === 0 ? 0 : 1
 }

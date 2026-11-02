@@ -87,4 +87,27 @@ describe.concurrent('commentaires — cellules multi-dimension', () => {
       ).rejects.toMatchObject({ code: 'VALIDATION_ERROR' })
     }),
   )
+
+  it(
+    'ordre historique des erreurs : individu inconnu (404) avant permission absente (403)',
+    integrationTest(async () => {
+      const cube = await fixtures.cubeTerritoireOperateur()
+      // Lecture seule : pas de WRITE_COMMENT.
+      const apiKey = await fixtures.apiKey({
+        permissions: [
+          { indicateur: { publicId: cube.indicateur }, action: IndicateurPermissionAction.READ },
+        ],
+      })
+      const creer = (individuId: string) =>
+        runAsPrincipal(apiKey.id, () =>
+          creerIndicateurIndividuCommentaire({
+            params: { indicateurId: cube.indicateur, individuId },
+            body: { type: 'DEFAUT', contenu: '<p>x</p>', statut: 'PUBLIE' },
+          }),
+        )
+
+      await expect(creer('DEPT-INCONNU')).rejects.toMatchObject({ code: 'P2025' })
+      await expect(creer(cube.deptA)).rejects.toMatchObject({ code: 'FORBIDDEN' })
+    }),
+  )
 })

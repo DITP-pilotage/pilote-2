@@ -27,9 +27,62 @@ const detectConflicts = async (
   return conflicts.map((row) => row.publicId)
 }
 
+// Changer la dimension d'un référentiel ne doit ni casser des cellules
+// existantes, ni faire passer en silence un indicateur mono-dimension en multi
+// (ses niveaux se répartiraient sur deux dimensions), ni couper une hiérarchie
+// (une `Relation` relierait deux dimensions). Chaque cas est refusé (409).
+const verifierChangementDimension = async ({
+  referentielId,
+  ancienneDimensionId,
+}: {
+  referentielId: string
+  ancienneDimensionId: string
+}): Promise<void> => {
+  const autreReferentielAncienneDimension = {
+    referentielId: { not: referentielId },
+    referentiel: { dimensionId: ancienneDimensionId },
+  }
+  const [cellules, indicateursPartages, relations] = await Promise.all([
+    db().celluleCoordonnee.count({ where: { individu: { referentielId } } }),
+    db().indicateur.count({
+      where: {
+        AND: [
+          { referentiels: { some: { referentielId } } },
+          { referentiels: { some: autreReferentielAncienneDimension } },
+        ],
+      },
+    }),
+    db().relation.count({
+      where: {
+        OR: [
+          { parent: { referentielId }, child: autreReferentielAncienneDimension },
+          { child: { referentielId }, parent: autreReferentielAncienneDimension },
+        ],
+      },
+    }),
+  ])
+  if (cellules > 0) {
+    throw new ConflictError(
+      'Changement de dimension refusé : des cellules référencent déjà les individus de ce référentiel.',
+    )
+  }
+  if (indicateursPartages > 0) {
+    throw new ConflictError(
+      "Changement de dimension refusé : un indicateur déclare ce référentiel avec d'autres niveaux de sa dimension actuelle (il deviendrait multi-dimension).",
+    )
+  }
+  if (relations > 0) {
+    throw new ConflictError(
+      "Changement de dimension refusé : des relations relient ses individus à d'autres niveaux de sa dimension actuelle.",
+    )
+  }
+}
+
 // Dimension du référentiel (cf. dimensions-design.md) :
 // - fournie : elle doit exister ; la changer sur un référentiel existant est
-//   refusé si ses individus sont déjà coordonnées de cellules (faits, commentaires) ;
+//   refusé si ses individus sont déjà coordonnées de cellules (faits,
+//   commentaires), s'il partage un indicateur ou une hiérarchie avec d'autres
+//   niveaux de sa dimension actuelle ;
 // - absente à la création : une dimension dédiée `DIM-<slug>` est créée ;
 // - absente à la mise à jour : inchangée (retourne undefined).
 const resoudreDimension = async ({
@@ -51,14 +104,10 @@ const resoudreDimension = async ({
     if (referentielId) {
       const actuel = await db().referentiel.findUniqueOrThrow({ where: { id: referentielId } })
       if (actuel.dimensionId !== dimension.id) {
-        const utilises = await db().celluleCoordonnee.count({
-          where: { individu: { referentielId } },
+        await verifierChangementDimension({
+          referentielId,
+          ancienneDimensionId: actuel.dimensionId,
         })
-        if (utilises > 0) {
-          throw new ConflictError(
-            'Changement de dimension refusé : des cellules référencent déjà les individus de ce référentiel.',
-          )
-        }
       }
     }
     return dimension.id

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { indicateurQueryOptions } from '@/queries/indicateurs'
 import { normaliserValeursQueryOptions } from '@/queries/valeursNormaliser'
 import { fichierVersMatrice } from './lecture/fichierVersMatrice'
 import { matriceVersRows, type ParsedRow, type ParseResult } from './lecture/matriceVersRows'
@@ -29,11 +30,18 @@ export function useImportValeurs({
     enabled: file != null,
   })
 
-  const lecture = matriceQuery.data
+  // Les colonnes d'identité supplémentaires ne sont détectées que pour un
+  // indicateur multi-dimension (déjà en cache sur la fiche indicateur). Tant
+  // qu'il n'est pas connu, la lecture reste en cours ; en cas d'échec, sortie
+  // mono historique.
+  const indicateurQuery = useQuery(indicateurQueryOptions(indicateurId))
+  const multiDimension = (indicateurQuery.data?.dimensions.length ?? 0) > 1
+
+  const lecture = indicateurQuery.isPending ? undefined : matriceQuery.data
   const parseResult: ParseResult | undefined = !lecture
     ? undefined
     : lecture.ok
-      ? matriceVersRows({ matrice: lecture.matrice })
+      ? matriceVersRows({ matrice: lecture.matrice, multiDimension })
       : { ok: false, error: { code: 'UNREADABLE' } }
 
   // Records dérivés seulement pour un fichier hors format standard (colonnes
@@ -59,7 +67,7 @@ export function useImportValeurs({
 
   const etat = deriverEtatImport({
     file,
-    lectureEnCours: file != null && matriceQuery.isPending,
+    lectureEnCours: file != null && (matriceQuery.isPending || indicateurQuery.isPending),
     parseResult,
     albert,
   })

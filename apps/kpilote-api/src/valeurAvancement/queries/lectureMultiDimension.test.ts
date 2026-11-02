@@ -436,6 +436,38 @@ describe.concurrent('lecture multi-dimension — tranches et synthèse', () => {
   )
 
   it(
+    'valeurs remarquables avec `fixe` sur deux dimensions : la cellule commune compte pour chaque référentiel',
+    integrationTest(async () => {
+      const { cube, apiKey } = await peupler()
+
+      // `DEPT-A~ORANGE` (référentiel DEPT) et `ORANGE~DEPT-A` (référentiel OP)
+      // désignent la même cellule.
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(cube.indicateur, {
+          referentiels: [cube.refDept, cube.refOp],
+          fixe: `${cube.deptA}~${cube.orange}`,
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items.find((item) => item.referentiel === cube.refDept)).toMatchObject({
+        min: 5,
+        max: 10,
+        mediane: 7.5,
+      })
+      expect(items.find((item) => item.referentiel === cube.refOp)).toMatchObject({
+        min: 10,
+        max: 20,
+        mediane: 15,
+        contributions: [
+          { individu: `${cube.orange}~${cube.deptA}`, valeur: 10 },
+          { individu: `${cube.sfr}~${cube.deptA}`, valeur: 20 },
+        ].sort((a, b) => a.individu.localeCompare(b.individu)),
+      })
+    }),
+  )
+
+  it(
     'valeurs remarquables sans `fixe` : population = marginales (tous opérateurs)',
     integrationTest(async () => {
       const { cube, apiKey } = await peupler()

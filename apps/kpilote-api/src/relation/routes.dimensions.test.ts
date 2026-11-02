@@ -89,6 +89,27 @@ describe.concurrent('PUT /relations/{id} — dimensions', () => {
   )
 
   it(
+    'FAITS_MASQUES (409) : le parent est d’un niveau non déclaré, son ancêtre déclaré porte des faits',
+    integrationTest(async () => {
+      const cube = await fixtures.cubeTerritoireOperateur()
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: cube.indicateur },
+        individus: [{ publicId: cube.deptA }, { publicId: cube.orange }],
+      })
+      // Canton (niveau non déclaré par l'indicateur) sous DEPT-A.
+      const canton = await commune()
+      await fixtures.relation({ parent: { publicId: cube.deptA }, child: { publicId: canton } })
+      const enfant = await commune()
+      const rawKey = await admin()
+
+      const response = await rattacher(enfant, canton, rawKey)
+
+      expect(response.status).toBe(409)
+      expect(await response.json()).toMatchObject({ code: 'FAITS_MASQUES' })
+    }),
+  )
+
+  it(
     'accepte la relation quand le parent ne porte pas de faits (DEPT-B)',
     integrationTest(async () => {
       const cube = await fixtures.cubeTerritoireOperateur()

@@ -59,9 +59,18 @@ const estColonneIdentite = ({ lignes, index }: { lignes: unknown[][]; index: num
 }
 
 // Projection stricte d'une matrice de cellules vers des lignes normalisées.
-// Attend les colonnes individu, date, valeur (ordre et casse libres), plus
-// d'éventuelles colonnes d'identité (indicateur multi-dimension, ex. operateur).
-export function matriceVersRows({ matrice }: { matrice: unknown[][] }): ParseResult {
+// Attend les colonnes individu, date, valeur (ordre et casse libres), plus,
+// pour un indicateur multi-dimension seulement, d'éventuelles colonnes
+// d'identité (ex. operateur). Pour un indicateur mono-dimension, les colonnes
+// supplémentaires sont ignorées, même si elles ressemblent à des publicIds
+// (ex. une colonne `region` à REG-11) : sortie historique.
+export function matriceVersRows({
+  matrice,
+  multiDimension = false,
+}: {
+  matrice: unknown[][]
+  multiDimension?: boolean
+}): ParseResult {
   const [ligneEntetes, ...lignesSuivantes] = matrice
   if (ligneEntetes === undefined) return { ok: false, error: { code: 'EMPTY' } }
 
@@ -90,11 +99,15 @@ export function matriceVersRows({ matrice }: { matrice: unknown[][] }): ParseRes
   }
 
   const reservees = new Set<number>([indices.individu, indices.date, indices.valeur])
-  const indicesIdentite = entetes.flatMap((entete, index) =>
-    entete.length > 0 && !reservees.has(index) && estColonneIdentite({ lignes: lignesData, index })
-      ? [index]
-      : [],
-  )
+  const indicesIdentite = multiDimension
+    ? entetes.flatMap((entete, index) =>
+        entete.length > 0 &&
+        !reservees.has(index) &&
+        estColonneIdentite({ lignes: lignesData, index })
+          ? [index]
+          : [],
+      )
+    : []
 
   const rows = lignesData.map((ligne) =>
     rowSchema.parse({

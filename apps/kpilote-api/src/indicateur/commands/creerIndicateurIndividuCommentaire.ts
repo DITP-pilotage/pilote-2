@@ -25,13 +25,9 @@ type Params = { indicateurId: string; individuId: string }
 // plus un par dimension. Comme l'historique, on ne vérifie pas que le membre
 // appartient à un niveau déclaré de l'indicateur (incohérence connue, documentée
 // dans dimensions-design.md, conservée pour ne pas changer le mono-dimension).
-const resoudreCelluleCommentaire = async ({
-  indicateurId,
-  celluleId,
-}: {
-  indicateurId: string
-  celluleId: string
-}): Promise<string> => {
+// Résolus avant le contrôle de permission (ordre historique : 404 puis 403) ;
+// la cellule n'est créée qu'ensuite.
+const resoudreCelluleCommentaire = async (celluleId: string) => {
   const publicIds = parseCelluleId(celluleId)
   const membres = await Promise.all(
     publicIds.map((publicId) =>
@@ -47,13 +43,11 @@ const resoudreCelluleCommentaire = async ({
       individuId: celluleId,
     })
   }
-  const cellule = {
+  return {
     cle: cleCellule(membres.map((m) => m.id)),
     publicId: celluleId,
     coordonnees: membres.map((m) => ({ dimensionId: m.referentiel.dimensionId, individuId: m.id })),
   }
-  const ids = await ensureCellules({ indicateurId, cellules: [cellule] })
-  return ids.get(cellule.cle)!
 }
 
 export const indicateurIndividuConfig: SujetCommentaireConfig<Params> = {
@@ -66,14 +60,21 @@ export const indicateurIndividuConfig: SujetCommentaireConfig<Params> = {
       }),
     )
       .andThen((indicateur) =>
-        ensureIndicateurWriteCommentPermission({ indicateurId: indicateur.id, principalId }).map(
-          () => indicateur,
-        ),
+        ResultAsync.fromSafePromise(resoudreCelluleCommentaire(individuId)).map((cellule) => ({
+          indId: indicateur.id,
+          cellule,
+        })),
       )
-      .andThen((indicateur) =>
+      .andThen(({ indId, cellule }) =>
+        ensureIndicateurWriteCommentPermission({ indicateurId: indId, principalId }).map(() => ({
+          indId,
+          cellule,
+        })),
+      )
+      .andThen(({ indId, cellule }) =>
         ResultAsync.fromSafePromise(
-          resoudreCelluleCommentaire({ indicateurId: indicateur.id, celluleId: individuId }),
-        ).map((celluleId) => ({ indId: indicateur.id, celluleId })),
+          ensureCellules({ indicateurId: indId, cellules: [cellule] }),
+        ).map((ids) => ({ indId, celluleId: ids.get(cellule.cle)! })),
       )
       .map(({ indId, celluleId }) => ({
         principalId,

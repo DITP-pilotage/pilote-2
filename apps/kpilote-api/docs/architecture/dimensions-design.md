@@ -535,16 +535,16 @@ cœurs existants `resolveSerieIndividu` et `resolveObjectifIndividu`.
 ### 5.8 Rétrocompatibilité
 
 - Indicateur mono-dimension : chemin historique, sémantique gelée.
-- Preuve : `scripts/poc-dimensions/snapshotLecture.ts` rejoue 785 requêtes de lecture sur le seed
-  historique (valeurs, objectifs, taux, synthèse, valeurs remarquables, dernières valeurs,
-  collections, référentiels…) et compare avec la capture faite avant tout changement. Résultat :
-  - 733 réponses identiques ;
-  - 52 réponses qui n'ont **que** des champs ajoutés (`dimensions` sur `/indicateurs`, `dimension` sur
-    `/referentiels`) ;
-  - 0 différence.
+- Preuve : `scripts/poc-dimensions/snapshotLecture.ts` rejoue 785 requêtes de lecture sur le seed historique (valeurs, objectifs, taux, synthèse, valeurs remarquables, dernières valeurs, collections, référentiels…). Il les compare à la capture faite **avant** tout changement de code (`.poc-evidence/snapshot-lecture-avant.json`).
+- Juste après la migration des données : 733 réponses identiques, 52 avec uniquement des champs ajoutés (`dimensions`, `dimension`), 0 différence.
+- Après le seed multi et tous les correctifs (état final), 0 différence :
+  - 724 réponses identiques ;
+  - 50 avec uniquement des champs ajoutés ;
+  - 5 listes globales qui n'ont **que** des entités ajoutées par les nouveaux jeux ;
+  - 6 avec les mêmes éléments dans un autre ordre : `/individus/{id}/dernieres-valeurs` et `/individus/{id}/taux-progression/indicateurs`, dont la requête historique `indicateur.findMany` n'a pas d'`ORDER BY`. Leur ordre suit l'ordre physique des lignes, qu'un UPDATE quelconque déplace. Ce comportement n'est pas défini par le contrat, et il est inchangé dans le code.
 - pilote-ppg :
-  - `valeurs:batch {individu,date,valeur}` est inchangé (erreurs comprises) ;
-  - `PUT /indicateurs` avec `referentiels[]` fait un replace-all exact sur un indicateur mono.
+  - `valeurs:batch {individu,date,valeur}` est inchangé, erreurs comprises (rejeu testé dans `valeurAvancement/routes.test.ts`) ;
+  - `PUT /indicateurs` avec `referentiels[]` fait un replace-all exact sur un indicateur mono (`indicateur/routes.test.ts`).
 
 ### 5.9 Import Albert
 
@@ -635,6 +635,14 @@ Le brief §3.6 demande de documenter les options avant d'écrire du code transve
 - **Déploiement** : expand/contract sur `cellule_id`. Non nécessaire pour le POC.
 - **Membres techniques dans un arbre partagé** : règle d'administration, sans garde automatique.
 - **Collections** : la règle « non applicable » ne s'active que si la collection contient un indicateur multi-dimension. Ajouter un tel indicateur peut donc faire passer un autre indicateur de « null bloquant » à « exclu » (discontinuité assumée pour garder l'historique exact).
+- **Flux d'administration historiques qui ignorent `dimension`** :
+  - un référentiel créé sans `dimension` reçoit une dimension dédiée ;
+  - le relier ensuite à un territoire renvoie `DIMENSIONS_DIFFERENTES` ;
+  - le co-déclarer avec REF-DEPT exige `dimensions[]`.
+
+  Il faut alors préciser la dimension à la création (l'admin le propose). pilote-ppg n'est pas concerné.
+
+- **Décomposition du graphique (webapp)** : avec des niveaux non déclarés intermédiaires (NAT + DEPT sans REG), elle utilise les parents bruts. Le calcul API les saute correctement ; seul le choix des séries proposées est imparfait.
 - **Héritées de l'existant**, non corrigées :
   - la création de commentaire ne vérifie pas le lien membre ↔ indicateur ;
   - `listObjectifsForIndicateur` annonce un filtre qu'il n'applique pas.
@@ -659,22 +667,24 @@ Le brief §3.6 demande de documenter les options avant d'écrire du code transve
 ### 10.1 Exemple seedé
 
 **Avant (contournement)** :
+
 - un indicateur mono-territoire par opérateur, `IND-111` à `IND-115` (« Lignes fibre raccordées — <Opérateur> »), chacun avec ses objectifs au grain département ;
 - la collection `COL-010` qui les regroupe (pondération 1).
 
 **Après (dimension)** :
+
 - `IND-101` « Lignes fibre raccordées », Territoire × Opérateur, avec les mêmes valeurs au grain (département, opérateur) ;
 - un objectif par département égal à la somme des objectifs des opérateurs ;
 - cube creux : OP-REGIONAL présent dans 10 départements seulement, OP-FREE absent des DROM.
 
 Preuve, au dernier point 2026-06, obtenue avec `pnpm tsx scripts/poc-dimensions/comparerContournement.ts` :
 
-| Cellule | Taux par opérateur (indicateurs séparés) | COL-010 (moyenne des taux) | IND-101 (taux de la somme) | Valeur IND-101 = Σ IND-111..115 |
-|---|---|---|---|---|
-| DEPT-29 | Orange 87,14 · SFR 83,05 · Free 100,00 (107,26 non plafonné) · Bouygues 75,41 · Régional 85,83 | 86,28 % | **87,40 %** (11 340 / 12 974) | 11 340 = 11 340 |
-| DEPT-13 (sans régional) | … · Régional null | **null** (tout-ou-rien) | **87,30 %** | 32 986 = 32 986 |
-| DEPT-974 (ni Free ni régional) | 2 opérateurs null | **null** | **82,74 %** | 28 808 = 28 808 |
-| NAT-FR | Free et Régional : objectif national non dérivable (strict) | **null** | **86,07 %** (2 750 325 / 3 195 086) | 2 750 325 = 2 750 325 |
+| Cellule                        | Taux par opérateur (indicateurs séparés)                                                       | COL-010 (moyenne des taux) | IND-101 (taux de la somme)          | Valeur IND-101 = Σ IND-111..115 |
+| ------------------------------ | ---------------------------------------------------------------------------------------------- | -------------------------- | ----------------------------------- | ------------------------------- |
+| DEPT-29                        | Orange 87,14 · SFR 83,05 · Free 100,00 (107,26 non plafonné) · Bouygues 75,41 · Régional 85,83 | 86,28 %                    | **87,40 %** (11 340 / 12 974)       | 11 340 = 11 340                 |
+| DEPT-13 (sans régional)        | … · Régional null                                                                              | **null** (tout-ou-rien)    | **87,30 %**                         | 32 986 = 32 986                 |
+| DEPT-974 (ni Free ni régional) | 2 opérateurs null                                                                              | **null**                   | **82,74 %**                         | 28 808 = 28 808                 |
+| NAT-FR                         | Free et Régional : objectif national non dérivable (strict)                                    | **null**                   | **86,07 %** (2 750 325 / 3 195 086) | 2 750 325 = 2 750 325           |
 
 ### 10.2 Ce qui change dans les chiffres
 
@@ -688,3 +698,33 @@ Preuve, au dernier point 2026-06, obtenue avec `pnpm tsx scripts/poc-dimensions/
    - le **cloisonnement en lecture** par indicateur, auparavant implicite : un opérateur voit désormais la marginale (§8).
 
    Le cloisonnement en écriture est conservé (§5.10).
+
+## 11. Revue adversariale du diff final
+
+Un sous-agent indépendant a relu `git diff eed13bc10..HEAD`, en lecture seule, à partir des
+tests et de scripts purs. Il ne relève **aucun bloquant**.
+
+| #   | Gravité | Constat                                                                                                                                             | Suite donnée                                                                                                                                          |
+| --- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Majeur  | Un **niveau ajouté** sous un niveau à faits (ex. COMMUNE sous DEPT) masque ces faits (marginale DEPT vide).                                         | Corrigé : le verrou feuille-à-faits couvre aussi les niveaux ajoutés (409). Test ajouté.                                                              |
+| 2   | Majeur  | Changer la dimension d'un référentiel peut faire basculer en silence un indicateur mono en multi, et casser pilote-ppg.                             | Corrigé : refus (409) si le référentiel est co-déclaré avec un autre niveau de l'ancienne dimension, ou relié par `Relation` à celle-ci. Test ajouté. |
+| 3   | Majeur  | Import webapp : sur un indicateur mono, une colonne supplémentaire qui ressemble à des publicIds envoie `coordonnees`, ce qui casse le mono.        | Corrigé : la détection n'est active que pour les indicateurs multi-dimension. Test ajouté.                                                            |
+| 4   | Mineur  | Valeurs remarquables multi-référentiels avec `fixe` : un membre disparaît (index sur la chaîne exacte).                                             | Corrigé : index sur les membres triés. Test ajouté.                                                                                                   |
+| 5   | Mineur  | Verrou `porteObjectifs` contourné par le repli sur la première dimension.                                                                           | Corrigé : au moins une dimension porte les objectifs en multi, et on compare le sous-cube effectif. Test ajouté.                                      |
+| 6   | Mineur  | Migration 140000 : `perimetre_restreint` n'est pas recalculé depuis les lignes existantes (fail-open si les migrations sont appliquées séparément). | Corrigé : migration `20261102150000_perimetre_recalcul`.                                                                                              |
+| 7   | Mineur  | `FAITS_MASQUES` ne regarde que le parent direct.                                                                                                    | Corrigé : contrôle étendu aux ancêtres. Test ajouté.                                                                                                  |
+| 8   | Mineur  | Flux historiques qui ignorent `dimension` (référentiel, relation, co-déclaration).                                                                  | Documenté (§8).                                                                                                                                       |
+| 9   | Mineur  | Commentaire : 403 avant 404 (ordre des erreurs inversé).                                                                                            | Corrigé : ordre historique rétabli. Test ajouté.                                                                                                      |
+| 10  | Mineur  | Décomposition webapp et niveaux non déclarés.                                                                                                       | Documenté (§8).                                                                                                                                       |
+
+Points écartés après vérification par le relecteur :
+
+- clés canoniques ;
+- mono identique (lectures, batch, `PUT /indicateurs`) ;
+- transactions et concurrence ;
+- périmètre fail-closed ;
+- SQL paramétré ;
+- migrations sans perte de données ;
+- absence de boucle de redirection ;
+- clés React Query ;
+- payload admin mono.

@@ -4,6 +4,7 @@ import { ConflictError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type Prisma } from '@/generated/prisma/client'
 import { type FonctionAgregation } from '@/generated/prisma/enums'
+import { loadAncetres } from '@/relation/queries/loadAncetres'
 
 // Règles de `PUT /indicateurs/{id}` sur les niveaux et dimensions (cf.
 // dimensions-design.md « Ce qu'un indicateur déclare ») :
@@ -16,7 +17,9 @@ import { type FonctionAgregation } from '@/generated/prisma/enums'
 // - dès 2 dimensions, chaque dimension sans configuration doit être décrite
 //   dans `dimensions[]` (ordre, fonction de la marginale, grain des objectifs) :
 //   l'ordre n'est jamais déduit de l'ordre du payload ;
-// - `porteObjectifs` n'est modifiable que si l'indicateur n'a aucun objectif.
+// - `porteObjectifs` n'est modifiable que si l'indicateur n'a aucun objectif ;
+//   en multi, au moins une dimension doit le porter, et le sous-cube effectif
+//   des objectifs ne peut changer si l'indicateur a des objectifs.
 
 export type NiveauDemande = {
   referentielId: string
@@ -119,7 +122,14 @@ export const planifierDimensionsIndicateur = async ({
     const demandee = demandees.get(dimensionId)
     const existante = existantesParDimension.get(dimensionId)
     if (demandee) {
-      if (existante && existante.porteObjectifs !== demandee.porteObjectifs && nbObjectifs > 0) {
+      // Mono-dimension : drapeau brut (historique). Multi : sous-cube effectif,
+      // contrôlé plus bas.
+      if (
+        dimensionsApres.size <= 1 &&
+        existante &&
+        existante.porteObjectifs !== demandee.porteObjectifs &&
+        nbObjectifs > 0
+      ) {
         throw new ConflictError(
           "Changement du grain des objectifs refusé : l'indicateur porte déjà des objectifs.",
         )
@@ -157,6 +167,26 @@ export const planifierDimensionsIndicateur = async ({
   if (new Set(configurations.map((c) => c.ordre)).size !== configurations.length) {
     throw new ValidationError('Les dimensions doivent avoir des `ordre` distincts', {})
   }
+  if (configurations.length > 1 && !configurations.some((c) => c.porteObjectifs)) {
+    throw new ValidationError(
+      'Indicateur multi-dimension : au moins une dimension doit porter les objectifs (`porteObjectifs`)',
+      {},
+    )
+  }
+  // Le drapeau brut ne suffit pas : à défaut de dimension `porteObjectifs`, le
+  // sous-cube se replie sur la première par ordre (cf. `dimensionsObjectifs`).
+  if (
+    nbObjectifs > 0 &&
+    dimensionsApres.size > 1 &&
+    !memesDimensions(
+      sousCubeObjectifsEffectif(configurationsExistantes),
+      sousCubeObjectifsEffectif(configurations),
+    )
+  ) {
+    throw new ConflictError(
+      "Changement du grain des objectifs refusé : l'indicateur porte déjà des objectifs.",
+    )
+  }
   if (indicateurId && aDesFaits && dimensionsApres.size > 1) {
     await verrouillerFeuillesAFaits({
       indicateurId,
@@ -172,6 +202,20 @@ export const planifierDimensionsIndicateur = async ({
   return { niveaux, configurations }
 }
 
+// Même règle que `dimensionsObjectifs` (loadIndicateurDimensions.ts), sur les
+// configurations brutes.
+const sousCubeObjectifsEffectif = (
+  configurations: ReadonlyArray<ConfigurationDimension>,
+): Set<string> => {
+  const portees = configurations.filter((c) => c.porteObjectifs)
+  const effectives =
+    portees.length > 0 ? portees : [...configurations].sort((a, b) => a.ordre - b.ordre).slice(0, 1)
+  return new Set(effectives.map((c) => c.dimensionId))
+}
+
+const memesDimensions = (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean =>
+  a.size === b.size && [...a].every((dimensionId) => b.has(dimensionId))
+
 const compterFaits = async (indicateurId: string, cellule: Prisma.CelluleWhereInput) => {
   const where = { indicateurId, cellule }
   const [valeurs, objectifs] = await Promise.all([
@@ -185,7 +229,9 @@ const compterFaits = async (indicateurId: string, cellule: Prisma.CelluleWhereIn
 // modification de configuration ne doit jamais rendre agrégée — donc masquer —
 // une cellule qui porte des faits. Refusé (409) : retirer un niveau à faits,
 // passer un niveau à faits de NONE à SUM/AVG, passer une marginale de NONE à
-// SUM/AVG alors que des faits sont saisis sur cette marginale.
+// SUM/AVG alors que des faits sont saisis sur cette marginale, ajouter un
+// niveau dont les individus descendent d'un membre agrégeable à faits (ce
+// membre gagnerait des enfants sans support).
 const verrouillerFeuillesAFaits = async ({
   indicateurId,
   niveauxAvant,
@@ -211,6 +257,36 @@ const verrouillerFeuillesAFaits = async ({
     if (faits > 0) {
       throw new ConflictError(
         'Modification refusée : elle masquerait des faits saisis sur un niveau (retrait du niveau, ou passage de NONE à une agrégation).',
+      )
+    }
+  }
+  const avantParNiveau = new Set(niveauxAvant.map((n) => n.referentielId))
+  // Un membre d'un niveau NONE reste une feuille même avec des enfants : seuls
+  // les ancêtres d'un niveau agrégeable (après modification) seraient masqués.
+  const niveauxAgreges = niveauxApres
+    .filter((n) => n.fonctionAgregation !== 'NONE')
+    .map((n) => n.referentielId)
+  for (const ajoute of niveauxApres.filter((n) => !avantParNiveau.has(n.referentielId))) {
+    const individus = await db().individu.findMany({
+      where: { referentielId: ajoute.referentielId },
+      select: { id: true },
+    })
+    const ancetres = await loadAncetres({
+      individuIds: individus.map((individu) => individu.id),
+      dimensionId: ajoute.dimensionId,
+    })
+    if (ancetres.size === 0) continue
+    const faits = await compterFaits(indicateurId, {
+      coordonnees: {
+        some: {
+          individuId: { in: [...ancetres] },
+          individu: { referentielId: { in: niveauxAgreges } },
+        },
+      },
+    })
+    if (faits > 0) {
+      throw new ConflictError(
+        "Ajout du niveau refusé : il masquerait des faits saisis sur l'un de ses membres parents (qui deviendraient agrégés).",
       )
     }
   }
