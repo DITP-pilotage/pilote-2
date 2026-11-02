@@ -1,5 +1,10 @@
 # Albert : indicateurs sans VI ou sans VC (PIL-1939)
 
+> Renommage décidé après coup : `get_indicateurs_non_a_jour` devient
+> `get_valeurs_avancement_non_a_jour`, et `get_indicateurs_sans_vi_vc` devient
+> `get_valeurs_initiales_cibles_manquantes`. Les queries gardent leur nom. Le
+> reste du document garde les anciens noms.
+
 Date : 2026-11-02
 
 Branche stackée sur `feat/albert-indicateurs-non-a-jour-rationalisation`
@@ -169,9 +174,10 @@ restent justes, et réutilise `indicateursPubliesWhere`.
 
 | Demande | Comportement |
 |---|---|
-| « Quels sont les indicateurs à mettre à jour ? », « non à jour », « retard de mise à jour », « données périmées », sans précision dans les échanges | `clarify_with_choices` avant toute recherche, y compris pour un seul indicateur |
+| « Quels sont les indicateurs à mettre à jour ? », « non à jour », sans précision dans les échanges | `clarify_with_choices` avant toute recherche, y compris pour un seul indicateur |
+| « données périmées », « retard de mise à jour », « fraîcheur » | `get_indicateurs_non_a_jour` directement : seule une valeur d'avancement peut être périmée |
 | Mention de la valeur actuelle (« VA », « valeur d'avancement », « dernière valeur ») | `get_indicateurs_non_a_jour` directement |
-| « sans cible », « sans VC » | Nouvel outil, `valeurs: "vc"` |
+| « sans cible », « sans VC », « cible à mettre à jour » | Nouvel outil, `valeurs: "vc"` |
 | « sans VI », « sans valeur initiale » | Nouvel outil, `valeurs: "vi"` |
 | « VI ou VC manquantes », « sans VI ni VC » (au sens de « ou ») | Nouvel outil, `valeurs: "vi_et_vc"` |
 | « taux d'avancement non calculé » | Inchangé : pas de routage vers le nouvel outil |
@@ -271,3 +277,9 @@ nouveau run complet : `get_indicateurs_sans_vi_vc` 100 %,
 `get_indicateurs_non_a_jour` 95,2 %, `clarify_with_choices` 80,0 %. Les trois cas
 sous le seuil le restent, et « Quels sont les indicateurs à mettre à jour ? » est à
 2/3 sur ce dernier run.
+
+Découpage et renommage, trois essais par cas, sans run complet des niveaux 2 et 3 :
+« périmé » et « retard de mise à jour » visent la VA sans clarifier, puis les outils
+sont renommés. `clarify_with_choices` passe à 100 %, dont « Quels indicateurs sont
+non à jour sur le CH-018 ? » à 3/3 ; `get_valeurs_avancement_non_a_jour` et
+`get_indicateurs` à 100 % ; `get_valeurs_initiales_cibles_manquantes` à 97,4 %.

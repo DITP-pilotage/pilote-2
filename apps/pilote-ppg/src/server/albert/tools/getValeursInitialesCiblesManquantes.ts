@@ -20,7 +20,7 @@ import {
   type ListesSignalees,
 } from "@/server/albert/tools/rechercheIndicateurs";
 
-export const getIndicateursSansViVcInputSchema = z.object({
+export const getValeursInitialesCiblesManquantesInputSchema = z.object({
   chantier_ids: chantierIdsIndicateursSchema,
   indicateur_ids: indicateurIdsSchema,
   perimetre: perimetreIndicateursSchema,
@@ -40,8 +40,8 @@ export const getIndicateursSansViVcInputSchema = z.object({
     ),
 });
 
-type GetIndicateursSansViVcInput = z.infer<
-  typeof getIndicateursSansViVcInputSchema
+type GetValeursInitialesCiblesManquantesInput = z.infer<
+  typeof getValeursInitialesCiblesManquantesInputSchema
 >;
 
 type ValeurManquante = "valeur initiale" | "valeur cible";
@@ -65,9 +65,9 @@ type ChantierRenvoye = {
   indicateurs: { id: string; nom: string; mailles: MailleRenvoyee[] }[];
 };
 
-export type GetIndicateursSansViVcOutput = ListesSignalees & {
+export type GetValeursInitialesCiblesManquantesOutput = ListesSignalees & {
   jalon: number;
-  detail: GetIndicateursSansViVcInput["detail"];
+  detail: GetValeursInitialesCiblesManquantesInput["detail"];
   detail_trop_volumineux?: true;
   resultats: ChantierRenvoye[];
   acces_refuse?: true;
@@ -151,7 +151,7 @@ function renvoyerChantiers({
   );
 }
 
-export function createGetIndicateursSansViVcTool({
+export function createGetValeursInitialesCiblesManquantesTool({
   getIndicateursSansViVcQuery,
   getIndicateursIdentiteQuery,
   territoireResolver,
@@ -170,7 +170,7 @@ export function createGetIndicateursSansViVcTool({
     return tool({
       description: `Renvoie les indicateurs dont la valeur initiale (VI) ou la valeur cible (VC) manque, par chantier, indicateur et maille, avec le nombre de territoires concernés parmi les territoires applicables et accessibles. Une valeur à 0 est renseignée.
 - Une VC manquante s'entend toujours sur le jalon renvoyé dans \`jalon\`, le jalon en cours : cite-le dans ta réponse, y compris si la demande vise une autre année, sans clarifier. Ce jalon prime sur celui de la session.
-- \`valeurs\` : "vi", "vc", ou "vi_et_vc" quand la demande vise les deux. Distingue toujours les motifs « VI manquante » et « VC manquante » ; un même territoire peut cumuler les deux. Si l'outil est appelé avec get_indicateurs_non_a_jour, rédige une seule synthèse par chantier, indicateur et maille, avec le motif « VA non à jour » en plus.
+- \`valeurs\` : "vi", "vc", ou "vi_et_vc" quand la demande vise les deux. Distingue toujours les motifs « VI manquante » et « VC manquante » ; un même territoire peut cumuler les deux. Si l'outil est appelé avec get_valeurs_avancement_non_a_jour, rédige une seule synthèse par chantier, indicateur et maille, avec le motif « VA non à jour » en plus.
 - \`detail\` : "compteurs" (défaut) pour une question vague ; "territoires" quand la demande nomme les territoires ou le détail. Après des compteurs, propose le détail sur un sous-ensemble, sans le faire d'office.
 - \`derniere_vc_connue\` : écris « Dernière cible connue : 100, jalon 2024 » ; null s'écrit « Aucune valeur cible connue ». Elle contextualise et ne remplace jamais la cible manquante.
 - Liste vide : dis explicitement qu'aucun indicateur ne répond aux critères sur ce périmètre. Cela ne dit rien des taux d'avancement : ne présente pas ce résultat comme la preuve qu'ils sont tous calculables.
@@ -178,12 +178,12 @@ export function createGetIndicateursSansViVcTool({
 - \`acces_refuse\` : l'utilisateur n'a accès ni à ces territoires, ni à aucun des chantiers ou indicateurs demandés.
 - \`chantiers_non_accessibles\`, \`indicateurs_non_accessibles\` : demandés mais hors du périmètre de l'utilisateur ; n'en dis rien d'autre, et ne les présente jamais comme complets.
 - \`indicateurs_introuvables\` : l'identifiant n'existe pas ou n'est pas publié ; dis-le, et ne le présente ni comme complet ni comme incomplet.
-Utilise-le pour : « sans cible », « sans VI », « sans VC », « sans valeur initiale », « valeurs initiales ou cibles manquantes » ; avec get_indicateurs_non_a_jour en parallèle quand la demande vise aussi les valeurs d'avancement.
-Ne l'utilise pas pour : la fraîcheur des valeurs d'avancement → get_indicateurs_non_a_jour ; les chantiers au taux d'avancement non calculé → get_chantiers_signales.`,
-      inputSchema: getIndicateursSansViVcInputSchema,
+Utilise-le pour : « sans cible », « cible à mettre à jour », « sans VI », « sans VC », « sans valeur initiale », « valeur initiale à mettre à jour », « valeurs initiales ou cibles manquantes » ; avec get_valeurs_avancement_non_a_jour en parallèle quand la demande vise aussi les valeurs d'avancement. « Non à jour » ou « à mettre à jour » sans type de valeurs → clarify_with_choices d'abord ; appelle cet outil si l'utilisateur choisit ensuite les VI et VC ou les trois.
+Ne l'utilise pas pour : la fraîcheur des valeurs d'avancement → get_valeurs_avancement_non_a_jour ; les chantiers au taux d'avancement non calculé → get_chantiers_signales.`,
+      inputSchema: getValeursInitialesCiblesManquantesInputSchema,
       execute: async (
-        input: GetIndicateursSansViVcInput,
-      ): Promise<GetIndicateursSansViVcOutput> => {
+        input: GetValeursInitialesCiblesManquantesInput,
+      ): Promise<GetValeursInitialesCiblesManquantesOutput> => {
         const jalon = getAnneeDateDeBascule(
           new Date(),
           configuration().dateBasculeAffichageValeursAnneePrecedente,

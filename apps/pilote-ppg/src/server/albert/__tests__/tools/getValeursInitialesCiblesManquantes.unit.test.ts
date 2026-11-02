@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
-  createGetIndicateursSansViVcTool,
-  getIndicateursSansViVcInputSchema,
-  type GetIndicateursSansViVcOutput,
-} from "@/server/albert/tools/getIndicateursSansViVc";
+  createGetValeursInitialesCiblesManquantesTool,
+  getValeursInitialesCiblesManquantesInputSchema,
+  type GetValeursInitialesCiblesManquantesOutput,
+} from "@/server/albert/tools/getValeursInitialesCiblesManquantes";
 import type {
   GetIndicateursSansViVcQuery,
   LigneIndicateurSansViVc,
@@ -72,7 +72,7 @@ const buildTool = ({
         ? perimetre.territoire_codes
         : ["NAT-FR", "DEPT-29"],
   );
-  const tool = createGetIndicateursSansViVcTool({
+  const tool = createGetValeursInitialesCiblesManquantesTool({
     getIndicateursSansViVcQuery: query,
     getIndicateursIdentiteQuery,
     territoireResolver,
@@ -81,7 +81,9 @@ const buildTool = ({
 };
 
 const executeTool = async (
-  tool: ReturnType<ReturnType<typeof createGetIndicateursSansViVcTool>>,
+  tool: ReturnType<
+    ReturnType<typeof createGetValeursInitialesCiblesManquantesTool>
+  >,
   input: {
     chantier_ids?: string[];
     indicateur_ids?: string[];
@@ -89,13 +91,13 @@ const executeTool = async (
     detail?: "compteurs" | "territoires";
     valeurs?: "vi" | "vc" | "vi_et_vc";
   } = {},
-): Promise<GetIndicateursSansViVcOutput> =>
-  tool.execute!(getIndicateursSansViVcInputSchema.parse(input), {
+): Promise<GetValeursInitialesCiblesManquantesOutput> =>
+  tool.execute!(getValeursInitialesCiblesManquantesInputSchema.parse(input), {
     toolCallId: "test",
     messages: [],
     abortSignal: undefined,
     context: {},
-  }) as Promise<GetIndicateursSansViVcOutput>;
+  }) as Promise<GetValeursInitialesCiblesManquantesOutput>;
 
 const resultatsAvecMaille = (maille: object) => [
   {
@@ -113,7 +115,7 @@ const lignesVc = (nombre: number): LigneIndicateurSansViVc[] =>
     viManquante: false,
   }));
 
-describe("get_indicateurs_sans_vi_vc", () => {
+describe("get_valeurs_initiales_cibles_manquantes", () => {
   test("transmet le jalon par défaut et les valeurs à la query", async () => {
     // given
     const { tool, query } = buildTool();

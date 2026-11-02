@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
-  createGetIndicateursNonAJourTool,
-  getIndicateursNonAJourInputSchema,
-  type GetIndicateursNonAJourOutput,
-} from "@/server/albert/tools/getIndicateursNonAJour";
+  createGetValeursAvancementNonAJourTool,
+  getValeursAvancementNonAJourInputSchema,
+  type GetValeursAvancementNonAJourOutput,
+} from "@/server/albert/tools/getValeursAvancementNonAJour";
 import type {
   GetIndicateursNonAJourQuery,
   LigneIndicateurNonAJour,
@@ -106,7 +106,7 @@ const buildTool = ({
       return territoiresResolus ?? [];
     },
   );
-  const tool = createGetIndicateursNonAJourTool({
+  const tool = createGetValeursAvancementNonAJourTool({
     getIndicateursNonAJourQuery: query,
     getIndicateursIdentiteQuery,
     territoireResolver,
@@ -115,20 +115,20 @@ const buildTool = ({
 };
 
 const executeTool = async (
-  tool: ReturnType<ReturnType<typeof createGetIndicateursNonAJourTool>>,
+  tool: ReturnType<ReturnType<typeof createGetValeursAvancementNonAJourTool>>,
   input: {
     chantier_ids?: string[];
     indicateur_ids?: string[];
     perimetre?: Perimetre;
     detail?: "compteurs" | "territoires";
   },
-): Promise<GetIndicateursNonAJourOutput> =>
-  tool.execute!(getIndicateursNonAJourInputSchema.parse(input), {
+): Promise<GetValeursAvancementNonAJourOutput> =>
+  tool.execute!(getValeursAvancementNonAJourInputSchema.parse(input), {
     toolCallId: "test",
     messages: [],
     abortSignal: undefined,
     context: {},
-  }) as Promise<GetIndicateursNonAJourOutput>;
+  }) as Promise<GetValeursAvancementNonAJourOutput>;
 
 const ACCES_REFUSE = {
   detail: "compteurs",
@@ -138,7 +138,7 @@ const ACCES_REFUSE = {
 
 const TERRITOIRES_ACCESSIBLES = ["NAT-FR", "REG-53", "DEPT-29", "DEPT-35"];
 
-describe("createGetIndicateursNonAJourTool execute", () => {
+describe("createGetValeursAvancementNonAJourTool execute", () => {
   describe("mode et restitution", () => {
     test("sans argument, interroge en compteurs tous les territoires accessibles", async () => {
       // Given

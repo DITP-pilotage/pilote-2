@@ -2,11 +2,12 @@ import type { ToolCase } from "../../types";
 import { toolSelectionEval } from "../toolSelectionEval";
 
 /**
- * Niveau 2 — `get_indicateurs_non_a_jour`.
+ * Niveau 2 — `get_valeurs_avancement_non_a_jour`.
  *
  * L'agent appelle l'outil quand l'utilisateur demande quels indicateurs, ou
  * quels territoires, ont des valeurs d'avancement qui ne sont pas à jour. Sans
- * mention de ces valeurs, la demande se clarifie (voir `clarify_with_choices`).
+ * mention de ces valeurs ou de leur fraîcheur (« périmées », « retard de mise à
+ * jour »), la demande se clarifie (voir `clarify_with_choices`).
  * Sans chantier ni indicateur cité, l'appel se fait sans argument (« mes
  * chantiers »).
  *
@@ -24,7 +25,7 @@ const CASES: ToolCase[] = [
       "Quelles valeurs d'avancement ont un retard de mise à jour sur mes chantiers ?",
     reason:
       "« mes chantiers » : tout le périmètre de l'utilisateur, sans argument",
-    expected: [{ toolName: "get_indicateurs_non_a_jour" }],
+    expected: [{ toolName: "get_valeurs_avancement_non_a_jour" }],
   },
   {
     question:
@@ -32,7 +33,7 @@ const CASES: ToolCase[] = [
     reason: "chantier cité : filtre sur ce chantier",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: { chantier_ids: ["CH-018"] },
       },
     ],
@@ -44,7 +45,7 @@ const CASES: ToolCase[] = [
       "une région seule est une sélection, sans ses départements ; le territoire ne retire pas le filtre chantier",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: {
           chantier_ids: ["CH-018"],
           perimetre: { type: "SELECTION" },
@@ -59,7 +60,7 @@ const CASES: ToolCase[] = [
       "indicateur cité : filtre sur cet indicateur, détail par territoire",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: { indicateur_ids: ["IND-894"], detail: "territoires" },
       },
     ],
@@ -72,7 +73,7 @@ const CASES: ToolCase[] = [
     expected: [
       { toolName: "search_indicateurs" },
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: { indicateur_ids: ["IND-019"] },
       },
     ],
@@ -84,7 +85,7 @@ const CASES: ToolCase[] = [
       "explication du retard : l'outil renvoie la périodicité et le délai de mise à jour",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: { indicateur_ids: ["IND-894"] },
       },
     ],
@@ -95,7 +96,7 @@ const CASES: ToolCase[] = [
     reason: "national cité : périmètre réduit à NAT-FR",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: {
           indicateur_ids: ["IND-894"],
           perimetre: { type: "SELECTION", territoire_codes: ["NAT-FR"] },
@@ -109,7 +110,7 @@ const CASES: ToolCase[] = [
     reason: "territoires nommés sur un chantier : détail, sans indicateur",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: { chantier_ids: ["CH-018"], detail: "territoires" },
       },
     ],
@@ -120,7 +121,7 @@ const CASES: ToolCase[] = [
     reason: "« les départements » : tous les départements, en détail",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: {
           indicateur_ids: ["IND-894"],
           detail: "territoires",
@@ -135,7 +136,7 @@ const CASES: ToolCase[] = [
     reason: "une région et ses départements, en un seul appel",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: {
           chantier_ids: ["CH-018"],
           perimetre: {
@@ -152,7 +153,7 @@ const CASES: ToolCase[] = [
     reason: "détail demandé explicitement sur tout le périmètre",
     expected: [
       {
-        toolName: "get_indicateurs_non_a_jour",
+        toolName: "get_valeurs_avancement_non_a_jour",
         input: { detail: "territoires" },
       },
     ],
@@ -160,24 +161,43 @@ const CASES: ToolCase[] = [
   {
     question: "Quels chantiers ont des valeurs d'avancement à mettre à jour ?",
     reason: "question vague : pas de détail par territoire",
-    expected: [{ toolName: "get_indicateurs_non_a_jour" }],
+    expected: [{ toolName: "get_valeurs_avancement_non_a_jour" }],
+  },
+  {
+    question: "Quels indicateurs ont un retard de mise à jour ?",
+    reason:
+      "la fraîcheur ne vise que les valeurs d'avancement : sans clarifier",
+    expected: [{ toolName: "get_valeurs_avancement_non_a_jour" }],
+    forbidden: ["clarify_with_choices"],
+  },
+  {
+    question: "Quelles données sont périmées sur l'IND-894 ?",
+    reason:
+      "la fraîcheur ne vise que les valeurs d'avancement : sans clarifier",
+    expected: [
+      {
+        toolName: "get_valeurs_avancement_non_a_jour",
+        input: { indicateur_ids: ["IND-894"] },
+      },
+    ],
+    forbidden: ["clarify_with_choices"],
   },
   {
     question: "Quels chantiers sont en retard en Bretagne ?",
     reason:
       "CAS NÉGATIF : retard d'avancement → get_chantiers(view='en_retard')",
-    forbidden: ["get_indicateurs_non_a_jour"],
+    forbidden: ["get_valeurs_avancement_non_a_jour"],
   },
   {
     question:
       "Quelles sont les valeurs des indicateurs du CH-004 au national ?",
     reason: "CAS NÉGATIF : valeurs des indicateurs → get_indicateurs",
-    forbidden: ["get_indicateurs_non_a_jour"],
+    forbidden: ["get_valeurs_avancement_non_a_jour"],
   },
 ];
 
 toolSelectionEval({
   famille: "donnees",
-  tool: "get_indicateurs_non_a_jour",
+  tool: "get_valeurs_avancement_non_a_jour",
   cases: CASES,
 });

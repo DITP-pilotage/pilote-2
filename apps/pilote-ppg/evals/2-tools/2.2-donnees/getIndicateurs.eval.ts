@@ -76,7 +76,8 @@ const CASES: ToolCase[] = [
   },
   {
     question: "Les indicateurs du CH-004 sont-ils à jour au national ?",
-    reason: "CAS NÉGATIF : fraîcheur des données → get_indicateurs_non_a_jour",
+    reason:
+      "CAS NÉGATIF : fraîcheur des données → get_valeurs_avancement_non_a_jour",
     forbidden: ["get_indicateurs"],
   },
 ];

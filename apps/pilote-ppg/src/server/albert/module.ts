@@ -10,8 +10,8 @@ import { createGetHistoriqueIndicateurTool } from "@/server/albert/tools/getHist
 import { createGetChantierCommentairesTool } from "@/server/albert/tools/getChantierCommentaires";
 import { createGetChantierObjectifsTool } from "@/server/albert/tools/getChantierObjectifs";
 import { createGetChantiersSignalesTool } from "@/server/albert/tools/getChantiersSignales";
-import { createGetIndicateursNonAJourTool } from "@/server/albert/tools/getIndicateursNonAJour";
-import { createGetIndicateursSansViVcTool } from "@/server/albert/tools/getIndicateursSansViVc";
+import { createGetValeursAvancementNonAJourTool } from "@/server/albert/tools/getValeursAvancementNonAJour";
+import { createGetValeursInitialesCiblesManquantesTool } from "@/server/albert/tools/getValeursInitialesCiblesManquantes";
 import { createSearchChantiersTool } from "@/server/albert/tools/searchChantiers";
 import { createSearchIndicateursTool } from "@/server/albert/tools/searchIndicateurs";
 import { createSearchTerritoiresTool } from "@/server/albert/tools/searchTerritoires";
@@ -72,11 +72,11 @@ type AlbertOwnCradle = {
   createGetChantiersSignalesTool: ReturnType<
     typeof createGetChantiersSignalesTool
   >;
-  createGetIndicateursNonAJourTool: ReturnType<
-    typeof createGetIndicateursNonAJourTool
+  createGetValeursAvancementNonAJourTool: ReturnType<
+    typeof createGetValeursAvancementNonAJourTool
   >;
-  createGetIndicateursSansViVcTool: ReturnType<
-    typeof createGetIndicateursSansViVcTool
+  createGetValeursInitialesCiblesManquantesTool: ReturnType<
+    typeof createGetValeursInitialesCiblesManquantesTool
   >;
   createSearchChantiersTool: ReturnType<typeof createSearchChantiersTool>;
   createSearchIndicateursTool: ReturnType<typeof createSearchIndicateursTool>;
@@ -134,11 +134,11 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetChantiersSignalesTool: asModuleFunction(
         createGetChantiersSignalesTool,
       ),
-      createGetIndicateursNonAJourTool: asModuleFunction(
-        createGetIndicateursNonAJourTool,
+      createGetValeursAvancementNonAJourTool: asModuleFunction(
+        createGetValeursAvancementNonAJourTool,
       ),
-      createGetIndicateursSansViVcTool: asModuleFunction(
-        createGetIndicateursSansViVcTool,
+      createGetValeursInitialesCiblesManquantesTool: asModuleFunction(
+        createGetValeursInitialesCiblesManquantesTool,
       ),
       createSearchChantiersTool: asModuleFunction(createSearchChantiersTool),
       createSearchIndicateursTool: asModuleFunction(

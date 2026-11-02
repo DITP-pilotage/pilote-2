@@ -51,25 +51,28 @@ const CASES: ToolCase[] = [
     question: "Quels sont les indicateurs à mettre à jour ?",
     reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
     expected: [{ toolName: "clarify_with_choices" }],
-    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
+    forbidden: [
+      "get_valeurs_avancement_non_a_jour",
+      "get_valeurs_initiales_cibles_manquantes",
+    ],
   },
   {
     question: "Quels indicateurs sont non à jour sur le CH-018 ?",
     reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
     expected: [{ toolName: "clarify_with_choices" }],
-    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
+    forbidden: [
+      "get_valeurs_avancement_non_a_jour",
+      "get_valeurs_initiales_cibles_manquantes",
+    ],
   },
   {
-    question: "Quels indicateurs ont un retard de mise à jour ?",
+    question: "Quels indicateurs sont à mettre à jour sur l'IND-894 ?",
     reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
     expected: [{ toolName: "clarify_with_choices" }],
-    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
-  },
-  {
-    question: "Quelles données sont périmées sur l'IND-894 ?",
-    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
-    expected: [{ toolName: "clarify_with_choices" }],
-    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
+    forbidden: [
+      "get_valeurs_avancement_non_a_jour",
+      "get_valeurs_initiales_cibles_manquantes",
+    ],
   },
   {
     question: "Quels indicateurs n'ont pas de cible ?",
