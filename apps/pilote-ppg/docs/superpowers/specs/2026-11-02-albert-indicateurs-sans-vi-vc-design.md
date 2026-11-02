@@ -232,3 +232,36 @@ une. Les résultats sont consignés en fin de ce document.
 - La forme de la requête pour la dernière VC connue, en évitant de la charger si
   elle ne sert pas.
 - La rédaction exacte des descriptions, ajustée d'après les evals.
+
+## Journal des mesures
+
+Evals de niveaux 2 et 3, 3 essais par cas. Niveau 3 hors calibration du juge.
+
+| | Avant (`4f5a26d`) | Après (`d85f7ce`) |
+|---|---|---|
+| Niveau 2 | 90,7 % | 94,1 % |
+| Niveau 2 hors nouvelle suite et `clarify_with_choices` | 97,0 % | 95,3 % |
+| Suite `get_indicateurs_sans_vi_vc` | 35,0 % | 90,0 % |
+| Suite `get_indicateurs_non_a_jour` | 95,2 % | 97,6 % |
+| Suite `clarify_with_choices` | 64,4 % | 84,4 % |
+| Niveau 3 | 96,0 % | 95,7 % |
+| Échecs répétés | 28 | 21 |
+| Taille du prompt système (caractères, non mesurée en tokens) | 15920 | 17791 |
+
+**Seuil non atteint.** Trois nouveaux cas restent sous 2 essais sur 3 sur le run
+après : « Quels indicateurs sont non à jour sur le CH-018 ? » (0/3), « Quels
+indicateurs ont un retard de mise à jour ? » (1/3), « Quelles données sont
+périmées sur l'IND-894 ? » (1/3). L'assistant appelle
+`get_indicateurs_non_a_jour` sans clarifier, malgré quatre itérations sur le prompt
+et les descriptions. Hypothèse non testée : le nom de l'outil reprend les mots de
+la demande. « Quels indicateurs n'ont pas de cible en 2027 ? » est aussi à 1/3 sur
+ce run (2/3 ou 3/3 sur les runs ciblés). La demande exacte du ticket, « Quels sont
+les indicateurs à mettre à jour ? », passe à 3/3.
+
+Cinq nouveaux échecs répétés, rejoués chacun deux fois à code égal :
+`get_evolution_indicateur` (IND-012 : 2/3 d'échecs puis aucun ; IND-009 : aucun),
+`get_historique_indicateur` (aucun) et `search_territoires` (« le 84 » : aucun) ne
+se reproduisent pas de façon stable. « Pas de synthèse des résultats renseignée »
+(`get_chantiers_signales`) se reproduit, mais échoue aussi à 0/3 au commit `2e2b96e`,
+sans l'outil ni le prompt : non attribué à ce travail. Le recul de 1,7 point du
+niveau 2 hors nouvelles suites reste dans cette variabilité, sans preuve plus forte.
