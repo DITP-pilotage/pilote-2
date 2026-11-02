@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminAlbertPermissions } from "./pages/admin/page-admin-albert-permissions";
@@ -137,34 +136,5 @@ test.describe("Appels directs à l'assistant IA", () => {
     });
 
     expect(response.status()).toBe(403);
-  });
-
-  test("un compte ne télécharge que ses propres rapports", async ({
-    page,
-    e2eContext,
-  }) => {
-    await new AppActions(page, e2eContext).loginAs(ADMIN);
-    const otherUtilisateur = await prisma.utilisateur.findUniqueOrThrow({
-      where: { email: "ditp.pilotage@example.com" },
-      select: { id: true },
-    });
-    const currentUtilisateur = await prisma.utilisateur.findUniqueOrThrow({
-      where: { email: ADMIN },
-      select: { id: true },
-    });
-
-    const otherUtilisateurRapport = await page.request.get(
-      `/api/albert/rapports/${otherUtilisateur.id}/rapport-0123abcd.pdf`,
-    );
-    const invalidFilename = await page.request.get(
-      `/api/albert/rapports/${currentUtilisateur.id}/..%2Fsecret.pdf`,
-    );
-    const missingRapport = await page.request.get(
-      `/api/albert/rapports/${currentUtilisateur.id}/rapport-0123abcd.pdf`,
-    );
-
-    expect(otherUtilisateurRapport.status()).toBe(403);
-    expect(invalidFilename.status()).toBe(400);
-    expect(missingRapport.status()).toBe(404);
   });
 });

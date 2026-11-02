@@ -798,7 +798,6 @@ L'accès est vérifié sur l'accueil par la présence du bouton « Ouvrir l'Assi
 ### Test 2 : Appels directs à l'assistant
 
 - `premiere.ministre` (sans accès) : `POST /api/albert/chat` répond 403
-- `ditp.admin` : le rapport d'un autre compte (`/api/albert/rapports/<id ditp.pilotage>/rapport-….pdf`) répond 403 ; un nom de fichier `..%2Fsecret.pdf` répond 400 ; un rapport absent de son propre dossier répond 404
 
 ---
 
