@@ -19,39 +19,39 @@ test("ouvre l'assistant IA depuis n'importe quelle page et retient la vue choisi
     await page.setViewportSize(ECRAN_LARGE);
     await appActions.loginAs(ADMIN);
     await page.goto("/nouveautes");
-    await assistant.expectFerme();
+    await assistant.expectClosed();
   });
 
   await step("La première ouverture se fait en plein écran", async () => {
-    await assistant.ouvrir();
-    await assistant.expectModale();
-    await assistant.expectSelecteurVue();
+    await assistant.open();
+    await assistant.expectModal();
+    await assistant.expectViewSelector();
   });
 
   await step(
     "Passer en panneau latéral conserve le texte en cours de saisie",
     async () => {
-      await assistant.saisir("Quels chantiers sont en retard ?");
-      await assistant.choisirVue("Panneau latéral");
-      await assistant.expectPanneau();
-      await assistant.expectSaisie("Quels chantiers sont en retard ?");
+      await assistant.fillInput("Quels chantiers sont en retard ?");
+      await assistant.chooseView("Panneau latéral");
+      await assistant.expectPanel();
+      await assistant.expectInput("Quels chantiers sont en retard ?");
     },
   );
 
   await step("Le panneau reste ouvert en changeant de page", async () => {
     await page.getByRole("link", { name: "Accueil" }).first().click();
     await page.waitForURL("**/accueil/**");
-    await assistant.expectPanneau();
+    await assistant.expectPanel();
   });
 
   await step(
     "Le panneau s'élargit au clavier, sans priver la page de place",
     async () => {
-      await assistant.expectLargeurPanneau(520);
-      await assistant.elargirPanneauAuClavier();
-      await assistant.expectLargeurPanneau(540);
-      await assistant.elargirPanneauAuClavier();
-      await assistant.expectLargeurPanneau(540);
+      await assistant.expectPanelWidth(520);
+      await assistant.widenPanelWithKeyboard();
+      await assistant.expectPanelWidth(540);
+      await assistant.widenPanelWithKeyboard();
+      await assistant.expectPanelWidth(540);
     },
   );
 
@@ -59,42 +59,42 @@ test("ouvre l'assistant IA depuis n'importe quelle page et retient la vue choisi
     "Sur un écran moyen, le panneau devient une fenêtre flottante",
     async () => {
       await page.setViewportSize(ECRAN_MOYEN);
-      await assistant.expectFenetre();
+      await assistant.expectFloatingWindow();
       await page.setViewportSize(ECRAN_LARGE);
-      await assistant.expectPanneau();
-      await assistant.expectLargeurPanneau(540);
+      await assistant.expectPanel();
+      await assistant.expectPanelWidth(540);
     },
   );
 
   await step(
     "Masquer une conversation vide laisse la pastille de départ, qui rouvre la même vue",
     async () => {
-      await assistant.masquer();
-      await assistant.expectFerme();
-      await assistant.ouvrir();
-      await assistant.expectPanneau();
+      await assistant.hide();
+      await assistant.expectClosed();
+      await assistant.open();
+      await assistant.expectPanel();
     },
   );
 
   await step("L'historique s'ouvre depuis le titre", async () => {
-    await assistant.ouvrirHistorique();
-    await assistant.expectHistorique();
+    await assistant.openHistory();
+    await assistant.expectHistory();
     await page.keyboard.press("Escape");
   });
 
   await step("Une nouvelle conversation repart de zéro", async () => {
-    await assistant.nouvelleConversation();
-    await assistant.expectSaisie("");
+    await assistant.startNewConversation();
+    await assistant.expectInput("");
   });
 
   await step(
     "Rouvrir l'assistant reprend la dernière vue choisie",
     async () => {
-      await assistant.choisirVue("Fenêtre flottante");
-      await assistant.expectFenetre();
-      await assistant.masquer();
-      await assistant.ouvrir();
-      await assistant.expectFenetre();
+      await assistant.chooseView("Fenêtre flottante");
+      await assistant.expectFloatingWindow();
+      await assistant.hide();
+      await assistant.open();
+      await assistant.expectFloatingWindow();
     },
   );
 
@@ -102,8 +102,8 @@ test("ouvre l'assistant IA depuis n'importe quelle page et retient la vue choisi
     "Sur un écran étroit, seul le plein écran est proposé",
     async () => {
       await page.setViewportSize(ECRAN_ETROIT);
-      await assistant.expectModale();
-      await assistant.expectSansSelecteurVue();
+      await assistant.expectModal();
+      await assistant.expectNoViewSelector();
     },
   );
 });

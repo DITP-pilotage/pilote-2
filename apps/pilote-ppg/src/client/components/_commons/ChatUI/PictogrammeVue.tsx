@@ -1,7 +1,6 @@
 import type { VueAssistant } from "@/components/_commons/ChatUI/affichageAssistant";
 import { clsxm } from "@/utils/clsxm";
 
-// La page, et la place qu'y prend l'assistant.
 const PLACE_DE_L_ASSISTANT: Record<
   VueAssistant,
   { x: number; y: number; width: number; height: number }

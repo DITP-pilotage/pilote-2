@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useState,
-  type KeyboardEvent,
-  type PointerEvent,
-} from "react";
+import type { KeyboardEvent, PointerEvent } from "react";
 import {
   useAlbertConversation,
   type CurrentConversation,
@@ -17,58 +12,35 @@ import {
   readLargeurPanneau,
   writeLargeurPanneau,
 } from "@/components/_commons/ChatUI/preferencesAssistantStorage";
+import { useResizable } from "@/components/_commons/ChatUI/useResizable";
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 
 const PAS_CLAVIER_PX = 20;
 
-// La largeur se règle en tirant le bord gauche, ou aux flèches du clavier
-// sur la poignée ; elle est retenue au relâchement.
-const useLargeurPanneau = () => {
-  const [largeur, setLargeur] = useState(() =>
-    bornerLargeurPanneau({
-      largeur: readLargeurPanneau() ?? LARGEUR_PANNEAU.parDefaut,
-      largeurEcran: window.innerWidth,
-    }),
-  );
+const borner = (largeur: number) =>
+  bornerLargeurPanneau({ largeur, largeurEcran: window.innerWidth });
 
-  useEffect(() => {
-    const reborner = () =>
-      setLargeur((actuelle) =>
-        bornerLargeurPanneau({
-          largeur: actuelle,
-          largeurEcran: window.innerWidth,
-        }),
-      );
-    window.addEventListener("resize", reborner);
-    return () => window.removeEventListener("resize", reborner);
-  }, []);
-
-  const changer = (voulue: number) => {
-    const bornee = bornerLargeurPanneau({
-      largeur: voulue,
-      largeurEcran: window.innerWidth,
-    });
-    setLargeur(bornee);
-    return bornee;
-  };
-
-  return { largeur, changer };
-};
+const lireLargeur = () => readLargeurPanneau() ?? LARGEUR_PANNEAU.parDefaut;
 
 const Panneau = ({ conversation }: { conversation: CurrentConversation }) => {
-  const { largeur, changer } = useLargeurPanneau();
-  const [redimensionne, setRedimensionne] = useState(false);
+  const {
+    size: largeur,
+    latestSize,
+    draggedHandle,
+    resize,
+    resizeAndPersist,
+    startDrag,
+    endDrag,
+  } = useResizable<number, "gauche">({
+    read: lireLargeur,
+    bound: borner,
+    persist: writeLargeurPanneau,
+  });
+  const redimensionne = draggedHandle !== null;
 
   const deplacer = (event: PointerEvent<HTMLDivElement>) => {
     if (!redimensionne) return;
-    changer(window.innerWidth - event.clientX);
-  };
-
-  const relacher = (event: PointerEvent<HTMLDivElement>) => {
-    if (!redimensionne) return;
-    event.currentTarget.releasePointerCapture(event.pointerId);
-    setRedimensionne(false);
-    writeLargeurPanneau(largeur);
+    resize(window.innerWidth - event.clientX);
   };
 
   const auClavier = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -76,7 +48,7 @@ const Panneau = ({ conversation }: { conversation: CurrentConversation }) => {
       event.key === "ArrowLeft" ? 1 : event.key === "ArrowRight" ? -1 : 0;
     if (sens === 0) return;
     event.preventDefault();
-    writeLargeurPanneau(changer(largeur + sens * PAS_CLAVIER_PX));
+    resizeAndPersist(latestSize.current + sens * PAS_CLAVIER_PX);
   };
 
   return (
@@ -90,22 +62,15 @@ const Panneau = ({ conversation }: { conversation: CurrentConversation }) => {
       <div
         aria-label="Largeur du panneau de l'assistant"
         aria-orientation="vertical"
-        aria-valuemax={bornerLargeurPanneau({
-          largeur: LARGEUR_PANNEAU.max,
-          largeurEcran: window.innerWidth,
-        })}
+        aria-valuemax={borner(LARGEUR_PANNEAU.max)}
         aria-valuemin={LARGEUR_PANNEAU.min}
         aria-valuenow={largeur}
         className="group absolute -left-1.5 bottom-0 top-0 z-10 flex w-3 cursor-col-resize touch-none items-center justify-center focus:outline-none"
         onKeyDown={auClavier}
-        onPointerCancel={relacher}
-        onPointerDown={(event) => {
-          event.preventDefault();
-          event.currentTarget.setPointerCapture(event.pointerId);
-          setRedimensionne(true);
-        }}
+        onPointerCancel={endDrag}
+        onPointerDown={startDrag("gauche")}
         onPointerMove={deplacer}
-        onPointerUp={relacher}
+        onPointerUp={endDrag}
         role="separator"
         tabIndex={0}
         title="Redimensionner le panneau"
@@ -123,9 +88,6 @@ const Panneau = ({ conversation }: { conversation: CurrentConversation }) => {
   );
 };
 
-// Colonne de droite de la mise en page, du haut au bas de l'écran : le
-// panneau pousse toute la page au lieu de la recouvrir, et reste visible
-// pendant qu'elle défile.
 export const AlbertPanneauLateral = () => {
   const { conversation, display } = useAlbertConversation();
 

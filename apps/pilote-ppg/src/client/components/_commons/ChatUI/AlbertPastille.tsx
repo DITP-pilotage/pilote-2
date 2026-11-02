@@ -13,8 +13,6 @@ import { clsxm } from "@/utils/clsxm";
 
 const estMac = () => /Mac|iPhone|iPad/.test(navigator.userAgent);
 
-// Un rond aux étoiles, qui s'étire pour dire quoi faire : au survol, au focus
-// clavier, et tant que l'assistant rédige une réponse.
 const Pastille = ({
   etiree,
   avecPoint,

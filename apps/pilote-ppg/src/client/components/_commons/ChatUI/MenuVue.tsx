@@ -23,7 +23,6 @@ const estVue = (valeur: string): valeur is VueAssistant =>
 export const MenuVue = () => {
   const { display, vuesDisponibles, changerVue } = useAlbertConversation();
 
-  // Sur un écran étroit, le plein écran est la seule vue possible.
   if (vuesDisponibles.length < 2 || !estVue(display)) return null;
 
   const vues = ORDRE.filter((vue) => vuesDisponibles.includes(vue));

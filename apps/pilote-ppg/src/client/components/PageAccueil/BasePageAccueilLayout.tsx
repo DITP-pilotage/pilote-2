@@ -12,7 +12,7 @@ import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/Bout
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { useAlbertPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 import {
   scenariosTerritoireCoordinateur,
   scenariosTerritoireDITP,
@@ -89,14 +89,9 @@ export const BasePageAccueilLayout: FunctionComponent<
   const profil = useProfilUtilisateurConnecte();
   const estDITPAdmin = session?.profil === ProfilEnum.DITP_ADMIN;
 
-  // Mémorisé : un nouvel objet à chaque rendu redéclarerait le contexte en boucle.
   const contexteAssistant = useMemo(
     () => ({
-      agentContext: {
-        jalon,
-        territoireCode,
-        instructions: `Le territoire courant de l'utilisateur est ${récupérerDétailsSurUnTerritoire(territoireCode).nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
-      },
+      agentContext: construireAgentContextTerritoire({ territoireCode, jalon }),
       scenarios:
         accesAlbert.scenarios === "coordinateur"
           ? scenariosTerritoireCoordinateur({ territoireCode })

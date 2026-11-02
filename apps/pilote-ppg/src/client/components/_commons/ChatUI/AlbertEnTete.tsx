@@ -16,9 +16,6 @@ import { deriverTitre } from "@/server/albert/domain/ChatConversation";
 const BOUTON_ICONE =
   "flex h-8 w-8 shrink-0 items-center justify-center text-primary transition-colors hover:bg-dsfr-alt-blue-france";
 
-// En-tête commun aux trois vues, comme dans Notion : le titre ouvre
-// l'historique, et un seul bouton cache l'assistant. La conversation reste
-// alors en bas à droite ; repartir de zéro, c'est en démarrer une nouvelle.
 export const AlbertEnTete = ({
   conversation,
 }: {

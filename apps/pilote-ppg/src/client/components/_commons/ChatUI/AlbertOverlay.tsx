@@ -9,8 +9,6 @@ import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConver
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
 import { api } from "@/server/framework/trpc/api";
 
-// ⌘K / Ctrl+K ouvre l'assistant depuis n'importe quelle page, ou reprend la
-// conversation masquée.
 const useRaccourciOuverture = ({ actif }: { actif: boolean }) => {
   const { conversation, display, open, restore } = useAlbertConversation();
 
@@ -18,6 +16,9 @@ const useRaccourciOuverture = ({ actif }: { actif: boolean }) => {
     if (!actif) return;
 
     const ouvrir = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
+      if (event.target instanceof HTMLElement && event.target.isContentEditable)
+        return;
       if (event.key.toLowerCase() !== "k") return;
       if (!(event.metaKey || event.ctrlKey)) return;
       if (conversation && display !== "minimized") return;
@@ -32,8 +33,6 @@ const useRaccourciOuverture = ({ actif }: { actif: boolean }) => {
   }, [actif, conversation, display, open, restore]);
 };
 
-// Le panneau latéral fait partie de la mise en page (AlbertPanneauLateral) :
-// il n'est pas rendu ici.
 export const AlbertOverlay = () => {
   const { conversation, display, open, minimize } = useAlbertConversation();
   const estPiloteEval =
@@ -45,12 +44,10 @@ export const AlbertOverlay = () => {
 
   useRaccourciOuverture({ actif: peutOuvrir });
 
+  if (!peutOuvrir) return null;
+
   if (!conversation || display === "minimized") {
-    // Une conversation masquée reste accessible ; sans conversation, la
-    // pastille n'est proposée qu'aux utilisateurs autorisés.
-    return conversation || peutOuvrir ? (
-      <AlbertPastille conversation={conversation} onOuvrir={open} />
-    ) : null;
+    return <AlbertPastille conversation={conversation} onOuvrir={open} />;
   }
 
   if (display === "floating") {
@@ -59,8 +56,6 @@ export const AlbertOverlay = () => {
 
   if (display !== "modal") return null;
 
-  // Échap masque l'assistant au lieu de le fermer : la conversation reste en
-  // bas à droite.
   const masquer = (event: { preventDefault: () => void }) => {
     event.preventDefault();
     minimize();

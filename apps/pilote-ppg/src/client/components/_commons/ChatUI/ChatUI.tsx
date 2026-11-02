@@ -55,10 +55,10 @@ export const ChatUI = ({
   contexteAccueil?: ContexteAccueil;
   tracked?: boolean;
 }) => {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const userHasScrolledRef = useRef(false);
   const prevMessageCountRef = useRef(0);
+  const hasScrolledOnceRef = useRef(false);
   const fillInputRef = useRef<
     ((text: string, proposition?: PropositionOrigin) => void) | null
   >(null);
@@ -153,11 +153,12 @@ export const ChatUI = ({
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    if (status !== "ready") {
-      container.scrollTop = container.scrollHeight;
-    } else {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    const isInitialRender = !hasScrolledOnceRef.current;
+    hasScrolledOnceRef.current = true;
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: isInitialRender || status !== "ready" ? "instant" : "smooth",
+    });
   }, [messages, status]);
 
   const handleScroll = useCallback(() => {
@@ -276,8 +277,6 @@ export const ChatUI = ({
                       onReessayer={retry}
                     />
                   )}
-
-                  <div ref={messagesEndRef} />
                 </div>
               </div>
             </div>

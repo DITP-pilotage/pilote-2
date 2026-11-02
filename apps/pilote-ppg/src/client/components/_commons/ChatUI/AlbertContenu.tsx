@@ -4,7 +4,6 @@ import { ChatExperimentationBanner } from "@/components/_commons/ChatUI/ChatExpe
 import { ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { versContexteAffiche } from "@/components/_commons/ChatUI/versContexteAffiche";
 
-// Contenu des trois vues : seul leur cadre diffère.
 export const AlbertContenu = ({
   conversation,
   compact,

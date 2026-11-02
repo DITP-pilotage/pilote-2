@@ -5,8 +5,6 @@ import {
   type VueAssistant,
 } from "@/components/_commons/ChatUI/affichageAssistant";
 
-// La vue et la largeur qui conviennent dépendent de l'écran : ces
-// préférences restent propres à l'appareil, dans le localStorage.
 const CLE_VUE = "albert:vue";
 const CLE_LARGEUR_PANNEAU = "albert:largeurPanneau";
 const CLE_TAILLE_FENETRE = "albert:tailleFenetre";

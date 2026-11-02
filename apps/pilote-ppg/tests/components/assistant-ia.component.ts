@@ -2,97 +2,95 @@ import { Page, expect } from "@playwright/test";
 
 const NOM_ASSISTANT = "Assistant IA PILOTE";
 
-type Vue = "Panneau latéral" | "Fenêtre flottante" | "Plein écran";
+type View = "Panneau latéral" | "Fenêtre flottante" | "Plein écran";
 
 export class AssistantIAComponent {
   constructor(private readonly page: Page) {}
 
-  get lanceur() {
+  get launcher() {
     return this.page.getByRole("button", { name: /Demander à l'assistant/ });
   }
 
-  private get modale() {
+  private get modal() {
     return this.page.getByRole("dialog", { name: NOM_ASSISTANT });
   }
 
-  private get panneau() {
+  private get panel() {
     return this.page.getByRole("complementary", { name: NOM_ASSISTANT });
   }
 
-  private get fenetre() {
+  private get floatingWindow() {
     return this.page.getByRole("region", { name: NOM_ASSISTANT });
   }
 
-  private get boutonVue() {
+  private get viewButton() {
     return this.page.getByRole("button", { name: /^Affichage/ });
   }
 
-  private get poigneePanneau() {
+  private get panelHandle() {
     return this.page.getByRole("separator", {
       name: "Largeur du panneau de l'assistant",
     });
   }
 
-  private get saisie() {
+  private get input() {
     return this.page.getByPlaceholder(/^Posez /);
   }
 
-  async ouvrir(): Promise<void> {
-    await this.lanceur.click();
+  async open(): Promise<void> {
+    await this.launcher.click();
   }
 
-  async masquer(): Promise<void> {
+  async hide(): Promise<void> {
     await this.page
       .getByRole("button", { name: "Masquer l'assistant" })
       .click();
   }
 
-  async choisirVue(vue: Vue): Promise<void> {
-    await this.boutonVue.click();
-    await this.page.getByRole("menuitemradio", { name: vue }).click();
+  async chooseView(view: View): Promise<void> {
+    await this.viewButton.click();
+    await this.page.getByRole("menuitemradio", { name: view }).click();
   }
 
-  async nouvelleConversation(): Promise<void> {
-    await this.page
-      .getByRole("button", { name: "Nouvelle conversation" })
-      .click();
+  async startNewConversation(): Promise<void> {
+    await this.page.getByTitle("Nouvelle conversation").click();
   }
 
-  async ouvrirHistorique(): Promise<void> {
+  async openHistory(): Promise<void> {
     await this.page.getByTitle("Historique des conversations").click();
   }
 
-  async elargirPanneauAuClavier(): Promise<void> {
-    await this.poigneePanneau.focus();
+  async widenPanelWithKeyboard(): Promise<void> {
+    await this.panelHandle.focus();
     await this.page.keyboard.press("ArrowLeft");
   }
 
-  async saisir(texte: string): Promise<void> {
-    await this.saisie.fill(texte);
+  async fillInput(text: string): Promise<void> {
+    await this.input.fill(text);
   }
 
-  async expectModale(): Promise<void> {
-    await expect(this.modale).toBeVisible();
+  async expectModal(): Promise<void> {
+    await expect(this.modal).toBeVisible();
   }
 
-  async expectPanneau(): Promise<void> {
-    await expect(this.panneau).toBeVisible();
-    await expect(this.modale).toHaveCount(0);
+  async expectPanel(): Promise<void> {
+    await expect(this.panel).toBeVisible();
+    await expect(this.modal).toHaveCount(0);
   }
 
-  async expectFenetre(): Promise<void> {
-    await expect(this.fenetre).toBeVisible();
-    await expect(this.panneau).toHaveCount(0);
+  async expectFloatingWindow(): Promise<void> {
+    await expect(this.floatingWindow).toBeVisible();
+    await expect(this.panel).toHaveCount(0);
   }
 
-  async expectLargeurPanneau(largeur: number): Promise<void> {
-    await expect(this.poigneePanneau).toHaveAttribute(
+  async expectPanelWidth(width: number): Promise<void> {
+    await expect(this.panelHandle).toHaveAttribute(
       "aria-valuenow",
-      String(largeur),
+      String(width),
     );
   }
 
-  async expectHistorique(): Promise<void> {
+  async expectHistory(): Promise<void> {
     await expect(
       this.page.getByRole("dialog", { name: "Historique des conversations" }),
     ).toBeVisible();
@@ -103,19 +101,19 @@ export class AssistantIAComponent {
     ).toBeVisible();
   }
 
-  async expectSelecteurVue(): Promise<void> {
-    await expect(this.boutonVue).toBeVisible();
+  async expectViewSelector(): Promise<void> {
+    await expect(this.viewButton).toBeVisible();
   }
 
-  async expectSansSelecteurVue(): Promise<void> {
-    await expect(this.boutonVue).toHaveCount(0);
+  async expectNoViewSelector(): Promise<void> {
+    await expect(this.viewButton).toHaveCount(0);
   }
 
-  async expectSaisie(texte: string): Promise<void> {
-    await expect(this.saisie).toHaveValue(texte);
+  async expectInput(text: string): Promise<void> {
+    await expect(this.input).toHaveValue(text);
   }
 
-  async expectFerme(): Promise<void> {
-    await expect(this.lanceur).toBeVisible();
+  async expectClosed(): Promise<void> {
+    await expect(this.launcher).toBeVisible();
   }
 }

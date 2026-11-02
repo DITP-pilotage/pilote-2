@@ -19,8 +19,6 @@ const normaliser = (texte: string) =>
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase();
 
-// Comme dans Notion : l'historique s'ouvre depuis le titre de la conversation,
-// dans toutes les vues.
 export const MenuHistorique = ({
   titre,
   chatIdCourant,

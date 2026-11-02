@@ -51,8 +51,6 @@ export type CurrentConversation = AlbertConversation & {
   scenarios?: ChatScenarios;
 };
 
-// Ce que la page affichée donne à l'assistant. Une page qui n'en déclare pas
-// ouvre une conversation sans contexte.
 export type AlbertPageContext = {
   agentContext: AlbertAgentContext;
   scenarios: ChatScenarios;
@@ -60,9 +58,7 @@ export type AlbertPageContext = {
 
 type AlbertConversationContextValue = {
   conversation: CurrentConversation | null;
-  /** Ce qui est réellement affiché, compte tenu de la largeur de l'écran. */
   display: AffichageAssistant;
-  /** Les vues qui tiennent sur l'écran, proposées par le sélecteur de vue. */
   vuesDisponibles: readonly VueAssistant[];
   pageContext: AlbertPageContext | null;
   setPageContext: (pageContext: AlbertPageContext | null) => void;
@@ -95,8 +91,6 @@ export const useAlbertPageContext = (pageContext: AlbertPageContext) => {
   }, [pageContext, setPageContext]);
 };
 
-// Monté au-dessus de toute la page (le panneau latéral en est la colonne de
-// droite) : il n'agit qu'une fois l'utilisateur connecté.
 export const AlbertConversationProvider = ({
   actif,
   children,
@@ -105,9 +99,8 @@ export const AlbertConversationProvider = ({
     null,
   );
   const [affichage, setAffichage] = useState<AffichageAssistant>("modal");
-  // Ce que « Reprendre » rouvre depuis le dock.
-  const [vueAvantReduction, setVueAvantReduction] =
-    useState<VueAssistant>("modal");
+  const [viewBeforeMinimize, setViewBeforeMinimize] =
+    useState<VueAssistant | null>(null);
   const tailleEcran = useTailleEcran();
   const display = affichageEffectif({ affichage, tailleEcran });
   const [pageContext, setPageContext] = useState<AlbertPageContext | null>(
@@ -171,7 +164,7 @@ export const AlbertConversationProvider = ({
     }: {
       id: string;
       agentContext?: AlbertAgentContext;
-      targetDisplay: AffichageAssistant;
+      targetDisplay?: AffichageAssistant;
     }) => {
       try {
         const stored = await trpcUtils.albert.conversations.recuperer.fetch({
@@ -183,7 +176,7 @@ export const AlbertConversationProvider = ({
           return;
         }
         setConversation(build({ id, agentContext, messages: stored.messages }));
-        setAffichage(targetDisplay);
+        if (targetDisplay) setAffichage(targetDisplay);
       } catch {
         // Never persisted (no turn completed yet) or already purged: the
         // fallback is simply not to show it.
@@ -229,8 +222,6 @@ export const AlbertConversationProvider = ({
         dimensions: { conversation_id: created.chat.id },
       });
     }
-    // La modale tient sur tous les écrans : c'est elle qu'on découvre, tant
-    // qu'aucune autre vue n'a été choisie sur cet appareil.
     setAffichage(readPreferenceVue() ?? "modal");
   }, [build, conversation, pageContext, track]);
 
@@ -259,7 +250,7 @@ export const AlbertConversationProvider = ({
         agentContext: conversation.agentContext,
       });
     }
-    if (affichage !== "minimized") setVueAvantReduction(affichage);
+    if (affichage !== "minimized") setViewBeforeMinimize(affichage);
     setAffichage("minimized");
   }, [affichage, conversation, track]);
 
@@ -269,11 +260,9 @@ export const AlbertConversationProvider = ({
       name: "assistant.resume",
       dimensions: { conversation_id: conversation?.chat.id },
     });
-    setAffichage(vueAvantReduction);
-  }, [conversation, track, vueAvantReduction]);
+    setAffichage(viewBeforeMinimize ?? readPreferenceVue() ?? "modal");
+  }, [conversation, track, viewBeforeMinimize]);
 
-  // Il n'y a plus de « Fermer » : repartir de zéro, c'est démarrer une
-  // nouvelle conversation, avec le contexte de la page affichée.
   const startNewConversation = useCallback(() => {
     if (!conversation) return;
     conversation.chat.stop();
@@ -301,13 +290,9 @@ export const AlbertConversationProvider = ({
       });
       conversation.chat.stop();
       clearMinimizedConversation();
-      load({
-        id,
-        agentContext: conversation.agentContext,
-        targetDisplay: affichage,
-      });
+      load({ id, agentContext: conversation.agentContext });
     },
-    [affichage, conversation, load, track],
+    [conversation, load, track],
   );
 
   const value = useMemo(

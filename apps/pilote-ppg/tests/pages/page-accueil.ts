@@ -47,14 +47,18 @@ export class PageAccueil extends BasePage {
   }
 
   async expectAssistantIAAccess(): Promise<void> {
-    await expect(this.assistantIA.lanceur).toBeVisible();
+    await expect(this.assistantIA.launcher).toBeVisible();
   }
 
   async expectNoAssistantIAAccess(): Promise<void> {
+    // Le lanceur dépend d'une requête client : sans l'attendre, son absence ne prouve rien.
+    const accessLoaded = this.page.waitForResponse(/albertAccess\.monAcces/);
+    await this.page.reload();
+    await accessLoaded;
     await expect(
       this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
     ).toBeVisible();
-    await expect(this.assistantIA.lanceur).toHaveCount(0);
+    await expect(this.assistantIA.launcher).toHaveCount(0);
   }
 
   async openExportModal(): Promise<void> {
