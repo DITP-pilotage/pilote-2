@@ -11,7 +11,10 @@ import {
   testIndicateurId,
   testIndividuId,
   testCollectionId,
+  testCollectionNumericId,
+  testDeptId,
   testReferentielId,
+  testRegId,
   testWidgetId,
 } from '@/test/randomIds'
 import {
@@ -1068,6 +1071,103 @@ async function commentaire(override: CommentaireOverrides) {
   return upsertCommentaire(override)
 }
 
+// --- Scénario : cube Territoire × Opérateur (POC dimensions) -----------------
+
+// Indicateur multi-dimension de référence des tests du POC dimensions :
+// Territoire (dimension de test par défaut) NAT → REG-1 → DEPT-A, DEPT-B et
+// NAT → REG-2 → DEPT-C, croisé avec Opérateur (dimension dédiée, membres à plat
+// ORANGE, SFR, FREE). Ne crée aucun fait. Les publicIds sont aléatoires (cf.
+// randomIds) et au format accepté par les routes (majuscules, IND-<chiffres>).
+type ConfigurationDimensionCube = {
+  ordre: number
+  fonctionAgregation: FonctionAgregation
+  porteObjectifs: boolean
+}
+
+type CubeTerritoireOperateurOverrides = Partial<{
+  indicateur: IndicateurOverrides
+  // Fonction des niveaux territoriaux (NAT, REG, DEPT).
+  fonctionNiveaux: FonctionAgregation
+  territoire: Partial<ConfigurationDimensionCube>
+  operateur: Partial<ConfigurationDimensionCube>
+}>
+
+const jetonMajuscule = (): string => testRegId().slice('REG-'.length)
+
+async function cubeTerritoireOperateur(o: CubeTerritoireOperateurOverrides = {}) {
+  const ids = {
+    indicateur: o.indicateur?.publicId ?? `IND-${testCollectionNumericId().slice('COL-'.length)}`,
+    dimensionTerritoire: DIMENSION_TEST_PAR_DEFAUT,
+    dimensionOperateur: `DIM-${jetonMajuscule()}`,
+    refNat: `REF-${jetonMajuscule()}`,
+    refReg: `REF-${jetonMajuscule()}`,
+    refDept: `REF-${jetonMajuscule()}`,
+    refOp: `REF-${jetonMajuscule()}`,
+    nat: `NAT-${jetonMajuscule()}`,
+    reg1: testRegId(),
+    reg2: testRegId(),
+    deptA: testDeptId(),
+    deptB: testDeptId(),
+    deptC: testDeptId(),
+    orange: `OP-${jetonMajuscule()}`,
+    sfr: `OP-${jetonMajuscule()}`,
+    free: `OP-${jetonMajuscule()}`,
+  }
+  const indicateurOverrides = {
+    nom: 'Indicateur croisé',
+    ...o.indicateur,
+    publicId: ids.indicateur,
+  }
+  await upsertIndicateur(indicateurOverrides)
+  await upsertDimension({ publicId: ids.dimensionOperateur, nom: 'Opérateur' })
+  const operateur = { publicId: ids.refOp, dimension: { publicId: ids.dimensionOperateur } }
+  for (const [parent, child, refParent, refChild] of [
+    [ids.nat, ids.reg1, ids.refNat, ids.refReg],
+    [ids.nat, ids.reg2, ids.refNat, ids.refReg],
+    [ids.reg1, ids.deptA, ids.refReg, ids.refDept],
+    [ids.reg1, ids.deptB, ids.refReg, ids.refDept],
+    [ids.reg2, ids.deptC, ids.refReg, ids.refDept],
+  ] as const) {
+    await upsertRelation({
+      parent: { publicId: parent, referentiel: { publicId: refParent } },
+      child: { publicId: child, referentiel: { publicId: refChild } },
+    })
+  }
+  for (const publicId of [ids.orange, ids.sfr, ids.free]) {
+    await upsertIndividu({ publicId, referentiel: operateur })
+  }
+  const fonctionNiveaux = o.fonctionNiveaux ?? FonctionAgregation.SUM
+  for (const publicId of [ids.refNat, ids.refReg, ids.refDept]) {
+    await upsertIndicateurReferentiel({
+      indicateur: { publicId: ids.indicateur },
+      referentiel: { publicId },
+      fonctionAgregation: fonctionNiveaux,
+    })
+  }
+  await upsertIndicateurReferentiel({
+    indicateur: { publicId: ids.indicateur },
+    referentiel: operateur,
+    fonctionAgregation: FonctionAgregation.NONE,
+  })
+  await upsertIndicateurDimension({
+    indicateur: { publicId: ids.indicateur },
+    dimension: { publicId: ids.dimensionTerritoire },
+    ordre: 0,
+    fonctionAgregation: FonctionAgregation.SUM,
+    porteObjectifs: true,
+    ...o.territoire,
+  })
+  await upsertIndicateurDimension({
+    indicateur: { publicId: ids.indicateur },
+    dimension: { publicId: ids.dimensionOperateur },
+    ordre: 1,
+    fonctionAgregation: FonctionAgregation.SUM,
+    porteObjectifs: false,
+    ...o.operateur,
+  })
+  return ids
+}
+
 // --- Organisme ---------------------------------------------------------------
 
 type OrganismeOverrides = Partial<{
@@ -1206,6 +1306,7 @@ export const fixtures = {
   dimension,
   indicateurDimension,
   indicateurPermissionPerimetre,
+  cubeTerritoireOperateur,
   feature,
   commentaire,
   referentiel,

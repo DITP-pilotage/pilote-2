@@ -83,14 +83,19 @@ const validateAndResolveCellules = ({
       if (existante) existante.indices.push(index)
       else erreursParCle.set(cle, { erreur, indices: [index] })
     })
-    // Forme `coordonnees` : doublons sur la clé canonique (après résolution).
+    // Doublons sur la clé canonique (après résolution), toutes formes confondues :
+    // `[B, A]` vaut `[A, B]`, et `{coordonnees: [A]}` vaut `{individu: A}` — sinon
+    // l'INSERT … ON CONFLICT toucherait deux fois la même ligne (erreur 500). Un
+    // groupe 100 % forme historique est déjà rapporté ci-dessus (chaîne brute).
     const canonicalDuplicateErrors = detectDuplicateKeys(
       items.flatMap((item, index) => {
         const cellule = cellules[index]
-        return item.coordonnees !== undefined && cellule
-          ? [{ index, key: cellule.publicId, date: item.date, cle: cellule.cle }]
-          : []
+        return cellule ? [{ index, key: cellule.publicId, date: item.date, cle: cellule.cle }] : []
       }),
+    ).filter(
+      (erreur) =>
+        erreur.code === 'DUPLICATE_KEY' &&
+        erreur.indices.some((index) => items[index]!.coordonnees !== undefined),
     )
     const errors: BatchInvalidErrorEntryApiModel[] = [
       ...duplicateErrors,

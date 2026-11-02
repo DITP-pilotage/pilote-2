@@ -226,15 +226,19 @@ const buildSyntheseMultiDimension = async ({
     cellules: [...new Set(groupes.flatMap((g) => [g.cellule, ...g.pairs]))],
     dateTrunc,
   })
-  const noeudParCellule = new Map(cibles.map((cible) => [cible.publicId, cible]))
+  // Indexés par membres triés : le chargeur dédoublonne les cellules de même clé
+  // canonique et ne garde que la première chaîne demandée (ex. `OP-X~DEPT-84`
+  // demandée, pair `DEPT-84~OP-X` construit) — la recherche doit ignorer l'ordre.
+  const cleMembres = (cellule: string) => parseCelluleId(cellule).sort().join('~')
+  const noeudParCellule = new Map(cibles.map((cible) => [cleMembres(cible.publicId), cible]))
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
   const items: SyntheseIndividusListApiModel['items'] = []
   for (const { cellule, pairs } of groupes) {
-    const noeud = noeudParCellule.get(cellule)
+    const noeud = noeudParCellule.get(cleMembres(cellule))
     if (!noeud) continue
     const valeursPairs: Decimal[] = []
     for (const pair of pairs) {
-      const noeudPair = noeudParCellule.get(pair)
+      const noeudPair = noeudParCellule.get(cleMembres(pair))
       const dernier = noeudPair && (await resolveSerieIndividu(noeudPair.id, ctx, cache)).at(-1)
       if (dernier) valeursPairs.push(dernier.valeur)
     }

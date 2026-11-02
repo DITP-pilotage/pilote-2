@@ -153,11 +153,9 @@ const assertWritePermission = async (indicateurId: string, principalId: string):
     throw new ForbiddenError("Vous n'avez pas la permission de modifier cet indicateur")
   }
   // Un principal cloisonné (périmètre d'écriture) écrit des valeurs, pas la
-  // structure de l'indicateur (niveaux, dimensions, ordre de remontée).
-  const perimetre = await db().indicateurPermissionPerimetre.count({
-    where: { principalId, indicateurId, action: IndicateurPermissionAction.WRITE_DATA },
-  })
-  if (perimetre > 0) {
+  // structure de l'indicateur (niveaux, dimensions, ordre de remontée). Le
+  // drapeau fait foi : restreint sans ligne de périmètre reste restreint.
+  if (hasWrite.perimetreRestreint) {
     throw new ForbiddenError(
       "Un principal au périmètre d'écriture restreint ne peut pas modifier la structure de l'indicateur",
     )
