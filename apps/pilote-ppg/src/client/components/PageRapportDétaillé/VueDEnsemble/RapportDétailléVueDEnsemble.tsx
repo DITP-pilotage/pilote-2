@@ -5,7 +5,7 @@ import { TitleBand } from "@/components/shared/TitleBand";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import Avancements from "@/components/_commons/Avancements/Avancements";
-import usePageRapportDétaillé from "@/components/PageRapportDétaillé/usePageRapportDétaillé";
+import { usePageRapportDétaillé } from "@/components/PageRapportDétaillé/usePageRapportDétaillé";
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
@@ -20,11 +20,11 @@ import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteCh
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
 import RepartitionsMeteosRapportDetaille from "@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
+import { ChantierRapportDetailleWithoutMailles } from "@/server/rapport-detaille/rapportDetaille.interface";
 import RapportDétailléTableauChantiers from "./RapportDétailléTableauChantiers/RapportDétailléTableauChantiers";
 
 interface RapportDétailléVueDEnsembleProps {
-  chantiers: ChantierRapportDetailleContrat[];
+  chantiers: ChantierRapportDetailleWithoutMailles[];
   filtresComptesCalculés: Record<TypeAlerteChantier, number>;
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat;
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
@@ -36,7 +36,7 @@ interface RapportDétailléVueDEnsembleProps {
   moyenneTauxAvancementTerritoire: number | null;
 }
 
-const RapportDétailléVueDEnsemble: FunctionComponent<
+export const RapportDétailléVueDEnsemble: FunctionComponent<
   RapportDétailléVueDEnsembleProps
 > = ({
   chantiers,
@@ -156,5 +156,3 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
     </section>
   );
 };
-
-export default RapportDétailléVueDEnsemble;

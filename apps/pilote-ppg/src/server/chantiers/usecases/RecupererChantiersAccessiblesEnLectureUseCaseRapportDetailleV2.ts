@@ -232,10 +232,12 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
     sorting: SortingParams,
     jalon: number,
     jalonParDefaut: number,
+    chantierIds?: string[],
   ): Promise<ChantierRapportDetailleContrat[]> {
     const habilitation = new Habilitation(habilitations);
-    const chantiersLecture =
-      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const chantiersLecture = habilitation
+      .récupérerListeChantiersIdsAccessiblesEnLecture()
+      .filter((chantierId) => !chantierIds || chantierIds.includes(chantierId));
     const territoiresLecture =
       habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
