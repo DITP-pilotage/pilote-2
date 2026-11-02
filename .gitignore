@@ -24,6 +24,12 @@ yarn-error.log*
 .idea/
 .vscode/
 .cursor/
+
+# Codex
+.agents/
+.codex/
+apps/pilote-ppg/AGENTS.md
+
 # Git ne redescend pas dans un dossier exclu : re-inclure un fichier profond suppose
 # d'abord re-inclure chaque dossier parent. Un skill partagé s'ajoute ici, dossier entier.
 .claude/*
