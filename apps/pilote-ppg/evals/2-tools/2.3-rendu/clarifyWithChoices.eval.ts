@@ -14,6 +14,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * répartition, PIL-1855) doit aussi passer par l'outil, avec des alternatives
  * réalisables, plutôt que par un dashboard hors sujet.
  *
+ * Une demande de mise à jour qui ne précise pas le type de valeurs (PIL-1939)
+ * passe aussi par l'outil, y compris pour un seul chantier ou indicateur.
+ *
  * Les négatifs n'ont rien à départager : un seul chantier correspond, ou la
  * maille est précisée. Sur une salutation, aucun outil : proposer un menu de
  * ce que l'agent sait faire serait une faute.
@@ -43,6 +46,40 @@ const CASES: ToolCase[] = [
     reason: "graphique de répartition hors catalogue : alternatives à proposer",
     expected: [{ toolName: "clarify_with_choices" }],
     forbidden: ["create_dashboard"],
+  },
+  {
+    question: "Quels sont les indicateurs à mettre à jour ?",
+    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
+    expected: [{ toolName: "clarify_with_choices" }],
+    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
+  },
+  {
+    question: "Quels indicateurs sont non à jour sur le CH-018 ?",
+    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
+    expected: [{ toolName: "clarify_with_choices" }],
+    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
+  },
+  {
+    question: "Quels indicateurs ont un retard de mise à jour ?",
+    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
+    expected: [{ toolName: "clarify_with_choices" }],
+    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
+  },
+  {
+    question: "Quelles données sont périmées sur l'IND-894 ?",
+    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
+    expected: [{ toolName: "clarify_with_choices" }],
+    forbidden: ["get_indicateurs_non_a_jour", "get_indicateurs_sans_vi_vc"],
+  },
+  {
+    question: "Quels indicateurs n'ont pas de cible ?",
+    reason: "CAS NÉGATIF : type de valeurs précisé, VC",
+    forbidden: ["clarify_with_choices"],
+  },
+  {
+    question: "Quelles valeurs d'avancement ne sont pas à jour ?",
+    reason: "CAS NÉGATIF : type de valeurs précisé, VA",
+    forbidden: ["clarify_with_choices"],
   },
   {
     question: "Quelle est l'ambition du chantier sur l'habitat indigne ?",

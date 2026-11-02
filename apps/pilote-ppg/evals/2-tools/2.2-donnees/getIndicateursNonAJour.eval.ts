@@ -5,8 +5,10 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * Niveau 2 — `get_indicateurs_non_a_jour`.
  *
  * L'agent appelle l'outil quand l'utilisateur demande quels indicateurs, ou
- * quels territoires, ont des données qui ne sont pas à jour. Sans chantier ni
- * indicateur cité, l'appel se fait sans argument (« mes chantiers »).
+ * quels territoires, ont des valeurs d'avancement qui ne sont pas à jour. Sans
+ * mention de ces valeurs, la demande se clarifie (voir `clarify_with_choices`).
+ * Sans chantier ni indicateur cité, l'appel se fait sans argument (« mes
+ * chantiers »).
  *
  * Les arguments vérifiés portent l'intention : `chantier_ids`,
  * `indicateur_ids`, `detail`, et `perimetre` pour NAT-FR ou un code cité
@@ -19,14 +21,14 @@ import { toolSelectionEval } from "../toolSelectionEval";
 const CASES: ToolCase[] = [
   {
     question:
-      "Quels sont les indicateurs avec un retard de mise à jour sur mes chantiers ?",
+      "Quelles valeurs d'avancement ont un retard de mise à jour sur mes chantiers ?",
     reason:
       "« mes chantiers » : tout le périmètre de l'utilisateur, sans argument",
     expected: [{ toolName: "get_indicateurs_non_a_jour" }],
   },
   {
     question:
-      "Quels sont les indicateurs non mis à jour sur le chantier CH-018 ?",
+      "Quelles valeurs d'avancement ne sont pas à jour sur le chantier CH-018 ?",
     reason: "chantier cité : filtre sur ce chantier",
     expected: [
       {
@@ -36,7 +38,8 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Les données du CH-018 sont-elles à jour en Bretagne ?",
+    question:
+      "Les valeurs d'avancement du CH-018 sont-elles à jour en Bretagne ?",
     reason:
       "une région seule est une sélection, sans ses départements ; le territoire ne retire pas le filtre chantier",
     expected: [
@@ -51,7 +54,7 @@ const CASES: ToolCase[] = [
   },
   {
     question:
-      "Sur quels territoires les données de l'indicateur IND-894 ne sont pas à jour ?",
+      "Sur quels territoires la valeur d'avancement de l'IND-894 n'est pas à jour ?",
     reason:
       "indicateur cité : filtre sur cet indicateur, détail par territoire",
     expected: [
@@ -63,7 +66,7 @@ const CASES: ToolCase[] = [
   },
   {
     question:
-      "La part des locaux raccordables à la fibre est-elle à jour partout ?",
+      "La valeur d'avancement de la part des locaux raccordables à la fibre est-elle à jour partout ?",
     reason:
       "indicateur désigné par son libellé : search_indicateurs pour trouver son identifiant, puis l'outil",
     expected: [
@@ -75,7 +78,8 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Pourquoi l'IND-894 est-il considéré comme pas à jour ?",
+    question:
+      "Pourquoi la valeur d'avancement de l'IND-894 est-elle considérée comme pas à jour ?",
     reason:
       "explication du retard : l'outil renvoie la périodicité et le délai de mise à jour",
     expected: [
@@ -86,7 +90,8 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "L'IND-894 est-il à jour au niveau national ?",
+    question:
+      "La valeur d'avancement de l'IND-894 est-elle à jour au niveau national ?",
     reason: "national cité : périmètre réduit à NAT-FR",
     expected: [
       {
@@ -99,7 +104,8 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Sur quels territoires le CH-018 a des indicateurs non à jour ?",
+    question:
+      "Sur quels territoires le CH-018 a des valeurs d'avancement non à jour ?",
     reason: "territoires nommés sur un chantier : détail, sans indicateur",
     expected: [
       {
@@ -109,7 +115,8 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Donne les départements non à jour pour l'IND-894",
+    question:
+      "Donne les départements où la valeur d'avancement de l'IND-894 n'est pas à jour",
     reason: "« les départements » : tous les départements, en détail",
     expected: [
       {
@@ -124,7 +131,7 @@ const CASES: ToolCase[] = [
   },
   {
     question:
-      "Les données du CH-018 sont-elles à jour en REG-53 et ses départements ?",
+      "Les valeurs d'avancement du CH-018 sont-elles à jour en REG-53 et ses départements ?",
     reason: "une région et ses départements, en un seul appel",
     expected: [
       {
@@ -141,7 +148,7 @@ const CASES: ToolCase[] = [
   },
   {
     question:
-      "Quels sont les indicateurs non à jour, avec le détail par territoire ?",
+      "Quelles valeurs d'avancement ne sont pas à jour, avec le détail par territoire ?",
     reason: "détail demandé explicitement sur tout le périmètre",
     expected: [
       {
@@ -151,7 +158,7 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Quels chantiers ont des indicateurs à mettre à jour ?",
+    question: "Quels chantiers ont des valeurs d'avancement à mettre à jour ?",
     reason: "question vague : pas de détail par territoire",
     expected: [{ toolName: "get_indicateurs_non_a_jour" }],
   },
