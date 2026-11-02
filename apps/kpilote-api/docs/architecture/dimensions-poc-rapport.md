@@ -1,7 +1,7 @@
 # Rapport final : POC « l'individu devient une dimension comme une autre »
 
 Date : 2026-11-02
-Branche : `claude/individu-dimension-poc-f01d87` (11 commits locaux, **rien de poussé**)
+Branche : `claude/individu-dimension-poc-f01d87` (12 commits, poussée en PR brouillon à la demande d'Antoine)
 
 Documents associés :
 
@@ -432,7 +432,7 @@ Une table de présence déclarée et datée est l'évolution naturelle.
 
 ## 8. État git
 
-Branche `claude/individu-dimension-poc-f01d87`, au-dessus de `eed13bc10` (base `dev`). 11 commits (les deux derniers ajoutent ce rapport et les vérifications navigateur), environ 207 fichiers, +14,8k et −1,4k lignes. **Aucun push, aucune PR, `dev` non modifiée.**
+Branche `claude/individu-dimension-poc-f01d87`, au-dessus de `eed13bc10` (base `dev`). 12 commits (les trois derniers ajoutent ce rapport, les vérifications navigateur et cette mise à jour), environ 207 fichiers, +14,8k et −1,4k lignes. Branche poussée et PR brouillon ouverte vers `dev` à la demande d'Antoine, le 2026-11-02 ; `dev` non modifiée.
 
 ```
 (ce commit)  docs(kpilote-api): vérifications webapp dans le navigateur (POC dimensions)
