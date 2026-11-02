@@ -133,6 +133,7 @@ export function ImportValeursModal({
           <ImportFormatValide
             nomFichier={etat.nomFichier}
             rows={etat.rows}
+            colonnesIdentite={etat.colonnesIdentite}
             erreursServeur={erreursServeur}
           />
         )

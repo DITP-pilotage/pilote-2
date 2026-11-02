@@ -10,7 +10,6 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'

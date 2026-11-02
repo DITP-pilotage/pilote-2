@@ -12,11 +12,7 @@ import { formatBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+import { type PointInterne, resolveSerieIndividu } from '@/valeurAvancement/resolveSerieIndividu'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 

@@ -17,6 +17,18 @@ const colonneTypeValeurSchema = z.object({
     .describe('Header exact de la colonne indiquant le type de valeur (recopie exacte).'),
 })
 
+// Pas de `.min(1)` : un tableau vide renvoyé par le modèle ne doit pas faire
+// échouer la génération ; le plan est assaini ensuite (cf. normaliserValeursImport).
+const colonnesIdentiteSupplementairesSchema = z
+  .array(z.string())
+  .optional()
+  .describe(
+    "Colonnes d'identité SUPPLÉMENTAIRES, uniquement si l'indicateur croise plusieurs dimensions " +
+      '(ex. territoire ET opérateur) : headers exacts des autres colonnes qui identifient ' +
+      "l'observation, en plus de `colonneIndividu`. Une colonne par dimension. " +
+      "Laisse ce champ absent quand une seule colonne identifie l'observation.",
+  )
+
 const planLongSchema = z.object({
   layout: z
     .literal('long')
@@ -28,6 +40,7 @@ const planLongSchema = z.object({
   colonneIndividu: z
     .string()
     .describe("Header de la colonne contenant le libellé de l'individu (territoire, entité…)."),
+  colonnesIdentiteSupplementaires: colonnesIdentiteSupplementairesSchema,
   colonneDate: colonneDateSchema,
   colonneValeur: z.string().describe('Header de la colonne contenant la valeur numérique.'),
   colonneTypeValeur: colonneTypeValeurSchema
@@ -48,6 +61,7 @@ const planPivotSchema = z.object({
         'Choisis ce layout quand les headers de colonnes sont eux-mêmes des dates.',
     ),
   colonneIndividu: z.string().describe("Header de la colonne contenant le libellé de l'individu."),
+  colonnesIdentiteSupplementaires: colonnesIdentiteSupplementairesSchema,
   colonnesPivot: z
     .array(
       z.object({
@@ -127,6 +141,13 @@ const SYSTEM_PROMPT =
   'actuelle »). Si une telle colonne existe, renseigne `colonneTypeValeur.nom` avec son ' +
   'header exact. Sinon, laisse ce champ absent.\n' +
   '\n' +
+  'INDICATEUR MULTI-DIMENSION :\n' +
+  "Si l'indicateur croise plusieurs dimensions (elles te sont alors listées), une observation " +
+  'est identifiée par une colonne par dimension (ex. `territoire, opérateur, date, valeur`). ' +
+  'Mets la première dans `colonneIndividu` et les autres dans `colonnesIdentiteSupplementaires`. ' +
+  "En pivot, les colonnes d'identité ne sont jamais des colonnes pivot : seules les colonnes " +
+  'dont le header est une date le sont.\n' +
+  '\n' +
   'Ne renvoie jamais un plan dont les noms de colonnes ne correspondent pas aux headers fournis.'
 
 const MAX_LIGNES_ECHANTILLON = 8
@@ -139,11 +160,15 @@ export type DecouvrirStructureError = {
 
 export const decouvrirStructure = ({
   indicateur,
+  dimensions,
   headers,
   rows,
   nomFichier,
 }: {
   indicateur: { nom: string; uniteLibelle: string | null }
+  // Noms des dimensions de l'indicateur, dans l'ordre. Mentionnées au modèle
+  // seulement à partir de deux (prompt utilisateur mono inchangé).
+  dimensions: ReadonlyArray<string>
   headers: ReadonlyArray<string>
   rows: ReadonlyArray<Record<string, unknown>>
   nomFichier: string
@@ -155,6 +180,11 @@ export const decouvrirStructure = ({
     `Indicateur ciblé : « ${indicateur.nom} »${
       indicateur.uniteLibelle ? ` (unité : ${indicateur.uniteLibelle})` : ''
     }.`,
+    dimensions.length > 1
+      ? `Dimensions croisées par l'indicateur (${dimensions.length}) : ${dimensions
+          .map((nom) => `« ${nom} »`)
+          .join(', ')}.`
+      : '',
     nomFichier ? `Fichier source : « ${nomFichier} ».` : '',
     '',
     `Headers du fichier (${headers.length}) : ${JSON.stringify(headers)}`,
@@ -200,6 +230,8 @@ export const decouvrirStructure = ({
             ? {
                 layout: output.plan.layout,
                 colonneIndividu: output.plan.colonneIndividu,
+                nbColonnesIdentiteSupplementaires:
+                  output.plan.colonnesIdentiteSupplementaires?.length ?? 0,
                 ...(output.plan.layout === 'long'
                   ? {
                       colonneDate: output.plan.colonneDate.nom,

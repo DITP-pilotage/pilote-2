@@ -9,8 +9,10 @@ import { type IndividuPourImport } from '@/valeurImport/queries/listIndividusFor
 
 const MAX_STEPS = 3
 
-export type ResolutionEntry = { libelleSource: string; individuPublicId: string }
-export type ResolutionNonResolu = { libelleSource: string; raison: string }
+// `colonne` : colonne d'identité source, renseignée en multi-dimension (la
+// correspondance est alors indexée par (colonne, libellé)).
+export type ResolutionEntry = { libelleSource: string; individuPublicId: string; colonne?: string }
+export type ResolutionNonResolu = { libelleSource: string; raison: string; colonne?: string }
 export type ResolutionResult = {
   mapping: ReadonlyArray<ResolutionEntry>
   nonResolus: ReadonlyArray<ResolutionNonResolu>
@@ -134,10 +136,14 @@ export const resoudreIndividus = ({
   indicateur,
   individusValides,
   libellesSources,
+  colonne,
 }: {
   indicateur: { nom: string }
   individusValides: ReadonlyArray<IndividuPourImport>
   libellesSources: ReadonlyArray<string>
+  // Multi-dimension : colonne résolue et dimension dont `individusValides` sont
+  // les seuls membres (contexte donné au modèle). Absent en mono.
+  colonne?: { nom: string; dimension: string }
 }): ResultAsync<ResolutionResult, ResoudreIndividusError> => {
   const model = createAlbertModel()
 
@@ -156,6 +162,12 @@ export const resoudreIndividus = ({
 
   const prompt = [
     `Indicateur : « ${indicateur.nom} ».`,
+    ...(colonne
+      ? [
+          `Colonne source : « ${colonne.nom} » — ses libellés désignent des membres de la ` +
+            `dimension « ${colonne.dimension} » uniquement.`,
+        ]
+      : []),
     '',
     `Individus connus (${individusContexte.length}) :`,
     JSON.stringify(individusContexte, null, 2),
@@ -175,6 +187,7 @@ export const resoudreIndividus = ({
       indicateurNom: indicateur.nom,
       nbIndividusValides: individusValides.length,
       nbLibellesSources: libellesSources.length,
+      ...(colonne ? { colonne: colonne.nom, dimension: colonne.dimension } : {}),
     },
     'Albert call 2 (résolution) — début',
   )
