@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   BarChart3,
+  Boxes,
   FolderTree,
   KeyRound,
   Layers,
@@ -50,13 +51,21 @@ function FeaturesComponent() {
         </FadeIn>
         <FadeIn delayMs={240}>
           <BarCard
+            icon={Boxes}
+            title="Gérer les dimensions"
+            description="Créer ou modifier une dimension d'observation, ses niveaux et ses membres."
+            onClick={() => void navigate({ to: '/dimensions' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={300}>
+          <BarCard
             icon={Network}
             title="Gérer les relations"
             description="Définir le parent de chaque individu dans la hiérarchie des référentiels."
             onClick={() => void navigate({ to: '/relations' })}
           />
         </FadeIn>
-        <FadeIn delayMs={300}>
+        <FadeIn delayMs={360}>
           <BarCard
             icon={KeyRound}
             title="Gérer les clés API"
@@ -64,7 +73,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/api-keys' })}
           />
         </FadeIn>
-        <FadeIn delayMs={360}>
+        <FadeIn delayMs={420}>
           <BarCard
             icon={Users}
             title="Gérer les utilisateurs"
@@ -72,7 +81,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/utilisateurs' })}
           />
         </FadeIn>
-        <FadeIn delayMs={420}>
+        <FadeIn delayMs={480}>
           <BarCard
             icon={Terminal}
             title="Console API"
@@ -80,7 +89,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/console' })}
           />
         </FadeIn>
-        <FadeIn delayMs={480}>
+        <FadeIn delayMs={540}>
           <BarCard
             icon={ToggleLeft}
             title="Gérer les features"
@@ -88,7 +97,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/features' })}
           />
         </FadeIn>
-        <FadeIn delayMs={540}>
+        <FadeIn delayMs={600}>
           <BarCard
             icon={LifeBuoy}
             title="Centre d’aide"

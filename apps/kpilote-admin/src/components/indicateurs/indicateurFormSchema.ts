@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import type { IndicateurApiModel, UpsertIndicateurBody } from '@pilote/kpilote-shared/indicateur'
 import {
+  configurationIndicateurDimensionSchema,
   configurationIndicateurReferentielSchema,
   indicateurSourceUrlSchema,
   indicateurVisibiliteSchema,
@@ -44,6 +45,10 @@ export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
         ),
       delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
       referentiels: z.array(configurationIndicateurReferentielSchema),
+      // Configurations saisies par dimension. Peut contenir des dimensions qui
+      // ne sont plus couvertes par les niveaux : la liste envoyée est celle
+      // résolue au submit (`resoudreDimensionsIndicateur`), vide en mono.
+      dimensions: z.array(configurationIndicateurDimensionSchema),
       responsables: z.array(
         z.object({
           id: z.string(),
@@ -88,6 +93,13 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
         : '',
     delaiUnite: indicateur?.delaiMiseADisposition?.unite ?? '',
     referentiels: indicateur?.referentiels ?? [],
+    dimensions:
+      indicateur?.dimensions.map((dimension) => ({
+        id: dimension.id,
+        ordre: dimension.ordre,
+        fonctionAgregation: dimension.fonctionAgregation,
+        porteObjectifs: dimension.porteObjectifs,
+      })) ?? [],
     responsables:
       indicateur?.responsables.map((responsable) => ({
         id: responsable.id,
@@ -100,7 +112,8 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
 
 // Mappe les valeurs du formulaire vers le body PUT. Les 6 métadonnées sont
 // toujours envoyées (chaîne vide → null = « effacer ») : ce que montre le
-// formulaire est ce qui est persisté.
+// formulaire est ce qui est persisté. `dimensions` n'est envoyé que pour un
+// indicateur multi-dimension : le body d'un mono reste celui d'avant.
 export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody {
   return {
     nom: values.nom,
@@ -117,6 +130,7 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
         ? null
         : { nombre: Number(values.delaiNombre), unite: values.delaiUnite },
     referentiels: values.referentiels,
+    ...(values.dimensions.length >= 2 ? { dimensions: values.dimensions } : {}),
     responsables: values.responsables.map((responsable) => responsable.id),
   }
 }
