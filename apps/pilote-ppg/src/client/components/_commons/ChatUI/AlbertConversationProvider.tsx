@@ -64,6 +64,7 @@ type AlbertConversationContextValue = {
   setPageContext: (pageContext: AlbertPageContext | null) => void;
   open: () => void;
   changerVue: (vue: VueAssistant) => void;
+  passerEnFenetre: () => void;
   minimize: () => void;
   restore: () => void;
   startNewConversation: () => void;
@@ -238,6 +239,10 @@ export const AlbertConversationProvider = ({
     [conversation, track],
   );
 
+  // Passage de circonstance (pour laisser voir la page) : la vue préférée
+  // reste celle que l'utilisateur a choisie.
+  const passerEnFenetre = useCallback(() => setAffichage("floating"), []);
+
   const minimize = useCallback(() => {
     if (conversation) {
       track({
@@ -304,6 +309,7 @@ export const AlbertConversationProvider = ({
       setPageContext,
       open,
       changerVue,
+      passerEnFenetre,
       minimize,
       restore,
       startNewConversation,
@@ -316,6 +322,7 @@ export const AlbertConversationProvider = ({
       pageContext,
       open,
       changerVue,
+      passerEnFenetre,
       minimize,
       restore,
       startNewConversation,
