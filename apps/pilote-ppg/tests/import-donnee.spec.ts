@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { stringify } from "csv-stringify/sync";
 import { test } from "./fixtures";
+import { prisma } from "@/server/framework/persistence/prisma";
 import { construireXlsx } from "@/server/import-indicateur/app/builder/TabularFile.builder";
 import { AppActions } from "./actions/app.actions";
 
@@ -219,5 +220,75 @@ test("doit pouvoir importer un fichier Excel dont les dates sont au format date"
     await pageMaj.expectStep(3);
     await pageMaj.submitData(process.env.E2E_USERNAME!);
     await pageMaj.expectImportSuccess(chantier.indicateurId);
+  });
+});
+
+test("doit pouvoir effacer une valeur en important une cellule vide depuis un fichier Excel", async ({
+  page,
+  e2eContext,
+}) => {
+  const chantier = {
+    id: "902",
+    indicateurId: INDICATEUR_FOR_IMPORT,
+    indicateurNom: "Indicateur e2e import",
+  };
+
+  await new AppActions(page, e2eContext).loginAs();
+  const pageMaj = new PageMiseAJourDonnees(page, e2eContext);
+  await pageMaj.goto(CHANTIER_FOR_WRITES);
+  await pageMaj.expectTitle(chantier.id);
+  await pageMaj.selectIndicateur(chantier.indicateurId, chantier.indicateurNom);
+  await pageMaj.nextStep();
+  await pageMaj.expectStep(2);
+
+  await test.step("Choix d'un fichier Excel dont la colonne valeur, la dernière, est vide", async () => {
+    // Un tableur n'écrit pas une cellule vide en fin de ligne : la ligne de
+    // données est plus courte que l'en-tête dans le XML.
+    const classeur = construireXlsx([
+      [
+        "identifiant_indic",
+        "zone_id",
+        "zone_nom",
+        "date_valeur",
+        "type_valeur",
+        "valeur",
+      ],
+      [
+        chantier.indicateurId,
+        "D17",
+        "Charente-Maritime",
+        "2023-04-01",
+        "vc",
+        "",
+      ],
+    ]);
+
+    await pageMaj.uploadFile(`${chantier.indicateurId}.xlsx`, classeur);
+  });
+
+  await test.step("Vérification que le fichier est conforme", async () => {
+    await pageMaj.verifyFile(process.env.E2E_USERNAME!);
+    await pageMaj.expectFileValid();
+  });
+
+  await test.step("Transmission des données vérifiées", async () => {
+    await pageMaj.nextStep();
+    await pageMaj.expectStep(3);
+    await pageMaj.submitData();
+    await pageMaj.expectImportSuccess(chantier.indicateurId);
+  });
+
+  await test.step("Vérification que la valeur vide est transmise, ce qui efface la valeur à cette date", async () => {
+    const mesures = await prisma.mesure_indicateur.findMany({
+      where: {
+        indic_id: chantier.indicateurId,
+        zone_id: "D17",
+        metric_date: "2023-04-01",
+        metric_type: "vc",
+      },
+      select: { metric_value: true },
+    });
+
+    expect(mesures).toEqual([{ metric_value: "" }]);
   });
 });
