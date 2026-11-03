@@ -7,6 +7,14 @@ export function normaliserChaîneDeCaractères(chaîneDeCaractères: string) {
     .normalize("NFD")
     .replace(/[\u0300-\u036F]/g, ""); // Enlève les diacritiques
 }
+
+/** Un texte en slug : minuscules sans accents, mots séparés par des tirets. */
+export function slugifier({ texte }: { texte: string }) {
+  return normaliserChaîneDeCaractères(texte)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export function nettoyerUneChaîneDeCaractèresPourAffichageHTML(
   chaîneDeCaractères: string,
 ) {
