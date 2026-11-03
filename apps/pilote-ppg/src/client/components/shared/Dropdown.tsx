@@ -14,7 +14,9 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
         {...props}
         className={clsxm(
           "max-sm:w-[100vw]",
-          "bg-white rounded-md shadow-md border border-gray-100 px-4 py-3 z-[1100]",
+          // Au-dessus de l'assistant IA (fenêtre z-[1750], plein écran
+          // z-[1760]), depuis lequel on ouvre aussi des menus.
+          "bg-white rounded-md shadow-md border border-gray-100 px-4 py-3 z-[1800]",
           "data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out",
           props.className,
         )}

@@ -69,6 +69,9 @@ export const AlbertOverlay = () => {
       open
     >
       <Dialog.Portal>
+        {/* Sans overlay, Radix ne bloque ni le défilement ni les clics de la
+            page : il est blanc, donc invisible derrière le contenu. */}
+        <Dialog.Overlay className="fixed inset-0 z-[1760] bg-white" />
         <Dialog.Content
           aria-describedby={undefined}
           className="fixed inset-0 z-[1760] flex flex-col bg-white focus:outline-none"

@@ -30,10 +30,12 @@ export const Modale = ({
     <Dialog.Root {...props}>
       {trigger ? <Dialog.Trigger asChild>{trigger}</Dialog.Trigger> : null}
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-10" />
+        {/* Au-dessus de l'assistant IA (fenêtre z-[1750], plein écran
+            z-[1760]), depuis lequel on ouvre aussi des modales. */}
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-[1800]" />
         <Dialog.Content
           className={clsxm(
-            "fixed inset-0 z-10 flex items-end md:items-center md:justify-center pointer-events-none",
+            "fixed inset-0 z-[1800] flex items-end md:items-center md:justify-center pointer-events-none",
             size === "full" ? "md:inset-4" : "md:inset-8",
           )}
         >
