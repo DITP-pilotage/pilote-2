@@ -196,6 +196,27 @@ describe("LocalFichierIndicateurValidationService", () => {
     expect(messagesDe(xlsx)).toEqual(messagesDe(csv));
   });
 
+  it.each([
+    ["import.csv", construireCsv],
+    ["import.xlsx", construireXlsx],
+  ])(
+    "accepte une valeur vide en dernière colonne, qui efface la valeur à cette date (%s)",
+    async (nom, construire) => {
+      const rapport = await valider(
+        nom,
+        construire([ENTETE, ["IND-001", "D46", "Lot", "2023-01-31", "va", ""]]),
+      );
+
+      expect(rapport.listeErreursValidation).toEqual([]);
+      expect(rapport.estValide).toBe(true);
+      expect(
+        rapport.listeMesuresIndicateurTemporaire.map(
+          (mesure) => mesure.metricValue,
+        ),
+      ).toEqual([""]);
+    },
+  );
+
   it("refuse un format non pris en charge avec un message explicite", async () => {
     const rapport = await valider(
       "donnees.ods",
