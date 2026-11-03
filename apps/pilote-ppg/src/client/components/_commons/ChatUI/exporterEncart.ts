@@ -1,17 +1,10 @@
+import { slugifier } from "@/client/utils/strings";
 import type { EncartOutput } from "@/server/albert/tools/encart";
 
 const TYPES: Record<EncartOutput["type"], string> = {
   synthese: "synthese-territoriale",
   comparaison: "comparaison-territoriale",
 };
-
-const slug = (texte: string): string =>
-  texte
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 /** Le nom du document : le titre de l'encart, à défaut son type et sa date. */
 export const nomEncart = ({
@@ -24,7 +17,9 @@ export const nomEncart = ({
   dateRedaction: string;
 }): string => {
   const titre = markdown.match(/^#\s+(.+)$/m)?.[1];
-  return titre ? slug(titre) : `${TYPES[type]}-${dateRedaction.slice(0, 10)}`;
+  return titre
+    ? slugifier({ texte: titre })
+    : `${TYPES[type]}-${dateRedaction.slice(0, 10)}`;
 };
 
 /** Les éléments de l'encart à ne pas imprimer, comme ses boutons. */
