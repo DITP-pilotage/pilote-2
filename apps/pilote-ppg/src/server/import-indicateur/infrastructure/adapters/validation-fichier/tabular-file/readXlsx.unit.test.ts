@@ -42,14 +42,13 @@ describe("readXlsx", () => {
       ["IND-001", "D46", "", "2023-01-31", "vi", ""],
     ]);
 
-    // La cellule intercalée garde sa place ; la cellule finale vide, absente du
-    // XML, laisse la ligne plus courte que l'en-tête.
     expect(readXlsx(classeur).lignes[1]).toEqual([
       "IND-001",
       "D46",
       "",
       "2023-01-31",
       "vi",
+      "",
     ]);
   });
 

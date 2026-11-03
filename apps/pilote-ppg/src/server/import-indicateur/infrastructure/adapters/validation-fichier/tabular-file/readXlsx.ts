@@ -220,14 +220,25 @@ export function readXlsx(archive: Buffer): LectureXlsx {
     parLigne.set(numeroLigne, cellules);
   }
 
+  const derniereColonneDe = (cellules: Map<number, string> | undefined) =>
+    Math.max(-1, ...(cellules?.keys() ?? []));
+  const derniereColonneEnTete = derniereColonneDe(parLigne.get(1));
+
   const lignes: string[][] = [];
 
   for (let numero = 1; numero <= ligneMax; numero += 1) {
     const cellules = parLigne.get(numero) ?? new Map<number, string>();
-    // Chaque ligne s'arrête à sa propre dernière cellule renseignée. C'est ce
-    // qui permet ensuite de distinguer une cellule vide d'une cellule absente,
-    // et donc de détecter une ligne plus courte que le schéma.
-    const derniereColonne = Math.max(-1, ...cellules.keys());
+    // Un tableur n'écrit pas les cellules vides : rien n'y distingue une
+    // cellule vide d'une cellule absente. Une ligne renseignée est donc
+    // complétée jusqu'à la largeur de l'en-tête, sans quoi une valeur vide en
+    // dernière colonne, qui sert à effacer une valeur, serait refusée comme
+    // colonne manquante. Une ligne vide le reste : la compléter ferait de
+    // chaque `<row>` vide, quelques octets, une allocation de la largeur de
+    // l'en-tête.
+    const derniereColonne =
+      cellules.size === 0
+        ? -1
+        : Math.max(derniereColonneDe(cellules), derniereColonneEnTete);
     lignes.push(
       Array.from(
         { length: derniereColonne + 1 },
