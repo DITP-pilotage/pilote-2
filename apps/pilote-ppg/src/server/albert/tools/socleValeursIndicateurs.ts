@@ -3,14 +3,21 @@ import { z } from "zod";
 import { chantierIdsSchema } from "@/server/albert/tools/chantierId";
 import type { GetIndicateursIdentiteQuery } from "@/server/chantiers/query/GetIndicateursIdentiteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import { libelleMaille } from "@/server/albert/tools/libelles";
 import {
   descriptionPerimetre,
   resoudrePerimetreAccessible,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
 
-export const SEUIL_LIGNES_TERRITOIRES = 800;
-export const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
+const SEUIL_LIGNES_TERRITOIRES = 800;
+const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
+
+export const CONSIGNE_DETAIL_TROP_VOLUMINEUX =
+  "`detail_trop_volumineux` : le détail par territoire est trop volumineux, les compteurs sont renvoyés à la place. Rédige toujours ta réponse complète à partir de ces compteurs, sans les présenter comme le détail demandé. Termine-la en précisant que ce détail est trop volumineux, sans chiffrer ce volume, et qu'on peut l'obtenir en réduisant la recherche à un chantier, un indicateur ou un territoire. N'appelle pas clarify_with_choices, ne pose aucune question avant d'avoir donné les compteurs, et ne relance pas l'outil d'office.";
+
+export const CONSIGNE_ACCES_REFUSE =
+  "`acces_refuse` : l'utilisateur n'a accès ni à ces territoires, ni à aucun des chantiers ou indicateurs demandés.";
 
 export const chantierIdsIndicateursSchema = chantierIdsSchema
   .optional()
@@ -52,19 +59,20 @@ export const perimetreIndicateursSchema = z
 Par défaut, TOUS_TERRITOIRES. N'y mets pas le territoire courant de la session, sauf si la demande le nomme.`,
   );
 
-/** Les listes signalées au modèle, seulement quand elles ne sont pas vides. */
-export type ListesSignalees = {
+type ListesSignalees = {
   chantiers_non_accessibles?: string[];
   indicateurs_non_accessibles?: string[];
   indicateurs_introuvables?: string[];
 };
 
+/** Les champs d'accès signalés au modèle, seulement quand ils s'appliquent. */
+export type ChampsAcces = ListesSignalees & { acces_refuse?: true };
+
 export type AccesResolus =
-  | { statut: "refuse"; listes: ListesSignalees }
-  | { statut: "rien_a_interroger"; listes: ListesSignalees }
+  | { statut: "sans_resultat"; champsAcces: ChampsAcces }
   | {
       statut: "interrogeable";
-      listes: ListesSignalees;
+      champsAcces: ChampsAcces;
       chantierIds: string[];
       territoireCodes: string[];
       indicateurIds?: string[];
@@ -117,7 +125,7 @@ export async function resoudreAccesIndicateurs({
   const territoireCodes =
     "codes" in perimetreAccessible ? perimetreAccessible.codes : [];
   if (territoireCodes.length === 0) {
-    return { statut: "refuse", listes: {} };
+    return { statut: "sans_resultat", champsAcces: { acces_refuse: true } };
   }
 
   const chantiersDemandes = [...new Set(chantiersDemandesBruts)];
@@ -132,8 +140,11 @@ export async function resoudreAccesIndicateurs({
       : chantiersAccessibles;
   if (chantierIds.length === 0) {
     return {
-      statut: "refuse",
-      listes: listesSignalees({ chantiersNonAccessibles }),
+      statut: "sans_resultat",
+      champsAcces: {
+        acces_refuse: true,
+        ...listesSignalees({ chantiersNonAccessibles }),
+      },
     };
   }
 
@@ -141,7 +152,7 @@ export async function resoudreAccesIndicateurs({
   if (indicateursDemandes.length === 0) {
     return {
       statut: "interrogeable",
-      listes: listesSignalees({ chantiersNonAccessibles }),
+      champsAcces: listesSignalees({ chantiersNonAccessibles }),
       chantierIds,
       territoireCodes,
     };
@@ -175,15 +186,19 @@ export async function resoudreAccesIndicateurs({
 
   if (indicateurIds.length === 0) {
     return {
-      statut:
-        indicateursNonAccessibles.length > 0 ? "refuse" : "rien_a_interroger",
-      listes,
+      statut: "sans_resultat",
+      champsAcces: {
+        ...(indicateursNonAccessibles.length > 0 && {
+          acces_refuse: true as const,
+        }),
+        ...listes,
+      },
     };
   }
 
   return {
     statut: "interrogeable",
-    listes,
+    champsAcces: listes,
     // Un indicateur nommé prime sur le filtre de chantiers : les deux filtres
     // s'appliquant en ET, il disparaîtrait sinon en silence.
     chantierIds: [
@@ -197,4 +212,98 @@ export async function resoudreAccesIndicateurs({
     territoireCodes,
     indicateurIds,
   };
+}
+
+type Detail = "compteurs" | "territoires";
+
+export type ChampsDetail = {
+  detail: Detail;
+  detail_trop_volumineux?: true;
+};
+
+export function resoudreDetail({
+  detail,
+  nbLignes,
+}: {
+  detail: Detail;
+  nbLignes: number;
+}): { avecTerritoires: boolean; champsDetail: ChampsDetail } {
+  const detailTropVolumineux =
+    detail === "territoires" && nbLignes > SEUIL_LIGNES_TERRITOIRES;
+  const avecTerritoires = detail === "territoires" && !detailTropVolumineux;
+
+  return {
+    avecTerritoires,
+    champsDetail: {
+      detail: avecTerritoires ? "territoires" : "compteurs",
+      ...(detailTropVolumineux && { detail_trop_volumineux: true as const }),
+    },
+  };
+}
+
+type LigneIndicateurTerritoire = {
+  chantierId: string;
+  chantierNom: string;
+  indicateurId: string;
+  indicateurNom: string;
+  maille: $Enums.Maille;
+};
+
+export type ChantierRenvoye<
+  ChampsIndicateur extends object,
+  ChampsMaille extends object,
+> = {
+  chantier: { id: string; nom: string };
+  indicateurs: (ChampsIndicateur & {
+    id: string;
+    nom: string;
+    mailles: (ChampsMaille & {
+      maille: ReturnType<typeof libelleMaille>;
+    })[];
+  })[];
+};
+
+export function renvoyerChantiers<
+  Ligne extends LigneIndicateurTerritoire,
+  ChampsIndicateur extends object,
+  ChampsMaille extends object,
+>({
+  lignes,
+  champsIndicateur,
+  champsMaille,
+}: {
+  lignes: Ligne[];
+  champsIndicateur: (ligne: Ligne) => ChampsIndicateur;
+  champsMaille: (lignesDeLaMaille: Ligne[]) => ChampsMaille;
+}): ChantierRenvoye<ChampsIndicateur, ChampsMaille>[] {
+  return [...Map.groupBy(lignes, (ligne) => ligne.chantierId).values()].map(
+    (lignesDuChantier) => ({
+      chantier: {
+        id: lignesDuChantier[0].chantierId,
+        nom: lignesDuChantier[0].chantierNom,
+      },
+      indicateurs: [
+        ...Map.groupBy(
+          lignesDuChantier,
+          (ligne) => ligne.indicateurId,
+        ).values(),
+      ].map((lignesDeLIndicateur) => ({
+        id: lignesDeLIndicateur[0].indicateurId,
+        nom: lignesDeLIndicateur[0].indicateurNom,
+        ...champsIndicateur(lignesDeLIndicateur[0]),
+        mailles: MAILLES_ORDER.flatMap((maille) => {
+          const lignesDeLaMaille = lignesDeLIndicateur.filter(
+            (ligne) => ligne.maille === maille,
+          );
+          if (lignesDeLaMaille.length === 0) return [];
+          return [
+            {
+              maille: libelleMaille({ maille }),
+              ...champsMaille(lignesDeLaMaille),
+            },
+          ];
+        }),
+      })),
+    }),
+  );
 }

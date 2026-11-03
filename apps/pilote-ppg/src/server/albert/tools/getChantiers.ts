@@ -12,6 +12,7 @@ import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolv
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import {
   descriptionPerimetre,
+  TERRITOIRE_NATIONAL,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
 import {
@@ -135,8 +136,6 @@ export type GetChantiersOutput = {
   non_applicable?: { territoire_code: string; raison: string }[];
   acces_refuse?: true;
 };
-
-const TERRITOIRE_NATIONAL = "NAT-FR";
 
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
   "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";

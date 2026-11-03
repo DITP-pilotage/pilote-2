@@ -2,23 +2,25 @@ import { tool } from "ai";
 import { z } from "zod";
 import { configuration } from "@/config";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import { libelleMaille } from "@/server/albert/tools/libelles";
 import type {
   GetIndicateursSansViVcQuery,
   LigneIndicateurSansViVc,
-  ValeursRecherchees,
 } from "@/server/chantiers/infrastructure/queries/GetIndicateursSansViVcQuery";
 import type { GetIndicateursIdentiteQuery } from "@/server/chantiers/query/GetIndicateursIdentiteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
   chantierIdsIndicateursSchema,
+  CONSIGNE_ACCES_REFUSE,
+  CONSIGNE_DETAIL_TROP_VOLUMINEUX,
   indicateurIdsSchema,
-  MAILLES_ORDER,
   perimetreIndicateursSchema,
+  renvoyerChantiers,
   resoudreAccesIndicateurs,
-  SEUIL_LIGNES_TERRITOIRES,
-  type ListesSignalees,
-} from "@/server/albert/tools/rechercheIndicateurs";
+  resoudreDetail,
+  type ChampsAcces,
+  type ChampsDetail,
+  type ChantierRenvoye,
+} from "@/server/albert/tools/socleValeursIndicateurs";
 
 export const getValeursInitialesCiblesManquantesInputSchema = z.object({
   chantier_ids: chantierIdsIndicateursSchema,
@@ -53,25 +55,17 @@ type TerritoireRenvoye = {
   derniere_vc_connue?: { valeur: number; jalon: number } | null;
 };
 
-type MailleRenvoyee = {
-  maille: ReturnType<typeof libelleMaille>;
+type ChampsMaille = {
   nb_territoires_sans_vi?: number;
   nb_territoires_sans_vc?: number;
   territoires?: TerritoireRenvoye[];
 };
 
-type ChantierRenvoye = {
-  chantier: { id: string; nom: string };
-  indicateurs: { id: string; nom: string; mailles: MailleRenvoyee[] }[];
-};
-
-export type GetValeursInitialesCiblesManquantesOutput = ListesSignalees & {
-  jalon: number;
-  detail: GetValeursInitialesCiblesManquantesInput["detail"];
-  detail_trop_volumineux?: true;
-  resultats: ChantierRenvoye[];
-  acces_refuse?: true;
-};
+export type GetValeursInitialesCiblesManquantesOutput = ChampsAcces &
+  ChampsDetail & {
+    jalon: number;
+    resultats: ChantierRenvoye<object, ChampsMaille>[];
+  };
 
 function renvoyerTerritoire(ligne: LigneIndicateurSansViVc): TerritoireRenvoye {
   return {
@@ -83,72 +77,6 @@ function renvoyerTerritoire(ligne: LigneIndicateurSansViVc): TerritoireRenvoye {
     ],
     ...(ligne.vcManquante && { derniere_vc_connue: ligne.derniereVcConnue }),
   };
-}
-
-function renvoyerMailles({
-  lignes,
-  valeurs,
-  avecTerritoires,
-}: {
-  lignes: LigneIndicateurSansViVc[];
-  valeurs: ValeursRecherchees;
-  avecTerritoires: boolean;
-}): MailleRenvoyee[] {
-  return MAILLES_ORDER.flatMap((maille) => {
-    const lignesDeLaMaille = lignes.filter((ligne) => ligne.maille === maille);
-    if (lignesDeLaMaille.length === 0) return [];
-    return [
-      {
-        maille: libelleMaille({ maille }),
-        ...(valeurs !== "vc" && {
-          nb_territoires_sans_vi: lignesDeLaMaille.filter(
-            (ligne) => ligne.viManquante,
-          ).length,
-        }),
-        ...(valeurs !== "vi" && {
-          nb_territoires_sans_vc: lignesDeLaMaille.filter(
-            (ligne) => ligne.vcManquante,
-          ).length,
-        }),
-        ...(avecTerritoires && {
-          territoires: lignesDeLaMaille.map(renvoyerTerritoire),
-        }),
-      },
-    ];
-  });
-}
-
-function renvoyerChantiers({
-  lignes,
-  valeurs,
-  avecTerritoires,
-}: {
-  lignes: LigneIndicateurSansViVc[];
-  valeurs: ValeursRecherchees;
-  avecTerritoires: boolean;
-}): ChantierRenvoye[] {
-  return [...Map.groupBy(lignes, (ligne) => ligne.chantierId).values()].map(
-    (lignesDuChantier) => ({
-      chantier: {
-        id: lignesDuChantier[0].chantierId,
-        nom: lignesDuChantier[0].chantierNom,
-      },
-      indicateurs: [
-        ...Map.groupBy(
-          lignesDuChantier,
-          (ligne) => ligne.indicateurId,
-        ).values(),
-      ].map((lignesDeLIndicateur) => ({
-        id: lignesDeLIndicateur[0].indicateurId,
-        nom: lignesDeLIndicateur[0].indicateurNom,
-        mailles: renvoyerMailles({
-          lignes: lignesDeLIndicateur,
-          valeurs,
-          avecTerritoires,
-        }),
-      })),
-    }),
-  );
 }
 
 export function createGetValeursInitialesCiblesManquantesTool({
@@ -174,8 +102,8 @@ export function createGetValeursInitialesCiblesManquantesTool({
 - \`detail\` : "compteurs" (défaut) pour une question vague ; "territoires" quand la demande nomme les territoires ou le détail. Après des compteurs, propose le détail sur un sous-ensemble, sans le faire d'office.
 - \`derniere_vc_connue\` : écris « Dernière cible connue : 100, jalon 2024 » ; null s'écrit « Aucune valeur cible connue ». Elle contextualise et ne remplace jamais la cible manquante.
 - Liste vide : dis explicitement qu'aucun indicateur ne répond aux critères sur ce périmètre. Cela ne dit rien des taux d'avancement : ne présente pas ce résultat comme la preuve qu'ils sont tous calculables.
-- \`detail_trop_volumineux\` : le détail par territoire est trop volumineux, les compteurs sont renvoyés à la place. Rédige toujours ta réponse complète à partir de ces compteurs, sans les présenter comme le détail demandé. Termine-la en précisant que ce détail est trop volumineux, sans chiffrer ce volume, et qu'on peut l'obtenir en réduisant la recherche à un chantier, un indicateur ou un territoire. N'appelle pas clarify_with_choices, ne pose aucune question avant d'avoir donné les compteurs, et ne relance pas l'outil d'office.
-- \`acces_refuse\` : l'utilisateur n'a accès ni à ces territoires, ni à aucun des chantiers ou indicateurs demandés.
+- ${CONSIGNE_DETAIL_TROP_VOLUMINEUX}
+- ${CONSIGNE_ACCES_REFUSE}
 - \`chantiers_non_accessibles\`, \`indicateurs_non_accessibles\` : demandés mais hors du périmètre de l'utilisateur ; n'en dis rien d'autre, et ne les présente jamais comme complets.
 - \`indicateurs_introuvables\` : l'identifiant n'existe pas ou n'est pas publié ; dis-le, et ne le présente ni comme complet ni comme incomplet.
 Utilise-le pour : « sans cible », « cible à mettre à jour », « sans VI », « sans VC », « sans valeur initiale », « valeur initiale à mettre à jour », « valeurs initiales ou cibles manquantes » ; avec get_valeurs_avancement_non_a_jour en parallèle quand la demande vise aussi les valeurs d'avancement. « Non à jour » ou « à mettre à jour » sans type de valeurs → clarify_with_choices d'abord ; appelle cet outil si l'utilisateur choisit ensuite les VI et VC ou les trois.
@@ -199,22 +127,12 @@ Ne l'utilise pas pour : la fraîcheur des valeurs d'avancement → get_valeurs_a
           getIndicateursIdentiteQuery,
         });
 
-        if (acces.statut === "refuse") {
+        if (acces.statut === "sans_resultat") {
           return {
             jalon,
             detail: input.detail,
             resultats: [],
-            acces_refuse: true,
-            ...acces.listes,
-          };
-        }
-
-        if (acces.statut === "rien_a_interroger") {
-          return {
-            jalon,
-            detail: input.detail,
-            resultats: [],
-            ...acces.listes,
+            ...acces.champsAcces,
           };
         }
 
@@ -226,24 +144,34 @@ Ne l'utilise pas pour : la fraîcheur des valeurs d'avancement → get_valeurs_a
           valeurs: input.valeurs,
         });
 
-        const detailTropVolumineux =
-          input.detail === "territoires" &&
-          lignes.length > SEUIL_LIGNES_TERRITOIRES;
-        const avecTerritoires =
-          input.detail === "territoires" && !detailTropVolumineux;
+        const { avecTerritoires, champsDetail } = resoudreDetail({
+          detail: input.detail,
+          nbLignes: lignes.length,
+        });
 
         return {
           jalon,
-          detail: avecTerritoires ? "territoires" : "compteurs",
-          ...(detailTropVolumineux && {
-            detail_trop_volumineux: true as const,
-          }),
+          ...champsDetail,
           resultats: renvoyerChantiers({
             lignes,
-            valeurs: input.valeurs,
-            avecTerritoires,
+            champsIndicateur: () => ({}),
+            champsMaille: (lignesDeLaMaille) => ({
+              ...(input.valeurs !== "vc" && {
+                nb_territoires_sans_vi: lignesDeLaMaille.filter(
+                  (ligne) => ligne.viManquante,
+                ).length,
+              }),
+              ...(input.valeurs !== "vi" && {
+                nb_territoires_sans_vc: lignesDeLaMaille.filter(
+                  (ligne) => ligne.vcManquante,
+                ).length,
+              }),
+              ...(avecTerritoires && {
+                territoires: lignesDeLaMaille.map(renvoyerTerritoire),
+              }),
+            }),
           }),
-          ...acces.listes,
+          ...acces.champsAcces,
         };
       },
     });
