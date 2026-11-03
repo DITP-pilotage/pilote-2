@@ -54,6 +54,7 @@ TRUNCATE TABLE
     raw_data.metadata_zonegroup,
     public.mesure_indicateur_temporaire,
     public.objectif,
+    public.albert_access_utilisateur,
     public.utilisateur,
     public.erreur_validation_fichier;"
 
