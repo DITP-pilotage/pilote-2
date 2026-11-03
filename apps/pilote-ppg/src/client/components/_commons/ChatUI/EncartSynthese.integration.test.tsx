@@ -101,7 +101,7 @@ describe("EncartSynthese", () => {
     // When
     ouvrirExporter();
     fireEvent.click(
-      await screen.findByRole("menuitem", { name: /Copier l.encart/ }),
+      await screen.findByRole("menuitem", { name: /Copier la synthèse/ }),
     );
 
     // Then
