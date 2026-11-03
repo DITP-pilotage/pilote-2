@@ -35,6 +35,8 @@ export class PrismaTerritoireResolver implements TerritoireResolver {
         return this.codesDeMaille({ maille: "REG" });
       case "TOUS_DEPARTEMENTS":
         return this.codesDeMaille({ maille: "DEPT" });
+      case "TOUS_TERRITOIRES":
+        return this.codesDeMaille({});
     }
   }
 
@@ -42,12 +44,12 @@ export class PrismaTerritoireResolver implements TerritoireResolver {
     maille,
     codeParent,
   }: {
-    maille: Maille;
+    maille?: Maille;
     codeParent?: string;
   }): Promise<string[]> {
     const territoires = await this.prisma.getInstance().territoire.findMany({
       where: {
-        maille,
+        ...(maille && { maille }),
         ...(codeParent && { code_parent: codeParent }),
       },
       orderBy: { code: "asc" },

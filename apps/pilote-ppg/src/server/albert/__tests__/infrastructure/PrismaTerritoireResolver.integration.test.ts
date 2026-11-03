@@ -95,4 +95,17 @@ describe("PrismaTerritoireResolver", () => {
       expect(codes.every((code) => code.startsWith("DEPT-"))).toBe(true);
     }),
   );
+
+  it(
+    "TOUS_TERRITOIRES renvoie la France, les régions et les départements",
+    createIntegrationTest(async () => {
+      // When
+      const codes = await resolver.resoudre({ type: "TOUS_TERRITOIRES" });
+
+      // Then
+      expect(codes).toEqual(
+        expect.arrayContaining(["NAT-FR", ...REGIONS, "DEPT-01", "DEPT-976"]),
+      );
+    }),
+  );
 });

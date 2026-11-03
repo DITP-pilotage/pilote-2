@@ -16,12 +16,12 @@ import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
   descriptionPerimetre,
+  resoudrePerimetreAccessible,
+  TERRITOIRE_NATIONAL,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
 
 export type { TypeContenuChantier };
-
-const TERRITOIRE_NATIONAL = "NAT-FR";
 
 export const getChantierCommentairesInputSchema = z.object({
   chantier_id: chantierIdSchema,
@@ -68,22 +68,6 @@ type ResultatCommentaires = Omit<
 export type GetChantierCommentairesInput = z.infer<
   typeof getChantierCommentairesInputSchema
 >;
-
-/** Les territoires que l'utilisateur désigne : ils doivent lui être accessibles, contrairement aux départements ou régions résolus ensuite. */
-function territoiresDesignes({
-  perimetre,
-}: {
-  perimetre: GetChantierCommentairesInput["perimetre"];
-}): string[] {
-  switch (perimetre.type) {
-    case "SELECTION":
-      return perimetre.territoire_codes;
-    case "REGION_ET_SES_DEPARTEMENTS":
-      return [perimetre.region_code];
-    case "FRANCE_ET_SES_REGIONS":
-      return [TERRITOIRE_NATIONAL];
-  }
-}
 
 export type GetChantierCommentairesOutput = {
   /** Le nom à écrire avec l'identifiant (« CH-XXX — Nom ») : sans lui, la réponse citait le chantier par son seul code. */
@@ -171,14 +155,17 @@ Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'
 Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
       inputSchema: getChantierCommentairesInputSchema,
       execute: async (input): Promise<GetChantierCommentairesOutput> => {
-        const territoireInaccessible = territoiresDesignes({
+        const perimetreAccessible = await resoudrePerimetreAccessible({
           perimetre: input.perimetre,
-        }).find((code) => !territoiresAccessibles.includes(code));
-        if (territoireInaccessible) {
+          territoiresAccessibles,
+          territoireResolver,
+        });
+        if ("territoireInaccessible" in perimetreAccessible) {
           throw new Error(
-            `Accès non autorisé au territoire ${territoireInaccessible}`,
+            `Accès non autorisé au territoire ${perimetreAccessible.territoireInaccessible}`,
           );
         }
+        const codesAccessibles = perimetreAccessible.codes;
 
         if (!chantiersAccessibles.includes(input.chantier_id)) {
           throw new Error(
@@ -187,11 +174,6 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
         }
 
         const typesDemandes = input.types ?? [...typesContenuChantier];
-
-        const codes = await territoireResolver.resoudre(input.perimetre);
-        const codesAccessibles = codes.filter((code) =>
-          territoiresAccessibles.includes(code),
-        );
 
         const doitInclureCommentairesNationaux =
           typesDemandes.some((type) =>

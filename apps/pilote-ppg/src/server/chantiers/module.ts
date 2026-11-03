@@ -71,6 +71,7 @@ import { GetRepartitionMeteoChantiersQuery } from "./infrastructure/queries/GetR
 import { GetChantiersSignalesQuery } from "./infrastructure/queries/GetChantiersSignalesQuery";
 import { GetChantiersSignalesDetailQuery } from "./infrastructure/queries/GetChantiersSignalesDetailQuery";
 import { GetIndicateursNonAJourQuery } from "./infrastructure/queries/GetIndicateursNonAJourQuery";
+import { GetIndicateursSansViVcQuery } from "./infrastructure/queries/GetIndicateursSansViVcQuery";
 import { GetTerritoiresNonAJourQuery } from "./infrastructure/queries/GetTerritoiresNonAJourQuery";
 import { ChantiersSignalesDataFetcher } from "./infrastructure/queries/ChantiersSignalesDataFetcher";
 import { GetStatistiquesAvancementChantiersQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
@@ -108,6 +109,7 @@ type ChantierExports = {
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   getChantiersSignalesDetailQuery: GetChantiersSignalesDetailQuery;
   getIndicateursNonAJourQuery: GetIndicateursNonAJourQuery;
+  getIndicateursSansViVcQuery: GetIndicateursSansViVcQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -196,6 +198,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getTerritoiresIdentiteQuery",
     "getChantiersSignalesDetailQuery",
     "getIndicateursNonAJourQuery",
+    "getIndicateursSansViVcQuery",
   ],
   register: (container, { asModuleClass, asModuleFunction }) => {
     container.register({
@@ -335,6 +338,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
         GetChantiersSignalesDetailQuery,
       ),
       getIndicateursNonAJourQuery: asModuleClass(GetIndicateursNonAJourQuery),
+      getIndicateursSansViVcQuery: asModuleClass(GetIndicateursSansViVcQuery),
       recupererEvolutionValeursAvancementTerritoiresQuery: asModuleClass(
         RecupererEvolutionValeursAvancementTerritoiresQuery,
       ),

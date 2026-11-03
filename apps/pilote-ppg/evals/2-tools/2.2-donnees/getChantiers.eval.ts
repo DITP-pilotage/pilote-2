@@ -18,7 +18,7 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * territoire (`get_taux_avancement_territoire`), et les chantiers signalés sans
  * catégorie, que le prompt système réserve à `get_chantiers_signales`, et le
  * retard de mise à jour des données, que le prompt système réserve à
- * `get_indicateurs_non_a_jour`.
+ * `get_valeurs_avancement_non_a_jour`.
  */
 
 const CASES: ToolCase[] = [
@@ -130,7 +130,7 @@ const CASES: ToolCase[] = [
   {
     question: "Quels indicateurs ont un retard de mise à jour en Bretagne ?",
     reason:
-      "CAS NÉGATIF : « retard de mise à jour » = fraîcheur → get_indicateurs_non_a_jour, pas view en_retard",
+      "CAS NÉGATIF : « retard de mise à jour » = fraîcheur → get_valeurs_avancement_non_a_jour, pas view en_retard",
     forbidden: ["get_chantiers"],
   },
 ];

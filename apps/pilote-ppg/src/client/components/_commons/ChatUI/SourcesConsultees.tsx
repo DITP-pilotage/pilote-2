@@ -16,7 +16,8 @@ export type SourceToolPart = Extract<
       | "tool-get_taux_avancement_territoire"
       | "tool-get_chantiers"
       | "tool-get_chantiers_signales"
-      | "tool-get_indicateurs_non_a_jour"
+      | "tool-get_valeurs_avancement_non_a_jour"
+      | "tool-get_valeurs_initiales_cibles_manquantes"
       | "tool-get_indicateurs"
       | "tool-get_chantier_commentaires"
       | "tool-get_chantier_objectifs"
@@ -33,7 +34,8 @@ const LIBELLES: Record<SourceToolPart["type"], string> = {
   "tool-get_taux_avancement_territoire": "Taux d'avancement",
   "tool-get_chantiers": "Chantiers",
   "tool-get_chantiers_signales": "Chantiers signalés",
-  "tool-get_indicateurs_non_a_jour": "Indicateurs non à jour",
+  "tool-get_valeurs_avancement_non_a_jour": "Indicateurs non à jour",
+  "tool-get_valeurs_initiales_cibles_manquantes": "Indicateurs sans VI ou VC",
   "tool-get_indicateurs": "Indicateurs",
   "tool-get_chantier_commentaires": "Commentaires",
   "tool-get_chantier_objectifs": "Objectifs",

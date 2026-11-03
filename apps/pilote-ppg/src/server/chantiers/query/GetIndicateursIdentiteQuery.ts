@@ -16,6 +16,7 @@ export type IndicateurIdentiteResult = {
 
 export type GetIndicateursIdentiteParams = {
   chantierIds?: string[];
+  indicateurIds?: string[];
 };
 
 export class GetIndicateursIdentiteQuery {
@@ -32,6 +33,9 @@ export class GetIndicateursIdentiteQuery {
         chantier_identite: { statut: $Enums.type_statut.PUBLIE },
         ...(params.chantierIds !== undefined
           ? { chantier_id: { in: params.chantierIds } }
+          : {}),
+        ...(params.indicateurIds !== undefined
+          ? { id: { in: params.indicateurIds } }
           : {}),
       },
       include: { chantier_identite: true },

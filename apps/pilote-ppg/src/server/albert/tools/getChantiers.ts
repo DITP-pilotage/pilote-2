@@ -12,6 +12,7 @@ import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolv
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import {
   descriptionPerimetre,
+  TERRITOIRE_NATIONAL,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
 import {
@@ -135,8 +136,6 @@ export type GetChantiersOutput = {
   non_applicable?: { territoire_code: string; raison: string }[];
   acces_refuse?: true;
 };
-
-const TERRITOIRE_NATIONAL = "NAT-FR";
 
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
   "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
@@ -387,7 +386,8 @@ Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels ch
 Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
-- la fraîcheur des données → get_indicateurs_non_a_jour ;
+- la fraîcheur des valeurs d'avancement → get_valeurs_avancement_non_a_jour ;
+- les VI ou VC manquantes → get_valeurs_initiales_cibles_manquantes ;
 - les commentaires d'un chantier (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
       inputSchema: getChantiersInputSchema,
       execute: async (input): Promise<GetChantiersOutput> =>
