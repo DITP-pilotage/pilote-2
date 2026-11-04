@@ -102,7 +102,7 @@ const indicateurParamsSchema = z.object({
 
 // --- GET /indicateurs/:id/valeurs --------------------------------------------
 
-export const getValeursForIndicateurRoute = createRoute({
+const getValeursForIndicateurRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/valeurs',
   tags: ['Indicateur'],
@@ -316,7 +316,7 @@ const individuParamsSchema = z.object({
   id: individuPublicIdSchema,
 })
 
-export const getDernieresValeursForIndividuRoute = createRoute({
+const getDernieresValeursForIndividuRoute = createRoute({
   method: 'get',
   path: '/individus/{id}/dernieres-valeurs',
   tags: ['Individu'],

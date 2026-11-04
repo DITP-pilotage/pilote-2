@@ -31,7 +31,7 @@ const UpsertReferentielBodySchema = upsertReferentielBodySchema.openapi('UpsertR
 
 // --- GET /referentiels -------------------------------------------------------
 
-export const getReferentielsRoute = createRoute({
+const getReferentielsRoute = createRoute({
   method: 'get',
   path: '/referentiels',
   tags: ['Referentiel'],
@@ -102,7 +102,7 @@ const upsertReferentielRoute = createRoute({
 
 // --- GET /referentiels/:id/individus -----------------------------------------
 
-export const getIndividusForReferentielRoute = createRoute({
+const getIndividusForReferentielRoute = createRoute({
   method: 'get',
   path: '/referentiels/{id}/individus',
   tags: ['Referentiel'],

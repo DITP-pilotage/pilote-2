@@ -49,7 +49,7 @@ const UpsertIndicateurBodySchema = upsertIndicateurBodySchema.openapi('UpsertInd
 
 // --- GET /indicateurs --------------------------------------------------------
 
-export const getIndicateursRoute = createRoute({
+const getIndicateursRoute = createRoute({
   method: 'get',
   path: '/indicateurs',
   tags: ['Indicateur'],
@@ -73,7 +73,7 @@ const detailParamsSchema = z.object({
   id: indicateurPublicIdSchema,
 })
 
-export const getIndicateurByIdRoute = createRoute({
+const getIndicateurByIdRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}',
   tags: ['Indicateur'],

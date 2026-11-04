@@ -35,7 +35,7 @@ import { useRecentlyVisitedCommands } from './useRecentlyVisitedCommands'
 type CommandPaletteProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  openAssistant: (question: string) => void
+  openAssistant?: ((question: string) => void) | undefined
   /** Requête présente à l'ouverture — le retour depuis l'assistant rend sa question. */
   initialQuery?: string
 }
@@ -92,9 +92,9 @@ export function CommandPalette({
   useCommandPaletteShortcut(handleOpen)
 
   // La demande à l'IA n'est plus une ligne de résultat : elle est attachée au champ
-  // de recherche, comme le fait Raycast. La question part telle quelle avec sa surface,
-  // le moteur ne devine rien de l'intention.
+  // de recherche, comme le fait Raycast.
   const askAssistant = useCallback(() => {
+    if (!openAssistant) return
     analytics.trackEvent(
       analyticsEvents.commandPalette.commandRun({
         command_group: 'assistant',
@@ -307,7 +307,7 @@ export function CommandPalette({
                 }
                 className="h-12 w-full bg-transparent text-sm text-text outline-none placeholder:text-text-subtle"
               />
-              {activeItem ? null : <AskAiTrigger onAsk={askAssistant} />}
+              {activeItem || !openAssistant ? null : <AskAiTrigger onAsk={askAssistant} />}
             </div>
             <CommandPrimitive.List
               className="min-h-0 flex-1 overflow-y-auto p-1.5"
