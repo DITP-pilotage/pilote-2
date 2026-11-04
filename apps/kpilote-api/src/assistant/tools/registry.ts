@@ -7,6 +7,7 @@ import {
 import { tool, type Tool, type ToolSet } from 'ai'
 
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
+import { getCommentaires } from '@/assistant/tools/getCommentaires'
 import { getEvolutionIndicateur } from '@/assistant/tools/getEvolutionIndicateur'
 import { getSyntheseCollection } from '@/assistant/tools/getSyntheseCollection'
 import { getSyntheseIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
@@ -23,11 +24,6 @@ import { logger } from '@/framework/logger/logger'
 
 export type { ToolContext, ToolDefinition } from '@/assistant/tools/toolDefinition'
 
-const notImplemented = <N extends ToolName>(name: N): ToolDefinition<N> => ({
-  description: name,
-  execute: () => Promise.reject(new Error(`${name} : non implémenté`)),
-})
-
 const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
   search_indicateurs: searchIndicateurs,
   search_collections: searchCollections,
@@ -35,7 +31,7 @@ const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
   get_synthese_indicateur: getSyntheseIndicateur,
   get_synthese_collection: getSyntheseCollection,
   get_evolution_indicateur: getEvolutionIndicateur,
-  get_commentaires: notImplemented('get_commentaires'),
+  get_commentaires: getCommentaires,
   clarify_with_choices: clarifyWithChoices,
 }
 
