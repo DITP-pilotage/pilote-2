@@ -33,8 +33,8 @@ export const cleanPseudoCalls = (text: string): string => {
     kept.push(line)
   }
 
-  return kept
-    .join('\n')
-    .replace(/(\n\s*---\s*)+\s*$/u, '')
-    .trim()
+  // Les séparateurs `---` laissés en fin de réponse sont retirés ligne à ligne : une
+  // expression régulière sur cette suite backtrackait de façon catastrophique.
+  while (kept.length > 0 && ['', '---'].includes(kept.at(-1)?.trim() ?? '')) kept.pop()
+  return kept.join('\n').trim()
 }

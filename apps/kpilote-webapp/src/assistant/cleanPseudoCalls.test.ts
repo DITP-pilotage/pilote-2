@@ -25,4 +25,12 @@ describe('cleanPseudoCalls', () => {
       TOOL_NAMES.map(() => ''),
     )
   })
+
+  it('retire les séparateurs de fin sans exploser sur une longue suite', () => {
+    const text = `Réponse${'\n---\n '.repeat(20000)}x`
+    const started = performance.now()
+    cleanPseudoCalls(text)
+    expect(performance.now() - started).toBeLessThan(200)
+    expect(cleanPseudoCalls('Réponse\n---\n\n---\n')).toBe('Réponse')
+  })
 })
