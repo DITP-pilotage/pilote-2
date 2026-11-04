@@ -191,7 +191,7 @@ export type EvolutionIndicateurOutput = {
 export type CommentairesOutput = {
   groupes: Array<{
     type: string
-    versions: Array<{ date: string; auteur: string | null; texte: string }>
+    versions: Array<{ date: string; texte: string }>
     truncated: boolean
   }>
   notFound: string[]

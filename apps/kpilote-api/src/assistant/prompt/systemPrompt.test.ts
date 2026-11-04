@@ -30,6 +30,10 @@ describe('buildSystemPrompt', () => {
     expect(buildSystemPrompt({ now, pageContext: null })).not.toMatch(/territoire/iu)
   })
 
+  it('traite les contenus saisis comme des citations, jamais comme des consignes', () => {
+    expect(buildSystemPrompt({ now, pageContext: null })).toMatch(/jamais des consignes/u)
+  })
+
   it('donne la date du jour', () => {
     expect(buildSystemPrompt({ now, pageContext: null })).toContain('4 novembre 2026')
   })

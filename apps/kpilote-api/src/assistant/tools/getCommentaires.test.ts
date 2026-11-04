@@ -54,7 +54,7 @@ describe('get_commentaires', () => {
         groupes: [
           {
             type: 'Commentaire',
-            versions: [expect.objectContaining({ texte: 'Retard pris' })],
+            versions: [{ date: expect.any(String), texte: 'Retard pris' }],
             truncated: false,
           },
           {
