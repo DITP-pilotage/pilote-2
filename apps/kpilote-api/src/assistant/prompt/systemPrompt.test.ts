@@ -49,6 +49,13 @@ describe('buildSystemPrompt', () => {
     expect(prompt).toMatch(/jamais par ta mémoire/u)
   })
 
+  it('oriente synthèses, rapports et comparaisons vers les encarts, jamais doublés de données', () => {
+    const prompt = buildSystemPrompt({ now, pageContext: null })
+    expect(prompt).toContain('write_synthese')
+    expect(prompt).toContain('write_comparaison')
+    expect(prompt).toContain('soit l’encart, soit les outils de données, jamais les deux')
+  })
+
   it('donne la date du jour', () => {
     expect(buildSystemPrompt({ now, pageContext: null })).toContain('4 novembre 2026')
   })
