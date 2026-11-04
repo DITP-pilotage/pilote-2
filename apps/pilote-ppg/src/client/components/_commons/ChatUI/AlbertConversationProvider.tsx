@@ -16,6 +16,7 @@ import {
   exportsAvailableEvents,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useAssistantTracking } from "@/components/_commons/ChatUI/useAssistantTracking";
+import { contexteAAppliquer } from "@/components/_commons/ChatUI/contexteConversation";
 import {
   albertAgentContextSchema,
   createAlbertConversation,
@@ -208,6 +209,21 @@ export const AlbertConversationProvider = ({
 
     load({ id: stored.id, targetDisplay: "minimized" });
   }, [actif, load]);
+
+  useEffect(() => {
+    if (!conversation) return;
+    const contexte = contexteAAppliquer({
+      conversation,
+      nombreMessages: conversation.chat.messages.length,
+      page: pageContext,
+    });
+    if (!contexte) return;
+
+    // Read by the transport on every request: the next message leaves with
+    // the context of the page.
+    conversation.requestBody.agentContext = contexte.agentContext;
+    setConversation({ ...conversation, ...contexte });
+  }, [conversation, pageContext]);
 
   const open = useCallback(() => {
     if (conversation) {
