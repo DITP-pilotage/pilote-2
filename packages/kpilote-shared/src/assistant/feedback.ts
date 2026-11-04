@@ -16,13 +16,17 @@ export const CATEGORY_LABELS: Record<IssueCategory, { title: string; hint: strin
   AUTRE: { title: 'Autre', hint: 'Autre problème' },
 }
 
+export const MAX_COMMENTAIRE_LENGTH = 2000
+
+const commentaire = z.string().max(MAX_COMMENTAIRE_LENGTH).optional()
+
 export const rateBodySchema = z
   .discriminatedUnion('evaluation', [
-    z.object({ evaluation: z.literal('POSITIVE'), commentaire: z.string().optional() }),
+    z.object({ evaluation: z.literal('POSITIVE'), commentaire }),
     z.object({
       evaluation: z.literal('NEGATIVE'),
-      categories: z.array(z.enum(ISSUE_CATEGORIES)).min(1),
-      commentaire: z.string().optional(),
+      categories: z.array(z.enum(ISSUE_CATEGORIES)).min(1).max(ISSUE_CATEGORIES.length),
+      commentaire,
     }),
   ])
   // « Autre » n'apprend rien sans texte : on l'exige plutôt que de collecter du bruit.

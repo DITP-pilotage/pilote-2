@@ -24,6 +24,7 @@ import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/
 import { startTimer } from '@/framework/timer'
 
 const MAX_BODY_BYTES = 32 * 1024
+const MAX_RATE_BODY_BYTES = 8 * 1024
 
 const STREAM_ERROR_MESSAGE = "L'assistant a rencontré une erreur. Réessayez dans un instant."
 
@@ -81,7 +82,7 @@ const rateRoute = createRoute({
   summary: "Évaluer une réponse de l'assistant",
   description:
     "Enregistre un retour sur l'appel désigné par son `llmCallId`. Un retour négatif exige au moins une catégorie ; `AUTRE` exige un commentaire. Un appel inconnu ou appartenant à un autre principal est ignoré, sans erreur.",
-  middleware: [requireAuthentication],
+  middleware: [requireAuthentication, bodyLimit({ maxSize: MAX_RATE_BODY_BYTES })],
   request: {
     params: z.object({ id: z.uuid() }),
     body: {

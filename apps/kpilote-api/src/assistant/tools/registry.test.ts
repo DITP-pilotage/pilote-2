@@ -124,6 +124,14 @@ describe('registre des outils', () => {
   )
 
   it(
+    'tronque le message journalisé, qui peut recopier la conversation',
+    integrationTest(() => {
+      expect(toLoggableError(new Error('x'.repeat(1000))).message).toHaveLength(300)
+      return Promise.resolve()
+    }),
+  )
+
+  it(
     'clarify_with_choices renvoie la question et les choix',
     integrationTest(async () => {
       const input = {
