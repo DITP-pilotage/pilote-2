@@ -49,7 +49,15 @@ const MAX_LOGGED_MESSAGE = 300
 
 export const toLoggableError = (error: unknown) =>
   error instanceof Error
-    ? { name: error.name, message: error.message.slice(0, MAX_LOGGED_MESSAGE), stack: error.stack }
+    ? {
+        name: error.name,
+        message: error.message.slice(0, MAX_LOGGED_MESSAGE),
+        // La pile commence par le message entier : seules ses lignes d'appel sont gardées.
+        stack: error.stack
+          ?.split('\n')
+          .filter((line) => line.trimStart().startsWith('at '))
+          .join('\n'),
+      }
     : { name: 'UnknownError', message: String(error).slice(0, MAX_LOGGED_MESSAGE) }
 
 // Seules les erreurs métier disent au modèle quoi corriger. Une erreur interne (base,

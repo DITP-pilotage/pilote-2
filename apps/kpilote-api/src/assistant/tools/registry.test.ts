@@ -126,7 +126,9 @@ describe('registre des outils', () => {
   it(
     'tronque le message journalisé, qui peut recopier la conversation',
     integrationTest(() => {
-      expect(toLoggableError(new Error('x'.repeat(1000))).message).toHaveLength(300)
+      const logged = toLoggableError(new Error(`${'x'.repeat(1000)}SENTINELLE`))
+      expect(logged.message).toHaveLength(300)
+      expect(JSON.stringify(logged)).not.toContain('SENTINELLE')
       return Promise.resolve()
     }),
   )
