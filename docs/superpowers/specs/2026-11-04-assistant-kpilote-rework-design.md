@@ -82,7 +82,6 @@ l'entrée ⌘K et `Modale size`.
 
 ```
 assistant/
-  llm/albert.ts          plomberie : modèles, streamText/generateText/sous-agents, wrapper, persistance des appels
   agent.ts               buildAgent({ principal, context, model }) → { system, tools, stopWhen, temperature }
   prompt/                systemPrompt.ts (+ glossaire, exemples), runtimeContext.ts
   tools/
@@ -96,8 +95,8 @@ assistant/
 ### 5.1 Plomberie LLM (`llm/albert.ts`)
 
 Reprend `Albert.ts` de PPG, adapté :
-- fabrique de modèle unique pour tout kpilote-api (fusionner avec `valeurImport/helpers/albert.ts`,
-  qui a la même responsabilité) ; modèles autorisés `openweight-large` (défaut) et `openweight-medium` ;
+- fabrique de modèle unique pour tout kpilote-api, dans `framework/llm/albert.ts` (fusion avec
+  `valeurImport/helpers/albert.ts`, qui a la même responsabilité) ; modèles autorisés `openweight-large` (défaut) et `openweight-medium` ;
 - `streamText` / `generateText` / `generateStructuredOutput` / `streamSubagentText` (celui-ci lit
   `fullStream` et lève sur `error`/`abort`, `textStream` avale les erreurs) ;
 - `registerModelWrapper` global appliqué à **tous** les modèles, sous-agents compris (sert aux evals du lot 8) ;
@@ -133,7 +132,7 @@ export type KpiloteUITools = { [K in ToolName]: { input: z.input<(typeof TOOLS)[
 ```
 
 - `kind` pilote le rendu front : `source` (pastille dans « N sources consultées »), `interface`
-  (choix ; plus tard encart, tuiles), `aide` (centre d'aide, lot 2).
+  (choix ; plus tard encart, tuiles), `help` (centre d'aide, lot 2).
 - Le front dérive pastilles, libellés et `cleanPseudoCalls` de `TOOLS` : plus aucune liste à la main.
 - Une garde de compilation vérifie que `ToolOutputs` et `TOOLS` ont exactement les mêmes clés.
 
@@ -157,9 +156,11 @@ Ajouter un outil = une entrée dans `TOOLS` (+ son type de sortie) et un fichier
 3. **Un canal par information** : une donnée n'arrive que par un outil (sinon le modèle s'arrête au premier).
 4. **Libellés, jamais de codes** dans les sorties ; noms à côté des identifiants (`nom` + `id`).
    HTML saisi (commentaires) converti en texte.
-5. **Statuts explicites** plutôt que listes vides ambiguës : `total` / `tronque`, `introuvables`
+5. **Statuts explicites** plutôt que listes vides ambiguës : `total` / `truncated`, `notFound`
    (identifiants inexistants **ou** non accessibles — l'API ne distingue pas, elle renvoie 404 :
-   on ne promet pas au modèle une distinction qu'on ne sait pas faire), `besoinPrecision`.
+   on ne promet pas au modèle une distinction qu'on ne sait pas faire), `needsClarification`.
+   Clés techniques en anglais, termes métier en français (convention kpilote) ; les **valeurs**
+   lues par le modèle sont en français.
 6. **Bornes explicites** sur toute liste, annoncées dans la sortie.
 7. **`toModelOutput`** quand l'interface a besoin de plus que le modèle.
 8. **Enums, pas de `literal`/`const`** dans les schémas d'entrée (gpt-oss ignore `const` : 63/136
@@ -173,10 +174,10 @@ Ajouter un outil = une entrée dans `TOOLS` (+ son type de sortie) et un fichier
 
 | Outil | Rôle | Notes |
 |---|---|---|
-| `search_indicateurs` | nom libre → ≤10 `{id, nom}` | pré-filtre lexical de #2359 **corrigé** : le repli catalogue pagine (bug : `pageSize 100` lisait 100 indicateurs et le garde-fou des 300 était mort), au-delà de la borne → `besoinPrecision`. Classement LLM seulement s'il reste plusieurs candidats. Requêtes légères (`id`, `nom`), pas `listIndicateurs` complet. |
+| `search_indicateurs` | nom libre → ≤10 `{id, nom}` | pré-filtre lexical de #2359 **corrigé** : le repli catalogue pagine (bug : `pageSize 100` lisait 100 indicateurs et le garde-fou des 300 était mort), au-delà de la borne → `needsClarification`. Classement LLM seulement s'il reste plusieurs candidats. Requêtes légères (`id`, `nom`), pas `listIndicateurs` complet. |
 | `search_collections` | idem pour les collections | même socle |
 | `search_individus` | nom libre → ≤10 individus `{id, nom, referentiel}`, filtrable par référentiel | **manquait** : la donnée d'avancement est indexée par (entité, individu). **Générique** (décidé) : un individu kpilote peut être n'importe quoi — territoire, bassin versant, académie… et ça va évoluer. Même socle que les autres recherches (pré-filtre lexical en base, classement LLM s'il reste plusieurs candidats). Pas de table d'alias géographiques à la PPG. |
-| `get_synthese_indicateur` | identité, unité, objectifs, taux de progression, valeurs remarquables pour un individu ou un périmètre | sans individu → `besoinPrecision` |
+| `get_synthese_indicateur` | identité, unité, objectifs, taux de progression, valeurs remarquables pour un individu ou un périmètre | sans individu → `needsClarification` |
 | `get_synthese_collection` | taux de progression et contributions d'une collection pour un individu | |
 | `get_evolution_indicateur` | série de valeurs d'un indicateur pour un individu | bornée |
 | `get_commentaires` | commentaires d'un indicateur × individu ou d'une collection, groupés et dédoublonnés comme PPG | HTML → texte |
@@ -227,7 +228,8 @@ Un test vérifie que tout nom d'outil cité dans le prompt existe dans `TOOLS`.
 
 - `assistant_conversation` (blob JSONB des messages, `contexte` réellement écrit) et `assistant_appel`
   (une ligne par tour : transcript, tokens de la dernière étape, durée, modèle, feedback).
-- Appels des sous-agents tracés (§5.1), rattachés à leur `assistant_appel`.
+- Appels des sous-agents tracés (§5.1) dans `assistant_sous_appel`, rattachés à leur
+  `assistant_appel` ; collectés en mémoire pendant le tour et écrits avec lui.
 - **Pas de purge** (décidé) : les conversations sont conservées, PPG a montré que le volume tient.
   Pas de cron de rétention. La FK `assistant_appel` → `assistant_conversation` garde
   `ON DELETE CASCADE` (une suppression ne peut être que volontaire) et son commentaire est aligné.
@@ -249,8 +251,10 @@ n'atteint la production.
 
 ### 6.5 Sources
 
-Extraction par clés conservée, mais seules les sorties des outils `kind: 'source'` comptent, et pas
-les candidats d'une recherche : les sources affichent ce qui fonde la réponse, pas tout ce qui a été lu.
+Comme PPG : les sources sont les pastilles « N sources consultées », une par appel d'outil
+`kind: 'source'` (§7). La part `data-sources` de #2359 (extraction des identifiants par clés,
+résolution des libellés) est **supprimée** : elle doublait les pastilles. Les entités citées dans
+le texte (`Libellé (IND-42)`) deviennent des liens internes, comme `remarkChantierLinks` chez PPG.
 
 ### 6.6 Contexte de page
 
