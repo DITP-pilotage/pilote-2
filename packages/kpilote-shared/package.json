@@ -44,6 +44,22 @@
       "types": "./src/apiKey.ts",
       "default": "./src/apiKey.ts"
     },
+    "./assistant/chat": {
+      "types": "./src/assistant/chat.ts",
+      "default": "./src/assistant/chat.ts"
+    },
+    "./assistant/ids": {
+      "types": "./src/assistant/ids.ts",
+      "default": "./src/assistant/ids.ts"
+    },
+    "./assistant/message": {
+      "types": "./src/assistant/message.ts",
+      "default": "./src/assistant/message.ts"
+    },
+    "./assistant/tools": {
+      "types": "./src/assistant/tools.ts",
+      "default": "./src/assistant/tools.ts"
+    },
     "./assistant/feedback": {
       "types": "./src/assistant/feedback.ts",
       "default": "./src/assistant/feedback.ts"
