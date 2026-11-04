@@ -18,6 +18,14 @@ import { runAsUser } from '@/test/runAsPrincipal'
 
 const callOptions = { toolCallId: 't', messages: [], context: undefined }
 
+const collect = async (result: unknown): Promise<unknown[]> => {
+  const states: unknown[] = []
+  if (typeof result === 'object' && result !== null && Symbol.asyncIterator in result) {
+    for await (const state of result as AsyncIterable<unknown>) states.push(state)
+  }
+  return states
+}
+
 const contextFor = (principalId: string): ToolContext =>
   runAsUser(principalId, () => ({
     model: 'openweight-large',
@@ -146,6 +154,50 @@ describe('registre des outils', () => {
       const tool = toAiTool('clarify_with_choices', clarifyWithChoices, contextFor('u-4'))
 
       expect(await tool.execute?.(input, callOptions)).toEqual(input)
+    }),
+  )
+
+  it(
+    'relaie chaque état d’un outil qui rédige, sous le principal capturé',
+    integrationTest(async () => {
+      const tool = toAiTool(
+        'clarify_with_choices',
+        {
+          description: 'test',
+          async *stream() {
+            yield { step: 1, principal: requireCurrentPrincipalId() }
+            yield { step: 2, principal: requireCurrentPrincipalId() }
+          },
+        },
+        contextFor('principal-redaction'),
+      )
+
+      expect(await collect(tool.execute?.({ question: 'q', choices: [] }, callOptions))).toEqual([
+        { step: 1, principal: 'principal-redaction' },
+        { step: 2, principal: 'principal-redaction' },
+      ])
+    }),
+  )
+
+  it(
+    'termine en erreur lisible un outil qui échoue en pleine rédaction',
+    integrationTest(async () => {
+      const tool = toAiTool(
+        'clarify_with_choices',
+        {
+          description: 'test',
+          async *stream() {
+            yield { step: 1 }
+            await Promise.resolve()
+            throw new ValidationError('rédaction interrompue')
+          },
+        },
+        contextFor('u-6'),
+      )
+
+      const states = await collect(tool.execute?.({ question: 'q', choices: [] }, callOptions))
+
+      expect(states.at(-1)).toEqual({ error: expect.stringContaining('rédaction interrompue') })
     }),
   )
 })

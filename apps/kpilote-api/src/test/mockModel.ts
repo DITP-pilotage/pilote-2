@@ -90,3 +90,26 @@ export const sequenceTextModel = (texts: ReadonlyArray<string>) => {
   })
   return { model, state }
 }
+
+/** Un modèle qui streame les morceaux donnés, et retient le dernier prompt reçu. */
+export const streamTextModel = (chunks: ReadonlyArray<string>) => {
+  const model = new MockLanguageModelV4({
+    doStream: () =>
+      Promise.resolve({
+        stream: simulateReadableStream({
+          chunks: [
+            { type: 'stream-start' as const, warnings: [] },
+            { type: 'text-start' as const, id: 't' },
+            ...chunks.map((delta) => ({ type: 'text-delta' as const, id: 't', delta })),
+            { type: 'text-end' as const, id: 't' },
+            {
+              type: 'finish' as const,
+              finishReason: { unified: 'stop' as const, raw: 'stop' },
+              usage: usage(10, 5),
+            },
+          ],
+        }),
+      }),
+  })
+  return model
+}

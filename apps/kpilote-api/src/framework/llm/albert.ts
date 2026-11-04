@@ -1,6 +1,6 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { type Model } from '@pilote/kpilote-shared/assistant/chat'
-import { generateText, Output, stepCountIs, type LanguageModel } from 'ai'
+import { generateText, Output, stepCountIs, streamText, type LanguageModel } from 'ai'
 import { type z } from 'zod'
 
 import { env } from '@/env'
@@ -69,4 +69,43 @@ export const generateStructured = async <T>({
     durationMs: elapsed(),
   })
   return result.output
+}
+
+/** La rédaction d'un sous-agent, morceau par morceau ; l'usage est tracé une fois le texte fini. */
+export async function* streamSubagentText({
+  name,
+  model,
+  system,
+  prompt,
+  trace,
+  abortSignal,
+}: {
+  name: string
+  model: Model
+  system: string
+  prompt: string
+  trace: TurnTrace | null
+  abortSignal?: AbortSignal
+}): AsyncGenerator<string> {
+  const elapsed = startTimer()
+  const result = streamText({
+    model: createAlbertModel(model),
+    system,
+    prompt,
+    temperature: CONVERSATION_TEMPERATURE,
+    ...(abortSignal ? { abortSignal } : {}),
+  })
+  for await (const part of result.fullStream) {
+    if (part.type === 'text-delta') yield part.text
+    if (part.type === 'error') throw part.error
+    if (part.type === 'abort') throw new Error('La rédaction du sous-agent a été interrompue')
+  }
+  const usage = await result.totalUsage
+  trace?.record({
+    name,
+    model,
+    inputTokens: usage.inputTokens ?? 0,
+    outputTokens: usage.outputTokens ?? 0,
+    durationMs: elapsed(),
+  })
 }

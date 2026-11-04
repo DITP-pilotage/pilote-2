@@ -15,15 +15,21 @@ export type ToolExecuteOptions = { abortSignal?: AbortSignal; context: ToolConte
 
 // Signatures de méthode, bivariantes : une définition typée par outil se range sans cast
 // dans `AnyToolDefinition`, la forme que l'enveloppe commune manipule.
+// Un outil répond en une fois (`execute`) ou émet ses états au fil d'une rédaction
+// (`stream`) : le SDK en fait des résultats intermédiaires, le dernier état est la sortie.
 export type ToolDefinition<N extends ToolName> = {
   description: string
-  execute(input: ToolInput<N>, options: ToolExecuteOptions): Promise<ToolOutputs[N]>
   /** Ce que le modèle relit de la sortie, quand l'interface en a besoin de davantage. */
   toModelOutput?(output: ToolOutputs[N]): JSONValue
-}
+} & (
+  | { execute(input: ToolInput<N>, options: ToolExecuteOptions): Promise<ToolOutputs[N]> }
+  | { stream(input: ToolInput<N>, options: ToolExecuteOptions): AsyncIterable<ToolOutputs[N]> }
+)
 
 export type AnyToolDefinition = {
   description: string
-  execute(input: unknown, options: ToolExecuteOptions): Promise<unknown>
   toModelOutput?(output: unknown): JSONValue
-}
+} & (
+  | { execute(input: unknown, options: ToolExecuteOptions): Promise<unknown> }
+  | { stream(input: unknown, options: ToolExecuteOptions): AsyncIterable<unknown> }
+)

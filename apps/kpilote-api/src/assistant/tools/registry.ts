@@ -19,6 +19,7 @@ import {
   type AnyToolDefinition,
   type ToolContext,
   type ToolDefinition,
+  type ToolExecuteOptions,
 } from '@/assistant/tools/toolDefinition'
 import { AppError } from '@/framework/errors/AppError'
 import { logger } from '@/framework/logger/logger'
@@ -86,23 +87,54 @@ export const toAiTool = (
   const failed = new Set<string>()
   const toModelOutput = definition.toModelOutput?.bind(definition)
 
+  const run = async (
+    execute: (input: unknown, options: ToolExecuteOptions) => Promise<unknown>,
+    input: unknown,
+    options: ToolExecuteOptions,
+  ): Promise<unknown> => {
+    const key = JSON.stringify(input)
+    if (failed.has(key)) return REPEATED_FAILURE
+    try {
+      return await context.runInContext(() => execute(input, options))
+    } catch (error) {
+      failed.add(key)
+      return describeFailure(name, error)
+    }
+  }
+
+  // Chaque pas de la rédaction reprend le principal capturé ; une erreur en cours de route
+  // devient le dernier état, comme pour un outil qui répond en une fois.
+  async function* relay(
+    stream: (input: unknown, options: ToolExecuteOptions) => AsyncIterable<unknown>,
+    input: unknown,
+    options: ToolExecuteOptions,
+  ): AsyncGenerator<unknown> {
+    const key = JSON.stringify(input)
+    if (failed.has(key)) {
+      yield REPEATED_FAILURE
+      return
+    }
+    const iterator = stream(input, options)[Symbol.asyncIterator]()
+    try {
+      while (true) {
+        const step = await context.runInContext(() => iterator.next())
+        if (step.done) return
+        yield step.value
+      }
+    } catch (error) {
+      failed.add(key)
+      yield describeFailure(name, error)
+    }
+  }
+
   return tool({
     description: definition.description,
     inputSchema: TOOLS[name].input,
-    execute: async (
-      input: unknown,
-      { abortSignal }: { abortSignal?: AbortSignal | undefined },
-    ): Promise<unknown> => {
-      const key = JSON.stringify(input)
-      if (failed.has(key)) return REPEATED_FAILURE
-      try {
-        return await context.runInContext(() =>
-          definition.execute(input, { ...(abortSignal ? { abortSignal } : {}), context }),
-        )
-      } catch (error) {
-        failed.add(key)
-        return describeFailure(name, error)
-      }
+    execute: (input: unknown, { abortSignal }: { abortSignal?: AbortSignal | undefined }) => {
+      const options: ToolExecuteOptions = { ...(abortSignal ? { abortSignal } : {}), context }
+      return 'stream' in definition
+        ? relay((i, o) => definition.stream(i, o), input, options)
+        : run((i, o) => definition.execute(i, o), input, options)
     },
     ...(toModelOutput
       ? {
