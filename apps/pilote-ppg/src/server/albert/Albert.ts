@@ -16,6 +16,7 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { z } from "zod";
 import { configuration } from "@/config";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
+import { clarificationEnTexteMiddleware } from "@/server/albert/infrastructure/clarificationEnTexteMiddleware";
 
 export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   if (!configuration().albert.devTools) {
@@ -34,9 +35,17 @@ type ModelWrapper = (model: LanguageModelV4) => LanguageModelV4;
  */
 let modelWrapper: ModelWrapper = (model) => model;
 
+/**
+ * Le rattrapage des clarifications écrites en texte passe sous l'enveloppe
+ * externe : les evals tracent la sortie corrigée, celle que voit l'utilisateur.
+ * Il ne s'applique qu'aux appels qui exposent `clarify_with_choices`.
+ */
 function createModel(modelId: string) {
   return modelWrapper(
-    withOptionalDevTools(Albert.createProvider().chat(modelId)),
+    wrapLanguageModel({
+      model: withOptionalDevTools(Albert.createProvider().chat(modelId)),
+      middleware: clarificationEnTexteMiddleware,
+    }),
   );
 }
 
