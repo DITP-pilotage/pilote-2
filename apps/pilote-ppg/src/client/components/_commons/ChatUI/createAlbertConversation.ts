@@ -7,6 +7,7 @@ import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 export const albertAgentContextSchema = z.object({
   territoireCode: z.string(),
   jalon: z.number(),
+  chantierId: z.string().optional(),
   instructions: z.string(),
 });
 

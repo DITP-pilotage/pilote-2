@@ -10,4 +10,10 @@ export const versContexteAffiche = (
       récupérerDétailsSurUnTerritoire(agentContext.territoireCode)
         ?.nomAffiché ?? agentContext.territoireCode,
     jalon: agentContext.jalon,
+    ...(agentContext.chantierId ? { chantierId: agentContext.chantierId } : {}),
   };
+
+export const libelleContexte = (contexte: ContexteAccueil): string =>
+  [contexte.chantierId, contexte.territoireNom, `Jalon ${contexte.jalon}`]
+    .filter(Boolean)
+    .join(" · ");

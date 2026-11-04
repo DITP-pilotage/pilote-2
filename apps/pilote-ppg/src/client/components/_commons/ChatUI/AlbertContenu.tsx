@@ -24,7 +24,11 @@ export const AlbertContenu = ({
         conversation={conversation}
         key={conversation.chat.id}
         placeholder={
-          contexte ? "Posez une question sur ce territoire..." : undefined
+          contexte?.chantierId
+            ? "Posez une question sur ce chantier..."
+            : contexte
+              ? "Posez une question sur ce territoire..."
+              : undefined
         }
         scenarios={conversation.scenarios}
         tracked

@@ -43,4 +43,5 @@ export const memeContexte = ({
   page: AlbertAgentContext | undefined;
 }): boolean =>
   conversation?.territoireCode === page?.territoireCode &&
-  conversation?.jalon === page?.jalon;
+  conversation?.jalon === page?.jalon &&
+  conversation?.chantierId === page?.chantierId;
