@@ -12,7 +12,7 @@ le dit, n'affirme rien et oriente vers l'équipe KPILOTE.
 
 ## Décisions (validées)
 
-- **Un sous-agent exposé comme outil**, `consulter_centre_aide({ question })`, toujours disponible.
+- **Un sous-agent exposé comme outil**, `consult_centre_aide({ question })`, toujours disponible.
   Il ne voit que le centre d'aide ; l'agent principal garde la conversation et peut combiner avec
   les données.
 - **Deux appels structurés, sans index** : sélection d'au plus 3 pages sur un sommaire (titre,
@@ -28,15 +28,15 @@ le dit, n'affirme rien et oriente vers l'équipe KPILOTE.
 
 ## Contrat
 
-- `ToolKind` gagne `'help'`. `TOOLS.consulter_centre_aide = { label: "Centre d'aide", kind: 'help', input: { question: string 1..500 } }`.
+- `ToolKind` gagne `'help'`. `TOOLS.consult_centre_aide = { label: "Centre d'aide", kind: 'help', input: { question: string 1..500 } }`.
 - `CentreAideOutput = { found: boolean; answer: string; sources: Array<{ id: string; titre: string; chemin: string[]; url: string }> }`.
 
 ## API
 
 - `assistant/tools/centreAide/` : `sommaire.ts` (pages visibles → `{ id, titre, chemin, intertitres }`
   et `{ …, contenu }` en texte, via `textFromHtml`, intertitres extraits des `h1`–`h6`),
-  `prompts.ts` (sélection et réponse, repris de PPG et adaptés à kpilote), `consulterCentreAide.ts`.
-- Sous-appels tracés `consulter_centre_aide.selection` et `consulter_centre_aide.reponse` sur le
+  `prompts.ts` (sélection et réponse, repris de PPG et adaptés à kpilote), `consultCentreAide.ts`.
+- Sous-appels tracés `consult_centre_aide.selection` et `consult_centre_aide.answer` sur le
   modèle du tour.
 
 ## Front

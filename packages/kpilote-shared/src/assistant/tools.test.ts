@@ -8,7 +8,8 @@ describe('TOOLS', () => {
     expect(
       TOOL_NAMES.filter(
         (name) =>
-          TOOLS[name].label.length === 0 || !['source', 'interface'].includes(TOOLS[name].kind),
+          TOOLS[name].label.length === 0 ||
+          !['source', 'interface', 'help'].includes(TOOLS[name].kind),
       ),
     ).toEqual([])
   })
@@ -25,5 +26,11 @@ describe('TOOLS', () => {
 describe('searchInput', () => {
   it('refuse une requête démesurée', () => {
     expect(searchInput.safeParse({ query: 'a'.repeat(501) }).success).toBe(false)
+  })
+})
+
+describe('consult_centre_aide', () => {
+  it('est un outil d’aide, rendu à part des sources de données', () => {
+    expect(TOOLS.consult_centre_aide.kind).toBe('help')
   })
 })

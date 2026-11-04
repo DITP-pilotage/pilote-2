@@ -72,3 +72,21 @@ export const failingStreamModel = () =>
         }),
       }),
   })
+
+/** Un modèle qui répond les textes donnés, un par appel, et compte ses appels. */
+export const sequenceTextModel = (texts: ReadonlyArray<string>) => {
+  const state = { calls: 0 }
+  const model = new MockLanguageModelV4({
+    doGenerate: () => {
+      const text = texts[Math.min(state.calls, texts.length - 1)] ?? ''
+      state.calls += 1
+      return Promise.resolve({
+        content: [{ type: 'text', text }],
+        finishReason: { unified: 'stop', raw: 'stop' },
+        usage: usage(10, 5),
+        warnings: [],
+      })
+    },
+  })
+  return { model, state }
+}
