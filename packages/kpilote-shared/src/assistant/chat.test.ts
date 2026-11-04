@@ -41,6 +41,19 @@ describe('chatRequestSchema', () => {
     expect(chatRequestSchema.safeParse(request({ parts: geant })).success).toBe(false)
   })
 
+  it('refuse plusieurs parts de texte, qui contourneraient la limite de longueur', () => {
+    const parts = [
+      { type: 'text', text: 'a'.repeat(3000) },
+      { type: 'text', text: 'b'.repeat(3000) },
+    ]
+    expect(chatRequestSchema.safeParse(request({ parts })).success).toBe(false)
+  })
+
+  it('refuse un identifiant de contexte démesuré', () => {
+    const context = { indicateurId: 'I'.repeat(129) }
+    expect(chatRequestSchema.safeParse(request({}, { context })).success).toBe(false)
+  })
+
   it('accepte un contexte de page partiel', () => {
     const parsed = chatRequestSchema.safeParse(request({}, { context: { indicateurId: 'IND-1' } }))
     expect(parsed.success).toBe(true)
