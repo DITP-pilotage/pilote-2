@@ -4,10 +4,11 @@ import { cleanPseudoCalls } from './cleanPseudoCalls'
 import { flattenLatex } from './flattenLatex'
 
 import { latestHelpConsultation } from './centreAide'
+import { writtenRapports } from './rapport'
 
 /**
- * Le texte de la réponse tel que l'utilisateur le lit, sans les artefacts du modèle, suivi
- * des pages du centre d'aide citées.
+ * Le texte de la réponse tel que l'utilisateur le lit : ses encarts, son texte sans les
+ * artefacts du modèle, puis les pages du centre d'aide citées.
  */
 export const copyableText = (message: KpiloteUIMessage, origin: string): string => {
   const text = message.parts
@@ -23,5 +24,6 @@ export const copyableText = (message: KpiloteUIMessage, origin: string): string 
           ].join('\n'),
         ]
       : []
-  return [...text, ...pages].join('\n\n')
+  const rapports = writtenRapports(message).map((rapport) => rapport.markdown)
+  return [...rapports, ...text, ...pages].join('\n\n')
 }

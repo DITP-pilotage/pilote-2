@@ -63,4 +63,24 @@ describe('deriveAssistantState', () => {
   it('aucun état une fois la réponse terminée', () => {
     expect(deriveAssistantState({ message: message([]), status: 'ready' })).toBeNull()
   })
+
+  it('« rédige la synthèse » tant que l’encart n’est pas terminé', () => {
+    const input = {
+      sujet: { type: 'INDICATEUR' as const, indicateurId: 'IND-1' },
+      individuId: 'D-1',
+    }
+    const writing: KpiloteUIMessage['parts'] = [
+      {
+        type: 'tool-write_synthese',
+        toolCallId: 't',
+        state: 'output-available',
+        preliminary: true,
+        input,
+        output: { type: 'synthese', dateRedaction: '', markdown: '# Ti', done: false },
+      },
+    ]
+    expect(deriveAssistantState({ message: message(writing), status: 'streaming' })).toBe(
+      'writing-report',
+    )
+  })
 })
