@@ -10,7 +10,7 @@ import { registerModelWrapper } from '@/framework/llm/albert'
 import { db } from '@/framework/persistence/dbStore'
 import { ApiKeyRole } from '@/generated/prisma/enums'
 import { integrationTest } from '@/test/integrationTest'
-import { scriptedStreamModel } from '@/test/mockModel'
+import { failingStreamModel, scriptedStreamModel } from '@/test/mockModel'
 
 const userPrincipal = (id: string): Principal => ({
   kind: 'user',
@@ -113,6 +113,40 @@ describe('routes de l’assistant', { concurrent: false }, () => {
       })
 
       expect(response.status).toBe(404)
+    }),
+  )
+
+  it(
+    'garde la question quand le modèle échoue en cours de tour',
+    integrationTest(async () => {
+      registerModelWrapper(() => failingStreamModel())
+      const body = chatBody()
+
+      // Le flux coupé remonte au client, qui affiche l'erreur et propose « Réessayer ».
+      await (await postChat(userPrincipal(randomUUID()), body)).text().catch(() => '')
+
+      const conversation = await db().assistantConversation.findUniqueOrThrow({
+        where: { id: body.id },
+      })
+      expect(JSON.stringify(conversation.messages)).toContain(body.message.id)
+    }),
+  )
+
+  it(
+    'ne duplique pas la question quand l’utilisateur relance un tour',
+    integrationTest(async () => {
+      registerModelWrapper(() => scriptedStreamModel([{ text: 'Réponse.' }]))
+      const principal = userPrincipal(randomUUID())
+      const body = chatBody()
+      await (await postChat(principal, body)).text()
+
+      await (await postChat(principal, body)).text()
+
+      const conversation = await db().assistantConversation.findUniqueOrThrow({
+        where: { id: body.id },
+      })
+      const ids = (conversation.messages as Array<{ id: string }>).map((message) => message.id)
+      expect(ids.filter((id) => id === body.message.id)).toHaveLength(1)
     }),
   )
 

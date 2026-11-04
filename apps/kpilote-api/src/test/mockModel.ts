@@ -58,3 +58,17 @@ export const scriptedStreamModel = (steps: ReadonlyArray<ScriptedStep>) => {
     },
   })
 }
+
+/** Un modèle dont le flux échoue après avoir commencé, comme une coupure d'Albert. */
+export const failingStreamModel = () =>
+  new MockLanguageModelV4({
+    doStream: () =>
+      Promise.resolve({
+        stream: new ReadableStream({
+          start(controller) {
+            controller.enqueue({ type: 'stream-start', warnings: [] })
+            controller.error(new Error('Albert indisponible'))
+          },
+        }),
+      }),
+  })

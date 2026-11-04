@@ -28,6 +28,25 @@ const MAX_RATE_BODY_BYTES = 8 * 1024
 
 const STREAM_ERROR_MESSAGE = "L'assistant a rencontré une erreur. Réessayez dans un instant."
 
+const hasId = (message: unknown): message is { id: string } =>
+  typeof message === 'object' &&
+  message !== null &&
+  'id' in message &&
+  typeof message.id === 'string'
+
+/**
+ * Un message déjà présent est une relance (« Réessayer ») : le tour repart de ce message,
+ * sans le dupliquer ni garder la réponse qu'il avait reçue.
+ */
+const historyBefore = (history: unknown[], messageId: string): unknown[] => {
+  const index = history.findIndex((message) => hasId(message) && message.id === messageId)
+  return index === -1 ? history : history.slice(0, index)
+}
+
+// Un tour arrêté ou en échec rejette ces promesses : on persiste ce qu'on a.
+const settled = <T, F>(promise: PromiseLike<T>, fallback: F): Promise<T | F> =>
+  Promise.resolve(promise).catch(() => fallback)
+
 const requireAssistantAccess = (): void => {
   if (!checkAssistantAccess(requirePrincipal())) {
     throw new ForbiddenError("L'assistant est réservé aux utilisateurs autorisés.")
@@ -113,7 +132,9 @@ assistantRoutes.openapi(chatRoute, async (context) => {
   const agent = await buildAgent({ pageContext: body.context, model, trace, runInContext })
   // L'historique vient de la base et le nouveau message est validé par le schéma de la
   // requête : seul un texte utilisateur peut entrer.
-  const messages = await validateUIMessages({ messages: [...history, body.message] })
+  const messages = await validateUIMessages({
+    messages: [...historyBefore(history, body.message.id), body.message],
+  })
   const llmCallId = randomUUID()
 
   const result = streamText({
@@ -122,6 +143,15 @@ assistantRoutes.openapi(chatRoute, async (context) => {
     ...agent,
     abortSignal: context.req.raw.signal,
   })
+
+  // Rattachés dès maintenant : un tour en échec rejette ces promesses avant `onFinish`, et
+  // un rejet sans gestionnaire ferait tomber le processus.
+  const outcome = Promise.all([
+    settled(result.steps, []),
+    settled(result.totalUsage, null),
+    settled(result.response, null),
+    settled(result.responseMessages, []),
+  ])
 
   return result.toUIMessageStreamResponse({
     originalMessages: messages,
@@ -133,46 +163,51 @@ assistantRoutes.openapi(chatRoute, async (context) => {
       )
       return STREAM_ERROR_MESSAGE
     },
-    onFinish: async ({ messages: finalMessages }) => {
-      const [steps, usage, response, responseMessages] = await Promise.all([
-        result.steps,
-        result.totalUsage,
-        result.response,
-        result.responseMessages,
-      ])
-      const tools = steps.flatMap((step) => step.toolCalls.map((call) => call.toolName))
-      const durationMs = elapsed()
-      await runInContext(() =>
-        recordTurn({
-          conversationId: body.id,
-          principalId,
-          contexte: body.context ?? null,
-          messages: finalMessages,
-          call: {
-            id: llmCallId,
+    onFinish: async ({ messages: finalMessages, isAborted }) => {
+      try {
+        const [steps, usage, response, responseMessages] = await outcome
+        const tools = steps.flatMap((step) => step.toolCalls.map((call) => call.toolName))
+        const durationMs = elapsed()
+        const inputTokens = usage?.inputTokens ?? 0
+        const outputTokens = usage?.outputTokens ?? 0
+        await runInContext(() =>
+          recordTurn({
+            conversationId: body.id,
+            principalId,
+            contexte: body.context ?? null,
+            messages: finalMessages,
+            call: {
+              id: llmCallId,
+              model,
+              transcript: { ...response, messages: responseMessages },
+              tools,
+              inputTokens,
+              outputTokens,
+              durationMs,
+              subCalls: trace.entries(),
+            },
+          }),
+        )
+        logger.info(
+          {
+            event: 'assistant.tour.done',
+            conversationId: body.id,
+            llmCallId,
             model,
-            transcript: { ...response, messages: responseMessages },
-            tools,
-            inputTokens: usage.inputTokens ?? 0,
-            outputTokens: usage.outputTokens ?? 0,
             durationMs,
-            subCalls: trace.entries(),
+            inputTokens,
+            outputTokens,
+            tools,
+            isAborted,
           },
-        }),
-      )
-      logger.info(
-        {
-          event: 'assistant.tour.done',
-          conversationId: body.id,
-          llmCallId,
-          model,
-          durationMs,
-          inputTokens: usage.inputTokens ?? 0,
-          outputTokens: usage.outputTokens ?? 0,
-          tools,
-        },
-        'Assistant — tour terminé',
-      )
+          'Assistant — tour terminé',
+        )
+      } catch (error) {
+        logger.error(
+          { event: 'assistant.tour.persistance', llmCallId, err: toLoggableError(error) },
+          'Assistant — tour non persisté',
+        )
+      }
     },
   })
 })
