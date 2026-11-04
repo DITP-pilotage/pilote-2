@@ -38,18 +38,16 @@ export const ChatEmptyState = ({
   contexte?: ContexteAccueil;
 }) => {
   const { sendMessage, fillInput, track } = useChatContext();
-  const shownEvent = useRef(
-    scenarios ? propositionsShownEvent(scenarios) : null,
-  );
   const trackRef = useRef(track);
 
   useEffect(() => {
     trackRef.current = track;
   }, [track]);
 
+  // Les propositions changent avec la page tant que la conversation est vide.
   useEffect(() => {
-    if (shownEvent.current) trackRef.current(shownEvent.current);
-  }, []);
+    if (scenarios) trackRef.current(propositionsShownEvent(scenarios));
+  }, [scenarios]);
 
   const handleClick = (scenario: ChatScenario) => {
     const proposition = {
