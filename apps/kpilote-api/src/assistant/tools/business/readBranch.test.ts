@@ -26,7 +26,7 @@ describe('readBranch', () => {
 
     await expect(readBranch(fetcher, '/ok')).resolves.toEqual({ data: { items: [] } })
     // Un 403 ne se lit pas comme « pas de données » : la branche dit pourquoi.
-    await expect(readBranch(fetcher, '/interdit')).resolves.toContainKey('unavailable')
+    expect(await readBranch(fetcher, '/interdit')).toContainKey('unavailable')
   })
 })
 
