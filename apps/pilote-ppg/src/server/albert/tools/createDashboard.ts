@@ -237,9 +237,9 @@ Ce qu'un dashboard sait afficher, et rien d'autre :
 - le taux d'avancement d'un territoire, la médiane et les valeurs remarquables (min, médiane, max) de ses sous-territoires ;
 - le nombre et la liste des chantiers en retard ou en difficulté d'un territoire ;
 - le tableau des indicateurs d'un chantier précis (VI, VA, VC, TA) ;
-- des cartes de France pour des chantiers précis : taux d'avancement, niveau de confiance ou propositions de valeur d'avancement par territoire ;
+- la carte de France d'un chantier précis, qui colore chaque région ou département selon le taux d'avancement, le niveau de confiance ou les propositions de valeur d'avancement de CE chantier ;
 - des courbes d'évolution dans le temps d'un indicateur précis (taux ou valeur d'avancement).
-Les cartes et le tableau des indicateurs exigent des chantiers identifiés, passés dans \`chantiers\` : il n'existe pas de carte « de tous les chantiers » d'un territoire.
+Une carte compare les territoires pour un chantier : elle ne montre jamais les chantiers d'un territoire, et il n'existe pas de carte d'un département ou d'une région avec ses chantiers. Les cartes et le tableau des indicateurs exigent des chantiers identifiés, passés dans \`chantiers\`.
 Utilise-le pour : un dashboard, un cockpit, un tableau de bord, une cartographie, une courbe ou un graphique d'évolution.
 Ne l'utilise pas pour : un rendu absent de cette liste (répartition, histogramme, camembert, classement…) → clarify_with_choices, avec des alternatives réalisables.`,
       inputSchema: createDashboardInputSchema,
