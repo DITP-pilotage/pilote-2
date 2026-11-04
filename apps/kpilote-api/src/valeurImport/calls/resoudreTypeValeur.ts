@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
-import { ALBERT_TEMPERATURE, createAlbertModel } from '@/valeurImport/helpers/albert'
+import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/albert'
 
 const outputSchema = z.object({
   typesValeurRetenus: z
@@ -65,7 +65,7 @@ export const resoudreTypeValeur = ({
       schema: outputSchema,
       system: SYSTEM_PROMPT,
       prompt,
-      temperature: ALBERT_TEMPERATURE,
+      temperature: STRUCTURED_TEMPERATURE,
     }).then((result) => {
       // Filtre défensif : ne garder que les valeurs réellement présentes en entrée
       // (protection contre une éventuelle hallucination d'Albert).
