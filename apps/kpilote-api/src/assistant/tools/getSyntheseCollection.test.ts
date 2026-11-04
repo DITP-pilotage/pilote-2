@@ -62,6 +62,37 @@ describe('get_synthese_collection', () => {
   )
 
   it(
+    'ne détaille pas la contribution d’un indicateur que le principal ne peut pas lire',
+    integrationTest(async () => {
+      const marqueur = token()
+      const prive = await fixtures.indicateur({
+        nom: `Privé ${marqueur}`,
+        visibilite: Visibilite.PRIVE,
+      })
+      const collection = await fixtures.collection({
+        nom: `Collection ${marqueur}`,
+        visibilite: Visibilite.PUBLIC,
+        indicateurs: [{ id: prive.id, publicId: prive.publicId }],
+      })
+      const { publicId } = await fixtures.individu({ nom: `Individu ${marqueur}` })
+
+      const output = await runToolAs(
+        randomUUID(),
+        'get_synthese_collection',
+        getSyntheseCollection,
+        {
+          collectionId: collection.publicId,
+          individuId: publicId,
+        },
+      )
+
+      expect(output).toEqual(
+        expect.objectContaining({ contributions: [], notFound: [prive.publicId] }),
+      )
+    }),
+  )
+
+  it(
     'rend notFound pour une collection que le principal ne peut pas lire',
     integrationTest(async () => {
       const { collection, individu } = await givenCollection(Visibilite.PRIVE)

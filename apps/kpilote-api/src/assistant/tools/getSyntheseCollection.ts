@@ -36,20 +36,23 @@ Ne l'utilise pas pour : le détail d'un indicateur de la collection → get_synt
     }).unwrapOr(null)
     if (!taux) return empty
 
+    // Une collection lisible peut contenir un indicateur qui ne l'est pas : sa contribution
+    // n'est pas détaillée, il est seulement signalé.
     const noms = await findIndicateurNamesByIds(
       taux.contributions.map((contribution) => contribution.indicateur),
     )
+    const lisibles = taux.contributions.filter((contribution) => noms.has(contribution.indicateur))
     return {
       ...empty,
       tauxProgression: taux.tauxProgression,
-      contributions: taux.contributions.map((contribution) => ({
-        indicateur: {
-          id: contribution.indicateur,
-          nom: noms.get(contribution.indicateur) ?? contribution.indicateur,
-        },
+      contributions: lisibles.map((contribution) => ({
+        indicateur: { id: contribution.indicateur, nom: noms.get(contribution.indicateur) ?? '' },
         ponderation: contribution.ponderation,
         tauxProgression: contribution.tauxProgression,
       })),
+      notFound: taux.contributions
+        .filter((contribution) => !noms.has(contribution.indicateur))
+        .map((contribution) => contribution.indicateur),
     }
   },
 }
