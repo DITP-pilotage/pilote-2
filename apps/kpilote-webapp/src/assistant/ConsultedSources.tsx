@@ -6,6 +6,7 @@ import { Check, LoaderCircle, TriangleAlert } from 'lucide-react'
 import { memo, useState } from 'react'
 
 import { toolNameOf } from './deriveAssistantState'
+import { sourceState } from './sourceState'
 
 export type SourceToolPart = ToolUIPart<KpiloteUITools>
 
@@ -20,12 +21,10 @@ const labelOf = (part: SourceToolPart) => {
   return name ? TOOLS[name].label : part.type
 }
 
-const isDone = (part: SourceToolPart) =>
-  part.state === 'output-available' || part.state === 'output-error'
-
 function StateIcon({ part }: { part: SourceToolPart }) {
-  if (part.state === 'output-error') return <TriangleAlert className="size-3.5 text-error" />
-  if (part.state === 'output-available') return <Check className="size-3.5 text-success" />
+  const state = sourceState(part)
+  if (state === 'failed') return <TriangleAlert className="size-3.5 text-error" />
+  if (state === 'done') return <Check className="size-3.5 text-success" />
   return <LoaderCircle className="size-3.5 animate-spin text-primary" />
 }
 
@@ -80,7 +79,7 @@ export const ConsultedSources = memo(function ConsultedSources({
   parts: SourceToolPart[]
 }) {
   const [openId, setOpenId] = useState<string | null>(null)
-  const allDone = parts.every(isDone)
+  const allDone = parts.every((part) => sourceState(part) !== 'running')
   const openPart = parts.find((part) => part.toolCallId === openId)
 
   return (
@@ -101,7 +100,7 @@ export const ConsultedSources = memo(function ConsultedSources({
             }
             className={clsxm(
               'inline-flex h-[26px] items-center gap-1.5 border bg-surface-muted px-2 text-xs font-medium text-text transition-colors hover:border-border-strong',
-              part.state === 'output-error' ? 'border-error bg-error-tinted' : 'border-border',
+              sourceState(part) === 'failed' ? 'border-error bg-error-tinted' : 'border-border',
               part.toolCallId === openId && 'border-primary text-primary',
             )}
           >
