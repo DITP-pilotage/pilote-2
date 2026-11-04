@@ -14,3 +14,17 @@ export const latestHelpConsultation = (message: KpiloteUIMessage): CentreAideOut
   }
   return null
 }
+
+const CONTACT_ONLY: CentreAideOutput = { found: false, answer: '', sources: [] }
+
+/**
+ * Ce que l'encart du centre d'aide doit montrer : la dernière consultation aboutie, ou le
+ * contact quand la dernière consultation a échoué. `null` sans consultation.
+ */
+export const helpToDisplay = (message: KpiloteUIMessage): CentreAideOutput | null => {
+  const consultations = message.parts.filter(
+    (part) => part.type === 'tool-consult_centre_aide' && part.state === 'output-available',
+  )
+  if (consultations.length === 0) return null
+  return latestHelpConsultation(message) ?? CONTACT_ONLY
+}

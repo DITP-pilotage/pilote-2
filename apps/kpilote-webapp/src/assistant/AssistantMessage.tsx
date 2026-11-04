@@ -2,7 +2,7 @@ import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { memo, type ReactNode } from 'react'
 
 import { AssistantSignature } from './AssistantSignature'
-import { latestHelpConsultation } from './centreAide'
+import { helpToDisplay } from './centreAide'
 import { CentreAideEncart } from './CentreAideEncart'
 import { ChoicesInline } from './ChoicesInline'
 import { ConsultedSources, isSourcePart } from './ConsultedSources'
@@ -39,7 +39,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   actions?: ReactNode
 }) {
   const sources = message.parts.filter(isSourcePart)
-  const help = latestHelpConsultation(message)
+  const help = helpToDisplay(message)
 
   return (
     <div className="flex w-full flex-col gap-3 text-[15px] leading-6 text-text">
