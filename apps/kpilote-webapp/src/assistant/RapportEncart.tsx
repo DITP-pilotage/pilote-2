@@ -65,7 +65,7 @@ export function RapportEncart({
     <article
       ref={ref}
       data-rapport=""
-      className="border border-border border-t-[5px] border-t-primary bg-surface px-6 py-6 shadow-md lg:-mx-8 lg:px-10"
+      className="border border-border border-t-[5px] border-t-primary bg-surface px-6 py-6 shadow-md lg:px-10"
     >
       <header className="mb-5 flex items-start justify-between gap-4 border-b border-border pb-3.5 text-[12.5px] leading-5 text-text-subtle">
         <p className="m-0 text-[13px] font-bold tracking-wide text-primary uppercase">

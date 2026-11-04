@@ -54,7 +54,7 @@ export function DashboardRender({
 }) {
   return (
     <article
-      className="overflow-hidden rounded-lg border border-border bg-surface lg:-mx-8"
+      className="overflow-hidden rounded-lg border border-border bg-surface"
       {...dashboardElementAttribute(toolCallId)}
     >
       <header className="border-b border-border bg-surface-muted px-4 py-3">
@@ -64,7 +64,7 @@ export function DashboardRender({
         {dashboard.containers.map((container, containerIndex) => (
           <div key={containerIndex} className="grid grid-cols-4 gap-3">
             {container.widgets.map((widget, widgetIndex) => (
-              <div key={widgetIndex} className={WIDTH_CLASSES[widgetWidth(widget)]}>
+              <div key={widgetIndex} className={`min-w-0 ${WIDTH_CLASSES[widgetWidth(widget)]}`}>
                 <WidgetErrorBoundary>
                   <Suspense
                     fallback={<div className="h-24 animate-pulse rounded-lg bg-surface-tinted" />}
