@@ -116,6 +116,17 @@ describe("memeContexte", () => {
     expect(meme).toBe(false);
   });
 
+  test("distingue deux chantiers sur le même territoire", () => {
+    // When
+    const meme = memeContexte({
+      conversation: { ...bretagne, chantierId: "CH-173" },
+      page: { ...bretagne, chantierId: "CH-139" },
+    });
+
+    // Then
+    expect(meme).toBe(false);
+  });
+
   test("distingue une conversation sans contexte", () => {
     // When
     const meme = memeContexte({

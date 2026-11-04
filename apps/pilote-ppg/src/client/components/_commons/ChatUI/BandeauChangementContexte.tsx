@@ -2,12 +2,11 @@ import {
   useAlbertConversation,
   type CurrentConversation,
 } from "@/components/_commons/ChatUI/AlbertConversationProvider";
-import type { ContexteAccueil } from "@/components/_commons/ChatUI/ChatEmptyState";
 import { memeContexte } from "@/components/_commons/ChatUI/contexteConversation";
-import { versContexteAffiche } from "@/components/_commons/ChatUI/versContexteAffiche";
-
-const libelle = (contexte: ContexteAccueil) =>
-  `${contexte.territoireNom} · Jalon ${contexte.jalon}`;
+import {
+  libelleContexte,
+  versContexteAffiche,
+} from "@/components/_commons/ChatUI/versContexteAffiche";
 
 /**
  * Une conversation commencée garde son contexte quand l'utilisateur change de
@@ -40,12 +39,14 @@ export const BandeauChangementContexte = ({
     >
       <span className="min-w-0 flex-1">
         Vous consultez{" "}
-        <span className="font-medium">{libelle(contextePage)}</span>
+        <span className="font-medium">{libelleContexte(contextePage)}</span>
         {contexteConversation ? (
           <>
             {" "}
             ; cette conversation porte sur{" "}
-            <span className="font-medium">{libelle(contexteConversation)}</span>
+            <span className="font-medium">
+              {libelleContexte(contexteConversation)}
+            </span>
           </>
         ) : null}
         .
