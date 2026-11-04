@@ -1,5 +1,6 @@
 import type { CurrentConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { AlbertEnTete } from "@/components/_commons/ChatUI/AlbertEnTete";
+import { BandeauChangementContexte } from "@/components/_commons/ChatUI/BandeauChangementContexte";
 import { ChatExperimentationBanner } from "@/components/_commons/ChatUI/ChatExperimentationBanner";
 import { ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { versContexteAffiche } from "@/components/_commons/ChatUI/versContexteAffiche";
@@ -16,6 +17,7 @@ export const AlbertContenu = ({
   return (
     <>
       <AlbertEnTete conversation={conversation} />
+      <BandeauChangementContexte conversation={conversation} />
       <ChatUI
         className="min-h-0 flex-1"
         contexteAccueil={contexte}

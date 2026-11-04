@@ -1,5 +1,8 @@
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
-import { contexteAAppliquer } from "@/components/_commons/ChatUI/contexteConversation";
+import {
+  contexteAAppliquer,
+  memeContexte,
+} from "@/components/_commons/ChatUI/contexteConversation";
 
 const bretagne = {
   territoireCode: "REG-53",
@@ -76,5 +79,51 @@ describe("contexteAAppliquer", () => {
       agentContext: undefined,
       scenarios: undefined,
     });
+  });
+});
+
+describe("memeContexte", () => {
+  test("reconnaît le même territoire au même jalon", () => {
+    // When
+    const meme = memeContexte({
+      conversation: bretagne,
+      page: { ...bretagne, instructions: "Formulé autrement" },
+    });
+
+    // Then
+    expect(meme).toBe(true);
+  });
+
+  test("distingue deux territoires", () => {
+    // When
+    const meme = memeContexte({
+      conversation: bretagne,
+      page: auvergneRhoneAlpes,
+    });
+
+    // Then
+    expect(meme).toBe(false);
+  });
+
+  test("distingue deux jalons", () => {
+    // When
+    const meme = memeContexte({
+      conversation: bretagne,
+      page: { ...bretagne, jalon: 2025 },
+    });
+
+    // Then
+    expect(meme).toBe(false);
+  });
+
+  test("distingue une conversation sans contexte", () => {
+    // When
+    const meme = memeContexte({
+      conversation: undefined,
+      page: bretagne,
+    });
+
+    // Then
+    expect(meme).toBe(false);
   });
 });
