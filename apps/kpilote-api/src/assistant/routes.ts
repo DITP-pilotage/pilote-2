@@ -2,12 +2,21 @@ import { randomUUID } from 'node:crypto'
 
 import { createRoute, z } from '@hono/zod-openapi'
 import { chatRequestSchema } from '@pilote/kpilote-shared/assistant/chat'
+import {
+  conversationListSchema,
+  conversationSchema,
+} from '@pilote/kpilote-shared/assistant/conversation'
 import { rateBodySchema } from '@pilote/kpilote-shared/assistant/feedback'
 import { convertToModelMessages, streamText, validateUIMessages } from 'ai'
 import { bodyLimit } from 'hono/body-limit'
 
 import { checkAssistantAccess } from '@/assistant/access'
 import { buildAgent } from '@/assistant/agent'
+import {
+  deleteConversation,
+  getConversation,
+  listConversations,
+} from '@/assistant/persistence/conversations'
 import { getConversationMessages } from '@/assistant/persistence/getConversationMessages'
 import { rateCall } from '@/assistant/persistence/rateCall'
 import { recordTurn } from '@/assistant/persistence/recordTurn'
@@ -113,6 +122,54 @@ const rateRoute = createRoute({
     204: { description: 'Retour enregistré' },
     400: erreur400,
     403: erreur403,
+  },
+})
+
+const conversationParams = z.object({ id: z.uuid() })
+
+const listConversationsRoute = createRoute({
+  method: 'get',
+  path: '/assistant/conversations',
+  tags: ['Assistant'],
+  summary: 'Lister ses conversations avec l’assistant',
+  description:
+    'Les conversations du principal appelant, des plus récentes aux plus anciennes, sans leurs messages.',
+  middleware: [requireAuthentication],
+  responses: {
+    200: succes200('Conversations', conversationListSchema.openapi('AssistantConversationList')),
+    403: erreur403,
+  },
+})
+
+const getConversationRoute = createRoute({
+  method: 'get',
+  path: '/assistant/conversations/{id}',
+  tags: ['Assistant'],
+  summary: 'Lire une conversation avec l’assistant',
+  description:
+    'Une conversation du principal appelant avec ses messages. Celle d’un autre principal rend 404.',
+  middleware: [requireAuthentication],
+  request: { params: conversationParams },
+  responses: {
+    200: succes200('Conversation', conversationSchema.openapi('AssistantConversation')),
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
+const deleteConversationRoute = createRoute({
+  method: 'delete',
+  path: '/assistant/conversations/{id}',
+  tags: ['Assistant'],
+  summary: 'Supprimer une conversation avec l’assistant',
+  description:
+    'Supprime une conversation du principal appelant, avec ses appels et leurs évaluations. Celle d’un autre principal rend 404.',
+  middleware: [requireAuthentication],
+  request: { params: conversationParams },
+  responses: {
+    204: { description: 'Conversation supprimée' },
+    403: erreur403,
+    404: erreur404,
   },
 })
 
@@ -222,5 +279,28 @@ assistantRoutes.openapi(accessRoute, (context) =>
 assistantRoutes.openapi(rateRoute, async (context) => {
   requireAssistantAccess()
   await rateCall({ callId: context.req.valid('param').id, body: context.req.valid('json') })
+  return context.body(null, 204)
+})
+
+assistantRoutes.openapi(listConversationsRoute, async (context) => {
+  requireAssistantAccess()
+  return context.json({ items: await listConversations(requireCurrentPrincipalId()) }, 200)
+})
+
+assistantRoutes.openapi(getConversationRoute, async (context) => {
+  requireAssistantAccess()
+  const conversation = await getConversation({
+    id: context.req.valid('param').id,
+    principalId: requireCurrentPrincipalId(),
+  })
+  return context.json(conversation, 200)
+})
+
+assistantRoutes.openapi(deleteConversationRoute, async (context) => {
+  requireAssistantAccess()
+  await deleteConversation({
+    id: context.req.valid('param').id,
+    principalId: requireCurrentPrincipalId(),
+  })
   return context.body(null, 204)
 })
