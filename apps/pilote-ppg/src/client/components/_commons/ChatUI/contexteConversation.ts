@@ -34,3 +34,13 @@ export const contexteAAppliquer = ({
 
   return { agentContext, scenarios };
 };
+
+export const memeContexte = ({
+  conversation,
+  page,
+}: {
+  conversation: AlbertAgentContext | undefined;
+  page: AlbertAgentContext | undefined;
+}): boolean =>
+  conversation?.territoireCode === page?.territoireCode &&
+  conversation?.jalon === page?.jalon;
