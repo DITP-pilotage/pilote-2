@@ -6,11 +6,6 @@ import {
 
 const conversation = {
   id: "0199a1ce-0000-7000-8000-000000000001",
-  agentContext: {
-    territoireCode: "NAT-FR",
-    jalon: 2025,
-    instructions: "Contexte",
-  },
 };
 
 describe("minimizedConversationStorage", () => {
@@ -27,18 +22,6 @@ describe("minimizedConversationStorage", () => {
 
     // Then
     expect(readBack).toStrictEqual(conversation);
-  });
-
-  test("relit une conversation ouverte sans contexte", () => {
-    // Given
-    const sansContexte = { id: conversation.id };
-    writeMinimizedConversation(sansContexte);
-
-    // When
-    const readBack = readMinimizedConversation();
-
-    // Then
-    expect(readBack).toStrictEqual(sansContexte);
   });
 
   test("retourne null quand rien n'a été écrit", () => {

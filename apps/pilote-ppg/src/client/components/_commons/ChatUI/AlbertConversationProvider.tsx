@@ -16,6 +16,7 @@ import {
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useAssistantTracking } from "@/components/_commons/ChatUI/useAssistantTracking";
 import {
+  albertAgentContextSchema,
   createAlbertConversation,
   type AlbertAgentContext,
   type AlbertConversation,
@@ -160,11 +161,9 @@ export const AlbertConversationProvider = ({
   const load = useCallback(
     async ({
       id,
-      agentContext,
       targetDisplay,
     }: {
       id: string;
-      agentContext?: AlbertAgentContext;
       targetDisplay?: AffichageAssistant;
     }) => {
       try {
@@ -176,6 +175,11 @@ export const AlbertConversationProvider = ({
           clearMinimizedConversation();
           return;
         }
+        // The conversation resumes with the context it was held in, not the
+        // one of the page or of the conversation being replaced.
+        const agentContext = albertAgentContextSchema.safeParse(
+          stored.contexte,
+        ).data;
         setConversation(build({ id, agentContext, messages: stored.messages }));
         if (targetDisplay) setAffichage(targetDisplay);
       } catch {
@@ -196,11 +200,7 @@ export const AlbertConversationProvider = ({
     const stored = readMinimizedConversation();
     if (!stored) return;
 
-    load({
-      id: stored.id,
-      agentContext: stored.agentContext,
-      targetDisplay: "minimized",
-    });
+    load({ id: stored.id, targetDisplay: "minimized" });
   }, [actif, load]);
 
   const open = useCallback(() => {
@@ -250,10 +250,7 @@ export const AlbertConversationProvider = ({
         name: "assistant.minimize",
         dimensions: { conversation_id: conversation.chat.id },
       });
-      writeMinimizedConversation({
-        id: conversation.chat.id,
-        agentContext: conversation.agentContext,
-      });
+      writeMinimizedConversation({ id: conversation.chat.id });
     }
     if (affichage !== "minimized") setViewBeforeMinimize(affichage);
     setAffichage("minimized");
@@ -295,7 +292,7 @@ export const AlbertConversationProvider = ({
       });
       conversation.chat.stop();
       clearMinimizedConversation();
-      load({ id, agentContext: conversation.agentContext });
+      load({ id });
     },
     [conversation, load, track],
   );

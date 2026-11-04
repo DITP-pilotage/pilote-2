@@ -1,13 +1,16 @@
 import { Chat } from "@ai-sdk/react";
 import { DefaultChatTransport, type ChatOnFinishCallback } from "ai";
+import { z } from "zod";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
-export type AlbertAgentContext = {
-  territoireCode: string;
-  jalon: number;
-  instructions: string;
-};
+export const albertAgentContextSchema = z.object({
+  territoireCode: z.string(),
+  jalon: z.number(),
+  instructions: z.string(),
+});
+
+export type AlbertAgentContext = z.infer<typeof albertAgentContextSchema>;
 
 export type AlbertRequestBody = {
   agentContext?: AlbertAgentContext;
