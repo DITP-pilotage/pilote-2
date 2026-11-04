@@ -5,7 +5,7 @@ import {
   type CommentaireApiModel,
 } from '@pilote/kpilote-shared/commentaire'
 
-import { findReadableCollection } from '@/assistant/tools/entityLookups'
+import { findIndividu, findReadableCollection } from '@/assistant/tools/entityLookups'
 import { findReadableIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { textFromHtml } from '@/assistant/tools/textFromHtml'
 import { type ToolDefinition } from '@/assistant/tools/toolDefinition'
@@ -53,8 +53,18 @@ Utilise-le pour : ce que disent les pilotes, le contexte d'un retard, la confian
 Ne l'utilise pas pour : les valeurs et objectifs chiffrés → get_synthese_indicateur.`,
   execute: async (input) => {
     if (input.cible === 'INDICATEUR') {
-      if (!(await findReadableIndicateur(input.indicateurId))) {
-        return { groupes: [], notFound: [input.indicateurId] }
+      const [indicateur, individu] = await Promise.all([
+        findReadableIndicateur(input.indicateurId),
+        findIndividu(input.individuId),
+      ])
+      if (!indicateur || !individu) {
+        return {
+          groupes: [],
+          notFound: [
+            ...(indicateur ? [] : [input.indicateurId]),
+            ...(individu ? [] : [input.individuId]),
+          ],
+        }
       }
       const groupes = await Promise.all(
         indicateurIndividuCommentaireTypeSchema.options.map(async (type) => {

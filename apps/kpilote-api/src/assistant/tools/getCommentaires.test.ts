@@ -82,4 +82,19 @@ describe('get_commentaires', () => {
       expect(output).toEqual({ groupes: [], notFound: [indicateur.publicId] })
     }),
   )
+
+  it(
+    'rend notFound pour un individu inexistant plutôt que « aucun commentaire »',
+    integrationTest(async () => {
+      const { indicateur } = await givenIndicateurIndividu(Visibilite.PUBLIC)
+
+      const output = await runToolAs(randomUUID(), 'get_commentaires', getCommentaires, {
+        cible: 'INDICATEUR',
+        indicateurId: indicateur.publicId,
+        individuId: 'INCONNU-404',
+      })
+
+      expect(output).toEqual({ groupes: [], notFound: ['INCONNU-404'] })
+    }),
+  )
 })
