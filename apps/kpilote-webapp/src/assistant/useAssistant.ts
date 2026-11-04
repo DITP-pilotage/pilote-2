@@ -9,8 +9,10 @@ import { env } from '@/env'
 // Une conversation survit au démontage du panneau (retour à la palette) : son `Chat` est
 // gardé tant que l'onglet vit, et retrouvé par son identifiant.
 const chats = new Map<string, Chat<KpiloteUIMessage>>()
+// Le contexte part avec chaque message : celui de la page affichée au moment de l'envoi.
+const contexts = new Map<string, PageContext | undefined>()
 
-const chatFor = (conversationId: string, pageContext: PageContext | undefined) => {
+const chatFor = (conversationId: string) => {
   const existing = chats.get(conversationId)
   if (existing) return existing
   const chat = new Chat<KpiloteUIMessage>({
@@ -19,7 +21,11 @@ const chatFor = (conversationId: string, pageContext: PageContext | undefined) =
       api: `${env.apiUrl}/assistant/chat`,
       // Le serveur possède l'historique : seul le nouveau message part.
       prepareSendMessagesRequest: ({ messages }) => ({
-        body: { id: conversationId, message: messages.at(-1), context: pageContext },
+        body: {
+          id: conversationId,
+          message: messages.at(-1),
+          context: contexts.get(conversationId),
+        },
       }),
       // Le jeton est relu à chaque envoi : il tourne.
       headers: () => {
@@ -38,9 +44,8 @@ export const useAssistant = ({
 }: {
   conversationId: string
   pageContext: PageContext | undefined
-}) =>
+}) => {
+  contexts.set(conversationId, pageContext)
   // Le throttle évite un rendu par token : le flux arrive plus vite que React ne peint.
-  useChat<KpiloteUIMessage>({
-    chat: chatFor(conversationId, pageContext),
-    experimental_throttle: 250,
-  })
+  return useChat<KpiloteUIMessage>({ chat: chatFor(conversationId), experimental_throttle: 250 })
+}

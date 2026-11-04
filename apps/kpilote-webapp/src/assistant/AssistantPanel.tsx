@@ -13,6 +13,7 @@ export function AssistantPanel({
   conversationId,
   pageContext,
   initialQuestion,
+  onInitialQuestionSent,
   onBack,
   renderActions,
 }: {
@@ -20,6 +21,7 @@ export function AssistantPanel({
   pageContext: PageContext | undefined
   /** Question saisie dans la palette : envoyée à l'ouverture, une seule fois. */
   initialQuestion?: string
+  onInitialQuestionSent?: () => void
   /** ⇧Tab : retour à l'écran d'où l'on vient. */
   onBack?: () => void
   renderActions?: (message: ReturnType<typeof useAssistant>['messages'][number]) => ReactNode
@@ -38,7 +40,8 @@ export function AssistantPanel({
     if (sentInitial.current || !question) return
     sentInitial.current = true
     void sendMessage({ text: question })
-  }, [initialQuestion, sendMessage])
+    onInitialQuestionSent?.()
+  }, [initialQuestion, onInitialQuestionSent, sendMessage])
 
   useEffect(() => {
     const element = thread.current
