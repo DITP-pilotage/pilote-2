@@ -93,6 +93,9 @@ export async function* streamSubagentText({
     system,
     prompt,
     temperature: CONVERSATION_TEMPERATURE,
+    // Par défaut, le SDK écrit l'erreur entière, prompt compris, dans la console : elle est
+    // relancée par `fullStream` et journalisée assainie par l'appelant.
+    onError: () => undefined,
     ...(abortSignal ? { abortSignal } : {}),
   })
   for await (const part of result.fullStream) {
