@@ -85,4 +85,32 @@ describe('consult_centre_aide', { concurrent: false }, () => {
       expect(await ask()).toEqual({ found: false, answer: '', sources: [] })
     }),
   )
+
+  it(
+    'ne cite qu’une fois une page que le sous-agent répète',
+    integrationTest(async () => {
+      const page = await givenPage()
+      const { model } = sequenceTextModel([
+        JSON.stringify({ ids: [page.id, page.id], reasoning: 'pertinent' }),
+        JSON.stringify({ found: true, answer: 'Réponse.', sourcesIds: [page.id, page.id] }),
+      ])
+      registerModelWrapper(() => model)
+
+      const output = (await ask()) as { sources: unknown[] }
+
+      expect(output.sources).toHaveLength(1)
+    }),
+  )
+
+  it('ne montre au modèle principal ni lien ni identifiant de page', () => {
+    const toModel = consultCentreAide.toModelOutput?.({
+      found: true,
+      answer: 'Ainsi.',
+      sources: [
+        { id: 'a1', titre: 'Importer', chemin: ['Données'], url: '/centre-aide?article=a1' },
+      ],
+    })
+
+    expect(toModel).toEqual({ found: true, answer: 'Ainsi.', pages: ['Importer'] })
+  })
 })

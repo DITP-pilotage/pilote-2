@@ -12,6 +12,16 @@ export type HelpPage = {
 }
 
 const HEADING = /<h[1-6][^<>]*>(.*?)<\/h[1-6]>/gisu
+const ACCORDION_ITEM = /<div\b[^<>]*data-type="accordion-item"[^<>]*>/giu
+const DATA_TITLE = /data-title="([^"]*)"/iu
+
+// Le titre d'un accordéon n'existe que dans l'attribut `data-title` : on en fait un
+// intertitre, sans quoi la sélection et la lecture perdent la question qu'il pose.
+const withAccordionTitles = (html: string): string =>
+  html.replace(ACCORDION_ITEM, (tag) => {
+    const title = DATA_TITLE.exec(tag)?.[1]
+    return title ? `${tag}<h4>${title}</h4>` : tag
+  })
 
 const headingsOf = (html: string): string[] => [
   ...new Set(
@@ -42,12 +52,15 @@ export const listHelpPages = async (): Promise<HelpPage[]> => {
 
   return articles
     .filter((article) => article.type === 'PAGE')
-    .map((article) => ({
-      id: article.id,
-      titre: titleOf(article),
-      chemin: pathOf(article.parentId),
-      intertitres: headingsOf(article.contenu),
-      contenu: textFromHtml(article.contenu),
-      url: `/centre-aide?article=${article.id}`,
-    }))
+    .map((article) => {
+      const html = withAccordionTitles(article.contenu)
+      return {
+        id: article.id,
+        titre: titleOf(article),
+        chemin: pathOf(article.parentId),
+        intertitres: headingsOf(html),
+        contenu: textFromHtml(html),
+        url: `/centre-aide?article=${article.id}`,
+      }
+    })
 }

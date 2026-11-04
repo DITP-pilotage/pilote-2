@@ -72,4 +72,20 @@ describe('listHelpPages', () => {
       expect(ids).not.toContain(orpheline.id)
     }),
   )
+
+  it(
+    'lit le titre d’un accordéon comme un intertitre',
+    integrationTest(async () => {
+      const admin = await fixtures.apiKey({ role: 'ADMIN' })
+      const page = await seed(admin.id, {
+        contenu:
+          '<div data-type="accordion-item" data-title="Comment est calculé le taux ?"><p>Ainsi.</p></div>',
+      })
+
+      const found = (await listHelpPages()).find((candidate) => candidate.id === page.id)
+
+      expect(found?.intertitres).toEqual(['Comment est calculé le taux ?'])
+      expect(found?.contenu).toContain('Comment est calculé le taux ?')
+    }),
+  )
 })

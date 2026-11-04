@@ -19,8 +19,9 @@ const answerSchema = z.object({
 
 const NOT_FOUND: CentreAideOutput = { found: false, answer: '', sources: [] }
 
+// Dans l'ordre du sous-agent, sans identifiant inventé ni répété.
 const known = (ids: ReadonlyArray<string>, pages: ReadonlyArray<HelpPage>): HelpPage[] =>
-  ids.flatMap((id) => pages.filter((page) => page.id === id))
+  [...new Set(ids)].flatMap((id) => pages.filter((page) => page.id === id))
 
 export const consultCentreAide: ToolDefinition<'consult_centre_aide'> = {
   description: `Renvoie la réponse du centre d'aide de kpilote à une question sur son fonctionnement, et les pages sur lesquelles elle s'appuie.
@@ -28,6 +29,13 @@ export const consultCentreAide: ToolDefinition<'consult_centre_aide'> = {
 - \`found\` faux : dis que le centre d'aide ne couvre pas la question, n'affirme aucune réponse, et indique que l'équipe KPILOTE peut répondre (son contact est affiché sous ta réponse).
 Utilise-le pour : une définition (taux de progression, référentiel, collection…), une méthode de calcul, une procédure (import, saisie, droits), le fonctionnement de l'outil.
 Ne l'utilise pas pour : les valeurs d'un indicateur, d'une collection ou d'un individu → les outils de données.`,
+  // Le modèle principal n'a besoin que de la réponse et des titres : les liens sont affichés
+  // par l'interface, il ne doit pas en écrire.
+  toModelOutput: ({ found, answer, sources }) => ({
+    found,
+    answer,
+    pages: sources.map((source) => source.titre),
+  }),
   execute: async ({ question }, { abortSignal, context }) => {
     const pages = await listHelpPages()
     if (pages.length === 0) return NOT_FOUND
