@@ -6,9 +6,9 @@ import { findReadableIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { db } from '@/framework/persistence/dbStore'
 
 /**
- * Les entités de la page, nommées par le serveur. Le client n'envoie que des identifiants :
- * une entité inconnue ou illisible est ignorée, et aucune phrase venue du client n'atteint
- * le prompt.
+ * Les entités de la page, nommées par le serveur. Le client n'envoie que des identifiants,
+ * jamais de phrase : une entité inconnue ou illisible est ignorée. Les libellés, saisis par
+ * les équipes, sont neutralisés à leur insertion dans le prompt.
  */
 export const resolvePageContext = async (
   context: PageContext | undefined,

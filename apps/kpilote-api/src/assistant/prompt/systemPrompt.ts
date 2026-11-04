@@ -13,13 +13,26 @@ const DATE_FORMAT = new Intl.DateTimeFormat('fr-FR', {
   timeZone: 'Europe/Paris',
 })
 
+const MAX_LABEL_LENGTH = 200
+
+// Les libellés sont saisis par les équipes : on les ramène à une ligne bornée, pour qu'aucun
+// ne puisse ouvrir une section du prompt.
+const label = (text: string): string =>
+  text
+    .replace(/\p{Cc}+/gu, ' ')
+    .replace(/\s+/gu, ' ')
+    .trim()
+    .slice(0, MAX_LABEL_LENGTH)
+
 const describePage = (page: ResolvedPageContext | null): string => {
   if (!page) return "- Page courante : aucune entité n'y est affichée."
   const lines = [
-    page.indicateur && `- Indicateur affiché : ${page.indicateur.nom} (${page.indicateur.id})`,
-    page.collection && `- Collection affichée : ${page.collection.nom} (${page.collection.id})`,
+    page.indicateur &&
+      `- Indicateur affiché : ${label(page.indicateur.nom)} (${page.indicateur.id})`,
+    page.collection &&
+      `- Collection affichée : ${label(page.collection.nom)} (${page.collection.id})`,
     page.individu &&
-      `- Individu sélectionné : ${page.individu.nom} (${page.individu.id}), du référentiel ${page.individu.referentiel}`,
+      `- Individu sélectionné : ${label(page.individu.nom)} (${page.individu.id}), du référentiel ${label(page.individu.referentiel)}`,
   ].filter((line): line is string => typeof line === 'string')
   return [
     ...lines,
