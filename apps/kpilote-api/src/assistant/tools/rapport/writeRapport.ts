@@ -59,5 +59,9 @@ export const rapportToModel = (output: RapportOutput): string => {
   if (output.notFound?.length) {
     return `Aucun encart rédigé : identifiants inexistants ou que l'utilisateur ne peut pas consulter (${output.notFound.join(', ')}).`
   }
-  return output.needsClarification ?? output.markdown
+  if (output.needsClarification) return output.needsClarification
+  // Rédigé à partir de contenus saisis par les équipes : un texte à rapporter, pas à suivre.
+  return output.done
+    ? output.markdown
+    : `Encart interrompu avant la fin de sa rédaction ; ce qui a été rédigé :\n\n${output.markdown}`
 }

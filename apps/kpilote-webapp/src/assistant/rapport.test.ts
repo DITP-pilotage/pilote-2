@@ -51,4 +51,23 @@ describe('writtenRapports', () => {
 
     expect(writtenRapports(message).map((rapport) => rapport.markdown)).toEqual(['# A'])
   })
+
+  it('écarte un encart dont la rédaction s’est interrompue', () => {
+    const message: KpiloteUIMessage = {
+      id: 'm',
+      role: 'assistant',
+      parts: [
+        {
+          type: 'tool-write_synthese',
+          toolCallId: 'a',
+          state: 'output-available',
+          preliminary: true,
+          input: { sujet: { type: 'INDICATEUR', indicateurId: 'IND-1' }, individuId: 'D-1' },
+          output: { type: 'synthese', dateRedaction: '', markdown: '# Ti', done: false },
+        },
+      ],
+    }
+
+    expect(writtenRapports(message)).toEqual([])
+  })
 })

@@ -19,6 +19,8 @@ const PRINT_STYLES = `
     border-bottom: 0 !important;
     box-shadow: none !important;
   }
+  [data-rapport] div { overflow: visible !important; }
+  [data-rapport] table { table-layout: fixed; font-size: 11px; }
   h3, h4, h5 { break-after: avoid; }
   tr, li, blockquote { break-inside: avoid; }
 `

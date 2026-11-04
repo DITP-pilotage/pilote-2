@@ -21,11 +21,11 @@ export const rapportOutput = (part: RapportPart): RapportOutput | null => {
   return output.notFound?.length || output.needsClarification ? null : output
 }
 
-/** Les encarts rédigés d'un message, dans l'ordre. */
+/** Les encarts rédigés jusqu'au bout d'un message, dans l'ordre. */
 export const writtenRapports = (message: KpiloteUIMessage): RapportOutput[] =>
   message.parts.flatMap((part) => {
     const output = isRapportPart(part) ? rapportOutput(part) : null
-    return output && output.markdown.length > 0 ? [output] : []
+    return output?.done && output.markdown.length > 0 ? [output] : []
   })
 
 const MAX_FILE_NAME = 80

@@ -1,5 +1,4 @@
 import {
-  MAX_PERIMETRE_INDIVIDUS,
   type CommentairesOutput,
   type DatedValue,
   type EntityRef,
@@ -14,7 +13,14 @@ import { getEvolutionIndicateur } from '@/assistant/tools/getEvolutionIndicateur
 import { getSyntheseCollection } from '@/assistant/tools/getSyntheseCollection'
 import { getSyntheseIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { resolvePerimetre } from '@/assistant/tools/perimetre'
-import { formatDate, formatEcart, formatTaux, formatValeur } from '@/assistant/tools/rapport/format'
+import {
+  formatCitation,
+  formatDate,
+  formatEcart,
+  formatPonderation,
+  formatTaux,
+  formatValeur,
+} from '@/assistant/tools/rapport/format'
 import { type Collected } from '@/assistant/tools/rapport/writeRapport'
 import { type ToolExecuteOptions } from '@/assistant/tools/toolDefinition'
 
@@ -22,8 +28,24 @@ import { type ToolExecuteOptions } from '@/assistant/tools/toolDefinition'
 // Le sous-agent ne reçoit que ce que son gabarit écrit, déjà formaté.
 
 export const LAST_POINTS = 6
+export const MAX_INDICATEURS = 20
 
-const named = (entity: EntityRef): string => `${entity.nom} (${entity.id})`
+const MAX_NAME = 200
+const MAX_DESCRIPTION = 500
+const MAX_COMMENTAIRE = 1000
+
+const named = (entity: EntityRef): string =>
+  `${formatCitation(entity.nom, MAX_NAME)} (${entity.id})`
+
+const description = (text: string | null): string | null =>
+  text === null ? null : formatCitation(text, MAX_DESCRIPTION)
+
+/** Les contributions les plus lourdes d'abord : une liste tronquée garde ce qui pèse. */
+const heaviest = <T extends { ponderation: number }>(contributions: ReadonlyArray<T>): T[] =>
+  [...contributions].sort((a, b) => b.ponderation - a.ponderation).slice(0, MAX_INDICATEURS)
+
+const indicateursTruncation = (shown: number, total: number) =>
+  total > shown ? { indicateursTronques: `${shown} indicateurs sur ${total}` } : {}
 
 const dated = (value: DatedValue | null, unite: string | null, missing: string): string =>
   value ? `${formatValeur(value.valeur, unite)} au ${formatDate(value.date)}` : missing
@@ -39,7 +61,7 @@ const individuRow = (row: SyntheseIndicateurOutput['individus'][number], unite: 
 
 const medianes = (synthese: SyntheseIndicateurOutput, unite: string | null) =>
   synthese.valeursRemarquables.map((item) => ({
-    referentiel: item.referentiel.nom,
+    referentiel: formatCitation(item.referentiel.nom, MAX_NAME),
     mediane: formatValeur(item.mediane, unite),
   }))
 
@@ -47,7 +69,15 @@ const medianes = (synthese: SyntheseIndicateurOutput, unite: string | null) =>
 const latestCommentaires = (output: CommentairesOutput) =>
   output.groupes.flatMap((groupe) => {
     const latest = groupe.versions[0]
-    return latest ? [{ type: groupe.type, date: formatDate(latest.date), texte: latest.texte }] : []
+    return latest
+      ? [
+          {
+            type: groupe.type,
+            date: formatDate(latest.date),
+            texte: formatCitation(latest.texte, MAX_COMMENTAIRE),
+          },
+        ]
+      : []
   })
 
 const truncation = (shown: number, total: number | undefined) =>
@@ -77,7 +107,7 @@ const collectSyntheseIndicateur = async (
   return {
     donnees: {
       indicateur: named(synthese.indicateur),
-      description: synthese.indicateur.description,
+      description: description(synthese.indicateur.description),
       ...individuRow(row, unite),
       medianes: medianes(synthese, unite),
       dernieresValeurs: evolution.points
@@ -96,7 +126,7 @@ const collectSyntheseCollection = async (
   const synthese = await getSyntheseCollection.execute({ collectionId, individuId }, options)
   if (!synthese.collection || !synthese.individu) return { notFound: synthese.notFound }
 
-  const contributions = synthese.contributions.slice(0, MAX_PERIMETRE_INDIVIDUS)
+  const contributions = heaviest(synthese.contributions)
   const [details, commentaires] = await Promise.all([
     Promise.all(
       contributions.map((contribution) =>
@@ -111,7 +141,7 @@ const collectSyntheseCollection = async (
   return {
     donnees: {
       collection: named(synthese.collection),
-      description: synthese.collection.description,
+      description: description(synthese.collection.description),
       individu: named(synthese.individu),
       tauxProgression: formatTaux(synthese.tauxProgression),
       indicateurs: contributions.map((contribution, index) => {
@@ -120,13 +150,14 @@ const collectSyntheseCollection = async (
         const unite = detail?.indicateur?.unite ?? null
         return {
           indicateur: named(contribution.indicateur),
-          ponderation: contribution.ponderation,
+          ponderation: formatPonderation(contribution.ponderation),
           tauxProgression: formatTaux(contribution.tauxProgression),
           derniereValeur: dated(row?.derniereValeur ?? null, unite, 'non renseignée'),
           objectif: dated(row?.objectif ?? null, unite, 'non renseigné'),
           ecartMediane: formatEcart(row?.ecartMediane ?? null, unite),
         }
       }),
+      ...indicateursTruncation(contributions.length, synthese.contributions.length),
       ...(synthese.notFound.length > 0 ? { indicateursNonLisibles: synthese.notFound.length } : {}),
       commentaires: latestCommentaires(commentaires),
     },
@@ -197,13 +228,15 @@ const collectComparaisonCollection = async (
       individus: syntheses.map((synthese, index) => ({
         individu: named(synthese.individu ?? cible.individus[index] ?? { id: '', nom: '' }),
         tauxProgression: formatTaux(synthese.tauxProgression),
-        indicateurs: synthese.contributions
-          .slice(0, MAX_PERIMETRE_INDIVIDUS)
-          .map((contribution) => ({
-            indicateur: named(contribution.indicateur),
-            tauxProgression: formatTaux(contribution.tauxProgression),
-          })),
+        indicateurs: heaviest(synthese.contributions).map((contribution) => ({
+          indicateur: named(contribution.indicateur),
+          tauxProgression: formatTaux(contribution.tauxProgression),
+        })),
       })),
+      ...indicateursTruncation(
+        Math.min(syntheses[0]?.contributions.length ?? 0, MAX_INDICATEURS),
+        syntheses[0]?.contributions.length ?? 0,
+      ),
       ...truncation(cible.individus.length, cible.truncated ? cible.total : undefined),
     },
   }

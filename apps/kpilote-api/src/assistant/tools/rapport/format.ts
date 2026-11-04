@@ -12,9 +12,12 @@ const DATE = new Intl.DateTimeFormat('fr-FR', {
 
 const MINUS = '−'
 
+const isPercent = (unite: string | null): boolean =>
+  unite?.toLocaleLowerCase('fr-FR') === 'pourcentage'
+
 const unitSuffix = (unite: string | null): string => {
   if (!unite) return ''
-  return unite.toLocaleLowerCase('fr-FR') === 'pourcentage' ? ' %' : ` ${unite}`
+  return isPercent(unite) ? ' %' : ` ${unite}`
 }
 
 // Intl écrit les milliers avec une espace insécable étroite, que le sous-agent recopie mal.
@@ -26,10 +29,28 @@ export const formatValeur = (valeur: number | null, unite: string | null): strin
 export const formatTaux = (taux: number | null): string =>
   taux === null ? 'non calculé' : `${Math.round(taux)} %`
 
+// L'écart entre deux pourcentages se compte en points : « −1,5 % » se lirait comme relatif.
 export const formatEcart = (ecart: number | null, unite: string | null): string => {
   if (ecart === null) return 'non calculé'
   const sign = ecart < 0 ? MINUS : ecart > 0 ? '+' : ''
-  return `${sign}${number(Math.abs(ecart))}${ecart === 0 ? '' : unitSuffix(unite)}`
+  const magnitude = Math.abs(ecart)
+  if (ecart === 0) return '0'
+  const suffix = isPercent(unite) ? (magnitude >= 2 ? ' points' : ' point') : unitSuffix(unite)
+  return `${sign}${number(magnitude)}${suffix}`
+}
+
+export const formatPonderation = (ponderation: number): string => number(ponderation)
+
+/**
+ * Un texte saisi par les équipes, ramené à une ligne bornée : il ne peut ni ouvrir une
+ * section du prompt ni le noyer.
+ */
+export const formatCitation = (text: string, max: number): string => {
+  const line = text
+    .replace(/\p{Cc}+/gu, ' ')
+    .replace(/\s+/gu, ' ')
+    .trim()
+  return line.length > max ? `${line.slice(0, max)}…` : line
 }
 
 export const formatDate = (date: string): string => DATE.format(new Date(date))

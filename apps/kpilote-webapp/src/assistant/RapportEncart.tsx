@@ -44,6 +44,7 @@ export function RapportEncart({
   const ref = useRef<HTMLElement>(null)
   const writing = isStreaming && !output.done
   const waitingForText = writing && output.markdown.trim() === ''
+  const interrupted = !isStreaming && !output.done
 
   const copy = () => {
     navigator.clipboard
@@ -78,6 +79,11 @@ export function RapportEncart({
         </div>
       </header>
       {waitingForText && <p className="mb-2 text-sm text-text-subtle">Rédaction en cours…</p>}
+      {interrupted && (
+        <p className="mb-3 border-l-4 border-l-warning bg-warning-tinted px-3 py-2 text-sm text-text">
+          Rédaction interrompue : cet encart est incomplet.
+        </p>
+      )}
       <MarkdownResponse text={output.markdown} variant="report" />
       {output.done && (
         <footer className="mt-6 flex justify-end border-t border-border pt-4" {...NO_PRINT}>

@@ -61,6 +61,8 @@ const COMPONENTS: Components = {
 // Un encart se lit comme une note : de vrais titres, des citations et des en-têtes marqués.
 const REPORT_COMPONENTS: Components = {
   ...COMPONENTS,
+  // Une note exportée ne porte aucun lien : il serait mort dans le PDF.
+  a: ({ children }) => <span>{children}</span>,
   h1: ({ children }) => <h3 className="mb-3 mt-0 text-[22px] font-bold leading-8">{children}</h3>,
   h2: ({ children }) => <h4 className="mb-2 mt-5 text-[17px] font-bold">{children}</h4>,
   h3: ({ children }) => <h5 className="mb-1 mt-4 text-[15px] font-bold">{children}</h5>,

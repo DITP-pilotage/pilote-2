@@ -115,6 +115,32 @@ describe('encarts', { concurrent: false }, () => {
   )
 
   it(
+    'dit combien d’indicateurs une synthèse de collection laisse de côté',
+    integrationTest(async () => {
+      const { vaucluse, marqueur } = await givenIndicateur()
+      const indicateurs = await Promise.all(
+        Array.from({ length: 21 }, (_, index) =>
+          fixtures.indicateur({ nom: `Ind ${index} ${marqueur}`, visibilite: Visibilite.PUBLIC }),
+        ),
+      )
+      const collection = await fixtures.collection({
+        nom: `Grande ${marqueur}`,
+        visibilite: Visibilite.PUBLIC,
+        indicateurs: indicateurs.map(({ id, publicId }) => ({ id, publicId })),
+      })
+      const model = streamTextModel(['# Synthèse'])
+      registerModelWrapper(() => model)
+
+      await collectToolStates(randomUUID(), 'write_synthese', writeSynthese, {
+        sujet: { type: 'COLLECTION', collectionId: collection.publicId },
+        individuId: vaucluse.publicId,
+      })
+
+      expect(lastPrompt(model)).toContain('20 indicateurs sur 21')
+    }),
+  )
+
+  it(
     'compare un indicateur entre plusieurs individus',
     integrationTest(async () => {
       const { indicateur, vaucluse, var_, marqueur } = await givenIndicateur()

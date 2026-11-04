@@ -90,6 +90,12 @@ describe('rapportToModel', () => {
     expect(rapportToModel({ ...base, markdown: '# Titre' })).toBe('# Titre')
   })
 
+  it('signale au modèle un encart dont la rédaction s’est interrompue', () => {
+    expect(rapportToModel({ ...base, done: false, markdown: '# Ti' })).toMatch(
+      /^Encart interrompu/u,
+    )
+  })
+
   it('dit ce qui a empêché l’encart', () => {
     expect(rapportToModel({ ...base, markdown: '', notFound: ['IND-9'] })).toContain('IND-9')
     expect(
