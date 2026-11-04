@@ -99,6 +99,8 @@ export const WIDGET_WIDTHS: Record<WidgetType, { default: number; allowed: reado
 
 /** La largeur demandée si elle est permise pour ce type, sinon sa largeur par défaut. */
 export const widgetWidth = (widget: DashboardWidget): number => {
+  // Un type ajouté côté serveur, inconnu d'un onglet resté sur l'ancien front.
+  if (!Object.hasOwn(WIDGET_WIDTHS, widget.type)) return 4
   const widths = WIDGET_WIDTHS[widget.type]
   return widget.width !== undefined && widths.allowed.includes(widget.width)
     ? widget.width

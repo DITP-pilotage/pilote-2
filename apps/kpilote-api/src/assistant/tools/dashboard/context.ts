@@ -1,10 +1,6 @@
 import { type EntityRef, type ToolInput } from '@pilote/kpilote-shared/assistant/tools'
 
-import {
-  findIndicateurNamesByIds,
-  findIndividu,
-  findReadableCollection,
-} from '@/assistant/tools/entityLookups'
+import { findIndicateurNamesByIds, findReadableCollection } from '@/assistant/tools/entityLookups'
 import { findReadableIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -14,7 +10,7 @@ export type DashboardContext = {
   indicateurs: Array<EntityRef & { referentielIds: string[] }>
   /** `indicateurIds` sert à nommer les contributions ; le sous-agent ne le voit pas. */
   collections: Array<EntityRef & { indicateurIds: string[] }>
-  individus: EntityRef[]
+  individus: Array<EntityRef & { referentielId: string }>
   referentiels: Array<EntityRef & { carte: boolean }>
 }
 
@@ -32,13 +28,27 @@ const readAll = async <T>(
   }
 }
 
+const findIndividuWithReferentiel = async (id: string) => {
+  const row = await db().individu.findUnique({
+    where: { publicId: id },
+    select: { publicId: true, nom: true, referentiel: { select: { publicId: true } } },
+  })
+  return row ? { id: row.publicId, nom: row.nom, referentielId: row.referentiel.publicId } : null
+}
+
 export const resolveDashboardContext = async (
   input: ToolInput<'create_dashboard'>,
 ): Promise<DashboardContext> => {
+  // Sans indicateur ni collection, le sous-agent n'aurait que du texte à composer.
+  if (!input.indicateurIds?.length && !input.collectionIds?.length) {
+    throw new ValidationError(
+      'Un dashboard montre au moins un indicateur ou une collection : résous-les avant de le composer.',
+    )
+  }
   const [indicateurs, collections, individus] = await Promise.all([
     readAll(input.indicateurIds, findReadableIndicateur),
     readAll(input.collectionIds, findReadableCollection),
-    readAll(input.individuIds, findIndividu),
+    readAll(input.individuIds, findIndividuWithReferentiel),
   ])
 
   const referentielIds = [

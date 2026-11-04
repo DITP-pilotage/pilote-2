@@ -5,11 +5,15 @@ import { type DashboardContext } from '@/assistant/tools/dashboard/context'
 import { validateDashboard } from '@/assistant/tools/dashboard/validate'
 
 const context: DashboardContext = {
-  indicateurs: [{ id: 'IND-1', nom: 'Chômage', referentielIds: ['REF-DEPT', 'REF-ACAD'] }],
+  indicateurs: [
+    { id: 'IND-1', nom: 'Chômage', referentielIds: ['REF-DEPT', 'REF-ACAD'] },
+    { id: 'IND-2', nom: 'Équipement 100 % Santé', referentielIds: ['REF-REG'] },
+  ],
   collections: [{ id: 'COL-1', nom: 'Emploi', indicateurIds: ['IND-1'] }],
   individus: [
-    { id: 'DEPT-59', nom: 'Nord' },
-    { id: 'DEPT-62', nom: 'Pas-de-Calais' },
+    { id: 'DEPT-59', nom: 'Nord', referentielId: 'REF-DEPT' },
+    { id: 'DEPT-62', nom: 'Pas-de-Calais', referentielId: 'REF-DEPT' },
+    { id: 'REG-32', nom: 'Hauts-de-France', referentielId: 'REF-REG' },
   ],
   referentiels: [
     { id: 'REF-DEPT', nom: 'Départements', carte: true },
@@ -71,5 +75,40 @@ describe('validateDashboard', () => {
     expect(
       check({ type: 'titre_section', titre: 'Emploi', description: 'Écart de 4,5 pts' }),
     ).toThrow('chiffre')
+  })
+
+  it('accepte un nom d’entité qui contient un chiffre, et une année', () => {
+    expect(
+      check(
+        { type: 'titre_section', titre: 'Équipement 100 % Santé (IND-2) en 2026' },
+        { type: 'kpi_indicateur', indicateurId: 'IND-2', individuId: 'REG-32' },
+      ),
+    ).not.toThrow()
+  })
+
+  it('refuse toute valeur écrite en texte, même sans unité', () => {
+    expect(check({ type: 'paragraph', contenu: ['45 000 chômeurs dans le Nord.'] })).toThrow(
+      'chiffre',
+    )
+    expect(check({ type: 'titre_section', titre: 'Taux de 45' })).toThrow('chiffre')
+  })
+
+  it('refuse un individu d’un référentiel où l’indicateur n’a pas de valeurs', () => {
+    expect(check({ type: 'kpi_indicateur', indicateurId: 'IND-1', individuId: 'REG-32' })).toThrow(
+      'REG-32',
+    )
+    expect(
+      check({ type: 'evolution_indicateur', indicateurId: 'IND-2', individuIds: ['DEPT-59'] }),
+    ).toThrow('DEPT-59')
+  })
+
+  it('refuse un individu répété dans un même widget', () => {
+    expect(
+      check({
+        type: 'tableau_individus',
+        indicateurId: 'IND-1',
+        individuIds: ['DEPT-59', 'DEPT-59'],
+      }),
+    ).toThrow('répété')
   })
 })

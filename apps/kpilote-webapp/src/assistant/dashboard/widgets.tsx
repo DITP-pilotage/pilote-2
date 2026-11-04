@@ -3,6 +3,7 @@ import type { UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { DataTable } from '@pilote/kpilote-ui/DataTable'
 import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { queryOptions, useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import ReactECharts from 'echarts-for-react'
 
 import {
@@ -12,7 +13,7 @@ import {
 } from '@/api/indicateurs'
 import { WidgetRenderer } from '@/components/widgets/WidgetRenderer'
 import {
-  formatDateFr,
+  formatMonthYearNumericFr,
   formatMonthYearShortFr,
   formatNumberAvecUniteFr,
   formatNumberFr,
@@ -94,9 +95,9 @@ function KpiIndicateur({ widget, labels }: { widget: WidgetOf<'kpi_indicateur'>;
       <Kpi
         value={valeur(derniere?.valeur, indicateur.unite)}
         caption={[
-          derniere && `au ${formatDateFr(derniere.date)}`,
+          derniere && `au ${formatMonthYearNumericFr(derniere.date)}`,
           point &&
-            `objectif ${valeur(point.valeurCible, indicateur.unite)} au ${formatDateFr(point.dateCible)}`,
+            `objectif ${valeur(point.valeurCible, indicateur.unite)} au ${formatMonthYearNumericFr(point.dateCible)}`,
         ]
           .filter(Boolean)
           .join(' · ')}
@@ -134,38 +135,41 @@ function EvolutionIndicateur({
   labels: Labels
 }) {
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(widget.indicateurId))
+  // `combine` garde la même référence tant que les données ne changent pas.
   const series = useSuspenseQueries({
     queries: widget.individuIds.map((individuId) =>
       indicateurValeursQueryOptions(widget.indicateurId, individuId),
     ),
+    combine: (results) => results.map(({ data }) => data.items),
   })
-  const dates = [
-    ...new Set(series.flatMap(({ data }) => data.items.map((item) => item.date))),
-  ].sort()
-  const option = {
-    grid: { top: 40, right: 24, bottom: 32, left: 64 },
-    legend: { top: 0 },
-    tooltip: { trigger: 'axis' },
-    xAxis: {
-      type: 'category',
-      data: dates.map((date) => formatMonthYearShortFr(date)),
-      boundaryGap: false,
-    },
-    yAxis: {
-      type: 'value',
-      axisLabel: { formatter: (value: number) => formatNumberAvecUniteFr(value, indicateur.unite) },
-    },
-    series: series.map(({ data }, index) => {
-      const byDate = new Map(data.items.map((item) => [item.date, item.valeur]))
-      const individuId = widget.individuIds[index] ?? ''
-      return {
-        name: labelOf(labels, individuId),
-        type: 'line',
-        connectNulls: true,
-        data: dates.map((date) => byDate.get(date) ?? null),
-      }
-    }),
-  }
+  const { unite } = indicateur
+
+  // Mémorisée : une option recréée redessine la courbe à chaque rendu du fil.
+  const option = useMemo(() => {
+    const dates = [...new Set(series.flatMap((items) => items.map((item) => item.date)))].sort()
+    const format = (value: number) => formatNumberAvecUniteFr(value, unite)
+    return {
+      grid: { top: 40, right: 24, bottom: 32, left: 64 },
+      legend: { top: 0 },
+      tooltip: { trigger: 'axis', valueFormatter: format },
+      xAxis: {
+        type: 'category',
+        data: dates.map((date) => formatMonthYearShortFr(date)),
+        boundaryGap: false,
+      },
+      yAxis: { type: 'value', axisLabel: { formatter: format } },
+      series: series.map((items, index) => {
+        const byDate = new Map(items.map((item) => [item.date, item.valeur]))
+        return {
+          name: labelOf(labels, widget.individuIds[index] ?? ''),
+          type: 'line',
+          connectNulls: true,
+          data: dates.map((date) => byDate.get(date) ?? null),
+        }
+      }),
+    }
+  }, [series, unite, labels, widget.individuIds])
+
   return (
     <Panel title={labelOf(labels, widget.indicateurId)}>
       <ReactECharts option={option} style={{ height: 280 }} notMerge />

@@ -45,6 +45,9 @@ describe('create_dashboard', { concurrent: false }, () => {
           referentielIds: [referentiel.publicId],
         }),
       ])
+      expect(context.individus).toEqual([
+        expect.objectContaining({ id: individu.publicId, referentielId: referentiel.publicId }),
+      ])
       expect(context.referentiels).toEqual([
         expect.objectContaining({ id: referentiel.publicId, carte: false }),
       ])
@@ -157,6 +160,23 @@ describe('create_dashboard', { concurrent: false }, () => {
       })
 
       expect(output).toEqual({ error: expect.stringContaining(indicateur.publicId) })
+      expect(state.calls).toBe(0)
+    }),
+  )
+
+  it(
+    'refuse un dashboard sans indicateur ni collection, sans appeler le sous-agent',
+    integrationTest(async () => {
+      const { individu } = await given()
+      const { model, state } = sequenceTextModel(['{}'])
+      registerModelWrapper(() => model)
+
+      const output = await runToolAs(randomUUID(), 'create_dashboard', createDashboard, {
+        task: 't',
+        individuIds: [individu.publicId],
+      })
+
+      expect(output).toEqual({ error: expect.stringContaining('indicateur ou une collection') })
       expect(state.calls).toBe(0)
     }),
   )

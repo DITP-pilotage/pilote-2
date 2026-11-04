@@ -3,9 +3,18 @@ import { type Dashboard, type DashboardWidget } from '@pilote/kpilote-shared/ass
 import { type DashboardContext } from '@/assistant/tools/dashboard/context'
 import { ValidationError } from '@/framework/errors/AppError'
 
-// Un chiffre suivi d'une unité de mesure : les valeurs viennent des widgets, jamais du
-// texte. Quantificateurs bornés, pour qu'un texte long ne fasse pas exploser la regex.
-const NUMBER_PATTERN = /\d{1,10}(?:[,.]\d{1,10})?\s{0,5}(?:%|points?\b|pts\b)/iu
+// Les valeurs viennent des widgets, jamais du texte : hors noms et identifiants du contexte,
+// le seul nombre permis est une année.
+const YEAR_PATTERN = /\b(?:19|20)\d{2}\b/gu
+const DIGIT_PATTERN = /\d/u
+
+const writesANumber = (text: string, known: ReadonlyArray<string>): boolean => {
+  const withoutKnown = known.reduce((rest, label) => rest.split(label).join(' '), text)
+  return DIGIT_PATTERN.test(withoutKnown.replace(YEAR_PATTERN, ' '))
+}
+
+const repeated = (ids: ReadonlyArray<string>): string[] =>
+  ids.filter((id, index) => ids.indexOf(id) !== index)
 
 const referencesOf = (widget: DashboardWidget) => {
   switch (widget.type) {
@@ -43,6 +52,15 @@ export const validateDashboard = (dashboard: Dashboard, context: DashboardContex
     individus: new Set(context.individus.map(({ id }) => id)),
     referentiels: new Set(context.referentiels.map(({ id }) => id)),
   }
+  // Les plus longs d'abord : un nom qui en contient un autre est retiré en entier.
+  const labels = [
+    ...context.indicateurs,
+    ...context.collections,
+    ...context.individus,
+    ...context.referentiels,
+  ]
+    .flatMap(({ id, nom }) => [id, nom])
+    .sort((a, b) => b.length - a.length)
   const problems: string[] = []
 
   for (const widget of dashboard.containers.flatMap((container) => container.widgets)) {
@@ -50,6 +68,21 @@ export const validateDashboard = (dashboard: Dashboard, context: DashboardContex
     for (const family of ['indicateurs', 'collections', 'individus', 'referentiels'] as const) {
       for (const id of references[family] ?? []) {
         if (!known[family].has(id)) problems.push(`${id} n'est pas dans le contexte`)
+      }
+    }
+
+    for (const id of repeated(references.individus ?? [])) {
+      problems.push(`${id} est répété dans un widget ${widget.type}`)
+    }
+
+    // Un individu hors des référentiels de l'indicateur n'a pas de valeur : le widget serait vide.
+    const indicateurOf = context.indicateurs.find(({ id }) => id === references.indicateurs?.[0])
+    if (indicateurOf) {
+      for (const individuId of references.individus ?? []) {
+        const individu = context.individus.find(({ id }) => id === individuId)
+        if (individu && !indicateurOf.referentielIds.includes(individu.referentielId)) {
+          problems.push(`${individuId} n'appartient à aucun référentiel de ${indicateurOf.id}`)
+        }
       }
     }
 
@@ -64,15 +97,15 @@ export const validateDashboard = (dashboard: Dashboard, context: DashboardContex
       }
     }
 
-    if (textsOf(widget).some((text) => NUMBER_PATTERN.test(text))) {
+    if (textsOf(widget).some((text) => writesANumber(text, labels))) {
       problems.push(`le texte d'un widget ${widget.type} contient un chiffre`)
     }
   }
-  if (NUMBER_PATTERN.test(dashboard.titre)) problems.push('le titre contient un chiffre')
+  if (writesANumber(dashboard.titre, labels)) problems.push('le titre contient un chiffre')
 
   if (problems.length > 0) {
     throw new ValidationError(
-      `Dashboard refusé : ${problems.join(' ; ')}. N'utilise que les identifiants du contexte et aucun chiffre en texte.`,
+      `Dashboard refusé : ${problems.join(' ; ')}. Corrige le dashboard : identifiants du contexte seulement, aucun chiffre en texte hors des noms et des années.`,
     )
   }
 }

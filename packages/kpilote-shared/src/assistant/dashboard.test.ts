@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 
-import { dashboardSchema, widgetSchema, widgetWidth, WIDGET_TYPES } from './dashboard'
+import {
+  dashboardSchema,
+  widgetSchema,
+  widgetWidth,
+  WIDGET_TYPES,
+  type DashboardWidget,
+} from './dashboard'
 
 const EXAMPLES = {
   kpi_indicateur: { indicateurId: 'IND-1', individuId: 'DEPT-01' },
@@ -57,5 +63,10 @@ describe('widgetWidth', () => {
     ).toBe(4)
     expect(widgetWidth({ type: 'kpi_indicateur', ...EXAMPLES.kpi_indicateur, width: 2 })).toBe(2)
     expect(widgetWidth({ type: 'kpi_indicateur', ...EXAMPLES.kpi_indicateur })).toBe(1)
+  })
+
+  it('occupe toute la largeur pour un type que ce front ne connaît pas', () => {
+    const futur = JSON.parse('{"type":"jauge","indicateurId":"IND-1"}') as DashboardWidget
+    expect(widgetWidth(futur)).toBe(4)
   })
 })
