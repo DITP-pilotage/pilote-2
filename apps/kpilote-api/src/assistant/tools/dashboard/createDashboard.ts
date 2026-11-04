@@ -1,6 +1,6 @@
 import { dashboardSchema } from '@pilote/kpilote-shared/assistant/dashboard'
 
-import { resolveDashboardContext } from '@/assistant/tools/dashboard/context'
+import { dashboardLabels, resolveDashboardContext } from '@/assistant/tools/dashboard/context'
 import {
   buildDashboardPrompt,
   buildDashboardSystemPrompt,
@@ -33,6 +33,6 @@ Une erreur liste ce qui a été refusé : corrige les identifiants plutôt que d
       ...(abortSignal ? { abortSignal } : {}),
     })
     validateDashboard(dashboard, dashboardContext)
-    return dashboard
+    return { ...dashboard, labels: await dashboardLabels(dashboardContext) }
   },
 }

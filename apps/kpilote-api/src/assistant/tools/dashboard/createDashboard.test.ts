@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { resolveDashboardContext } from '@/assistant/tools/dashboard/context'
+import { dashboardLabels, resolveDashboardContext } from '@/assistant/tools/dashboard/context'
 import { createDashboard } from '@/assistant/tools/dashboard/createDashboard'
 import { registerModelWrapper } from '@/framework/llm/albert'
 import { Visibilite } from '@/generated/prisma/enums'
@@ -78,7 +78,40 @@ describe('create_dashboard', { concurrent: false }, () => {
         individuIds: [individu.publicId],
       })
 
-      expect(output).toEqual(dashboard)
+      expect(output).toEqual({
+        ...dashboard,
+        labels: expect.objectContaining({
+          [indicateur.publicId]: indicateur.nom,
+          [individu.publicId]: individu.nom,
+        }),
+      })
+    }),
+  )
+
+  it(
+    'nomme les indicateurs des collections du contexte',
+    integrationTest(async () => {
+      const { indicateur, individu } = await given()
+      const collection = await fixtures.collection({
+        nom: `Emploi ${token()}`,
+        visibilite: Visibilite.PUBLIC,
+        indicateurs: [{ id: indicateur.id, publicId: indicateur.publicId }],
+      })
+
+      const labels = await runAsUser(randomUUID(), () =>
+        resolveDashboardContext({
+          task: 't',
+          collectionIds: [collection.publicId],
+          individuIds: [individu.publicId],
+        }).then(dashboardLabels),
+      )
+
+      expect(labels).toEqual(
+        expect.objectContaining({
+          [collection.publicId]: collection.nom,
+          [indicateur.publicId]: indicateur.nom,
+        }),
+      )
     }),
   )
 

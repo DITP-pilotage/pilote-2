@@ -6,7 +6,7 @@ import { validateDashboard } from '@/assistant/tools/dashboard/validate'
 
 const context: DashboardContext = {
   indicateurs: [{ id: 'IND-1', nom: 'Chômage', referentielIds: ['REF-DEPT', 'REF-ACAD'] }],
-  collections: [{ id: 'COL-1', nom: 'Emploi' }],
+  collections: [{ id: 'COL-1', nom: 'Emploi', indicateurIds: ['IND-1'] }],
   individus: [
     { id: 'DEPT-59', nom: 'Nord' },
     { id: 'DEPT-62', nom: 'Pas-de-Calais' },

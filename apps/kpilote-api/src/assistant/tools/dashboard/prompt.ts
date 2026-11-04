@@ -68,5 +68,10 @@ Tu reçois ce que l'utilisateur veut visualiser, suivi d'un bloc <context> qui l
 
 Remplace les placeholders par les valeurs réelles du <context>. Tu n'as pas d'outils.`
 
-export const buildDashboardPrompt = (task: string, context: DashboardContext): string =>
-  `${task}\n\n<context>\n${JSON.stringify(context)}\n</context>`
+export const buildDashboardPrompt = (task: string, context: DashboardContext): string => {
+  const visible = {
+    ...context,
+    collections: context.collections.map(({ id, nom }) => ({ id, nom })),
+  }
+  return `${task}\n\n<context>\n${JSON.stringify(visible)}\n</context>`
+}

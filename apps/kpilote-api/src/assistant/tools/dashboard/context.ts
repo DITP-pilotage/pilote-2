@@ -1,6 +1,10 @@
 import { type EntityRef, type ToolInput } from '@pilote/kpilote-shared/assistant/tools'
 
-import { findIndividu, findReadableCollection } from '@/assistant/tools/entityLookups'
+import {
+  findIndicateurNamesByIds,
+  findIndividu,
+  findReadableCollection,
+} from '@/assistant/tools/entityLookups'
 import { findReadableIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -8,7 +12,8 @@ import { db } from '@/framework/persistence/dbStore'
 /** Ce que le sous-agent peut référencer : seulement des entités que l'utilisateur lit. */
 export type DashboardContext = {
   indicateurs: Array<EntityRef & { referentielIds: string[] }>
-  collections: EntityRef[]
+  /** `indicateurIds` sert à nommer les contributions ; le sous-agent ne le voit pas. */
+  collections: Array<EntityRef & { indicateurIds: string[] }>
   individus: EntityRef[]
   referentiels: Array<EntityRef & { carte: boolean }>
 }
@@ -74,6 +79,7 @@ export const resolveDashboardContext = async (
     collections: collections.found.map((collection) => ({
       id: collection.id,
       nom: collection.nom,
+      indicateurIds: collection.indicateurs.map(({ id }) => id),
     })),
     individus: individus.found,
     referentiels: referentiels.map((row) => ({
@@ -82,4 +88,25 @@ export const resolveDashboardContext = async (
       carte: row.widgets.some(({ widget }) => widget.type.startsWith(CARTE_WIDGET_PREFIX)),
     })),
   }
+}
+
+/**
+ * Les noms affichés par les widgets, indicateurs des collections compris ; un indicateur
+ * illisible d'une collection n'est pas nommé.
+ */
+export const dashboardLabels = async (
+  context: DashboardContext,
+): Promise<Record<string, string>> => {
+  const contributions = await findIndicateurNamesByIds(
+    context.collections.flatMap((collection) => collection.indicateurIds),
+  )
+  return Object.fromEntries([
+    ...contributions,
+    ...[
+      ...context.indicateurs,
+      ...context.collections,
+      ...context.individus,
+      ...context.referentiels,
+    ].map((entity) => [entity.id, entity.nom] as const),
+  ])
 }

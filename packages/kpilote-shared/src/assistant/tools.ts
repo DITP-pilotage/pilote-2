@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { type Dashboard } from './dashboard'
+import { type DashboardOutput } from './dashboard'
 import { collectionIdInput, indicateurIdInput, individuIdInput, referentielIdInput } from './ids'
 
 // Contrat des outils de l'assistant : la seule liste. Le serveur enregistre un outil par
@@ -303,7 +303,7 @@ export interface ToolOutputs {
   consult_centre_aide: CentreAideOutput
   write_synthese: RapportOutput
   write_comparaison: RapportOutput
-  create_dashboard: Dashboard
+  create_dashboard: DashboardOutput
   clarify_with_choices: ClarifyOutput
 }
 

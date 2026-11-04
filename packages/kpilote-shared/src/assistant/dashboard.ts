@@ -117,3 +117,9 @@ export const dashboardSchema = z.object({
 })
 
 export type Dashboard = z.output<typeof dashboardSchema>
+
+/**
+ * Ce que l'outil renvoie : le dashboard et les noms des entités qu'il référence, résolus par
+ * le serveur avec les droits de l'utilisateur (des libellés, jamais des valeurs).
+ */
+export type DashboardOutput = Dashboard & { labels: Record<string, string> }
