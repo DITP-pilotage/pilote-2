@@ -13,6 +13,8 @@ import { logger } from '@/framework/logger/logger'
 export const MAX_RESULTS = 10
 export const MAX_RANKING_CANDIDATES = 60
 export const MAX_FALLBACK_CATALOG = 300
+/** Candidats lus par terme du pré-filtre. */
+export const TERM_PAGE_SIZE = 100
 
 export type Ranker = (
   query: string,

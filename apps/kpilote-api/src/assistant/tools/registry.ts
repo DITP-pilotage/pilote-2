@@ -7,6 +7,9 @@ import {
 import { tool, type Tool, type ToolSet } from 'ai'
 
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
+import { searchIndividus } from '@/assistant/tools/searchIndividus'
+import { searchCollections } from '@/assistant/tools/searchCollections'
+import { searchIndicateurs } from '@/assistant/tools/searchIndicateurs'
 import {
   type AnyToolDefinition,
   type ToolContext,
@@ -23,9 +26,9 @@ const notImplemented = <N extends ToolName>(name: N): ToolDefinition<N> => ({
 })
 
 const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
-  search_indicateurs: notImplemented('search_indicateurs'),
-  search_collections: notImplemented('search_collections'),
-  search_individus: notImplemented('search_individus'),
+  search_indicateurs: searchIndicateurs,
+  search_collections: searchCollections,
+  search_individus: searchIndividus,
   get_synthese_indicateur: notImplemented('get_synthese_indicateur'),
   get_synthese_collection: notImplemented('get_synthese_collection'),
   get_evolution_indicateur: notImplemented('get_evolution_indicateur'),
