@@ -7,6 +7,7 @@ import {
 import { tool, type Tool, type ToolSet } from 'ai'
 
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
+import { getSyntheseIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { searchIndividus } from '@/assistant/tools/searchIndividus'
 import { searchCollections } from '@/assistant/tools/searchCollections'
 import { searchIndicateurs } from '@/assistant/tools/searchIndicateurs'
@@ -29,7 +30,7 @@ const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
   search_indicateurs: searchIndicateurs,
   search_collections: searchCollections,
   search_individus: searchIndividus,
-  get_synthese_indicateur: notImplemented('get_synthese_indicateur'),
+  get_synthese_indicateur: getSyntheseIndicateur,
   get_synthese_collection: notImplemented('get_synthese_collection'),
   get_evolution_indicateur: notImplemented('get_evolution_indicateur'),
   get_commentaires: notImplemented('get_commentaires'),
