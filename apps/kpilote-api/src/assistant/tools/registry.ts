@@ -7,6 +7,8 @@ import {
 import { tool, type Tool, type ToolSet } from 'ai'
 
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
+import { getEvolutionIndicateur } from '@/assistant/tools/getEvolutionIndicateur'
+import { getSyntheseCollection } from '@/assistant/tools/getSyntheseCollection'
 import { getSyntheseIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { searchIndividus } from '@/assistant/tools/searchIndividus'
 import { searchCollections } from '@/assistant/tools/searchCollections'
@@ -31,8 +33,8 @@ const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
   search_collections: searchCollections,
   search_individus: searchIndividus,
   get_synthese_indicateur: getSyntheseIndicateur,
-  get_synthese_collection: notImplemented('get_synthese_collection'),
-  get_evolution_indicateur: notImplemented('get_evolution_indicateur'),
+  get_synthese_collection: getSyntheseCollection,
+  get_evolution_indicateur: getEvolutionIndicateur,
   get_commentaires: notImplemented('get_commentaires'),
   clarify_with_choices: clarifyWithChoices,
 }
