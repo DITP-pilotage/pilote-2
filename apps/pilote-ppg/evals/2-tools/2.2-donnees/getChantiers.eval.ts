@@ -121,7 +121,12 @@ const CASES: ToolCase[] = [
     reason:
       "un tableau se met en forme dans la réponse, pas dans un dashboard (PIL-1855)",
     expected: [
-      { toolName: "get_chantiers", input: { tri: "taux_decroissant" } },
+      {
+        toolName: "get_chantiers",
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["DEPT-72"] },
+        },
+      },
     ],
     forbidden: ["create_dashboard", "clarify_with_choices"],
   },
