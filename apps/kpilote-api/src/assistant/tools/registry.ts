@@ -12,6 +12,8 @@ import { getCommentaires } from '@/assistant/tools/getCommentaires'
 import { getEvolutionIndicateur } from '@/assistant/tools/getEvolutionIndicateur'
 import { getSyntheseCollection } from '@/assistant/tools/getSyntheseCollection'
 import { getSyntheseIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
+import { writeComparaison } from '@/assistant/tools/rapport/writeComparaison'
+import { writeSynthese } from '@/assistant/tools/rapport/writeSynthese'
 import { searchIndividus } from '@/assistant/tools/searchIndividus'
 import { searchCollections } from '@/assistant/tools/searchCollections'
 import { searchIndicateurs } from '@/assistant/tools/searchIndicateurs'
@@ -35,6 +37,8 @@ const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
   get_evolution_indicateur: getEvolutionIndicateur,
   get_commentaires: getCommentaires,
   consult_centre_aide: consultCentreAide,
+  write_synthese: writeSynthese,
+  write_comparaison: writeComparaison,
   clarify_with_choices: clarifyWithChoices,
 }
 

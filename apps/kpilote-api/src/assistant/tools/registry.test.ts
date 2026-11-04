@@ -166,6 +166,7 @@ describe('registre des outils', () => {
           description: 'test',
           async *stream() {
             yield { step: 1, principal: requireCurrentPrincipalId() }
+            await Promise.resolve()
             yield { step: 2, principal: requireCurrentPrincipalId() }
           },
         },

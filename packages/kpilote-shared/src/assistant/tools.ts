@@ -81,6 +81,29 @@ export const consultCentreAideInput = z.object({
     ),
 })
 
+export const rapportSujetInput = z
+  .discriminatedUnion('type', [
+    z.object({ type: z.enum(['COLLECTION']), collectionId: collectionIdInput }),
+    z.object({ type: z.enum(['INDICATEUR']), indicateurId: indicateurIdInput }),
+  ])
+  .describe(
+    "Ce que l'encart décrit : une collection (type COLLECTION, avec collectionId) ou un indicateur (type INDICATEUR, avec indicateurId).",
+  )
+
+export type RapportSujet = z.output<typeof rapportSujetInput>
+
+export const writeSyntheseInput = z.object({
+  sujet: rapportSujetInput,
+  individuId: individuIdInput,
+})
+
+export const writeComparaisonInput = z.object({
+  sujet: rapportSujetInput,
+  perimetre: perimetreInput.describe(
+    `Au moins deux individus à comparer.\n${PERIMETRE_DESCRIPTION}`,
+  ),
+})
+
 export const clarifyInput = z.object({
   question: z.string().min(1).describe('Question affichée en haut du panneau de choix.'),
   choices: z
@@ -98,7 +121,7 @@ export const clarifyInput = z.object({
     .describe('Options concrètes et réalisables entre lesquelles trancher (2 à 4).'),
 })
 
-export type ToolKind = 'source' | 'interface' | 'help'
+export type ToolKind = 'source' | 'interface' | 'help' | 'report'
 
 type ToolContract = { label: string; kind: ToolKind; input: z.ZodType }
 
@@ -127,6 +150,8 @@ export const TOOLS = {
     kind: 'help',
     input: consultCentreAideInput,
   },
+  write_synthese: { label: 'Synthèse', kind: 'report', input: writeSyntheseInput },
+  write_comparaison: { label: 'Comparaison', kind: 'report', input: writeComparaisonInput },
   clarify_with_choices: { label: 'Question de précision', kind: 'interface', input: clarifyInput },
 } as const satisfies Record<string, ToolContract>
 
@@ -221,6 +246,23 @@ export type CentreAideOutput = {
   sources: HelpSource[]
 }
 
+export type RapportType = 'synthese' | 'comparaison'
+
+/**
+ * Un état de l'encart : l'outil en émet plusieurs pendant la rédaction, chacun avec tout le
+ * texte rédigé jusque-là ; le dernier a `done`.
+ */
+export type RapportOutput = {
+  type: RapportType
+  dateRedaction: string
+  markdown: string
+  done: boolean
+  /** Sujet ou individus inexistants ou illisibles : aucun encart n'est rédigé. */
+  notFound?: string[]
+  /** La demande ne permet pas d'encart (une comparaison d'un seul individu) : à rapporter. */
+  needsClarification?: string
+}
+
 export type ClarifyOutput = z.output<typeof clarifyInput>
 
 export interface ToolOutputs {
@@ -232,6 +274,8 @@ export interface ToolOutputs {
   get_evolution_indicateur: EvolutionIndicateurOutput
   get_commentaires: CommentairesOutput
   consult_centre_aide: CentreAideOutput
+  write_synthese: RapportOutput
+  write_comparaison: RapportOutput
   clarify_with_choices: ClarifyOutput
 }
 

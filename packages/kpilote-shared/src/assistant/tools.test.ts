@@ -9,7 +9,7 @@ describe('TOOLS', () => {
       TOOL_NAMES.filter(
         (name) =>
           TOOLS[name].label.length === 0 ||
-          !['source', 'interface', 'help'].includes(TOOLS[name].kind),
+          !['source', 'interface', 'help', 'report'].includes(TOOLS[name].kind),
       ),
     ).toEqual([])
   })
@@ -32,5 +32,20 @@ describe('searchInput', () => {
 describe('consult_centre_aide', () => {
   it('est un outil d’aide, rendu à part des sources de données', () => {
     expect(TOOLS.consult_centre_aide.kind).toBe('help')
+  })
+})
+
+describe('encarts', () => {
+  it('write_synthese et write_comparaison sont des rédactions, hors des sources', () => {
+    expect([TOOLS.write_synthese.kind, TOOLS.write_comparaison.kind]).toEqual(['report', 'report'])
+  })
+
+  it('une comparaison porte sur un sujet et un périmètre', () => {
+    expect(
+      TOOLS.write_comparaison.input.safeParse({
+        sujet: { type: 'INDICATEUR', indicateurId: 'IND-1' },
+        perimetre: { type: 'SELECTION', individuIds: ['DEPT-01', 'DEPT-02'] },
+      }).success,
+    ).toBe(true)
   })
 })
