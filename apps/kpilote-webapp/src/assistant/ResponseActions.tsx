@@ -104,7 +104,7 @@ export function ResponseActions({ message }: { message: KpiloteUIMessage }) {
 
   const copy = () => {
     navigator.clipboard
-      .writeText(copyableText(message))
+      .writeText(copyableText(message, window.location.origin))
       .then(() => toast({ title: 'Texte copié dans le presse-papiers' }))
       .catch(() => toast({ title: "Le texte n'a pas pu être copié", variant: 'error' }))
   }
