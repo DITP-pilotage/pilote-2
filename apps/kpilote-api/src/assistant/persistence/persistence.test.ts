@@ -28,16 +28,36 @@ const call = (overrides: Partial<Parameters<typeof recordTurn>[0]['call']> = {})
   ...overrides,
 })
 
-const turn = (principalId: string, conversationId: string, callOverrides = {}) =>
+const turn = (
+  principalId: string,
+  conversationId: string,
+  callOverrides = {},
+  startedOnSavedConversation = false,
+) =>
   recordTurn({
     conversationId,
     principalId,
+    startedOnSavedConversation,
     contexte: { indicateurId: 'IND-1' },
     messages: [userMessage('Où en est la fraude fiscale ?')],
     call: call(callOverrides),
   })
 
 describe('persistance de l’assistant', () => {
+  it(
+    'ne recrée pas une conversation supprimée pendant le tour',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      const conversationId = randomUUID()
+
+      await turn(principalId, conversationId, {}, true)
+
+      expect(
+        await db().assistantConversation.findUnique({ where: { id: conversationId } }),
+      ).toBeNull()
+    }),
+  )
+
   it(
     'écrit la conversation, l’appel et ses sous-appels',
     integrationTest(async () => {

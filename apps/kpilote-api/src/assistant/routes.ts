@@ -234,6 +234,7 @@ assistantRoutes.openapi(chatRoute, async (context) => {
           recordTurn({
             conversationId: body.id,
             principalId,
+            startedOnSavedConversation: history.length > 0,
             contexte: body.context ?? null,
             messages: finalMessages,
             call: {

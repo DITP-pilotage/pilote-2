@@ -49,12 +49,15 @@ export type RecordedCall = {
 export const recordTurn = async ({
   conversationId,
   principalId,
+  startedOnSavedConversation,
   contexte,
   messages,
   call,
 }: {
   conversationId: string
   principalId: string
+  /** Le tour reprenait une conversation enregistrée : absente à la fin, elle a été supprimée. */
+  startedOnSavedConversation: boolean
   contexte: PageContext | null
   messages: ReadonlyArray<unknown>
   call: RecordedCall
@@ -67,6 +70,8 @@ export const recordTurn = async ({
     data: { messages: blob },
   })
   if (count === 0) {
+    // Supprimée pendant le tour : la suppression l'emporte, rien n'est recréé.
+    if (startedOnSavedConversation) return
     const taken = await db().assistantConversation.findUnique({
       where: { id: conversationId },
       select: { id: true },
