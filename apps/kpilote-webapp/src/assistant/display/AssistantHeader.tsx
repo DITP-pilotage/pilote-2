@@ -1,6 +1,7 @@
 import { deriveTitle } from '@pilote/kpilote-shared/assistant/conversation'
 import { ChevronsRight, Minus, SquarePen } from 'lucide-react'
 
+import { MenuHistorique } from '../history/MenuHistorique'
 import { useConversationState } from '../useAssistant'
 import { useAssistantDisplay } from './AssistantProvider'
 import { MenuVue } from './MenuVue'
@@ -14,9 +15,7 @@ export function AssistantHeader({ conversationId }: { conversationId: string }) 
 
   return (
     <div className="flex h-12 shrink-0 items-center gap-1 border-b border-border pr-2 pl-3">
-      <p className="m-0 min-w-0 truncate text-sm font-semibold text-text">
-        {deriveTitle(messages)}
-      </p>
+      <MenuHistorique conversationId={conversationId} titre={deriveTitle(messages)} />
       <span className="min-w-2 flex-1" />
       <button
         type="button"
