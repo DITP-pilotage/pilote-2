@@ -692,7 +692,6 @@ model AssistantConversation {
   id          String   @id @db.Uuid
   principalId String   @map("principal_id") @db.Uuid
   titre       String
-  surface     String
   messages    Json
   contexte    Json? 
   createdAt   DateTime @default(now()) @map("created_at")
@@ -712,8 +711,8 @@ model AssistantAppel {
   conversationId     String                       @map("conversation_id") @db.Uuid
   principalId        String                       @map("principal_id") @db.Uuid
   modele             String
-  surface            String
   transcript         Json
+  outils             String[]                     @default([])
   inputTokens        Int                          @default(0) @map("input_tokens")
   outputTokens       Int                          @default(0) @map("output_tokens")
   dureeMs            Int                          @default(0) @map("duree_ms")
@@ -722,8 +721,27 @@ model AssistantAppel {
   commentaire        String?
   createdAt          DateTime                     @default(now()) @map("created_at")
 
+  // Supprimer une conversation supprime ses appels ; les conversations ne sont jamais
+  // purgées automatiquement.
   conversation AssistantConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sousAppels   AssistantSousAppel[]
 
   @@index([conversationId, createdAt(sort: Desc)])
   @@map("assistant_appel")
+}
+
+model AssistantSousAppel {
+  id           String   @id @default(uuid()) @db.Uuid
+  appelId      String   @map("appel_id") @db.Uuid
+  nom          String
+  modele       String
+  inputTokens  Int      @default(0) @map("input_tokens")
+  outputTokens Int      @default(0) @map("output_tokens")
+  dureeMs      Int      @default(0) @map("duree_ms")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  appel AssistantAppel @relation(fields: [appelId], references: [id], onDelete: Cascade)
+
+  @@index([appelId])
+  @@map("assistant_sous_appel")
 }
