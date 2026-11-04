@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { type Dashboard } from './dashboard'
 import { collectionIdInput, indicateurIdInput, individuIdInput, referentielIdInput } from './ids'
 
 // Contrat des outils de l'assistant : la seule liste. Le serveur enregistre un outil par
@@ -104,6 +105,27 @@ export const writeComparaisonInput = z.object({
   ),
 })
 
+const ids = (input: z.ZodType<string, string>, max: number, description: string) =>
+  z.array(input).max(max).optional().describe(description)
+
+export const createDashboardInput = z.object({
+  task: z
+    .string()
+    .min(1)
+    .max(1000)
+    .describe(
+      'Ce que le dashboard doit montrer, dans les mots de la demande (« la courbe de IND-42 dans le Nord et le Pas-de-Calais »).',
+    ),
+  indicateurIds: ids(indicateurIdInput, 10, 'Les indicateurs à montrer.'),
+  collectionIds: ids(collectionIdInput, 5, 'Les collections à montrer.'),
+  individuIds: ids(individuIdInput, 20, 'Les individus concernés.'),
+  referentielIds: ids(
+    referentielIdInput,
+    5,
+    'Les référentiels à cartographier ou à résumer, quand la demande les vise.',
+  ),
+})
+
 export const clarifyInput = z.object({
   question: z.string().min(1).describe('Question affichée en haut du panneau de choix.'),
   choices: z
@@ -121,7 +143,7 @@ export const clarifyInput = z.object({
     .describe('Options concrètes et réalisables entre lesquelles trancher (2 à 4).'),
 })
 
-export type ToolKind = 'source' | 'interface' | 'help' | 'report'
+export type ToolKind = 'source' | 'interface' | 'help' | 'report' | 'dashboard'
 
 type ToolContract = { label: string; kind: ToolKind; input: z.ZodType }
 
@@ -152,6 +174,11 @@ export const TOOLS = {
   },
   write_synthese: { label: 'Synthèse', kind: 'report', input: writeSyntheseInput },
   write_comparaison: { label: 'Comparaison', kind: 'report', input: writeComparaisonInput },
+  create_dashboard: {
+    label: 'Tableau de bord',
+    kind: 'dashboard',
+    input: createDashboardInput,
+  },
   clarify_with_choices: { label: 'Question de précision', kind: 'interface', input: clarifyInput },
 } as const satisfies Record<string, ToolContract>
 
@@ -276,6 +303,7 @@ export interface ToolOutputs {
   consult_centre_aide: CentreAideOutput
   write_synthese: RapportOutput
   write_comparaison: RapportOutput
+  create_dashboard: Dashboard
   clarify_with_choices: ClarifyOutput
 }
 
