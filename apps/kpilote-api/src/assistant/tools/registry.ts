@@ -12,6 +12,8 @@ import {
   type ToolContext,
   type ToolDefinition,
 } from '@/assistant/tools/toolDefinition'
+import { AppError } from '@/framework/errors/AppError'
+import { logger } from '@/framework/logger/logger'
 
 export type { ToolContext, ToolDefinition } from '@/assistant/tools/toolDefinition'
 
@@ -39,9 +41,13 @@ export const REPEATED_FAILURE: ToolError = {
 const isToolError = (output: unknown): output is ToolError =>
   typeof output === 'object' && output !== null && 'error' in output
 
-const describeFailure = (error: unknown): ToolError => ({
-  error: `L'appel a échoué : ${error instanceof Error ? error.message : String(error)}`,
-})
+// Seules les erreurs métier disent au modèle quoi corriger. Une erreur interne (base,
+// réseau) reste dans les journaux : sa sortie atteint aussi l'interface.
+const describeFailure = (name: ToolName, error: unknown): ToolError => {
+  if (error instanceof AppError) return { error: `L'appel a échoué : ${error.message}` }
+  logger.error({ event: 'assistant.outil.erreur', tool: name, err: error }, 'Outil en erreur')
+  return { error: "L'appel a échoué suite à une erreur interne." }
+}
 
 /**
  * L'enveloppe commune : exécution sous le principal capturé, mémoire des appels échoués à
@@ -71,7 +77,7 @@ export const toAiTool = (
         )
       } catch (error) {
         failed.add(key)
-        return describeFailure(error)
+        return describeFailure(name, error)
       }
     },
     ...(toModelOutput

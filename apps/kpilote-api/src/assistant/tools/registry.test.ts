@@ -9,6 +9,7 @@ import {
 } from '@/assistant/tools/registry'
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
 import { captureContext } from '@/framework/context/captureContext'
+import { ValidationError } from '@/framework/errors/AppError'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { TurnTrace } from '@/framework/llm/turnTrace'
 import { integrationTest } from '@/test/integrationTest'
@@ -60,7 +61,7 @@ describe('registre des outils', () => {
           description: 'test',
           execute: () => {
             calls += 1
-            return Promise.reject(new Error('boom'))
+            return Promise.reject(new ValidationError('boom'))
           },
         },
         contextFor('u-2'),
@@ -76,17 +77,39 @@ describe('registre des outils', () => {
   )
 
   it(
-    'convertit une exception en erreur lisible par le modèle',
+    "transmet au modèle le message d'une erreur métier",
     integrationTest(async () => {
       const tool = toAiTool(
         'clarify_with_choices',
-        { description: 'test', execute: () => Promise.reject(new Error('boom')) },
+        {
+          description: 'test',
+          execute: () => Promise.reject(new ValidationError('période invalide')),
+        },
         contextFor('u-3'),
       )
 
       expect(await tool.execute?.({ question: 'q', choices: [] }, callOptions)).toEqual({
-        error: expect.stringContaining('boom'),
+        error: expect.stringContaining('période invalide'),
       })
+    }),
+  )
+
+  it(
+    "ne transmet pas le message d'une erreur interne",
+    integrationTest(async () => {
+      const tool = toAiTool(
+        'clarify_with_choices',
+        {
+          description: 'test',
+          execute: () => Promise.reject(new Error('relation "secret_table" does not exist')),
+        },
+        contextFor('u-5'),
+      )
+
+      const output = await tool.execute?.({ question: 'q', choices: [] }, callOptions)
+
+      expect(JSON.stringify(output)).not.toContain('secret_table')
+      expect(output).toEqual({ error: expect.any(String) })
     }),
   )
 
