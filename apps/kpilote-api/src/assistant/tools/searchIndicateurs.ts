@@ -15,8 +15,7 @@ Ne l'utilise pas pour : un identifiant déjà donné (IND-42) → get_synthese_i
   execute: ({ query }, { abortSignal, context }) =>
     searchEntities({
       query,
-      filterByTerm: (term) =>
-        findIndicateurNames({ term, limit: TERM_PAGE_SIZE }).then((page) => page.items),
+      filterByTerm: (term) => findIndicateurNames({ term, limit: TERM_PAGE_SIZE }),
       loadCatalog: (limit) => findIndicateurNames({ limit }),
       rank: createRanker({
         name: 'search_indicateurs.ranking',

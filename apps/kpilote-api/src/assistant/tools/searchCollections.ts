@@ -15,8 +15,7 @@ Ne l'utilise pas pour : un identifiant déjà donné (COL-7) → get_synthese_co
   execute: ({ query }, { abortSignal, context }) =>
     searchEntities({
       query,
-      filterByTerm: (term) =>
-        findCollectionNames({ term, limit: TERM_PAGE_SIZE }).then((page) => page.items),
+      filterByTerm: (term) => findCollectionNames({ term, limit: TERM_PAGE_SIZE }),
       loadCatalog: (limit) => findCollectionNames({ limit }),
       rank: createRanker({
         name: 'search_collections.ranking',

@@ -20,7 +20,8 @@ describe('searchEntities', () => {
     const { rank, calls } = rankerReturning([])
     const output = await searchEntities({
       query: 'fraude fiscale',
-      filterByTerm: () => Promise.resolve([{ id: 'IND-1', nom: 'Fraude fiscale' }]),
+      filterByTerm: () =>
+        Promise.resolve({ items: [{ id: 'IND-1', nom: 'Fraude fiscale' }], total: 1 }),
       loadCatalog: () => Promise.resolve({ items: [], total: 0 }),
       rank,
     })
@@ -33,7 +34,7 @@ describe('searchEntities', () => {
     const { rank } = rankerReturning([])
     const output = await searchEntities({
       query: 'zzz',
-      filterByTerm: () => Promise.resolve([]),
+      filterByTerm: () => Promise.resolve({ items: [], total: 0 }),
       loadCatalog: () => Promise.resolve({ items: catalog(300), total: 301 }),
       rank,
     })
@@ -45,7 +46,7 @@ describe('searchEntities', () => {
     const { rank, calls } = rankerReturning(['IND-2'])
     const output = await searchEntities({
       query: 'VSS',
-      filterByTerm: () => Promise.resolve([]),
+      filterByTerm: () => Promise.resolve({ items: [], total: 0 }),
       loadCatalog: () => Promise.resolve({ items: catalog(5), total: 5 }),
       rank,
     })
@@ -59,10 +60,13 @@ describe('searchEntities', () => {
     const output = await searchEntities({
       query: 'fraude',
       filterByTerm: () =>
-        Promise.resolve([
-          { id: 'IND-1', nom: 'Fraude fiscale' },
-          { id: 'IND-2', nom: 'Fraude sociale' },
-        ]),
+        Promise.resolve({
+          items: [
+            { id: 'IND-1', nom: 'Fraude fiscale' },
+            { id: 'IND-2', nom: 'Fraude sociale' },
+          ],
+          total: 2,
+        }),
       loadCatalog: () => Promise.resolve({ items: [], total: 0 }),
       rank,
     })
@@ -74,11 +78,40 @@ describe('searchEntities', () => {
     const { rank } = rankerReturning([])
     const output = await searchEntities({
       query: 'fraude',
-      filterByTerm: () => Promise.resolve([]),
+      filterByTerm: () => Promise.resolve({ items: [], total: 0 }),
       loadCatalog: () => Promise.resolve({ items: [], total: 0 }),
       rank,
     })
 
     expect(output).toEqual({ results: [], needsClarification: expect.any(String) })
+  })
+
+  it('montre au classement tout le catalogue de repli, au-delà de 60 candidats', async () => {
+    const rank: Ranker = (_query, candidates) =>
+      Promise.resolve(candidates.some((c) => c.id === 'IND-150') ? ['IND-150'] : [])
+    const output = await searchEntities({
+      query: 'CAF',
+      filterByTerm: () => Promise.resolve({ items: [], total: 0 }),
+      loadCatalog: () => Promise.resolve({ items: catalog(200), total: 200 }),
+      rank,
+    })
+
+    expect(output.results).toEqual([{ id: 'IND-150', nom: 'Indicateur 150' }])
+  })
+
+  it('demande une précision quand un terme ramène trop de noms pour conclure', async () => {
+    const { rank } = rankerReturning([])
+    const output = await searchEntities({
+      query: 'taux',
+      filterByTerm: () =>
+        Promise.resolve({
+          items: catalog(100).map((item) => ({ ...item, nom: `Taux ${item.id}` })),
+          total: 450,
+        }),
+      loadCatalog: () => Promise.resolve({ items: [], total: 0 }),
+      rank,
+    })
+
+    expect(output).toEqual({ results: [], needsClarification: expect.stringContaining('taux') })
   })
 })

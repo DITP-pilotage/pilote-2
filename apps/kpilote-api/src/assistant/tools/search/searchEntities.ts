@@ -38,13 +38,18 @@ export const searchEntities = async ({
   rank,
 }: {
   query: string
-  filterByTerm: (term: string) => Promise<NamedEntity[]>
+  filterByTerm: (term: string) => Promise<NamePage>
   loadCatalog: (limit: number) => Promise<NamePage>
   rank: Ranker
 }): Promise<SearchOutput> => {
   const terms = splitIntoTerms(query)
-  const filtered = (await Promise.all(terms.map(filterByTerm))).flat()
-  let candidates = rankByMatchedTerms(filtered, terms)
+  const pages = await Promise.all(terms.map(filterByTerm))
+  let candidates = rankByMatchedTerms(
+    pages.flatMap((page) => page.items),
+    terms,
+  )
+  // Un terme qui ramène plus de noms que la page lue a pu en cacher la bonne entité.
+  const truncatedTerms = terms.filter((_, index) => (pages[index]?.total ?? 0) > TERM_PAGE_SIZE)
 
   if (candidates.length === 0) {
     const catalog = await loadCatalog(MAX_FALLBACK_CATALOG)
@@ -68,13 +73,25 @@ export const searchEntities = async ({
   }
 
   const [first] = candidates
-  if (candidates.length === 1 && first) return { results: [first] }
+  if (candidates.length === 1 && first && truncatedTerms.length === 0) return { results: [first] }
 
-  const ranked = await rank(query, candidates.slice(0, MAX_RANKING_CANDIDATES))
+  // Le classement voit tous les candidats, par lots : n'en montrer qu'une partie reviendrait
+  // à tronquer la liste en silence.
+  const batches = Array.from(
+    { length: Math.ceil(candidates.length / MAX_RANKING_CANDIDATES) },
+    (_, index) =>
+      candidates.slice(index * MAX_RANKING_CANDIDATES, (index + 1) * MAX_RANKING_CANDIDATES),
+  )
+  const ranked = (await Promise.all(batches.map((batch) => rank(query, batch)))).flat()
   const results = filterHallucinations(ranked, candidates).slice(0, MAX_RESULTS)
-  return results.length === 0
-    ? { results: [], needsClarification: 'Aucune entité ne correspond à la demande.' }
-    : { results }
+  if (results.length > 0) return { results }
+  return {
+    results: [],
+    needsClarification:
+      truncatedTerms.length > 0
+        ? `Trop de noms contiennent « ${truncatedTerms.join(' », « ')} » pour conclure. Demande à l'utilisateur une formulation plus précise.`
+        : 'Aucune entité ne correspond à la demande.',
+  }
 }
 
 const RANKING_SYSTEM_PROMPT = `Tu reçois une requête utilisateur en langage naturel et une liste de candidats.

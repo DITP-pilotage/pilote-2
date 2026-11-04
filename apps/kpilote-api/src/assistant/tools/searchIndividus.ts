@@ -20,7 +20,7 @@ Ne l'utilise pas pour : un individu déjà identifié dans la conversation ou le
           term,
           limit: TERM_PAGE_SIZE,
           ...(referentielId ? { referentielId } : {}),
-        }).then((page) => page.items),
+        }),
       loadCatalog: (limit) =>
         findIndividuNames({ limit, ...(referentielId ? { referentielId } : {}) }),
       rank: createRanker({

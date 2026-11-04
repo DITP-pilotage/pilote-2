@@ -8,8 +8,8 @@ import {
 } from '@/assistant/tools/search/prefilter'
 
 describe('splitIntoTerms', () => {
-  it('normalise la casse et retire les diacritiques', () => {
-    expect(splitIntoTerms('Délais DE Paiement')).toEqual(['delais', 'paiement'])
+  it('met en minuscules en gardant les accents, que la base compare tels quels', () => {
+    expect(splitIntoTerms('Délais DE Paiement')).toEqual(['délais', 'paiement'])
   })
 
   it('retire les mots vides et les termes trop courts', () => {

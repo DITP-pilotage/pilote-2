@@ -51,9 +51,12 @@ export const normalize = (text: string): string =>
  * le catalogue et ne discriminent rien.
  */
 export const splitIntoTerms = (query: string): string[] => {
-  const terms = normalize(query)
-    .split(/[^a-z0-9]+/u)
-    .filter((term) => term.length >= MIN_TERM_LENGTH && !STOP_WORDS.has(term))
+  // Les accents sont gardés : le `contains` de la base ignore la casse mais pas les accents,
+  // « santé » doit donc partir tel quel pour trouver « Santé ».
+  const terms = query
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((term) => term.length >= MIN_TERM_LENGTH && !STOP_WORDS.has(normalize(term)))
   return [...new Set(terms)].slice(0, MAX_SEARCH_TERMS)
 }
 
@@ -71,7 +74,7 @@ export const rankByMatchedTerms = (
   for (const candidate of candidates) {
     if (byId.has(candidate.id)) continue
     const nom = normalize(candidate.nom)
-    const score = terms.filter((term) => nom.includes(term)).length
+    const score = terms.filter((term) => nom.includes(normalize(term))).length
     if (score === 0) continue
     byId.set(candidate.id, { entite: candidate, score })
   }
