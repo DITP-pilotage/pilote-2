@@ -34,6 +34,7 @@ export const searchInput = z.object({
   query: z
     .string()
     .min(1)
+    .max(500)
     .describe("La formulation de l'utilisateur, telle quelle, sans reformulation."),
 })
 

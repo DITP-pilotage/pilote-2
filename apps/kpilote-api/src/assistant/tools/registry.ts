@@ -44,11 +44,21 @@ export const REPEATED_FAILURE: ToolError = {
 const isToolError = (output: unknown): output is ToolError =>
   typeof output === 'object' && output !== null && 'error' in output
 
+// Les erreurs du SDK portent le prompt et la réponse du modèle : on ne journalise que
+// leur nom, leur message et leur pile.
+export const toLoggableError = (error: unknown) =>
+  error instanceof Error
+    ? { name: error.name, message: error.message, stack: error.stack }
+    : { name: 'UnknownError', message: String(error) }
+
 // Seules les erreurs métier disent au modèle quoi corriger. Une erreur interne (base,
 // réseau) reste dans les journaux : sa sortie atteint aussi l'interface.
 const describeFailure = (name: ToolName, error: unknown): ToolError => {
   if (error instanceof AppError) return { error: `L'appel a échoué : ${error.message}` }
-  logger.error({ event: 'assistant.outil.erreur', tool: name, err: error }, 'Outil en erreur')
+  logger.error(
+    { event: 'assistant.outil.erreur', tool: name, err: toLoggableError(error) },
+    'Outil en erreur',
+  )
   return { error: "L'appel a échoué suite à une erreur interne." }
 }
 

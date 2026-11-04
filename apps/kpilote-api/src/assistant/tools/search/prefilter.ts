@@ -2,6 +2,9 @@ import { type NamedEntity } from '@pilote/kpilote-shared/assistant/tools'
 
 const MIN_TERM_LENGTH = 3
 
+/** Chaque terme coûte une requête : on n'en garde qu'un nombre borné. */
+export const MAX_SEARCH_TERMS = 8
+
 // Mots vides français les plus fréquents dans une formulation de recherche. La liste est
 // volontairement courte : un mot vide oublié coûte un appel de filtre en plus, pas un
 // résultat faux.
@@ -51,7 +54,7 @@ export const splitIntoTerms = (query: string): string[] => {
   const terms = normalize(query)
     .split(/[^a-z0-9]+/u)
     .filter((term) => term.length >= MIN_TERM_LENGTH && !STOP_WORDS.has(term))
-  return [...new Set(terms)]
+  return [...new Set(terms)].slice(0, MAX_SEARCH_TERMS)
 }
 
 /**

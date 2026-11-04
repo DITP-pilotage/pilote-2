@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   rankByMatchedTerms,
   splitIntoTerms,
+  MAX_SEARCH_TERMS,
   filterHallucinations,
 } from '@/assistant/tools/search/prefilter'
 
@@ -17,6 +18,11 @@ describe('splitIntoTerms', () => {
 
   it('dédoublonne', () => {
     expect(splitIntoTerms('fraude fraude fiscale')).toEqual(['fraude', 'fiscale'])
+  })
+
+  it('borne le nombre de termes, et donc de requêtes du pré-filtre', () => {
+    const query = Array.from({ length: 30 }, (_, index) => `terme${index}`).join(' ')
+    expect(splitIntoTerms(query)).toHaveLength(MAX_SEARCH_TERMS)
   })
 
   it('renvoie un tableau vide sur une requête sans terme exploitable', () => {

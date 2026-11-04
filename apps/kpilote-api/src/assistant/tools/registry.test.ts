@@ -5,6 +5,7 @@ import {
   buildTools,
   REPEATED_FAILURE,
   toAiTool,
+  toLoggableError,
   type ToolContext,
 } from '@/assistant/tools/registry'
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
@@ -109,6 +110,15 @@ describe('registre des outils', () => {
       const output = await tool.execute?.({ question: 'q', choices: [] }, callOptions)
 
       expect(JSON.stringify(output)).not.toContain('secret_table')
+      expect(
+        toLoggableError(
+          Object.assign(new Error('boom'), { requestBodyValues: { prompt: 'données' } }),
+        ),
+      ).toEqual({
+        name: 'Error',
+        message: 'boom',
+        stack: expect.any(String),
+      })
       expect(output).toEqual({ error: expect.any(String) })
     }),
   )
