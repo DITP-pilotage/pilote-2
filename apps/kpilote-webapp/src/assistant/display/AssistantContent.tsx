@@ -9,7 +9,7 @@ import { useAssistantDisplay } from './AssistantProvider'
 const isInternalLink = (target: EventTarget): boolean => {
   const link = target instanceof Element ? target.closest('a[href]') : null
   const href = link?.getAttribute('href') ?? ''
-  return href.startsWith('/') && !href.startsWith('//')
+  return href.startsWith('/') && !href.startsWith('//') && link?.getAttribute('target') !== '_blank'
 }
 
 /** En-tête et fil, communs aux trois vues. */
@@ -20,8 +20,11 @@ export function AssistantContent({ conversationId }: { conversationId: string })
 
   // En plein écran, un lien interne laisse voir la page : l'assistant passe en fenêtre
   // (ou se masque) avant que le lien ne navigue.
+  // Un clic modifié (nouvel onglet) ou déjà traité ne quitte pas la page.
   const onLinkClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (display === 'fullscreen' && isInternalLink(event.target)) toWindow()
+    if (display !== 'fullscreen' || event.defaultPrevented) return
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
+    if (isInternalLink(event.target)) toWindow()
   }
 
   return (
@@ -32,8 +35,8 @@ export function AssistantContent({ conversationId }: { conversationId: string })
           key={conversationId}
           conversationId={conversationId}
           pageContext={pageContext}
-          initialQuestion={pendingQuestion}
-          onInitialQuestionSent={clearPendingQuestion}
+          pendingQuestion={pendingQuestion}
+          onPendingQuestionSent={clearPendingQuestion}
           {...(display === 'fullscreen' && backToPalette ? { onBack: backToPalette } : {})}
           renderActions={(message) => <ResponseActions message={message} />}
         />

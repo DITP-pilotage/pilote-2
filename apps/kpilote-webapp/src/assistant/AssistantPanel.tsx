@@ -7,21 +7,22 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AssistantMessage, UserMessage } from './AssistantMessage'
 import { AssistantSignature } from './AssistantSignature'
 import { deriveAssistantState } from './deriveAssistantState'
+import { questionToSend, type PendingQuestion } from './pendingQuestion'
 import { readDraft, useAssistant, writeDraft } from './useAssistant'
 
 export function AssistantPanel({
   conversationId,
   pageContext,
-  initialQuestion,
-  onInitialQuestionSent,
+  pendingQuestion,
+  onPendingQuestionSent,
   onBack,
   renderActions,
 }: {
   conversationId: string
   pageContext: PageContext | undefined
-  /** Question saisie dans la palette : envoyée à l'ouverture, une seule fois. */
-  initialQuestion?: string
-  onInitialQuestionSent?: () => void
+  /** Question saisie dans la palette : envoyée une fois, après la réponse en cours. */
+  pendingQuestion?: PendingQuestion | null
+  onPendingQuestionSent?: (id: string) => void
   /** ⇧Tab : retour à l'écran d'où l'on vient. */
   onBack?: () => void
   renderActions?: (message: ReturnType<typeof useAssistant>['messages'][number]) => ReactNode
@@ -37,18 +38,22 @@ export function AssistantPanel({
   }
   const thread = useRef<HTMLDivElement>(null)
   const field = useRef<HTMLTextAreaElement>(null)
-  const sentInitial = useRef(false)
+  const lastSentId = useRef<string | null>(null)
   // Stables : un message déjà affiché ne se re-rend pas à chaque frappe ni à chaque morceau.
   const choose = useCallback((label: string) => void sendMessage({ text: label }), [sendMessage])
   const writeOther = useCallback(() => field.current?.focus(), [])
 
   useEffect(() => {
-    const question = initialQuestion?.trim()
-    if (sentInitial.current || !question) return
-    sentInitial.current = true
-    void sendMessage({ text: question })
-    onInitialQuestionSent?.()
-  }, [initialQuestion, onInitialQuestionSent, sendMessage])
+    const question = questionToSend({
+      pending: pendingQuestion ?? null,
+      lastSentId: lastSentId.current,
+      status,
+    })
+    if (!question) return
+    lastSentId.current = question.id
+    void sendMessage({ text: question.text })
+    onPendingQuestionSent?.(question.id)
+  }, [pendingQuestion, onPendingQuestionSent, sendMessage, status])
 
   useEffect(() => {
     const element = thread.current
@@ -70,7 +75,8 @@ export function AssistantPanel({
     <div
       className="flex h-full flex-col gap-4"
       onKeyDown={(event) => {
-        if (onBack && event.key === 'Tab' && event.shiftKey) {
+        // Depuis le champ seulement : ailleurs, Maj+Tab garde la navigation arrière.
+        if (onBack && event.key === 'Tab' && event.shiftKey && event.target === field.current) {
           event.preventDefault()
           onBack()
         }

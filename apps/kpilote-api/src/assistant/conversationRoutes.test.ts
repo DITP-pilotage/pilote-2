@@ -53,6 +53,28 @@ describe('conversations de l’assistant', { concurrent: false }, () => {
   )
 
   it(
+    'ne liste que les 50 plus récentes',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      await db().assistantConversation.createMany({
+        data: Array.from({ length: 51 }, (_, index) => ({
+          id: randomUUID(),
+          principalId,
+          titre: `Conversation ${index}`,
+          messages: [],
+          updatedAt: new Date(2026, 0, 1, 0, index),
+        })),
+      })
+
+      const response = await appAs(userPrincipal(principalId)).request('/assistant/conversations')
+      const body = (await response.json()) as { items: Array<{ titre: string }> }
+
+      expect(body.items).toHaveLength(50)
+      expect(body.items.at(-1)?.titre).toBe('Conversation 1')
+    }),
+  )
+
+  it(
     'rend une conversation du principal avec ses messages',
     integrationTest(async () => {
       const principalId = randomUUID()

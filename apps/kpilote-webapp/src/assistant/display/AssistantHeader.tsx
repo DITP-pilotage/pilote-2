@@ -1,10 +1,10 @@
 import { deriveTitle } from '@pilote/kpilote-shared/assistant/conversation'
 import { ChevronsRight, Minus, SquarePen } from 'lucide-react'
 
-import { MenuHistorique } from '../history/MenuHistorique'
+import { HistoryMenu } from '../history/HistoryMenu'
 import { useConversationState } from '../useAssistant'
 import { useAssistantDisplay } from './AssistantProvider'
-import { MenuVue } from './MenuVue'
+import { ViewMenu } from './ViewMenu'
 
 const ICON_BUTTON =
   'flex size-8 shrink-0 items-center justify-center rounded-md text-primary transition-colors hover:bg-primary-tinted'
@@ -15,7 +15,7 @@ export function AssistantHeader({ conversationId }: { conversationId: string }) 
 
   return (
     <div className="flex h-12 shrink-0 items-center gap-1 border-b border-border pr-2 pl-3">
-      <MenuHistorique conversationId={conversationId} titre={deriveTitle(messages)} />
+      <HistoryMenu conversationId={conversationId} titre={deriveTitle(messages)} />
       <span className="min-w-2 flex-1" />
       <button
         type="button"
@@ -26,7 +26,7 @@ export function AssistantHeader({ conversationId }: { conversationId: string }) 
       >
         <SquarePen className="size-[18px]" />
       </button>
-      <MenuVue />
+      <ViewMenu />
       <button
         type="button"
         aria-label="Masquer l'assistant"

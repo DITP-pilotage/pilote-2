@@ -13,6 +13,7 @@ import {
 } from 'react'
 
 import { assistantAccessQueryOptions, fetchConversation } from '../assistantApi'
+import type { PendingQuestion } from '../pendingQuestion'
 import { loadChat, stopChat } from '../useAssistant'
 import { clearMinimized, readMinimized, writeMinimized } from './minimizedStorage'
 import { readViewPreference, writeViewPreference } from './preferencesStorage'
@@ -26,8 +27,8 @@ type AssistantContextValue = {
   display: AssistantDisplay
   availableViews: readonly AssistantView[]
   /** Question venue de la palette, envoyée une fois par le fil. */
-  pendingQuestion: string
-  clearPendingQuestion: () => void
+  pendingQuestion: PendingQuestion | null
+  clearPendingQuestion: (id: string) => void
   open: (question?: string) => void
   minimize: () => void
   restore: () => void
@@ -65,10 +66,18 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [requested, setRequested] = useState<AssistantDisplay>('fullscreen')
   const [viewBeforeMinimize, setViewBeforeMinimize] = useState<AssistantView | null>(null)
-  const [pendingQuestion, setPendingQuestion] = useState('')
+  const [pendingQuestion, setPendingQuestion] = useState<PendingQuestion | null>(null)
   const [palette, setPalette] = useState<{ open: () => void } | null>(null)
-  const clearPendingQuestion = useCallback(() => setPendingQuestion(''), [])
+  const clearPendingQuestion = useCallback(
+    (id: string) => setPendingQuestion((current) => (current?.id === id ? null : current)),
+    [],
+  )
   const screenSize = useScreenSize()
+  // Pour les callbacks asynchrones : la conversation ouverte au moment où ils aboutissent.
+  const currentId = useRef<string | null>(null)
+  useEffect(() => {
+    currentId.current = conversationId
+  }, [conversationId])
   const display = conversationId ? effectiveView(requested, screenSize) : 'minimized'
 
   // Au chargement de l'onglet, la conversation masquée revient en pastille ; introuvable,
@@ -85,6 +94,8 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
           clearMinimized()
           return
         }
+        // Ouvert entre-temps depuis la palette : la conversation ouverte l'emporte.
+        if (currentId.current) return
         loadChat(stored.id, messages)
         setConversationId(stored.id)
         setRequested('minimized')
@@ -95,7 +106,8 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
   const open = useCallback(
     (question?: string) => {
       if (!conversationId) setConversationId(crypto.randomUUID())
-      if (question) setPendingQuestion(question)
+      const text = question?.trim()
+      if (text) setPendingQuestion({ id: crypto.randomUUID(), text })
       setRequested(readViewPreference() ?? 'fullscreen')
     },
     [conversationId],
@@ -118,10 +130,15 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
 
   // Passage de circonstance, pour laisser voir la page : la vue préférée ne change pas.
   const toWindow = useCallback(() => {
-    setRequested(viewsFor(screenSize).includes('floating') ? 'floating' : 'minimized')
-  }, [screenSize])
+    if (viewsFor(screenSize).includes('floating')) setRequested('floating')
+    else minimize()
+  }, [minimize, screenSize])
+
+  // Seule la dernière sélection s'applique, même si une autre action est venue entre-temps.
+  const selection = useRef(0)
 
   const newConversation = useCallback(() => {
+    selection.current += 1
     if (conversationId) stopChat(conversationId)
     clearMinimized()
     setConversationId(crypto.randomUUID())
@@ -129,10 +146,12 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
 
   const selectConversation = useCallback(
     async (id: string) => {
+      const ticket = ++selection.current
       if (conversationId) stopChat(conversationId)
       clearMinimized()
       const messages = await savedMessages(id)
-      if (!messages) return
+      if (ticket !== selection.current) return
+      if (!messages) throw new Error('Conversation introuvable')
       loadChat(id, messages)
       setConversationId(id)
     },

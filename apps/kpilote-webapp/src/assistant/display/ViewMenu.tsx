@@ -17,7 +17,7 @@ const ORDER: readonly AssistantView[] = ['sidePanel', 'floating', 'fullscreen']
 const isView = (value: string): value is AssistantView =>
   (ASSISTANT_VIEWS as readonly string[]).includes(value)
 
-export function MenuVue() {
+export function ViewMenu() {
   const { display, availableViews, changeView } = useAssistantDisplay()
 
   if (availableViews.length < 2 || !isView(display)) return null

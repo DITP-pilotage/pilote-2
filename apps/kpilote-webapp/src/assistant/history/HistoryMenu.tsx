@@ -10,13 +10,7 @@ import { useAssistantDisplay } from '../display/AssistantProvider'
 import { formatConversationDate, groupByPeriod, matchesSearch } from './historyGroups'
 
 /** Le titre de la conversation ouvre l'historique : reprise, recherche, suppression. */
-export function MenuHistorique({
-  conversationId,
-  titre,
-}: {
-  conversationId: string
-  titre: string
-}) {
+export function HistoryMenu({ conversationId, titre }: { conversationId: string; titre: string }) {
   const { selectConversation, newConversation } = useAssistantDisplay()
   const toast = useToast()
   const queryClient = useQueryClient()
@@ -24,7 +18,11 @@ export function MenuHistorique({
   const [search, setSearch] = useState('')
   // Figé à l'ouverture : les périodes et les heures se lisent par rapport à ce moment.
   const [now, setNow] = useState(() => new Date())
-  const { data: conversations = [] } = useQuery({ ...conversationsQueryOptions(), enabled: open })
+  const {
+    data: conversations = [],
+    isPending,
+    isError,
+  } = useQuery({ ...conversationsQueryOptions(), enabled: open })
 
   const remove = useMutation({
     mutationFn: deleteConversation,
@@ -92,7 +90,13 @@ export function MenuHistorique({
             />
           </label>
           <nav aria-label="Conversations" className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-2">
-            {groups.length === 0 ? (
+            {isError ? (
+              <p className="m-0 px-2.5 py-3 text-xs text-error">
+                L&apos;historique n&apos;a pas pu être chargé.
+              </p>
+            ) : isPending ? (
+              <p className="m-0 px-2.5 py-3 text-xs text-text-subtle">Chargement…</p>
+            ) : groups.length === 0 ? (
               <p className="m-0 px-2.5 py-3 text-xs text-text-subtle">
                 {search ? 'Aucune conversation trouvée.' : 'Aucune conversation.'}
               </p>
