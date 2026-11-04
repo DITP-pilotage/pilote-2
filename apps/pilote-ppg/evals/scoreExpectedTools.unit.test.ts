@@ -238,4 +238,92 @@ describe("scoreExpectedTools", () => {
       },
     });
   });
+
+  it("note 0 quand une option proposée correspond à une option interdite", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "clarify_with_choices",
+          input: {
+            question: "Quelle visualisation ?",
+            choices: [
+              {
+                label: "Le tableau des chantiers de la Sarthe",
+                value: "tableau",
+              },
+              {
+                label: "Une carte de la Sarthe avec les chantiers",
+                value: "carte",
+              },
+            ],
+          },
+        },
+      ]),
+      expected: [{ toolName: "clarify_with_choices" }],
+      optionsInterdites: [
+        {
+          motif: "carte.*\\bchantiers\\b",
+          raison: "aucune carte ne montre tous les chantiers",
+        },
+      ],
+    });
+
+    expect(result.score).toBe(0);
+    expect(result.metadata.verdict).toBe(
+      "options interdites proposées : « Une carte de la Sarthe avec les chantiers » (aucune carte ne montre tous les chantiers)",
+    );
+  });
+
+  it("ignore la casse d'une option interdite", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "clarify_with_choices",
+          input: {
+            question: "Quelle visualisation ?",
+            choices: [
+              { label: "CARTE", value: "carte" },
+              { label: "Tableau", value: "tableau" },
+            ],
+          },
+        },
+      ]),
+      expected: [{ toolName: "clarify_with_choices" }],
+      optionsInterdites: [{ motif: "carte", raison: "pas de carte" }],
+    });
+
+    expect(result.score).toBe(0);
+  });
+
+  it("note normalement quand aucune option proposée n'est interdite", () => {
+    const result = scoreExpectedTools({
+      output: turn([
+        {
+          toolName: "clarify_with_choices",
+          input: {
+            question: "Quelle visualisation ?",
+            choices: [
+              {
+                label: "La carte du taux d'avancement d'un chantier précis",
+                value: "carte",
+              },
+              {
+                label: "Le tableau des chantiers de la Sarthe",
+                value: "tableau",
+              },
+            ],
+          },
+        },
+      ]),
+      expected: [{ toolName: "clarify_with_choices" }],
+      optionsInterdites: [
+        {
+          motif: "carte.*\\bchantiers\\b",
+          raison: "aucune carte ne montre tous les chantiers",
+        },
+      ],
+    });
+
+    expect(result.score).toBe(1);
+  });
 });

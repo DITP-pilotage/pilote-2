@@ -48,6 +48,16 @@ const CASES: ToolCase[] = [
     reason: "graphique de répartition hors catalogue : alternatives à proposer",
     expected: [{ toolName: "clarify_with_choices" }],
     forbidden: ["create_dashboard"],
+    optionsInterdites: [
+      {
+        motif: "carte.*(chaque chantier|\\bchantiers\\b)",
+        raison: "une carte porte sur un chantier précis, jamais sur tous",
+      },
+      {
+        motif: "r[ée]partition|histogramme|camembert|diagramme",
+        raison: "aucun dashboard ne rend une répartition",
+      },
+    ],
   },
   {
     question: "Quels sont les indicateurs à mettre à jour ?",

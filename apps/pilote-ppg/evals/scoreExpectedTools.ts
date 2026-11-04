@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from "node:util";
-import type { AgentTurn, ObservedToolCall } from "./types";
+import type { AgentTurn, ObservedToolCall, OptionInterdite } from "./types";
 
 /**
  * Scorer de sélection d'outils.
@@ -20,20 +20,27 @@ import type { AgentTurn, ObservedToolCall } from "./types";
  * La sélection en sous-ensemble tolère les appels en trop : sans `forbidden`,
  * un cas négatif passerait même si l'agent appelle aussi l'outil qu'il ne
  * devait pas appeler. Un seul outil interdit appelé suffit à noter 0.
+ *
+ * Même logique pour les options de `clarify_with_choices` : appeler l'outil ne
+ * dit pas si ce qu'il propose est réalisable. Une seule option dont le libellé
+ * correspond à une option interdite suffit à noter 0.
  */
 export function scoreExpectedTools({
   output,
   expected,
   forbidden = [],
+  optionsInterdites = [],
 }: {
   output: AgentTurn;
   expected: ObservedToolCall[] | undefined;
   forbidden?: string[];
+  optionsInterdites?: OptionInterdite[];
 }) {
   const { score, verdict } = juger({
     output,
     expectedCalls: expected,
     forbidden,
+    optionsInterdites,
   });
 
   // Affiché sous le score dans l'UI : ce que le cas attendait, au même format
@@ -53,10 +60,12 @@ function juger({
   output,
   expectedCalls,
   forbidden,
+  optionsInterdites,
 }: {
   output: AgentTurn;
   expectedCalls: ObservedToolCall[] | undefined;
   forbidden: string[];
+  optionsInterdites: OptionInterdite[];
 }) {
   const forbiddenCalled = [
     ...new Set(
@@ -70,6 +79,20 @@ function juger({
     return {
       score: 0,
       verdict: `outils interdits appelés : ${forbiddenCalled.join(", ")}`,
+    };
+  }
+
+  const optionsProposees = trouverOptionsInterdites({
+    output,
+    optionsInterdites,
+  });
+
+  if (optionsProposees.length > 0) {
+    return {
+      score: 0,
+      verdict: `options interdites proposées : ${optionsProposees
+        .map(({ label, raison }) => `« ${label} » (${raison})`)
+        .join(", ")}`,
     };
   }
 
@@ -102,6 +125,29 @@ function juger({
         ? "tous les appels attendus sont présents"
         : `manquants : ${missing.map(describe).join(", ")}`,
   };
+}
+
+function trouverOptionsInterdites({
+  output,
+  optionsInterdites,
+}: {
+  output: AgentTurn;
+  optionsInterdites: OptionInterdite[];
+}) {
+  const labels = output.toolCalls
+    .filter((call) => call.toolName === "clarify_with_choices")
+    .flatMap((call) => {
+      const { choices } = (call.input ?? {}) as {
+        choices?: { label?: unknown }[];
+      };
+      return (choices ?? []).map((choice) => String(choice.label ?? ""));
+    });
+
+  return labels.flatMap((label) =>
+    optionsInterdites
+      .filter(({ motif }) => new RegExp(motif, "i").test(label))
+      .map(({ raison }) => ({ label, raison })),
+  );
 }
 
 function matches(call: ObservedToolCall, expectedCall: ObservedToolCall) {
