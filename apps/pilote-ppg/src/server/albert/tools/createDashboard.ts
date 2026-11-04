@@ -187,6 +187,28 @@ async function resolveIndicateurs(
   );
 }
 
+const DEMANDE_DE_CARTE = /\bcart(?:e|es|ographie)\b/iu;
+
+/**
+ * Une carte montre un chantier sur tous les territoires : sans chantier, le
+ * sous-agent empilait des jauges de taux d'avancement sous le titre « Carte »
+ * (PIL-1855). On refuse avant de l'appeler ; l'erreur revient au modèle, qui
+ * fait choisir le chantier.
+ */
+export function verifierCarteAvecChantier({
+  task,
+  chantiers,
+}: {
+  task: string;
+  chantiers: ChantierContext[] | undefined;
+}): void {
+  if (DEMANDE_DE_CARTE.test(task) && !chantiers?.length) {
+    throw new Error(
+      "Une carte montre un seul chantier sur tous les territoires, et aucun chantier n'est passé dans `chantiers`. Fais choisir le chantier avec clarify_with_choices, ou propose un rendu sans carte.",
+    );
+  }
+}
+
 /**
  * Le sous-agent du dashboard attend encore des codes météo (SOLEIL…) pour
  * choisir l'emoji et le libellé : on lui reconvertit le libellé reçu. Un
@@ -247,6 +269,8 @@ Ne l'utilise pas pour : un rendu absent de cette liste (répartition, histogramm
         { task, territoire_codes, jalons, chantiers, indicateur_ids },
         { abortSignal },
       ) => {
+        verifierCarteAvecChantier({ task, chantiers });
+
         const indicateurs = indicateur_ids
           ? await resolveIndicateurs(
               indicateur_ids,
