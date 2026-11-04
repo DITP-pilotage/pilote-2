@@ -1,11 +1,11 @@
 import { useNavigate } from '@tanstack/react-router'
 import { Search } from 'lucide-react'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 
 import { analytics } from '@/analytics/tracker'
-import { useAssistantLauncher } from '@/assistant/useAssistantLauncher'
+import { useAssistantDisplay } from '@/assistant/display/AssistantProvider'
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { ContacterEquipe } from '@/components/ContacterEquipe'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
@@ -21,10 +21,14 @@ import type { Auth } from '@/auth'
 export function HeaderNav({ auth }: { auth: Auth }) {
   const navigate = useNavigate()
   const [paletteOpen, setPaletteOpen] = useState(false)
-  const assistant = useAssistantLauncher({
-    enabled: auth.isAuthenticated,
-    onBackToPalette: () => setPaletteOpen(true),
-  })
+  const assistant = useAssistantDisplay()
+  const { registerPalette } = assistant
+
+  // Maj+Tab dans l'assistant en plein écran ramène à la palette.
+  useEffect(() => {
+    registerPalette(() => setPaletteOpen(true))
+    return () => registerPalette(null)
+  }, [registerPalette])
 
   return (
     <>
@@ -70,11 +74,10 @@ export function HeaderNav({ auth }: { auth: Auth }) {
           <CommandPalette
             open={paletteOpen}
             onOpenChange={setPaletteOpen}
-            openAssistant={assistant.allowed ? assistant.launch : undefined}
+            openAssistant={assistant.allowed ? assistant.open : undefined}
           />
         </Suspense>
       ) : null}
-      {assistant.modal}
     </>
   )
 }

@@ -1,35 +1,9 @@
 import { type Model, type PageContext } from '@pilote/kpilote-shared/assistant/chat'
+import { deriveTitle } from '@pilote/kpilote-shared/assistant/conversation'
 
 import { NotFoundError } from '@/framework/errors/AppError'
 import { type SubCallTrace } from '@/framework/llm/turnTrace'
 import { db } from '@/framework/persistence/dbStore'
-
-const MAX_TITLE_LENGTH = 80
-
-const isTextPart = (part: unknown): part is { type: 'text'; text: string } =>
-  typeof part === 'object' &&
-  part !== null &&
-  'type' in part &&
-  part.type === 'text' &&
-  'text' in part &&
-  typeof part.text === 'string'
-
-/** Premier message utilisateur, tronqué : de quoi retrouver une conversation dans une liste. */
-export const deriveTitle = (messages: ReadonlyArray<unknown>): string => {
-  for (const message of messages) {
-    if (typeof message !== 'object' || message === null) continue
-    if (!('role' in message) || message.role !== 'user') continue
-    const parts = 'parts' in message && Array.isArray(message.parts) ? message.parts : []
-    const text = parts
-      .filter(isTextPart)
-      .map((part) => part.text)
-      .join(' ')
-      .trim()
-    if (text.length === 0) continue
-    return text.length > MAX_TITLE_LENGTH ? `${text.slice(0, MAX_TITLE_LENGTH - 1)}…` : text
-  }
-  return 'Nouvelle conversation'
-}
 
 // Aller-retour JSON : le sérialiseur de Prisma plante sur les schémas zod que le SDK
 // attache aux parts d'outils.

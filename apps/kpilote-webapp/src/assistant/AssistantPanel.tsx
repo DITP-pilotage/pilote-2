@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AssistantMessage, UserMessage } from './AssistantMessage'
 import { AssistantSignature } from './AssistantSignature'
 import { deriveAssistantState } from './deriveAssistantState'
-import { useAssistant } from './useAssistant'
+import { readDraft, useAssistant, writeDraft } from './useAssistant'
 
 export function AssistantPanel({
   conversationId,
@@ -30,7 +30,11 @@ export function AssistantPanel({
     conversationId,
     pageContext,
   })
-  const [input, setInput] = useState('')
+  const [input, setInputState] = useState(() => readDraft(conversationId))
+  const setInput = (text: string) => {
+    setInputState(text)
+    writeDraft(conversationId, text)
+  }
   const thread = useRef<HTMLDivElement>(null)
   const field = useRef<HTMLTextAreaElement>(null)
   const sentInitial = useRef(false)
