@@ -56,6 +56,12 @@ describe('buildSystemPrompt', () => {
     expect(prompt).toContain('soit l’encart, soit les outils de données, jamais les deux')
   })
 
+  it('oriente courbes, graphiques et cartes vers un dashboard, et l’évolution vers les données', () => {
+    const prompt = buildSystemPrompt({ now, pageContext: null })
+    expect(prompt).toContain('create_dashboard')
+    expect(prompt).toContain('« comment évolue »')
+  })
+
   it('donne la date du jour', () => {
     expect(buildSystemPrompt({ now, pageContext: null })).toContain('4 novembre 2026')
   })
