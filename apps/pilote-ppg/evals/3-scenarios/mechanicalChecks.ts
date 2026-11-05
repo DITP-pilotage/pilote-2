@@ -42,7 +42,8 @@ function unique(values: string[]) {
   return [...new Set(values)];
 }
 
-const TOOL_NAME = /\b(?:get|search|create|export|display|compose)_[a-z_]+\b/g;
+const TOOL_NAME =
+  /\b(?:get|search|create|export|display|compose|proposer)_[a-z_]+\b/g;
 
 export function checkNoToolName({ text }: { text: string }): CheckResult {
   const cites = unique(text.match(TOOL_NAME) ?? []);

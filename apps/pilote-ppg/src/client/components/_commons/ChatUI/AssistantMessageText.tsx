@@ -18,6 +18,7 @@ import { clsxm } from "@/utils/clsxm";
 // à la ToolSet dans src/app/api/albert/chat/route.ts.
 const TOOL_NAMES = [
   "clarify_with_choices",
+  "proposer_suites",
   // Ancien nom, encore présent dans les conversations antérieures au renommage.
   "display_choices",
   "create_dashboard",

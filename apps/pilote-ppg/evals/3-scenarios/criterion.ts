@@ -98,7 +98,7 @@ const BASE: Criterion[] = [
     id: BASE_IDS.noOpinion,
     rule: "Règle 4 : ni opinion, ni recommandation, ni causalité absente des données",
     instruction:
-      "La réponse décrit les données sans conseiller, recommander, prioriser ni qualifier moralement. « Il conviendrait de », « il est urgent de », « la situation est préoccupante » sont non conformes. Une tendance factuelle (« les écarts se concentrent sur la santé ») est conforme.",
+      "La réponse décrit les données sans conseiller, recommander, prioriser ni qualifier moralement. « Il conviendrait de », « il est urgent de », « la situation est préoccupante » sont non conformes. Une tendance factuelle (« les écarts se concentrent sur la santé ») est conforme. Proposer une demande à faire ensuite à l'assistant (« je peux afficher ses indicateurs ») n'est pas une recommandation (PIL-1950).",
   }),
   judged({
     id: BASE_IDS.exactFigures,

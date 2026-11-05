@@ -18,7 +18,7 @@ export const ChantierIndicateursTable = ({
         <Table.Row>
           <Table.ColumnHeaderCell>Nom</Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell>Valeur initiale</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Valeur actuelle</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Valeur d'avancement</Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell>Valeur cible</Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell>
             Taux d&apos;avancement

@@ -110,6 +110,40 @@ export const choicesPresentedEvent = ({
   };
 };
 
+type PresentedSuitesPart = Extract<
+  PiloteUIMessage["parts"][number],
+  { type: "tool-proposer_suites"; state: "output-available" }
+>;
+
+const isPresentedSuites = (
+  part: PiloteUIMessage["parts"][number],
+): part is PresentedSuitesPart =>
+  part.type === "tool-proposer_suites" && part.state === "output-available";
+
+/** Les suites qui ferment la réponse : celles du dernier appel, s'il y en a. */
+export const dernieresSuites = (parts: PiloteUIMessage["parts"]) =>
+  parts.filter(isPresentedSuites).at(-1)?.output.suites ?? null;
+
+export const suitesPresentedEvent = ({
+  conversationId,
+  message,
+}: {
+  conversationId: string;
+  message: PiloteUIMessage;
+}): AssistantEvent | null => {
+  const suites = dernieresSuites(message.parts ?? []);
+  if (!suites || suites.length === 0) return null;
+  return {
+    action: "view",
+    name: "response.suites",
+    dimensions: {
+      conversation_id: conversationId,
+      llm_call_id: llmCallIdOf(message),
+      nombre_choix: suites.length,
+    },
+  };
+};
+
 export const isInternalHref = (href: string | undefined): href is string =>
   href !== undefined && href.startsWith("/") && !href.startsWith("//");
 
