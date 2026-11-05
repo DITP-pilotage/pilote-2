@@ -35,6 +35,10 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * 0.964. Restent en échec « Quels indicateurs n'ont pas de cible en 2027 ? »
  * (appel de `clarify_with_choices`, ou aucun appel) et « Qu'est-ce que je dois
  * mettre à jour dans le Nord ? » (un essai sans `search_territoires`).
+ *
+ * Référence « après (4) », indicateurs regroupés par chantier : moyenne
+ * 0.964. Restent en échec « Quels indicateurs n'ont pas de cible en 2027 ? »
+ * (0 sur 3) et « Qu'est-ce que je dois mettre à jour dans le Nord ? » (0.5).
  */
 
 const CASES: ToolCase[] = [
