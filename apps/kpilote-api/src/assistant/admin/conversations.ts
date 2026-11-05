@@ -12,28 +12,60 @@ import { type Prisma } from '@/generated/prisma/client'
 
 type Query = z.output<typeof adminConversationsQuerySchema>
 
-const hasCommentaire = (commentaire: string | null): boolean =>
-  (commentaire ?? '').trim().length > 0
+// Le filtre et le décompte partagent la même règle : une liste filtrée « avec commentaire »
+// ne montre jamais 0 commentaire.
+const avecCommentaire: Prisma.AssistantAppelWhereInput = {
+  AND: [{ commentaire: { not: null } }, { NOT: { commentaire: '' } }],
+}
 
 const whereOf = (query: Query): Prisma.AssistantConversationWhereInput => ({
   ...(query.recherche ? { titre: { contains: query.recherche, mode: 'insensitive' } } : {}),
   AND: [
     ...(query.positif ? [{ appels: { some: { evaluation: 'POSITIVE' as const } } }] : []),
     ...(query.negatif ? [{ appels: { some: { evaluation: 'NEGATIVE' as const } } }] : []),
-    ...(query.commentaire
-      ? [
-          {
-            appels: {
-              some: { AND: [{ commentaire: { not: null } }, { NOT: { commentaire: '' } }] },
-            },
-          },
-        ]
-      : []),
+    ...(query.commentaire ? [{ appels: { some: avecCommentaire } }] : []),
     ...(query.categorie
       ? [{ appels: { some: { categoriesProbleme: { has: query.categorie } } } }]
       : []),
   ],
 })
+
+type Retours = Pick<
+  AdminConversationList['items'][number],
+  'reponses' | 'positifs' | 'negatifs' | 'commentaires'
+>
+
+const noRetours: Retours = { reponses: 0, positifs: 0, negatifs: 0, commentaires: 0 }
+
+/** Comptés en base : une conversation chargée peut compter des dizaines d'appels. */
+const countRetours = async (conversationIds: string[]): Promise<Map<string, Retours>> => {
+  const [parEvaluation, parCommentaire] = await Promise.all([
+    db().assistantAppel.groupBy({
+      by: ['conversationId', 'evaluation'],
+      where: { conversationId: { in: conversationIds } },
+      _count: { _all: true },
+    }),
+    db().assistantAppel.groupBy({
+      by: ['conversationId'],
+      where: { conversationId: { in: conversationIds }, ...avecCommentaire },
+      _count: { _all: true },
+    }),
+  ])
+  const counts = new Map<string, Retours>()
+  const of = (id: string): Retours => {
+    const current = counts.get(id) ?? { ...noRetours }
+    counts.set(id, current)
+    return current
+  }
+  for (const group of parEvaluation) {
+    const retours = of(group.conversationId)
+    retours.reponses += group._count._all
+    if (group.evaluation === 'POSITIVE') retours.positifs += group._count._all
+    if (group.evaluation === 'NEGATIVE') retours.negatifs += group._count._all
+  }
+  for (const group of parCommentaire) of(group.conversationId).commentaires = group._count._all
+  return counts
+}
 
 // Pseudonymisé : ni l'identifiant du principal, ni rien qui permette de le retrouver.
 export const listAdminConversations = async (query: Query): Promise<AdminConversationList> => {
@@ -50,20 +82,17 @@ export const listAdminConversations = async (query: Query): Promise<AdminConvers
         titre: true,
         createdAt: true,
         updatedAt: true,
-        appels: { select: { evaluation: true, commentaire: true } },
       },
     }),
   ])
+  const counts = await countRetours(rows.map((row) => row.id))
   return {
     items: rows.map((row) => ({
       id: row.id,
       titre: row.titre,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
-      reponses: row.appels.length,
-      positifs: row.appels.filter((appel) => appel.evaluation === 'POSITIVE').length,
-      negatifs: row.appels.filter((appel) => appel.evaluation === 'NEGATIVE').length,
-      commentaires: row.appels.filter((appel) => hasCommentaire(appel.commentaire)).length,
+      ...(counts.get(row.id) ?? noRetours),
     })),
     total,
     page: query.page,

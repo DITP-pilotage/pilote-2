@@ -192,6 +192,18 @@ describe('administration de l’assistant', { concurrent: false }, () => {
     )
 
     it(
+      'compte les commentaires comme le filtre les retient',
+      integrationTest(async () => {
+        const marque = randomUUID()
+        await givenConversation(`${marque} blanc`, [{ evaluation: 'POSITIVE', commentaire: '  ' }])
+
+        const body = await list(`?recherche=${marque}&commentaire=true`)
+
+        expect(body.items.every((item) => item.commentaires > 0)).toBe(true)
+      }),
+    )
+
+    it(
       'pagine par 25',
       integrationTest(async () => {
         const marque = randomUUID()

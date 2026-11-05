@@ -18,7 +18,7 @@ export const rateCall = async ({
     where: { id: callId, principalId: requireCurrentPrincipalId() },
     data: {
       evaluation: body.evaluation,
-      commentaire: body.commentaire ?? null,
+      commentaire: body.commentaire?.trim() || null,
       categoriesProbleme: body.evaluation === 'NEGATIVE' ? body.categories : [],
     },
   })
