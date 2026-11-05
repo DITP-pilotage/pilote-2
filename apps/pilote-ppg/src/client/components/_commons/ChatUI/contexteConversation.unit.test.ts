@@ -7,12 +7,12 @@ import {
 const bretagne = {
   territoireCode: "REG-53",
   jalon: 2026,
-  instructions: "Bretagne",
+  territoireNom: "Bretagne",
 };
 const auvergneRhoneAlpes = {
   territoireCode: "REG-84",
   jalon: 2026,
-  instructions: "Auvergne-Rhône-Alpes",
+  territoireNom: "Auvergne-Rhône-Alpes",
 };
 const scenariosBretagne: ChatScenarios = { kind: "flat", scenarios: [] };
 const scenariosAuvergneRhoneAlpes: ChatScenarios = {
@@ -87,7 +87,7 @@ describe("memeContexte", () => {
     // When
     const meme = memeContexte({
       conversation: bretagne,
-      page: { ...bretagne, instructions: "Formulé autrement" },
+      page: { ...bretagne, territoireNom: "Région Bretagne" },
     });
 
     // Then

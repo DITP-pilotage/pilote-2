@@ -27,7 +27,8 @@ export function construireAgentContextChantier({
   return {
     jalon,
     territoireCode,
+    territoireNom: territoire.nomAffiché,
     chantierId,
-    instructions: `L'utilisateur consulte le chantier ${chantierId} « ${chantierNom} » sur le territoire ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce chantier et ce territoire par défaut lorsque l'utilisateur ne les précise pas dans sa question.`,
+    chantierNom,
   };
 }

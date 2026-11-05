@@ -25,4 +25,9 @@ export type ToolCase = {
   expected?: ObservedToolCall[];
   /** Outils qui ne doivent pas être appelés : un seul appel note le cas à 0. */
   forbidden?: string[];
+  /**
+   * Le territoire et le jalon sélectionnés sur l'accueil. Absent : aucun
+   * contexte, le jalon par défaut et pas de territoire courant.
+   */
+  contexteAccueil?: { territoireCode: string; jalon: number };
 };

@@ -8,7 +8,8 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * médiane de répartition et sa position, seul ou en comparaison entre
  * territoires ou entre jalons. Les arguments vérifiés portent l'intention : le
  * type de `perimetre` et le `jalon`. Les codes des territoires ne le sont
- * pas : leur résolution relève du niveau 3.
+ * pas : leur résolution relève du niveau 3. Seule exception, le territoire
+ * courant de l'accueil, qui s'applique sans recherche.
  *
  * Les négatifs portent sur les deux autres taux d'avancement, qui partagent le
  * vocabulaire : celui d'un chantier (`get_chantiers`) et celui de ses
@@ -145,6 +146,34 @@ const CASES: ToolCase[] = [
     expected: [
       { toolName: "get_taux_avancement_territoire", input: { jalon: 2024 } },
       { toolName: "get_taux_avancement_territoire", input: { jalon: 2025 } },
+    ],
+  },
+  {
+    question: "Quel est le taux d'avancement ?",
+    reason:
+      "sans territoire ni jalon dans la demande : ceux de l'accueil, jamais NAT-FR",
+    contexteAccueil: { territoireCode: "DEPT-01", jalon: 2026 },
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["DEPT-01"] },
+          jalon: 2026,
+        },
+      },
+    ],
+  },
+  {
+    question: "Quel est le taux d'avancement de la France ?",
+    reason: "un territoire nommé prime sur celui de l'accueil",
+    contexteAccueil: { territoireCode: "DEPT-01", jalon: 2026 },
+    expected: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        input: {
+          perimetre: { type: "SELECTION", territoire_codes: ["NAT-FR"] },
+        },
+      },
     ],
   },
   {

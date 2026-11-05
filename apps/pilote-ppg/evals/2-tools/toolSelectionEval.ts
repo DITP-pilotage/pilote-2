@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
+import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import {
   BRETAGNE,
@@ -81,7 +82,9 @@ export function toolSelectionEval({
               chatId: randomUUID(),
               question: input.question,
               habilitations,
-              agentContext: undefined,
+              agentContext: input.contexteAccueil
+                ? construireAgentContextTerritoire(input.contexteAccueil)
+                : undefined,
               userId,
             });
 

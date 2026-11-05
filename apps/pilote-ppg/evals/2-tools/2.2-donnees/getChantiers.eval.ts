@@ -8,7 +8,8 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * ensemble de territoires et les filtrer. Les arguments vérifiés sont ceux qui
  * portent l'intention : la `view`, les filtres, le type de `perimetre`, les
  * `chantier_ids`. Les codes des territoires ne le sont pas : résoudre
- * « l'Auvergne » relève de la recherche de territoire et du niveau 3.
+ * « l'Auvergne » relève de la recherche de territoire et du niveau 3. Seule
+ * exception, le territoire courant de l'accueil, qui s'applique sans recherche.
  *
  * Les `view` attendues viennent de la table « Comprendre les demandes
  * utilisateur » du prompt système : « en retard » → en_retard seul, « où ça
@@ -113,6 +114,22 @@ const CASES: ToolCase[] = [
     reason: "chantier explicite → chantier_ids",
     expected: [
       { toolName: "get_chantiers", input: { chantier_ids: ["CH-005"] } },
+    ],
+  },
+  {
+    question: "Quels chantiers sont en retard ?",
+    reason:
+      "sans territoire dans la demande : celui de l'accueil, jamais NAT-FR",
+    contexteAccueil: { territoireCode: "DEPT-01", jalon: 2026 },
+    expected: [
+      {
+        toolName: "get_chantiers",
+        input: {
+          view: "en_retard",
+          perimetre: { type: "SELECTION", territoire_codes: ["DEPT-01"] },
+          jalon: 2026,
+        },
+      },
     ],
   },
   {
