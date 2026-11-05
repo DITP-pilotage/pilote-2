@@ -182,7 +182,7 @@ function FloatingWindow({ conversationId }: { conversationId: string }) {
 }
 
 /**
- * Plein écran ou centrée, comme une modale : focus piégé, page figée ; Échap masque
+ * Plein écran ou centrée (au gabarit de la palette ⌘K), comme une modale : focus piégé, page figée ; Échap masque
  * l'assistant sans le fermer.
  */
 function ModalView({ conversationId, centered }: { conversationId: string; centered: boolean }) {
@@ -208,7 +208,7 @@ function ModalView({ conversationId, centered }: { conversationId: string; cente
           className={clsxm(
             'fixed flex flex-col bg-surface focus:outline-none',
             centered
-              ? 'top-1/2 left-1/2 h-[min(84vh,calc(100dvh-16vh))] w-[min(64rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-border shadow-[0_20px_60px_rgba(0,0,0,0.22)]'
+              ? 'top-[8vh] left-1/2 h-[84vh] w-[min(56rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-xl border border-border shadow-[0_16px_48px_rgba(0,0,0,0.16)]'
               : 'inset-0',
             LAYER,
           )}
