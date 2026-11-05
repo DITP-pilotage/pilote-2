@@ -7,7 +7,6 @@ import type {
 import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
 import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
-import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { EvalUser } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
 import { JALON_COURANT } from "./territoires";
@@ -56,7 +55,7 @@ export async function readGroundTruth({
 
   const territoirePrincipal = scope.territoires[0];
 
-  const indicateurs: GetChantierIndicateursResult[] = [];
+  const indicateurs: GetChantierIndicateursOutput["resultats"][] = [];
   if (scope.indicateurs) {
     const signales = chantiersDistincts([
       ...chantiersEnRetard,

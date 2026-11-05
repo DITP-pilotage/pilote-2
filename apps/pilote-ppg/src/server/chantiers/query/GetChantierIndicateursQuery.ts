@@ -15,6 +15,7 @@ export type GetChantierIndicateursResult = {
     valeur_cible: number | null;
     date_valeur_cible: string | null;
     taux_avancement: number | null;
+    responsables_donnees_ids: string[];
   }[];
 };
 
@@ -42,6 +43,10 @@ export class GetChantierIndicateursQuery {
       },
     });
 
+    const idsParEmail = await this.idsParEmail(
+      rows.flatMap((row) => row.indicateur_identite.responsables_donnees_mails),
+    );
+
     return {
       territoire_code: params.territoireCode,
       chantier_id: params.chantierId,
@@ -59,8 +64,32 @@ export class GetChantierIndicateursQuery {
           valeur_cible: jalon?.valeur_cible ?? null,
           date_valeur_cible: jalon?.date_valeur_cible?.toISOString() ?? null,
           taux_avancement: jalon?.taux_avancement ?? null,
+          responsables_donnees_ids:
+            row.indicateur_identite.responsables_donnees_mails.flatMap(
+              (email) => idsParEmail.get(email.toLowerCase()) ?? [],
+            ),
         };
       }),
     };
+  }
+
+  private async idsParEmail(emails: string[]): Promise<Map<string, string>> {
+    if (emails.length === 0) return new Map();
+    const utilisateurs = await this.deps.prisma
+      .getInstance()
+      .utilisateur.findMany({
+        where: {
+          OR: [...new Set(emails)].map((email) => ({
+            email: { equals: email, mode: "insensitive" as const },
+          })),
+        },
+        select: { id: true, email: true },
+      });
+    return new Map(
+      utilisateurs.map((utilisateur) => [
+        utilisateur.email.toLowerCase(),
+        utilisateur.id,
+      ]),
+    );
   }
 }

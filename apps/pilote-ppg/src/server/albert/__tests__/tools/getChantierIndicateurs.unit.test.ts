@@ -8,6 +8,9 @@ import type {
   GetChantierIndicateursQuery,
   GetChantierIndicateursResult,
 } from "@/server/chantiers/query/GetChantierIndicateursQuery";
+import { personReference } from "@/shared/personne/personReference";
+
+const RESPONSABLE_ID = "0b3c1f2e-8a4d-4c6b-9e1f-2a3b4c5d6e7f";
 
 const queryResult: GetChantierIndicateursResult = {
   territoire_code: "REG-75",
@@ -72,5 +75,44 @@ describe("createGetChantierIndicateursTool execute", () => {
       executeTool(tool, { chantier_id: "CH-062", territoire_code: "REG-75" }),
     ).rejects.toThrow("Accès non autorisé au chantier CH-062");
     expect(query.execute).not.toHaveBeenCalled();
+  });
+
+  test("cite les responsables des données par leur référence", async () => {
+    // Given
+    const indicateur = {
+      indicateur_id: "IND-001",
+      nom: "Indicateur",
+      unite_mesure: null,
+      valeur_initiale: null,
+      date_valeur_initiale: null,
+      valeur_actuelle: null,
+      date_valeur_actuelle: null,
+      valeur_cible: null,
+      date_valeur_cible: null,
+      taux_avancement: null,
+    };
+    const query = mock<GetChantierIndicateursQuery>({
+      execute: vi.fn(async () => ({
+        ...queryResult,
+        indicateurs: [
+          { ...indicateur, responsables_donnees_ids: [RESPONSABLE_ID] },
+        ],
+      })),
+    });
+    const tool = buildTool({ query, chantiersAccessibles: ["CH-084"] });
+
+    // When
+    const result = await executeTool(tool, {
+      chantier_id: "CH-084",
+      territoire_code: "REG-75",
+    });
+
+    // Then
+    expect(result.resultats.indicateurs).toEqual([
+      {
+        ...indicateur,
+        responsables_donnees: [personReference(RESPONSABLE_ID)],
+      },
+    ]);
   });
 });
