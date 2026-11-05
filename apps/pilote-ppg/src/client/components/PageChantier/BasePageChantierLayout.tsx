@@ -111,6 +111,7 @@ export const BasePageChantierLayout = ({
   return (
     <div className="flex bg-dsfr-contrast-grey print:bg-white">
       <BarreLatérale
+        collapsesWhenPageNarrow
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
@@ -136,7 +137,7 @@ export const BasePageChantierLayout = ({
         />
       </BarreLatérale>
       <main
-        className={clsx("pb-10 w-full print:mx-[12mm]", {
+        className={clsx("pb-10 w-full min-w-0 print:mx-[12mm]", {
           "bg-dsfr-grey-1000": estChantierArchive,
         })}
       >

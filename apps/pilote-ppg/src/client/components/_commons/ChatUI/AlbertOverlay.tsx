@@ -1,92 +1,62 @@
+import { useEffect } from "react";
 import { Dialog } from "radix-ui";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
-import { Icone } from "@/components/_commons/Icone";
-import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
-import { MapPin2Icon } from "@/components/_commons/Icones/MapPin2Icon";
-import { SubtractLineIcon } from "@/components/_commons/Icones/SubtractLineIcon";
-import { AlbertMonogramme } from "@/components/_commons/ChatUI/AlbertMonogramme";
-import { ChatExperimentationBanner } from "@/components/_commons/ChatUI/ChatExperimentationBanner";
-import { ChatUI } from "@/components/_commons/ChatUI/ChatUI";
-import type { ContexteAccueil } from "@/components/_commons/ChatUI/ChatEmptyState";
-import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
-import { AlbertDock } from "@/components/_commons/ChatUI/AlbertDock";
+import { $Enums } from "@prisma/client";
+import { useCurrentApplication } from "@/client/hooks/useCurrentApplication";
+import { AlbertContenu } from "@/components/_commons/ChatUI/AlbertContenu";
+import { AlbertFenetre } from "@/components/_commons/ChatUI/AlbertFenetre";
+import { AlbertPastille } from "@/components/_commons/ChatUI/AlbertPastille";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { NOM_ASSISTANT } from "@/components/_commons/ChatUI/libellesAssistant";
+import { api } from "@/server/framework/trpc/api";
 
-const BOUTON_ICONE =
-  "flex h-8 w-8 items-center justify-center text-primary transition-colors hover:bg-dsfr-alt-blue-france";
+const useRaccourciOuverture = ({ actif }: { actif: boolean }) => {
+  const { conversation, display, open, restore } = useAlbertConversation();
 
-const ConversationHistory = ({ chatId }: { chatId: string }) => {
-  const { selectConversation, startNewConversation } = useAlbertConversation();
+  useEffect(() => {
+    if (!actif) return;
 
-  return (
-    <ConversationHistoryDrawer
-      chatIdCourant={chatId}
-      onNouvelleConversation={startNewConversation}
-      onSelectionner={selectConversation}
-    />
-  );
+    const ouvrir = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
+      if (event.target instanceof HTMLElement && event.target.isContentEditable)
+        return;
+      if (event.key.toLowerCase() !== "k") return;
+      if (!(event.metaKey || event.ctrlKey)) return;
+      if (conversation && display !== "minimized") return;
+
+      event.preventDefault();
+      if (conversation) restore();
+      else open();
+    };
+
+    window.addEventListener("keydown", ouvrir);
+    return () => window.removeEventListener("keydown", ouvrir);
+  }, [actif, conversation, display, open, restore]);
 };
 
-const AlbertEnTete = ({
-  contexte,
-  onReduire,
-}: {
-  contexte: ContexteAccueil;
-  onReduire: () => void;
-}) => (
-  <div className="flex h-14 shrink-0 items-center gap-3 border-b border-dsfr-grey-900 pl-5 pr-4">
-    <AlbertMonogramme />
-    <Dialog.Title className="mb-0 text-base font-bold leading-5 text-dsfr-grey-50">
-      {NOM_ASSISTANT}
-    </Dialog.Title>
-    <span className="ml-2 inline-flex h-7 items-center gap-1.5 border border-dsfr-blue-france-925 bg-dsfr-blue-france-950 px-2.5 text-[13px] font-medium leading-5 text-primary">
-      <Icone className="h-4 w-4" icone={MapPin2Icon} />
-      {contexte.territoireNom} · Jalon {contexte.jalon}
-    </span>
-    <span className="flex-1" />
-    <button
-      aria-label="Réduire la conversation"
-      className={BOUTON_ICONE}
-      onClick={onReduire}
-      title="Réduire"
-      type="button"
-    >
-      <Icone className="h-5 w-5" icone={SubtractLineIcon} />
-    </button>
-    <Dialog.Close asChild>
-      <button
-        aria-label={`Fermer l'${NOM_ASSISTANT}`}
-        className={BOUTON_ICONE}
-        title="Fermer"
-        type="button"
-      >
-        <Icone className="h-5 w-5" icone={CloseLineIcon} />
-      </button>
-    </Dialog.Close>
-  </div>
-);
-
 export const AlbertOverlay = () => {
-  const { conversation, display, close, minimize } = useAlbertConversation();
+  const { conversation, display, open, minimize } = useAlbertConversation();
+  const estPiloteEval =
+    useCurrentApplication() === $Enums.application_accessible.PILOTE_EVAL;
+  const { data: acces } = api.albertAccess.monAcces.useQuery(undefined, {
+    staleTime: Infinity,
+  });
+  const peutOuvrir = !estPiloteEval && (acces?.peutUtiliser ?? false);
 
-  if (!conversation) return null;
+  useRaccourciOuverture({ actif: peutOuvrir });
 
-  if (display === "minimized") {
-    return <AlbertDock conversation={conversation} />;
+  if (!peutOuvrir) return null;
+
+  if (!conversation || display === "minimized") {
+    return <AlbertPastille conversation={conversation} onOuvrir={open} />;
   }
 
-  const { territoireCode, jalon } = conversation.agentContext;
-  const contexte: ContexteAccueil = {
-    territoireNom:
-      récupérerDétailsSurUnTerritoire(territoireCode)?.nomAffiché ??
-      territoireCode,
-    jalon,
-  };
+  if (display === "floating") {
+    return <AlbertFenetre conversation={conversation} />;
+  }
 
-  // Échap et clic en dehors réduisent la conversation au lieu de la fermer :
-  // seul « Fermer » l'abandonne.
-  const minimiserAuLieuDeFermer = (event: { preventDefault: () => void }) => {
+  if (display !== "modal") return null;
+
+  const masquer = (event: { preventDefault: () => void }) => {
     event.preventDefault();
     minimize();
   };
@@ -94,34 +64,21 @@ export const AlbertOverlay = () => {
   return (
     <Dialog.Root
       onOpenChange={(isOpen) => {
-        if (!isOpen) close();
+        if (!isOpen) minimize();
       }}
       open
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-10 bg-black/50" />
+        {/* Sans overlay, Radix ne bloque ni le défilement ni les clics de la
+            page : il est blanc, donc invisible derrière le contenu. */}
+        <Dialog.Overlay className="fixed inset-0 z-[1760] bg-white" />
         <Dialog.Content
           aria-describedby={undefined}
-          className="fixed inset-4 z-10 flex flex-col border border-dsfr-grey-900 bg-white shadow-md focus:outline-none"
-          onEscapeKeyDown={minimiserAuLieuDeFermer}
-          onInteractOutside={minimiserAuLieuDeFermer}
+          className="fixed inset-0 z-[1760] flex flex-col bg-white focus:outline-none"
+          onEscapeKeyDown={masquer}
         >
-          <AlbertEnTete contexte={contexte} onReduire={minimize} />
-          <div className="flex min-h-0 flex-1">
-            <ConversationHistory chatId={conversation.chat.id} />
-            <div className="relative min-w-0 flex-1">
-              <ChatUI
-                className="h-full"
-                contexteAccueil={contexte}
-                conversation={conversation}
-                key={conversation.chat.id}
-                placeholder="Posez une question sur ce territoire..."
-                scenarios={conversation.scenarios}
-                tracked
-              />
-            </div>
-          </div>
-          <ChatExperimentationBanner />
+          <Dialog.Title className="sr-only">{NOM_ASSISTANT}</Dialog.Title>
+          <AlbertContenu compact={false} conversation={conversation} />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

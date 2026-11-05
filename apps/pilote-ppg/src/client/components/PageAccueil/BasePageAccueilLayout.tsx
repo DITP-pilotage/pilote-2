@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useState } from "react";
+import { FunctionComponent, ReactNode, useMemo, useState } from "react";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
@@ -11,7 +11,8 @@ import { FiltresActifs } from "@/components/PageAccueil/FiltresActifs/FiltresAct
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
-import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
+import { useAlbertPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 import {
   scenariosTerritoireCoordinateur,
   scenariosTerritoireDITP,
@@ -88,6 +89,18 @@ export const BasePageAccueilLayout: FunctionComponent<
   const profil = useProfilUtilisateurConnecte();
   const estDITPAdmin = session?.profil === ProfilEnum.DITP_ADMIN;
 
+  const contexteAssistant = useMemo(
+    () => ({
+      agentContext: construireAgentContextTerritoire({ territoireCode, jalon }),
+      scenarios:
+        accesAlbert.scenarios === "coordinateur"
+          ? scenariosTerritoireCoordinateur({ territoireCode })
+          : scenariosTerritoireDITP({ territoireCode, jalon, estDITPAdmin }),
+    }),
+    [territoireCode, jalon, accesAlbert.scenarios, estDITPAdmin],
+  );
+  useAlbertPageContext(contexteAssistant);
+
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");
   const estProfilRegionalAutoriseAVoirLaTerritorialisation =
@@ -129,6 +142,7 @@ export const BasePageAccueilLayout: FunctionComponent<
       </Head>
       <div className="flex">
         <BarreLatérale
+          collapsesWhenPageNarrow
           estOuvert={estOuverteBarreLatérale}
           setEstOuvert={setEstOuverteBarreLatérale}
         >
@@ -170,7 +184,7 @@ export const BasePageAccueilLayout: FunctionComponent<
             />
           </section>
         </BarreLatérale>
-        <main className="w-full">
+        <main className="w-full min-w-0">
           <div className="flex flex-wrap sticky top-0 z-[1] w-full shadow-[0_6px_18px_theme(colors.dsfr-shadow)] bg-dsfr-blue-france-850 pt-4">
             <PanelMenuNavigation
               estAutoriseAVoirLeSelecteurDeMaille={
@@ -181,23 +195,6 @@ export const BasePageAccueilLayout: FunctionComponent<
               setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
               territoireCode={territoireCode}
             />
-            {accesAlbert.peutUtiliser ? (
-              <div className="h-full flex items-center pt-1 pr-2 ml-auto">
-                <BoutonSyntheseTerritoire
-                  jalon={jalon}
-                  territoireCode={territoireCode}
-                  scenarios={
-                    accesAlbert.scenarios === "coordinateur"
-                      ? scenariosTerritoireCoordinateur({ territoireCode })
-                      : scenariosTerritoireDITP({
-                          territoireCode,
-                          jalon,
-                          estDITPAdmin,
-                        })
-                  }
-                />
-              </div>
-            ) : null}
             <FiltresActifs
               axes={axes}
               mailleSelectionnee={mailleSelectionnee}

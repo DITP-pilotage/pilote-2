@@ -135,7 +135,8 @@ export const LienInterneAssistant = ({
   children?: ReactNode;
 }) => {
   const router = useRouter();
-  const { minimize } = useAlbertConversation();
+  const { display, vuesDisponibles, passerEnFenetre, minimize } =
+    useAlbertConversation();
   const { trackLink, trackMiddleClick } = useLinkTracking(
     event ?? linkEvent(href),
   );
@@ -151,7 +152,13 @@ export const LienInterneAssistant = ({
         // Let middle-click, Ctrl/Cmd-click and "open in new tab" through.
         if (event.defaultPrevented || event.metaKey || event.ctrlKey) return;
         event.preventDefault();
-        minimize();
+        // Le panneau et la fenêtre laissent voir la page vers laquelle on
+        // navigue. Le plein écran la masque : il passe en fenêtre là où elle
+        // tient (desktop), et se masque ailleurs.
+        if (display === "modal") {
+          if (vuesDisponibles.includes("floating")) passerEnFenetre();
+          else minimize();
+        }
         router.push(href);
       }}
     >

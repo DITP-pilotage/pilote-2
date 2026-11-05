@@ -25,6 +25,7 @@ import type {
   ContexteAccueil,
 } from "@/components/_commons/ChatUI/ChatEmptyState";
 import { Icone } from "@/components/_commons/Icone";
+import { MapPin2Icon } from "@/components/_commons/Icones/MapPin2Icon";
 import { ArrowDownCircleIcon } from "@/components/_commons/Icones/ArrowDownCircleIcon";
 import {
   lastLlmCallId,
@@ -54,10 +55,10 @@ export const ChatUI = ({
   contexteAccueil?: ContexteAccueil;
   tracked?: boolean;
 }) => {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const userHasScrolledRef = useRef(false);
   const prevMessageCountRef = useRef(0);
+  const hasScrolledOnceRef = useRef(false);
   const fillInputRef = useRef<
     ((text: string, proposition?: PropositionOrigin) => void) | null
   >(null);
@@ -152,11 +153,12 @@ export const ChatUI = ({
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    if (status !== "ready") {
-      container.scrollTop = container.scrollHeight;
-    } else {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    const isInitialRender = !hasScrolledOnceRef.current;
+    hasScrolledOnceRef.current = true;
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: isInitialRender || status !== "ready" ? "instant" : "smooth",
+    });
   }, [messages, status]);
 
   const handleScroll = useCallback(() => {
@@ -206,7 +208,7 @@ export const ChatUI = ({
       track={track}
     >
       <ChantierLinksProvider options={chantierLinkOptions}>
-        <div className={clsxm("flex flex-col bg-white", className)}>
+        <div className={clsxm("@container flex flex-col bg-white", className)}>
           <style>{chatMarkdownStyles}</style>
 
           <div className="relative min-h-0 flex-1">
@@ -216,7 +218,7 @@ export const ChatUI = ({
               ref={scrollContainerRef}
             >
               <div className="mx-auto flex min-h-full max-w-6xl flex-col px-4 pb-4 pt-7">
-                {messages.length === 0 && scenarios && (
+                {messages.length === 0 && (
                   <ChatEmptyState
                     contexte={contexteAccueil}
                     scenarios={scenarios}
@@ -224,6 +226,13 @@ export const ChatUI = ({
                 )}
 
                 <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+                  {contexteAccueil && messages.length > 0 ? (
+                    <span className="inline-flex h-6 items-center gap-1.5 self-start border border-dsfr-blue-france-925 bg-dsfr-blue-france-950 px-2 text-xs font-medium leading-4 text-primary">
+                      <Icone className="h-3.5 w-3.5" icone={MapPin2Icon} />
+                      {contexteAccueil.territoireNom} · Jalon{" "}
+                      {contexteAccueil.jalon}
+                    </span>
+                  ) : null}
                   {messages.map((message, index) => {
                     const estDernier = index === messages.length - 1;
 
@@ -268,8 +277,6 @@ export const ChatUI = ({
                       onReessayer={retry}
                     />
                   )}
-
-                  <div ref={messagesEndRef} />
                 </div>
               </div>
             </div>
@@ -290,6 +297,7 @@ export const ChatUI = ({
           </div>
 
           <ChatInputForm
+            draft={conversation.draft}
             fillInputRef={fillInputRef}
             placeholder={placeholder}
           />

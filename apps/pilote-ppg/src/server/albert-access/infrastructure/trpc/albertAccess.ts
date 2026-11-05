@@ -18,6 +18,15 @@ const assertDitpAdmin = (profil: string | undefined) => {
 const utilisateurInput = z.object({ utilisateurId: z.string().uuid() });
 
 export const albertAccessRouter = createTRPCRouter({
+  monAcces: protectedProcedure.query(({ ctx }) =>
+    getContainer("albertAccess")
+      .resolve("checkAlbertAccessUseCase")
+      .execute({
+        utilisateurId: ctx.session.user.id,
+        profil: ctx.session.profil ?? null,
+      }),
+  ),
+
   listProfils: protectedProcedure.query(({ ctx }) => {
     assertDitpAdmin(ctx.session.profil);
     return getContainer("albertAccess").resolve("listProfilsUseCase").execute();
