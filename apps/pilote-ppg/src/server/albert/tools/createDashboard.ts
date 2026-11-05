@@ -187,6 +187,28 @@ async function resolveIndicateurs(
   );
 }
 
+const DEMANDE_DE_CARTE = /\bcart(?:e|es|ographie)\b/iu;
+
+/**
+ * Une carte montre un chantier sur tous les territoires : sans chantier, le
+ * sous-agent empilait des jauges de taux d'avancement sous le titre « Carte »
+ * (PIL-1855). On refuse avant de l'appeler ; l'erreur revient au modèle, qui
+ * fait choisir le chantier.
+ */
+export function verifierCarteAvecChantier({
+  task,
+  chantiers,
+}: {
+  task: string;
+  chantiers: ChantierContext[] | undefined;
+}): void {
+  if (DEMANDE_DE_CARTE.test(task) && !chantiers?.length) {
+    throw new Error(
+      "Une carte montre un seul chantier sur tous les territoires, et aucun chantier n'est passé dans `chantiers`. Fais choisir le chantier avec clarify_with_choices, ou propose un rendu sans carte.",
+    );
+  }
+}
+
 /**
  * Le sous-agent du dashboard attend encore des codes météo (SOLEIL…) pour
  * choisir l'emoji et le libellé : on lui reconvertit le libellé reçu. Un
@@ -237,9 +259,9 @@ Ce qu'un dashboard sait afficher, et rien d'autre :
 - le taux d'avancement d'un territoire, la médiane et les valeurs remarquables (min, médiane, max) de ses sous-territoires ;
 - le nombre et la liste des chantiers en retard ou en difficulté d'un territoire ;
 - le tableau des indicateurs d'un chantier précis (VI, VA, VC, TA) ;
-- des cartes de France pour des chantiers précis : taux d'avancement, niveau de confiance ou propositions de valeur d'avancement par territoire ;
+- la carte de France d'un chantier précis, qui colore chaque région ou département selon le taux d'avancement, le niveau de confiance ou les propositions de valeur d'avancement de CE chantier ;
 - des courbes d'évolution dans le temps d'un indicateur précis (taux ou valeur d'avancement).
-Les cartes et le tableau des indicateurs exigent des chantiers identifiés, passés dans \`chantiers\` : il n'existe pas de carte « de tous les chantiers » d'un territoire.
+Une carte compare les territoires pour un chantier : elle ne montre jamais les chantiers d'un territoire, et il n'existe pas de carte d'un département ou d'une région avec ses chantiers. Les cartes et le tableau des indicateurs exigent des chantiers identifiés, passés dans \`chantiers\`.
 Utilise-le pour : un dashboard, un cockpit, un tableau de bord, une cartographie, une courbe ou un graphique d'évolution.
 Ne l'utilise pas pour : un rendu absent de cette liste (répartition, histogramme, camembert, classement…) → clarify_with_choices, avec des alternatives réalisables.`,
       inputSchema: createDashboardInputSchema,
@@ -247,6 +269,8 @@ Ne l'utilise pas pour : un rendu absent de cette liste (répartition, histogramm
         { task, territoire_codes, jalons, chantiers, indicateur_ids },
         { abortSignal },
       ) => {
+        verifierCarteAvecChantier({ task, chantiers });
+
         const indicateurs = indicateur_ids
           ? await resolveIndicateurs(
               indicateur_ids,

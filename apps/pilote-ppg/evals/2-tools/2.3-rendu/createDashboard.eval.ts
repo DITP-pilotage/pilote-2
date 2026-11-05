@@ -27,9 +27,17 @@ const CASES: ToolCase[] = [
     expected: [{ toolName: "create_dashboard" }],
   },
   {
-    question: "Je veux la cartographie du taux d'avancement par région",
-    reason: "« cartographie » : rendu visuel explicite",
+    question:
+      "Je veux la cartographie du taux d'avancement du CH-004 par région",
+    reason: "« cartographie » d'un chantier : rendu visuel explicite",
     expected: [{ toolName: "create_dashboard" }],
+  },
+  {
+    question: "Je veux la cartographie du taux d'avancement par région",
+    reason:
+      "CAS NÉGATIF : une carte porte sur un chantier précis, à faire choisir (PIL-1855)",
+    expected: [{ toolName: "clarify_with_choices" }],
+    forbidden: ["create_dashboard"],
   },
   {
     question: "Trace la courbe d'évolution de l'IND-004 au national",

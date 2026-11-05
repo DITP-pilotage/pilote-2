@@ -8,7 +8,11 @@ export const clarifyWithChoicesInputSchema = z.object({
   choices: z
     .array(
       z.object({
-        label: z.string().describe("Texte à afficher sur le bouton"),
+        label: z
+          .string()
+          .describe(
+            "La demande complète, telle que l'utilisateur aurait pu l'écrire, avec son objet et son territoire : c'est ce texte qui t'est renvoyé quand il clique",
+          ),
         value: z
           .string()
           .describe("Valeur à renvoyer lorsque le bouton est cliqué"),

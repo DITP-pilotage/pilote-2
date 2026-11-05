@@ -12,7 +12,9 @@ import { toolSelectionEval } from "../toolSelectionEval";
  *
  * Une demande que le dashboard ne sait pas rendre telle quelle (graphique de
  * répartition, PIL-1855) doit aussi passer par l'outil, avec des alternatives
- * réalisables, plutôt que par un dashboard hors sujet.
+ * réalisables, plutôt que par un dashboard hors sujet. Le tableau des taux
+ * d'avancement de chaque chantier, qu'il doit savoir proposer à la place, est
+ * vérifié dans la suite de `get_chantiers`.
  *
  * Une demande de mise à jour qui ne précise pas le type de valeurs (PIL-1939)
  * passe aussi par l'outil, y compris pour un seul chantier ou indicateur.
@@ -46,6 +48,16 @@ const CASES: ToolCase[] = [
     reason: "graphique de répartition hors catalogue : alternatives à proposer",
     expected: [{ toolName: "clarify_with_choices" }],
     forbidden: ["create_dashboard"],
+    optionsInterdites: [
+      {
+        motif: "carte.*(chaque chantier|\\bchantiers\\b)",
+        raison: "une carte porte sur un chantier précis, jamais sur tous",
+      },
+      {
+        motif: "r[ée]partition|histogramme|camembert|diagramme",
+        raison: "aucun dashboard ne rend une répartition",
+      },
+    ],
   },
   {
     question: "Quels sont les indicateurs à mettre à jour ?",
