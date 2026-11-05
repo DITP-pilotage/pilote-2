@@ -890,7 +890,6 @@ const CHANTIER_RESULTS = [
                 commentaire: null,
               }),
               taux_avancement: 75,
-              responsables_donnees: [],
             },
           ],
         },

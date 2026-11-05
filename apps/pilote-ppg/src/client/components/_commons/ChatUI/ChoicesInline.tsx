@@ -86,7 +86,9 @@ export const ChoicesInline = ({
           {titre}
         </span>
         {question && (
-          <p className="mb-0 font-bold text-dsfr-grey-50">{question}</p>
+          <p className="mb-0 font-bold text-dsfr-grey-50">
+            <TextWithPersons text={question} />
+          </p>
         )}
       </div>
 

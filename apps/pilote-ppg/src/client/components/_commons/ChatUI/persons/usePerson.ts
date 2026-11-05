@@ -1,4 +1,8 @@
-import { useQuery, type QueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  type QueryClient,
+} from "@tanstack/react-query";
 import { api } from "@/server/framework/trpc/api";
 import type { ResolvedPerson } from "@/shared/personne/personReference";
 import { personBatcher } from "@/components/_commons/ChatUI/persons/personBatcher";
@@ -9,11 +13,16 @@ export const personQueryKey = (id: string) => ["personne", id] as const;
 
 export const usePerson = (id: string) => {
   const { client } = api.useUtils();
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: personQueryKey(id),
     queryFn: async (): Promise<ResolvedPerson | null> =>
-      (await personBatcher(client).fetch(id)) ?? null,
+      (await personBatcher({
+        queryClient,
+        resolve: (ids) => client.albert.persons.resolve.query({ ids }),
+      }).fetch(id)) ?? null,
     staleTime: DIX_MINUTES_MS,
+    retry: false,
   });
 };
 
