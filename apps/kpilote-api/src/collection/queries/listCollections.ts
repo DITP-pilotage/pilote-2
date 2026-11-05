@@ -19,12 +19,15 @@ export const listCollections = (
   if (params.recherche) {
     filters.nom = { contains: params.recherche, mode: 'insensitive' }
   }
+  const publicId: Prisma.StringFilter<'Collection'> = {}
   if (params.rechercheIdentifiant) {
-    filters.publicId = { contains: params.rechercheIdentifiant, mode: 'insensitive' }
+    publicId.contains = params.rechercheIdentifiant
+    publicId.mode = 'insensitive'
   }
   if (params.ids?.length) {
-    filters.publicId = { in: params.ids }
+    publicId.in = params.ids
   }
+  if (Object.keys(publicId).length > 0) filters.publicId = publicId
   // Un principal ADMIN administre toutes les collections (PUBLIC + PRIVÉ), cohérent
   // avec isAdminPrincipal qui court-circuite déjà /me/permissions.
   const where = isAdminPrincipal() ? filters : withCollectionReadPermission(filters, principalId)

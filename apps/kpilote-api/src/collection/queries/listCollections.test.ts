@@ -276,6 +276,26 @@ describe.concurrent('listCollections', () => {
   )
 
   it(
+    'combine les identifiants fournis et la recherche sur l’identifiant',
+    integrationTest(async () => {
+      const prefixe = testCollectionId()
+      const trouvee = `${prefixe}-a`
+      const horsRecherche = testCollectionId()
+      await fixtures.collection(
+        { publicId: trouvee, nom: 'Trouvée', visibilite: 'PUBLIC' },
+        { publicId: horsRecherche, nom: 'Hors recherche', visibilite: 'PUBLIC' },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listCollections({ ids: [trouvee, horsRecherche], rechercheIdentifiant: prefixe }),
+      )
+
+      expect(result._unsafeUnwrap().items.map((item) => item.id)).toEqual([trouvee])
+    }),
+  )
+
+  it(
     'ignore un tableau ids vide plutôt que de tout filtrer',
     integrationTest(async () => {
       const presente = testCollectionId()

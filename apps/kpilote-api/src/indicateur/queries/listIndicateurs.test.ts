@@ -7,7 +7,7 @@ import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurIds, testCollectionId, testReferentielId } from '@/test/randomIds'
-import { runAsPrincipal } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
   it(
@@ -275,6 +275,21 @@ describe.concurrent('listIndicateurs', () => {
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id).sort()).toEqual([ind1, ind3].sort())
       expect(value.total).toBe(2)
+    }),
+  )
+
+  it(
+    'combine le filtre ids et la recherche sur l’identifiant',
+    integrationTest(async () => {
+      const [prefixe, horsRecherche] = testIndicateurIds(2)
+      const trouve = `${prefixe}-a`
+      await fixtures.indicateur({ publicId: trouve }, { publicId: horsRecherche })
+
+      const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () =>
+        listIndicateurs({ ids: [trouve, horsRecherche], rechercheIdentifiant: prefixe }),
+      )
+
+      expect(result._unsafeUnwrap().items.map((i) => i.id)).toEqual([trouve])
     }),
   )
 
