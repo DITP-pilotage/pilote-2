@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
@@ -9,7 +9,7 @@ import { IndicateurPonderation } from "@/server/parametrage-chantier/queries/Get
 import {
   CHAMP_POIDS_PAR_MAILLE,
   calculerSommesParMaille,
-} from "@/components/PageAdminChantiers/sommesPonderations";
+} from "@/components/PageAdminChantiers/ponderations/sommesPonderations";
 
 export interface LignePonderationForm {
   estActif: boolean;
@@ -38,10 +38,9 @@ const valeursFormulaire = (
 });
 
 function determinerModification(
-  ligne: LignePonderationForm | undefined,
+  ligne: LignePonderationForm,
   ponderation: IndicateurPonderation,
 ): ModificationLigne {
-  if (!ligne) return null;
   if (ligne.estActif !== ponderation.estActif) {
     return ligne.estActif ? "reactive" : "desactive";
   }
@@ -53,22 +52,27 @@ function determinerModification(
   return poidsModifie ? "modifie" : null;
 }
 
+export const filtrerIndicesParStatut = (
+  ponderations: IndicateurPonderation[],
+  filtre: FiltreStatut,
+) =>
+  ponderations.flatMap((ponderation, index) =>
+    filtre === "tous" || ponderation.estActif === (filtre === "actifs")
+      ? [index]
+      : [],
+  );
+
 export const usePonderationsIndicateursForm = ({
   ponderations,
 }: {
   ponderations: IndicateurPonderation[];
 }) => {
   const refreshRouter = useRefreshRouter();
-  const [filtre, setFiltre] = useState<FiltreStatut>("tous");
 
   const reactHookForm = useForm<PonderationsForm>({
     defaultValues: valeursFormulaire(ponderations),
   });
   const { reset } = reactHookForm;
-
-  useEffect(() => {
-    reset(valeursFormulaire(ponderations));
-  }, [ponderations, reset]);
 
   const lignes = useWatch({ control: reactHookForm.control, name: "lignes" });
 
@@ -111,16 +115,6 @@ export const usePonderationsIndicateursForm = ({
     (modification) => modification === "desactive",
   ).length;
 
-  const nombreActifs = (lignes ?? []).filter((ligne) => ligne?.estActif).length;
-
-  const indicesAffiches = ponderations
-    .map((_, index) => index)
-    .filter((index) => {
-      if (filtre === "tous") return true;
-      const estActif = lignes[index]?.estActif ?? ponderations[index].estActif;
-      return filtre === "actifs" ? estActif : !estActif;
-    });
-
   const mutation =
     api.parametrageChantier.savePonderationsIndicateurs.useMutation({
       onSuccess: () => {
@@ -152,18 +146,12 @@ export const usePonderationsIndicateursForm = ({
 
   return {
     reactHookForm,
-    lignes,
     sommesParMaille,
     sommesEnErreur,
     modifications,
     nombreModifications,
     nombreReactivations,
     nombreDesactivations,
-    nombreActifs,
-    nombreInactifs: ponderations.length - nombreActifs,
-    filtre,
-    setFiltre,
-    indicesAffiches,
     annuler: () => reset(valeursFormulaire(ponderations)),
     enregistrer,
     estEnCoursDEnregistrement: mutation.isPending,

@@ -1,7 +1,7 @@
 import {
   LignePonderationSomme,
   calculerSommesParMaille,
-} from "@/components/PageAdminChantiers/sommesPonderations";
+} from "@/components/PageAdminChantiers/ponderations/sommesPonderations";
 
 const ligne = (
   overrides: Partial<LignePonderationSomme>,
