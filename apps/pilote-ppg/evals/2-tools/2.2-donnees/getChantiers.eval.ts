@@ -116,6 +116,16 @@ const CASES: ToolCase[] = [
     ],
   },
   {
+    question:
+      "Le tableau des taux d'avancement de chaque chantier dans la Sarthe",
+    reason:
+      "un tableau se met en forme dans la réponse, pas dans un dashboard (PIL-1855)",
+    expected: [
+      { toolName: "get_chantiers", input: { tri: "taux_decroissant" } },
+    ],
+    forbidden: ["create_dashboard", "clarify_with_choices"],
+  },
+  {
     question: "Quel est le taux d'avancement de la Bretagne ?",
     reason:
       "CAS NÉGATIF : taux global du territoire, pas le détail par chantier",

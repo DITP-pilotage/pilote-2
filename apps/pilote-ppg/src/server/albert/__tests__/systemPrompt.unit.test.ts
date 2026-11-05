@@ -204,6 +204,33 @@ describe("buildChatSystemPrompt", () => {
     );
   });
 
+  it("met un tableau en forme dans la réponse, sans dashboard (PIL-1855)", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain("un tableau n'est pas un tableau de bord");
+  });
+
+  it("ne propose en option que ce que les outils savent faire (PIL-1855)", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "l'option doit être réalisable avec tes outils, tels que leurs descriptions les décrivent",
+    );
+    expect(prompt).toContain(
+      "Chaque libellé est la demande complète que l'utilisateur aurait pu écrire, avec son objet et son territoire",
+    );
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({
