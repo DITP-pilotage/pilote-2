@@ -107,6 +107,51 @@ describe('persistance de l’assistant', () => {
   )
 
   it(
+    'garde les deux appels quand deux premiers tours arrivent ensemble',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      const conversationId = randomUUID()
+      const [first, second] = [randomUUID(), randomUUID()]
+
+      await Promise.all([
+        turn(principalId, conversationId, { id: first }),
+        turn(principalId, conversationId, { id: second }),
+      ])
+
+      const appels = await db().assistantAppel.findMany({
+        where: { conversationId },
+        select: { id: true },
+      })
+      expect(appels.map((appel) => appel.id).sort()).toEqual([first, second].sort())
+    }),
+  )
+
+  it(
+    'ne garde pas les messages d’un tour dont l’appel n’a pas pu être écrit',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      const conversationId = randomUUID()
+      await turn(principalId, conversationId)
+
+      await expect(
+        recordTurn({
+          conversationId,
+          principalId,
+          startedOnSavedConversation: true,
+          contexte: null,
+          messages: [userMessage('Où en est la fraude fiscale ?'), userMessage('Et en Bretagne ?')],
+          call: call({ transcript: { tokens: 1n } }),
+        }),
+      ).rejects.toThrow()
+
+      const conversation = await db().assistantConversation.findUniqueOrThrow({
+        where: { id: conversationId },
+      })
+      expect(JSON.stringify(conversation.messages)).not.toContain('Et en Bretagne ?')
+    }),
+  )
+
+  it(
     'refuse d’écraser la conversation d’un autre principal',
     integrationTest(async () => {
       const conversationId = randomUUID()
