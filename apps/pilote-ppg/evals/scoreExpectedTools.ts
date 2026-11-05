@@ -15,7 +15,10 @@ import type { AgentTurn, ObservedToolCall, OptionInterdite } from "./types";
  * par valeur, à toute profondeur : `perimetre: { type: "SELECTION" }` accepte
  * n'importe quelle sélection. Un argument tableau doit contenir AU MOINS les
  * valeurs attendues : `types: ["freins_a_lever"]` accepte un appel qui demande
- * aussi d'autres types.
+ * aussi d'autres types. Exception : les clés de `CLES_ENSEMBLE_EXACT`
+ * (`motifs`) se comparent comme un ensemble exact, sans tenir compte de
+ * l'ordre : `motifs: ["va"]` refuse un appel qui demande aussi `vi` et `vc`,
+ * car ajouter un motif change le sens de la demande.
  *
  * La sélection en sous-ensemble tolère les appels en trop : sans `forbidden`,
  * un cas négatif passerait même si l'agent appelle aussi l'outil qu'il ne
@@ -160,8 +163,21 @@ function matches(call: ObservedToolCall, expectedCall: ObservedToolCall) {
 const estUnObjet = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-function matchesValue(actual: unknown, expected: unknown): boolean {
+const CLES_ENSEMBLE_EXACT = ["motifs"];
+
+function matchesValue(
+  actual: unknown,
+  expected: unknown,
+  key?: string,
+): boolean {
   if (Array.isArray(expected) && Array.isArray(actual)) {
+    if (key !== undefined && CLES_ENSEMBLE_EXACT.includes(key)) {
+      return (
+        new Set(actual).size === new Set(expected).size &&
+        expected.every((expectedItem) => actual.includes(expectedItem))
+      );
+    }
+
     return expected.every((expectedItem) =>
       actual.some((actualItem) => matchesValue(actualItem, expectedItem)),
     );
@@ -169,7 +185,7 @@ function matchesValue(actual: unknown, expected: unknown): boolean {
 
   if (estUnObjet(expected) && estUnObjet(actual)) {
     return Object.entries(expected).every(([key, value]) =>
-      matchesValue(actual[key], value),
+      matchesValue(actual[key], value, key),
     );
   }
 

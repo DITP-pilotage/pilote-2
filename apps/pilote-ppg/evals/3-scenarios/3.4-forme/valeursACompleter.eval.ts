@@ -15,13 +15,21 @@ import { VALEURS_A_COMPLETER_CRITERIA } from "./valeursACompleter.criteria";
  * Aucune attente d'outil : le scénario juge la réponse écrite, et tourne à
  * l'identique avec les deux outils d'origine et avec l'outil unique.
  *
- * Référence observée le 2026-11-05 sur dev, avec les deux outils d'origine
- * (3 essais par cas, 6 cas) : N3 96,1 %. Autres suites : valeurs
+ * Référence « avant » observée le 2026-11-05 sur dev, avec les deux outils
+ * d'origine (3 essais par cas, 6 cas) : N3 96,1 %. Autres suites : valeurs
  * d'avancement non à jour 95,8 %, valeurs initiales et cibles manquantes
  * 94,9 %, clarifyWithChoices 95,2 % (sous 2/3 : « Quels sont les indicateurs
  * du chantier sur le handicap… », « Quelles valeurs d'avancement ne sont pas à
  * jour ? »), getIndicateurs 100 %, getChantiers 100 %, getChantiersSignales
  * 90,9 %.
+ *
+ * Référence « après » avec `get_indicateurs_a_completer` (mêmes cas, deux
+ * passages) : N3 93,5 % puis 92,8 % ; clarifyWithChoices 81,0 % puis 76,2 % ;
+ * getIndicateurs 100 % ; getChantiers 97,6 % puis 94,0 % ; getChantiersSignales
+ * 90,9 % ; getIndicateursACompleter 86,5 % puis 85,4 %. Les critères sur le
+ * tableau du détail (« Tableau introduit » 33 % puis 28 %, « Un seul
+ * territoire » 83 % puis 72 %) n'étaient pas actifs « avant » : ils restaient
+ * neutres faute de champ en_bref.
  */
 
 scenarioEval({

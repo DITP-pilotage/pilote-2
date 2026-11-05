@@ -207,6 +207,38 @@ describe("scoreExpectedTools", () => {
     expect(result.score).toBe(0);
   });
 
+  it("compare motifs comme un ensemble exact, quel que soit l'ordre", () => {
+    const expected = [
+      { toolName: "get_indicateurs_a_completer", input: { motifs: ["va"] } },
+    ];
+    const appel = (motifs: string[]) =>
+      scoreExpectedTools({
+        output: turn([
+          { toolName: "get_indicateurs_a_completer", input: { motifs } },
+        ]),
+        expected,
+      }).score;
+
+    expect({
+      identique: appel(["va"]),
+      enTrop: appel(["va", "vi", "vc"]),
+      ordreInverse: scoreExpectedTools({
+        output: turn([
+          {
+            toolName: "get_indicateurs_a_completer",
+            input: { motifs: ["vc", "vi"] },
+          },
+        ]),
+        expected: [
+          {
+            toolName: "get_indicateurs_a_completer",
+            input: { motifs: ["vi", "vc"] },
+          },
+        ],
+      }).score,
+    }).toEqual({ identique: 1, enTrop: 0, ordreInverse: 1 });
+  });
+
   it("décrit les appels attendus avec leurs arguments", () => {
     const result = scoreExpectedTools({
       output: turn([

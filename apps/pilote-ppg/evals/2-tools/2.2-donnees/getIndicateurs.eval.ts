@@ -76,9 +76,15 @@ const CASES: ToolCase[] = [
   },
   {
     question: "Les indicateurs du CH-004 sont-ils à jour au national ?",
-    reason:
-      "CAS NÉGATIF : fraîcheur des données → get_valeurs_avancement_non_a_jour",
+    reason: "CAS NÉGATIF : fraîcheur des données → get_indicateurs_a_completer",
     forbidden: ["get_indicateurs"],
+  },
+  {
+    question: "Quelle est la VC de l'IND-894 en Bretagne ?",
+    reason:
+      "CAS NÉGATIF inverse : la valeur d'un indicateur, pas une valeur manquante → get_indicateurs",
+    expected: [{ toolName: "get_indicateurs" }],
+    forbidden: ["get_indicateurs_a_completer"],
   },
 ];
 
