@@ -16,6 +16,10 @@
       "types": "./src/analytics/buckets.ts",
       "default": "./src/analytics/buckets.ts"
     },
+    "./analytics/dimensions": {
+      "types": "./src/analytics/dimensions.ts",
+      "default": "./src/analytics/dimensions.ts"
+    },
     "./analytics/events": {
       "types": "./src/analytics/events.ts",
       "default": "./src/analytics/events.ts"

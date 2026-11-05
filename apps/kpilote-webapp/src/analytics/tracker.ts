@@ -22,10 +22,14 @@ const config: AnalyticsConfig | null =
       }
     : null
 
+// Au-delà, les envois retenus partent sans dimensions : l'analytics n'attend pas l'API.
+export const DIMENSIONS_TIMEOUT_MS = 3000
+
 export const analytics = createBrowserAnalytics({
   config,
   enabled: import.meta.env.PROD && env.analyticsEnabled,
   doNotTrack: respectDoNotTrack(),
+  waitForDimensions: { timeoutMs: DIMENSIONS_TIMEOUT_MS },
 })
 
 const describeInactive = (reason: InactiveAnalyticsReason): string => {
