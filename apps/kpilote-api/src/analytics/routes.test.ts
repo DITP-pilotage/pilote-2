@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import { OpenAPIHono } from '@hono/zod-openapi'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { analyticsRoutes } from '@/analytics/routes'
 import { runWithPrincipal, type Principal } from '@/framework/auth/userContext'
@@ -90,6 +90,23 @@ describe('dimensions Matomo', { concurrent: false }, () => {
       expect(
         await db().analyticsDimension.findUnique({ where: { cle: 'app_area' } }),
       ).toMatchObject({ slot: 1 })
+    }),
+  )
+
+  it(
+    'nomment le numéro pris quand une autre clé l’enregistre en même temps',
+    integrationTest(async () => {
+      await db().analyticsDimension.deleteMany()
+      await db().analyticsDimension.create({ data: { cle: 'app_area', slot: 1, nom: 'Zone' } })
+      // L'autre enregistrement arrive entre la vérification et l'écriture.
+      vi.spyOn(db().analyticsDimension, 'findFirst').mockResolvedValueOnce(null)
+
+      const response = await putAs(admin, 'entity_id', { slot: 1, nom: 'Entité' })
+
+      expect(response.status).toBe(409)
+      expect(await response.json()).toMatchObject({
+        message: 'La dimension 1 est déjà associée à une autre clé.',
+      })
     }),
   )
 
