@@ -1,3 +1,4 @@
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { useQuery } from '@tanstack/react-query'
 import { validateUIMessages } from 'ai'
@@ -11,6 +12,8 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react'
+
+import { analytics } from '@/analytics/tracker'
 
 import { assistantAccessQueryOptions, fetchConversation } from '../assistantApi'
 import type { PendingQuestion } from '../pendingQuestion'
@@ -103,30 +106,57 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
       .catch(() => clearMinimized())
   }, [allowed])
 
+  // La vue réellement affichée, une fois repliée selon la largeur de l'écran.
+  const shownView = useCallback(
+    (view: AssistantView): AssistantView => {
+      const shown = effectiveView(view, screenSize)
+      return shown === 'minimized' ? view : shown
+    },
+    [screenSize],
+  )
+
+  // La palette passe toujours une question ; la pastille, jamais.
   const open = useCallback(
     (question?: string) => {
       if (!conversationId) setConversationId(crypto.randomUUID())
       const text = question?.trim()
       if (text) setPendingQuestion({ id: crypto.randomUUID(), text })
-      setRequested(readViewPreference() ?? 'fullscreen')
+      const view = readViewPreference() ?? 'fullscreen'
+      setRequested(view)
+      analytics.trackEvent(
+        analyticsEvents.assistant.open({
+          source: question === undefined ? 'pastille' : 'palette',
+          view: shownView(view),
+        }),
+      )
     },
-    [conversationId],
+    [conversationId, shownView],
   )
 
   const minimize = useCallback(() => {
     if (conversationId) writeMinimized(conversationId)
+    if (display !== 'minimized')
+      analytics.trackEvent(analyticsEvents.assistant.minimize({ view: display }))
     if (requested !== 'minimized') setViewBeforeMinimize(requested)
     setRequested('minimized')
-  }, [conversationId, requested])
+  }, [conversationId, display, requested])
 
   const restore = useCallback(() => {
-    setRequested(viewBeforeMinimize ?? readViewPreference() ?? 'fullscreen')
-  }, [viewBeforeMinimize])
-
-  const changeView = useCallback((view: AssistantView) => {
-    writeViewPreference(view)
+    const view = viewBeforeMinimize ?? readViewPreference() ?? 'fullscreen'
     setRequested(view)
-  }, [])
+    analytics.trackEvent(analyticsEvents.assistant.resume({ view: shownView(view) }))
+  }, [shownView, viewBeforeMinimize])
+
+  const changeView = useCallback(
+    (view: AssistantView) => {
+      writeViewPreference(view)
+      setRequested(view)
+      if (display !== 'minimized' && display !== view) {
+        analytics.trackEvent(analyticsEvents.assistant.viewChange({ from: display, to: view }))
+      }
+    },
+    [display],
+  )
 
   // Passage de circonstance, pour laisser voir la page : la vue préférée ne change pas.
   const toWindow = useCallback(() => {
@@ -138,6 +168,7 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
   const selection = useRef(0)
 
   const newConversation = useCallback(() => {
+    analytics.trackEvent(analyticsEvents.assistant.conversationNew())
     selection.current += 1
     if (conversationId) stopChat(conversationId)
     clearMinimized()
@@ -154,6 +185,7 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
       if (!messages) throw new Error('Conversation introuvable')
       loadChat(id, messages)
       setConversationId(id)
+      analytics.trackEvent(analyticsEvents.assistant.historySelect())
     },
     [conversationId],
   )

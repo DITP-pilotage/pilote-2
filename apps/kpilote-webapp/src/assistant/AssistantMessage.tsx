@@ -27,13 +27,21 @@ export function UserMessage({ message }: { message: KpiloteUIMessage }) {
 }
 
 /** L'encart d'un outil de rédaction : en attente tant que l'outil n'a rien émis. */
-function RapportOf({ part, isStreaming }: { part: RapportPart; isStreaming: boolean }) {
+function RapportOf({
+  part,
+  isStreaming,
+  llmCallId,
+}: {
+  part: RapportPart
+  isStreaming: boolean
+  llmCallId: string | undefined
+}) {
   const pending = part.state === 'input-streaming' || part.state === 'input-available'
   const output = pending
     ? { type: rapportTypeOf(part), dateRedaction: '', markdown: '', done: false }
     : rapportOutput(part)
   if (!output || (pending && !isStreaming)) return null
-  return <RapportEncart output={output} isStreaming={isStreaming} />
+  return <RapportEncart output={output} isStreaming={isStreaming} llmCallId={llmCallId} />
 }
 
 export const AssistantMessage = memo(function AssistantMessage({
@@ -76,7 +84,14 @@ export const AssistantMessage = memo(function AssistantMessage({
           )
         }
         if (isRapportPart(part)) {
-          return <RapportOf key={index} part={part} isStreaming={state !== null} />
+          return (
+            <RapportOf
+              key={index}
+              part={part}
+              isStreaming={state !== null}
+              llmCallId={message.metadata?.llmCallId}
+            />
+          )
         }
         return null
       })}

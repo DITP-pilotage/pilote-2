@@ -4,6 +4,7 @@ import {
   type IssueCategory,
   type RateBody,
 } from '@pilote/kpilote-shared/assistant/feedback'
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
@@ -13,10 +14,13 @@ import { useToast } from '@pilote/kpilote-ui/Toast'
 import { Copy, Image, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { useId, useState } from 'react'
 
+import { analytics } from '@/analytics/tracker'
+
 import { rateCall } from './assistantApi'
 import { copyableText } from './copyResponse'
 import { copyDashboardImage } from './dashboard/copyImage'
 import { findDashboardElement, firstDashboard } from './dashboard/dashboardParts'
+import { useAssistantDisplay } from './display/AssistantProvider'
 
 const CATEGORY_OPTIONS = ISSUE_CATEGORIES.map((category) => ({
   value: category,
@@ -103,11 +107,16 @@ export function ResponseActions({ message }: { message: KpiloteUIMessage }) {
   const [sending, setSending] = useState(false)
   const [negativeOpen, setNegativeOpen] = useState(false)
   const llmCallId = message.metadata?.llmCallId
+  const { conversationId } = useAssistantDisplay()
+  const callContext = { conversation_id: conversationId ?? '', llm_call_id: llmCallId }
 
   const copy = () => {
     navigator.clipboard
       .writeText(copyableText(message, window.location.origin))
-      .then(() => toast({ title: 'Texte copié dans le presse-papiers' }))
+      .then(() => {
+        toast({ title: 'Texte copié dans le presse-papiers' })
+        analytics.trackEvent(analyticsEvents.assistant.exportText(callContext))
+      })
       .catch(() => toast({ title: "Le texte n'a pas pu être copié", variant: 'error' }))
   }
 
@@ -117,7 +126,10 @@ export function ResponseActions({ message }: { message: KpiloteUIMessage }) {
     const element = dashboard ? findDashboardElement(dashboard.toolCallId) : null
     if (!element) return
     copyDashboardImage(element)
-      .then(() => toast({ title: 'Image copiée dans le presse-papiers' }))
+      .then(() => {
+        toast({ title: 'Image copiée dans le presse-papiers' })
+        analytics.trackEvent(analyticsEvents.assistant.exportDashboardImage(callContext))
+      })
       .catch(() => toast({ title: "L'image n'a pas pu être copiée", variant: 'error' }))
   }
 
@@ -126,6 +138,14 @@ export function ResponseActions({ message }: { message: KpiloteUIMessage }) {
     setSending(true)
     rateCall({ llmCallId, body })
       .then(() => {
+        analytics.trackEvent(
+          body.evaluation === 'POSITIVE'
+            ? analyticsEvents.assistant.feedbackPositive(callContext)
+            : analyticsEvents.assistant.feedbackNegative({
+                ...callContext,
+                categories: body.categories.join(','),
+              }),
+        )
         setRated(true)
         setNegativeOpen(false)
         toast({ title: 'Merci pour votre retour' })

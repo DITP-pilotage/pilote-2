@@ -1,9 +1,12 @@
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { clsxm } from '@pilote/kpilote-ui/clsxm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ChevronDown, Search, Trash2 } from 'lucide-react'
 import { Popover } from 'radix-ui'
 import { useMemo, useState } from 'react'
+
+import { analytics } from '@/analytics/tracker'
 
 import { conversationsQueryOptions, deleteConversation } from '../assistantApi'
 import { useAssistantDisplay } from '../display/AssistantProvider'
@@ -27,6 +30,7 @@ export function HistoryMenu({ conversationId, titre }: { conversationId: string;
   const remove = useMutation({
     mutationFn: deleteConversation,
     onSuccess: (_, id) => {
+      analytics.trackEvent(analyticsEvents.assistant.conversationDelete())
       void queryClient.invalidateQueries({ queryKey: conversationsQueryOptions().queryKey })
       if (id === conversationId) newConversation()
     },
@@ -60,8 +64,10 @@ export function HistoryMenu({ conversationId, titre }: { conversationId: string;
       open={open}
       onOpenChange={(isOpen) => {
         setOpen(isOpen)
-        if (isOpen) setNow(new Date())
-        else setSearch('')
+        if (isOpen) {
+          setNow(new Date())
+          analytics.trackEvent(analyticsEvents.assistant.historyOpen())
+        } else setSearch('')
       }}
     >
       <Popover.Trigger

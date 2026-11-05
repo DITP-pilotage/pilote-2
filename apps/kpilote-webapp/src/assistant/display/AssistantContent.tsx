@@ -1,17 +1,22 @@
 import type { MouseEvent } from 'react'
 
+import { analytics } from '@/analytics/tracker'
+
 import { AssistantPanel } from '../AssistantPanel'
 import { ResponseActions } from '../ResponseActions'
+import { linkEvent } from '../tracking'
 import { usePageContext } from '../usePageContext'
 import { AssistantHeader } from './AssistantHeader'
 import { useAssistantDisplay } from './AssistantProvider'
 import { ExperimentationBanner } from './ExperimentationBanner'
 import { hidesPage } from './views'
 
-const isInternalLink = (target: EventTarget): boolean => {
-  const link = target instanceof Element ? target.closest('a[href]') : null
-  const href = link?.getAttribute('href') ?? ''
-  return href.startsWith('/') && !href.startsWith('//') && link?.getAttribute('target') !== '_blank'
+const linkOf = (target: EventTarget): Element | null =>
+  target instanceof Element ? target.closest('a[href]') : null
+
+const isInternalLink = (link: Element): boolean => {
+  const href = link.getAttribute('href') ?? ''
+  return href.startsWith('/') && !href.startsWith('//') && link.getAttribute('target') !== '_blank'
 }
 
 /** En-tête et fil, communs aux trois vues. */
@@ -23,10 +28,14 @@ export function AssistantContent({ conversationId }: { conversationId: string })
   // En vue modale, un lien interne laisse voir la page : l'assistant passe en fenêtre
   // (ou se masque) avant que le lien ne navigue.
   // Un clic modifié (nouvel onglet) ou déjà traité ne quitte pas la page.
+  // Seules les réponses portent des liens : l'en-tête n'a que des boutons.
   const onLinkClick = (event: MouseEvent<HTMLDivElement>) => {
+    const link = linkOf(event.target)
+    if (!link) return
+    analytics.trackEvent(linkEvent(link.getAttribute('href') ?? ''))
     if (!hidesPage(display) || event.defaultPrevented) return
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
-    if (isInternalLink(event.target)) toWindow()
+    if (isInternalLink(link)) toWindow()
   }
 
   return (

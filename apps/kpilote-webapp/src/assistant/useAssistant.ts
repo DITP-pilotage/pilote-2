@@ -3,8 +3,11 @@ import type { PageContext } from '@pilote/kpilote-shared/assistant/chat'
 import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { DefaultChatTransport } from 'ai'
 
+import { analytics } from '@/analytics/tracker'
 import { tokenStore } from '@/auth/tokenStore'
 import { env } from '@/env'
+
+import { answerOutcomeEvent, choicesPresentedEvent } from './tracking'
 
 // Une conversation survit au démontage du panneau (retour à la palette) : son `Chat` est
 // gardé tant que l'onglet vit, et retrouvé par son identifiant.
@@ -19,6 +22,12 @@ const createChat = (conversationId: string, messages: KpiloteUIMessage[] = []) =
   const chat = new Chat<KpiloteUIMessage>({
     id: conversationId,
     messages,
+    onFinish: ({ message, isAbort, isError }) => {
+      const outcome = answerOutcomeEvent({ conversationId, message, isAbort, isError })
+      if (outcome) analytics.trackEvent(outcome)
+      const choices = isAbort ? null : choicesPresentedEvent({ conversationId, message })
+      if (choices) analytics.trackEvent(choices)
+    },
     transport: new DefaultChatTransport<KpiloteUIMessage>({
       api: `${env.apiUrl}/assistant/chat`,
       // Le serveur possède l'historique : seul le nouveau message part.

@@ -1,3 +1,4 @@
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import type { RapportOutput } from '@pilote/kpilote-shared/assistant/tools'
 import { Button } from '@pilote/kpilote-ui/Button'
 import {
@@ -10,6 +11,9 @@ import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ChevronDown, Copy, Download, FileText } from 'lucide-react'
 import { useRef } from 'react'
 
+import { analytics } from '@/analytics/tracker'
+
+import { useAssistantDisplay } from './display/AssistantProvider'
 import { NO_PRINT, printRapport } from './exportRapport'
 import { MarkdownResponse } from './MarkdownResponse'
 import { rapportFileName } from './rapport'
@@ -35,13 +39,17 @@ const DATE_FORMAT = new Intl.DateTimeFormat('fr-FR', {
 export function RapportEncart({
   output,
   isStreaming,
+  llmCallId,
 }: {
   output: RapportOutput
+  llmCallId: string | undefined
   /** Une rédaction interrompue (arrêt, rechargement) ne reste pas « en cours ». */
   isStreaming: boolean
 }) {
   const toast = useToast()
+  const { conversationId } = useAssistantDisplay()
   const ref = useRef<HTMLElement>(null)
+  const exportContext = { conversation_id: conversationId ?? '', llm_call_id: llmCallId }
   const writing = isStreaming && !output.done
   const waitingForText = writing && output.markdown.trim() === ''
   const interrupted = !isStreaming && !output.done
@@ -49,13 +57,17 @@ export function RapportEncart({
   const copy = () => {
     navigator.clipboard
       .writeText(output.markdown)
-      .then(() => toast({ title: 'Texte copié dans le presse-papiers' }))
+      .then(() => {
+        toast({ title: 'Texte copié dans le presse-papiers' })
+        analytics.trackEvent(analyticsEvents.assistant.exportReportCopy(exportContext))
+      })
       .catch(() => toast({ title: "Le texte n'a pas pu être copié", variant: 'error' }))
   }
 
   const downloadPdf = () => {
     const element = ref.current
     if (element === null) return
+    analytics.trackEvent(analyticsEvents.assistant.exportReportPdf(exportContext))
     printRapport({ element, title: rapportFileName(output) }).catch(() =>
       toast({ title: "Le PDF n'a pas pu être préparé", variant: 'error' }),
     )
