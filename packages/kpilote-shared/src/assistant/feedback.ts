@@ -18,7 +18,7 @@ export const CATEGORY_LABELS: Record<IssueCategory, { title: string; hint: strin
 
 export const MAX_COMMENTAIRE_LENGTH = 2000
 
-const commentaire = z.string().max(MAX_COMMENTAIRE_LENGTH).optional()
+const commentaire = z.string().trim().max(MAX_COMMENTAIRE_LENGTH).optional()
 
 export const rateBodySchema = z
   .discriminatedUnion('evaluation', [

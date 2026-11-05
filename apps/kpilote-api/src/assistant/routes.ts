@@ -12,6 +12,7 @@ import { bodyLimit } from 'hono/body-limit'
 
 import { checkAssistantAccess } from '@/assistant/access'
 import { buildAgent } from '@/assistant/agent'
+import { windowHistory } from '@/assistant/historyWindow'
 import {
   deleteConversation,
   getConversation,
@@ -56,8 +57,8 @@ const historyBefore = (history: unknown[], messageId: string): unknown[] => {
 const settled = <T, F>(promise: PromiseLike<T>, fallback: F): Promise<T | F> =>
   Promise.resolve(promise).catch(() => fallback)
 
-const requireAssistantAccess = (): void => {
-  if (!checkAssistantAccess(requirePrincipal())) {
+const requireAssistantAccess = async (): Promise<void> => {
+  if (!(await checkAssistantAccess(requirePrincipal()))) {
     throw new ForbiddenError("L'assistant est réservé aux utilisateurs autorisés.")
   }
 }
@@ -176,7 +177,7 @@ const deleteConversationRoute = createRoute({
 export const assistantRoutes = createOpenApiHono()
 
 assistantRoutes.openapi(chatRoute, async (context) => {
-  requireAssistantAccess()
+  await requireAssistantAccess()
   const body = context.req.valid('json')
   const principalId = requireCurrentPrincipalId()
   const model = body.model ?? DEFAULT_MODEL
@@ -196,7 +197,7 @@ assistantRoutes.openapi(chatRoute, async (context) => {
 
   const result = streamText({
     model: createAlbertModel(model),
-    messages: await convertToModelMessages(messages, { tools: agent.tools }),
+    messages: windowHistory(await convertToModelMessages(messages, { tools: agent.tools })),
     ...agent,
     abortSignal: context.req.raw.signal,
     // L'erreur est journalisée assainie par `onError` de la réponse ; le défaut du SDK
@@ -273,23 +274,23 @@ assistantRoutes.openapi(chatRoute, async (context) => {
   })
 })
 
-assistantRoutes.openapi(accessRoute, (context) =>
-  context.json({ allowed: checkAssistantAccess(requirePrincipal()) }, 200),
+assistantRoutes.openapi(accessRoute, async (context) =>
+  context.json({ allowed: await checkAssistantAccess(requirePrincipal()) }, 200),
 )
 
 assistantRoutes.openapi(rateRoute, async (context) => {
-  requireAssistantAccess()
+  await requireAssistantAccess()
   await rateCall({ callId: context.req.valid('param').id, body: context.req.valid('json') })
   return context.body(null, 204)
 })
 
 assistantRoutes.openapi(listConversationsRoute, async (context) => {
-  requireAssistantAccess()
+  await requireAssistantAccess()
   return context.json({ items: await listConversations(requireCurrentPrincipalId()) }, 200)
 })
 
 assistantRoutes.openapi(getConversationRoute, async (context) => {
-  requireAssistantAccess()
+  await requireAssistantAccess()
   const conversation = await getConversation({
     id: context.req.valid('param').id,
     principalId: requireCurrentPrincipalId(),
@@ -298,7 +299,7 @@ assistantRoutes.openapi(getConversationRoute, async (context) => {
 })
 
 assistantRoutes.openapi(deleteConversationRoute, async (context) => {
-  requireAssistantAccess()
+  await requireAssistantAccess()
   await deleteConversation({
     id: context.req.valid('param').id,
     principalId: requireCurrentPrincipalId(),

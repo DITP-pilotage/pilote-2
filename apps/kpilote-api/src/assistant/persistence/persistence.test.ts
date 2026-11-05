@@ -212,6 +212,22 @@ describe('persistance de l’assistant', () => {
   )
 
   it(
+    'n’enregistre pas un commentaire vide',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      const callId = randomUUID()
+      await turn(principalId, randomUUID(), { id: callId })
+
+      await runAsUser(principalId, () =>
+        rateCall({ callId, body: { evaluation: 'POSITIVE', commentaire: '   ' } }),
+      )
+
+      const appel = await db().assistantAppel.findUniqueOrThrow({ where: { id: callId } })
+      expect(appel.commentaire).toBeNull()
+    }),
+  )
+
+  it(
     'ignore la note d’un appel appartenant à un autre principal',
     integrationTest(async () => {
       const callId = randomUUID()

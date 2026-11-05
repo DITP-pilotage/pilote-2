@@ -3,10 +3,12 @@ import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { clsxm } from '@pilote/kpilote-ui/clsxm'
+import { useQueryClient } from '@tanstack/react-query'
 import { ArrowDown, Mic, Square } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { AssistantMessage, UserMessage } from './AssistantMessage'
+import { assistantAccessQueryOptions } from './assistantApi'
 import { AssistantSignature } from './AssistantSignature'
 import { deriveAssistantState } from './deriveAssistantState'
 import { EmptyState } from './emptyState/EmptyState'
@@ -67,6 +69,13 @@ export function AssistantPanel({
   const following = useRef(true)
   const [detached, setDetached] = useState(false)
   const messageCount = useRef(messages.length)
+  const queryClient = useQueryClient()
+
+  // L'accès a pu être retiré entre-temps : relu, il fait disparaître l'assistant plutôt que
+  // de laisser réessayer en vain.
+  useEffect(() => {
+    if (error) void queryClient.invalidateQueries(assistantAccessQueryOptions())
+  }, [error, queryClient])
 
   useEffect(() => {
     const question = questionToSend({

@@ -95,4 +95,15 @@ describe('apiRouter served by @hono/node-server', () => {
   it('does not forward a body on GET', async () => {
     expect(await send('GET')).toEqual({ method: 'GET', contentType: null, body: '' })
   })
+
+  it('relays the assistant administration but not the assistant itself', async () => {
+    const status = async (path: string) =>
+      (await fetch(`${proxyUrl}/api/${path}`, { headers: { cookie } })).status
+
+    expect(await status('assistant/admin/conversations?page=2&recherche=ch%C3%B4mage')).toBe(200)
+    expect(await status('assistant/admin/acces/utilisateurs/0f8c1a2b-uuid')).toBe(200)
+    expect(await status('assistant/chat')).toBe(403)
+    expect(await status('assistant/acces')).toBe(403)
+    expect(await status('assistant')).toBe(403)
+  })
 })

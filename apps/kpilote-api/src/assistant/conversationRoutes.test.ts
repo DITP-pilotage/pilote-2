@@ -8,12 +8,16 @@ import { runWithPrincipal, type Principal } from '@/framework/auth/userContext'
 import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { db } from '@/framework/persistence/dbStore'
 import { ApiKeyRole } from '@/generated/prisma/enums'
+import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 
 const userPrincipal = (id: string): Principal => ({
   kind: 'user',
   user: { id, email: 'agent@example.fr', prenom: 'Agent', nom: 'Test' },
 })
+
+// Un utilisateur autorisé à se servir de l'assistant.
+const authorizedId = async () => (await fixtures.assistantUtilisateur()).id
 
 const appAs = (principal: Principal) => {
   const app = new OpenAPIHono()
@@ -38,7 +42,7 @@ describe('conversations de l’assistant', { concurrent: false }, () => {
   it(
     'liste les seules conversations du principal, des plus récentes aux plus anciennes',
     integrationTest(async () => {
-      const principalId = randomUUID()
+      const principalId = await authorizedId()
       await givenConversation(principalId, 'Ancienne', new Date('2026-01-01'))
       await givenConversation(principalId, 'Récente', new Date('2026-06-01'))
       await givenConversation(randomUUID(), 'D’un autre')
@@ -55,7 +59,7 @@ describe('conversations de l’assistant', { concurrent: false }, () => {
   it(
     'ne liste que les 50 plus récentes',
     integrationTest(async () => {
-      const principalId = randomUUID()
+      const principalId = await authorizedId()
       await db().assistantConversation.createMany({
         data: Array.from({ length: 51 }, (_, index) => ({
           id: randomUUID(),
@@ -77,7 +81,7 @@ describe('conversations de l’assistant', { concurrent: false }, () => {
   it(
     'rend une conversation du principal avec ses messages',
     integrationTest(async () => {
-      const principalId = randomUUID()
+      const principalId = await authorizedId()
       const conversation = await givenConversation(principalId, 'Chômage')
 
       const response = await appAs(userPrincipal(principalId)).request(
@@ -99,7 +103,7 @@ describe('conversations de l’assistant', { concurrent: false }, () => {
     'ne montre ni ne supprime la conversation d’un autre principal',
     integrationTest(async () => {
       const conversation = await givenConversation(randomUUID(), 'Privée')
-      const intrus = appAs(userPrincipal(randomUUID()))
+      const intrus = appAs(userPrincipal(await authorizedId()))
 
       expect((await intrus.request(`/assistant/conversations/${conversation.id}`)).status).toBe(404)
       expect(
@@ -115,7 +119,7 @@ describe('conversations de l’assistant', { concurrent: false }, () => {
   it(
     'supprime une conversation du principal',
     integrationTest(async () => {
-      const principalId = randomUUID()
+      const principalId = await authorizedId()
       const conversation = await givenConversation(principalId, 'À supprimer')
       const app = appAs(userPrincipal(principalId))
 
