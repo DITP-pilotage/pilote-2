@@ -86,7 +86,7 @@ export const useAlbertConversation = (): AlbertConversationContextValue => {
   return value;
 };
 
-export const useAlbertPageContext = (pageContext: AlbertPageContext) => {
+export const useAssistantPageContext = (pageContext: AlbertPageContext) => {
   const { setPageContext } = useAlbertConversation();
 
   useEffect(() => {

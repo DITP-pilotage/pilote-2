@@ -17,7 +17,7 @@ import {
 import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEntetePageChantier";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import PageChantierEnTête from "./EnTête/EnTête";
-import { useAlbertPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { useAssistantPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { construireAgentContextChantier } from "@/components/PageChantier/agentContextChantier";
 import { scenariosChantier } from "@/components/PageChantier/scenariosChantier";
 import { usePageChantier } from "./usePageChantier";
@@ -58,7 +58,7 @@ export const BasePageChantierLayout = ({
     }),
     [chantier.id, chantier.nom, territoireCode, jalon],
   );
-  useAlbertPageContext(contexteAssistant);
+  useAssistantPageContext(contexteAssistant);
 
   const territoireSélectionné = useTerritoireSelectionne();
 
