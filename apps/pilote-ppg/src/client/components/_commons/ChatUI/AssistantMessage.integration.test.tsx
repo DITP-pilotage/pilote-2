@@ -1,8 +1,11 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { render } from "@/components/shared/DataTable/testUtils";
 import "@testing-library/jest-dom";
 import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
+import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
+import type { LigneACompleter } from "@/server/albert/tools/indicateursACompleter";
 
 vi.mock("html-to-image", () => ({
   toBlob: async () => new Blob(["png"], { type: "image/png" }),
@@ -38,6 +41,68 @@ const renderMessage = (message: PiloteUIMessage) =>
     >
       <AssistantMessage isStreaming={false} message={message} />
     </ChantierLinksProvider>,
+  );
+
+const ligneACompleter = (numero: number): LigneACompleter => ({
+  chantier_id: "CH-018",
+  chantier_nom: "Accès aux soins",
+  indicateur_id: `IND-${numero}`,
+  indicateur_nom: `Indicateur ${numero}`,
+  territoire_code: "REG-53",
+  territoire_nom: "Bretagne",
+  territoire_nom_affiche: "Bretagne",
+  maille: "régionale",
+  motifs: ["VA non à jour"],
+  date_derniere_valeur: null,
+  mise_a_jour_attendue_depuis: null,
+});
+
+const reponseAvecDetail = (nombreLignes: number): PiloteUIMessage => ({
+  id: "assistant-2",
+  role: "assistant",
+  parts: [
+    {
+      type: "tool-get_indicateurs_a_completer",
+      toolCallId: "call-detail",
+      state: "output-available",
+      input: { motifs: ["va"] },
+      output: {
+        resume: { en_bref: "Résumé.", ensemble: {}, chantiers: [] },
+        detail: {
+          motifs: ["va"],
+          perimetre: "Bretagne et ses départements",
+          lignes: Array.from({ length: nombreLignes }, (_, index) =>
+            ligneACompleter(index + 1),
+          ),
+        },
+      },
+    },
+  ],
+});
+
+const partClarification = (
+  toolCallId: string,
+  question: string,
+): PiloteUIMessage["parts"][number] => ({
+  type: "tool-clarify_with_choices",
+  toolCallId,
+  state: "output-available",
+  input: { question, choices: [] },
+  output: { question, choices: [{ label: `Choix ${question}`, value: "oui" }] },
+});
+
+const renderAvecChoix = (message: PiloteUIMessage) =>
+  render(
+    <ChatContextProvider
+      error={undefined}
+      fillInput={vi.fn()}
+      sendMessage={vi.fn()}
+      status="ready"
+      stop={vi.fn()}
+      track={vi.fn()}
+    >
+      <AssistantMessage afficherChoix isStreaming={false} message={message} />
+    </ChatContextProvider>,
   );
 
 describe("AssistantMessage", () => {
@@ -105,5 +170,99 @@ describe("AssistantMessage", () => {
     expect(
       screen.queryByRole("button", { name: /copier l'image/i }),
     ).not.toBeInTheDocument();
+  });
+
+  test("affiche le tableau replié avec une ligne", () => {
+    // Given
+    const reponse = reponseAvecDetail(1);
+
+    // When
+    renderMessage(reponse);
+
+    // Then
+    expect(
+      screen.getByText(
+        "Détail par territoire · Bretagne et ses départements · VA non à jour · 1 lignes · 1 chantier",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Afficher le détail").closest("details"),
+    ).not.toHaveAttribute("open");
+  });
+
+  test("n'affiche pas de tableau sans ligne", () => {
+    // Given
+    const reponse = reponseAvecDetail(0);
+
+    // When
+    renderMessage(reponse);
+
+    // Then
+    expect(screen.queryByText(/Détail par territoire/)).not.toBeInTheDocument();
+  });
+
+  test("n'affiche pas de tableau pendant le streaming", () => {
+    // Given
+    const reponse = reponseAvecDetail(1);
+
+    // When
+    render(<AssistantMessage isStreaming message={reponse} />);
+
+    // Then
+    expect(screen.queryByText(/Détail par territoire/)).not.toBeInTheDocument();
+  });
+
+  test("n'affiche pas de tableau sur une clarification", () => {
+    // Given
+    const reponse: PiloteUIMessage = {
+      id: "assistant-3",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-get_indicateurs_a_completer",
+          toolCallId: "call-clarification",
+          state: "output-available",
+          input: { motifs: ["va", "vi", "vc"] },
+          output: {
+            clarification: {
+              question: "Quelles valeurs ?",
+              choices: [{ label: "Valeurs d'avancement", value: "va" }],
+            },
+          },
+        },
+      ],
+    };
+
+    // When
+    renderAvecChoix(reponse);
+
+    // Then
+    expect(screen.queryByText(/Détail par territoire/)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Valeurs d'avancement/ }),
+    ).toBeInTheDocument();
+  });
+
+  test("ne présente que les choix de la dernière question", () => {
+    // Given
+    const reponse: PiloteUIMessage = {
+      id: "assistant-4",
+      role: "assistant",
+      parts: [
+        partClarification("call-1", "première"),
+        partClarification("call-2", "seconde"),
+      ],
+    };
+
+    // When
+    renderAvecChoix(reponse);
+
+    // Then
+    expect(
+      screen.queryByRole("button", { name: /Choix première/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Choix seconde/ }),
+    ).toBeInTheDocument();
   });
 });

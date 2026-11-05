@@ -1,5 +1,5 @@
 import { api } from "@/server/framework/trpc/api";
-import { SelecteurGroupement } from "./SelecteurGroupement";
+import { SelecteurGroupement } from "@/components/_commons/SelecteurGroupement/SelecteurGroupement";
 import { TableauAnnuaire } from "./TableauAnnuaire";
 import { pluriel } from "./lignesAnnuaire";
 import {
