@@ -63,7 +63,7 @@ describe("GetChantierObjectifsQuery", () => {
         contenu: "Ancien objectif",
         date_modification: new Date("2025-01-01"),
       });
-      await fixtures.objectifChantier({
+      const objectifRecent = await fixtures.objectifChantier({
         chantier_id: chantier.id,
         type: $Enums.type_objectif.notre_ambition,
         contenu: "Objectif récent",
@@ -77,6 +77,8 @@ describe("GetChantierObjectifsQuery", () => {
       expect(result.objectifs.notre_ambition).toEqual({
         date_publication: new Date("2025-06-01").toISOString(),
         contenu: "Objectif récent",
+        auteur_creation_id: objectifRecent.auteur_creation_id,
+        auteur_modification_id: objectifRecent.auteur_modification_id,
       });
     }),
   );
@@ -86,13 +88,13 @@ describe("GetChantierObjectifsQuery", () => {
     createIntegrationTest(async () => {
       // Given
       const chantier = await fixtures.chantierIdentite();
-      await fixtures.objectifChantier({
+      const ambition = await fixtures.objectifChantier({
         chantier_id: chantier.id,
         type: $Enums.type_objectif.notre_ambition,
         contenu: "Notre ambition",
         date_modification: new Date("2025-01-01"),
       });
-      await fixtures.objectifChantier({
+      const dejaFait = await fixtures.objectifChantier({
         chantier_id: chantier.id,
         type: $Enums.type_objectif.deja_fait,
         contenu: "Déjà fait",
@@ -106,10 +108,14 @@ describe("GetChantierObjectifsQuery", () => {
       expect(result.objectifs.notre_ambition).toEqual({
         date_publication: new Date("2025-01-01").toISOString(),
         contenu: "Notre ambition",
+        auteur_creation_id: ambition.auteur_creation_id,
+        auteur_modification_id: ambition.auteur_modification_id,
       });
       expect(result.objectifs.deja_fait).toEqual({
         date_publication: new Date("2025-02-01").toISOString(),
         contenu: "Déjà fait",
+        auteur_creation_id: dejaFait.auteur_creation_id,
+        auteur_modification_id: dejaFait.auteur_modification_id,
       });
       expect(result.objectifs.a_faire).toBeNull();
     }),
