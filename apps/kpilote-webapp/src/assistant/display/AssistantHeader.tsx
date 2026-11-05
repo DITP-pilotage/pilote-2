@@ -1,5 +1,8 @@
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { deriveTitle } from '@pilote/kpilote-shared/assistant/conversation'
 import { ChevronsRight, Minus, SquarePen } from 'lucide-react'
+
+import { analytics } from '@/analytics/tracker'
 
 import { HistoryMenu } from '../history/HistoryMenu'
 import { useConversationState } from '../useAssistant'
@@ -22,7 +25,10 @@ export function AssistantHeader({ conversationId }: { conversationId: string }) 
         aria-label="Nouvelle conversation"
         title="Nouvelle conversation"
         className={ICON_BUTTON}
-        onClick={newConversation}
+        onClick={() => {
+          analytics.trackEvent(analyticsEvents.assistant.conversationNew())
+          newConversation()
+        }}
       >
         <SquarePen className="size-[18px]" />
       </button>
@@ -32,7 +38,12 @@ export function AssistantHeader({ conversationId }: { conversationId: string }) 
         aria-label="Masquer l'assistant"
         title="Masquer"
         className={ICON_BUTTON}
-        onClick={minimize}
+        onClick={() => {
+          if (display !== 'minimized') {
+            analytics.trackEvent(analyticsEvents.assistant.minimize({ view: display }))
+          }
+          minimize()
+        }}
       >
         {display === 'sidePanel' ? (
           <ChevronsRight className="size-[18px]" />
