@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { EncartSynthese } from "@/components/_commons/ChatUI/EncartSynthese";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { imprimerEncart } from "@/components/_commons/ChatUI/exporterEncart";
@@ -29,11 +30,13 @@ const encart = (
 
 const renderEncart = (output: EncartOutput, isStreaming = true) =>
   render(
-    <ChantierLinksProvider
-      options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
-    >
-      <EncartSynthese isStreaming={isStreaming} output={output} />
-    </ChantierLinksProvider>,
+    <QueryClientProvider client={new QueryClient()}>
+      <ChantierLinksProvider
+        options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
+      >
+        <EncartSynthese isStreaming={isStreaming} output={output} />
+      </ChantierLinksProvider>
+    </QueryClientProvider>,
   );
 
 // Le menu « Exporter » (radix) se positionne avec ResizeObserver, absent de jsdom.

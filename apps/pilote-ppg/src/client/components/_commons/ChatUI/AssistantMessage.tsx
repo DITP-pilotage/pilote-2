@@ -34,6 +34,8 @@ import {
   llmCallIdOf,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
+import { useQueryClient } from "@tanstack/react-query";
+import { textWithCachedPersons } from "@/components/_commons/ChatUI/persons/textWithCachedPersons";
 
 const TYPES_ENCART: Record<string, EncartOutput["type"]> = {
   "tool-rediger_synthese_territoire": "synthese",
@@ -91,6 +93,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   const canCopyText = copyExports.includes("export.text");
   const canCopyImage = copyExports.includes("export.dashboard_image");
   const track = useChatTracking();
+  const queryClient = useQueryClient();
 
   const lastTextIndex = parts.reduce<number>(
     (acc, part, index) => (part.type === "text" ? index : acc),
@@ -130,7 +133,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   };
 
   const copierTexte = () => {
-    const texte = [
+    const texteAvecReferences = [
       ...texteEncarts({ message }),
       extractMessageText(message),
       ...(consultationCentreAide
@@ -142,6 +145,10 @@ export const AssistantMessage = memo(function AssistantMessage({
           ]
         : []),
     ].join("\n\n");
+    const texte = textWithCachedPersons({
+      text: texteAvecReferences,
+      queryClient,
+    });
 
     trackedCopy({
       name: "export.text",
