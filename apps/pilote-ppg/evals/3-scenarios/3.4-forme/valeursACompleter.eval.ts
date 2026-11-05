@@ -9,8 +9,8 @@ import { VALEURS_A_COMPLETER_CRITERIA } from "./valeursACompleter.criteria";
  * maille à zéro dite « aucune donnée », des motifs définis de travers, puis,
  * pour la réponse en deux temps (en bref puis tableau du détail) : un nombre
  * de territoires pour un seul territoire, une liste au-delà du seuil, un
- * territoire hors demande, un tableau non introduit. Les quatre derniers
- * critères restent neutres tant qu'aucune sortie d'outil n'a de champ en_bref.
+ * territoire hors demande, un tableau non introduit. Ces critères restent
+ * neutres tant qu'aucune sortie d'outil n'a de champ `perimetre`.
  *
  * Aucune attente d'outil : le scénario juge la réponse écrite, et tourne à
  * l'identique avec les deux outils d'origine et avec l'outil unique.
@@ -30,6 +30,14 @@ import { VALEURS_A_COMPLETER_CRITERIA } from "./valeursACompleter.criteria";
  * tableau du détail (« Tableau introduit » 33 % puis 28 %, « Un seul
  * territoire » 83 % puis 72 %) n'étaient pas actifs « avant » : ils restaient
  * neutres faute de champ en_bref.
+ *
+ * Référence « après (2) » avec le résumé plat (sans en_bref), le 2026-11-05 :
+ * N3 91,3 % puis 92,4 % (« Tableau introduit » 0 % aux deux passages, « Un
+ * seul territoire » 94 % puis 100 %, « Aucun territoire hors demande » 100 %
+ * puis 94 %, « Périmètre cité » 83 % puis 89 %, « Pas de somme entre
+ * indicateurs » et « Mailles à zéro » 100 %) ; clarifyWithChoices 95,2 % ;
+ * getIndicateurs 100 % ; getChantiers 98,8 % ; getChantiersSignales 93,9 % ;
+ * getIndicateursACompleter 96,4 %.
  */
 
 scenarioEval({

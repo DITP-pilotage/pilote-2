@@ -22,10 +22,19 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * (`get_chantiers`), sur le taux non calculé (`get_chantiers_signales`) et sur
  * les valeurs des indicateurs (`get_indicateurs`).
  *
- * Référence observée le 2026-11-05 (3 essais par cas, 32 cas) : moyenne
- * 0.865 puis 0.854 au second passage (96 évals). Les cas sans type de valeurs
- * nommé échouent surtout parce que le modèle appelle `clarify_with_choices`
- * après la clarification renvoyée par l'outil.
+ * Référence « avant » (dev, 2026-11-05, deux anciens outils) : valeurs
+ * d'avancement non à jour 95,8 % et valeurs initiales et cibles manquantes
+ * 94,9 %.
+ *
+ * Référence « après (tâche 8) », résumé en phrase (3 essais par cas, 32 cas) :
+ * moyenne 0.865 puis 0.854 au second passage (96 évals). Les cas sans type de
+ * valeurs nommé échouaient surtout parce que le modèle appelait
+ * `clarify_with_choices` après la clarification renvoyée par l'outil.
+ *
+ * Référence « après (2) », résumé plat (une ligne par indicateur) : moyenne
+ * 0.964. Restent en échec « Quels indicateurs n'ont pas de cible en 2027 ? »
+ * (appel de `clarify_with_choices`, ou aucun appel) et « Qu'est-ce que je dois
+ * mettre à jour dans le Nord ? » (un essai sans `search_territoires`).
  */
 
 const CASES: ToolCase[] = [
