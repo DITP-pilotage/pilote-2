@@ -24,6 +24,12 @@ import type {
 import type { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { personReference } from "@/shared/personne/personReference";
+
+const DIRECTEUR_PROJET_ID = "0b3c1f2e-8a4d-4c6b-9e1f-2a3b4c5d6e7f";
+const RESPONSABLE_LOCAL_ID = "1c4d2f3e-9b5e-4d7c-8f2a-3b4c5d6e7f80";
+const COORDINATEUR_ID = "2d5e3a4f-0c6f-4e8d-9a3b-4c5d6e7f8091";
+const AUTEUR_SYNTHESE_ID = "3e6f4b5a-1d7a-4f9e-8b4c-5d6e7f8091a2";
 
 vi.mock("@/server/albert/Albert", () => ({
   Albert: { streamSubagentText: vi.fn() },
@@ -67,7 +73,10 @@ const chantier = (id: string): ChantierResult => ({
     ppg: "PPG",
     ministeres: [],
     mailles_applicables: ["NAT", "DEPT"],
+    directeurs_projet_ids: [DIRECTEUR_PROJET_ID],
   },
+  responsables_locaux_ids: [RESPONSABLE_LOCAL_ID],
+  coordinateurs_territoriaux_ids: [COORDINATEUR_ID],
   meteo: "ORAGE",
   tendance: "BAISSE",
   ecart: -14,
@@ -79,6 +88,8 @@ const chantier = (id: string): ChantierResult => ({
     commentaire: "Deux postes restent vacants.",
     date_meteo: "2026-01-10",
     date_commentaire: "2026-01-12",
+    auteur_creation_id: AUTEUR_SYNTHESE_ID,
+    auteur_modification_id: AUTEUR_SYNTHESE_ID,
   },
   commentaires: { donnees: null, autresResultats: null },
 });
@@ -92,7 +103,10 @@ const chantierRenvoye = (id: string): ChantierRenvoye => ({
     ppg: "PPG",
     ministeres: [],
     maille_de_pilotage: "départementale",
+    directeurs_projet: [personReference(DIRECTEUR_PROJET_ID)],
   },
+  responsables_locaux: [personReference(RESPONSABLE_LOCAL_ID)],
+  coordinateurs_territoriaux: [personReference(COORDINATEUR_ID)],
   taux_avancement: 40,
   ecart: -14,
   tendance: "En baisse",
@@ -102,6 +116,7 @@ const chantierRenvoye = (id: string): ChantierRenvoye => ({
   synthese: {
     commentaire: "Deux postes restent vacants.",
     date_commentaire: "2026-01-12",
+    auteur: personReference(AUTEUR_SYNTHESE_ID),
   },
 });
 
@@ -307,7 +322,7 @@ describe("outils de rédaction d'encart", () => {
     ]);
   });
 
-  test("passe au sous-agent des données prêtes à recopier, sans les drapeaux ni les commentaires détaillés", async () => {
+  test("passe au sous-agent des données prêtes à recopier, personnes comprises par leur référence, sans les drapeaux ni les commentaires détaillés", async () => {
     // Given
     subagentRedige(["# Synthèse"]);
     const chantierPourLeSousAgent = (id: string) => ({
@@ -317,6 +332,10 @@ describe("outils de rédaction d'encart", () => {
       niveau_de_confiance: "Objectifs compromis",
       tendance: "En baisse",
       commentaire_de_synthese: "Deux postes restent vacants.",
+      auteur_synthese: personReference(AUTEUR_SYNTHESE_ID),
+      directeurs_projet: [personReference(DIRECTEUR_PROJET_ID)],
+      responsables_locaux: [personReference(RESPONSABLE_LOCAL_ID)],
+      coordinateurs_territoriaux: [personReference(COORDINATEUR_ID)],
     });
 
     // When
