@@ -218,7 +218,7 @@ describe("get_indicateurs_a_completer", () => {
     // then
     expect(result).toEqual({
       resume: expect.objectContaining({
-        en_bref: expect.stringMatching(/^Périmètre : tous vos territoires\. /),
+        perimetre: "tous vos territoires",
         jalon_vc: JALON,
       }),
       detail: {
@@ -266,7 +266,7 @@ describe("get_indicateurs_a_completer", () => {
     });
   });
 
-  test("un seul territoire accessible : phrases sans territoires", async () => {
+  test("un seul territoire accessible : même forme plate", async () => {
     // given
     const { tool } = buildTool({ territoiresAccessibles: ["DEPT-29"] });
 
@@ -278,9 +278,16 @@ describe("get_indicateurs_a_completer", () => {
 
     // then
     expect(result).toEqual({
-      resume: expect.objectContaining({
-        ensemble: { "VA non à jour": "1 chantier, 1 indicateur" },
-      }),
+      resume: {
+        perimetre: "tous vos territoires",
+        indicateurs: [
+          {
+            chantier: "CH-001 · Chantier bornes",
+            indicateur: "IND-001 · Nombre de bornes",
+            "VA non à jour": { départementale: 1 },
+          },
+        ],
+      },
       detail: expect.objectContaining({ perimetre: "tous vos territoires" }),
     });
   });
@@ -427,9 +434,14 @@ describe("get_indicateurs_a_completer", () => {
   test("version modèle des données : le résumé et les champs d'accès, sans détail ni lignes", () => {
     // given
     const resume = {
-      en_bref: "Périmètre : tous vos territoires. 1 chantier, 1 indicateur",
-      ensemble: { "VA non à jour": "1 chantier, 1 indicateur" },
-      chantiers: [{ chantier: "CH-001", "VA non à jour": "1 indicateur" }],
+      perimetre: "tous vos territoires",
+      indicateurs: [
+        {
+          chantier: "CH-001 · Chantier",
+          indicateur: "IND-001 · Indicateur",
+          "VA non à jour": { départementale: 1 },
+        },
+      ],
     };
     const output: GetIndicateursACompleterOutput = {
       resume,

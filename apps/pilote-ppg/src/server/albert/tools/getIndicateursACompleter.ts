@@ -321,7 +321,6 @@ Ne l'utilise pas pour :
             lignes,
             motifs,
             mailles: maillesDesTerritoires(acces.territoireCodes),
-            unSeulTerritoire: acces.territoireCodes.length === 1,
             perimetre,
             jalon: jalonDeLaVc,
             demandesExplicites,

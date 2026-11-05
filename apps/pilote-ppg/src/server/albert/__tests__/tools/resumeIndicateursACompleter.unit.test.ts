@@ -48,241 +48,101 @@ const lignesBretagne = [
   ligne({ ...MEDECINS, territoireCode: "DEPT-56", motif: "vc" }),
 ];
 
-const lignesNord = [
-  ligne({ ...MAISONS, territoireCode: "DEPT-59", motif: "va" }),
-  ligne({ ...MEDECINS, territoireCode: "DEPT-59", motif: "va" }),
-  ligne({ ...MEDECINS, territoireCode: "DEPT-59", motif: "vc" }),
-];
-
 const paramsDeBase = {
   motifs: ["va", "vc"] as Motif[],
   mailles: ["REG", "DEPT"] as ("NAT" | "REG" | "DEPT")[],
-  unSeulTerritoire: false,
   perimetre: "Bretagne et ses départements",
   jalon: 2026,
   demandesExplicites: [],
 };
 
 describe("resumerIndicateursACompleter", () => {
-  test("plusieurs territoires", () => {
+  test("exemple de la spec", () => {
     const resume = resumerIndicateursACompleter({
       ...paramsDeBase,
       lignes: lignesBretagne,
     });
 
     expect(resume).toEqual({
-      en_bref:
-        "Périmètre : Bretagne et ses départements. 1 chantier et 2 indicateurs ont des valeurs à compléter (VA non à jour, VC manquante pour le jalon 2026).",
+      perimetre: "Bretagne et ses départements",
       jalon_vc: 2026,
-      ensemble: {
-        "VA non à jour": "1 chantier, 2 indicateurs · 1 région, 3 départements",
-        "VC manquante":
-          "1 chantier, 1 indicateur · aucune région, 2 départements",
-        "tous motifs confondus":
-          "1 chantier, 2 indicateurs · 1 région, 4 départements",
-      },
-      chantiers: [
+      indicateurs: [
         {
           chantier: "CH-038 · Accès aux soins",
-          "VA non à jour": "2 indicateurs · 1 région, 3 départements",
-          "VC manquante": "1 indicateur · aucune région, 2 départements",
-          "tous motifs confondus": "2 indicateurs · 1 région, 4 départements",
-          indicateurs: [
-            {
-              indicateur: "IND-894 · Maisons de santé",
-              "VA non à jour": "1 région, 3 départements",
-            },
-            {
-              indicateur: "IND-912 · Médecins",
-              "VA non à jour": "aucune région, 1 département",
-              "VC manquante": "aucune région, 2 départements",
-            },
-          ],
+          indicateur: "IND-894 · Maisons de santé",
+          "VA non à jour": { régionale: 1, départementale: 3 },
+        },
+        {
+          chantier: "CH-038 · Accès aux soins",
+          indicateur: "IND-912 · Médecins",
+          "VA non à jour": { régionale: 0, départementale: 1 },
+          "VC manquante": { régionale: 0, départementale: 2 },
         },
       ],
     });
   });
 
-  test("un seul territoire", () => {
-    const resume = resumerIndicateursACompleter({
-      ...paramsDeBase,
-      lignes: lignesNord,
-      unSeulTerritoire: true,
-      perimetre: "Nord",
-    });
-
-    expect(resume).toEqual({
-      en_bref:
-        "Périmètre : Nord. 1 chantier et 2 indicateurs ont des valeurs à compléter (VA non à jour, VC manquante pour le jalon 2026).",
-      jalon_vc: 2026,
-      ensemble: {
-        "VA non à jour": "1 chantier, 2 indicateurs",
-        "VC manquante": "1 chantier, 1 indicateur",
-        "tous motifs confondus": "1 chantier, 2 indicateurs",
-      },
-      chantiers: [
-        {
-          chantier: "CH-038 · Accès aux soins",
-          "VA non à jour": "2 indicateurs",
-          "VC manquante": "1 indicateur",
-          "tous motifs confondus": "2 indicateurs",
-          indicateurs: [
-            {
-              indicateur: "IND-894 · Maisons de santé",
-              "VA non à jour": "à compléter",
-            },
-            {
-              indicateur: "IND-912 · Médecins",
-              "VA non à jour": "à compléter",
-              "VC manquante": "à compléter",
-            },
-          ],
-        },
-      ],
-    });
-  });
-
-  test("liste des indicateurs selon le seuil", () => {
-    const lignesParIndicateur = (nombre: number) =>
-      Array.from({ length: nombre }, (_, index) =>
-        ligne({
-          indicateurId: `IND-${String(index).padStart(3, "0")}`,
-          territoireCode: "DEPT-29",
-          motif: "va",
-        }),
-      );
-
-    const sousLeSeuil = resumerIndicateursACompleter({
-      ...paramsDeBase,
-      motifs: ["va"],
-      lignes: lignesParIndicateur(20),
-    });
-    const auDessusDuSeuil = resumerIndicateursACompleter({
-      ...paramsDeBase,
-      motifs: ["va"],
-      lignes: lignesParIndicateur(21),
-    });
-
-    expect(sousLeSeuil.chantiers[0]?.indicateurs).toHaveLength(20);
-    expect(auDessusDuSeuil.chantiers).toEqual([
-      {
-        chantier: "CH-038 · Accès aux soins",
-        "VA non à jour": "21 indicateurs · aucune région, 1 département",
-      },
-    ]);
-  });
-
-  test("l'ensemble compte une fois un territoire concerné dans deux chantiers", () => {
-    const resume = resumerIndicateursACompleter({
-      ...paramsDeBase,
-      motifs: ["va"],
-      lignes: [
-        ligne({ ...MAISONS, territoireCode: "DEPT-29", motif: "va" }),
-        ligne({
-          chantierId: "CH-040",
-          chantierNom: "Écoles",
-          ...MEDECINS,
-          territoireCode: "DEPT-29",
-          motif: "va",
-        }),
-      ],
-    });
-
-    expect(resume.ensemble).toEqual({
-      "VA non à jour":
-        "2 chantiers, 2 indicateurs · aucune région, 1 département",
-    });
-  });
-
-  test("un motif sans ligne vaut aucun indicateur dans l'ensemble seulement", () => {
-    const resume = resumerIndicateursACompleter({
-      ...paramsDeBase,
-      motifs: ["va", "vi"],
-      jalon: undefined,
-      lignes: [ligne({ ...MAISONS, territoireCode: "DEPT-29", motif: "va" })],
-    });
-
-    expect(resume.ensemble["VI manquante"]).toBe("aucun indicateur");
-    expect(resume.chantiers[0]).not.toHaveProperty("VI manquante");
-    expect(resume).not.toHaveProperty("jalon_vc");
-  });
-
-  test("le national est cité avec les autres mailles", () => {
+  test("mailles à zéro et nationale", () => {
     const resume = resumerIndicateursACompleter({
       ...paramsDeBase,
       motifs: ["va"],
       mailles: ["NAT", "REG", "DEPT"],
+      perimetre: "France",
+      jalon: undefined,
       lignes: [ligne({ ...MAISONS, territoireCode: "NAT-FR", motif: "va" })],
     });
 
-    expect(resume.ensemble).toEqual({
-      "VA non à jour":
-        "1 chantier, 1 indicateur · 1 territoire national, aucune région, aucun département",
+    expect(resume).toEqual({
+      perimetre: "France",
+      indicateurs: [
+        {
+          chantier: "CH-038 · Accès aux soins",
+          indicateur: "IND-894 · Maisons de santé",
+          "VA non à jour": { nationale: 1, régionale: 0, départementale: 0 },
+        },
+      ],
     });
   });
 
-  test("les chantiers sont triés par nombre d'indicateurs décroissant puis par identifiant", () => {
-    const lignes = [
-      ligne({
-        chantierId: "CH-003",
-        chantierNom: "Trois",
-        indicateurId: "IND-030",
-        territoireCode: "DEPT-29",
-        motif: "va",
-      }),
-      ligne({
-        chantierId: "CH-002",
-        chantierNom: "Deux",
-        indicateurId: "IND-020",
-        territoireCode: "DEPT-29",
-        motif: "va",
-      }),
-      ligne({
-        chantierId: "CH-001",
-        chantierNom: "Un",
-        indicateurId: "IND-001",
-        territoireCode: "DEPT-29",
-        motif: "va",
-      }),
-      ligne({
-        chantierId: "CH-002",
-        chantierNom: "Deux",
-        indicateurId: "IND-010",
-        territoireCode: "DEPT-29",
-        motif: "va",
-      }),
-    ];
-
+  test("tri par chantier puis par indicateur", () => {
     const resume = resumerIndicateursACompleter({
       ...paramsDeBase,
       motifs: ["va"],
-      unSeulTerritoire: true,
-      lignes,
+      jalon: undefined,
+      lignes: [
+        ligne({
+          chantierId: "CH-002",
+          chantierNom: "Deux",
+          indicateurId: "IND-020",
+          territoireCode: "DEPT-29",
+          motif: "va",
+        }),
+        ligne({
+          chantierId: "CH-002",
+          chantierNom: "Deux",
+          indicateurId: "IND-010",
+          territoireCode: "DEPT-29",
+          motif: "va",
+        }),
+        ligne({
+          chantierId: "CH-001",
+          chantierNom: "Un",
+          indicateurId: "IND-030",
+          territoireCode: "DEPT-29",
+          motif: "va",
+        }),
+      ],
     });
 
-    expect(resume.chantiers).toEqual([
-      {
-        chantier: "CH-002 · Deux",
-        "VA non à jour": "2 indicateurs",
-        indicateurs: [
-          { indicateur: "IND-010 · IND-010", "VA non à jour": "à compléter" },
-          { indicateur: "IND-020 · IND-020", "VA non à jour": "à compléter" },
-        ],
-      },
-      {
-        chantier: "CH-001 · Un",
-        "VA non à jour": "1 indicateur",
-        indicateurs: [
-          { indicateur: "IND-001 · IND-001", "VA non à jour": "à compléter" },
-        ],
-      },
-      {
-        chantier: "CH-003 · Trois",
-        "VA non à jour": "1 indicateur",
-        indicateurs: [
-          { indicateur: "IND-030 · IND-030", "VA non à jour": "à compléter" },
-        ],
-      },
+    expect(
+      resume.indicateurs.map(({ chantier, indicateur }) => [
+        chantier,
+        indicateur,
+      ]),
+    ).toEqual([
+      ["CH-001 · Un", "IND-030 · IND-030"],
+      ["CH-002 · Deux", "IND-010 · IND-010"],
+      ["CH-002 · Deux", "IND-020 · IND-020"],
     ]);
   });
 
@@ -290,26 +150,35 @@ describe("resumerIndicateursACompleter", () => {
     const resume = resumerIndicateursACompleter({
       ...paramsDeBase,
       motifs: ["vc"],
-      perimetre: "Nord",
       lignes: [],
     });
 
     expect(resume).toEqual({
-      en_bref:
-        "Périmètre : Nord. Aucune valeur à compléter (VC manquante pour le jalon 2026).",
+      perimetre: "Bretagne et ses départements",
       jalon_vc: 2026,
-      ensemble: { "VC manquante": "aucun indicateur" },
-      chantiers: [],
+      indicateurs: [],
     });
   });
 
-  test("les demandes explicites sans valeur à compléter sont listées", () => {
+  test("sans valeur à compléter", () => {
     const resume = resumerIndicateursACompleter({
       ...paramsDeBase,
-      lignes: lignesBretagne,
-      demandesExplicites: ["CH-018", "CH-038"],
+      motifs: ["va"],
+      jalon: undefined,
+      demandesExplicites: ["IND-894", "CH-018"],
+      lignes: [ligne({ ...MAISONS, territoireCode: "DEPT-29", motif: "va" })],
     });
 
-    expect(resume.sans_valeur_a_completer).toEqual(["CH-018"]);
+    expect(resume).toEqual({
+      perimetre: "Bretagne et ses départements",
+      indicateurs: [
+        {
+          chantier: "CH-038 · Accès aux soins",
+          indicateur: "IND-894 · Maisons de santé",
+          "VA non à jour": { régionale: 0, départementale: 1 },
+        },
+      ],
+      sans_valeur_a_completer: ["CH-018"],
+    });
   });
 });
