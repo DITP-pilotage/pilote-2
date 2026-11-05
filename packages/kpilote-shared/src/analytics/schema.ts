@@ -5,6 +5,7 @@ export const ANALYTICS_CATEGORIES = [
   'kpilote.commentaire',
   'kpilote.import',
   'kpilote.command_palette',
+  'kpilote.assistant',
   'kpilote.admin',
   'kpilote.error',
 ] as const
