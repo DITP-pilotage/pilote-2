@@ -1,4 +1,3 @@
-import type { JSONValue } from "ai";
 import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
@@ -248,8 +247,6 @@ export const couvertureEncart = ({
       "chantiers ni en retard ni en difficulté",
       "autres territoires, dont les départements d'une région, et autres jalons",
     ],
-    consigne:
-      "Pour une donnée hors de cette couverture, appelle l'outil correspondant sur ce périmètre : son absence de l'encart ne dit pas qu'elle n'existe pas.",
   };
 };
 
@@ -259,12 +256,16 @@ export const couvertureEncart = ({
  * réponde aux questions de suivi à partir de ce que l'utilisateur a vu : il
  * perdait alors le territoire, et relisait les chiffres dans la prose
  * (PIL-1949).
+ *
+ * En texte, et non en JSON, et en disant l'encart déjà affiché : rendu en
+ * JSON, il était recopié sous l'encart (3 essais sur 3, synthèse avec
+ * départements), et la phrase de clarify_with_choices revenait sans choix.
  */
 export const encartVersModele = ({
   output,
 }: {
   output: EncartOutput;
-}): { type: "text"; value: string } | { type: "json"; value: JSONValue } => {
+}): { type: "text"; value: string } => {
   if (output.acces_refuse) {
     return {
       type: "text",
@@ -273,16 +274,18 @@ export const encartVersModele = ({
   }
   if (!output.donnees) return { type: "text", value: output.markdown };
 
+  const couverture = couvertureEncart({
+    jalon: output.jalon,
+    donnees: output.donnees,
+  });
   return {
-    type: "json",
-    value: {
-      encart: output.markdown,
-      couverture: couvertureEncart({
-        jalon: output.jalon,
-        donnees: output.donnees,
-      }),
-      donnees: donneesPourLeSousAgent(output.donnees),
-    },
+    type: "text",
+    value: `${output.markdown}
+
+---
+Contexte pour les questions suivantes. L'encart ci-dessus est déjà affiché à l'utilisateur : ne le recopie pas. Pour une donnée hors de cette couverture, appelle l'outil correspondant sur ce périmètre.
+Couverture : ${JSON.stringify(couverture)}
+Données de l'encart : ${JSON.stringify(donneesPourLeSousAgent(output.donnees))}`,
   };
 };
 

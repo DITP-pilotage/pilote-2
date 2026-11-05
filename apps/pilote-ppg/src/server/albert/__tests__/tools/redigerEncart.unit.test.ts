@@ -564,26 +564,18 @@ describe("outils de rédaction d'encart", () => {
     );
     expect(resultatsOutil).toEqual([
       {
-        type: "json",
-        value: {
-          encart: "# Synthèse pour le Nord",
-          couverture: expect.objectContaining({
-            territoires: [{ code: "DEPT-59", nom: "Nord" }],
-            jalon: 2025,
-          }),
-          donnees: expect.objectContaining({
-            chantiers_en_retard: {
-              resultats: [
-                expect.objectContaining({
-                  territoire_code: "DEPT-59",
-                  chantiers: [expect.objectContaining({ id: "CH-071" })],
-                }),
-              ],
-            },
-          }),
-        },
+        type: "text",
+        value: expect.stringMatching(
+          /^# Synthèse pour le Nord\n\n---\nContexte pour les questions suivantes\. L'encart ci-dessus est déjà affiché à l'utilisateur : ne le recopie pas\./,
+        ),
       },
     ]);
+    const [{ value }] = resultatsOutil as { value: string }[];
+    expect(value).toContain(
+      'Couverture : {"territoires":[{"code":"DEPT-59","nom":"Nord"}],"jalon":2025,',
+    );
+    expect(value).toContain('Données de l\'encart : {"taux":[');
+    expect(value).toContain('"id":"CH-071"');
   });
 
   test("rend le seul markdown d'un encart sans données", () => {
@@ -764,8 +756,6 @@ describe("couvertureEncart", () => {
         "chantiers ni en retard ni en difficulté",
         "autres territoires, dont les départements d'une région, et autres jalons",
       ],
-      consigne:
-        "Pour une donnée hors de cette couverture, appelle l'outil correspondant sur ce périmètre : son absence de l'encart ne dit pas qu'elle n'existe pas.",
     });
   });
 
