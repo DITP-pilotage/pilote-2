@@ -2,7 +2,7 @@ import { useId, type ComponentProps } from "react";
 import type { AnalyticsEventName } from "@/client/analytics/schema";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { Icone } from "@/components/_commons/Icone";
-import { ArrowGoForwardContourIcon } from "@/components/_commons/Icones/ArrowGoForwardContourIcon";
+import { ChatForward1Icon } from "@/components/_commons/Icones/ChatForward1Icon";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { PencilIcon } from "@/components/_commons/Icones/PencilIcon";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
@@ -33,7 +33,7 @@ const VARIANTES = {
   },
   suites: {
     titre: "Pour aller plus loin",
-    icone: ArrowGoForwardContourIcon,
+    icone: ChatForward1Icon,
     evenement: "response.suite",
     autreDemande: false,
     className: "border-t border-dsfr-grey-925 pt-3",
