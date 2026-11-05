@@ -175,6 +175,7 @@ const FICHE_BRETAGNE: GroundTruth = {
           valeur_cible: 180,
           date_valeur_cible: null,
           taux_avancement: 30,
+          responsables_donnees: [],
         },
       ],
     },

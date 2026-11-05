@@ -1,8 +1,8 @@
+import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetTauxAvancementTerritoireResult } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
 import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
-import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 
 /**
  * La forme de la fiche de vérité, et ce qu'on en déduit, sans rien charger du
@@ -28,7 +28,7 @@ export type GroundTruth = {
   tauxAvancement: GetTauxAvancementTerritoireResult[];
   chantiersEnRetard: ResultatChantiers[];
   chantiersEnDifficulte: ResultatChantiers[];
-  indicateurs: GetChantierIndicateursResult[];
+  indicateurs: GetChantierIndicateursOutput["resultats"][];
   commentaires: GetChantierCommentairesOutput[];
 };
 

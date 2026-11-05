@@ -89,6 +89,7 @@ const getChantierIndicateursQuery = mock<GetChantierIndicateursQuery>({
         valeur_cible: 60,
         date_valeur_cible: "2026-12-31",
         taux_avancement: 66.25,
+        responsables_donnees_ids: [],
       },
     ],
   })),
