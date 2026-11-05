@@ -26,6 +26,7 @@ export const analytics = createBrowserAnalytics({
   config,
   enabled: import.meta.env.PROD && env.analyticsEnabled,
   doNotTrack: respectDoNotTrack(),
+  waitForDimensions: true,
 })
 
 const describeInactive = (reason: InactiveAnalyticsReason): string => {

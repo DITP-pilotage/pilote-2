@@ -9,12 +9,16 @@ export type Analytics = {
   status: AnalyticsStatus
   trackPageView: (pageView: AnalyticsPageView) => void
   trackEvent: (event: AnalyticsEvent) => void
+  /** Clé de contexte → numéro de dimension Matomo ; libère les envois mis en attente. */
+  setDimensionSlots: (slots: Record<string, number>) => void
 }
 
 export type BrowserAnalyticsOptions = {
   config: AnalyticsConfig | null
   enabled: boolean
   doNotTrack: boolean
+  /** Retient les envois jusqu'au premier `setDimensionSlots`, pour qu'ils portent les dimensions. */
+  waitForDimensions?: boolean
   send?: (url: string) => void
 }
 
@@ -22,6 +26,7 @@ const noopAnalytics = (reason: InactiveAnalyticsReason): Analytics => ({
   status: { active: false, reason },
   trackPageView: () => {},
   trackEvent: () => {},
+  setDimensionSlots: () => {},
 })
 
 const sendBeacon = (url: string): void => {
@@ -50,13 +55,30 @@ export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analyt
   // suivants : eux seuls ne savent pas d'où ils partent. Les événements émis
   // avant la première page vue restent sans page, comme aujourd'hui.
   let currentPage: AnalyticsPage | undefined
+  let currentConfig = config
+  // Les requêtes sont construites à l'envoi : celles mises en attente prennent les dimensions.
+  let waiting: Array<() => string> | null = options.waitForDimensions ? [] : null
+
+  const schedule = (build: () => string): void => {
+    if (waiting) waiting.push(build)
+    else emit(build())
+  }
 
   return {
     status: { active: true },
     trackPageView: (pageView) => {
       currentPage = pageView
-      emit(buildPageViewRequest(pageView, config))
+      schedule(() => buildPageViewRequest(pageView, currentConfig))
     },
-    trackEvent: (event) => emit(buildEventRequest(event, config, currentPage)),
+    trackEvent: (event) => {
+      const page = currentPage
+      schedule(() => buildEventRequest(event, currentConfig, page))
+    },
+    setDimensionSlots: (slots) => {
+      currentConfig = { ...config, dimensionSlots: { ...config.dimensionSlots, ...slots } }
+      const pending = waiting ?? []
+      waiting = null
+      for (const build of pending) emit(build())
+    },
   }
 }
