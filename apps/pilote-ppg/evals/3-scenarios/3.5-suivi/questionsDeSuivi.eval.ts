@@ -59,6 +59,29 @@ scenarioEval({
       forbidden: ["clarify_with_choices"],
     },
     {
+      history: ["Fais moi la synthèse de la Bretagne"],
+      question: "Détaille par département",
+      reason:
+        "après un encart régional : il ne couvre pas les départements (outil libre, voir « Départements interrogés »)",
+      truthScope: {
+        territoires: ["REG-53"],
+        perimetre: BRETAGNE_ET_SES_DEPARTEMENTS,
+      },
+      forbidden: ["clarify_with_choices"],
+    },
+    {
+      history: ["Quels sont les chantiers en retard en Bretagne ?"],
+      question: "Et leurs indicateurs non à jour ?",
+      reason:
+        "ambigu : ni la valeur d'avancement ni la cible ne sont nommées, le périmètre est connu",
+      truthScope: { territoires: ["REG-53"] },
+      expected: [{ toolName: "clarify_with_choices" }],
+      forbidden: [
+        "get_valeurs_avancement_non_a_jour",
+        "get_valeurs_initiales_cibles_manquantes",
+      ],
+    },
+    {
       history: ["Quel est le taux d'avancement de la Bretagne ?"],
       question: "Et en 2024 ?",
       reason: "autre jalon, même territoire",
