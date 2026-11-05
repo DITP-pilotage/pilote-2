@@ -1,11 +1,19 @@
-import { memo, useMemo, type MouseEvent, type ReactNode } from "react";
+import {
+  memo,
+  useMemo,
+  type ComponentPropsWithoutRef,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 import { useRouter } from "next/router";
-import ReactMarkdown, { type Options } from "react-markdown";
+import ReactMarkdown, { type ExtraProps, type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useChantierLinks } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { remarkChantierLinks } from "@/components/_commons/ChatUI/remarkChantierLinks";
 import { remarkSautsDeLigne } from "@/components/_commons/ChatUI/remarkSautsDeLigne";
+import { remarkPersonReferences } from "@/components/_commons/ChatUI/persons/remarkPersonReferences";
+import { PersonMention } from "@/components/_commons/ChatUI/persons/PersonMention";
 import {
   isInternalHref,
   linkEvent,
@@ -196,7 +204,16 @@ const MarkdownLink = ({
   return <LienInterneAssistant href={href}>{children}</LienInterneAssistant>;
 };
 
-const components = { a: MarkdownLink };
+const MarkdownSpan = ({
+  node,
+  ...props
+}: ComponentPropsWithoutRef<"span"> & ExtraProps) => {
+  const personId = node?.properties.dataPersonId;
+  if (typeof personId === "string") return <PersonMention id={personId} />;
+  return <span {...props} />;
+};
+
+const components = { a: MarkdownLink, span: MarkdownSpan };
 
 export const AssistantMessageText = memo(function AssistantMessageText({
   text,
@@ -213,6 +230,7 @@ export const AssistantMessageText = memo(function AssistantMessageText({
       remarkGfm,
       remarkSautsDeLigne,
       [remarkChantierLinks, chantierLinkOptions],
+      remarkPersonReferences,
     ],
     [chantierLinkOptions],
   );

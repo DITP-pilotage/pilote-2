@@ -7,6 +7,7 @@ interface NomUtilisateurAvecTooltipProps {
   nom: string;
   service: string | null;
   fonction: string | null;
+  email?: string;
   className?: string;
 }
 
@@ -14,6 +15,7 @@ export const NomUtilisateurAvecTooltip = ({
   nom,
   service,
   fonction,
+  email,
   className,
 }: NomUtilisateurAvecTooltipProps) => {
   const [open, setOpen] = useState(false);
@@ -41,6 +43,12 @@ export const NomUtilisateurAvecTooltip = ({
               <span className="font-semibold">Fonction : </span>
               {fonction ?? "Non renseigné"}
             </p>
+            {email && (
+              <p className="text-sm mb-0">
+                <span className="font-semibold">E-mail : </span>
+                {email}
+              </p>
+            )}
             <RadixTooltip.Arrow />
           </RadixTooltip.Content>
         </Tooltip.Portal>
