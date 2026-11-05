@@ -123,6 +123,8 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
       if (text) setPendingQuestion({ id: crypto.randomUUID(), text })
       const view = readViewPreference() ?? 'fullscreen'
       setRequested(view)
+      // Une question posée par la palette pendant que l'assistant est visible n'ouvre rien.
+      if (display !== 'minimized') return
       analytics.trackEvent(
         analyticsEvents.assistant.open({
           source: question === undefined ? 'pastille' : 'palette',
@@ -130,16 +132,14 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
         }),
       )
     },
-    [conversationId, shownView],
+    [conversationId, display, shownView],
   )
 
   const minimize = useCallback(() => {
     if (conversationId) writeMinimized(conversationId)
-    if (display !== 'minimized')
-      analytics.trackEvent(analyticsEvents.assistant.minimize({ view: display }))
     if (requested !== 'minimized') setViewBeforeMinimize(requested)
     setRequested('minimized')
-  }, [conversationId, display, requested])
+  }, [conversationId, requested])
 
   const restore = useCallback(() => {
     const view = viewBeforeMinimize ?? readViewPreference() ?? 'fullscreen'
@@ -168,7 +168,6 @@ export function AssistantProvider({ enabled, children }: PropsWithChildren<{ ena
   const selection = useRef(0)
 
   const newConversation = useCallback(() => {
-    analytics.trackEvent(analyticsEvents.assistant.conversationNew())
     selection.current += 1
     if (conversationId) stopChat(conversationId)
     clearMinimized()

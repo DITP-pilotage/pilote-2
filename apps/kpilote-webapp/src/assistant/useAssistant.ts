@@ -67,6 +67,17 @@ export const writeDraft = (conversationId: string, text: string): void => {
   drafts.set(conversationId, text)
 }
 
+// Un brouillon pré-rempli par une proposition : la question envoyée en vient, même après un
+// changement de vue.
+const prefilledDrafts = new Set<string>()
+
+export const isPrefilled = (conversationId: string): boolean => prefilledDrafts.has(conversationId)
+
+export const setPrefilled = (conversationId: string, prefilled: boolean): void => {
+  if (prefilled) prefilledDrafts.add(conversationId)
+  else prefilledDrafts.delete(conversationId)
+}
+
 /** L'état d'une conversation sans l'envoyer : pour l'en-tête et la pastille. */
 export const useConversationState = (conversationId: string) =>
   useChat<KpiloteUIMessage>({ chat: chatFor(conversationId), experimental_throttle: 250 })

@@ -13,7 +13,6 @@ import { useRef } from 'react'
 
 import { analytics } from '@/analytics/tracker'
 
-import { useAssistantDisplay } from './display/AssistantProvider'
 import { NO_PRINT, printRapport } from './exportRapport'
 import { MarkdownResponse } from './MarkdownResponse'
 import { rapportFileName } from './rapport'
@@ -39,17 +38,18 @@ const DATE_FORMAT = new Intl.DateTimeFormat('fr-FR', {
 export function RapportEncart({
   output,
   isStreaming,
+  conversationId,
   llmCallId,
 }: {
   output: RapportOutput
+  conversationId: string
   llmCallId: string | undefined
   /** Une rédaction interrompue (arrêt, rechargement) ne reste pas « en cours ». */
   isStreaming: boolean
 }) {
   const toast = useToast()
-  const { conversationId } = useAssistantDisplay()
   const ref = useRef<HTMLElement>(null)
-  const exportContext = { conversation_id: conversationId ?? '', llm_call_id: llmCallId }
+  const exportContext = { conversation_id: conversationId, llm_call_id: llmCallId }
   const writing = isStreaming && !output.done
   const waitingForText = writing && output.markdown.trim() === ''
   const interrupted = !isStreaming && !output.done
@@ -67,10 +67,9 @@ export function RapportEncart({
   const downloadPdf = () => {
     const element = ref.current
     if (element === null) return
-    analytics.trackEvent(analyticsEvents.assistant.exportReportPdf(exportContext))
-    printRapport({ element, title: rapportFileName(output) }).catch(() =>
-      toast({ title: "Le PDF n'a pas pu être préparé", variant: 'error' }),
-    )
+    printRapport({ element, title: rapportFileName(output) })
+      .then(() => analytics.trackEvent(analyticsEvents.assistant.exportReportPdf(exportContext)))
+      .catch(() => toast({ title: "Le PDF n'a pas pu être préparé", variant: 'error' }))
   }
 
   return (

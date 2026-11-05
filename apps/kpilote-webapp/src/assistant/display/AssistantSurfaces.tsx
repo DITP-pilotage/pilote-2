@@ -1,8 +1,11 @@
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { deriveTitle } from '@pilote/kpilote-shared/assistant/conversation'
 import { clsxm } from '@pilote/kpilote-ui/clsxm'
 import { Sparkles } from 'lucide-react'
 import { Dialog } from 'radix-ui'
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react'
+
+import { analytics } from '@/analytics/tracker'
 
 import { useConversationState } from '../useAssistant'
 import { AssistantContent } from './AssistantContent'
@@ -187,11 +190,17 @@ function FloatingWindow({ conversationId }: { conversationId: string }) {
  */
 function ModalView({ conversationId, centered }: { conversationId: string; centered: boolean }) {
   const { minimize } = useAssistantDisplay()
+  const hide = () => {
+    analytics.trackEvent(
+      analyticsEvents.assistant.minimize({ view: centered ? 'centered' : 'fullscreen' }),
+    )
+    minimize()
+  }
   return (
     <Dialog.Root
       open
       onOpenChange={(isOpen) => {
-        if (!isOpen) minimize()
+        if (!isOpen) hide()
       }}
     >
       <Dialog.Portal>
@@ -214,7 +223,7 @@ function ModalView({ conversationId, centered }: { conversationId: string; cente
           )}
           onEscapeKeyDown={(event) => {
             event.preventDefault()
-            minimize()
+            hide()
           }}
         >
           <Dialog.Title className="sr-only">{NAME}</Dialog.Title>

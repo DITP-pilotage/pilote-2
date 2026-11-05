@@ -30,10 +30,12 @@ export function UserMessage({ message }: { message: KpiloteUIMessage }) {
 function RapportOf({
   part,
   isStreaming,
+  conversationId,
   llmCallId,
 }: {
   part: RapportPart
   isStreaming: boolean
+  conversationId: string
   llmCallId: string | undefined
 }) {
   const pending = part.state === 'input-streaming' || part.state === 'input-available'
@@ -41,7 +43,14 @@ function RapportOf({
     ? { type: rapportTypeOf(part), dateRedaction: '', markdown: '', done: false }
     : rapportOutput(part)
   if (!output || (pending && !isStreaming)) return null
-  return <RapportEncart output={output} isStreaming={isStreaming} llmCallId={llmCallId} />
+  return (
+    <RapportEncart
+      output={output}
+      isStreaming={isStreaming}
+      conversationId={conversationId}
+      llmCallId={llmCallId}
+    />
+  )
 }
 
 export const AssistantMessage = memo(function AssistantMessage({
@@ -50,9 +59,11 @@ export const AssistantMessage = memo(function AssistantMessage({
   showChoices,
   onChoose,
   onWriteOther,
+  conversationId,
   actions,
 }: {
   message: KpiloteUIMessage
+  conversationId: string
   /** Ce que fait l'assistant, sous sa signature ; `null` une fois la réponse terminée. */
   state: AssistantState | null
   showChoices: boolean
@@ -89,6 +100,7 @@ export const AssistantMessage = memo(function AssistantMessage({
               key={index}
               part={part}
               isStreaming={state !== null}
+              conversationId={conversationId}
               llmCallId={message.metadata?.llmCallId}
             />
           )

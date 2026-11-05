@@ -28,7 +28,6 @@ export function AssistantContent({ conversationId }: { conversationId: string })
   // En vue modale, un lien interne laisse voir la page : l'assistant passe en fenêtre
   // (ou se masque) avant que le lien ne navigue.
   // Un clic modifié (nouvel onglet) ou déjà traité ne quitte pas la page.
-  // Seules les réponses portent des liens : l'en-tête n'a que des boutons.
   const onLinkClick = (event: MouseEvent<HTMLDivElement>) => {
     const link = linkOf(event.target)
     if (!link) return
@@ -49,7 +48,9 @@ export function AssistantContent({ conversationId }: { conversationId: string })
           pendingQuestion={pendingQuestion}
           onPendingQuestionSent={clearPendingQuestion}
           {...(hidesPage(display) && backToPalette ? { onBack: backToPalette } : {})}
-          renderActions={(message) => <ResponseActions message={message} />}
+          renderActions={(message) => (
+            <ResponseActions message={message} conversationId={conversationId} />
+          )}
         />
       </div>
       <ExperimentationBanner compact={!hidesPage(display)} />

@@ -20,7 +20,6 @@ import { rateCall } from './assistantApi'
 import { copyableText } from './copyResponse'
 import { copyDashboardImage } from './dashboard/copyImage'
 import { findDashboardElement, firstDashboard } from './dashboard/dashboardParts'
-import { useAssistantDisplay } from './display/AssistantProvider'
 
 const CATEGORY_OPTIONS = ISSUE_CATEGORIES.map((category) => ({
   value: category,
@@ -101,14 +100,19 @@ function NegativeFeedbackModal({
 }
 
 /** Copie et évaluation de la dernière réponse, comme sur PPG. */
-export function ResponseActions({ message }: { message: KpiloteUIMessage }) {
+export function ResponseActions({
+  message,
+  conversationId,
+}: {
+  message: KpiloteUIMessage
+  conversationId: string
+}) {
   const toast = useToast()
   const [rated, setRated] = useState(false)
   const [sending, setSending] = useState(false)
   const [negativeOpen, setNegativeOpen] = useState(false)
   const llmCallId = message.metadata?.llmCallId
-  const { conversationId } = useAssistantDisplay()
-  const callContext = { conversation_id: conversationId ?? '', llm_call_id: llmCallId }
+  const callContext = { conversation_id: conversationId, llm_call_id: llmCallId }
 
   const copy = () => {
     navigator.clipboard

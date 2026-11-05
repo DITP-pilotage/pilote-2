@@ -20,7 +20,7 @@ import { isNearBottom } from './followResponse'
 import { questionToSend, type PendingQuestion } from './pendingQuestion'
 import { pageType, questionType } from './tracking'
 import { appendTranscript } from './transcript'
-import { readDraft, useAssistant, writeDraft } from './useAssistant'
+import { isPrefilled, readDraft, setPrefilled, useAssistant, writeDraft } from './useAssistant'
 import { useSpeechRecognition } from './useSpeechRecognition'
 
 // Un affichage de l'accueil par conversation : changer de vue remonte le panneau sans
@@ -65,20 +65,18 @@ export function AssistantPanel({
   useEffect(() => {
     messagesRef.current = messages
   }, [messages])
-  // Champ pré-rempli par une proposition : la question envoyée en vient.
-  const prefilled = useRef(false)
   // Quelle que soit la façon d'envoyer, la dictée s'arrête : elle remplirait sinon le champ
   // pendant la réponse.
   const send = useCallback(
-    (text: string, origine: QuestionSendContext['origine']) => {
+    (text: string, origin: QuestionSendContext['origine']) => {
       cancelSpeech()
       analytics.trackEvent(
         analyticsEvents.assistant.questionSend({
           conversation_id: conversationId,
-          origine,
+          origine: origin,
           type_question: questionType({
             messages: messagesRef.current,
-            fromProposition: origine === 'proposition',
+            fromProposition: origin === 'proposition',
           }),
         }),
       )
@@ -162,8 +160,8 @@ export function AssistantPanel({
   const submit = () => {
     const text = input.trim()
     if (text.length === 0 || busy) return
-    send(text, prefilled.current ? 'proposition' : 'saisie')
-    prefilled.current = false
+    send(text, isPrefilled(conversationId) ? 'proposition' : 'saisie')
+    setPrefilled(conversationId, false)
     setInput('')
   }
 
@@ -178,7 +176,7 @@ export function AssistantPanel({
       send(proposition.message, 'proposition')
       return
     }
-    prefilled.current = true
+    setPrefilled(conversationId, true)
     setInput(proposition.message)
     field.current?.focus()
   }
@@ -226,6 +224,7 @@ export function AssistantPanel({
                 showChoices={message === last && status === 'ready'}
                 onChoose={choose}
                 onWriteOther={writeOther}
+                conversationId={conversationId}
                 actions={message === last && status === 'ready' ? renderActions?.(message) : null}
               />
             ),
@@ -278,7 +277,7 @@ export function AssistantPanel({
             value={input}
             placeholder={busy ? "L'assistant prépare sa réponse…" : 'Posez votre question…'}
             onChange={(event) => {
-              if (event.target.value.trim() === '') prefilled.current = false
+              if (event.target.value.trim() === '') setPrefilled(conversationId, false)
               setInput(event.target.value)
             }}
             onKeyDown={(event) => {
