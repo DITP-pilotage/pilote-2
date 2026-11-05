@@ -8,6 +8,7 @@ export const ligneEnregistrementPonderationSchema = z.object({
   poidsPourcentDept: z.number().nullable(),
   poidsPourcentReg: z.number().nullable(),
   poidsPourcentNat: z.number().nullable(),
+  estActif: z.boolean(),
 });
 
 export const enregistrerPonderationsIndicateursCommandSchema = z.object({
@@ -43,6 +44,14 @@ export class SavePonderationsIndicateursHandler {
               ligne.indicId,
             );
 
+          const statutModifie = ancien.indicHiddenPilote === ligne.estActif;
+          if (statutModifie) {
+            await prisma.metadata_indicateurs_hidden.update({
+              where: { indic_id: ligne.indicId },
+              data: { indic_hidden_pilote: !ligne.estActif },
+            });
+          }
+
           await prisma.metadata_parametrage_indicateurs.update({
             where: { indic_id: ligne.indicId },
             data: {
@@ -52,24 +61,34 @@ export class SavePonderationsIndicateursHandler {
             },
           });
 
-          const nouveau = ancien.avecPonderationsDeclarees({
-            poidsPourcentDept: ligne.poidsPourcentDept,
-            poidsPourcentReg: ligne.poidsPourcentReg,
-            poidsPourcentNat: ligne.poidsPourcentNat,
-          });
+          const nouveau = ancien
+            .avecPonderationsDeclarees({
+              poidsPourcentDept: ligne.poidsPourcentDept,
+              poidsPourcentReg: ligne.poidsPourcentReg,
+              poidsPourcentNat: ligne.poidsPourcentNat,
+            })
+            .avecStatutActif(ligne.estActif);
 
-          const historisationModification =
+          const historisations = (
+            [
+              "metadata_indicateurs",
+              "metadata_parametrages_indicateurs",
+            ] as const
+          ).map((tableModifieId) =>
             HistorisationModification.creerHistorisationModification({
               auteurId,
-              tableModifieId: "metadata_parametrages_indicateurs",
+              tableModifieId,
               ancienneValeur: ancien,
               nouvelleValeur: nouveau,
-            });
+            }),
+          );
 
-          if (historisationModification.aDesModifications()) {
-            await this.dependencies.historisationModificationRepository.sauvegarderModificationHistorisation(
-              historisationModification,
-            );
+          for (const historisation of historisations) {
+            if (historisation.aDesModifications()) {
+              await this.dependencies.historisationModificationRepository.sauvegarderModificationHistorisation(
+                historisation,
+              );
+            }
           }
         }),
       );

@@ -62,12 +62,14 @@ describe("SavePonderationsIndicateursHandler", () => {
               poidsPourcentDept: null,
               poidsPourcentReg: null,
               poidsPourcentNat: 40,
+              estActif: true,
             },
             {
               indicId: indicateur2.indic_id,
               poidsPourcentDept: null,
               poidsPourcentReg: null,
               poidsPourcentNat: 60,
+              estActif: true,
             },
           ],
         },
@@ -128,12 +130,14 @@ describe("SavePonderationsIndicateursHandler", () => {
               poidsPourcentDept: null,
               poidsPourcentReg: null,
               poidsPourcentNat: 40,
+              estActif: true,
             },
             {
               indicId: indicateur2.indic_id,
               poidsPourcentDept: null,
               poidsPourcentReg: null,
               poidsPourcentNat: 40,
+              estActif: true,
             },
           ],
         },
@@ -181,6 +185,7 @@ describe("SavePonderationsIndicateursHandler", () => {
               poidsPourcentDept: 999,
               poidsPourcentReg: 999,
               poidsPourcentNat: 100,
+              estActif: true,
             },
           ],
         },
@@ -227,6 +232,7 @@ describe("SavePonderationsIndicateursHandler", () => {
               poidsPourcentDept: null,
               poidsPourcentReg: null,
               poidsPourcentNat: 0,
+              estActif: true,
             },
           ],
         },
@@ -287,6 +293,7 @@ describe("SavePonderationsIndicateursHandler", () => {
               poidsPourcentDept: null,
               poidsPourcentReg: null,
               poidsPourcentNat: 40,
+              estActif: true,
             },
           ],
         },
@@ -299,6 +306,159 @@ describe("SavePonderationsIndicateursHandler", () => {
           where: { id_objet_modifie: indicateur.indic_id },
         });
       expect(historisations).toEqual([]);
+    }),
+  );
+  it(
+    "désactive un indicateur quand il est enregistré comme inactif",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const indicateur = await fixtures.metadataIndicateurHidden({
+        indic_id: "IND-001",
+        indic_parent_ch: "CH-010",
+        indic_hidden_pilote: false,
+      });
+      await fixtures.metadataIndicateurComplementaire({
+        indic_id: indicateur.indic_id,
+        indic_territorialise: false,
+      });
+      await fixtures.metadataParametrageIndicateurs({
+        indic_id: indicateur.indic_id,
+        poids_pourcent_nat_declaree: 40,
+      });
+      const auteur = await fixtures.utilisateur({});
+
+      // When
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 40,
+              estActif: false,
+            },
+          ],
+        },
+        auteur.id,
+      );
+
+      // Then
+      const indicateurEnregistre =
+        await getPrisma().metadata_indicateurs_hidden.findUniqueOrThrow({
+          where: { indic_id: indicateur.indic_id },
+          select: { indic_hidden_pilote: true },
+        });
+      expect(indicateurEnregistre).toEqual({ indic_hidden_pilote: true });
+    }),
+  );
+
+  it(
+    "historise le statut avec les métadonnées et la pondération avec le paramétrage, comme la fiche indicateur",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const indicateur = await fixtures.metadataIndicateurHidden({
+        indic_id: "IND-001",
+        indic_parent_ch: "CH-010",
+        indic_hidden_pilote: true,
+      });
+      await fixtures.metadataIndicateurComplementaire({
+        indic_id: indicateur.indic_id,
+        indic_territorialise: false,
+      });
+      await fixtures.metadataParametrageIndicateurs({
+        indic_id: indicateur.indic_id,
+        poids_pourcent_dept_declaree: null,
+        poids_pourcent_reg_declaree: null,
+        poids_pourcent_nat_declaree: 10,
+      });
+      const auteur = await fixtures.utilisateur({});
+
+      // When
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 25,
+              estActif: true,
+            },
+          ],
+        },
+        auteur.id,
+      );
+
+      // Then
+      const historisations =
+        await getPrisma().historisation_modification.findMany({
+          where: { id_objet_modifie: indicateur.indic_id },
+          select: {
+            table_modifie_id: true,
+            ancienne_valeur: true,
+            nouvelle_valeur: true,
+          },
+          orderBy: { table_modifie_id: "asc" },
+        });
+      expect(historisations).toEqual([
+        {
+          table_modifie_id: "metadata_indicateurs",
+          ancienne_valeur: { indic_hidden_pilote: true },
+          nouvelle_valeur: { indic_hidden_pilote: false },
+        },
+        {
+          table_modifie_id: "metadata_parametrages_indicateurs",
+          ancienne_valeur: { poids_pourcent_nat_declaree: 10 },
+          nouvelle_valeur: { poids_pourcent_nat_declaree: 25 },
+        },
+      ]);
+    }),
+  );
+  it(
+    "ne réécrit pas le statut d'un indicateur dont le statut n'a pas changé",
+    createIntegrationTest(async () => {
+      // Given : un statut non renseigné, considéré comme actif
+      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const indicateur = await fixtures.metadataIndicateurHidden({
+        indic_id: "IND-001",
+        indic_parent_ch: "CH-010",
+        indic_hidden_pilote: null,
+      });
+      await fixtures.metadataIndicateurComplementaire({
+        indic_id: indicateur.indic_id,
+        indic_territorialise: false,
+      });
+      await fixtures.metadataParametrageIndicateurs({
+        indic_id: indicateur.indic_id,
+      });
+      const auteur = await fixtures.utilisateur({});
+
+      // When
+      await handler.execute(
+        {
+          lignes: [
+            {
+              indicId: indicateur.indic_id,
+              poidsPourcentDept: null,
+              poidsPourcentReg: null,
+              poidsPourcentNat: 100,
+              estActif: true,
+            },
+          ],
+        },
+        auteur.id,
+      );
+
+      // Then
+      const indicateurEnregistre =
+        await getPrisma().metadata_indicateurs_hidden.findUniqueOrThrow({
+          where: { indic_id: indicateur.indic_id },
+          select: { indic_hidden_pilote: true },
+        });
+      expect(indicateurEnregistre).toEqual({ indic_hidden_pilote: null });
     }),
   );
 });
