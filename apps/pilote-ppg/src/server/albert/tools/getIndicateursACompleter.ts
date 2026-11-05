@@ -36,6 +36,9 @@ import {
 const CONSIGNE_PRECISION =
   "Les choix sont déjà affichés à l'utilisateur. N'appelle aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse par la seule phrase « Choisissez une option pour continuer. »";
 
+const CONSIGNE_TABLEAU =
+  "Le détail par territoire est affiché dans un tableau sous ta réponse. Termine ta réponse par une phrase qui y renvoie.";
+
 export const getIndicateursACompleterInputSchema = z.object({
   motifs: z
     .array(z.enum(["va", "vi", "vc"]))
@@ -106,7 +109,14 @@ export function indicateursACompleterVersModele({
   }
   if (contientDesDonnees(output)) {
     const { resume, detail: _detail, ...champsAcces } = output;
-    return { type: "json", value: { ...resume, ...champsAcces } };
+    return {
+      type: "json",
+      value: {
+        ...resume,
+        ...(resume.chantiers.length > 0 && { consigne: CONSIGNE_TABLEAU }),
+        ...champsAcces,
+      },
+    };
   }
   return { type: "json", value: output };
 }
@@ -254,7 +264,7 @@ export function createGetIndicateursACompleterTool({
       description: `Renvoie les indicateurs à compléter, par chantier, indicateur et maille, selon trois motifs :
 - VA non à jour : sa date de prochaine mise à jour (date de la dernière valeur + périodicité + délai de disponibilité) est dépassée, ou aucune valeur n'a jamais été renseignée ;
 - VI manquante : aucune valeur initiale n'est renseignée ; une valeur à 0 est renseignée ;
-- VC manquante : aucune valeur cible n'est renseignée pour le jalon \`jalon_vc\`, le jalon en cours, qui prime sur celui de la session ; cite-le dès qu'une VC est en jeu.
+- VC manquante : aucune valeur cible n'est renseignée pour le jalon \`jalon_vc\`, le jalon en cours, qui prime sur celui de la session ; cite-le dès qu'une VC est en jeu, y compris si la demande vise une autre année : réponds sur ce jalon, sans clarifier ni rappeler l'outil.
 Les nombres sont calculés par l'outil.
 - \`motifs\` : les types de valeurs nommés ou établis par les échanges, sinon les trois, plusieurs dans un seul appel. L'outil demande lui-même la précision du type de valeurs : n'appelle jamais clarify_with_choices pour cela.
 - \`precision_demandee\` : suis la \`consigne\` renvoyée.

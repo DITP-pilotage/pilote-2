@@ -52,6 +52,12 @@ import { VALEURS_A_COMPLETER_CRITERIA } from "./valeursACompleter.criteria";
  * « Tableau introduit » 22 %, « Périmètre cité » 72 %, « Un seul territoire »
  * 83 %, « Mailles à zéro » 89 %, « Motifs justes » 94 % ; tous les autres
  * critères 100 %.
+ *
+ * Référence « après (5) » avec la phrase de fin vers le tableau (décision 17),
+ * le 2026-11-05 : N3 94,1 % (3 essais par cas, 6 cas). « Tableau introduit »
+ * 67 %, « Périmètre cité » 61 %, « Mailles à zéro », « Motifs justes »,
+ * « Un seul territoire » et « Aucun territoire hors demande » 94 % ; tous les
+ * autres critères 100 %.
  */
 
 scenarioEval({

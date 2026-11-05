@@ -489,7 +489,31 @@ describe("get_indicateurs_a_completer", () => {
     // then
     expect(result).toEqual({
       type: "json",
-      value: { ...resume, chantiers_non_accessibles: ["CH-999"] },
+      value: {
+        ...resume,
+        consigne:
+          "Le détail par territoire est affiché dans un tableau sous ta réponse. Termine ta réponse par une phrase qui y renvoie.",
+        chantiers_non_accessibles: ["CH-999"],
+      },
     });
+  });
+
+  test("version modèle des données sans chantier : pas de consigne de fin", () => {
+    // given
+    const resume = { perimetre: "tous vos territoires", chantiers: [] };
+    const output: GetIndicateursACompleterOutput = {
+      resume,
+      detail: {
+        motifs: ["va"],
+        perimetre: "tous vos territoires",
+        lignes: [],
+      },
+    };
+
+    // when
+    const result = indicateursACompleterVersModele({ output });
+
+    // then
+    expect(result).toEqual({ type: "json", value: resume });
   });
 });

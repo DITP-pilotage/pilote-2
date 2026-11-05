@@ -39,6 +39,12 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * Référence « après (4) », indicateurs regroupés par chantier : moyenne
  * 0.964. Restent en échec « Quels indicateurs n'ont pas de cible en 2027 ? »
  * (0 sur 3) et « Qu'est-ce que je dois mettre à jour dans le Nord ? » (0.5).
+ *
+ * Référence « après (5) » avec la consigne de fin et la règle du jalon dans la
+ * description (décision 17), le 2026-11-05 : moyenne 0.969. « Pas de cible en
+ * 2027 » passe (3 sur 3). Restent « Pourquoi la valeur d'avancement de l'IND-894
+ * … » et « Donne les départements … IND-894 … » (0.67 chacun) et « Qu'est-ce que
+ * je dois mettre à jour dans le Nord ? » (0.67).
  */
 
 const CASES: ToolCase[] = [
