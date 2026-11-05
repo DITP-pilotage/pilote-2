@@ -596,3 +596,35 @@ Expected : mêmes seuils qu'à la tâche 8. Sous les seuils, notez les cas en é
 - [ ] **Step 3: En-têtes** : avant (dont 95,8 % et 94,9 % des deux anciennes suites dans `getIndicateursACompleter.eval.ts`), après (tâche 8) et après (2).
 
 - [ ] **Step 4: Commit** (si autorisé) — `test(albert): critères N3 du résumé plat et nouvelle mesure`
+
+### Task 12: Indicateurs regroupés par chantier
+
+Décision 16 de la spec (Triko, après la mesure finale) : le résumé regroupe les indicateurs par chantier, sans aucun nombre au niveau du chantier.
+
+**Files:**
+- Modify: `src/server/albert/tools/resumeIndicateursACompleter.ts` et son test
+- Modify: `src/server/albert/tools/getIndicateursACompleter.ts` (description, si elle nomme la liste `indicateurs` au premier niveau) et son test
+- Modify: `src/client/components/_commons/ChatUI/AssistantMessage.integration.test.tsx` (fixture de `resume`, si elle en dépend)
+- Modify: `evals/3-scenarios/3.4-forme/valeursACompleter.eval.ts`, `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts` (en-têtes : bloc « après (4) »)
+
+**Interfaces:**
+- Produces (remplace celle de la tâche 9) :
+
+```ts
+export type IndicateurResume = { indicateur: string } & Partial<Record<LibelleMotif, NombresParMaille>>;
+export type ChantierResume = { chantier: string; indicateurs: IndicateurResume[] };
+export type ResumeIndicateursACompleter = {
+  perimetre: string;
+  jalon_vc?: number;
+  chantiers: ChantierResume[];
+  sans_valeur_a_completer?: string[];
+};
+```
+
+Règles : chantiers triés par identifiant, indicateurs de chaque chantier triés par identifiant ; aucun champ de nombre au niveau du chantier ; le reste de la tâche 9 inchangé (motifs concernés, toutes les mailles interrogées à 0 compris, `jalon_vc`, `sans_valeur_a_completer`).
+
+- [ ] **Step 1: Tests** : le test « exemple de la spec » attend à l'identique le nouvel exemple JSON de la section « Résumé envoyé au modèle » ; le test de tri attend CH-001 puis CH-002 (IND-010, IND-020) en objets entiers ; « aucune ligne » attend `chantiers: []` ; les tests de l'outil suivent la nouvelle forme.
+- [ ] **Step 2: Lancer les tests** du résumé et de l'outil. Expected : FAIL.
+- [ ] **Step 3: Implémenter**, relancer ; `pnpm vitest run --project server-unit src/server/albert evals`, `pnpm vitest run --project client src/client/components/_commons/ChatUI`, `pnpm lint`. Expected : PASS, 0 erreur.
+- [ ] **Step 4: Mesure** : `pnpm eval evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts --outputPath evals/resultats-maj-apres4-getIndicateursACompleter.json` et `pnpm eval evals/3-scenarios/3.4-forme/valeursACompleter.eval.ts --outputPath evals/resultats-maj-apres4-valeursACompleter.json` ; reporter les moyennes (et les critères N3) dans les en-têtes, bloc « après (4) ». Aucune itération de description.
+- [ ] **Step 5: Commit** (si autorisé) — `refactor(albert): regroupe les indicateurs à compléter par chantier`

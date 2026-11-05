@@ -93,6 +93,11 @@ Décisions qui **remplacent** les points 3, 9 et 11 :
     seule dans la description, le modèle rappelait `clarify_with_choices` dans
     tous les cas ambigus.
 
+16. (Triko, le 2026-11-05, après la mesure finale) Les indicateurs sont
+    **regroupés par chantier** : une liste `chantiers`, chacun avec son libellé et
+    la liste de ses indicateurs. Le chantier ne porte aucun nombre (décision 13
+    maintenue).
+
 Les points 4 et 5 restent des règles de rédaction ; les points 1, 2, 6, 7, 8 et
 10 sont inchangés.
 
@@ -241,17 +246,20 @@ modèle revoit le résumé, jamais les lignes.
 {
   "perimetre": "Bretagne et ses départements",
   "jalon_vc": 2026,
-  "indicateurs": [
+  "chantiers": [
     {
       "chantier": "CH-038 · Accès aux soins",
-      "indicateur": "IND-894 · Maisons de santé",
-      "VA non à jour": { "régionale": 1, "départementale": 3 }
-    },
-    {
-      "chantier": "CH-038 · Accès aux soins",
-      "indicateur": "IND-912 · Médecins",
-      "VA non à jour": { "régionale": 0, "départementale": 1 },
-      "VC manquante": { "régionale": 0, "départementale": 2 }
+      "indicateurs": [
+        {
+          "indicateur": "IND-894 · Maisons de santé",
+          "VA non à jour": { "régionale": 1, "départementale": 3 }
+        },
+        {
+          "indicateur": "IND-912 · Médecins",
+          "VA non à jour": { "régionale": 0, "départementale": 1 },
+          "VC manquante": { "régionale": 0, "départementale": 2 }
+        }
+      ]
     }
   ]
 }
@@ -261,13 +269,15 @@ Champs :
 - `perimetre` : le libellé du périmètre interrogé (chantiers ou indicateurs
   demandés, puis territoires en noms), le même que le titre du tableau.
 - `jalon_vc` : présent dès que `vc` est demandé.
-- `indicateurs` : une entrée par indicateur concerné, triée par chantier puis
-  par indicateur. `chantier` et `indicateur` en libellés « {id} · {nom} ». Une
-  clé par motif concerné par cet indicateur (« VA non à jour », « VI
-  manquante », « VC manquante »), dont la valeur donne le nombre de
-  territoires à compléter pour **chaque maille interrogée**, 0 compris
-  (libellés de `libelleMaille` : « nationale », « régionale »,
-  « départementale »). Liste vide si rien n'est à compléter.
+- `chantiers` (décision 16) : un objet par chantier concerné, trié par
+  identifiant, avec `chantier` en libellé « {id} · {nom} » et `indicateurs`, la
+  liste de ses indicateurs concernés triés par identifiant. Aucun nombre au
+  niveau du chantier. Liste vide si rien n'est à compléter.
+- chaque indicateur : `indicateur` en libellé « {id} · {nom} », puis une clé par
+  motif concerné par cet indicateur (« VA non à jour », « VI manquante », « VC
+  manquante »), dont la valeur donne le nombre de territoires à compléter pour
+  **chaque maille interrogée**, 0 compris (libellés de `libelleMaille` :
+  « nationale », « régionale », « départementale »).
 - `sans_valeur_a_completer` : les chantiers et indicateurs demandés
   explicitement (`chantier_ids`, `indicateur_ids`) qui n'ont aucune valeur à
   compléter. Absent si aucun.
