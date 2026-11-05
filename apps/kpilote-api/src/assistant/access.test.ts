@@ -80,4 +80,13 @@ describe('checkAssistantAccess', { concurrent: false }, () => {
       ).toBe(0)
     }),
   )
+
+  it(
+    'n’accepte qu’une seule ligne de paramètres',
+    integrationTest(async () => {
+      await expect(
+        db().assistantParametres.create({ data: { id: 2, actif: true } }),
+      ).rejects.toThrow()
+    }),
+  )
 })
