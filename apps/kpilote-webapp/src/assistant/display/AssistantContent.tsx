@@ -5,6 +5,7 @@ import { ResponseActions } from '../ResponseActions'
 import { usePageContext } from '../usePageContext'
 import { AssistantHeader } from './AssistantHeader'
 import { useAssistantDisplay } from './AssistantProvider'
+import { hidesPage } from './views'
 
 const isInternalLink = (target: EventTarget): boolean => {
   const link = target instanceof Element ? target.closest('a[href]') : null
@@ -18,11 +19,11 @@ export function AssistantContent({ conversationId }: { conversationId: string })
     useAssistantDisplay()
   const pageContext = usePageContext()
 
-  // En plein écran, un lien interne laisse voir la page : l'assistant passe en fenêtre
+  // En vue modale, un lien interne laisse voir la page : l'assistant passe en fenêtre
   // (ou se masque) avant que le lien ne navigue.
   // Un clic modifié (nouvel onglet) ou déjà traité ne quitte pas la page.
   const onLinkClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (display !== 'fullscreen' || event.defaultPrevented) return
+    if (!hidesPage(display) || event.defaultPrevented) return
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
     if (isInternalLink(event.target)) toWindow()
   }
@@ -37,7 +38,7 @@ export function AssistantContent({ conversationId }: { conversationId: string })
           pageContext={pageContext}
           pendingQuestion={pendingQuestion}
           onPendingQuestionSent={clearPendingQuestion}
-          {...(display === 'fullscreen' && backToPalette ? { onBack: backToPalette } : {})}
+          {...(hidesPage(display) && backToPalette ? { onBack: backToPalette } : {})}
           renderActions={(message) => <ResponseActions message={message} />}
         />
       </div>

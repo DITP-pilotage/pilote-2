@@ -24,7 +24,7 @@ export function HeaderNav({ auth }: { auth: Auth }) {
   const assistant = useAssistantDisplay()
   const { registerPalette } = assistant
 
-  // Maj+Tab dans l'assistant en plein écran ramène à la palette.
+  // Maj+Tab dans l'assistant en vue modale ramène à la palette.
   useEffect(() => {
     registerPalette(() => setPaletteOpen(true))
     return () => registerPalette(null)

@@ -4,15 +4,16 @@ import { Fragment } from 'react'
 
 import { useAssistantDisplay } from './AssistantProvider'
 import { ViewPictogram } from './ViewPictogram'
-import { ASSISTANT_VIEWS, type AssistantView } from './views'
+import { ASSISTANT_VIEWS, type AssistantView, hidesPage } from './views'
 
 const LABELS: Record<AssistantView, string> = {
   sidePanel: 'Panneau latéral',
   floating: 'Fenêtre flottante',
+  centered: 'Centrée',
   fullscreen: 'Plein écran',
 }
 
-const ORDER: readonly AssistantView[] = ['sidePanel', 'floating', 'fullscreen']
+const ORDER: readonly AssistantView[] = ['sidePanel', 'floating', 'centered', 'fullscreen']
 
 const isView = (value: string): value is AssistantView =>
   (ASSISTANT_VIEWS as readonly string[]).includes(value)
@@ -46,7 +47,7 @@ export function ViewMenu() {
           >
             {views.map((view) => (
               <Fragment key={view}>
-                {view === 'fullscreen' && views.length > 1 ? (
+                {view === views.find(hidesPage) && views.length > 1 ? (
                   <DropdownMenu.Separator className="my-1.5 h-px bg-border" />
                 ) : null}
                 <DropdownMenu.RadioItem

@@ -1,4 +1,4 @@
-export const ASSISTANT_VIEWS = ['fullscreen', 'sidePanel', 'floating'] as const
+export const ASSISTANT_VIEWS = ['fullscreen', 'centered', 'sidePanel', 'floating'] as const
 
 export type AssistantView = (typeof ASSISTANT_VIEWS)[number]
 
@@ -10,13 +10,14 @@ export type ScreenSize = 'narrow' | 'medium' | 'wide'
 // la largeur pour laquelle elles sont conçues. La fenêtre flottante, elle, se pose dessus.
 const VIEWS_BY_SIZE: Record<ScreenSize, readonly AssistantView[]> = {
   narrow: ['fullscreen'],
-  medium: ['floating', 'fullscreen'],
-  wide: ['floating', 'sidePanel', 'fullscreen'],
+  medium: ['floating', 'centered', 'fullscreen'],
+  wide: ['floating', 'sidePanel', 'centered', 'fullscreen'],
 }
 
 const FALLBACK: Record<AssistantView, AssistantView | null> = {
   sidePanel: 'floating',
   floating: 'fullscreen',
+  centered: 'fullscreen',
   fullscreen: null,
 }
 
@@ -32,6 +33,10 @@ export const effectiveView = (display: AssistantDisplay, size: ScreenSize): Assi
   while (view && !viewsFor(size).includes(view)) view = FALLBACK[view]
   return view ?? 'fullscreen'
 }
+
+/** Plein écran et centrée sont modales : la page reste derrière, inaccessible. */
+export const hidesPage = (display: AssistantDisplay): boolean =>
+  display === 'fullscreen' || display === 'centered'
 
 export const PANEL_WIDTH = { min: 400, max: 720, default: 520 } as const
 

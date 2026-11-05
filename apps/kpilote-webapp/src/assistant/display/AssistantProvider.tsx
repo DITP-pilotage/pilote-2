@@ -36,7 +36,7 @@ type AssistantContextValue = {
   toWindow: () => void
   newConversation: () => void
   selectConversation: (id: string) => Promise<void>
-  /** La palette s'enregistre pour que Maj+Tab y ramène depuis le plein écran. */
+  /** La palette s'enregistre pour que Maj+Tab y ramène depuis une vue modale. */
   registerPalette: (openPalette: (() => void) | null) => void
   backToPalette: (() => void) | null
 }

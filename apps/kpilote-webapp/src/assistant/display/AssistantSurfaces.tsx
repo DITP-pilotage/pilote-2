@@ -181,8 +181,11 @@ function FloatingWindow({ conversationId }: { conversationId: string }) {
   )
 }
 
-/** Le plein écran : focus piégé, page figée ; Échap masque l'assistant sans le fermer. */
-function Fullscreen({ conversationId }: { conversationId: string }) {
+/**
+ * Plein écran ou centrée, comme une modale : focus piégé, page figée ; Échap masque
+ * l'assistant sans le fermer.
+ */
+function ModalView({ conversationId, centered }: { conversationId: string; centered: boolean }) {
   const { minimize } = useAssistantDisplay()
   return (
     <Dialog.Root
@@ -193,10 +196,22 @@ function Fullscreen({ conversationId }: { conversationId: string }) {
     >
       <Dialog.Portal>
         {/* Sans overlay, Radix ne bloque ni le défilement ni les clics de la page. */}
-        <Dialog.Overlay className={clsxm('fixed inset-0 bg-background', LAYER)} />
+        <Dialog.Overlay
+          className={clsxm(
+            'fixed inset-0',
+            centered ? 'bg-black/40 backdrop-blur-sm' : 'bg-background',
+            LAYER,
+          )}
+        />
         <Dialog.Content
           aria-describedby={undefined}
-          className={clsxm('fixed inset-0 flex flex-col bg-surface focus:outline-none', LAYER)}
+          className={clsxm(
+            'fixed flex flex-col bg-surface focus:outline-none',
+            centered
+              ? 'top-1/2 left-1/2 h-[min(84vh,calc(100dvh-16vh))] w-[min(64rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-border shadow-[0_20px_60px_rgba(0,0,0,0.22)]'
+              : 'inset-0',
+            LAYER,
+          )}
           onEscapeKeyDown={(event) => {
             event.preventDefault()
             minimize()
@@ -288,7 +303,7 @@ function ConversationPastille({ conversationId }: { conversationId: string }) {
   )
 }
 
-/** Plein écran, fenêtre flottante ou pastille : ce qui se pose par-dessus la page. */
+/** Vue modale, fenêtre flottante ou pastille : ce qui se pose par-dessus la page. */
 export function AssistantOverlay() {
   const { allowed, conversationId, display, open } = useAssistantDisplay()
   if (!allowed) return null
@@ -302,6 +317,8 @@ export function AssistantOverlay() {
   }
   if (display === 'minimized') return <ConversationPastille conversationId={conversationId} />
   if (display === 'floating') return <FloatingWindow conversationId={conversationId} />
-  if (display === 'fullscreen') return <Fullscreen conversationId={conversationId} />
+  if (display === 'fullscreen' || display === 'centered') {
+    return <ModalView conversationId={conversationId} centered={display === 'centered'} />
+  }
   return null
 }

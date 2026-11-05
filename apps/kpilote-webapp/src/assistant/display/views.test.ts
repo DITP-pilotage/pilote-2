@@ -1,19 +1,29 @@
 import { describe, expect, it } from 'vitest'
 
-import { boundPanelWidth, boundWindowSize, effectiveView, viewsFor } from './views'
+import { boundPanelWidth, boundWindowSize, effectiveView, hidesPage, viewsFor } from './views'
 
 describe('vues de l’assistant', () => {
   it('propose les vues qui tiennent sur l’écran', () => {
     expect(viewsFor('narrow')).toEqual(['fullscreen'])
-    expect(viewsFor('medium')).toEqual(['floating', 'fullscreen'])
-    expect(viewsFor('wide')).toEqual(['floating', 'sidePanel', 'fullscreen'])
+    expect(viewsFor('medium')).toEqual(['floating', 'centered', 'fullscreen'])
+    expect(viewsFor('wide')).toEqual(['floating', 'sidePanel', 'centered', 'fullscreen'])
   })
 
   it('replie de proche en proche une vue qui ne tient pas, sans l’oublier', () => {
     expect(effectiveView('sidePanel', 'medium')).toBe('floating')
     expect(effectiveView('sidePanel', 'narrow')).toBe('fullscreen')
     expect(effectiveView('sidePanel', 'wide')).toBe('sidePanel')
+    expect(effectiveView('centered', 'narrow')).toBe('fullscreen')
+    expect(effectiveView('centered', 'medium')).toBe('centered')
     expect(effectiveView('minimized', 'narrow')).toBe('minimized')
+  })
+
+  it('distingue les vues modales, qui cachent la page', () => {
+    expect(hidesPage('fullscreen')).toBe(true)
+    expect(hidesPage('centered')).toBe(true)
+    expect(hidesPage('floating')).toBe(false)
+    expect(hidesPage('sidePanel')).toBe(false)
+    expect(hidesPage('minimized')).toBe(false)
   })
 
   it('borne le panneau et laisse sa place à la page', () => {
