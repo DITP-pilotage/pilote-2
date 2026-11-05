@@ -80,8 +80,11 @@ const champsRecherche = (ligne: LigneDetail) => [
   ligne.territoire_nom ?? "",
 ];
 
-const pluriel = (nombre: number, singulier: string, plurielLibelle: string) =>
-  `${nombre} ${nombre > 1 ? plurielLibelle : singulier}`;
+export const pluriel = (
+  nombre: number,
+  singulier: string,
+  plurielLibelle: string,
+) => `${nombre} ${nombre > 1 ? plurielLibelle : singulier}`;
 
 const nombreDistincts = (
   lignes: LigneDetail[],

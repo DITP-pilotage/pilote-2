@@ -182,7 +182,7 @@ describe("AssistantMessage", () => {
     // Then
     expect(
       screen.getByText(
-        "Détail par territoire · Bretagne et ses départements · VA non à jour · 1 lignes · 1 chantier",
+        "Détail par territoire · Bretagne et ses départements · VA non à jour · 1 ligne · 1 chantier",
       ),
     ).toBeInTheDocument();
     expect(

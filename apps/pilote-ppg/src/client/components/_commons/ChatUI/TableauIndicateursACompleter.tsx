@@ -2,6 +2,7 @@ import { useId } from "react";
 import { csvIndicateursACompleter } from "@/components/_commons/ChatUI/csvIndicateursACompleter";
 import {
   libelleGroupe,
+  pluriel,
   type Regroupement,
   type TableDetail,
   useTableauIndicateursACompleter,
@@ -277,8 +278,8 @@ export const TableauIndicateursACompleter = ({
       <div className="flex items-center justify-between gap-4 px-4 py-3">
         <p className="mb-0 text-sm font-bold text-dsfr-grey-50">
           Détail par territoire · {detail.perimetre} · {libellesMotifs} ·{" "}
-          {lignesFiltrees.length} lignes · {nombreChantiers} chantier
-          {nombreChantiers > 1 ? "s" : ""}
+          {pluriel(lignesFiltrees.length, "ligne", "lignes")} ·{" "}
+          {pluriel(nombreChantiers, "chantier", "chantiers")}
         </p>
         <Button
           iconLeft={
