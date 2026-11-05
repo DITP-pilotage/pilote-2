@@ -1,35 +1,11 @@
 import { type Model, type PageContext } from '@pilote/kpilote-shared/assistant/chat'
+import { deriveTitle } from '@pilote/kpilote-shared/assistant/conversation'
 
 import { NotFoundError } from '@/framework/errors/AppError'
 import { type SubCallTrace } from '@/framework/llm/turnTrace'
 import { db } from '@/framework/persistence/dbStore'
-
-const MAX_TITLE_LENGTH = 80
-
-const isTextPart = (part: unknown): part is { type: 'text'; text: string } =>
-  typeof part === 'object' &&
-  part !== null &&
-  'type' in part &&
-  part.type === 'text' &&
-  'text' in part &&
-  typeof part.text === 'string'
-
-/** Premier message utilisateur, tronqué : de quoi retrouver une conversation dans une liste. */
-export const deriveTitle = (messages: ReadonlyArray<unknown>): string => {
-  for (const message of messages) {
-    if (typeof message !== 'object' || message === null) continue
-    if (!('role' in message) || message.role !== 'user') continue
-    const parts = 'parts' in message && Array.isArray(message.parts) ? message.parts : []
-    const text = parts
-      .filter(isTextPart)
-      .map((part) => part.text)
-      .join(' ')
-      .trim()
-    if (text.length === 0) continue
-    return text.length > MAX_TITLE_LENGTH ? `${text.slice(0, MAX_TITLE_LENGTH - 1)}…` : text
-  }
-  return 'Nouvelle conversation'
-}
+import { withinTransaction } from '@/framework/persistence/withTransaction'
+import { Prisma } from '@/generated/prisma/client'
 
 // Aller-retour JSON : le sérialiseur de Prisma plante sur les schémas zod que le SDK
 // attache aux parts d'outils.
@@ -49,60 +25,73 @@ export type RecordedCall = {
 export const recordTurn = async ({
   conversationId,
   principalId,
+  startedOnSavedConversation,
   contexte,
   messages,
   call,
 }: {
   conversationId: string
   principalId: string
+  /** Le tour reprenait une conversation enregistrée : absente à la fin, elle a été supprimée. */
+  startedOnSavedConversation: boolean
   contexte: PageContext | null
   messages: ReadonlyArray<unknown>
   call: RecordedCall
 }): Promise<void> => {
   const blob = toPlainJson(messages)
-  // Mise à jour cloisonnée au principal : un identifiant deviné ne doit pas écraser la
-  // conversation d'un autre. Zéro ligne touchée = premier tour, sauf si l'id est pris.
-  const { count } = await db().assistantConversation.updateMany({
-    where: { id: conversationId, principalId },
-    data: { messages: blob },
-  })
-  if (count === 0) {
-    const taken = await db().assistantConversation.findUnique({
-      where: { id: conversationId },
-      select: { id: true },
-    })
-    if (taken) throw new NotFoundError('Conversation introuvable', { id: conversationId })
-    await db().assistantConversation.create({
-      data: {
-        id: conversationId,
-        principalId,
-        titre: deriveTitle(messages),
-        messages: blob,
-        ...(contexte ? { contexte } : {}),
-      },
-    })
+  const appel = {
+    id: call.id,
+    principalId,
+    modele: call.model,
+    transcript: toPlainJson(call.transcript),
+    outils: call.tools,
+    inputTokens: call.inputTokens,
+    outputTokens: call.outputTokens,
+    dureeMs: call.durationMs,
+    sousAppels: {
+      create: call.subCalls.map((subCall) => ({
+        nom: subCall.name,
+        modele: subCall.model,
+        inputTokens: subCall.inputTokens,
+        outputTokens: subCall.outputTokens,
+        dureeMs: subCall.durationMs,
+      })),
+    },
   }
 
-  await db().assistantAppel.create({
-    data: {
-      id: call.id,
-      conversationId,
-      principalId,
-      modele: call.model,
-      transcript: toPlainJson(call.transcript),
-      outils: call.tools,
-      inputTokens: call.inputTokens,
-      outputTokens: call.outputTokens,
-      dureeMs: call.durationMs,
-      sousAppels: {
-        create: call.subCalls.map((subCall) => ({
-          nom: subCall.name,
-          modele: subCall.model,
-          inputTokens: subCall.inputTokens,
-          outputTokens: subCall.outputTokens,
-          dureeMs: subCall.durationMs,
-        })),
-      },
-    },
+  await withinTransaction(async () => {
+    if (!startedOnSavedConversation) {
+      // Premier tour : deux envois simultanés (double clic) ne se gênent pas, le second
+      // trouve la conversation déjà créée.
+      await db().assistantConversation.createMany({
+        data: [
+          {
+            id: conversationId,
+            principalId,
+            titre: deriveTitle(messages),
+            messages: blob,
+            ...(contexte ? { contexte } : {}),
+          },
+        ],
+        skipDuplicates: true,
+      })
+    }
+    try {
+      // Messages et appel en une écriture : un tour n'est jamais gardé sans son appel.
+      // Cloisonnée au principal : un identifiant deviné ne doit pas écraser la conversation
+      // d'un autre.
+      await db().assistantConversation.update({
+        where: { id: conversationId, principalId },
+        data: { messages: blob, appels: { create: appel } },
+        select: { id: true },
+      })
+    } catch (error) {
+      if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')) {
+        throw error
+      }
+      // Supprimée pendant le tour : la suppression l'emporte, rien n'est recréé.
+      if (startedOnSavedConversation) return
+      throw new NotFoundError('Conversation introuvable', { id: conversationId })
+    }
   })
 }
