@@ -8,6 +8,8 @@ import { ChoicesInline } from './ChoicesInline'
 import { ConsultedSources, isSourcePart } from './ConsultedSources'
 import { type AssistantState } from './deriveAssistantState'
 import { MarkdownResponse } from './MarkdownResponse'
+import { isRapportPart, rapportOutput, rapportTypeOf, type RapportPart } from './rapport'
+import { RapportEncart } from './RapportEncart'
 
 export function UserMessage({ message }: { message: KpiloteUIMessage }) {
   return (
@@ -20,6 +22,16 @@ export function UserMessage({ message }: { message: KpiloteUIMessage }) {
       </p>
     </div>
   )
+}
+
+/** L'encart d'un outil de rédaction : en attente tant que l'outil n'a rien émis. */
+function RapportOf({ part, isStreaming }: { part: RapportPart; isStreaming: boolean }) {
+  const pending = part.state === 'input-streaming' || part.state === 'input-available'
+  const output = pending
+    ? { type: rapportTypeOf(part), dateRedaction: '', markdown: '', done: false }
+    : rapportOutput(part)
+  if (!output || (pending && !isStreaming)) return null
+  return <RapportEncart output={output} isStreaming={isStreaming} />
 }
 
 export const AssistantMessage = memo(function AssistantMessage({
@@ -45,11 +57,15 @@ export const AssistantMessage = memo(function AssistantMessage({
     <div className="flex w-full flex-col gap-3 text-[15px] leading-6 text-text">
       <AssistantSignature state={state} />
       {sources.length > 0 && <ConsultedSources parts={sources} />}
-      {message.parts.map((part, index) =>
-        part.type === 'text' && part.text.length > 0 ? (
-          <MarkdownResponse key={index} text={part.text} />
-        ) : null,
-      )}
+      {message.parts.map((part, index) => {
+        if (part.type === 'text' && part.text.length > 0) {
+          return <MarkdownResponse key={index} text={part.text} />
+        }
+        if (isRapportPart(part)) {
+          return <RapportOf key={index} part={part} isStreaming={state !== null} />
+        }
+        return null
+      })}
       {/* Sous le texte, une fois la réponse rédigée : l'encart ferme la réponse. */}
       {state === null && help && <CentreAideEncart output={help} />}
       {/* Les choix ferment la réponse, même si le modèle a écrit après l'appel. */}

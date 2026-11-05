@@ -8,7 +8,7 @@ import {
 import { findIndividu, findReadableCollection } from '@/assistant/tools/entityLookups'
 import { findReadableIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
 import { textFromHtml } from '@/assistant/tools/textFromHtml'
-import { type ToolDefinition } from '@/assistant/tools/toolDefinition'
+import { type QueryToolDefinition } from '@/assistant/tools/toolDefinition'
 import { listerCollectionCommentaires } from '@/collection/queries/listerCollectionCommentaires'
 import { listerIndicateurIndividuCommentaires } from '@/indicateur/queries/listerIndicateurIndividuCommentaires'
 
@@ -44,7 +44,7 @@ const toGroup = (type: string, commentaires: ReadonlyArray<CommentaireApiModel>)
 
 const PAGE_SIZE = 100
 
-export const getCommentaires: ToolDefinition<'get_commentaires'> = {
+export const getCommentaires: QueryToolDefinition<'get_commentaires'> = {
   description: `Renvoie les commentaires publiés sur un indicateur pour un individu, ou sur une collection, groupés par type (commentaire, niveau de confiance, objectif), du plus récent au plus ancien, en texte et sans répétitions.
 - \`truncated\` : seuls les ${MAX_VERSIONS_PER_TYPE} plus récents d'un type sont lus.
 - \`notFound\` : identifiants inexistants ou que l'utilisateur ne peut pas consulter ; ne les distingue pas.
