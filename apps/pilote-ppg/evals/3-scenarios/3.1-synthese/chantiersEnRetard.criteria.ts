@@ -27,7 +27,7 @@ export const CHANTIERS_EN_RETARD_CRITERIA = withBase({
       id: "Valeurs des indicateurs",
       rule: "Demande : les valeurs des indicateurs de chaque chantier en retard (VI, VA, VC, TA)",
       instruction:
-        "Pour chaque chantier en retard, la réponse DONNE les valeurs de ses indicateurs (valeur initiale, actuelle, cible, taux d'avancement). Renvoyer vers un tableau de bord ou dire que l'affichage est impossible est non conforme. L'exactitude des valeurs relève de « Chiffres exacts », pas de ce critère.",
+        "Pour chaque chantier en retard, la réponse DONNE les valeurs de ses indicateurs (valeur initiale, valeur d'avancement, cible, taux d'avancement). Renvoyer vers un tableau de bord ou dire que l'affichage est impossible est non conforme. L'exactitude des valeurs relève de « Chiffres exacts », pas de ce critère.",
     }),
   ],
 });

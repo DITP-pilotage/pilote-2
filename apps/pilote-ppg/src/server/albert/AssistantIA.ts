@@ -4,6 +4,7 @@ import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { getContainer } from "@/server/dependances";
 import { clarifyWithChoicesTool } from "@/server/albert/tools/clarifyWithChoices";
+import { proposerSuitesTool } from "@/server/albert/tools/proposerSuites";
 
 /**
  * Câblage de l'agent : quels outils et quel prompt système, pour quelles
@@ -88,6 +89,7 @@ export class AssistantIA {
         "createConsulterCentreAideTool",
       )(),
       clarify_with_choices: clarifyWithChoicesTool,
+      proposer_suites: proposerSuitesTool,
       create_dashboard: container.resolve("createCreateDashboardTool")({
         chantiersAccessibles,
       }),

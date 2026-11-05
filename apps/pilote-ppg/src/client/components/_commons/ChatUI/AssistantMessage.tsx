@@ -30,6 +30,7 @@ import { TableauIndicateursACompleter } from "@/components/_commons/ChatUI/Table
 import {
   choixPresentes,
   copyExportNames,
+  dernieresSuites,
   llmCallIdOf,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
@@ -72,6 +73,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
   const consultationCentreAide = derniereConsultationCentreAide(parts);
+  const suites = dernieresSuites(parts);
 
   const dernierChoix = parts.reduce<ReturnType<typeof choixPresentes>>(
     (dernier, part) => choixPresentes(part) ?? dernier,
@@ -238,6 +240,15 @@ export const AssistantMessage = memo(function AssistantMessage({
           choices={dernierChoix.choices}
           llmCallId={llmCallIdOf(message)}
           question={dernierChoix.question}
+        />
+      )}
+
+      {/* Les suites prolongent la réponse : seules les dernières proposées. */}
+      {afficherChoix && suites && suites.length > 0 && (
+        <ChoicesInline
+          choices={suites}
+          llmCallId={llmCallIdOf(message)}
+          variante="suites"
         />
       )}
 

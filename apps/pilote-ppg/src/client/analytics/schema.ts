@@ -46,6 +46,8 @@ export const ANALYTICS_EVENT_NAMES = [
   "response.choices",
   "response.choice",
   "response.choice.other",
+  "response.suites",
+  "response.suite",
   "response.link.internal",
   "response.link.external",
   "response.help_center.link",

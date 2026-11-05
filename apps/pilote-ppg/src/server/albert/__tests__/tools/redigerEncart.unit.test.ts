@@ -6,7 +6,9 @@ import { Albert } from "@/server/albert/Albert";
 import {
   type DonneesEncart,
   type EncartOutput,
+  couvertureEncart,
   ecartPourLeSousAgent,
+  encartVersModele,
 } from "@/server/albert/tools/encart";
 import { createRedigerSyntheseTerritoireTool } from "@/server/albert/tools/redigerSyntheseTerritoire";
 import {
@@ -527,7 +529,7 @@ describe("outils de rédaction d'encart", () => {
     expect(resultat.success).toEqual(false);
   });
 
-  test("ne rend au modèle que le markdown, y compris dans l'historique", async () => {
+  test("rend au modèle le markdown, la couverture et les données, y compris dans l'historique", async () => {
     // Given
     const message: UIMessage = {
       id: "message-1",
@@ -563,9 +565,27 @@ describe("outils de rédaction d'encart", () => {
     expect(resultatsOutil).toEqual([
       {
         type: "text",
-        value: "# Synthèse pour le Nord",
+        value: expect.stringMatching(
+          /^# Synthèse pour le Nord\n\n---\nContexte pour les questions suivantes\. L'encart ci-dessus est déjà affiché à l'utilisateur : ne le recopie pas\./,
+        ),
       },
     ]);
+    const [{ value }] = resultatsOutil as { value: string }[];
+    expect(value).toContain(
+      'Couverture : {"territoires":[{"code":"DEPT-59","nom":"Nord"}],"jalon":2025,',
+    );
+    expect(value).toContain('Données de l\'encart : {"taux":[');
+    expect(value).toContain('"id":"CH-071"');
+  });
+
+  test("rend le seul markdown d'un encart sans données", () => {
+    // When
+    const sortie = encartVersModele({
+      output: encart({ markdown: "# Synthèse pour le Nord", termine: true }),
+    });
+
+    // Then
+    expect(sortie).toEqual({ type: "text", value: "# Synthèse pour le Nord" });
   });
 
   test("generateText retient le dernier résultat de l'outil", async () => {
@@ -710,5 +730,50 @@ describe("ecartPourLeSousAgent", () => {
 
     // Then
     expect(ecrit).toEqual(attendu);
+  });
+});
+
+describe("couvertureEncart", () => {
+  test("donne les territoires lus et signale l'absence des indicateurs", () => {
+    // When
+    const couverture = couvertureEncart({
+      jalon: 2025,
+      donnees: DONNEES_DU_NORD,
+    });
+
+    // Then
+    expect(couverture).toEqual({
+      territoires: [{ code: "DEPT-59", nom: "Nord" }],
+      jalon: 2025,
+      contient: [
+        "taux d'avancement et position face à la médiane",
+        "chantiers en retard et en difficulté : écart, niveau de confiance, tendance, commentaire de synthèse",
+      ],
+      ne_contient_pas: [
+        "indicateurs",
+        "commentaires typés (sur les données, actions, résultats, freins)",
+        "objectifs",
+        "chantiers ni en retard ni en difficulté",
+        "autres territoires, dont les départements d'une région, et autres jalons",
+      ],
+    });
+  });
+
+  test("compte les indicateurs parmi le contenu quand l'encart les a lus", () => {
+    // When
+    const couverture = couvertureEncart({
+      jalon: 2025,
+      donnees: { ...DONNEES_DU_NORD, indicateurs: [] },
+    });
+
+    // Then
+    expect(couverture).toEqual(
+      expect.objectContaining({
+        contient: expect.arrayContaining([
+          "valeurs des indicateurs de ces chantiers",
+        ]),
+        ne_contient_pas: expect.not.arrayContaining(["indicateurs"]),
+      }),
+    );
   });
 });

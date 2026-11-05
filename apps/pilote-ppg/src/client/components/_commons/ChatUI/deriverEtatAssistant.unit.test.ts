@@ -195,6 +195,27 @@ describe("deriverEtatAssistant", () => {
     // Then
     expect(etat).toBe("consulte-le-centre-d-aide");
   });
+
+  test("rédige pendant qu'il propose les suites", () => {
+    // Given
+    const dernier = message([
+      {
+        type: "tool-proposer_suites",
+        toolCallId: "appel-1",
+        state: "input-streaming",
+        input: undefined,
+      },
+    ]);
+
+    // When
+    const etat = deriverEtatAssistant({
+      message: dernier,
+      status: "streaming",
+    });
+
+    // Then
+    expect(etat).toBe("redige");
+  });
 });
 
 describe("afficherAttenteReponse", () => {

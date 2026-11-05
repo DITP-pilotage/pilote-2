@@ -210,11 +210,13 @@ const evidence = ({
   truth = FICHE_BRETAGNE,
   tableTerritories = [],
   conversation = [],
+  suites = [],
 }: Partial<Evidence> & { question: string; matter: string }): Evidence => ({
   question,
   profile,
   currentTerritory: "REG-53",
   answer,
+  suites,
   matter,
   dashboard,
   toolCalls,
@@ -339,7 +341,7 @@ const RETARD_REFERENCE = `**CH-005 — Réduire les délais de passage aux urgen
 - Écart à la médiane : -15 points
 - Niveau de confiance : Appuis nécessaires
 
-Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur actuelle 250, valeur cible 180, taux d'avancement 30 %.`;
+Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur d'avancement 250, valeur cible 180, taux d'avancement 30 %.`;
 
 const retard = ({ from, to }: { from: string | RegExp; to: string }) =>
   evidence({
@@ -365,11 +367,11 @@ const RETARD: CalibrationCase[] = [
   },
   {
     suite: SUITES.chantiersEnRetard,
-    label: "Valeur actuelle fausse",
+    label: "Valeur d'avancement fausse",
     broken: "Chiffres exacts",
     evidence: retard({
-      from: "valeur actuelle 250",
-      to: "valeur actuelle 210",
+      from: "valeur d'avancement 250",
+      to: "valeur d'avancement 210",
     }),
   },
   {
@@ -859,7 +861,7 @@ const RESTRICTION: CalibrationCase[] = [
 // --- Synthèse d'un chantier sur un territoire ---------------------------
 
 const CHANTIER_QUESTION = `Fais moi la synthèse du chantier CH-005 sur le territoire Bretagne
-Comment se situe ce chantier par rapport aux autres territoires ?
+Quel est son écart à la médiane ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`;
 
 const CHANTIER_RESULTS = [
@@ -921,10 +923,6 @@ const CHANTIER_REFERENCE = `## CH-005 — Réduire les délais de passage aux ur
 
 Le chantier est en retard de 15 points sur la médiane, avec un niveau de confiance « Appuis nécessaires ».
 
-## Position face aux autres territoires
-
-Sur ce chantier, la Bretagne (écart de -15 points) se situe derrière les Pays de la Loire (écart de +8 points, taux d'avancement de 75 %).
-
 ## Difficultés remontées dans les commentaires
 
 Deux postes d'urgentistes sont vacants à Brest et Quimper. La fermeture estivale de deux lignes de SMUR explique la hausse du délai au premier semestre, et la donnée de juin reste provisoire.`;
@@ -957,13 +955,13 @@ const SYNTHESE_CHANTIER: CalibrationCase[] = [
   },
   {
     suite: SUITES.syntheseChantier,
-    label: "Position sans chiffre",
-    broken: "Situé face aux autres territoires",
+    label: "Écart sans chiffre",
+    broken: "Écart à la médiane chiffré",
     evidence: syntheseChantier(
       muter({
         reference: CHANTIER_REFERENCE,
-        from: "Sur ce chantier, la Bretagne (écart de -15 points) se situe derrière les Pays de la Loire (écart de +8 points, taux d'avancement de 75 %).",
-        to: "Sur ce chantier, la Bretagne se situe derrière les Pays de la Loire.",
+        from: "Le chantier est en retard de 15 points sur la médiane",
+        to: "Le chantier est en retard sur la médiane",
       }),
     ),
   },

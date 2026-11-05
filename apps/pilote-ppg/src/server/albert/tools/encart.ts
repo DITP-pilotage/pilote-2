@@ -208,19 +208,86 @@ export async function* redigerEncart({
 }
 
 /**
- * Le modèle principal ne relit que le texte de l'encart, pas les données :
- * il répond aux questions de suivi à partir de ce que l'utilisateur a vu.
+ * Ce que l'encart couvre, et surtout ce qu'il ne couvre pas : sans ce
+ * périmètre explicite, une question de suivi après l'encart partait sur
+ * NAT-FR, et une donnée absente de l'encart était annoncée inexistante
+ * (PIL-1949).
+ */
+export const couvertureEncart = ({
+  jalon,
+  donnees,
+}: {
+  jalon: number;
+  donnees: DonneesEncart;
+}) => {
+  const territoires = new Map<string, string | null>();
+  for (const { territoire_code, territoire_nom } of [
+    ...donnees.taux,
+    ...donnees.chantiers_en_retard.resultats,
+    ...donnees.chantiers_en_difficulte.resultats,
+  ]) {
+    if (!territoires.has(territoire_code)) {
+      territoires.set(territoire_code, territoire_nom);
+    }
+  }
+  const avecIndicateurs = donnees.indicateurs !== undefined;
+
+  return {
+    territoires: [...territoires].map(([code, nom]) => ({ code, nom })),
+    jalon,
+    contient: [
+      "taux d'avancement et position face à la médiane",
+      "chantiers en retard et en difficulté : écart, niveau de confiance, tendance, commentaire de synthèse",
+      ...(avecIndicateurs ? ["valeurs des indicateurs de ces chantiers"] : []),
+    ],
+    ne_contient_pas: [
+      ...(avecIndicateurs ? [] : ["indicateurs"]),
+      "commentaires typés (sur les données, actions, résultats, freins)",
+      "objectifs",
+      "chantiers ni en retard ni en difficulté",
+      "autres territoires, dont les départements d'une région, et autres jalons",
+    ],
+  };
+};
+
+/**
+ * Le modèle principal relit le texte de l'encart, son périmètre et les
+ * données dont il est tiré. PIL-1900 ne lui rendait que le texte, pour qu'il
+ * réponde aux questions de suivi à partir de ce que l'utilisateur a vu : il
+ * perdait alors le territoire, et relisait les chiffres dans la prose
+ * (PIL-1949).
+ *
+ * En texte, et non en JSON, et en disant l'encart déjà affiché : rendu en
+ * JSON, il était recopié sous l'encart (3 essais sur 3, synthèse avec
+ * départements), et la phrase de clarify_with_choices revenait sans choix.
  */
 export const encartVersModele = ({
   output,
 }: {
   output: EncartOutput;
-}): { type: "text"; value: string } => ({
-  type: "text",
-  value: output.acces_refuse
-    ? "Accès refusé : l'utilisateur n'a accès à aucun chantier."
-    : output.markdown,
-});
+}): { type: "text"; value: string } => {
+  if (output.acces_refuse) {
+    return {
+      type: "text",
+      value: "Accès refusé : l'utilisateur n'a accès à aucun chantier.",
+    };
+  }
+  if (!output.donnees) return { type: "text", value: output.markdown };
+
+  const couverture = couvertureEncart({
+    jalon: output.jalon,
+    donnees: output.donnees,
+  });
+  return {
+    type: "text",
+    value: `${output.markdown}
+
+---
+Contexte pour les questions suivantes. L'encart ci-dessus est déjà affiché à l'utilisateur : ne le recopie pas. Pour une donnée hors de cette couverture, appelle l'outil correspondant sur ce périmètre.
+Couverture : ${JSON.stringify(couverture)}
+Données de l'encart : ${JSON.stringify(donneesPourLeSousAgent(output.donnees))}`,
+  };
+};
 
 export const jalonEncartSchema = z
   .number()

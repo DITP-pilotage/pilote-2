@@ -8,6 +8,10 @@ import {
   type ClarifyWithChoicesOutput,
 } from "@/server/albert/tools/clarifyWithChoices";
 import {
+  proposerSuitesInputSchema,
+  type ProposerSuitesOutput,
+} from "@/server/albert/tools/proposerSuites";
+import {
   createDashboardInputSchema,
   type CreateDashboardOutput,
 } from "@/server/albert/tools/createDashboard";
@@ -68,6 +72,10 @@ export type PiloteUITools = {
   clarify_with_choices: {
     input: z.input<typeof clarifyWithChoicesInputSchema>;
     output: ClarifyWithChoicesOutput;
+  };
+  proposer_suites: {
+    input: z.input<typeof proposerSuitesInputSchema>;
+    output: ProposerSuitesOutput;
   };
   get_taux_avancement_territoire: {
     input: z.input<typeof getTauxAvancementTerritoireInputSchema>;

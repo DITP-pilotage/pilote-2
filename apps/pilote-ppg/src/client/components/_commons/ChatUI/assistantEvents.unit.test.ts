@@ -9,6 +9,7 @@ import {
   propositionMode,
   propositionsShownEvent,
   questionType,
+  suitesPresentedEvent,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
@@ -252,6 +253,52 @@ describe("choicesPresentedEvent", () => {
   it("ne compte rien sans question à choix", () => {
     expect(
       choicesPresentedEvent({
+        conversationId: "conv-1",
+        message: assistantMessage,
+      }),
+    ).toBeNull();
+  });
+});
+
+describe("suitesPresentedEvent", () => {
+  const partSuites = (labels: string[], toolCallId: string) => ({
+    type: "tool-proposer_suites" as const,
+    toolCallId,
+    state: "output-available" as const,
+    input: { suites: labels.map((label) => ({ label })) },
+    output: { suites: labels.map((label) => ({ label })) },
+  });
+
+  it("compte les suites du dernier appel", () => {
+    // Given
+    const avecSuites: PiloteUIMessage = {
+      ...assistantMessage,
+      parts: [
+        partSuites(["Synthèse de la Bretagne"], "call-1"),
+        partSuites(
+          ["Chantiers en retard en Bretagne", "Synthèse de la Bretagne"],
+          "call-2",
+        ),
+      ],
+    };
+
+    // Then
+    expect(
+      suitesPresentedEvent({ conversationId: "conv-1", message: avecSuites }),
+    ).toEqual({
+      action: "view",
+      name: "response.suites",
+      dimensions: {
+        conversation_id: "conv-1",
+        llm_call_id: "llm-1",
+        nombre_choix: 2,
+      },
+    });
+  });
+
+  it("ne compte rien sans suite", () => {
+    expect(
+      suitesPresentedEvent({
         conversationId: "conv-1",
         message: assistantMessage,
       }),

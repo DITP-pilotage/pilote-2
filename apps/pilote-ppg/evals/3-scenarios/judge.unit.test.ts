@@ -47,6 +47,7 @@ const EVIDENCE: Evidence = {
   },
   tableTerritories: [],
   conversation: [],
+  suites: [],
 };
 
 describe("toVerdict", () => {
@@ -121,6 +122,21 @@ describe("buildJudgePrompt", () => {
     expect(prompt).toContain("# Synthèse pour Bretagne");
     expect(prompt).toContain('"toolName": "get_chantiers"');
     expect(prompt).toContain("Territoire courant : REG-53");
+  });
+
+  test("montre les suites proposées dans la matière", () => {
+    // When
+    const prompt = buildJudgePrompt({
+      evidence: { ...EVIDENCE, suites: ["Chantiers en retard en Bretagne"] },
+      criteria: CRITERES,
+    });
+
+    // Then
+    const matiere = prompt.slice(
+      prompt.indexOf("=== DÉBUT DE LA MATIÈRE ==="),
+      prompt.indexOf("=== FIN DE LA MATIÈRE ==="),
+    );
+    expect(matiere).toContain("- Chantiers en retard en Bretagne");
   });
 
   test("donne la conversation précédente quand le tour en suit d'autres", () => {

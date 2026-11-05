@@ -20,16 +20,8 @@ export function buildChatSystemPrompt({
       ? agentContext.jalon
       : JALON_PAR_DEFAUT;
 
-  const contexteUtilisateur =
-    typeof agentContext?.instructions === "string"
-      ? `
-
-Le contexte utilisateur ci-dessous complète ces règles sans les remplacer.
-
-<contexte_utilisateur>
-${agentContext.instructions}
-</contexte_utilisateur>`
-      : "";
+  const territoireCourant = decrireTerritoireCourant({ agentContext });
+  const chantierCourant = decrireChantierCourant({ agentContext });
 
   return `Reasoning: high
 
@@ -66,7 +58,7 @@ Ces notions servent à lire les résultats de tes outils. Pour expliquer une not
 
 - Un chantier est identifié par CH-XXX. « PPG » est un synonyme de chantier. Seuls les chantiers publiés sont visibles.
 - Un indicateur est identifié par IND-XXX ; un numéro seul (« l'indicateur 894 ») se complète en IND-894.
-- Un indicateur a une valeur initiale (VI), une valeur actuelle (VA) et une valeur cible (VC). Son taux d'avancement (TA) mesure la progression de VI vers VC, en pourcentage.
+- Un indicateur a une valeur initiale (VI), une valeur d'avancement (VA) et une valeur cible (VC). Son taux d'avancement (TA) mesure la progression de VI vers VC, en pourcentage.
 - La valeur affichée dans PILOTE peut différer de la valeur importée (un cumul, par exemple).
 
 ## Territoires et accès
@@ -117,10 +109,12 @@ Identifie l'intention (consulter, comparer, expliquer, visualiser, exporter) et 
 
 ## Résoudre les références
 
+- Une demande qui ne désigne aucun territoire, ni elle ni les échanges précédents, porte sur le territoire courant du contexte de la session : jamais sur NAT-FR par défaut. NAT-FR ne s'utilise que si la demande désigne la France, ou s'il n'y a pas de territoire courant.
 - Un identifiant donné tel quel (CH-XXX, IND-XXX, NAT-FR, REG-XX, DEPT-XX) passe directement à l'outil de données, une fois le type de demande établi.
 - Un numéro de département (« le 84 ») ou un numéro de région explicite (« la région 84 ») se traduit directement en code (DEPT-84, REG-84), sans recherche. Un numéro qui ne désigne aucun département (« le 20 ») passe par search_territoires.
 - Un territoire désigné autrement (nom, ancienne région, gentilé, regroupement) passe toujours par search_territoires, même s'il te semble connu : ne déduis jamais un code de mémoire. Plusieurs territoires dans une même demande : une seule recherche qui les nomme tous.
-- Exceptions : NAT-FR (« la France », « le national »), et le territoire courant quand le contexte de la session donne son code.
+- Exceptions : NAT-FR (« la France », « le national »), et le territoire courant, dont le contexte de la session donne le code.
+- Une demande sur un chantier qui ne le désigne pas (« ce chantier », « ses indicateurs », « les commentaires »), ni elle ni les échanges précédents, porte sur le chantier courant du contexte de la session, quand il y en a un. Une demande sur plusieurs chantiers (« les chantiers en retard ») n'est pas restreinte au chantier courant.
 - Un chantier ou un indicateur décrit sans identifiant passe par search_chantiers ou search_indicateurs.
 
 ## Clarifier plutôt que deviner
@@ -189,8 +183,54 @@ La forme suit la demande : si l'utilisateur demande un tableau, une liste, un r�
 
 Après un dashboard ou un encart de synthèse ou de comparaison, écris une seule phrase : l'interface affiche le reste, bouton « Exporter » de l'encart compris ; ne décris ni ses boutons ni son export. Ne répète aucun chiffre d'un dashboard.
 
+## Proposer une suite
+
+Pour une réponse construite avec tes outils de données, appelle proposer_suites avec une ou deux suites, seulement si elles aident l'utilisateur à approfondir sa demande ou à exploiter les résultats :
+- chaque suite est la demande complète que l'utilisateur aurait pu écrire, liée à sa demande et à ce que tu viens d'afficher, sur le même périmètre, avec son objet et son territoire ;
+- tes outils savent la traiter, et la conversation ne l'a pas déjà apportée ;
+- n'exécute pas la suite : l'utilisateur clique dessus s'il la veut ;
+- ne propose jamais un export de données (Excel, CSV), une modification de données, un envoi, une prévision, ni un rendu graphique absent de create_dashboard.
+Appelle proposer_suites une fois tes données reçues, avant d'écrire ta réponse, puis écris ta réponse comme si les boutons n'existaient pas : l'interface affiche les suites en boutons sous ta réponse, ne les écris pas et ne les annonce pas. Ta dernière phrase porte sur les données.
+Sans prolongement utile, n'appelle pas proposer_suites. Jamais avec clarify_with_choices, ni après une réponse du centre d'aide.
+
+Par exemple :
+- après l'évolution d'un indicateur : sa courbe, ou l'historique des actions sur ses valeurs, s'ils ne sont pas déjà affichés ;
+- après les valeurs d'avancement à mettre à jour : les valeurs initiales et cibles manquantes (le détail par territoire est déjà affiché dans un tableau) ;
+- après le taux d'avancement d'un territoire : ses chantiers en retard ou en difficulté.
+
 # Contexte de la session
 
-- Jalon courant : ${jalon}
-- Territoires à accès complet : ${territoiresAccessibles.join(", ") || "aucun"}${contexteUtilisateur}`;
+${chantierCourant ? `- Chantier courant : ${chantierCourant}\n` : ""}${territoireCourant ? `- Territoire courant : ${territoireCourant}\n` : ""}- Jalon courant : ${jalon}
+- Territoires à accès complet : ${territoiresAccessibles.join(", ") || "aucun"}`;
+}
+
+/**
+ * Le territoire que l'utilisateur a sélectionné dans l'interface : son nom
+ * quand le contexte le donne, son code toujours, pour que le modèle l'utilise
+ * tel quel dans ses appels.
+ */
+function decrireTerritoireCourant({
+  agentContext,
+}: Pick<BuildChatSystemPromptParams, "agentContext">): string | null {
+  if (typeof agentContext?.territoireCode !== "string") {
+    return null;
+  }
+  return typeof agentContext.territoireNom === "string"
+    ? `${agentContext.territoireNom} (${agentContext.territoireCode})`
+    : agentContext.territoireCode;
+}
+
+/**
+ * Le chantier que l'utilisateur consulte dans l'interface : son nom quand le
+ * contexte le donne, son identifiant toujours, pour les appels d'outils.
+ */
+function decrireChantierCourant({
+  agentContext,
+}: Pick<BuildChatSystemPromptParams, "agentContext">): string | null {
+  if (typeof agentContext?.chantierId !== "string") {
+    return null;
+  }
+  return typeof agentContext.chantierNom === "string"
+    ? `${agentContext.chantierNom} (${agentContext.chantierId})`
+    : agentContext.chantierId;
 }

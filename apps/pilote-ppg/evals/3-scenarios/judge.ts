@@ -124,6 +124,13 @@ export function buildJudgePrompt({
     `MATIÈRE À JUGER :`,
     `=== DÉBUT DE LA MATIÈRE ===`,
     evidence.matter,
+    ...(evidence.suites.length > 0
+      ? [
+          ``,
+          `SUITES PROPOSÉES (boutons sous la réponse, chacun envoie sa demande d'un clic) :`,
+          ...evidence.suites.map((suite) => `- ${suite}`),
+        ]
+      : []),
     `=== FIN DE LA MATIÈRE ===`,
     ``,
     `CRITÈRES :`,

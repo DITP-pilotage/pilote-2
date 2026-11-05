@@ -76,4 +76,34 @@ describe("buildEvidence", () => {
       "rediger_comparaison_territoires",
     ]);
   });
+
+  test("les suites affichées sont celles du dernier appel du tour, pas des tours précédents", () => {
+    // Given
+    const suites = (labels: string[]) => ({
+      toolName: "proposer_suites",
+      input: {},
+      output: { suites: labels.map((label) => ({ label })) },
+    });
+    const turn: ScenarioTurn = {
+      ...TOUR,
+      toolResults: [
+        ...TOUR.toolResults,
+        suites(["Synthèse de la Bretagne"]),
+        suites(["Chantiers en retard en Bretagne"]),
+      ],
+      history: [
+        {
+          question: "Quel est le taux de la Bretagne ?",
+          text: "51 %.",
+          toolResults: [suites(["Taux de la Normandie"])],
+        },
+      ],
+    };
+
+    // When
+    const evidence = buildEvidence({ turn, matter: "text" });
+
+    // Then
+    expect(evidence.suites).toEqual(["Chantiers en retard en Bretagne"]);
+  });
 });

@@ -53,7 +53,7 @@ describe("gabarit de synthèse", () => {
 
     // Then
     expect(prompt).toContain(
-      "| Indicateur | Valeur initiale | Valeur actuelle | Cible | Taux d'avancement |",
+      "| Indicateur | Valeur initiale | Valeur d'avancement | Cible | Taux d'avancement |",
     );
   });
 });

@@ -304,4 +304,71 @@ describe("AssistantMessage", () => {
       screen.getByRole("button", { name: /Choix seconde/ }),
     ).toBeInTheDocument();
   });
+
+  describe("suites", () => {
+    const partSuites = (labels: string[], toolCallId: string) => ({
+      type: "tool-proposer_suites" as const,
+      toolCallId,
+      state: "output-available" as const,
+      input: { suites: labels.map((label) => ({ label })) },
+      output: { suites: labels.map((label) => ({ label })) },
+    });
+
+    const reponseAvecSuites: PiloteUIMessage = {
+      id: "assistant-2",
+      role: "assistant",
+      parts: [
+        partSuites(["Synthèse de la Bretagne"], "call-1"),
+        { type: "text", text: "Le taux de la Bretagne est de 51 %." },
+        partSuites(["Chantiers en retard en Bretagne"], "call-2"),
+      ],
+    };
+
+    const renderAvecSuites = ({ afficherChoix }: { afficherChoix: boolean }) =>
+      render(
+        <ChatContextProvider
+          error={undefined}
+          fillInput={vi.fn()}
+          sendMessage={vi.fn()}
+          status="ready"
+          stop={vi.fn()}
+          track={vi.fn()}
+        >
+          <ChantierLinksProvider
+            options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
+          >
+            <AssistantMessage
+              afficherChoix={afficherChoix}
+              isStreaming={false}
+              message={reponseAvecSuites}
+            />
+          </ChantierLinksProvider>
+        </ChatContextProvider>,
+      );
+
+    test("affiche les dernières suites proposées sous la réponse", () => {
+      // When
+      renderAvecSuites({ afficherChoix: true });
+
+      // Then
+      expect(
+        screen.getByRole("button", {
+          name: /chantiers en retard en bretagne/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /synthèse de la bretagne/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    test("n'affiche pas les suites d'une réponse qui n'est plus la dernière", () => {
+      // When
+      renderAvecSuites({ afficherChoix: false });
+
+      // Then
+      expect(
+        screen.queryByRole("region", { name: /pour aller plus loin/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
