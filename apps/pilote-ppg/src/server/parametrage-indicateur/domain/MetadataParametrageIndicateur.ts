@@ -654,6 +654,24 @@ export class MetadataParametrageIndicateur {
     poidsPourcentReg: number | null;
     poidsPourcentNat: number | null;
   }): MetadataParametrageIndicateur {
+    return this.copierAvec({
+      poidsPourcentDept: poidsPourcentDept as number,
+      poidsPourcentReg: poidsPourcentReg as number,
+      poidsPourcentNat: poidsPourcentNat as number,
+    });
+  }
+
+  avecStatutActif(estActif: boolean): MetadataParametrageIndicateur {
+    return this.copierAvec({ indicHiddenPilote: !estActif });
+  }
+
+  private copierAvec(
+    modifications: Partial<
+      Parameters<
+        typeof MetadataParametrageIndicateur.creerMetadataParametrageIndicateur
+      >[0]
+    >,
+  ): MetadataParametrageIndicateur {
     return MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
       indicId: this.indicId,
       viDeptFrom: this.viDeptFrom,
@@ -680,9 +698,9 @@ export class MetadataParametrageIndicateur {
       paramVacgDecumulFrom: this.paramVacgDecumulFrom,
       paramVacgPartitionDate: this.paramVacgPartitionDate,
       paramVacgOp: this.paramVacgOp,
-      poidsPourcentDept: poidsPourcentDept as number,
-      poidsPourcentReg: poidsPourcentReg as number,
-      poidsPourcentNat: poidsPourcentNat as number,
+      poidsPourcentDept: this.poidsPourcentDept,
+      poidsPourcentReg: this.poidsPourcentReg,
+      poidsPourcentNat: this.poidsPourcentNat,
       poidsPourcentEvalNat: this.poidsPourcentEvalNat,
       poidsPourcentEvalReg: this.poidsPourcentEvalReg,
       poidsPourcentEvalDept: this.poidsPourcentEvalDept,
@@ -726,6 +744,7 @@ export class MetadataParametrageIndicateur {
       maillePilotage: this.maillePilotage,
       cibleAttendue: this.cibleAttendue,
       couvertureTemporelle: this.couvertureTemporelle,
+      ...modifications,
     });
   }
 

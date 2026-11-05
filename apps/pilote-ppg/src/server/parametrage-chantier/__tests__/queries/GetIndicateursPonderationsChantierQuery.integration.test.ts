@@ -54,6 +54,7 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
         {
           indicId: "IND-001",
           indicNom: "Taux de couverture",
+          estActif: true,
           maillesApplicables: ["NAT", "REG"],
           poidsPourcentDept: null,
           poidsPourcentReg: 60,
@@ -101,6 +102,51 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
         {
           indicId: "IND-001",
           indicNom: "Indicateur sans complément",
+          estActif: true,
+          maillesApplicables: ["NAT"],
+          poidsPourcentDept: null,
+          poidsPourcentReg: null,
+          poidsPourcentNat: null,
+        },
+      ]);
+    }),
+  );
+  it(
+    "indique si chaque indicateur est actif et liste les actifs avant les inactifs",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      await fixtures.metadataIndicateurHidden({
+        indic_id: "IND-001",
+        indic_parent_ch: "CH-010",
+        indic_nom: "A - inactif",
+        indic_hidden_pilote: true,
+      });
+      await fixtures.metadataIndicateurHidden({
+        indic_id: "IND-002",
+        indic_parent_ch: "CH-010",
+        indic_nom: "B - actif",
+        indic_hidden_pilote: false,
+      });
+
+      // When
+      const result = await query.run({ chantierId: "CH-010" });
+
+      // Then
+      expect(result).toEqual([
+        {
+          indicId: "IND-002",
+          indicNom: "B - actif",
+          estActif: true,
+          maillesApplicables: ["NAT"],
+          poidsPourcentDept: null,
+          poidsPourcentReg: null,
+          poidsPourcentNat: null,
+        },
+        {
+          indicId: "IND-001",
+          indicNom: "A - inactif",
+          estActif: false,
           maillesApplicables: ["NAT"],
           poidsPourcentDept: null,
           poidsPourcentReg: null,

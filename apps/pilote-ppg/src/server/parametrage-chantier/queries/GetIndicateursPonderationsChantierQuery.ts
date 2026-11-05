@@ -8,6 +8,7 @@ import {
 export interface IndicateurPonderation {
   indicId: string;
   indicNom: string;
+  estActif: boolean;
   maillesApplicables: Maille[];
   poidsPourcentDept: number | null;
   poidsPourcentReg: number | null;
@@ -30,13 +31,17 @@ export class GetIndicateursPonderationsChantierQuery {
 
     const indicateurs = await instance.metadata_indicateurs_hidden.findMany({
       where: { indic_parent_ch: chantierId },
-      orderBy: { indic_nom: "asc" },
+      orderBy: [
+        { indic_hidden_pilote: { sort: "asc", nulls: "first" } },
+        { indic_nom: "asc" },
+      ],
       include: { complementaire: true, parametrage: true },
     });
 
     return indicateurs.map((indicateur) => ({
       indicId: indicateur.indic_id,
       indicNom: indicateur.indic_nom,
+      estActif: indicateur.indic_hidden_pilote !== true,
       maillesApplicables: calculerMaillesApplicablesIndicateur(
         indicateur.complementaire?.indic_territorialise ?? false,
         indicateur.complementaire?.mailles ?? null,
