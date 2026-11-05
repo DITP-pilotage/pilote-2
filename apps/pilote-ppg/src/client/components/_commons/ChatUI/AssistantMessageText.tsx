@@ -31,6 +31,7 @@ const TOOL_NAMES = [
   "get_indicateurs",
   "get_evolution_indicateur",
   "get_historique_indicateur",
+  "get_indicateurs_a_completer",
 ];
 
 const TOOL_CALL_START_REGEX = new RegExp(

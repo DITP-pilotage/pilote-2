@@ -1,20 +1,12 @@
-import type { $Enums } from "@prisma/client";
 import { z } from "zod";
 import { chantierIdsSchema } from "@/server/albert/tools/chantierId";
 import type { GetIndicateursIdentiteQuery } from "@/server/chantiers/query/GetIndicateursIdentiteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
-import { libelleMaille } from "@/server/albert/tools/libelles";
 import {
   descriptionPerimetre,
   resoudrePerimetreAccessible,
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
-
-const SEUIL_LIGNES_TERRITOIRES = 800;
-const MAILLES_ORDER: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
-
-export const CONSIGNE_DETAIL_TROP_VOLUMINEUX =
-  "`detail_trop_volumineux` : le détail par territoire est trop volumineux, les compteurs sont renvoyés à la place. Rédige toujours ta réponse complète à partir de ces compteurs, sans les présenter comme le détail demandé. Termine-la en précisant que ce détail est trop volumineux, sans chiffrer ce volume, et qu'on peut l'obtenir en réduisant la recherche à un chantier, un indicateur ou un territoire. N'appelle pas clarify_with_choices, ne pose aucune question avant d'avoir donné les compteurs, et ne relance pas l'outil d'office.";
 
 export const CONSIGNE_ACCES_REFUSE =
   "`acces_refuse` : l'utilisateur n'a accès ni à ces territoires, ni à aucun des chantiers ou indicateurs demandés.";
@@ -212,98 +204,4 @@ export async function resoudreAccesIndicateurs({
     territoireCodes,
     indicateurIds,
   };
-}
-
-type Detail = "compteurs" | "territoires";
-
-export type ChampsDetail = {
-  detail: Detail;
-  detail_trop_volumineux?: true;
-};
-
-export function resoudreDetail({
-  detail,
-  nbLignes,
-}: {
-  detail: Detail;
-  nbLignes: number;
-}): { avecTerritoires: boolean; champsDetail: ChampsDetail } {
-  const detailTropVolumineux =
-    detail === "territoires" && nbLignes > SEUIL_LIGNES_TERRITOIRES;
-  const avecTerritoires = detail === "territoires" && !detailTropVolumineux;
-
-  return {
-    avecTerritoires,
-    champsDetail: {
-      detail: avecTerritoires ? "territoires" : "compteurs",
-      ...(detailTropVolumineux && { detail_trop_volumineux: true as const }),
-    },
-  };
-}
-
-type LigneIndicateurTerritoire = {
-  chantierId: string;
-  chantierNom: string;
-  indicateurId: string;
-  indicateurNom: string;
-  maille: $Enums.Maille;
-};
-
-export type ChantierRenvoye<
-  ChampsIndicateur extends object,
-  ChampsMaille extends object,
-> = {
-  chantier: { id: string; nom: string };
-  indicateurs: (ChampsIndicateur & {
-    id: string;
-    nom: string;
-    mailles: (ChampsMaille & {
-      maille: ReturnType<typeof libelleMaille>;
-    })[];
-  })[];
-};
-
-export function renvoyerChantiers<
-  Ligne extends LigneIndicateurTerritoire,
-  ChampsIndicateur extends object,
-  ChampsMaille extends object,
->({
-  lignes,
-  champsIndicateur,
-  champsMaille,
-}: {
-  lignes: Ligne[];
-  champsIndicateur: (ligne: Ligne) => ChampsIndicateur;
-  champsMaille: (lignesDeLaMaille: Ligne[]) => ChampsMaille;
-}): ChantierRenvoye<ChampsIndicateur, ChampsMaille>[] {
-  return [...Map.groupBy(lignes, (ligne) => ligne.chantierId).values()].map(
-    (lignesDuChantier) => ({
-      chantier: {
-        id: lignesDuChantier[0].chantierId,
-        nom: lignesDuChantier[0].chantierNom,
-      },
-      indicateurs: [
-        ...Map.groupBy(
-          lignesDuChantier,
-          (ligne) => ligne.indicateurId,
-        ).values(),
-      ].map((lignesDeLIndicateur) => ({
-        id: lignesDeLIndicateur[0].indicateurId,
-        nom: lignesDeLIndicateur[0].indicateurNom,
-        ...champsIndicateur(lignesDeLIndicateur[0]),
-        mailles: MAILLES_ORDER.flatMap((maille) => {
-          const lignesDeLaMaille = lignesDeLIndicateur.filter(
-            (ligne) => ligne.maille === maille,
-          );
-          if (lignesDeLaMaille.length === 0) return [];
-          return [
-            {
-              maille: libelleMaille({ maille }),
-              ...champsMaille(lignesDeLaMaille),
-            },
-          ];
-        }),
-      })),
-    }),
-  );
 }

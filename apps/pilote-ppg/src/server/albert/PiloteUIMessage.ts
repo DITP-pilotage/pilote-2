@@ -48,13 +48,9 @@ import {
   type GetChantiersSignalesOutput,
 } from "@/server/albert/tools/getChantiersSignales";
 import {
-  getValeursAvancementNonAJourInputSchema,
-  type GetValeursAvancementNonAJourOutput,
-} from "@/server/albert/tools/getValeursAvancementNonAJour";
-import {
-  getValeursInitialesCiblesManquantesInputSchema,
-  type GetValeursInitialesCiblesManquantesOutput,
-} from "@/server/albert/tools/getValeursInitialesCiblesManquantes";
+  getIndicateursACompleterInputSchema,
+  type GetIndicateursACompleterOutput,
+} from "@/server/albert/tools/getIndicateursACompleter";
 import {
   getEvolutionIndicateurInputSchema,
   type GetEvolutionIndicateurOutput,
@@ -97,13 +93,9 @@ export type PiloteUITools = {
     input: z.input<typeof getChantiersSignalesInputSchema>;
     output: GetChantiersSignalesOutput;
   };
-  get_valeurs_avancement_non_a_jour: {
-    input: z.input<typeof getValeursAvancementNonAJourInputSchema>;
-    output: GetValeursAvancementNonAJourOutput;
-  };
-  get_valeurs_initiales_cibles_manquantes: {
-    input: z.input<typeof getValeursInitialesCiblesManquantesInputSchema>;
-    output: GetValeursInitialesCiblesManquantesOutput;
+  get_indicateurs_a_completer: {
+    input: z.input<typeof getIndicateursACompleterInputSchema>;
+    output: GetIndicateursACompleterOutput;
   };
   get_evolution_indicateur: {
     input: z.input<typeof getEvolutionIndicateurInputSchema>;

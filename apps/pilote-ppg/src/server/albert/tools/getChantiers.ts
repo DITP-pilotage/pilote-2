@@ -386,8 +386,7 @@ Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels ch
 Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
-- la fraîcheur des valeurs d'avancement → get_valeurs_avancement_non_a_jour ;
-- les VI ou VC manquantes → get_valeurs_initiales_cibles_manquantes ;
+- les VA non à jour, les VI ou VC manquantes → get_indicateurs_a_completer ;
 - les commentaires d'un chantier (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
       inputSchema: getChantiersInputSchema,
       execute: async (input): Promise<GetChantiersOutput> =>
