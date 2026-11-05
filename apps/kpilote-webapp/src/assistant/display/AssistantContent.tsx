@@ -26,14 +26,14 @@ export function AssistantContent({ conversationId }: { conversationId: string })
   const pageContext = usePageContext()
 
   // En vue modale, un lien interne laisse voir la page : l'assistant passe en fenêtre
-  // (ou se masque) avant que le lien ne navigue.
-  // Un clic modifié (nouvel onglet) ou déjà traité ne quitte pas la page.
+  // (ou se masque) avant que le lien ne navigue. Écouté en capture, avant le `Link` qui
+  // navigue. Un clic modifié (nouvel onglet) ne quitte pas la page.
   const onLinkClick = (event: MouseEvent<HTMLDivElement>) => {
     const link = linkOf(event.target)
     if (!link) return
     const tracked = linkEvent(link.getAttribute('href') ?? '')
     if (tracked) analytics.trackEvent(tracked)
-    if (!hidesPage(display) || event.defaultPrevented) return
+    if (!hidesPage(display)) return
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
     if (isInternalLink(link)) toWindow()
   }
