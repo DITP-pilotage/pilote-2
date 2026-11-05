@@ -169,6 +169,12 @@ describe("checkNoToolName", () => {
     ).toEqual({ ok: false, detail: "noms d'outils cités : get_chantiers" });
   });
 
+  test("signale l'outil des suites écrit dans la réponse (PIL-1950)", () => {
+    expect(
+      checkNoToolName({ text: 'proposer_suites({"suites": []})' }),
+    ).toEqual({ ok: false, detail: "noms d'outils cités : proposer_suites" });
+  });
+
   test("laisse passer une réponse sans nom d'outil", () => {
     expect(checkNoToolName({ text: "Voici la synthèse." })).toEqual({
       ok: true,

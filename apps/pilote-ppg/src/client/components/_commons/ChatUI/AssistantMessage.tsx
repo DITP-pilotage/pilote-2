@@ -28,6 +28,7 @@ import type { EncartOutput } from "@/server/albert/tools/encart";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
 import {
   copyExportNames,
+  dernieresSuites,
   llmCallIdOf,
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
@@ -70,6 +71,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   const parts = message.parts ?? [];
   const sources = parts.filter(estSourcePart);
   const consultationCentreAide = derniereConsultationCentreAide(parts);
+  const suites = dernieresSuites(parts);
 
   const hasText = parts.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
@@ -223,6 +225,15 @@ export const AssistantMessage = memo(function AssistantMessage({
             />
           ) : null,
         )}
+
+      {/* Les suites prolongent la réponse : seules les dernières proposées. */}
+      {afficherChoix && suites && suites.length > 0 && (
+        <ChoicesInline
+          choices={suites}
+          llmCallId={llmCallIdOf(message)}
+          variante="suites"
+        />
+      )}
 
       {!isStreaming && (canCopyText || canCopyImage || evaluation) && (
         <div className="flex flex-wrap items-center gap-1">

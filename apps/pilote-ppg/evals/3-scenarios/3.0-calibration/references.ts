@@ -210,11 +210,13 @@ const evidence = ({
   truth = FICHE_BRETAGNE,
   tableTerritories = [],
   conversation = [],
+  suites = [],
 }: Partial<Evidence> & { question: string; matter: string }): Evidence => ({
   question,
   profile,
   currentTerritory: "REG-53",
   answer,
+  suites,
   matter,
   dashboard,
   toolCalls,

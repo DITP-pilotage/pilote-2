@@ -1,4 +1,8 @@
 import type { ComposeDashboardOutput } from "@/server/albert/tools/composeDashboard";
+import {
+  PROPOSER_SUITES,
+  type ProposerSuitesOutput,
+} from "@/server/albert/tools/proposerSuites";
 import type { ObservedToolCall } from "../types";
 import type { EvalProfile } from "../world";
 import type { GroundTruth } from "./truth";
@@ -15,6 +19,12 @@ export type Evidence = {
   currentTerritory: string;
   /** Texte de la réponse dans le chat. */
   answer: string;
+  /**
+   * Les suites affichées en boutons sous la réponse (PIL-1950). À part de la
+   * matière : une suite est une demande, pas de la prose, et les contrôles de
+   * forme ne s'y appliquent pas.
+   */
+  suites: string[];
   /** Ce que lit le juge : texte, encart rédigé + texte, ou dashboard décrit + texte. */
   matter: string;
   dashboard: ComposeDashboardOutput | null;
@@ -54,6 +64,16 @@ type SortieEncart = {
 };
 
 type ToolResult = { toolName: string; input: unknown; output: unknown };
+
+/** Les suites que l'interface affiche : celles du dernier appel. */
+export function suitesAffichees(
+  toolResults: { toolName: string; output: unknown }[],
+): string[] {
+  const sortie = toolResults
+    .filter((toolResult) => toolResult.toolName === PROPOSER_SUITES)
+    .at(-1)?.output as ProposerSuitesOutput | undefined;
+  return (sortie?.suites ?? []).map((suite) => suite.label);
+}
 
 function describeDashboard(dashboard: ComposeDashboardOutput): string {
   return [

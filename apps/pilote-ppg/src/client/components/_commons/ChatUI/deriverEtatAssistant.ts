@@ -66,6 +66,8 @@ export const deriverEtatAssistant = ({
   if (!enCours) return "reflechit";
 
   if (OUTILS_ENCART.has(derniere.type)) return "redige-l-encart";
+  // Les suites précèdent la réponse : l'assistant passe à sa rédaction
+  if (derniere.type === "tool-proposer_suites") return "redige";
   if (derniere.type === "tool-consulter_centre_aide") {
     return "consulte-le-centre-d-aide";
   }

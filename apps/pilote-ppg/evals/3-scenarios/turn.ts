@@ -3,6 +3,7 @@ import type { EvalProfile } from "../world";
 import {
   extractMatter,
   maskedTerritories,
+  suitesAffichees,
   type Evidence,
   type MatterKind,
 } from "./evidence";
@@ -62,6 +63,7 @@ export function buildEvidence({
     profile: turn.profile,
     currentTerritory: turn.currentTerritory,
     answer: turn.text,
+    suites: suitesAffichees(turn.toolResults),
     matter,
     dashboard,
     toolCalls: turn.toolCalls,

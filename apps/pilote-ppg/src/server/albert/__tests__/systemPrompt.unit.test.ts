@@ -240,10 +240,10 @@ describe("buildChatSystemPrompt", () => {
 
     // Then
     expect(prompt).toContain(
-      "termine par une ou deux suites, en une phrase, seulement si elles aident l'utilisateur à approfondir sa demande ou à exploiter les résultats",
+      "Pour une réponse construite avec tes outils de données, appelle proposer_suites avec une ou deux suites, seulement si elles aident l'utilisateur à approfondir sa demande ou à exploiter les résultats",
     );
     expect(prompt).toContain(
-      "Sans prolongement utile, termine ta réponse sans suggestion.",
+      "Sans prolongement utile, n'appelle pas proposer_suites.",
     );
   });
 
@@ -259,8 +259,12 @@ describe("buildChatSystemPrompt", () => {
       "tes outils savent la traiter, et la conversation ne l'a pas déjà apportée",
     );
     expect(prompt).toContain(
-      "n'exécute pas la suite : attends que l'utilisateur la demande",
+      "n'exécute pas la suite : l'utilisateur clique dessus s'il la veut",
     );
+    expect(prompt).toContain(
+      "Appelle proposer_suites une fois tes données reçues, avant d'écrire ta réponse, puis écris ta réponse comme si les boutons n'existaient pas",
+    );
+    expect(prompt).toContain("Ta dernière phrase porte sur les données.");
   });
 
   it("donne le jalon du contexte d'accueil", () => {

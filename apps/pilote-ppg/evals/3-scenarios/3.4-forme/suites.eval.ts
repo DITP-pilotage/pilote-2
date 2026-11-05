@@ -4,18 +4,21 @@ import { SUITES_CRITERIA } from "./suites.criteria";
 
 /**
  * Scénario « Suites proposées » (PIL-1950). Le modèle choisit lui-même la
- * suite d'une réponse, à partir du prompt et de ses outils : le cas mesure
- * qu'elle reste utile, réalisable et nouvelle d'une réponse à l'autre, et
- * qu'il ne l'exécute pas d'office.
+ * suite d'une réponse, à partir du prompt et de ses outils, et la propose en
+ * boutons sous la réponse (`proposer_suites`) : le cas mesure qu'elle reste
+ * utile, réalisable et nouvelle d'une réponse à l'autre, qu'il ne l'exécute
+ * pas d'office, et qu'il ne l'écrit pas en plus dans sa réponse.
  *
  * Chaque réponse de données a ici un prolongement évident. L'exécution
  * d'office se lit dans « Outils attendus » : la suite attendue est un outil
- * interdit du tour. Le centre d'aide, lui, ne se prolonge pas.
+ * interdit du tour. Le centre d'aide et la clarification, eux, ne se
+ * prolongent pas : deux encarts de choix à la suite se confondraient.
  *
- * Référence observée le 2026-11-05, sur 30 essais menés à terme : suites
- * 107/108 (une réponse en propose trois), centre d'aide sans suite 3/3.
- * L'historique des actions sur les valeurs n'est jamais proposé : l'agent
- * préfère l'évolution de l'indicateur ou les chantiers du territoire.
+ * Référence observée le 2026-11-05 avec les suites écrites dans la réponse,
+ * sur 30 essais menés à terme : suites 107/108 (une réponse en propose
+ * trois), centre d'aide sans suite 3/3. L'historique des actions sur les
+ * valeurs n'est jamais proposé : l'agent préfère l'évolution de l'indicateur
+ * ou les chantiers du territoire.
  */
 
 const BRETAGNE = { type: "SELECTION", territoire_codes: ["REG-53"] };
@@ -78,10 +81,19 @@ scenarioEval({
       expected: [{ toolName: "get_chantiers", input: { view: "en_retard" } }],
     },
     {
+      question: "Quels sont les indicateurs à mettre à jour ?",
+      reason:
+        "CAS NÉGATIF : une clarification, sans suite qui ferait double emploi",
+      truthScope: { territoires: ["REG-53"] },
+      expected: [{ toolName: "clarify_with_choices" }],
+      forbidden: ["proposer_suites"],
+    },
+    {
       question: "Comment est calculé le taux d'avancement d'un chantier ?",
       reason: "CAS NÉGATIF : une page du centre d'aide, sans suite",
       truthScope: { territoires: ["REG-53"] },
       expected: [{ toolName: "consulter_centre_aide" }],
+      forbidden: ["proposer_suites"],
     },
   ],
 });
