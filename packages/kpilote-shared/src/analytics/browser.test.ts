@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { createBrowserAnalytics, type BrowserAnalyticsOptions } from './browser'
 import type { AnalyticsConfig } from './schema'
@@ -117,7 +117,9 @@ describe('createBrowserAnalytics', () => {
 describe('dimensions personnalisées', () => {
   it('garde les envois en attente jusqu’aux dimensions, puis les envoie dans l’ordre', () => {
     const send = vi.fn()
-    const analytics = createBrowserAnalytics(options({ send, waitForDimensions: true }))
+    const analytics = createBrowserAnalytics(
+      options({ send, waitForDimensions: { timeoutMs: 3000 } }),
+    )
 
     analytics.trackPageView({ path: '/indicateurs/$id', context: { entity_id: 'IND-1' } })
     analytics.trackEvent({
@@ -154,9 +156,49 @@ describe('dimensions personnalisées', () => {
     expect(new URL(url).searchParams.get('dimension5')).toBe('c1')
   })
 
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
+
+  it('envoie sans dimensions ce qui attend encore au bout du délai', () => {
+    vi.useFakeTimers()
+    const send = vi.fn()
+    const analytics = createBrowserAnalytics(
+      options({ send, waitForDimensions: { timeoutMs: 3000 } }),
+    )
+
+    analytics.trackPageView({ path: '/' })
+    analytics.trackEvent({ category: 'kpilote.error', action: 'error', name: 'mutation' })
+    vi.advanceTimersByTime(2999)
+    expect(send).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(1)
+    expect(send).toHaveBeenCalledTimes(2)
+    expect(new URL(send.mock.calls[1]?.[0] as string).searchParams.get('e_n')).toBe('mutation')
+  })
+
+  it('envoie ce qui attend quand la page se ferme', () => {
+    const listeners = new Map<string, () => void>()
+    vi.stubGlobal('addEventListener', (type: string, listener: () => void) => {
+      listeners.set(type, listener)
+    })
+    const send = vi.fn()
+    const analytics = createBrowserAnalytics(
+      options({ send, waitForDimensions: { timeoutMs: 3000 } }),
+    )
+
+    analytics.trackPageView({ path: '/' })
+    listeners.get('pagehide')?.()
+
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+
   it('n’attend plus après une seconde réception', () => {
     const send = vi.fn()
-    const analytics = createBrowserAnalytics(options({ send, waitForDimensions: true }))
+    const analytics = createBrowserAnalytics(
+      options({ send, waitForDimensions: { timeoutMs: 3000 } }),
+    )
 
     analytics.setDimensionSlots({})
     analytics.setDimensionSlots({ entity_id: 2 })

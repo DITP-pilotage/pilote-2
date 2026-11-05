@@ -30,7 +30,6 @@ export const upsertDimension = async (
   })
 }
 
-// Clé inconnue : Prisma lève P2025, rendu en 404.
 export const deleteDimension = async (cle: string): Promise<void> => {
   await db().analyticsDimension.delete({ where: { cle } })
 }

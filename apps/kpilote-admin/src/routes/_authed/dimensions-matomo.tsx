@@ -53,11 +53,16 @@ function DimensionsMatomoComponent() {
   const toast = useToast()
   const { isProd, locked, unlock } = useProdEditUnlock()
   const [values, setValues] = useState<FormValues>(EMPTY)
-  // La clé identifie la dimension : en modification, elle ne change pas.
   const [editing, setEditing] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState<string | null>(null)
 
   const onError = (error: unknown) => toast({ title: extractApiError(error), variant: 'error' })
   const refresh = () => queryClient.invalidateQueries({ queryKey: ANALYTICS_DIMENSIONS_KEY })
+
+  const cancel = () => {
+    setEditing(null)
+    setValues(EMPTY)
+  }
 
   const save = useMutation({
     mutationFn: (form: FormValues) =>
@@ -73,8 +78,10 @@ function DimensionsMatomoComponent() {
 
   const remove = useMutation({
     mutationFn: deleteAnalyticsDimension,
-    onSuccess: async () => {
+    onSuccess: async (_data, cle) => {
       await refresh()
+      setConfirming(null)
+      if (cle === editing) cancel()
       toast({ title: 'Dimension supprimée.' })
     },
     onError,
@@ -83,11 +90,6 @@ function DimensionsMatomoComponent() {
   const edit = (dimension: AnalyticsDimension) => {
     setEditing(dimension.cle)
     setValues({ cle: dimension.cle, slot: String(dimension.slot), nom: dimension.nom })
-  }
-
-  const cancel = () => {
-    setEditing(null)
-    setValues(EMPTY)
   }
 
   const disabled = locked || save.isPending || remove.isPending
@@ -125,7 +127,9 @@ function DimensionsMatomoComponent() {
             Clé de contexte
             <input
               value={values.cle}
-              onChange={(event) => setValues({ ...values, cle: event.target.value.trim() })}
+              onChange={(event) =>
+                setValues({ ...values, cle: event.target.value.trim().toLowerCase() })
+              }
               placeholder="conversation_id"
               disabled={disabled || editing !== null}
               className={`${INPUT} w-56 font-mono`}
@@ -164,8 +168,9 @@ function DimensionsMatomoComponent() {
             </Button>
           </div>
           <p className="m-0 w-full text-xs text-text-muted">
-            Créez d’abord la dimension dans Matomo, puis reportez ici son numéro. Clé : minuscules,
-            chiffres et « _ ».
+            Créez d’abord la dimension dans Matomo, de portée « Action » pour un contexte qui change
+            d’une page à l’autre, puis reportez ici son numéro (1 à {MAX_DIMENSION_SLOT}). Clé :
+            minuscules, chiffres et « _ ». Pour échanger deux numéros, passez par un numéro libre.
           </p>
         </form>
 
@@ -203,14 +208,35 @@ function DimensionsMatomoComponent() {
                       >
                         <Pencil />
                       </IconButton>
-                      <IconButton
-                        variant="danger"
-                        label={`Supprimer ${dimension.cle}`}
-                        disabled={disabled}
-                        onClick={() => remove.mutate(dimension.cle)}
-                      >
-                        <Trash2 />
-                      </IconButton>
+                      {confirming === dimension.cle ? (
+                        <>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => setConfirming(null)}
+                            disabled={remove.isPending}
+                          >
+                            Annuler
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => remove.mutate(dimension.cle)}
+                            disabled={disabled}
+                            className="bg-red-marianne hover:bg-red-marianne"
+                          >
+                            Supprimer
+                          </Button>
+                        </>
+                      ) : (
+                        <IconButton
+                          variant="danger"
+                          label={`Supprimer ${dimension.cle}`}
+                          disabled={disabled}
+                          onClick={() => setConfirming(dimension.cle)}
+                        >
+                          <Trash2 />
+                        </IconButton>
+                      )}
                     </span>
                   </Table.Cell>
                 </Table.Row>

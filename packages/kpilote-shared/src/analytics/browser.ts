@@ -17,8 +17,11 @@ export type BrowserAnalyticsOptions = {
   config: AnalyticsConfig | null
   enabled: boolean
   doNotTrack: boolean
-  /** Retient les envois jusqu'au premier `setDimensionSlots`, pour qu'ils portent les dimensions. */
-  waitForDimensions?: boolean
+  /**
+   * Retient les envois jusqu'au premier `setDimensionSlots`, pour qu'ils portent les
+   * dimensions ; au-delà du délai, ou si la page se ferme, ils partent sans.
+   */
+  waitForDimensions?: { timeoutMs: number }
   send?: (url: string) => void
 }
 
@@ -64,6 +67,23 @@ export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analyt
     else emit(build())
   }
 
+  const release = (): void => {
+    const pending = waiting ?? []
+    waiting = null
+    for (const build of pending) emit(build())
+  }
+
+  if (options.waitForDimensions) {
+    setTimeout(release, options.waitForDimensions.timeoutMs)
+    // sendBeacon part encore pendant la fermeture de la page : la file ne doit pas s'y perdre.
+    if (typeof addEventListener === 'function') {
+      addEventListener('pagehide', release)
+      addEventListener('visibilitychange', () => {
+        if (typeof document !== 'undefined' && document.visibilityState === 'hidden') release()
+      })
+    }
+  }
+
   return {
     status: { active: true },
     trackPageView: (pageView) => {
@@ -76,9 +96,7 @@ export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analyt
     },
     setDimensionSlots: (slots) => {
       currentConfig = { ...config, dimensionSlots: { ...config.dimensionSlots, ...slots } }
-      const pending = waiting ?? []
-      waiting = null
-      for (const build of pending) emit(build())
+      release()
     },
   }
 }
