@@ -46,17 +46,27 @@ export function AssistantPanel({
   const thread = useRef<HTMLDivElement>(null)
   const field = useRef<HTMLTextAreaElement>(null)
   const lastSentId = useRef<string | null>(null)
+  const speech = useSpeechRecognition({
+    onTranscript: (text) => setInput(appendTranscript(input, text)),
+  })
+  const { cancel: cancelSpeech } = speech
+  // Quelle que soit la façon d'envoyer, la dictée s'arrête : elle remplirait sinon le champ
+  // pendant la réponse.
+  const send = useCallback(
+    (text: string) => {
+      cancelSpeech()
+      void sendMessage({ text })
+    },
+    [cancelSpeech, sendMessage],
+  )
   // Stables : un message déjà affiché ne se re-rend pas à chaque frappe ni à chaque morceau.
-  const choose = useCallback((label: string) => void sendMessage({ text: label }), [sendMessage])
+  const choose = useCallback((label: string) => send(label), [send])
   const writeOther = useCallback(() => field.current?.focus(), [])
   // Le fil suit la réponse, sauf si l'on remonte pour relire ; une nouvelle question
   // le raccroche.
   const following = useRef(true)
   const [detached, setDetached] = useState(false)
   const messageCount = useRef(messages.length)
-  const speech = useSpeechRecognition({
-    onTranscript: (text) => setInput(appendTranscript(input, text)),
-  })
 
   useEffect(() => {
     const question = questionToSend({
@@ -66,11 +76,13 @@ export function AssistantPanel({
     })
     if (!question) return
     lastSentId.current = question.id
-    void sendMessage({ text: question.text })
+    send(question.text)
     onPendingQuestionSent?.(question.id)
-  }, [pendingQuestion, onPendingQuestionSent, sendMessage, status])
+  }, [pendingQuestion, onPendingQuestionSent, send, status])
 
   useEffect(() => {
+    // L'accueil se lit depuis son début.
+    if (messages.length === 0) return
     if (messages.length !== messageCount.current) {
       messageCount.current = messages.length
       following.current = true
@@ -100,14 +112,13 @@ export function AssistantPanel({
   const submit = () => {
     const text = input.trim()
     if (text.length === 0 || busy) return
-    speech.cancel()
-    void sendMessage({ text })
+    send(text)
     setInput('')
   }
 
   const chooseProposition = (proposition: Proposition) => {
     if (proposition.mode === 'send') {
-      void sendMessage({ text: proposition.message })
+      send(proposition.message)
       return
     }
     setInput(proposition.message)

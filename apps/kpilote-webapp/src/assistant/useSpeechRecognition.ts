@@ -21,6 +21,8 @@ export const useSpeechRecognition = ({
   const isSupported = recognitionConstructor() !== undefined
   const [state, setState] = useState<SpeechRecognitionState>('inactive')
   const recognitionRef = useRef<SpeechRecognition | null>(null)
+  // Arrêtée, la reconnaissance ne finit qu'à `onend` : la relancer avant lèverait une erreur.
+  const active = useRef(false)
   const onTranscriptRef = useRef(onTranscript)
 
   useEffect(() => {
@@ -36,6 +38,8 @@ export const useSpeechRecognition = ({
       return
     }
 
+    if (active.current) return
+
     if (!recognitionRef.current) {
       const Recognition = recognitionConstructor()
       if (!Recognition) return
@@ -50,11 +54,15 @@ export const useSpeechRecognition = ({
         }
       }
       recognition.onerror = () => setState('inactive')
-      recognition.onend = () => setState('inactive')
+      recognition.onend = () => {
+        active.current = false
+        setState('inactive')
+      }
       recognitionRef.current = recognition
     }
 
     recognitionRef.current.start()
+    active.current = true
     setState('listening')
   }, [lang, state])
 
