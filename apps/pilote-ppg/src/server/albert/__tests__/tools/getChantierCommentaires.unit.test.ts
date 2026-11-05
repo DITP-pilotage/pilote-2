@@ -12,6 +12,11 @@ import type {
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
+import { personReference } from "@/shared/personne/personReference";
+
+const AUTEUR_ID = "0b3c1f2e-8a4d-4c6b-9e1f-2a3b4c5d6e7f";
+const MODIFICATEUR_ID = "9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f";
+const REFERENCE_AUTEUR = personReference(AUTEUR_ID);
 
 const queryResult: GetChantierCommentairesQueryResult = {
   resultats: [
@@ -25,6 +30,8 @@ const queryResult: GetChantierCommentairesQueryResult = {
           date_publication: "2026-01-12",
           contenu: "<p>Deux postes vacants.<br>Recrutement engagé.</p>",
           type: "freins_a_lever",
+          auteur_creation_id: AUTEUR_ID,
+          auteur_modification_id: AUTEUR_ID,
         },
       ],
     },
@@ -39,11 +46,21 @@ const commentaire = ({
   date_publication,
   type,
   contenu,
-}: Omit<CommentaireDeLaQuery, "id">): CommentaireDeLaQuery => ({
+  auteur_creation_id = AUTEUR_ID,
+  auteur_modification_id = AUTEUR_ID,
+}: Omit<
+  CommentaireDeLaQuery,
+  "id" | "auteur_creation_id" | "auteur_modification_id"
+> &
+  Partial<
+    Pick<CommentaireDeLaQuery, "auteur_creation_id" | "auteur_modification_id">
+  >): CommentaireDeLaQuery => ({
   id: `${type}-${date_publication}`,
   date_publication,
   type,
   contenu,
+  auteur_creation_id,
+  auteur_modification_id,
 });
 
 const resultatAvecCommentaires = (
@@ -133,6 +150,7 @@ describe("createGetChantierCommentairesTool execute", () => {
                 {
                   date_publication: "2026-01-12",
                   contenu: "Deux postes vacants.\nRecrutement engagé.",
+                  auteur: REFERENCE_AUTEUR,
                 },
               ],
             },
@@ -185,15 +203,31 @@ describe("createGetChantierCommentairesTool execute", () => {
       {
         type: "commentaires_sur_les_donnees",
         versions: [
-          { date_publication: "2026-02-26", contenu: "Données v2" },
-          { date_publication: "2025-03-07", contenu: "Données v1" },
+          {
+            date_publication: "2026-02-26",
+            contenu: "Données v2",
+            auteur: REFERENCE_AUTEUR,
+          },
+          {
+            date_publication: "2025-03-07",
+            contenu: "Données v1",
+            auteur: REFERENCE_AUTEUR,
+          },
         ],
       },
       {
         type: "synthese_des_resultats",
         versions: [
-          { date_publication: "2026-02-20", contenu: "Synthèse v2" },
-          { date_publication: "2024-12-26", contenu: "Synthèse v1" },
+          {
+            date_publication: "2026-02-20",
+            contenu: "Synthèse v2",
+            auteur: REFERENCE_AUTEUR,
+          },
+          {
+            date_publication: "2024-12-26",
+            contenu: "Synthèse v1",
+            auteur: REFERENCE_AUTEUR,
+          },
         ],
       },
     ]);
@@ -242,9 +276,21 @@ describe("createGetChantierCommentairesTool execute", () => {
       {
         type: "synthese_des_resultats",
         versions: [
-          { date_publication: "2026-02-26", contenu: "Enjeux importants." },
-          { date_publication: "2025-03-07", contenu: "Enjeux majeurs." },
-          { date_publication: "2024-12-26", contenu: "Enjeux  importants." },
+          {
+            date_publication: "2026-02-26",
+            contenu: "Enjeux importants.",
+            auteur: REFERENCE_AUTEUR,
+          },
+          {
+            date_publication: "2025-03-07",
+            contenu: "Enjeux majeurs.",
+            auteur: REFERENCE_AUTEUR,
+          },
+          {
+            date_publication: "2024-12-26",
+            contenu: "Enjeux  importants.",
+            auteur: REFERENCE_AUTEUR,
+          },
         ],
       },
     ]);
@@ -285,6 +331,7 @@ describe("createGetChantierCommentairesTool execute", () => {
           {
             date_publication: "2026-02-26",
             contenu: "Campagne de vaccination lancée.",
+            auteur: REFERENCE_AUTEUR,
           },
         ],
       },
@@ -294,6 +341,7 @@ describe("createGetChantierCommentairesTool execute", () => {
           {
             date_publication: "2026-02-25",
             contenu: "Campagne de vaccination lancée.",
+            auteur: REFERENCE_AUTEUR,
           },
         ],
       },
@@ -342,13 +390,27 @@ describe("createGetChantierCommentairesTool execute", () => {
     expect(result.resultats[0].commentaires).toEqual([
       {
         type: "commentaires_sur_les_donnees",
-        versions: [{ date_publication: "2026-02-26", contenu: "Données v2" }],
+        versions: [
+          {
+            date_publication: "2026-02-26",
+            contenu: "Données v2",
+            auteur: REFERENCE_AUTEUR,
+          },
+        ],
       },
       {
         type: "synthese_des_resultats",
         versions: [
-          { date_publication: "2025-03-07", contenu: "Enjeux majeurs." },
-          { date_publication: "2024-12-26", contenu: "Enjeux importants." },
+          {
+            date_publication: "2025-03-07",
+            contenu: "Enjeux majeurs.",
+            auteur: REFERENCE_AUTEUR,
+          },
+          {
+            date_publication: "2024-12-26",
+            contenu: "Enjeux importants.",
+            auteur: REFERENCE_AUTEUR,
+          },
         ],
       },
     ]);
@@ -416,5 +478,114 @@ describe("createGetChantierCommentairesTool execute", () => {
         .mocked(query.execute)
         .mock.calls.map(([params]) => params.territoireCode),
     ).toEqual(["REG-75"]);
+  });
+  test("cite l'auteur d'une version par sa référence, sans modifie_par quand il l'a aussi modifiée", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () =>
+        resultatAvecCommentaires([
+          commentaire({
+            date_publication: "2026-02-26",
+            type: "freins_a_lever",
+            contenu: "<p>Freins</p>",
+          }),
+        ]),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect(result.resultats[0].commentaires).toEqual([
+      {
+        type: "freins_a_lever",
+        versions: [
+          {
+            date_publication: "2026-02-26",
+            contenu: "Freins",
+            auteur: personReference(AUTEUR_ID),
+          },
+        ],
+      },
+    ]);
+  });
+
+  test("cite aussi la personne qui a modifié la version quand ce n'est pas l'auteur", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () =>
+        resultatAvecCommentaires([
+          commentaire({
+            date_publication: "2026-02-26",
+            type: "freins_a_lever",
+            contenu: "<p>Freins</p>",
+            auteur_modification_id: MODIFICATEUR_ID,
+          }),
+        ]),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect(result.resultats[0].commentaires[0].versions).toEqual([
+      {
+        date_publication: "2026-02-26",
+        contenu: "Freins",
+        auteur: personReference(AUTEUR_ID),
+        modifie_par: personReference(MODIFICATEUR_ID),
+      },
+    ]);
+  });
+
+  test("garde l'auteur de la version la plus récente quand des versions identiques sont fusionnées", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async () =>
+        resultatAvecCommentaires([
+          commentaire({
+            date_publication: "2026-02-26",
+            type: "freins_a_lever",
+            contenu: "<p>Freins</p>",
+            auteur_creation_id: MODIFICATEUR_ID,
+            auteur_modification_id: MODIFICATEUR_ID,
+          }),
+          commentaire({
+            date_publication: "2025-03-07",
+            type: "freins_a_lever",
+            contenu: "<p>Freins</p>",
+          }),
+        ]),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect(result.resultats[0].commentaires[0].versions).toEqual([
+      {
+        date_publication: "2026-02-26",
+        contenu: "Freins",
+        auteur: personReference(MODIFICATEUR_ID),
+      },
+    ]);
   });
 });
