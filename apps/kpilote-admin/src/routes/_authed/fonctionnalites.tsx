@@ -6,6 +6,7 @@ import {
   Layers,
   LifeBuoy,
   Network,
+  Sparkles,
   Terminal,
   ToggleLeft,
   Users,
@@ -94,6 +95,14 @@ function FeaturesComponent() {
             title="Centre d’aide"
             description="Rédiger les articles d’aide en édition « en place », puis les publier (réservé aux clés ADMIN)."
             onClick={() => void navigate({ to: '/centre-aide' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={600}>
+          <BarCard
+            icon={Sparkles}
+            title="Gérer l’assistant IA"
+            description="Ouvrir ou couper l’assistant, choisir qui s’en sert, lire les conversations et leurs retours (réservé aux clés ADMIN)."
+            onClick={() => void navigate({ to: '/assistant' })}
           />
         </FadeIn>
       </div>
