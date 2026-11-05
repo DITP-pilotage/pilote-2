@@ -38,6 +38,14 @@ import { VALEURS_A_COMPLETER_CRITERIA } from "./valeursACompleter.criteria";
  * indicateurs » et « Mailles à zéro » 100 %) ; clarifyWithChoices 95,2 % ;
  * getIndicateurs 100 % ; getChantiers 98,8 % ; getChantiersSignales 93,9 % ;
  * getIndicateursACompleter 96,4 %.
+ *
+ * Référence « après (3) » avec l'historique complet des tours (appels et
+ * résultats d'outils conservés), le 2026-11-05 : N3 93,1 % (3 essais par cas,
+ * 6 cas). « Tableau introduit » 33 %, « Périmètre cité » 72 %, « Un seul
+ * territoire » 94 %, « Aucun territoire hors demande » 94 %, « Pas de HTML »
+ * 94 % ; tous les autres critères 100 % (« Pas de somme entre indicateurs »,
+ * « Mailles à zéro », « Motifs justes »). D'autres scénarios N3 utilisant
+ * `history` peuvent changer de score avec ce correctif.
  */
 
 scenarioEval({
