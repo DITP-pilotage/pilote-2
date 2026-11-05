@@ -17,6 +17,15 @@ const textOf = (message: object): string => {
     .join('\n\n')
 }
 
+const callIdOf = (message: object): string | null =>
+  'metadata' in message &&
+  typeof message.metadata === 'object' &&
+  message.metadata !== null &&
+  'llmCallId' in message.metadata &&
+  typeof message.metadata.llmCallId === 'string'
+    ? message.metadata.llmCallId
+    : null
+
 const roleOf = (message: unknown): { role: 'user' | 'assistant'; message: object } | null => {
   if (typeof message !== 'object' || message === null || !('role' in message)) return null
   if (message.role === 'user' || message.role === 'assistant') {
@@ -26,26 +35,30 @@ const roleOf = (message: unknown): { role: 'user' | 'assistant'; message: object
 }
 
 /**
- * Le fil d'une conversation, tour par tour : chaque question, le texte de sa réponse, et
- * l'appel qui l'a produite (un appel par réponse, dans l'ordre).
+ * Le fil d'une conversation, tour par tour : chaque question, le texte de sa réponse et
+ * l'appel qui l'a produite, retrouvé par l'identifiant que la réponse porte. Une relance
+ * remplace la réponse mais garde l'appel d'origine : il est rendu à part.
  */
-export const assistantTurns = <A>(
+export const assistantTurns = <A extends { id: string }>(
   messages: ReadonlyArray<unknown>,
   appels: ReadonlyArray<A>,
-): AssistantTurn<A>[] => {
-  const turns: Array<{ question: string; reponse: string }> = []
+): { turns: AssistantTurn<A>[]; replaced: A[] } => {
+  const byId = new Map(appels.map((appel) => [appel.id, appel]))
+  const turns: AssistantTurn<A>[] = []
   for (const entry of messages) {
     const typed = roleOf(entry)
     if (!typed) continue
     if (typed.role === 'user') {
-      turns.push({ question: textOf(typed.message), reponse: '' })
+      turns.push({ question: textOf(typed.message), reponse: '', appel: null })
       continue
     }
     const current = turns.at(-1)
     if (!current) continue
     const text = textOf(typed.message)
-    current.reponse =
-      current.reponse && text ? `${current.reponse}\n\n${text}` : current.reponse || text
+    current.reponse = [current.reponse, text].filter((part) => part.length > 0).join('\n\n')
+    const callId = callIdOf(typed.message)
+    current.appel = (callId ? byId.get(callId) : undefined) ?? current.appel
   }
-  return turns.map((turn, index) => ({ ...turn, appel: appels[index] ?? null }))
+  const shown = new Set(turns.flatMap((turn) => (turn.appel ? [turn.appel.id] : [])))
+  return { turns, replaced: appels.filter((appel) => !shown.has(appel.id)) }
 }

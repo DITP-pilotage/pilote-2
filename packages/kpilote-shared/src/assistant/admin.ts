@@ -13,7 +13,7 @@ export const assistantAccesSchema = z.object({
 })
 export type AssistantAcces = z.infer<typeof assistantAccesSchema>
 
-export const modifierActifBodySchema = z.object({ actif: z.boolean() })
+export const setActifBodySchema = z.object({ actif: z.boolean() })
 
 const flag = z
   .enum(['true', 'false'])
@@ -36,7 +36,10 @@ export const adminConversationSummarySchema = z.object({
   titre: z.string(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-  tours: z.number().int().describe('Nombre de réponses de l’assistant.'),
+  reponses: z
+    .number()
+    .int()
+    .describe('Nombre de réponses produites, y compris celles remplacées par une relance.'),
   positifs: z.number().int(),
   negatifs: z.number().int(),
   commentaires: z.number().int(),

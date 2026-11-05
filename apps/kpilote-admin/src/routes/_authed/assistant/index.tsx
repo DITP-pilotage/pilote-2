@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useCallback } from 'react'
 import { z } from 'zod'
 
-import type { ConversationsFiltres } from '@/api/assistant'
+import type { ConversationsFilters } from '@/api/assistant'
 import { AssistantAccesPanel } from '@/components/assistant/AssistantAccesPanel'
 import { AssistantConversationsPanel } from '@/components/assistant/AssistantConversationsPanel'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -12,20 +12,21 @@ import { Tabs, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { assistantAccesQueryOptions } from '@/queries/assistant'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
-const ONGLETS = ['acces', 'conversations'] as const
+const TABS = ['acces', 'conversations'] as const
 
+// Une adresse modifiée à la main retombe sur les valeurs par défaut plutôt que d'échouer.
 const searchSchema = z.object({
-  onglet: z.enum(ONGLETS).default('acces'),
-  page: z.number().int().min(1).default(1),
-  recherche: z.string().optional(),
-  positif: z.boolean().optional(),
-  negatif: z.boolean().optional(),
-  commentaire: z.boolean().optional(),
-  categorie: z.enum(ISSUE_CATEGORIES).optional(),
+  onglet: z.enum(TABS).default('acces').catch('acces'),
+  page: z.number().int().min(1).default(1).catch(1),
+  recherche: z.coerce.string().optional().catch(undefined),
+  positif: z.boolean().optional().catch(undefined),
+  negatif: z.boolean().optional().catch(undefined),
+  commentaire: z.boolean().optional().catch(undefined),
+  categorie: z.enum(ISSUE_CATEGORIES).optional().catch(undefined),
 })
 
-const isOnglet = (value: string): value is (typeof ONGLETS)[number] =>
-  (ONGLETS as readonly string[]).includes(value)
+const isTab = (value: string): value is (typeof TABS)[number] =>
+  (TABS as readonly string[]).includes(value)
 
 export const Route = createFileRoute('/_authed/assistant/')({
   validateSearch: searchSchema,
@@ -38,11 +39,11 @@ export const Route = createFileRoute('/_authed/assistant/')({
 })
 
 function AssistantComponent() {
-  const { onglet, ...filtres } = Route.useSearch()
+  const { onglet, ...filters } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
 
-  const onFiltresChange = useCallback(
-    (next: ConversationsFiltres) => void navigate({ search: { onglet, ...next }, replace: true }),
+  const onFiltersChange = useCallback(
+    (next: ConversationsFilters) => void navigate({ search: { onglet, ...next }, replace: true }),
     [navigate, onglet],
   )
 
@@ -62,7 +63,7 @@ function AssistantComponent() {
       <Tabs
         value={onglet}
         onValueChange={(value) => {
-          if (isOnglet(value)) void navigate({ search: { onglet: value }, replace: true })
+          if (isTab(value)) void navigate({ search: { onglet: value }, replace: true })
         }}
       >
         <TabsList className="mb-6">
@@ -73,7 +74,7 @@ function AssistantComponent() {
 
       {onglet === 'acces' ? <AssistantAccesPanel /> : null}
       {onglet === 'conversations' ? (
-        <AssistantConversationsPanel filtres={filtres} onFiltresChange={onFiltresChange} />
+        <AssistantConversationsPanel filters={filters} onFiltersChange={onFiltersChange} />
       ) : null}
     </div>
   )

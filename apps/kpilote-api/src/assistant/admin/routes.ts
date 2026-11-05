@@ -4,15 +4,10 @@ import {
   adminConversationSchema,
   adminConversationsQuerySchema,
   assistantAccesSchema,
-  modifierActifBodySchema,
+  setActifBodySchema,
 } from '@pilote/kpilote-shared/assistant/admin'
 
-import {
-  autoriserUtilisateur,
-  readAcces,
-  retirerUtilisateur,
-  setActif,
-} from '@/assistant/admin/access'
+import { grantAccess, readAccess, revokeAccess, setActif } from '@/assistant/admin/access'
 import { getAdminConversation, listAdminConversations } from '@/assistant/admin/conversations'
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
@@ -24,18 +19,18 @@ export const assistantAdminRoutes = createOpenApiHono()
 const requireAdmin = () =>
   ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
 
-const AccesSchema = assistantAccesSchema.openapi('AssistantAcces')
-const accesResponses = { 200: succes200('Accès à l’assistant', AccesSchema), 403: erreur403 }
+const AccessSchema = assistantAccesSchema.openapi('AssistantAcces')
+const accessResponses = { 200: succes200('Accès à l’assistant', AccessSchema), 403: erreur403 }
 const utilisateurParams = z.object({ utilisateurId: z.uuid() })
 
-const readAccesRoute = createRoute({
+const readAccessRoute = createRoute({
   method: 'get',
   path: '/assistant/admin/acces',
   tags: ['Assistant (administration)'],
   summary: 'Lire l’accès à l’assistant',
   description: 'L’interrupteur général et les utilisateurs autorisés. Clé API ADMIN.',
   middleware: [requireAuthentication],
-  responses: accesResponses,
+  responses: accessResponses,
 })
 
 const setActifRoute = createRoute({
@@ -46,12 +41,12 @@ const setActifRoute = createRoute({
   description: 'Coupé, personne n’y a accès, utilisateurs autorisés compris. Clé API ADMIN.',
   middleware: [requireAuthentication],
   request: {
-    body: { content: { 'application/json': { schema: modifierActifBodySchema } }, required: true },
+    body: { content: { 'application/json': { schema: setActifBodySchema } }, required: true },
   },
-  responses: { ...accesResponses, 400: erreur400 },
+  responses: { ...accessResponses, 400: erreur400 },
 })
 
-const autoriserRoute = createRoute({
+const grantRoute = createRoute({
   method: 'put',
   path: '/assistant/admin/acces/utilisateurs/{utilisateurId}',
   tags: ['Assistant (administration)'],
@@ -59,10 +54,10 @@ const autoriserRoute = createRoute({
   description: 'Idempotent. Utilisateur inconnu : 404. Clé API ADMIN.',
   middleware: [requireAuthentication],
   request: { params: utilisateurParams },
-  responses: { ...accesResponses, 404: erreur404 },
+  responses: { ...accessResponses, 404: erreur404 },
 })
 
-const retirerRoute = createRoute({
+const revokeRoute = createRoute({
   method: 'delete',
   path: '/assistant/admin/acces/utilisateurs/{utilisateurId}',
   tags: ['Assistant (administration)'],
@@ -70,7 +65,7 @@ const retirerRoute = createRoute({
   description: 'Idempotent. Clé API ADMIN.',
   middleware: [requireAuthentication],
   request: { params: utilisateurParams },
-  responses: accesResponses,
+  responses: accessResponses,
 })
 
 const listConversationsRoute = createRoute({
@@ -79,7 +74,7 @@ const listConversationsRoute = createRoute({
   tags: ['Assistant (administration)'],
   summary: 'Lister toutes les conversations',
   description:
-    'Toutes les conversations, des plus récentes aux plus anciennes, avec leurs retours, sans l’identité de leur auteur. Clé API ADMIN.',
+    'Toutes les conversations, des plus récentes aux plus anciennes, avec leurs feedbacks, sans l’identité de leur auteur. Clé API ADMIN.',
   middleware: [requireAuthentication],
   request: { query: adminConversationsQuerySchema },
   responses: {
@@ -108,9 +103,9 @@ const getConversationRoute = createRoute({
   },
 })
 
-assistantAdminRoutes.openapi(readAccesRoute, async (context) => {
+assistantAdminRoutes.openapi(readAccessRoute, async (context) => {
   requireAdmin()
-  return context.json(await readAcces(), 200)
+  return context.json(await readAccess(), 200)
 })
 
 assistantAdminRoutes.openapi(setActifRoute, async (context) => {
@@ -119,16 +114,16 @@ assistantAdminRoutes.openapi(setActifRoute, async (context) => {
   return context.json(await setActif(actif), 200)
 })
 
-assistantAdminRoutes.openapi(autoriserRoute, async (context) => {
+assistantAdminRoutes.openapi(grantRoute, async (context) => {
   requireAdmin()
   const { utilisateurId } = context.req.valid('param')
-  return context.json(await autoriserUtilisateur(utilisateurId), 200)
+  return context.json(await grantAccess(utilisateurId), 200)
 })
 
-assistantAdminRoutes.openapi(retirerRoute, async (context) => {
+assistantAdminRoutes.openapi(revokeRoute, async (context) => {
   requireAdmin()
   const { utilisateurId } = context.req.valid('param')
-  return context.json(await retirerUtilisateur(utilisateurId), 200)
+  return context.json(await revokeAccess(utilisateurId), 200)
 })
 
 assistantAdminRoutes.openapi(listConversationsRoute, async (context) => {

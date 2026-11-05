@@ -60,7 +60,7 @@ export const listAdminConversations = async (query: Query): Promise<AdminConvers
       titre: row.titre,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
-      tours: row.appels.length,
+      reponses: row.appels.length,
       positifs: row.appels.filter((appel) => appel.evaluation === 'POSITIVE').length,
       negatifs: row.appels.filter((appel) => appel.evaluation === 'NEGATIVE').length,
       commentaires: row.appels.filter((appel) => hasCommentaire(appel.commentaire)).length,

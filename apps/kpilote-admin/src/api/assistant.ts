@@ -10,7 +10,7 @@ import type { IssueCategory } from '@pilote/kpilote-shared/assistant/feedback'
 
 import { bffClient } from '@/api/client'
 
-export type ConversationsFiltres = {
+export type ConversationsFilters = {
   page: number
   recherche?: string | undefined
   positif?: boolean | undefined
@@ -22,39 +22,37 @@ export type ConversationsFiltres = {
 export const fetchAssistantAcces = async (): Promise<AssistantAcces> =>
   assistantAccesSchema.parse(await bffClient.get('assistant/admin/acces').json())
 
-export const modifierAssistantActif = async (actif: boolean): Promise<AssistantAcces> =>
+export const setAssistantActif = async (actif: boolean): Promise<AssistantAcces> =>
   assistantAccesSchema.parse(
     await bffClient.put('assistant/admin/acces/actif', { json: { actif } }).json(),
   )
 
-export const autoriserAssistantUtilisateur = async (
-  utilisateurId: string,
-): Promise<AssistantAcces> =>
+export const grantAssistantAccess = async (utilisateurId: string): Promise<AssistantAcces> =>
   assistantAccesSchema.parse(
     await bffClient.put(`assistant/admin/acces/utilisateurs/${utilisateurId}`).json(),
   )
 
-export const retirerAssistantUtilisateur = async (utilisateurId: string): Promise<AssistantAcces> =>
+export const revokeAssistantAccess = async (utilisateurId: string): Promise<AssistantAcces> =>
   assistantAccesSchema.parse(
     await bffClient.delete(`assistant/admin/acces/utilisateurs/${utilisateurId}`).json(),
   )
 
-const toSearchParams = (filtres: ConversationsFiltres): URLSearchParams => {
-  const params = new URLSearchParams({ page: String(filtres.page) })
-  if (filtres.recherche) params.set('recherche', filtres.recherche)
-  if (filtres.positif) params.set('positif', 'true')
-  if (filtres.negatif) params.set('negatif', 'true')
-  if (filtres.commentaire) params.set('commentaire', 'true')
-  if (filtres.categorie) params.set('categorie', filtres.categorie)
+const toSearchParams = (filters: ConversationsFilters): URLSearchParams => {
+  const params = new URLSearchParams({ page: String(filters.page) })
+  if (filters.recherche) params.set('recherche', filters.recherche)
+  if (filters.positif) params.set('positif', 'true')
+  if (filters.negatif) params.set('negatif', 'true')
+  if (filters.commentaire) params.set('commentaire', 'true')
+  if (filters.categorie) params.set('categorie', filters.categorie)
   return params
 }
 
 export const fetchAssistantConversations = async (
-  filtres: ConversationsFiltres,
+  filters: ConversationsFilters,
 ): Promise<AdminConversationList> =>
   adminConversationListSchema.parse(
     await bffClient
-      .get('assistant/admin/conversations', { searchParams: toSearchParams(filtres) })
+      .get('assistant/admin/conversations', { searchParams: toSearchParams(filters) })
       .json(),
   )
 

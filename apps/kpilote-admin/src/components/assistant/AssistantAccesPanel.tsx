@@ -2,11 +2,7 @@ import type { UtilisateurApiModel } from '@pilote/kpilote-shared/utilisateur'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
 
-import {
-  autoriserAssistantUtilisateur,
-  modifierAssistantActif,
-  retirerAssistantUtilisateur,
-} from '@/api/assistant'
+import { grantAssistantAccess, setAssistantActif, revokeAssistantAccess } from '@/api/assistant'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { SegmentedField } from '@pilote/kpilote-ui/SegmentedField'
@@ -19,7 +15,7 @@ const ACTIF_OPTIONS = [
   { value: 'coupe', label: 'Coupé' },
 ] as const
 
-const initiales = (utilisateur: UtilisateurApiModel): string =>
+const initials = (utilisateur: UtilisateurApiModel): string =>
   `${utilisateur.prenom.at(0) ?? ''}${utilisateur.nom.at(0) ?? ''}`.toUpperCase()
 
 export function AssistantAccesPanel() {
@@ -27,19 +23,19 @@ export function AssistantAccesPanel() {
   const toast = useToast()
   const onError = (error: unknown) => toast({ title: extractApiError(error), variant: 'error' })
 
-  const actifMutation = useAssistantAccesMutation(modifierAssistantActif, {
+  const actifMutation = useAssistantAccesMutation(setAssistantActif, {
     onSuccess: () => toast({ title: 'Accès mis à jour.' }),
     onError,
   })
-  const autoriserMutation = useAssistantAccesMutation(autoriserAssistantUtilisateur, {
+  const grantMutation = useAssistantAccesMutation(grantAssistantAccess, {
     onSuccess: () => toast({ title: 'Utilisateur autorisé.' }),
     onError,
   })
-  const retirerMutation = useAssistantAccesMutation(retirerAssistantUtilisateur, {
+  const revokeMutation = useAssistantAccesMutation(revokeAssistantAccess, {
     onSuccess: () => toast({ title: 'Utilisateur retiré.' }),
     onError,
   })
-  const pending = autoriserMutation.isPending || retirerMutation.isPending
+  const pending = grantMutation.isPending || revokeMutation.isPending
 
   return (
     <div className="flex flex-col gap-8">
@@ -66,7 +62,7 @@ export function AssistantAccesPanel() {
         <div className="mb-4">
           <UtilisateurPicker
             excludedIds={acces.utilisateurs.map((utilisateur) => utilisateur.id)}
-            onSelect={(utilisateur) => autoriserMutation.mutate(utilisateur.id)}
+            onSelect={(utilisateur) => grantMutation.mutate(utilisateur.id)}
             disabled={pending}
             placeholder="Ajouter un utilisateur…"
           />
@@ -82,7 +78,7 @@ export function AssistantAccesPanel() {
                 className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-surface-tinted"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                  {initiales(utilisateur)}
+                  {initials(utilisateur)}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm text-text">
@@ -96,7 +92,7 @@ export function AssistantAccesPanel() {
                   variant="danger"
                   label={`Retirer ${utilisateur.prenom} ${utilisateur.nom}`}
                   disabled={pending}
-                  onClick={() => retirerMutation.mutate(utilisateur.id)}
+                  onClick={() => revokeMutation.mutate(utilisateur.id)}
                   className="shrink-0"
                 >
                   <Trash2 />

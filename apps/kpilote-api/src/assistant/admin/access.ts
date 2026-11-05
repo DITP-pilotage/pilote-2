@@ -4,7 +4,7 @@ import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { toUtilisateurApiModel } from '@/utilisateur/utils'
 
-export const readAcces = async (): Promise<AssistantAcces> => {
+export const readAccess = async (): Promise<AssistantAcces> => {
   const [parametres, acces] = await Promise.all([
     db().assistantParametres.findUnique({ where: { id: 1 } }),
     db().assistantAccesUtilisateur.findMany({
@@ -24,10 +24,10 @@ export const setActif = async (actif: boolean): Promise<AssistantAcces> => {
     update: { actif },
     create: { id: 1, actif },
   })
-  return readAcces()
+  return readAccess()
 }
 
-export const autoriserUtilisateur = async (utilisateurId: string): Promise<AssistantAcces> => {
+export const grantAccess = async (utilisateurId: string): Promise<AssistantAcces> => {
   const utilisateur = await db().utilisateur.findUnique({
     where: { id: utilisateurId },
     select: { id: true },
@@ -38,10 +38,10 @@ export const autoriserUtilisateur = async (utilisateurId: string): Promise<Assis
     update: {},
     create: { utilisateurId },
   })
-  return readAcces()
+  return readAccess()
 }
 
-export const retirerUtilisateur = async (utilisateurId: string): Promise<AssistantAcces> => {
+export const revokeAccess = async (utilisateurId: string): Promise<AssistantAcces> => {
   await db().assistantAccesUtilisateur.deleteMany({ where: { utilisateurId } })
-  return readAcces()
+  return readAccess()
 }

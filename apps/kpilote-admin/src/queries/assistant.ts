@@ -5,7 +5,7 @@ import {
   fetchAssistantAcces,
   fetchAssistantConversation,
   fetchAssistantConversations,
-  type ConversationsFiltres,
+  type ConversationsFilters,
 } from '@/api/assistant'
 
 const ACCES_KEY = ['assistant', 'acces'] as const
@@ -13,10 +13,10 @@ const ACCES_KEY = ['assistant', 'acces'] as const
 export const assistantAccesQueryOptions = () =>
   queryOptions({ queryKey: ACCES_KEY, queryFn: fetchAssistantAcces })
 
-export const assistantConversationsQueryOptions = (filtres: ConversationsFiltres) =>
+export const assistantConversationsQueryOptions = (filters: ConversationsFilters) =>
   queryOptions({
-    queryKey: ['assistant', 'conversations', filtres],
-    queryFn: () => fetchAssistantConversations(filtres),
+    queryKey: ['assistant', 'conversations', filters],
+    queryFn: () => fetchAssistantConversations(filters),
     placeholderData: keepPreviousData,
   })
 
@@ -26,7 +26,7 @@ export const assistantConversationQueryOptions = (id: string) =>
     queryFn: () => fetchAssistantConversation(id),
   })
 
-// Chaque mutation renvoie l'accès à jour : le cache est remplacé, sans nouvel aller-retour.
+// Chaque mutation renvoie l'accès à jour : le cache est remplacé, sans nouvel aller-feedback.
 export const useAssistantAccesMutation = <V>(
   mutationFn: (variables: V) => Promise<AssistantAcces>,
   options: { onSuccess: () => void; onError: (error: unknown) => void },

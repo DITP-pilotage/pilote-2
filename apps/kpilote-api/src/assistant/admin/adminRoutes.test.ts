@@ -65,7 +65,7 @@ const givenConversation = async (titre: string, appels: Appel[] = [], updatedAt 
 type ListBody = {
   items: Array<{
     titre: string
-    tours: number
+    reponses: number
     positifs: number
     negatifs: number
     commentaires: number
@@ -154,14 +154,14 @@ describe('administration de l’assistant', { concurrent: false }, () => {
         expect(body.items).toEqual([
           expect.objectContaining({
             titre: `${marque} récente`,
-            tours: 3,
+            reponses: 3,
             positifs: 1,
             negatifs: 1,
             commentaires: 1,
           }),
           expect.objectContaining({
             titre: `${marque} ancienne`,
-            tours: 0,
+            reponses: 0,
             positifs: 0,
             negatifs: 0,
             commentaires: 0,
@@ -266,6 +266,12 @@ describe('administration de l’assistant', { concurrent: false }, () => {
         expect(
           (await app.request('/assistant/admin/acces/actif', json('PUT', { actif: true }))).status,
         ).toBe(403)
+        const utilisateurPath = `/assistant/admin/acces/utilisateurs/${utilisateur.id}`
+        expect((await app.request(utilisateurPath, { method: 'PUT' })).status).toBe(403)
+        expect((await app.request(utilisateurPath, { method: 'DELETE' })).status).toBe(403)
+        expect((await app.request(`/assistant/admin/conversations/${randomUUID()}`)).status).toBe(
+          403,
+        )
       }
     }),
   )
