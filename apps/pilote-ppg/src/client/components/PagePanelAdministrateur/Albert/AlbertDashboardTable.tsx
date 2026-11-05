@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
 import type { appRouter } from "@/server/app/trpc/appRouter";
+import { TextWithPersons } from "@/components/_commons/ChatUI/persons/TextWithPersons";
 
 type ListerOutput = inferRouterOutputs<
   typeof appRouter
@@ -91,11 +92,17 @@ export const AlbertDashboardTable = ({
                 onClick={() => onLigneClick(cellContext.row.original.id)}
                 type="button"
               >
-                {cellContext.getValue() || "Sans titre"}
+                {cellContext.getValue() ? (
+                  <TextWithPersons text={cellContext.getValue()} />
+                ) : (
+                  "Sans titre"
+                )}
               </button>
               {cellContext.row.original.extraitPremierMessageUser && (
                 <div className="text-xs text-dsfr-mention-grey mt-1 line-clamp-1">
-                  {cellContext.row.original.extraitPremierMessageUser}
+                  <TextWithPersons
+                    text={cellContext.row.original.extraitPremierMessageUser}
+                  />
                 </div>
               )}
             </>

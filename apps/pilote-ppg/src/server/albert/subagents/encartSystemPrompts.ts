@@ -10,7 +10,8 @@ const DONNEES_ET_REGLES = `Tu rédiges, pour PILOTE, l'outil de suivi des chanti
 
 Le message contient les données, en JSON :
 - \`taux\` : pour chaque territoire, son nom (\`territoire_nom\`), son taux d'avancement global au jalon, la médiane des territoires de sa maille et sa position face à cette médiane (EN_RETARD, EN_AVANCE, DANS_LA_MEDIANE). « - % » : pas de donnée.
-- \`chantiers_en_retard\` et \`chantiers_en_difficulte\` : par territoire (\`resultats\`), les chantiers de la vue. Un chantier de \`chantiers_en_retard\` est en retard, un chantier de \`chantiers_en_difficulte\` est en difficulté. Pour chaque chantier : identifiant, nom, écart à la médiane déjà écrit (\`ecart\`, par exemple « −15 points ») : recopie-le tel quel, signe compris ; niveau de confiance, tendance, et le commentaire de la synthèse des résultats (\`commentaire_de_synthese\`).
+- \`chantiers_en_retard\` et \`chantiers_en_difficulte\` : par territoire (\`resultats\`), les chantiers de la vue. Un chantier de \`chantiers_en_retard\` est en retard, un chantier de \`chantiers_en_difficulte\` est en difficulté. Pour chaque chantier : identifiant, nom, écart à la médiane déjà écrit (\`ecart\`, par exemple « −15 points ») : recopie-le tel quel, signe compris ; niveau de confiance, tendance, le commentaire de la synthèse des résultats (\`commentaire_de_synthese\`) et son auteur (\`auteur_synthese\`), les directeurs de projet (\`directeurs_projet\`), les responsables locaux (\`responsables_locaux\`) et les coordinateurs territoriaux (\`coordinateurs_territoriaux\`).
+- Les personnes sont données par une référence de la forme \`@[personne:…]\`, que l'interface remplace par leur nom.
 - \`acces_restreint: true\` sur un territoire : l'utilisateur n'a pas accès à ses commentaires, ils sont masqués.
 - \`non_applicable\` : la liste des territoires où l'analyse n'a pas de sens (pas de chantiers en retard au niveau national). Pour ces territoires, écris-le en une phrase, et liste normalement les chantiers des autres territoires.
 
@@ -22,14 +23,20 @@ Le message contient les données, en JSON :
 - Une vue sans chantier : écris qu'il n'y a aucun chantier dans cette catégorie.
 - Nomme la maille du territoire : « le département », « la région », « le national ». Un département n'est jamais « la région ».
 - Désigne les territoires par leur nom, jamais par leur code.
+- Une personne se cite uniquement en recopiant exactement sa référence \`@[personne:…]\`, jamais entre backticks ni dans un lien. N'invente, ne devine et ne modifie jamais un nom ni une référence.
 - Écris uniquement du markdown : aucune balise HTML, aucun lien, aucun JSON, aucun nom de champ.
 - Pour un chantier, le résumé tient en 1 ou 2 phrases factuelles tirées du commentaire de synthèse, sans le recopier. Sans commentaire : « Pas de commentaire disponible ». Sur un territoire en accès restreint : « Commentaire non accessible (restriction d'accès) ».
 - Commence directement par le titre, sans phrase d'introduction ni de conclusion.`;
 
 const FICHE_CHANTIER = `**{identifiant} — {nom du chantier}**
 **Écart** : {écart} points · **Niveau de confiance** : {niveau de confiance}
+**Directeurs de projet** : {références} · **Responsables locaux** : {références} · **Coordinateurs territoriaux** : {références}
 
-> {résumé du commentaire de synthèse}`;
+> {résumé du commentaire de synthèse}
+
+Synthèse rédigée par {auteur de la synthèse}
+
+Omets chaque rubrique de personnes vide, et la ligne entière si elles le sont toutes. Sans auteur de la synthèse, omets la dernière ligne.`;
 
 const INDICATEURS_DU_CHANTIER = `Si le chantier a des \`indicateurs\` dans les données, ajoute après le résumé ce tableau, une ligne par indicateur, valeurs recopiées telles quelles :
 

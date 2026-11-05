@@ -4,6 +4,8 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 type ObjectifItem = {
   date_publication: string;
   contenu: string;
+  auteur_creation_id: string;
+  auteur_modification_id: string;
 };
 
 export type GetChantierObjectifsResult = {
@@ -30,6 +32,8 @@ export class GetChantierObjectifsQuery {
         type: true,
         contenu: true,
         date_modification: true,
+        auteur_creation_id: true,
+        auteur_modification_id: true,
       },
       orderBy: { date_modification: "desc" },
     });
@@ -40,6 +44,8 @@ export class GetChantierObjectifsQuery {
       return {
         date_publication: objectif.date_modification.toISOString(),
         contenu: objectif.contenu,
+        auteur_creation_id: objectif.auteur_creation_id,
+        auteur_modification_id: objectif.auteur_modification_id,
       };
     };
 
