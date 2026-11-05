@@ -309,12 +309,12 @@ Ne l'utilise pas pour :
             territoires.map(({ code, nom }) => [code, nom]),
           ),
         });
-        const demandesExplicites =
-          input.indicateur_ids.length > 0
-            ? (acces.indicateurIds ?? [])
-            : [...new Set(input.chantier_ids)].filter((chantierId) =>
-                chantiersAccessibles.includes(chantierId),
-              );
+        const demandesExplicites = [
+          ...(acces.indicateurIds ?? []),
+          ...[...new Set(input.chantier_ids)].filter((chantierId) =>
+            chantiersAccessibles.includes(chantierId),
+          ),
+        ];
 
         return {
           resume: resumerIndicateursACompleter({

@@ -328,34 +328,126 @@ describe("get_indicateurs_a_completer", () => {
     });
   });
 
-  test("version modèle : ni détail ni lignes, la précision demandée à la place de la clarification", async () => {
+  test("demandes explicites : indicateurs retenus puis chantiers accessibles", async () => {
     // given
-    const { tool } = buildTool();
-    const clarification: GetIndicateursACompleterOutput = {
-      clarification: { question: "Quelles valeurs ?", choices: [] },
-    };
-    const donnees = await executeTool(tool, {
-      messages: MESSAGE_AVEC_TYPES,
-      motifs: ["va"],
-    });
+    const { tool } = buildTool({ lignesVa: [], lignesViVc: [] });
 
     // when
-    const versModeleClarification = indicateursACompleterVersModele({
-      output: clarification,
-    });
-    const versModeleDonnees = indicateursACompleterVersModele({
-      output: donnees,
+    const result = await executeTool(tool, {
+      messages: MESSAGE_AVEC_TYPES,
+      motifs: ["va"],
+      chantier_ids: ["CH-001"],
+      indicateur_ids: ["IND-894"],
     });
 
     // then
-    expect(versModeleClarification).toEqual({
-      type: "json",
-      value: { precision_demandee: true },
+    expect(result).toEqual({
+      resume: expect.objectContaining({
+        sans_valeur_a_completer: ["IND-894", "CH-001"],
+      }),
+      detail: expect.anything(),
     });
-    expect(versModeleDonnees.value).toEqual({
-      en_bref: expect.stringMatching(/^Périmètre : tous vos territoires\. /),
-      ensemble: expect.anything(),
-      chantiers: expect.anything(),
+  });
+
+  test.each([
+    {
+      cas: "toutes les régions",
+      input: { perimetre: { type: "TOUTES_REGIONS" as const } },
+      attendu: "toutes vos régions",
+    },
+    {
+      cas: "tous les départements",
+      input: { perimetre: { type: "TOUS_DEPARTEMENTS" as const } },
+      attendu: "tous vos départements",
+    },
+    {
+      cas: "France et ses régions",
+      input: { perimetre: { type: "FRANCE_ET_SES_REGIONS" as const } },
+      attendu: "France et ses régions",
+    },
+    {
+      cas: "sélection avec un code inconnu",
+      input: {
+        perimetre: {
+          type: "SELECTION" as const,
+          territoire_codes: ["DEPT-29", "DEPT-35"],
+        },
+      },
+      attendu: "Finistère, DEPT-35",
+    },
+    {
+      cas: "préfixe des chantiers",
+      input: {
+        chantier_ids: ["CH-018"],
+        perimetre: {
+          type: "REGION_ET_SES_DEPARTEMENTS" as const,
+          region_code: "REG-53",
+        },
+      },
+      attendu: "CH-018, Bretagne et ses départements",
+    },
+  ])("périmètre : $cas", async ({ input, attendu }) => {
+    // given
+    const { tool } = buildTool();
+
+    // when
+    const result = await executeTool(tool, {
+      messages: MESSAGE_AVEC_TYPES,
+      motifs: ["va"],
+      ...input,
+    });
+
+    // then
+    expect(result).toEqual({
+      resume: expect.anything(),
+      detail: expect.objectContaining({ perimetre: attendu }),
+    });
+  });
+
+  test("version modèle d'une clarification : la précision demandée et les champs d'accès", () => {
+    // given
+    const output: GetIndicateursACompleterOutput = {
+      clarification: { question: "Quelles valeurs ?", choices: [] },
+      chantiers_non_accessibles: ["CH-999"],
+    };
+
+    // when
+    const result = indicateursACompleterVersModele({ output });
+
+    // then
+    expect(result).toEqual({
+      type: "json",
+      value: {
+        precision_demandee: true,
+        chantiers_non_accessibles: ["CH-999"],
+      },
+    });
+  });
+
+  test("version modèle des données : le résumé et les champs d'accès, sans détail ni lignes", () => {
+    // given
+    const resume = {
+      en_bref: "Périmètre : tous vos territoires. 1 chantier, 1 indicateur",
+      ensemble: { "VA non à jour": "1 chantier, 1 indicateur" },
+      chantiers: [{ chantier: "CH-001", "VA non à jour": "1 indicateur" }],
+    };
+    const output: GetIndicateursACompleterOutput = {
+      resume,
+      detail: {
+        motifs: ["va"],
+        perimetre: "tous vos territoires",
+        lignes: [],
+      },
+      chantiers_non_accessibles: ["CH-999"],
+    };
+
+    // when
+    const result = indicateursACompleterVersModele({ output });
+
+    // then
+    expect(result).toEqual({
+      type: "json",
+      value: { ...resume, chantiers_non_accessibles: ["CH-999"] },
     });
   });
 });
