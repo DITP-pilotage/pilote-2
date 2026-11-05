@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import clsx from "clsx";
 import { BarreLatérale } from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
@@ -17,6 +17,9 @@ import {
 import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEntetePageChantier";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import PageChantierEnTête from "./EnTête/EnTête";
+import { useAssistantPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { construireAgentContextChantier } from "@/components/PageChantier/agentContextChantier";
+import { scenariosChantier } from "@/components/PageChantier/scenariosChantier";
 import { usePageChantier } from "./usePageChantier";
 
 interface BasePageChantierLayoutProps {
@@ -31,12 +34,31 @@ export const BasePageChantierLayout = ({
     indicateurs,
     chantier,
     territoireCode,
+    jalon,
     mailleQuery,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
   } = pageChantier.useServerSidePropsContext();
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+
+  const contexteAssistant = useMemo(
+    () => ({
+      agentContext: construireAgentContextChantier({
+        chantierId: chantier.id,
+        chantierNom: chantier.nom,
+        territoireCode,
+        jalon,
+      }),
+      scenarios: scenariosChantier({
+        chantierId: chantier.id,
+        territoireCode,
+        jalon,
+      }),
+    }),
+    [chantier.id, chantier.nom, territoireCode, jalon],
+  );
+  useAssistantPageContext(contexteAssistant);
 
   const territoireSélectionné = useTerritoireSelectionne();
 

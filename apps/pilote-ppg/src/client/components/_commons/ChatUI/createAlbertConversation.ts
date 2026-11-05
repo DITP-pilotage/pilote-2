@@ -1,13 +1,20 @@
 import { Chat } from "@ai-sdk/react";
 import { DefaultChatTransport, type ChatOnFinishCallback } from "ai";
+import { z } from "zod";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
-export type AlbertAgentContext = {
-  territoireCode: string;
-  jalon: number;
-  instructions: string;
-};
+// Les noms sont optionnels : les conversations enregistrées avant PIL-1949
+// n'ont que les codes. Le serveur se rabat alors sur le code.
+export const albertAgentContextSchema = z.object({
+  territoireCode: z.string(),
+  territoireNom: z.string().optional(),
+  jalon: z.number(),
+  chantierId: z.string().optional(),
+  chantierNom: z.string().optional(),
+});
+
+export type AlbertAgentContext = z.infer<typeof albertAgentContextSchema>;
 
 export type AlbertRequestBody = {
   agentContext?: AlbertAgentContext;

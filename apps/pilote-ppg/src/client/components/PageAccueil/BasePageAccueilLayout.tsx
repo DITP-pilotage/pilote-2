@@ -11,7 +11,7 @@ import { FiltresActifs } from "@/components/PageAccueil/FiltresActifs/FiltresAct
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
-import { useAlbertPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
+import { useAssistantPageContext } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 import {
   scenariosTerritoireCoordinateur,
@@ -99,7 +99,7 @@ export const BasePageAccueilLayout: FunctionComponent<
     }),
     [territoireCode, jalon, accesAlbert.scenarios, estDITPAdmin],
   );
-  useAlbertPageContext(contexteAssistant);
+  useAssistantPageContext(contexteAssistant);
 
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");

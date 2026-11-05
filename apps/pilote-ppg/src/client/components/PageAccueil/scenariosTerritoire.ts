@@ -46,7 +46,7 @@ export function scenariosTerritoireDITP({
             label: "Synthèse d'un chantier sur un territoire",
             icone: MapPin2Icon,
             message: `Fais moi la synthèse du chantier CH-XXX sur le territoire NOM_TERRITOIRE
-Comment se situe ce chantier par rapport aux autres territoires ?
+Quel est son écart à la médiane ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`,
             mode: "fill",
           },
@@ -166,7 +166,7 @@ export function scenariosTerritoireCoordinateur({
             label: "Synthèse d'un chantier sur un territoire",
             icone: MapPin2Icon,
             message: `Fais moi la synthèse du chantier CH-XXX sur ${territoire.nomAffiché}
-Comment se situe ce chantier par rapport aux autres territoires ?
+Quel est son écart à la médiane ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`,
             mode: "fill",
           },

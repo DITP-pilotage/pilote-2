@@ -28,6 +28,7 @@ export type ChatScenarios =
 export type ContexteAccueil = {
   territoireNom: string;
   jalon: number;
+  chantierId?: string;
 };
 
 export const ChatEmptyState = ({
@@ -38,18 +39,16 @@ export const ChatEmptyState = ({
   contexte?: ContexteAccueil;
 }) => {
   const { sendMessage, fillInput, track } = useChatContext();
-  const shownEvent = useRef(
-    scenarios ? propositionsShownEvent(scenarios) : null,
-  );
   const trackRef = useRef(track);
 
   useEffect(() => {
     trackRef.current = track;
   }, [track]);
 
+  // Les propositions changent avec la page tant que la conversation est vide.
   useEffect(() => {
-    if (shownEvent.current) trackRef.current(shownEvent.current);
-  }, []);
+    if (scenarios) trackRef.current(propositionsShownEvent(scenarios));
+  }, [scenarios]);
 
   const handleClick = (scenario: ChatScenario) => {
     const proposition = {
@@ -99,7 +98,18 @@ export const ChatEmptyState = ({
         <p className="text-[15px] leading-6 text-dsfr-mention-grey mb-0">
           {contexte ? (
             <>
-              Je synthétise les données PILOTE de{" "}
+              Je synthétise les données PILOTE{" "}
+              {contexte.chantierId ? (
+                <>
+                  du chantier{" "}
+                  <strong className="text-dsfr-grey-50">
+                    {contexte.chantierId}
+                  </strong>{" "}
+                  sur{" "}
+                </>
+              ) : (
+                "de "
+              )}
               <strong className="text-dsfr-grey-50">
                 {contexte.territoireNom}
               </strong>{" "}

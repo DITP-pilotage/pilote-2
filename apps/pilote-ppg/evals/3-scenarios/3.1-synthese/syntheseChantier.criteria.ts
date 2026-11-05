@@ -5,15 +5,15 @@ export const SYNTHESE_CHANTIER_CRITERIA = withBase({
   criteria: [
     judged({
       id: "Trois volets",
-      rule: "Demande : synthèse du chantier, position face aux autres territoires, difficultés des commentaires",
+      rule: "Demande : synthèse du chantier, écart à la médiane, difficultés des commentaires",
       instruction:
-        "Cherche dans la réponse un passage pour chacun des trois volets de la demande, et cite-les dans la preuve : (1) la situation du chantier sur le territoire demandé ; (2) sa position face à au moins un autre territoire ; (3) des difficultés tirées des commentaires. Un volet sans passage qui le traite est non conforme. La justesse du contenu de chaque volet relève d'autres critères.",
+        "Cherche dans la réponse un passage pour chacun des trois volets de la demande, et cite-les dans la preuve : (1) la situation du chantier sur le territoire demandé ; (2) son écart à la médiane ; (3) des difficultés tirées des commentaires. Un volet sans passage qui le traite est non conforme. La justesse du contenu de chaque volet relève d'autres critères.",
     }),
     judged({
-      id: "Situé face aux autres territoires",
-      rule: "Comparer des territoires entre eux",
+      id: "Écart à la médiane chiffré",
+      rule: "Demande : l'écart du chantier à la médiane",
       instruction:
-        "Le chantier est situé face à au moins un autre territoire avec des valeurs chiffrées (taux ou écart) ÉCRITES dans la réponse. Une position énoncée sans chiffre (« derrière », « devant ») est non conforme, même si les données reçues permettraient de la chiffrer.",
+        "L'écart du chantier à la médiane est ÉCRIT en points dans la réponse (« −15 points », « 15 points sous la médiane »). Un écart énoncé sans chiffre (« en retard sur la médiane ») est non conforme, même si les données reçues permettraient de le chiffrer.",
     }),
     judged({
       id: "Difficultés tirées des commentaires",

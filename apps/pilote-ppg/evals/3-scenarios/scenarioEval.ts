@@ -33,6 +33,7 @@ export const GROUPS = {
   comparaison: "3.2 · Comparaison",
   aide: "3.3 · Centre d'aide",
   forme: "3.4 · Forme de la réponse",
+  suivi: "3.5 · Questions de suivi",
 };
 
 export type ScenarioCase = {

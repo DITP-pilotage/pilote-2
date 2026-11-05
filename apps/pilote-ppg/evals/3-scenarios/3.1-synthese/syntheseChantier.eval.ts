@@ -3,8 +3,10 @@ import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
 
 /**
  * Scénario « Synthèse d'un chantier sur un territoire » (DITP et
- * coordinateur, à compléter). Trois volets : la synthèse du chantier, sa
- * position face aux autres territoires, les difficultés des commentaires.
+ * coordinateur, à compléter). Trois volets : la synthèse du chantier, son
+ * écart à la médiane, les difficultés des commentaires. Le message demandait
+ * sa position « par rapport aux autres territoires », un périmètre sans
+ * borne : la médiane la donne déjà (PIL-1949).
  *
  * Le message DITP de l'interface est « … sur le territoire NOM_TERRITOIRE »,
  * celui du coordinateur « … sur <territoire courant> » : d'où « le territoire
@@ -12,11 +14,9 @@ import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
  *
  * Le mot « synthèse » charge le gabarit de synthèse territoriale, alors que
  * le workflow ne vaut que pour une demande qui ne cible pas un chantier :
- * « Pas le gabarit territorial » le mesure. Aucun workflow ne dit comment
- * situer un chantier face aux autres territoires : le chemin n'est pas
- * imposé, le juge vérifie le résultat. Côté coordinateur, les autres régions
- * sont hors périmètre : « Restriction signalée » s'applique si l'agent les
- * interroge.
+ * « Pas le gabarit territorial » le mesure. Côté coordinateur, les autres
+ * régions sont hors périmètre : « Restriction signalée » s'applique si
+ * l'agent les interroge.
  *
  * Référence observée le 2026-09-30 : outils 42 %, forme 79 %, fond 100 %.
  * `get_chantier_commentaires` n'est jamais appelé : Albert tire les
@@ -30,7 +30,7 @@ import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
 
 const MESSAGE = (territoire: string) =>
   `Fais moi la synthèse du chantier CH-005 sur ${territoire}
-Comment se situe ce chantier par rapport aux autres territoires ?
+Quel est son écart à la médiane ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`;
 
 const OUTILS = [

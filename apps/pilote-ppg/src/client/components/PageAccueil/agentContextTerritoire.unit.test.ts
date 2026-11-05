@@ -1,7 +1,7 @@
 import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
 
 describe("construireAgentContextTerritoire", () => {
-  test("désigne le territoire courant par son nom affiché et son code", () => {
+  test("désigne le territoire courant par son code et son nom affiché", () => {
     // When
     const result = construireAgentContextTerritoire({
       territoireCode: "DEPT-35",
@@ -12,8 +12,7 @@ describe("construireAgentContextTerritoire", () => {
     expect(result).toEqual({
       territoireCode: "DEPT-35",
       jalon: 2025,
-      instructions:
-        "Le territoire courant de l'utilisateur est 35 - Ille-et-Vilaine (code : DEPT-35). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.",
+      territoireNom: "35 - Ille-et-Vilaine",
     });
   });
 });
