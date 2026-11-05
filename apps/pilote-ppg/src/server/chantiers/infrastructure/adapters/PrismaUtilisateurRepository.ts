@@ -115,6 +115,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         service_autre: true,
         perimetre_ministeriel: true,
         fonction: true,
+        date_desactivation: true,
       },
     });
     return new Map(utilisateurs.map((u) => [u.id, u]));

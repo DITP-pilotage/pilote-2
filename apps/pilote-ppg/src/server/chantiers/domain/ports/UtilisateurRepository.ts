@@ -9,6 +9,7 @@ export type UtilisateurEnrichi = {
   service_autre: string | null;
   perimetre_ministeriel: string | null;
   fonction: string | null;
+  date_desactivation: Date | null;
 };
 
 export interface UtilisateurRepository {

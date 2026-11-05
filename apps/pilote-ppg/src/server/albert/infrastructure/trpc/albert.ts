@@ -7,6 +7,7 @@ import {
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
+import { resolvePersonsInputSchema } from "@/shared/personne/resolvePersonsInput";
 
 const assertAlbertAccess = (session: {
   user: { id: string };
@@ -103,6 +104,16 @@ const conversationsRouter = createTRPCRouter({
     }),
 });
 
+const personsRouter = createTRPCRouter({
+  resolve: protectedProcedure
+    .input(resolvePersonsInputSchema)
+    .query(({ input }) =>
+      getContainer("albert")
+        .resolve("resolvePersonsQuery")
+        .execute({ ids: input.ids }),
+    ),
+});
+
 export const albertRouter = createTRPCRouter({
   evaluer: protectedProcedure
     .input(
@@ -150,4 +161,5 @@ export const albertRouter = createTRPCRouter({
       });
     }),
   conversations: conversationsRouter,
+  persons: personsRouter,
 });
