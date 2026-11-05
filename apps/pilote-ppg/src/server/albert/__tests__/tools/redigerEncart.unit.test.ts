@@ -6,10 +6,10 @@ import { Albert } from "@/server/albert/Albert";
 import {
   type DonneesEncart,
   type EncartOutput,
-  couvertureEncart,
   ecartPourLeSousAgent,
   encartVersModele,
 } from "@/server/albert/tools/encart";
+import { couvertureEncart } from "@/server/albert/tools/couvertureEncart";
 import { createRedigerSyntheseTerritoireTool } from "@/server/albert/tools/redigerSyntheseTerritoire";
 import {
   createRedigerComparaisonTerritoiresTool,
