@@ -24,7 +24,7 @@ describe("GetChantierCommentairesQuery", () => {
   });
 
   it(
-    "retourne les commentaires publiés des types demandés sans données auteur",
+    "retourne les commentaires publiés des types demandés avec les identifiants de leurs auteurs",
     createIntegrationTest(async () => {
       // Given
       const chantier = await fixtures.chantierIdentite();
@@ -65,6 +65,8 @@ describe("GetChantierCommentairesQuery", () => {
                 date_publication: new Date("2025-06-01").toISOString(),
                 contenu: "Commentaire sur les données",
                 type: "commentaires_sur_les_donnees",
+                auteur_creation_id: commentaire.auteur_creation_id,
+                auteur_modification_id: commentaire.auteur_modification_id,
               },
             ],
           },
@@ -184,6 +186,8 @@ describe("GetChantierCommentairesQuery", () => {
           date_publication: new Date("2025-03-01").toISOString(),
           contenu: "Analyse de la synthèse",
           type: "synthese_des_resultats",
+          auteur_creation_id: synthese.auteur_creation_id,
+          auteur_modification_id: synthese.auteur_modification_id,
         },
       ]);
     }),
@@ -285,6 +289,8 @@ describe("GetChantierCommentairesQuery", () => {
           date_publication: new Date("2025-04-01").toISOString(),
           contenu: "Décision Élysée-Matignon",
           type: "decision_strategique",
+          auteur_creation_id: decision.auteur_creation_id,
+          auteur_modification_id: decision.auteur_modification_id,
         },
       ]);
     }),

@@ -22,6 +22,8 @@ vi.mock("@/server/albert/Albert", () => ({
 // Le conteneur tire next-auth, que les tests unitaires ne chargent pas
 vi.mock("@/server/dependances", () => ({ getContainer: vi.fn() }));
 
+const AUTEUR_ID = "5d0c9e2a-7b31-4c8e-a1f4-0e6b2d9c3a71";
+
 const CH_071: ChantierResult = {
   chantier: {
     id: "CH-071",
@@ -101,12 +103,16 @@ const getChantierCommentairesQuery = () =>
               date_publication: "2026-03-01T10:00:00.000Z",
               contenu: "<p>Les recrutements reprennent.</p>",
               type: "commentaires_sur_les_donnees",
+              auteur_creation_id: AUTEUR_ID,
+              auteur_modification_id: AUTEUR_ID,
             },
             {
               id: "commentaire-1",
               date_publication: "2026-01-01T10:00:00.000Z",
               contenu: "<p>Les recrutements sont gelés.</p>",
               type: "commentaires_sur_les_donnees",
+              auteur_creation_id: AUTEUR_ID,
+              auteur_modification_id: AUTEUR_ID,
             },
           ],
         },
