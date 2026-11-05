@@ -33,9 +33,9 @@ const FICHE_CHANTIER = `**{identifiant} — {nom du chantier}**
 
 const INDICATEURS_DU_CHANTIER = `Si le chantier a des \`indicateurs\` dans les données, ajoute après le résumé ce tableau, une ligne par indicateur, valeurs recopiées telles quelles :
 
-| Indicateur | Valeur initiale | Valeur actuelle | Cible | Taux d'avancement |
+| Indicateur | Valeur initiale | Valeur d'avancement | Cible | Taux d'avancement |
 |---|---|---|---|---|
-| {identifiant} — {nom de l'indicateur} | {valeur initiale} | {valeur actuelle} | {cible} | {taux d'avancement} |
+| {identifiant} — {nom de l'indicateur} | {valeur initiale} | {valeur d'avancement} | {cible} | {taux d'avancement} |
 
 Sans \`indicateurs\` dans les données, n'ajoute pas de tableau.`;
 

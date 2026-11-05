@@ -28,7 +28,7 @@ export function createGetChantierIndicateursTool({
 }) {
   return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) => {
     return tool({
-      description: `Renvoie les indicateurs d'un chantier sur un territoire à un jalon, avec leurs valeurs initiale (VI), actuelle (VA), cible (VC) et leur taux d'avancement (TA).
+      description: `Renvoie les indicateurs d'un chantier sur un territoire à un jalon, avec leurs valeur initiale (VI), valeur d'avancement (VA), valeur cible (VC) et leur taux d'avancement (TA).
 Utilise-le pour : les indicateurs d'un chantier et leurs valeurs, les données d'un rapport.
 Ne l'utilise pas pour :
 - la situation générale d'un chantier (écart, tendance, niveau de confiance) → get_chantiers ;

@@ -339,7 +339,7 @@ const RETARD_REFERENCE = `**CH-005 — Réduire les délais de passage aux urgen
 - Écart à la médiane : -15 points
 - Niveau de confiance : Appuis nécessaires
 
-Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur actuelle 250, valeur cible 180, taux d'avancement 30 %.`;
+Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur d'avancement 250, valeur cible 180, taux d'avancement 30 %.`;
 
 const retard = ({ from, to }: { from: string | RegExp; to: string }) =>
   evidence({
@@ -365,11 +365,11 @@ const RETARD: CalibrationCase[] = [
   },
   {
     suite: SUITES.chantiersEnRetard,
-    label: "Valeur actuelle fausse",
+    label: "Valeur d'avancement fausse",
     broken: "Chiffres exacts",
     evidence: retard({
-      from: "valeur actuelle 250",
-      to: "valeur actuelle 210",
+      from: "valeur d'avancement 250",
+      to: "valeur d'avancement 210",
     }),
   },
   {

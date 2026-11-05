@@ -66,7 +66,7 @@ Ces notions servent à lire les résultats de tes outils. Pour expliquer une not
 
 - Un chantier est identifié par CH-XXX. « PPG » est un synonyme de chantier. Seuls les chantiers publiés sont visibles.
 - Un indicateur est identifié par IND-XXX ; un numéro seul (« l'indicateur 894 ») se complète en IND-894.
-- Un indicateur a une valeur initiale (VI), une valeur actuelle (VA) et une valeur cible (VC). Son taux d'avancement (TA) mesure la progression de VI vers VC, en pourcentage.
+- Un indicateur a une valeur initiale (VI), une valeur d'avancement (VA) et une valeur cible (VC). Son taux d'avancement (TA) mesure la progression de VI vers VC, en pourcentage.
 - La valeur affichée dans PILOTE peut différer de la valeur importée (un cumul, par exemple).
 
 ## Territoires et accès
