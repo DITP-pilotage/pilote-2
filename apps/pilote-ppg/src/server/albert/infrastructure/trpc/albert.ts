@@ -103,6 +103,16 @@ const conversationsRouter = createTRPCRouter({
     }),
 });
 
+const personsRouter = createTRPCRouter({
+  resolve: protectedProcedure
+    .input(z.object({ ids: z.array(z.string().uuid()).min(1).max(100) }))
+    .query(({ input }) =>
+      getContainer("albert")
+        .resolve("resolvePersonsQuery")
+        .execute({ ids: input.ids }),
+    ),
+});
+
 export const albertRouter = createTRPCRouter({
   evaluer: protectedProcedure
     .input(
@@ -150,4 +160,5 @@ export const albertRouter = createTRPCRouter({
       });
     }),
   conversations: conversationsRouter,
+  persons: personsRouter,
 });
