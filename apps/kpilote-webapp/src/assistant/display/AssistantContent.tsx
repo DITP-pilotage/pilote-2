@@ -5,6 +5,7 @@ import { ResponseActions } from '../ResponseActions'
 import { usePageContext } from '../usePageContext'
 import { AssistantHeader } from './AssistantHeader'
 import { useAssistantDisplay } from './AssistantProvider'
+import { ExperimentationBanner } from './ExperimentationBanner'
 import { hidesPage } from './views'
 
 const isInternalLink = (target: EventTarget): boolean => {
@@ -42,6 +43,7 @@ export function AssistantContent({ conversationId }: { conversationId: string })
           renderActions={(message) => <ResponseActions message={message} />}
         />
       </div>
+      <ExperimentationBanner compact={!hidesPage(display)} />
     </div>
   )
 }
