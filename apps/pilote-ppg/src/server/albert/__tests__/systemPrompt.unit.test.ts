@@ -287,10 +287,109 @@ describe("buildChatSystemPrompt", () => {
 
     // Then
     expect(prompt).toContain("- Jalon courant : 2025");
-    expect(prompt).not.toContain("<contexte_utilisateur>");
+    expect(prompt).not.toContain("- Territoire courant :");
   });
 
-  it("liste les territoires à accès complet", () => {
+  it("donne le territoire courant du contexte d'accueil, par son nom et son code", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: {
+        jalon: 2026,
+        territoireCode: "DEPT-01",
+        territoireNom: "01 - Ain",
+      },
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "- Territoire courant : 01 - Ain (DEPT-01)\n- Jalon courant : 2026",
+    );
+  });
+
+  it("donne le territoire courant par son seul code quand le contexte ne porte pas son nom", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: { jalon: 2026, territoireCode: "DEPT-01" },
+    });
+
+    // Then
+    expect(prompt).toContain("- Territoire courant : DEPT-01\n");
+  });
+
+  it("donne le chantier courant du contexte de la page chantier, par son nom et son identifiant", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: {
+        jalon: 2026,
+        territoireCode: "DEPT-01",
+        territoireNom: "01 - Ain",
+        chantierId: "CH-173",
+        chantierNom: "Renforcer notre souveraineté industrielle",
+      },
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "- Chantier courant : Renforcer notre souveraineté industrielle (CH-173)\n- Territoire courant : 01 - Ain (DEPT-01)\n",
+    );
+  });
+
+  it("donne le chantier courant par son seul identifiant quand le contexte ne porte pas son nom", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: {
+        jalon: 2026,
+        territoireCode: "DEPT-01",
+        chantierId: "CH-173",
+      },
+    });
+
+    // Then
+    expect(prompt).toContain("- Chantier courant : CH-173\n");
+  });
+
+  it("ne donne pas de chantier courant hors de la page chantier", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: { jalon: 2026, territoireCode: "DEPT-01" },
+    });
+
+    // Then
+    expect(prompt).not.toContain("- Chantier courant :");
+  });
+
+  it("applique le chantier courant à une demande sur un chantier non désigné, pas à une demande sur plusieurs chantiers", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "porte sur le chantier courant du contexte de la session, quand il y en a un. Une demande sur plusieurs chantiers (« les chantiers en retard ») n'est pas restreinte au chantier courant.",
+    );
+  });
+
+  it("applique le territoire courant à une demande sans territoire, jamais NAT-FR par défaut", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "porte sur le territoire courant du contexte de la session : jamais sur NAT-FR par défaut",
+    );
+  });
+
+  it("termine par les territoires à accès complet", () => {
     // When
     const prompt = buildChatSystemPrompt({
       territoiresAccessibles: ["REG-53", "DEPT-35"],
@@ -298,21 +397,8 @@ describe("buildChatSystemPrompt", () => {
     });
 
     // Then
-    expect(prompt).toContain("- Territoires à accès complet : REG-53, DEPT-35");
-  });
-
-  it("termine par les instructions du contexte utilisateur", () => {
-    // When
-    const prompt = buildChatSystemPrompt({
-      territoiresAccessibles: [],
-      agentContext: { instructions: "Territoire par défaut : Bretagne" },
-    });
-
-    // Then
     expect(
-      prompt.endsWith(
-        "<contexte_utilisateur>\nTerritoire par défaut : Bretagne\n</contexte_utilisateur>",
-      ),
+      prompt.endsWith("- Territoires à accès complet : REG-53, DEPT-35"),
     ).toBe(true);
   });
 });

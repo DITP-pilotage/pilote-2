@@ -14,9 +14,9 @@ describe("construireAgentContextChantier", () => {
     expect(result).toEqual({
       territoireCode: "DEPT-35",
       jalon: 2025,
+      territoireNom: "35 - Ille-et-Vilaine",
       chantierId: "CH-173",
-      instructions:
-        "L'utilisateur consulte le chantier CH-173 « Renforcer notre souveraineté industrielle » sur le territoire 35 - Ille-et-Vilaine (code : DEPT-35). Utilise ce chantier et ce territoire par défaut lorsque l'utilisateur ne les précise pas dans sa question.",
+      chantierNom: "Renforcer notre souveraineté industrielle",
     });
   });
 });

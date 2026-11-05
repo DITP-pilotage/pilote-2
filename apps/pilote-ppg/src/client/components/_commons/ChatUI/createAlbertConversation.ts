@@ -4,11 +4,14 @@ import { z } from "zod";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
+// Les noms sont optionnels : les conversations enregistrées avant PIL-1949
+// n'ont que les codes. Le serveur se rabat alors sur le code.
 export const albertAgentContextSchema = z.object({
   territoireCode: z.string(),
+  territoireNom: z.string().optional(),
   jalon: z.number(),
   chantierId: z.string().optional(),
-  instructions: z.string(),
+  chantierNom: z.string().optional(),
 });
 
 export type AlbertAgentContext = z.infer<typeof albertAgentContextSchema>;

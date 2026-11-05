@@ -37,4 +37,9 @@ export type ToolCase = {
    * proposée dont le libellé correspond note le cas à 0.
    */
   optionsInterdites?: OptionInterdite[];
+  /**
+   * Le territoire et le jalon sélectionnés sur l'accueil. Absent : aucun
+   * contexte, le jalon par défaut et pas de territoire courant.
+   */
+  contexteAccueil?: { territoireCode: string; jalon: number };
 };

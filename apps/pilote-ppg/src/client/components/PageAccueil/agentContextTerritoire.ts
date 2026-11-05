@@ -28,6 +28,6 @@ export function construireAgentContextTerritoire({
   return {
     jalon,
     territoireCode,
-    instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
+    territoireNom: territoire.nomAffiché,
   };
 }
