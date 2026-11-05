@@ -83,4 +83,18 @@ describe('deriveAssistantState', () => {
       'writing-report',
     )
   })
+
+  it('« compose le tableau de bord » pendant la composition d’un dashboard', () => {
+    const parts: KpiloteUIMessage['parts'] = [
+      {
+        type: 'tool-create_dashboard',
+        toolCallId: 't',
+        state: 'input-available',
+        input: { task: 't' },
+      },
+    ]
+    expect(deriveAssistantState({ message: message(parts), status: 'streaming' })).toBe(
+      'composing-dashboard',
+    )
+  })
 })

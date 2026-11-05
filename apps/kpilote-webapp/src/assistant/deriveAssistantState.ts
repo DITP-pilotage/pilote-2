@@ -3,13 +3,19 @@ import { TOOLS, type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import type { ChatStatus } from 'ai'
 
 export type AssistantState =
-  'thinking' | 'consulting-sources' | 'consulting-help' | 'writing-report' | 'writing'
+  | 'thinking'
+  | 'consulting-sources'
+  | 'consulting-help'
+  | 'writing-report'
+  | 'composing-dashboard'
+  | 'writing'
 
 export const ASSISTANT_STATE_LABELS: Record<AssistantState, string> = {
   thinking: 'réfléchit',
   'consulting-sources': 'consulte les sources',
   'consulting-help': 'consulte le centre d’aide',
   'writing-report': 'rédige la synthèse',
+  'composing-dashboard': 'compose le tableau de bord',
   writing: 'rédige',
 }
 
@@ -46,5 +52,6 @@ export const deriveAssistantState = ({
   const running = last.state === 'input-streaming' || last.state === 'input-available'
   if (!running) return 'thinking'
   if (TOOLS[name].kind === 'help') return 'consulting-help'
+  if (TOOLS[name].kind === 'dashboard') return 'composing-dashboard'
   return TOOLS[name].kind === 'source' ? 'consulting-sources' : 'thinking'
 }

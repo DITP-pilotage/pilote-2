@@ -8,6 +8,8 @@ import { ChoicesInline } from './ChoicesInline'
 import { ConsultedSources, isSourcePart } from './ConsultedSources'
 import { type AssistantState } from './deriveAssistantState'
 import { MarkdownResponse } from './MarkdownResponse'
+import { DashboardLoader, DashboardRender } from './dashboard/DashboardRender'
+import { dashboardOutput, isDashboardPart } from './dashboard/dashboardParts'
 import { isRapportPart, rapportOutput, rapportTypeOf, type RapportPart } from './rapport'
 import { RapportEncart } from './RapportEncart'
 
@@ -60,6 +62,18 @@ export const AssistantMessage = memo(function AssistantMessage({
       {message.parts.map((part, index) => {
         if (part.type === 'text' && part.text.length > 0) {
           return <MarkdownResponse key={index} text={part.text} />
+        }
+        if (isDashboardPart(part)) {
+          if (part.state === 'output-error') return null
+          const dashboard = dashboardOutput(part)
+          if (dashboard) {
+            return (
+              <DashboardRender key={index} dashboard={dashboard} toolCallId={part.toolCallId} />
+            )
+          }
+          return part.state === 'output-available' || state === null ? null : (
+            <DashboardLoader key={index} />
+          )
         }
         if (isRapportPart(part)) {
           return <RapportOf key={index} part={part} isStreaming={state !== null} />

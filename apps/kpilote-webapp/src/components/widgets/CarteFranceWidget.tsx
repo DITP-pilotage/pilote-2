@@ -18,6 +18,7 @@ export function CarteFranceWidget({
   mapName,
   geoJson,
   frontieres,
+  interactive = true,
 }: {
   widget: WidgetApiModel
   indicateurId: string
@@ -25,6 +26,8 @@ export function CarteFranceWidget({
   mapName: string
   geoJson: FranceGeoJson
   frontieres: FranceGeoJson
+  /** Hors de la page de l'indicateur (un dashboard de l'assistant), un clic ne navigue pas. */
+  interactive?: boolean
 }) {
   const navigate = useNavigate()
   const [{ data: individus }, { data: remarquables }] = useSuspenseQueries({
@@ -65,7 +68,7 @@ export function CarteFranceWidget({
       geoJson={geoJson}
       frontieres={frontieres}
       points={points}
-      onSelect={handleSelect}
+      {...(interactive ? { onSelect: handleSelect } : {})}
     />
   )
 }
