@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
-import { ALBERT_TEMPERATURE, createAlbertModel } from '@/valeurImport/helpers/albert'
+import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/albert'
 
 const colonneDateSchema = z.object({
   nom: z.string().describe('Nom exact du header de colonne contenant la date (recopie exacte).'),
@@ -184,7 +184,7 @@ export const decouvrirStructure = ({
       schema: decouverteOutputSchema,
       system: SYSTEM_PROMPT,
       prompt,
-      temperature: ALBERT_TEMPERATURE,
+      temperature: STRUCTURED_TEMPERATURE,
     }).then((result) => {
       const durationMs = elapsed()
       const usage = result.usage

@@ -349,6 +349,9 @@ importers:
 
   apps/kpilote-webapp:
     dependencies:
+      '@ai-sdk/react':
+        specifier: ^4.0.145
+        version: 4.0.145(react@19.3.1)(zod@4.6.7)
       '@hono/node-server':
         specifier: 2.1.5
         version: 2.1.5(hono@4.13.13)
@@ -400,6 +403,9 @@ importers:
       '@yornaath/batshit':
         specifier: ^0.14.0
         version: 0.14.0
+      ai:
+        specifier: ^7.0.141
+        version: 7.0.141(zod@4.6.7)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -457,6 +463,12 @@ importers:
       react-hook-form:
         specifier: ^7.90.0
         version: 7.90.0(@types/react@19.3.0)(react@19.3.1)
+      react-markdown:
+        specifier: ^10.1.0
+        version: 10.1.0(@types/react@19.3.0)(react@19.3.1)
+      remark-gfm:
+        specifier: ^4.0.1
+        version: 4.0.1
       tailwind-merge:
         specifier: ^3.7.0
         version: 3.7.0
@@ -1004,6 +1016,9 @@ importers:
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
+      ai:
+        specifier: ^7.0.141
+        version: 7.0.141(zod@4.6.7)
       oxlint:
         specifier: ^1.88.0
         version: 1.88.0(oxlint-tsgolint@7.0.2004)

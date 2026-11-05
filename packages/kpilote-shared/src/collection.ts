@@ -1,6 +1,11 @@
 import { z } from 'zod'
 
-import { createPaginatedApiListSchema, paginationCursorSchema, pageSizeSchema } from './pagination'
+import {
+  createPaginatedApiListSchema,
+  idsFilterSchema,
+  paginationCursorSchema,
+  pageSizeSchema,
+} from './pagination'
 import { collectionContactsUtilesGroupSchema } from './collectionContactUtile'
 import { collectionPublicIdSchema, indicateurPublicIdSchema } from './publicIds'
 import { responsableApiModelSchema } from './responsable'
@@ -92,6 +97,7 @@ export const listCollectionsQuerySchema = z.object({
     .string()
     .optional()
     .describe("Filtre case-insensitive sur l'identifiant public (`publicId`, ex. `COL-01`)."),
+  ids: idsFilterSchema(collectionPublicIdSchema, 'COL-001,COL-002'),
   cursor: paginationCursorSchema.optional(),
   pageSize: pageSizeSchema,
 })
