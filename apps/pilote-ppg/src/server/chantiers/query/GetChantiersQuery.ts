@@ -9,6 +9,7 @@ type ChantierIdentite = {
   ppg: string;
   ministeres: string[];
   mailles_applicables: string[];
+  directeurs_projet_ids: string[];
 };
 
 type SyntheseResultat = {
@@ -16,6 +17,8 @@ type SyntheseResultat = {
   commentaire: string | null;
   date_meteo: string | null;
   date_commentaire: string | null;
+  auteur_creation_id: string;
+  auteur_modification_id: string;
 };
 
 type CommentaireResult = {
@@ -25,6 +28,8 @@ type CommentaireResult = {
 
 export type ChantierResult = {
   chantier: ChantierIdentite;
+  responsables_locaux_ids: string[];
+  coordinateurs_territoriaux_ids: string[];
   meteo: string | null;
   tendance: string | null;
   ecart: number | null;
@@ -125,7 +130,10 @@ export class GetChantiersQuery {
             ppg: ct.chantier_identite.ppg,
             ministeres: ct.chantier_identite.ministeres_acronymes,
             mailles_applicables: ct.chantier_identite.mailles_applicables,
+            directeurs_projet_ids: ct.chantier_identite.directeurs_projet_ids,
           },
+          responsables_locaux_ids: ct.responsables_locaux_ids,
+          coordinateurs_territoriaux_ids: ct.coordinateurs_territoriaux_ids,
           meteo: ct.meteo,
           tendance: ct.tendance,
           ecart,
@@ -143,6 +151,10 @@ export class GetChantiersQuery {
                   date_commentaire:
                     ct.syntheses_des_resultats[0].date_modification?.toISOString() ??
                     null,
+                  auteur_creation_id:
+                    ct.syntheses_des_resultats[0].auteur_creation_id,
+                  auteur_modification_id:
+                    ct.syntheses_des_resultats[0].auteur_modification_id,
                 }
               : null,
           commentaires: {

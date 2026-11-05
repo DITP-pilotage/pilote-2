@@ -14,6 +14,12 @@ import type {
 } from "@/server/chantiers/query/GetChantiersQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
+import { personReference } from "@/shared/personne/personReference";
+
+const DIRECTEUR_PROJET_ID = "0b3c1f2e-8a4d-4c6b-9e1f-2a3b4c5d6e7f";
+const RESPONSABLE_LOCAL_ID = "1c4d2f3e-9b5e-4d7c-8f2a-3b4c5d6e7f80";
+const COORDINATEUR_ID = "2d5e3a4f-0c6f-4e8d-9a3b-4c5d6e7f8091";
+const AUTEUR_SYNTHESE_ID = "3e6f4b5a-1d7a-4f9e-8b4c-5d6e7f8091a2";
 
 const buildChantier = (id: string): ChantierResult => ({
   chantier: {
@@ -23,7 +29,10 @@ const buildChantier = (id: string): ChantierResult => ({
     ppg: "PPG",
     ministeres: [],
     mailles_applicables: ["NAT", "REG"],
+    directeurs_projet_ids: [DIRECTEUR_PROJET_ID],
   },
+  responsables_locaux_ids: [RESPONSABLE_LOCAL_ID],
+  coordinateurs_territoriaux_ids: [COORDINATEUR_ID],
   meteo: "ORAGE",
   tendance: "BAISSE",
   ecart: -5,
@@ -35,6 +44,8 @@ const buildChantier = (id: string): ChantierResult => ({
     commentaire: "<p>Deux postes restent vacants.</p>",
     date_meteo: "2026-01-10",
     date_commentaire: "2026-01-12",
+    auteur_creation_id: AUTEUR_SYNTHESE_ID,
+    auteur_modification_id: AUTEUR_SYNTHESE_ID,
   },
   commentaires: { donnees: null, autresResultats: null },
 });
@@ -49,7 +60,10 @@ const chantierRenvoye = (id: string) => ({
     ppg: "PPG",
     ministeres: [],
     maille_de_pilotage: "régionale" as const,
+    directeurs_projet: [personReference(DIRECTEUR_PROJET_ID)],
   },
+  responsables_locaux: [personReference(RESPONSABLE_LOCAL_ID)],
+  coordinateurs_territoriaux: [personReference(COORDINATEUR_ID)],
   taux_avancement: 40,
   ecart: -5,
   tendance: "En baisse",
@@ -59,6 +73,7 @@ const chantierRenvoye = (id: string) => ({
   synthese: {
     commentaire: "Deux postes restent vacants.",
     date_commentaire: "2026-01-12",
+    auteur: personReference(AUTEUR_SYNTHESE_ID),
   },
 });
 
@@ -226,7 +241,7 @@ describe("createGetChantiersTool execute", () => {
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("renvoie les libellés de la tendance, du niveau de confiance et de la maille de pilotage (D1), et la synthèse en texte", async () => {
+  test("renvoie les libellés de la tendance, du niveau de confiance et de la maille de pilotage (D1), la synthèse en texte et les personnes par leur référence", async () => {
     // Given
     const tool = buildTool({
       query: buildQuery(["CH-084"]),
@@ -250,7 +265,7 @@ describe("createGetChantiersTool execute", () => {
     ]);
   });
 
-  test("hors périmètre, signale la restriction d'accès, garde le niveau de confiance et masque la tendance et les commentaires", async () => {
+  test("hors périmètre, signale la restriction d'accès, garde le niveau de confiance et les directeurs de projet, masque la tendance, les commentaires et les personnes du territoire", async () => {
     // Given
     const tool = buildTool({
       query: buildQuery(["CH-084"]),
@@ -273,6 +288,8 @@ describe("createGetChantiersTool execute", () => {
         chantiers: [
           {
             ...chantierRenvoye("CH-084"),
+            responsables_locaux: [],
+            coordinateurs_territoriaux: [],
             tendance: null,
             est_en_difficulte: false,
             synthese: { commentaire: null, date_commentaire: null },

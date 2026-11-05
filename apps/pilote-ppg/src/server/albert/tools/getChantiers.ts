@@ -8,6 +8,7 @@ import type {
   GetChantiersParams,
 } from "@/server/chantiers/query/GetChantiersQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
+import { personReference } from "@/shared/personne/personReference";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import {
@@ -106,9 +107,15 @@ export type CollecteChantiersInput = Omit<
  * chantier sur le territoire.
  */
 export type ChantierRenvoye = {
-  chantier: Omit<ChantierResult["chantier"], "mailles_applicables"> & {
+  chantier: Omit<
+    ChantierResult["chantier"],
+    "mailles_applicables" | "directeurs_projet_ids"
+  > & {
     maille_de_pilotage: ReturnType<typeof mailleDePilotage>;
+    directeurs_projet: string[];
   };
+  responsables_locaux: string[];
+  coordinateurs_territoriaux: string[];
   taux_avancement: number | null;
   ecart: number | null;
   tendance: string | null;
@@ -118,6 +125,8 @@ export type ChantierRenvoye = {
   synthese: {
     commentaire: string | null;
     date_commentaire: string | null;
+    auteur?: string;
+    modifie_par?: string;
   } | null;
 };
 
@@ -154,12 +163,18 @@ function toQueryParams(
 }
 
 function renvoyerChantier(chantierResult: ChantierResult): ChantierRenvoye {
-  const { mailles_applicables, ...chantier } = chantierResult.chantier;
+  const { mailles_applicables, directeurs_projet_ids, ...chantier } =
+    chantierResult.chantier;
   return {
     chantier: {
       ...chantier,
       maille_de_pilotage: mailleDePilotage({ mailles: mailles_applicables }),
+      directeurs_projet: directeurs_projet_ids.map(personReference),
     },
+    responsables_locaux:
+      chantierResult.responsables_locaux_ids.map(personReference),
+    coordinateurs_territoriaux:
+      chantierResult.coordinateurs_territoriaux_ids.map(personReference),
     taux_avancement: chantierResult.taux_avancement,
     ecart: chantierResult.ecart,
     tendance: libelleTendance({ tendance: chantierResult.tendance }),
@@ -175,6 +190,13 @@ function renvoyerChantier(chantierResult: ChantierResult): ChantierRenvoye {
               ? null
               : texteDepuisHtml({ html: chantierResult.synthese.commentaire }),
           date_commentaire: chantierResult.synthese.date_commentaire,
+          auteur: personReference(chantierResult.synthese.auteur_creation_id),
+          ...(chantierResult.synthese.auteur_modification_id !==
+            chantierResult.synthese.auteur_creation_id && {
+            modifie_par: personReference(
+              chantierResult.synthese.auteur_modification_id,
+            ),
+          }),
         }
       : null,
   };
@@ -193,6 +215,8 @@ function masquerDonneesNonAccessibles(
       acces_restreint: true,
       chantiers: resultat.chantiers.map((chantier) => ({
         ...chantier,
+        responsables_locaux: [],
+        coordinateurs_territoriaux: [],
         tendance: null,
         est_en_retard: false,
         est_en_difficulte: false,
@@ -378,9 +402,10 @@ export function createGetChantiersTool({
 - \`view\`, \`tendance\` et \`chantier_ids\` se combinent.
 - \`non_applicable\` : les territoires où l'analyse demandée n'a pas de sens (pas de chantiers en retard au niveau national), avec la raison ; ce n'est pas une absence de résultat.
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.
-- \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance et le commentaire de synthèse y sont masqués, ce n'est pas une absence de données.
+- \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance, le commentaire de synthèse et les personnes du territoire y sont masqués, ce n'est pas une absence de données.
 - \`maille_de_pilotage\` null : la maille de pilotage du chantier n'est pas connue.
 - \`taux_avancement\` null : le taux d'avancement du chantier n'est pas calculé à ce jalon, en raison d'indicateurs non renseignés ; dis-le, sans le remplacer par un autre taux.
+- \`directeurs_projet\`, \`responsables_locaux\`, \`coordinateurs_territoriaux\` et l'\`auteur\` de la synthèse : les références des personnes, à recopier telles quelles pour les citer.
 - \`tri\` classe les chantiers tous territoires confondus ; \`limite\` (20 par défaut) garde les premiers.
 - \`total\` : le nombre de chantiers avant la limite. \`tronque\` : la liste est coupée ; dis-le (« les 20 plus en retard, sur 340 ») ou resserre la demande (vue, tendance, périmètre).
 Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? », « les chantiers les plus en retard » (tri) ; un ensemble de territoires (« la Bretagne et ses départements », « toutes les régions », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
