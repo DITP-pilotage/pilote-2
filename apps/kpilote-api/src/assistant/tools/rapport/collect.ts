@@ -23,9 +23,12 @@ import {
 } from '@/assistant/tools/rapport/format'
 import { type Collected } from '@/assistant/tools/rapport/writeRapport'
 import { type ToolExecuteOptions } from '@/assistant/tools/toolDefinition'
+import { withConcurrency } from '@/framework/concurrency'
 
 // Les données passent par les outils de données : mêmes règles d'accès, mêmes libellés.
 // Le sous-agent ne reçoit que ce que son gabarit écrit, déjà formaté.
+// Les lectures par individu ou par indicateur passent par `withConcurrency` : un large
+// périmètre ne doit pas épuiser le pool de connexions.
 
 export const LAST_POINTS = 6
 export const MAX_INDICATEURS = 20
@@ -128,12 +131,13 @@ const collectSyntheseCollection = async (
 
   const contributions = heaviest(synthese.contributions)
   const [details, commentaires] = await Promise.all([
-    Promise.all(
-      contributions.map((contribution) =>
-        getSyntheseIndicateur.execute(
-          { indicateurId: contribution.indicateur.id, individuId },
-          options,
-        ),
+    withConcurrency(
+      contributions.map(
+        (contribution) => () =>
+          getSyntheseIndicateur.execute(
+            { indicateurId: contribution.indicateur.id, individuId },
+            options,
+          ),
       ),
     ),
     getCommentaires.execute({ cible: 'COLLECTION', collectionId }, options),
@@ -184,12 +188,13 @@ const collectComparaisonIndicateur = async (
   if (synthese.individus.length < 2) return tooFew(synthese.individus.length, synthese.notFound)
 
   const { unite } = synthese.indicateur
-  const commentaires = await Promise.all(
-    synthese.individus.map((row) =>
-      getCommentaires.execute(
-        { cible: 'INDICATEUR', indicateurId, individuId: row.individu.id },
-        options,
-      ),
+  const commentaires = await withConcurrency(
+    synthese.individus.map(
+      (row) => () =>
+        getCommentaires.execute(
+          { cible: 'INDICATEUR', indicateurId, individuId: row.individu.id },
+          options,
+        ),
     ),
   )
   return {
@@ -217,9 +222,10 @@ const collectComparaisonCollection = async (
   const cible = await resolvePerimetre(perimetre)
   if (cible.individus.length < 2) return tooFew(cible.individus.length, cible.notFound)
 
-  const syntheses = await Promise.all(
-    cible.individus.map((individu) =>
-      getSyntheseCollection.execute({ collectionId, individuId: individu.id }, options),
+  const syntheses = await withConcurrency(
+    cible.individus.map(
+      (individu) => () =>
+        getSyntheseCollection.execute({ collectionId, individuId: individu.id }, options),
     ),
   )
   return {

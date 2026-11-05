@@ -1,9 +1,11 @@
 import { randomUUID } from 'node:crypto'
 
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { getCommentaires } from '@/assistant/tools/getCommentaires'
 import { writeComparaison } from '@/assistant/tools/rapport/writeComparaison'
 import { writeSynthese } from '@/assistant/tools/rapport/writeSynthese'
+import { env } from '@/env'
 import { registerModelWrapper } from '@/framework/llm/albert'
 import { UniteIndicateur, Visibilite } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
@@ -47,7 +49,10 @@ const lastPrompt = (model: ReturnType<typeof streamTextModel>): string =>
   JSON.stringify(model.doStreamCalls.at(-1)?.prompt ?? [])
 
 describe('encarts', { concurrent: false }, () => {
-  afterEach(() => registerModelWrapper(null))
+  afterEach(() => {
+    registerModelWrapper(null)
+    vi.restoreAllMocks()
+  })
 
   it(
     'rédige la synthèse d’un indicateur à partir de données déjà formatées',
@@ -159,6 +164,44 @@ describe('encarts', { concurrent: false }, () => {
       expect(prompt).toContain(`Vaucluse ${marqueur}`)
       expect(prompt).toContain(`Var ${marqueur}`)
       expect(prompt).toContain('8 %')
+    }),
+  )
+
+  it(
+    'borne les lectures simultanées d’une comparaison sur un large périmètre',
+    integrationTest(async () => {
+      const { indicateur, marqueur } = await givenIndicateur()
+      const referentiel = await fixtures.referentiel({ nom: `Régions ${marqueur}` })
+      await fixtures.indicateurReferentiel({ indicateur, referentiel })
+      const individus = await Promise.all(
+        Array.from({ length: env.MAX_ASYNC_CONCURRENCY + 3 }, (_, index) =>
+          fixtures.individu({ nom: `Région ${index} ${marqueur}`, referentiel }),
+        ),
+      )
+      registerModelWrapper(() => streamTextModel(['# Comparaison']))
+      const execute = getCommentaires.execute.bind(getCommentaires)
+      let inFlight = 0
+      let maxInFlight = 0
+      vi.spyOn(getCommentaires, 'execute').mockImplementation(async (...args) => {
+        inFlight += 1
+        maxInFlight = Math.max(maxInFlight, inFlight)
+        try {
+          return await execute(...args)
+        } finally {
+          inFlight -= 1
+        }
+      })
+
+      await collectToolStates(randomUUID(), 'write_comparaison', writeComparaison, {
+        sujet: { type: 'INDICATEUR', indicateurId: indicateur.publicId },
+        perimetre: {
+          type: 'SELECTION',
+          individuIds: individus.map((individu) => individu.publicId),
+        },
+      })
+
+      expect(maxInFlight).toBeGreaterThan(1)
+      expect(maxInFlight).toBeLessThanOrEqual(env.MAX_ASYNC_CONCURRENCY)
     }),
   )
 
