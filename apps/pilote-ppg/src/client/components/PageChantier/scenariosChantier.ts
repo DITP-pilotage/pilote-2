@@ -51,7 +51,7 @@ export function scenariosChantier({
             id: "chantier_synthese_commentaires",
             label: "Synthèse des commentaires",
             icone: Chat2Icon,
-            message: `Synthétise les commentaires du chantier ${chantierId} sur ${nom} : principales difficultés et actions`,
+            message: `Synthétise les commentaires du chantier ${chantierId} sur ${nom}`,
             mode: "send",
           },
           {
