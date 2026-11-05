@@ -1,5 +1,4 @@
 import {
-  DIMENSION_KEY_PATTERN,
   MAX_DIMENSION_SLOT,
   type AnalyticsDimension,
 } from '@pilote/kpilote-shared/analytics/dimensions'
@@ -18,6 +17,7 @@ import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import { dimensionFormError, type DimensionFormValues } from '@/lib/dimensionForm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import {
   ANALYTICS_DIMENSIONS_KEY,
@@ -29,23 +29,12 @@ export const Route = createFileRoute('/_authed/dimensions-matomo')({
   component: DimensionsMatomoComponent,
 })
 
-type FormValues = { cle: string; slot: string; nom: string }
+type FormValues = DimensionFormValues
 
 const EMPTY: FormValues = { cle: '', slot: '', nom: '' }
 
 const INPUT =
   'rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none disabled:bg-surface-tinted'
-
-const isValid = (values: FormValues): boolean => {
-  const slot = Number(values.slot)
-  return (
-    DIMENSION_KEY_PATTERN.test(values.cle) &&
-    Number.isInteger(slot) &&
-    slot >= 1 &&
-    slot <= MAX_DIMENSION_SLOT &&
-    values.nom.trim().length > 0
-  )
-}
 
 function DimensionsMatomoComponent() {
   const { data: dimensions } = useSuspenseQuery(analyticsDimensionsQueryOptions())
@@ -93,6 +82,9 @@ function DimensionsMatomoComponent() {
   }
 
   const disabled = locked || save.isPending || remove.isPending
+  const formError = dimensionFormError(values, dimensions, editing)
+  // Le motif ne s'affiche qu'une fois les trois champs remplis : pas d'erreur pendant la saisie.
+  const filled = values.cle !== '' && values.slot !== '' && values.nom !== ''
 
   return (
     <div>
@@ -120,7 +112,7 @@ function DimensionsMatomoComponent() {
           className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-6"
           onSubmit={(event) => {
             event.preventDefault()
-            if (isValid(values)) save.mutate(values)
+            if (formError === null) save.mutate(values)
           }}
         >
           <label className="flex flex-col gap-1.5 text-xs font-semibold">
@@ -163,10 +155,15 @@ function DimensionsMatomoComponent() {
                 Annuler
               </Button>
             ) : null}
-            <Button type="submit" disabled={disabled || !isValid(values)}>
+            <Button type="submit" disabled={disabled || formError !== null}>
               {editing ? 'Enregistrer' : 'Ajouter'}
             </Button>
           </div>
+          {filled && formError ? (
+            <p role="alert" className="m-0 w-full text-xs text-red-marianne">
+              {formError}
+            </p>
+          ) : null}
           <p className="m-0 w-full text-xs text-text-muted">
             Créez d’abord la dimension dans Matomo, de portée « Action » pour un contexte qui change
             d’une page à l’autre, puis reportez ici son numéro (1 à {MAX_DIMENSION_SLOT}). Clé :
