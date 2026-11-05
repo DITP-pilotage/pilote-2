@@ -93,12 +93,24 @@ describe("doitDemanderPrecision", () => {
     const messages: ModelMessage[] = [
       { role: "user", content: "Quelles VA ne sont pas à jour ?" },
       appelOutil,
-      resultatOutil({ en_bref: "Périmètre : le CH-018" }),
+      resultatOutil({ perimetre: "le CH-018", indicateurs: [] }),
       { role: "assistant", content: "Voici le résumé." },
       { role: "user", content: "Et sur le CH-019 ?" },
     ];
 
     expect(doitDemanderPrecision({ messages })).toEqual(false);
+  });
+
+  test("demande quand le tour précédent ne porte que l'ancien marqueur en_bref", () => {
+    const messages: ModelMessage[] = [
+      { role: "user", content: "Quelles VA ne sont pas à jour ?" },
+      appelOutil,
+      resultatOutil({ en_bref: "Périmètre : le CH-018" }),
+      { role: "assistant", content: "Voici le résumé." },
+      { role: "user", content: "Et sur le CH-019 ?" },
+    ];
+
+    expect(doitDemanderPrecision({ messages })).toEqual(true);
   });
 
   test("demande quand le tour précédent s'est arrêté sur un accès refusé", () => {

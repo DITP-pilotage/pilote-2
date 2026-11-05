@@ -33,6 +33,9 @@ import {
   type ChampsAcces,
 } from "@/server/albert/tools/socleValeursIndicateurs";
 
+const CONSIGNE_PRECISION =
+  "Les choix sont déjà affichés à l'utilisateur. N'appelle aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse par la seule phrase « Choisissez une option pour continuer. »";
+
 export const getIndicateursACompleterInputSchema = z.object({
   motifs: z
     .array(z.enum(["va", "vi", "vc"]))
@@ -94,7 +97,11 @@ export function indicateursACompleterVersModele({
     const { clarification: _clarification, ...champsAcces } = output;
     return {
       type: "json",
-      value: { precision_demandee: true, ...champsAcces },
+      value: {
+        precision_demandee: true,
+        consigne: CONSIGNE_PRECISION,
+        ...champsAcces,
+      },
     };
   }
   if (contientDesDonnees(output)) {
@@ -235,15 +242,17 @@ export function createGetIndicateursACompleterTool({
 - VC manquante : aucune valeur cible n'est renseignée pour le jalon \`jalon_vc\`, le jalon en cours, qui prime sur celui de la session ; cite-le dès qu'une VC est en jeu.
 Les nombres sont calculés par l'outil.
 - \`motifs\` : les types de valeurs nommés ou établis par les échanges, sinon les trois, plusieurs dans un seul appel. L'outil demande lui-même la précision du type de valeurs : n'appelle jamais clarify_with_choices pour cela.
-- \`precision_demandee\` : les choix sont affichés à l'utilisateur. Termine ta réponse par cette seule phrase : « Choisissez une option pour continuer. »
+- \`precision_demandee\` : suis la \`consigne\` renvoyée.
+- « Pourquoi la VA de cet indicateur n'est-elle pas à jour ? » : appelle cet outil sur l'indicateur (motifs ["va"]), explique la règle (périodicité, délai de disponibilité) et renvoie au tableau pour les dates ; le centre d'aide ne sert que pour la définition ou le calcul en général.
 - Rédaction :
-  - commence par reprendre \`en_bref\`, périmètre compris ;
-  - présente ensuite les chantiers, et leurs indicateurs quand ils sont listés, motif par motif, en reprenant les phrases du résumé telles quelles ;
-  - ne somme jamais deux nombres : les totaux sont dans le résumé (\`ensemble\` pour tout le périmètre, « tous motifs confondus » pour plusieurs motifs) ;
+  - cite le périmètre interrogé (\`perimetre\`) ;
+  - présente les indicateurs, regroupés par chantier, motif par motif, avec le nombre de territoires par maille ;
+  - ne somme jamais des territoires entre indicateurs, entre mailles ou entre motifs : un même territoire peut être concerné par plusieurs indicateurs. Si on te demande un total (par chantier, sur le périmètre), donne les nombres indicateur par indicateur et renvoie au tableau du détail ;
+  - sur un seul territoire interrogé, ne donne aucun nombre de territoires : dis sur quels chantiers et indicateurs il a des valeurs à compléter, par motif ;
   - n'explique pas d'office chaque motif ; quand tu en définis un (« qu'est-ce que… », « pourquoi… »), reprends sa définition ci-dessus ;
   - \`sans_valeur_a_completer\` : dis que ces chantiers ou indicateurs n'ont aucune valeur à compléter sur ce périmètre, jamais qu'ils sont sans donnée ;
-  - « aucune région », « aucun département » : aucun territoire à compléter sur cette maille, jamais une donnée indisponible ;
-  - quand il y a au moins une ligne, termine par une phrase qui introduit le tableau du détail affiché sous la réponse ;
+  - une maille à 0 : aucun territoire à compléter sur cette maille, jamais une donnée indisponible ;
+  - quand il y a au moins un indicateur, termine par une phrase qui introduit le tableau du détail affiché sous la réponse ;
   - noms de territoires, dates, classement de territoires : tu ne les reçois pas, renvoie au tableau.
 - Liste vide : c'est la réponse définitive. Ne rappelle jamais l'outil avec les mêmes arguments et ne demande pas de précision.
 - ${CONSIGNE_ACCES_REFUSE}

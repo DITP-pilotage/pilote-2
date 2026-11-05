@@ -91,7 +91,7 @@ function valeurContientUneReponseDeLOutil(value: unknown): boolean {
   return (
     typeof value === "object" &&
     value !== null &&
-    ("en_bref" in value || "precision_demandee" in value)
+    ("perimetre" in value || "precision_demandee" in value)
   );
 }
 

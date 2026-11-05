@@ -426,6 +426,8 @@ describe("get_indicateurs_a_completer", () => {
       type: "json",
       value: {
         precision_demandee: true,
+        consigne:
+          "Les choix sont déjà affichés à l'utilisateur. N'appelle aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse par la seule phrase « Choisissez une option pour continuer. »",
         chantiers_non_accessibles: ["CH-999"],
       },
     });
