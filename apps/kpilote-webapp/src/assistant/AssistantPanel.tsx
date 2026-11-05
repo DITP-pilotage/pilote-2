@@ -18,13 +18,13 @@ import { EmptyState } from './emptyState/EmptyState'
 import { propositionsFor, type Proposition } from './emptyState/propositions'
 import { isNearBottom } from './followResponse'
 import { questionToSend, type PendingQuestion } from './pendingQuestion'
-import { pageType, questionType } from './tracking'
+import { pageType, propositionViewKey, questionOrigin, questionType } from './tracking'
 import { appendTranscript } from './transcript'
-import { isPrefilled, readDraft, setPrefilled, useAssistant, writeDraft } from './useAssistant'
+import { prefillOf, readDraft, setPrefill, useAssistant, writeDraft } from './useAssistant'
 import { useSpeechRecognition } from './useSpeechRecognition'
 
-// Un affichage de l'accueil par conversation : changer de vue remonte le panneau sans
-// compter un nouvel affichage.
+// Un affichage de l'accueil par conversation et par page : changer de vue remonte le
+// panneau sans compter un nouvel affichage.
 const propositionsShown = new Set<string>()
 
 export function AssistantPanel({
@@ -160,8 +160,8 @@ export function AssistantPanel({
   const submit = () => {
     const text = input.trim()
     if (text.length === 0 || busy) return
-    send(text, isPrefilled(conversationId) ? 'proposition' : 'saisie')
-    setPrefilled(conversationId, false)
+    send(text, questionOrigin({ text, prefill: prefillOf(conversationId) }))
+    setPrefill(conversationId, null)
     setInput('')
   }
 
@@ -176,7 +176,7 @@ export function AssistantPanel({
       send(proposition.message, 'proposition')
       return
     }
-    setPrefilled(conversationId, true)
+    setPrefill(conversationId, proposition.message)
     setInput(proposition.message)
     field.current?.focus()
   }
@@ -185,8 +185,9 @@ export function AssistantPanel({
   const propositions = propositionsFor(pageContext)
 
   useEffect(() => {
-    if (!empty || propositionsShown.has(conversationId)) return
-    propositionsShown.add(conversationId)
+    const key = propositionViewKey({ conversationId, pageContext })
+    if (!empty || propositionsShown.has(key)) return
+    propositionsShown.add(key)
     analytics.trackEvent(
       analyticsEvents.assistant.propositionView({
         nombre_choix: propositions.length,
@@ -277,7 +278,7 @@ export function AssistantPanel({
             value={input}
             placeholder={busy ? "L'assistant prépare sa réponse…" : 'Posez votre question…'}
             onChange={(event) => {
-              if (event.target.value.trim() === '') setPrefilled(conversationId, false)
+              if (event.target.value.trim() === '') setPrefill(conversationId, null)
               setInput(event.target.value)
             }}
             onKeyDown={(event) => {

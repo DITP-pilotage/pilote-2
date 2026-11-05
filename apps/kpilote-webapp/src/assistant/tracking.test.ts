@@ -6,6 +6,8 @@ import {
   choicesPresentedEvent,
   linkEvent,
   pageType,
+  propositionViewKey,
+  questionOrigin,
   questionType,
 } from './tracking'
 
@@ -111,5 +113,40 @@ describe('pageType', () => {
     expect(pageType({ indicateurId: 'IND-1' })).toBe('indicateur')
     expect(pageType({ collectionId: 'COL-1', individuId: 'D-1' })).toBe('collection')
     expect(pageType(undefined)).toBe('autre')
+  })
+})
+
+describe('questionOrigin', () => {
+  it('attribue à la proposition une question qui complète son début', () => {
+    expect(
+      questionOrigin({
+        text: 'Compare cet indicateur entre le Var et le Vaucluse',
+        prefill: 'Compare cet indicateur entre ',
+      }),
+    ).toBe('proposition')
+  })
+
+  it('compte comme saisie une question réécrite par-dessus la proposition', () => {
+    expect(
+      questionOrigin({ text: 'Quels indicateurs suivent la fraude ?', prefill: 'Compare ' }),
+    ).toBe('saisie')
+    expect(questionOrigin({ text: 'Bonjour', prefill: null })).toBe('saisie')
+  })
+})
+
+describe('propositionViewKey', () => {
+  it('distingue l’écran vide affiché sur une autre page', () => {
+    expect(
+      propositionViewKey({ conversationId: 'c', pageContext: { indicateurId: 'IND-1' } }),
+    ).not.toBe(propositionViewKey({ conversationId: 'c', pageContext: { indicateurId: 'IND-2' } }))
+    expect(propositionViewKey({ conversationId: 'c', pageContext: undefined })).not.toBe(
+      propositionViewKey({ conversationId: 'd', pageContext: undefined }),
+    )
+  })
+
+  it('reste la même quand le panneau se remonte sur la même page', () => {
+    expect(
+      propositionViewKey({ conversationId: 'c', pageContext: { indicateurId: 'IND-1' } }),
+    ).toBe(propositionViewKey({ conversationId: 'c', pageContext: { indicateurId: 'IND-1' } }))
   })
 })

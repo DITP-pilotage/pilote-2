@@ -17,6 +17,28 @@ export const questionType = ({
   return fromProposition ? 'premiere_proposition' : 'premiere_libre'
 }
 
+/**
+ * Une question préremplie par une proposition en vient tant qu'elle la complète ; réécrite
+ * par-dessus, c'est une saisie.
+ */
+export const questionOrigin = ({
+  text,
+  prefill,
+}: {
+  text: string
+  prefill: string | null
+}): 'proposition' | 'saisie' =>
+  prefill !== null && text.startsWith(prefill.trim()) ? 'proposition' : 'saisie'
+
+/** Un affichage de l'écran vide par conversation et par page : un changement de vue n'en est pas un. */
+export const propositionViewKey = ({
+  conversationId,
+  pageContext,
+}: {
+  conversationId: string
+  pageContext: PageContext | undefined
+}): string => `${conversationId}:${JSON.stringify(pageContext ?? {})}`
+
 /** Une réponse arrêtée par l'utilisateur n'est ni aboutie ni en échec : elle a son événement. */
 export const answerOutcomeEvent = ({
   conversationId,
