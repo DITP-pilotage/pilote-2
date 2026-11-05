@@ -12,6 +12,7 @@ import { bodyLimit } from 'hono/body-limit'
 
 import { checkAssistantAccess } from '@/assistant/access'
 import { buildAgent } from '@/assistant/agent'
+import { windowHistory } from '@/assistant/historyWindow'
 import {
   deleteConversation,
   getConversation,
@@ -196,7 +197,7 @@ assistantRoutes.openapi(chatRoute, async (context) => {
 
   const result = streamText({
     model: createAlbertModel(model),
-    messages: await convertToModelMessages(messages, { tools: agent.tools }),
+    messages: windowHistory(await convertToModelMessages(messages, { tools: agent.tools })),
     ...agent,
     abortSignal: context.req.raw.signal,
     // L'erreur est journalisée assainie par `onError` de la réponse ; le défaut du SDK

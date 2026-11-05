@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { MAX_TURNS } from '@/assistant/historyWindow'
 import { assistantRoutes } from '@/assistant/routes'
 import { runWithPrincipal, type Principal } from '@/framework/auth/userContext'
 import { registerErrorHandler } from '@/framework/errors/errorHandler'
@@ -101,6 +102,32 @@ describe('routes de l’assistant', { concurrent: false }, () => {
       expect(appel.outils).toEqual(['search_indicateurs'])
       expect(appel.principalId).toBe(principalId)
       expect(stream).toContain(`"llmCallId":"${appel.id}"`)
+    }),
+  )
+
+  it(
+    'n’envoie au modèle que les derniers tours d’une longue conversation',
+    integrationTest(async () => {
+      const model = scriptedStreamModel([{ text: 'Réponse.' }])
+      registerModelWrapper(() => model)
+      const principalId = await authorizedId()
+      const body = chatBody()
+      const saved = Array.from({ length: MAX_TURNS + 5 }, (_, index) => [
+        { id: randomUUID(), role: 'user', parts: [{ type: 'text', text: `Question ${index}` }] },
+        {
+          id: randomUUID(),
+          role: 'assistant',
+          parts: [{ type: 'text', text: `Réponse ${index}` }],
+        },
+      ]).flat()
+      await db().assistantConversation.create({
+        data: { id: body.id, principalId, titre: 'Longue', messages: saved },
+      })
+
+      await (await postChat(userPrincipal(principalId), body)).text()
+
+      const prompt = model.doStreamCalls[0]?.prompt ?? []
+      expect(prompt.filter((message) => message.role === 'user')).toHaveLength(MAX_TURNS)
     }),
   )
 
