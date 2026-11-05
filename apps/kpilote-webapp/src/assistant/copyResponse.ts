@@ -3,9 +3,25 @@ import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { cleanPseudoCalls } from './cleanPseudoCalls'
 import { flattenLatex } from './flattenLatex'
 
-/** Le texte de la réponse tel que l'utilisateur le lit, sans les artefacts du modèle. */
-export const copyableText = (message: KpiloteUIMessage): string =>
-  message.parts
+import { latestHelpConsultation } from './centreAide'
+
+/**
+ * Le texte de la réponse tel que l'utilisateur le lit, sans les artefacts du modèle, suivi
+ * des pages du centre d'aide citées.
+ */
+export const copyableText = (message: KpiloteUIMessage, origin: string): string => {
+  const text = message.parts
     .flatMap((part) => (part.type === 'text' ? [flattenLatex(cleanPseudoCalls(part.text))] : []))
-    .filter((text) => text.length > 0)
-    .join('\n\n')
+    .filter((chunk) => chunk.length > 0)
+  const help = latestHelpConsultation(message)
+  const pages =
+    help?.found && help.sources.length > 0
+      ? [
+          [
+            'Pages du centre d’aide :',
+            ...help.sources.map((source) => `- ${source.titre} : ${origin}${source.url}`),
+          ].join('\n'),
+        ]
+      : []
+  return [...text, ...pages].join('\n\n')
+}

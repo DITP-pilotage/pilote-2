@@ -13,7 +13,8 @@ export type SourceToolPart = ToolUIPart<KpiloteUITools>
 export const isSourcePart = (part: KpiloteUIMessage['parts'][number]): part is SourceToolPart => {
   if (!isToolUIPart(part)) return false
   const name = toolNameOf(part.type)
-  return name !== null && TOOLS[name].kind === 'source'
+  // Comme sur PPG, la consultation du centre d'aide figure parmi les sources.
+  return name !== null && (TOOLS[name].kind === 'source' || TOOLS[name].kind === 'help')
 }
 
 const labelOf = (part: SourceToolPart) => {
