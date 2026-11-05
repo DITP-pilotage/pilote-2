@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
@@ -34,11 +35,13 @@ const reponseAvecDashboard: PiloteUIMessage = {
 
 const renderMessage = (message: PiloteUIMessage) =>
   render(
-    <ChantierLinksProvider
-      options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
-    >
-      <AssistantMessage isStreaming={false} message={message} />
-    </ChantierLinksProvider>,
+    <QueryClientProvider client={new QueryClient()}>
+      <ChantierLinksProvider
+        options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
+      >
+        <AssistantMessage isStreaming={false} message={message} />
+      </ChantierLinksProvider>
+    </QueryClientProvider>,
   );
 
 describe("AssistantMessage", () => {
@@ -129,24 +132,26 @@ describe("AssistantMessage", () => {
 
     const renderAvecSuites = ({ afficherChoix }: { afficherChoix: boolean }) =>
       render(
-        <ChatContextProvider
-          error={undefined}
-          fillInput={vi.fn()}
-          sendMessage={vi.fn()}
-          status="ready"
-          stop={vi.fn()}
-          track={vi.fn()}
-        >
-          <ChantierLinksProvider
-            options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
+        <QueryClientProvider client={new QueryClient()}>
+          <ChatContextProvider
+            error={undefined}
+            fillInput={vi.fn()}
+            sendMessage={vi.fn()}
+            status="ready"
+            stop={vi.fn()}
+            track={vi.fn()}
           >
-            <AssistantMessage
-              afficherChoix={afficherChoix}
-              isStreaming={false}
-              message={reponseAvecSuites}
-            />
-          </ChantierLinksProvider>
-        </ChatContextProvider>,
+            <ChantierLinksProvider
+              options={{ buildUrl: (chantierId) => `/chantier/${chantierId}` }}
+            >
+              <AssistantMessage
+                afficherChoix={afficherChoix}
+                isStreaming={false}
+                message={reponseAvecSuites}
+              />
+            </ChantierLinksProvider>
+          </ChatContextProvider>
+        </QueryClientProvider>,
       );
 
     test("affiche les dernières suites proposées sous la réponse", () => {

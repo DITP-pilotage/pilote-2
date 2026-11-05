@@ -7,6 +7,7 @@ import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { PencilIcon } from "@/components/_commons/Icones/PencilIcon";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
 import { clsxm } from "@/utils/clsxm";
+import { TextWithPersons } from "@/components/_commons/ChatUI/persons/TextWithPersons";
 
 type Choix = { label: string };
 
@@ -97,7 +98,9 @@ export const ChoicesInline = ({
               onClick={() => selectChoice(choice, index)}
               type="button"
             >
-              {choice.label}
+              <span>
+                <TextWithPersons text={choice.label} />
+              </span>
               <Icone
                 className="h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                 icone={ArrowLine1Icon}
