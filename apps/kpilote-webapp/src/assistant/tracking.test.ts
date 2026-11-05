@@ -23,6 +23,10 @@ describe('questionType', () => {
     expect(questionType({ messages: [], fromProposition: true })).toBe('premiere_proposition')
     expect(questionType({ messages: [user, answer()], fromProposition: true })).toBe('suivante')
   })
+
+  it('compte comme suivante la question reposée après un échec sans réponse', () => {
+    expect(questionType({ messages: [user], fromProposition: false })).toBe('suivante')
+  })
 })
 
 describe('answerOutcomeEvent', () => {
@@ -90,10 +94,15 @@ describe('choicesPresentedEvent', () => {
 
 describe('linkEvent', () => {
   it('distingue centre d’aide, liens internes et externes', () => {
-    expect(linkEvent('/centre-aide?article=x').name).toBe('response.help_center.link')
-    expect(linkEvent('/indicateurs/IND-1').name).toBe('response.link.internal')
-    expect(linkEvent('https://exemple.fr').name).toBe('response.link.external')
-    expect(linkEvent('//exemple.fr').name).toBe('response.link.external')
+    expect(linkEvent('/centre-aide?article=x')?.name).toBe('response.help_center.link')
+    expect(linkEvent('/indicateurs/IND-1')?.name).toBe('response.link.internal')
+    expect(linkEvent('https://exemple.fr')?.name).toBe('response.link.external')
+    expect(linkEvent('//exemple.fr')?.name).toBe('response.link.external')
+  })
+
+  it('ignore les liens qui ne mènent pas à une page', () => {
+    expect(linkEvent('mailto:contact@exemple.fr')).toBeNull()
+    expect(linkEvent('tel:+33100000000')).toBeNull()
   })
 })
 

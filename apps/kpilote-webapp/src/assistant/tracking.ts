@@ -13,7 +13,7 @@ export const questionType = ({
   messages: ReadonlyArray<KpiloteUIMessage>
   fromProposition: boolean
 }): QuestionSendContext['type_question'] => {
-  if (messages.some((message) => message.role === 'assistant')) return 'suivante'
+  if (messages.length > 0) return 'suivante'
   return fromProposition ? 'premiere_proposition' : 'premiere_libre'
 }
 
@@ -60,7 +60,9 @@ export const choicesPresentedEvent = ({
   return null
 }
 
-export const linkEvent = (href: string): AnalyticsEvent => {
+/** Seuls les liens qui mènent à une page sont comptés (pas `mailto:` ni `tel:`). */
+export const linkEvent = (href: string): AnalyticsEvent | null => {
+  if (/^(mailto|tel):/i.test(href)) return null
   if (href.startsWith('/centre-aide')) return analyticsEvents.assistant.helpCenterLink()
   return href.startsWith('/') && !href.startsWith('//')
     ? analyticsEvents.assistant.linkInternal()

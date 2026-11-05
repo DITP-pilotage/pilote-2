@@ -31,7 +31,8 @@ export function AssistantContent({ conversationId }: { conversationId: string })
   const onLinkClick = (event: MouseEvent<HTMLDivElement>) => {
     const link = linkOf(event.target)
     if (!link) return
-    analytics.trackEvent(linkEvent(link.getAttribute('href') ?? ''))
+    const tracked = linkEvent(link.getAttribute('href') ?? '')
+    if (tracked) analytics.trackEvent(tracked)
     if (!hidesPage(display) || event.defaultPrevented) return
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
     if (isInternalLink(link)) toWindow()
