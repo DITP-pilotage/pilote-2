@@ -46,6 +46,12 @@ import { VALEURS_A_COMPLETER_CRITERIA } from "./valeursACompleter.criteria";
  * 94 % ; tous les autres critères 100 % (« Pas de somme entre indicateurs »,
  * « Mailles à zéro », « Motifs justes »). D'autres scénarios N3 utilisant
  * `history` peuvent changer de score avec ce correctif.
+ *
+ * Référence « après (4) » avec les indicateurs regroupés par chantier
+ * (décision 16), le 2026-11-05 : N3 91,3 % (3 essais par cas, 6 cas).
+ * « Tableau introduit » 22 %, « Périmètre cité » 72 %, « Un seul territoire »
+ * 83 %, « Mailles à zéro » 89 %, « Motifs justes » 94 % ; tous les autres
+ * critères 100 %.
  */
 
 scenarioEval({

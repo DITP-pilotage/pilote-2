@@ -11,13 +11,16 @@ import { libelleMaille } from "@/server/albert/tools/libelles";
 
 export type NombresParMaille = Partial<Record<LibelleMaille, number>>;
 export type IndicateurResume = {
-  chantier: string;
   indicateur: string;
 } & Partial<Record<LibelleMotif, NombresParMaille>>;
+export type ChantierResume = {
+  chantier: string;
+  indicateurs: IndicateurResume[];
+};
 export type ResumeIndicateursACompleter = {
   perimetre: string;
   jalon_vc?: number;
-  indicateurs: IndicateurResume[];
+  chantiers: ChantierResume[];
   sans_valeur_a_completer?: string[];
 };
 
@@ -54,36 +57,47 @@ export function resumerIndicateursACompleter({
   jalon?: number;
   demandesExplicites: string[];
 }): ResumeIndicateursACompleter {
-  const lignesParIndicateur = new Map<string, LigneFusionnee[]>();
+  const lignesParChantier = new Map<string, Map<string, LigneFusionnee[]>>();
   for (const ligne of lignes) {
-    const cle = `${ligne.chantierId}\u0000${ligne.indicateurId}`;
-    lignesParIndicateur.set(cle, [
-      ...(lignesParIndicateur.get(cle) ?? []),
+    const lignesParIndicateur =
+      lignesParChantier.get(ligne.chantierId) ??
+      new Map<string, LigneFusionnee[]>();
+    lignesParIndicateur.set(ligne.indicateurId, [
+      ...(lignesParIndicateur.get(ligne.indicateurId) ?? []),
       ligne,
     ]);
+    lignesParChantier.set(ligne.chantierId, lignesParIndicateur);
   }
 
-  const indicateurs: IndicateurResume[] = [...lignesParIndicateur.entries()]
+  const chantiers: ChantierResume[] = [...lignesParChantier.entries()]
     .sort(([gauche], [droite]) => comparer(gauche, droite))
-    .map(([, lignesIndicateur]) => {
-      const premiereLigne = lignesIndicateur[0]!;
-      const motifsConcernes = MOTIFS_ORDER.filter(
-        (motif) =>
-          motifs.includes(motif) &&
-          lignesIndicateur.some((ligne) => ligne.motifs.has(motif)),
-      );
+    .map(([, lignesParIndicateur]) => {
+      const indicateurs: IndicateurResume[] = [...lignesParIndicateur.entries()]
+        .sort(([gauche], [droite]) => comparer(gauche, droite))
+        .map(([, lignesIndicateur]) => {
+          const premiereLigne = lignesIndicateur[0]!;
+          const motifsConcernes = MOTIFS_ORDER.filter(
+            (motif) =>
+              motifs.includes(motif) &&
+              lignesIndicateur.some((ligne) => ligne.motifs.has(motif)),
+          );
+          return {
+            indicateur: `${premiereLigne.indicateurId} · ${premiereLigne.indicateurNom}`,
+            ...Object.fromEntries(
+              motifsConcernes.map((motif) => [
+                LIBELLES_MOTIF[motif],
+                nombresParMaille(
+                  lignesIndicateur.filter((ligne) => ligne.motifs.has(motif)),
+                  mailles,
+                ),
+              ]),
+            ),
+          };
+        });
+      const premiereLigne = [...lignesParIndicateur.values()][0]![0]!;
       return {
         chantier: `${premiereLigne.chantierId} · ${premiereLigne.chantierNom}`,
-        indicateur: `${premiereLigne.indicateurId} · ${premiereLigne.indicateurNom}`,
-        ...Object.fromEntries(
-          motifsConcernes.map((motif) => [
-            LIBELLES_MOTIF[motif],
-            nombresParMaille(
-              lignesIndicateur.filter((ligne) => ligne.motifs.has(motif)),
-              mailles,
-            ),
-          ]),
-        ),
+        indicateurs,
       };
     });
 
@@ -99,7 +113,7 @@ export function resumerIndicateursACompleter({
   return {
     perimetre,
     ...(motifs.includes("vc") && jalon !== undefined && { jalon_vc: jalon }),
-    indicateurs,
+    chantiers,
     ...(sansValeur.length > 0 && { sans_valeur_a_completer: sansValeur }),
   };
 }

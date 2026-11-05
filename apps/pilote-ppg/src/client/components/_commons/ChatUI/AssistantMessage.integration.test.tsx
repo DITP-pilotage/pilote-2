@@ -67,7 +67,7 @@ const reponseAvecDetail = (nombreLignes: number): PiloteUIMessage => ({
       state: "output-available",
       input: { motifs: ["va"] },
       output: {
-        resume: { perimetre: "Bretagne et ses départements", indicateurs: [] },
+        resume: { perimetre: "Bretagne et ses départements", chantiers: [] },
         detail: {
           motifs: ["va"],
           perimetre: "Bretagne et ses départements",

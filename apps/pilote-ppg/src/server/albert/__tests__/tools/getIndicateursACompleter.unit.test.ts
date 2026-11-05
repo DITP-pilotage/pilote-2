@@ -280,11 +280,15 @@ describe("get_indicateurs_a_completer", () => {
     expect(result).toEqual({
       resume: {
         perimetre: "Finistère",
-        indicateurs: [
+        chantiers: [
           {
             chantier: "CH-001 · Chantier bornes",
-            indicateur: "IND-001 · Nombre de bornes",
-            "VA non à jour": { départementale: 1 },
+            indicateurs: [
+              {
+                indicateur: "IND-001 · Nombre de bornes",
+                "VA non à jour": { départementale: 1 },
+              },
+            ],
           },
         ],
       },
@@ -457,11 +461,15 @@ describe("get_indicateurs_a_completer", () => {
     // given
     const resume = {
       perimetre: "tous vos territoires",
-      indicateurs: [
+      chantiers: [
         {
           chantier: "CH-001 · Chantier",
-          indicateur: "IND-001 · Indicateur",
-          "VA non à jour": { départementale: 1 },
+          indicateurs: [
+            {
+              indicateur: "IND-001 · Indicateur",
+              "VA non à jour": { départementale: 1 },
+            },
+          ],
         },
       ],
     };

@@ -66,17 +66,20 @@ describe("resumerIndicateursACompleter", () => {
     expect(resume).toEqual({
       perimetre: "Bretagne et ses départements",
       jalon_vc: 2026,
-      indicateurs: [
+      chantiers: [
         {
           chantier: "CH-038 · Accès aux soins",
-          indicateur: "IND-894 · Maisons de santé",
-          "VA non à jour": { régionale: 1, départementale: 3 },
-        },
-        {
-          chantier: "CH-038 · Accès aux soins",
-          indicateur: "IND-912 · Médecins",
-          "VA non à jour": { régionale: 0, départementale: 1 },
-          "VC manquante": { régionale: 0, départementale: 2 },
+          indicateurs: [
+            {
+              indicateur: "IND-894 · Maisons de santé",
+              "VA non à jour": { régionale: 1, départementale: 3 },
+            },
+            {
+              indicateur: "IND-912 · Médecins",
+              "VA non à jour": { régionale: 0, départementale: 1 },
+              "VC manquante": { régionale: 0, départementale: 2 },
+            },
+          ],
         },
       ],
     });
@@ -94,11 +97,19 @@ describe("resumerIndicateursACompleter", () => {
 
     expect(resume).toEqual({
       perimetre: "France",
-      indicateurs: [
+      chantiers: [
         {
           chantier: "CH-038 · Accès aux soins",
-          indicateur: "IND-894 · Maisons de santé",
-          "VA non à jour": { nationale: 1, régionale: 0, départementale: 0 },
+          indicateurs: [
+            {
+              indicateur: "IND-894 · Maisons de santé",
+              "VA non à jour": {
+                nationale: 1,
+                régionale: 0,
+                départementale: 0,
+              },
+            },
+          ],
         },
       ],
     });
@@ -134,15 +145,29 @@ describe("resumerIndicateursACompleter", () => {
       ],
     });
 
-    expect(
-      resume.indicateurs.map(({ chantier, indicateur }) => [
-        chantier,
-        indicateur,
-      ]),
-    ).toEqual([
-      ["CH-001 · Un", "IND-030 · IND-030"],
-      ["CH-002 · Deux", "IND-010 · IND-010"],
-      ["CH-002 · Deux", "IND-020 · IND-020"],
+    expect(resume.chantiers).toEqual([
+      {
+        chantier: "CH-001 · Un",
+        indicateurs: [
+          {
+            indicateur: "IND-030 · IND-030",
+            "VA non à jour": { régionale: 0, départementale: 1 },
+          },
+        ],
+      },
+      {
+        chantier: "CH-002 · Deux",
+        indicateurs: [
+          {
+            indicateur: "IND-010 · IND-010",
+            "VA non à jour": { régionale: 0, départementale: 1 },
+          },
+          {
+            indicateur: "IND-020 · IND-020",
+            "VA non à jour": { régionale: 0, départementale: 1 },
+          },
+        ],
+      },
     ]);
   });
 
@@ -156,7 +181,7 @@ describe("resumerIndicateursACompleter", () => {
     expect(resume).toEqual({
       perimetre: "Bretagne et ses départements",
       jalon_vc: 2026,
-      indicateurs: [],
+      chantiers: [],
     });
   });
 
@@ -171,11 +196,15 @@ describe("resumerIndicateursACompleter", () => {
 
     expect(resume).toEqual({
       perimetre: "Bretagne et ses départements",
-      indicateurs: [
+      chantiers: [
         {
           chantier: "CH-038 · Accès aux soins",
-          indicateur: "IND-894 · Maisons de santé",
-          "VA non à jour": { régionale: 0, départementale: 1 },
+          indicateurs: [
+            {
+              indicateur: "IND-894 · Maisons de santé",
+              "VA non à jour": { régionale: 0, départementale: 1 },
+            },
+          ],
         },
       ],
       sans_valeur_a_completer: ["CH-018"],
