@@ -16,6 +16,8 @@ export type LigneIndicateurNonAJour = {
   maille: $Enums.Maille;
   territoireCode: string;
   territoireNom: string | null;
+  /** Le libellé des écrans PILOTE (« 29 - Finistère »). */
+  territoireNomAffiche: string;
   dateDerniereValeur: string | null;
   miseAJourAttendueDepuis: string | null;
 };
@@ -42,6 +44,7 @@ export class GetIndicateursNonAJourQuery {
           maille: true,
           territoire_code: true,
           territoire_nom: true,
+          territoire: { select: { nom_affiche: true } },
           date_valeur_actuelle_mandat: true,
           prochaine_date_maj: true,
           indicateur_identite: {
@@ -65,6 +68,7 @@ export class GetIndicateursNonAJourQuery {
       maille: ligne.maille,
       territoireCode: ligne.territoire_code,
       territoireNom: ligne.territoire_nom,
+      territoireNomAffiche: ligne.territoire.nom_affiche,
       dateDerniereValeur: ligne.date_valeur_actuelle_mandat
         ? toISODate(ligne.date_valeur_actuelle_mandat)
         : null,

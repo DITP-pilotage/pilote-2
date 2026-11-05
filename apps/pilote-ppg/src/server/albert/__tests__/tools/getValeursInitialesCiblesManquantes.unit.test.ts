@@ -28,6 +28,7 @@ const LIGNE_FINISTERE: LigneIndicateurSansViVc = {
   maille: "DEPT",
   territoireCode: "DEPT-29",
   territoireNom: "Finistère",
+  territoireNomAffiche: "29 - Finistère",
   viManquante: true,
   vcManquante: true,
   derniereVcConnue: { valeur: 100, jalon: 2024 },

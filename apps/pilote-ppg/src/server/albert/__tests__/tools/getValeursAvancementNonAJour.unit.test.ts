@@ -23,6 +23,7 @@ const LIGNE_FINISTERE: LigneIndicateurNonAJour = {
   maille: "DEPT",
   territoireCode: "DEPT-29",
   territoireNom: "Finistère",
+  territoireNomAffiche: "29 - Finistère",
   dateDerniereValeur: "2026-01-01",
   miseAJourAttendueDepuis: "2026-05-31",
 };
