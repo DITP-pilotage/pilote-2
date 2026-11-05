@@ -69,14 +69,26 @@ const formaterValeur = (valeur: unknown): string =>
     ? String(valeur)
     : JSON.stringify(valeur);
 
+const sortieAffichee = (part: SourceToolPart): unknown => {
+  if (!estTerminee(part)) return undefined;
+  if (
+    part.type === "tool-get_indicateurs_a_completer" &&
+    part.state === "output-available" &&
+    "resume" in part.output
+  ) {
+    return part.output.resume;
+  }
+  return (
+    (part as { output?: unknown }).output ??
+    (part as { errorText?: string }).errorText
+  );
+};
+
 const DetailSource = ({ part }: { part: SourceToolPart }) => {
   const parametres = Object.entries(
     (part.input as Record<string, unknown> | undefined) ?? {},
   );
-  const sortie = estTerminee(part)
-    ? ((part as { output?: unknown; errorText?: string }).output ??
-      (part as { errorText?: string }).errorText)
-    : undefined;
+  const sortie = sortieAffichee(part);
 
   return (
     <div className="border border-dsfr-grey-925 text-xs leading-[18px] text-dsfr-grey-50">

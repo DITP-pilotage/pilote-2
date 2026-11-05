@@ -91,6 +91,22 @@ const partClarification = (
   output: { question, choices: [{ label: `Choix ${question}`, value: "oui" }] },
 });
 
+const partClarificationACompleter = (
+  toolCallId: string,
+  question: string,
+): PiloteUIMessage["parts"][number] => ({
+  type: "tool-get_indicateurs_a_completer",
+  toolCallId,
+  state: "output-available",
+  input: { motifs: ["va", "vi", "vc"] },
+  output: {
+    clarification: {
+      question,
+      choices: [{ label: `Choix ${question}`, value: "oui" }],
+    },
+  },
+});
+
 const renderAvecChoix = (message: PiloteUIMessage) =>
   render(
     <ChatContextProvider
@@ -251,6 +267,29 @@ describe("AssistantMessage", () => {
       parts: [
         partClarification("call-1", "première"),
         partClarification("call-2", "seconde"),
+      ],
+    };
+
+    // When
+    renderAvecChoix(reponse);
+
+    // Then
+    expect(
+      screen.queryByRole("button", { name: /Choix première/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Choix seconde/ }),
+    ).toBeInTheDocument();
+  });
+
+  test("ne présente que les choix de la dernière clarification de get_indicateurs_a_completer", () => {
+    // Given
+    const reponse: PiloteUIMessage = {
+      id: "assistant-5",
+      role: "assistant",
+      parts: [
+        partClarificationACompleter("call-1", "première"),
+        partClarificationACompleter("call-2", "seconde"),
       ],
     };
 

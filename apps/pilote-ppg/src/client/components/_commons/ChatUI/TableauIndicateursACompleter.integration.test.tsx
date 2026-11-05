@@ -59,7 +59,7 @@ const afficherDetail = (detail: DetailIndicateursACompleter) => {
 };
 
 describe("TableauIndicateursACompleter", () => {
-  test("regroupe par chantier puis indicateur, chantiers dépliés et indicateurs repliés", () => {
+  test("regroupe par territoire, avec ses indicateurs et ses chantiers comptés", () => {
     // Given
     const detail = detailDe(lignesDeuxChantiers);
     afficherDetail(detail);
