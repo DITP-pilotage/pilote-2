@@ -221,6 +221,71 @@ describe("resumerIndicateursACompleter", () => {
     });
   });
 
+  test("les chantiers sont triés par nombre d'indicateurs décroissant puis par identifiant", () => {
+    const lignes = [
+      ligne({
+        chantierId: "CH-003",
+        chantierNom: "Trois",
+        indicateurId: "IND-030",
+        territoireCode: "DEPT-29",
+        motif: "va",
+      }),
+      ligne({
+        chantierId: "CH-002",
+        chantierNom: "Deux",
+        indicateurId: "IND-020",
+        territoireCode: "DEPT-29",
+        motif: "va",
+      }),
+      ligne({
+        chantierId: "CH-001",
+        chantierNom: "Un",
+        indicateurId: "IND-001",
+        territoireCode: "DEPT-29",
+        motif: "va",
+      }),
+      ligne({
+        chantierId: "CH-002",
+        chantierNom: "Deux",
+        indicateurId: "IND-010",
+        territoireCode: "DEPT-29",
+        motif: "va",
+      }),
+    ];
+
+    const resume = resumerIndicateursACompleter({
+      ...paramsDeBase,
+      motifs: ["va"],
+      unSeulTerritoire: true,
+      lignes,
+    });
+
+    expect(resume.chantiers).toEqual([
+      {
+        chantier: "CH-002 · Deux",
+        "VA non à jour": "2 indicateurs",
+        indicateurs: [
+          { indicateur: "IND-010 · IND-010", "VA non à jour": "à compléter" },
+          { indicateur: "IND-020 · IND-020", "VA non à jour": "à compléter" },
+        ],
+      },
+      {
+        chantier: "CH-001 · Un",
+        "VA non à jour": "1 indicateur",
+        indicateurs: [
+          { indicateur: "IND-001 · IND-001", "VA non à jour": "à compléter" },
+        ],
+      },
+      {
+        chantier: "CH-003 · Trois",
+        "VA non à jour": "1 indicateur",
+        indicateurs: [
+          { indicateur: "IND-030 · IND-030", "VA non à jour": "à compléter" },
+        ],
+      },
+    ]);
+  });
+
   test("aucune ligne", () => {
     const resume = resumerIndicateursACompleter({
       ...paramsDeBase,
