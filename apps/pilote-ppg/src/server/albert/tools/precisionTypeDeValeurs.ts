@@ -20,8 +20,8 @@ const EXPRESSIONS_DES_TYPES_DE_VALEURS = [
 function extraireLesMots(texte: string): string[] {
   return normaliserChaîneDeCaractères(texte)
     .split(/[^a-z]+/)
-    .filter((mot) => mot.length >= LONGUEUR_MINIMALE_D_UN_MOT)
-    .map((mot) => mot.replace(/s$/, ""));
+    .map((mot) => mot.replace(/s$/, ""))
+    .filter((mot) => mot.length >= LONGUEUR_MINIMALE_D_UN_MOT);
 }
 
 function aAuPlusUneErreur(mot: string, reference: string): boolean {

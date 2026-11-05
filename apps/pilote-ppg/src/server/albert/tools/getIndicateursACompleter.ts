@@ -188,31 +188,46 @@ function clarification(
 function libellePerimetre({
   input,
   nomsDesTerritoires,
+  territoireCodes,
+  indicateurIds,
+  chantiersAccessibles,
 }: {
   input: GetIndicateursACompleterInput;
   nomsDesTerritoires: Map<string, string>;
+  territoireCodes: string[];
+  indicateurIds: string[] | undefined;
+  chantiersAccessibles: string[];
 }): string {
   const nomDuTerritoire = (code: string) =>
     nomsDesTerritoires.get(code) ?? code;
   const { perimetre } = input;
-  const territoires = {
-    TOUS_TERRITOIRES: "tous vos territoires",
-    TOUTES_REGIONS: "toutes vos régions",
-    TOUS_DEPARTEMENTS: "tous vos départements",
-    FRANCE_ET_SES_REGIONS: "France et ses régions",
-    REGION_ET_SES_DEPARTEMENTS:
-      perimetre.type === "REGION_ET_SES_DEPARTEMENTS"
-        ? `${nomDuTerritoire(perimetre.region_code)} et ses départements`
-        : "",
-    SELECTION:
-      perimetre.type === "SELECTION"
-        ? perimetre.territoire_codes.map(nomDuTerritoire).join(", ")
-        : "",
-  }[perimetre.type];
-  const indicateurs = [...new Set(input.indicateur_ids)];
-  const chantiers = [...new Set(input.chantier_ids)];
+  const territoires =
+    territoireCodes.length === 1
+      ? nomDuTerritoire(territoireCodes[0])
+      : libelleDesTerritoires();
+  const indicateurs = [...new Set(indicateurIds)];
+  const chantiers = [...new Set(input.chantier_ids)].filter((chantierId) =>
+    chantiersAccessibles.includes(chantierId),
+  );
   const elements = indicateurs.length > 0 ? indicateurs : chantiers;
   return [...elements, territoires].join(", ");
+
+  function libelleDesTerritoires(): string {
+    return {
+      TOUS_TERRITOIRES: "tous vos territoires",
+      TOUTES_REGIONS: "toutes vos régions",
+      TOUS_DEPARTEMENTS: "tous vos départements",
+      FRANCE_ET_SES_REGIONS: "France et ses régions",
+      REGION_ET_SES_DEPARTEMENTS:
+        perimetre.type === "REGION_ET_SES_DEPARTEMENTS"
+          ? `${nomDuTerritoire(perimetre.region_code)} et ses départements`
+          : "",
+      SELECTION:
+        perimetre.type === "SELECTION"
+          ? perimetre.territoire_codes.map(nomDuTerritoire).join(", ")
+          : "",
+    }[perimetre.type];
+  }
 }
 
 export function createGetIndicateursACompleterTool({
@@ -317,13 +332,17 @@ Ne l'utilise pas pour :
           nomsDesTerritoires: new Map(
             territoires.map(({ code, nom }) => [code, nom]),
           ),
+          territoireCodes: acces.territoireCodes,
+          indicateurIds: acces.indicateurIds,
+          chantiersAccessibles,
         });
-        const demandesExplicites = [
-          ...(acces.indicateurIds ?? []),
-          ...[...new Set(input.chantier_ids)].filter((chantierId) =>
-            chantiersAccessibles.includes(chantierId),
-          ),
-        ];
+        const indicateursDemandes = acces.indicateurIds ?? [];
+        const demandesExplicites =
+          indicateursDemandes.length > 0
+            ? indicateursDemandes
+            : [...new Set(input.chantier_ids)].filter((chantierId) =>
+                chantiersAccessibles.includes(chantierId),
+              );
 
         return {
           resume: resumerIndicateursACompleter({

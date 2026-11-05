@@ -279,7 +279,7 @@ describe("get_indicateurs_a_completer", () => {
     // then
     expect(result).toEqual({
       resume: {
-        perimetre: "tous vos territoires",
+        perimetre: "Finistère",
         indicateurs: [
           {
             chantier: "CH-001 · Chantier bornes",
@@ -288,7 +288,7 @@ describe("get_indicateurs_a_completer", () => {
           },
         ],
       },
-      detail: expect.objectContaining({ perimetre: "tous vos territoires" }),
+      detail: expect.objectContaining({ perimetre: "Finistère" }),
     });
   });
 
@@ -335,7 +335,7 @@ describe("get_indicateurs_a_completer", () => {
     });
   });
 
-  test("demandes explicites : indicateurs retenus puis chantiers accessibles", async () => {
+  test("demandes explicites : les indicateurs retenus seuls quand un chantier est aussi nommé", async () => {
     // given
     const { tool } = buildTool({ lignesVa: [], lignesViVc: [] });
 
@@ -350,7 +350,27 @@ describe("get_indicateurs_a_completer", () => {
     // then
     expect(result).toEqual({
       resume: expect.objectContaining({
-        sans_valeur_a_completer: ["IND-894", "CH-001"],
+        sans_valeur_a_completer: ["IND-894"],
+      }),
+      detail: expect.anything(),
+    });
+  });
+
+  test("demandes explicites : les chantiers accessibles quand seuls des chantiers sont nommés", async () => {
+    // given
+    const { tool } = buildTool({ lignesVa: [], lignesViVc: [] });
+
+    // when
+    const result = await executeTool(tool, {
+      messages: MESSAGE_AVEC_TYPES,
+      motifs: ["va"],
+      chantier_ids: ["CH-001", "CH-002"],
+    });
+
+    // then
+    expect(result).toEqual({
+      resume: expect.objectContaining({
+        sans_valeur_a_completer: ["CH-001", "CH-002"],
       }),
       detail: expect.anything(),
     });
