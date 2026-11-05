@@ -70,6 +70,32 @@ territoires.
     rédigées par le code. Pas de variantes à expliquer au modèle, pas
     d'imbrication où il pourrait rattacher un nombre au mauvais niveau.
 
+### Révision du 2026-11-05, après la mesure « après »
+
+Les mesures n'ont pas montré de gain du résumé en phrases, qui contraint le modèle
+et complique le code. Triko préfère les synthèses que le modèle rédige lui-même.
+Décisions qui **remplacent** les points 3, 9 et 11 :
+
+12. Le modèle reçoit **la liste plate des indicateurs concernés**, chacun avec
+    son chantier et, motif par motif, le nombre de territoires à compléter par
+    maille interrogée (0 compris). Ce sont des nombres, pas des phrases. Le
+    modèle rédige sa synthèse à partir de cette liste.
+13. **Pas de totaux** : ni par chantier, ni sur tout le périmètre, ni tous motifs
+    confondus. La description interdit de sommer des territoires entre
+    indicateurs, mailles ou motifs ; un total demandé se donne indicateur par
+    indicateur, avec un renvoi au tableau.
+14. Plus de phrase d'ouverture écrite par le code (`en_bref`), plus de seuil de
+    20 indicateurs, plus de forme propre à un seul territoire : le périmètre est
+    un simple champ, et la règle « un seul territoire, aucun nombre de
+    territoires » passe dans la description.
+15. La consigne de fin d'une demande de précision (« les choix sont déjà
+    affichés, n'appelle aucun autre outil ») est renvoyée **dans le résultat** :
+    seule dans la description, le modèle rappelait `clarify_with_choices` dans
+    tous les cas ambigus.
+
+Les points 4 et 5 restent des règles de rédaction ; les points 1, 2, 6, 7, 8 et
+10 sont inchangés.
+
 ## Objectifs
 
 - Un outil `get_indicateurs_a_completer` qui remplace les deux outils de `dev`.
@@ -146,7 +172,9 @@ Règle :
 2. Sinon, l'outil a-t-il été appelé **avant** ce dernier message utilisateur,
    et cet appel a-t-il renvoyé des données ou une demande de précision ? →
    données, avec les `motifs` du modèle. Un appel qui s'est arrêté sur un accès
-   refusé ne compte pas.
+   refusé ne compte pas. Dans l'historique, on reconnaît ces résultats, vus
+   sous leur version modèle, à la présence de `perimetre` (données) ou de
+   `precision_demandee` (précision).
 3. Sinon → demande de précision.
 
 La règle 2 ne regarde que les tours précédents : un second appel dans le même
@@ -192,120 +220,62 @@ branche) :
 Chaque libellé contient une expression de la liste : le clic, envoyé comme
 message, passe la règle 1.
 
-Version modèle : `{ precision_demandee: true }` et, dans la description, la
-consigne de terminer par la seule phrase « Choisissez une option pour
-continuer. ».
+Version modèle (révision du 2026-11-05) : `{ precision_demandee: true, consigne }`,
+où `consigne` vaut « Les choix sont déjà affichés à l'utilisateur. N'appelle
+aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse
+par la seule phrase « Choisissez une option pour continuer. » ». Seule dans la
+description, cette consigne n'était pas suivie : le modèle rappelait
+`clarify_with_choices` (3 essais sur 3, sur tous les cas ambigus).
 
 ### Résumé envoyé au modèle
+
+Révision du 2026-11-05 (décisions 12 à 14) : la forme en phrases, avec
+`en_bref`, `ensemble`, les totaux et le seuil de 20 indicateurs, est
+abandonnée.
 
 `toModelOutput` ne renvoie que le résumé. La même fonction s'applique à
 l'historique via `convertToModelMessages` (`Albert.ts`) : aux tours suivants, le
 modèle revoit le résumé, jamais les lignes.
 
-**Une seule forme, sur deux niveaux au plus** (décision de Triko, après
-relecture) : les mêmes clés quel que soit le périmètre. Chaque chantier et chaque
-indicateur est un objet plat : son libellé, puis une clé par motif concerné, dont
-la valeur est une courte phrase écrite par le code, que le modèle reprend telle
-quelle. Deux critères calculés par le code ne changent que le contenu :
-- **un seul territoire** (le périmètre résolu et accessible compte un seul code) :
-  les phrases ne parlent pas de territoires ; sinon, elles donnent les
-  territoires distincts par maille interrogée ;
-- **liste `indicateurs`** : présente si 20 indicateurs distincts concernés ou
-  moins, tous chantiers confondus (`SEUIL_INDICATEURS_RESUME = 20`, à ajuster par
-  les evals) ; absente au-delà.
+```json
+{
+  "perimetre": "Bretagne et ses départements",
+  "jalon_vc": 2026,
+  "indicateurs": [
+    {
+      "chantier": "CH-038 · Accès aux soins",
+      "indicateur": "IND-894 · Maisons de santé",
+      "VA non à jour": { "régionale": 1, "départementale": 3 }
+    },
+    {
+      "chantier": "CH-038 · Accès aux soins",
+      "indicateur": "IND-912 · Médecins",
+      "VA non à jour": { "régionale": 0, "départementale": 1 },
+      "VC manquante": { "régionale": 0, "départementale": 2 }
+    }
+  ]
+}
+```
 
 Champs :
-- `en_bref` : une phrase écrite par le code, que le modèle reprend. Elle porte le
-  périmètre interrogé (chantiers et territoires, en noms), le nombre de chantiers
-  et d'indicateurs concernés, les motifs et le jalon si une VC est en jeu. Exemple :
-  « Périmètre : Bretagne et ses départements. 3 chantiers et 7 indicateurs ont des
-  valeurs à compléter (VA non à jour, VC manquante pour le jalon 2026). » Sans
-  ligne : « Périmètre : Nord. Aucune valeur cible manquante pour le jalon 2026. »
+- `perimetre` : le libellé du périmètre interrogé (chantiers ou indicateurs
+  demandés, puis territoires en noms), le même que le titre du tableau.
 - `jalon_vc` : présent dès que `vc` est demandé.
-- `ensemble` : les totaux sur tout le périmètre, tous chantiers confondus, par
-  motif : nombre de chantiers, d'indicateurs et, sur plusieurs territoires, de
-  territoires distincts par maille. C'est là que le modèle lit « combien de
-  départements au total », au lieu d'additionner les chantiers.
-- `chantiers` : triés par nombre d'indicateurs concernés décroissant, puis par
-  identifiant. Libellés « CH-038 · Accès aux soins », « IND-894 · Maisons de
-  santé ».
+- `indicateurs` : une entrée par indicateur concerné, triée par chantier puis
+  par indicateur. `chantier` et `indicateur` en libellés « {id} · {nom} ». Une
+  clé par motif concerné par cet indicateur (« VA non à jour », « VI
+  manquante », « VC manquante »), dont la valeur donne le nombre de
+  territoires à compléter pour **chaque maille interrogée**, 0 compris
+  (libellés de `libelleMaille` : « nationale », « régionale »,
+  « départementale »). Liste vide si rien n'est à compléter.
 - `sans_valeur_a_completer` : les chantiers et indicateurs demandés
   explicitement (`chantier_ids`, `indicateur_ids`) qui n'ont aucune valeur à
-  compléter, pour que le modèle les dise à jour et ne les présente pas comme
-  sans donnée. Absent si aucun.
+  compléter. Absent si aucun.
 - Champs d'accès inchangés : `acces_refuse`, `chantiers_non_accessibles`,
   `indicateurs_non_accessibles`, `indicateurs_introuvables`.
 
-**Clés de motif** : « VA non à jour », « VI manquante », « VC manquante ». Dans
-`ensemble`, tous les motifs demandés, « aucun indicateur » pour un motif sans
-ligne (le modèle peut dire qu'aucune VC ne manque) ; dans les chantiers et les
-indicateurs, seulement les motifs concernés. « tous motifs confondus », dans
-`ensemble` et les chantiers, seulement si deux motifs ou plus sont demandés ; il
-compte chaque chantier, indicateur et territoire une fois.
-
-**Phrases** :
-
-| Niveau | Plusieurs territoires | Un seul territoire |
-|---|---|---|
-| `ensemble` | « 1 chantier, 2 indicateurs · 1 région, 3 départements » | « 1 chantier, 2 indicateurs » |
-| chantier | « 2 indicateurs · 1 région, 3 départements » | « 2 indicateurs » |
-| indicateur | « 1 région, 3 départements » | « à compléter » |
-
-Sur plusieurs territoires, une phrase cite **toutes** les mailles interrogées, y
-compris celles sans territoire concerné, écrites « aucune région », « aucun
-département » ; elle compte des territoires distincts. Le code accorde le
-nombre (« 1 département », « 3 départements ») ; la formulation du niveau
-national est laissée au constructeur.
-
-**Plusieurs territoires** :
-
-```json
-{
-  "en_bref": "Périmètre : Bretagne et ses départements. 1 chantier et 2 indicateurs ont des valeurs à compléter (VA non à jour, VC manquante pour le jalon 2026).",
-  "jalon_vc": 2026,
-  "ensemble": {
-    "VA non à jour": "1 chantier, 2 indicateurs · 1 région, 3 départements",
-    "VC manquante": "1 chantier, 1 indicateur · aucune région, 2 départements",
-    "tous motifs confondus": "1 chantier, 2 indicateurs · 1 région, 4 départements"
-  },
-  "chantiers": [{
-    "chantier": "CH-038 · Accès aux soins",
-    "VA non à jour": "2 indicateurs · 1 région, 3 départements",
-    "VC manquante": "1 indicateur · aucune région, 2 départements",
-    "tous motifs confondus": "2 indicateurs · 1 région, 4 départements",
-    "indicateurs": [
-      { "indicateur": "IND-894 · Maisons de santé", "VA non à jour": "1 région, 3 départements" },
-      { "indicateur": "IND-912 · Médecins", "VA non à jour": "aucune région, 1 département", "VC manquante": "aucune région, 2 départements" }
-    ]
-  }]
-}
-```
-
-**Un seul territoire** :
-
-```json
-{
-  "en_bref": "Périmètre : Nord. 1 chantier et 2 indicateurs ont des valeurs à compléter (VA non à jour, VC manquante pour le jalon 2026).",
-  "jalon_vc": 2026,
-  "ensemble": {
-    "VA non à jour": "1 chantier, 2 indicateurs",
-    "VC manquante": "1 chantier, 1 indicateur",
-    "tous motifs confondus": "1 chantier, 2 indicateurs"
-  },
-  "chantiers": [{
-    "chantier": "CH-038 · Accès aux soins",
-    "VA non à jour": "2 indicateurs",
-    "VC manquante": "1 indicateur",
-    "tous motifs confondus": "2 indicateurs",
-    "indicateurs": [
-      { "indicateur": "IND-894 · Maisons de santé", "VA non à jour": "à compléter" },
-      { "indicateur": "IND-912 · Médecins", "VA non à jour": "à compléter", "VC manquante": "à compléter" }
-    ]
-  }]
-}
-```
-
-Au-delà du seuil, même forme sans les listes `indicateurs`.
+Aucun total : ni par chantier, ni sur le périmètre, ni tous motifs confondus.
+La forme est la même sur un ou plusieurs territoires.
 
 ### Sortie complète (interface)
 
@@ -330,22 +300,30 @@ Une seule description. Elle porte :
 - `motifs` : la correspondance lexicale ; les types nommés ou établis par les
   échanges, sinon les trois ; l'outil demande lui-même la précision, n'appelle
   jamais `clarify_with_choices` pour le type de valeurs ;
-- `precision_demandee` : termine par la seule phrase « Choisissez une option pour
-  continuer. » ;
-- la rédaction :
-  - commence par reprendre `en_bref`, périmètre compris ;
-  - présente ensuite les chantiers, et leurs indicateurs quand ils sont listés,
-    motif par motif, en reprenant les phrases du résumé telles quelles ;
-  - ne somme jamais deux nombres : les totaux sont dans le résumé (`ensemble`
-    pour tout le périmètre, « tous motifs confondus » pour plusieurs motifs) ;
-  - n'explique pas d'office chaque motif ; quand tu en définis un (question
-    « qu'est-ce que… », « pourquoi… »), reprends la définition ci-dessus ;
+- `precision_demandee` : suis la `consigne` renvoyée ;
+- « Pourquoi la VA de cet indicateur n'est-elle pas à jour ? » : appelle cet
+  outil sur l'indicateur (motifs ["va"]), explique la règle (périodicité, délai
+  de disponibilité) et renvoie au tableau pour les dates ; le centre d'aide ne
+  sert que pour la définition ou le calcul en général ;
+- la rédaction (révision du 2026-11-05) :
+  - cite le périmètre interrogé (`perimetre`) ;
+  - présente les indicateurs, regroupés par chantier, motif par motif, avec le
+    nombre de territoires par maille ;
+  - ne somme jamais des territoires entre indicateurs, entre mailles ou entre
+    motifs : un même territoire peut être concerné par plusieurs indicateurs.
+    Si on te demande un total (par chantier, sur le périmètre), donne les
+    nombres indicateur par indicateur et renvoie au tableau du détail ;
+  - sur un seul territoire interrogé, ne donne aucun nombre de territoires :
+    dis sur quels chantiers et indicateurs il a des valeurs à compléter, par
+    motif ;
+  - n'explique pas d'office chaque motif ; quand tu en définis un, reprends la
+    définition ci-dessus ;
   - `sans_valeur_a_completer` : dis que ces chantiers ou indicateurs n'ont
     aucune valeur à compléter sur ce périmètre, jamais qu'ils sont sans donnée ;
-  - « aucune région », « aucun département » : aucun territoire à compléter sur
-    cette maille, jamais une donnée indisponible ;
+  - une maille à 0 : aucun territoire à compléter sur cette maille, jamais une
+    donnée indisponible ;
   - termine par une phrase qui introduit le tableau du détail affiché sous la
-    réponse, quand il y a au moins une ligne ;
+    réponse, quand il y a au moins un indicateur ;
   - noms de territoires, dates ou classement de territoires : tu ne les reçois
     pas, renvoie au tableau ;
 - liste vide : réponse définitive, ne rappelle pas l'outil avec les mêmes
@@ -432,15 +410,13 @@ Pas de tests triviaux ; côté client, seulement là où la branche en a déjà.
   tour précédent → données ; appel précédent arrêté sur un accès refusé →
   précision ; second appel dans le même tour → précision ; libellé d'un choix →
   données ; accès refusé → champs d'accès, pas de précision.
-- **Résumé** (unitaires, requêtes simulées) : phrases sur un et sur plusieurs
-  territoires ; listes `indicateurs` présentes à 20 indicateurs, absentes à 21 ;
-  maille interrogée sans ligne écrite « aucune région » ou « aucun
-  département » ; un territoire concerné par
-  plusieurs indicateurs, ou par plusieurs chantiers, compté une fois au chantier
-  et dans `ensemble` ; « tous motifs confondus » seulement à partir de deux
-  motifs ; tri des chantiers ; chantier et indicateur demandés sans ligne dans
-  `sans_valeur_a_completer` ; `en_bref` avec et sans ligne ; `toModelOutput` ne
-  contient ni lignes ni noms de territoires.
+- **Résumé** (unitaires, requêtes simulées ; révision du 2026-11-05) : une
+  entrée par indicateur avec ses motifs concernés et toutes les mailles
+  interrogées, 0 compris ; un territoire compté une fois par indicateur et par
+  motif ; tri par chantier puis indicateur ; aucun total ; chantier et
+  indicateur demandés sans ligne dans `sans_valeur_a_completer` ; liste vide
+  sans ligne ; `toModelOutput` ne contient ni lignes ni noms de territoires
+  concernés, et la demande de précision porte sa `consigne`.
 - **Interface** : reprendre et adapter les tests de la branche (tableau, CSV,
   événements, message) ; tableau affiché dès une ligne, absent sans ligne et sur
   une demande de précision ; un seul bloc de choix quand l'outil a renvoyé deux
@@ -474,12 +450,16 @@ Pas de tests triviaux ; côté client, seulement là où la branche en a déjà.
   - aucun total de territoires absent du résumé ;
   - une maille à 0 dite comme telle ;
   - un motif défini l'est comme dans la description ;
-  - sur un seul territoire, aucun nombre de territoires ;
-  - au-delà du seuil, pas de liste d'indicateurs ;
+  - sur un seul territoire, aucun nombre de territoires (jugé sur le
+    `perimetre` de la sortie de l'outil, pas sur la demande) ;
   - aucun nom de territoire hors de ceux de la demande ;
   - une phrase qui introduit le tableau quand il y a des lignes.
 - **Mesure après**, mêmes suites ; rejouer une à une les suites touchées par les
   503/429 de l'API Albert.
+- Révision du 2026-11-05 : le critère « au-delà du seuil, pas de liste
+  d'indicateurs » disparaît avec le seuil ; les critères propres au nouvel outil
+  se reconnaissent au champ `perimetre` de sa sortie (et non plus `en_bref`) ;
+  nouvelle mesure « après » sur les mêmes suites.
 
 ## Reculs acceptés
 
@@ -497,15 +477,17 @@ Pas de tests triviaux ; côté client, seulement là où la branche en a déjà.
 
 ## Laissé au constructeur
 
-- Les noms exacts des champs du résumé (`en_bref`, `ensemble`…), la formulation
-  de `en_bref`, des phrases (niveau national compris) et de la description.
-- La source des noms de territoires pour `en_bref`, les libellés des choix et le
+- La formulation de la description.
+- La source des noms de territoires pour `perimetre`, les libellés des choix et le
   titre du tableau (lignes, ou lecture dédiée quand il n'y a pas de ligne).
 - L'algorithme de tolérance (distance d'édition à une transposition près) et le
   découpage des expressions de plusieurs mots.
 - La forme exacte de la sortie complète.
 
 ## Choix du rédacteur, à vérifier à la relecture
+
+Les choix sur `en_bref`, `ensemble`, « tous motifs confondus », les phrases et
+le seuil sont caducs depuis la révision du 2026-11-05 (décisions 12 à 15).
 
 - **Plus de déclencheur « expression de mise à jour »** : proposé en conversation
   (ne demander la précision que si le message contient « à jour », « à

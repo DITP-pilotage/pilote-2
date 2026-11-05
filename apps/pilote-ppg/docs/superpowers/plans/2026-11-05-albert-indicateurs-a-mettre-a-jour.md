@@ -500,3 +500,98 @@ Sous ces seuils, notez les cas en échec et rapportez-les à Triko avant toute i
 - [ ] **Step 4: Référence** : reporter les moyennes avant et après dans l'en-tête de `valeursACompleter.eval.ts` et de `getIndicateursACompleter.eval.ts`.
 
 - [ ] **Step 5: Commit** (si autorisé) — `test(albert): evals de get_indicateurs_a_completer et mesure après`
+
+---
+
+## Révision du 2026-11-05 — résumé simplifié (tâches 9 à 11)
+
+Après la mesure de la tâche 8, Triko simplifie le résumé (spec, décisions 12 à 15) : une liste plate d'indicateurs avec, motif par motif, le nombre de territoires par maille interrogée ; aucun total, aucune phrase écrite par le code, plus de seuil ; la consigne de fin de la demande de précision revient dans le résultat. Les tâches 1 à 8 restent ; ces trois tâches les amendent.
+
+Contraintes ajoutées : les clés de maille sont les libellés de `libelleMaille` (« nationale », « régionale », « départementale ») ; aucun champ `en_bref`, `ensemble`, « tous motifs confondus » ni `SEUIL_INDICATEURS_RESUME` ne subsiste ; le marqueur d'un résultat de données dans l'historique est `perimetre`.
+
+### Task 9: Résumé simplifié
+
+**Files:**
+- Modify (réécriture): `src/server/albert/tools/resumeIndicateursACompleter.ts`
+- Test (réécriture): `src/server/albert/__tests__/tools/resumeIndicateursACompleter.unit.test.ts`
+
+**Interfaces:**
+- Consumes: `LigneFusionnee`, `Motif`, `LibelleMotif`, `LibelleMaille`, `LIBELLES_MOTIF`, `MOTIFS_ORDER` (tâche 3) ; `libelleMaille`.
+- Produces (remplace l'API de la tâche 4) :
+
+```ts
+export type NombresParMaille = Partial<Record<LibelleMaille, number>>;
+export type IndicateurResume = { chantier: string; indicateur: string } & Partial<Record<LibelleMotif, NombresParMaille>>;
+export type ResumeIndicateursACompleter = {
+  perimetre: string;
+  jalon_vc?: number;
+  indicateurs: IndicateurResume[];
+  sans_valeur_a_completer?: string[];
+};
+export function resumerIndicateursACompleter(params: {
+  lignes: LigneFusionnee[];
+  motifs: Motif[];              // dédoublonnés, ordre va, vi, vc
+  mailles: $Enums.Maille[];     // mailles interrogées, ordre NAT, REG, DEPT
+  perimetre: string;
+  jalon?: number;               // présent si "vc" est demandé
+  demandesExplicites: string[];
+}): ResumeIndicateursACompleter;
+```
+
+Règles : une entrée par indicateur qui a au moins une ligne, triée par identifiant de chantier puis d'indicateur ; `chantier` et `indicateur` en « {id} · {nom} » ; une clé par motif concerné par cet indicateur, dans l'ordre va, vi, vc ; sa valeur donne, pour chaque maille de `mailles` dans l'ordre, le nombre de territoires distincts de ce motif (0 compris) ; `jalon_vc` si `"vc"` est demandé ; `sans_valeur_a_completer` comme à la tâche 4 ; aucun autre champ.
+
+- [ ] **Step 1: Réécrire les tests**
+  - `exemple de la spec` : lignes VA IND-894 sur REG-53, DEPT-22, DEPT-29, DEPT-35 ; VA IND-912 sur DEPT-29 ; VC IND-912 sur DEPT-29, DEPT-56 (CH-038 « Accès aux soins ») ; `mailles: ["REG", "DEPT"]`, `perimetre: "Bretagne et ses départements"`, `jalon: 2026`, motifs `["va", "vc"]` → `toEqual` sur l'exemple JSON de la section « Résumé envoyé au modèle » de la spec, à l'identique.
+  - `mailles à zéro et nationale` : `mailles: ["NAT", "REG", "DEPT"]`, une ligne VA sur NAT-FR → `{ "nationale": 1, "régionale": 0, "départementale": 0 }`.
+  - `tri` : lignes de CH-002 puis CH-001, et IND-020 avant IND-010 → entrées triées CH-001, puis CH-002 (IND-010, IND-020).
+  - `aucune ligne` : motifs `["vc"]`, `jalon: 2026` → `{ perimetre, jalon_vc: 2026, indicateurs: [] }`.
+  - `sans valeur à compléter` : `demandesExplicites: ["IND-894", "CH-018"]`, lignes sur IND-894 seulement → `sans_valeur_a_completer: ["CH-018"]`.
+
+- [ ] **Step 2: Lancer les tests** — `pnpm vitest run --project server-unit src/server/albert/__tests__/tools/resumeIndicateursACompleter.unit.test.ts`. Expected : FAIL.
+
+- [ ] **Step 3: Réécrire** `resumerIndicateursACompleter`, puis relancer. Expected : PASS. `pnpm lint:tsc` signalera les appels de la tâche 5 : ils sont corrigés à la tâche 10 ; ne commitez qu'avec `tsc` vert, donc ajustez le seul appel dans `getIndicateursACompleter.ts` (retirer `unSeulTerritoire`) sans autre changement.
+
+- [ ] **Step 4: Commit** (si autorisé) — `refactor(albert): résumé plat, une ligne par indicateur`
+
+### Task 10: Outil — sortie modèle, description, marqueur d'historique
+
+**Files:**
+- Modify: `src/server/albert/tools/getIndicateursACompleter.ts` et son test
+- Modify: `src/server/albert/tools/precisionTypeDeValeurs.ts` et son test (règle 2 : `perimetre` remplace `en_bref`)
+
+**Interfaces:**
+- Consumes: `resumerIndicateursACompleter`, `ResumeIndicateursACompleter` (tâche 9).
+- Produces: `indicateursACompleterVersModele` : clarification → `{ precision_demandee: true, consigne: CONSIGNE_PRECISION, ...champsAcces }` ; données → `{ ...resume, ...champsAcces }`.
+
+Texte fixé : `CONSIGNE_PRECISION` = « Les choix sont déjà affichés à l'utilisateur. N'appelle aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse par la seule phrase « Choisissez une option pour continuer. » »
+
+Description : réécrire les puces de rédaction et ajouter le routage du « pourquoi », exactement selon la section « Description de l'outil » de la spec (révision du 2026-11-05) ; retirer toute mention de `en_bref`, `ensemble`, phrases et totaux.
+
+- [ ] **Step 1: Tests**
+  - `precisionTypeDeValeurs` : le cas « tour précédent avec des données » utilise `value: { perimetre: "…", indicateurs: [] }` ; un résultat précédent portant seulement `en_bref` ne compte plus (→ `true`).
+  - `getIndicateursACompleter` : version modèle d'une précision avec `chantiers_non_accessibles` → `{ precision_demandee: true, consigne: CONSIGNE_PRECISION, chantiers_non_accessibles: [...] }` ; version modèle de données → résumé plat + champs d'accès, sans `detail` ni `lignes` ; `resume.perimetre` égal à `detail.perimetre` ; le test « un seul territoire accessible » vérifie la forme plate (`{ "départementale": 1 }`).
+
+- [ ] **Step 2: Lancer les tests** des deux fichiers. Expected : FAIL sur les nouveaux cas.
+
+- [ ] **Step 3: Implémenter**, puis relancer ; `pnpm vitest run --project server-unit src/server/albert` et `pnpm lint`. Expected : PASS, 0 erreur.
+
+- [ ] **Step 4: Commit** (si autorisé) — `fix(albert): consigne de précision dans le résultat et description du résumé plat`
+
+### Task 11: Evals et nouvelle mesure après
+
+**Files:**
+- Modify: `evals/3-scenarios/3.4-forme/valeursACompleter.criteria.ts`, `valeursACompleter.eval.ts` (en-tête)
+- Modify: `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts` (en-tête)
+
+- [ ] **Step 1: Critères N3**
+  - Préfixe neutre des critères propres à l'outil : « Si aucune sortie d'outil ne contient le champ `perimetre`, ce critère est conforme. »
+  - Retirer `Pas de liste au-delà du seuil`.
+  - `Un seul territoire` : jugé sur le `perimetre` de la sortie de l'outil — s'il désigne un seul territoire (un département, ou une région sans ses départements), la réponse ne donne aucun nombre de territoires ; sinon le critère est conforme.
+
+- [ ] **Step 2: Mesure après (2)**, une suite par commande, `--outputPath evals/resultats-maj-apres2-<suite>.json` : `getIndicateursACompleter`, `clarifyWithChoices`, `valeursACompleter` (N3), `getIndicateurs`, `getChantiers`, `getChantiersSignales`. Rejouer une fois une suite sous son score « avant ».
+
+Expected : mêmes seuils qu'à la tâche 8. Sous les seuils, notez les cas en échec et rapportez-les à Triko sans itérer.
+
+- [ ] **Step 3: En-têtes** : avant (dont 95,8 % et 94,9 % des deux anciennes suites dans `getIndicateursACompleter.eval.ts`), après (tâche 8) et après (2).
+
+- [ ] **Step 4: Commit** (si autorisé) — `test(albert): critères N3 du résumé plat et nouvelle mesure`
