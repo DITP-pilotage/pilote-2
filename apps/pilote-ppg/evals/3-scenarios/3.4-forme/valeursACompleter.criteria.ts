@@ -40,21 +40,21 @@ export const VALEURS_A_COMPLETER_CRITERIA = withBase({
     }),
     judged({
       id: "Un seul territoire",
-      rule: "Réponse en bref : pas de nombre de territoires pour un seul territoire",
+      rule: "Résumé : pas de nombre de territoires pour un seul territoire",
       instruction:
         NEUTRE_SANS_PERIMETRE +
         "Le `perimetre` de la sortie de l'outil désigne-t-il un seul territoire (un département, ou une région sans ses départements) ? Si oui, la réponse ne donne aucun nombre de territoires. Sinon, ce critère est conforme.",
     }),
     judged({
       id: "Aucun territoire hors demande",
-      rule: "Réponse en bref : aucun territoire nommé hors de la demande",
+      rule: "Résumé : aucun territoire nommé hors de la demande",
       instruction:
         NEUTRE_SANS_PERIMETRE +
         "La réponse ne nomme aucun territoire absent de la demande. Nommer un territoire que l'utilisateur n'a pas demandé est non conforme.",
     }),
     judged({
       id: "Tableau introduit",
-      rule: "Réponse en bref : une phrase renvoie au tableau du détail",
+      rule: "Résumé : une phrase renvoie au tableau du détail",
       instruction:
         NEUTRE_SANS_PERIMETRE +
         "Si l'outil a renvoyé des valeurs à compléter, la réponse se termine par une phrase qui renvoie au tableau du détail. Sans renvoi au tableau, ce critère est non conforme. Si l'outil n'a renvoyé aucune valeur à compléter, ce critère est conforme.",

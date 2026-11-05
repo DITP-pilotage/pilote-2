@@ -7,10 +7,10 @@ import { VALEURS_A_COMPLETER_CRITERIA } from "./valeursACompleter.criteria";
  *
  * Critères visés : des territoires additionnés d'un indicateur à l'autre, une
  * maille à zéro dite « aucune donnée », des motifs définis de travers, puis,
- * pour la réponse en deux temps (en bref puis tableau du détail) : un nombre
- * de territoires pour un seul territoire, une liste au-delà du seuil, un
- * territoire hors demande, un tableau non introduit. Ces critères restent
- * neutres tant qu'aucune sortie d'outil n'a de champ `perimetre`.
+ * pour la réponse en deux temps (résumé puis tableau du détail) : un nombre
+ * de territoires pour un seul territoire, un territoire hors demande, un
+ * tableau non introduit. Ces critères restent neutres quand aucune sortie
+ * d'outil n'a de champ `perimetre`.
  *
  * Aucune attente d'outil : le scénario juge la réponse écrite, et tourne à
  * l'identique avec les deux outils d'origine et avec l'outil unique.

@@ -105,7 +105,7 @@ const CASES: ToolCase[] = [
     question:
       "Pourquoi la valeur d'avancement de l'IND-894 est-elle considérée comme pas à jour ?",
     reason:
-      "explication du retard : l'outil renvoie la définition du motif et la date de prochaine mise à jour",
+      "explication du retard : appeler l'outil sur l'indicateur (motif VA), puis expliquer la règle de périodicité et de délai sans date",
     expected: [
       {
         toolName: "get_indicateurs_a_completer",

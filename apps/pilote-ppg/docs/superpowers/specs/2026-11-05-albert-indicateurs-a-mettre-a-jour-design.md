@@ -126,7 +126,7 @@ Les points 4 et 5 restent des règles de rédaction ; les points 1, 2, 6, 7, 8 e
 ## Anti-objectifs
 
 - Le modèle n'additionne jamais des territoires entre indicateurs, mailles ou
-  motifs : tout total qu'il présente vient du résumé.
+  motifs : il ne présente aucun total de territoires calculé par lui-même.
 - Une maille interrogée sans territoire à compléter ne se présente jamais comme
   une donnée inaccessible.
 - La précision n'est jamais redemandée quand la demande ou les échanges ont déjà

@@ -15,6 +15,7 @@ Branche : `feat/albert-indicateurs-a-mettre-a-jour` (depuis `origin/dev`). Rése
 ## Global Constraints
 
 - Outil `get_indicateurs_a_completer`, fabrique `createGetIndicateursACompleterTool`, libellé de source « Indicateurs à compléter ».
+- Révision du 2026-11-05 : voir la section en fin de plan ; `SEUIL_INDICATEURS_RESUME`, `en_bref` et « tous motifs confondus » sont abandonnés.
 - Motifs `"va" | "vi" | "vc"`, toujours dédoublonnés et dans cet ordre ; libellés « VA non à jour », « VI manquante », « VC manquante » ; total « tous motifs confondus ».
 - `SEUIL_INDICATEURS_RESUME = 20` indicateurs distincts.
 - Le modèle ne reçoit jamais de lignes, de noms de territoires concernés ni de dates.
