@@ -231,6 +231,38 @@ describe("buildChatSystemPrompt", () => {
     );
   });
 
+  it("propose une suite seulement quand elle apporte quelque chose (PIL-1950)", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "termine par une ou deux suites, en une phrase, seulement si elles aident l'utilisateur à approfondir sa demande ou à exploiter les résultats",
+    );
+    expect(prompt).toContain(
+      "Sans prolongement utile, termine ta réponse sans suggestion.",
+    );
+  });
+
+  it("ne propose qu'une suite réalisable, nouvelle, et sans l'exécuter (PIL-1950)", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain(
+      "tes outils savent la traiter, et la conversation ne l'a pas déjà apportée",
+    );
+    expect(prompt).toContain(
+      "n'exécute pas la suite : attends que l'utilisateur la demande",
+    );
+  });
+
   it("donne le jalon du contexte d'accueil", () => {
     // When
     const prompt = buildChatSystemPrompt({
