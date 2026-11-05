@@ -98,6 +98,16 @@ Décisions qui **remplacent** les points 3, 9 et 11 :
     la liste de ses indicateurs. Le chantier ne porte aucun nombre (décision 13
     maintenue).
 
+17. (Triko, le 2026-11-05, PR #2654) Deux corrections après mesure :
+    - quand au moins un chantier est concerné, le résultat de données porte une
+      `consigne` : « Le détail par territoire est affiché dans un tableau sous
+      ta réponse. Termine ta réponse par une phrase qui y renvoie. » (seule dans
+      la description, la phrase n'apparaissait que dans 22 à 33 % des cas) ;
+    - la description rétablit la règle de `dev` sur le jalon : une VC manquante
+      s'entend sur `jalon_vc`, y compris si la demande vise une autre année ;
+      répondre sur ce jalon en le citant, sans clarifier ni rappeler l'outil
+      (« pas de cible en 2027 » à 0/3 sans elle).
+
 Les points 4 et 5 restent des règles de rédaction ; les points 1, 2, 6, 7, 8 et
 10 sont inchangés.
 
@@ -281,6 +291,9 @@ Champs :
 - `sans_valeur_a_completer` : les chantiers et indicateurs demandés
   explicitement (`chantier_ids`, `indicateur_ids`) qui n'ont aucune valeur à
   compléter. Absent si aucun.
+- `consigne` (décision 17) : présente seulement si `chantiers` n'est pas vide,
+  « Le détail par territoire est affiché dans un tableau sous ta réponse.
+  Termine ta réponse par une phrase qui y renvoie. »
 - Champs d'accès inchangés : `acces_refuse`, `chantiers_non_accessibles`,
   `indicateurs_non_accessibles`, `indicateurs_introuvables`.
 
@@ -306,7 +319,8 @@ Une seule description. Elle porte :
     renseignée ;
   - VC manquante : aucune valeur cible n'est renseignée pour le jalon `jalon_vc`,
     le jalon en cours, qui prime sur celui de la session ; cite-le dès qu'une VC
-    est en jeu ;
+    est en jeu, y compris si la demande vise une autre année : réponds sur ce
+    jalon, sans clarifier ni rappeler l'outil (décision 17) ;
 - `motifs` : la correspondance lexicale ; les types nommés ou établis par les
   échanges, sinon les trois ; l'outil demande lui-même la précision, n'appelle
   jamais `clarify_with_choices` pour le type de valeurs ;

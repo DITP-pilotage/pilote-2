@@ -628,3 +628,24 @@ Règles : chantiers triés par identifiant, indicateurs de chaque chantier trié
 - [ ] **Step 3: Implémenter**, relancer ; `pnpm vitest run --project server-unit src/server/albert evals`, `pnpm vitest run --project client src/client/components/_commons/ChatUI`, `pnpm lint`. Expected : PASS, 0 erreur.
 - [ ] **Step 4: Mesure** : `pnpm eval evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts --outputPath evals/resultats-maj-apres4-getIndicateursACompleter.json` et `pnpm eval evals/3-scenarios/3.4-forme/valeursACompleter.eval.ts --outputPath evals/resultats-maj-apres4-valeursACompleter.json` ; reporter les moyennes (et les critères N3) dans les en-têtes, bloc « après (4) ». Aucune itération de description.
 - [ ] **Step 5: Commit** (si autorisé) — `refactor(albert): regroupe les indicateurs à compléter par chantier`
+
+### Task 13: Phrase de fin du tableau et jalon d'une autre année
+
+Décision 17 de la spec (PR #2654).
+
+**Files:**
+- Modify: `src/server/albert/tools/getIndicateursACompleter.ts` (sortie modèle des données, description) et son test
+- Modify: `evals/3-scenarios/3.4-forme/valeursACompleter.eval.ts`, `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts` (en-têtes : bloc « après (5) »)
+
+**Interfaces:**
+- Produces: `indicateursACompleterVersModele` : données → `{ ...resume, ...(resume.chantiers.length > 0 && { consigne: CONSIGNE_TABLEAU }), ...champsAcces }` ; clarification inchangée.
+
+Textes fixés :
+- `CONSIGNE_TABLEAU` = « Le détail par territoire est affiché dans un tableau sous ta réponse. Termine ta réponse par une phrase qui y renvoie. »
+- Puce VC de la description : ajouter « y compris si la demande vise une autre année : réponds sur ce jalon, sans clarifier ni rappeler l'outil » (voir la spec, « Description de l'outil »).
+
+- [ ] **Step 1: Tests** : version modèle de données avec au moins un chantier → contient `consigne: CONSIGNE_TABLEAU` (littéral exact) ; avec `chantiers: []` → pas de `consigne` ; la précision garde sa propre consigne.
+- [ ] **Step 2: Lancer les tests** de l'outil. Expected : FAIL.
+- [ ] **Step 3: Implémenter**, relancer ; `pnpm vitest run --project server-unit src/server/albert evals`, `pnpm lint`. Expected : PASS, 0 erreur.
+- [ ] **Step 4: Mesure** : `getIndicateursACompleter` et `valeursACompleter` (N3) avec `--outputPath evals/resultats-maj-apres5-<suite>.json` ; bloc « après (5) » dans les en-têtes ; rapporter « Tableau introduit », « Périmètre cité » et le cas « pas de cible en 2027 ». Aucune autre itération.
+- [ ] **Step 5: Commit** (si autorisé) — `fix(albert): phrase de fin vers le tableau et jalon d'une autre année`
