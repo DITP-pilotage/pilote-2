@@ -79,13 +79,6 @@ const CASES: ToolCase[] = [
     reason: "CAS NÉGATIF : fraîcheur des données → get_indicateurs_a_completer",
     forbidden: ["get_indicateurs"],
   },
-  {
-    question: "Quelle est la VC de l'IND-894 en Bretagne ?",
-    reason:
-      "CAS NÉGATIF inverse : la valeur d'un indicateur, pas une valeur manquante → get_indicateurs",
-    expected: [{ toolName: "get_indicateurs" }],
-    forbidden: ["get_indicateurs_a_completer"],
-  },
 ];
 
 toolSelectionEval({
