@@ -12,6 +12,7 @@ export const getReferentielByPublicId = (
       where: { publicId },
       include: {
         _count: { select: { individus: true } },
+        dimension: { select: { publicId: true } },
         widgets: { include: { widget: true }, orderBy: { createdAt: 'asc' } },
       },
     }),

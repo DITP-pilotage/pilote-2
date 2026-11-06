@@ -7,6 +7,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { ReferentielForm, type ReferentielFormValues } from '@/components/ReferentielForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import { dimensionsAllQueryOptions } from '@/queries/dimensions'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 import { useAppConfig } from '@/context/AppConfigContext'
 
@@ -15,6 +16,7 @@ export const Route = createFileRoute('/_authed/referentiels/$id')({
     await Promise.all([
       context.queryClient.fetchQuery(referentielQueryOptions(params.id)),
       context.queryClient.fetchQuery(referentielIndividusQueryOptions(params.id)),
+      context.queryClient.fetchQuery(dimensionsAllQueryOptions()),
     ])
   },
   component: EditReferentielComponent,
@@ -32,6 +34,7 @@ function EditReferentielComponent() {
     id: referentiel.id,
     nom: referentiel.nom,
     description: referentiel.description ?? '',
+    dimension: referentiel.dimension,
     individus: individus.map((individu) => ({ publicId: individu.id, nom: individu.nom })),
   }
 
@@ -41,11 +44,15 @@ function EditReferentielComponent() {
       upsertReferentiel(id, {
         nom: values.nom,
         description: values.description.trim() === '' ? null : values.description,
+        // Envoyée seulement si elle change : absente, l'API conserve l'existante.
+        ...(values.dimension !== referentiel.dimension ? { dimension: values.dimension } : {}),
         individus: values.individus,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['referentiels'] })
       await queryClient.invalidateQueries({ queryKey: ['referentiel', id] })
+      await queryClient.invalidateQueries({ queryKey: ['dimensions'] })
+      await queryClient.invalidateQueries({ queryKey: ['dimension'] })
       toast({ title: 'Référentiel modifié.' })
       void navigate({ to: '/referentiels' })
     },

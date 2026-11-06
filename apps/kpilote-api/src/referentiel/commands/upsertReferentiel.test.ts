@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { ForbiddenError } from '@/framework/errors/AppError'
+import { ConflictError, ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptIds, testReferentielId } from '@/test/randomIds'
+import { testDeptIds, testIndividuId, testReferentielId, testRegId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
 
 // La gestion d'un référentiel est réservée aux clés ADMIN : les cas nominaux
@@ -214,6 +214,66 @@ describe.concurrent('upsertReferentiel — garde ADMIN', () => {
       const result = await runAsUser(utilisateur.id, () => upsertReferentiel(refId, body))
 
       expect(result.isOk()).toBe(true)
+    }),
+  )
+})
+
+describe.concurrent('upsertReferentiel — changement de dimension', () => {
+  // Dimension cible distincte de la dimension de test partagée.
+  const autreDimension = () => fixtures.dimension({ publicId: `DIM-${testRegId().slice(4)}` })
+  const changerDimension = (publicId: string, dimension: string) =>
+    upsertReferentielAsAdmin(publicId, { nom: 'Référentiel', description: null, dimension })
+
+  it(
+    "refusé (409) si un indicateur déclare aussi un autre niveau de l'ancienne dimension",
+    integrationTest(async () => {
+      const [refA, refB] = [testReferentielId(), testReferentielId()]
+      const indicateur = await fixtures.indicateur()
+      for (const publicId of [refA, refB]) {
+        await fixtures.indicateurReferentiel({
+          indicateur: { publicId: indicateur.publicId },
+          referentiel: { publicId },
+        })
+      }
+      const dimension = await autreDimension()
+
+      await expect(changerDimension(refA, dimension.publicId)).rejects.toThrow(ConflictError)
+      await expect(changerDimension(refA, dimension.publicId)).rejects.toThrow(/multi-dimension/)
+    }),
+  )
+
+  it(
+    "refusé (409) si une relation relie ses individus à un autre niveau de l'ancienne dimension",
+    integrationTest(async () => {
+      const [refParent, refEnfant] = [testReferentielId(), testReferentielId()]
+      await fixtures.relation({
+        parent: { publicId: testIndividuId(), referentiel: { publicId: refParent } },
+        child: { publicId: testIndividuId(), referentiel: { publicId: refEnfant } },
+      })
+      const dimension = await autreDimension()
+
+      for (const publicId of [refParent, refEnfant]) {
+        await expect(changerDimension(publicId, dimension.publicId)).rejects.toThrow(/relations/)
+      }
+    }),
+  )
+
+  it(
+    'permis pour un référentiel isolé',
+    integrationTest(async () => {
+      const refIsole = testReferentielId()
+      const indicateur = await fixtures.indicateur()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indicateur.publicId },
+        referentiel: { publicId: refIsole },
+      })
+      const dimension = await autreDimension()
+
+      const result = await changerDimension(refIsole, dimension.publicId)
+
+      expect(result.isOk()).toBe(true)
+      const persisted = await db().referentiel.findUniqueOrThrow({ where: { publicId: refIsole } })
+      expect(persisted.dimensionId).toBe(dimension.id)
     }),
   )
 })

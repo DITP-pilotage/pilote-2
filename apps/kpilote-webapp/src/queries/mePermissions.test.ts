@@ -6,7 +6,9 @@ import {
   IndicateurPermissionAction,
 } from '@pilote/kpilote-shared/permission'
 
+import { buildNodesCube, DIMENSIONS_CUBE } from '@/tests/factories/dimensions'
 import {
+  canWriteDataCellule,
   canWriteDataIndicateur,
   canWriteCommentIndicateur,
   canWriteCommentCollection,
@@ -107,5 +109,57 @@ describe('canWriteCommentCollection', () => {
       collections: [{ id: 'COL-2', actions: [CollectionPermissionAction.WRITE_COMMENT] }],
     }
     expect(canWriteCommentCollection({ permissions, collectionId: 'COL-1' })).toBe(false)
+  })
+})
+
+describe('canWriteDataCellule', () => {
+  const nodes = buildNodesCube()
+  const DEPT_84 = { dimension: 'DIM-TERRITOIRE', individu: 'DEPT-84', referentiel: 'REF-DEPT' }
+  const verifier = (permissions: MePermissionsApiModel) =>
+    canWriteDataCellule({
+      permissions,
+      indicateurId: 'IND-101',
+      coordonnees: [DEPT_84],
+      nodes,
+      dimensions: DIMENSIONS_CUBE,
+    })
+
+  it('sans périmètre : règle historique (WRITE_DATA suffit)', () => {
+    expect(
+      verifier({
+        ...base,
+        indicateurs: [{ id: 'IND-101', actions: [IndicateurPermissionAction.WRITE_DATA] }],
+      }),
+    ).toBe(true)
+  })
+
+  it('périmètre restreint : cellule dans le périmètre', () => {
+    expect(
+      verifier({
+        ...base,
+        indicateurs: [
+          { id: 'IND-101', actions: [IndicateurPermissionAction.WRITE_DATA], perimetre: ['FR'] },
+        ],
+      }),
+    ).toBe(true)
+  })
+
+  it('périmètre restreint : cellule hors périmètre', () => {
+    expect(
+      verifier({
+        ...base,
+        indicateurs: [
+          {
+            id: 'IND-101',
+            actions: [IndicateurPermissionAction.WRITE_DATA],
+            perimetre: ['DEPT-13'],
+          },
+        ],
+      }),
+    ).toBe(false)
+  })
+
+  it('admin : toujours autorisé', () => {
+    expect(verifier({ ...base, isAdmin: true })).toBe(true)
   })
 })

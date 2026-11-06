@@ -6,6 +6,9 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { parseCelluleId } from '@pilote/kpilote-shared/cellule'
+
+import { loadContexteSerie } from '@/dimension/queries/loadContexteResolution'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { formatBucket } from '@/framework/bucket'
 import { type Decimal } from '@/framework/decimal'
@@ -15,7 +18,6 @@ import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeMin } from '@/valeurAvancement/computeMin'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
   type IndividuRef,
   type PointInterne,
@@ -58,14 +60,31 @@ const buildStats = async ({
   const referentiels = await loadReferentielsAvecIndividus(params.referentiels)
   if (referentiels.length === 0) return { items: [] }
 
-  const cibles: IndividuRef[] = referentiels.flatMap((r) => r.individus)
+  // Tranche (multi-dimension) : chaque membre du référentiel est combiné aux
+  // coordonnées fixées. Sans `fixe`, la cellule est le membre seul (mono : chemin
+  // historique ; multi : marginale sur les autres dimensions).
+  const fixeParDimension = await loadFixe(params.fixe)
+  const celluleDe = (referentiel: ReferentielAvecIndividus, individu: IndividuRef): string =>
+    [
+      individu.publicId,
+      ...[...fixeParDimension]
+        .filter(([dimensionId]) => dimensionId !== referentiel.dimensionId)
+        .map(([, publicId]) => publicId),
+    ].join('~')
+
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { ctx, allNodes } = await loadResolveSerieContext({
+  const { ctx, cibles } = await loadContexteSerie({
     indicateurId,
-    individusCibles: cibles,
+    cellules: referentiels.flatMap((r) => r.individus.map((i) => celluleDe(r, i))),
     dateTrunc,
   })
+  // Deux référentiels de dimensions différentes avec `fixe` produisent des
+  // chaînes équivalentes dans un ordre différent (`DEPT-84~OP-X` et
+  // `OP-X~DEPT-84`) ; le chargeur n'en garde qu'une : indexer par l'ensemble
+  // des membres, sans ordre.
+  const cleMembres = (cellule: string) => parseCelluleId(cellule).sort().join('~')
+  const noeudParCellule = new Map(cibles.map((cible) => [cleMembres(cible.publicId), cible]))
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const items: ValeursRemarquablesListApiModel['items'] = []
@@ -73,11 +92,14 @@ const buildStats = async ({
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = (await resolveSerieIndividu(individu.id, ctx, cache)).at(-1)
+      const cellule = celluleDe(referentiel, individu)
+      const noeud = noeudParCellule.get(cleMembres(cellule))
+      if (!noeud) continue
+      const dernierPoint = (await resolveSerieIndividu(noeud.id, ctx, cache)).at(-1)
       if (!dernierPoint) continue
       valeurs.push(dernierPoint.valeur)
       contributions.push({
-        individu: individu.publicId,
+        individu: cellule,
         valeur: dernierPoint.valeur.toNumber(),
         date: formatBucket(dernierPoint.bucket),
         source: dernierPoint.type === 'saisie' ? 'saisie' : 'derivee',
@@ -99,7 +121,7 @@ const buildStats = async ({
       dateTrunc,
       nbReferentiels: referentiels.length,
       nbCibles: cibles.length,
-      nbNodes: allNodes.size,
+      nbNodes: ctx.referentielParIndividu.size,
       durationMs: Math.round(performance.now() - startedAt),
     },
     'listValeursRemarquablesForIndicateur computed',
@@ -107,9 +129,21 @@ const buildStats = async ({
   return { items }
 }
 
+type ReferentielAvecIndividus = { publicId: string; dimensionId: string; individus: IndividuRef[] }
+
+// dimensionId → publicId du membre fixé.
+const loadFixe = async (fixe: string | undefined): Promise<Map<string, string>> => {
+  if (!fixe) return new Map()
+  const membres = await db().individu.findMany({
+    where: { publicId: { in: parseCelluleId(fixe) } },
+    select: { publicId: true, referentiel: { select: { dimensionId: true } } },
+  })
+  return new Map(membres.map((m) => [m.referentiel.dimensionId, m.publicId]))
+}
+
 const loadReferentielsAvecIndividus = async (
   referentielPublicIds: ReadonlyArray<string>,
-): Promise<ReadonlyArray<{ publicId: string; individus: IndividuRef[] }>> => {
+): Promise<ReadonlyArray<ReferentielAvecIndividus>> => {
   const rows = await db().referentiel.findMany({
     where: { publicId: { in: [...referentielPublicIds] } },
     orderBy: { publicId: 'asc' },
@@ -117,6 +151,7 @@ const loadReferentielsAvecIndividus = async (
   })
   return rows.map((r) => ({
     publicId: r.publicId,
+    dimensionId: r.dimensionId,
     individus: r.individus.map(({ id, publicId, referentielId }) => ({
       id,
       publicId,

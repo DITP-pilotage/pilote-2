@@ -19,7 +19,10 @@ import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { loadCollections, collectionsQueryOptions } from '@/queries/collections'
-import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
+import {
+  loadReferentielIdsTableauDeBord,
+  useReferentielIdsTableauDeBord,
+} from '@/queries/referentiels'
 
 const collectionsSearchSchema = z.object({
   cursor: z.string().optional(),
@@ -34,7 +37,9 @@ export const Route = createFileRoute('/_authenticated/collections/')({
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
     const { queryClient } = context
-    const referentielIds = await loadAllReferentielIds({ queryClient })
+    // Référentiels du contexte : tous, sauf les dimensions qui n'existent que
+    // croisées sur des indicateurs multi-dimension (cf. lib/individus/tableauDeBord.ts).
+    const referentielIds = await loadReferentielIdsTableauDeBord({ queryClient })
     await ensureIndividuReferentielPair({
       queryClient,
       referentielIds,
@@ -67,8 +72,7 @@ function CollectionsListComponent() {
       pageSize: search.pageSize ?? DEFAULT_PAGE_SIZE,
     }),
   )
-  const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
-  const referentielIds = referentiels.map((r) => r.id)
+  const referentielIds = useReferentielIdsTableauDeBord()
 
   const cardContext =
     search.individu && search.referentiel

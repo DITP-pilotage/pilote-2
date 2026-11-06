@@ -49,7 +49,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       const row = await db().objectifIndicateurIndividu.findFirstOrThrow({
         where: {
           indicateurId: link.indicateurId,
-          individuId: individu.id,
+          cellule: { coordonnees: { some: { individuId: individu.id } } },
           dateCible: '2025-01-01',
         },
       })
@@ -95,7 +95,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       const rows = await db().objectifIndicateurIndividu.findMany({
         where: {
           indicateurId: link.indicateurId,
-          individuId: individu.id,
+          cellule: { coordonnees: { some: { individuId: individu.id } } },
           dateCible: '2025-01-01',
         },
       })

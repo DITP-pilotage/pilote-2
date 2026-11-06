@@ -5,7 +5,13 @@ export type EtatImport =
   | { kind: 'vide' }
   | { kind: 'lecture' }
   | { kind: 'illisible'; error: ParseError }
-  | { kind: 'standard'; rows: ParsedRow[]; nomFichier: string | undefined }
+  | {
+      kind: 'standard'
+      rows: ParsedRow[]
+      nomFichier: string | undefined
+      // Multi-dimension uniquement (cf. ParseResult).
+      colonnesIdentite?: string[]
+    }
   | { kind: 'albertEnCours' }
   | { kind: 'albertRevue'; revue: NormaliserValeursImportResponseApiModel }
   | { kind: 'albertEchec'; error: ParseError }
@@ -23,7 +29,14 @@ export function deriverEtatImport({
 }): EtatImport {
   if (!file) return { kind: 'vide' }
   if (lectureEnCours || parseResult === undefined) return { kind: 'lecture' }
-  if (parseResult.ok) return { kind: 'standard', rows: parseResult.rows, nomFichier: file.name }
+  if (parseResult.ok) {
+    return {
+      kind: 'standard',
+      rows: parseResult.rows,
+      nomFichier: file.name,
+      ...(parseResult.colonnesIdentite ? { colonnesIdentite: parseResult.colonnesIdentite } : {}),
+    }
+  }
 
   // Colonnes manquantes → on tente l'extraction assistée par Albert. Les autres
   // erreurs de parse (vide, trop de lignes, illisible) sont terminales.

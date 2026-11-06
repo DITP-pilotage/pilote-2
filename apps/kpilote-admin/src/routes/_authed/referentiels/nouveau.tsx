@@ -8,8 +8,10 @@ import { ReferentielForm, type ReferentielFormValues } from '@/components/Refere
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { useAppConfig } from '@/context/AppConfigContext'
+import { dimensionsAllQueryOptions } from '@/queries/dimensions'
 
 export const Route = createFileRoute('/_authed/referentiels/nouveau')({
+  loader: ({ context }) => context.queryClient.fetchQuery(dimensionsAllQueryOptions()),
   component: NewReferentielComponent,
 })
 
@@ -24,10 +26,12 @@ function NewReferentielComponent() {
       upsertReferentiel(values.id, {
         nom: values.nom,
         description: values.description.trim() === '' ? null : values.description,
+        ...(values.dimension !== '' ? { dimension: values.dimension } : {}),
         individus: values.individus,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['referentiels'] })
+      await queryClient.invalidateQueries({ queryKey: ['dimensions'] })
       toast({ title: 'Référentiel créé.' })
       void navigate({ to: '/referentiels' })
     },
@@ -50,7 +54,7 @@ function NewReferentielComponent() {
       <PageHeading title="Nouveau référentiel" />
       <ReferentielForm
         mode="create"
-        initial={{ id: '', nom: '', description: '', individus: [] }}
+        initial={{ id: '', nom: '', description: '', dimension: '', individus: [] }}
         pending={mutation.isPending}
         isProd={isProd}
         onCancel={() => void navigate({ to: '/referentiels' })}

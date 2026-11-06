@@ -139,3 +139,42 @@ export const buildMonthlySeries = ({
     },
   }
 }
+
+export type MonthlyMultiSeries = {
+  months: ReadonlyArray<Month>
+  series: ReadonlyArray<{ key: string; values: ReadonlyArray<number | null> }>
+  defaultWindow: { startIndex: number; endIndex: number }
+}
+
+// Variante N séries (graphique décomposé par dimension) : même axe des mois
+// pour toutes les séries — ancre = dernier mois tous membres confondus — et
+// même fenêtre par défaut que `buildMonthlySeries`. Sans objectif ni taux : une
+// décomposition compare des valeurs.
+export const buildMonthlyMultiSeries = ({
+  series,
+  windowSize,
+}: {
+  series: ReadonlyArray<{ key: string; valeurs: ReadonlyArray<ValeurDateApiModel> }>
+  windowSize: number
+}): MonthlyMultiSeries => {
+  const { earliest, latest } = monthBounds(series.flatMap((s) => s.valeurs))
+  const anchor = latest ?? currentMonth()
+  const minStart = anchor.subtract({ months: windowSize - 1 })
+  const start = earliest ? earlier(earliest, minStart) : minStart
+  const months = enumerateMonths({ start, end: anchor })
+  const lastIndex = months.length - 1
+  return {
+    months,
+    series: series.map(({ key, valeurs }) => {
+      const valueByKey = latestValueByMonthKey(valeurs)
+      return {
+        key,
+        values: months.map((month): number | null => valueByKey.get(month.key) ?? null),
+      }
+    }),
+    defaultWindow: {
+      startIndex: Math.max(0, lastIndex - (windowSize - 1)),
+      endIndex: lastIndex,
+    },
+  }
+}

@@ -82,6 +82,7 @@ export const fetchValeursRemarquablesForIndicateur = async (
     .get(`indicateurs/${indicateurId}/valeurs-remarquables`, {
       searchParams: {
         referentiels: params.referentiels.join(','),
+        ...(params.fixe ? { fixe: params.fixe } : {}),
         ...(params.dateTrunc ? { dateTrunc: params.dateTrunc } : {}),
       },
     })

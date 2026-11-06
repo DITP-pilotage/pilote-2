@@ -56,7 +56,24 @@ const performReplace = async (
   const idsIndicateur = indexerParPublicId(body.indicateurs, lignesIndicateur, 'Indicateur')
   const idsCollection = indexerParPublicId(body.collections, lignesCollection, 'Collection')
 
-  await db().indicateurPermission.deleteMany({ where: { principalId: body.principalId } })
+  // Différentiel côté indicateurs : une permission conservée garde sa
+  // restriction et son périmètre (cloisonnement) ; seules les permissions
+  // retirées sont supprimées (leur périmètre part avec elles, FK en cascade).
+  const ciblesIndicateur = new Set(
+    body.indicateurs.flatMap((entree) =>
+      entree.actions.map((action) => `${idsIndicateur.get(entree.publicId)!}|${action}`),
+    ),
+  )
+  const existantes = await db().indicateurPermission.findMany({
+    where: { principalId: body.principalId },
+    select: { indicateurId: true, action: true },
+  })
+  for (const existante of existantes) {
+    if (ciblesIndicateur.has(`${existante.indicateurId}|${existante.action}`)) continue
+    await db().indicateurPermission.delete({
+      where: { principalId_indicateurId_action: { principalId: body.principalId, ...existante } },
+    })
+  }
   await db().collectionPermission.deleteMany({ where: { principalId: body.principalId } })
 
   await db().indicateurPermission.createMany({

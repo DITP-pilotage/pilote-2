@@ -8,6 +8,8 @@ import { indicateursCsvSchema, MAX_INDICATEURS_PAR_REQUETE } from './indicateurs
 // sur la même valeur que celle imposée par l'API.
 export { MAX_INDICATEURS_PAR_REQUETE } from './indicateursCsv'
 import { indicateurPublicIdSchema } from './publicIds'
+import { celluleIdSchema, coordonneesSchema } from './cellule'
+import { dimensionPublicIdSchema } from './dimension'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import { createPaginatedApiListSchema, pageSizeSchema, paginationCursorSchema } from './pagination'
@@ -21,17 +23,39 @@ export const valeurDateApiModelSchema = z.object({
 })
 export type ValeurDateApiModel = z.infer<typeof valeurDateApiModelSchema>
 
-export const upsertValeurAvancementBodySchema = z.object({
-  individu: individuPublicIdSchema,
-  date: dateSchema,
-  valeur: valeurSchema,
-})
+// Une valeur se saisit sur une cellule **complète** : `individu` (forme
+// historique, cellule à une coordonnée) ou `coordonnees` (un membre par dimension
+// de l'indicateur). Exactement l'un des deux.
+const ciblerCelluleSchema = {
+  individu: individuPublicIdSchema
+    .optional()
+    .describe('Forme historique : individu cible (indicateur mono-dimension).'),
+  coordonnees: coordonneesSchema.optional(),
+}
+const exactementUneCible = (body: {
+  individu?: string | undefined
+  coordonnees?: string[] | undefined
+}) => (body.individu === undefined) !== (body.coordonnees === undefined)
+const messageUneCible = {
+  message: 'Renseigner exactement un champ parmi `individu` et `coordonnees`',
+  path: ['coordonnees'],
+}
+
+export const upsertValeurAvancementBodySchema = z
+  .object({
+    ...ciblerCelluleSchema,
+    date: dateSchema,
+    valeur: valeurSchema,
+  })
+  .refine(exactementUneCible, messageUneCible)
 export type UpsertValeurAvancementBody = z.infer<typeof upsertValeurAvancementBodySchema>
 
-export const deleteValeurAvancementBodySchema = z.object({
-  individu: individuPublicIdSchema,
-  date: dateSchema,
-})
+export const deleteValeurAvancementBodySchema = z
+  .object({
+    ...ciblerCelluleSchema,
+    date: dateSchema,
+  })
+  .refine(exactementUneCible, messageUneCible)
 export type DeleteValeurAvancementBody = z.infer<typeof deleteValeurAvancementBodySchema>
 
 export const MAX_VALEURS_PAR_BATCH = 1000
@@ -42,7 +66,7 @@ export const upsertValeursAvancementBatchBodySchema = z.object({
     .min(1, 'Au moins une entrée est requise')
     .max(MAX_VALEURS_PAR_BATCH, `Au plus ${MAX_VALEURS_PAR_BATCH} entrées par requête`)
     .describe(
-      `Entrées à upserter sur l'indicateur (clé unique \`(individu, date)\`). 1..${MAX_VALEURS_PAR_BATCH} entrées.`,
+      `Entrées à upserter sur l'indicateur (clé unique \`(cellule, date)\`, cellule = \`individu\` ou \`coordonnees\`). 1..${MAX_VALEURS_PAR_BATCH} entrées.`,
     ),
 })
 export type UpsertValeursAvancementBatchBody = z.infer<
@@ -103,9 +127,46 @@ export const batchInvalidErrorEntryApiModelSchema = z.discriminatedUnion('code',
     indices: z
       .array(z.number().int().nonnegative())
       .min(2)
-      .describe('Les index où le couple `(individu, date)` apparaît (au moins 2).'),
-    individu: individuPublicIdSchema,
+      .describe(
+        'Les index où le couple `(cellule, date)` apparaît (au moins 2), cellule comparée sous sa forme canonique.',
+      ),
+    individu: celluleIdSchema.describe('Cellule canonique en doublon.'),
     date: dateSchema,
+  }),
+  z.object({
+    code: z.literal('COORDONNEE_MANQUANTE'),
+    indices: z.array(z.number().int().nonnegative()).min(1),
+    dimension: dimensionPublicIdSchema.describe(
+      "Dimension de l'indicateur sans coordonnée : une valeur se saisit sur une cellule complète.",
+    ),
+  }),
+  z.object({
+    code: z.literal('DIMENSION_NON_DECLAREE'),
+    indices: z.array(z.number().int().nonnegative()).min(1),
+    individu: individuPublicIdSchema.describe(
+      "Membre existant dont la dimension n'est pas déclarée sur l'indicateur.",
+    ),
+  }),
+  z.object({
+    code: z.literal('COORDONNEES_EN_DOUBLE'),
+    indices: z.array(z.number().int().nonnegative()).min(1),
+    dimension: dimensionPublicIdSchema.describe(
+      'Dimension portant plusieurs membres dans la même cellule.',
+    ),
+  }),
+  z.object({
+    code: z.literal('CELLULE_AGREGEE'),
+    indices: z.array(z.number().int().nonnegative()).min(1),
+    individu: individuPublicIdSchema.describe(
+      'Membre agrégé (il a des enfants) : la cellule est dérivée, on saisit ses membres feuilles.',
+    ),
+  }),
+  z.object({
+    code: z.literal('HORS_PERIMETRE'),
+    indices: z.array(z.number().int().nonnegative()).min(1),
+    individu: celluleIdSchema.describe(
+      "Cellule hors du périmètre d'écriture du principal (cloisonnement par membre de dimension).",
+    ),
   }),
 ])
 export type BatchInvalidErrorEntryApiModel = z.infer<typeof batchInvalidErrorEntryApiModelSchema>
@@ -180,7 +241,7 @@ const referentielsCsvSchema = z
 // se ressemblent mais leurs garanties API divergent — ne pas mutualiser sans
 // relâcher le typage côté client.
 export const valeursRemarquablesContributionApiModelSchema = z.object({
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   valeur: z.number().describe('Dernière valeur connue de cet individu.'),
   date: z
     .string()
@@ -247,6 +308,13 @@ export const listValeursRemarquablesForIndicateurQuerySchema = z.object({
   referentiels: referentielsCsvSchema.describe(
     `Liste d'identifiants de référentiels séparés par une virgule (ex. REF-DEPT,REF-REG). 1..${MAX_REFERENTIELS_PAR_REQUETE} identifiants.`,
   ),
+  fixe: celluleIdSchema
+    .optional()
+    .describe(
+      'Indicateur multi-dimension : coordonnées fixées des autres dimensions (cellule partielle, ex. ' +
+        '`OP-ORANGE`). La population d’un référentiel R est alors la **tranche** « membres de R × fixe ». ' +
+        'Absent : les autres dimensions sont marginales (« tous »). Une coordonnée de la dimension de R est ignorée.',
+    ),
   dateTrunc: dateTruncSchema
     .optional()
     .describe(
@@ -260,7 +328,7 @@ export type ListValeursRemarquablesForIndicateurQuery = z.infer<
 >
 
 export const syntheseIndividuApiModelSchema = z.object({
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   variation: z
     .number()
     .nullable()
@@ -340,7 +408,7 @@ export const contributionSourceSchema = z
 export type ContributionSource = z.infer<typeof contributionSourceSchema>
 
 export const contributionApiModelSchema = z.object({
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   valeur: z
     .number()
     .nullable()
@@ -379,7 +447,7 @@ export type CouvertureApiModel = z.infer<typeof couvertureApiModelSchema>
 
 export const valeurSaisieApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   date: dateSchema.describe(
     "Date du point. Égale à la date de la saisie d'origine si `dateTrunc=day`, sinon date du " +
       'bucket post-troncature (la valeur retenue dans le bucket est la plus récente).',
@@ -391,7 +459,7 @@ export type ValeurSaisieApiModel = z.infer<typeof valeurSaisieApiModelSchema>
 
 export const valeurDeriveeApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   date: dateSchema.describe(
     'Date du bucket post-troncature pour lequel le point dérivé est calculé.',
   ),

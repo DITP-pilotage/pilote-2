@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
@@ -10,6 +10,7 @@ import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { clickableRowProps } from '@/lib/clickableRow'
+import { dimensionsAllQueryOptions } from '@/queries/dimensions'
 import { referentielsInfiniteQueryOptions } from '@/queries/referentiels'
 import { useAppConfig } from '@/context/AppConfigContext'
 
@@ -24,6 +25,9 @@ function ReferentielsListComponent() {
   const query = useInfiniteQuery(referentielsInfiniteQueryOptions(recherche))
   const items = query.data?.pages.flatMap((page) => page.items) ?? []
   const total = query.data?.pages[0]?.total ?? 0
+  // Noms de dimension : simple enrichissement, l'identifiant s'affiche en attendant.
+  const { data: dimensions } = useQuery(dimensionsAllQueryOptions())
+  const nomDimension = new Map((dimensions ?? []).map((dimension) => [dimension.id, dimension.nom]))
 
   return (
     <div>
@@ -68,6 +72,7 @@ function ReferentielsListComponent() {
               <Table.HeaderCell>ID</Table.HeaderCell>
               <Table.HeaderCell>Nom</Table.HeaderCell>
               <Table.HeaderCell>Description</Table.HeaderCell>
+              <Table.HeaderCell>Dimension</Table.HeaderCell>
               <Table.HeaderCell align="center">Individus</Table.HeaderCell>
               <Table.HeaderCell />
             </Table.Row>
@@ -88,6 +93,10 @@ function ReferentielsListComponent() {
                 </Table.Cell>
                 <Table.Cell>
                   <span className="text-text-muted">{referentiel.description ?? '—'}</span>
+                </Table.Cell>
+                <Table.Cell>
+                  <span className="text-sm">{nomDimension.get(referentiel.dimension) ?? ''}</span>{' '}
+                  <span className="font-mono text-xs text-text-muted">{referentiel.dimension}</span>
                 </Table.Cell>
                 <Table.Cell align="center">{referentiel.nombreIndividus}</Table.Cell>
                 <Table.Cell align="right">

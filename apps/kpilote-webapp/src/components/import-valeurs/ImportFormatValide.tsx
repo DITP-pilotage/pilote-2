@@ -6,10 +6,12 @@ import { type ParsedRow } from './lecture/matriceVersRows'
 export function ImportFormatValide({
   nomFichier,
   rows,
+  colonnesIdentite,
   erreursServeur,
 }: {
   nomFichier: string | undefined
   rows: ParsedRow[]
+  colonnesIdentite?: string[] | undefined
   erreursServeur: string[]
 }) {
   return (
@@ -20,7 +22,7 @@ export function ImportFormatValide({
         </span>
       </div>
       <ErreursServeurBloc messages={erreursServeur} />
-      <ImportPreviewTable rows={rows} />
+      <ImportPreviewTable rows={rows} colonnesIdentite={colonnesIdentite} />
     </>
   )
 }

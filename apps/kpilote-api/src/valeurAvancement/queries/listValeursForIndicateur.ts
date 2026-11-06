@@ -8,12 +8,11 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { loadContexteSerie } from '@/dimension/queries/loadContexteResolution'
 import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import { type PointInterne, resolveSerieIndividu } from '@/valeurAvancement/resolveSerieIndividu'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
@@ -51,16 +50,14 @@ const buildSeries = async ({
   indicateurPublicId: string
   params: ListValeursForIndicateurQuery
 }): Promise<ValeurAvancementListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(params.individus)
-  if (individusCibles.length === 0) return { items: [] }
-
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { ctx, allNodes } = await loadResolveSerieContext({
+  const { ctx, cibles: individusCibles } = await loadContexteSerie({
     indicateurId,
-    individusCibles: individusCibles,
+    cellules: params.individus,
     dateTrunc,
   })
+  if (individusCibles.length === 0) return { items: [] }
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const dateDebut = params.dateDebut ? parseBucket(params.dateDebut) : null
@@ -82,7 +79,7 @@ const buildSeries = async ({
       indicateurId,
       dateTrunc,
       nbCibles: individusCibles.length,
-      nbNodes: allNodes.size,
+      nbNodes: ctx.referentielParIndividu.size,
       nbPoints: items.length,
       durationMs: Math.round(performance.now() - startedAt),
     },

@@ -8,14 +8,25 @@ const formatTaux = (taux: number | null): string => {
   return `${taux} %`
 }
 
+// Les indicateurs « non applicables » (aucune dimension de la cellule demandée,
+// collection mixte) sont exclus de la moyenne : ni bloquants ni comptés.
 const buildCaption = (
   taux: number | null,
-  contributions: ReadonlyArray<{ tauxProgression: number | null }>,
+  contributions: ReadonlyArray<{
+    tauxProgression: number | null
+    nonApplicable?: true | undefined
+  }>,
 ): string => {
-  if (taux !== null) return 'Moyenne pondérée des indicateurs'
-  const nbBloquants = contributions.filter((c) => c.tauxProgression === null).length
+  const applicables = contributions.filter((c) => c.nonApplicable !== true)
+  const nbNonApplicables = contributions.length - applicables.length
+  const suffixe =
+    nbNonApplicables > 0
+      ? ` (${nbNonApplicables} non applicable${nbNonApplicables > 1 ? 's' : ''})`
+      : ''
+  if (taux !== null) return `Moyenne pondérée des indicateurs${suffixe}`
+  const nbBloquants = applicables.filter((c) => c.tauxProgression === null).length
   if (contributions.length === 0) return 'Collection sans indicateur'
-  return `${nbBloquants}/${contributions.length} indicateur${nbBloquants > 1 ? 's' : ''} sans taux`
+  return `${nbBloquants}/${applicables.length} indicateur${nbBloquants > 1 ? 's' : ''} sans taux${suffixe}`
 }
 
 export function CollectionTauxProgression({

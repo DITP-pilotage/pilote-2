@@ -11,7 +11,8 @@ import {
 } from '@pilote/kpilote-shared/indicateur'
 import { listerNiveauxConfianceQuerySchema } from '@pilote/kpilote-shared/niveauConfiance'
 import { createPaginatedApiListSchema } from '@pilote/kpilote-shared/pagination'
-import { indicateurPublicIdSchema, individuPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
+import { celluleIdSchema } from '@pilote/kpilote-shared/cellule'
+import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 
 import {
   BrouillonApiModelSchema,
@@ -21,6 +22,7 @@ import {
   reponseCommentaire,
   reponseListe,
 } from '@/commentaire/openapi'
+import { DESCRIPTION_CELLULES_LECTURE } from '@/dimension/descriptionsOpenApi'
 import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -177,7 +179,7 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
 
 const indicateurIndividuCommentaireParamsSchema = z.object({
   indicateurId: indicateurPublicIdSchema,
-  individuId: individuPublicIdSchema,
+  individuId: celluleIdSchema,
 })
 
 const creerIndicateurIndividuCommentaireRoute = createRoute({
@@ -185,6 +187,9 @@ const creerIndicateurIndividuCommentaireRoute = createRoute({
   path: '/indicateurs/{indicateurId}/individus/{individuId}/commentaires',
   tags: ['Indicateur'],
   summary: 'Créer un commentaire sur un indicateur pour un individu',
+  description:
+    '`individuId` désigne la cellule commentée (complète ou marginale).' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurIndividuCommentaireParamsSchema,
@@ -215,6 +220,9 @@ const listerIndicateurIndividuCommentairesRoute = createRoute({
   path: '/indicateurs/{indicateurId}/individus/{individuId}/commentaires',
   tags: ['Indicateur'],
   summary: 'Lister les commentaires d’un indicateur pour un individu',
+  description:
+    '`individuId` désigne la cellule commentée (complète ou marginale).' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurIndividuCommentaireParamsSchema,
@@ -239,6 +247,9 @@ const getIndicateurIndividuBrouillonRoute = createRoute({
   path: '/indicateurs/{indicateurId}/individus/{individuId}/commentaires/brouillon',
   tags: ['Indicateur'],
   summary: 'Récupérer mon brouillon courant (indicateur + individu)',
+  description:
+    '`individuId` désigne la cellule commentée (complète ou marginale).' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurIndividuCommentaireParamsSchema,
@@ -263,6 +274,9 @@ const listerNiveauxParCommentairesIndicateurIndividuRoute = createRoute({
   path: '/indicateurs/{indicateurId}/individus/{individuId}/niveaux-confiance',
   tags: ['Indicateur', 'NiveauConfiance'],
   summary: 'Niveaux de confiance des commentaires demandés (indicateur + individu)',
+  description:
+    '`individuId` désigne la cellule commentée (complète ou marginale).' +
+    DESCRIPTION_CELLULES_LECTURE,
   middleware: [requireAuthentication],
   request: {
     params: indicateurIndividuCommentaireParamsSchema,

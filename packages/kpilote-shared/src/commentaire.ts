@@ -20,7 +20,7 @@ export const commentaireApiModelSchema = z
       .string()
       .nullable()
       .describe(
-        'Identifiant public de l’individu rattaché, ou null pour un commentaire global de collection.',
+        'Identifiant public de la cellule rattachée (un individu pour un indicateur mono-dimension, ex. DEPT-84 ; DEPT-84~OP-ORANGE sinon), ou null pour un commentaire global de collection.',
       ),
     contenu: z.string().describe('Contenu HTML riche (peut être vide).'),
     statut: commentaireStatutSchema,

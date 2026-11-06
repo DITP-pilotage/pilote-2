@@ -18,6 +18,7 @@
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],
       "@/commentaire/*": ["./src/commentaire/*"],
+      "@/dimension/*": ["./src/dimension/*"],
       "@/centreAide/*": ["./src/centreAide/*"],
       "@/feature/*": ["./src/feature/*"],
       "@/healthcheck/*": ["./src/healthcheck/*"],

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { dateSchema } from './dates'
-import { individuPublicIdSchema } from './individu'
+import { celluleIdSchema } from './cellule'
 import { collectionPublicIdSchema, indicateurPublicIdSchema } from './publicIds'
 
 export const MAX_COLLECTIONS_PAR_REQUETE = 50
@@ -62,7 +62,7 @@ export type CollectionTauxProgressionSummaryListApiModel = z.infer<
 >
 
 export const getCollectionTauxProgressionQuerySchema = z.object({
-  individu: individuPublicIdSchema.describe(
+  individu: celluleIdSchema.describe(
     "Identifiant public de l'individu pour lequel calculer le taux de progression de la collection.",
   ),
 })
@@ -87,8 +87,14 @@ export const collectionTauxProgressionContributionApiModelSchema = z.object({
     ),
   ponderation: z
     .number()
+    .describe('Pondération appliquée à cet indicateur dans la moyenne pondérée de la collection.'),
+  nonApplicable: z
+    .literal(true)
+    .optional()
     .describe(
-      'Pondération appliquée à cet indicateur dans la moyenne pondérée de la collection. Fixé à 1 en v0.',
+      "Présent (true) quand l'indicateur ne porte aucune des dimensions de la cellule demandée " +
+        '(ex. indicateur territorial pour une cellule « opérateur ») : il est exclu de la moyenne ' +
+        'au lieu de la rendre null. Absent sinon.',
     ),
 })
 export type CollectionTauxProgressionContributionApiModel = z.infer<
@@ -97,7 +103,7 @@ export type CollectionTauxProgressionContributionApiModel = z.infer<
 
 export const collectionTauxProgressionApiModelSchema = z.object({
   collection: collectionPublicIdSchema,
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   tauxProgression: z
     .number()
     .nullable()

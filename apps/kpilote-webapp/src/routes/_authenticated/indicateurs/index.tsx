@@ -19,7 +19,10 @@ import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
-import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
+import {
+  loadReferentielIdsTableauDeBord,
+  useReferentielIdsTableauDeBord,
+} from '@/queries/referentiels'
 
 const indicateursSearchSchema = z.object({
   cursor: z.string().optional(),
@@ -41,7 +44,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
     const { queryClient } = context
-    const referentielIds = await loadAllReferentielIds({ queryClient })
+    // Référentiels du contexte : tous, sauf les dimensions qui n'existent que
+    // croisées sur des indicateurs multi-dimension (cf. lib/individus/tableauDeBord.ts).
+    const referentielIds = await loadReferentielIdsTableauDeBord({ queryClient })
     await ensureIndividuReferentielPair({
       queryClient,
       referentielIds,
@@ -66,8 +71,7 @@ function IndicateursListComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data } = useSuspenseQuery(indicateursQueryOptions(toIndicateursQuery(search)))
-  const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
-  const referentielIds = referentiels.map((r) => r.id)
+  const referentielIds = useReferentielIdsTableauDeBord()
 
   return (
     <Page

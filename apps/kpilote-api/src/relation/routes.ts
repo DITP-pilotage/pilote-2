@@ -11,10 +11,19 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { ErrorApiModelSchema, erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
+import {
+  ErrorApiModelSchema,
+  erreur400,
+  erreur403,
+  erreur404,
+  erreur409,
+} from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { supprimerRelation } from '@/relation/commands/supprimerRelation'
-import { upsertRelationParent } from '@/relation/commands/upsertRelationParent'
+import {
+  type UpsertRelationParentError,
+  upsertRelationParent,
+} from '@/relation/commands/upsertRelationParent'
 import { getRelationByEnfant } from '@/relation/queries/getRelationByEnfant'
 import { listRelations } from '@/relation/queries/listRelations'
 
@@ -55,7 +64,7 @@ const upsertRelationRoute = createRoute({
   tags: ['Relation', 'Admin'],
   summary: "Définir le parent d'un individu",
   description:
-    "Réservé aux clés API de rôle `ADMIN`. `id` est l'identifiant public de l'individu **enfant** : un individu a au plus un parent, l'enfant identifie donc la relation. Crée la relation si l'enfant n'en a pas, remplace son parent sinon. Opération idempotente, exécutée dans une transaction. Rejetée si le parent est l'individu lui-même (`AUTO_PARENT`) ou l'un de ses descendants (`CYCLE_DETECTE`).",
+    "Réservé aux clés API de rôle `ADMIN`. `id` est l'identifiant public de l'individu **enfant** : un individu a au plus un parent, l'enfant identifie donc la relation. Crée la relation si l'enfant n'en a pas, remplace son parent sinon. Opération idempotente, exécutée dans une transaction. Rejetée si le parent est l'individu lui-même (`AUTO_PARENT`), l'un de ses descendants (`CYCLE_DETECTE`) ou d'une autre dimension (`DIMENSIONS_DIFFERENTES`). Rejetée en 409 (`FAITS_MASQUES`) si le parent porte des faits sur un indicateur multi-dimension où son niveau agrège : la relation masquerait ces faits.",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -72,6 +81,7 @@ const upsertRelationRoute = createRoute({
     400: erreur400,
     403: erreur403,
     404: erreur404,
+    409: erreur409,
   },
 })
 
@@ -92,7 +102,11 @@ const supprimerRelationRoute = createRoute({
   },
 })
 
-const MESSAGES_ERREUR: Record<'AUTO_PARENT' | 'CYCLE_DETECTE', string> = {
+const MESSAGES_ERREUR: Record<UpsertRelationParentError['type'], string> = {
+  DIMENSIONS_DIFFERENTES:
+    "Le parent et l'enfant doivent appartenir à la même dimension (une hiérarchie vit dans une dimension)",
+  FAITS_MASQUES:
+    'Refusé : le parent porte des faits sur un indicateur multi-dimension ; lui donner un enfant les masquerait',
   AUTO_PARENT: 'Un individu ne peut pas être son propre parent',
   CYCLE_DETECTE:
     "Le parent choisi est un descendant de l'individu : la hiérarchie formerait un cycle",
@@ -138,7 +152,7 @@ relationRoutes.openapi(upsertRelationRoute, async (context) => {
         context,
         error: { code: error.type, message: MESSAGES_ERREUR[error.type] },
         schema: ErrorApiModelSchema,
-        status: 400,
+        status: error.type === 'FAITS_MASQUES' ? 409 : 400,
       }),
   )
 })

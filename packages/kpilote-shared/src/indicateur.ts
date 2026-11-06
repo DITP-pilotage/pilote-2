@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { dateSchema } from './dates'
+import { dimensionPublicIdSchema } from './dimension'
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 import { indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 import { responsableApiModelSchema } from './responsable'
@@ -142,6 +143,45 @@ export type ConfigurationIndicateurReferentielApiModel = z.infer<
   typeof configurationIndicateurReferentielApiModelSchema
 >
 
+export const fonctionAgregationMarginaleSchema = fonctionAgregationSchema.describe(
+  "Fonction de la marginale d'une dimension (« tous » sur cette dimension) : SUM, AVG (moyenne simple " +
+    'non pondérée) ou NONE (marginale non dérivée : elle se saisit directement, ex. un taux de ' +
+    'couverture « tous opérateurs » qui est une union et non une somme).',
+)
+
+export const configurationIndicateurDimensionSchema = z
+  .object({
+    id: dimensionPublicIdSchema,
+    ordre: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe(
+        "Rang de remontée : la dimension d'ordre le plus petit est agrégée en dernier (opération la plus externe). Détermine le résultat des fonctions non additives (AVG).",
+      ),
+    fonctionAgregation: fonctionAgregationMarginaleSchema,
+    porteObjectifs: z
+      .boolean()
+      .describe(
+        'Vrai si les objectifs sont saisis selon cette dimension. Les objectifs vivent sur le sous-cube des dimensions qui les portent.',
+      ),
+  })
+  .describe("Configuration d'une dimension pour un indicateur.")
+export type ConfigurationIndicateurDimension = z.infer<
+  typeof configurationIndicateurDimensionSchema
+>
+
+export const configurationIndicateurDimensionApiModelSchema =
+  configurationIndicateurDimensionSchema.extend({
+    nom: z.string().describe('Nom lisible de la dimension.'),
+    referentiels: z
+      .array(referentielPublicIdSchema)
+      .describe("Niveaux de la dimension déclarés sur l'indicateur, triés par `id` ASC."),
+  })
+export type ConfigurationIndicateurDimensionApiModel = z.infer<
+  typeof configurationIndicateurDimensionApiModelSchema
+>
+
 export const PERIODES_MISE_A_JOUR = [
   'QUOTIDIENNE',
   'HEBDOMADAIRE',
@@ -233,6 +273,12 @@ export const indicateurApiModelSchema = z.object({
       'Configurations de cet indicateur sur chaque référentiel associé, triées par `id` ASC. ' +
         'Tableau vide si aucun référentiel.',
     ),
+  dimensions: z
+    .array(configurationIndicateurDimensionApiModelSchema)
+    .describe(
+      "Dimensions d'observation de l'indicateur, triées par `ordre`. Une seule pour un indicateur " +
+        'mono-dimension (cas historique) ; plusieurs pour un indicateur croisé (ex. Territoire × Opérateur).',
+    ),
   responsables: z
     .array(responsableApiModelSchema)
     .describe(
@@ -293,7 +339,17 @@ export const upsertIndicateurBodySchema = z.object({
     .describe(
       'Liste complète des référentiels configurés pour cet indicateur (replace-all à chaque PUT). ' +
         'Tableau vide pour aucun référentiel. Doublons silencieusement dédupliqués sur `id` ; ' +
-        "en cas de fonctions différentes, la dernière occurrence l'emporte.",
+        "en cas de fonctions différentes, la dernière occurrence l'emporte. " +
+        'Le remplacement se fait **par dimension** : les niveaux des dimensions absentes de la liste ' +
+        'sont conservés (une synchro qui ne connaît que le territoire ne retire pas la dimension Opérateur).',
+    ),
+  dimensions: z
+    .array(configurationIndicateurDimensionSchema)
+    .optional()
+    .describe(
+      'Configuration optionnelle des dimensions (ordre, fonction de la marginale, grain des objectifs). ' +
+        'Absent = configuration existante conservée ; les nouvelles dimensions reçoivent des défauts ' +
+        '(ordre suivant, SUM, objectifs portés par la première dimension uniquement).',
     ),
   responsables: z
     .array(z.string().uuid())

@@ -1,12 +1,15 @@
 import { type IndividuMetadata } from '@pilote/kpilote-shared/individu'
-import { z } from 'zod'
 
-export const codeInseeMetadataSchema = z.object({
-  codeInsee: z.string().min(1),
-})
-export type CodeInseeMetadata = z.infer<typeof codeInseeMetadataSchema>
-
-export const parseCodeInseeMetadata = (metadata: IndividuMetadata): CodeInseeMetadata | null => {
-  const result = codeInseeMetadataSchema.safeParse(metadata)
-  return result.success ? result.data : null
+// Valeur de jointure d'un individu avec une entité visuelle du widget : la
+// propriété `joinKey` du widget (ex. `codeInsee`) lue dans `Individu.metadata`.
+// Seules les chaînes non vides sont retenues.
+export const parseJoinValue = ({
+  metadata,
+  joinKey,
+}: {
+  metadata: IndividuMetadata
+  joinKey: string
+}): string | null => {
+  const valeur = metadata?.[joinKey]
+  return typeof valeur === 'string' && valeur.length > 0 ? valeur : null
 }

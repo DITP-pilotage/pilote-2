@@ -97,4 +97,71 @@ describe('matriceVersRows', () => {
       rows: [{ individu: 'DEPT-01', date: '2025-06-03', valeur: 42 }],
     })
   })
+
+  it('ajoute les colonnes d’identité supplémentaires (multi-dimension) en coordonnées alignées', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['individu', 'Operateur', 'date', 'valeur'],
+        ['DEPT-84', 'OP-ORANGE', '2025-01-01', 10],
+        ['DEPT-13', '', '2025-01-01', 11],
+      ],
+      multiDimension: true,
+    })
+    expect(result).toEqual({
+      ok: true,
+      colonnesIdentite: ['individu', 'Operateur'],
+      rows: [
+        {
+          individu: 'DEPT-84',
+          coordonnees: ['DEPT-84', 'OP-ORANGE'],
+          date: '2025-01-01',
+          valeur: 10,
+        },
+        { individu: 'DEPT-13', coordonnees: ['DEPT-13', ''], date: '2025-01-01', valeur: 11 },
+      ],
+    })
+  })
+
+  it('une colonne libre (commentaire « OK ») n’est pas une colonne d’identité', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['individu', 'date', 'valeur', 'statut', 'source'],
+        ['DEPT-84', '2025-01-01', 10, 'OK', 'INSEE'],
+      ],
+      multiDimension: true,
+    })
+    expect(result).toStrictEqual({
+      ok: true,
+      rows: [{ individu: 'DEPT-84', date: '2025-01-01', valeur: 10 }],
+    })
+  })
+
+  it('mono : une colonne de publicIds (région) n’est pas une colonne d’identité', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['individu', 'date', 'valeur', 'region'],
+        ['DEPT-84', '2025-01-01', 10, 'REG-11'],
+        ['DEPT-13', '2025-01-01', 11, 'REG-93'],
+      ],
+    })
+    expect(result).toStrictEqual({
+      ok: true,
+      rows: [
+        { individu: 'DEPT-84', date: '2025-01-01', valeur: 10 },
+        { individu: 'DEPT-13', date: '2025-01-01', valeur: 11 },
+      ],
+    })
+  })
+
+  it('une colonne mêlant publicIds et texte libre n’est pas une colonne d’identité', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['individu', 'date', 'valeur', 'remarque'],
+        ['DEPT-84', '2025-01-01', 10, 'OP-ORANGE'],
+        ['DEPT-13', '2025-01-01', 11, 'à vérifier'],
+      ],
+      multiDimension: true,
+    })
+    expect(result.ok && result.colonnesIdentite).toBe(undefined)
+  })
 })

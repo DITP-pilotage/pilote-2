@@ -9,10 +9,12 @@ import { withConcurrency } from '@/framework/concurrency'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
-import { computeContributions } from '@/collection/queries/computeCollectionContributions'
+import {
+  computeContributions,
+  loadMembresCellule,
+} from '@/collection/queries/computeCollectionContributions'
 import { withCollectionReadPermission } from '@/collection/permissions'
 import { resolveCollectionTauxProgression } from '@/collection/resolveCollectionTauxProgression'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
 const collectionListArgs = {
   select: {
@@ -41,10 +43,8 @@ const build = async (
 ): Promise<CollectionTauxProgressionSummaryListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
-  const individuCible = await db().individu.findFirstOrThrow({
-    where: { publicId: individuPublicId },
-    select: { id: true, publicId: true, referentielId: true },
-  })
+  // Membre inconnu → 404 (P2025), comme le findFirstOrThrow historique.
+  await loadMembresCellule(individuPublicId)
 
   const startedAt = performance.now()
 
@@ -54,13 +54,13 @@ const build = async (
   })
 
   const items = await withConcurrency(
-    collections.map((collection) => () => computeCollectionTaux(collection, individuCible)),
+    collections.map((collection) => () => computeCollectionTaux(collection, individuPublicId)),
   )
 
   logger.info(
     {
       event: 'collection.listCollectionTauxProgressionForIndividu.timing',
-      individuId: individuCible.id,
+      cellule: individuPublicId,
       nbCollectionsDemandes: params.collections.length,
       nbCollectionsAccessibles: collections.length,
       nbItems: items.length,
@@ -74,13 +74,13 @@ const build = async (
 
 const computeCollectionTaux = async (
   collection: CollectionRow,
-  individuCible: IndividuRef,
+  cellule: string,
 ): Promise<{ collection: string; tauxProgression: number | null }> => {
   if (collection.indicateurs.length === 0) {
     return { collection: collection.publicId, tauxProgression: null }
   }
 
-  const contributions = await computeContributions(collection.indicateurs, individuCible)
+  const contributions = await computeContributions(collection.indicateurs, cellule)
   const { tauxProgression } = resolveCollectionTauxProgression(contributions)
   return { collection: collection.publicId, tauxProgression }
 }

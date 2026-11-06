@@ -2,6 +2,8 @@ import { type IndividuApiModel } from '@pilote/kpilote-shared/individu'
 import { type ReferentielApiModel } from '@pilote/kpilote-shared/referentiel'
 import { describe, expect, it } from 'vitest'
 
+import { buildNodesCube } from '@/tests/factories/dimensions'
+
 import { buildOrderedNodes } from './hierarchy'
 import { resolveIndividuReferentielPair } from './pair'
 
@@ -9,6 +11,7 @@ const referentiel = (id: string, nom: string): ReferentielApiModel => ({
   id,
   nom,
   description: null,
+  dimension: 'DIM-TERRITOIRE',
   nombreIndividus: 0,
   widgets: [],
   createdAt: '2026-01-01T00:00:00.000Z',
@@ -90,5 +93,22 @@ describe('resolveIndividuReferentielPair', () => {
       kind: 'mismatch',
       fallback: { individu: 'IND-FR', referentiel: 'REF-NAT' },
     })
+  })
+
+  it('restreint l’individu par défaut aux référentiels donnés, pas les individus acceptés', () => {
+    // « Orange » précède « France » : sans restriction, la racine par défaut serait un opérateur.
+    const nodes = buildNodesCube().filter((n) => n.individu.id !== 'OP-SFR')
+    const territoire = ['REF-NAT', 'REF-DEPT']
+    expect(resolveIndividuReferentielPair(nodes, {}, territoire)).toEqual({
+      kind: 'mismatch',
+      fallback: { individu: 'FR', referentiel: 'REF-NAT' },
+    })
+    expect(
+      resolveIndividuReferentielPair(
+        nodes,
+        { individu: 'OP-ORANGE', referentiel: 'REF-OPERATEUR' },
+        territoire,
+      ),
+    ).toEqual({ kind: 'valid', pair: { individu: 'OP-ORANGE', referentiel: 'REF-OPERATEUR' } })
   })
 })

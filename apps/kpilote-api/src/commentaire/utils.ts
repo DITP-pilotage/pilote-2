@@ -16,7 +16,16 @@ export const htmlToPlainText = (html: string): string =>
 export const commentaireInclude = {
   auteurCreation: auteurInclude,
   auteurModification: auteurInclude,
-  indicateurIndividu: { include: { individu: { select: { publicId: true } } } },
+  indicateurIndividu: {
+    include: {
+      cellule: {
+        include: {
+          coordonnees: { include: { individu: { select: { publicId: true } } } },
+        },
+      },
+      indicateur: { select: { dimensions: { select: { dimensionId: true, ordre: true } } } },
+    },
+  },
   collection: true,
 } satisfies Prisma.CommentaireInclude
 
@@ -25,8 +34,21 @@ export type CommentaireRow = Prisma.CommentaireGetPayload<{ include: typeof comm
 const typeDuCommentaire = (row: CommentaireRow): string =>
   row.indicateurIndividu?.type ?? row.collection?.type ?? 'DEFAUT'
 
-const individuPublicId = (row: CommentaireRow): string | null =>
-  row.indicateurIndividu?.individu.publicId ?? null
+// Identifiant public de la cellule commentée, membres dans l'ordre des dimensions
+// de l'indicateur (= publicId de l'individu en mono-dimension).
+const individuPublicId = (row: CommentaireRow): string | null => {
+  const satellite = row.indicateurIndividu
+  if (!satellite) return null
+  const ordre = new Map(satellite.indicateur.dimensions.map((d) => [d.dimensionId, d.ordre]))
+  return [...satellite.cellule.coordonnees]
+    .sort(
+      (a, b) =>
+        (ordre.get(a.dimensionId) ?? Number.MAX_SAFE_INTEGER) -
+        (ordre.get(b.dimensionId) ?? Number.MAX_SAFE_INTEGER),
+    )
+    .map((coordonnee) => coordonnee.individu.publicId)
+    .join('~')
+}
 
 export const toCommentaireApiModel = (row: CommentaireRow): CommentaireApiModel => ({
   id: row.id,

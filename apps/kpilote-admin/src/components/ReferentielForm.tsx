@@ -1,10 +1,13 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@pilote/kpilote-ui/Button'
+import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { clsxm } from '@/lib/clsxm'
+import { dimensionsAllQueryOptions } from '@/queries/dimensions'
 
 type IndividuItem = { publicId: string; nom: string }
 
@@ -12,6 +15,9 @@ export type ReferentielFormValues = {
   id: string
   nom: string
   description: string
+  // Dimension dont le référentiel est un niveau. Vide à la création : l'API
+  // crée une dimension dédiée (`DIM-<slug>`).
+  dimension: string
   individus: IndividuItem[]
 }
 
@@ -31,6 +37,7 @@ export function ReferentielForm({
   onCancel: () => void
 }) {
   const [values, setValues] = useState<ReferentielFormValues>(initial)
+  const { data: dimensions } = useSuspenseQuery(dimensionsAllQueryOptions())
 
   const update = (patch: Partial<ReferentielFormValues>) =>
     setValues((prev) => ({ ...prev, ...patch }))
@@ -78,6 +85,26 @@ export function ReferentielForm({
             value={values.nom}
             onChange={(event) => update({ nom: event.target.value })}
             className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
+          />
+        </div>
+
+        <div className="mb-5">
+          <FieldSelect
+            label="Dimension"
+            value={values.dimension}
+            onValueChange={(dimension) => update({ dimension })}
+            hint={
+              mode === 'create'
+                ? 'Sans choix, une dimension dédiée est créée.'
+                : 'Changement refusé (409) si des faits portent sur ses individus.'
+            }
+            options={[
+              ...(mode === 'create' ? [{ value: '', label: 'Nouvelle dimension dédiée' }] : []),
+              ...dimensions.map((dimension) => ({
+                value: dimension.id,
+                label: `${dimension.nom} (${dimension.id})`,
+              })),
+            ]}
           />
         </div>
 
