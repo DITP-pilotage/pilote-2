@@ -23,6 +23,7 @@ export const MultiSelectFiltre = ({
   showGroupSelection = true,
   showSearch = true,
   classNameBouton,
+  classNameContenu,
 }: {
   label?: string;
   values: string[];
@@ -35,6 +36,8 @@ export const MultiSelectFiltre = ({
   showGroupSelection?: boolean;
   showSearch?: boolean;
   classNameBouton?: string;
+  /** Par défaut, le menu prend la largeur du bouton. */
+  classNameContenu?: string;
 }) => {
   const [recherche, setRecherche] = useState("");
 
@@ -91,7 +94,10 @@ export const MultiSelectFiltre = ({
 
         <Dropdown.Content
           align="start"
-          className="w-[var(--radix-dropdown-menu-trigger-width)]"
+          className={clsxm(
+            "w-[var(--radix-dropdown-menu-trigger-width)]",
+            classNameContenu,
+          )}
         >
           <div className="divide-y divide-dsfr-mention-grey -m-4 max-h-96 overflow-y-auto">
             <div className="sticky top-0 bg-white z-10">

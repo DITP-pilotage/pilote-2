@@ -73,13 +73,21 @@ scenarioEval({
       history: ["Quels sont les chantiers en retard en Bretagne ?"],
       question: "Et leurs indicateurs non à jour ?",
       reason:
-        "ambigu : ni la valeur d'avancement ni la cible ne sont nommées, le périmètre est connu",
+        "ambigu : ni la valeur d'avancement ni la cible ne sont nommées, le périmètre est connu ; get_indicateurs_a_completer demande lui-même la précision",
       truthScope: { territoires: ["REG-53"] },
-      expected: [{ toolName: "clarify_with_choices" }],
-      forbidden: [
-        "get_valeurs_avancement_non_a_jour",
-        "get_valeurs_initiales_cibles_manquantes",
+      expected: [{ toolName: "get_indicateurs_a_completer" }],
+      forbidden: ["clarify_with_choices"],
+    },
+    {
+      history: ["Quels chantiers ont des indicateurs non à jour en Bretagne ?"],
+      question: "Valeurs d'avancement non à jour en REG-53",
+      reason:
+        "clic sur un choix de la précision : rappeler l'outil avec le motif choisi, la consigne du tour précédent ne vaut plus",
+      truthScope: { territoires: ["REG-53"] },
+      expected: [
+        { toolName: "get_indicateurs_a_completer", input: { motifs: ["va"] } },
       ],
+      forbidden: ["clarify_with_choices"],
     },
     {
       history: ["Quel est le taux d'avancement de la Bretagne ?"],

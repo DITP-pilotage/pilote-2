@@ -7,6 +7,7 @@ import type {
   PiloteUIMessage,
   PiloteUITools,
 } from "@/server/albert/PiloteUIMessage";
+import { indicateursACompleterVersModele } from "@/server/albert/tools/sortieIndicateursACompleter";
 import { clsxm } from "@/utils/clsxm";
 
 export type SourceToolPart = Extract<
@@ -16,8 +17,7 @@ export type SourceToolPart = Extract<
       | "tool-get_taux_avancement_territoire"
       | "tool-get_chantiers"
       | "tool-get_chantiers_signales"
-      | "tool-get_valeurs_avancement_non_a_jour"
-      | "tool-get_valeurs_initiales_cibles_manquantes"
+      | "tool-get_indicateurs_a_completer"
       | "tool-get_indicateurs"
       | "tool-get_chantier_commentaires"
       | "tool-get_chantier_objectifs"
@@ -34,8 +34,7 @@ const LIBELLES: Record<SourceToolPart["type"], string> = {
   "tool-get_taux_avancement_territoire": "Taux d'avancement",
   "tool-get_chantiers": "Chantiers",
   "tool-get_chantiers_signales": "Chantiers signalés",
-  "tool-get_valeurs_avancement_non_a_jour": "Indicateurs non à jour",
-  "tool-get_valeurs_initiales_cibles_manquantes": "Indicateurs sans VI ou VC",
+  "tool-get_indicateurs_a_completer": "Indicateurs à compléter",
   "tool-get_indicateurs": "Indicateurs",
   "tool-get_chantier_commentaires": "Commentaires",
   "tool-get_chantier_objectifs": "Objectifs",
@@ -71,14 +70,26 @@ const formaterValeur = (valeur: unknown): string =>
     ? String(valeur)
     : JSON.stringify(valeur);
 
+// Ce que le modèle a lu : le détail ligne à ligne, déjà affiché en tableau, pèserait plusieurs Mo.
+const sortieAffichee = (part: SourceToolPart): unknown => {
+  if (!estTerminee(part)) return undefined;
+  if (
+    part.type === "tool-get_indicateurs_a_completer" &&
+    part.state === "output-available"
+  ) {
+    return indicateursACompleterVersModele({ output: part.output }).value;
+  }
+  return (
+    (part as { output?: unknown }).output ??
+    (part as { errorText?: string }).errorText
+  );
+};
+
 const DetailSource = ({ part }: { part: SourceToolPart }) => {
   const parametres = Object.entries(
     (part.input as Record<string, unknown> | undefined) ?? {},
   );
-  const sortie = estTerminee(part)
-    ? ((part as { output?: unknown; errorText?: string }).output ??
-      (part as { errorText?: string }).errorText)
-    : undefined;
+  const sortie = sortieAffichee(part);
 
   return (
     <div className="border border-dsfr-grey-925 text-xs leading-[18px] text-dsfr-grey-50">

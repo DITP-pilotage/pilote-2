@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { type Cell, flexRender } from "@tanstack/react-table";
 import { Table } from "@/components/shared/Table";
 import { clsxm } from "@/utils/clsxm";
@@ -16,6 +16,8 @@ export type DataTableBodyProps = {
   cellTitle?: boolean;
   rowClassName?: string | ((row: AnyRow) => string | undefined);
   renderGroupCell?: (cell: AnyCell) => ReactNode;
+  // Remplace toute la ligne de groupe, par exemple par une seule cellule pleine largeur.
+  renderGroupRow?: (row: AnyRow) => ReactNode;
 };
 
 const ROW_LINK_FOCUS =
@@ -138,20 +140,28 @@ export function DataTableBody({
   cellTitle,
   rowClassName,
   renderGroupCell,
+  renderGroupRow,
 }: DataTableBodyProps & { table: AnyTable }) {
+  const canGroup = hasFeature(table, "columnGroupingFeature");
   return (
     <Table.Body className={clsxm(className)}>
-      {table.getRowModel().rows.map((row: AnyRow) => (
-        <DataTableRow
-          cellClassName={cellClassName}
-          cellTitle={cellTitle}
-          key={row.id}
-          renderGroupCell={renderGroupCell}
-          row={row}
-          rowClassName={rowClassName}
-          table={table}
-        />
-      ))}
+      {table
+        .getRowModel()
+        .rows.map((row: AnyRow) =>
+          renderGroupRow && canGroup && row.getIsGrouped() ? (
+            <Fragment key={row.id}>{renderGroupRow(row)}</Fragment>
+          ) : (
+            <DataTableRow
+              cellClassName={cellClassName}
+              cellTitle={cellTitle}
+              key={row.id}
+              renderGroupCell={renderGroupCell}
+              row={row}
+              rowClassName={rowClassName}
+              table={table}
+            />
+          ),
+        )}
     </Table.Body>
   );
 }

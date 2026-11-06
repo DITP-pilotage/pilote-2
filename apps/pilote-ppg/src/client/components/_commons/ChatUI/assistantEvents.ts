@@ -5,6 +5,7 @@ import type {
 import type { ChatScenarios } from "@/components/_commons/ChatUI/ChatEmptyState";
 import type { AssistantEvent } from "@/components/_commons/ChatUI/useAssistantTracking";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
+import type { ClarifyWithChoicesOutput } from "@/server/albert/tools/clarifyWithChoices";
 
 export type PropositionOrigin = {
   id: string;
@@ -79,16 +80,23 @@ export const answerOutcomeEvent = ({
     : { action: "success", name: "answer.complete", dimensions };
 };
 
-type PresentedChoicesPart = Extract<
-  PiloteUIMessage["parts"][number],
-  { type: "tool-clarify_with_choices"; state: "output-available" }
->;
-
-const isPresentedChoices = (
+/** La question à choix présentée par l'un des deux outils qui en posent. */
+export const choixPresentes = (
   part: PiloteUIMessage["parts"][number],
-): part is PresentedChoicesPart =>
-  part.type === "tool-clarify_with_choices" &&
-  part.state === "output-available";
+): ClarifyWithChoicesOutput | null => {
+  if (
+    part.type === "tool-clarify_with_choices" &&
+    part.state === "output-available"
+  )
+    return part.output;
+  if (
+    part.type === "tool-get_indicateurs_a_completer" &&
+    part.state === "output-available" &&
+    "clarification" in part.output
+  )
+    return part.output.clarification;
+  return null;
+};
 
 export const choicesPresentedEvent = ({
   conversationId,
@@ -97,15 +105,15 @@ export const choicesPresentedEvent = ({
   conversationId: string;
   message: PiloteUIMessage;
 }): AssistantEvent | null => {
-  const clarification = (message.parts ?? []).find(isPresentedChoices);
-  if (!clarification) return null;
+  const choix = (message.parts ?? []).map(choixPresentes).find(Boolean);
+  if (!choix) return null;
   return {
     action: "view",
     name: "response.choices",
     dimensions: {
       conversation_id: conversationId,
       llm_call_id: llmCallIdOf(message),
-      nombre_choix: clarification.output.choices.length,
+      nombre_choix: choix.choices.length,
     },
   };
 };

@@ -26,7 +26,9 @@ import { EncartSynthese } from "@/components/_commons/ChatUI/EncartSynthese";
 import { texteEncarts } from "@/components/_commons/ChatUI/texteEncarts";
 import type { EncartOutput } from "@/server/albert/tools/encart";
 import { BoutonCopier } from "@/components/_commons/BoutonCopier/BoutonCopier";
+import { TableauIndicateursACompleter } from "@/components/_commons/ChatUI/TableauIndicateursACompleter";
 import {
+  choixPresentes,
   copyExportNames,
   dernieresSuites,
   llmCallIdOf,
@@ -72,6 +74,11 @@ export const AssistantMessage = memo(function AssistantMessage({
   const sources = parts.filter(estSourcePart);
   const consultationCentreAide = derniereConsultationCentreAide(parts);
   const suites = dernieresSuites(parts);
+
+  const dernierChoix = parts.reduce<ReturnType<typeof choixPresentes>>(
+    (dernier, part) => choixPresentes(part) ?? dernier,
+    null,
+  );
 
   const hasText = parts.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
@@ -212,19 +219,29 @@ export const AssistantMessage = memo(function AssistantMessage({
         <CentreAideEncart output={consultationCentreAide} />
       )}
 
-      {/* Les choix ferment la réponse, même si le modèle a écrit du texte après l'appel. */}
-      {afficherChoix &&
-        parts.map((part, index) =>
-          part.type === "tool-clarify_with_choices" &&
-          part.state === "output-available" ? (
-            <ChoicesInline
-              choices={part.output.choices}
-              key={index}
-              llmCallId={llmCallIdOf(message)}
-              question={part.output.question}
+      {/* Le détail suit la synthèse que le modèle écrit après l'appel de l'outil. */}
+      {!isStreaming &&
+        parts.map((part) =>
+          part.type === "tool-get_indicateurs_a_completer" &&
+          part.state === "output-available" &&
+          "detail" in part.output &&
+          part.output.detail.lignes.length > 0 ? (
+            <TableauIndicateursACompleter
+              detail={part.output.detail}
+              key={part.toolCallId}
             />
           ) : null,
         )}
+
+      {/* Les choix ferment la réponse, même si le modèle a écrit du texte après
+          l'appel. Seule la dernière question compte : les précédentes sont dépassées. */}
+      {afficherChoix && dernierChoix && (
+        <ChoicesInline
+          choices={dernierChoix.choices}
+          llmCallId={llmCallIdOf(message)}
+          question={dernierChoix.question}
+        />
+      )}
 
       {/* Les suites prolongent la réponse : seules les dernières proposées. */}
       {afficherChoix && suites && suites.length > 0 && (

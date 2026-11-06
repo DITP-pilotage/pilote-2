@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
+import type { FiltreTerritoires } from "@/client/utils/territoire/filtreTerritoires";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
 import type { AnnuaireCoordinateurs } from "@/server/annuaire/queries/ListerCoordinateursAnnuaireQuery";
 import { BlocPersonne } from "./cellules/BlocPersonne";
@@ -11,7 +12,6 @@ import {
   cleTerritoire,
   comparerPersonnes,
   comparerTerritoires,
-  type FiltreAvecGroupes,
   type LigneCoordinateur,
   filtreTerritoires,
   lignesCoordinateurs,
@@ -72,7 +72,7 @@ const columnHelper = tableauAnnuaire.createColumnHelper<LigneCoordinateur>();
 
 // Seules les lignes de groupe sont affichées : chaque `cell` lit `row.original`
 // (première affectation du groupe) ou `row.subRows` (toutes ses affectations).
-const useColonnes = (filtre: FiltreAvecGroupes) =>
+const useColonnes = (filtre: FiltreTerritoires) =>
   useMemo(
     () =>
       columnHelper.columns([

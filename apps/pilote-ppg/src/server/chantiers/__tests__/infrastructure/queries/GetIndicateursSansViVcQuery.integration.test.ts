@@ -92,6 +92,7 @@ const ligne = (
   maille: "DEPT",
   territoireCode: "DEPT-29",
   territoireNom: "Finistère",
+  territoireNomAffiche: "29 - Finistère",
   viManquante: false,
   vcManquante: false,
   derniereVcConnue: null,
@@ -286,6 +287,7 @@ describe("GetIndicateursSansViVcQuery", () => {
         ligne({
           territoireCode: "DEPT-35",
           territoireNom: "Ille-et-Vilaine",
+          territoireNomAffiche: "35 - Ille-et-Vilaine",
           vcManquante: true,
         }),
       ]);
@@ -327,6 +329,7 @@ describe("GetIndicateursSansViVcQuery", () => {
         ligne({
           territoireCode: "DEPT-35",
           territoireNom: "Ille-et-Vilaine",
+          territoireNomAffiche: "35 - Ille-et-Vilaine",
           vcManquante: true,
         }),
       ]);
@@ -353,6 +356,7 @@ describe("GetIndicateursSansViVcQuery", () => {
         ligne({
           territoireCode: "DEPT-35",
           territoireNom: "Ille-et-Vilaine",
+          territoireNomAffiche: "35 - Ille-et-Vilaine",
           viManquante: true,
         }),
       ]);

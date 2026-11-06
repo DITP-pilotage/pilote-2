@@ -105,7 +105,7 @@ const CASES: ToolCase[] = [
     question:
       "Quels chantiers ont des indicateurs non mis à jour en Bretagne ?",
     reason:
-      "CAS NÉGATIF : pas une catégorie de signalement → get_valeurs_avancement_non_a_jour",
+      "CAS NÉGATIF : pas une catégorie de signalement → get_indicateurs_a_completer",
     forbidden: ["get_chantiers_signales"],
   },
 ];

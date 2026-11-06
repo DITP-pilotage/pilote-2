@@ -12,9 +12,19 @@ import type { AnyColumn, AnyTable } from "./types";
 export type DataTableFiltersProps = {
   className?: string;
   // « inline » : recherche et filtres sur une ligne, puis `resultats` et le bouton de réinitialisation.
-  layout?: "stack" | "inline";
+  // « compact » : tout sur une ligne serrée, libellés dans les boutons, pour un espace étroit comme le chat.
+  layout?: "stack" | "inline" | "compact";
   resultats?: ReactNode;
+  searchPlaceholder?: string;
+  // Contrôles ajoutés après les filtres, par exemple le choix du regroupement.
+  children?: ReactNode;
 };
+
+export const COMPACT_CONTROL_CLASSNAME =
+  "py-1 text-sm border rounded-t border-b-2 border-b-gray-600 bg-dsfr-contrast-grey";
+
+// Au-delà, la liste d'un filtre compact propose une recherche.
+const COMPACT_SEARCH_THRESHOLD = 8;
 
 const toStringArray = (value: unknown): string[] =>
   Array.isArray(value)
@@ -24,9 +34,11 @@ const toStringArray = (value: unknown): string[] =>
 function ColumnFilter({
   column,
   className,
+  compact = false,
 }: {
   column: AnyColumn;
   className?: string;
+  compact?: boolean;
 }) {
   const filter = getColumnMeta(column)?.filter;
   if (!filter) return null;
@@ -46,23 +58,45 @@ function ColumnFilter({
       />
     );
   }
+  const getOptionLabel = (value: string) =>
+    filter.options.find((option) => option.value === value)?.label ?? value;
+  const optionGroups = filter.groups?.map((group) => ({
+    label: group.label,
+    options: group.values,
+  })) ?? [{ label: "", options: filter.options.map((option) => option.value) }];
+
+  if (compact) {
+    return (
+      <MultiSelectFiltre
+        className={clsxm("w-auto", filter.className, className)}
+        classNameBouton={clsxm(
+          COMPACT_CONTROL_CLASSNAME,
+          "gap-2 px-3",
+          filter.buttonClassName,
+        )}
+        classNameContenu="w-80 max-w-[90vw]"
+        getOptionLabel={getOptionLabel}
+        getPlaceholder={(selection) =>
+          selection.length === 0
+            ? filter.label
+            : `${filter.label} (${selection.length})`
+        }
+        onChange={onChange}
+        optionGroups={optionGroups}
+        showGroupSelection={filter.groups != null}
+        showSearch={filter.options.length > COMPACT_SEARCH_THRESHOLD}
+        values={values}
+      />
+    );
+  }
   return (
     <MultiSelectFiltre
       className={clsxm(filter.className, className)}
       classNameBouton={filter.buttonClassName}
-      getOptionLabel={(value) =>
-        filter.options.find((option) => option.value === value)?.label ?? value
-      }
+      getOptionLabel={getOptionLabel}
       label={filter.label}
       onChange={onChange}
-      optionGroups={
-        filter.groups?.map((group) => ({
-          label: group.label,
-          options: group.values,
-        })) ?? [
-          { label: "", options: filter.options.map((option) => option.value) },
-        ]
-      }
+      optionGroups={optionGroups}
       showGroupSelection={false}
       values={values}
     />
@@ -74,6 +108,8 @@ export function DataTableFilters({
   className,
   layout = "stack",
   resultats,
+  searchPlaceholder,
+  children,
   hasActiveFilters,
   onResetFilters,
 }: DataTableFiltersProps & {
@@ -87,8 +123,46 @@ export function DataTableFilters({
         .filter((column: AnyColumn) => getColumnMeta(column)?.filter != null)
     : [];
 
-  const recherche = hasFeature(table, "globalFilteringFeature") ? (
-    <DataTableSearch table={table} />
+  const hasSearch = hasFeature(table, "globalFilteringFeature");
+
+  if (layout === "compact") {
+    return (
+      <section
+        aria-label="Filtres du tableau"
+        className={clsxm(
+          "flex flex-wrap items-center gap-2 px-4 py-2 border-b border-dsfr-grey-900",
+          className,
+        )}
+      >
+        {hasSearch && (
+          <DataTableSearch
+            button="none"
+            className="w-auto min-w-40 flex-1"
+            inputClassName="px-3 py-1 text-sm"
+            placeholder={searchPlaceholder}
+            table={table}
+          />
+        )}
+        {columns.map((column: AnyColumn) => (
+          <ColumnFilter column={column} compact key={column.id} />
+        ))}
+        {children}
+        {resultats != null && (
+          <span aria-live="polite" className="text-sm font-medium">
+            {resultats}
+          </span>
+        )}
+        {hasActiveFilters && (
+          <Button onClick={onResetFilters} size="sm" variant="link">
+            Réinitialiser
+          </Button>
+        )}
+      </section>
+    );
+  }
+
+  const recherche = hasSearch ? (
+    <DataTableSearch placeholder={searchPlaceholder} table={table} />
   ) : null;
 
   const reinitialiser = (
@@ -128,6 +202,7 @@ export function DataTableFilters({
                 />
               </div>
             ))}
+            {children}
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {resultats != null && (
@@ -147,6 +222,7 @@ export function DataTableFilters({
           {columns.map((column: AnyColumn) => (
             <ColumnFilter column={column} key={column.id} />
           ))}
+          {children}
           {resultats != null && (
             <span aria-live="polite" className="text-sm font-medium">
               {resultats}

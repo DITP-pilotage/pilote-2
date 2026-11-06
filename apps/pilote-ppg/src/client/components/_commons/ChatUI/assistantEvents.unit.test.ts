@@ -208,6 +208,48 @@ describe("choicesPresentedEvent", () => {
     });
   });
 
+  it("compte les choix renvoyés par get_indicateurs_a_completer", () => {
+    // Given
+    const avecClarification: PiloteUIMessage = {
+      ...assistantMessage,
+      parts: [
+        {
+          type: "tool-get_indicateurs_a_completer",
+          toolCallId: "call-2",
+          state: "output-available",
+          input: { motifs: ["va"] },
+          output: {
+            clarification: {
+              question: "Quelles valeurs ?",
+              choices: [
+                { label: "Valeurs d'avancement", value: "va" },
+                { label: "Valeurs initiales", value: "vi" },
+                { label: "Valeurs cibles", value: "vc" },
+              ],
+            },
+          },
+        },
+      ],
+    };
+
+    // When
+    const event = choicesPresentedEvent({
+      conversationId: "conv-1",
+      message: avecClarification,
+    });
+
+    // Then
+    expect(event).toEqual({
+      action: "view",
+      name: "response.choices",
+      dimensions: {
+        conversation_id: "conv-1",
+        llm_call_id: "llm-1",
+        nombre_choix: 3,
+      },
+    });
+  });
+
   it("ne compte rien sans question à choix", () => {
     expect(
       choicesPresentedEvent({

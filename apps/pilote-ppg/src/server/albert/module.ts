@@ -10,8 +10,7 @@ import { createGetHistoriqueIndicateurTool } from "@/server/albert/tools/getHist
 import { createGetChantierCommentairesTool } from "@/server/albert/tools/getChantierCommentaires";
 import { createGetChantierObjectifsTool } from "@/server/albert/tools/getChantierObjectifs";
 import { createGetChantiersSignalesTool } from "@/server/albert/tools/getChantiersSignales";
-import { createGetValeursAvancementNonAJourTool } from "@/server/albert/tools/getValeursAvancementNonAJour";
-import { createGetValeursInitialesCiblesManquantesTool } from "@/server/albert/tools/getValeursInitialesCiblesManquantes";
+import { createGetIndicateursACompleterTool } from "@/server/albert/tools/getIndicateursACompleter";
 import { createSearchChantiersTool } from "@/server/albert/tools/searchChantiers";
 import { createSearchIndicateursTool } from "@/server/albert/tools/searchIndicateurs";
 import { createSearchTerritoiresTool } from "@/server/albert/tools/searchTerritoires";
@@ -72,11 +71,8 @@ type AlbertOwnCradle = {
   createGetChantiersSignalesTool: ReturnType<
     typeof createGetChantiersSignalesTool
   >;
-  createGetValeursAvancementNonAJourTool: ReturnType<
-    typeof createGetValeursAvancementNonAJourTool
-  >;
-  createGetValeursInitialesCiblesManquantesTool: ReturnType<
-    typeof createGetValeursInitialesCiblesManquantesTool
+  createGetIndicateursACompleterTool: ReturnType<
+    typeof createGetIndicateursACompleterTool
   >;
   createSearchChantiersTool: ReturnType<typeof createSearchChantiersTool>;
   createSearchIndicateursTool: ReturnType<typeof createSearchIndicateursTool>;
@@ -134,11 +130,8 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetChantiersSignalesTool: asModuleFunction(
         createGetChantiersSignalesTool,
       ),
-      createGetValeursAvancementNonAJourTool: asModuleFunction(
-        createGetValeursAvancementNonAJourTool,
-      ),
-      createGetValeursInitialesCiblesManquantesTool: asModuleFunction(
-        createGetValeursInitialesCiblesManquantesTool,
+      createGetIndicateursACompleterTool: asModuleFunction(
+        createGetIndicateursACompleterTool,
       ),
       createSearchChantiersTool: asModuleFunction(createSearchChantiersTool),
       createSearchIndicateursTool: asModuleFunction(

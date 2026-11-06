@@ -1,7 +1,7 @@
 import { api } from "@/server/framework/trpc/api";
 import { SelecteurGroupement } from "./SelecteurGroupement";
 import { TableauAnnuaire } from "./TableauAnnuaire";
-import { pluriel } from "./lignesAnnuaire";
+import { pluriel } from "@/client/utils/strings";
 import {
   REGROUPEMENTS_COORDINATEURS,
   useTableauCoordinateurs,

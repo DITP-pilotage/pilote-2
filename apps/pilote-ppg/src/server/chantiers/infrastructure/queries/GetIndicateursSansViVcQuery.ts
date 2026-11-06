@@ -12,6 +12,8 @@ export type LigneIndicateurSansViVc = {
   maille: $Enums.Maille;
   territoireCode: string;
   territoireNom: string | null;
+  /** Le libellé des écrans PILOTE (« 29 - Finistère »). */
+  territoireNomAffiche: string;
   viManquante: boolean;
   vcManquante: boolean;
   derniereVcConnue: { valeur: number; jalon: number } | null;
@@ -63,6 +65,7 @@ export class GetIndicateursSansViVcQuery {
           maille: true,
           territoire_code: true,
           territoire_nom: true,
+          territoire: { select: { nom_affiche: true } },
           valeur_initiale: true,
           indicateur_territoire_jalon: {
             where: { jalon: { lte: params.jalon } },
@@ -100,6 +103,7 @@ export class GetIndicateursSansViVcQuery {
         maille: ligne.maille,
         territoireCode: ligne.territoire_code,
         territoireNom: ligne.territoire_nom,
+        territoireNomAffiche: ligne.territoire.nom_affiche,
         viManquante: rechercheVi && ligne.valeur_initiale === null,
         vcManquante,
         derniereVcConnue:

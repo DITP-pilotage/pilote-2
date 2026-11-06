@@ -200,7 +200,7 @@ export function scenarioEval({
               });
               messages.push(
                 { role: "user", content: question },
-                ...previous.response.messages,
+                ...previous.responseMessages,
               );
               history.push({
                 question,

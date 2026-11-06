@@ -90,6 +90,26 @@ function TableauGroupe() {
   );
 }
 
+function TableauGroupeLigneEntiere() {
+  const table = groupe.useDataTable({
+    data: chantiers,
+    columns: colonnesGroupees,
+    initialState: { grouping: ["ministere"], expanded: true },
+  });
+  return (
+    <table.Root caption="Chantiers groupés">
+      <table.Header />
+      <table.Body
+        renderGroupRow={(row) => (
+          <tr>
+            <td colSpan={3}>{`Ministère ${row.getValue("ministere")}`}</td>
+          </tr>
+        )}
+      />
+    </table.Root>
+  );
+}
+
 describe("table.Body", () => {
   it("rend un seul lien nommé par ligne, sur la colonne principale", () => {
     render(<TableauPlat />);
@@ -146,5 +166,26 @@ describe("table.Body", () => {
     expect(screen.getAllByRole("link").map((lien) => lien.textContent)).toEqual(
       ["Eau", "Air"],
     );
+  });
+
+  it("remplace les lignes de groupe par renderGroupRow et garde les lignes de détail", () => {
+    render(<TableauGroupeLigneEntiere />);
+
+    expect(
+      screen
+        .getAllByRole("row")
+        .slice(1)
+        .map((ligne) =>
+          within(ligne)
+            .getAllByRole("cell")
+            .map((cellule) => cellule.textContent),
+        ),
+    ).toEqual([
+      ["Ministère MTE"],
+      ["MTE", "Eau", "20"],
+      ["MTE", "Air", "40"],
+      ["Ministère MEN"],
+      ["MEN", "École", "10"],
+    ]);
   });
 });

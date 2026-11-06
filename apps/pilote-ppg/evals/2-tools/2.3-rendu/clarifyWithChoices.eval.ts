@@ -16,12 +16,11 @@ import { toolSelectionEval } from "../toolSelectionEval";
  * d'avancement de chaque chantier, qu'il doit savoir proposer à la place, est
  * vérifié dans la suite de `get_chantiers`.
  *
- * Une demande de mise à jour qui ne précise pas le type de valeurs (PIL-1939)
- * passe aussi par l'outil, y compris pour un seul chantier ou indicateur.
- *
  * Les négatifs n'ont rien à départager : un seul chantier correspond, ou la
  * maille est précisée. Sur une salutation, aucun outil : proposer un menu de
- * ce que l'agent sait faire serait une faute.
+ * ce que l'agent sait faire serait une faute. Une demande de mise à jour qui
+ * ne précise pas le type de valeurs n'est pas non plus servie par cet outil :
+ * `get_indicateurs_a_completer` demande lui-même la précision.
  */
 
 const CASES: ToolCase[] = [
@@ -60,40 +59,14 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Quels sont les indicateurs à mettre à jour ?",
-    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
-    expected: [{ toolName: "clarify_with_choices" }],
-    forbidden: [
-      "get_valeurs_avancement_non_a_jour",
-      "get_valeurs_initiales_cibles_manquantes",
-    ],
-  },
-  {
     question: "Quels indicateurs sont non à jour sur le CH-018 ?",
-    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
-    expected: [{ toolName: "clarify_with_choices" }],
-    forbidden: [
-      "get_valeurs_avancement_non_a_jour",
-      "get_valeurs_initiales_cibles_manquantes",
+    reason:
+      "CAS NÉGATIF : mise à jour sans type de valeurs → get_indicateurs_a_completer, qui demande lui-même la précision",
+    expected: [
+      {
+        toolName: "get_indicateurs_a_completer",
+      },
     ],
-  },
-  {
-    question: "Quels indicateurs sont à mettre à jour sur l'IND-894 ?",
-    reason: "mise à jour sans type de valeurs : VA, VI et VC, ou les trois",
-    expected: [{ toolName: "clarify_with_choices" }],
-    forbidden: [
-      "get_valeurs_avancement_non_a_jour",
-      "get_valeurs_initiales_cibles_manquantes",
-    ],
-  },
-  {
-    question: "Quels indicateurs n'ont pas de cible ?",
-    reason: "CAS NÉGATIF : type de valeurs précisé, VC",
-    forbidden: ["clarify_with_choices"],
-  },
-  {
-    question: "Quelles valeurs d'avancement ne sont pas à jour ?",
-    reason: "CAS NÉGATIF : type de valeurs précisé, VA",
     forbidden: ["clarify_with_choices"],
   },
   {
