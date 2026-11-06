@@ -79,6 +79,17 @@ scenarioEval({
       forbidden: ["clarify_with_choices"],
     },
     {
+      history: ["Quels chantiers ont des indicateurs non à jour en Bretagne ?"],
+      question: "Valeurs d'avancement non à jour en REG-53",
+      reason:
+        "clic sur un choix de la précision : rappeler l'outil avec le motif choisi, la consigne du tour précédent ne vaut plus",
+      truthScope: { territoires: ["REG-53"] },
+      expected: [
+        { toolName: "get_indicateurs_a_completer", input: { motifs: ["va"] } },
+      ],
+      forbidden: ["clarify_with_choices"],
+    },
+    {
       history: ["Quel est le taux d'avancement de la Bretagne ?"],
       question: "Et en 2024 ?",
       reason: "autre jalon, même territoire",

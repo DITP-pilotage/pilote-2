@@ -484,7 +484,7 @@ describe("get_indicateurs_a_completer", () => {
       value: {
         precision_demandee: true,
         consigne:
-          "Les choix sont déjà affichés à l'utilisateur. N'appelle aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse par la seule phrase « Choisissez une option pour continuer. »",
+          "Les choix sont affichés à l'utilisateur. Pour cette réponse seulement : n'appelle aucun autre outil, en particulier pas clarify_with_choices, et écris uniquement la phrase « Choisissez une option pour continuer. ». Au message suivant, l'utilisateur répond par l'un des choix (« Valeurs d'avancement non à jour », « Valeurs initiales et cibles manquantes »…) : rappelle alors get_indicateurs_a_completer avec les motifs qu'il nomme.",
         chantiers_non_accessibles: ["CH-999"],
       },
     });

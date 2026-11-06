@@ -13,7 +13,7 @@ import type { ChampsAcces } from "@/server/albert/tools/socleValeursIndicateurs"
  */
 
 const CONSIGNE_PRECISION =
-  "Les choix sont déjà affichés à l'utilisateur. N'appelle aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse par la seule phrase « Choisissez une option pour continuer. »";
+  "Les choix sont affichés à l'utilisateur. Pour cette réponse seulement : n'appelle aucun autre outil, en particulier pas clarify_with_choices, et écris uniquement la phrase « Choisissez une option pour continuer. ». Au message suivant, l'utilisateur répond par l'un des choix (« Valeurs d'avancement non à jour », « Valeurs initiales et cibles manquantes »…) : rappelle alors get_indicateurs_a_completer avec les motifs qu'il nomme.";
 
 const CONSIGNE_TABLEAU =
   "Le détail par territoire est affiché dans un tableau sous ta réponse. Termine ta réponse par une phrase qui y renvoie.";
