@@ -44,7 +44,7 @@ export type LigneACompleter = {
   derniere_vc_connue?: { valeur: number; jalon: number } | null;
 };
 
-const comparer = (gauche: string, droite: string) =>
+export const comparer = (gauche: string, droite: string) =>
   gauche < droite ? -1 : gauche > droite ? 1 : 0;
 
 export function fusionnerLignes({

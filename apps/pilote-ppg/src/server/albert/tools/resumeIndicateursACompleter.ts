@@ -1,5 +1,6 @@
 import type { $Enums } from "@prisma/client";
 import {
+  comparer,
   LIBELLES_MOTIF,
   MOTIFS_ORDER,
   type LibelleMaille,
@@ -23,9 +24,6 @@ export type ResumeIndicateursACompleter = {
   chantiers: ChantierResume[];
   sans_valeur_a_completer?: string[];
 };
-
-const comparer = (gauche: string, droite: string) =>
-  gauche < droite ? -1 : gauche > droite ? 1 : 0;
 
 const nombresParMaille = (
   lignes: LigneFusionnee[],
@@ -57,21 +55,15 @@ export function resumerIndicateursACompleter({
   jalon?: number;
   demandesExplicites: string[];
 }): ResumeIndicateursACompleter {
-  const lignesParChantier = new Map<string, Map<string, LigneFusionnee[]>>();
-  for (const ligne of lignes) {
-    const lignesParIndicateur =
-      lignesParChantier.get(ligne.chantierId) ??
-      new Map<string, LigneFusionnee[]>();
-    lignesParIndicateur.set(ligne.indicateurId, [
-      ...(lignesParIndicateur.get(ligne.indicateurId) ?? []),
-      ligne,
-    ]);
-    lignesParChantier.set(ligne.chantierId, lignesParIndicateur);
-  }
+  const lignesParChantier = Map.groupBy(lignes, (ligne) => ligne.chantierId);
 
   const chantiers: ChantierResume[] = [...lignesParChantier.entries()]
     .sort(([gauche], [droite]) => comparer(gauche, droite))
-    .map(([, lignesParIndicateur]) => {
+    .map(([, lignesChantier]) => {
+      const lignesParIndicateur = Map.groupBy(
+        lignesChantier,
+        (ligne) => ligne.indicateurId,
+      );
       const indicateurs: IndicateurResume[] = [...lignesParIndicateur.entries()]
         .sort(([gauche], [droite]) => comparer(gauche, droite))
         .map(([, lignesIndicateur]) => {
@@ -94,7 +86,7 @@ export function resumerIndicateursACompleter({
             ),
           };
         });
-      const premiereLigne = [...lignesParIndicateur.values()][0]![0]!;
+      const premiereLigne = lignesChantier[0]!;
       return {
         chantier: `${premiereLigne.chantierId} · ${premiereLigne.chantierNom}`,
         indicateurs,
