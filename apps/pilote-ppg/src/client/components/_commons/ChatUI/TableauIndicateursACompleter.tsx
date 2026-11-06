@@ -103,7 +103,8 @@ export const TableauIndicateursACompleter = ({
     .join(", ");
 
   return (
-    <div className="border border-dsfr-grey-925 bg-white">
+    // Déborde de la colonne de texte comme l'encart de synthèse, quand le fil est assez large.
+    <div className="border border-dsfr-grey-925 bg-white @5xl:-mx-16">
       <div className="flex items-center justify-between gap-4 px-4 py-3">
         <p className="mb-0 text-sm font-bold text-dsfr-grey-50">
           Détail par territoire · {detail.perimetre} · {libellesMotifs} ·{" "}
